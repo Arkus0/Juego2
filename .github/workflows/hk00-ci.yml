@@ -5,40 +5,91 @@ on:
     branches:
       - wp-hk-00-v2
   pull_request:
-    paths:
-      - 'src/**'
-      - 'tests/**'
-      - 'tools/**'
-      - 'scripts/**'
-      - '.github/workflows/hk00-ci.yml'
-      - 'global.json'
-      - 'Directory.Build.props'
-      - 'Directory.Packages.props'
-      - 'NuGet.config'
-      - 'Juego2.sln'
-      - 'Docs/evidence/WP-HK-00/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+  CONFIGURATION: Release
+  CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
 jobs:
-  stage1-build-test:
+  proof:
+    name: Exact-SHA foundational proof
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CANDIDATE_SHA }}
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-      - name: Record toolchain
+      - name: Verify exact candidate
         run: |
           set -euo pipefail
-          git rev-parse HEAD
+          actual="$(git rev-parse HEAD)"
+          echo "candidate=${actual}"
+          echo "expected=${CANDIDATE_SHA}"
+          test "${actual}" = "${CANDIDATE_SHA}"
           dotnet --version
-          dotnet --info
-      - name: Restore
-        run: dotnet restore Juego2.sln
-      - name: Build
-        run: dotnet build Juego2.sln --configuration Release --no-restore -v minimal
-      - name: Test
-        run: dotnet test Juego2.sln --configuration Release --no-build --no-restore -v minimal
+      - name: Run proof pipeline
+        run: bash scripts/proof.sh
+      - name: Require committed inventory to match observation
+        run: |
+          set -euo pipefail
+          status="$(git status --porcelain -- Docs/evidence/WP-HK-00/inventory)"
+          if [[ -n "${status}" ]]; then
+            echo "Inventory drift:" >&2
+            echo "${status}" >&2
+            exit 1
+          fi
+      - name: Upload proof evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hk00-proof-${{ env.CANDIDATE_SHA }}
+          path: |
+            artifacts/proof
+            Docs/evidence/WP-HK-00/inventory
+          if-no-files-found: warn
+
+  self-attacks:
+    name: Causal negative controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CANDIDATE_SHA }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Verify exact candidate
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${CANDIDATE_SHA}"
+      - name: Inject, detect, revert and re-prove causal classes
+        run: bash scripts/self-attacks/run-self-attacks.sh
+      - name: Require committed attack summary to match
+        run: |
+          set -euo pipefail
+          status="$(git status --porcelain -- Docs/evidence/WP-HK-00/self-attacks/results.md)"
+          if [[ -n "${status}" ]]; then
+            echo "Self-attack summary drift:" >&2
+            echo "${status}" >&2
+            exit 1
+          fi
+      - name: Upload attack evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hk00-self-attacks-${{ env.CANDIDATE_SHA }}
+          path: |
+            artifacts/self-attacks/logs
+            Docs/evidence/WP-HK-00/self-attacks/results.md
+          if-no-files-found: warn
