@@ -39,7 +39,11 @@ namespace Arkus.HK00.Proof
                     }
                 }
 
-                if (phase != "repository" && phase != "static" && phase != "effective" && phase != "all")
+                if (phase != "repository"
+                    && phase != "static"
+                    && phase != "effective"
+                    && phase != "output"
+                    && phase != "all")
                 {
                     throw new ArgumentException("Unsupported phase: " + phase);
                 }
@@ -55,21 +59,31 @@ namespace Arkus.HK00.Proof
                 if (phase == "repository" || phase == "all")
                 {
                     runner.RunRepository();
+                    additionalFindings += BuildSurfaceChecks.RunRepository(root);
                     additionalFindings += RepositoryClosureChecks.RunRepository(root);
                 }
+
                 if (phase == "static" || phase == "all")
                 {
                     runner.RunStatic();
                     additionalFindings += AdditionalChecks.RunStatic(root, configuration);
                     additionalFindings += RepositoryClosureChecks.RunStatic(root, configuration);
                 }
+
                 if (phase == "effective" || phase == "all")
                 {
                     runner.RunEffective();
                     additionalFindings += AdditionalChecks.RunEffective(root, configuration);
+                    additionalFindings += NonProductEffectiveChecks.Run(root, configuration);
                     additionalFindings += LateBuildChecks.CheckEffectiveCompilerExtensions(root, configuration);
+                    additionalFindings += OutputIntegrityChecks.Run(root, configuration);
                     additionalFindings += LateBuildChecks.CheckTrackedBytesStable(root, trackedBeforeBuild!);
                     additionalFindings += LateBuildChecks.CheckCandidateTree(root);
+                }
+
+                if (phase == "output")
+                {
+                    additionalFindings += OutputIntegrityChecks.Run(root, configuration);
                 }
 
                 if (inventory is not null || report is not null)

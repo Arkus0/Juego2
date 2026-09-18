@@ -3,8 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIGURATION="${CONFIGURATION:-Release}"
-TOOL_PROJECT="${ROOT}/tools/Arkus.HK00.Proof/Arkus.HK00.Proof.csproj"
-TOOL_DLL="${ROOT}/tools/Arkus.HK00.Proof/bin/${CONFIGURATION}/net8.0/Arkus.HK00.Proof.dll"
+TOOL_DLL="${ROOT}/artifacts/bootstrap-proof/Arkus.HK00.Proof.dll"
 INVENTORY_DIR="${ROOT}/Docs/evidence/WP-HK-00/inventory"
 REPORT_PATH="${ROOT}/artifacts/proof/report.json"
 
@@ -17,23 +16,29 @@ cd "${ROOT}"
 
 step() { printf '\n=== %s ===\n' "$1"; }
 
-step "build fixed-contract proof oracle"
-dotnet restore "${TOOL_PROJECT}"
-dotnet build "${TOOL_PROJECT}" --configuration "${CONFIGURATION}" --no-restore -v minimal
+step "bootstrap fixed-contract proof oracle directly from tracked sources"
+bash scripts/build-proof-oracle.sh
+test -f "${TOOL_DLL}" || { echo "FAIL CLOSED: bootstrapped proof oracle missing at ${TOOL_DLL}" >&2; exit 2; }
 
-test -f "${TOOL_DLL}" || { echo "FAIL CLOSED: proof oracle missing at ${TOOL_DLL}" >&2; exit 2; }
-
-step "independent repository/project/source universe"
+step "independent repository/project/source/build-surface universe"
 dotnet "${TOOL_DLL}" --root "${ROOT}" --configuration "${CONFIGURATION}" --phase repository
 
-step "restore exact solution"
-dotnet restore Juego2.sln
+step "restore exact solution with automatic response files disabled"
+dotnet msbuild Juego2.sln \
+  -nologo \
+  -noAutoResponse \
+  -t:Restore \
+  -p:Configuration="${CONFIGURATION}"
 
 step "evaluated MSBuild/static contract"
 dotnet "${TOOL_DLL}" --root "${ROOT}" --configuration "${CONFIGURATION}" --phase static
 
-step "build complete solution"
-dotnet build Juego2.sln --configuration "${CONFIGURATION}" --no-restore -v minimal
+step "build complete solution with automatic response files disabled"
+dotnet msbuild Juego2.sln \
+  -nologo \
+  -noAutoResponse \
+  -t:Rebuild \
+  -p:Configuration="${CONFIGURATION}"
 
 step "effective compiler + assembly + PDB proof"
 mkdir -p "${ROOT}/artifacts/proof"
@@ -44,8 +49,17 @@ dotnet "${TOOL_DLL}" \
   --inventory "${INVENTORY_DIR}" \
   --report "${REPORT_PATH}"
 
-step "tests"
-dotnet test Juego2.sln --configuration "${CONFIGURATION}" --no-build --no-restore -v minimal
+step "tests with automatic response files disabled and no rebuild"
+dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+  --configuration "${CONFIGURATION}" \
+  --no-build \
+  --no-restore \
+  -noAutoResponse \
+  -v minimal
+
+step "post-test candidate/output integrity"
+dotnet "${TOOL_DLL}" --root "${ROOT}" --configuration "${CONFIGURATION}" --phase repository
+dotnet "${TOOL_DLL}" --root "${ROOT}" --configuration "${CONFIGURATION}" --phase output
 
 step "proof green"
 echo "WP-HK-00 proof pipeline GREEN"

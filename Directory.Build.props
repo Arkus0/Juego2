@@ -14,6 +14,5 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <RollForward>LatestPatch</RollForward>
   </PropertyGroup>
 </Project>

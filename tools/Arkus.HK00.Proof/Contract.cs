@@ -34,6 +34,7 @@ namespace Arkus.HK00.Proof
         public string[] AllowedPackages { get; }
         public string Directory => System.IO.Path.GetDirectoryName(Path)!.Replace('\\', '/');
         public bool IsProduct => Kind == ProjectKind.Portable || Kind == ProjectKind.Host;
+        public bool RequiresTrustedCompilerExtensions => IsProduct || Kind == ProjectKind.Proof;
         public string TargetFramework => Kind == ProjectKind.Portable ? "netstandard2.1" : "net8.0";
     }
 
@@ -41,6 +42,15 @@ namespace Arkus.HK00.Proof
     {
         public const string SdkVersion = "8.0.425";
         public const string SdkRollForward = "disable";
+        public const string CanonicalSolution = "Juego2.sln";
+
+        public static readonly IReadOnlyDictionary<string, string> PackageVersions =
+            new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["Microsoft.NET.Test.Sdk"] = "17.14.1",
+                ["xunit"] = "2.9.3",
+                ["xunit.runner.visualstudio"] = "2.8.2",
+            };
 
         public static readonly IReadOnlyList<ProjectSpec> Projects = new[]
         {
@@ -61,8 +71,9 @@ namespace Arkus.HK00.Proof
             "NuGet.config",
             "Directory.Build.props",
             "Directory.Packages.props",
-            "Juego2.sln",
+            CanonicalSolution,
             ".github/workflows/hk00-ci.yml",
+            "scripts/build-proof-oracle.sh",
             "scripts/proof.sh",
             "scripts/self-attacks/run-self-attacks.sh",
             "scripts/self-attacks/run-closure-attacks.sh",

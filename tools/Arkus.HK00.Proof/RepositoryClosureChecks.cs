@@ -14,18 +14,28 @@ namespace Arkus.HK00.Proof
             ProcessResult result;
             try
             {
-                result = ProcessExec.Run("dotnet", new[] { "sln", "Juego2.sln", "list" }, root);
+                result = ProcessExec.Run("dotnet", new[] { "sln", FixedContract.CanonicalSolution, "list" }, root);
             }
             catch (Exception ex)
             {
-                return Report("HK00-SOLUTION-ORACLE", "repository", "Juego2.sln", ex.Message);
+                return Report("HK00-SOLUTION-ORACLE", "repository", FixedContract.CanonicalSolution, ex.Message);
             }
 
             var actual = new SortedSet<string>(StringComparer.Ordinal);
+            var inProjectList = false;
             foreach (var rawLine in result.Stdout.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 var line = rawLine.Trim();
-                if (!line.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase))
+                if (!inProjectList)
+                {
+                    if (line.Length >= 3 && line.All(ch => ch == '-'))
+                    {
+                        inProjectList = true;
+                    }
+                    continue;
+                }
+
+                if (line.Length == 0)
                 {
                     continue;
                 }
@@ -38,12 +48,11 @@ namespace Arkus.HK00.Proof
 
             if (actual.Count == 0)
             {
-                findings += Report(
+                return Report(
                     "HK00-SOLUTION-ORACLE",
                     "repository",
-                    "Juego2.sln",
-                    "dotnet sln produced no inspectable C# project membership.");
-                return findings;
+                    FixedContract.CanonicalSolution,
+                    "dotnet sln produced no inspectable project membership.");
             }
 
             var expected = new SortedSet<string>(FixedContract.Projects.Select(p => p.Path), StringComparer.Ordinal);
@@ -55,7 +64,7 @@ namespace Arkus.HK00.Proof
                         "HK00-SOLUTION-UNEXPECTED-PROJECT",
                         "repository",
                         project,
-                        "Solution contains a project outside the fixed HK00 project contract.");
+                        "Solution contains a build participant outside the fixed HK00 project contract.");
                 }
             }
 
@@ -67,7 +76,7 @@ namespace Arkus.HK00.Proof
                         "HK00-SOLUTION-MISSING-PROJECT",
                         "repository",
                         project,
-                        "Fixed HK00 project exists in the repository contract but is absent from Juego2.sln.");
+                        "Fixed HK00 project is absent from the canonical solution.");
                 }
             }
 
@@ -166,7 +175,7 @@ namespace Arkus.HK00.Proof
                         "HK00-MSBUILD-IMPORT-UNTRUSTED",
                         "static",
                         spec.Name + ":" + relative,
-                        "Evaluated MSBuild import closure contains a repository-owned extension outside the fixed HK00 build-policy surface.");
+                        "Evaluated MSBuild import closure contains repository-owned build logic outside the fixed HK00 surface.");
                 }
             }
 
