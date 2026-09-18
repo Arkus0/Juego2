@@ -39,8 +39,18 @@ namespace Arkus.HK00.Proof
                     }
                 }
 
+                if (phase != "repository" && phase != "static" && phase != "effective" && phase != "all")
+                {
+                    throw new ArgumentException("Unsupported phase: " + phase);
+                }
+
                 var runner = new ProofRunner(root, configuration);
-                var additionalFindings = 0;
+                var additionalFindings = LateBuildChecks.CheckCandidateTree(root);
+                TrackedBytesSnapshot? trackedBeforeBuild = null;
+                if (phase == "effective" || phase == "all")
+                {
+                    trackedBeforeBuild = LateBuildChecks.CaptureTrackedBytes(root);
+                }
 
                 if (phase == "repository" || phase == "all")
                 {
@@ -55,10 +65,9 @@ namespace Arkus.HK00.Proof
                 {
                     runner.RunEffective();
                     additionalFindings += AdditionalChecks.RunEffective(root, configuration);
-                }
-                if (phase != "repository" && phase != "static" && phase != "effective" && phase != "all")
-                {
-                    throw new ArgumentException("Unsupported phase: " + phase);
+                    additionalFindings += LateBuildChecks.CheckEffectiveCompilerExtensions(root, configuration);
+                    additionalFindings += LateBuildChecks.CheckTrackedBytesStable(root, trackedBeforeBuild!);
+                    additionalFindings += LateBuildChecks.CheckCandidateTree(root);
                 }
 
                 if (inventory is not null || report is not null)

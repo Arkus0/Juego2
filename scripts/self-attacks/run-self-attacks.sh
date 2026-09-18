@@ -88,9 +88,6 @@ expect_red() {
 
 revert_and_green() {
   local phase="$1" name="$2"
-  # Revert by destroying the mutated checkout and reconstructing it from the
-  # immutable pristine snapshot captured before any attack. This avoids hidden
-  # state from package/build tooling becoming part of the revert proof.
   fresh
   expect_green "${phase}" "${LOGDIR}/${name}-green.log"
 }
@@ -141,7 +138,7 @@ namespace Arkus.Game.World
 {
     public static class WorldModule
     {
-        public const string Name = "Arkus.Game.World";
+        public static string Name => "Arkus.Game.World";
     }
 }
 CS
@@ -161,6 +158,25 @@ m_engine_ref() {
 
 m_custom_analyzer() {
   insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" "  <ItemGroup><Analyzer Include=\"${TOOL_DLL}\" /></ItemGroup>"
+}
+
+m_late_analyzer() {
+  local json="${WORK}/baseline-analyzers.json"
+  (cd "${SANDBOX}" && dotnet msbuild src/Arkus.Game.Core/Arkus.Game.Core.csproj -nologo -noAutoResponse -p:Configuration="${CONFIGURATION}" -getItem:Analyzer) >"${json}"
+  local analyzer
+  analyzer="$(python3 - "${json}" <<'PY'
+import json,sys
+with open(sys.argv[1]) as f:
+    d=json.load(f)
+a=d.get('Items',{}).get('Analyzer',[])
+if not a:
+    raise SystemExit(2)
+print(a[0].get('FullPath') or a[0].get('Identity') or '')
+PY
+)" || fail "could not locate a pinned SDK analyzer for late-injection attack"
+  [[ -n "${analyzer}" && -f "${analyzer}" ]] || fail "baseline SDK analyzer path is not a file: ${analyzer}"
+  cp "${analyzer}" "${SANDBOX}/RogueAnalyzer.dll"
+  insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" '  <Target Name="InjectLateAnalyzer" BeforeTargets="CoreCompile"><ItemGroup><Analyzer Include="$(MSBuildProjectDirectory)/../../RogueAnalyzer.dll" /></ItemGroup></Target>'
 }
 
 m_custom_import() {
@@ -184,6 +200,10 @@ m_external() {
   mkdir -p "$(dirname "${external}")"
   echo 'namespace ExternalInjected { public static class Marker { } }' >"${external}"
   insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" "  <Target Name=\"InjectExternal\" BeforeTargets=\"CoreCompile\"><ItemGroup><Compile Include=\"${external}\" /></ItemGroup></Target>"
+}
+
+m_mutate_tracked_source() {
+  insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" '  <Target Name="MutateTrackedSource" BeforeTargets="CoreCompile"><WriteLinesToFile File="$(MSBuildProjectDirectory)/CoreModule.cs" Lines="// build-mutated" Overwrite="false" /></Target>'
 }
 
 m_toolchain() {
@@ -248,16 +268,18 @@ MD
   run_attack production-package-injected static HK00-PACKAGE-FORBIDDEN m_package
   run_attack engine-raw-reference static HK00-ENGINE-REFERENCE m_engine_ref
   run_attack custom-analyzer-source-generator static HK00-ANALYZER-UNTRUSTED m_custom_analyzer
+  run_attack late-target-analyzer-source-generator effective HK00-COMPILER-ANALYZER-UNTRUSTED m_late_analyzer
   run_attack explicit-custom-build-import static HK00-CUSTOM-IMPORT m_custom_import
   run_attack source-dropped-at-build-time effective HK00-SOURCE-NOT-COMPILED-EFFECTIVE m_drop_effective
   run_attack generated-product-source-injected effective HK00-COMPILER-SOURCE-UNTRACKED m_generated
   run_attack external-source-injected-at-build-time effective HK00-COMPILER-SOURCE-FOREIGN m_external
+  run_attack tracked-source-mutated-during-build effective HK00-BUILD-MUTATED-TRACKED m_mutate_tracked_source
   warning_attack
   run_attack toolchain-pin-relaxed repository HK00-TOOLCHAIN-PIN m_toolchain
   run_attack proof-project-deleted repository HK00-TRACKED-MISSING m_proof_deleted
   run_attack legacy-manifest-cannot-shrink-universe repository HK00-PROJECT-UNEXPECTED m_legacy_manifest
 
-  echo "all 18 causal self-attacks passed"
+  echo "all 20 causal self-attacks passed"
 }
 
 main "$@"
