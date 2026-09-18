@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "declaredEdges": [
+    {
+      "from": "Arkus.Game.Authoring",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Game.Authoring",
+      "to": "Arkus.Game.World"
+    },
+    {
+      "from": "Arkus.Game.Authoring",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Game.Validation",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Game.Validation",
+      "to": "Arkus.Game.World"
+    },
+    {
+      "from": "Arkus.Game.Validation",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Game.World",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Harness.Cli",
+      "to": "Arkus.Harness.Runtime"
+    },
+    {
+      "from": "Arkus.Harness.Runtime",
+      "to": "Arkus.Game.Authoring"
+    },
+    {
+      "from": "Arkus.Harness.Runtime",
+      "to": "Arkus.Game.Validation"
+    },
+    {
+      "from": "Arkus.Harness.Runtime",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.Authoring"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.Validation"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.World"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Harness.Cli"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Harness.Runtime"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Kernel.Proof"
+    },
+    {
+      "from": "Arkus.Kernel.Proof.Tool",
+      "to": "Arkus.Kernel.Proof"
+    }
+  ],
+  "projectReferenceEdges": [
+    {
+      "from": "Arkus.Game.Authoring",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Game.Authoring",
+      "to": "Arkus.Game.World"
+    },
+    {
+      "from": "Arkus.Game.Authoring",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Game.Validation",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Game.Validation",
+      "to": "Arkus.Game.World"
+    },
+    {
+      "from": "Arkus.Game.Validation",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Game.World",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Harness.Cli",
+      "to": "Arkus.Harness.Runtime"
+    },
+    {
+      "from": "Arkus.Harness.Runtime",
+      "to": "Arkus.Game.Authoring"
+    },
+    {
+      "from": "Arkus.Harness.Runtime",
+      "to": "Arkus.Game.Validation"
+    },
+    {
+      "from": "Arkus.Harness.Runtime",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.Authoring"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.Validation"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.World"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Harness.Cli"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Harness.Runtime"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Kernel.Proof"
+    },
+    {
+      "from": "Arkus.Kernel.Proof.Tool",
+      "to": "Arkus.Kernel.Proof"
+    }
+  ],
+  "effectiveAssemblyReferenceEdges": [
+    {
+      "from": "Arkus.Game.Authoring",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Game.Authoring",
+      "to": "Arkus.Game.World"
+    },
+    {
+      "from": "Arkus.Game.Authoring",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Game.Validation",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Game.Validation",
+      "to": "Arkus.Game.World"
+    },
+    {
+      "from": "Arkus.Game.Validation",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Game.World",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Harness.Cli",
+      "to": "Arkus.Harness.Runtime"
+    },
+    {
+      "from": "Arkus.Harness.Runtime",
+      "to": "Arkus.Game.Authoring"
+    },
+    {
+      "from": "Arkus.Harness.Runtime",
+      "to": "Arkus.Game.Validation"
+    },
+    {
+      "from": "Arkus.Harness.Runtime",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.Authoring"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.Core"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.Validation"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Game.World"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Harness.Cli"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Harness.Protocol"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Harness.Runtime"
+    },
+    {
+      "from": "Arkus.Harness.Tests",
+      "to": "Arkus.Kernel.Proof"
+    },
+    {
+      "from": "Arkus.Kernel.Proof.Tool",
+      "to": "Arkus.Kernel.Proof"
+    }
+  ]
+}

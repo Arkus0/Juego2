@@ -1,6 +1,6 @@
 # WP-HK-00 — Canonical portable kernel boundary
 
-Status: PLANNED  
+Status: WORKER CANDIDATE — implementation complete, awaiting fresh independent Reviewer  
 Class: FOUNDATIONAL  
 Depends on: none  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
@@ -47,3 +47,10 @@ Unity project/scenes/assets, Quaternius, DFU, gameplay systems, AI transport fea
 ## DoD
 
 Exact-SHA CI green; proof matrix complete; zero unresolved/undetected classes; fresh independent Reviewer PASS.
+
+## Evidence
+
+`Docs/evidence/WP-HK-00/` — verdict, proof matrix, self-attack logs, residual-risk audit and generated inventories.
+Decision record: `Docs/adr/ADR-0001-canonical-kernel-boundary.md`.
+
+Reproduce: `bash scripts/proof.sh` and `bash scripts/self-attacks/run-self-attacks.sh`.

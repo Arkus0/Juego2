@@ -1,0 +1,94 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0AAF1AC2-8D3C-434A-9254-04367DD5C3D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Game.Authoring", "src\Arkus.Game.Authoring\Arkus.Game.Authoring.csproj", "{F19CCA68-FFAF-4D84-B0EE-97FA0F6E6B56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Game.Core", "src\Arkus.Game.Core\Arkus.Game.Core.csproj", "{89F21110-8209-4988-B9E1-5C993C837BAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Game.Validation", "src\Arkus.Game.Validation\Arkus.Game.Validation.csproj", "{8C1580A4-3606-4B75-B7C6-48446D99FE39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Game.World", "src\Arkus.Game.World\Arkus.Game.World.csproj", "{BA9E609D-F9F9-4916-BD9F-ED27F2894053}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Harness.Cli", "src\Arkus.Harness.Cli\Arkus.Harness.Cli.csproj", "{BC63C7C3-77DA-4E9F-82F8-990269554E25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Harness.Protocol", "src\Arkus.Harness.Protocol\Arkus.Harness.Protocol.csproj", "{A5955A1E-6E6E-44D8-94FF-0C01B2C51CDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Harness.Runtime", "src\Arkus.Harness.Runtime\Arkus.Harness.Runtime.csproj", "{D0104DFA-E6AA-4EE3-BC95-5D3AE395B990}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{62DB0119-08C9-42EB-97FA-4D1AC3E22EE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Kernel.Proof.Tool", "tools\Arkus.Kernel.Proof.Tool\Arkus.Kernel.Proof.Tool.csproj", "{A891DCF3-FDFF-42FE-9A5D-7AE33D080194}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Kernel.Proof", "tools\Arkus.Kernel.Proof\Arkus.Kernel.Proof.csproj", "{95728582-1DE3-44FE-856C-E4367A39233F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{49795847-647A-42A8-BF02-FE5A7698AB68}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Harness.Tests", "tests\Arkus.Harness.Tests\Arkus.Harness.Tests.csproj", "{E708A750-B5BB-46BA-AC28-FB56D5228CB8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F19CCA68-FFAF-4D84-B0EE-97FA0F6E6B56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F19CCA68-FFAF-4D84-B0EE-97FA0F6E6B56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F19CCA68-FFAF-4D84-B0EE-97FA0F6E6B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F19CCA68-FFAF-4D84-B0EE-97FA0F6E6B56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89F21110-8209-4988-B9E1-5C993C837BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89F21110-8209-4988-B9E1-5C993C837BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89F21110-8209-4988-B9E1-5C993C837BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89F21110-8209-4988-B9E1-5C993C837BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C1580A4-3606-4B75-B7C6-48446D99FE39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C1580A4-3606-4B75-B7C6-48446D99FE39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C1580A4-3606-4B75-B7C6-48446D99FE39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C1580A4-3606-4B75-B7C6-48446D99FE39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA9E609D-F9F9-4916-BD9F-ED27F2894053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA9E609D-F9F9-4916-BD9F-ED27F2894053}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA9E609D-F9F9-4916-BD9F-ED27F2894053}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA9E609D-F9F9-4916-BD9F-ED27F2894053}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC63C7C3-77DA-4E9F-82F8-990269554E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC63C7C3-77DA-4E9F-82F8-990269554E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC63C7C3-77DA-4E9F-82F8-990269554E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC63C7C3-77DA-4E9F-82F8-990269554E25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5955A1E-6E6E-44D8-94FF-0C01B2C51CDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5955A1E-6E6E-44D8-94FF-0C01B2C51CDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5955A1E-6E6E-44D8-94FF-0C01B2C51CDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5955A1E-6E6E-44D8-94FF-0C01B2C51CDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0104DFA-E6AA-4EE3-BC95-5D3AE395B990}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0104DFA-E6AA-4EE3-BC95-5D3AE395B990}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0104DFA-E6AA-4EE3-BC95-5D3AE395B990}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0104DFA-E6AA-4EE3-BC95-5D3AE395B990}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A891DCF3-FDFF-42FE-9A5D-7AE33D080194}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A891DCF3-FDFF-42FE-9A5D-7AE33D080194}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A891DCF3-FDFF-42FE-9A5D-7AE33D080194}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A891DCF3-FDFF-42FE-9A5D-7AE33D080194}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95728582-1DE3-44FE-856C-E4367A39233F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95728582-1DE3-44FE-856C-E4367A39233F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95728582-1DE3-44FE-856C-E4367A39233F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95728582-1DE3-44FE-856C-E4367A39233F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E708A750-B5BB-46BA-AC28-FB56D5228CB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E708A750-B5BB-46BA-AC28-FB56D5228CB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E708A750-B5BB-46BA-AC28-FB56D5228CB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E708A750-B5BB-46BA-AC28-FB56D5228CB8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F19CCA68-FFAF-4D84-B0EE-97FA0F6E6B56} = {0AAF1AC2-8D3C-434A-9254-04367DD5C3D9}
+		{89F21110-8209-4988-B9E1-5C993C837BAB} = {0AAF1AC2-8D3C-434A-9254-04367DD5C3D9}
+		{8C1580A4-3606-4B75-B7C6-48446D99FE39} = {0AAF1AC2-8D3C-434A-9254-04367DD5C3D9}
+		{BA9E609D-F9F9-4916-BD9F-ED27F2894053} = {0AAF1AC2-8D3C-434A-9254-04367DD5C3D9}
+		{BC63C7C3-77DA-4E9F-82F8-990269554E25} = {0AAF1AC2-8D3C-434A-9254-04367DD5C3D9}
+		{A5955A1E-6E6E-44D8-94FF-0C01B2C51CDC} = {0AAF1AC2-8D3C-434A-9254-04367DD5C3D9}
+		{D0104DFA-E6AA-4EE3-BC95-5D3AE395B990} = {0AAF1AC2-8D3C-434A-9254-04367DD5C3D9}
+		{A891DCF3-FDFF-42FE-9A5D-7AE33D080194} = {62DB0119-08C9-42EB-97FA-4D1AC3E22EE7}
+		{95728582-1DE3-44FE-856C-E4367A39233F} = {62DB0119-08C9-42EB-97FA-4D1AC3E22EE7}
+		{E708A750-B5BB-46BA-AC28-FB56D5228CB8} = {49795847-647A-42A8-BF02-FE5A7698AB68}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj" />
+    <ProjectReference Include="../../src/Arkus.Game.Core/Arkus.Game.Core.csproj" />
+    <ProjectReference Include="../../src/Arkus.Game.Validation/Arkus.Game.Validation.csproj" />
+    <ProjectReference Include="../../src/Arkus.Game.World/Arkus.Game.World.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
+    <ProjectReference Include="../../tools/Arkus.Kernel.Proof/Arkus.Kernel.Proof.csproj" />
+  </ItemGroup>
+
+</Project>

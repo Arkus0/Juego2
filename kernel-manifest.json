@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "workpack": "WP-HK-00",
+  "description": "Single declarative source of truth for the canonical kernel boundary: which projects exist, who owns which production source, which dependency edges are allowed, and which build contract each project class must satisfy. Every claim here is checked mechanically by the Arkus.Kernel.Proof tool; nothing in this file is trusted on its own.",
+  "repository": {
+    "sourceScanRoots": [
+      "src",
+      "tests",
+      "tools"
+    ],
+    "excludedDirectoryNames": [
+      ".git",
+      "artifacts",
+      "bin",
+      "obj"
+    ]
+  },
+  "toolchain": {
+    "globalJsonPath": "global.json",
+    "sdk": {
+      "version": "8.0.100",
+      "rollForward": "latestPatch",
+      "allowPrerelease": false
+    },
+    "allowedNoWarn": [
+      "1701",
+      "1702"
+    ],
+    "requireCentralPackageManagement": true
+  },
+  "projectClasses": {
+    "portable-kernel": {
+      "description": "Engine-agnostic portable library consumed by downstream hosts, including Unity later. Unity-compatible contract.",
+      "production": true,
+      "engineFree": true,
+      "allowPackageReferences": false,
+      "requireDeclaredEdgesExercised": true,
+      "allowExternalCompiledSources": false,
+      "requiredProperties": {
+        "TargetFramework": "netstandard2.1",
+        "LangVersion": "9.0",
+        "Nullable": "enable",
+        "RollForward": "LatestPatch",
+        "ImplicitUsings": "disable",
+        "TreatWarningsAsErrors": "true",
+        "EnableNETAnalyzers": "true",
+        "DisableTransitiveProjectReferences": "true",
+        "Deterministic": "true",
+        "DebugType": "portable",
+        "EmbedAllSources": "true"
+      }
+    },
+    "host": {
+      "description": "Headless host/CLI. Pinned .NET 8, never consumed by Unity.",
+      "production": true,
+      "engineFree": true,
+      "allowPackageReferences": false,
+      "requireDeclaredEdgesExercised": true,
+      "allowExternalCompiledSources": false,
+      "requiredProperties": {
+        "TargetFramework": "net8.0",
+        "LangVersion": "9.0",
+        "Nullable": "enable",
+        "RollForward": "LatestPatch",
+        "ImplicitUsings": "disable",
+        "TreatWarningsAsErrors": "true",
+        "EnableNETAnalyzers": "true",
+        "DisableTransitiveProjectReferences": "true",
+        "Deterministic": "true",
+        "DebugType": "portable",
+        "EmbedAllSources": "true"
+      }
+    },
+    "tooling": {
+      "description": "Build/proof tooling. Production source, but not part of the shipped kernel and never referenced by it.",
+      "production": true,
+      "engineFree": true,
+      "allowPackageReferences": false,
+      "requireDeclaredEdgesExercised": false,
+      "allowExternalCompiledSources": false,
+      "requiredProperties": {
+        "TargetFramework": "net8.0",
+        "LangVersion": "9.0",
+        "Nullable": "enable",
+        "RollForward": "LatestPatch",
+        "ImplicitUsings": "disable",
+        "TreatWarningsAsErrors": "true",
+        "EnableNETAnalyzers": "true",
+        "DisableTransitiveProjectReferences": "true",
+        "Deterministic": "true",
+        "DebugType": "portable",
+        "EmbedAllSources": "true"
+      }
+    },
+    "tests": {
+      "description": "Test surface. Not production source; may reference pinned test packages.",
+      "production": false,
+      "engineFree": true,
+      "allowPackageReferences": true,
+      "requireDeclaredEdgesExercised": false,
+      "allowExternalCompiledSources": true,
+      "requiredProperties": {
+        "TargetFramework": "net8.0",
+        "LangVersion": "9.0",
+        "Nullable": "enable",
+        "RollForward": "LatestPatch",
+        "ImplicitUsings": "disable",
+        "TreatWarningsAsErrors": "true",
+        "EnableNETAnalyzers": "true",
+        "DisableTransitiveProjectReferences": "true",
+        "Deterministic": "true",
+        "DebugType": "portable",
+        "EmbedAllSources": "true"
+      }
+    }
+  },
+  "projects": [
+    {
+      "name": "Arkus.Harness.Protocol",
+      "path": "src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj",
+      "class": "portable-kernel",
+      "dependsOn": []
+    },
+    {
+      "name": "Arkus.Game.Core",
+      "path": "src/Arkus.Game.Core/Arkus.Game.Core.csproj",
+      "class": "portable-kernel",
+      "dependsOn": []
+    },
+    {
+      "name": "Arkus.Game.World",
+      "path": "src/Arkus.Game.World/Arkus.Game.World.csproj",
+      "class": "portable-kernel",
+      "dependsOn": [
+        "Arkus.Game.Core"
+      ]
+    },
+    {
+      "name": "Arkus.Game.Authoring",
+      "path": "src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj",
+      "class": "portable-kernel",
+      "dependsOn": [
+        "Arkus.Game.Core",
+        "Arkus.Game.World",
+        "Arkus.Harness.Protocol"
+      ]
+    },
+    {
+      "name": "Arkus.Game.Validation",
+      "path": "src/Arkus.Game.Validation/Arkus.Game.Validation.csproj",
+      "class": "portable-kernel",
+      "dependsOn": [
+        "Arkus.Game.Core",
+        "Arkus.Game.World",
+        "Arkus.Harness.Protocol"
+      ]
+    },
+    {
+      "name": "Arkus.Harness.Runtime",
+      "path": "src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj",
+      "class": "portable-kernel",
+      "dependsOn": [
+        "Arkus.Game.Authoring",
+        "Arkus.Game.Validation",
+        "Arkus.Harness.Protocol"
+      ]
+    },
+    {
+      "name": "Arkus.Harness.Cli",
+      "path": "src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj",
+      "class": "host",
+      "dependsOn": [
+        "Arkus.Harness.Runtime"
+      ]
+    },
+    {
+      "name": "Arkus.Kernel.Proof",
+      "path": "tools/Arkus.Kernel.Proof/Arkus.Kernel.Proof.csproj",
+      "class": "tooling",
+      "dependsOn": []
+    },
+    {
+      "name": "Arkus.Kernel.Proof.Tool",
+      "path": "tools/Arkus.Kernel.Proof.Tool/Arkus.Kernel.Proof.Tool.csproj",
+      "class": "tooling",
+      "dependsOn": [
+        "Arkus.Kernel.Proof"
+      ]
+    },
+    {
+      "name": "Arkus.Harness.Tests",
+      "path": "tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj",
+      "class": "tests",
+      "dependsOn": [
+        "Arkus.Game.Authoring",
+        "Arkus.Game.Core",
+        "Arkus.Game.Validation",
+        "Arkus.Game.World",
+        "Arkus.Harness.Cli",
+        "Arkus.Harness.Protocol",
+        "Arkus.Harness.Runtime",
+        "Arkus.Kernel.Proof"
+      ]
+    }
+  ],
+  "forbiddenAssemblyNamePatterns": [
+    "UnityEngine",
+    "UnityEngine.*",
+    "UnityEditor",
+    "UnityEditor.*",
+    "Unity.*",
+    "Assembly-CSharp",
+    "Assembly-CSharp-*",
+    "DaggerfallWorkshop*",
+    "DaggerfallConnect*",
+    "DaggerfallUnity*"
+  ],
+  "generatedSourceNamePatterns": [
+    "*.AssemblyInfo.cs",
+    "*.AssemblyAttributes.cs",
+    "*.GlobalUsings.g.cs"
+  ],
+  "requiredFiles": [
+    "global.json",
+    "NuGet.config",
+    "Directory.Build.props",
+    "Directory.Packages.props",
+    "Juego2.sln",
+    "kernel-manifest.json",
+    ".github/workflows/ci.yml",
+    "scripts/proof.sh",
+    "scripts/self-attacks/run-self-attacks.sh"
+  ],
+  "requiredTestProjects": [
+    "Arkus.Harness.Tests"
+  ],
+  "requiredProofTool": "Arkus.Kernel.Proof.Tool"
+}

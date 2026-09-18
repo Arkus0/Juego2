@@ -1,0 +1,121 @@
+name: CI
+
+# WP-HK-00 requires a clean, headless, Linux proof from an exact commit. Every
+# job below fails closed: a missing project, test project or proof tool is a
+# failure, never a smaller passing run.
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+  CONFIGURATION: Release
+
+jobs:
+  kernel-proof:
+    name: Kernel boundary proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out the exact candidate commit
+        uses: actions/checkout@v4
+
+      - name: Install the pinned SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Record candidate SHA and toolchain
+        run: |
+          echo "candidate sha: ${GITHUB_SHA}"
+          dotnet --version
+          dotnet --list-sdks
+
+      - name: Fail closed if a required proof input is absent
+        run: |
+          set -euo pipefail
+          required=(
+            kernel-manifest.json
+            global.json
+            NuGet.config
+            Directory.Build.props
+            Directory.Packages.props
+            Juego2.sln
+            scripts/proof.sh
+            scripts/self-attacks/run-self-attacks.sh
+            tools/Arkus.Kernel.Proof.Tool/Arkus.Kernel.Proof.Tool.csproj
+            tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj
+          )
+          for path in "${required[@]}"; do
+            if [[ ! -f "${path}" ]]; then
+              echo "FAIL CLOSED: required proof input '${path}' is missing" >&2
+              exit 1
+            fi
+          done
+
+      - name: Run the proof pipeline
+        run: bash scripts/proof.sh
+
+      - name: Fail if the generated inventory drifted from the committed one
+        run: |
+          set -euo pipefail
+          if ! git diff --exit-code -- Docs/evidence/WP-HK-00/inventory; then
+            echo "FAIL: committed inventories are stale; regenerate with scripts/proof.sh" >&2
+            exit 1
+          fi
+
+      - name: Upload proof evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-proof-evidence
+          path: |
+            artifacts/proof/report.json
+            Docs/evidence/WP-HK-00/inventory
+          if-no-files-found: warn
+
+  self-attacks:
+    name: Causal self-attacks
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out the exact candidate commit
+        uses: actions/checkout@v4
+
+      - name: Install the pinned SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Build the proof tool
+        run: |
+          set -euo pipefail
+          dotnet restore Juego2.sln --locked-mode
+          dotnet build tools/Arkus.Kernel.Proof.Tool/Arkus.Kernel.Proof.Tool.csproj \
+            --no-restore -c "${CONFIGURATION}" -v minimal
+
+      - name: Inject, detect, revert and re-prove every defect class
+        run: bash scripts/self-attacks/run-self-attacks.sh
+
+      - name: Upload self-attack evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: self-attack-evidence
+          path: Docs/evidence/WP-HK-00/self-attacks
+          if-no-files-found: error

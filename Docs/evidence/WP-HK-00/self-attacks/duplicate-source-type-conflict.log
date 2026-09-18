@@ -1,0 +1,62 @@
+# self-attack: duplicate-source-type-conflict
+# A product source file is linked into a second assembly whose type the graph already exports; the compiler must reject it too.
+# configuration: Release
+# touched paths: src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj
+
+--- 1. inject defect ---
+
+--- 2. build with defect (expected to fail) ---
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Arkus.Game.Core -> <SANDBOX>/artifacts/bin/Arkus.Game.Core/release/Arkus.Game.Core.dll
+  Arkus.Harness.Protocol -> <SANDBOX>/artifacts/bin/Arkus.Harness.Protocol/release/Arkus.Harness.Protocol.dll
+  Arkus.Kernel.Proof -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof/release/Arkus.Kernel.Proof.dll
+  Arkus.Kernel.Proof.Tool -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof.Tool/release/Arkus.Kernel.Proof.Tool.dll
+  Arkus.Game.World -> <SANDBOX>/artifacts/bin/Arkus.Game.World/release/Arkus.Game.World.dll
+  Arkus.Game.Authoring -> <SANDBOX>/artifacts/bin/Arkus.Game.Authoring/release/Arkus.Game.Authoring.dll
+  Arkus.Game.Validation -> <SANDBOX>/artifacts/bin/Arkus.Game.Validation/release/Arkus.Game.Validation.dll
+<SANDBOX>/src/Arkus.Harness.Runtime/RuntimeModule.cs(35,35): error CS0433: The type 'ValidationModule' exists in both 'Arkus.Game.Authoring, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' and 'Arkus.Game.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' [<SANDBOX>/src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj]
+
+Build FAILED.
+
+<SANDBOX>/src/Arkus.Harness.Runtime/RuntimeModule.cs(35,35): error CS0433: The type 'ValidationModule' exists in both 'Arkus.Game.Authoring, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' and 'Arkus.Game.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' [<SANDBOX>/src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:02.56
+
+--- 3. guard must turn red for the intended reason ---
+HK00-SOURCE-FOREIGN-COMPILE-ITEM [static] Arkus.Game.Authoring:src/Arkus.Game.Validation/ValidationModule.cs: Compiler input lies outside the project directory, so the source has more than one owner.
+HK00-SOURCE-DUPLICATE-OWNERSHIP [static] src/Arkus.Game.Validation/ValidationModule.cs: Source file is compiled by more than one project: Arkus.Game.Authoring, Arkus.Game.Validation.
+phases=preflight+static configuration=Release findings=2
+EXPECTED CHECK FIRED: HK00-SOURCE-DUPLICATE-OWNERSHIP
+EXPECTED CHECK FIRED: HK00-SOURCE-FOREIGN-COMPILE-ITEM
+EXPECTATION RESULT: MET
+
+--- 4. revert defect ---
+
+--- 5. rebuild and prove green again ---
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Arkus.Game.Core -> <SANDBOX>/artifacts/bin/Arkus.Game.Core/release/Arkus.Game.Core.dll
+  Arkus.Harness.Protocol -> <SANDBOX>/artifacts/bin/Arkus.Harness.Protocol/release/Arkus.Harness.Protocol.dll
+  Arkus.Kernel.Proof -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof/release/Arkus.Kernel.Proof.dll
+  Arkus.Kernel.Proof.Tool -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof.Tool/release/Arkus.Kernel.Proof.Tool.dll
+  Arkus.Game.World -> <SANDBOX>/artifacts/bin/Arkus.Game.World/release/Arkus.Game.World.dll
+  Arkus.Game.Validation -> <SANDBOX>/artifacts/bin/Arkus.Game.Validation/release/Arkus.Game.Validation.dll
+  Arkus.Game.Authoring -> <SANDBOX>/artifacts/bin/Arkus.Game.Authoring/release/Arkus.Game.Authoring.dll
+  Arkus.Harness.Runtime -> <SANDBOX>/artifacts/bin/Arkus.Harness.Runtime/release/Arkus.Harness.Runtime.dll
+  Arkus.Harness.Cli -> <SANDBOX>/artifacts/bin/Arkus.Harness.Cli/release/Arkus.Harness.Cli.dll
+  Arkus.Harness.Tests -> <SANDBOX>/artifacts/bin/Arkus.Harness.Tests/release/Arkus.Harness.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.09
+phases=preflight+static+effective+compiler configuration=Release findings=0
+PROOF RESULT: GREEN
+
+--- result: RED on injection, GREEN after revert ---

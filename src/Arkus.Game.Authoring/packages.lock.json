@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "dependencies": {
+    ".NETStandard,Version=v2.1": {
+      "arkus.game.core": {
+        "type": "Project"
+      },
+      "arkus.game.world": {
+        "type": "Project",
+        "dependencies": {
+          "Arkus.Game.Core": "[1.0.0, )"
+        }
+      },
+      "arkus.harness.protocol": {
+        "type": "Project"
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+# self-attack: toolchain-property-drift
+# A kernel project drifts off the pinned language version.
+# configuration: Release
+# touched paths: src/Arkus.Game.Core/Arkus.Game.Core.csproj
+
+--- 1. inject defect ---
+
+--- 3. guard must turn red for the intended reason ---
+HK00-TOOLCHAIN-PROPERTY [static] Arkus.Game.Core:LangVersion: Evaluated 'LangVersion' is 'latest' but class 'portable-kernel' requires '9.0'.
+phases=preflight+static configuration=Release findings=1
+EXPECTED CHECK FIRED: HK00-TOOLCHAIN-PROPERTY
+EXPECTATION RESULT: MET
+
+--- 4. revert defect ---
+
+--- 5. rebuild and prove green again ---
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Arkus.Game.Core -> <SANDBOX>/artifacts/bin/Arkus.Game.Core/release/Arkus.Game.Core.dll
+  Arkus.Harness.Protocol -> <SANDBOX>/artifacts/bin/Arkus.Harness.Protocol/release/Arkus.Harness.Protocol.dll
+  Arkus.Kernel.Proof -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof/release/Arkus.Kernel.Proof.dll
+  Arkus.Game.World -> <SANDBOX>/artifacts/bin/Arkus.Game.World/release/Arkus.Game.World.dll
+  Arkus.Game.Validation -> <SANDBOX>/artifacts/bin/Arkus.Game.Validation/release/Arkus.Game.Validation.dll
+  Arkus.Game.Authoring -> <SANDBOX>/artifacts/bin/Arkus.Game.Authoring/release/Arkus.Game.Authoring.dll
+  Arkus.Kernel.Proof.Tool -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof.Tool/release/Arkus.Kernel.Proof.Tool.dll
+  Arkus.Harness.Runtime -> <SANDBOX>/artifacts/bin/Arkus.Harness.Runtime/release/Arkus.Harness.Runtime.dll
+  Arkus.Harness.Cli -> <SANDBOX>/artifacts/bin/Arkus.Harness.Cli/release/Arkus.Harness.Cli.dll
+  Arkus.Harness.Tests -> <SANDBOX>/artifacts/bin/Arkus.Harness.Tests/release/Arkus.Harness.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.15
+phases=preflight+static+effective+compiler configuration=Release findings=0
+PROOF RESULT: GREEN
+
+--- result: RED on injection, GREEN after revert ---

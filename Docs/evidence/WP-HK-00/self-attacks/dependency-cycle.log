@@ -1,0 +1,54 @@
+# self-attack: dependency-cycle
+# Arkus.Game.Core is made to depend back on Arkus.Game.World.
+# configuration: Release
+# touched paths: src/Arkus.Game.Core/Arkus.Game.Core.csproj
+
+--- 1. inject defect ---
+
+--- 2. build with defect (expected to fail) ---
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+/usr/lib/dotnet/sdk/8.0.131/NuGet.targets(1178,5): error MSB4006: There is a circular dependency in the target dependency graph involving target "_GenerateRestoreProjectPathWalk". [<SANDBOX>/src/Arkus.Game.Core/Arkus.Game.Core.csproj]
+
+Build FAILED.
+
+/usr/lib/dotnet/sdk/8.0.131/NuGet.targets(1178,5): error MSB4006: There is a circular dependency in the target dependency graph involving target "_GenerateRestoreProjectPathWalk". [<SANDBOX>/src/Arkus.Game.Core/Arkus.Game.Core.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.80
+
+--- 3. guard must turn red for the intended reason ---
+HK00-GRAPH-UNDECLARED-EDGE [static] Arkus.Game.Core -> Arkus.Game.World: Project file declares a dependency edge that the manifest does not allow.
+HK00-GRAPH-CYCLE [static] Arkus.Game.Core -> Arkus.Game.World -> Arkus.Game.Core: The dependency graph derived from project files contains a cycle or back-edge.
+phases=preflight+static configuration=Release findings=2
+EXPECTED CHECK FIRED: HK00-GRAPH-CYCLE
+EXPECTED CHECK FIRED: HK00-GRAPH-UNDECLARED-EDGE
+EXPECTATION RESULT: MET
+
+--- 4. revert defect ---
+
+--- 5. rebuild and prove green again ---
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Arkus.Game.Core -> <SANDBOX>/artifacts/bin/Arkus.Game.Core/release/Arkus.Game.Core.dll
+  Arkus.Harness.Protocol -> <SANDBOX>/artifacts/bin/Arkus.Harness.Protocol/release/Arkus.Harness.Protocol.dll
+  Arkus.Kernel.Proof -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof/release/Arkus.Kernel.Proof.dll
+  Arkus.Game.World -> <SANDBOX>/artifacts/bin/Arkus.Game.World/release/Arkus.Game.World.dll
+  Arkus.Game.Validation -> <SANDBOX>/artifacts/bin/Arkus.Game.Validation/release/Arkus.Game.Validation.dll
+  Arkus.Kernel.Proof.Tool -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof.Tool/release/Arkus.Kernel.Proof.Tool.dll
+  Arkus.Game.Authoring -> <SANDBOX>/artifacts/bin/Arkus.Game.Authoring/release/Arkus.Game.Authoring.dll
+  Arkus.Harness.Runtime -> <SANDBOX>/artifacts/bin/Arkus.Harness.Runtime/release/Arkus.Harness.Runtime.dll
+  Arkus.Harness.Cli -> <SANDBOX>/artifacts/bin/Arkus.Harness.Cli/release/Arkus.Harness.Cli.dll
+  Arkus.Harness.Tests -> <SANDBOX>/artifacts/bin/Arkus.Harness.Tests/release/Arkus.Harness.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.84
+phases=preflight+static+effective+compiler configuration=Release findings=0
+PROOF RESULT: GREEN
+
+--- result: RED on injection, GREEN after revert ---

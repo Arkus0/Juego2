@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "projectCount": 10,
+  "projects": [
+    {
+      "name": "Arkus.Game.Authoring",
+      "path": "src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj",
+      "class": "portable-kernel",
+      "production": true,
+      "targetFramework": "netstandard2.1",
+      "langVersion": "9.0",
+      "declaredDependencies": [
+        "Arkus.Game.Core",
+        "Arkus.Game.World",
+        "Arkus.Harness.Protocol"
+      ],
+      "ownedSourceCount": 1
+    },
+    {
+      "name": "Arkus.Game.Core",
+      "path": "src/Arkus.Game.Core/Arkus.Game.Core.csproj",
+      "class": "portable-kernel",
+      "production": true,
+      "targetFramework": "netstandard2.1",
+      "langVersion": "9.0",
+      "declaredDependencies": [],
+      "ownedSourceCount": 1
+    },
+    {
+      "name": "Arkus.Game.Validation",
+      "path": "src/Arkus.Game.Validation/Arkus.Game.Validation.csproj",
+      "class": "portable-kernel",
+      "production": true,
+      "targetFramework": "netstandard2.1",
+      "langVersion": "9.0",
+      "declaredDependencies": [
+        "Arkus.Game.Core",
+        "Arkus.Game.World",
+        "Arkus.Harness.Protocol"
+      ],
+      "ownedSourceCount": 1
+    },
+    {
+      "name": "Arkus.Game.World",
+      "path": "src/Arkus.Game.World/Arkus.Game.World.csproj",
+      "class": "portable-kernel",
+      "production": true,
+      "targetFramework": "netstandard2.1",
+      "langVersion": "9.0",
+      "declaredDependencies": [
+        "Arkus.Game.Core"
+      ],
+      "ownedSourceCount": 1
+    },
+    {
+      "name": "Arkus.Harness.Cli",
+      "path": "src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj",
+      "class": "host",
+      "production": true,
+      "targetFramework": "net8.0",
+      "langVersion": "9.0",
+      "declaredDependencies": [
+        "Arkus.Harness.Runtime"
+      ],
+      "ownedSourceCount": 1
+    },
+    {
+      "name": "Arkus.Harness.Protocol",
+      "path": "src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj",
+      "class": "portable-kernel",
+      "production": true,
+      "targetFramework": "netstandard2.1",
+      "langVersion": "9.0",
+      "declaredDependencies": [],
+      "ownedSourceCount": 1
+    },
+    {
+      "name": "Arkus.Harness.Runtime",
+      "path": "src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj",
+      "class": "portable-kernel",
+      "production": true,
+      "targetFramework": "netstandard2.1",
+      "langVersion": "9.0",
+      "declaredDependencies": [
+        "Arkus.Game.Authoring",
+        "Arkus.Game.Validation",
+        "Arkus.Harness.Protocol"
+      ],
+      "ownedSourceCount": 1
+    },
+    {
+      "name": "Arkus.Harness.Tests",
+      "path": "tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj",
+      "class": "tests",
+      "production": false,
+      "targetFramework": "net8.0",
+      "langVersion": "9.0",
+      "declaredDependencies": [
+        "Arkus.Game.Authoring",
+        "Arkus.Game.Core",
+        "Arkus.Game.Validation",
+        "Arkus.Game.World",
+        "Arkus.Harness.Cli",
+        "Arkus.Harness.Protocol",
+        "Arkus.Harness.Runtime",
+        "Arkus.Kernel.Proof"
+      ],
+      "ownedSourceCount": 9
+    },
+    {
+      "name": "Arkus.Kernel.Proof",
+      "path": "tools/Arkus.Kernel.Proof/Arkus.Kernel.Proof.csproj",
+      "class": "tooling",
+      "production": true,
+      "targetFramework": "net8.0",
+      "langVersion": "9.0",
+      "declaredDependencies": [],
+      "ownedSourceCount": 15
+    },
+    {
+      "name": "Arkus.Kernel.Proof.Tool",
+      "path": "tools/Arkus.Kernel.Proof.Tool/Arkus.Kernel.Proof.Tool.csproj",
+      "class": "tooling",
+      "production": true,
+      "targetFramework": "net8.0",
+      "langVersion": "9.0",
+      "declaredDependencies": [
+        "Arkus.Kernel.Proof"
+      ],
+      "ownedSourceCount": 1
+    }
+  ]
+}

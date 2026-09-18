@@ -1,0 +1,69 @@
+# self-attack: layering-back-edge
+# The runtime reaches past authoring/validation straight into core.
+# configuration: Release
+# touched paths: src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj src/Arkus.Harness.Runtime/CoreBridge.cs
+
+--- 1. inject defect ---
+
+--- 2. build with defect (expected to succeed) ---
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+  Restored <SANDBOX>/src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj (in 226 ms).
+  Restored <SANDBOX>/src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj (in 226 ms).
+  Restored <SANDBOX>/tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj (in 249 ms).
+  7 of 10 projects are up-to-date for restore.
+  Arkus.Game.Core -> <SANDBOX>/artifacts/bin/Arkus.Game.Core/release/Arkus.Game.Core.dll
+  Arkus.Harness.Protocol -> <SANDBOX>/artifacts/bin/Arkus.Harness.Protocol/release/Arkus.Harness.Protocol.dll
+  Arkus.Kernel.Proof -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof/release/Arkus.Kernel.Proof.dll
+  Arkus.Game.World -> <SANDBOX>/artifacts/bin/Arkus.Game.World/release/Arkus.Game.World.dll
+  Arkus.Game.Validation -> <SANDBOX>/artifacts/bin/Arkus.Game.Validation/release/Arkus.Game.Validation.dll
+  Arkus.Game.Authoring -> <SANDBOX>/artifacts/bin/Arkus.Game.Authoring/release/Arkus.Game.Authoring.dll
+  Arkus.Harness.Runtime -> <SANDBOX>/artifacts/bin/Arkus.Harness.Runtime/release/Arkus.Harness.Runtime.dll
+  Arkus.Kernel.Proof.Tool -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof.Tool/release/Arkus.Kernel.Proof.Tool.dll
+  Arkus.Harness.Cli -> <SANDBOX>/artifacts/bin/Arkus.Harness.Cli/release/Arkus.Harness.Cli.dll
+  Arkus.Harness.Tests -> <SANDBOX>/artifacts/bin/Arkus.Harness.Tests/release/Arkus.Harness.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.05
+
+--- 3. guard must turn red for the intended reason ---
+HK00-GRAPH-UNDECLARED-EDGE [static] Arkus.Harness.Runtime -> Arkus.Game.Core: Project file declares a dependency edge that the manifest does not allow.
+HK00-REF-UNDECLARED-EFFECTIVE [effective] Arkus.Harness.Runtime -> Arkus.Game.Core: The built assembly references a kernel assembly that is not a declared dependency.
+HK00-COMPILER-REFERENCE-UNDECLARED [compiler] Arkus.Harness.Runtime -> Arkus.Game.Core: The compiler was actually given a kernel reference that the manifest does not declare.
+phases=preflight+static+effective+compiler configuration=Release findings=3
+EXPECTED CHECK FIRED: HK00-GRAPH-UNDECLARED-EDGE
+EXPECTED CHECK FIRED: HK00-REF-UNDECLARED-EFFECTIVE
+EXPECTATION RESULT: MET
+
+--- 4. revert defect ---
+
+--- 5. rebuild and prove green again ---
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+  Restored <SANDBOX>/src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj (in 277 ms).
+  Restored <SANDBOX>/src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj (in 212 ms).
+  Restored <SANDBOX>/tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj (in 301 ms).
+  7 of 10 projects are up-to-date for restore.
+  Arkus.Game.Core -> <SANDBOX>/artifacts/bin/Arkus.Game.Core/release/Arkus.Game.Core.dll
+  Arkus.Harness.Protocol -> <SANDBOX>/artifacts/bin/Arkus.Harness.Protocol/release/Arkus.Harness.Protocol.dll
+  Arkus.Kernel.Proof -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof/release/Arkus.Kernel.Proof.dll
+  Arkus.Game.World -> <SANDBOX>/artifacts/bin/Arkus.Game.World/release/Arkus.Game.World.dll
+  Arkus.Game.Authoring -> <SANDBOX>/artifacts/bin/Arkus.Game.Authoring/release/Arkus.Game.Authoring.dll
+  Arkus.Game.Validation -> <SANDBOX>/artifacts/bin/Arkus.Game.Validation/release/Arkus.Game.Validation.dll
+  Arkus.Kernel.Proof.Tool -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof.Tool/release/Arkus.Kernel.Proof.Tool.dll
+  Arkus.Harness.Runtime -> <SANDBOX>/artifacts/bin/Arkus.Harness.Runtime/release/Arkus.Harness.Runtime.dll
+  Arkus.Harness.Cli -> <SANDBOX>/artifacts/bin/Arkus.Harness.Cli/release/Arkus.Harness.Cli.dll
+  Arkus.Harness.Tests -> <SANDBOX>/artifacts/bin/Arkus.Harness.Tests/release/Arkus.Harness.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.40
+phases=preflight+static+effective+compiler configuration=Release findings=0
+PROOF RESULT: GREEN
+
+--- result: RED on injection, GREEN after revert ---
