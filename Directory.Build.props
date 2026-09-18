@@ -1,0 +1,51 @@
+<Project>
+
+  <!--
+    Canonical kernel build contract (WP-HK-00).
+
+    Every property here is deliberately uniform across the repository so that a
+    mechanical check can compare the *evaluated* value of each project against
+    the class policy declared in kernel-manifest.json. Nothing below may be
+    relaxed per project without updating the manifest and the proof evidence.
+  -->
+
+  <PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <NoWarn />
+    <WarningsNotAsErrors />
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Declared dependency direction must also be the compile-time surface. -->
+    <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+
+    <!-- Hosts run on the pinned major.minor runtime and take security patches
+         only; they never silently roll forward onto a newer runtime. -->
+    <RollForward>LatestPatch</RollForward>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Effective-compilation oracle: the portable PDB document table must list
+         every source file the compiler actually consumed, including files with
+         no sequence points. -->
+    <Deterministic>true</Deterministic>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <EmbedAllSources>true</EmbedAllSources>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>

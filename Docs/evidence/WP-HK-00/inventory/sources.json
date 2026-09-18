@@ -1,0 +1,297 @@
+{
+  "schemaVersion": 1,
+  "sourceCount": 32,
+  "productionSourceCount": 23,
+  "unclassifiedProductionSourceCount": 0,
+  "unclassifiedSources": [],
+  "sources": [
+    {
+      "path": "src/Arkus.Game.Authoring/AuthoringModule.cs",
+      "owner": "Arkus.Game.Authoring",
+      "class": "portable-kernel",
+      "production": true,
+      "sha256": "b53c71eb242c2962ee00147b4b597b1b387ecd8489c0fa569544d7cf38bd5655",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "src/Arkus.Game.Core/CoreModule.cs",
+      "owner": "Arkus.Game.Core",
+      "class": "portable-kernel",
+      "production": true,
+      "sha256": "bf13545ee78a43b6c704201e4ef1b8cf87163a5b59b74299c246182276156aae",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "src/Arkus.Game.Validation/ValidationModule.cs",
+      "owner": "Arkus.Game.Validation",
+      "class": "portable-kernel",
+      "production": true,
+      "sha256": "d9ab0d9ac4c50b02ebd1cd7d3d95d8703d08edb557e6b3ad72a59f085eb964c6",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "src/Arkus.Game.World/WorldModule.cs",
+      "owner": "Arkus.Game.World",
+      "class": "portable-kernel",
+      "production": true,
+      "sha256": "8eb4f99b5f07bd832db050491d8f32257e922782887704433856fa941abb5054",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "src/Arkus.Harness.Cli/Program.cs",
+      "owner": "Arkus.Harness.Cli",
+      "class": "host",
+      "production": true,
+      "sha256": "ce8d3c0773b572bb5f7cbecadf14ba91eb97061237fa590ca0ce986c21e44031",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "src/Arkus.Harness.Protocol/ProtocolModule.cs",
+      "owner": "Arkus.Harness.Protocol",
+      "class": "portable-kernel",
+      "production": true,
+      "sha256": "ed2d6ebe5ac1cd6d75c63fb80e45aa86ce59290a36872cd93677840a8ca16725",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "src/Arkus.Harness.Runtime/RuntimeModule.cs",
+      "owner": "Arkus.Harness.Runtime",
+      "class": "portable-kernel",
+      "production": true,
+      "sha256": "b73ff3a2556e5946703898f98f327b6a44238b93c0f927c4b129f15a25ffedee",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tests/Arkus.Harness.Tests/CompilerCommandLineTests.cs",
+      "owner": "Arkus.Harness.Tests",
+      "class": "tests",
+      "production": false,
+      "sha256": "aec984f142043f82d904f9acd201177cd84eeedaa12a4ff3e29c690a6cb7eb1a",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tests/Arkus.Harness.Tests/DependencyGraphTests.cs",
+      "owner": "Arkus.Harness.Tests",
+      "class": "tests",
+      "production": false,
+      "sha256": "883b52d2a3619441a40e193cb1773f844205287b98addf212d2aabee04ce2694",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tests/Arkus.Harness.Tests/EffectiveAssemblyTests.cs",
+      "owner": "Arkus.Harness.Tests",
+      "class": "tests",
+      "production": false,
+      "sha256": "f62d60ba81be046597d59e5e9f942e9cf00cb152355f6d61ad79956dbca9d995",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tests/Arkus.Harness.Tests/KernelCompositionTests.cs",
+      "owner": "Arkus.Harness.Tests",
+      "class": "tests",
+      "production": false,
+      "sha256": "216c26a05838c76ae0a86fedd2db8661e1bc64b44702edcb7ff4a1b7a1e48962",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tests/Arkus.Harness.Tests/KernelManifestTests.cs",
+      "owner": "Arkus.Harness.Tests",
+      "class": "tests",
+      "production": false,
+      "sha256": "aa33722f9e0ac0f27d08680c177ca4949e8bab1ec2cf37e431893cc25710f7ea",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tests/Arkus.Harness.Tests/NamePatternMatcherTests.cs",
+      "owner": "Arkus.Harness.Tests",
+      "class": "tests",
+      "production": false,
+      "sha256": "3dcbce8ef11306883993abff272a4cb61a6001a534b5bc3d4bec4510de9505d0",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tests/Arkus.Harness.Tests/RepositoryLocator.cs",
+      "owner": "Arkus.Harness.Tests",
+      "class": "tests",
+      "production": false,
+      "sha256": "46d0440eef2de52f1218ee742e8c79dfc6eb742090ac7a1a9253d75a4407b215",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tests/Arkus.Harness.Tests/RepositoryPathsTests.cs",
+      "owner": "Arkus.Harness.Tests",
+      "class": "tests",
+      "production": false,
+      "sha256": "2787cb89412e155318c1e0308af936705b89f9cefaa6e2fa00cc943b09b19072",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tests/Arkus.Harness.Tests/SdkPinRulesTests.cs",
+      "owner": "Arkus.Harness.Tests",
+      "class": "tests",
+      "production": false,
+      "sha256": "489380867a9703bdb81fd8505743a7339c0b36c1e6082849d5933ac113cd4a11",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof.Tool/Program.cs",
+      "owner": "Arkus.Kernel.Proof.Tool",
+      "class": "tooling",
+      "production": true,
+      "sha256": "090d1eb88aed50d7579ad5e326acc281affe82ad97cd2d514494bcd95c9f1571",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/AssemblyFacts.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "52666274339633496cdba50e8b05a2c3d8a69396e63becd831b530097be38907",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/CheckIds.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "d62889cc298c7c710e66b11e16d6d2e60c970b71361e9f15262b20d48564f014",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/CompilerCommandLine.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "e1f9144986794bb4a626ff3aa4b9ef1578e241c51251ad24d98d43dbd2322f29",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/DependencyGraph.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "8ea7cc49c99a363f45b8cf2a05e7db26070ef30a32c8db8af030e8f88dadad74",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/Finding.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "018a1731f6a6a6569533a54d7730fcffd948f60f571179a7963f37a3a7417c9a",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/InventoryModel.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "4e51ff037a786d605d84d42eaed82db5dea3a079b0e8a852408128373cb28ad2",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/KernelManifest.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "315005ec8554d7592f54a26f28b32ec75b46cec440299661d21e184bc19267d6",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/KernelProofRunner.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "90203a4b6f15814c2ca4f2239d60e97deec48ef7e0e3a23325de34c740e4d191",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/MsBuildEvaluator.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "485c431f0ecc2c33462128069202efa79336d2eb099d4c4a00bdb53e7ff79fb2",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/NamePatternMatcher.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "8a208fdf32f2d6283b6be42183c16829741666d0ec8204fe0c0b24085bcca0b9",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/ProjectFacts.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "27be55fb8e541b6da6c3c5e3a5f84fa04194dad5f4576482344fcd6299fc0798",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/ProofReport.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "3658f653c66a59a8788b7baef57fc6f004f0c690cf95d3dd6dc3a6b57746ac1c",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/ProofToolException.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "3068d1be09198d76294e6304962f1abf38753beb272f40857a02fe0b60354e89",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/RepositoryPaths.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "d91345fb626c207523f6304285c6951c825be7bbe2db9391d5ad9113abb56d00",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    },
+    {
+      "path": "tools/Arkus.Kernel.Proof/SdkPin.cs",
+      "owner": "Arkus.Kernel.Proof",
+      "class": "tooling",
+      "production": true,
+      "sha256": "4cefb976a69ee2e6e416f763ecbd9f43500cf6f7aac40713f88b4ff4267f92ed",
+      "compiledStatically": true,
+      "compiledEffectively": true
+    }
+  ]
+}

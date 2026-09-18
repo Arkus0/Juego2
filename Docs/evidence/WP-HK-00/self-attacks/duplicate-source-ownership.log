@@ -1,0 +1,66 @@
+# self-attack: duplicate-source-ownership
+# One product source file is compiled into two assemblies without breaking the build.
+# configuration: Release
+# touched paths: src/Arkus.Game.Core/SharedHelper.cs src/Arkus.Game.World/Arkus.Game.World.csproj
+
+--- 1. inject defect ---
+
+--- 2. build with defect (expected to succeed) ---
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Arkus.Game.Core -> <SANDBOX>/artifacts/bin/Arkus.Game.Core/release/Arkus.Game.Core.dll
+  Arkus.Harness.Protocol -> <SANDBOX>/artifacts/bin/Arkus.Harness.Protocol/release/Arkus.Harness.Protocol.dll
+  Arkus.Game.World -> <SANDBOX>/artifacts/bin/Arkus.Game.World/release/Arkus.Game.World.dll
+  Arkus.Kernel.Proof -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof/release/Arkus.Kernel.Proof.dll
+  Arkus.Game.Authoring -> <SANDBOX>/artifacts/bin/Arkus.Game.Authoring/release/Arkus.Game.Authoring.dll
+  Arkus.Kernel.Proof.Tool -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof.Tool/release/Arkus.Kernel.Proof.Tool.dll
+  Arkus.Game.Validation -> <SANDBOX>/artifacts/bin/Arkus.Game.Validation/release/Arkus.Game.Validation.dll
+  Arkus.Harness.Runtime -> <SANDBOX>/artifacts/bin/Arkus.Harness.Runtime/release/Arkus.Harness.Runtime.dll
+  Arkus.Harness.Cli -> <SANDBOX>/artifacts/bin/Arkus.Harness.Cli/release/Arkus.Harness.Cli.dll
+  Arkus.Harness.Tests -> <SANDBOX>/artifacts/bin/Arkus.Harness.Tests/release/Arkus.Harness.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.82
+
+--- 3. guard must turn red for the intended reason ---
+HK00-SOURCE-FOREIGN-COMPILE-ITEM [static] Arkus.Game.World:src/Arkus.Game.Core/SharedHelper.cs: Compiler input lies outside the project directory, so the source has more than one owner.
+HK00-SOURCE-DUPLICATE-OWNERSHIP [static] src/Arkus.Game.Core/SharedHelper.cs: Source file is compiled by more than one project: Arkus.Game.Core, Arkus.Game.World.
+HK00-SOURCE-FOREIGN-COMPILED-EFFECTIVE [effective] Arkus.Game.World:src/Arkus.Game.Core/SharedHelper.cs: The compiler consumed a source file that this project does not own.
+HK00-SOURCE-DUPLICATE-OWNERSHIP [effective] src/Arkus.Game.Core/SharedHelper.cs: The compiler consumed this file into more than one assembly: Arkus.Game.Core, Arkus.Game.World.
+HK00-COMPILER-SOURCE-FOREIGN [compiler] Arkus.Game.World:src/Arkus.Game.Core/SharedHelper.cs: The compiler was actually given source that this project does not own.
+phases=preflight+static+effective+compiler configuration=Release findings=5
+EXPECTED CHECK FIRED: HK00-SOURCE-DUPLICATE-OWNERSHIP
+EXPECTED CHECK FIRED: HK00-SOURCE-FOREIGN-COMPILE-ITEM
+EXPECTED CHECK FIRED: HK00-SOURCE-FOREIGN-COMPILED-EFFECTIVE
+EXPECTATION RESULT: MET
+
+--- 4. revert defect ---
+
+--- 5. rebuild and prove green again ---
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Arkus.Game.Core -> <SANDBOX>/artifacts/bin/Arkus.Game.Core/release/Arkus.Game.Core.dll
+  Arkus.Harness.Protocol -> <SANDBOX>/artifacts/bin/Arkus.Harness.Protocol/release/Arkus.Harness.Protocol.dll
+  Arkus.Kernel.Proof -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof/release/Arkus.Kernel.Proof.dll
+  Arkus.Game.World -> <SANDBOX>/artifacts/bin/Arkus.Game.World/release/Arkus.Game.World.dll
+  Arkus.Game.Authoring -> <SANDBOX>/artifacts/bin/Arkus.Game.Authoring/release/Arkus.Game.Authoring.dll
+  Arkus.Kernel.Proof.Tool -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof.Tool/release/Arkus.Kernel.Proof.Tool.dll
+  Arkus.Game.Validation -> <SANDBOX>/artifacts/bin/Arkus.Game.Validation/release/Arkus.Game.Validation.dll
+  Arkus.Harness.Runtime -> <SANDBOX>/artifacts/bin/Arkus.Harness.Runtime/release/Arkus.Harness.Runtime.dll
+  Arkus.Harness.Cli -> <SANDBOX>/artifacts/bin/Arkus.Harness.Cli/release/Arkus.Harness.Cli.dll
+  Arkus.Harness.Tests -> <SANDBOX>/artifacts/bin/Arkus.Harness.Tests/release/Arkus.Harness.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.90
+phases=preflight+static+effective+compiler configuration=Release findings=0
+PROOF RESULT: GREEN
+
+--- result: RED on injection, GREEN after revert ---

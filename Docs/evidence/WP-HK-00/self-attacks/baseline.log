@@ -1,0 +1,31 @@
+# baseline: pristine sandbox must build and prove green before any attack
+MSBuild version 17.8.49+7806cbf7b for .NET
+  Determining projects to restore...
+  Restored <SANDBOX>/src/Arkus.Game.Core/Arkus.Game.Core.csproj (in 463 ms).
+  Restored <SANDBOX>/tools/Arkus.Kernel.Proof/Arkus.Kernel.Proof.csproj (in 464 ms).
+  Restored <SANDBOX>/tools/Arkus.Kernel.Proof.Tool/Arkus.Kernel.Proof.Tool.csproj (in 491 ms).
+  Restored <SANDBOX>/src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj (in 494 ms).
+  Restored <SANDBOX>/src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj (in 1 ms).
+  Restored <SANDBOX>/src/Arkus.Game.World/Arkus.Game.World.csproj (in 1 ms).
+  Restored <SANDBOX>/src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj (in 2 ms).
+  Restored <SANDBOX>/src/Arkus.Game.Validation/Arkus.Game.Validation.csproj (in 1 ms).
+  Restored <SANDBOX>/src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj (in 19 ms).
+  Restored <SANDBOX>/tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj (in 638 ms).
+  Arkus.Harness.Protocol -> <SANDBOX>/artifacts/bin/Arkus.Harness.Protocol/release/Arkus.Harness.Protocol.dll
+  Arkus.Game.Core -> <SANDBOX>/artifacts/bin/Arkus.Game.Core/release/Arkus.Game.Core.dll
+  Arkus.Kernel.Proof -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof/release/Arkus.Kernel.Proof.dll
+  Arkus.Game.World -> <SANDBOX>/artifacts/bin/Arkus.Game.World/release/Arkus.Game.World.dll
+  Arkus.Game.Validation -> <SANDBOX>/artifacts/bin/Arkus.Game.Validation/release/Arkus.Game.Validation.dll
+  Arkus.Kernel.Proof.Tool -> <SANDBOX>/artifacts/bin/Arkus.Kernel.Proof.Tool/release/Arkus.Kernel.Proof.Tool.dll
+  Arkus.Game.Authoring -> <SANDBOX>/artifacts/bin/Arkus.Game.Authoring/release/Arkus.Game.Authoring.dll
+  Arkus.Harness.Runtime -> <SANDBOX>/artifacts/bin/Arkus.Harness.Runtime/release/Arkus.Harness.Runtime.dll
+  Arkus.Harness.Cli -> <SANDBOX>/artifacts/bin/Arkus.Harness.Cli/release/Arkus.Harness.Cli.dll
+  Arkus.Harness.Tests -> <SANDBOX>/artifacts/bin/Arkus.Harness.Tests/release/Arkus.Harness.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:13.20
+phases=preflight+static+effective+compiler configuration=Release findings=0
+PROOF RESULT: GREEN

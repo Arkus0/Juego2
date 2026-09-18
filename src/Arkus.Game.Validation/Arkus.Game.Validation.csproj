@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Arkus.Game.Core/Arkus.Game.Core.csproj" />
+    <ProjectReference Include="../Arkus.Game.World/Arkus.Game.World.csproj" />
+    <ProjectReference Include="../Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
+  </ItemGroup>
+
+</Project>
