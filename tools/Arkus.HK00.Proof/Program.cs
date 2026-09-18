@@ -55,11 +55,13 @@ namespace Arkus.HK00.Proof
                 if (phase == "repository" || phase == "all")
                 {
                     runner.RunRepository();
+                    additionalFindings += RepositoryClosureChecks.RunRepository(root);
                 }
                 if (phase == "static" || phase == "all")
                 {
                     runner.RunStatic();
                     additionalFindings += AdditionalChecks.RunStatic(root, configuration);
+                    additionalFindings += RepositoryClosureChecks.RunStatic(root, configuration);
                 }
                 if (phase == "effective" || phase == "all")
                 {
