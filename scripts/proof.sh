@@ -7,6 +7,8 @@ TOOL_DLL="${ROOT}/artifacts/bootstrap-proof/Arkus.HK00.Proof.dll"
 OBSERVED_ROOT="${ROOT}/artifacts/observed"
 INVENTORY_DIR="${OBSERVED_ROOT}/inventory"
 REPORT_PATH="${OBSERVED_ROOT}/proof/report.json"
+LOCK_PATH="${OBSERVED_ROOT}/package-lock/packages.lock.json"
+LOCK_CACHE="${ROOT}/artifacts/package-lock-generation-cache"
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_NOLOGO=1
@@ -34,8 +36,20 @@ assert_candidate_clean() {
 
 step "assert immutable candidate input"
 assert_candidate_clean
-rm -rf "${OBSERVED_ROOT}/inventory" "${OBSERVED_ROOT}/proof"
-mkdir -p "${INVENTORY_DIR}" "$(dirname "${REPORT_PATH}")"
+rm -rf "${OBSERVED_ROOT}/inventory" "${OBSERVED_ROOT}/proof" "${OBSERVED_ROOT}/package-lock" "${LOCK_CACHE}"
+mkdir -p "${INVENTORY_DIR}" "$(dirname "${REPORT_PATH}")" "$(dirname "${LOCK_PATH}")" "${LOCK_CACHE}"
+
+step "observe exact test package closure in isolated cache"
+NUGET_PACKAGES="${LOCK_CACHE}" dotnet msbuild tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+  -nologo \
+  -noAutoResponse \
+  -t:Restore \
+  -p:Configuration="${CONFIGURATION}" \
+  -p:RestorePackagesWithLockFile=true \
+  -p:RestoreLockedMode=false \
+  -p:RestoreForceEvaluate=true \
+  -p:NuGetLockFilePath="${LOCK_PATH}"
+test -f "${LOCK_PATH}" || { echo "FAIL CLOSED: observed NuGet lock was not generated" >&2; exit 2; }
 
 step "bootstrap fixed-contract proof oracle directly from tracked sources"
 bash scripts/build-proof-oracle.sh
@@ -85,4 +99,4 @@ step "assert candidate remained immutable"
 assert_candidate_clean
 
 step "proof green"
-echo "WP-HK-00 proof pipeline GREEN (candidate read-only; evidence emitted under artifacts/observed)"
+echo "WP-HK-00 proof pipeline GREEN (candidate read-only; observations emitted only under artifacts)"
