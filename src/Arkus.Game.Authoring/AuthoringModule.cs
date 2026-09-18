@@ -7,7 +7,7 @@ namespace Arkus.Game.Authoring
     /// <summary>Boundary marker that causally exercises the required authoring edges.</summary>
     public static class AuthoringModule
     {
-        public const string Name = "Arkus.Game.Authoring";
+        public static string Name => "Arkus.Game.Authoring";
         public static string Composition => CoreModule.Name + ":" + WorldModule.Name + ":" + ProtocolModule.Name;
     }
 }
