@@ -12,6 +12,14 @@ A Worker tries to satisfy the contract. Before freeze, that same Worker must als
 
 Worker pre-review is a quality gate, not an independent review. `WORKER_PRE_REVIEW: CLEAN` never means `PASS`, never satisfies the Reviewer obligation and never permits the Reviewer to trust Worker conclusions.
 
+## Adoption boundary
+
+This v1.2 pre-review gate applies to implementation candidates frozen after the commit containing this protocol version reaches `main`.
+
+A candidate already validly frozen before that adoption point remains reviewable under the handoff/protocol that governed its freeze; the process change alone does not invalidate its exact SHA. If that candidate receives a Reviewer FAIL, returns to Draft, changes implementation/evidence, transfers to a materially changed candidate, or is otherwise re-frozen after adoption, the next freeze must satisfy v1.2 including `WORKER_PRE_REVIEW: CLEAN`.
+
+This transition prevents process hardening from manufacturing a false implementation defect in an already-frozen candidate while ensuring every subsequent candidate receives the new gate.
+
 ## State machine
 
 ```text
@@ -124,14 +132,15 @@ Reviewer must:
 - be independent of Worker implementation for the frozen candidate;
 - reconstruct contract and repository state from GitHub;
 - verify PR HEAD == Frozen candidate SHA at review start;
-- verify the handoff records `Worker pre-review: CLEAN`, while treating that only as Worker readiness evidence;
+- for candidates governed by v1.2+, verify the handoff records `Worker pre-review: CLEAN`, while treating that only as Worker readiness evidence;
+- for candidates grandfathered by the adoption boundary, do not fail them solely because the v1.2 pre-review fields did not yet exist;
 - inspect complete baseline→candidate diff, tests, CI and evidence;
 - challenge claims rather than trust Worker prose or Worker pre-review conclusions;
 - for foundational WPs, independently search for omission classes and attack completeness, including risks not highlighted by the Worker;
 - never repair implementation;
 - emit `PASS | FAIL | BLOCKED | READY_FOR_LOCAL_VALIDATION` naming the exact reviewed SHA.
 
-A green Worker test suite and a clean Worker pre-review are necessary, never sufficient.
+For candidates governed by v1.2+, a green Worker test suite and a clean Worker pre-review are necessary, never sufficient.
 
 ## FAIL
 
@@ -143,7 +152,8 @@ A local/trivial defect may be repaired locally. A finding that invalidates the p
 
 Merge is valid only when:
 
-- the frozen handoff recorded `Worker pre-review: CLEAN` for the exact candidate lineage;
+- for candidates governed by v1.2+, the frozen handoff recorded `Worker pre-review: CLEAN` for the exact candidate lineage;
+- a grandfathered pre-v1.2 candidate satisfies the handoff rules that governed its original valid freeze;
 - independent PASS names the exact Frozen candidate SHA;
 - required CI/evidence for that SHA is green/complete;
 - no later implementation mutation exists;
