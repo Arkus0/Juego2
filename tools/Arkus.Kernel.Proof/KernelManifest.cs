@@ -6,16 +6,6 @@ using System.Text.Json.Serialization;
 
 namespace Arkus.Kernel.Proof
 {
-    /// <summary>Repository scan policy.</summary>
-    public sealed class RepositoryScanPolicy
-    {
-        /// <summary>Directories, relative to the repository root, that are scanned for projects and sources.</summary>
-        public List<string> SourceScanRoots { get; } = new List<string>();
-
-        /// <summary>Directory names skipped anywhere in the tree.</summary>
-        public List<string> ExcludedDirectoryNames { get; } = new List<string>();
-    }
-
     /// <summary>Declared SDK pin.</summary>
     public sealed class SdkPinPolicy
     {
@@ -89,14 +79,20 @@ namespace Arkus.Kernel.Proof
     }
 
     /// <summary>
-    /// Declarative source of truth for the canonical kernel boundary.
+    /// Declarative source of truth for the canonical kernel policy.
     /// </summary>
+    /// <remarks>
+    /// The manifest classifies projects and their policy; it deliberately does
+    /// not declare the repository scan boundary. Repository completeness is an
+    /// independent proof input and may not be narrowed by the object being proved.
+    /// </remarks>
     public sealed class KernelManifest
     {
         private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
+            UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
 
             // Collection properties are intentionally get-only so no caller can
             // swap the backing instance; populating them keeps the manifest model
@@ -112,9 +108,6 @@ namespace Arkus.Kernel.Proof
 
         /// <summary>Free-text intent.</summary>
         public string Description { get; set; } = string.Empty;
-
-        /// <summary>Repository scan policy.</summary>
-        public RepositoryScanPolicy Repository { get; set; } = new RepositoryScanPolicy();
 
         /// <summary>Toolchain policy.</summary>
         public ToolchainPolicy Toolchain { get; set; } = new ToolchainPolicy();
@@ -163,7 +156,7 @@ namespace Arkus.Kernel.Proof
             }
             catch (JsonException ex)
             {
-                throw new ProofToolException($"Kernel manifest is not valid JSON: {path}", ex);
+                throw new ProofToolException($"Kernel manifest is not valid for the closed schema: {path}", ex);
             }
 
             if (manifest is null)
@@ -227,11 +220,6 @@ namespace Arkus.Kernel.Proof
                 throw new ProofToolException($"Manifest declares no project classes: {path}");
             }
 
-            if (Repository.SourceScanRoots.Count == 0)
-            {
-                throw new ProofToolException($"Manifest declares no source scan roots: {path}");
-            }
-
             if (ForbiddenAssemblyNamePatterns.Count == 0)
             {
                 throw new ProofToolException($"Manifest declares no forbidden assembly patterns: {path}");
@@ -257,7 +245,8 @@ namespace Arkus.Kernel.Proof
                 throw new ProofToolException($"Manifest declares no SDK pin: {path}");
             }
 
-            var seen = new HashSet<string>(StringComparer.Ordinal);
+            var seenNames = new HashSet<string>(StringComparer.Ordinal);
+            var seenPaths = new HashSet<string>(StringComparer.Ordinal);
             foreach (var project in Projects)
             {
                 if (string.IsNullOrEmpty(project.Name) || string.IsNullOrEmpty(project.Path))
@@ -265,9 +254,14 @@ namespace Arkus.Kernel.Proof
                     throw new ProofToolException($"Manifest contains a project without name or path: {path}");
                 }
 
-                if (!seen.Add(project.Name))
+                if (!seenNames.Add(project.Name))
                 {
                     throw new ProofToolException($"Manifest declares project '{project.Name}' twice: {path}");
+                }
+
+                if (!seenPaths.Add(project.Path))
+                {
+                    throw new ProofToolException($"Manifest classifies project path '{project.Path}' twice: {path}");
                 }
             }
         }
