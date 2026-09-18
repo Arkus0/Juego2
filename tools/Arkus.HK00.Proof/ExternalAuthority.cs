@@ -76,6 +76,12 @@ namespace Arkus.HK00.Proof
             var packages = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var dependency in target.EnumerateObject())
             {
+                if (dependency.Value.TryGetProperty("type", out var type)
+                    && string.Equals(type.GetString(), "Project", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 if (!dependency.Value.TryGetProperty("resolved", out var resolved)
                     || !dependency.Value.TryGetProperty("contentHash", out var contentHash))
                 {

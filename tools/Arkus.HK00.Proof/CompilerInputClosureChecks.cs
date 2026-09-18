@@ -163,13 +163,13 @@ namespace Arkus.HK00.Proof
                 try
                 {
                     var facts = probe.Evaluate(dependency);
-                    var targetPath = facts.Property("TargetPath");
-                    if (string.IsNullOrWhiteSpace(targetPath))
-                    {
-                        findings += Report("HK00-COMPILER-REFERENCE-ORACLE", "effective", spec.Name + " -> " + dependencyName, "Dependency has no evaluated TargetPath.");
-                        continue;
-                    }
-                    dependencyOutputs.Add(Path.GetFullPath(targetPath));
+                    AddIfPresent(dependencyOutputs, facts.Property("TargetPath"));
+                    AddIfPresent(dependencyOutputs, facts.Property("TargetRefPath"));
+
+                    var dependencyRoot = Path.GetFullPath(Path.Combine(root, dependency.Directory));
+                    var assemblyFile = dependency.Name + ".dll";
+                    dependencyOutputs.Add(Path.GetFullPath(Path.Combine(dependencyRoot, "obj", configuration, dependency.TargetFramework, "ref", assemblyFile)));
+                    dependencyOutputs.Add(Path.GetFullPath(Path.Combine(dependencyRoot, "obj", configuration, dependency.TargetFramework, "refint", assemblyFile)));
                 }
                 catch (Exception ex)
                 {
@@ -208,11 +208,19 @@ namespace Arkus.HK00.Proof
                         "HK00-COMPILER-REFERENCE-UNTRUSTED",
                         "effective",
                         spec.Name + ":" + full,
-                        "Compiler reference is outside framework packs, exact declared Arkus dependency outputs, and the exact locked test package closure.");
+                        "Compiler reference is outside framework packs, declared Arkus dependency outputs/reference assemblies, and the exact locked test package closure.");
                 }
             }
 
             return findings;
+        }
+
+        private static void AddIfPresent(HashSet<string> outputs, string path)
+        {
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                outputs.Add(Path.GetFullPath(path));
+            }
         }
 
         private static int Report(string id, string phase, string subject, string message)

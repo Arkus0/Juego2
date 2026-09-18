@@ -60,6 +60,7 @@ namespace Arkus.HK00.Proof
             "NoWarn",
             "WarningsNotAsErrors",
             "TargetPath",
+            "TargetRefPath",
         };
 
         private static readonly string[] Items =
