@@ -76,7 +76,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "${CANDIDATE_SHA}"
           test "$(dotnet --version)" = "8.0.425"
           dotnet --list-runtimes | grep -Fq 'Microsoft.NETCore.App 8.0.31 '
-      - name: Inject, detect, reconstruct and re-prove 33 causal classes in disposable copy
+      - name: Inject, detect, reconstruct and re-prove 34 causal classes in disposable copy
         run: bash scripts/self-attacks/run-readonly-self-attacks.sh
       - name: Require committed attack summary to equal observation
         run: |

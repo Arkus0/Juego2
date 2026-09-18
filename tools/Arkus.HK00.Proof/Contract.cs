@@ -29,7 +29,7 @@ namespace Arkus.HK00.Proof
         public string[] AllowedPackages { get; }
         public string Directory => System.IO.Path.GetDirectoryName(Path)!.Replace('\\', '/');
         public bool IsProduct => Kind == ProjectKind.Portable || Kind == ProjectKind.Host;
-        public bool RequiresTrustedCompilerExtensions => IsProduct || Kind == ProjectKind.Proof;
+        public bool RequiresTrustedCompilerExtensions => IsProduct || Kind == ProjectKind.Tests || Kind == ProjectKind.Proof;
         public string TargetFramework => Kind == ProjectKind.Portable ? "netstandard2.1" : "net8.0";
     }
 
@@ -44,7 +44,8 @@ namespace Arkus.HK00.Proof
             new Dictionary<string, string>(StringComparer.Ordinal)
             {
                 ["Microsoft.NET.Test.Sdk"] = "17.14.1",
-                ["xunit"] = "2.9.3",
+                ["xunit.core"] = "2.9.3",
+                ["xunit.assert"] = "2.9.3",
                 ["xunit.runner.visualstudio"] = "2.8.2",
             };
 
@@ -57,7 +58,7 @@ namespace Arkus.HK00.Proof
             new ProjectSpec("Arkus.Game.Validation", "src/Arkus.Game.Validation/Arkus.Game.Validation.csproj", ProjectKind.Portable, new[] { "Arkus.Game.Core", "Arkus.Game.World", "Arkus.Harness.Protocol" }, Array.Empty<string>()),
             new ProjectSpec("Arkus.Harness.Runtime", "src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj", ProjectKind.Portable, new[] { "Arkus.Game.Authoring", "Arkus.Game.Validation", "Arkus.Harness.Protocol" }, Array.Empty<string>()),
             new ProjectSpec("Arkus.Harness.Cli", "src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj", ProjectKind.Host, new[] { "Arkus.Harness.Runtime" }, Array.Empty<string>()),
-            new ProjectSpec("Arkus.Harness.Tests", "tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj", ProjectKind.Tests, new[] { "Arkus.Game.Authoring", "Arkus.Game.Core", "Arkus.Game.Validation", "Arkus.Game.World", "Arkus.Harness.Protocol", "Arkus.Harness.Runtime" }, new[] { "Microsoft.NET.Test.Sdk", "xunit", "xunit.runner.visualstudio" }),
+            new ProjectSpec("Arkus.Harness.Tests", "tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj", ProjectKind.Tests, new[] { "Arkus.Game.Authoring", "Arkus.Game.Core", "Arkus.Game.Validation", "Arkus.Game.World", "Arkus.Harness.Protocol", "Arkus.Harness.Runtime" }, new[] { "Microsoft.NET.Test.Sdk", "xunit.core", "xunit.assert", "xunit.runner.visualstudio" }),
             new ProjectSpec("Arkus.HK00.Proof", "tools/Arkus.HK00.Proof/Arkus.HK00.Proof.csproj", ProjectKind.Proof, Array.Empty<string>(), Array.Empty<string>()),
         };
 
@@ -72,9 +73,11 @@ namespace Arkus.HK00.Proof
             "scripts/build-proof-oracle.sh",
             "scripts/proof.sh",
             "scripts/self-attacks/run-all-self-attacks.sh",
+            "scripts/self-attacks/run-readonly-self-attacks.sh",
             "scripts/self-attacks/run-self-attacks.sh",
             "scripts/self-attacks/run-closure-attacks.sh",
             "scripts/self-attacks/run-terminal-inventory-attack.sh",
+            "scripts/self-attacks/run-test-surface-attack.sh",
             "tools/Arkus.HK00.Proof/Arkus.HK00.Proof.csproj",
         };
 
