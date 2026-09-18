@@ -102,9 +102,7 @@ record solution-omits-fixed-project HK00-SOLUTION-MISSING-PROJECT
 
 fresh
 cat >"${SANDBOX}/Directory.Build.targets" <<'XML'
-<Project>
-  <Target Name="HiddenRepositoryBuildExtension" BeforeTargets="BeforeBuild" />
-</Project>
+<Project><Target Name="HiddenRepositoryBuildExtension" BeforeTargets="BeforeBuild" /></Project>
 XML
 git -C "${SANDBOX}" add Directory.Build.targets
 expect_red repository HK00-MSBUILD-FILE-UNCLASSIFIED "${LOGDIR}/auto-directory-build-target-red.log"
@@ -114,9 +112,7 @@ record auto-directory-build-target HK00-MSBUILD-FILE-UNCLASSIFIED
 fresh
 mkdir -p "${SANDBOX}/outside/Rogue"
 cat >"${SANDBOX}/outside/Rogue/Rogue.fsproj" <<'XML'
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup>
-</Project>
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>
 XML
 git -C "${SANDBOX}" add outside/Rogue/Rogue.fsproj
 (cd "${SANDBOX}" && dotnet sln Juego2.sln add outside/Rogue/Rogue.fsproj >/dev/null)
@@ -161,6 +157,44 @@ revert_green repository unclassified-compiler-input-item
 record unclassified-compiler-input-item HK00-BUILD-XML-SHAPE
 
 fresh
+echo 'late compiler metadata' >"${SANDBOX}/Rogue.additional"
+git -C "${SANDBOX}" add Rogue.additional
+insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" \
+  '  <Target Name="LateAdditionalFile" BeforeTargets="CoreCompile"><ItemGroup><AdditionalFiles Include="$(MSBuildProjectDirectory)/../../Rogue.additional" /></ItemGroup></Target>'
+prepare_built
+expect_red effective HK00-COMPILER-INPUT-UNCLASSIFIED "${LOGDIR}/late-compiler-input-channel-red.log"
+fresh
+prepare_built
+expect_green effective "${LOGDIR}/late-compiler-input-channel-green.log"
+record late-compiler-input-channel HK00-COMPILER-INPUT-UNCLASSIFIED
+
+fresh
+insert_xml "${SANDBOX}/tools/Arkus.HK00.Proof/Arkus.HK00.Proof.csproj" \
+  '  <Target Name="InjectProofGeneratedSource" BeforeTargets="CoreCompile"><WriteLinesToFile File="$(IntermediateOutputPath)InjectedProof.cs" Overwrite="true" Lines="namespace Arkus.HK00.Proof { internal static class InjectedProofSource { } }" /><ItemGroup><Compile Include="$(IntermediateOutputPath)InjectedProof.cs" /></ItemGroup></Target>'
+prepare_built
+expect_red effective HK00-COMPILER-SOURCE-UNTRACKED "${LOGDIR}/proof-effective-generated-source-red.log"
+fresh
+prepare_built
+expect_green effective "${LOGDIR}/proof-effective-generated-source-green.log"
+record proof-effective-generated-source HK00-COMPILER-SOURCE-UNTRACKED
+
+fresh
+mkdir -p "${SANDBOX}/tools/Arkus.HK00.Proof/nested"
+echo 'this is deliberately invalid C#' >"${SANDBOX}/tools/Arkus.HK00.Proof/nested/Break.cs"
+git -C "${SANDBOX}" add tools/Arkus.HK00.Proof/nested/Break.cs
+set +e
+(cd "${SANDBOX}" && bash scripts/build-proof-oracle.sh) >"${LOGDIR}/bootstrap-recursive-proof-source-red.log" 2>&1
+code=$?
+set -e
+[[ ${code} -ne 0 ]] || fail "bootstrap-recursive-proof-source: nested tracked proof source escaped direct csc bootstrap"
+fresh
+(cd "${SANDBOX}" && bash scripts/build-proof-oracle.sh) >"${LOGDIR}/bootstrap-recursive-proof-source-green.log" 2>&1 || {
+  cat "${LOGDIR}/bootstrap-recursive-proof-source-green.log" >&2
+  fail "bootstrap-recursive-proof-source: pristine bootstrap did not return GREEN"
+}
+record bootstrap-recursive-proof-source DIRECT-CSC-BOOTSTRAP
+
+fresh
 prepare_built
 MAL="${WORK}/malicious-output"
 rm -rf "${MAL}"
@@ -186,4 +220,4 @@ prepare_built
 expect_green output "${LOGDIR}/postcompile-output-substitution-green.log"
 record postcompile-output-substitution HK00-PDB-PE-MISMATCH
 
-echo "all 9 closure/build-boundary attacks passed"
+echo "all 12 closure/build-bootstrap attacks passed"

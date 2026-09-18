@@ -47,7 +47,11 @@ dotnet --list-runtimes | grep -Fq "Microsoft.NETCore.App ${RUNTIME_VERSION} [${d
   exit 2
 }
 
-mapfile -d '' sources < <(git ls-files -z -- 'tools/Arkus.HK00.Proof/*.cs')
+sources=()
+while IFS= read -r -d '' candidate; do
+  [[ "${candidate}" == *.cs ]] || continue
+  sources+=("${candidate}")
+done < <(git ls-files -z -- 'tools/Arkus.HK00.Proof')
 [[ ${#sources[@]} -gt 0 ]] || { echo "BOOTSTRAP FAIL: no tracked proof sources" >&2; exit 2; }
 
 mkdir -p "${OUT}"
@@ -115,4 +119,4 @@ JSON
 }
 
 printf '%s\n' "${sources[@]}" >"${OUT}/sources.txt"
-echo "HK00 proof oracle bootstrapped directly from tracked C# sources with pinned SDK/ref/runtime."
+echo "HK00 proof oracle bootstrapped recursively from tracked C# sources with pinned SDK/ref/runtime."

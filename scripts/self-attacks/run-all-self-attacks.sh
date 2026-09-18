@@ -30,4 +30,4 @@ bash "${ROOT}/scripts/self-attacks/run-self-attacks.sh"
 bash "${ROOT}/scripts/self-attacks/run-closure-attacks.sh"
 bash "${ROOT}/scripts/self-attacks/run-terminal-inventory-attack.sh"
 
-echo "all 30 causal self-attacks passed"
+echo "all 33 causal self-attacks passed"
