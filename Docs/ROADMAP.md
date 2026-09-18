@@ -1,6 +1,6 @@
 # ROADMAP — Juego2
 
-Version: 1.0 — 2026-09-18
+Version: 1.1 — 2026-09-18
 
 ## North star
 
@@ -76,12 +76,20 @@ If the gate cannot be proven without excessive complexity, STOP and simplify the
 
 Only after `WP-HK-GATE` PASS:
 
+- select and pin the then-current production Unity version from fresh evidence (prefer the appropriate supported/LTS line for the project rather than inheriting a legacy DFU-era version);
+- record the selected Unity/editor/package baseline in an H1 ADR/workpack so builds are reproducible;
 - define Unity as a downstream projection/adapter over the accepted kernel;
 - prove Unity consumes the same canonical game contracts rather than a duplicate implementation;
 - establish scene/prefab projection, runtime bootstrap and Unity-side validation;
-- add Unity parity gate before content production.
+- add Unity parity gate before content production;
+- keep Unity-version-specific APIs, packages and editor integration behind the Unity adapter boundary wherever practical;
+- treat future Unity upgrades as an adapter/parity migration: an engine update must not require redesigning the accepted H0 protocol, canonical world model or authoring kernel unless a separately reviewed contract change proves that necessary.
 
-Detailed H1 WPs are intentionally **not frozen yet**. They will be authored from the accepted H0 contracts instead of guessing today.
+### Unity upgradeability rule
+
+H0 must not be coupled to one Unity release. H1 may pin a concrete Unity version for reproducibility, but that pin is a deployment/integration baseline, not a permanent architectural dependency. A later Unity upgrade must be validated through the Unity bridge/parity evidence before it becomes the new accepted baseline.
+
+Detailed H1 WPs are intentionally **not frozen yet**. They will be authored from the accepted H0 contracts and the then-current Unity/tooling landscape instead of guessing today.
 
 ---
 
