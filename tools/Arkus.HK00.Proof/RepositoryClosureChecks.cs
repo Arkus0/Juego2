@@ -105,11 +105,19 @@ namespace Arkus.HK00.Proof
                 string imports;
                 try
                 {
-                    using var document = JsonDocument.Parse(result.Stdout);
-                    imports = document.RootElement.TryGetProperty("Properties", out var properties)
-                        && properties.TryGetProperty("MSBuildAllProjects", out var allProjects)
-                            ? allProjects.GetString() ?? string.Empty
-                            : string.Empty;
+                    var stdout = result.Stdout.Trim();
+                    if (stdout.StartsWith("{", StringComparison.Ordinal))
+                    {
+                        using var document = JsonDocument.Parse(stdout);
+                        imports = document.RootElement.TryGetProperty("Properties", out var properties)
+                            && properties.TryGetProperty("MSBuildAllProjects", out var allProjects)
+                                ? allProjects.GetString() ?? string.Empty
+                                : string.Empty;
+                    }
+                    else
+                    {
+                        imports = stdout;
+                    }
                 }
                 catch (Exception ex)
                 {
