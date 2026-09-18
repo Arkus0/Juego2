@@ -135,6 +135,18 @@ m_cycle() {
   insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" '  <ItemGroup><ProjectReference Include="../Arkus.Game.World/Arkus.Game.World.csproj" /></ItemGroup>'
 }
 
+m_unexercised_edge() {
+  cat >"${SANDBOX}/src/Arkus.Game.World/WorldModule.cs" <<'CS'
+namespace Arkus.Game.World
+{
+    public static class WorldModule
+    {
+        public const string Name = "Arkus.Game.World";
+    }
+}
+CS
+}
+
 m_cross_compile() {
   insert_xml "${SANDBOX}/src/Arkus.Game.World/Arkus.Game.World.csproj" '  <ItemGroup><Compile Include="../Arkus.Game.Core/CoreModule.cs" /></ItemGroup>'
 }
@@ -145,6 +157,16 @@ m_package() {
 
 m_engine_ref() {
   insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" '  <ItemGroup><Reference Include="UnityEngine" /></ItemGroup>'
+}
+
+m_custom_analyzer() {
+  insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" "  <ItemGroup><Analyzer Include=\"${TOOL_DLL}\" /></ItemGroup>"
+}
+
+m_custom_import() {
+  echo '<Project />' >"${SANDBOX}/src/Arkus.Game.Core/Custom.targets"
+  git -C "${SANDBOX}" add src/Arkus.Game.Core/Custom.targets
+  insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" '  <Import Project="Custom.targets" />'
 }
 
 m_drop_effective() {
@@ -221,9 +243,12 @@ MD
   run_attack fixed-policy-relaxed-in-build static HK00-PROJECT-PROPERTY m_relax_policy
   run_attack dependency-cycle-backedge static HK00-GRAPH-UNDECLARED-EDGE m_cycle
   grep -Fq HK00-GRAPH-CYCLE "${LOGDIR}/dependency-cycle-backedge-red.log" || fail "cycle oracle did not also fire"
+  run_attack required-edge-made-decorative effective HK00-ASSEMBLY-REF-MISSING m_unexercised_edge
   run_attack cross-project-source-compile static HK00-SOURCE-FOREIGN-COMPILE m_cross_compile
   run_attack production-package-injected static HK00-PACKAGE-FORBIDDEN m_package
   run_attack engine-raw-reference static HK00-ENGINE-REFERENCE m_engine_ref
+  run_attack custom-analyzer-source-generator static HK00-ANALYZER-UNTRUSTED m_custom_analyzer
+  run_attack explicit-custom-build-import static HK00-CUSTOM-IMPORT m_custom_import
   run_attack source-dropped-at-build-time effective HK00-SOURCE-NOT-COMPILED-EFFECTIVE m_drop_effective
   run_attack generated-product-source-injected effective HK00-COMPILER-SOURCE-UNTRACKED m_generated
   run_attack external-source-injected-at-build-time effective HK00-COMPILER-SOURCE-FOREIGN m_external
@@ -232,7 +257,7 @@ MD
   run_attack proof-project-deleted repository HK00-TRACKED-MISSING m_proof_deleted
   run_attack legacy-manifest-cannot-shrink-universe repository HK00-PROJECT-UNEXPECTED m_legacy_manifest
 
-  echo "all 15 causal self-attacks passed"
+  echo "all 18 causal self-attacks passed"
 }
 
 main "$@"
