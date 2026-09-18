@@ -121,8 +121,9 @@ The candidate is not READY until material defect classes below have an injected 
 - toolchain pin drift;
 - proof project deletion;
 - legacy self-shrinking manifest attempt;
-- terminal NUL-delimited Git inventory entry omission;
-- plus baseline GREEN reconstruction after each injected defect class.
+- terminal NUL-delimited Git inventory entry omission.
+
+The core script covers 20 attacks, the closure script adds 2, and the terminal-inventory script adds 1: **23 causal attacks total**. Every attack requires the intended oracle/check to fire and then reconstructs pristine state and proves GREEN.
 
 Attack implementations target causal classes rather than enumerating endless MSBuild syntax variants.
 
