@@ -12,6 +12,15 @@ namespace Arkus.HK00.Proof
             var findings = 0;
             var probe = new MsBuildProbe(root, configuration);
             var trackedSources = ReadTrackedSources(root);
+            ExternalAuthority authority;
+            try
+            {
+                authority = ExternalAuthority.Create(root);
+            }
+            catch (Exception ex)
+            {
+                return Report("HK00-EXTERNAL-AUTHORITY", "effective", "external-authority", ex.Message);
+            }
 
             foreach (var spec in FixedContract.Projects)
             {
@@ -36,12 +45,12 @@ namespace Arkus.HK00.Proof
                 }
 
                 findings += CheckOptions(spec, compiler);
-                findings += CheckSources(root, spec, compiler, trackedSources);
-                findings += CheckAssembly(root, spec, facts, trackedSources);
+                findings += CheckSources(root, spec, compiler, trackedSources, authority);
+                findings += CheckAssembly(root, spec, facts, trackedSources, authority);
 
                 if (spec.RequiresTrustedCompilerExtensions)
                 {
-                    findings += CheckTrustedAnalyzers(root, spec, compiler);
+                    findings += CheckTrustedAnalyzers(root, spec, compiler, authority);
                 }
             }
 
@@ -78,7 +87,8 @@ namespace Arkus.HK00.Proof
             string root,
             ProjectSpec spec,
             CompilerCommandLine compiler,
-            SortedSet<string> trackedSources)
+            SortedSet<string> trackedSources,
+            ExternalAuthority authority)
         {
             var findings = 0;
             var prefix = spec.Directory.TrimEnd('/') + "/";
@@ -90,16 +100,18 @@ namespace Arkus.HK00.Proof
             foreach (var source in compiler.Sources)
             {
                 var full = Path.GetFullPath(source);
+                if (authority.IsExpectedTestSdkSource(spec, full))
+                {
+                    continue;
+                }
+
                 if (!ProcessExec.IsInside(root, full))
                 {
-                    if (!IsAllowedExternalTestSdkSource(spec, full))
-                    {
-                        findings += Report(
-                            "HK00-COMPILER-SOURCE-FOREIGN",
-                            "effective",
-                            spec.Name + ":" + full,
-                            "Canonical project compiler consumed an unclassified source outside the repository.");
-                    }
+                    findings += Report(
+                        "HK00-COMPILER-SOURCE-FOREIGN",
+                        "effective",
+                        spec.Name + ":" + full,
+                        "Canonical project compiler consumed an unclassified source outside Arkus ownership and the exact locked Test SDK source contract.");
                     continue;
                 }
 
@@ -134,7 +146,8 @@ namespace Arkus.HK00.Proof
             string root,
             ProjectSpec spec,
             ProjectFacts facts,
-            SortedSet<string> trackedSources)
+            SortedSet<string> trackedSources,
+            ExternalAuthority authority)
         {
             var targetPath = facts.Property("TargetPath");
             if (string.IsNullOrWhiteSpace(targetPath) || !File.Exists(targetPath))
@@ -188,28 +201,28 @@ namespace Arkus.HK00.Proof
                 trackedSources.Where(path => path.StartsWith(prefix, StringComparison.Ordinal)),
                 StringComparer.Ordinal);
             var documents = new Dictionary<string, CompiledDocument>(StringComparer.Ordinal);
-            var observedExternalTestSdk = false;
+            var observedTestSdk = false;
 
             foreach (var document in assembly.CompiledDocuments)
             {
                 var full = Path.IsPathRooted(document.Path)
                     ? Path.GetFullPath(document.Path)
                     : Path.GetFullPath(Path.Combine(Path.Combine(root, spec.Directory), document.Path));
+
+                if (authority.IsExpectedTestSdkSource(spec, full))
+                {
+                    observedTestSdk = true;
+                    if (document.HashAlgorithm != AssemblyFacts.Sha256Algorithm
+                        || !AssemblyFacts.HashEquals(document.Hash, AssemblyFacts.Sha256OfFile(full)))
+                    {
+                        findings += Report("HK00-PDB-SOURCE-HASH", "effective", spec.Name + ":" + full, "Locked Test SDK source checksum does not match compiled bytes.");
+                    }
+                    continue;
+                }
+
                 if (!ProcessExec.IsInside(root, full))
                 {
-                    if (IsAllowedExternalTestSdkSource(spec, full))
-                    {
-                        observedExternalTestSdk = true;
-                        if (document.HashAlgorithm != AssemblyFacts.Sha256Algorithm
-                            || !AssemblyFacts.HashEquals(document.Hash, AssemblyFacts.Sha256OfFile(full)))
-                        {
-                            findings += Report("HK00-PDB-SOURCE-HASH", "effective", spec.Name + ":" + full, "External pinned test SDK source checksum does not match compiled bytes.");
-                        }
-                    }
-                    else
-                    {
-                        findings += Report("HK00-PDB-SOURCE-FOREIGN", "effective", spec.Name + ":" + document.Path, "PDB records an unclassified source outside the repository.");
-                    }
+                    findings += Report("HK00-PDB-SOURCE-FOREIGN", "effective", spec.Name + ":" + document.Path, "PDB records an unclassified source outside Arkus ownership and the exact locked Test SDK source contract.");
                     continue;
                 }
 
@@ -236,46 +249,21 @@ namespace Arkus.HK00.Proof
                 }
             }
 
-            if (spec.Kind == ProjectKind.Tests && !observedExternalTestSdk)
+            if (spec.Kind == ProjectKind.Tests && !observedTestSdk)
             {
                 findings += Report(
                     "HK00-TESTSDK-SOURCE-MISSING",
                     "effective",
                     spec.Name,
-                    "Pinned Microsoft.NET.Test.Sdk source injection was not observed as expected.");
+                    "Exact locked Microsoft.NET.Test.Sdk source injection was not observed as expected.");
             }
 
             return findings;
         }
 
-        private static bool IsAllowedExternalTestSdkSource(ProjectSpec spec, string fullPath)
-        {
-            if (spec.Kind != ProjectKind.Tests)
-            {
-                return false;
-            }
-
-            var packageRoot = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                ".nuget",
-                "packages");
-            var expected = Path.GetFullPath(Path.Combine(
-                packageRoot,
-                "microsoft.net.test.sdk",
-                FixedContract.PackageVersions["Microsoft.NET.Test.Sdk"],
-                "build",
-                "net8.0",
-                "Microsoft.NET.Test.Sdk.Program.cs"));
-            return string.Equals(Path.GetFullPath(fullPath), expected, StringComparison.Ordinal);
-        }
-
-        private static int CheckTrustedAnalyzers(string root, ProjectSpec spec, CompilerCommandLine compiler)
+        private static int CheckTrustedAnalyzers(string root, ProjectSpec spec, CompilerCommandLine compiler, ExternalAuthority authority)
         {
             var findings = 0;
-            var sdkDirectory = RunningSdkDirectory(root);
-            var dotnetRoot = Directory.GetParent(Directory.GetParent(sdkDirectory)!.FullName)!.FullName;
-            var packsDirectory = Path.Combine(dotnetRoot, "packs");
-
             foreach (var value in compiler.Values("analyzer"))
             {
                 foreach (var rawPath in value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
@@ -290,14 +278,13 @@ namespace Arkus.HK00.Proof
                     var absolute = Path.IsPathRooted(token)
                         ? Path.GetFullPath(token)
                         : Path.GetFullPath(Path.Combine(projectDirectory, token));
-                    if (!ProcessExec.IsInside(sdkDirectory, absolute)
-                        && !(Directory.Exists(packsDirectory) && ProcessExec.IsInside(packsDirectory, absolute)))
+                    if (!authority.IsSdkOrPack(absolute))
                     {
                         findings += Report(
                             "HK00-COMPILER-ANALYZER-UNTRUSTED",
                             "effective",
                             spec.Name + ":" + absolute,
-                            "Proof authority may load compiler extensions only from the selected SDK/reference packs.");
+                            "Canonical compiler extensions may load only from the exact selected SDK/reference packs; locked packages are not blanket analyzer authority.");
                     }
                 }
             }
@@ -318,28 +305,6 @@ namespace Arkus.HK00.Proof
                 }
             }
             return sources;
-        }
-
-        private static string RunningSdkDirectory(string root)
-        {
-            var version = ProcessExec.Run("dotnet", new[] { "--version" }, root).Stdout.Trim();
-            var list = ProcessExec.Run("dotnet", new[] { "--list-sdks" }, root).Stdout;
-            foreach (var rawLine in list.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                var line = rawLine.Trim();
-                if (!line.StartsWith(version + " ", StringComparison.Ordinal))
-                {
-                    continue;
-                }
-                var open = line.LastIndexOf('[');
-                var close = line.LastIndexOf(']');
-                if (open >= 0 && close > open)
-                {
-                    var baseDirectory = line.Substring(open + 1, close - open - 1);
-                    return Path.GetFullPath(Path.Combine(baseDirectory, version));
-                }
-            }
-            throw new InvalidOperationException("Could not derive selected SDK directory for " + version + ".");
         }
 
         private static int Report(string id, string phase, string subject, string message)

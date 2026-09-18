@@ -81,6 +81,7 @@ namespace Arkus.HK00.Proof
             "scripts/self-attacks/run-terminal-inventory-attack.sh",
             "scripts/self-attacks/run-test-surface-attack.sh",
             "scripts/self-attacks/run-external-authority-attacks.sh",
+            "scripts/self-attacks/run-reference-authority-attack.sh",
             "tools/Arkus.HK00.Proof/Arkus.HK00.Proof.csproj",
         };
 
