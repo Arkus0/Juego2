@@ -1,0 +1,56 @@
+[
+  {
+    "Name": "Arkus.Game.Authoring",
+    "Path": "src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj",
+    "Kind": "Portable",
+    "TargetFramework": "netstandard2.1"
+  },
+  {
+    "Name": "Arkus.Game.Core",
+    "Path": "src/Arkus.Game.Core/Arkus.Game.Core.csproj",
+    "Kind": "Portable",
+    "TargetFramework": "netstandard2.1"
+  },
+  {
+    "Name": "Arkus.Game.Validation",
+    "Path": "src/Arkus.Game.Validation/Arkus.Game.Validation.csproj",
+    "Kind": "Portable",
+    "TargetFramework": "netstandard2.1"
+  },
+  {
+    "Name": "Arkus.Game.World",
+    "Path": "src/Arkus.Game.World/Arkus.Game.World.csproj",
+    "Kind": "Portable",
+    "TargetFramework": "netstandard2.1"
+  },
+  {
+    "Name": "Arkus.Harness.Cli",
+    "Path": "src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj",
+    "Kind": "Host",
+    "TargetFramework": "net8.0"
+  },
+  {
+    "Name": "Arkus.Harness.Protocol",
+    "Path": "src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj",
+    "Kind": "Portable",
+    "TargetFramework": "netstandard2.1"
+  },
+  {
+    "Name": "Arkus.Harness.Runtime",
+    "Path": "src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj",
+    "Kind": "Portable",
+    "TargetFramework": "netstandard2.1"
+  },
+  {
+    "Name": "Arkus.Harness.Tests",
+    "Path": "tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj",
+    "Kind": "Tests",
+    "TargetFramework": "net8.0"
+  },
+  {
+    "Name": "Arkus.HK00.Proof",
+    "Path": "tools/Arkus.HK00.Proof/Arkus.HK00.Proof.csproj",
+    "Kind": "Proof",
+    "TargetFramework": "net8.0"
+  }
+]
