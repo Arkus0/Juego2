@@ -22,6 +22,12 @@ namespace Arkus.HK00.Proof
         {
             var findings = 0;
             var probe = new MsBuildProbe(root, configuration);
+            var sdkDirectory = RunningSdkDirectory(root);
+            var sdkBase = Directory.GetParent(sdkDirectory)
+                ?? throw new InvalidOperationException("Selected SDK directory has no parent.");
+            var dotnetRoot = Directory.GetParent(sdkBase.FullName)
+                ?? throw new InvalidOperationException("Selected SDK base has no DOTNET_ROOT parent.");
+            var packsDirectory = Path.Combine(dotnetRoot.FullName, "packs");
 
             foreach (var spec in FixedContract.Projects)
             {
@@ -57,22 +63,50 @@ namespace Arkus.HK00.Proof
                     {
                         continue;
                     }
+
                     var full = Path.IsPathRooted(token)
                         ? Path.GetFullPath(token)
                         : Path.GetFullPath(Path.Combine(Path.Combine(root, spec.Directory), token));
                     var allowedObj = Path.Combine(root, spec.Directory, "obj");
-                    if (!ProcessExec.IsInside(allowedObj, full))
+                    var trusted = ProcessExec.IsInside(allowedObj, full)
+                        || ProcessExec.IsInside(sdkDirectory, full)
+                        || (Directory.Exists(packsDirectory) && ProcessExec.IsInside(packsDirectory, full));
+                    if (!trusted)
                     {
                         findings += Report(
                             "HK00-COMPILER-ANALYZERCONFIG-UNTRUSTED",
                             "effective",
                             spec.Name + ":" + full,
-                            "Analyzer config input must be an SDK-generated intermediate under this project's obj directory.");
+                            "Analyzer config input must come from this project's generated obj tree or the pinned SDK/reference-pack roots.");
                     }
                 }
             }
 
             return findings;
+        }
+
+        private static string RunningSdkDirectory(string root)
+        {
+            var version = ProcessExec.Run("dotnet", new[] { "--version" }, root).Stdout.Trim();
+            var list = ProcessExec.Run("dotnet", new[] { "--list-sdks" }, root).Stdout;
+            foreach (var rawLine in list.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var line = rawLine.Trim();
+                if (!line.StartsWith(version + " ", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                var open = line.LastIndexOf('[');
+                var close = line.LastIndexOf(']');
+                if (open >= 0 && close > open)
+                {
+                    var baseDirectory = line.Substring(open + 1, close - open - 1);
+                    return Path.GetFullPath(Path.Combine(baseDirectory, version));
+                }
+            }
+
+            throw new InvalidOperationException("Could not derive selected SDK directory for " + version + ".");
         }
 
         private static int Report(string id, string phase, string subject, string message)
