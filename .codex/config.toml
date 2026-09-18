@@ -1,0 +1,5 @@
+# Juego2 project defaults for Codex Desktop / CLI.
+# Foundational HK Worker and Reviewer roles require this profile.
+model = "gpt-5.6-sol"
+model_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "xhigh"
