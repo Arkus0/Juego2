@@ -1,0 +1,62 @@
+[
+  {
+    "Path": "src/Arkus.Game.Authoring/AuthoringModule.cs",
+    "Owner": "Arkus.Game.Authoring"
+  },
+  {
+    "Path": "src/Arkus.Game.Core/CoreModule.cs",
+    "Owner": "Arkus.Game.Core"
+  },
+  {
+    "Path": "src/Arkus.Game.Validation/ValidationModule.cs",
+    "Owner": "Arkus.Game.Validation"
+  },
+  {
+    "Path": "src/Arkus.Game.World/WorldModule.cs",
+    "Owner": "Arkus.Game.World"
+  },
+  {
+    "Path": "src/Arkus.Harness.Cli/Program.cs",
+    "Owner": "Arkus.Harness.Cli"
+  },
+  {
+    "Path": "src/Arkus.Harness.Protocol/ProtocolModule.cs",
+    "Owner": "Arkus.Harness.Protocol"
+  },
+  {
+    "Path": "src/Arkus.Harness.Runtime/RuntimeModule.cs",
+    "Owner": "Arkus.Harness.Runtime"
+  },
+  {
+    "Path": "tests/Arkus.Harness.Tests/KernelCompositionTests.cs",
+    "Owner": "Arkus.Harness.Tests"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/AssemblyFacts.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/CompilerCommandLine.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/Contract.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/MsBuildFacts.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/ProcessExec.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/Program.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/ProofRunner.cs",
+    "Owner": "Arkus.HK00.Proof"
+  }
+]
