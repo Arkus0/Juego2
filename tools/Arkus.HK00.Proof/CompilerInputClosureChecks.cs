@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace Arkus.HK00.Proof
 {
@@ -64,6 +66,52 @@ namespace Arkus.HK00.Proof
             }
 
             return findings;
+        }
+
+        public static void WriteInventory(string root, string configuration, string path)
+        {
+            var probe = new MsBuildProbe(root, configuration);
+            var authority = ExternalAuthority.Create(root);
+            var rows = new List<object>();
+
+            foreach (var spec in FixedContract.Projects.OrderBy(project => project.Name, StringComparer.Ordinal))
+            {
+                var arguments = probe.CompilerArguments(spec);
+                var normalized = new List<string>(arguments.Count);
+                foreach (var argument in arguments)
+                {
+                    normalized.Add(NormalizeArgument(root, authority, argument));
+                }
+
+                rows.Add(new
+                {
+                    Project = spec.Name,
+                    Arguments = normalized,
+                });
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            File.WriteAllText(path, JsonSerializer.Serialize(rows, options) + Environment.NewLine);
+        }
+
+        private static string NormalizeArgument(string root, ExternalAuthority authority, string argument)
+        {
+            var value = argument.Replace('\\', '/');
+            var replacements = new[]
+            {
+                new KeyValuePair<string, string>(Path.GetFullPath(authority.PackageRoot).Replace('\\', '/'), "$NUGET"),
+                new KeyValuePair<string, string>(Path.GetFullPath(authority.SdkDirectory).Replace('\\', '/'), "$SDK"),
+                new KeyValuePair<string, string>(Path.GetFullPath(authority.PacksDirectory).Replace('\\', '/'), "$PACKS"),
+                new KeyValuePair<string, string>(Path.GetFullPath(root).Replace('\\', '/'), "$ROOT"),
+            };
+
+            foreach (var replacement in replacements.OrderByDescending(pair => pair.Key.Length))
+            {
+                value = value.Replace(replacement.Key, replacement.Value);
+            }
+
+            return value;
         }
 
         private static int CheckAnalyzerConfigs(string root, ProjectSpec spec, CompilerCommandLine compiler, ExternalAuthority authority)
