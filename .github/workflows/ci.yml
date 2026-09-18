@@ -4,11 +4,15 @@ name: CI
 # job below fails closed: a missing project, test project or proof tool is a
 # failure, never a smaller passing run.
 
+# Triggered by push rather than pull_request on purpose. A pull_request run
+# checks out a preview merge of the head into the base, so its result would bind
+# to a tree that is not the candidate. WP-HK-00 evidence has to name an exact
+# candidate SHA, so the proof runs on the candidate tree itself; GitHub still
+# surfaces these runs on the pull request, because they share its head SHA.
 on:
   push:
     branches:
       - "**"
-  pull_request:
   workflow_dispatch:
 
 permissions:
