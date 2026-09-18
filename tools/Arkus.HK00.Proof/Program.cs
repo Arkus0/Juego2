@@ -81,6 +81,10 @@ namespace Arkus.HK00.Proof
                     var inventoryPath = inventory ?? Path.Combine(root, "artifacts", "proof", "inventory");
                     var reportPath = report ?? Path.Combine(root, "artifacts", "proof", "report.json");
                     runner.WriteEvidence(inventoryPath, reportPath);
+                    CompilerInputClosureChecks.WriteInventory(
+                        root,
+                        configuration,
+                        Path.Combine(inventoryPath, "compiler-args.json"));
 
                     Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
                     var jsonOptions = new JsonSerializerOptions { WriteIndented = true };

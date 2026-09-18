@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace Arkus.HK00.Proof
 {
@@ -75,6 +78,78 @@ namespace Arkus.HK00.Proof
             }
 
             return findings;
+        }
+
+        public static void WriteInventory(string root, string configuration, string outputPath)
+        {
+            var probe = new MsBuildProbe(root, configuration);
+            var sdkDirectory = RunningSdkDirectory(root);
+            var dotnetRoot = Directory.GetParent(Directory.GetParent(sdkDirectory)!.FullName)!.FullName;
+            var packsDirectory = Path.Combine(dotnetRoot, "packs");
+            var packageRoot = PackageRoot();
+            var rows = new List<object>();
+
+            foreach (var spec in FixedContract.Projects.OrderBy(project => project.Name, StringComparer.Ordinal))
+            {
+                var arguments = probe.CompilerArguments(spec);
+                rows.Add(new
+                {
+                    Project = spec.Name,
+                    Arguments = arguments.Select(argument => NormalizeArgument(
+                        argument,
+                        root,
+                        sdkDirectory,
+                        packsDirectory,
+                        packageRoot)).ToArray(),
+                });
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            File.WriteAllText(outputPath, JsonSerializer.Serialize(rows, options) + Environment.NewLine);
+        }
+
+        private static string NormalizeArgument(
+            string argument,
+            string root,
+            string sdkDirectory,
+            string packsDirectory,
+            string packageRoot)
+        {
+            var normalized = argument.Replace('\\', '/');
+            var replacements = new[]
+            {
+                new KeyValuePair<string, string>(NormalizePath(packageRoot), "$NUGET"),
+                new KeyValuePair<string, string>(NormalizePath(sdkDirectory), "$SDK"),
+                new KeyValuePair<string, string>(NormalizePath(packsDirectory), "$PACKS"),
+                new KeyValuePair<string, string>(NormalizePath(root), "$ROOT"),
+            };
+
+            foreach (var replacement in replacements.OrderByDescending(pair => pair.Key.Length))
+            {
+                normalized = normalized.Replace(replacement.Key, replacement.Value, StringComparison.Ordinal);
+            }
+
+            return normalized;
+        }
+
+        private static string NormalizePath(string path)
+        {
+            return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Replace('\\', '/');
+        }
+
+        private static string PackageRoot()
+        {
+            var configured = Environment.GetEnvironmentVariable("NUGET_PACKAGES");
+            if (!string.IsNullOrWhiteSpace(configured))
+            {
+                return Path.GetFullPath(configured);
+            }
+
+            return Path.GetFullPath(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                ".nuget",
+                "packages"));
         }
 
         private static string RunningSdkDirectory(string root)
