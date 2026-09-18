@@ -1,0 +1,44 @@
+name: HK00 CI
+
+on:
+  push:
+    branches:
+      - wp-hk-00-v2
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'tools/**'
+      - 'scripts/**'
+      - '.github/workflows/hk00-ci.yml'
+      - 'global.json'
+      - 'Directory.Build.props'
+      - 'Directory.Packages.props'
+      - 'NuGet.config'
+      - 'Juego2.sln'
+      - 'Docs/evidence/WP-HK-00/**'
+
+permissions:
+  contents: read
+
+jobs:
+  stage1-build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Record toolchain
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD
+          dotnet --version
+          dotnet --info
+      - name: Restore
+        run: dotnet restore Juego2.sln
+      - name: Build
+        run: dotnet build Juego2.sln --configuration Release --no-restore -v minimal
+      - name: Test
+        run: dotnet test Juego2.sln --configuration Release --no-build --no-restore -v minimal
