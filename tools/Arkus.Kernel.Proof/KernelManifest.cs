@@ -6,6 +6,25 @@ using System.Text.Json.Serialization;
 
 namespace Arkus.Kernel.Proof
 {
+    /// <summary>
+    /// Fixed repository scan policy owned by the proof implementation, not by the
+    /// manifest being proved.
+    /// </summary>
+    public sealed class RepositoryScanPolicy
+    {
+        private static readonly string[] FixedRoots = { "." };
+        private static readonly string[] FixedExcludedDirectories = { ".git", "artifacts" };
+
+        /// <summary>The complete repository checkout is the scan root.</summary>
+        public IReadOnlyList<string> SourceScanRoots => FixedRoots;
+
+        /// <summary>
+        /// Direct children of the scan root that are proof-internal/generated and
+        /// therefore not repository product input.
+        /// </summary>
+        public IReadOnlyList<string> ExcludedDirectoryNames => FixedExcludedDirectories;
+    }
+
     /// <summary>Declared SDK pin.</summary>
     public sealed class SdkPinPolicy
     {
@@ -79,12 +98,12 @@ namespace Arkus.Kernel.Proof
     }
 
     /// <summary>
-    /// Declarative source of truth for the canonical kernel policy.
+    /// Declarative source of truth for canonical kernel policy and classification.
     /// </summary>
     /// <remarks>
-    /// The manifest classifies projects and their policy; it deliberately does
-    /// not declare the repository scan boundary. Repository completeness is an
-    /// independent proof input and may not be narrowed by the object being proved.
+    /// Repository completeness is intentionally not configurable here. The proof
+    /// owns its repository boundary independently so the object being proved
+    /// cannot shrink the universe that the proof inspects.
     /// </remarks>
     public sealed class KernelManifest
     {
@@ -108,6 +127,25 @@ namespace Arkus.Kernel.Proof
 
         /// <summary>Free-text intent.</summary>
         public string Description { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Proof-owned repository boundary. It is deliberately ignored by JSON
+        /// and therefore cannot be controlled by kernel-manifest.json.
+        /// </summary>
+        [JsonIgnore]
+        public RepositoryScanPolicy Repository { get; } = new RepositoryScanPolicy();
+
+        /// <summary>
+        /// Rejects the legacy manifest-owned repository scan policy if anybody
+        /// attempts to reintroduce it.
+        /// </summary>
+        [JsonPropertyName("repository")]
+        public JsonElement RepositoryPolicyMustNotBeDeclared
+        {
+            get => default;
+            set => throw new JsonException(
+                "'repository' scan policy is not configurable; WP-HK-00 proof completeness owns the repository boundary independently.");
+        }
 
         /// <summary>Toolchain policy.</summary>
         public ToolchainPolicy Toolchain { get; set; } = new ToolchainPolicy();

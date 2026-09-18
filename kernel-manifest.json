@@ -1,20 +1,7 @@
 {
   "schemaVersion": 1,
   "workpack": "WP-HK-00",
-  "description": "Single declarative source of truth for the canonical kernel boundary: which projects exist, who owns which production source, which dependency edges are allowed, and which build contract each project class must satisfy. Every claim here is checked mechanically by the Arkus.Kernel.Proof tool; nothing in this file is trusted on its own.",
-  "repository": {
-    "sourceScanRoots": [
-      "src",
-      "tests",
-      "tools"
-    ],
-    "excludedDirectoryNames": [
-      ".git",
-      "artifacts",
-      "bin",
-      "obj"
-    ]
-  },
+  "description": "Single declarative source of truth for the canonical kernel classification and policy. Repository completeness is intentionally proof-owned and cannot be narrowed from this manifest.",
   "toolchain": {
     "globalJsonPath": "global.json",
     "sdk": {
@@ -229,7 +216,8 @@
     "kernel-manifest.json",
     ".github/workflows/ci.yml",
     "scripts/proof.sh",
-    "scripts/self-attacks/run-self-attacks.sh"
+    "scripts/self-attacks/run-self-attacks.sh",
+    "scripts/self-attacks/run-completeness-attacks.sh"
   ],
   "requiredTestProjects": [
     "Arkus.Harness.Tests"

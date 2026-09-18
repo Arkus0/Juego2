@@ -57,6 +57,7 @@ jobs:
             Juego2.sln
             scripts/proof.sh
             scripts/self-attacks/run-self-attacks.sh
+            scripts/self-attacks/run-completeness-attacks.sh
             tools/Arkus.Kernel.Proof.Tool/Arkus.Kernel.Proof.Tool.csproj
             tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj
           )
@@ -109,8 +110,11 @@ jobs:
           dotnet build tools/Arkus.Kernel.Proof.Tool/Arkus.Kernel.Proof.Tool.csproj \
             --no-restore -c "${CONFIGURATION}" -v minimal
 
-      - name: Inject, detect, revert and re-prove every defect class
+      - name: Inject, detect, revert and re-prove existing defect classes
         run: bash scripts/self-attacks/run-self-attacks.sh
+
+      - name: Attack repository-completeness omission classes
+        run: bash scripts/self-attacks/run-completeness-attacks.sh
 
       - name: Upload self-attack evidence
         if: always()

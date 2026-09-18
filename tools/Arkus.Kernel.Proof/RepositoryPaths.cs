@@ -60,10 +60,21 @@ namespace Arkus.Kernel.Proof
             return normalizedPath.StartsWith(normalizedDirectory, StringComparison.Ordinal);
         }
 
-        /// <summary>Enumerates files under a root, skipping excluded directory names.</summary>
+        /// <summary>
+        /// Enumerates files under a proof root, skipping only named direct children
+        /// of that root.
+        /// </summary>
+        /// <remarks>
+        /// Exclusions are deliberately not recursive. The WP-HK-00 completeness
+        /// boundary is the repository root, and a nested directory named
+        /// <c>obj</c>, <c>bin</c>, <c>artifacts</c>, or similar must not become an
+        /// accidental proof escape hatch. The fixed proof policy excludes only
+        /// top-level <c>.git</c> metadata and the top-level generated
+        /// <c>artifacts</c> workspace.
+        /// </remarks>
         /// <param name="root">Absolute root directory.</param>
         /// <param name="searchPattern">File search pattern.</param>
-        /// <param name="excludedDirectoryNames">Directory names to skip at any depth.</param>
+        /// <param name="excludedDirectoryNames">Direct child directory names to skip.</param>
         /// <returns>Absolute file paths, ordinal-sorted.</returns>
         public static IReadOnlyList<string> EnumerateFiles(
             string root,
@@ -81,8 +92,9 @@ namespace Arkus.Kernel.Proof
                 return results;
             }
 
+            var normalizedRoot = Path.GetFullPath(root);
             var pending = new Stack<string>();
-            pending.Push(Path.GetFullPath(root));
+            pending.Push(normalizedRoot);
 
             while (pending.Count > 0)
             {
@@ -95,18 +107,21 @@ namespace Arkus.Kernel.Proof
 
                 foreach (var directory in Directory.EnumerateDirectories(current))
                 {
-                    var name = Path.GetFileName(directory);
-                    var excluded = false;
-                    foreach (var candidate in excludedDirectoryNames)
+                    var skip = false;
+                    if (string.Equals(current, normalizedRoot, StringComparison.Ordinal))
                     {
-                        if (string.Equals(name, candidate, StringComparison.Ordinal))
+                        var name = Path.GetFileName(directory);
+                        foreach (var candidate in excludedDirectoryNames)
                         {
-                            excluded = true;
-                            break;
+                            if (string.Equals(name, candidate, StringComparison.Ordinal))
+                            {
+                                skip = true;
+                                break;
+                            }
                         }
                     }
 
-                    if (!excluded)
+                    if (!skip)
                     {
                         pending.Push(directory);
                     }
