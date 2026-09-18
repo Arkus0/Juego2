@@ -1,25 +1,38 @@
 # WP-HK-00 Worker foundational verdict
 
-Candidate state: **ACTIVE / NOT READY FOR REVIEW**
+FOUNDATIONAL_PROOF_VERDICT: NOT_READY
+UNRESOLVED_PROOF_OBLIGATIONS: 1
+KNOWN_UNDETECTED_DEFECT_CLASSES: 0
+TRUST_BOUNDARY: `Docs/evidence/WP-HK-00/TRUST_BOUNDARY_AUDIT.md`
+PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
-`FOUNDATIONAL_PROOF_VERDICT: NOT_READY`  
-`UNRESOLVED_PROOF_OBLIGATIONS: 1`  
-`KNOWN_UNDETECTED_DEFECT_CLASSES: 0`
+## Worker statement
 
-## Why NOT_READY
+The implementation covers the material acceptance claims of `WP-HK-00` within the finite trust boundary documented in `TRUST_BOUNDARY_AUDIT.md` and reconciled with `FOUNDATIONAL_PROOF_STANDARD.md` v1.2.
 
-The current architecture/proof-boundary pre-review is design-clean after causal repairs, but the Definition of Done requires executed exact-SHA CI. GitHub-hosted Actions is currently failing before runner allocation (`runner_id=0`, `steps=[]`), including the main-owned Worker Handoff job, so the Worker cannot legitimately claim the final proof or 37 negative controls executed on the current lineage.
+The proof system no longer treats arbitrary hostile subversion of Git, the pinned .NET/MSBuild/C# toolchain, NuGet or OS/CI infrastructure as an HK00 obligation. Existing guards against realistic repository-controlled false-green paths remain as defence in depth because they are already implemented and useful.
 
-This is external infrastructure backpressure, not a contractual implementation PASS or FAIL. The PR must remain Draft + ACTIVE.
+`NOT_READY` is temporary and procedural/evidentiary, not a known implementation defect. The remaining obligation is to obtain an actual exact-SHA CI execution, reconcile generated observation artifacts with committed evidence, then perform the mandatory Worker adversarial pre-review on that complete exact candidate.
 
-## Required transition to READY
+## Proof-budget statement
 
-- GitHub-hosted runner becomes available.
-- Positive read-only proof executes on exact candidate SHA and reaches GREEN.
-- All 37 causal attacks execute RED for intended oracle → pristine reconstruction → GREEN.
-- Observed package lock/inventories/compiler args/attack results are reconciled to committed evidence.
-- A final evidence candidate reruns exact-SHA CI with zero drift.
-- Worker performs final no-write adversarial pre-review and records `WORKER_PRE_REVIEW: CLEAN` in the PR handoff/evidence link.
-- Only then stop writers, record exact Frozen candidate SHA, mark FROZEN_FOR_REVIEW and Ready.
+The earlier repair line materially expanded proof machinery while closing a real self-shrinking-universe defect class. The v1.2 trust-boundary audit stops that expansion and classifies the existing machinery by acceptance value. No further proof/self-attack family will be added unless it directly falsifies an HK00 acceptance criterion inside the declared trust boundary.
 
-Fresh independent Reviewer PASS remains mandatory after freeze.
+`PROOF_BUDGET_VERDICT: WITHIN_BUDGET`
+
+## Required freeze preconditions
+
+Before freeze, one exact candidate SHA must have all of the following:
+
+- exact candidate/toolchain preflight GREEN;
+- read-only foundational proof pipeline GREEN;
+- committed inventory equals observed inventory, including normalized `compiler-args.json`;
+- all 37 retained causal RED→GREEN attacks GREEN;
+- committed self-attack summary equals observation;
+- clean restore/build/test on Linux under the locked dependency graph;
+- `WORKER_PRE_REVIEW: CLEAN` under Worker/Reviewer Protocol v1.3;
+- no later branch mutation.
+
+Only after the evidence-bearing candidate satisfies those conditions may the foundational verdict be changed to `READY` with both counters zero and the same exact HEAD frozen for independent review.
+
+Independent Reviewer remains mandatory and must not treat this Worker verdict or pre-review as a PASS.

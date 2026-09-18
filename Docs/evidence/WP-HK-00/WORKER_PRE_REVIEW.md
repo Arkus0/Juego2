@@ -1,94 +1,91 @@
 # WP-HK-00 Worker adversarial pre-review
 
 Status: **NOT_READY**  
-Protocol: `WORKER_REVIEW_PROTOCOL.md` v1.2  
-Audit lineage: PR #8 after integrating `main` process commit `dd4d2bdda69400d86fdba2156a93d15165662442`  
+Protocol: `WORKER_REVIEW_PROTOCOL.md` v1.3  
+Proof standard: `FOUNDATIONAL_PROOF_STANDARD.md` v1.2  
+Trust boundary: `Docs/evidence/WP-HK-00/TRUST_BOUNDARY_AUDIT.md`  
 Independent Reviewer verdict: **not attempted by this Worker**
 
 ## Purpose
 
-This is the mandatory Worker-side falsification gate. It records what the Worker tried to break before handoff. It is not independent review and must not constrain the fresh Reviewer.
+This is the mandatory Worker-side falsification gate. It attacks the actual HK00 acceptance claims inside the declared finite trust boundary. It is not independent review and does not attempt to prove malicious subversion of Git, the pinned .NET/MSBuild/C# toolchain, NuGet, OS or CI infrastructure.
 
-## Six-layer audit
+## Acceptance-focused audit
 
-### 1. Authority / proof bootstrap — DESIGN CLEAN
+### 1. Canonical boundary / universe — DESIGN CLEAN
 
-- Proof executable is compiled directly with pinned `csc.dll`, not through its own MSBuild project.
-- Source universe is every Git-tracked proof `.cs` source; bytes are SHA-256 checked before/after bootstrap.
-- SDK `8.0.425`, runtime/ref pack `8.0.31`, runtime roll-forward disabled.
-- Candidate-owned CI is explicitly **not** treated as independent authority; fresh Reviewer remains mandatory.
+- Git candidate tree is the independent project/source existence universe.
+- Fixed Arkus classification is separate from generated inventories/manifest data.
+- Canonical projects must exist and canonical solution membership must match the fixed set.
+- Tracked production C# must map to exactly one owner.
+- The previous self-shrinking scan-root/extension-boundary class has been repaired at the universe boundary rather than special-cased.
 
-### 2. Universe / contract — DESIGN CLEAN
+### 2. Portable/toolchain/engine boundary — DESIGN CLEAN
 
-- Exact Git index is repository/source authority; symlinks/gitlinks and candidate-tree divergence fail closed.
-- Build participant discovery does not stop at `.csproj`: any tracked XML root `<Project>` must be a fixed project or fixed policy file.
-- Exactly one solution entrypoint is allowed; solution membership must equal the fixed project set.
-- Repository response files are rejected and canonical MSBuild uses `-noAutoResponse`.
-- Evaluated import closure catches repository/untracked/external build logic that actually participates.
-- Pre-review discovered that the Worker lineage was one process commit behind `main`; fixed by making `dd4d2bd...` a real parent of the candidate before continuing.
+- Portable projects are fixed to `netstandard2.1`, C# 9, warnings-as-errors and deterministic build settings; host/tests/proof use pinned .NET 8.
+- SDK `8.0.425`, runtime/ref pack `8.0.31`, roll-forward disabled.
+- Product projects have no third-party NuGet package allowance and no Unity/UnityEditor/DFU dependency path.
+- Current complete product source remains HK00 boundary code only; gameplay/Unity/assets remain forbidden scope.
 
-### 3. Effective compiler inputs — DESIGN CLEAN
+### 3. Dependency graph / effective compilation — DESIGN CLEAN
 
-- All nine canonical projects, including Tests and Proof, are rebuilt and expose actual `CscCommandLineArgs`.
-- Complete normalized compiler arguments are evidence, preventing unmodelled switches from being observationally invisible.
-- Sources must be tracked/owned except the one exact locked Test SDK injected source.
-- Analyzer/source-generator authority is SDK/packs only.
-- Analyzer configs are restricted to selected toolchain or project `obj`.
-- Semantic input switches such as addmodule/link/resource/additionalfile are fail-closed.
-- Compiler references must be framework packs, exact outputs of declared Arkus project dependencies, or exact locked test-package paths.
-- External authority is centralized so import/source/analyzer/reference checks do not silently maintain different trust rules.
+- Evaluated `ProjectReference` graph is compared with fixed direction and checked for cycles.
+- Effective compiler source inputs are observed for all canonical projects; owned sources must reach compilation.
+- Portable PDB/source checks bind compiled source documents to candidate bytes.
+- Required product dependency edges also appear in emitted assembly metadata as defence in depth.
 
-### 4. Outputs — DESIGN CLEAN
+### 4. Reproducible dependency/build path — DESIGN CLEAN
 
-- Portable PDB source documents/checksums bind actual compiled source bytes.
-- PE CodeView and portable-PDB identities must match.
-- Required product graph edges must appear in emitted assembly metadata.
-- Multifile/netmodule and managed manifest-resource output channels are rejected.
-- Outputs are rechecked after tests to catch post-compile substitution.
+- Test direct dependencies are centrally pinned and the complete transitive graph is committed in `packages.lock.json` with content hashes.
+- A fresh isolated lock observation is compared to the committed lock; canonical restore uses locked mode.
+- Clean Linux restore/build/test is the required execution path.
+- Repository-controlled alternate build channels already implemented (solution membership, response/import/compiler extension/reference/output checks) remain defence in depth; no new hostile-toolchain family will be added unless an HK00 acceptance is actually falsified.
 
-### 5. Candidate mutability — DESIGN CLEAN
+### 5. Proof/evidence integrity — DESIGN CLEAN
 
-- Positive proof treats candidate as read-only; observations are written only below ignored `artifacts/`.
-- Tracked bytes are captured before effective work and compared after; Git index/worktree divergence is separate.
-- Self-attacks execute inside a disposable Git copy; only ignored results/logs are exported to the original checkout.
-- Committed evidence is never generated by overwriting itself and then declared matching.
+- Candidate is read-only during positive proof; observations are emitted below ignored `artifacts/`.
+- Self-attacks run in a disposable Git copy.
+- Proof bootstrap is direct from tracked proof C# under pinned compiler as defence in depth against self-confirming proof-project configuration.
+- Normalized effective compiler arguments make material input drift visible without claiming exhaustive certification of compiler internals.
 
-### 6. Evidence / dependency / handoff — DESIGN CLEAN, EXECUTION BLOCKED
+### 6. Trust boundary / proof budget / handoff — DESIGN CLEAN, EXECUTION PENDING
 
-- Test transitive dependency closure is committed with exact versions/content hashes and fresh isolated resolution is byte-compared before locked restore.
-- External-component evidence enumerates the whole locked test closure, not only direct packages.
-- Proof matrix and residual-risk audit state the candidate-owned-CI trust boundary explicitly.
-- PR #8 is sole canonical HK00 implementation surface; superseded PRs are closed.
-- PR branch now contains current `main` pre-review protocol as an actual parent.
-- **Blocking condition:** GitHub-hosted Actions currently fails before runner allocation (`runner_id=0`, `steps=[]`) for HK00 CI and even the main-owned Worker Handoff job. Therefore final exact-SHA proof/37 attacks cannot currently execute.
+- Git, pinned .NET/MSBuild/C# behavior, NuGet lock/restore behavior and OS/CI are explicitly trusted base.
+- Existing 37 attacks are classified as `REQUIRED_FOR_HK00` or `DEFENCE_IN_DEPTH`; arbitrary attacks on trusted implementations are `OUTSIDE_TRUST_BOUNDARY` non-claims.
+- Proof growth has been bounded after the prior self-shrinking-universe repairs.
+- `PROOF_BUDGET_VERDICT: WITHIN_BUDGET`.
+- PR #8 remains Draft/ACTIVE and is the only canonical HK00 implementation surface.
 
-## Material classes discovered and repaired during Worker pre-review lineage
+## Material causal classes repaired during Worker lineage
 
-1. project/build universe pre-filtered by `.csproj`;
-2. Proof/Tests outside effective compiler/PDB observation;
-3. proof oracle able to depend on its own MSBuild authority;
-4. response-file/solution-build surfaces differing from observed builds;
-5. compiler semantic channels such as addmodule/link outside the original model;
-6. PE/PDB output substitution not cryptographically/effectively tied;
-7. proof/evidence generation mutating the candidate it claimed to prove;
-8. test analyzer/transitive NuGet closure not explicitly controlled;
-9. external MSBuild imports not classified against exact authority;
-10. compiler `/reference` provenance not closed;
-11. candidate lineage behind the binding `main` pre-review protocol.
+1. self-shrinking project/source scan boundary;
+2. project/build participant pre-filtering before classification;
+3. Tests/Proof outside effective source/PDB observation;
+4. proof oracle able to depend on its own MSBuild compile universe;
+5. response/solution/import behavior not aligned with canonical observation;
+6. material compiler input channels omitted from effective observation;
+7. PE/PDB output substitution gap;
+8. proof/evidence mutation of the candidate;
+9. transitive test dependency/analyzer authority not explicitly bounded;
+10. external import/reference provenance split across inconsistent policies;
+11. candidate lineage behind binding process rules.
 
-Repairs target the causal classes above rather than the individual reported examples. The attack suite currently declares **37 causal classes**; the final exact candidate must execute all of them RED for the intended guard, reconstruct pristine, then GREEN.
+These repairs remain regression-covered by the existing 37 causal controls. No additional family is justified by the current HK00 claim.
 
 ## Current gate
 
 `DESIGN_AUDIT: CLEAN`  
 `WORKER_PRE_REVIEW: NOT_READY`  
 `WORKER_PRE_REVIEW_FINDINGS_FIXED: 11`  
-`WORKER_PRE_REVIEW_BLOCKER: EXACT_SHA_CI_RUNNER_UNAVAILABLE`
+`PROOF_BUDGET_VERDICT: WITHIN_BUDGET`  
+`WORKER_PRE_REVIEW_BLOCKER: FINAL_EXACT_SHA_EXECUTION_AND_EVIDENCE_RECONCILIATION_PENDING`
 
-Do **not** convert this to `CLEAN` or freeze the PR until:
+The candidate must remain Draft until:
 
-1. the final candidate SHA executes the positive foundational proof successfully;
-2. all 37 causal negative controls execute successfully;
-3. observed inventories/results are reconciled with committed evidence with zero drift;
-4. the exact post-evidence SHA reruns both gates green;
-5. the Worker rechecks the final diff/handoff without modifying candidate bytes.
+1. positive proof executes GREEN on the exact evidence candidate;
+2. all 37 retained attacks execute RED for intended guard → pristine reconstruction → GREEN;
+3. observed inventories/results are reconciled with committed evidence;
+4. the exact post-evidence SHA reruns both gates with zero drift;
+5. the Worker rechecks the complete final diff/handoff without modifying candidate bytes.
+
+Only then may this document/state be promoted to `WORKER_PRE_REVIEW: CLEAN` and the same exact HEAD frozen for a fresh independent Reviewer.
