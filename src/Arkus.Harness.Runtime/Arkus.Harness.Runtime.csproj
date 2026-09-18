@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Arkus.Harness.Runtime</AssemblyName>
+    <RootNamespace>Arkus.Harness.Runtime</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
+    <ProjectReference Include="../Arkus.Game.Authoring/Arkus.Game.Authoring.csproj" />
+    <ProjectReference Include="../Arkus.Game.Validation/Arkus.Game.Validation.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Arkus.Game.World</AssemblyName>
+    <RootNamespace>Arkus.Game.World</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Arkus.Game.Core/Arkus.Game.Core.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,60 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Harness.Protocol", "src\Arkus.Harness.Protocol\Arkus.Harness.Protocol.csproj", "{A0000001-0000-4000-8000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Game.Core", "src\Arkus.Game.Core\Arkus.Game.Core.csproj", "{A0000002-0000-4000-8000-000000000002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Game.World", "src\Arkus.Game.World\Arkus.Game.World.csproj", "{A0000003-0000-4000-8000-000000000003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Game.Authoring", "src\Arkus.Game.Authoring\Arkus.Game.Authoring.csproj", "{A0000004-0000-4000-8000-000000000004}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Game.Validation", "src\Arkus.Game.Validation\Arkus.Game.Validation.csproj", "{A0000005-0000-4000-8000-000000000005}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Harness.Runtime", "src\Arkus.Harness.Runtime\Arkus.Harness.Runtime.csproj", "{A0000006-0000-4000-8000-000000000006}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Harness.Cli", "src\Arkus.Harness.Cli\Arkus.Harness.Cli.csproj", "{A0000007-0000-4000-8000-000000000007}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.Harness.Tests", "tests\Arkus.Harness.Tests\Arkus.Harness.Tests.csproj", "{A0000008-0000-4000-8000-000000000008}"
+EndProject
+Global
+  GlobalSection(SolutionConfigurationPlatforms) = preSolution
+    Debug|Any CPU = Debug|Any CPU
+    Release|Any CPU = Release|Any CPU
+  EndGlobalSection
+  GlobalSection(ProjectConfigurationPlatforms) = postSolution
+    {A0000001-0000-4000-8000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {A0000001-0000-4000-8000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {A0000001-0000-4000-8000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {A0000001-0000-4000-8000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
+    {A0000002-0000-4000-8000-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {A0000002-0000-4000-8000-000000000002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {A0000002-0000-4000-8000-000000000002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {A0000002-0000-4000-8000-000000000002}.Release|Any CPU.Build.0 = Release|Any CPU
+    {A0000003-0000-4000-8000-000000000003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {A0000003-0000-4000-8000-000000000003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {A0000003-0000-4000-8000-000000000003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {A0000003-0000-4000-8000-000000000003}.Release|Any CPU.Build.0 = Release|Any CPU
+    {A0000004-0000-4000-8000-000000000004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {A0000004-0000-4000-8000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {A0000004-0000-4000-8000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {A0000004-0000-4000-8000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
+    {A0000005-0000-4000-8000-000000000005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {A0000005-0000-4000-8000-000000000005}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {A0000005-0000-4000-8000-000000000005}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {A0000005-0000-4000-8000-000000000005}.Release|Any CPU.Build.0 = Release|Any CPU
+    {A0000006-0000-4000-8000-000000000006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {A0000006-0000-4000-8000-000000000006}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {A0000006-0000-4000-8000-000000000006}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {A0000006-0000-4000-8000-000000000006}.Release|Any CPU.Build.0 = Release|Any CPU
+    {A0000007-0000-4000-8000-000000000007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {A0000007-0000-4000-8000-000000000007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {A0000007-0000-4000-8000-000000000007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {A0000007-0000-4000-8000-000000000007}.Release|Any CPU.Build.0 = Release|Any CPU
+    {A0000008-0000-4000-8000-000000000008}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {A0000008-0000-4000-8000-000000000008}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {A0000008-0000-4000-8000-000000000008}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {A0000008-0000-4000-8000-000000000008}.Release|Any CPU.Build.0 = Release|Any CPU
+  EndGlobalSection
+EndGlobal

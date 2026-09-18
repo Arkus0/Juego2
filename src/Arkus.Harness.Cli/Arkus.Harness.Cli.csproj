@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Arkus.Harness.Cli</AssemblyName>
+    <RootNamespace>Arkus.Harness.Cli</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
+  </ItemGroup>
+</Project>
