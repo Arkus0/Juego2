@@ -1,6 +1,6 @@
 # Worker → Reviewer Protocol
 
-Version: 1.0 — 2026-09-18
+Version: 1.1 — 2026-09-18
 
 ## Purpose
 
@@ -28,7 +28,7 @@ MERGE
 
 ## Worker rules
 
-1. One active Worker per WP candidate.
+1. One active Worker per WP candidate and one canonical open implementation PR per active WP unless an explicit transfer/repair migration is being completed.
 2. Start from current `main`; record baseline SHA.
 3. Open/keep PR Draft while implementation can change.
 4. Respect exact WP Allowed/Forbidden scope and dependencies.
@@ -38,6 +38,8 @@ MERGE
 8. Mark `Worker state: FROZEN_FOR_REVIEW` and `Branch frozen: YES`.
 9. After Ready, do not modify implementation until Reviewer verdict.
 10. Worker never self-reviews.
+
+A superseded implementation PR must be explicitly marked/closed so GitHub does not present two active ownership surfaces for the same WP.
 
 ## Required PR handoff fields
 
@@ -63,6 +65,8 @@ fail_cycle: <integer>
 
 A second Worker may continue the same WP only after the prior Worker stops, the PR is Draft, and a `Transfer SHA` + Worker history update is recorded. Transfer does not reset `fail_cycle` or erase evidence.
 
+If repair is migrated to a new PR, the previous PR must be closed/superseded and the new PR must preserve Worker history, transfer SHA, reviewed SHA and `fail_cycle`; migration is not a clean restart.
+
 ## Reviewer rules
 
 Reviewer must:
@@ -82,6 +86,8 @@ A green Worker test suite is necessary, never sufficient.
 
 A FAIL must identify the violated criterion, evidence, expected behavior and minimal correction boundary. The same WP remains unresolved. Repair creates a new candidate SHA and requires a fresh independent review.
 
+A local/trivial defect may be repaired locally. A finding that invalidates the proof boundary, architecture or completeness argument must be repaired at that causal boundary rather than by special-casing the reported example.
+
 ## PASS / merge preflight
 
 Merge is valid only when:
@@ -96,6 +102,8 @@ If documentation-only review finalization is used, it must not redefine the revi
 ## Foundational circuit breaker
 
 If two independent Reviewer FAILs expose the same foundational defect class, stop local patching and re-audit the foundation before another downstream repair loop.
+
+A single FAIL proving that the universe used by a completeness claim can self-shrink, omit material objects by construction, or circularly define its own proof set is already an architectural finding. Re-audit that proof boundary immediately before another implementation cycle.
 
 ## DocSync
 

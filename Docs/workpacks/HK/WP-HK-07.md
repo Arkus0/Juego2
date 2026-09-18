@@ -1,4 +1,4 @@
-# WP-HK-07 — Headless host + transport boundary
+# WP-HK-07 — Headless host + transport projections
 
 Status: PLANNED  
 Class: FOUNDATIONAL  
@@ -7,28 +7,43 @@ Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 
 ## Objective
 
-Expose the accepted runtime through a production-quality headless process boundary without coupling the kernel to any one future transport.
+Expose the accepted runtime through a production-quality, transport-neutral host with both a deterministic reference transport and a standards-compatible MCP projection, without coupling canonical semantics to either.
 
 ## Acceptance
 
 - Canonical host works non-interactively in CI from a clean checkout.
-- At least one deterministic machine transport is supported (preferred baseline: JSON Lines over stdin/stdout plus one-shot file/stdin mode).
-- Protocol output is isolated from diagnostic logging; stdout cannot be corrupted by incidental logs.
-- Exit codes and fatal transport errors are stable/documented.
-- Request timeout/cancellation semantics are explicit.
-- Process startup does not require Unity, editor state, network access or user prompts.
-- Runtime kernel has no dependency on CLI/stdio-specific types; future MCP/GUI adapters can wrap the same service surface.
-- Restore/build/test and protocol conformance run under pinned toolchain/environment assumptions.
+- Deterministic reference transport is supported (baseline: JSON Lines over stdin/stdout plus one-shot file/stdin mode or an explicitly reviewed equivalent).
+- A first-party MCP adapter projects the accepted canonical Arkus contract through a pinned approved SDK/implementation rather than maintaining an independent command/schema registry.
+- MCP and reference transport expose semantically equivalent capabilities for the accepted H0 surface; framing differences are allowed, semantic drift is not.
+- Protocol output is isolated from diagnostic logging; machine streams cannot be corrupted by incidental logs.
+- Exit codes and fatal reference-transport errors are stable/documented.
+- Request timeout/cancellation semantics are explicit and map cleanly into canonical cancellation/failure semantics.
+- Process startup does not require Unity, editor state, network access or user prompts for the local canonical path.
+- Runtime kernel has no dependency on CLI/stdio/MCP/HTTP-specific types; future GUI/HTTP/SDK adapters can wrap the same service surface.
+- Restore/build/test and transport conformance run under pinned toolchain/environment assumptions.
 - Effective process inputs/environment relevant to behaviour are explicit enough to reproduce CI execution.
+- The transport inventory cannot self-shrink: canonical capability inventory is the authority and adapters are checked against it, not vice versa.
+- External transport SDK usage satisfies `DEPENDENCY_IP_POLICY.md` and is replaceable behind Arkus conformance tests.
 
 ## Required self-attacks
 
-RED→GREEN for: log contamination of protocol stream, truncated frame, malformed JSON, oversized frame, cancellation/timeout, unexpected process environment changing semantics, and alternate public host path bypassing canonical runtime.
+RED→GREEN for:
+
+- log contamination of reference protocol stream;
+- truncated/malformed/oversized reference frame;
+- cancellation/timeout;
+- unexpected process environment changing semantics;
+- alternate public host path bypassing canonical runtime;
+- canonical capability missing from MCP projection;
+- MCP projection changing request/result/error meaning;
+- MCP adapter introducing a hidden mutation path;
+- transport registry being used as the only completeness oracle;
+- removing/replacing the transport SDK causing canonical kernel code changes rather than adapter-only changes.
 
 ## Forbidden scope
 
-MCP server, HTTP/cloud service, Unity Editor bridge, GUI.
+HTTP/cloud service, Unity Editor bridge, GUI, model-vendor-specific orchestration.
 
 ## DoD
 
-An external process can discover and exercise the complete accepted harness contract headlessly with deterministic framing and failure behaviour; independent PASS.
+External processes can discover and exercise the complete accepted harness contract through the deterministic reference transport and the MCP projection; conformance proves both are projections of the same canonical semantics with deterministic failure behaviour; independent PASS.

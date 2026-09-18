@@ -6,6 +6,8 @@ Juego2 is harness-first. No serious gameplay, Unity scene production, Quaternius
 
 The harness exists to let an AI agent create, inspect, modify, validate, replay, and test the game world through stable machine-readable contracts without knowing C# implementation details.
 
+Arkus Harness is also being designed as a commercially viable, engine-agnostic AI-native game-authoring platform. Juego2 is its proving ground, not a reason to narrow the platform to one game, one engine, one model vendor, or one transport.
+
 ## Minimal agent entry
 
 For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOMATION_BOOTSTRAP.md`, reconstruct GitHub state, resolve the first safe eligible contractual action, execute one role transition, persist it, and stop at the next role boundary.
@@ -17,8 +19,9 @@ For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOM
 3. `Docs/workpacks/**` — exact scope and Definition of Done for one unit of work.
 4. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, exact-SHA freeze and independent review.
 5. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` — binding proof rules for foundational WPs.
-6. `Docs/automation/DEPENDENCY_ROUTING.md` + `AGENTIC_PROTOCOL_DURABILITY.md` — backend-neutral orchestration.
-7. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
+6. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
+7. `Docs/automation/DEPENDENCY_ROUTING.md` + `AGENTIC_PROTOCOL_DURABILITY.md` — backend-neutral orchestration.
+8. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
 
 ## Product rules
 
@@ -27,10 +30,13 @@ For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOM
 - Do not copy architecture or code from `Arkus0/Juego` by default. It is reference material only. Migration requires explicit justification and review.
 - Process lessons from `Juego` may be reused when they are engine/game independent.
 - DFU is not part of the critical path. It may only return later as an optional adapter after `WP-HK-GATE`, through an explicit ADR proving net value.
-- The harness core must be engine-agnostic and transport-agnostic. Unity is a downstream consumer.
+- Arkus canonical contracts and semantics are transport-neutral. MCP, JSONL, HTTP, SDKs and future Creator GUI are projections/adapters, never the source of truth.
+- The harness core must be engine-agnostic. Unity is the first engine bridge, not the architectural ceiling; engine-specific types may not leak into canonical kernel contracts.
+- External tools/libraries may be adopted when they solve a generic problem better, but no adopted component may reduce Arkus scope, become an irreplaceable semantic authority, or create avoidable commercial/IP restrictions.
 - The harness must fail closed: missing schemas, validators, proof tools or required evidence are failures.
 - Prefer standards and evaluated behaviour over growing syntax denylists.
-- Determinism, replayability, structured errors, discoverability and provenance are product requirements, not test conveniences.
+- Determinism, replayability, structured errors, discoverability, transactions and provenance are product requirements, not test conveniences.
+- Completeness claims may not rely solely on an inventory/registry/configuration controlled by the thing being proved; the universe under proof must be independently discoverable or checked against effective behaviour.
 - Do not add gameplay semantics merely to make harness tests convenient; use a deliberately tiny micro-world fixture.
 
 ## Agentic flow rules
@@ -41,6 +47,7 @@ For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOM
 - PASS/FAIL binds an exact Frozen candidate SHA.
 - FAIL returns to the same WP/PR repair loop; it does not authorize skipping ahead.
 - Two independent FAILs exposing the same foundational class trigger architecture re-audit.
+- A FAIL showing that the proof universe can self-shrink or omit material objects by construction is immediately architectural: re-audit the proof boundary before another local patch.
 - Merge is followed by DocSync before the next WP is selected.
 - Backend outage/quota/host-down is recoverable backpressure, not contractual FAIL.
 - Role leases prevent duplicate actors; never steal a live lease.
