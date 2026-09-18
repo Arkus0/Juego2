@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - wp-hk-00-v2
+      - wp-hk-00-v2-chatgpt
   pull_request:
   workflow_dispatch:
 
@@ -61,7 +62,7 @@ jobs:
   self-attacks:
     name: Causal negative controls
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -74,7 +75,10 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${CANDIDATE_SHA}"
       - name: Inject, detect, revert and re-prove causal classes
-        run: bash scripts/self-attacks/run-self-attacks.sh
+        run: |
+          set -euo pipefail
+          bash scripts/self-attacks/run-self-attacks.sh
+          bash scripts/self-attacks/run-terminal-inventory-attack.sh
       - name: Require committed attack summary to match
         run: |
           set -euo pipefail

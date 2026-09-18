@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Arkus.HK00.Proof
 {
@@ -43,21 +43,20 @@ namespace Arkus.HK00.Proof
             startInfo.Environment["MSBUILDDISABLENODEREUSE"] = "1";
 
             using var process = new Process { StartInfo = startInfo };
-            var stdout = new StringBuilder();
-            var stderr = new StringBuilder();
-            process.OutputDataReceived += (_, e) => { if (e.Data is not null) stdout.AppendLine(e.Data); };
-            process.ErrorDataReceived += (_, e) => { if (e.Data is not null) stderr.AppendLine(e.Data); };
-
             if (!process.Start())
             {
                 throw new InvalidOperationException($"Could not start '{fileName}'.");
             }
 
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            // Preserve stdout/stderr exactly. Line-oriented DataReceived handlers append
+            // separators that do not exist in the child output and corrupt NUL-delimited
+            // Git inventories (in particular their final entry).
+            Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
+            Task<string> stderrTask = process.StandardError.ReadToEndAsync();
             process.WaitForExit();
+            Task.WaitAll(stdoutTask, stderrTask);
 
-            var result = new ProcessResult(process.ExitCode, stdout.ToString(), stderr.ToString());
+            var result = new ProcessResult(process.ExitCode, stdoutTask.Result, stderrTask.Result);
             if (throwOnFailure && result.ExitCode != 0)
             {
                 throw new InvalidOperationException(
