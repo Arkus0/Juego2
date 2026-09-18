@@ -65,6 +65,7 @@ namespace Arkus.HK00.Proof
             ".github/workflows/hk00-ci.yml",
             "scripts/proof.sh",
             "scripts/self-attacks/run-self-attacks.sh",
+            "scripts/self-attacks/run-closure-attacks.sh",
             "scripts/self-attacks/run-terminal-inventory-attack.sh",
             "tools/Arkus.HK00.Proof/Arkus.HK00.Proof.csproj",
         };
