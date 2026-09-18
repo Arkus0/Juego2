@@ -232,8 +232,8 @@ namespace Arkus.HK00.Proof
                     continue;
                 }
 
-                var open = line.LastIndexOf('[', StringComparison.Ordinal);
-                var close = line.LastIndexOf(']', StringComparison.Ordinal);
+                var open = line.LastIndexOf('[');
+                var close = line.LastIndexOf(']');
                 if (open >= 0 && close > open)
                 {
                     var baseDirectory = line.Substring(open + 1, close - open - 1);
