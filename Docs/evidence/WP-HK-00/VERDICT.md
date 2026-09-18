@@ -67,6 +67,21 @@ byte-identical to the ones generated locally on 8.0.131, which is what the
 This evidence commit adds only this record; it changes no code, no manifest and
 no inventory.
 
+### Freeze against current main
+
+The candidate was afterwards merged with the then-current `main`
+(`89104b0`), which had added the Worker/Reviewer protocol, the PR template and
+the automation workflows while this workpack was being implemented. The merge
+touched no file this workpack owns, and the merged tree was re-proved from a
+clean `artifacts/`: proof green across all four phases with 0 findings, 69 tests
+passed, inventories byte-identical to the committed ones.
+
+Per `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`, GitHub is the handoff surface:
+the **Frozen candidate SHA**, its CI run and the Worker state live in the pull
+request handoff block. The implementation itself has not changed since
+`7aa70698bd48f9d2f8f42a1bfbee263b19cf1dab`, whose exact-SHA CI evidence is
+recorded above; everything after it is the merge plus this record.
+
 ## What a Reviewer should attack first
 
 Stated deliberately, because the standard asks the Reviewer to find an omission
