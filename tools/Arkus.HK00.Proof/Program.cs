@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace Arkus.HK00.Proof
 {
@@ -72,14 +74,29 @@ namespace Arkus.HK00.Proof
                     additionalFindings += OutputIntegrityChecks.Run(root, configuration);
                 }
 
+                var findingCount = runner.Findings.Count + additionalFindings;
+
                 if (inventory is not null || report is not null)
                 {
-                    runner.WriteEvidence(
-                        inventory ?? Path.Combine(root, "artifacts", "proof", "inventory"),
-                        report ?? Path.Combine(root, "artifacts", "proof", "report.json"));
+                    var inventoryPath = inventory ?? Path.Combine(root, "artifacts", "proof", "inventory");
+                    var reportPath = report ?? Path.Combine(root, "artifacts", "proof", "report.json");
+                    runner.WriteEvidence(inventoryPath, reportPath);
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
+                    var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+                    var evidenceReport = new
+                    {
+                        CandidateSha = ProcessExec.Run("git", new[] { "rev-parse", "HEAD" }, root).Stdout.Trim(),
+                        Configuration = configuration,
+                        RunningSdk = ProcessExec.Run("dotnet", new[] { "--version" }, root).Stdout.Trim(),
+                        CoreFindingCount = runner.Findings.Count,
+                        AdditionalFindingCount = additionalFindings,
+                        FindingCount = findingCount,
+                        CoreFindings = runner.Findings.Select(f => new { f.Id, f.Phase, f.Subject, f.Message }).ToArray(),
+                    };
+                    File.WriteAllText(reportPath, JsonSerializer.Serialize(evidenceReport, jsonOptions) + Environment.NewLine);
                 }
 
-                var findingCount = runner.Findings.Count + additionalFindings;
                 if (findingCount != 0)
                 {
                     Console.Error.WriteLine($"HK00 proof FAILED with {findingCount} finding(s).");

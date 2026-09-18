@@ -3,8 +3,7 @@ name: HK00 CI
 on:
   push:
     branches:
-      - wp-hk-00-v2
-      - wp-hk-00-v2-chatgpt
+      - wp-hk-00-v3-chatgpt-isolated
   pull_request:
   workflow_dispatch:
 
@@ -39,23 +38,22 @@ jobs:
           test "${actual}" = "${CANDIDATE_SHA}"
           test "$(dotnet --version)" = "8.0.425"
           dotnet --list-runtimes | grep -Fq 'Microsoft.NETCore.App 8.0.31 '
-      - name: Run proof pipeline
+      - name: Run read-only proof pipeline
         run: bash scripts/proof.sh
-      - name: Require committed inventory to match observation
+      - name: Require committed inventory to equal observation
         run: |
           set -euo pipefail
-          status="$(git status --porcelain -- Docs/evidence/WP-HK-00/inventory)"
-          if [[ -n "${status}" ]]; then
-            echo "Inventory drift:" >&2
-            echo "${status}" >&2
-            exit 1
-          fi
+          test -d artifacts/observed/inventory
+          diff -ru Docs/evidence/WP-HK-00/inventory artifacts/observed/inventory
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
       - name: Upload proof evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: hk00-proof-${{ env.CANDIDATE_SHA }}
           path: |
+            artifacts/observed
             artifacts/proof
             artifacts/bootstrap-proof
             Docs/evidence/WP-HK-00/inventory
@@ -78,23 +76,22 @@ jobs:
           test "$(git rev-parse HEAD)" = "${CANDIDATE_SHA}"
           test "$(dotnet --version)" = "8.0.425"
           dotnet --list-runtimes | grep -Fq 'Microsoft.NETCore.App 8.0.31 '
-      - name: Inject, detect, reconstruct and re-prove 33 causal classes
-        run: bash scripts/self-attacks/run-all-self-attacks.sh
-      - name: Require committed attack summary to match
+      - name: Inject, detect, reconstruct and re-prove 33 causal classes in disposable copy
+        run: bash scripts/self-attacks/run-readonly-self-attacks.sh
+      - name: Require committed attack summary to equal observation
         run: |
           set -euo pipefail
-          status="$(git status --porcelain -- Docs/evidence/WP-HK-00/self-attacks/results.md)"
-          if [[ -n "${status}" ]]; then
-            echo "Self-attack summary drift:" >&2
-            echo "${status}" >&2
-            exit 1
-          fi
+          test -f artifacts/observed/self-attacks/results.md
+          diff -u Docs/evidence/WP-HK-00/self-attacks/results.md artifacts/observed/self-attacks/results.md
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
       - name: Upload attack evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: hk00-self-attacks-${{ env.CANDIDATE_SHA }}
           path: |
+            artifacts/observed/self-attacks
             artifacts/self-attacks/logs
             Docs/evidence/WP-HK-00/self-attacks/results.md
           if-no-files-found: warn
