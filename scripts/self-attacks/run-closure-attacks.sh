@@ -8,7 +8,7 @@ PRISTINE="${WORK}/closure-pristine"
 SANDBOX="${WORK}/closure-sandbox"
 LOGDIR="${WORK}/logs"
 RESULTS="${ROOT}/Docs/evidence/WP-HK-00/self-attacks/results.md"
-TOOL_DLL="${ROOT}/tools/Arkus.HK00.Proof/bin/${CONFIGURATION}/net8.0/Arkus.HK00.Proof.dll"
+TOOL_DLL="${ROOT}/artifacts/bootstrap-proof/Arkus.HK00.Proof.dll"
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_NOLOGO=1
@@ -33,6 +33,17 @@ fresh() {
   git -C "${SANDBOX}" config user.email "hk00@example.invalid"
   git -C "${SANDBOX}" add -A
   git -C "${SANDBOX}" commit -qm pristine
+}
+
+insert_xml() {
+  local file="$1" snippet="$2"
+  python3 - "$file" "$snippet" <<'PY'
+import sys
+p,s=sys.argv[1],sys.argv[2]
+t=open(p).read()
+assert '</Project>' in t
+open(p,'w').write(t.replace('</Project>',s+'\n</Project>',1))
+PY
 }
 
 run_guard() {
@@ -60,10 +71,24 @@ expect_red() {
 
 record() {
   printf '| `%s` | `%s` | RED on injection → pristine reconstruction → GREEN |\n' "$1" "$2" >>"${RESULTS}"
+  echo "PASS $1"
+}
+
+revert_green() {
+  local phase="$1" name="$2"
+  fresh
+  expect_green "${phase}" "${LOGDIR}/${name}-green.log"
+}
+
+prepare_built() {
+  (cd "${SANDBOX}" && dotnet msbuild Juego2.sln -nologo -noAutoResponse -t:Restore -p:Configuration="${CONFIGURATION}" >/dev/null)
+  (cd "${SANDBOX}" && dotnet msbuild Juego2.sln -nologo -noAutoResponse -t:Rebuild -p:Configuration="${CONFIGURATION}" >/dev/null)
 }
 
 rm -rf "${PRISTINE}" "${SANDBOX}"
 copy_clean_tree "${ROOT}" "${PRISTINE}"
+[[ -f "${TOOL_DLL}" ]] || bash "${ROOT}/scripts/build-proof-oracle.sh" >/dev/null
+mkdir -p "${LOGDIR}"
 
 fresh
 expect_green repository "${LOGDIR}/closure-baseline-repository.log"
@@ -72,8 +97,7 @@ expect_green static "${LOGDIR}/closure-baseline-static.log"
 fresh
 (cd "${SANDBOX}" && dotnet sln Juego2.sln remove src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj >/dev/null)
 expect_red repository HK00-SOLUTION-MISSING-PROJECT "${LOGDIR}/solution-omits-fixed-project-red.log"
-fresh
-expect_green repository "${LOGDIR}/solution-omits-fixed-project-green.log"
+revert_green repository solution-omits-fixed-project
 record solution-omits-fixed-project HK00-SOLUTION-MISSING-PROJECT
 
 fresh
@@ -83,9 +107,83 @@ cat >"${SANDBOX}/Directory.Build.targets" <<'XML'
 </Project>
 XML
 git -C "${SANDBOX}" add Directory.Build.targets
-expect_red static HK00-MSBUILD-IMPORT-UNTRUSTED "${LOGDIR}/auto-directory-build-target-red.log"
-fresh
-expect_green static "${LOGDIR}/auto-directory-build-target-green.log"
-record auto-directory-build-target HK00-MSBUILD-IMPORT-UNTRUSTED
+expect_red repository HK00-MSBUILD-FILE-UNCLASSIFIED "${LOGDIR}/auto-directory-build-target-red.log"
+revert_green repository auto-directory-build-target
+record auto-directory-build-target HK00-MSBUILD-FILE-UNCLASSIFIED
 
-echo "all 2 closure attacks passed"
+fresh
+mkdir -p "${SANDBOX}/outside/Rogue"
+cat >"${SANDBOX}/outside/Rogue/Rogue.fsproj" <<'XML'
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup>
+</Project>
+XML
+git -C "${SANDBOX}" add outside/Rogue/Rogue.fsproj
+(cd "${SANDBOX}" && dotnet sln Juego2.sln add outside/Rogue/Rogue.fsproj >/dev/null)
+expect_red repository HK00-SOLUTION-UNEXPECTED-PROJECT "${LOGDIR}/solution-noncsharp-participant-red.log"
+revert_green repository solution-noncsharp-participant
+record solution-noncsharp-participant HK00-SOLUTION-UNEXPECTED-PROJECT
+
+fresh
+mkdir -p "${SANDBOX}/outside"
+echo '<Project />' >"${SANDBOX}/outside/Hidden.xyz"
+git -C "${SANDBOX}" add outside/Hidden.xyz
+expect_red repository HK00-MSBUILD-FILE-UNCLASSIFIED "${LOGDIR}/unclassified-msbuild-project-red.log"
+revert_green repository unclassified-msbuild-project
+record unclassified-msbuild-project HK00-MSBUILD-FILE-UNCLASSIFIED
+
+fresh
+insert_xml "${SANDBOX}/tools/Arkus.HK00.Proof/Arkus.HK00.Proof.csproj" \
+  '  <Target Name="ReplaceProofCompile" BeforeTargets="CoreCompile"><ItemGroup><Compile Remove="Contract.cs" /></ItemGroup></Target>'
+expect_red repository HK00-BUILD-XML-SHAPE "${LOGDIR}/proof-project-inline-target-red.log"
+revert_green repository proof-project-inline-target
+record proof-project-inline-target HK00-BUILD-XML-SHAPE
+
+fresh
+echo '-p:TreatWarningsAsErrors=false' >"${SANDBOX}/Directory.Build.rsp"
+git -C "${SANDBOX}" add Directory.Build.rsp
+expect_red repository HK00-BUILD-RESPONSE-FILE "${LOGDIR}/repository-response-file-red.log"
+revert_green repository repository-response-file
+record repository-response-file HK00-BUILD-RESPONSE-FILE
+
+fresh
+cp "${SANDBOX}/Juego2.sln" "${SANDBOX}/Alternate.sln"
+git -C "${SANDBOX}" add Alternate.sln
+expect_red repository HK00-ALT-SOLUTION-ENTRYPOINT "${LOGDIR}/alternate-solution-entrypoint-red.log"
+revert_green repository alternate-solution-entrypoint
+record alternate-solution-entrypoint HK00-ALT-SOLUTION-ENTRYPOINT
+
+fresh
+insert_xml "${SANDBOX}/src/Arkus.Game.Core/Arkus.Game.Core.csproj" \
+  '  <ItemGroup><AddModules Include="rogue.netmodule" /></ItemGroup>'
+expect_red repository HK00-BUILD-XML-SHAPE "${LOGDIR}/unclassified-compiler-input-item-red.log"
+revert_green repository unclassified-compiler-input-item
+record unclassified-compiler-input-item HK00-BUILD-XML-SHAPE
+
+fresh
+prepare_built
+MAL="${WORK}/malicious-output"
+rm -rf "${MAL}"
+mkdir -p "${MAL}"
+cat >"${MAL}/Malicious.csproj" <<'XML'
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Arkus.Game.Core</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+</Project>
+XML
+echo 'namespace Arkus.Game.Core { public static class Replaced { public static int Value => 7; } }' >"${MAL}/Replaced.cs"
+dotnet build "${MAL}/Malicious.csproj" -c Release -noAutoResponse -v quiet >/dev/null
+cp "${MAL}/bin/Release/netstandard2.1/Arkus.Game.Core.dll" \
+   "${SANDBOX}/src/Arkus.Game.Core/bin/Release/netstandard2.1/Arkus.Game.Core.dll"
+expect_red output HK00-PDB-PE-MISMATCH "${LOGDIR}/postcompile-output-substitution-red.log"
+fresh
+prepare_built
+expect_green output "${LOGDIR}/postcompile-output-substitution-green.log"
+record postcompile-output-substitution HK00-PDB-PE-MISMATCH
+
+echo "all 9 closure/build-boundary attacks passed"

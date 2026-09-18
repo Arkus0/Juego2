@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
           global-json-file: global.json
-      - name: Verify exact candidate
+      - name: Verify exact candidate and pinned toolchain
         run: |
           set -euo pipefail
           actual="$(git rev-parse HEAD)"
@@ -38,6 +38,7 @@ jobs:
           echo "expected=${CANDIDATE_SHA}"
           test "${actual}" = "${CANDIDATE_SHA}"
           test "$(dotnet --version)" = "8.0.425"
+          dotnet --list-runtimes | grep -Fq 'Microsoft.NETCore.App 8.0.31 '
       - name: Run proof pipeline
         run: bash scripts/proof.sh
       - name: Require committed inventory to match observation
@@ -56,6 +57,7 @@ jobs:
           name: hk00-proof-${{ env.CANDIDATE_SHA }}
           path: |
             artifacts/proof
+            artifacts/bootstrap-proof
             Docs/evidence/WP-HK-00/inventory
           if-no-files-found: warn
 
@@ -70,17 +72,14 @@ jobs:
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
           global-json-file: global.json
-      - name: Verify exact candidate
+      - name: Verify exact candidate and pinned toolchain
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${CANDIDATE_SHA}"
           test "$(dotnet --version)" = "8.0.425"
-      - name: Inject, detect, revert and re-prove causal classes
-        run: |
-          set -euo pipefail
-          bash scripts/self-attacks/run-self-attacks.sh
-          bash scripts/self-attacks/run-closure-attacks.sh
-          bash scripts/self-attacks/run-terminal-inventory-attack.sh
+          dotnet --list-runtimes | grep -Fq 'Microsoft.NETCore.App 8.0.31 '
+      - name: Inject, detect, reconstruct and re-prove 30 causal classes
+        run: bash scripts/self-attacks/run-all-self-attacks.sh
       - name: Require committed attack summary to match
         run: |
           set -euo pipefail

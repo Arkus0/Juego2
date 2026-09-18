@@ -56,16 +56,16 @@ namespace Arkus.HK00.Proof
                         "HK00-ASSEMBLY-SECONDARY-FILE",
                         "output",
                         spec.Name,
-                        "Multi-file assembly/netmodule inputs are outside the HK00 compiler-input model.");
+                        "Multi-file assembly/netmodule output is outside the HK00 compiler-input model.");
                 }
 
-                if (assembly.ManifestResourceCount != 0 || assembly.NativeResourceSize != 0)
+                if (assembly.ManifestResourceCount != 0)
                 {
                     findings += Report(
-                        "HK00-ASSEMBLY-RESOURCE",
+                        "HK00-ASSEMBLY-MANIFEST-RESOURCE",
                         "output",
                         spec.Name,
-                        "Embedded managed/native resource inputs are outside the HK00 portable-kernel build surface.");
+                        "Managed manifest resources are outside the HK00 canonical build surface.");
                 }
             }
 

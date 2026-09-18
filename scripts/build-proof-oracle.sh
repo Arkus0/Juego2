@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SDK_VERSION="8.0.425"
+RUNTIME_VERSION="8.0.31"
 OUT="${ROOT}/artifacts/bootstrap-proof"
 DLL="${OUT}/Arkus.HK00.Proof.dll"
 PDB="${OUT}/Arkus.HK00.Proof.pdb"
@@ -36,14 +37,13 @@ csc="${sdk_dir}/Roslyn/bincore/csc.dll"
 [[ -f "${csc}" ]] || { echo "BOOTSTRAP FAIL: csc.dll missing at ${csc}" >&2; exit 2; }
 
 dotnet_root="$(dirname "${sdk_base}")"
-ref_dir="$(
-  find "${dotnet_root}/packs/Microsoft.NETCore.App.Ref" \
-    -mindepth 3 -maxdepth 3 -type d -path '*/ref/net8.0' -print |
-  sort -V |
-  tail -n 1
-)"
-[[ -n "${ref_dir}" && -d "${ref_dir}" ]] || {
-  echo "BOOTSTRAP FAIL: net8.0 reference pack not found under ${dotnet_root}" >&2
+ref_dir="${dotnet_root}/packs/Microsoft.NETCore.App.Ref/${RUNTIME_VERSION}/ref/net8.0"
+[[ -d "${ref_dir}" ]] || {
+  echo "BOOTSTRAP FAIL: exact ref pack ${RUNTIME_VERSION} missing at ${ref_dir}" >&2
+  exit 2
+}
+dotnet --list-runtimes | grep -Fq "Microsoft.NETCore.App ${RUNTIME_VERSION} [${dotnet_root}/shared/Microsoft.NETCore.App]" || {
+  echo "BOOTSTRAP FAIL: exact runtime ${RUNTIME_VERSION} is unavailable" >&2
   exit 2
 }
 
@@ -96,15 +96,15 @@ cmp -s "${before}" "${after}" || {
   exit 2
 }
 
-cat >"${RUNTIMECONFIG}" <<'JSON'
+cat >"${RUNTIMECONFIG}" <<JSON
 {
   "runtimeOptions": {
     "tfm": "net8.0",
     "framework": {
       "name": "Microsoft.NETCore.App",
-      "version": "8.0.0"
+      "version": "${RUNTIME_VERSION}"
     },
-    "rollForward": "LatestPatch"
+    "rollForward": "Disable"
   }
 }
 JSON
@@ -115,4 +115,4 @@ JSON
 }
 
 printf '%s\n' "${sources[@]}" >"${OUT}/sources.txt"
-echo "HK00 proof oracle bootstrapped directly from tracked C# sources with pinned csc."
+echo "HK00 proof oracle bootstrapped directly from tracked C# sources with pinned SDK/ref/runtime."

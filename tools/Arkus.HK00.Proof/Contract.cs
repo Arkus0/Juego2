@@ -13,12 +13,7 @@ namespace Arkus.HK00.Proof
 
     internal sealed class ProjectSpec
     {
-        public ProjectSpec(
-            string name,
-            string path,
-            ProjectKind kind,
-            string[] dependencies,
-            string[] allowedPackages)
+        public ProjectSpec(string name, string path, ProjectKind kind, string[] dependencies, string[] allowedPackages)
         {
             Name = name;
             Path = path;
@@ -41,6 +36,7 @@ namespace Arkus.HK00.Proof
     internal static class FixedContract
     {
         public const string SdkVersion = "8.0.425";
+        public const string RuntimeVersion = "8.0.31";
         public const string SdkRollForward = "disable";
         public const string CanonicalSolution = "Juego2.sln";
 
@@ -75,6 +71,7 @@ namespace Arkus.HK00.Proof
             ".github/workflows/hk00-ci.yml",
             "scripts/build-proof-oracle.sh",
             "scripts/proof.sh",
+            "scripts/self-attacks/run-all-self-attacks.sh",
             "scripts/self-attacks/run-self-attacks.sh",
             "scripts/self-attacks/run-closure-attacks.sh",
             "scripts/self-attacks/run-terminal-inventory-attack.sh",
@@ -90,7 +87,6 @@ namespace Arkus.HK00.Proof
                     return project;
                 }
             }
-
             return null;
         }
 
@@ -104,7 +100,6 @@ namespace Arkus.HK00.Proof
                     return project;
                 }
             }
-
             return null;
         }
     }

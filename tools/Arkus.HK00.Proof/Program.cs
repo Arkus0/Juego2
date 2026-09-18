@@ -19,31 +19,16 @@ namespace Arkus.HK00.Proof
                 {
                     switch (args[i])
                     {
-                        case "--root":
-                            root = args[++i];
-                            break;
-                        case "--configuration":
-                            configuration = args[++i];
-                            break;
-                        case "--phase":
-                            phase = args[++i];
-                            break;
-                        case "--inventory":
-                            inventory = args[++i];
-                            break;
-                        case "--report":
-                            report = args[++i];
-                            break;
-                        default:
-                            throw new ArgumentException("Unknown argument: " + args[i]);
+                        case "--root": root = args[++i]; break;
+                        case "--configuration": configuration = args[++i]; break;
+                        case "--phase": phase = args[++i]; break;
+                        case "--inventory": inventory = args[++i]; break;
+                        case "--report": report = args[++i]; break;
+                        default: throw new ArgumentException("Unknown argument: " + args[i]);
                     }
                 }
 
-                if (phase != "repository"
-                    && phase != "static"
-                    && phase != "effective"
-                    && phase != "output"
-                    && phase != "all")
+                if (phase != "repository" && phase != "static" && phase != "effective" && phase != "output" && phase != "all")
                 {
                     throw new ArgumentException("Unsupported phase: " + phase);
                 }
@@ -75,6 +60,7 @@ namespace Arkus.HK00.Proof
                     runner.RunEffective();
                     additionalFindings += AdditionalChecks.RunEffective(root, configuration);
                     additionalFindings += NonProductEffectiveChecks.Run(root, configuration);
+                    additionalFindings += CompilerInputClosureChecks.Run(root, configuration);
                     additionalFindings += LateBuildChecks.CheckEffectiveCompilerExtensions(root, configuration);
                     additionalFindings += OutputIntegrityChecks.Run(root, configuration);
                     additionalFindings += LateBuildChecks.CheckTrackedBytesStable(root, trackedBeforeBuild!);
@@ -88,9 +74,9 @@ namespace Arkus.HK00.Proof
 
                 if (inventory is not null || report is not null)
                 {
-                    var inventoryDirectory = inventory ?? Path.Combine(root, "artifacts", "proof", "inventory");
-                    var reportPath = report ?? Path.Combine(root, "artifacts", "proof", "report.json");
-                    runner.WriteEvidence(inventoryDirectory, reportPath);
+                    runner.WriteEvidence(
+                        inventory ?? Path.Combine(root, "artifacts", "proof", "inventory"),
+                        report ?? Path.Combine(root, "artifacts", "proof", "report.json"));
                 }
 
                 var findingCount = runner.Findings.Count + additionalFindings;

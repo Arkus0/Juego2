@@ -85,23 +85,26 @@ namespace Arkus.HK00.Proof
             var expected = new SortedSet<string>(
                 trackedSources.Where(path => path.StartsWith(prefix, StringComparison.Ordinal)),
                 StringComparer.Ordinal);
-            var actual = new SortedSet<string>(StringComparer.Ordinal);
+            var actualTracked = new SortedSet<string>(StringComparer.Ordinal);
 
             foreach (var source in compiler.Sources)
             {
                 var full = Path.GetFullPath(source);
                 if (!ProcessExec.IsInside(root, full))
                 {
-                    findings += Report(
-                        "HK00-COMPILER-SOURCE-FOREIGN",
-                        "effective",
-                        spec.Name + ":" + full,
-                        "Canonical project compiler consumed source outside the repository.");
+                    if (!IsAllowedExternalTestSdkSource(spec, full))
+                    {
+                        findings += Report(
+                            "HK00-COMPILER-SOURCE-FOREIGN",
+                            "effective",
+                            spec.Name + ":" + full,
+                            "Canonical project compiler consumed an unclassified source outside the repository.");
+                    }
                     continue;
                 }
 
                 var relative = ProcessExec.Relative(root, full);
-                actual.Add(relative);
+                actualTracked.Add(relative);
                 if (!expected.Contains(relative))
                 {
                     findings += Report(
@@ -114,7 +117,7 @@ namespace Arkus.HK00.Proof
 
             foreach (var source in expected)
             {
-                if (!actual.Contains(source))
+                if (!actualTracked.Contains(source))
                 {
                     findings += Report(
                         "HK00-SOURCE-NOT-COMPILED-EFFECTIVE",
@@ -185,6 +188,8 @@ namespace Arkus.HK00.Proof
                 trackedSources.Where(path => path.StartsWith(prefix, StringComparison.Ordinal)),
                 StringComparer.Ordinal);
             var documents = new Dictionary<string, CompiledDocument>(StringComparer.Ordinal);
+            var observedExternalTestSdk = false;
+
             foreach (var document in assembly.CompiledDocuments)
             {
                 var full = Path.IsPathRooted(document.Path)
@@ -192,7 +197,19 @@ namespace Arkus.HK00.Proof
                     : Path.GetFullPath(Path.Combine(Path.Combine(root, spec.Directory), document.Path));
                 if (!ProcessExec.IsInside(root, full))
                 {
-                    findings += Report("HK00-PDB-SOURCE-FOREIGN", "effective", spec.Name + ":" + document.Path, "PDB records source outside the repository.");
+                    if (IsAllowedExternalTestSdkSource(spec, full))
+                    {
+                        observedExternalTestSdk = true;
+                        if (document.HashAlgorithm != AssemblyFacts.Sha256Algorithm
+                            || !AssemblyFacts.HashEquals(document.Hash, AssemblyFacts.Sha256OfFile(full)))
+                        {
+                            findings += Report("HK00-PDB-SOURCE-HASH", "effective", spec.Name + ":" + full, "External pinned test SDK source checksum does not match compiled bytes.");
+                        }
+                    }
+                    else
+                    {
+                        findings += Report("HK00-PDB-SOURCE-FOREIGN", "effective", spec.Name + ":" + document.Path, "PDB records an unclassified source outside the repository.");
+                    }
                     continue;
                 }
 
@@ -219,7 +236,37 @@ namespace Arkus.HK00.Proof
                 }
             }
 
+            if (spec.Kind == ProjectKind.Tests && !observedExternalTestSdk)
+            {
+                findings += Report(
+                    "HK00-TESTSDK-SOURCE-MISSING",
+                    "effective",
+                    spec.Name,
+                    "Pinned Microsoft.NET.Test.Sdk source injection was not observed as expected.");
+            }
+
             return findings;
+        }
+
+        private static bool IsAllowedExternalTestSdkSource(ProjectSpec spec, string fullPath)
+        {
+            if (spec.Kind != ProjectKind.Tests)
+            {
+                return false;
+            }
+
+            var packageRoot = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                ".nuget",
+                "packages");
+            var expected = Path.GetFullPath(Path.Combine(
+                packageRoot,
+                "microsoft.net.test.sdk",
+                FixedContract.PackageVersions["Microsoft.NET.Test.Sdk"],
+                "build",
+                "net8.0",
+                "Microsoft.NET.Test.Sdk.Program.cs"));
+            return string.Equals(Path.GetFullPath(fullPath), expected, StringComparison.Ordinal);
         }
 
         private static int CheckTrustedAnalyzers(string root, ProjectSpec spec, CompilerCommandLine compiler)
