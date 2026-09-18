@@ -1,10 +1,23 @@
 # ChatGPT Work / Mobile Automation — Juego2
 
-Version: 1.0 — 2026-09-18
+Version: 1.1 — 2026-09-18
 
 These are the canonical trigger/condition/prompt contracts for cloud automation. Provider UI configuration is an adapter; GitHub state remains authoritative.
 
+## Required model profile for H0
+
+For every `HK-*` workpack through `WP-HK-GATE`:
+
+- any `WORKER` or `REPAIR_WORKER` task: **GPT-5.6 Sol · Extra High**;
+- any independent `REVIEWER` task: **GPT-5.6 Sol · Extra High**.
+
+This is a task configuration requirement, not wording inside the prompt. Do not silently fall back to another model/reasoning level. If the profile is unavailable, leave the GitHub transition pending and persist `HUMAN_ACTION_REQUIRED: REQUIRED_MODEL_UNAVAILABLE`.
+
+Finalizer, routine DocSync and recovery may use a cheaper configuration when mechanically constrained.
+
 ## 1. Juego2 Review Ready
+
+**Model:** GPT-5.6 Sol · Extra High for H0.
 
 **Trigger:** pull request marked Ready for review.
 
@@ -17,6 +30,8 @@ Trabaja sobre Arkus0/Juego2. Actúa exclusivamente como Reviewer independiente d
 ```
 
 ## 2. Juego2 Review Fail Repair
+
+**Model:** GPT-5.6 Sol · Extra High for H0.
 
 **Trigger:** review/comment persists `Reviewer verdict: FAIL`.
 
