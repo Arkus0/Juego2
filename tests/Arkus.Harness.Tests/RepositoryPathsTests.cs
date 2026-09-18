@@ -88,5 +88,32 @@ namespace Arkus.Harness.Tests
                 Directory.Delete(root, true);
             }
         }
+
+        [Fact]
+        public void ExtensionEnumerationIsCaseInsensitiveOnLinuxToo()
+        {
+            var root = Path.Combine(Path.GetTempPath(), "arkus-case-scan-" + System.Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);
+
+            try
+            {
+                var source = Path.Combine(root, "Rogue.CS");
+                var project = Path.Combine(root, "Rogue.CSPROJ");
+                File.WriteAllText(source, "// source");
+                File.WriteAllText(project, "<Project />");
+
+                var sources = RepositoryPaths.EnumerateFiles(root, "*.cs", System.Array.Empty<string>());
+                var projects = RepositoryPaths.EnumerateFiles(root, "*.csproj", System.Array.Empty<string>());
+
+                Assert.Single(sources);
+                Assert.Equal(Path.GetFullPath(source), sources[0]);
+                Assert.Single(projects);
+                Assert.Equal(Path.GetFullPath(project), projects[0]);
+            }
+            finally
+            {
+                Directory.Delete(root, true);
+            }
+        }
     }
 }

@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 #
-# WP-HK-00 causal completeness attacks added after the independent review found
-# that manifest-owned sourceScanRoots could shrink the universe being proved.
+# WP-HK-00 causal attacks for repository/proof-boundary completeness.
 #
-# These attacks target omission classes specifically: project/source outside the
-# old roots, and source hidden below a recursively excluded directory name.
-# Each attack must turn the intended guard red, then revert byte-exactly and
-# prove green again.
+# The original Reviewer failure exposed a self-shrinkable proof universe. These
+# attacks cover that omission class and equivalent ways to hide projects/sources
+# from a Linux proof: arbitrary paths, nested excluded-name directories,
+# extension casing, excluded root-level artifacts, symlinks and untracked files.
 #
 set -euo pipefail
 
@@ -16,6 +15,7 @@ WORK="${COMPLETENESS_ATTACK_WORKDIR:-${ROOT}/artifacts/completeness-attacks}"
 PRISTINE="${WORK}/pristine"
 SANDBOX="${WORK}/sandbox"
 EVIDENCE="${ROOT}/Docs/evidence/WP-HK-00/self-attacks"
+RESULTS="${EVIDENCE}/completeness-results.md"
 PROOF_TOOL_DLL="${ROOT}/artifacts/bin/Arkus.Kernel.Proof.Tool/${CONFIGURATION,,}/Arkus.Kernel.Proof.Tool.dll"
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
@@ -72,23 +72,29 @@ revert_attack() {
     if [[ ! -e "${PRISTINE}/${rel}" ]]; then
       rm -f "${SANDBOX}/${rel}"
     fi
-  done < <(cd "${SANDBOX}" && find . -path ./artifacts -prune -o -type f -print)
+  done < <(cd "${SANDBOX}" && find . -path ./artifacts -prune -o -path ./.git -prune -o -type f -print)
 
   while IFS= read -r rel; do
     if [[ "${rel}" != "." && ! -d "${PRISTINE}/${rel}" ]]; then
       rmdir "${SANDBOX}/${rel}" 2>/dev/null || true
     fi
-  done < <(cd "${SANDBOX}" && find . -path ./artifacts -prune -o -type d -print | sort -r)
+  done < <(cd "${SANDBOX}" && find . -path ./artifacts -prune -o -path ./.git -prune -o -type d -print | sort -r)
 }
 
 prove_revert_is_exact() {
   local logfile="$1"
-  if ! diff -r --exclude=artifacts "${PRISTINE}" "${SANDBOX}" >>"${logfile}" 2>&1; then
+  if ! diff -r --exclude=artifacts --exclude=.git "${PRISTINE}" "${SANDBOX}" >>"${logfile}" 2>&1; then
     fail "sandbox is not byte-identical to pristine after revert"
   fi
 }
 
-run_attack() {
+record_pass() {
+  local name="$1" oracle="$2"
+  printf '| `%s` | %s | PASS |\n' "${name}" "${oracle}" >>"${RESULTS}"
+  printf 'PASS  %s\n' "${name}"
+}
+
+run_proof_attack() {
   local name="$1" description="$2" expected="$3"
   local logfile="${EVIDENCE}/${name}.log"
 
@@ -96,6 +102,7 @@ run_attack() {
   {
     printf '# self-attack: %s\n' "${name}"
     printf '# %s\n' "${description}"
+    printf '# oracle: C# kernel proof\n'
     printf '# configuration: %s\n' "${CONFIGURATION}"
     printf '\n--- 1. inject defect ---\n'
   } >"${logfile}"
@@ -135,8 +142,27 @@ namespace Arkus.Game.Core
 }
 CS
       ;;
+    uppercase-source-extension)
+      mkdir -p "${SANDBOX}/Docs/rogue-source"
+      cat >"${SANDBOX}/Docs/rogue-source/Orphan.CS" <<'CS'
+namespace RogueCase
+{
+    public static class Orphan { }
+}
+CS
+      ;;
+    uppercase-project-extension)
+      mkdir -p "${SANDBOX}/outside-old-roots/CaseProject"
+      cat >"${SANDBOX}/outside-old-roots/CaseProject/CaseProject.CSPROJ" <<'XML'
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+</Project>
+XML
+      ;;
     *)
-      fail "unknown attack ${name}"
+      fail "unknown proof attack ${name}"
       ;;
   esac
 
@@ -164,7 +190,91 @@ CS
 
   printf '\n--- result: RED on injection, GREEN after revert ---\n' >>"${logfile}"
   sanitize_log "${logfile}"
-  printf 'PASS  %s\n' "${name}"
+  record_pass "${name}" "C# proof"
+}
+
+init_boundary_git() {
+  rm -rf "${SANDBOX}/.git"
+  git -C "${SANDBOX}" init -q
+  git -C "${SANDBOX}" config user.name "HK00 Self Attack"
+  git -C "${SANDBOX}" config user.email "hk00-self-attack@example.invalid"
+  git -C "${SANDBOX}" add -A
+}
+
+run_boundary_oracle() {
+  local logfile="$1"
+  set +e
+  (cd "${SANDBOX}" && bash scripts/proof-repository-boundary.sh) >>"${logfile}" 2>&1
+  local code=$?
+  set -e
+  return ${code}
+}
+
+run_boundary_attack() {
+  local name="$1" description="$2" expected="$3"
+  local logfile="${EVIDENCE}/${name}.log"
+
+  copy_tree "${PRISTINE}" "${SANDBOX}"
+  init_boundary_git
+  {
+    printf '# self-attack: %s\n' "${name}"
+    printf '# %s\n' "${description}"
+    printf '# oracle: independent Git/checkout boundary oracle\n'
+    printf '\n--- 1. pristine oracle must be green ---\n'
+  } >"${logfile}"
+
+  if ! run_boundary_oracle "${logfile}"; then
+    fail "${name}: pristine boundary oracle is not green"
+  fi
+
+  printf '\n--- 2. inject defect ---\n' >>"${logfile}"
+  case "${name}" in
+    tracked-source-under-artifacts)
+      mkdir -p "${SANDBOX}/artifacts"
+      printf 'namespace RogueArtifacts { public static class Smuggled { } }\n' >"${SANDBOX}/artifacts/Smuggled.cs"
+      git -C "${SANDBOX}" add -f artifacts/Smuggled.cs
+      ;;
+    tracked-symlink)
+      ln -s "src/Arkus.Game.Core/CoreModule.cs" "${SANDBOX}/LinkedCore.cs"
+      git -C "${SANDBOX}" add LinkedCore.cs
+      ;;
+    untracked-source-in-checkout)
+      mkdir -p "${SANDBOX}/loose"
+      printf 'namespace Loose { public static class Untracked { } }\n' >"${SANDBOX}/loose/Untracked.cs"
+      ;;
+    boundary-uppercase-source)
+      printf 'namespace RogueCase { public static class Upper { } }\n' >"${SANDBOX}/Upper.CS"
+      git -C "${SANDBOX}" add Upper.CS
+      ;;
+    *)
+      fail "unknown boundary attack ${name}"
+      ;;
+  esac
+
+  printf '\n--- 3. oracle must turn red for the intended reason ---\n' >>"${logfile}"
+  set +e
+  (cd "${SANDBOX}" && bash scripts/proof-repository-boundary.sh) >>"${logfile}" 2>&1
+  local code=$?
+  set -e
+  if [[ ${code} -eq 0 ]]; then
+    fail "${name}: boundary oracle stayed green"
+  fi
+  if ! grep -Fq "${expected}" "${logfile}"; then
+    fail "${name}: expected ${expected} was not reported"
+  fi
+
+  printf '\n--- 4. revert defect byte-exactly and re-prove green ---\n' >>"${logfile}"
+  rm -rf "${SANDBOX}/.git"
+  revert_attack
+  prove_revert_is_exact "${logfile}"
+  init_boundary_git
+  if ! run_boundary_oracle "${logfile}"; then
+    fail "${name}: boundary oracle is not green after revert"
+  fi
+
+  printf '\n--- result: RED on injection, GREEN after revert ---\n' >>"${logfile}"
+  sanitize_log "${logfile}"
+  record_pass "${name}" "independent boundary oracle"
 }
 
 main() {
@@ -175,6 +285,13 @@ main() {
   mkdir -p "${WORK}" "${EVIDENCE}"
   copy_tree "${ROOT}" "${PRISTINE}"
   copy_tree "${PRISTINE}" "${SANDBOX}"
+
+  cat >"${RESULTS}" <<'MD'
+# WP-HK-00 repository-completeness causal attacks
+
+| Attack | Oracle | Result |
+|---|---|---|
+MD
 
   local baseline="${EVIDENCE}/completeness-baseline.log"
   printf '# completeness baseline: pristine sandbox must build and prove green\n' >"${baseline}"
@@ -187,22 +304,52 @@ main() {
   sanitize_log "${baseline}"
   printf 'PASS  completeness baseline\n'
 
-  run_attack \
+  run_proof_attack \
     project-outside-legacy-roots \
     "A C# project and source are added outside the former src/tests/tools scan roots." \
     "HK00-MANIFEST-PROJECT-UNDECLARED HK00-SOURCE-UNCLASSIFIED"
 
-  run_attack \
+  run_proof_attack \
     source-outside-legacy-roots \
-    "A production-looking C# source is added under Docs, outside the former scan roots." \
+    "A C# source is added under Docs, outside the former scan roots." \
     "HK00-SOURCE-UNCLASSIFIED"
 
-  run_attack \
+  run_proof_attack \
     nested-excluded-directory-source \
     "Owned source is hidden below a nested obj directory; recursive exclusion must not hide it." \
     "HK00-SOURCE-NOT-COMPILED-STATIC"
 
-  printf 'all 3 completeness self-attacks passed\n'
+  run_proof_attack \
+    uppercase-source-extension \
+    "A source uses .CS casing that Linux globbing could otherwise omit." \
+    "HK00-SOURCE-UNCLASSIFIED"
+
+  run_proof_attack \
+    uppercase-project-extension \
+    "A project uses .CSPROJ casing that Linux globbing could otherwise omit." \
+    "HK00-MANIFEST-PROJECT-UNDECLARED"
+
+  run_boundary_attack \
+    tracked-source-under-artifacts \
+    "A tracked C# file is placed under the root artifacts workspace excluded from the C# inventory." \
+    "HK00-BOUNDARY-TRACKED-ARTIFACT"
+
+  run_boundary_attack \
+    tracked-symlink \
+    "A tracked source-like path is a symlink rather than owned bytes in the candidate commit." \
+    "HK00-BOUNDARY-SYMLINK"
+
+  run_boundary_attack \
+    untracked-source-in-checkout \
+    "A physical C# source exists in the checkout but is absent from the candidate commit." \
+    "HK00-BOUNDARY-UNTRACKED-SOURCE"
+
+  run_boundary_attack \
+    boundary-uppercase-source \
+    "A tracked source uses non-canonical extension casing; the independent oracle must reject it too." \
+    "HK00-BOUNDARY-NONCANONICAL-CASE"
+
+  printf 'all 9 repository-completeness self-attacks passed\n'
 }
 
 main "$@"

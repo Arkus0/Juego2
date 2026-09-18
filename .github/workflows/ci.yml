@@ -1,8 +1,8 @@
 name: CI
 
-# WP-HK-00 requires a clean, headless, Linux proof from an exact commit. Every
-# job below fails closed: a missing project, test project or proof tool is a
-# failure, never a smaller passing run.
+# WP-HK-00 requires a clean, headless, Linux proof from the exact candidate
+# commit. Every job below fails closed: a missing project, test project, proof
+# tool or repository-boundary oracle is a failure, never a smaller passing run.
 
 on:
   push:
@@ -23,6 +23,7 @@ env:
   DOTNET_NOLOGO: "1"
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
   CONFIGURATION: Release
+  CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
 jobs:
   kernel-proof:
@@ -33,15 +34,21 @@ jobs:
     steps:
       - name: Check out the exact candidate commit
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CANDIDATE_SHA }}
 
       - name: Install the pinned SDK
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
 
-      - name: Record candidate SHA and toolchain
+      - name: Record and verify candidate SHA and toolchain
         run: |
-          echo "candidate sha: ${GITHUB_SHA}"
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          echo "candidate sha: ${actual}"
+          echo "expected sha:  ${CANDIDATE_SHA}"
+          test "${actual}" = "${CANDIDATE_SHA}"
           dotnet --version
           dotnet --list-sdks
 
@@ -56,6 +63,7 @@ jobs:
             Directory.Packages.props
             Juego2.sln
             scripts/proof.sh
+            scripts/proof-repository-boundary.sh
             scripts/self-attacks/run-self-attacks.sh
             scripts/self-attacks/run-completeness-attacks.sh
             tools/Arkus.Kernel.Proof.Tool/Arkus.Kernel.Proof.Tool.csproj
@@ -97,6 +105,16 @@ jobs:
     steps:
       - name: Check out the exact candidate commit
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CANDIDATE_SHA }}
+
+      - name: Verify candidate SHA
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          echo "candidate sha: ${actual}"
+          echo "expected sha:  ${CANDIDATE_SHA}"
+          test "${actual}" = "${CANDIDATE_SHA}"
 
       - name: Install the pinned SDK
         uses: actions/setup-dotnet@v4

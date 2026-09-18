@@ -71,6 +71,10 @@ namespace Arkus.Kernel.Proof
         /// accidental proof escape hatch. The fixed proof policy excludes only
         /// top-level <c>.git</c> metadata and the top-level generated
         /// <c>artifacts</c> workspace.
+        ///
+        /// Extension-only patterns such as <c>*.cs</c> and <c>*.csproj</c> are
+        /// matched case-insensitively on every platform. This prevents a Linux
+        /// checkout from hiding <c>.CS</c>/<c>.CSPROJ</c> files from the proof.
         /// </remarks>
         /// <param name="root">Absolute root directory.</param>
         /// <param name="searchPattern">File search pattern.</param>
@@ -81,6 +85,11 @@ namespace Arkus.Kernel.Proof
             string searchPattern,
             IReadOnlyCollection<string> excludedDirectoryNames)
         {
+            if (searchPattern is null)
+            {
+                throw new ArgumentNullException(nameof(searchPattern));
+            }
+
             if (excludedDirectoryNames is null)
             {
                 throw new ArgumentNullException(nameof(excludedDirectoryNames));
@@ -93,15 +102,28 @@ namespace Arkus.Kernel.Proof
             }
 
             var normalizedRoot = Path.GetFullPath(root);
+            var extensionPattern = TryGetExtensionPattern(searchPattern, out var expectedExtension);
             var pending = new Stack<string>();
             pending.Push(normalizedRoot);
 
             while (pending.Count > 0)
             {
                 var current = pending.Pop();
+                var files = extensionPattern
+                    ? Directory.EnumerateFiles(current)
+                    : Directory.EnumerateFiles(current, searchPattern);
 
-                foreach (var file in Directory.EnumerateFiles(current, searchPattern))
+                foreach (var file in files)
                 {
+                    if (extensionPattern
+                        && !string.Equals(
+                            Path.GetExtension(file),
+                            expectedExtension,
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
                     results.Add(Path.GetFullPath(file));
                 }
 
@@ -130,6 +152,20 @@ namespace Arkus.Kernel.Proof
 
             results.Sort(StringComparer.Ordinal);
             return results;
+        }
+
+        private static bool TryGetExtensionPattern(string searchPattern, out string extension)
+        {
+            extension = string.Empty;
+            if (!searchPattern.StartsWith("*.", StringComparison.Ordinal)
+                || searchPattern.IndexOf('*', 1) >= 0
+                || searchPattern.IndexOf('?') >= 0)
+            {
+                return false;
+            }
+
+            extension = searchPattern.Substring(1);
+            return extension.Length > 1;
         }
     }
 }

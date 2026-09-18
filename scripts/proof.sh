@@ -2,11 +2,12 @@
 #
 # Canonical WP-HK-00 proof pipeline.
 #
-# The order matters. The proof tool is built and the preflight runs before the
-# solution build, so a deleted project, test project or proof tool is reported as
-# a failure instead of quietly shrinking what gets verified. Static checks come
-# from evaluated MSBuild facts; effective checks read the produced assemblies and
-# portable PDBs after the build.
+# The order matters. A manifest-independent repository-boundary oracle runs
+# before restore/build can create generated files. The proof tool is then built
+# and preflight runs before the solution build, so a deleted project, test
+# project or proof tool is reported as a failure instead of quietly shrinking
+# what gets verified. Static checks come from evaluated MSBuild facts; effective
+# checks read the produced assemblies and portable PDBs after the build.
 #
 set -euo pipefail
 
@@ -26,6 +27,9 @@ cd "${ROOT}"
 step() {
   printf '\n=== %s ===\n' "$1"
 }
+
+step "repository boundary oracle"
+bash scripts/proof-repository-boundary.sh
 
 step "toolchain"
 dotnet --version
