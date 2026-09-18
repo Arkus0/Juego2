@@ -81,9 +81,15 @@ namespace Arkus.HK00.Proof
         public static int CheckEffectiveCompilerExtensions(string root, string configuration)
         {
             var findings = 0;
-            var sdkDirectory = RunningSdkDirectory(root);
-            var dotnetRoot = Directory.GetParent(Directory.GetParent(sdkDirectory)!.FullName)!.FullName;
-            var packsDirectory = Path.Combine(dotnetRoot, "packs");
+            ExternalAuthority authority;
+            try
+            {
+                authority = ExternalAuthority.Create(root);
+            }
+            catch (Exception ex)
+            {
+                return Report("HK00-EXTERNAL-AUTHORITY", "effective", "external-authority", ex.Message);
+            }
             var probe = new MsBuildProbe(root, configuration);
 
             foreach (var spec in FixedContract.Projects)
@@ -119,25 +125,19 @@ namespace Arkus.HK00.Proof
                         var absolute = Path.IsPathRooted(token)
                             ? Path.GetFullPath(token)
                             : Path.GetFullPath(Path.Combine(projectDirectory, token));
-                        if (!IsTrustedCompilerExtension(sdkDirectory, packsDirectory, absolute))
+                        if (!authority.IsSdkOrPack(absolute))
                         {
                             findings += Report(
                                 "HK00-COMPILER-ANALYZER-UNTRUSTED",
                                 "effective",
                                 spec.Name + ":" + absolute,
-                                "Actual C# compiler command line contains an analyzer/source-generator outside the selected SDK or its .NET reference/workload packs.");
+                                "Actual C# compiler command line contains an analyzer/source-generator outside the single selected SDK/reference-pack authority.");
                         }
                     }
                 }
             }
 
             return findings;
-        }
-
-        private static bool IsTrustedCompilerExtension(string sdkDirectory, string packsDirectory, string path)
-        {
-            return ProcessExec.IsInside(sdkDirectory, path)
-                || (Directory.Exists(packsDirectory) && ProcessExec.IsInside(packsDirectory, path));
         }
 
         private static int ReportGitDelta(string root, IReadOnlyList<string> args, string reason)
@@ -153,28 +153,6 @@ namespace Arkus.HK00.Proof
                     reason + ".");
             }
             return findings;
-        }
-
-        private static string RunningSdkDirectory(string root)
-        {
-            var version = ProcessExec.Run("dotnet", new[] { "--version" }, root).Stdout.Trim();
-            var list = ProcessExec.Run("dotnet", new[] { "--list-sdks" }, root).Stdout;
-            foreach (var rawLine in list.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                var line = rawLine.Trim();
-                if (!line.StartsWith(version + " ", StringComparison.Ordinal))
-                {
-                    continue;
-                }
-                var open = line.LastIndexOf('[');
-                var close = line.LastIndexOf(']');
-                if (open >= 0 && close > open)
-                {
-                    var baseDirectory = line.Substring(open + 1, close - open - 1);
-                    return Path.GetFullPath(Path.Combine(baseDirectory, version));
-                }
-            }
-            throw new InvalidOperationException("Could not derive selected SDK directory for " + version + ".");
         }
 
         private static string Sha256(string path)

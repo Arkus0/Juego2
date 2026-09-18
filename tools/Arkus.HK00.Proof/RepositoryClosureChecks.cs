@@ -8,8 +8,6 @@ namespace Arkus.HK00.Proof
 {
     internal static class RepositoryClosureChecks
     {
-        private const string TestLockPath = "tests/Arkus.Harness.Tests/packages.lock.json";
-
         public static int RunRepository(string root)
         {
             var findings = 0;
@@ -89,18 +87,14 @@ namespace Arkus.HK00.Proof
         {
             var findings = 0;
             var tracked = ReadTrackedFiles(root);
-            var sdkDirectory = RunningSdkDirectory(root);
-            var dotnetRoot = Directory.GetParent(Directory.GetParent(sdkDirectory)!.FullName)!.FullName;
-            var packsDirectory = Path.Combine(dotnetRoot, "packs");
-            var packageRoot = PackageRoot();
-            Dictionary<string, string> lockedPackages;
+            ExternalAuthority authority;
             try
             {
-                lockedPackages = ReadLockedPackages(root);
+                authority = ExternalAuthority.Create(root);
             }
             catch (Exception ex)
             {
-                return Report("HK00-DEPENDENCY-LOCK", "static", TestLockPath, ex.Message);
+                return Report("HK00-EXTERNAL-AUTHORITY", "static", "external-authority", ex.Message);
             }
 
             foreach (var spec in FixedContract.Projects)
@@ -171,18 +165,19 @@ namespace Arkus.HK00.Proof
                         ? Path.GetFullPath(token)
                         : Path.GetFullPath(Path.Combine(root, token));
 
+                    if (authority.IsSdkOrPack(absolute)
+                        || (spec.Kind == ProjectKind.Tests && authority.IsLockedTestPackagePath(absolute)))
+                    {
+                        continue;
+                    }
+
                     if (!ProcessExec.IsInside(root, absolute))
                     {
-                        if (IsAllowedExternalImport(spec, absolute, sdkDirectory, packsDirectory, packageRoot, lockedPackages))
-                        {
-                            continue;
-                        }
-
                         findings += Report(
                             "HK00-MSBUILD-IMPORT-EXTERNAL-UNTRUSTED",
                             "static",
                             spec.Name + ":" + absolute,
-                            "Evaluated MSBuild import comes from outside the repository, selected SDK/packs, and exact locked test package closure.");
+                            "Evaluated MSBuild import comes from outside Arkus ownership and the single external-authority model.");
                         continue;
                     }
 
@@ -206,116 +201,6 @@ namespace Arkus.HK00.Proof
             }
 
             return findings;
-        }
-
-        private static bool IsAllowedExternalImport(
-            ProjectSpec spec,
-            string absolute,
-            string sdkDirectory,
-            string packsDirectory,
-            string packageRoot,
-            IReadOnlyDictionary<string, string> lockedPackages)
-        {
-            if (ProcessExec.IsInside(sdkDirectory, absolute)
-                || (Directory.Exists(packsDirectory) && ProcessExec.IsInside(packsDirectory, absolute)))
-            {
-                return true;
-            }
-
-            if (spec.Kind != ProjectKind.Tests || !ProcessExec.IsInside(packageRoot, absolute))
-            {
-                return false;
-            }
-
-            var relative = ProcessExec.Relative(packageRoot, absolute);
-            var segments = relative.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if (segments.Length < 3)
-            {
-                return false;
-            }
-
-            var packageId = segments[0].ToLowerInvariant();
-            var packageVersion = segments[1];
-            return lockedPackages.TryGetValue(packageId, out var lockedVersion)
-                && string.Equals(packageVersion, lockedVersion, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static Dictionary<string, string> ReadLockedPackages(string root)
-        {
-            var path = Path.Combine(root, TestLockPath);
-            if (!File.Exists(path))
-            {
-                throw new InvalidOperationException("Committed test package lock is missing.");
-            }
-
-            using var document = JsonDocument.Parse(File.ReadAllText(path));
-            if (!document.RootElement.TryGetProperty("dependencies", out var dependencies)
-                || !dependencies.TryGetProperty("net8.0", out var target))
-            {
-                throw new InvalidOperationException("Committed test package lock has no net8.0 dependency graph.");
-            }
-
-            var packages = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var dependency in target.EnumerateObject())
-            {
-                if (!dependency.Value.TryGetProperty("resolved", out var resolved))
-                {
-                    continue;
-                }
-                var version = resolved.GetString();
-                if (string.IsNullOrWhiteSpace(version))
-                {
-                    continue;
-                }
-                packages[dependency.Name.ToLowerInvariant()] = version;
-            }
-
-            if (packages.Count == 0)
-            {
-                throw new InvalidOperationException("Committed test package lock contains no resolved packages.");
-            }
-            return packages;
-        }
-
-        private static string PackageRoot()
-        {
-            var configured = Environment.GetEnvironmentVariable("NUGET_PACKAGES");
-            if (!string.IsNullOrWhiteSpace(configured))
-            {
-                return Path.GetFullPath(configured);
-            }
-
-            return Path.GetFullPath(Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                ".nuget",
-                "packages"));
-        }
-
-        private static string RunningSdkDirectory(string root)
-        {
-            var version = ProcessExec.Run("dotnet", new[] { "--version" }, root).Stdout.Trim();
-            if (!string.Equals(version, FixedContract.SdkVersion, StringComparison.Ordinal))
-            {
-                throw new InvalidOperationException("Unexpected SDK while classifying MSBuild imports: " + version);
-            }
-
-            var list = ProcessExec.Run("dotnet", new[] { "--list-sdks" }, root).Stdout;
-            foreach (var rawLine in list.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                var line = rawLine.Trim();
-                if (!line.StartsWith(version + " ", StringComparison.Ordinal))
-                {
-                    continue;
-                }
-                var open = line.LastIndexOf('[');
-                var close = line.LastIndexOf(']');
-                if (open >= 0 && close > open)
-                {
-                    var baseDirectory = line.Substring(open + 1, close - open - 1);
-                    return Path.GetFullPath(Path.Combine(baseDirectory, version));
-                }
-            }
-            throw new InvalidOperationException("Could not derive selected SDK directory for " + version + ".");
         }
 
         private static SortedSet<string> ReadTrackedFiles(string root)
