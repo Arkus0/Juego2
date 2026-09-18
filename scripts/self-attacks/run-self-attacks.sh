@@ -56,11 +56,7 @@ run_guard() {
   if [[ "${phase}" == "effective" || "${phase}" == "all" ]]; then
     prepare_effective
   fi
-  set +e
   (cd "${SANDBOX}" && dotnet "${TOOL_DLL}" --root "${SANDBOX}" --configuration "${CONFIGURATION}" --phase "${phase}") >"${log}" 2>&1
-  local code=$?
-  set -e
-  return ${code}
 }
 
 expect_green() {
