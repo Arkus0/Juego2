@@ -34,6 +34,9 @@ fresh() {
   git -C "${SANDBOX}" config user.email "hk00@example.invalid"
   git -C "${SANDBOX}" add -A
   git -C "${SANDBOX}" commit -qm pristine
+  local dirty
+  dirty="$(git -C "${SANDBOX}" status --porcelain --untracked-files=all)"
+  [[ -z "${dirty}" ]] || { printf '%s\n' "${dirty}" >&2; fail "fresh sandbox is not clean"; }
 }
 
 insert_xml() {
@@ -85,17 +88,15 @@ expect_red() {
 
 revert_and_green() {
   local phase="$1" name="$2"
-  git -C "${SANDBOX}" reset --hard -q HEAD
-  git -C "${SANDBOX}" clean -fdx -q
-  if [[ -n "$(git -C "${SANDBOX}" status --porcelain --untracked-files=all)" ]]; then
-    git -C "${SANDBOX}" status --porcelain --untracked-files=all >&2
-    fail "${name}: sandbox is not byte-clean after revert"
-  fi
+  # Revert by destroying the mutated checkout and reconstructing it from the
+  # immutable pristine snapshot captured before any attack. This avoids hidden
+  # state from package/build tooling becoming part of the revert proof.
+  fresh
   expect_green "${phase}" "${LOGDIR}/${name}-green.log"
 }
 
 record() {
-  printf '| `%s` | `%s` | RED on injection → clean Git revert → GREEN |\n' "$1" "$2" >>"${RESULTS}"
+  printf '| `%s` | `%s` | RED on injection → pristine reconstruction → GREEN |\n' "$1" "$2" >>"${RESULTS}"
   echo "PASS ${1}"
 }
 
