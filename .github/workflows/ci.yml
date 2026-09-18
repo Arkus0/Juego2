@@ -14,9 +14,11 @@ on:
 permissions:
   contents: read
 
+# Bind concurrency to the workflow SHA. A long-running run for an obsolete
+# candidate must never block validation of the current candidate.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"
