@@ -82,6 +82,8 @@ namespace Arkus.HK00.Proof
         {
             var findings = 0;
             var sdkDirectory = RunningSdkDirectory(root);
+            var dotnetRoot = Directory.GetParent(Directory.GetParent(sdkDirectory)!.FullName)!.FullName;
+            var packsDirectory = Path.Combine(dotnetRoot, "packs");
             var probe = new MsBuildProbe(root, configuration);
 
             foreach (var spec in FixedContract.Projects)
@@ -117,19 +119,25 @@ namespace Arkus.HK00.Proof
                         var absolute = Path.IsPathRooted(token)
                             ? Path.GetFullPath(token)
                             : Path.GetFullPath(Path.Combine(projectDirectory, token));
-                        if (!ProcessExec.IsInside(sdkDirectory, absolute))
+                        if (!IsTrustedCompilerExtension(sdkDirectory, packsDirectory, absolute))
                         {
                             findings += Report(
                                 "HK00-COMPILER-ANALYZER-UNTRUSTED",
                                 "effective",
                                 spec.Name + ":" + absolute,
-                                "Actual C# compiler command line contains an analyzer/source-generator outside the pinned .NET SDK.");
+                                "Actual C# compiler command line contains an analyzer/source-generator outside the selected SDK or its .NET reference/workload packs.");
                         }
                     }
                 }
             }
 
             return findings;
+        }
+
+        private static bool IsTrustedCompilerExtension(string sdkDirectory, string packsDirectory, string path)
+        {
+            return ProcessExec.IsInside(sdkDirectory, path)
+                || (Directory.Exists(packsDirectory) && ProcessExec.IsInside(packsDirectory, path));
         }
 
         private static int ReportGitDelta(string root, IReadOnlyList<string> args, string reason)
