@@ -32,6 +32,10 @@
     "Owner": "Arkus.Harness.Tests"
   },
   {
+    "Path": "tools/Arkus.HK00.Proof/AdditionalChecks.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
     "Path": "tools/Arkus.HK00.Proof/AssemblyFacts.cs",
     "Owner": "Arkus.HK00.Proof"
   },
@@ -41,6 +45,10 @@
   },
   {
     "Path": "tools/Arkus.HK00.Proof/Contract.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/LateBuildChecks.cs",
     "Owner": "Arkus.HK00.Proof"
   },
   {
@@ -57,6 +65,10 @@
   },
   {
     "Path": "tools/Arkus.HK00.Proof/ProofRunner.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/RepositoryClosureChecks.cs",
     "Owner": "Arkus.HK00.Proof"
   }
 ]
