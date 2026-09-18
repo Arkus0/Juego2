@@ -39,6 +39,7 @@ namespace Arkus.HK00.Proof
         public const string RuntimeVersion = "8.0.31";
         public const string SdkRollForward = "disable";
         public const string CanonicalSolution = "Juego2.sln";
+        public const string TestPackageLock = "tests/Arkus.Harness.Tests/packages.lock.json";
 
         public static readonly IReadOnlyDictionary<string, string> PackageVersions =
             new Dictionary<string, string>(StringComparer.Ordinal)
@@ -69,6 +70,7 @@ namespace Arkus.HK00.Proof
             "Directory.Build.props",
             "Directory.Packages.props",
             CanonicalSolution,
+            TestPackageLock,
             ".github/workflows/hk00-ci.yml",
             "scripts/build-proof-oracle.sh",
             "scripts/proof.sh",
@@ -78,6 +80,7 @@ namespace Arkus.HK00.Proof
             "scripts/self-attacks/run-closure-attacks.sh",
             "scripts/self-attacks/run-terminal-inventory-attack.sh",
             "scripts/self-attacks/run-test-surface-attack.sh",
+            "scripts/self-attacks/run-external-authority-attacks.sh",
             "tools/Arkus.HK00.Proof/Arkus.HK00.Proof.csproj",
         };
 

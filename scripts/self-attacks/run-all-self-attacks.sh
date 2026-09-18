@@ -29,6 +29,7 @@ export -f dotnet
 bash "${ROOT}/scripts/self-attacks/run-self-attacks.sh"
 bash "${ROOT}/scripts/self-attacks/run-closure-attacks.sh"
 bash "${ROOT}/scripts/self-attacks/run-test-surface-attack.sh"
+bash "${ROOT}/scripts/self-attacks/run-external-authority-attacks.sh"
 bash "${ROOT}/scripts/self-attacks/run-terminal-inventory-attack.sh"
 
-echo "all 34 causal self-attacks passed"
+echo "all 36 causal self-attacks passed"
