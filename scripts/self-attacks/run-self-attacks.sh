@@ -207,7 +207,7 @@ m_mutate_tracked_source() {
 }
 
 m_toolchain() {
-  sed -i 's/"latestPatch"/"major"/' "${SANDBOX}/global.json"
+  sed -i 's/"disable"/"major"/' "${SANDBOX}/global.json"
 }
 
 m_proof_deleted() {
