@@ -2,6 +2,14 @@
 
 Claude Code may act as Architect, Worker, Reviewer, Finalizer or DocSync only under the same GitHub state machine as every other backend.
 
+## Model policy separation
+
+The OpenAI H0 requirement `GPT-5.6 Sol + Extra High/xhigh` does **not** apply literally to Claude Code. Do not invent a fake equivalence between OpenAI and Anthropic model names or effort controls.
+
+For foundational `HK-*` Worker/Repair Worker/Reviewer roles, Claude Code should use the strongest configured Claude reasoning/coding profile available for that backend. The backend must still satisfy exactly the same WP proof obligations, exact-SHA freeze and independent-review rules.
+
+Claude configuration is maintained independently from `.codex/config.toml` and ChatGPT Work task model settings.
+
 ## Invariants
 
 - GitHub is truth; Claude session memory is disposable.
