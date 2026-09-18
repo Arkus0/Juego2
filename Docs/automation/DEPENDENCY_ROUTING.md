@@ -1,6 +1,6 @@
 # Dependency Routing
 
-Version: 1.0 — 2026-09-18
+Version: 1.1 — 2026-09-18
 
 A human target is a goal, not permission to skip prerequisites.
 
@@ -37,17 +37,21 @@ Node states: `UNMET | BLOCKED | OWNED | ELIGIBLE | SATISFIED`.
 Unless an accepted later contract changes it:
 
 ```text
-HK-00 -> HK-01 -> HK-02 -> HK-03 -> HK-04 -> HK-05
-      -> HK-06 -> HK-07 -> HK-08 -> HK-09 -> HK-10 -> HK-GATE
+HK-00 -> HK-00A -> HK-01 -> HK-02 -> HK-03 -> HK-04 -> HK-05
+       -> HK-06 -> HK-07 -> HK-08 -> HK-09 -> HK-10 -> HK-GATE
 ```
 
-H1/Unity remains blocked until `HK-GATE` is accepted.
+`HK-00A` is a real prerequisite, not optional documentation. It freezes the product/adoption boundary before the canonical contract is implemented.
+
+H1/engine work remains blocked until `HK-GATE` is accepted.
 
 ## Ownership / failure
 
 Routing never steals an owned WP. Reviewer FAIL normally keeps the same WP as the unresolved prerequisite and routes to repair, not to a later WP.
 
 Two independent FAILs exposing the same foundational class trigger architecture re-audit under the foundational proof standard.
+
+A defect showing that the proof universe can self-shrink or omit material objects by construction is architecture-level immediately. Do not route another syntax-specific repair until the proof boundary itself has been re-audited.
 
 ## Ambiguity
 
