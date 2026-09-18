@@ -40,6 +40,8 @@ namespace Arkus.HK00.Proof
                 }
 
                 var runner = new ProofRunner(root, configuration);
+                var additionalFindings = 0;
+
                 if (phase == "repository" || phase == "all")
                 {
                     runner.RunRepository();
@@ -47,10 +49,12 @@ namespace Arkus.HK00.Proof
                 if (phase == "static" || phase == "all")
                 {
                     runner.RunStatic();
+                    additionalFindings += AdditionalChecks.RunStatic(root, configuration);
                 }
                 if (phase == "effective" || phase == "all")
                 {
                     runner.RunEffective();
+                    additionalFindings += AdditionalChecks.RunEffective(root, configuration);
                 }
                 if (phase != "repository" && phase != "static" && phase != "effective" && phase != "all")
                 {
@@ -64,9 +68,10 @@ namespace Arkus.HK00.Proof
                     runner.WriteEvidence(inventoryDirectory, reportPath);
                 }
 
-                if (runner.Findings.Count != 0)
+                var findingCount = runner.Findings.Count + additionalFindings;
+                if (findingCount != 0)
                 {
-                    Console.Error.WriteLine($"HK00 proof FAILED with {runner.Findings.Count} finding(s).");
+                    Console.Error.WriteLine($"HK00 proof FAILED with {findingCount} finding(s).");
                     return 1;
                 }
 
