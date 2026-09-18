@@ -1,26 +1,25 @@
 # WP-HK-00 Worker foundational verdict
 
-FOUNDATIONAL_PROOF_VERDICT: READY
-UNRESOLVED_PROOF_OBLIGATIONS: 0
-KNOWN_UNDETECTED_DEFECT_CLASSES: 0
+Candidate state: **ACTIVE / NOT READY FOR REVIEW**
 
-## Worker statement
+`FOUNDATIONAL_PROOF_VERDICT: NOT_READY`  
+`UNRESOLVED_PROOF_OBLIGATIONS: 1`  
+`KNOWN_UNDETECTED_DEFECT_CLASSES: 0`
 
-The implementation and evidence satisfy the Worker-side proof obligations of `WP-HK-00` and `FOUNDATIONAL_PROOF_STANDARD.md`, subject to the mandatory final exact-SHA CI gate before freeze.
+## Why NOT_READY
 
-READY here means the proof obligations/evidence are complete enough to submit to that exact-SHA gate. It is **not** a Reviewer PASS and does not waive independent review.
+The current architecture/proof-boundary pre-review is design-clean after causal repairs, but the Definition of Done requires executed exact-SHA CI. GitHub-hosted Actions is currently failing before runner allocation (`runner_id=0`, `steps=[]`), including the main-owned Worker Handoff job, so the Worker cannot legitimately claim the final proof or 37 negative controls executed on the current lineage.
 
-## Required freeze precondition
+This is external infrastructure backpressure, not a contractual implementation PASS or FAIL. The PR must remain Draft + ACTIVE.
 
-The Worker must not freeze until the candidate containing this file has:
+## Required transition to READY
 
-- exact candidate SHA preflight green;
-- foundational proof pipeline green;
-- committed inventory drift check green;
-- all 23 causal RED→GREEN attacks green;
-- committed self-attack summary drift check green;
-- no later branch mutation.
+- GitHub-hosted runner becomes available.
+- Positive read-only proof executes on exact candidate SHA and reaches GREEN.
+- All 37 causal attacks execute RED for intended oracle → pristine reconstruction → GREEN.
+- Observed package lock/inventories/compiler args/attack results are reconciled to committed evidence.
+- A final evidence candidate reruns exact-SHA CI with zero drift.
+- Worker performs final no-write adversarial pre-review and records `WORKER_PRE_REVIEW: CLEAN` in the PR handoff/evidence link.
+- Only then stop writers, record exact Frozen candidate SHA, mark FROZEN_FOR_REVIEW and Ready.
 
-After those conditions are true, PR metadata records the same 40-character HEAD as both `Candidate HEAD SHA` and `Frozen candidate SHA`, sets `Worker state: FROZEN_FOR_REVIEW`, `Branch frozen: YES`, and `Worker verdict: IN_REVIEW`, then the PR is marked Ready for Review.
-
-Independent Reviewer remains responsible for reconstructing scope, challenging the completeness argument and searching for at least one omission class not highlighted by Worker.
+Fresh independent Reviewer PASS remains mandatory after freeze.
