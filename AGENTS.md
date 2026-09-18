@@ -17,7 +17,7 @@ For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOM
 1. Code, executable tests and recorded evidence — actual state.
 2. `Docs/ROADMAP.md` — milestone order and gates.
 3. `Docs/workpacks/**` — exact scope and Definition of Done for one unit of work.
-4. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, exact-SHA freeze and independent review.
+4. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, Worker pre-review, exact-SHA freeze and independent review.
 5. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` — binding proof rules for foundational WPs.
 6. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
 7. `Docs/automation/DEPENDENCY_ROUTING.md` + `AGENTIC_PROTOCOL_DURABILITY.md` — backend-neutral orchestration.
@@ -42,10 +42,13 @@ For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOM
 ## Agentic flow rules
 
 - GitHub is the persistent queue and operational truth; provider sessions are disposable.
-- Draft + ACTIVE: Worker may write. Ready + FROZEN_FOR_REVIEW: no Worker writes.
+- Draft + ACTIVE: Worker may write.
+- Before freeze, the Worker must perform the protocol's adversarial pre-review against the complete candidate and repair any finding while still Draft + ACTIVE.
+- `WORKER_PRE_REVIEW: CLEAN` is required readiness evidence but is never an independent PASS; the fresh Reviewer must reconstruct and falsify from scratch without being bounded by Worker conclusions.
+- Ready + FROZEN_FOR_REVIEW: no Worker writes.
 - A Reviewer must be independent of the Worker context and tries to falsify the candidate; it never repairs implementation.
 - PASS/FAIL binds an exact Frozen candidate SHA.
-- FAIL returns to the same WP/PR repair loop; it does not authorize skipping ahead.
+- FAIL returns to the same WP/PR repair loop; it does not authorize skipping ahead, and the repaired candidate must pass Worker pre-review again before refreeze.
 - Two independent FAILs exposing the same foundational class trigger architecture re-audit.
 - A FAIL showing that the proof universe can self-shrink or omit material objects by construction is immediately architectural: re-audit the proof boundary before another local patch.
 - Merge is followed by DocSync before the next WP is selected.
