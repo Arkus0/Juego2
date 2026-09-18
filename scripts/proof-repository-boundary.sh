@@ -26,6 +26,11 @@ if [[ "$(cd "${top}" && pwd)" != "${ROOT}" ]]; then
   fail HK00-BOUNDARY-WRONG-GIT-ROOT "script root is not the Git worktree root"
 fi
 
+is_csharp_input() {
+  local lower="${1,,}"
+  [[ "${lower}" == *.cs || "${lower}" == *.csproj ]]
+}
+
 check_case() {
   local rel="$1"
   local lower="${rel,,}"
@@ -39,7 +44,8 @@ check_case() {
 
 # The generated root-level artifacts workspace is excluded from the C# inventory.
 # Therefore no repository input may be tracked there. Otherwise the exclusion
-# would become a proof escape hatch.
+# would become a proof escape hatch. Symlinks and gitlinks are also forbidden:
+# the candidate must own the bytes it proves, not an external target/tree.
 while IFS= read -r -d '' rel; do
   case "${rel}" in
     artifacts/*)
@@ -50,8 +56,20 @@ while IFS= read -r -d '' rel; do
   check_case "${rel}"
 
   mode="$(git -C "${ROOT}" ls-files -s -- "${rel}" | awk 'NR == 1 { print $1 }')"
-  if [[ "${mode}" == "120000" ]]; then
-    fail HK00-BOUNDARY-SYMLINK "tracked symlinks are forbidden in the HK00 proof boundary: ${rel}"
+  case "${mode}" in
+    120000)
+      fail HK00-BOUNDARY-SYMLINK "tracked symlinks are forbidden in the HK00 proof boundary: ${rel}"
+      ;;
+    160000)
+      fail HK00-BOUNDARY-GITLINK "tracked gitlinks/submodules are forbidden in the HK00 proof boundary: ${rel}"
+      ;;
+  esac
+
+  # A tracked source/project must also be present as a regular file in this
+  # checkout. This makes sparse/missing worktrees fail closed instead of silently
+  # shrinking the physical universe inspected by the C# proof.
+  if is_csharp_input "${rel}" && [[ ! -f "${ROOT}/${rel}" ]]; then
+    fail HK00-BOUNDARY-TRACKED-SOURCE-MISSING "tracked C# source/project is absent from the checkout: ${rel}"
   fi
 done < <(git -C "${ROOT}" ls-files -z)
 

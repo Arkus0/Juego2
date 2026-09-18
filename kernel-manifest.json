@@ -216,6 +216,7 @@
     "kernel-manifest.json",
     ".github/workflows/ci.yml",
     "scripts/proof.sh",
+    "scripts/proof-repository-boundary.sh",
     "scripts/self-attacks/run-self-attacks.sh",
     "scripts/self-attacks/run-completeness-attacks.sh"
   ],

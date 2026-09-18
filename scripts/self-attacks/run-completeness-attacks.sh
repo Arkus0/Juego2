@@ -5,7 +5,8 @@
 # The original Reviewer failure exposed a self-shrinkable proof universe. These
 # attacks cover that omission class and equivalent ways to hide projects/sources
 # from a Linux proof: arbitrary paths, nested excluded-name directories,
-# extension casing, excluded root-level artifacts, symlinks and untracked files.
+# extension casing, excluded root-level artifacts, symlinks, gitlinks, sparse
+# worktrees and untracked files.
 #
 set -euo pipefail
 
@@ -238,6 +239,14 @@ run_boundary_attack() {
       ln -s "src/Arkus.Game.Core/CoreModule.cs" "${SANDBOX}/LinkedCore.cs"
       git -C "${SANDBOX}" add LinkedCore.cs
       ;;
+    tracked-gitlink)
+      tree="$(git -C "${SANDBOX}" write-tree)"
+      commit="$(printf 'baseline\n' | git -C "${SANDBOX}" commit-tree "${tree}")"
+      git -C "${SANDBOX}" update-index --add --cacheinfo "160000,${commit},ExternalKernel"
+      ;;
+    tracked-source-missing)
+      rm "${SANDBOX}/tools/Arkus.Kernel.Proof/RepositoryPaths.cs"
+      ;;
     untracked-source-in-checkout)
       mkdir -p "${SANDBOX}/loose"
       printf 'namespace Loose { public static class Untracked { } }\n' >"${SANDBOX}/loose/Untracked.cs"
@@ -340,6 +349,16 @@ MD
     "HK00-BOUNDARY-SYMLINK"
 
   run_boundary_attack \
+    tracked-gitlink \
+    "A tracked gitlink/submodule represents an external tree that the checkout proof would not own." \
+    "HK00-BOUNDARY-GITLINK"
+
+  run_boundary_attack \
+    tracked-source-missing \
+    "A tracked C# source is absent from the physical checkout, as in a sparse/incomplete worktree." \
+    "HK00-BOUNDARY-TRACKED-SOURCE-MISSING"
+
+  run_boundary_attack \
     untracked-source-in-checkout \
     "A physical C# source exists in the checkout but is absent from the candidate commit." \
     "HK00-BOUNDARY-UNTRACKED-SOURCE"
@@ -349,7 +368,7 @@ MD
     "A tracked source uses non-canonical extension casing; the independent oracle must reject it too." \
     "HK00-BOUNDARY-NONCANONICAL-CASE"
 
-  printf 'all 9 repository-completeness self-attacks passed\n'
+  printf 'all 11 repository-completeness self-attacks passed\n'
 }
 
 main "$@"
