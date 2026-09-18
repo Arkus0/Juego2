@@ -39,8 +39,9 @@ Two details matter for whether this is evidence at all:
 
 ## Required classes
 
-The workpack requires RED→GREEN for six defect classes. All six are covered, and
-eleven further attacks close classes found while building the proof:
+The workpack requires RED→GREEN for six defect classes. All six are covered by
+fifteen attacks, and four further attacks close classes found while building the
+proof:
 
 | Required class | Attack | Checks required to fire |
 |---|---|---|

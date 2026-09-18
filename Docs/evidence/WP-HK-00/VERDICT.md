@@ -29,9 +29,9 @@ classes that could leave this claim false while CI is green.
 
 | Item | State |
 |---|---|
-| Candidate SHA | recorded below once the freeze commit exists |
+| Candidate SHA | `7aa70698bd48f9d2f8f42a1bfbee263b19cf1dab` |
 | Branch | `claude/wp-hk-00-worker-550se1` |
-| Exact-SHA CI | recorded below |
+| Exact-SHA CI | GREEN, both jobs (see below) |
 | Proof pipeline locally | GREEN (`scripts/proof.sh`, SDK 8.0.131, configuration Release) |
 | Self-attack suite locally | 19 of 19 passed, each red then green |
 | Tests | 69 passed, 0 failed |
@@ -41,11 +41,31 @@ classes that could leave this claim false while CI is green.
 
 ### Exact-SHA CI
 
-<!-- Filled by the Worker after the freeze commit; a verdict without this is not frozen. -->
+- Candidate SHA: `7aa70698bd48f9d2f8f42a1bfbee263b19cf1dab`
+- Run: <https://github.com/Arkus0/Juego2/actions/runs/35364202327>
+- `Kernel boundary proof`: **success** — preflight green, proof green across
+  `preflight+static+effective+compiler` with 0 findings, headless host smoke test
+  green, 69 tests passed, generated inventories identical to the committed ones.
+- `Causal self-attacks`: **success** — all 19 attacks injected, detected by their
+  named check, reverted byte-exactly and re-proved green, on a clean checkout.
 
-- Candidate SHA: _pending freeze commit_
-- CI run: _pending_
-- Result: _pending_
+The run also produced an unplanned piece of positive evidence for the toolchain
+pin. The GitHub runner had twelve SDKs available —
+
+```text
+8.0.100  8.0.130  8.0.206  8.0.319  8.0.424
+9.0.120  9.0.205  9.0.317
+10.0.111 10.0.204 10.0.303 10.0.400
+```
+
+— and `dotnet --version` under this repository resolved to **8.0.130**: inside
+the pinned `8.0.1xx` feature band, and not any of the higher bands or major
+versions sitting next to it. The inventories that SDK generated were
+byte-identical to the ones generated locally on 8.0.131, which is what the
+`latestPatch` pin is supposed to guarantee.
+
+This evidence commit adds only this record; it changes no code, no manifest and
+no inventory.
 
 ## What a Reviewer should attack first
 
