@@ -1,9 +1,19 @@
 # WP-HK-06A — Provenance journal + authored/live boundary
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
-Depends on: `WP-HK-05`  
+Depends on: `WP-HK-05` ✅ COMPLETE  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+Baseline SHA: `bc6241d2db2b6e15f1a9ac78c673f7ef0735ffff`
+Implementation PR: `#32`
+
+Completion:
+- Reviewed candidate SHA: `4ed9a925791ae14b0b5c0d92625161504021542e`
+- Independent Reviewer verdict: `PASS` (PR review `#5257682288`)
+- Exact-SHA candidate observation: GREEN (Actions `35469103222`)
+- Exact-SHA freeze validation: GREEN (Actions `35469154331`)
+- Merge SHA: `8089a52e8a7bbdde46e97705df6906c0d38d593a`
+- Completed: `2026-09-19`
 
 ## Objective
 
@@ -38,6 +48,14 @@ A surrogate implemented by sending authored no-op mutations is invalid evidence 
 ## Required negative-conformance tests
 
 RED→GREEN for: missing journal entry after an accepted mutation, entry emitted for rejected/dry-run/read-only work, wrong before/after revision or hash, wrong affected-resource set, provenance claiming a mutation that did not persist, runtime-observation surrogate activity advancing authored revision/hash/history, and a runtime-observation path acquiring journal/commit authority.
+
+## Accepted result
+
+HK06A now exposes the versioned/discoverable `authoring.journal.read@1.0` surface and an explicit authored-world lineage rooted at the session's initial canonical anchor. Every newly persisted accepted mutation appends exactly one deterministic entry at the accepted HK04 commit boundary; the entry records the normalized accepted request, request/capability identity, truthful before/result revision+hash anchors and deterministic affected-resource identity. Canonical state, idempotency receipts and journal entries publish atomically through one immutable session-state reference under the existing commit lock. Non-persisting plan/dry-run/read/validation/rejected/stale/idempotent-retry paths do not fabricate successful history.
+
+The first frozen candidate (`046134fd3acd9641798dbad180406688fb5d31aa`) failed independent review because the journal serializer could theoretically emit a schema-valid but semantically false replay envelope while the parsed request/state transition remained correct. The accepted repair closes that HK06A-owned false-green class at the provenance-entry boundary: the complete machine-readable normalized request is independently interpreted and re-fingerprinted across all four current mutation operation kinds, its idempotency/base fields are reconciled with the parsed accepted request and authored anchor, and deterministic entry identity is independently verified before publication. A separate test-owned oracle compares the public journal request to an independently constructed accepted request and a second clean execution supplies the deterministic identity expectation.
+
+The authored/live boundary is also accepted: runtime observations use a separately named stamp carrying only the authored base anchor, and the bounded Potes/scheduled-NPC surrogate can advance transient test-owned fields without changing canonical revision/hash or journal history. A deliberately unsafe surrogate granted commit authority turns that boundary oracle RED. HK06A deliberately does not claim semantic diff, snapshot semantics, replay execution/compatibility or deterministic gameplay simulation; those remain downstream responsibilities.
 
 ## Forbidden scope
 
