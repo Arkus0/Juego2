@@ -38,23 +38,24 @@ namespace Arkus.Harness.Tests
                 targetContract,
                 WorldPortabilityContract.ImportName,
                 request);
+            var resultData = result.Data!;
 
-            Assert.Empty(definition.SuccessSchema!.ValidateValue(result.Data));
+            Assert.Empty(definition.SuccessSchema!.ValidateValue(resultData));
             Assert.Equal(0, JournalCount(targetContract));
 
-            var evidence = Hk04TransactionalMutationTests.Map(result.Data!, "rebaseEvidence");
+            var evidence = Hk04TransactionalMutationTests.Map(resultData, "rebaseEvidence");
             Assert.Equal(WorldPortabilityContract.RebaseEvidenceSchemaId, evidence["schemaId"]);
             Assert.Equal(idempotencyKey, evidence["idempotencyKey"]);
             Assert.Equal(WorldPortabilityContract.SnapshotSchemaId, evidence["snapshotSchemaId"]);
             Assert.Equal(snapshot["snapshotVersion"], evidence["snapshotVersion"]);
             Assert.Equal(snapshot["anchor"], evidence["snapshotAnchor"]);
-            Assert.Equal(result.Data["previous"], evidence["previous"]);
-            Assert.Equal(result.Data["current"], evidence["current"]);
+            Assert.Equal(resultData["previous"], evidence["previous"]);
+            Assert.Equal(resultData["current"], evidence["current"]);
             Assert.Equal("new-local-lineage", evidence["lineageDisposition"]);
             Assert.Equal("new-local-lineage-empty", evidence["mutationJournalDisposition"]);
             Assert.False(string.IsNullOrWhiteSpace((string)evidence["requestFingerprint"]!));
 
-            var missingEvidence = new Dictionary<string, object?>(result.Data, StringComparer.Ordinal);
+            var missingEvidence = new Dictionary<string, object?>(resultData, StringComparer.Ordinal);
             missingEvidence.Remove("rebaseEvidence");
             Assert.NotEmpty(definition.SuccessSchema.ValidateValue(missingEvidence));
 
