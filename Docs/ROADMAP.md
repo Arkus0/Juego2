@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.15 — 2026-09-19
+Version: 1.16 — 2026-09-20
 
 ## North star
 
@@ -42,15 +42,17 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05` and `WP-HK-06A` are COMPLETE.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A` and `WP-HK-06B` are COMPLETE.
 
 `WP-HK-05` PR `#26` passed independent review on frozen candidate `23a9fd4373a803187cd9391b1459cd48975177f6` (review `#5257350871`), exact-SHA candidate observation Actions `35464742544` GREEN, freeze validation Actions `35464834162` GREEN, and merged as `ed65661680aea2a9be79f892c96aa42bf788a842` on 2026-09-19. Two prior frozen candidates failed in the same aggregate-validation-under-ambiguous-identity class; the circuit breaker triggered a causal architecture re-audit, and the accepted candidate uses dependency-local ambiguity deferral rather than global suppression.
 
 `WP-HK-06A` PR `#32` passed independent review on frozen candidate `4ed9a925791ae14b0b5c0d92625161504021542e` (review `#5257682288`), exact-SHA candidate observation Actions `35469103222` GREEN, freeze validation Actions `35469154331` GREEN, and merged as `8089a52e8a7bbdde46e97705df6906c0d38d593a` on 2026-09-19. One earlier frozen candidate failed because a schema-valid but semantically false normalized replay envelope could remain green; the accepted repair binds the complete machine-readable request to the parsed request fingerprint/base anchor and independently verifies deterministic entry identity before atomic state/receipt/journal publication.
 
+`WP-HK-06B` PR `#35` passed independent review on frozen candidate `2b05e982c96e7ece08cca999075c183e75eee2fd` (review `#5258130916`), exact-SHA validation Actions `35473614054` GREEN, and merged as `28e2d0aadf63fe322eac636955e9223dc9249328` on 2026-09-20 Europe/Rome. One earlier frozen candidate failed because snapshot import was publicly classified as an ordinary canonical mutation/transaction while effective execution was a whole-session rebase with a deliberately empty new local mutation journal. The accepted repair introduces an explicit canonical-rebase classification and truthful machine-readable rebase evidence without weakening HK04/HK06A mutation semantics.
+
 Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is now `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-Next dependency-valid workpack: `WP-HK-06B — Semantic diff + canonical snapshot portability`.
+Next dependency-valid workpack: `WP-HK-06C — Deterministic journal replay + end-to-end audit consistency`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -63,24 +65,38 @@ Next dependency-valid workpack: `WP-HK-06B — Semantic diff + canonical snapsho
 | 7 | `WP-HK-02A` ✅ COMPLETE | Object-scoped opaque extension data + typed declared dependencies |
 | 8 | `WP-HK-05` ✅ COMPLETE | Validation/invariants and structured repairable diagnostics |
 | 9 | `WP-HK-06A` ✅ COMPLETE | Provenance journal + authored/live-state boundary |
-| 10 | `WP-HK-06B` | Semantic diff + canonical snapshot export/import portability |
+| 10 | `WP-HK-06B` ✅ COMPLETE | Semantic diff + canonical snapshot export/import portability |
 | 11 | `WP-HK-06C` | Deterministic journal replay + end-to-end audit consistency |
 | 12 | `WP-HK-07A` | Production headless host + deterministic JSONL/reference transport |
 | 13 | `WP-HK-07B` | Standards-compatible MCP projection + cross-transport conformance |
-| 14 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination and round-trip budgets |
+| 14 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination, structured CAS recovery and round-trip budgets |
 | 15 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
-| 16 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure |
+| 16 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
 | 17 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
+
+## H0 interaction/concurrency decision
+
+H0 keeps the accepted whole-world revision/hash CAS and does not speculate into per-resource locking, automatic merge, distributed transactions or autonomous multi-agent scheduling.
+
+Before `WP-HK-GATE`, HK08 must make the existing optimistic-concurrency model **cheap to recover from**: a stale plan must receive bounded machine-readable context anchored to the expected and current world so the agent can preserve intent, re-plan the affected slice and retry through the normal transaction path without ordinarily reconstructing the complete world.
+
+Batching is the primary H0 mitigation for whole-world commit cost. The current 64-operation request limit is not a permanent product constant: HK08 measures a representative coherent multi-resource edit, and the accepted request shape/limit must allow that edit to remain one atomic transaction inside the HK09 resource envelope. Do not build logical multi-plan transactions merely because an arbitrary number such as 64 exists; add them only if measured representative work proves one atomic request is insufficient.
+
+Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling are post-GATE product work unless HK08/GATE evidence proves they are necessary for the representative single-client authoring contract. A future concurrent-agent requirement is a valid reason to revisit the CAS granularity, but not a reason to delay H0 today.
+
+HK08 also re-runs reference-transport ↔ MCP conformance for every interaction primitive it changes or adds. HK07B proves the initial neutral projection; it cannot pre-prove semantics introduced later by HK08.
 
 ### H0 exit criteria
 
-See prior accepted ROADMAP body; gate criteria unchanged from v1.9.
+`WP-HK-GATE` is authoritative for the executable gate scenario. In addition to correctness/replay/transport neutrality, H0 must demonstrate bounded stale-plan recovery, an atomic representative batch that fits the accepted resource budget, and bounded long-session resource behaviour. Multi-agent throughput and automatic concurrent merge are explicitly not H0 gate criteria unless earlier measured evidence reclassifies them.
 
 ---
 
 # H1 — Engine Bridge Foundation: Unity First (blocked by H0)
 
-Only after `WP-HK-GATE` PASS. Detailed H1 WPs not frozen yet.
+Only after `WP-HK-GATE` PASS. Detailed H1 WPs are not frozen yet.
+
+The first H1/scoped-extension producer work must preserve the HK02A opaque-kernel boundary while removing an avoidable AI footgun: when a schema-aware producer/codec understands references embedded in its payload, it must derive the corresponding typed dependency surface mechanically from the structured input it serializes. The AI should not normally be responsible for manually keeping opaque payload references and `dependencies` synchronized. Direct opaque payload + dependency authoring remains a low-level primitive; the engine-agnostic kernel still does not introspect arbitrary payload bytes.
 
 ---
 
