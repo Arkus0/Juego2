@@ -49,12 +49,32 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 - Prefer standards and evaluated behaviour over growing syntax denylists.
 - Determinism, replayability, structured errors, discoverability, transactions and provenance are product requirements, not test conveniences.
 - Completeness claims may not rely solely on an inventory/registry/configuration controlled by the thing being proved; the universe under proof must be independently discoverable or checked against effective behaviour.
+- Accepted predecessor guarantees compose forward. A downstream WP consumes binding guarantees already accepted upstream and must not re-prove them merely as defence-in-depth unless the current WP explicitly owns that guarantee or concrete evidence shows the predecessor claim is false/inapplicable.
 - Do not add gameplay semantics merely to make harness tests convenient; use a deliberately tiny micro-world fixture.
+
+## Mandatory predecessor contract check
+
+Before editing a WP, the Worker must reconstruct the accepted contract it inherits rather than reading only the current WP.
+
+At minimum, for each direct accepted dependency it must read the dependency WP, its completion metadata/exact reviewed SHA, independent PASS evidence, relevant proof matrix/residual-risk evidence when present, and any binding architecture/invariant documents that dependency made authoritative. Follow transitive predecessors only where the direct dependency or current WP relies on their invariants; do not reread the entire project history mechanically.
+
+The Worker must persist a short `PREDECESSOR_CONTRACT_CHECK` in its Worker plan/evidence before implementation begins. It must state:
+
+- accepted predecessor/dependency and reviewed/merge SHA(s);
+- inherited guarantees relevant to the current WP;
+- guarantees newly owned by the current WP;
+- predecessor guarantees intentionally consumed rather than re-proved;
+- the concrete condition that would justify reopening an inherited guarantee (for example, evidence that the accepted guarantee does not cover the effective path or that the predecessor claim itself was false).
+
+The independent Reviewer performs the mirror check. Before issuing FAIL for an apparent omission, it must determine whether that omission is already covered by a binding predecessor guarantee. If so, it is not a current-WP blocker unless the Reviewer can show with concrete evidence that the inherited guarantee is inapplicable or false. Requiring duplicate proof of an accepted predecessor claim is overdefense, not additional quality.
+
+This rule does not make predecessor prose unquestionable. Concrete contradictory evidence may reopen the relevant causal boundary under the normal circuit-breaker rules; mere theoretical possibility or a desire for redundant proof may not.
 
 ## Worker → Reviewer → finalization flow
 
 - GitHub is the persistent repository, PR and evidence truth; sessions are disposable.
 - Draft + ACTIVE: Worker may write; Automation V2 runs candidate observation on relevant updates.
+- Before implementation, Worker completes and records the mandatory predecessor contract check.
 - Before freeze, Worker performs the required adversarial pre-review and repairs any in-claim blocker while still Draft + ACTIVE.
 - `WORKER_PRE_REVIEW: CLEAN` is readiness evidence, never independent PASS.
 - Worker stops all writers, binds exact HEAD as `Frozen candidate SHA`, records `Candidate HEAD SHA`, sets `FROZEN_FOR_REVIEW`/`Branch frozen: YES`, and marks the PR Ready.
