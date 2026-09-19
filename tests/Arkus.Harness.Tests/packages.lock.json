@@ -99,6 +99,7 @@
         "type": "Project",
         "dependencies": {
           "Arkus.Game.Core": "[1.0.0, )",
+          "Arkus.Game.Validation": "[1.0.0, )",
           "Arkus.Game.World": "[1.0.0, )",
           "Arkus.Harness.Protocol": "[1.0.0, )"
         }
