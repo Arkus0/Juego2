@@ -2,7 +2,7 @@
 
 ## Trust boundary
 
-HK04 proves transactional semantics for the finite engine-neutral in-memory canonical `WorldState` authoring session introduced by this WP and for the three public `authoring.change.*@1.0` routes composed through the accepted HK01 canonical contract. It does not claim durable database/engine persistence, distributed transactions, Unity scene writes, undo history, authorization policy enforcement, arbitrary filesystem mutation or gameplay-specific authoring.
+HK04 proves transactional semantics for the finite engine-neutral in-memory canonical `WorldState` authoring session introduced by this WP and for public capability handlers composed through the accepted HK01 route boundary. Planning access is attenuated from the internal commit capability; route publication and conformance inspect the current finite set of Authoring write-authority types using normal .NET reflection. It does not claim durable database/engine persistence, distributed transactions, Unity scene writes, undo history, authorization policy enforcement, arbitrary filesystem mutation, gameplay-specific authoring, hostile private-reflection access or subversion of the trusted runtime/compiler.
 
 ## Accepted residuals
 
@@ -30,8 +30,12 @@ HK04 bounds a request to 64 operations but does not impose a byte quota on opaqu
 
 The caller allocates stable idempotency keys. Reusing one key for different expected anchor or operations is a hard conflict. Retrying the same logical intention after deliberately rebasing onto a newer world is a new request and therefore requires a new key.
 
+### Future authority-bearing implementations
+
+The current canonical writer is the sealed `TransactionalWorldAuthoringSession`; the internal `ICanonicalWorldMutationCommitter` is the only capability issued to Runtime for commit. The inspector recognizes both by assignability and follows handler-local object graphs/delegate targets at publication. If a later persistence WP introduces a different direct canonical writer or an authority broker outside those types, that WP must route it through the internal committer or extend the authority oracle and its causal control. HK04 does not claim to pre-classify future writer abstractions that do not yet exist.
+
 ## Explicitly not residual / protected invariants
 
-The following are inside the claim and therefore are not deferred: partial apply, stale overwrite, duplicate accepted apply within the authoritative session, dry-run/apply semantic divergence, unreported effective state changes, and an effective canonical mutation handler escaping the transactional mutation surface. Each has a retained causal negative control.
+The following are inside the claim and therefore are not deferred: partial apply, stale overwrite, duplicate accepted apply within the authoritative session, dry-run/apply semantic divergence, unreported effective state changes, and a current effective public handler carrying canonical write authority while escaping the transactional mutation surface. Each has a retained causal negative control; the hidden-bypass control performs and observes a real state mutation before proving the publication/conformance boundary turns red.
 
 No known undetected defect class remains inside the stated HK04 boundary.

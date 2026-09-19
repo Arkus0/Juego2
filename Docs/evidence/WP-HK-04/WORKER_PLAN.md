@@ -1,7 +1,8 @@
 # WP-HK-04 Worker plan
 
 Baseline SHA: `ecebd054821eeb388c3cf6ee4e389545d762b6d8`  
-Worker: `ChatGPT / GPT-5.6 Sol`  
+Worker: `ChatGPT / GPT-5.6 Sol (repair cycle 1)`
+
 State: `ACTIVE`
 
 ## PREDECESSOR_CONTRACT_CHECK
@@ -55,7 +56,9 @@ The envelope carries `idempotencyKey`, `expectedRevision`, `expectedHash` and or
 
 Planning copies one immutable base state into private working collections, applies every operation, and constructs one validated `WorldState` at `baseRevision + 1`. No session state changes during planning. Apply commits only the completed candidate inside one critical section if revision/hash still match. Exact accepted retries replay the stored receipt; the same key with different request semantics fails closed.
 
-The production session exposes no public state replacement API: its only externally callable mutation methods are the three phase methods above, with the `_current` replacement kept private inside successful apply. Runtime mutation handlers can only delegate through `IWorldMutationService`.
+The production session exposes no public state replacement API: `_current` replacement remains private inside successful apply. The public `IWorldMutationService` surface now exposes planning/dry-run only. Runtime gives those handlers a sealed attenuated planner view; only the transactional apply handler receives the internal Authoring-owned `ICanonicalWorldMutationCommitter` capability through the explicit Runtime friend boundary.
+
+Repair cycle 1 additionally treats the concrete `TransactionalWorldAuthoringSession` as effective write authority because its public `Apply` method remains callable for direct host/test use. `CapabilityRoute` rejects a non-transactional handler whose effective object graph carries that session or the internal commit capability. `MutationSurfaceConformance` independently reflects authority-bearing handler structure without consulting `SideEffect`, so a route cannot disappear from both sides merely by remaining declared `ReadOnly`.
 
 ## Foundational proof approach
 
@@ -63,9 +66,9 @@ The finite claim universe is the three HK04 public routes, four generic operatio
 
 Independent/evaluated oracles:
 
-1. independently enumerate effective production route handlers and compare transactional handler routes with discovered canonical-mutation definitions;
+1. independently enumerate effective production route handlers, transactional markers and structurally authority-bearing handlers, then reconcile all three with discovered canonical-mutation definitions and dispatcher keys;
 2. compare dry-run predicted canonical result hash with the state actually committed by apply from the same base;
 3. hash state before a multi-operation request whose later operation is invalid and prove no partial change persists;
 4. independently diff base vs candidate state and require every effective resource/field/reference change to appear in the returned change set.
 
-Required causal controls cover partial apply, stale writer, duplicate retry, public mutation route outside transaction handling, dry-run/apply divergence, and an effective state change omitted from the plan.
+Required causal controls cover partial apply, stale writer, duplicate retry, a real `ReadOnly` public handler that commits canonical state outside transaction handling, dry-run/apply divergence, and an effective state change omitted from the plan. The original declaration/marker mismatch remains as a supplementary metadata control; it is no longer the evidence for the hidden-mutation-bypass claim.
