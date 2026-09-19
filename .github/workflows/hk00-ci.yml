@@ -120,7 +120,9 @@ jobs:
           ATTACK_RESULT: ${{ needs.causal-controls.result }}
         run: |
           set -euo pipefail
+          clean=UNKNOWN
           if [[ "${PROOF_RESULT}" == "success" && "${ATTACK_RESULT}" == "success" ]]; then
+            clean=YES
             if [[ "${GITHUB_REF_NAME}" == "validation/hk00-verify" ]]; then
               result=GREEN
               reconciliation=GREEN
@@ -140,8 +142,8 @@ jobs:
           Executor role: WORKER
           Execution substrate: github-hosted-linux-x64
           Canonical commands: scripts/proof.sh; scripts/self-attacks/run-readonly-self-attacks.sh
-          Candidate clean before: YES
-          Candidate clean after: YES
+          Candidate clean before: ${clean}
+          Candidate clean after: ${clean}
           Required gates: foundational-proof=${PROOF_RESULT}; causal-negative-controls=${ATTACK_RESULT}; evidence-reconciliation=${reconciliation}
           Result: ${result}
           Evidence: workflow artifacts for ${GITHUB_SHA}
