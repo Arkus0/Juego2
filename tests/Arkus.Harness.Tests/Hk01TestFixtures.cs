@@ -40,9 +40,10 @@ namespace Arkus.Harness.Tests
                 "orphan",
                 "orphan.route",
                 new ContractVersion(1, 0),
-                false);
+                false,
+                "orphan-scope");
             var orphan = new CanonicalProviderContribution(
-                new ProviderDescriptor("fixture.orphan", ProviderKind.Scoped, "engine", new[] { "orphan" }),
+                new ProviderDescriptor("fixture.orphan", ProviderKind.Scoped, "orphan-scope", new[] { "orphan" }),
                 new[] { orphanDefinition },
                 new[] { CapabilityRoute.FromHandler(new OrphanHandler()) });
 
@@ -64,7 +65,8 @@ namespace Arkus.Harness.Tests
             string capabilityNamespace,
             string capabilityName,
             ContractVersion version,
-            bool includeOptionalTarget)
+            bool includeOptionalTarget,
+            string scope = "engine")
         {
             var requestProperties = new Dictionary<string, SchemaNode>(StringComparer.Ordinal);
             if (includeOptionalTarget)
@@ -74,7 +76,7 @@ namespace Arkus.Harness.Tests
 
             return new CapabilityDefinition(
                 new CapabilityKey(capabilityName, version),
-                new ProviderMetadata(providerId, ProviderKind.Scoped, "engine", capabilityNamespace),
+                new ProviderMetadata(providerId, ProviderKind.Scoped, scope, capabilityNamespace),
                 new JsonSchemaDocument(SchemaNode.Object(requestProperties)),
                 new JsonSchemaDocument(SchemaNode.Object(
                     new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
