@@ -1,0 +1,61 @@
+[
+  {
+    "Project": "Arkus.Game.Authoring",
+    "Dependencies": [
+      "Arkus.Game.Core",
+      "Arkus.Game.World",
+      "Arkus.Harness.Protocol"
+    ]
+  },
+  {
+    "Project": "Arkus.Game.Core",
+    "Dependencies": []
+  },
+  {
+    "Project": "Arkus.Game.Validation",
+    "Dependencies": [
+      "Arkus.Game.Core",
+      "Arkus.Game.World",
+      "Arkus.Harness.Protocol"
+    ]
+  },
+  {
+    "Project": "Arkus.Game.World",
+    "Dependencies": [
+      "Arkus.Game.Core"
+    ]
+  },
+  {
+    "Project": "Arkus.HK00.Proof",
+    "Dependencies": []
+  },
+  {
+    "Project": "Arkus.Harness.Cli",
+    "Dependencies": [
+      "Arkus.Harness.Runtime"
+    ]
+  },
+  {
+    "Project": "Arkus.Harness.Protocol",
+    "Dependencies": []
+  },
+  {
+    "Project": "Arkus.Harness.Runtime",
+    "Dependencies": [
+      "Arkus.Game.Authoring",
+      "Arkus.Game.Validation",
+      "Arkus.Harness.Protocol"
+    ]
+  },
+  {
+    "Project": "Arkus.Harness.Tests",
+    "Dependencies": [
+      "Arkus.Game.Authoring",
+      "Arkus.Game.Core",
+      "Arkus.Game.Validation",
+      "Arkus.Game.World",
+      "Arkus.Harness.Protocol",
+      "Arkus.Harness.Runtime"
+    ]
+  }
+]
