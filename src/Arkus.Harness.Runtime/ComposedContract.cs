@@ -109,6 +109,23 @@ namespace Arkus.Harness.Runtime
                 return InternalFailure("contract.missing_request_schema", "Accepted canonical definition has no request schema.");
             }
 
+            var portableRequestIssues = PortableData.Validate(request);
+            if (portableRequestIssues.Count != 0)
+            {
+                var first = portableRequestIssues[0];
+                return Failure(
+                    "contract.invalid_request",
+                    first.Message,
+                    first.Path,
+                    new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["schemaCode"] = first.Code,
+                        ["capability"] = selected.Key.ToString()
+                    },
+                    false,
+                    "Use only JSON-compatible portable canonical request data.");
+            }
+
             var requestIssues = selected.RequestSchema.ValidateValue(request);
             if (requestIssues.Count != 0)
             {
@@ -139,6 +156,11 @@ namespace Arkus.Harness.Runtime
                     return InternalFailure("contract.invalid_result", "Capability returned success without a schema-valid result payload.");
                 }
 
+                if (PortableData.Validate(result.Data).Count != 0)
+                {
+                    return InternalFailure("contract.invalid_result", "Capability success payload contained non-portable canonical data.");
+                }
+
                 var resultIssues = selected.SuccessSchema.ValidateValue(result.Data);
                 if (resultIssues.Count != 0)
                 {
@@ -153,7 +175,13 @@ namespace Arkus.Harness.Runtime
                 return InternalFailure("contract.invalid_error", "Capability returned failure without a canonical structured error.");
             }
 
-            var errorIssues = selected.ErrorSchema.ValidateValue(result.Error.ToData());
+            var errorData = result.Error.ToData();
+            if (PortableData.Validate(errorData).Count != 0)
+            {
+                return InternalFailure("contract.invalid_error", "Capability error payload contained non-portable canonical data.");
+            }
+
+            var errorIssues = selected.ErrorSchema.ValidateValue(errorData);
             if (errorIssues.Count != 0)
             {
                 return InternalFailure("contract.invalid_error", "Capability error payload violated the canonical structured error schema.");
