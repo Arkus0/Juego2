@@ -16,7 +16,7 @@ Execution order is now:
 1. `WP-HK-06A — Provenance journal + authored/live boundary`
 2. `WP-HK-06B — Semantic diff + canonical snapshot portability`
 3. `WP-HK-06C — Deterministic journal replay + end-to-end audit consistency`
-4. `WP-HK-07` only after `WP-HK-06C` PASS + merge + DocSync.
+4. `WP-HK-07A` only after `WP-HK-06C` PASS + merge + DocSync.
 
 ## Split rationale
 
