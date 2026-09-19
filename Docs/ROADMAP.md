@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.8 — 2026-09-19
+Version: 1.9 — 2026-09-19
 
 ## North star
 
@@ -44,9 +44,9 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02` and `WP-HK-03` are COMPLETE. `WP-HK-03` PR `#18` passed independent review on frozen candidate `8c20a380003c082fa9bd472d3233afa9654fb231` and merged as `d8b808450ee7863726d718a25c5756534113fcfd` on 2026-09-19. Arkus now exposes the accepted canonical world state through one complete canonical read surface with schema-described summary/object/reference/extension reads, deterministic pagination/cursors, revision/hash binding, bounded output and a reconstruction oracle proving the current HK02 semantic state is inspectable without a second truth.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03` and `WP-HK-04` are COMPLETE. `WP-HK-04` PR `#19` passed independent review on frozen candidate `849ed68e41d674ab0d50883ccd9af394e9d2e456` and merged as `b1810a5f7c5378ff06272718a11e08720d714a65` on 2026-09-19. Arkus now has one engine-neutral transactional authoring pipeline with deterministic plan/dry-run/apply semantics, atomic whole-state commit, expected revision/hash compare-and-swap, idempotent retry/conflict handling, machine-readable change sets and conditions, and an accepted proof boundary in which canonical commit authority is internal rather than publicly obtainable through the authoring session. The final repair explicitly converged away from wrapper/container enumeration: structural authority inspection is defence in depth only, while current non-mutation public behaviour is effectively checked against canonical revision/hash and the mutation definition/policy/transactional-handler/dispatcher surfaces are mechanically reconciled.
 
-Next dependency-valid workpack after DocSync: `WP-HK-04`.
+Next dependency-valid workpack after DocSync: `WP-HK-05`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -55,7 +55,7 @@ Next dependency-valid workpack after DocSync: `WP-HK-04`.
 | 3 | `WP-HK-01` ✅ COMPLETE | Canonical contract model + machine-readable capability/schema discovery |
 | 4 | `WP-HK-02` ✅ COMPLETE | Canonical world state, stable identity, deterministic serialization + hash |
 | 5 | `WP-HK-03` ✅ COMPLETE | Complete read/inspection/query surface |
-| 6 | `WP-HK-04` | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
+| 6 | `WP-HK-04` ✅ COMPLETE | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
 | 7 | `WP-HK-05` | Validation/invariants and structured repairable diagnostics |
 | 8 | `WP-HK-06` | Provenance, semantic diff, journal, snapshot/export and deterministic replay |
 | 9 | `WP-HK-07` | Production headless host + reference JSONL + standards-compatible MCP projection |
