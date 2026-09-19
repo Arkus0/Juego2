@@ -8,27 +8,31 @@ The harness exists to let an AI agent create, inspect, modify, validate, replay,
 
 Arkus Harness is also being designed as a commercially viable, engine-agnostic AI-native game-authoring platform. Juego2 is its proving ground, not a reason to narrow the platform to one game, one engine, one model vendor, or one transport.
 
-## Minimal agent entry
+## Manual operating model
 
-For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOMATION_BOOTSTRAP.md`, reconstruct GitHub state, resolve the first safe eligible contractual action, execute one role transition, persist it, and stop at the next role boundary.
+Juego2 has no automation bootstrap and no GitHub Actions workflow orchestration.
+
+The human explicitly starts each role/session. A Worker, Reviewer or documentation/finalization session must reconstruct current GitHub state before acting and must stop at the next role boundary. No repository trigger, lease, Telegram notification or bootstrap document is required to advance work.
+
+If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Juego2`, reconstruct the current state, identify the next dependency-valid manual action, and do not silently cross from Worker to independent Reviewer or from Reviewer to repair Worker in the same context.
 
 ## Sources of truth
 
 1. Code, executable tests and recorded evidence — actual state.
 2. `Docs/ROADMAP.md` — milestone order and gates.
 3. `Docs/workpacks/**` — exact scope and Definition of Done for one unit of work.
-4. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md` — provider-neutral exact-SHA execution, evidence binding and zero-budget runner policy.
+4. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md` — exact-SHA execution and evidence binding without hosted CI.
 5. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, Worker pre-review, exact-SHA freeze and independent review.
 6. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` — binding proof rules for foundational WPs.
 7. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
-8. `Docs/automation/DEPENDENCY_ROUTING.md` + `AGENTIC_PROTOCOL_DURABILITY.md` — backend-neutral orchestration.
-9. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
+8. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
 
 ## Product rules
 
-- One WP at a time per branch/Worker.
-- Foundational work is not done because one execution is green; completeness, self-attacks and residual-risk evidence are required.
-- Exact-SHA validation is provider-neutral. GitHub-hosted Actions are optional convenience, not a contractual dependency; follow `EXECUTION_RECEIPT_PROTOCOL.md`.
+- One active Worker per WP candidate and one canonical implementation PR.
+- Foundational work is not done because one execution is green; completeness, self-attacks and residual-risk evidence are required within the accepted trust boundary.
+- Validation is exact-SHA and executor-neutral. Worker, independent Reviewer or a capable local environment may run canonical commands and persist receipts.
+- GitHub Actions are not used by Juego2. Do not add or re-enable workflow automation unless the human explicitly changes this policy.
 - Do not copy architecture or code from `Arkus0/Juego` by default. It is reference material only. Migration requires explicit justification and review.
 - Process lessons from `Juego` may be reused when they are engine/game independent.
 - DFU is not part of the critical path. It may only return later as an optional adapter after `WP-HK-GATE`, through an explicit ADR proving net value.
@@ -41,27 +45,19 @@ For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOM
 - Completeness claims may not rely solely on an inventory/registry/configuration controlled by the thing being proved; the universe under proof must be independently discoverable or checked against effective behaviour.
 - Do not add gameplay semantics merely to make harness tests convenient; use a deliberately tiny micro-world fixture.
 
-## Agentic flow rules
+## Manual Worker → Reviewer flow
 
-- GitHub is the persistent queue and operational truth; provider sessions are disposable.
+- GitHub is the persistent repository, PR and evidence truth; sessions are disposable.
 - Draft + ACTIVE: Worker may write.
-- Before freeze, the Worker must perform the protocol's adversarial pre-review against the complete candidate and repair any finding while still Draft + ACTIVE.
-- `WORKER_PRE_REVIEW: CLEAN` is required readiness evidence but is never an independent PASS; the fresh Reviewer must reconstruct and falsify from scratch without being bounded by Worker conclusions.
-- Ready + FROZEN_FOR_REVIEW: no Worker writes.
-- A Reviewer must be independent of the Worker context and tries to falsify the candidate; it never repairs implementation.
-- PASS/FAIL binds an exact Frozen candidate SHA.
-- FAIL returns to the same WP/PR repair loop; it does not authorize skipping ahead, and the repaired candidate must pass Worker pre-review again before refreeze.
-- Two independent FAILs exposing the same foundational class trigger architecture re-audit.
-- A FAIL showing that the proof universe can self-shrink or omit material objects by construction is immediately architectural: re-audit the proof boundary before another local patch.
-- Merge is followed by DocSync before the next WP is selected.
-- Backend outage/quota/host-down is recoverable backpressure, not contractual FAIL. Switch to another compliant execution substrate rather than weakening validation.
-- Role leases prevent duplicate actors; never steal a live lease.
-- Telegram is low-noise notification only. It never owns workflow state and is never a completion gate.
+- Before freeze, the Worker performs the required adversarial pre-review against the complete candidate and repairs any in-claim blocker while still Draft + ACTIVE.
+- `WORKER_PRE_REVIEW: CLEAN` is readiness evidence, never an independent PASS.
+- Ready + `FROZEN_FOR_REVIEW`: no Worker writes.
+- A fresh independent Reviewer reconstructs state and tries to falsify the frozen candidate; it never repairs implementation.
+- PASS/FAIL binds the exact Frozen candidate SHA.
+- FAIL returns to the same WP repair loop and requires a new Worker session followed by a fresh pre-review/refreeze.
+- Merge is followed by a manual DocSync/reconciliation before the next WP is selected.
+- No automatic role transition, role lease, notification or background runner is part of the correctness contract.
 
 ## Skills / profiles
 
-Project skills live under `.agents/skills/`: `plan-milestone`, `implement-workpack`, `validate-workpack`, `validate-milestone`, `update-handoff`.
-
-OpenCode role profiles live under `.opencode/agents/`: `architect`, `worker`, `reviewer`.
-
-Use the profile/skill appropriate to the role; never use the Worker context as independent Reviewer.
+Project skills under `.agents/skills/` and OpenCode role profiles under `.opencode/agents/` are optional manual helpers, not orchestration. Use the profile/skill appropriate to the current explicitly invoked role; never reuse Worker context as independent Reviewer.

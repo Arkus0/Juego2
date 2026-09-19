@@ -1,8 +1,8 @@
 # WP Continuity Policy — Juego2
 
-Version: 1.0 — 2026-09-18
+Version: 1.1 — 2026-09-19
 
-Complements `WORKER_REVIEW_PROTOCOL.md` with post-review/merge continuity.
+Complements `WORKER_REVIEW_PROTOCOL.md` with manual post-review/merge continuity.
 
 ## After PASS
 
@@ -11,26 +11,22 @@ A WP is merge-ready only when:
 1. independent Reviewer validated the exact Frozen candidate SHA;
 2. exact-SHA PASS is persisted;
 3. implementation has not changed after the reviewed SHA;
-4. mandatory evidence/checks are complete;
+4. mandatory validation/evidence is complete;
 5. any strictly allowed reviewer finalization is documentation-only.
 
 Do not churn ROADMAP for every commit. Update global planning only when accepted WP/gate results materially change milestone/dependency state.
 
 ## After merge
 
-Implementation merge creates `DOCSYNC_PENDING`.
-
-DocSync must inspect and reconcile the surfaces actually affected by the accepted result:
+Perform DocSync/reconciliation manually before selecting another WP. Inspect only the surfaces actually affected by the accepted result:
 
 - exact WP status/contract metadata;
 - `Docs/ROADMAP.md` when milestone/dependency state changed;
-- architecture/ADR when the accepted architecture changed;
+- architecture/ADR when accepted architecture changed;
 - evidence indexes when applicable;
 - `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md`.
 
-If no changes are needed, persist `DOCSYNC_NOOP` naming checked surfaces.
-
-Only `DOCSYNC_COMPLETE`/`DOCSYNC_NOOP` releases the flow back to `DISCOVER` for the next WP.
+If no documentation change is needed, record that fact in the merge/finalization evidence; no automation marker is required.
 
 ## Compact handoff
 
@@ -38,7 +34,7 @@ Keep only information a fresh session needs: latest accepted WP/SHA, current mil
 
 ## New WP ownership
 
-A merged WP reserves no future WP for its Worker. Reconstruct current `main`, resolve dependencies again, then claim a fresh branch/WP.
+A merged WP reserves no future WP for its Worker. Reconstruct current `main`, resolve dependencies again, then start a fresh branch/WP manually.
 
 ## Future local/editor evidence
 

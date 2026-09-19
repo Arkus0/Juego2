@@ -13,20 +13,25 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 3. exact active `Docs/workpacks/HK/...`
 4. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`
 5. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
-6. `Docs/automation/DEPENDENCY_ROUTING.md`
-7. `Docs/automation/AGENTIC_PROTOCOL_DURABILITY.md`
+6. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md`
+
+## Manual operating model
+
+There is no automation bootstrap, GitHub Actions orchestration, Telegram workflow or automatic Worker→Reviewer handoff.
+
+The human starts each role/session manually. Every session reconstructs current GitHub state, performs only its assigned role, persists evidence/PR state, and stops at the next role boundary.
 
 ## Current next product target
 
-`WP-HK-00` unless current `main`/GitHub already shows it accepted or owned. Always reconstruct from GitHub before acting.
+Use current `main`, open PRs and accepted evidence to determine the next dependency-valid WP. Never trust this handoff over current GitHub state.
 
 ## H0 order
 
-`HK-00 → HK-01 → HK-02 → HK-03 → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 → HK-00A → HK-01 → HK-02 → HK-03 → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
-GitHub is truth. Draft Worker writes; Ready means frozen exact-SHA and independent review. FAIL returns to same WP. PASS binds exact SHA. Merge is followed by DocSync before next DISCOVER. Telegram is notification only.
+GitHub is truth. Draft Worker writes; Ready means frozen exact-SHA and independent review. FAIL returns to the same WP. PASS binds the exact SHA. After merge, reconcile affected docs/evidence manually before selecting the next WP.
 
 ## Update rule
 
