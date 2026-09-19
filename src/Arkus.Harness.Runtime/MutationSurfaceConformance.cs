@@ -31,9 +31,10 @@ namespace Arkus.Harness.Runtime
     }
 
     /// <summary>
-    /// Mechanically closes the HK04 mutation surface: canonical mutation definitions,
-    /// canonical-transaction definitions, effective transactional handlers and dispatcher
-    /// bindings must identify the same capability keys.
+    /// Mechanically closes the HK04 mutation surface. Contract metadata is reconciled with two
+    /// independently derived executable surfaces: transactional-marker handlers and handlers that
+    /// structurally carry actual canonical write authority. The latter does not consult SideEffect
+    /// or transaction policy metadata and therefore cannot disappear merely by relabelling a route.
     /// </summary>
     public static class MutationSurfaceConformance
     {
@@ -44,6 +45,7 @@ namespace Arkus.Harness.Runtime
             if (contract == null) throw new ArgumentNullException(nameof(contract));
             if (effectiveAssemblies == null) throw new ArgumentNullException(nameof(effectiveAssemblies));
 
+            var assemblies = CopyAssemblies(effectiveAssemblies);
             var issues = new List<MutationSurfaceIssue>();
             var discoveredMutation = new HashSet<CapabilityKey>();
             var declaredTransactional = new HashSet<CapabilityKey>();
@@ -68,11 +70,13 @@ namespace Arkus.Harness.Runtime
                 }
             }
 
-            var effectiveTransactional = EnumerateEffectiveTransactionalHandlers(effectiveAssemblies, issues);
+            var effectiveTransactional = EnumerateEffectiveTransactionalHandlers(assemblies, issues);
+            var effectiveWriteAuthority = EnumerateEffectiveWriteAuthorityHandlers(assemblies, issues);
             var dispatcher = new HashSet<CapabilityKey>(contract.RouteKeys);
 
             CompareSets(discoveredMutation, declaredTransactional, "transaction-policy", issues);
             CompareSets(discoveredMutation, effectiveTransactional, "effective-transaction-handler", issues);
+            CompareSets(discoveredMutation, effectiveWriteAuthority, "effective-write-authority", issues);
 
             foreach (var key in discoveredMutation)
             {
@@ -96,14 +100,23 @@ namespace Arkus.Harness.Runtime
                 }
             }
 
+            foreach (var key in effectiveWriteAuthority)
+            {
+                if (!dispatcher.Contains(key))
+                {
+                    issues.Add(new MutationSurfaceIssue(
+                        "mutation-surface.write-authority-not-dispatched",
+                        key.ToString(),
+                        "A public handler carrying canonical write authority exists outside the canonical dispatcher."));
+                }
+            }
+
             return new MutationSurfaceReport(issues.AsReadOnly());
         }
 
-        private static HashSet<CapabilityKey> EnumerateEffectiveTransactionalHandlers(
-            IEnumerable<Assembly> assemblies,
-            IList<MutationSurfaceIssue> issues)
+        private static IReadOnlyList<Assembly> CopyAssemblies(IEnumerable<Assembly> assemblies)
         {
-            var result = new HashSet<CapabilityKey>();
+            var result = new List<Assembly>();
             var visited = new HashSet<string>(StringComparer.Ordinal);
             foreach (var assembly in assemblies)
             {
@@ -113,8 +126,19 @@ namespace Arkus.Harness.Runtime
                 }
 
                 var identity = assembly.FullName ?? assembly.GetName().Name ?? assembly.ToString();
-                if (!visited.Add(identity)) continue;
+                if (visited.Add(identity)) result.Add(assembly);
+            }
 
+            return result.AsReadOnly();
+        }
+
+        private static HashSet<CapabilityKey> EnumerateEffectiveTransactionalHandlers(
+            IEnumerable<Assembly> assemblies,
+            IList<MutationSurfaceIssue> issues)
+        {
+            var result = new HashSet<CapabilityKey>();
+            foreach (var assembly in assemblies)
+            {
                 foreach (var type in assembly.GetTypes())
                 {
                     if (!type.IsClass || type.IsAbstract || !typeof(ITransactionalMutationHandler).IsAssignableFrom(type))
@@ -122,41 +146,74 @@ namespace Arkus.Harness.Runtime
                         continue;
                     }
 
-                    var attributes = type.GetCustomAttributes(typeof(PublicCapabilityRouteAttribute), false);
-                    if (attributes.Length != 1)
-                    {
-                        issues.Add(new MutationSurfaceIssue(
-                            "mutation-surface.binding-metadata-count",
-                            type.FullName ?? type.Name,
-                            "Every effective transactional handler must declare exactly one public route identity."));
-                        continue;
-                    }
-
-                    var attribute = (PublicCapabilityRouteAttribute)attributes[0];
-                    try
-                    {
-                        var key = new CapabilityKey(
-                            attribute.CapabilityName,
-                            ContractVersion.Parse(attribute.ContractVersion));
-                        if (!result.Add(key))
-                        {
-                            issues.Add(new MutationSurfaceIssue(
-                                "mutation-surface.duplicate-handler",
-                                key.ToString(),
-                                "More than one effective transactional handler claims this mutation route."));
-                        }
-                    }
-                    catch (FormatException)
-                    {
-                        issues.Add(new MutationSurfaceIssue(
-                            "mutation-surface.invalid-version",
-                            type.FullName ?? type.Name,
-                            "Transactional route binding has an invalid canonical version."));
-                    }
+                    AddHandlerKey(type, result, "transactional", issues);
                 }
             }
 
             return result;
+        }
+
+        private static HashSet<CapabilityKey> EnumerateEffectiveWriteAuthorityHandlers(
+            IEnumerable<Assembly> assemblies,
+            IList<MutationSurfaceIssue> issues)
+        {
+            var result = new HashSet<CapabilityKey>();
+            foreach (var assembly in assemblies)
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (!type.IsClass ||
+                        type.IsAbstract ||
+                        !typeof(ICanonicalCapabilityHandler).IsAssignableFrom(type) ||
+                        !MutationAuthorityInspector.TypeCarriesCanonicalWriteAuthority(type))
+                    {
+                        continue;
+                    }
+
+                    AddHandlerKey(type, result, "write-authority", issues);
+                }
+            }
+
+            return result;
+        }
+
+        private static void AddHandlerKey(
+            Type type,
+            ISet<CapabilityKey> result,
+            string surface,
+            IList<MutationSurfaceIssue> issues)
+        {
+            var attributes = type.GetCustomAttributes(typeof(PublicCapabilityRouteAttribute), false);
+            if (attributes.Length != 1)
+            {
+                issues.Add(new MutationSurfaceIssue(
+                    "mutation-surface.binding-metadata-count",
+                    type.FullName ?? type.Name,
+                    "Every effective " + surface + " handler must declare exactly one public route identity."));
+                return;
+            }
+
+            var attribute = (PublicCapabilityRouteAttribute)attributes[0];
+            try
+            {
+                var key = new CapabilityKey(
+                    attribute.CapabilityName,
+                    ContractVersion.Parse(attribute.ContractVersion));
+                if (!result.Add(key))
+                {
+                    issues.Add(new MutationSurfaceIssue(
+                        "mutation-surface.duplicate-handler",
+                        key.ToString(),
+                        "More than one effective " + surface + " handler claims this mutation route."));
+                }
+            }
+            catch (FormatException)
+            {
+                issues.Add(new MutationSurfaceIssue(
+                    "mutation-surface.invalid-version",
+                    type.FullName ?? type.Name,
+                    surface + " route binding has an invalid canonical version."));
+            }
         }
 
         private static void CompareSets(
