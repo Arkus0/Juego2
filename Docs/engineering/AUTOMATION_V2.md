@@ -1,6 +1,6 @@
 # Automation V2 — minimal GitHub Actions orchestration
 
-Version: 1.1 — 2026-09-19
+Version: 1.2 — 2026-09-19
 
 ## Purpose
 
@@ -29,8 +29,10 @@ Draft Worker PR
   -> Candidate observation on every relevant PR update
   -> Worker fixes/reconciles evidence
   -> Worker pre-review CLEAN
-  -> Worker freezes exact SHA and marks PR Ready
-  -> Freeze exact-SHA validation
+  -> Worker obtains exact-SHA GREEN receipt
+  -> Worker freezes that exact SHA and marks PR Ready
+  -> Freeze handoff validates/reuses the same exact-SHA GREEN receipt
+     (full verifier runs only when no valid reusable receipt exists)
   -> REVIEW_READY marker
   -> human starts a fresh independent Reviewer
   -> Reviewer emits exact-SHA PASS or FAIL
@@ -48,12 +50,16 @@ Only the mechanical parts above are automated. Worker, independent Reviewer and 
 
 ### `.github/workflows/candidate-validation.yml`
 
-Runs PR code with a **read-only token**.
+Runs PR code with a **read-only token** plus read-only Actions access for receipt reuse.
 
 - Draft PR: observation mode.
-- Ready/non-draft PR: frozen-candidate verify mode.
+- Ready/non-draft PR: frozen-candidate verify/handoff mode.
 - Manual `workflow_dispatch`: exact SHA + explicit observation/verify mode.
 - `Mode: PROCESS_ONLY` skips product validation.
+- If a durable exact-SHA GREEN receipt already exists for the same candidate and passes strict identity/content validation, freeze reuses it instead of paying for an identical full rerun.
+- If no valid reusable receipt exists, freeze executes the canonical verifier normally and fails closed on any ambiguity.
+
+Receipt reuse is not trust-by-filename. The workflow verifies the source workflow succeeded, source `head_sha` equals the frozen candidate SHA, downloads the receipt artifact, and checks the receipt binds the exact SHA with clean-before/after YES, required gates GREEN and `Result: GREEN` before skipping execution.
 
 Canonical entrypoint convention for future WPs:
 
@@ -64,6 +70,7 @@ HK00 compatibility is built in while that WP is active:
 
 - `scripts/hk00-observe-exact-sha.sh <sha>`
 - `scripts/hk00-verify-exact-sha.sh <sha>`
+- reusable receipt artifact: `hk00-receipt-<40-char SHA>`
 
 The workflow uploads logs/receipts/observed artifacts but does not edit the candidate.
 
@@ -73,7 +80,7 @@ Has write permissions but **never checks out or executes PR code**.
 
 It performs only GitHub-state transitions:
 
-- after successful frozen validation, verifies handoff metadata and emits `REVIEW_READY`;
+- after successful frozen handoff validation (fresh execution or validated receipt reuse), verifies handoff metadata and emits `REVIEW_READY`;
 - on canonical Reviewer `FAIL` for the exact frozen SHA, emits `REPAIR_REQUIRED`;
 - on canonical Reviewer `PASS`, verifies the reviewed SHA equals PR HEAD/Frozen SHA, requires a successful `Freeze exact-SHA validation` check, and merges that exact SHA;
 - after an implementation merge, emits `DOCSYNC_REQUIRED`.
@@ -120,6 +127,8 @@ A `PASS` cannot merge unless all of these agree:
 - `Reviewed candidate SHA`;
 - successful `Freeze exact-SHA validation` check.
 
+That successful freeze check may represent either a fresh canonical execution or strict reuse of an already-durable exact-SHA GREEN receipt for the identical frozen SHA.
+
 ## DocSync completion marker
 
 After post-merge reconciliation is complete, the DocSync/finalization role persists one comment on the merged implementation PR:
@@ -138,6 +147,8 @@ Detail: <short reconciliation result>
 ## Cost policy
 
 Automation V2 uses only standard GitHub-hosted runners by default. Do not introduce larger/paid runners or paid third-party CI as a normal gate without an explicit human decision.
+
+Do not knowingly rerun an expensive exact-SHA proof solely to transition workflow state when a durable GREEN receipt for the identical SHA can be validated without weakening the proof boundary. Reuse is an orchestration optimization, not a semantic shortcut.
 
 If hosted Actions are unavailable, quota/policy changes, or a workflow platform fails, correctness does not disappear: the exact-SHA execution receipt protocol remains a valid manual fallback.
 
