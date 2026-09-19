@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.13 — 2026-09-19
+Version: 1.14 — 2026-09-19
 
 ## North star
 
@@ -46,7 +46,9 @@ Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, 
 
 `WP-HK-05` PR `#26` passed independent review on frozen candidate `23a9fd4373a803187cd9391b1459cd48975177f6` (review `#5257350871`), exact-SHA candidate observation Actions `35464742544` GREEN, freeze validation Actions `35464834162` GREEN, and merged as `ed65661680aea2a9be79f892c96aa42bf788a842` on 2026-09-19. Two prior frozen candidates failed in the same aggregate-validation-under-ambiguous-identity class; the circuit breaker triggered a causal architecture re-audit, and the accepted candidate uses dependency-local ambiguity deferral rather than global suppression.
 
-Next dependency-valid workpack: `WP-HK-06 — Provenance, diff, snapshot + replay`.
+Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is now `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
+
+Next dependency-valid workpack: `WP-HK-06A — Provenance journal + authored/live boundary`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -58,12 +60,15 @@ Next dependency-valid workpack: `WP-HK-06 — Provenance, diff, snapshot + repla
 | 6 | `WP-HK-04` ✅ COMPLETE | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
 | 7 | `WP-HK-02A` ✅ COMPLETE | Object-scoped opaque extension data + typed declared dependencies |
 | 8 | `WP-HK-05` ✅ COMPLETE | Validation/invariants and structured repairable diagnostics |
-| 9 | `WP-HK-06` | Provenance, semantic diff, journal, snapshot/export and deterministic replay |
-| 10 | `WP-HK-07` | Production headless host + reference JSONL + standards-compatible MCP projection |
-| 11 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination and round-trip budgets |
-| 12 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
-| 13 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure |
-| 14 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
+| 9 | `WP-HK-06A` | Provenance journal + authored/live-state boundary |
+| 10 | `WP-HK-06B` | Semantic diff + canonical snapshot export/import portability |
+| 11 | `WP-HK-06C` | Deterministic journal replay + end-to-end audit consistency |
+| 12 | `WP-HK-07A` | Production headless host + deterministic JSONL/reference transport |
+| 13 | `WP-HK-07B` | Standards-compatible MCP projection + cross-transport conformance |
+| 14 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination and round-trip budgets |
+| 15 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
+| 16 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure |
+| 17 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
 
 ### H0 exit criteria
 
