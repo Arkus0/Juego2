@@ -104,7 +104,9 @@ namespace Arkus.Game.Authoring
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
                 {
                     ["owners"] = SchemaNode.Array(SchemaNode.String()),
-                    ["schemaVersions"] = SchemaNode.Array(SchemaNode.Integer())
+                    ["schemaVersions"] = SchemaNode.Array(SchemaNode.Integer()),
+                    ["scopes"] = SchemaNode.Array(SchemaNode.String(new[] { "global", "object" })),
+                    ["subjectIds"] = SchemaNode.Array(SchemaNode.String())
                 });
             properties["limit"] = SchemaNode.Integer();
             properties["cursor"] = SchemaNode.String();
@@ -116,8 +118,11 @@ namespace Arkus.Game.Authoring
             var properties = AnchorProperties();
             properties["owner"] = SchemaNode.String();
             properties["schemaVersion"] = SchemaNode.Integer();
+            properties["subjectId"] = SchemaNode.String();
             properties["offset"] = SchemaNode.Integer();
             properties["limit"] = SchemaNode.Integer();
+            properties["dependencyOffset"] = SchemaNode.Integer();
+            properties["dependencyLimit"] = SchemaNode.Integer();
             return ObjectSchema(properties, new[] { "revision", "hash", "owner", "schemaVersion" });
         }
 
@@ -176,9 +181,12 @@ namespace Arkus.Game.Authoring
                 {
                     ["owner"] = SchemaNode.String(),
                     ["schemaVersion"] = SchemaNode.Integer(),
-                    ["payloadLength"] = SchemaNode.Integer()
+                    ["scope"] = SchemaNode.String(new[] { "global", "object" }),
+                    ["subjectId"] = SchemaNode.String(),
+                    ["payloadLength"] = SchemaNode.Integer(),
+                    ["dependencyCount"] = SchemaNode.Integer()
                 },
-                new[] { "owner", "schemaVersion", "payloadLength" });
+                new[] { "owner", "schemaVersion", "scope", "payloadLength", "dependencyCount" });
             var properties = WithWorldMetadata(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
             {
                 ["items"] = SchemaNode.Array(descriptor),
@@ -189,18 +197,35 @@ namespace Arkus.Game.Authoring
 
         private static JsonSchemaDocument ExtensionReadSuccessSchema()
         {
+            var dependency = SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["kind"] = SchemaNode.String(),
+                    ["targetId"] = SchemaNode.String()
+                },
+                new[] { "kind", "targetId" });
             var properties = WithWorldMetadata(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
             {
                 ["owner"] = SchemaNode.String(),
                 ["schemaVersion"] = SchemaNode.Integer(),
+                ["scope"] = SchemaNode.String(new[] { "global", "object" }),
+                ["subjectId"] = SchemaNode.String(),
                 ["payloadLength"] = SchemaNode.Integer(),
                 ["offset"] = SchemaNode.Integer(),
                 ["payloadBase64"] = SchemaNode.String(),
-                ["nextOffset"] = SchemaNode.Integer()
+                ["nextOffset"] = SchemaNode.Integer(),
+                ["dependencyCount"] = SchemaNode.Integer(),
+                ["dependencyOffset"] = SchemaNode.Integer(),
+                ["dependencies"] = SchemaNode.Array(dependency),
+                ["nextDependencyOffset"] = SchemaNode.Integer()
             });
             return ObjectSchema(
                 properties,
-                new[] { "world", "owner", "schemaVersion", "payloadLength", "offset", "payloadBase64" });
+                new[]
+                {
+                    "world", "owner", "schemaVersion", "scope", "payloadLength", "offset", "payloadBase64",
+                    "dependencyCount", "dependencyOffset", "dependencies"
+                });
         }
 
         private static SchemaNode ObjectResultSchema()

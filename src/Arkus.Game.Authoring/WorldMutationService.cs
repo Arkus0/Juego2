@@ -15,8 +15,8 @@ namespace Arkus.Game.Authoring
     /// </summary>
     public sealed class TransactionalWorldAuthoringSession : IWorldStateSource, IWorldMutationService, ICanonicalWorldMutationCommitter
     {
-        private const string FingerprintVersion = "arkus-world-mutation-request-v1";
-        private const string PlanVersion = "arkus-world-mutation-plan-v1";
+        private const string FingerprintVersion = "arkus-world-mutation-request-v2";
+        private const string PlanVersion = "arkus-world-mutation-plan-v2";
         private static readonly UTF8Encoding StrictUtf8 = new UTF8Encoding(false, true);
 
         private readonly object _gate = new object();
@@ -175,7 +175,7 @@ namespace Arkus.Game.Authoring
             for (var index = 0; index < snapshot.State.Extensions.Count; index++)
             {
                 var value = snapshot.State.Extensions[index];
-                extensions.Add(WorldMutationCoverage.ExtensionKey(value.Owner, value.SchemaVersion), value);
+                extensions.Add(WorldMutationCoverage.ExtensionKey(value.Owner, value.SchemaVersion, value.SubjectId), value);
             }
 
             for (var index = 0; index < request.Operations.Count; index++)
@@ -277,12 +277,22 @@ namespace Arkus.Game.Authoring
                     return null;
 
                 case MutationOperationKind.PutExtension:
-                    extensions[WorldMutationCoverage.ExtensionKey(operation.Owner!, operation.SchemaVersion)] =
-                        new WorldExtensionData(operation.Owner!, operation.SchemaVersion, operation.Payload!);
+                    extensions[WorldMutationCoverage.ExtensionKey(
+                        operation.Owner!,
+                        operation.SchemaVersion,
+                        ToObjectId(operation.SubjectId))] = new WorldExtensionData(
+                            operation.Owner!,
+                            operation.SchemaVersion,
+                            operation.Payload!,
+                            ToObjectId(operation.SubjectId),
+                            BuildReferences(operation.Dependencies));
                     return null;
 
                 case MutationOperationKind.RemoveExtension:
-                    var key = WorldMutationCoverage.ExtensionKey(operation.Owner!, operation.SchemaVersion);
+                    var key = WorldMutationCoverage.ExtensionKey(
+                        operation.Owner!,
+                        operation.SchemaVersion,
+                        ToObjectId(operation.SubjectId));
                     if (!extensions.Remove(key))
                     {
                         return MissingResource(operationIndex, "world.extension:" + key);
@@ -306,6 +316,11 @@ namespace Arkus.Game.Authoring
             }
 
             return references.AsReadOnly();
+        }
+
+        private static WorldObjectId? ToObjectId(string? value)
+        {
+            return value == null ? (WorldObjectId?)null : new WorldObjectId(value);
         }
 
         private static IReadOnlyList<WorldMutationChange> BuildChanges(WorldState before, WorldState after)
@@ -353,14 +368,19 @@ namespace Arkus.Game.Authoring
                 var fields = new List<string>();
                 if (oldValue == null || newValue == null) fields.Add("existence");
                 if (oldValue == null || newValue == null || !PayloadEquals(oldValue, newValue)) fields.Add("payload");
-                if (fields.Count != 0)
+                var oldDependencies = ExtensionDependencySet(oldValue);
+                var newDependencies = ExtensionDependencySet(newValue);
+                var added = Difference(newDependencies, oldDependencies);
+                var removed = Difference(oldDependencies, newDependencies);
+                if (added.Count != 0 || removed.Count != 0) fields.Add("dependencies");
+                if (fields.Count != 0 || added.Count != 0 || removed.Count != 0)
                 {
                     changes.Add(new WorldMutationChange(
                         "world.extension:" + key,
                         oldValue == null ? "create" : newValue == null ? "remove" : "update",
                         fields,
-                        Array.Empty<string>(),
-                        Array.Empty<string>()));
+                        added,
+                        removed));
                 }
             }
 
@@ -447,7 +467,7 @@ namespace Arkus.Game.Authoring
                         containerId = parsedContainer;
                     }
 
-                    var referenceError = ParseReferences(data, index, out var references);
+                    var referenceError = ParseReferences(data, index, "references", out var references);
                     if (referenceError != null) return referenceError;
                     operation = MutationOperation.PutObject(id, typeId, containerId, references);
                     return null;
@@ -461,7 +481,7 @@ namespace Arkus.Game.Authoring
                     return null;
 
                 case "put-extension":
-                    if (!OnlyFields(data, "kind", "owner", "schemaVersion", "payloadBase64"))
+                    if (!OnlyFields(data, "kind", "owner", "schemaVersion", "subjectId", "dependencies", "payloadBase64"))
                         return InvalidRequest(OperationPath(index), "put-extension contains fields outside its declared grammar.");
                     if (!TryStableToken(data, "owner", out var owner))
                         return InvalidRequest(OperationPath(index) + ".owner", "Extension owner must be a stable token.");
@@ -469,17 +489,35 @@ namespace Arkus.Game.Authoring
                         return InvalidRequest(OperationPath(index) + ".schemaVersion", "Extension schemaVersion must be a positive 32-bit integer.");
                     if (!TryGetString(data, "payloadBase64", out var payloadText) || !TryCanonicalBase64(payloadText, out var payload))
                         return InvalidRequest(OperationPath(index) + ".payloadBase64", "payloadBase64 must use canonical Base64 encoding.");
-                    operation = MutationOperation.PutExtension(owner, (int)schemaVersion, payload);
+                    string? subjectId = null;
+                    if (data.ContainsKey("subjectId"))
+                    {
+                        if (!TryStableToken(data, "subjectId", out var parsedSubject))
+                            return InvalidRequest(OperationPath(index) + ".subjectId", "subjectId must be a stable token.");
+                        subjectId = parsedSubject;
+                    }
+
+                    var dependencyError = ParseReferences(data, index, "dependencies", out var dependencies);
+                    if (dependencyError != null) return dependencyError;
+                    operation = MutationOperation.PutExtension(owner, (int)schemaVersion, subjectId, dependencies, payload);
                     return null;
 
                 case "remove-extension":
-                    if (!OnlyFields(data, "kind", "owner", "schemaVersion"))
+                    if (!OnlyFields(data, "kind", "owner", "schemaVersion", "subjectId"))
                         return InvalidRequest(OperationPath(index), "remove-extension contains fields outside its declared grammar.");
                     if (!TryStableToken(data, "owner", out var removeOwner))
                         return InvalidRequest(OperationPath(index) + ".owner", "Extension owner must be a stable token.");
                     if (!TryGetInteger(data, "schemaVersion", out var removeVersion) || removeVersion <= 0 || removeVersion > int.MaxValue)
                         return InvalidRequest(OperationPath(index) + ".schemaVersion", "Extension schemaVersion must be a positive 32-bit integer.");
-                    operation = MutationOperation.RemoveExtension(removeOwner, (int)removeVersion);
+                    string? removeSubjectId = null;
+                    if (data.ContainsKey("subjectId"))
+                    {
+                        if (!TryStableToken(data, "subjectId", out var parsedSubject))
+                            return InvalidRequest(OperationPath(index) + ".subjectId", "subjectId must be a stable token.");
+                        removeSubjectId = parsedSubject;
+                    }
+
+                    operation = MutationOperation.RemoveExtension(removeOwner, (int)removeVersion, removeSubjectId);
                     return null;
 
                 default:
@@ -490,13 +528,14 @@ namespace Arkus.Game.Authoring
         private static CapabilityInvocationResult? ParseReferences(
             IReadOnlyDictionary<string, object?> data,
             int operationIndex,
+            string fieldName,
             out IReadOnlyList<ReferenceValue> references)
         {
             references = Array.Empty<ReferenceValue>();
-            if (!data.TryGetValue("references", out var raw)) return null;
+            if (!data.TryGetValue(fieldName, out var raw)) return null;
             if (!(raw is IReadOnlyList<object?> values))
             {
-                return InvalidRequest(OperationPath(operationIndex) + ".references", "references must be an array.");
+                return InvalidRequest(OperationPath(operationIndex) + "." + fieldName, fieldName + " must be an array.");
             }
 
             var parsed = new List<ReferenceValue>();
@@ -508,13 +547,20 @@ namespace Arkus.Game.Authoring
                     !TryStableToken(reference, "targetId", out var targetId))
                 {
                     return InvalidRequest(
-                        OperationPath(operationIndex) + ".references[" + index.ToString(CultureInfo.InvariantCulture) + "]",
+                        OperationPath(operationIndex) + "." + fieldName + "[" + index.ToString(CultureInfo.InvariantCulture) + "]",
                         "Each reference requires only stable-token kind and targetId fields.");
                 }
 
                 parsed.Add(new ReferenceValue(kind, targetId));
             }
 
+            parsed.Sort((left, right) =>
+            {
+                var comparison = StringComparer.Ordinal.Compare(left.Kind, right.Kind);
+                return comparison != 0
+                    ? comparison
+                    : StringComparer.Ordinal.Compare(left.TargetId, right.TargetId);
+            });
             references = parsed.AsReadOnly();
             return null;
         }
@@ -708,7 +754,7 @@ namespace Arkus.Game.Authoring
             for (var index = 0; index < state.Extensions.Count; index++)
             {
                 var value = state.Extensions[index];
-                values.Add(WorldMutationCoverage.ExtensionKey(value.Owner, value.SchemaVersion), value);
+                values.Add(WorldMutationCoverage.ExtensionKey(value.Owner, value.SchemaVersion, value.SubjectId), value);
             }
 
             return values;
@@ -752,10 +798,22 @@ namespace Arkus.Game.Authoring
             return true;
         }
 
+        private static HashSet<string> ExtensionDependencySet(WorldExtensionData? value)
+        {
+            var dependencies = new HashSet<string>(StringComparer.Ordinal);
+            if (value == null) return dependencies;
+            for (var index = 0; index < value.Dependencies.Count; index++)
+            {
+                var current = value.Dependencies[index];
+                dependencies.Add(current.Kind.Value + "->" + current.TargetId.Value);
+            }
+
+            return dependencies;
+        }
+
         private static int CompareExtensions(WorldExtensionData left, WorldExtensionData right)
         {
-            var owner = string.Compare(left.Owner, right.Owner, StringComparison.Ordinal);
-            return owner != 0 ? owner : left.SchemaVersion.CompareTo(right.SchemaVersion);
+            return left.Identity.CompareTo(right.Identity);
         }
 
         private static CapabilityInvocationResult MissingResource(int index, string resource)
@@ -1025,6 +1083,8 @@ namespace Arkus.Game.Authoring
                 IReadOnlyList<ReferenceValue>? references,
                 string? owner,
                 int schemaVersion,
+                string? subjectId,
+                IReadOnlyList<ReferenceValue>? dependencies,
                 byte[]? payload)
             {
                 Kind = kind;
@@ -1034,6 +1094,8 @@ namespace Arkus.Game.Authoring
                 References = references ?? Array.Empty<ReferenceValue>();
                 Owner = owner;
                 SchemaVersion = schemaVersion;
+                SubjectId = subjectId;
+                Dependencies = dependencies ?? Array.Empty<ReferenceValue>();
                 Payload = payload;
             }
 
@@ -1044,6 +1106,8 @@ namespace Arkus.Game.Authoring
             public IReadOnlyList<ReferenceValue> References { get; }
             public string? Owner { get; }
             public int SchemaVersion { get; }
+            public string? SubjectId { get; }
+            public IReadOnlyList<ReferenceValue> Dependencies { get; }
             public byte[]? Payload { get; }
 
             public static MutationOperation PutObject(
@@ -1052,22 +1116,47 @@ namespace Arkus.Game.Authoring
                 string? containerId,
                 IReadOnlyList<ReferenceValue> references)
             {
-                return new MutationOperation(MutationOperationKind.PutObject, id, typeId, containerId, references, null, 0, null);
+                return new MutationOperation(MutationOperationKind.PutObject, id, typeId, containerId, references, null, 0, null, null, null);
             }
 
             public static MutationOperation RemoveObject(string id)
             {
-                return new MutationOperation(MutationOperationKind.RemoveObject, id, null, null, null, null, 0, null);
+                return new MutationOperation(MutationOperationKind.RemoveObject, id, null, null, null, null, 0, null, null, null);
             }
 
-            public static MutationOperation PutExtension(string owner, int schemaVersion, byte[] payload)
+            public static MutationOperation PutExtension(
+                string owner,
+                int schemaVersion,
+                string? subjectId,
+                IReadOnlyList<ReferenceValue> dependencies,
+                byte[] payload)
             {
-                return new MutationOperation(MutationOperationKind.PutExtension, null, null, null, null, owner, schemaVersion, (byte[])payload.Clone());
+                return new MutationOperation(
+                    MutationOperationKind.PutExtension,
+                    null,
+                    null,
+                    null,
+                    null,
+                    owner,
+                    schemaVersion,
+                    subjectId,
+                    dependencies,
+                    (byte[])payload.Clone());
             }
 
-            public static MutationOperation RemoveExtension(string owner, int schemaVersion)
+            public static MutationOperation RemoveExtension(string owner, int schemaVersion, string? subjectId)
             {
-                return new MutationOperation(MutationOperationKind.RemoveExtension, null, null, null, null, owner, schemaVersion, null);
+                return new MutationOperation(
+                    MutationOperationKind.RemoveExtension,
+                    null,
+                    null,
+                    null,
+                    null,
+                    owner,
+                    schemaVersion,
+                    subjectId,
+                    null,
+                    null);
             }
 
             public void AppendFingerprint(StringBuilder builder)
@@ -1087,10 +1176,17 @@ namespace Arkus.Game.Authoring
                         break;
                     case MutationOperationKind.PutExtension:
                         builder.Append(Owner).Append('\t').Append(SchemaVersion.ToString(CultureInfo.InvariantCulture)).Append('\t')
-                            .Append(Convert.ToBase64String(Payload!));
+                            .Append(SubjectId ?? "-").Append('\t');
+                        for (var index = 0; index < Dependencies.Count; index++)
+                        {
+                            builder.Append(Dependencies[index].Kind).Append("->").Append(Dependencies[index].TargetId).Append(';');
+                        }
+
+                        builder.Append('\t').Append(Convert.ToBase64String(Payload!));
                         break;
                     case MutationOperationKind.RemoveExtension:
-                        builder.Append(Owner).Append('\t').Append(SchemaVersion.ToString(CultureInfo.InvariantCulture));
+                        builder.Append(Owner).Append('\t').Append(SchemaVersion.ToString(CultureInfo.InvariantCulture)).Append('\t')
+                            .Append(SubjectId ?? "-");
                         break;
                 }
 

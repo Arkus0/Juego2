@@ -119,7 +119,7 @@ namespace Arkus.Harness.Tests
         {
             var payload = Encoding.UTF8.GetString(CanonicalWorldStateCodec.Serialize(Hk02TestFixtures.MicroWorld()));
 
-            Assert.StartsWith("ARKUS_WORLD_STATE_V1\nschema\t1\n", payload);
+            Assert.StartsWith("ARKUS_WORLD_STATE_V2\nschema\t2\n", payload);
             Assert.EndsWith("end\n", payload);
             Assert.DoesNotContain("\r", payload);
         }

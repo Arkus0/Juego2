@@ -357,13 +357,17 @@ namespace Arkus.Harness.Tests
                     var owner = (string)descriptor["owner"]!;
                     var schemaVersion = Convert.ToInt32(descriptor["schemaVersion"], System.Globalization.CultureInfo.InvariantCulture);
                     var payloadLength = Convert.ToInt32(descriptor["payloadLength"], System.Globalization.CultureInfo.InvariantCulture);
+                    WorldObjectId? subjectId = descriptor.TryGetValue("subjectId", out var rawSubject)
+                        ? new WorldObjectId((string)rawSubject!)
+                        : (WorldObjectId?)null;
                     var bytes = new List<byte>();
                     var offset = 0;
-                    while (offset < payloadLength)
+                    do
                     {
                         var readRequest = Anchor(source);
                         readRequest["owner"] = owner;
                         readRequest["schemaVersion"] = schemaVersion;
+                        if (subjectId.HasValue) readRequest["subjectId"] = subjectId.Value.Value;
                         readRequest["offset"] = offset;
                         readRequest["limit"] = WorldInspectionService.MaximumExtensionChunkBytes;
                         var read = Success(contract, WorldInspectionContract.ExtensionReadName, readRequest);
@@ -375,8 +379,41 @@ namespace Arkus.Harness.Tests
 
                         offset = Convert.ToInt32(nextOffset, System.Globalization.CultureInfo.InvariantCulture);
                     }
+                    while (offset < payloadLength);
 
-                    extensions.Add(new WorldExtensionData(owner, schemaVersion, bytes.ToArray()));
+                    var dependencies = new List<WorldReference>();
+                    var dependencyOffset = 0;
+                    do
+                    {
+                        var dependencyRequest = Anchor(source);
+                        dependencyRequest["owner"] = owner;
+                        dependencyRequest["schemaVersion"] = schemaVersion;
+                        if (subjectId.HasValue) dependencyRequest["subjectId"] = subjectId.Value.Value;
+                        dependencyRequest["offset"] = payloadLength;
+                        dependencyRequest["limit"] = WorldInspectionService.MaximumExtensionChunkBytes;
+                        dependencyRequest["dependencyOffset"] = dependencyOffset;
+                        dependencyRequest["dependencyLimit"] = WorldInspectionService.MaximumExtensionDependencyPageSize;
+                        var dependencyRead = Success(contract, WorldInspectionContract.ExtensionReadName, dependencyRequest);
+                        foreach (var rawDependency in Hk03InspectionTests.List(dependencyRead.Data!, "dependencies"))
+                        {
+                            var dependency = (IReadOnlyDictionary<string, object?>)rawDependency!;
+                            dependencies.Add(new WorldReference(
+                                new WorldReferenceKind((string)dependency["kind"]!),
+                                new WorldObjectId((string)dependency["targetId"]!)));
+                        }
+
+                        if (!dependencyRead.Data.TryGetValue("nextDependencyOffset", out var nextDependencyOffset))
+                        {
+                            break;
+                        }
+
+                        dependencyOffset = Convert.ToInt32(
+                            nextDependencyOffset,
+                            System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                    while (true);
+
+                    extensions.Add(new WorldExtensionData(owner, schemaVersion, bytes.ToArray(), subjectId, dependencies));
                 }
 
                 cursor = extensionResult.Data!.TryGetValue("nextCursor", out var next)
@@ -403,8 +440,11 @@ namespace Arkus.Harness.Tests
                 "WorldObject.References",
                 "WorldReference.Kind",
                 "WorldReference.TargetId",
+                "WorldExtensionData.Identity",
                 "WorldExtensionData.Owner",
                 "WorldExtensionData.SchemaVersion",
+                "WorldExtensionData.SubjectId",
+                "WorldExtensionData.Dependencies",
                 "WorldExtensionData.PayloadLength"
             };
             var actual = new HashSet<string>(StringComparer.Ordinal);

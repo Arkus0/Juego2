@@ -92,7 +92,7 @@ namespace Arkus.Game.World
             }
 
             ValidateContainmentAcyclic(state, byId);
-            ValidateExtensions(state);
+            ValidateExtensions(state, byId);
         }
 
         private static void ValidateContainmentAcyclic(
@@ -122,9 +122,11 @@ namespace Arkus.Game.World
             }
         }
 
-        private static void ValidateExtensions(WorldState state)
+        private static void ValidateExtensions(
+            WorldState state,
+            IReadOnlyDictionary<WorldObjectId, WorldObject> byId)
         {
-            var keys = new HashSet<string>(StringComparer.Ordinal);
+            var identities = new HashSet<WorldExtensionIdentity>();
             for (var index = 0; index < state.Extensions.Count; index++)
             {
                 var extension = state.Extensions[index] ?? throw Error(
@@ -132,13 +134,48 @@ namespace Arkus.Game.World
                     "Extension entries cannot be null.",
                     "$/extensions/" + index.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
-                var key = extension.Owner + "@" + extension.SchemaVersion.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                if (!keys.Add(key))
+                var identity = extension.Identity;
+                if (!identities.Add(identity))
                 {
                     throw Error(
                         "world.duplicate_extension",
-                        "Only one opaque extension payload may exist for an owner/schema-version pair.",
-                        "$/extensions/" + extension.Owner);
+                        "Only one opaque extension payload may exist for an owner/schema-version/subject identity.",
+                        "$/extensions/" + identity.ResourceKey);
+                }
+
+                if (extension.SubjectId.HasValue && !byId.ContainsKey(extension.SubjectId.Value))
+                {
+                    throw Error(
+                        "world.dangling_extension_subject",
+                        "Extension subjects must resolve inside the same world state.",
+                        "$/extensions/" + identity.ResourceKey + "/subjectId");
+                }
+
+                var uniqueDependencies = new HashSet<WorldReference>();
+                for (var dependencyIndex = 0; dependencyIndex < extension.Dependencies.Count; dependencyIndex++)
+                {
+                    var dependency = extension.Dependencies[dependencyIndex] ?? throw Error(
+                        "world.invalid_extension_dependency",
+                        "Extension dependency entries cannot be null.",
+                        "$/extensions/" + identity.ResourceKey + "/dependencies/" +
+                        dependencyIndex.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (!uniqueDependencies.Add(dependency))
+                    {
+                        throw Error(
+                            "world.duplicate_extension_dependency",
+                            "Duplicate extension dependency edges are not semantic state.",
+                            "$/extensions/" + identity.ResourceKey + "/dependencies");
+                    }
+
+                    if (!byId.ContainsKey(dependency.TargetId))
+                    {
+                        throw Error(
+                            "world.dangling_extension_dependency",
+                            "Extension dependency targets must resolve inside the same world state.",
+                            "$/extensions/" + identity.ResourceKey + "/dependencies/" +
+                            dependencyIndex.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    }
                 }
             }
         }
