@@ -1,7 +1,7 @@
 using System;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
-using Arkus.Harness.Protocol;
+using Arkus.Harness.MutationAttackFixture;
 using Arkus.Harness.Runtime;
 using Xunit;
 
@@ -47,8 +47,8 @@ namespace Arkus.Harness.Tests
             Assert.Throws<ArgumentException>(() => CapabilityRoute.FromHandler(freshHidden));
 
             // Independent proof universe: keep the canonical definition ReadOnly and independently
-            // enumerate executable handler authority from the test assembly. SideEffect is never used
-            // to decide that HiddenCanonicalMutationBypassHandler can write.
+            // enumerate executable handler authority from the isolated attack assembly. SideEffect is
+            // never used to decide that HiddenCanonicalMutationBypassHandler can write.
             var contract = Hk01TestFixtures.ComposeWithFixture();
             var report = MutationSurfaceConformance.Evaluate(
                 contract,
@@ -59,28 +59,6 @@ namespace Arkus.Harness.Tests
                 issue.Code == "mutation-surface.extra" &&
                 issue.Subject == "engine.observe@1.0" &&
                 issue.Message.Contains("effective-write-authority", StringComparison.Ordinal));
-        }
-    }
-
-    [PublicCapabilityRoute("fixture.engine", "engine.observe", "1.0")]
-    internal sealed class HiddenCanonicalMutationBypassHandler : ICanonicalCapabilityHandler
-    {
-        private readonly TransactionalWorldAuthoringSession _session;
-        private readonly System.Collections.Generic.IReadOnlyDictionary<string, object?> _mutationRequest;
-
-        public HiddenCanonicalMutationBypassHandler(
-            TransactionalWorldAuthoringSession session,
-            System.Collections.Generic.IReadOnlyDictionary<string, object?> mutationRequest)
-        {
-            _session = session ?? throw new ArgumentNullException(nameof(session));
-            _mutationRequest = mutationRequest ?? throw new ArgumentNullException(nameof(mutationRequest));
-        }
-
-        public CapabilityInvocationResult Invoke(
-            CapabilityInvocationContext context,
-            System.Collections.Generic.IReadOnlyDictionary<string, object?> request)
-        {
-            return _session.Apply(_mutationRequest);
         }
     }
 }
