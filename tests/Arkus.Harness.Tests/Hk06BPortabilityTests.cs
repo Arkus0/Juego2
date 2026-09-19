@@ -86,18 +86,43 @@ namespace Arkus.Harness.Tests
             var targetInitial = new WorldState(new WorldId("world.target"), 3, Array.Empty<WorldObject>());
             var target = new PortableWorldAuthoringSession(targetInitial);
             var targetContract = Compose(target);
+            var importRequest = ImportRequest(target.Current, snapshot, "request.hk06b.roundtrip");
             var import = Hk04TransactionalMutationTests.Success(
                 targetContract,
                 WorldPortabilityContract.ImportName,
-                ImportRequest(target.Current, snapshot));
+                importRequest);
 
             Assert.Equal("new-local-lineage", import.Data!["lineageDisposition"]);
+            Assert.False((bool)import.Data["replayed"]!);
             Assert.Equal(0, import.Data["retainedJournalEntries"]);
             Assert.Equal(0, import.Data["importedJournalEntries"]);
             Assert.Equal(
                 CanonicalWorldStateCodec.ComputeContentHash(source.Current),
                 CanonicalWorldStateCodec.ComputeContentHash(target.Current));
             Assert.Equal(source.Current.Revision, target.Current.Revision);
+            Assert.Equal(0, JournalCount(targetContract));
+
+            var replay = Hk04TransactionalMutationTests.Success(
+                targetContract,
+                WorldPortabilityContract.ImportName,
+                importRequest);
+            Assert.True((bool)replay.Data!["replayed"]!);
+            Assert.Equal(import.Data["current"], replay.Data["current"]);
+            Assert.Equal(0, JournalCount(targetContract));
+
+            var conflictRequest = new Dictionary<string, object?>(importRequest, StringComparer.Ordinal)
+            {
+                ["expectedHash"] = new string('0', 64)
+            };
+            var conflict = targetContract.Dispatch(
+                WorldPortabilityContract.ImportName,
+                Hk04TransactionalMutationTests.ExactVersion(),
+                conflictRequest);
+            Assert.False(conflict.Success);
+            Assert.Equal("world.snapshot.idempotency_conflict", conflict.Error!.MachineCode);
+            Assert.Equal(
+                CanonicalWorldStateCodec.ComputeContentHash(source.Current),
+                CanonicalWorldStateCodec.ComputeContentHash(target.Current));
             Assert.Equal(0, JournalCount(targetContract));
 
             var journal = Hk06AProvenanceJournalTests.ReadJournal(targetContract).Data!;
@@ -260,7 +285,7 @@ namespace Arkus.Harness.Tests
             Hk04TransactionalMutationTests.Success(
                 cleanContract,
                 WorldPortabilityContract.ImportName,
-                ImportRequest(clean.Current, after));
+                ImportRequest(clean.Current, after, "request.hk06b.potes-import"));
             Assert.Equal(
                 CanonicalWorldStateCodec.ComputeContentHash(session.Current),
                 CanonicalWorldStateCodec.ComputeContentHash(clean.Current));
@@ -302,10 +327,12 @@ namespace Arkus.Harness.Tests
 
         private static IReadOnlyDictionary<string, object?> ImportRequest(
             WorldState current,
-            IReadOnlyDictionary<string, object?> snapshot)
+            IReadOnlyDictionary<string, object?> snapshot,
+            string idempotencyKey = "request.hk06b.snapshot-import")
         {
             return new Dictionary<string, object?>(StringComparer.Ordinal)
             {
+                ["idempotencyKey"] = idempotencyKey,
                 ["expectedRevision"] = current.Revision,
                 ["expectedHash"] = CanonicalWorldStateCodec.ComputeContentHash(current),
                 ["snapshot"] = snapshot
