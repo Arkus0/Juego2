@@ -18,23 +18,23 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00` and `WP-HK-00A` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A` and `WP-HK-01` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-00A — Product architecture + adoption boundary`.
+Latest accepted workpack: `WP-HK-01 — Canonical contract model + capability discovery`.
 
-- implementation PR: `#15`
-- reviewed frozen candidate: `e66ed729c75d94fb7efdfc304cf51ec52fa25e53`
-- independent Reviewer: `PASS`
-- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35430543113`)
-- merge SHA: `0a4253443326ccab8e910c3265b015fc757cc4a2`
-- accepted product architecture: canonical Arkus contract is engine/transport neutral, supports reviewed scoped capability composition, and forbids bridge/transport-owned parallel public registries
-- dependency/adoption policy: binding; exact-version review remains required before direct external-code adoption
+- implementation PR: `#16`
+- reviewed frozen candidate: `c16c0a7bbe4afe440252b921516b5e9b4635e082`
+- independent Reviewer: `PASS` (PR review `#5255264042`)
+- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35435429932`)
+- merge SHA: `24d761ba0bc33a70fc06e5ea351054b5d3c51488`
+- accepted contract boundary: one transport-neutral Arkus capability inventory drives dispatch/discovery/projection; scoped providers enter only through canonical composition; portable logical references are provider-owned; same-major breaking request changes fail composition before negotiation
+- conformance boundary: definitions, canonical dispatcher routes, independently enumerated concrete handlers and the emitted `system.describe` artifact are reconciled by the HK01 suite
 
-The prior HK00 project/source-universe defect and the HK00A engine-scoped-capability ownership ambiguity are closed inside their accepted finite claims. Do not reopen either WP merely for theoretical defence-in-depth outside its proof budget.
+HK01 had two rejected candidates before PASS. The final repair cycle re-audited the portability + evolution/negotiation boundary rather than stacking literal patches. Do not reopen HK01 merely to duplicate HK00 project-universe proof or for theoretical defence-in-depth outside the accepted finite claim/proof budget.
 
 ## Current next product target
 
-`WP-HK-01 — Canonical contract model + capability discovery` is the next dependency-valid workpack. It must implement and prove the engine-neutral canonical contract/composition model required by the accepted HK00A boundary, including synthetic scoped-provider composition and independently/effectively enumerable completeness.
+`WP-HK-02 — Canonical world state + deterministic identity` is the next dependency-valid workpack. It depends on completed HK01 and must establish stable typed identity, deterministic canonical serialization/state hashing, explicit versioning, referential integrity and a minimal representative micro-world fixture without leaking Unity/gameplay design into H0.
 
 ## Operating model
 
@@ -48,7 +48,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 → HK-02 → HK-03 → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 → HK-03 → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
