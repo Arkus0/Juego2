@@ -49,6 +49,7 @@ namespace Arkus.Game.Authoring
     public sealed class UnavailableWorldMutationService :
         IWorldMutationService,
         IWorldValidationService,
+        IWorldProvenanceService,
         ICanonicalWorldMutationCommitter
     {
         private readonly UnavailableWorldValidationService _validation = new UnavailableWorldValidationService();
@@ -59,6 +60,7 @@ namespace Arkus.Game.Authoring
             _validation.ValidateCurrent(request);
         public CapabilityInvocationResult ValidateProposed(IReadOnlyDictionary<string, object?> request) =>
             _validation.ValidateProposed(request);
+        public CapabilityInvocationResult ReadJournal(IReadOnlyDictionary<string, object?> request) => Unavailable();
         CapabilityInvocationResult ICanonicalWorldMutationCommitter.Apply(IReadOnlyDictionary<string, object?> request) => Unavailable();
 
         private static CapabilityInvocationResult Unavailable()

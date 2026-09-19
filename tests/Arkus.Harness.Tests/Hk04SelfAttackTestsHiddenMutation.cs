@@ -113,7 +113,8 @@ namespace Arkus.Harness.Tests
                 [WorldValidationContract.CurrentName] = Hk01TestFixtures.EmptyRequest(),
                 [WorldValidationContract.ProposedName] = plannedMutation,
                 [WorldMutationContract.PlanName] = plannedMutation,
-                [WorldMutationContract.DryRunName] = plannedMutation
+                [WorldMutationContract.DryRunName] = plannedMutation,
+                [WorldProvenanceContract.ReadName] = Hk01TestFixtures.EmptyRequest()
             };
         }
     }

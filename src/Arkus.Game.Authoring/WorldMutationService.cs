@@ -18,6 +18,7 @@ namespace Arkus.Game.Authoring
         IWorldStateSource,
         IWorldMutationService,
         IWorldValidationService,
+        IWorldProvenanceService,
         ICanonicalWorldMutationCommitter
     {
         private const string FingerprintVersion = "arkus-world-mutation-request-v2";
@@ -25,14 +26,15 @@ namespace Arkus.Game.Authoring
         private static readonly UTF8Encoding StrictUtf8 = new UTF8Encoding(false, true);
 
         private readonly object _gate = new object();
-        private readonly Dictionary<string, IdempotencyReceipt> _receipts =
-            new Dictionary<string, IdempotencyReceipt>(StringComparer.Ordinal);
-        private WorldState _current;
+        private readonly AuthoredWorldAnchor _journalBase;
+        private AuthoringState _state;
 
         public TransactionalWorldAuthoringSession(WorldState initialState)
         {
-            _current = initialState ?? throw new ArgumentNullException(nameof(initialState));
+            if (initialState == null) throw new ArgumentNullException(nameof(initialState));
             WorldStateValidator.ValidateOrThrow(initialState);
+            _journalBase = AuthoredWorldAnchor.FromState(initialState);
+            _state = AuthoringState.Initial(initialState);
         }
 
         public WorldState Current
@@ -41,8 +43,36 @@ namespace Arkus.Game.Authoring
             {
                 lock (_gate)
                 {
-                    return _current;
+                    return _state.Current;
                 }
+            }
+        }
+
+        public CapabilityInvocationResult ReadJournal(IReadOnlyDictionary<string, object?> request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (request.Count != 0)
+            {
+                return InvalidProvenanceRequest("Authored journal read takes an empty request.");
+            }
+
+            lock (_gate)
+            {
+                var entries = new List<object?>();
+                for (var index = 0; index < _state.Journal.Count; index++)
+                {
+                    entries.Add(_state.Journal[index].ToData());
+                }
+
+                return CapabilityInvocationResult.Succeeded(ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["schemaId"] = WorldProvenanceContract.JournalSchemaId,
+                    ["entrySchemaId"] = WorldProvenanceContract.EntrySchemaId,
+                    ["base"] = _journalBase.ToData(),
+                    ["current"] = AuthoredWorldAnchor.FromState(_state.Current).ToData(),
+                    ["entryCount"] = _state.Journal.Count,
+                    ["entries"] = entries.AsReadOnly()
+                }));
             }
         }
 
@@ -98,7 +128,7 @@ namespace Arkus.Game.Authoring
 
             lock (_gate)
             {
-                if (_receipts.TryGetValue(parsed.IdempotencyKey, out var existing))
+                if (_state.Receipts.TryGetValue(parsed.IdempotencyKey, out var existing))
                 {
                     return ReplayOrConflict(parsed, existing);
                 }
@@ -110,20 +140,38 @@ namespace Arkus.Game.Authoring
 
             lock (_gate)
             {
-                if (_receipts.TryGetValue(parsed.IdempotencyKey, out var racedReceipt))
+                if (_state.Receipts.TryGetValue(parsed.IdempotencyKey, out var racedReceipt))
                 {
                     return ReplayOrConflict(parsed, racedReceipt);
                 }
 
-                var actualHash = CanonicalWorldStateCodec.ComputeContentHash(_current);
-                if (_current.Revision != plan!.BaseRevision ||
+                var actualHash = CanonicalWorldStateCodec.ComputeContentHash(_state.Current);
+                if (_state.Current.Revision != plan!.BaseRevision ||
                     !string.Equals(actualHash, plan.BaseHash, StringComparison.Ordinal))
                 {
-                    return StaleWrite(plan.BaseRevision, plan.BaseHash, _current.Revision, actualHash);
+                    return StaleWrite(plan.BaseRevision, plan.BaseHash, _state.Current.Revision, actualHash);
                 }
 
-                _current = plan.CandidateState;
-                _receipts.Add(parsed.IdempotencyKey, new IdempotencyReceipt(parsed.Fingerprint, plan));
+                var provenanceError = BuildProvenanceEntry(
+                    _state.Journal.Count + 1L,
+                    parsed,
+                    plan,
+                    _state.Journal,
+                    out var entry);
+                if (provenanceError != null) return provenanceError;
+
+                var nextJournal = new List<WorldMutationProvenanceEntry>(_state.Journal) { entry };
+                var nextReceipts = new Dictionary<string, IdempotencyReceipt>(_state.Receipts, StringComparer.Ordinal)
+                {
+                    [parsed.IdempotencyKey] = new IdempotencyReceipt(parsed.Fingerprint, plan)
+                };
+
+                // Publish authored state, mutation receipt and journal append as one immutable
+                // session-state reference while holding the accepted HK04 commit lock.
+                _state = new AuthoringState(
+                    plan.CandidateState,
+                    nextReceipts,
+                    nextJournal.AsReadOnly());
             }
 
             return Success("apply", true, false, plan!);
@@ -133,7 +181,9 @@ namespace Arkus.Game.Authoring
         {
             lock (_gate)
             {
-                return new WorldSnapshot(_current, CanonicalWorldStateCodec.ComputeContentHash(_current));
+                return new WorldSnapshot(
+                    _state.Current,
+                    CanonicalWorldStateCodec.ComputeContentHash(_state.Current));
             }
         }
 
@@ -662,6 +712,200 @@ namespace Arkus.Game.Authoring
             }));
         }
 
+        private CapabilityInvocationResult? BuildProvenanceEntry(
+            long sequence,
+            ParsedMutationRequest request,
+            MutationPlan plan,
+            IReadOnlyList<WorldMutationProvenanceEntry> currentJournal,
+            out WorldMutationProvenanceEntry entry)
+        {
+            entry = null!;
+            var baseAnchor = new AuthoredWorldAnchor(
+                plan.WorldId,
+                plan.SchemaVersion,
+                plan.BaseRevision,
+                plan.BaseHash);
+            var resultHash = CanonicalWorldStateCodec.ComputeContentHash(plan.CandidateState);
+            var resultAnchor = new AuthoredWorldAnchor(
+                plan.WorldId,
+                plan.SchemaVersion,
+                plan.CandidateState.Revision,
+                resultHash);
+
+            var previous = currentJournal.Count == 0
+                ? _journalBase
+                : currentJournal[currentJournal.Count - 1].Result;
+            if (!AnchorsEqual(previous, baseAnchor) ||
+                request.ExpectedRevision != baseAnchor.Revision ||
+                !string.Equals(request.ExpectedHash, baseAnchor.Hash, StringComparison.Ordinal) ||
+                plan.CandidateState.Revision != plan.BaseRevision + 1 ||
+                !string.Equals(plan.ResultHash, resultHash, StringComparison.Ordinal))
+            {
+                return Failure(
+                    "world.provenance.commit_mismatch",
+                    "The mutation journal entry disagrees with the canonical state transition and was not committed.",
+                    "$",
+                    new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["sequence"] = sequence,
+                        ["baseRevision"] = plan.BaseRevision,
+                        ["resultRevision"] = plan.CandidateState.Revision
+                    },
+                    false,
+                    "Treat this as an Arkus authored-state/provenance invariant failure; do not report mutation success.");
+            }
+
+            var affected = new SortedSet<string>(StringComparer.Ordinal);
+            for (var index = 0; index < plan.Changes.Count; index++)
+            {
+                affected.Add(plan.Changes[index].Resource);
+            }
+
+            if (affected.Count == 0)
+            {
+                return Failure(
+                    "world.provenance.empty_effect",
+                    "A persisted mutation must identify at least one affected authored resource.",
+                    "$.operations",
+                    EmptyContext(),
+                    false,
+                    "Treat this as an Arkus mutation-plan/provenance invariant failure; do not commit the request.");
+            }
+
+            var affectedResources = new List<string>(affected);
+            var entryId = ComputeProvenanceEntryId(
+                sequence,
+                request,
+                baseAnchor,
+                resultAnchor,
+                affectedResources);
+            entry = new WorldMutationProvenanceEntry(
+                entryId,
+                sequence,
+                WorldMutationContract.ApplyName,
+                WorldMutationContract.ContractVersionText,
+                request.IdempotencyKey,
+                request.Fingerprint,
+                NormalizedRequestData(request),
+                baseAnchor,
+                resultAnchor,
+                affectedResources.AsReadOnly());
+            return null;
+        }
+
+        private static bool AnchorsEqual(AuthoredWorldAnchor left, AuthoredWorldAnchor right)
+        {
+            return string.Equals(left.WorldId, right.WorldId, StringComparison.Ordinal) &&
+                left.StateSchemaVersion == right.StateSchemaVersion &&
+                left.Revision == right.Revision &&
+                string.Equals(left.Hash, right.Hash, StringComparison.Ordinal);
+        }
+
+        private static string ComputeProvenanceEntryId(
+            long sequence,
+            ParsedMutationRequest request,
+            AuthoredWorldAnchor baseAnchor,
+            AuthoredWorldAnchor resultAnchor,
+            IReadOnlyList<string> affectedResources)
+        {
+            var builder = new StringBuilder();
+            AppendIdentityField(builder, WorldProvenanceContract.EntrySchemaId);
+            AppendIdentityField(builder, sequence.ToString(CultureInfo.InvariantCulture));
+            AppendIdentityField(builder, WorldMutationContract.ApplyName);
+            AppendIdentityField(builder, WorldMutationContract.ContractVersionText);
+            AppendIdentityField(builder, request.IdempotencyKey);
+            AppendIdentityField(builder, request.Fingerprint);
+            AppendIdentityField(builder, baseAnchor.WorldId);
+            AppendIdentityField(builder, baseAnchor.StateSchemaVersion.ToString(CultureInfo.InvariantCulture));
+            AppendIdentityField(builder, baseAnchor.Revision.ToString(CultureInfo.InvariantCulture));
+            AppendIdentityField(builder, baseAnchor.Hash);
+            AppendIdentityField(builder, resultAnchor.Revision.ToString(CultureInfo.InvariantCulture));
+            AppendIdentityField(builder, resultAnchor.Hash);
+            for (var index = 0; index < affectedResources.Count; index++)
+            {
+                AppendIdentityField(builder, affectedResources[index]);
+            }
+
+            return Sha256(builder.ToString());
+        }
+
+        private static void AppendIdentityField(StringBuilder builder, string value)
+        {
+            builder.Append(value.Length.ToString(CultureInfo.InvariantCulture))
+                .Append(':')
+                .Append(value)
+                .Append('\n');
+        }
+
+        private static IReadOnlyDictionary<string, object?> NormalizedRequestData(ParsedMutationRequest request)
+        {
+            var operations = new List<object?>();
+            for (var index = 0; index < request.Operations.Count; index++)
+            {
+                operations.Add(NormalizedOperationData(request.Operations[index]));
+            }
+
+            return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["idempotencyKey"] = request.IdempotencyKey,
+                ["expectedRevision"] = request.ExpectedRevision,
+                ["expectedHash"] = request.ExpectedHash,
+                ["operations"] = operations.AsReadOnly()
+            });
+        }
+
+        private static IReadOnlyDictionary<string, object?> NormalizedOperationData(MutationOperation operation)
+        {
+            var data = new Dictionary<string, object?>(StringComparer.Ordinal);
+            switch (operation.Kind)
+            {
+                case MutationOperationKind.PutObject:
+                    data["kind"] = "put-object";
+                    data["id"] = operation.Id;
+                    data["typeId"] = operation.TypeId;
+                    if (operation.ContainerId != null) data["containerId"] = operation.ContainerId;
+                    data["references"] = ReferenceData(operation.References);
+                    break;
+                case MutationOperationKind.RemoveObject:
+                    data["kind"] = "remove-object";
+                    data["id"] = operation.Id;
+                    break;
+                case MutationOperationKind.PutExtension:
+                    data["kind"] = "put-extension";
+                    data["owner"] = operation.Owner;
+                    data["schemaVersion"] = operation.SchemaVersion;
+                    if (operation.SubjectId != null) data["subjectId"] = operation.SubjectId;
+                    data["dependencies"] = ReferenceData(operation.Dependencies);
+                    data["payloadBase64"] = Convert.ToBase64String(operation.Payload!);
+                    break;
+                case MutationOperationKind.RemoveExtension:
+                    data["kind"] = "remove-extension";
+                    data["owner"] = operation.Owner;
+                    data["schemaVersion"] = operation.SchemaVersion;
+                    if (operation.SubjectId != null) data["subjectId"] = operation.SubjectId;
+                    break;
+                default:
+                    throw new InvalidOperationException("Unknown parsed mutation operation.");
+            }
+
+            return ReadOnly(data);
+        }
+
+        private static IReadOnlyList<object?> ReferenceData(IReadOnlyList<ReferenceValue> references)
+        {
+            var values = new List<object?>();
+            for (var index = 0; index < references.Count; index++)
+            {
+                values.Add(ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["kind"] = references[index].Kind,
+                    ["targetId"] = references[index].TargetId
+                }));
+            }
+
+            return values.AsReadOnly();
+        }
+
         private static IReadOnlyDictionary<string, object?> PlanData(MutationPlan plan)
         {
             var changes = new List<object?>();
@@ -912,6 +1156,17 @@ namespace Arkus.Game.Authoring
                 "Use only the typed mutation envelope declared by system.describe.");
         }
 
+        private static CapabilityInvocationResult InvalidProvenanceRequest(string message)
+        {
+            return Failure(
+                "world.provenance.invalid_request",
+                message,
+                "$",
+                EmptyContext(),
+                false,
+                "Use the empty journal-read request declared by system.describe.");
+        }
+
         private static CapabilityInvocationResult Failure(
             string code,
             string message,
@@ -1047,6 +1302,36 @@ namespace Arkus.Game.Authoring
 
             public WorldState State { get; }
             public string Hash { get; }
+        }
+
+        private sealed class AuthoringState
+        {
+            public AuthoringState(
+                WorldState current,
+                IReadOnlyDictionary<string, IdempotencyReceipt> receipts,
+                IReadOnlyList<WorldMutationProvenanceEntry> journal)
+            {
+                Current = current ?? throw new ArgumentNullException(nameof(current));
+                if (receipts == null) throw new ArgumentNullException(nameof(receipts));
+                if (journal == null) throw new ArgumentNullException(nameof(journal));
+
+                Receipts = new ReadOnlyDictionary<string, IdempotencyReceipt>(
+                    new Dictionary<string, IdempotencyReceipt>(receipts, StringComparer.Ordinal));
+                Journal = new List<WorldMutationProvenanceEntry>(journal).AsReadOnly();
+            }
+
+            public WorldState Current { get; }
+            public IReadOnlyDictionary<string, IdempotencyReceipt> Receipts { get; }
+            public IReadOnlyList<WorldMutationProvenanceEntry> Journal { get; }
+
+            public static AuthoringState Initial(WorldState state)
+            {
+                return new AuthoringState(
+                    state,
+                    new ReadOnlyDictionary<string, IdempotencyReceipt>(
+                        new Dictionary<string, IdempotencyReceipt>(StringComparer.Ordinal)),
+                    Array.Empty<WorldMutationProvenanceEntry>());
+            }
         }
 
         private sealed class ParsedMutationRequest
