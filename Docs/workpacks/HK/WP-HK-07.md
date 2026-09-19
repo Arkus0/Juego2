@@ -1,52 +1,31 @@
 # WP-HK-07 — Headless host + transport projections
 
-Status: PLANNED  
-Class: FOUNDATIONAL  
+Status: SUPERSEDED — SPLIT BEFORE IMPLEMENTATION  
+Class: FOUNDATIONAL UMBRELLA  
 Depends on: `WP-HK-06C`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 
-## Objective
+## Resolution
 
-Expose the accepted runtime through a production-quality, transport-neutral host with both a deterministic reference transport and a standards-compatible MCP projection, without coupling canonical semantics to either.
+This workpack was intentionally split before implementation because it coupled two distinct independently reviewable boundaries: making Arkus a real deterministic external process, and projecting that accepted process contract through MCP without semantic drift.
 
-## Acceptance
+Do **not** implement or review this umbrella as a single WP.
 
-- Canonical host works non-interactively in CI from a clean checkout.
-- Deterministic reference transport is supported (baseline: JSON Lines over stdin/stdout plus one-shot file/stdin mode or an explicitly reviewed equivalent).
-- A first-party MCP adapter projects the accepted canonical Arkus contract through a pinned approved SDK/implementation rather than maintaining an independent command/schema registry.
-- MCP and reference transport expose semantically equivalent capabilities for the accepted H0 surface; framing differences are allowed, semantic drift is not.
-- Transport projections consume the composed canonical capability inventory generically rather than a transport-owned or engine-bridge-owned list, so later accepted scoped providers can become visible without creating a second registry or rewriting canonical semantics.
-- Protocol output is isolated from diagnostic logging; machine streams cannot be corrupted by incidental logs.
-- Exit codes and fatal reference-transport errors are stable/documented.
-- Request timeout/cancellation semantics are explicit and map cleanly into canonical cancellation/failure semantics.
-- Process startup does not require Unity, editor state, network access or user prompts for the local canonical path.
-- Runtime kernel has no dependency on CLI/stdio/MCP/HTTP-specific types; future GUI/HTTP/SDK adapters can wrap the same service surface.
-- Restore/build/test and transport conformance run under pinned toolchain/environment assumptions.
-- Effective process inputs/environment relevant to behaviour are explicit enough to reproduce CI execution.
-- The transport inventory cannot self-shrink: canonical capability inventory is the authority and adapters are checked against it, not vice versa.
-- External transport SDK usage satisfies `DEPENDENCY_IP_POLICY.md` and is replaceable behind Arkus conformance tests.
+Execution order is now:
 
-## Required negative-conformance tests
+1. `WP-HK-07A — Headless host + deterministic reference transport`
+2. `WP-HK-07B — MCP projection + cross-transport conformance`
+3. `WP-HK-08` only after `WP-HK-07B` PASS + merge + DocSync.
 
-RED→GREEN for:
+## Split rationale
 
-- log contamination of reference protocol stream;
-- truncated/malformed/oversized reference frame;
-- cancellation/timeout;
-- unexpected process environment changing semantics;
-- alternate public host path that skips the canonical runtime;
-- canonical capability missing from MCP projection;
-- MCP projection changing request/result/error meaning;
-- MCP adapter exposing an undeclared mutation path;
-- transport registry being used as the only completeness oracle;
-- synthetic scoped canonical capability present in the composed inventory but omitted because the transport reads a fixed/base-only registry;
-- engine/transport adapter attempting to publish an adapter-only capability that was never accepted by canonical composition;
-- removing/replacing the transport SDK causing canonical kernel code changes rather than adapter-only changes.
+The original HK07 objective remains unchanged in aggregate: external processes must be able to discover and exercise the complete accepted Arkus contract through a deterministic reference transport and a standards-compatible MCP projection, with both transports proven to share one canonical semantic source of truth.
 
-## Forbidden scope
+- HK07A owns process hosting, deterministic JSONL/reference framing, failure behaviour, cancellation and the no-second-registry completeness boundary.
+- HK07B consumes the accepted HK07A host/reference transport and adds MCP plus cross-transport semantic equivalence and SDK replaceability.
 
-HTTP/cloud service, Unity Editor bridge, GUI, model-vendor-specific orchestration.
+This split lets the project obtain and independently validate a usable external harness process before introducing MCP SDK/projection complexity. Accepted predecessor guarantees from HK01–HK06C compose forward and should not be redundantly re-proved without concrete contradictory evidence.
 
-## DoD
+## Original aggregate DoD
 
-External processes can discover and exercise the complete accepted harness contract through the deterministic reference transport and the MCP projection; conformance proves both are projections of the same composed canonical semantics with deterministic failure behaviour and no parallel adapter registry; independent PASS.
+When HK07A and HK07B are both COMPLETE, external processes can discover and exercise the complete accepted H0 contract through both the deterministic reference transport and MCP, with deterministic failure behaviour, no parallel adapter registry and mechanically demonstrated semantic equivalence.
