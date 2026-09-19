@@ -1,9 +1,19 @@
 # WP-HK-05 — Validation + repairable diagnostics
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
-Depends on: `WP-HK-02A`
+Depends on: `WP-HK-02A` ✅ COMPLETE  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+Baseline SHA: `dbd8121411079f22a01d5cb85345e180ff41f7e2`
+Implementation PR: `#26`
+
+Completion:
+- Reviewed candidate SHA: `23a9fd4373a803187cd9391b1459cd48975177f6`
+- Independent Reviewer verdict: `PASS` (PR review `#5257350871`)
+- Exact-SHA candidate observation: GREEN (Actions `35464742544`)
+- Exact-SHA freeze validation: GREEN (Actions `35464834162`)
+- Merge SHA: `ed65661680aea2a9be79f892c96aa42bf788a842`
+- Completed: `2026-09-19`
 
 ## Objective
 
@@ -23,6 +33,12 @@ Make invalid world states and invalid authoring intents detectable through stabl
 ## Required negative-conformance tests
 
 RED→GREEN for: validation being skipped on a public mutation path, missing invariant registration, exception escaping as public error, nondeterministic diagnostic order, ambiguous path/context, and mutation route accepting state rejected by explicit validation.
+
+## Accepted result
+
+HK05 now exposes versioned current/proposed validation with stable machine diagnostics, mechanically reconciles the finite invariant inventory, aggregates independent violations deterministically, and rejects invalid candidates before canonical commit. Duplicate object/extension identity is reported at index-addressable locations; secondary diagnostics are deferred only when their own source or dependency traversal genuinely depends on an ambiguous identity representative, so unrelated unique-ID violations remain visible.
+
+Two historical Reviewer FAILs on earlier frozen candidates (`e0c865efd2127ca53d9e25064215e09a4579acd4` and `8c8d8c1a66b4995bbc9f3f933ba1791e49d69e97`) exposed the same aggregate-validation/ambiguous-identity class. The foundational circuit breaker triggered an architecture re-audit before the accepted repair. Preserve that history; do not reopen HK02/HK04 predecessor guarantees without concrete contradictory evidence.
 
 ## Forbidden scope
 
