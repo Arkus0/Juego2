@@ -354,6 +354,7 @@ namespace Arkus.Harness.Protocol
                 SideEffectClass.ExternalReversible => "externalreversible",
                 SideEffectClass.ExternalIrreversible => "externalirreversible",
                 SideEffectClass.CanonicalRebase => "canonicalrebase",
+                SideEffectClass.CanonicalReplay => "canonicalreplay",
                 _ => throw new ArgumentOutOfRangeException(nameof(value))
             };
         }
@@ -428,6 +429,7 @@ namespace Arkus.Harness.Protocol
                 TransactionRequirement.ReadOnlyEnvelope => "readonlyenvelope",
                 TransactionRequirement.CanonicalTransaction => "canonicaltransaction",
                 TransactionRequirement.CanonicalRebase => "canonicalrebase",
+                TransactionRequirement.CanonicalReplay => "canonicalreplay",
                 _ => throw new ArgumentOutOfRangeException(nameof(value))
             };
         }
