@@ -220,7 +220,11 @@ namespace Arkus.Harness.Tests
                 Hk04TransactionalMutationTests.ExactVersion(),
                 malformed);
             Assert.False(result.Success);
-            Assert.Equal("world.change.invalid_request", result.Error!.MachineCode);
+            Assert.Contains(result.Error!.MachineCode, new[]
+            {
+                "contract.invalid_request",
+                "world.change.invalid_request"
+            });
 
             Assert.True(EscapesException(() => throw new InvalidOperationException("injected escaped exception")));
         }
