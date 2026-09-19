@@ -53,6 +53,11 @@ jobs:
           output_path = os.environ['GITHUB_OUTPUT']
           repo = os.environ['GITHUB_REPOSITORY']
 
+          # Default to a clean no-op. Recognized actionable/informational events
+          # overwrite this at the end after producing complete outputs.
+          with open(output_path, 'a', encoding='utf-8') as out:
+              out.write('send=false\n')
+
           with open(event_path, 'r', encoding='utf-8') as fh:
               event = json.load(fh)
 
@@ -213,10 +218,12 @@ jobs:
           with open(output_path, 'a', encoding='utf-8') as out:
               out.write(f'message<<{delimiter}\n{message}\n{delimiter}\n')
               out.write('reply_markup=' + json.dumps(reply_markup, ensure_ascii=False, separators=(',', ':')) + '\n')
+              out.write('send=true\n')
           PY
 
       - name: Check Telegram configuration
         id: config
+        if: steps.build.outputs.send == 'true'
         shell: bash
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -230,7 +237,7 @@ jobs:
           fi
 
       - name: Send Telegram message
-        if: steps.config.outputs.configured == 'true'
+        if: steps.build.outputs.send == 'true' && steps.config.outputs.configured == 'true'
         shell: bash
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
