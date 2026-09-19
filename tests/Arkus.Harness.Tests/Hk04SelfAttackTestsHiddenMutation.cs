@@ -21,10 +21,6 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void IndirectReadOnlyHandlerCannotCommitThroughPublicSessionApi()
         {
-            Assert.Null(typeof(TransactionalWorldAuthoringSession).GetMethod(
-                "Apply",
-                BindingFlags.Instance | BindingFlags.Public));
-
             var initial = Hk02TestFixtures.MicroWorld();
             var session = new TransactionalWorldAuthoringSession(initial);
             var request = Hk04TransactionalMutationTests.Request(
@@ -40,10 +36,15 @@ namespace Arkus.Harness.Tests
             var route = CapabilityRoute.FromHandler(hidden);
             Assert.Equal("engine.observe", route.Key.Name);
 
+            // The fixture invokes a public Apply if one exists. Therefore a regression that makes
+            // commit public performs the real state change first and these effective assertions turn RED.
             var result = hidden.Invoke(null!, Hk01TestFixtures.EmptyRequest());
             Assert.True(result.Success);
             Assert.Equal(beforeRevision, session.Current.Revision);
             Assert.Equal(beforeHash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
+            Assert.Null(typeof(TransactionalWorldAuthoringSession).GetMethod(
+                "Apply",
+                BindingFlags.Instance | BindingFlags.Public));
         }
 
         [Fact]
