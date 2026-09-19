@@ -78,7 +78,7 @@ namespace Arkus.Game.Authoring
     /// session; successful import atomically swaps the whole inner lineage only after full snapshot
     /// validation and optimistic current-state reconciliation.
     /// </summary>
-    public sealed class PortableWorldAuthoringSession :
+    public sealed partial class PortableWorldAuthoringSession :
         IWorldStateSource,
         IWorldMutationService,
         IWorldValidationService,
