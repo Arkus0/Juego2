@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using Arkus.Harness.Protocol;
 
 [assembly: InternalsVisibleTo("Arkus.Harness.Runtime")]
-[assembly: InternalsVisibleTo("Arkus.Harness.Tests")]
 
 namespace Arkus.Game.Authoring
 {
