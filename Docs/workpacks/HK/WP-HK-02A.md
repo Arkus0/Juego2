@@ -1,9 +1,22 @@
 # WP-HK-02A — Object-scoped extension data + typed dependencies
 
-Status: ACTIVE
+Status: COMPLETE
 Class: FOUNDATIONAL
 Depends on: `WP-HK-04` ✅ COMPLETE
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+Baseline SHA: `5a07c55aeb79406a84bff579b34c09459707b713`
+Implementation PR: `#25`
+
+Completion:
+- Reviewed candidate SHA: `f39a1994524c42213dafb63d440faaf9de7c040f`
+- Independent Reviewer verdict: `PASS`, review `#5256593405`
+- Final exact-SHA observation: GREEN, Actions `35456397714`
+- Exact-SHA freeze validation: GREEN, Actions `35456445373`
+- Focused controls: 11/11; full regression: 98/98; Release build: 0 warnings/errors (implementation run `35456331653`)
+- Merge SHA: `ac7ce1180b462f093cf0ee02bbbd6f853938e27c`
+- Completed: `2026-09-19`
+- Review history: frozen `9d0dc3739f31bcc6a7f8df12b5f6e876837efacc` independently FAILed on global/object `"-"` fingerprint collision and missing multi-page dependency evidence; both corrected in the accepted candidate. Prior FAIL not retroactively superseded.
+- Next dependency-valid WP: `WP-HK-05`.
 
 ## Why this workpack exists
 
