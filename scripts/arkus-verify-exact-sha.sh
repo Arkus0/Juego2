@@ -80,7 +80,7 @@ case "$(resolve_wp)" in
     exec bash scripts/hk03-verify-exact-sha.sh "$@"
     ;;
   WP-HK-02)
-    exec bash scripts/hk02-observe-exact-sha.sh "$@"
+    exec bash scripts/hk02-verify-exact-sha.sh "$@"
     ;;
   WP-HK-01)
     exec bash scripts/hk01-verify-exact-sha.sh "$@"
