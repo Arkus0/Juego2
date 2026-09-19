@@ -2,9 +2,15 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-DRIVER_ROOT="${ROOT}/artifacts/self-attacks-driver/candidate"
+SHARD="${1:-all}"
+DRIVER_ROOT="${ROOT}/artifacts/self-attacks-driver/${SHARD}/candidate"
 OBSERVED_ROOT="${ROOT}/artifacts/observed/self-attacks"
-LOG_DEST="${ROOT}/artifacts/self-attacks/logs"
+LOG_DEST="${ROOT}/artifacts/self-attacks/logs/${SHARD}"
+
+case "${SHARD}" in
+  all|core|closure|test-surface|external-authority|reference-authority|terminal-inventory) ;;
+  *) echo "SELF-ATTACK DRIVER FAIL: unknown shard '${SHARD}'." >&2; exit 2 ;;
+esac
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_NOLOGO=1
@@ -27,7 +33,7 @@ assert_candidate_clean() {
 }
 
 assert_candidate_clean
-rm -rf "${ROOT}/artifacts/self-attacks-driver" "${OBSERVED_ROOT}" "${LOG_DEST}"
+rm -rf "${ROOT}/artifacts/self-attacks-driver/${SHARD}" "${LOG_DEST}"
 mkdir -p "${DRIVER_ROOT}" "${OBSERVED_ROOT}" "${LOG_DEST}"
 
 tar -C "${ROOT}" \
@@ -42,7 +48,7 @@ git -C "${DRIVER_ROOT}" commit -qm candidate
 
 (
   cd "${DRIVER_ROOT}"
-  bash scripts/self-attacks/run-all-self-attacks.sh
+  bash scripts/self-attacks/run-all-self-attacks.sh "${SHARD}"
 )
 
 SOURCE_RESULTS="${DRIVER_ROOT}/Docs/evidence/WP-HK-00/self-attacks/results.md"
@@ -50,11 +56,17 @@ SOURCE_RESULTS="${DRIVER_ROOT}/Docs/evidence/WP-HK-00/self-attacks/results.md"
   echo "SELF-ATTACK DRIVER FAIL: attack summary was not produced." >&2
   exit 2
 }
-cp "${SOURCE_RESULTS}" "${OBSERVED_ROOT}/results.md"
+
+if [[ "${SHARD}" == "all" ]]; then
+  OBSERVED_RESULTS="${OBSERVED_ROOT}/results.md"
+else
+  OBSERVED_RESULTS="${OBSERVED_ROOT}/${SHARD}.md"
+fi
+cp "${SOURCE_RESULTS}" "${OBSERVED_RESULTS}"
 
 if [[ -d "${DRIVER_ROOT}/artifacts/self-attacks/logs" ]]; then
   cp -a "${DRIVER_ROOT}/artifacts/self-attacks/logs/." "${LOG_DEST}/"
 fi
 
 assert_candidate_clean
-echo "HK00 self-attacks GREEN in disposable candidate copy; original candidate remained read-only."
+echo "HK00 self-attack shard '${SHARD}' GREEN in disposable candidate copy; original candidate remained read-only."
