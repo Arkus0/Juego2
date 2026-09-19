@@ -1,6 +1,6 @@
 # Worker → Reviewer Protocol
 
-Version: 1.5 — 2026-09-19
+Version: 1.6 — 2026-09-19
 
 ## Purpose
 
@@ -96,6 +96,7 @@ The Worker must temporarily switch from implementation reasoning to independent-
 - identify the explicit claim and trust boundary before inventing negative scenarios;
 - inspect the complete baseline→candidate diff rather than only the last repair;
 - verify tests/CI/evidence actually prove the contract rather than merely exercising representative happy paths;
+- for a foundational WP that defines or changes authorable-state or public-contract semantics, inspect the required bounded representative content-shape probe and verify that its findings are explicitly classified without treating the probe as a completeness oracle;
 - inspect negative/error behaviour, boundary conditions, fail-closed behaviour and handoff/freeze requirements;
 - search for missing objects, paths, variants or effective behaviour that could sit outside an asserted completeness/proof universe **inside the declared claim**;
 - distinguish a local/trivial defect from a causal architectural/proof-boundary defect and repair at the correct level;

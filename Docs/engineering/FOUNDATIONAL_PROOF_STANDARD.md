@@ -1,6 +1,6 @@
 # Foundational Proof Standard
 
-Version: 1.2 — 2026-09-18
+Version: 1.3 — 2026-09-19
 
 This standard binds every `HK-*` workpack through `WP-HK-GATE`.
 
@@ -71,6 +71,20 @@ For every acceptance criterion record:
 |---|---|---|---|---|---|---|
 
 Representative happy-path tests are not a completeness argument, but neither is proof required to defend against mechanisms explicitly outside the trust boundary.
+
+## Representative content-shape probe
+
+Before freeze, a foundational workpack that defines or changes authorable-state or public-contract semantics must model one bounded slice of the currently approved Juego2 target through the candidate surface. The purpose is to expose a mismatch between an internally consistent abstract fixture and the kind of content the harness is intended to author.
+
+The probe:
+
+- uses an approved product source such as the current visual bible/setting, plus only enough concrete content to exercise the WP claim;
+- checks representability, identity/granularity and the affected inspect/mutate/validate/diff/replay boundaries owned by the WP;
+- records assumptions and classifies each finding as an in-scope blocker, a concrete predecessor reopen condition, a named future/residual decision, or an out-of-boundary observation;
+- does not replace the independently defined invariant/universe proof, causal negative controls, regression suite or exact-SHA CI;
+- does not silently promote transforms, schedules, simulation, gameplay or other example content into canonical schemas when the WP does not own them.
+
+One representative scenario is sufficient unless the WP claim itself names several materially different content classes. The probe must remain cheaper than the proof it informs and must not become an open-ended search for unknown unknowns.
 
 ## Independent-universe rule
 

@@ -39,9 +39,9 @@ HK04 required two repair cycles before PASS. The accepted lesson is binding for 
 
 ## Current next product target
 
-`WP-HK-05 — Validation + repairable diagnostics` is the next dependency-valid workpack. It depends on completed HK04 and must make invalid world states and invalid authoring intents visible through stable machine-actionable diagnostics, while proving validation cannot be skipped on any public mutation route.
+`WP-HK-02A — Object-scoped extension data + typed dependencies` is the active next workpack after a human-approved content-shape decision. It depends on completed HK04 and must add an optional object subject plus typed dependency references to opaque extensions, then preserve HK02 deterministic identity, HK03 complete reads and HK04 transactional mutation over the widened semantics. HK05 is paused until HK02A reaches independent PASS, merge and DocSync.
 
-Before implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: consume the accepted HK04 transactional guarantees (including the closed commit-authority boundary and canonical apply path), identify exactly which validation guarantees HK05 newly owns, and state what concrete evidence would justify reopening HK04. Do not re-prove HK01/HK02/HK03/HK04 merely for defence-in-depth.
+Before implementation, the HK02A Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: consume the accepted HK02 state, HK03 inspection and HK04 transactional guarantees; identify only the extension semantics newly owned by HK02A; and state what concrete evidence would justify reopening an inherited guarantee. Do not re-prove HK01/HK02/HK03/HK04 merely for defence-in-depth.
 
 ## Operating model
 
@@ -59,7 +59,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 

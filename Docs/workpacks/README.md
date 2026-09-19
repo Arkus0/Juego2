@@ -13,7 +13,7 @@ For all `HK-*` workpacks through `WP-HK-GATE`:
 The H0 sequence is intentionally serial:
 
 ```text
-HK-00 -> HK-00A -> HK-01 -> HK-02 -> HK-03 -> HK-04 -> HK-05
+HK-00 -> HK-00A -> HK-01 -> HK-02 -> HK-03 -> HK-04 -> HK-02A -> HK-05
        -> HK-06 -> HK-07 -> HK-08 -> HK-09 -> HK-10 -> HK-GATE
 ```
 
