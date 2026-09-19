@@ -12,7 +12,7 @@ namespace Arkus.Harness.Runtime
             if (service == null) throw new ArgumentNullException(nameof(service));
 
             var reader = (IWorldPortabilityService)new WorldMutationPlannerView(service);
-            var importer = CanonicalWorldSnapshotAuthority.Bind(service);
+            var importer = IdempotentWorldSnapshotAuthority.Bind(service);
             return new List<CapabilityRoute>
             {
                 CapabilityRoute.FromHandler(new WorldSemanticDiffHandler(reader)),
