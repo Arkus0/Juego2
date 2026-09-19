@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Arkus.Game.Authoring;
+using Arkus.Game.Validation;
 using Arkus.Harness.Protocol;
 
 namespace Arkus.Harness.Runtime
@@ -27,10 +28,13 @@ namespace Arkus.Harness.Runtime
             var acceptedBase = BaseContract.CreateContribution();
             var definitions = new List<CapabilityDefinition>(acceptedBase.Definitions);
             definitions.AddRange(WorldInspectionContract.CreateDefinitions());
+            definitions.AddRange(WorldValidationContract.CreateDefinitions());
             definitions.AddRange(WorldMutationContract.CreateDefinitions());
 
             var routes = new List<CapabilityRoute>(acceptedBase.Routes);
             routes.AddRange(WorldInspectionBindings.CreateRoutes(inspection));
+            routes.AddRange(WorldValidationBindings.CreateRoutes(
+                mutation as IWorldValidationService ?? new UnavailableWorldValidationService()));
             routes.AddRange(WorldMutationBindings.CreateRoutes(mutation));
 
             return new CanonicalProviderContribution(

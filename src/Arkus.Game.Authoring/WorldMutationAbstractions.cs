@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using Arkus.Game.Validation;
 using Arkus.Harness.Protocol;
 
 [assembly: InternalsVisibleTo("Arkus.Harness.Runtime")]
@@ -45,10 +46,19 @@ namespace Arkus.Game.Authoring
         }
     }
 
-    public sealed class UnavailableWorldMutationService : IWorldMutationService, ICanonicalWorldMutationCommitter
+    public sealed class UnavailableWorldMutationService :
+        IWorldMutationService,
+        IWorldValidationService,
+        ICanonicalWorldMutationCommitter
     {
+        private readonly UnavailableWorldValidationService _validation = new UnavailableWorldValidationService();
+
         public CapabilityInvocationResult Plan(IReadOnlyDictionary<string, object?> request) => Unavailable();
         public CapabilityInvocationResult DryRun(IReadOnlyDictionary<string, object?> request) => Unavailable();
+        public CapabilityInvocationResult ValidateCurrent(IReadOnlyDictionary<string, object?> request) =>
+            _validation.ValidateCurrent(request);
+        public CapabilityInvocationResult ValidateProposed(IReadOnlyDictionary<string, object?> request) =>
+            _validation.ValidateProposed(request);
         CapabilityInvocationResult ICanonicalWorldMutationCommitter.Apply(IReadOnlyDictionary<string, object?> request) => Unavailable();
 
         private static CapabilityInvocationResult Unavailable()

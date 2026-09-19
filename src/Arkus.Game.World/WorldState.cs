@@ -221,11 +221,6 @@ namespace Arkus.Game.World
             IEnumerable<WorldExtensionData>? extensions = null,
             int schemaVersion = CurrentSchemaVersion)
         {
-            if (string.IsNullOrEmpty(id.Value))
-            {
-                throw new ArgumentException("World ID must be initialized.", nameof(id));
-            }
-
             if (objects is null)
             {
                 throw new ArgumentNullException(nameof(objects));
@@ -237,7 +232,12 @@ namespace Arkus.Game.World
             _objects = new List<WorldObject>(objects).AsReadOnly();
             _extensions = new List<WorldExtensionData>(extensions ?? Array.Empty<WorldExtensionData>()).AsReadOnly();
 
-            WorldStateValidator.ValidateOrThrow(this);
+            WorldStateValidator.ValidateCandidateOrThrow(new WorldStateCandidate(
+                Id,
+                Revision,
+                _objects,
+                _extensions,
+                SchemaVersion));
         }
 
         public int SchemaVersion { get; }
