@@ -20,9 +20,9 @@ Make every accepted harness change auditable and reproducible from machine-reada
 - Read-only requests do not pollute mutation history.
 - Journal/snapshot evidence can be consumed headlessly by tests and future tooling.
 
-## Required self-attacks
+## Required negative-conformance tests
 
-RED→GREEN for: missing journal entry, wrong before/after hash, reordered replay, tampered snapshot, hidden state change absent from semantic diff, and provenance claiming a mutation that did not persist.
+RED→GREEN for: missing journal entry, wrong before/after hash, reordered replay, altered snapshot data, hidden state change absent from semantic diff, and provenance claiming a mutation that did not persist.
 
 ## Forbidden scope
 
