@@ -13,8 +13,9 @@ namespace Arkus.Harness.Tests
     /// <summary>
     /// Circuit-breaker causal controls for the hidden-mutation class. The first control preserves
     /// the exact List<> indirection missed by repair cycle 1. The second evaluates every current
-    /// public non-mutation route against one live authoritative session and proves revision/hash
-    /// remain unchanged, so friend-assembly implementation details cannot silently become writes.
+    /// public route that is not an explicitly classified canonical writer against one live
+    /// authoritative session and proves revision/hash remain unchanged, so friend-assembly
+    /// implementation details cannot silently become writes.
     /// </summary>
     public sealed class Hk04SelfAttackTestsHiddenMutation
     {
@@ -48,25 +49,26 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void EveryEffectiveNonMutationRouteIsEvaluatedAndCannotChangeCanonicalState()
+        public void EveryEffectiveNonWriterRouteIsEvaluatedAndCannotChangeCanonicalState()
         {
             var initial = Hk02TestFixtures.MicroWorld();
             var session = new PortableWorldAuthoringSession(initial);
             var contract = CanonicalWorldContract.Compose(new WorldInspectionService(session), session);
-            var requests = ValidNonMutationRequests(initial);
-            var nonMutationNames = new HashSet<string>(StringComparer.Ordinal);
+            var requests = ValidNonWriterRequests(initial);
+            var nonWriterNames = new HashSet<string>(StringComparer.Ordinal);
 
             foreach (var definition in contract.Definitions)
             {
-                if (definition.SideEffect == SideEffectClass.CanonicalMutation)
+                if (definition.SideEffect == SideEffectClass.CanonicalMutation ||
+                    definition.SideEffect == SideEffectClass.CanonicalRebase)
                 {
                     continue;
                 }
 
-                nonMutationNames.Add(definition.Key.Name);
+                nonWriterNames.Add(definition.Key.Name);
                 Assert.True(
                     requests.TryGetValue(definition.Key.Name, out var request),
-                    "Missing evaluated request vector for public non-mutation route " + definition.Key);
+                    "Missing evaluated request vector for public non-writer route " + definition.Key);
 
                 var beforeHash = CanonicalWorldStateCodec.ComputeContentHash(session.Current);
                 var beforeRevision = session.Current.Revision;
@@ -83,11 +85,11 @@ namespace Arkus.Harness.Tests
                 Assert.Equal(beforeHash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
             }
 
-            Assert.Equal(nonMutationNames.Count, requests.Count);
-            Assert.True(nonMutationNames.SetEquals(requests.Keys));
+            Assert.Equal(nonWriterNames.Count, requests.Count);
+            Assert.True(nonWriterNames.SetEquals(requests.Keys));
         }
 
-        private static IReadOnlyDictionary<string, IReadOnlyDictionary<string, object?>> ValidNonMutationRequests(WorldState state)
+        private static IReadOnlyDictionary<string, IReadOnlyDictionary<string, object?>> ValidNonWriterRequests(WorldState state)
         {
             var objectGet = Hk03InspectionTests.Anchor(state);
             objectGet["id"] = "node.child";
