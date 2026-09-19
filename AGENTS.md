@@ -17,16 +17,18 @@ For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOM
 1. Code, executable tests and recorded evidence — actual state.
 2. `Docs/ROADMAP.md` — milestone order and gates.
 3. `Docs/workpacks/**` — exact scope and Definition of Done for one unit of work.
-4. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, Worker pre-review, exact-SHA freeze and independent review.
-5. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` — binding proof rules for foundational WPs.
-6. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
-7. `Docs/automation/DEPENDENCY_ROUTING.md` + `AGENTIC_PROTOCOL_DURABILITY.md` — backend-neutral orchestration.
-8. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
+4. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md` — provider-neutral exact-SHA execution, evidence binding and zero-budget runner policy.
+5. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, Worker pre-review, exact-SHA freeze and independent review.
+6. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` — binding proof rules for foundational WPs.
+7. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
+8. `Docs/automation/DEPENDENCY_ROUTING.md` + `AGENTIC_PROTOCOL_DURABILITY.md` — backend-neutral orchestration.
+9. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
 
 ## Product rules
 
 - One WP at a time per branch/Worker.
-- Foundational work is not done because CI is green; completeness, self-attacks and residual-risk evidence are required.
+- Foundational work is not done because one execution is green; completeness, self-attacks and residual-risk evidence are required.
+- Exact-SHA validation is provider-neutral. GitHub-hosted Actions are optional convenience, not a contractual dependency; follow `EXECUTION_RECEIPT_PROTOCOL.md`.
 - Do not copy architecture or code from `Arkus0/Juego` by default. It is reference material only. Migration requires explicit justification and review.
 - Process lessons from `Juego` may be reused when they are engine/game independent.
 - DFU is not part of the critical path. It may only return later as an optional adapter after `WP-HK-GATE`, through an explicit ADR proving net value.
@@ -52,9 +54,9 @@ For a configured backend, `Ponte a trabajar en Arkus0/Juego2` means: read `AUTOM
 - Two independent FAILs exposing the same foundational class trigger architecture re-audit.
 - A FAIL showing that the proof universe can self-shrink or omit material objects by construction is immediately architectural: re-audit the proof boundary before another local patch.
 - Merge is followed by DocSync before the next WP is selected.
-- Backend outage/quota/host-down is recoverable backpressure, not contractual FAIL.
+- Backend outage/quota/host-down is recoverable backpressure, not contractual FAIL. Switch to another compliant execution substrate rather than weakening validation.
 - Role leases prevent duplicate actors; never steal a live lease.
-- Telegram is low-noise notification only. It never owns workflow state.
+- Telegram is low-noise notification only. It never owns workflow state and is never a completion gate.
 
 ## Skills / profiles
 
