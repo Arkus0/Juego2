@@ -120,6 +120,14 @@
           "Arkus.Game.Core": "[1.0.0, )"
         }
       },
+      "arkus.harness.mutationattackfixture": {
+        "type": "Project",
+        "dependencies": {
+          "Arkus.Game.Authoring": "[1.0.0, )",
+          "Arkus.Harness.Protocol": "[1.0.0, )",
+          "Arkus.Harness.Runtime": "[1.0.0, )"
+        }
+      },
       "arkus.harness.protocol": {
         "type": "Project"
       },
