@@ -1176,7 +1176,7 @@ namespace Arkus.Game.Authoring
                         break;
                     case MutationOperationKind.PutExtension:
                         builder.Append(Owner).Append('\t').Append(SchemaVersion.ToString(CultureInfo.InvariantCulture)).Append('\t')
-                            .Append(SubjectId ?? "-").Append('\t');
+                            .Append(SubjectId == null ? "global" : "object:" + SubjectId.Length.ToString(CultureInfo.InvariantCulture) + ":" + SubjectId).Append('\t');
                         for (var index = 0; index < Dependencies.Count; index++)
                         {
                             builder.Append(Dependencies[index].Kind).Append("->").Append(Dependencies[index].TargetId).Append(';');
@@ -1186,7 +1186,7 @@ namespace Arkus.Game.Authoring
                         break;
                     case MutationOperationKind.RemoveExtension:
                         builder.Append(Owner).Append('\t').Append(SchemaVersion.ToString(CultureInfo.InvariantCulture)).Append('\t')
-                            .Append(SubjectId ?? "-");
+                            .Append(SubjectId == null ? "global" : "object:" + SubjectId.Length.ToString(CultureInfo.InvariantCulture) + ":" + SubjectId);
                         break;
                 }
 
