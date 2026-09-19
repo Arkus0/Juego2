@@ -15,7 +15,7 @@ DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode
 DOTNET_NOLOGO=1 dotnet build Juego2.sln --configuration Release --no-restore
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore \
-  --filter 'FullyQualifiedName~Hk05ValidationDiagnosticsTests'
+  --filter 'FullyQualifiedName~Hk05'
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore
 
