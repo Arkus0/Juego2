@@ -5,6 +5,8 @@ on:
     types: [arkus_notification]
   issue_comment:
     types: [created]
+  pull_request:
+    types: [closed]
   workflow_dispatch:
 
 permissions:
@@ -13,7 +15,7 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: telegram-notify-${{ github.event.comment.id || github.event.client_payload.key || github.run_id }}
+  group: telegram-notify-${{ github.event.comment.id || github.event.client_payload.key || github.event.pull_request.id || github.run_id }}
   cancel-in-progress: false
 
 jobs:
@@ -21,7 +23,9 @@ jobs:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'repository_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (
+        github.event_name == 'issue_comment' &&
         github.event.issue.pull_request != null &&
         contains(github.event.comment.body, 'ARKUS_AUTOMATION_V2') &&
         (
@@ -52,6 +56,17 @@ jobs:
           with open(event_path, 'r', encoding='utf-8') as fh:
               event = json.load(fh)
 
+          state = ''
+          detail = ''
+          next_wp = ''
+          milestone = ''
+          wp = ''
+          target_sha = ''
+          pr_number = None
+          pr_url = f"https://github.com/{repo}"
+          title = ''
+          reply_markup = None
+
           if event_name == 'workflow_dispatch':
               message = '🔔 Arkus0/Juego2\nNotificaciones de Telegram operativas.'
           else:
@@ -62,9 +77,25 @@ jobs:
                   next_wp = str(payload.get('next_wp', '')).strip()[:120]
                   milestone = str(payload.get('milestone', '')).strip()[:120]
                   wp = str(payload.get('wp', '')).strip()[:120]
+                  target_sha = str(payload.get('target_sha', '')).strip().lower()
                   pr_number = payload.get('pr')
                   pr_url = f"https://github.com/{repo}/pull/{pr_number}" if pr_number else f"https://github.com/{repo}"
                   title = ''
+              elif event_name == 'pull_request':
+                  pr = event.get('pull_request', {})
+                  if not pr.get('merged'):
+                      sys.exit(0)
+                  pr_body = pr.get('body') or ''
+                  if re.search(r'^(Mode|WORKFLOW_MODE):\s*`?PROCESS_ONLY`?\s*$', pr_body, re.M | re.I):
+                      sys.exit(0)
+                  state = 'DOCSYNC_REQUIRED'
+                  detail = 'Merge confirmado. Ejecuta DocSync antes de seleccionar el siguiente WP.'
+                  target_sha = str(pr.get('merge_commit_sha') or '').strip().lower()
+                  pr_number = pr.get('number')
+                  pr_url = pr.get('html_url') or f"https://github.com/{repo}/pull/{pr_number}"
+                  title = pr.get('title') or ''
+                  wp_match = re.search(r'^WP:\s*`?([^`\r\n]+?)`?\s*$', pr_body, re.M | re.I)
+                  wp = (wp_match.group(1).strip() if wp_match else '').strip()[:120]
               else:
                   body = event.get('comment', {}).get('body', '')
                   if 'ARKUS_AUTOMATION_V2' not in body:
@@ -82,29 +113,28 @@ jobs:
                   detail = fields.get('Detail', '').strip()[:420]
                   next_wp = fields.get('Next WP', '').strip()[:120]
                   milestone = fields.get('Milestone', '').strip()[:120]
+                  target_sha = fields.get('Target SHA', '').strip().lower()
 
                   issue = event.get('issue', {})
                   pr_number = issue.get('number')
-                  pr_url = issue.get('html_url') or event.get('comment', {}).get('html_url')
+                  pr_url = issue.get('html_url') or event.get('comment', {}).get('html_url') or f"https://github.com/{repo}"
                   pr_body = issue.get('body') or ''
                   title = issue.get('title') or ''
 
                   wp_match = re.search(r'^WP:\s*`?([^`\r\n]+?)`?\s*$', pr_body, re.M | re.I)
                   wp = (fields.get('WP') or (wp_match.group(1).strip() if wp_match else '')).strip()[:120]
 
-              # Intentionally low-noise: routine DOCSYNC_REQUIRED is not sent.
               labels = {
                   'REVIEW_READY': '👷 Worker terminado',
                   'PASS_PREFLIGHT_GREEN': '✅ Reviewer PASS',
                   'REPAIR_REQUIRED': '❌ Reviewer FAIL',
+                  'DOCSYNC_REQUIRED': '📚 Merge confirmado — DocSync requerido',
                   'DOCSYNC_COMPLETE': '📚 Merge + DocSync completados',
                   'MILESTONE_COMPLETE': '🏁 Hito completado',
                   'BLOCKED': '🛑 Bloqueado',
                   'HUMAN_ACTION_REQUIRED': '⚠️ Atención requerida',
               }
 
-              if state == 'DOCSYNC_REQUIRED':
-                  sys.exit(0)
               if state not in labels:
                   sys.exit(0)
 
@@ -121,8 +151,9 @@ jobs:
 
               defaults = {
                   'REVIEW_READY': 'Candidato congelado y validado; listo para Reviewer independiente.',
-                  'PASS_PREFLIGHT_GREEN': 'PASS exacto validado; merge automático autorizado.',
+                  'PASS_PREFLIGHT_GREEN': 'PASS exacto validado; merge automático en curso. No hace falta actuar hasta la confirmación del merge.',
                   'REPAIR_REQUIRED': 'El WP vuelve a Worker sobre el mismo candidato/contrato.',
+                  'DOCSYNC_REQUIRED': 'Merge confirmado. Ejecuta DocSync antes de seleccionar el siguiente WP.',
                   'DOCSYNC_COMPLETE': 'Implementación mergeada y documentación reconciliada.',
                   'MILESTONE_COMPLETE': 'Milestone aceptado y reconciliado.',
                   'BLOCKED': 'La ejecución necesita desbloqueo antes de continuar.',
@@ -139,9 +170,49 @@ jobs:
 
               message = '\n'.join(parts)
 
+              prompt = None
+              if state == 'REVIEW_READY' and pr_number and re.fullmatch(r'[0-9a-f]{40}', target_sha):
+                  prompt = (
+                      f'En Arkus0/Juego2, actúa como Reviewer independiente del PR #{pr_number}, SHA {target_sha}. '
+                      'Reconstruye GitHub y WP/contratos; revisa y deja Reviewer verdict PASS/FAIL + Reviewed candidate SHA. No repares.'
+                  )
+              elif state == 'REPAIR_REQUIRED' and pr_number:
+                  prompt = (
+                      f'En Arkus0/Juego2, actúa como Worker de reparación del PR #{pr_number}. '
+                      'Reconstruye GitHub y el último Reviewer FAIL; corrige la clase del problema, revalida, congela SHA exacto y entrega a Reviewer. No revises.'
+                  )
+              elif state == 'DOCSYNC_REQUIRED' and pr_number:
+                  prompt = (
+                      f'En Arkus0/Juego2, finaliza el PR #{pr_number}: confirma merge del SHA aceptado, reconstruye main, '
+                      'haz DocSync solo documental, emite DOCSYNC_COMPLETE con Next WP válido y detente. No cambies implementación.'
+                  )
+              elif state == 'DOCSYNC_COMPLETE' and pr_number and next_wp.upper() != 'NONE':
+                  prompt = (
+                      f'En Arkus0/Juego2, actúa como Worker del Next WP indicado en DOCSYNC_COMPLETE del PR #{pr_number}. '
+                      'Reconstruye main/GitHub y dependencias; implementa el WP completo, pre-review, valida, congela SHA exacto y entrega a Reviewer independiente. No revises.'
+                  )
+              elif state in {'BLOCKED', 'HUMAN_ACTION_REQUIRED'} and pr_number:
+                  prompt = (
+                      f'En Arkus0/Juego2, revisa el bloqueo del PR #{pr_number}. Reconstruye GitHub, identifica exactamente '
+                      'qué requiere intervención humana y dime la acción mínima. No modifiques nada.'
+                  )
+
+              rows = []
+              if prompt:
+                  if len(prompt) > 256:
+                      print(f'ChatGPT handoff prompt exceeds Telegram copy_text limit: {len(prompt)}', file=sys.stderr)
+                      sys.exit(1)
+                  rows.append([{'text': '📋 Copiar siguiente prompt', 'copy_text': {'text': prompt}}])
+                  rows.append([{'text': '🤖 Abrir ChatGPT', 'url': 'https://chatgpt.com/'}])
+              if pr_number and pr_url:
+                  rows.append([{'text': '🔗 Abrir PR', 'url': pr_url}])
+              if rows:
+                  reply_markup = {'inline_keyboard': rows}
+
           delimiter = 'TELEGRAM_MESSAGE_EOF'
           with open(output_path, 'a', encoding='utf-8') as out:
               out.write(f'message<<{delimiter}\n{message}\n{delimiter}\n')
+              out.write('reply_markup=' + json.dumps(reply_markup, ensure_ascii=False, separators=(',', ':')) + '\n')
           PY
 
       - name: Check Telegram configuration
@@ -165,6 +236,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           MESSAGE: ${{ steps.build.outputs.message }}
+          REPLY_MARKUP: ${{ steps.build.outputs.reply_markup }}
         run: |
           set -euo pipefail
           BOT_TOKEN="$(printf '%s' "$TELEGRAM_BOT_TOKEN" | tr -d '\r\n')"
@@ -173,7 +245,8 @@ jobs:
           payload="$(jq -n \
             --arg chat_id "$CHAT_ID" \
             --arg text "$MESSAGE" \
-            '{chat_id: $chat_id, text: $text, disable_web_page_preview: true}')"
+            --argjson reply_markup "$REPLY_MARKUP" \
+            '{chat_id: $chat_id, text: $text, disable_web_page_preview: true} + (if $reply_markup == null then {} else {reply_markup: $reply_markup} end)')"
 
           response="$(curl --silent --show-error \
             --request POST \
