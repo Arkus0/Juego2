@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Arkus.Game.Authoring;
+using Arkus.Game.Validation;
 using Arkus.Harness.Protocol;
 
 namespace Arkus.Harness.Runtime
@@ -33,16 +34,19 @@ namespace Arkus.Harness.Runtime
     }
 
     /// <summary>
-    /// Capability attenuation boundary: exposes only the public planning surface and deliberately
-    /// does not expose or implement canonical commit authority even when the wrapped service does.
+    /// Capability attenuation boundary: exposes only non-committing authoring operations and
+    /// deliberately does not expose or implement canonical commit authority even when the wrapped
+    /// service does. HK05 reuses the same accepted attenuation boundary for explicit validation.
     /// </summary>
-    internal sealed class WorldMutationPlannerView : IWorldMutationService
+    internal sealed class WorldMutationPlannerView : IWorldMutationService, IWorldValidationService
     {
         private readonly IWorldMutationService _service;
+        private readonly IWorldValidationService _validation;
 
         public WorldMutationPlannerView(IWorldMutationService service)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
+            _validation = service as IWorldValidationService ?? new UnavailableWorldValidationService();
         }
 
         public CapabilityInvocationResult Plan(IReadOnlyDictionary<string, object?> request)
@@ -53,6 +57,16 @@ namespace Arkus.Harness.Runtime
         public CapabilityInvocationResult DryRun(IReadOnlyDictionary<string, object?> request)
         {
             return _service.DryRun(request);
+        }
+
+        public CapabilityInvocationResult ValidateCurrent(IReadOnlyDictionary<string, object?> request)
+        {
+            return _validation.ValidateCurrent(request);
+        }
+
+        public CapabilityInvocationResult ValidateProposed(IReadOnlyDictionary<string, object?> request)
+        {
+            return _validation.ValidateProposed(request);
         }
     }
 
