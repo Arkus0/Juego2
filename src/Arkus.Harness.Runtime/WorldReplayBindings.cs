@@ -53,12 +53,11 @@ namespace Arkus.Harness.Runtime
         public static IReadOnlyList<CapabilityRoute> CreateRoutes(IWorldMutationService mutation)
         {
             if (mutation == null) throw new ArgumentNullException(nameof(mutation));
+            var authority = new WorldReplayBindingAuthority(mutation);
             return new List<CapabilityRoute>
             {
-                CapabilityRoute.FromHandler(
-                    new WorldReplayCompatibilityHandler(CanonicalWorldReplayAuthority.BindCompatibility(mutation))),
-                CapabilityRoute.FromHandler(
-                    new WorldReplayHandler(CanonicalWorldReplayAuthority.Bind(mutation)))
+                CapabilityRoute.FromHandler(new WorldReplayCompatibilityHandler(authority)),
+                CapabilityRoute.FromHandler(new WorldReplayHandler(authority))
             }.AsReadOnly();
         }
     }
