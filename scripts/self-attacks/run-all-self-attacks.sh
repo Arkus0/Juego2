@@ -38,30 +38,41 @@ reset_results() {
 MD
 }
 
+prepare_shared_workspace() {
+  local work="${ROOT}/artifacts/self-attacks"
+  local pristine="${work}/pristine"
+  rm -rf "${work}"
+  mkdir -p "${pristine}" "${work}/logs"
+  tar -C "${ROOT}" \
+    --exclude=.git --exclude=artifacts --exclude='*/bin' --exclude='*/obj' --exclude='*/TestResults' \
+    -cf - . | tar -C "${pristine}" -xf -
+}
+
+run_family() {
+  prepare_shared_workspace
+  reset_results
+  bash "$1"
+}
+
 run_shard() {
   case "${SHARD}" in
     core)
       bash "${ROOT}/scripts/self-attacks/run-self-attacks.sh"
       ;;
     closure)
-      reset_results
-      bash "${ROOT}/scripts/self-attacks/run-closure-attacks.sh"
+      run_family "${ROOT}/scripts/self-attacks/run-closure-attacks.sh"
       ;;
     test-surface)
-      reset_results
-      bash "${ROOT}/scripts/self-attacks/run-test-surface-attack.sh"
+      run_family "${ROOT}/scripts/self-attacks/run-test-surface-attack.sh"
       ;;
     external-authority)
-      reset_results
-      bash "${ROOT}/scripts/self-attacks/run-external-authority-attacks.sh"
+      run_family "${ROOT}/scripts/self-attacks/run-external-authority-attacks.sh"
       ;;
     reference-authority)
-      reset_results
-      bash "${ROOT}/scripts/self-attacks/run-reference-authority-attack.sh"
+      run_family "${ROOT}/scripts/self-attacks/run-reference-authority-attack.sh"
       ;;
     terminal-inventory)
-      reset_results
-      bash "${ROOT}/scripts/self-attacks/run-terminal-inventory-attack.sh"
+      run_family "${ROOT}/scripts/self-attacks/run-terminal-inventory-attack.sh"
       ;;
     all)
       bash "${ROOT}/scripts/self-attacks/run-self-attacks.sh"
