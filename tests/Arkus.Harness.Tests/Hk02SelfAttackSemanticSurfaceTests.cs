@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Arkus.Harness.Tests
 {
-    public sealed class Hk02SelfAttackSemanticSurfaceTests
+    public sealed class Hk02SelfAttackTestsSemanticSurface
     {
         [Fact]
         public void SemanticInputAndPropertyUniverseCannotGrowWithoutUpdatingCanonicalProof()
