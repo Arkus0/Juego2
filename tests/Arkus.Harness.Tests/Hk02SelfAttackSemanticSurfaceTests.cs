@@ -29,6 +29,11 @@ namespace Arkus.Harness.Tests
                 typeof(WorldExtensionData),
                 new[] { "owner", "schemaVersion", "payload", "subjectId", "dependencies" },
                 new[] { "Dependencies", "Identity", "Owner", "PayloadLength", "SchemaVersion", "SubjectId" });
+
+            AssertSurface(
+                typeof(WorldExtensionIdentity),
+                new[] { "owner", "schemaVersion", "subjectId" },
+                new[] { "Owner", "ResourceKey", "SchemaVersion", "SubjectId" });
         }
 
         private static void AssertSurface(Type type, string[] expectedConstructorParameters, string[] expectedProperties)

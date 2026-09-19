@@ -445,13 +445,18 @@ namespace Arkus.Harness.Tests
                 "WorldExtensionData.SchemaVersion",
                 "WorldExtensionData.SubjectId",
                 "WorldExtensionData.Dependencies",
-                "WorldExtensionData.PayloadLength"
+                "WorldExtensionData.PayloadLength",
+                "WorldExtensionIdentity.Owner",
+                "WorldExtensionIdentity.SchemaVersion",
+                "WorldExtensionIdentity.SubjectId",
+                "WorldExtensionIdentity.ResourceKey"
             };
             var actual = new HashSet<string>(StringComparer.Ordinal);
             AddPublicProperties(typeof(WorldState), actual);
             AddPublicProperties(typeof(WorldObject), actual);
             AddPublicProperties(typeof(WorldReference), actual);
             AddPublicProperties(typeof(WorldExtensionData), actual);
+            AddPublicProperties(typeof(WorldExtensionIdentity), actual);
 
             Assert.True(expected.SetEquals(actual), "HK02 semantic surface changed; update the HK03 completeness map before freeze.");
         }

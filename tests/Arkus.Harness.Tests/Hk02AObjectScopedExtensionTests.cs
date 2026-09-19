@@ -156,8 +156,10 @@ namespace Arkus.Harness.Tests
                 value.Owner == "future.profile" && value.SubjectId == new WorldObjectId("node.child"));
         }
 
-        [Fact]
-        public void RemovingObjectReferencedByExtensionCannotReachApply()
+        [Theory]
+        [InlineData("building.shop", "world.dangling_extension_dependency")]
+        [InlineData("npc.ana", "world.dangling_extension_subject")]
+        public void RemovingObjectReferencedByExtensionCannotReachApply(string objectId, string sourceCode)
         {
             var initial = ScopedWorld();
             var session = new TransactionalWorldAuthoringSession(initial);
@@ -166,7 +168,7 @@ namespace Arkus.Harness.Tests
             var request = Hk04TransactionalMutationTests.Request(
                 initial,
                 "request.hk02a-dangling",
-                Hk04TransactionalMutationTests.RemoveObject("building.shop"));
+                Hk04TransactionalMutationTests.RemoveObject(objectId));
 
             var plan = contract.Dispatch(
                 WorldMutationContract.PlanName,
@@ -181,7 +183,7 @@ namespace Arkus.Harness.Tests
             Assert.False(apply.Success);
             Assert.Equal("world.change.invalid_candidate", plan.Error!.MachineCode);
             Assert.Equal("world.change.invalid_candidate", apply.Error!.MachineCode);
-            Assert.Equal("world.dangling_extension_dependency", plan.Error.Context["sourceCode"]);
+            Assert.Equal(sourceCode, plan.Error.Context["sourceCode"]);
             Assert.Equal(initial.Revision, session.Current.Revision);
             Assert.Equal(beforeHash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
         }
