@@ -8,7 +8,7 @@ OBSERVED_ROOT="${ROOT}/artifacts/observed/self-attacks"
 LOG_DEST="${ROOT}/artifacts/self-attacks/logs/${SHARD}"
 
 case "${SHARD}" in
-  all|core|closure|test-surface|external-authority|reference-authority|terminal-inventory) ;;
+  all|core|core-fast|core-effective-a|core-effective-b|core-effective-c|closure|test-surface|external-authority|reference-authority|terminal-inventory) ;;
   *) echo "SELF-ATTACK DRIVER FAIL: unknown shard '${SHARD}'." >&2; exit 2 ;;
 esac
 
