@@ -18,31 +18,33 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A` and `WP-HK-01` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01` and `WP-HK-02` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-01 — Canonical contract model + capability discovery`.
+Latest accepted workpack: `WP-HK-02 — Canonical world state + deterministic identity`.
 
-- implementation PR: `#16`
-- reviewed frozen candidate: `c16c0a7bbe4afe440252b921516b5e9b4635e082`
-- independent Reviewer: `PASS` (PR review `#5255264042`)
-- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35435429932`)
-- merge SHA: `24d761ba0bc33a70fc06e5ea351054b5d3c51488`
-- accepted contract boundary: one transport-neutral Arkus capability inventory drives dispatch/discovery/projection; scoped providers enter only through canonical composition; portable logical references are provider-owned; same-major breaking request changes fail composition before negotiation
-- conformance boundary: definitions, canonical dispatcher routes, independently enumerated concrete handlers and the emitted `system.describe` artifact are reconciled by the HK01 suite
+- implementation PR: `#17`
+- reviewed frozen candidate: `f23fba9ab81566e682237183cf92618bbce504bd`
+- independent Reviewer: `PASS` (PR review `#5255346033`)
+- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35436836349`)
+- merge SHA: `1605f922b74d4f0b71bba7896c311a914ffed3f7`
+- accepted state boundary: typed stable world/object/type/reference identity, explicit schema/revision, one deterministic canonical byte representation, SHA-256 content identity, fail-closed referential integrity and explicit namespaced/versioned opaque extension preservation
+- canonicalization boundary: object/reference/extension caller ordering and process culture are non-semantic; deserialization reserializes and requires the unique byte-canonical representation
 
-HK01 had two rejected candidates before PASS. The final repair cycle re-audited the portability + evolution/negotiation boundary rather than stacking literal patches. Do not reopen HK01 merely to duplicate HK00 project-universe proof or for theoretical defence-in-depth outside the accepted finite claim/proof budget.
+HK02 passed on its first independent review. A non-blocking future-hardening note remains: if later WPs expand the public state-bearing type surface, their predecessor/current proof must ensure the HK02 semantic-surface/mutation coverage remains applicable rather than assuming the original finite surface covers newly introduced semantics.
 
 ## Current next product target
 
-`WP-HK-02 — Canonical world state + deterministic identity` is the next dependency-valid workpack. It depends on completed HK01 and must establish stable typed identity, deterministic canonical serialization/state hashing, explicit versioning, referential integrity and a minimal representative micro-world fixture without leaking Unity/gameplay design into H0.
+`WP-HK-03 — Inspection/query surface` is the next dependency-valid workpack. It depends on completed HK02 and must make accepted world state completely inspectable through bounded, deterministic, schema-described reads, including stable pagination/cursors, revision/hash binding and a completeness argument that no authorable state required for safe later mutation is hidden.
 
-Before any HK02 implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: read accepted HK01 contract/PASS/proof evidence, identify the HK01 guarantees HK02 consumes, separate them from HK02-owned guarantees, and record what concrete evidence would justify reopening an inherited boundary. Do not duplicate HK00/HK01 proofs merely for defence-in-depth.
+Before any HK03 implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: read accepted HK02 contract/PASS/proof evidence, identify which canonical-state guarantees HK03 consumes, separate them from HK03-owned inspection/query guarantees, and record what concrete evidence would justify reopening an inherited boundary. Do not re-prove HK00/HK01/HK02 merely for defence-in-depth.
 
 ## Operating model
 
 Automation V2 provides mechanical candidate validation, exact-SHA state transitions and optional low-noise Telegram notifications. It does not replace independent Reviewer judgment.
 
 `WORKER_REVIEW_PROTOCOL.md` v1.5 makes predecessor-contract reconstruction mandatory for both roles. Worker records `Predecessor contract check` before implementation. Reviewer independently reconstructs the same inherited/current ownership split and may not issue FAIL for an accepted predecessor guarantee merely because the current WP does not redundantly re-prove it; concrete evidence of inapplicability/falsehood is required.
+
+Use the exact handoff enum values defined by the protocol (`FROZEN_FOR_REVIEW`, `IN_REVIEW`, etc.); alternate aliases can be rejected by Automation V2 even when the candidate itself is valid.
 
 A fresh independent Reviewer remains mandatory. On exact-SHA PASS, the successful Reviewer/finalization session should close the accepted cycle immediately when permissions permit: exact-SHA merge preflight → merge → documentation-only DocSync → `DOCSYNC_COMPLETE` with dependency-valid `Next WP`. No extra human session is required solely for routine DocSync. The post-PASS phase may not modify implementation bytes or reconsider the reviewed candidate; any required implementation change starts a new Worker/review cycle.
 
@@ -52,7 +54,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 → HK-03 → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
