@@ -7,13 +7,10 @@ using Arkus.Game.Authoring;
 namespace Arkus.Harness.Runtime
 {
     /// <summary>
-    /// Independent structural oracle for effective canonical write authority.
-    ///
-    /// It deliberately does not read CapabilityDefinition.SideEffect or policy metadata. A handler
-    /// is authority-bearing when its executable object graph can directly hold the Authoring-owned
-    /// commit capability or the concrete transactional session whose public Apply method can commit.
-    /// The sealed WorldMutationPlannerView is the explicit attenuation boundary: its private wrapped
-    /// service is not reachable through the handler's API without reflection/private-member subversion.
+    /// Defence-in-depth check for accidental direct leakage of the internal canonical committer.
+    /// This is deliberately not a completeness oracle: HK04 completeness relies on closing public
+    /// commit authority plus effective behavioural controls, not on recursively classifying every
+    /// possible object-graph/container shape.
     /// </summary>
     internal static class MutationAuthorityInspector
     {
@@ -132,8 +129,7 @@ namespace Arkus.Harness.Runtime
 
         private static bool IsDirectAuthorityType(Type type)
         {
-            return typeof(ICanonicalWorldMutationCommitter).IsAssignableFrom(type) ||
-                typeof(TransactionalWorldAuthoringSession).IsAssignableFrom(type);
+            return typeof(ICanonicalWorldMutationCommitter).IsAssignableFrom(type);
         }
 
         private static bool IsInspectableContainer(Type type)
