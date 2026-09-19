@@ -67,7 +67,7 @@ namespace Arkus.Harness.Runtime
     /// rebase. Every publicly declared CanonicalReplay route must use the dedicated handler marker
     /// and matching CanonicalReplay transaction requirement, and no other route may carry it.
     /// </summary>
-    internal static class ReplaySurfaceConformance
+    public static class ReplaySurfaceConformance
     {
         public static IReadOnlyList<string> Validate(
             IEnumerable<CapabilityDefinition> definitions,
