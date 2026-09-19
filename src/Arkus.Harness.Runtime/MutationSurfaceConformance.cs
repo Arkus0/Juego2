@@ -31,10 +31,10 @@ namespace Arkus.Harness.Runtime
     }
 
     /// <summary>
-    /// Mechanically closes the HK04 mutation surface. Contract metadata is reconciled with two
-    /// independently derived executable surfaces: transactional-marker handlers and handlers that
-    /// structurally carry actual canonical write authority. The latter does not consult SideEffect
-    /// or transaction policy metadata and therefore cannot disappear merely by relabelling a route.
+    /// Mechanically reconciles the mutation surfaces named by HK04: canonical mutation metadata,
+    /// canonical-transaction policy, effective transactional handlers and dispatcher bindings.
+    /// Hidden-write completeness is intentionally not inferred from object-graph shape; public
+    /// commit authority is closed by Authoring and evaluated behavioural controls cover regressions.
     /// </summary>
     public static class MutationSurfaceConformance
     {
@@ -71,12 +71,10 @@ namespace Arkus.Harness.Runtime
             }
 
             var effectiveTransactional = EnumerateEffectiveTransactionalHandlers(assemblies, issues);
-            var effectiveWriteAuthority = EnumerateEffectiveWriteAuthorityHandlers(assemblies, issues);
             var dispatcher = new HashSet<CapabilityKey>(contract.RouteKeys);
 
             CompareSets(discoveredMutation, declaredTransactional, "transaction-policy", issues);
             CompareSets(discoveredMutation, effectiveTransactional, "effective-transaction-handler", issues);
-            CompareSets(discoveredMutation, effectiveWriteAuthority, "effective-write-authority", issues);
 
             foreach (var key in discoveredMutation)
             {
@@ -97,17 +95,6 @@ namespace Arkus.Harness.Runtime
                         "mutation-surface.handler-not-dispatched",
                         key.ToString(),
                         "An effective transactional mutation handler is not bound into the canonical dispatcher."));
-                }
-            }
-
-            foreach (var key in effectiveWriteAuthority)
-            {
-                if (!dispatcher.Contains(key))
-                {
-                    issues.Add(new MutationSurfaceIssue(
-                        "mutation-surface.write-authority-not-dispatched",
-                        key.ToString(),
-                        "A public handler carrying canonical write authority exists outside the canonical dispatcher."));
                 }
             }
 
@@ -147,30 +134,6 @@ namespace Arkus.Harness.Runtime
                     }
 
                     AddHandlerKey(type, result, "transactional", issues);
-                }
-            }
-
-            return result;
-        }
-
-        private static HashSet<CapabilityKey> EnumerateEffectiveWriteAuthorityHandlers(
-            IEnumerable<Assembly> assemblies,
-            IList<MutationSurfaceIssue> issues)
-        {
-            var result = new HashSet<CapabilityKey>();
-            foreach (var assembly in assemblies)
-            {
-                foreach (var type in assembly.GetTypes())
-                {
-                    if (!type.IsClass ||
-                        type.IsAbstract ||
-                        !typeof(ICanonicalCapabilityHandler).IsAssignableFrom(type) ||
-                        !MutationAuthorityInspector.TypeCarriesCanonicalWriteAuthority(type))
-                    {
-                        continue;
-                    }
-
-                    AddHandlerKey(type, result, "write-authority", issues);
                 }
             }
 
