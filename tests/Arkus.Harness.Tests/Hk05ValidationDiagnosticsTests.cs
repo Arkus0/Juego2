@@ -11,14 +11,37 @@ namespace Arkus.Harness.Tests
 {
     public sealed class Hk05ValidationDiagnosticsTests
     {
+        private static readonly IReadOnlyList<string> ExpectedOwnedInvariantIds = new[]
+        {
+            "arkus.world.identity.initialized/v1",
+            "arkus.world.schema.supported/v1",
+            "arkus.world.revision.nonnegative/v1",
+            "arkus.world.object.entry-present/v1",
+            "arkus.world.object.identity-unique/v1",
+            "arkus.world.object.container-resolves/v1",
+            "arkus.world.object.container-not-self/v1",
+            "arkus.world.object.reference-entry-present/v1",
+            "arkus.world.object.reference-unique/v1",
+            "arkus.world.object.reference-target-resolves/v1",
+            "arkus.world.object.containment-acyclic/v1",
+            "arkus.world.extension.entry-present/v1",
+            "arkus.world.extension.identity-unique/v1",
+            "arkus.world.extension.subject-resolves/v1",
+            "arkus.world.extension.dependency-entry-present/v1",
+            "arkus.world.extension.dependency-unique/v1",
+            "arkus.world.extension.dependency-target-resolves/v1"
+        };
+
         [Fact]
         public void ValidatorInventoryExactlyClassifiesTheIndependentInvariantUniverse()
         {
             Assert.Empty(WorldValidationEngine.FindInventoryIssues());
             Assert.Equal(WorldInvariantCatalog.All.Count, WorldValidationEngine.ValidatorInventory.Count);
 
+            var expected = new HashSet<string>(ExpectedOwnedInvariantIds, StringComparer.Ordinal);
             var catalog = new HashSet<string>(StringComparer.Ordinal);
             foreach (var invariant in WorldInvariantCatalog.All) Assert.True(catalog.Add(invariant.InvariantId));
+            Assert.True(expected.SetEquals(catalog));
 
             var registered = new HashSet<string>(StringComparer.Ordinal);
             foreach (var validator in WorldValidationEngine.ValidatorInventory)
@@ -28,7 +51,7 @@ namespace Arkus.Harness.Tests
                 Assert.Contains(validator.Category, new[] { "structural", "identity", "reference" });
             }
 
-            Assert.True(catalog.SetEquals(registered));
+            Assert.True(expected.SetEquals(registered));
 
             var omissionMutant = new List<WorldValidatorDescriptor>();
             for (var index = 1; index < WorldValidationEngine.ValidatorInventory.Count; index++)
@@ -48,8 +71,7 @@ namespace Arkus.Harness.Tests
                 foreach (var diagnostic in result.Diagnostics) observed.Add(diagnostic.InvariantId);
             }
 
-            var expected = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var invariant in WorldInvariantCatalog.All) expected.Add(invariant.InvariantId);
+            var expected = new HashSet<string>(ExpectedOwnedInvariantIds, StringComparer.Ordinal);
             Assert.True(expected.SetEquals(observed));
         }
 
@@ -63,6 +85,7 @@ namespace Arkus.Harness.Tests
             Assert.True(first.Diagnostics.Count >= 6);
             Assert.Equal(Signatures(first.Diagnostics), Signatures(reordered.Diagnostics));
             Assert.Equal(first.Diagnostics.Count, reordered.Diagnostics.Count);
+            Assert.Empty(DiagnosticShapeIssues(first.Diagnostics));
 
             foreach (var diagnostic in first.Diagnostics)
             {
@@ -74,6 +97,20 @@ namespace Arkus.Harness.Tests
                 Assert.False(string.IsNullOrWhiteSpace(diagnostic.Message));
                 Assert.NotEmpty(diagnostic.RemediationContext);
             }
+
+            var reversed = new List<string>(Signatures(first.Diagnostics));
+            reversed.Reverse();
+            Assert.False(SequencesEqual(Signatures(first.Diagnostics), reversed));
+
+            var ambiguous = new WorldValidationDiagnostic(
+                "world.injected",
+                WorldDiagnosticSeverity.Error,
+                string.Empty,
+                string.Empty,
+                "arkus.world.injected/v1",
+                "Injected ambiguous diagnostic.",
+                new Dictionary<string, object?>(StringComparer.Ordinal));
+            Assert.NotEmpty(DiagnosticShapeIssues(new[] { ambiguous }));
         }
 
         [Fact]
@@ -88,10 +125,11 @@ namespace Arkus.Harness.Tests
             var proposedDefinition = Definition(contract, WorldValidationContract.ProposedName);
             Assert.NotNull(currentDefinition.SuccessSchema);
             Assert.NotNull(proposedDefinition.SuccessSchema);
-            Assert.True(CanonicalSemanticEquality.SchemaDocumentsEqual(
-                currentDefinition.SuccessSchema!, proposedDefinition.SuccessSchema!));
-            Assert.Contains("schemaId", currentDefinition.SuccessSchema!.Root.Required);
-            Assert.Contains("diagnostics", currentDefinition.SuccessSchema.Root.Required);
+            Assert.Equal(
+                currentDefinition.SuccessSchema!.SemanticFingerprint(),
+                proposedDefinition.SuccessSchema!.SemanticFingerprint());
+            Assert.Contains("schemaId", currentDefinition.SuccessSchema.Root.RequiredProperties);
+            Assert.Contains("diagnostics", currentDefinition.SuccessSchema.Root.RequiredProperties);
 
             var current = Hk04TransactionalMutationTests.Success(
                 contract,
@@ -112,6 +150,79 @@ namespace Arkus.Harness.Tests
             Assert.True((int)proposed.Data["diagnosticCount"]! >= 3);
             Assert.Equal(before, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
             Assert.Equal(initial.Revision, session.Current.Revision);
+        }
+
+        [Fact]
+        public void EveryPublicCanonicalMutationRouteEnforcesExplicitValidation()
+        {
+            var initial = Hk02TestFixtures.MicroWorld();
+            var session = new TransactionalWorldAuthoringSession(initial);
+            var contract = Hk04TransactionalMutationTests.Compose(session);
+            var request = InvalidMutation(initial);
+            var before = CanonicalWorldStateCodec.ComputeContentHash(session.Current);
+            var explicitValidation = contract.Dispatch(
+                WorldValidationContract.ProposedName,
+                Hk04TransactionalMutationTests.ExactVersion(),
+                request);
+
+            Assert.True(explicitValidation.Success);
+            Assert.False((bool)explicitValidation.Data!["valid"]!);
+
+            var mutationRoutes = new List<CapabilityDefinition>();
+            foreach (var definition in contract.Definitions)
+            {
+                if (definition.SideEffect == SideEffectClass.CanonicalMutation) mutationRoutes.Add(definition);
+            }
+
+            Assert.NotEmpty(mutationRoutes);
+            foreach (var definition in mutationRoutes)
+            {
+                var result = contract.Dispatch(
+                    definition.Key.Name,
+                    ContractVersionRange.Exact(definition.Key.Version),
+                    request);
+                Assert.Empty(MutationValidationIssues(explicitValidation, result));
+            }
+
+            var acceptedInvalidMutant = CapabilityInvocationResult.Succeeded(
+                new Dictionary<string, object?>(StringComparer.Ordinal));
+            Assert.Contains(
+                "mutation-accepted-invalid-state",
+                MutationValidationIssues(explicitValidation, acceptedInvalidMutant));
+
+            var skippedValidationMutant = contract.Dispatch(
+                WorldMutationContract.ApplyName,
+                Hk04TransactionalMutationTests.ExactVersion(),
+                new Dictionary<string, object?>(StringComparer.Ordinal));
+            Assert.Contains(
+                "mutation-validation-skipped",
+                MutationValidationIssues(explicitValidation, skippedValidationMutant));
+
+            Assert.Equal(before, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
+            Assert.Equal(initial.Revision, session.Current.Revision);
+        }
+
+        [Fact]
+        public void ExpectedValidationErrorsDoNotEscapeAsRuntimeExceptions()
+        {
+            var initial = Hk02TestFixtures.MicroWorld();
+            var session = new TransactionalWorldAuthoringSession(initial);
+            var contract = Hk04TransactionalMutationTests.Compose(session);
+            var malformed = new Dictionary<string, object?>(StringComparer.Ordinal);
+
+            Assert.False(EscapesException(() => contract.Dispatch(
+                WorldValidationContract.ProposedName,
+                Hk04TransactionalMutationTests.ExactVersion(),
+                malformed)));
+
+            var result = contract.Dispatch(
+                WorldValidationContract.ProposedName,
+                Hk04TransactionalMutationTests.ExactVersion(),
+                malformed);
+            Assert.False(result.Success);
+            Assert.Equal("world.change.invalid_request", result.Error!.MachineCode);
+
+            Assert.True(EscapesException(() => throw new InvalidOperationException("injected escaped exception")));
         }
 
         [Fact]
@@ -140,13 +251,14 @@ namespace Arkus.Harness.Tests
             Assert.Null(exception);
             Assert.NotNull(proposed);
             Assert.NotNull(applied);
-            Assert.True(proposed!.Success);
-            Assert.False((bool)proposed.Data!["valid"]!);
-            Assert.False(applied!.Success);
-            Assert.Equal("world.change.invalid_candidate", applied.Error!.MachineCode);
+            Assert.Empty(MutationValidationIssues(proposed!, applied!));
 
-            var applyValidation = (IReadOnlyDictionary<string, object?>)applied.Error.Context["validation"]!;
-            Assert.Equal(DataSignatures(proposed.Data), DataSignatures(applyValidation));
+            var divergentValidation = CapabilityInvocationResult.Succeeded(
+                WorldValidationEngine.ValidateCandidate(InvalidTownCandidate(false)).ToData());
+            Assert.Contains(
+                "validate-apply-disagreement",
+                MutationValidationIssues(divergentValidation, applied!));
+
             Assert.Equal(before, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
             Assert.Equal(initial.Revision, session.Current.Revision);
         }
@@ -168,6 +280,74 @@ namespace Arkus.Harness.Tests
                 "request.hk05-invalid",
                 Hk04TransactionalMutationTests.RemoveObject("node.root"),
                 Hk04TransactionalMutationTests.RemoveObject("node.peer"));
+        }
+
+        private static IReadOnlyList<string> MutationValidationIssues(
+            CapabilityInvocationResult explicitValidation,
+            CapabilityInvocationResult mutation)
+        {
+            var issues = new List<string>();
+            if (!explicitValidation.Success || explicitValidation.Data == null ||
+                !explicitValidation.Data.TryGetValue("valid", out var rawValid) || !(rawValid is bool valid) || valid)
+            {
+                issues.Add("explicit-validation-not-invalid");
+                return issues.AsReadOnly();
+            }
+
+            if (mutation.Success)
+            {
+                issues.Add("mutation-accepted-invalid-state");
+                return issues.AsReadOnly();
+            }
+
+            if (mutation.Error == null ||
+                !string.Equals(mutation.Error.MachineCode, "world.change.invalid_candidate", StringComparison.Ordinal) ||
+                !mutation.Error.Context.TryGetValue("validation", out var rawValidation) ||
+                !(rawValidation is IReadOnlyDictionary<string, object?> applyValidation))
+            {
+                issues.Add("mutation-validation-skipped");
+                return issues.AsReadOnly();
+            }
+
+            if (!SequencesEqual(DataSignatures(explicitValidation.Data), DataSignatures(applyValidation)))
+                issues.Add("validate-apply-disagreement");
+            return issues.AsReadOnly();
+        }
+
+        private static IReadOnlyList<string> DiagnosticShapeIssues(IEnumerable<WorldValidationDiagnostic> diagnostics)
+        {
+            var issues = new List<string>();
+            foreach (var diagnostic in diagnostics)
+            {
+                if (string.IsNullOrWhiteSpace(diagnostic.Resource)) issues.Add("diagnostic-resource-ambiguous");
+                if (string.IsNullOrWhiteSpace(diagnostic.Path) || !diagnostic.Path.StartsWith("$/", StringComparison.Ordinal))
+                    issues.Add("diagnostic-path-ambiguous");
+                if (diagnostic.RemediationContext.Count == 0) issues.Add("diagnostic-context-empty");
+            }
+            return issues.AsReadOnly();
+        }
+
+        private static bool EscapesException(Func<CapabilityInvocationResult> call)
+        {
+            try
+            {
+                call();
+                return false;
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+        }
+
+        private static bool SequencesEqual(IReadOnlyList<string> left, IReadOnlyList<string> right)
+        {
+            if (left.Count != right.Count) return false;
+            for (var index = 0; index < left.Count; index++)
+            {
+                if (!string.Equals(left[index], right[index], StringComparison.Ordinal)) return false;
+            }
+            return true;
         }
 
         private static IReadOnlyList<string> Signatures(IReadOnlyList<WorldValidationDiagnostic> diagnostics)
