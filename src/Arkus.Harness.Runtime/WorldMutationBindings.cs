@@ -38,15 +38,20 @@ namespace Arkus.Harness.Runtime
     /// deliberately does not expose or implement canonical commit authority even when the wrapped
     /// service does. HK05 reuses the same accepted attenuation boundary for explicit validation.
     /// </summary>
-    internal sealed class WorldMutationPlannerView : IWorldMutationService, IWorldValidationService
+    internal sealed class WorldMutationPlannerView :
+        IWorldMutationService,
+        IWorldValidationService,
+        IWorldProvenanceService
     {
         private readonly IWorldMutationService _service;
         private readonly IWorldValidationService _validation;
+        private readonly IWorldProvenanceService _provenance;
 
         public WorldMutationPlannerView(IWorldMutationService service)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _validation = service as IWorldValidationService ?? new UnavailableWorldValidationService();
+            _provenance = service as IWorldProvenanceService ?? new UnavailableWorldProvenanceService();
         }
 
         public CapabilityInvocationResult Plan(IReadOnlyDictionary<string, object?> request)
@@ -67,6 +72,11 @@ namespace Arkus.Harness.Runtime
         public CapabilityInvocationResult ValidateProposed(IReadOnlyDictionary<string, object?> request)
         {
             return _validation.ValidateProposed(request);
+        }
+
+        public CapabilityInvocationResult ReadJournal(IReadOnlyDictionary<string, object?> request)
+        {
+            return _provenance.ReadJournal(request);
         }
     }
 

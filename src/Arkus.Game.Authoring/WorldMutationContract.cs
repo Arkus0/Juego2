@@ -10,9 +10,10 @@ namespace Arkus.Game.Authoring
         public const string PlanName = "authoring.change.plan";
         public const string DryRunName = "authoring.change.dry-run";
         public const string ApplyName = "authoring.change.apply";
+        public const string ContractVersionText = "1.0";
         public const int MaximumOperations = 64;
 
-        private static readonly ContractVersion Version = new ContractVersion(1, 0);
+        private static readonly ContractVersion Version = ContractVersion.Parse(ContractVersionText);
 
         public static IReadOnlyList<CapabilityDefinition> CreateDefinitions()
         {

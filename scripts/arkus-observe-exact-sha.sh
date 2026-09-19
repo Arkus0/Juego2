@@ -9,6 +9,10 @@ resolve_wp() {
     printf '%s\n' "${ARKUS_WP}"
     return
   fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Fq 'WP: `WP-HK-06A`'; then
+    printf '%s\n' 'WP-HK-06A'
+    return
+  fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Fq 'WP: `WP-HK-05`'; then
     printf '%s\n' 'WP-HK-05'
     return
@@ -46,6 +50,9 @@ resolve_wp() {
 }
 
 case "$(resolve_wp)" in
+  WP-HK-06A)
+    exec bash scripts/hk06a-observe-exact-sha.sh "$@"
+    ;;
   WP-HK-05)
     exec bash scripts/hk05-observe-exact-sha.sh "$@"
     ;;
