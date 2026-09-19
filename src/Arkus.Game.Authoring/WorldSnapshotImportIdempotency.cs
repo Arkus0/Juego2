@@ -13,6 +13,8 @@ namespace Arkus.Game.Authoring
     /// HK06B keyed-idempotency authority for snapshot rebase. Receipts are deliberately separate
     /// from the HK06A mutation journal: they prove retry identity for the import command and do not
     /// claim that an imported or pre-import mutation history belongs to the new local lineage.
+    /// Successful rebases expose their own canonical rebase evidence so required provenance is
+    /// truthful without pretending the rebase was an HK06A mutation.
     /// The store is keyed by the authoritative session object so recomposing the runtime contract
     /// does not silently forget accepted import keys while that session remains alive.
     /// </summary>
@@ -85,7 +87,12 @@ namespace Arkus.Game.Authoring
                     var result = _raw.ImportSnapshot(new ReadOnlyDictionary<string, object?>(forwarded));
                     if (!result.Success || result.Data == null) return result;
 
-                    var first = WithReplay(result.Data, false);
+                    var first = WithReplayAndEvidence(
+                        result.Data,
+                        false,
+                        idempotencyKey,
+                        fingerprint,
+                        forwarded);
                     _store.Receipts.Add(idempotencyKey, new Receipt(fingerprint, first));
                     return CapabilityInvocationResult.Succeeded(first);
                 }
@@ -189,6 +196,37 @@ namespace Arkus.Game.Authoring
                     case ulong current when current <= long.MaxValue: integer = (long)current; return true;
                     default: return false;
                 }
+            }
+
+            private static IReadOnlyDictionary<string, object?> WithReplayAndEvidence(
+                IReadOnlyDictionary<string, object?> source,
+                bool replayed,
+                string idempotencyKey,
+                string requestFingerprint,
+                IReadOnlyDictionary<string, object?> request)
+            {
+                var snapshot = (IReadOnlyDictionary<string, object?>)request["snapshot"]!;
+                var evidence = new ReadOnlyDictionary<string, object?>(
+                    new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["schemaId"] = WorldPortabilityContract.RebaseEvidenceSchemaId,
+                        ["idempotencyKey"] = idempotencyKey,
+                        ["requestFingerprint"] = requestFingerprint,
+                        ["snapshotSchemaId"] = snapshot["schemaId"],
+                        ["snapshotVersion"] = snapshot["snapshotVersion"],
+                        ["snapshotAnchor"] = snapshot["anchor"],
+                        ["previous"] = source["previous"],
+                        ["current"] = source["current"],
+                        ["lineageDisposition"] = source["lineageDisposition"],
+                        ["mutationJournalDisposition"] = "new-local-lineage-empty"
+                    });
+
+                var copy = new Dictionary<string, object?>(source, StringComparer.Ordinal)
+                {
+                    ["rebaseEvidence"] = evidence,
+                    ["replayed"] = replayed
+                };
+                return new ReadOnlyDictionary<string, object?>(copy);
             }
 
             private static IReadOnlyDictionary<string, object?> WithReplay(
