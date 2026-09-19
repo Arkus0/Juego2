@@ -80,8 +80,8 @@ namespace Arkus.Harness.Runtime
             IList<NamespaceOwner> namespaces,
             IList<CompositionIssue> issues)
         {
-            if (!CanonicalContractValidator.IsCanonicalIdentifier(descriptor.ProviderId) ||
-                !CanonicalContractValidator.IsCanonicalIdentifier(descriptor.Scope))
+            if (!CanonicalIdentityRules.IsCanonicalIdentifier(descriptor.ProviderId) ||
+                !CanonicalIdentityRules.IsCanonicalIdentifier(descriptor.Scope))
             {
                 issues.Add(new CompositionIssue(
                     "composition.invalid_provider_identity",
@@ -118,7 +118,7 @@ namespace Arkus.Harness.Runtime
 
             foreach (var currentNamespace in descriptor.OwnedNamespaces)
             {
-                if (!CanonicalContractValidator.IsCanonicalIdentifier(currentNamespace))
+                if (!CanonicalIdentityRules.IsCanonicalIdentifier(currentNamespace))
                 {
                     issues.Add(new CompositionIssue(
                         "composition.invalid_namespace",
@@ -221,7 +221,7 @@ namespace Arkus.Harness.Runtime
             foreach (var ownedNamespace in descriptor.OwnedNamespaces)
             {
                 if (string.Equals(definition.Provider.CapabilityNamespace, ownedNamespace, StringComparison.Ordinal) &&
-                    CanonicalContractValidator.IsWithinNamespace(definition.Key.Name, ownedNamespace))
+                    CanonicalIdentityRules.IsWithinNamespace(definition.Key.Name, ownedNamespace))
                 {
                     return true;
                 }
