@@ -8,13 +8,18 @@ namespace Arkus.Harness.Runtime
 {
     internal static class WorldValidationBindings
     {
-        public static IReadOnlyList<CapabilityRoute> CreateRoutes(IWorldValidationService service)
+        public static IReadOnlyList<CapabilityRoute> CreateRoutes(IWorldMutationService service)
         {
             if (service == null) throw new ArgumentNullException(nameof(service));
+
+            // Explicit validation is read-only but the authoritative session also owns commit.
+            // Route it through the same HK04 attenuation facade used by plan/dry-run so these
+            // handlers never carry the internal canonical committer themselves.
+            var validation = (IWorldValidationService)new WorldMutationPlannerView(service);
             return new List<CapabilityRoute>
             {
-                CapabilityRoute.FromHandler(new WorldValidationCurrentHandler(service)),
-                CapabilityRoute.FromHandler(new WorldValidationProposedHandler(service))
+                CapabilityRoute.FromHandler(new WorldValidationCurrentHandler(validation)),
+                CapabilityRoute.FromHandler(new WorldValidationProposedHandler(validation))
             }.AsReadOnly();
         }
     }
