@@ -1,6 +1,6 @@
 # Worker → Reviewer Protocol
 
-Version: 1.5 — 2026-09-19
+Version: 1.6 — 2026-09-19
 
 ## Purpose
 
@@ -20,9 +20,9 @@ Accepted predecessor guarantees are compositional. A downstream WP is expected t
 
 ## Adoption boundary
 
-Version 1.5 applies to Worker/review cycles that start after this version reaches `main`.
+Version 1.6 applies to Worker/review cycles that start after the commit containing this version reaches `main`. It does not retroactively bind an already-started cycle and does not bind the `PROCESS_ONLY` PR that adopts it.
 
-The v1.5 change adds mandatory predecessor-contract reconstruction for Worker and Reviewer. It preserves the v1.4 post-PASS continuity rule and does not weaken implementation acceptance, proof obligations, Worker/Reviewer independence or FAIL repair rules.
+The v1.6 change adds the bounded representative content-shape probe to the pre-review duties for applicable foundational WPs. It retains the v1.5 predecessor-contract reconstruction and v1.4 post-PASS continuity rules, and does not weaken implementation acceptance, proof obligations, Worker/Reviewer independence or FAIL repair rules.
 
 ## Predecessor contract inheritance
 
@@ -96,6 +96,7 @@ The Worker must temporarily switch from implementation reasoning to independent-
 - identify the explicit claim and trust boundary before inventing negative scenarios;
 - inspect the complete baseline→candidate diff rather than only the last repair;
 - verify tests/CI/evidence actually prove the contract rather than merely exercising representative happy paths;
+- for a foundational WP that defines or changes authorable-state or public-contract semantics, inspect the required bounded representative content-shape probe and verify that its findings are explicitly classified without treating the probe as a completeness oracle;
 - inspect negative/error behaviour, boundary conditions, fail-closed behaviour and handoff/freeze requirements;
 - search for missing objects, paths, variants or effective behaviour that could sit outside an asserted completeness/proof universe **inside the declared claim**;
 - distinguish a local/trivial defect from a causal architectural/proof-boundary defect and repair at the correct level;

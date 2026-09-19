@@ -39,15 +39,15 @@ HK04 required two repair cycles before PASS. The accepted lesson is binding for 
 
 ## Current next product target
 
-`WP-HK-05 — Validation + repairable diagnostics` is the next dependency-valid workpack. It depends on completed HK04 and must make invalid world states and invalid authoring intents visible through stable machine-actionable diagnostics, while proving validation cannot be skipped on any public mutation route.
+`WP-HK-02A — Object-scoped extension data + typed dependencies` is the next dependency-valid workpack after this process adoption reaches `main`. It depends on completed HK04 and must add an optional object subject plus declared typed dependency edges to opaque extensions, then propagate that semantic shape through canonical identity/hash, HK03 inspection and HK04 mutation/change coverage.
 
-Before implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: consume the accepted HK04 transactional guarantees (including the closed commit-authority boundary and canonical apply path), identify exactly which validation guarantees HK05 newly owns, and state what concrete evidence would justify reopening HK04. Do not re-prove HK01/HK02/HK03/HK04 merely for defence-in-depth.
+HK05 is paused behind HK02A. No HK02A implementation Worker may start until the process adoption commit is on `main`; this makes the v1.3 proof standard and v1.6 Worker protocol non-circular predecessors of the later candidate.
 
 ## Operating model
 
 Automation V2 provides mechanical candidate validation, exact-SHA state transitions and optional low-noise Telegram notifications. It does not replace independent Reviewer judgment.
 
-`WORKER_REVIEW_PROTOCOL.md` v1.5 makes predecessor-contract reconstruction mandatory for both roles. Worker records `Predecessor contract check` before implementation. Reviewer independently reconstructs the same inherited/current ownership split and may not issue FAIL for an accepted predecessor guarantee merely because the current WP does not redundantly re-prove it; concrete evidence of inapplicability/falsehood is required.
+`WORKER_REVIEW_PROTOCOL.md` v1.6 retains mandatory predecessor-contract reconstruction and adds a bounded representative content-shape probe for applicable foundational WPs. Worker records `Predecessor contract check` before implementation. Reviewer independently reconstructs the same inherited/current ownership split and may not issue FAIL for an accepted predecessor guarantee merely because the current WP does not redundantly re-prove it; concrete evidence of inapplicability/falsehood is required.
 
 Use the exact handoff enum values defined by the protocol (`FROZEN_FOR_REVIEW`, `IN_REVIEW`, etc.); alternate aliases can be rejected by Automation V2 even when the candidate itself is valid.
 
@@ -59,7 +59,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
