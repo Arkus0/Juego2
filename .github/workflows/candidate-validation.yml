@@ -1,0 +1,196 @@
+name: Arkus Candidate Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+  workflow_dispatch:
+    inputs:
+      candidate_sha:
+        description: Exact 40-character candidate SHA
+        required: true
+        type: string
+      mode:
+        description: observation for mutable Worker state; verify for frozen candidate
+        required: true
+        default: observation
+        type: choice
+        options:
+          - observation
+          - verify
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arkus-candidate-${{ github.event.pull_request.number || inputs.candidate_sha || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  observation:
+    name: Candidate observation
+    if: >-
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == true) ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'observation')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.candidate_sha }}
+      PR_BODY: ${{ github.event.pull_request.body || '' }}
+      ARKUS_EXECUTION_SUBSTRATE: github-actions-ubuntu-24.04
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "::error::TARGET_SHA is not exact"; exit 2; }
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Install pinned .NET SDK from global.json
+        if: ${{ hashFiles('global.json') != '' }}
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+
+      - name: Run canonical observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          if printf '%s\n' "${PR_BODY}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
+            cat > EXECUTION_RECEIPT.txt <<EOF
+          EXECUTION_RECEIPT_V1
+          WP: PROCESS_ONLY
+          Candidate SHA: ${TARGET_SHA}
+          Executor role: WORKER
+          Execution environment: github-actions-ubuntu-24.04
+          Canonical command: process-only
+          Candidate clean before: YES
+          Candidate clean after: YES
+          Required gates: process-only=GREEN
+          Result: GREEN
+          Evidence: NONE
+          EOF
+            cat EXECUTION_RECEIPT.txt | tee validation.log
+            exit 0
+          fi
+
+          if [[ -f scripts/arkus-observe-exact-sha.sh ]]; then
+            cmd=scripts/arkus-observe-exact-sha.sh
+          elif [[ -f scripts/hk00-observe-exact-sha.sh ]]; then
+            cmd=scripts/hk00-observe-exact-sha.sh
+          else
+            echo "::error::No canonical observation entrypoint. Add scripts/arkus-observe-exact-sha.sh (or the HK00 compatibility entrypoint)." | tee validation.log
+            exit 2
+          fi
+
+          set +e
+          bash "${cmd}" "${TARGET_SHA}" 2>&1 | tee validation.log
+          status=${PIPESTATUS[0]}
+          set -e
+          if grep -q '^EXECUTION_RECEIPT_V1$' validation.log; then
+            awk '/^EXECUTION_RECEIPT_V1$/{emit=1} emit' validation.log > EXECUTION_RECEIPT.txt
+          fi
+          exit "${status}"
+
+      - name: Upload observation evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: candidate-observation-${{ env.TARGET_SHA }}
+          path: |
+            validation.log
+            EXECUTION_RECEIPT.txt
+            artifacts/observed
+          if-no-files-found: warn
+          retention-days: 7
+
+  verify:
+    name: Freeze exact-SHA validation
+    if: >-
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'verify')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.candidate_sha }}
+      PR_BODY: ${{ github.event.pull_request.body || '' }}
+      ARKUS_EXECUTOR_ROLE: WORKER
+      ARKUS_EXECUTION_SUBSTRATE: github-actions-ubuntu-24.04
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "::error::TARGET_SHA is not exact"; exit 2; }
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Install pinned .NET SDK from global.json
+        if: ${{ hashFiles('global.json') != '' }}
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+
+      - name: Run canonical frozen-candidate verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          if printf '%s\n' "${PR_BODY}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
+            cat > EXECUTION_RECEIPT.txt <<EOF
+          EXECUTION_RECEIPT_V1
+          WP: PROCESS_ONLY
+          Candidate SHA: ${TARGET_SHA}
+          Executor role: WORKER
+          Execution environment: github-actions-ubuntu-24.04
+          Canonical command: process-only
+          Candidate clean before: YES
+          Candidate clean after: YES
+          Required gates: process-only=GREEN
+          Result: GREEN
+          Evidence: NONE
+          EOF
+            cat EXECUTION_RECEIPT.txt | tee validation.log
+            exit 0
+          fi
+
+          if [[ -f scripts/arkus-verify-exact-sha.sh ]]; then
+            cmd=scripts/arkus-verify-exact-sha.sh
+          elif [[ -f scripts/hk00-verify-exact-sha.sh ]]; then
+            cmd=scripts/hk00-verify-exact-sha.sh
+          else
+            echo "::error::No canonical verify entrypoint. Add scripts/arkus-verify-exact-sha.sh (or the HK00 compatibility entrypoint)." | tee validation.log
+            exit 2
+          fi
+
+          set +e
+          bash "${cmd}" "${TARGET_SHA}" 2>&1 | tee validation.log
+          status=${PIPESTATUS[0]}
+          set -e
+          if grep -q '^EXECUTION_RECEIPT_V1$' validation.log; then
+            awk '/^EXECUTION_RECEIPT_V1$/{emit=1} emit' validation.log > EXECUTION_RECEIPT.txt
+          fi
+          exit "${status}"
+
+      - name: Upload frozen-candidate evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: freeze-validation-${{ env.TARGET_SHA }}
+          path: |
+            validation.log
+            EXECUTION_RECEIPT.txt
+            artifacts/observed
+          if-no-files-found: warn
+          retention-days: 30

@@ -8,31 +8,35 @@ The harness exists to let an AI agent create, inspect, modify, validate, replay,
 
 Arkus Harness is also being designed as a commercially viable, engine-agnostic AI-native game-authoring platform. Juego2 is its proving ground, not a reason to narrow the platform to one game, one engine, one model vendor, or one transport.
 
-## Manual operating model
+## Operating model
 
-Juego2 has no automation bootstrap and no GitHub Actions workflow orchestration.
+Juego2 uses **Automation V2** for mechanical GitHub Actions validation and state transitions, but has no automation bootstrap, role leases, dependency-routing daemon or automatic AI-session spawning.
 
-The human explicitly starts each role/session. A Worker, Reviewer or documentation/finalization session must reconstruct current GitHub state before acting and must stop at the next role boundary. No repository trigger, lease, Telegram notification or bootstrap document is required to advance work.
+The human still explicitly starts each reasoning role/session: Worker, independent Reviewer and DocSync. Every role reconstructs current GitHub state before acting and stops at the next role boundary.
 
-If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Juego2`, reconstruct the current state, identify the next dependency-valid manual action, and do not silently cross from Worker to independent Reviewer or from Reviewer to repair Worker in the same context.
+Automation may run canonical validation, persist handoff markers and merge an exact reviewed SHA after a valid PASS. It never substitutes for Worker pre-review or independent Reviewer judgment.
+
+If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Juego2`, reconstruct current state, identify the next dependency-valid role, and do not silently cross from Worker to independent Reviewer or from Reviewer to repair Worker in the same context.
 
 ## Sources of truth
 
 1. Code, executable tests and recorded evidence — actual state.
 2. `Docs/ROADMAP.md` — milestone order and gates.
 3. `Docs/workpacks/**` — exact scope and Definition of Done for one unit of work.
-4. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md` — exact-SHA execution and evidence binding without hosted CI.
+4. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md` — exact-SHA execution and evidence binding.
 5. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, Worker pre-review, exact-SHA freeze and independent review.
 6. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` — binding proof rules for foundational WPs.
 7. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
-8. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
+8. `Docs/engineering/AUTOMATION_V2.md` — minimal replaceable GitHub Actions orchestration.
+9. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
 
 ## Product rules
 
 - One active Worker per WP candidate and one canonical implementation PR.
 - Foundational work is not done because one execution is green; completeness, self-attacks and residual-risk evidence are required within the accepted trust boundary.
-- Validation is exact-SHA and executor-neutral. Worker, independent Reviewer or a capable local environment may run canonical commands and persist receipts.
-- GitHub Actions are not used by Juego2. Do not add or re-enable workflow automation unless the human explicitly changes this policy.
+- Validation is exact-SHA and executor-neutral. Automation V2 normally supplies hosted execution; Worker, independent Reviewer or capable local environments remain valid fallbacks.
+- GitHub Actions workflow YAML is orchestration only. Canonical scripts/contracts own validation semantics.
+- Standard GitHub-hosted runners are allowed. Do not introduce larger/paid runners or paid CI as a normal dependency without explicit human approval.
 - Do not copy architecture or code from `Arkus0/Juego` by default. It is reference material only. Migration requires explicit justification and review.
 - Process lessons from `Juego` may be reused when they are engine/game independent.
 - DFU is not part of the critical path. It may only return later as an optional adapter after `WP-HK-GATE`, through an explicit ADR proving net value.
@@ -45,18 +49,20 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 - Completeness claims may not rely solely on an inventory/registry/configuration controlled by the thing being proved; the universe under proof must be independently discoverable or checked against effective behaviour.
 - Do not add gameplay semantics merely to make harness tests convenient; use a deliberately tiny micro-world fixture.
 
-## Manual Worker → Reviewer flow
+## Worker → Reviewer flow
 
 - GitHub is the persistent repository, PR and evidence truth; sessions are disposable.
-- Draft + ACTIVE: Worker may write.
-- Before freeze, the Worker performs the required adversarial pre-review against the complete candidate and repairs any in-claim blocker while still Draft + ACTIVE.
-- `WORKER_PRE_REVIEW: CLEAN` is readiness evidence, never an independent PASS.
-- Ready + `FROZEN_FOR_REVIEW`: no Worker writes.
-- A fresh independent Reviewer reconstructs state and tries to falsify the frozen candidate; it never repairs implementation.
+- Draft + ACTIVE: Worker may write; Automation V2 runs candidate observation on relevant updates.
+- Before freeze, Worker performs the required adversarial pre-review and repairs any in-claim blocker while still Draft + ACTIVE.
+- `WORKER_PRE_REVIEW: CLEAN` is readiness evidence, never independent PASS.
+- Worker stops all writers, binds exact HEAD as `Frozen candidate SHA`, records `Candidate HEAD SHA`, sets `FROZEN_FOR_REVIEW`/`Branch frozen: YES`, and marks the PR Ready.
+- Automation V2 runs frozen exact-SHA verification. Only after it is green and metadata agrees does it persist `REVIEW_READY`.
+- The human then starts a fresh independent Reviewer. The Reviewer reconstructs state and tries to falsify the frozen candidate; it never repairs implementation.
 - PASS/FAIL binds the exact Frozen candidate SHA.
-- FAIL returns to the same WP repair loop and requires a new Worker session followed by a fresh pre-review/refreeze.
-- Merge is followed by a manual DocSync/reconciliation before the next WP is selected.
-- No automatic role transition, role lease, notification or background runner is part of the correctness contract.
+- FAIL produces `REPAIR_REQUIRED`; a fresh repair Worker is started manually on the same WP.
+- PASS plus exact-SHA green preflight may be merged automatically by Automation V2.
+- Merge produces `DOCSYNC_REQUIRED`; DocSync is started manually and must complete before the next WP is selected.
+- Automation never proves role independence. That remains a session/process obligation under `WORKER_REVIEW_PROTOCOL.md`.
 
 ## Skills / profiles
 
