@@ -188,6 +188,111 @@ namespace Arkus.Harness.Tests
             Assert.Equal(beforeHash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void GlobalAndDashSubjectHaveDistinctIdempotencyFingerprints(bool remove)
+        {
+            var objects = new List<WorldObject>(TownObjects())
+            {
+                new WorldObject(new WorldObjectId("-"), new WorldTypeId("fixture.npc"))
+            };
+            var initial = NewWorld(objects, remove
+                ? new[]
+                {
+                    new WorldExtensionData("fixture.dash", 1, new byte[] { 0x41 }),
+                    new WorldExtensionData("fixture.dash", 1, new byte[] { 0x41 }, new WorldObjectId("-"))
+                }
+                : Array.Empty<WorldExtensionData>());
+            var session = new TransactionalWorldAuthoringSession(initial);
+            var contract = Hk04TransactionalMutationTests.Compose(session);
+            var global = Hk04TransactionalMutationTests.Request(
+                initial, "request.hk02a-dash", DashOperation(remove, null));
+            var scoped = Hk04TransactionalMutationTests.Request(
+                initial, "request.hk02a-dash", DashOperation(remove, "-"));
+
+            Hk04TransactionalMutationTests.Success(contract, WorldMutationContract.ApplyName, global);
+            var hash = CanonicalWorldStateCodec.ComputeContentHash(session.Current);
+            var revision = session.Current.Revision;
+            var conflict = contract.Dispatch(WorldMutationContract.ApplyName,
+                Hk04TransactionalMutationTests.ExactVersion(), scoped);
+            Assert.False(conflict.Success);
+            Assert.Equal("world.change.idempotency_conflict", conflict.Error!.MachineCode);
+            Assert.Equal(revision, session.Current.Revision);
+            Assert.Equal(hash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
+            Assert.Single(session.Current.Extensions);
+            Assert.Equal(new WorldObjectId("-"), session.Current.Extensions[0].SubjectId);
+
+            var distinctKey = Hk04TransactionalMutationTests.Request(
+                session.Current, "request.hk02a-dash-distinct", DashOperation(remove, "-"));
+            Hk04TransactionalMutationTests.Success(contract, WorldMutationContract.ApplyName, distinctKey);
+            Assert.Equal(remove ? 0 : 2, session.Current.Extensions.Count);
+        }
+
+        [Fact]
+        public void SecondDependencyPageIsRequiredForExactCanonicalReconstruction()
+        {
+            var objects = new List<WorldObject>(TownObjects());
+            var dependencies = new List<WorldReference>();
+            for (var index = 0; index <= WorldInspectionService.MaximumExtensionDependencyPageSize; index++)
+            {
+                var id = "target." + index.ToString("D3", System.Globalization.CultureInfo.InvariantCulture);
+                objects.Add(new WorldObject(new WorldObjectId(id), new WorldTypeId("fixture.target")));
+                dependencies.Add(Dependency("links_to", id));
+            }
+            var source = NewWorld(objects, new[]
+            {
+                new WorldExtensionData("fixture.many-dependencies", 1, new byte[] { 0x41 }, null, dependencies)
+            });
+            var contract = Hk04TransactionalMutationTests.Compose(new TransactionalWorldAuthoringSession(source));
+            var request = Hk03InspectionTests.Anchor(source);
+            request["owner"] = "fixture.many-dependencies";
+            request["schemaVersion"] = 1;
+            request["offset"] = 0;
+            request["limit"] = WorldInspectionService.MaximumExtensionChunkBytes;
+            request["dependencyOffset"] = 0;
+            request["dependencyLimit"] = WorldInspectionService.MaximumExtensionDependencyPageSize;
+            var first = Hk04TransactionalMutationTests.Success(
+                contract, WorldInspectionContract.ExtensionReadName, request);
+            Assert.Equal(WorldInspectionService.MaximumExtensionDependencyPageSize,
+                Hk04TransactionalMutationTests.List(first.Data!, "dependencies").Count);
+            Assert.Equal(WorldInspectionService.MaximumExtensionDependencyPageSize,
+                Convert.ToInt32(first.Data!["nextDependencyOffset"], System.Globalization.CultureInfo.InvariantCulture));
+            request["dependencyOffset"] = first.Data!["nextDependencyOffset"];
+            var second = Hk04TransactionalMutationTests.Success(
+                contract, WorldInspectionContract.ExtensionReadName, request);
+            Assert.Single(Hk04TransactionalMutationTests.List(second.Data!, "dependencies"));
+            Assert.False(second.Data!.ContainsKey("nextDependencyOffset"));
+
+            var complete = ReadAllExtensions(contract, source);
+            Assert.Single(complete);
+            Assert.Equal(dependencies.Count, complete[0].Dependencies.Count);
+            Assert.Equal(CanonicalWorldStateCodec.ComputeContentHash(source),
+                CanonicalWorldStateCodec.ComputeContentHash(
+                    new WorldState(source.Id, source.Revision, source.Objects, complete, source.SchemaVersion)));
+            var firstPageOnly = new[]
+            {
+                new WorldExtensionData("fixture.many-dependencies", 1, new byte[] { 0x41 }, null,
+                    dependencies.GetRange(0, WorldInspectionService.MaximumExtensionDependencyPageSize))
+            };
+            Assert.NotEqual(CanonicalWorldStateCodec.ComputeContentHash(source),
+                CanonicalWorldStateCodec.ComputeContentHash(
+                    new WorldState(source.Id, source.Revision, source.Objects, firstPageOnly, source.SchemaVersion)));
+        }
+
+        private static IReadOnlyDictionary<string, object?> DashOperation(bool remove, string? subjectId)
+        {
+            var operation = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["kind"] = remove ? "remove-extension" : "put-extension",
+                ["owner"] = "fixture.dash",
+                ["schemaVersion"] = 1
+            };
+            if (subjectId != null) operation["subjectId"] = subjectId;
+            if (!remove) operation["payloadBase64"] = Convert.ToBase64String(new byte[] { 0x41 });
+            return Hk03InspectionTests.ReadOnlyMap(operation);
+        }
+
         [Fact]
         public void IndependentCoverageOracleDetectsOmittedDependencyEffects()
         {
@@ -347,16 +452,21 @@ namespace Arkus.Harness.Tests
                 request["limit"] = WorldInspectionService.MaximumExtensionChunkBytes;
                 request["dependencyOffset"] = 0;
                 request["dependencyLimit"] = WorldInspectionService.MaximumExtensionDependencyPageSize;
-                var read = Hk04TransactionalMutationTests.Success(
-                    contract,
-                    WorldInspectionContract.ExtensionReadName,
-                    request);
                 var dependencies = new List<WorldReference>();
-                foreach (var rawDependency in Hk04TransactionalMutationTests.List(read.Data!, "dependencies"))
+                CapabilityInvocationResult read;
+                do
                 {
-                    var dependency = (IReadOnlyDictionary<string, object?>)rawDependency!;
-                    dependencies.Add(Dependency((string)dependency["kind"]!, (string)dependency["targetId"]!));
+                    read = Hk04TransactionalMutationTests.Success(
+                        contract, WorldInspectionContract.ExtensionReadName, request);
+                    foreach (var rawDependency in Hk04TransactionalMutationTests.List(read.Data!, "dependencies"))
+                    {
+                        var dependency = (IReadOnlyDictionary<string, object?>)rawDependency!;
+                        dependencies.Add(Dependency((string)dependency["kind"]!, (string)dependency["targetId"]!));
+                    }
+                    if (!read.Data!.TryGetValue("nextDependencyOffset", out var nextOffset)) break;
+                    request["dependencyOffset"] = nextOffset;
                 }
+                while (true);
 
                 var subjectId = read.Data!.TryGetValue("subjectId", out var rawSubject)
                     ? new WorldObjectId((string)rawSubject!)
