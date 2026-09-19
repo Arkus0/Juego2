@@ -10,6 +10,7 @@ Active Worker: `@...`
 Worker state: `ACTIVE | PAUSED | FROZEN_FOR_REVIEW`
 Worker history: `...`
 Transfer SHA: `NONE`
+Predecessor contract check: `NONE`
 Candidate HEAD SHA: `<40-char>`
 Worker pre-review: `NOT_RUN | NOT_READY | CLEAN`
 Worker pre-review evidence: `NONE`
@@ -34,4 +35,4 @@ Known limitations/skips: `NONE`
 
 Mode: `WORKPACK | PROCESS_ONLY`
 
-> Draft means Worker may write and Automation V2 may run observation checks. Before Ready: stop all writers, bind exact HEAD as Candidate/Frozen SHA, record `Worker pre-review: CLEAN`, set `Worker state: FROZEN_FOR_REVIEW`, `Branch frozen: YES`, and `Worker verdict: IN_REVIEW`. Ready triggers frozen exact-SHA validation; only a green exact-SHA handoff may proceed to an independent Reviewer. A canonical exact-SHA PASS may be auto-merged; merged workpacks require DocSync before the next WP.
+> Draft means Worker may write and Automation V2 may run observation checks. Before implementation: reconstruct direct accepted predecessor guarantees and record `Predecessor contract check`. Before Ready: stop all writers, bind exact HEAD as Candidate/Frozen SHA, record `Worker pre-review: CLEAN`, set `Worker state: FROZEN_FOR_REVIEW`, `Branch frozen: YES`, and `Worker verdict: IN_REVIEW`. Ready triggers frozen exact-SHA validation; only a green exact-SHA handoff may proceed to an independent Reviewer. Reviewer must not demand duplicate proof of accepted predecessor guarantees without concrete evidence that the inherited guarantee is inapplicable or false. A canonical exact-SHA PASS may be auto-merged; merged workpacks require DocSync before the next WP.
