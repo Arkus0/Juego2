@@ -1,0 +1,177 @@
+name: Telegram Notify
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: telegram-notify-${{ github.event.comment.id || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.issue.pull_request != null &&
+        contains(github.event.comment.body, 'ARKUS_AUTOMATION_V2') &&
+        (
+          github.event.comment.user.login == 'github-actions[bot]' ||
+          github.event.comment.author_association == 'OWNER' ||
+          github.event.comment.author_association == 'MEMBER' ||
+          github.event.comment.author_association == 'COLLABORATOR'
+        )
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+
+    steps:
+      - name: Build notification
+        id: build
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import sys
+
+          event_name = os.environ['GITHUB_EVENT_NAME']
+          event_path = os.environ['GITHUB_EVENT_PATH']
+          output_path = os.environ['GITHUB_OUTPUT']
+
+          if event_name == 'workflow_dispatch':
+              message = '🔔 Arkus0/Juego2\nNotificaciones de Telegram operativas.'
+          else:
+              with open(event_path, 'r', encoding='utf-8') as fh:
+                  event = json.load(fh)
+
+              body = event.get('comment', {}).get('body', '')
+              if 'ARKUS_AUTOMATION_V2' not in body:
+                  sys.exit(0)
+
+              fields = {}
+              for raw in body.splitlines():
+                  line = raw.strip()
+                  if ':' not in line:
+                      continue
+                  key, value = line.split(':', 1)
+                  fields[key.strip()] = value.strip()
+
+              state = fields.get('State', '').upper()
+              detail = fields.get('Detail', '').strip()[:420]
+              next_wp = fields.get('Next WP', '').strip()[:120]
+              milestone = fields.get('Milestone', '').strip()[:120]
+
+              # Intentionally low-noise: routine DOCSYNC_REQUIRED is not sent.
+              labels = {
+                  'REVIEW_READY': '👷 Worker terminado',
+                  'PASS_PREFLIGHT_GREEN': '✅ Reviewer PASS',
+                  'REPAIR_REQUIRED': '❌ Reviewer FAIL',
+                  'DOCSYNC_COMPLETE': '📚 Merge + DocSync completados',
+                  'MILESTONE_COMPLETE': '🏁 Hito completado',
+                  'BLOCKED': '🛑 Bloqueado',
+                  'HUMAN_ACTION_REQUIRED': '⚠️ Atención requerida',
+              }
+
+              if state == 'DOCSYNC_REQUIRED':
+                  sys.exit(0)
+              if state not in labels:
+                  sys.exit(0)
+
+              issue = event.get('issue', {})
+              pr_number = issue.get('number')
+              pr_url = issue.get('html_url') or event.get('comment', {}).get('html_url')
+              pr_body = issue.get('body') or ''
+              title = issue.get('title') or ''
+
+              wp_match = re.search(r'^WP:\s*`?([^`\r\n]+?)`?\s*$', pr_body, re.M | re.I)
+              wp = (fields.get('WP') or (wp_match.group(1).strip() if wp_match else '')).strip()[:120]
+              subject = wp or milestone or title[:120] or f'PR #{pr_number}'
+
+              if state == 'DOCSYNC_COMPLETE' and not next_wp:
+                  print('DOCSYNC_COMPLETE requires a non-empty Next WP field', file=sys.stderr)
+                  sys.exit(1)
+              if state == 'MILESTONE_COMPLETE' and not milestone:
+                  print('MILESTONE_COMPLETE requires a non-empty Milestone field', file=sys.stderr)
+                  sys.exit(1)
+
+              parts = [f"{labels[state]} — {subject}"]
+
+              defaults = {
+                  'REVIEW_READY': 'Candidato congelado y validado; listo para Reviewer independiente.',
+                  'PASS_PREFLIGHT_GREEN': 'PASS exacto validado; merge automático autorizado.',
+                  'REPAIR_REQUIRED': 'El WP vuelve a Worker sobre el mismo candidato/contrato.',
+                  'DOCSYNC_COMPLETE': 'Implementación mergeada y documentación reconciliada.',
+                  'MILESTONE_COMPLETE': 'Milestone aceptado y reconciliado.',
+                  'BLOCKED': 'La ejecución necesita desbloqueo antes de continuar.',
+                  'HUMAN_ACTION_REQUIRED': 'Se necesita intervención humana antes de continuar.',
+              }
+              parts.append(detail or defaults[state])
+
+              if next_wp:
+                  parts.append(f'Siguiente WP: {next_wp}')
+              if pr_number:
+                  parts.append(f'PR #{pr_number}')
+              if pr_url:
+                  parts.extend(['', pr_url])
+
+              message = '\n'.join(parts)
+
+          delimiter = 'TELEGRAM_MESSAGE_EOF'
+          with open(output_path, 'a', encoding='utf-8') as out:
+              out.write(f'message<<{delimiter}\n{message}\n{delimiter}\n')
+          PY
+
+      - name: Check Telegram configuration
+        id: config
+        shell: bash
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [[ -z "${TELEGRAM_BOT_TOKEN}" || -z "${TELEGRAM_CHAT_ID}" ]]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Telegram secrets are not configured; notification skipped."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Send Telegram message
+        if: steps.config.outputs.configured == 'true'
+        shell: bash
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MESSAGE: ${{ steps.build.outputs.message }}
+        run: |
+          set -euo pipefail
+          BOT_TOKEN="$(printf '%s' "$TELEGRAM_BOT_TOKEN" | tr -d '\r\n')"
+          CHAT_ID="$(printf '%s' "$TELEGRAM_CHAT_ID" | tr -d '[:space:]')"
+
+          payload="$(jq -n \
+            --arg chat_id "$CHAT_ID" \
+            --arg text "$MESSAGE" \
+            '{chat_id: $chat_id, text: $text, disable_web_page_preview: true}')"
+
+          response="$(curl --silent --show-error \
+            --request POST \
+            --header 'Content-Type: application/json' \
+            --data "$payload" \
+            --write-out '\n%{http_code}' \
+            "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage")"
+
+          status="$(printf '%s\n' "$response" | tail -n 1)"
+          body="$(printf '%s\n' "$response" | sed '$d')"
+
+          if [[ "$status" -lt 200 || "$status" -ge 300 ]]; then
+            description="$(printf '%s' "$body" | jq -r '.description // "Telegram API request failed"' 2>/dev/null || true)"
+            echo "Telegram API error (${status}): ${description:-Telegram API request failed}" >&2
+            exit 1
+          fi
