@@ -145,13 +145,15 @@ namespace Arkus.Game.Authoring
                     "Query authoring.replay.compatibility@1.0 before replaying another format.");
             }
 
-            if (!TryObject(journal, "base", out var baseData) ||
-                !TryAnchor(baseData, path + ".base", out var baseAnchor, out var baseError))
-                return baseError ?? Error("world.replay.journal_invalid", "Journal base anchor is invalid.", path + ".base");
+            if (!TryObject(journal, "base", out var baseData))
+                return Error("world.replay.journal_invalid", "Journal base anchor is missing or not an object.", path + ".base");
+            if (!TryAnchor(baseData, path + ".base", out var baseAnchor, out var baseError))
+                return baseError!;
 
-            if (!TryObject(journal, "current", out var currentData) ||
-                !TryAnchor(currentData, path + ".current", out var currentAnchor, out var currentError))
-                return currentError ?? Error("world.replay.journal_invalid", "Journal current anchor is invalid.", path + ".current");
+            if (!TryObject(journal, "current", out var currentData))
+                return Error("world.replay.journal_invalid", "Journal current anchor is missing or not an object.", path + ".current");
+            if (!TryAnchor(currentData, path + ".current", out var currentAnchor, out var currentError))
+                return currentError!;
 
             if (!TryLong(journal, "entryCount", out var entryCount) || entryCount < 0 ||
                 !journal.TryGetValue("entries", out var rawEntries) ||
@@ -233,14 +235,16 @@ namespace Arkus.Game.Authoring
 
             if (!TryObject(entry, "request", out var request))
                 return Error("world.replay.entry_invalid", "Journal entry request is not an object.", path + ".request");
-            if (!TryObject(entry, "base", out var baseData) ||
-                !TryAnchor(baseData, path + ".base", out var baseAnchor, out var baseError))
-                return baseError ?? Error("world.replay.entry_invalid", "Journal entry base is invalid.", path + ".base");
+            if (!TryObject(entry, "base", out var baseData))
+                return Error("world.replay.entry_invalid", "Journal entry base is not an object.", path + ".base");
+            if (!TryAnchor(baseData, path + ".base", out var baseAnchor, out var baseError))
+                return baseError!;
             if (!SameAnchor(baseAnchor!, expectedBase))
                 return Error("world.replay.sequence_invalid", "Journal entry base does not continue the preceding result anchor.", path + ".base");
-            if (!TryObject(entry, "result", out var resultData) ||
-                !TryAnchor(resultData, path + ".result", out var resultAnchor, out var resultError))
-                return resultError ?? Error("world.replay.entry_invalid", "Journal entry result is invalid.", path + ".result");
+            if (!TryObject(entry, "result", out var resultData))
+                return Error("world.replay.entry_invalid", "Journal entry result is not an object.", path + ".result");
+            if (!TryAnchor(resultData, path + ".result", out var resultAnchor, out var resultError))
+                return resultError!;
 
             if (!entry.TryGetValue("affectedResources", out var rawResources) ||
                 !(rawResources is IReadOnlyList<object?> resourceValues))
@@ -292,7 +296,7 @@ namespace Arkus.Game.Authoring
                 string.Equals(left.Hash, right.Hash, StringComparison.Ordinal);
         }
 
-        internal static StructuredError? TryAnchor(
+        internal static bool TryAnchor(
             IReadOnlyDictionary<string, object?> data,
             string path,
             out AuthoredWorldAnchor? anchor,
@@ -308,18 +312,18 @@ namespace Arkus.Game.Authoring
                 !TryString(data, "hash", out var hash) || !IsCanonicalHash(hash))
             {
                 error = Error("world.replay.entry_invalid", "Authored anchor is not canonical.", path);
-                return error;
+                return false;
             }
 
             try
             {
                 anchor = new AuthoredWorldAnchor(worldId, (int)schemaVersion, revision, hash);
-                return null;
+                return true;
             }
             catch (ArgumentException)
             {
                 error = Error("world.replay.entry_invalid", "Authored anchor contains an invalid world identity.", path);
-                return error;
+                return false;
             }
         }
 
