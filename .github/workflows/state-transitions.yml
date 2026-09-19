@@ -39,6 +39,11 @@ jobs:
           freeze_job=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100" --jq '.jobs[] | select(.name == "Freeze exact-SHA validation") | .conclusion' | tail -n1)
           [[ "${freeze_job}" == "success" ]] || exit 0
 
+          pr_body=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.body // ""')
+          if printf '%s\n' "${pr_body}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
+            exit 0
+          fi
+
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
           sha=$(python - <<'PY'
           import json, re, sys
