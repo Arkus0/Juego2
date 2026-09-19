@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.14 — 2026-09-19
+Version: 1.15 — 2026-09-19
 
 ## North star
 
@@ -42,13 +42,15 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A` and `WP-HK-05` are COMPLETE.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05` and `WP-HK-06A` are COMPLETE.
 
 `WP-HK-05` PR `#26` passed independent review on frozen candidate `23a9fd4373a803187cd9391b1459cd48975177f6` (review `#5257350871`), exact-SHA candidate observation Actions `35464742544` GREEN, freeze validation Actions `35464834162` GREEN, and merged as `ed65661680aea2a9be79f892c96aa42bf788a842` on 2026-09-19. Two prior frozen candidates failed in the same aggregate-validation-under-ambiguous-identity class; the circuit breaker triggered a causal architecture re-audit, and the accepted candidate uses dependency-local ambiguity deferral rather than global suppression.
 
+`WP-HK-06A` PR `#32` passed independent review on frozen candidate `4ed9a925791ae14b0b5c0d92625161504021542e` (review `#5257682288`), exact-SHA candidate observation Actions `35469103222` GREEN, freeze validation Actions `35469154331` GREEN, and merged as `8089a52e8a7bbdde46e97705df6906c0d38d593a` on 2026-09-19. One earlier frozen candidate failed because a schema-valid but semantically false normalized replay envelope could remain green; the accepted repair binds the complete machine-readable request to the parsed request fingerprint/base anchor and independently verifies deterministic entry identity before atomic state/receipt/journal publication.
+
 Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is now `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-Next dependency-valid workpack: `WP-HK-06A — Provenance journal + authored/live boundary`.
+Next dependency-valid workpack: `WP-HK-06B — Semantic diff + canonical snapshot portability`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -60,7 +62,7 @@ Next dependency-valid workpack: `WP-HK-06A — Provenance journal + authored/liv
 | 6 | `WP-HK-04` ✅ COMPLETE | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
 | 7 | `WP-HK-02A` ✅ COMPLETE | Object-scoped opaque extension data + typed declared dependencies |
 | 8 | `WP-HK-05` ✅ COMPLETE | Validation/invariants and structured repairable diagnostics |
-| 9 | `WP-HK-06A` | Provenance journal + authored/live-state boundary |
+| 9 | `WP-HK-06A` ✅ COMPLETE | Provenance journal + authored/live-state boundary |
 | 10 | `WP-HK-06B` | Semantic diff + canonical snapshot export/import portability |
 | 11 | `WP-HK-06C` | Deterministic journal replay + end-to-end audit consistency |
 | 12 | `WP-HK-07A` | Production headless host + deterministic JSONL/reference transport |
