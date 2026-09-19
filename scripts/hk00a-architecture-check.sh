@@ -51,6 +51,7 @@ reject_regex "$arch" 'MCP (request|tool|schema).*(only|sole|canonical) (source|a
 
 # 2. H0 canonical contract remains engine-neutral.
 require_text "$hk01" "engine-specific object types"
+require_text "$arch" "H0 base capability definitions remain engine-neutral."
 reject_regex "$hk01" 'UnityEngine|UnityEditor|GameObject|MonoBehaviour|ScriptableObject|UnityEngine\.SceneManagement' \
   "HK01 canonical contract leaks Unity concepts"
 
@@ -82,6 +83,23 @@ require_text "$arch" "Transport and engine adapters may not mutate canonical sta
 require_text "$arch" "Every canonical mutation must enter through the accepted Arkus authoring transaction pipeline"
 require_text "$ip" "may not create a mutation path that bypasses the accepted Arkus authoring transaction pipeline"
 require_text "$hk07" "MCP adapter introducing a hidden mutation path"
+
+# 7. Legitimate engine-scoped capabilities have a valid Arkus-owned composition path without contaminating H0.
+require_text "$arch" "Engine-scoped public capabilities enter the product only through an Arkus-owned contract composition path."
+require_text "$arch" "The canonical contract composer validates namespace ownership"
+require_text "$hk01" "HK01 must define an engine-neutral canonical contract composer."
+require_text "$hk01" "A scoped provider cannot expose a public capability unless its definition has been accepted into the canonical inventory"
+require_text "$roadmap" "register every public Unity/engine-scoped capability through the Arkus-owned canonical composition path defined by HK01"
+reject_regex "$arch" 'engine-scoped public capabilities.*(directly|only).*H0 base' \
+  "engine-scoped public capabilities cannot be forced into the H0 base contract"
+
+# 8. Engine bridges/providers cannot become a second public capability/schema authority.
+require_text "$arch" "An engine bridge may contribute capability definitions and implementation bindings, but it may not publish a parallel public capability registry, discovery surface or transport-only schema authority."
+require_text "$arch" "once accepted by the Arkus composer, the capability appears in the single composed canonical inventory"
+require_text "$hk01" "No engine bridge, transport adapter, SDK or Creator surface may make a capability public by maintaining an independent registry."
+require_text "$hk07" "Transport projections consume the composed canonical capability inventory generically"
+reject_regex "$arch" 'engine bridge may publish a parallel public capability registry' \
+  "engine bridge cannot publish a parallel public capability registry"
 
 # H0 route/DAG reconciliation.
 require_text "$hk00a" 'Depends on: `WP-HK-00` ✅ COMPLETE'

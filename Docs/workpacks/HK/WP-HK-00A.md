@@ -22,6 +22,8 @@ No runtime feature implementation is required or allowed merely to make this arc
 - `Docs/engineering/PRODUCT_ARCHITECTURE.md` is reviewed and explicitly establishes canonical Arkus semantics above transports and engines.
 - MCP is defined as a first-class standards adapter/projection, not the canonical contract source.
 - Unity is defined as the first engine bridge, not the platform boundary; H0 contracts remain engine-neutral.
+- Legitimate engine-scoped public capabilities have one Arkus-owned composition/registration path: the canonical contract model remains engine-neutral, bridge implementations may contribute scoped definitions/bindings, and no bridge/transport may expose a parallel public registry or schema authority.
+- Scoped public capabilities remain subject to canonical discovery/schema/policy/transaction/provenance rules; canonical-state mutation cannot bypass the accepted authoring transaction pipeline.
 - A single-source contract-generation rule exists for discovery/schemas/SDK/Creator metadata; hand-maintained parallel truths are forbidden as the normal design.
 - `Docs/engineering/DEPENDENCY_IP_POLICY.md` defines commercial license/provenance/SBOM/replaceability rules before external code is embedded.
 - `Docs/engineering/EXTERNAL_HARNESS_ADOPTION_AUDIT.md` records the current adopt/borrow/benchmark/reject decisions and the capability patterns Arkus must meet or exceed.
@@ -38,12 +40,14 @@ Because this WP is architecture/process rather than runtime implementation, its 
 3. adopting an engine harness wholesale even when required Arkus semantics are missing;
 4. embedding an external dependency with unknown/incompatible commercial terms;
 5. defining command completeness only from the discovery registry being proved;
-6. allowing transport/engine adapters to mutate canonical state outside the accepted transaction pipeline.
+6. allowing transport/engine adapters to mutate canonical state outside the accepted transaction pipeline;
+7. forcing legitimate engine-scoped public capabilities into the H0/base contract instead of the Arkus-owned scoped composition path;
+8. allowing an engine bridge to publish its own public capability/discovery/schema registry outside canonical composition.
 
 ## Forbidden scope
 
-Gameplay implementation, Unity project/assets, Creator GUI, cloud SaaS, implementing HK01+ runtime code, selecting final future non-Unity engines.
+Gameplay implementation, Unity project/assets, Creator GUI, cloud SaaS, implementing HK01+ runtime code, selecting final future non-Unity engines or concrete Unity capability APIs.
 
 ## DoD
 
-Architecture documents, roadmap/DAG and affected future WP contracts agree on one product boundary; adversarial consistency review finds no transport/engine/dependency path that can silently redefine or narrow canonical Arkus semantics; independent Reviewer PASS.
+Architecture documents, roadmap/DAG and affected future WP contracts agree on one product boundary; adversarial consistency review finds no transport/engine/dependency path that can silently redefine or narrow canonical Arkus semantics, and a legitimate future engine-scoped capability has exactly one valid Arkus-owned path to become public without contaminating the H0 kernel; independent Reviewer PASS.

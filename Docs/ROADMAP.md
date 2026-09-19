@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.3 — 2026-09-19
+Version: 1.4 — 2026-09-19
 
 ## North star
 
@@ -19,6 +19,7 @@ AI / future Creator GUI / scripts / SDK clients
        MCP / JSONL / future HTTP
                     ↓
          canonical Arkus Contract
+      base + scoped extensions
                     ↓
       Authoring + Validation kernel
                     ↓
@@ -30,6 +31,8 @@ AI / future Creator GUI / scripts / SDK clients
 ```
 
 The canonical contract and kernel are engine-agnostic, transport-agnostic and model-vendor-agnostic. MCP is a first-class standards adapter, not the source of truth. Unity is the first engine bridge, not the platform boundary. External frameworks may be adopted selectively where they solve generic infrastructure better, but Arkus must remain a functional superset rather than inheriting another harness's ceiling.
+
+The canonical contract system supports later reviewed scoped capability contributions. Engine bridges may contribute definitions/bindings only through Arkus-owned canonical composition; they may not publish parallel public registries, and H0 base contracts remain free of engine implementation types.
 
 The old `Arkus0/Juego` repository is a reference archive, not a migration source of authority.
 
@@ -79,6 +82,7 @@ Next dependency-valid workpack after DocSync: `WP-HK-00A`.
 - no direct repository/world-state edits are required to complete the benchmark;
 - a measured interaction-budget baseline exists and batching prevents pathological one-command-per-field authoring;
 - the product boundary remains engine/transport/vendor neutral and approved external dependencies are replaceable;
+- the canonical contract system has one Arkus-owned composition path for future scoped providers and no adapter-owned public registry;
 - all foundational proof obligations have zero unresolved and zero known-undetected classes.
 
 If the gate cannot be proven without excessive complexity, STOP and simplify the harness architecture before starting an engine bridge.
@@ -94,6 +98,9 @@ Only after `WP-HK-GATE` PASS:
 - record the selected Unity/editor/package baseline in an H1 ADR/workpack so builds are reproducible;
 - implement Unity as the first downstream projection/adapter over the accepted kernel;
 - prove Unity consumes the same canonical game contracts rather than a duplicate implementation;
+- register every public Unity/engine-scoped capability through the Arkus-owned canonical composition path defined by HK01; the Unity bridge may contribute scoped definitions and implementation bindings but may not own a parallel discovery/schema registry;
+- express Unity-scoped public request/result/error data without exposing Unity runtime/editor class types as canonical kernel dependencies;
+- keep engine-scoped capabilities inside the accepted canonical policy/transaction/provenance envelope, with canonical-state mutation still entering the canonical authoring transaction pipeline;
 - establish scene/prefab/runtime projection, engine observation/evidence and Unity-side validation;
 - establish deterministic playtest/visual-evidence capabilities without making Unity the owner of scenario semantics;
 - add Unity parity gate before content production;

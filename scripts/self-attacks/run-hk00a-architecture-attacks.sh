@@ -88,7 +88,21 @@ replace_once "${TMP}/Docs/engineering/PRODUCT_ARCHITECTURE.md" \
   "Transport and engine adapters may mutate canonical state directly."
 expect_red "adapter-bypasses-canonical-transaction"
 
+# 7. Legitimate engine-scoped capabilities are forced into the H0/base contract instead of using scoped composition.
+reset_fixture
+replace_once "${TMP}/Docs/engineering/PRODUCT_ARCHITECTURE.md" \
+  "Engine-scoped public capabilities enter the product only through an Arkus-owned contract composition path." \
+  "Engine-scoped public capabilities are authored directly into the H0 base contract."
+expect_red "engine-scope-forced-into-h0-base"
+
+# 8. The engine bridge publishes a parallel public capability registry.
+reset_fixture
+replace_once "${TMP}/Docs/engineering/PRODUCT_ARCHITECTURE.md" \
+  "An engine bridge may contribute capability definitions and implementation bindings, but it may not publish a parallel public capability registry, discovery surface or transport-only schema authority." \
+  "An engine bridge may publish a parallel public capability registry, discovery surface and transport-only schema authority."
+expect_red "engine-bridge-parallel-registry"
+
 # Re-prove GREEN on the unmodified candidate after all negative controls.
 ARKUS_ARCH_DOC_ROOT="${ROOT}" bash "${CHECKER}" >/dev/null
 echo "SELF_ATTACK: GREEN restored"
-echo "HK00A_SELF_ATTACKS: GREEN (6/6 causal negative controls turned RED)"
+echo "HK00A_SELF_ATTACKS: GREEN (8/8 causal negative controls turned RED)"
