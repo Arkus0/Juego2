@@ -1,9 +1,19 @@
 # WP-HK-03 — Inspection/query surface
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
-Depends on: `WP-HK-02`  
+Depends on: `WP-HK-02` ✅ COMPLETE  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+Baseline SHA: `39b0660193af53575aab26d3e5ff567a48ea86f3`
+Implementation PR: `#18`
+
+Completion:
+- Reviewed candidate SHA: `8c20a380003c082fa9bd472d3233afa9654fb231`
+- Independent Reviewer verdict: `PASS`
+- Reviewer evidence: PR review `#5255545669`
+- Exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35438687868`)
+- Merge SHA: `d8b808450ee7863726d718a25c5756534113fcfd`
+- Completed: `2026-09-19`
 
 ## Objective
 
