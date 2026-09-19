@@ -1,66 +1,98 @@
 # WP-HK-06B Worker pre-review
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 1
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 3
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-06B/WORKER_PRE_REVIEW.md
 
 ## Candidate challenged
 
 - WP: `WP-HK-06B`
 - Baseline: `5281160ce4eff601ab52dfb568fd4e4976560383`
-- Implementation/test SHA observed after repair: `02775314155dde7d62f99e48456238a07e227848`
+- Reviewer-failed frozen SHA: `bebc1b6165f7228f33dc593534052cd80eb6e041`
+- Repair implementation/test SHA observed GREEN: `6f700ad4c9a00328f61d7c317a28fdbbe303ca95`
 - PR: `#35`
+- Repair cycle: `1`
 - Direct dependency: accepted `WP-HK-06A`; inheritance split remains as recorded in `WORKER_PLAN.md`.
 
 This is Worker quality-gate evidence only. It is not an independent Reviewer verdict.
 
-## Challenge performed
+## Independent-review blocker reconstructed
 
-The complete baseline-to-candidate change set was re-read against `WP-HK-06B`, `WORKER_REVIEW_PROTOCOL.md`, `FOUNDATIONAL_PROOF_STANDARD.md`, the HK06A accepted evidence, the downstream HK06C/HK07A contracts and the approved Potes/Liébana setting used by the required content-shape probe.
+Review `#5258024978` correctly identified an HK06B-owned contradiction in frozen SHA `bebc1b6…`: `authoring.snapshot.import@1.0` was publicly classified as `CanonicalMutation + CanonicalTransaction + Provenance Required`, while effective execution replaced the complete canonical session through a separate snapshot-rebase authority and intentionally started the imported lineage with an empty HK06A mutation journal.
 
-I challenged:
+That was not treated as permission to weaken HK04/HK06A tests or to bless `journal=0` as an exception. The repair re-audited the full classification ↔ authority ↔ history/evidence seam and kept the accepted HK06A guarantee unchanged: successful **canonical mutations** still publish HK06A mutation provenance exactly at the accepted mutation commit boundary.
 
-- the finite authored-resource universe behind semantic-diff completeness;
-- object and extension identity/granularity, field classes, add/remove/update behavior and representation-order neutrality;
-- snapshot schema/version/state-format validation, canonical-byte/anchor agreement and false same-state paths;
-- atomic rejection and CAS behavior for import;
-- canonical-mutation metadata/idempotency/validation integration rather than exempting snapshot import from HK04/HK05 rules;
-- source/target journal semantics and the risk of fabricating provenance;
-- authored/live leakage through snapshot content;
-- public definition/route/discovery completeness and read-only attenuation;
-- the entire PR for forbidden replay, transport, Unity, gameplay simulation, cloud, GUI and Git-as-truth scope;
-- the proof budget and the representative Potes content shape.
+## Repair architecture challenged
 
-## Finding fixed during pre-review
+The complete baseline-to-repair change set was re-read against `WP-HK-06B`, `WORKER_REVIEW_PROTOCOL.md`, `FOUNDATIONAL_PROOF_STANDARD.md`, accepted HK01/HK04/HK05/HK06A contracts, and downstream HK06C/HK07A.
 
-**Finding 1 — semantic-diff proof omitted extension existence as an explicit causal class.**
+The repair was challenged specifically for:
 
-The initial suite proved object add/remove, object field changes and extension payload/dependency changes, while production code also handled extension create/remove. Because the WP explicitly owns added/removed authorable resources and extensions are an accepted HK02A resource class, that left a material in-claim omission class without an independent exact-set/causal control.
+- whether snapshot import is truthfully distinguishable from ordinary canonical mutation without inventing a second mutation model;
+- whether the public contract, effective handler marker and actual commit authority agree on that distinction;
+- whether `Provenance Required` has machine-readable evidence appropriate to rebase rather than pretending an HK06A mutation occurred;
+- whether the HK06A journal remains empty after rebase but ordinary post-rebase edits still become HK06A entries;
+- whether keyed idempotency returns the same rebase evidence without a second state/history effect;
+- whether HK01 discovery/projection can represent the new canonical metadata through both production and independent-oracle paths;
+- whether HK04 `MutationSurfaceConformance` remains unchanged and exact for `CanonicalMutation` rather than receiving an import-specific exception;
+- whether the HK04 non-writer behavioral oracle excludes canonical writers by semantic class, not by route name;
+- whether rejected import still validates before publication and leaves state/history unchanged;
+- whether HK06C can consume the imported snapshot as a clean lineage base and later HK06A entries without reinterpreting either predecessor format;
+- whether any repair change leaked into replay, transport, Unity, gameplay simulation, persistence or other forbidden scope.
 
-Repair: `Hk06BNegativeConformanceTests.IndependentOracleCoversExtensionExistenceAndTurnsRedForOmissionOrFalseExtra` now:
+## Repair result
 
-- adds a distinct `future.gamma@3@global` extension and removes `future.alpha@2@global`;
-- computes changed resources with a test-owned object/extension projection independent of production diff;
-- requires effective resource sets to equal that oracle exactly;
-- proves an omitted expected extension yields `missing:...`;
-- proves an invented resource yields `extra:...`.
+The public contract now defines a distinct `CanonicalRebase` side-effect and `CanonicalRebase` transaction requirement. `authoring.snapshot.import@1.0` uses those semantics and remains optimistic-versioned + keyed-idempotent.
 
-The first repair fixture accidentally reused existing `future.beta@1@global` and was rejected by HK02A uniqueness validation before reaching the target oracle. That incidental red was discarded as invalid evidence; the fixture was corrected to a distinct identity and rerun.
+The effective import handler implements `ICanonicalRebaseHandler` and no longer implements `ITransactionalMutationHandler`. Ordinary `authoring.change.apply` remains `CanonicalMutation + CanonicalTransaction`; inherited `MutationSurfaceConformance` was not modified.
 
-Post-repair exact implementation observation on `02775314155dde7d62f99e48456238a07e227848` is GREEN: build 0 warnings/errors, focused HK06B 7/7, full regression 126/126, clean before/after.
+Successful import now returns required `arkus.authoring.snapshot-rebase-evidence@1`, binding:
+
+- idempotency key and canonical request fingerprint;
+- snapshot schema/version and imported snapshot anchor;
+- previous and current authored anchors;
+- `new-local-lineage` disposition;
+- explicit `new-local-lineage-empty` HK06A mutation-journal disposition.
+
+The HK06A journal therefore remains truthful at count 0 immediately after rebase because no HK06A mutation occurred. The accepted later-mutation behavior remains unchanged: the first ordinary edit after import becomes local mutation journal entry 1.
+
+## Findings fixed during Worker pre-review
+
+**Finding 1 — original pre-review proof omitted extension existence as an explicit semantic-diff causal class.**
+
+The already-landed HK06B pre-review repair added an independent exact-set oracle and omission/false-extra controls for extension add/remove using a distinct `future.gamma@3@global` identity.
+
+**Finding 2 — new focused rebase proof initially failed nullable analysis.**
+
+Candidate observation of `4240e72…` failed build with one `CS8602` in the new test. Production assemblies had compiled; no functional claim was accepted from that run. The test now captures the already-required successful result data once and passes nullable analysis.
+
+**Finding 3 — independent HK01 projection oracle did not know the new canonical metadata token.**
+
+Observation of `c28ea84…` built cleanly and passed focused HK06B 9/9, then full regression failed closed in five inherited conformance tests because `CanonicalProjectionOracleData` rejected `CanonicalRebase`. The oracle was extended explicitly with `canonicalrebase` side-effect/transaction tokens. No conformance check was bypassed.
+
+## Green implementation observation
+
+Exact implementation/test SHA `6f700ad4c9a00328f61d7c317a28fdbbe303ca95` passed `Arkus Candidate Validation` run `35473449876`:
+
+- Release build: 0 warnings / 0 errors;
+- focused HK06B: 9/9 GREEN;
+- full regression: 128/128 GREEN;
+- canonical observation receipt: GREEN;
+- candidate clean before and after: YES;
+- artifact: `10593592078`.
 
 ## No remaining blocker found
 
-- Snapshot export contains exact canonical bytes and truthful anchor; import reconstructs and validates before publication.
-- Unsupported/corrupt/boundary-violating artifacts fail before replacement and leave target state/history unchanged.
-- Import intentionally creates `new-local-lineage`; no source or previous target mutation journal is retained/fabricated.
-- Separate import receipts satisfy keyed idempotency without being presented as HK06A mutation provenance.
-- Diff/resource completeness is independently challenged across the current finite object/extension model; representation-only reorder remains empty.
-- The Potes probe demonstrates intended content shape without promoting runtime/gameplay fields into canonical authored state.
-- HK06C replay and HK07A transport remain untouched except as downstream contracts consumed for scope checking.
+- Contract classification, effective handler authority and emitted evidence now describe the same whole-root rebase operation.
+- HK04/HK06A mutation semantics were not weakened: snapshot import is no longer falsely enrolled in that class, and ordinary mutation conformance remains GREEN.
+- No source/prior-target mutation history is retained or fabricated by import.
+- Required rebase evidence is schema-bound and survives exact keyed retry while mutation journal count remains unchanged.
+- HK01 canonical discovery/projection handles the new metadata through its independent oracle.
+- HK06C can consume HK06B snapshot-as-base plus subsequent HK06A mutation entries without redefining either contract.
+- Diff/resource completeness, snapshot integrity/atomicity and authored/live boundary controls remain GREEN.
 - No concrete evidence reopens an accepted predecessor guarantee.
 - Remaining risks are outside the declared claim and recorded in `RESIDUAL_RISK.md`.
 
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
-The candidate is clean for evidence reconciliation. After this documentation-only evidence commit, the resulting exact HEAD must pass `scripts/hk06b-verify-exact-sha.sh` unchanged before the PR is frozen and handed to an independent Reviewer.
+This evidence reconciliation is documentation-only after the GREEN implementation observation. The resulting exact HEAD must pass `scripts/hk06b-verify-exact-sha.sh` unchanged before the PR is frozen and handed to a fresh independent Reviewer.
