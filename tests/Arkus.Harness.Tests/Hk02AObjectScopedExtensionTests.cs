@@ -221,7 +221,8 @@ namespace Arkus.Harness.Tests
             Assert.Equal(revision, session.Current.Revision);
             Assert.Equal(hash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
             Assert.Single(session.Current.Extensions);
-            Assert.Equal(new WorldObjectId("-"), session.Current.Extensions[0].SubjectId);
+            Assert.Equal(remove ? new WorldObjectId("-") : (WorldObjectId?)null,
+                session.Current.Extensions[0].SubjectId);
 
             var distinctKey = Hk04TransactionalMutationTests.Request(
                 session.Current, "request.hk02a-dash-distinct", DashOperation(remove, "-"));
