@@ -22,25 +22,26 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02` and `WP-HK-03` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03` and `WP-HK-04` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-03 — Inspection/query surface`.
+Latest accepted workpack: `WP-HK-04 — Planning + transactional mutation`.
 
-- implementation PR: `#18`
-- reviewed frozen candidate: `8c20a380003c082fa9bd472d3233afa9654fb231`
-- independent Reviewer: `PASS` (PR review `#5255545669`)
-- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35438687868`)
-- merge SHA: `d8b808450ee7863726d718a25c5756534113fcfd`
-- accepted read boundary: six canonical `world.*@1.0` capabilities provide world summary, object lookup/query, flattened reference query, extension descriptors and bounded opaque-extension chunks through the single HK01 composed inventory
-- inspection guarantees: deterministic ordering/cursors, revision/hash anchoring, structured stale/selector/missing-resource failures, fixed/paginated output, side-effect-free reads and public-read reconstruction of the current HK02 semantic world state
+- implementation PR: `#19`
+- reviewed frozen candidate: `849ed68e41d674ab0d50883ccd9af394e9d2e456`
+- independent Reviewer: `PASS` (PR review `#5256156672`)
+- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35450965678`)
+- merge SHA: `b1810a5f7c5378ff06272718a11e08720d714a65`
+- accepted mutation boundary: deterministic plan/dry-run/apply over the HK02 canonical world, atomic whole-state commit, expected revision/hash CAS, explicit idempotency replay/conflict semantics, machine-readable change sets/conditions and mechanically reconciled mutation/transaction/dispatcher surfaces
+- authority boundary: `TransactionalWorldAuthoringSession` has no public commit method; canonical commit authority is internal to the Authoring→Runtime boundary and only the canonical transactional apply handler receives it
+- proof convergence: the prior hidden-mutation proof loop was closed by removing public commit authority and using effective behaviour over the accepted HK01 route universe; `MutationAuthorityInspector` remains defence in depth only and must not regrow into container/wrapper enumeration
 
-HK03 passed on its first independent review. The Reviewer explicitly classified selector-array cardinality/resource-exhaustion limits as downstream `WP-HK-09` ownership because HK09 owns input size and execution/resource limits; do not reopen HK03 for that alone without concrete evidence that the accepted inspection semantics are false. HK03's own bounded-output and finite query-language guarantees remain binding.
+HK04 required two repair cycles before PASS. The accepted lesson is binding for downstream work: do not reopen HK01 route completeness without concrete contradictory evidence, and do not reintroduce syntax-specific whack-a-mole where an authority/effective-behaviour boundary can prove the actual claim.
 
 ## Current next product target
 
-`WP-HK-04 — Planning + transactional mutation` is the next dependency-valid workpack. It depends on completed HK03 and must introduce a safe canonical mutation model based on deterministic plan → validate/dry-run → atomic apply, with optimistic revision/hash concurrency, idempotent retries, explicit change sets and no undeclared canonical mutation path.
+`WP-HK-05 — Validation + repairable diagnostics` is the next dependency-valid workpack. It depends on completed HK04 and must make invalid world states and invalid authoring intents visible through stable machine-actionable diagnostics, while proving validation cannot be skipped on any public mutation route.
 
-Before any HK04 implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: read accepted HK03 contract/PASS/proof evidence, identify which inspection/query guarantees HK04 consumes, separate them from HK04-owned planning/transaction guarantees, and record what concrete evidence would justify reopening an inherited boundary. Do not re-prove HK00/HK01/HK02/HK03 merely for defence-in-depth.
+Before implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: consume the accepted HK04 transactional guarantees (including the closed commit-authority boundary and canonical apply path), identify exactly which validation guarantees HK05 newly owns, and state what concrete evidence would justify reopening HK04. Do not re-prove HK01/HK02/HK03/HK04 merely for defence-in-depth.
 
 ## Operating model
 
@@ -58,7 +59,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
