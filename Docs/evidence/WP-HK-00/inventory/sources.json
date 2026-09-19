@@ -40,11 +40,23 @@
     "Owner": "Arkus.HK00.Proof"
   },
   {
+    "Path": "tools/Arkus.HK00.Proof/BuildSurfaceChecks.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
     "Path": "tools/Arkus.HK00.Proof/CompilerCommandLine.cs",
     "Owner": "Arkus.HK00.Proof"
   },
   {
+    "Path": "tools/Arkus.HK00.Proof/CompilerInputClosureChecks.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
     "Path": "tools/Arkus.HK00.Proof/Contract.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/ExternalAuthority.cs",
     "Owner": "Arkus.HK00.Proof"
   },
   {
@@ -53,6 +65,14 @@
   },
   {
     "Path": "tools/Arkus.HK00.Proof/MsBuildFacts.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/NonProductEffectiveChecks.cs",
+    "Owner": "Arkus.HK00.Proof"
+  },
+  {
+    "Path": "tools/Arkus.HK00.Proof/OutputIntegrityChecks.cs",
     "Owner": "Arkus.HK00.Proof"
   },
   {
