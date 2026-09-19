@@ -52,3 +52,17 @@ The current WP does not rebuild HK01 route discovery or HK04 commit authority. C
 The product change extends eight existing engine-neutral source files. Proof reuses the accepted semantic inventory, exact codec hash, HK03 reconstruction and HK04 semantic-diff oracle, plus one focused HK02A test class and thin exact-SHA entrypoints. No dependency, generalized framework or alternate registry was added. Every added control maps directly to an acceptance criterion or a defect found during Worker pre-review.
 
 `PROOF_BUDGET_VERDICT: WITHIN_BUDGET`.
+
+## Repair cycle 1 — independent FAIL reconciliation
+
+The original READY verdict above described the superseded frozen candidate and was falsified by the independent Reviewer on `9d0dc3739f31bcc6a7f8df12b5f6e876837efacc`. It is historical, not sufficient for freeze. This section replaces its two affected proof rows for the repaired candidate:
+
+- **Composite HK04 mutation identity/idempotency:** global and valid `subjectId: "-"` have distinct fingerprints for put and remove. Public same-key calls must conflict without a second commit; independent keys address both resources. No valid canonical object ID has been forbidden.
+- **Bounded and complete HK03 extension dependency inspection:** the public read returns 100 and then 1 of 101 distinct typed edges, the reconstruction helper follows `nextDependencyOffset`, and the exact canonical hash is recovered. A first-page-only reconstruction has a different hash.
+
+Implementation SHA `2cb7a3daaa565a6b0ca5b68882541191750dac60`, Actions `35456331653`: Release 0 warnings/0 errors, focused 11/11, regression 98/98, canonical GREEN. The documentation-only reconciliation needs its own exact-SHA observation. All other existing proof rows and trust boundaries remain unchanged. The two new focused defect classes are material, in-claim HK02A corrections, not generalized HK04 re-proof or new framework machinery.
+
+FOUNDATIONAL_PROOF_VERDICT: READY
+UNRESOLVED_PROOF_OBLIGATIONS: 0
+KNOWN_UNDETECTED_DEFECT_CLASSES: 0
+PROOF_BUDGET_VERDICT: WITHIN_BUDGET
