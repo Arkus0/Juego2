@@ -1,130 +1,152 @@
-# WP-HK-06A Worker pre-review
+# WP-HK-06A Worker pre-review — repair cycle 1
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 0
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 1
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-06A
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
 Baseline: `bc6241d2db2b6e15f1a9ac78c673f7ef0735ffff`
+Reviewer-failed candidate: `046134fd3acd9641798dbad180406688fb5d31aa`
+Repair implementation SHA: `e78e587dd098f765d4266bc9d61511118faab7d2`
+Reviewer FAIL: review `5257604438`
 
-Pre-review implementation SHA: `d46f397eed6f22f7dbe5113c154dd8c06837d0f1`.
-Actions run `35467676205`: candidate observation GREEN on Ubuntu 24.04 with pinned .NET SDK
-8.0.425; Release build 0 warnings / 0 errors; focused `Hk06A*` 6/6; full regression
-116/116; clean-before/clean-after exact-SHA receipt GREEN. Artifact `10591846104` contains the
-receipt and observation log.
+Actions run `35468947971` observed the repaired implementation SHA on Ubuntu 24.04 with pinned .NET
+SDK 8.0.425: Release build 0 warnings / 0 errors; focused `Hk06A*` 9/9 GREEN; full regression
+119/119 GREEN; clean-before/clean-after exact-SHA observation receipt GREEN. Artifact `10592091971`
+contains the receipt and observation log.
 
-This report is the final evidence reconciliation write. Its resulting exact branch SHA must receive
-one fresh canonical observation unchanged before freeze; no earlier green run is reused as the final
-candidate receipt.
+This report is the final evidence reconciliation write for repair cycle 1. Its resulting branch SHA
+must receive a fresh canonical exact-SHA verification unchanged before freeze; the implementation
+observation above is not reused as the frozen-candidate receipt.
 
 ## Contract and predecessor re-check
 
-The pre-review re-read `WP-HK-06A`, the superseded combined HK06 contract, HK06B/HK06C and the
-following HK07A/HK07B/HK08/HK09/HK10/GATE chain, plus `PRODUCT_ARCHITECTURE.md`,
-`FOUNDATIONAL_PROOF_STANDARD.md` v1.3, `WORKER_REVIEW_PROTOCOL.md` v1.6 and the execution-receipt
-protocol.
+The repair pre-review re-read `WP-HK-06A`, the HK06A→HK06B→HK06C split and downstream HK07A
+consumption boundary, together with `FOUNDATIONAL_PROOF_STANDARD.md`, `WORKER_REVIEW_PROTOCOL.md`
+v1.6 and the exact-SHA execution protocol.
 
 The direct accepted predecessor remains HK05 reviewed candidate
 `23a9fd4373a803187cd9391b1459cd48975177f6`, independent PASS review `5257350871`, implementation
 merge `ed65661680aea2a9be79f892c96aa42bf788a842` and DocSync merge
-`2be48337721406eb77b6b66b31f7fc738d9ba08f`. The mandatory
-`PREDECESSOR_CONTRACT_CHECK` was recorded in `WORKER_PLAN.md` before implementation.
+`2be48337721406eb77b6b66b31f7fc738d9ba08f`. `WORKER_PLAN.md` contains the mandatory predecessor
+contract check from before implementation.
 
-HK06A still consumes, without duplicate proof, HK01 canonical route/discovery closure, HK02/HK02A
-state/hash identity, HK03 read neutrality, HK04 sole commit authority/atomicity/CAS/idempotency and
-semantic change coverage, and HK05 pre-commit validation. No concrete observation made those
-accepted guarantees false or inapplicable. HK06A owns the journal artifact, its truthful append at
-that boundary, and the authored/live separation only.
+HK06A continues to consume, without duplicate proof, HK01 canonical route/discovery closure,
+HK02/HK02A state/hash identity, HK03 read neutrality, HK04 sole commit authority/atomicity/CAS/
+idempotency/change coverage and HK05 pre-commit validation. The independent FAIL did not contradict
+those guarantees. The defect was solely in HK06A's new claim that its machine-readable normalized
+request is truthful future replay evidence.
+
+## Reviewer finding and causal repair
+
+The failed candidate parsed/executed one mutation representation and then separately serialized a
+journal `request`. Its request fingerprint came from the parsed mutation, while the journal body came
+from `NormalizedOperationData`. A schema-valid serializer defect (for example another valid `typeId`)
+could therefore leave persisted state, anchors, affected resources and fingerprint correct while the
+journal carried false replay instructions.
+
+Repair cycle 1 fixes the class, not the example:
+
+- `WorldProvenanceIntegrity` independently interprets the journal-ready machine-readable request;
+- it re-derives the complete v2 semantic fingerprint across all four operation kinds and requires it
+  to equal the fingerprint of the parsed/executed request;
+- journal idempotency key and expected revision/hash must independently agree with request identity
+  and the base anchor;
+- `WorldMutationProvenanceEntry` refuses construction if that binding fails, before the immutable
+  `AuthoringState` publication;
+- entry identity is independently recomputed from the bound request identity, transition anchors,
+  sequence, schema/version and affected resources; a different but syntactically canonical 64-hex ID
+  is rejected;
+- focused self-attacks corrupt schema-valid replay-relevant fields across `put-object`,
+  `remove-object`, `put-extension` and `remove-extension`, plus top-level identity/base fields, and
+  require the production guard to turn RED;
+- a separate test-owned oracle compares the complete journal request recursively against the request
+  constructed independently before dispatch. Valid `typeId` and Base64 payload corruption turn this
+  oracle RED, and a canonical-looking wrong entry ID turns an independent second-run identity oracle
+  RED.
+
+No replay execution was implemented. HK06C remains the owner of replay interpretation/compatibility.
 
 ## Complete baseline-to-candidate diff audit
 
-The complete baseline diff was inspected, including all 21 changed files rather than only the last
-test commit. Product changes are confined to:
+The complete baseline→repair diff was inspected rather than only the last commits. Product changes
+remain confined to the existing HK06A surfaces: authored anchors/runtime-observation stamp, versioned
+journal/entry model, canonical read binding and transaction-boundary provenance integration. The
+repair adds only the internal request/identity integrity guard at that provenance-entry boundary.
 
-- `Arkus.Game.Authoring`: immutable authored anchors, a separately named runtime-observation stamp,
-  versioned journal/entry schemas and entry construction inside the accepted commit section;
-- `Arkus.Harness.Runtime`: one canonical read route composed through the inherited route system and
-  backed by the existing non-committing attenuation view;
-- the existing authoritative session: one immutable holder for current state, receipts and journal,
-  published once under the existing HK04 lock;
-- focused tests, thin exact-SHA scripts and HK06A evidence.
+Focused tests/evidence now include the original journal, persisted-only, concurrency,
+content-shape/authored-live checks plus the repair's semantic-corruption and independent-envelope
+oracles. No new package or external authority was introduced.
 
-The diff contains no semantic-diff, snapshot, import/export, replay, Unity, gameplay scheduler,
-clock, AI, deterministic simulation, GUI, cloud persistence or Git-history implementation. It adds
-no package or external semantic authority.
+The diff contains no semantic diff, snapshot export/import, journal replay, Unity serialization,
+gameplay clock/scheduler/AI, deterministic simulation, GUI history browser, cloud persistence or Git
+history as source of truth.
 
 ## Strict in-claim challenge
 
-### Journal completeness and atomicity
+### Replay-envelope truthfulness
 
-The only accepted commit publication was followed from parse through validation, planning, locked
-CAS, provenance construction and publication. State, idempotency receipt and journal entry become
-visible through one `AuthoringState` reference under the same lock; journal readers use that lock.
-Every failure return precedes publication. A same-base concurrent race produces exactly one winning
-state and the one entry whose request identity/result anchor matches it.
+The repaired path was challenged against the exact false-green class from review and equivalent
+variants. Changing valid object ID/type/container/reference data, extension owner/version/subject/
+dependency/payload, remove-operation identities, expected revision/hash or idempotency key while
+holding the accepted parsed fingerprint fixed makes provenance construction fail closed. The guard
+uses the machine-readable envelope rather than private parsed operation objects, so it is capable of
+detecting drift in the serializer it is checking.
 
-The initial authored anchor is explicit even when the session starts above revision zero. That
-prevents the session-local journal from fabricating unobserved earlier history and gives HK06B/HK06C
-an unambiguous lineage base.
+The independent test-owned oracle additionally proves that a mutually wrong production serializer
+and production guard cannot define the expected request by themselves: expected data is created in
+the test before dispatch and deeply compared with public journal output. That oracle also uses a
+second clean execution to establish expected deterministic entry identity instead of merely checking
+hash syntax.
 
-### Truthfulness and deterministic identity
+### Atomicity and predecessor composition
 
-The base anchor is checked against the journal tail and accepted request. The result hash is
-recomputed from the exact candidate immediately before publication and checked against the accepted
-plan. A mismatch fails closed without publishing either state or provenance. Affected resources are
-a sorted unique projection of HK04's accepted, independently coverage-checked semantic change set.
+The guard runs while the accepted HK04 commit lock is held and before the new immutable
+`AuthoringState` is assigned. Therefore an invariant failure cannot publish state without provenance
+or provenance without state. No second writer, validator, CAS, receipt store or state model was
+added. The existing concurrent-writer and non-persisting-path regressions remain GREEN.
 
-Entries carry the idempotency key, deterministic semantic request fingerprint, full normalized
-request envelope, capability name/version, before/result anchors and affected resources. The
-length-framed SHA-256 entry ID includes the schema version, sequence, request identity, anchors and
-resource set. Two clean sessions executing the same sequence produce identical ordered IDs and
-final hash.
+### Public contract and downstream boundary
 
-### Persisted-only behavior and error paths
+The public journal schema/version is unchanged: the repair strengthens the truthfulness invariant of
+`arkus.authoring.journal-entry@1`; it does not redefine HK06A output after the fact or push format
+repair into HK06C. `authoring.journal.read@1.0` remains canonical/discoverable through the accepted
+composer and read-only attenuation path.
 
-Plan, dry-run, inspection, current/proposed validation and journal read are exercised as successful
-non-writes. Malformed, invalid-candidate and stale applies are exercised as failures. None appends.
-An exact idempotent retry returns the inherited receipt without a second entry. The independent
-transition audit turns RED for a missing or extra entry, false anchors, a false affected-resource
-set and a corrupt identity.
+HK06B can therefore consume truthful history/anchors without taking ownership of request semantics,
+and HK06C can consume the already-versioned HK06A journal rather than repairing or redefining it.
 
-### Public contract and authority boundary
+### Authored/live boundary
 
-`authoring.journal.read@1.0` is declared, routed, discovered and schema-validated through the
-accepted canonical composer. The handler receives `WorldMutationPlannerView`, not the internal
-committer. The inherited complete non-mutation oracle now includes the journal route and proves its
-effective state neutrality. There is no journal-owned registry or second mutation authority.
-
-### Authored/live content-shape boundary
-
-The required bounded Potes probe uses canonical plaza, bar, shop and NPC data. A real authored shop
-edit creates one truthful journal entry. The test-owned scheduled-NPC observation is stamped with
-that exact authored base and changes only its own transient step/position. Canonical revision, hash
-and journal IDs remain unchanged. Giving an unsafe test surrogate a real apply callback makes the
-same oracle RED for revision, hash and journal, so the safe result is not vacuous. No simulation
-meaning is inferred from the surrogate.
+The repair does not touch the authored/live split. The bounded Potes observation surrogate remains
+outside mutation authority, is stamped with the authored base and can change transient fields without
+canonical revision/hash/history churn; the unsafe authority-granted surrogate still turns the
+boundary oracle RED.
 
 ## Findings
 
-No material in-claim defect was found during this strict pre-review
-(`WORKER_PRE_REVIEW_FINDINGS_FIXED: 0`). The additional concurrent-commit regression and final
-schema/input validation tightening were completed before this pre-review and were already GREEN at
-the implementation SHA above; they are not counted as pre-review findings.
+`WORKER_PRE_REVIEW_FINDINGS_FIXED: 1` counts the concrete independent-Reviewer blocker that initiated
+repair cycle 1: schema-valid normalized replay-envelope drift was not causally bound to the accepted
+mutation. It is repaired at the provenance boundary with both a production fail-closed invariant and
+an independent test-owned oracle.
 
-Out-of-boundary items remain explicit in `RESIDUAL_RISK.md`: process durability,
-snapshot/history policy, replay compatibility, semantic diff, pagination and future runtime
-observation payload/simulation semantics. None can falsify the bounded H0 claim delivered here.
+No additional material in-claim blocker was found during the repair pre-review. No accepted
+predecessor guarantee was reopened because no concrete evidence made one false or inapplicable.
+
+Out-of-boundary items remain those already recorded in `RESIDUAL_RISK.md`: process durability,
+snapshot/history policy, replay compatibility/interpretation, semantic diff, pagination and future
+runtime-observation payload/simulation semantics.
 
 ## Proof budget and handoff readiness
 
-The product adds one journal model, one read route and one small observation stamp. Proof uses one
-transition audit, one authority-boundary oracle, six focused tests and the existing canonical
-regression surface. It does not add a generalized event store, replay engine, simulation framework,
-second state model or redundant predecessor proof.
+The repair adds one bounded internal integrity guard plus three focused tests (two production-guard
+self-attacks and one independent accepted-envelope audit). This is proportional to a concrete
+Reviewer-proven false-green class and does not introduce a generalized replay verifier, event store,
+second semantic registry, second state model or duplicate predecessor proof.
 
 `PROOF_BUDGET_VERDICT: WITHIN_BUDGET`.
 
-No known in-claim blocker remains. `WORKER_PRE_REVIEW: CLEAN` applies to the content described
-above. After this evidence-only commit receives GREEN canonical observation, that exact SHA may be
-recorded as Candidate/Frozen SHA, the branch may be frozen and the PR marked Ready for a fresh
+No known in-claim blocker remains. `WORKER_PRE_REVIEW: CLEAN` applies to the repaired content above.
+After this evidence-only commit receives GREEN canonical exact-SHA verification, that exact SHA may
+be recorded as Candidate/Frozen SHA, the branch may be frozen and the PR marked Ready for a fresh
 independent Reviewer. This Worker does not issue the independent PASS/FAIL verdict.
