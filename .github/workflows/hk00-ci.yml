@@ -66,7 +66,10 @@ jobs:
       fail-fast: false
       matrix:
         shard:
-          - core
+          - core-fast
+          - core-effective-a
+          - core-effective-b
+          - core-effective-c
           - closure
           - test-surface
           - external-authority
@@ -149,7 +152,7 @@ jobs:
           |---|---|---|
           MD
 
-          for shard in core closure test-surface external-authority reference-authority terminal-inventory; do
+          for shard in core-fast core-effective-a core-effective-b core-effective-c closure test-surface external-authority reference-authority terminal-inventory; do
             file="artifacts/aggregate/${shard}.md"
             test -f "${file}"
             grep '^| `' "${file}" >>"${combined}"
