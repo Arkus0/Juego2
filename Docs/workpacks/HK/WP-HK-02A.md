@@ -1,6 +1,6 @@
 # WP-HK-02A — Object-scoped extension data + typed dependencies
 
-Status: PLANNED
+Status: ACTIVE
 Class: FOUNDATIONAL
 Depends on: `WP-HK-04` ✅ COMPLETE
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`

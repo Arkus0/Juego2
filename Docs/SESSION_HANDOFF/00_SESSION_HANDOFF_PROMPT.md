@@ -39,9 +39,9 @@ HK04 required two repair cycles before PASS. The accepted lesson is binding for 
 
 ## Current next product target
 
-`WP-HK-02A — Object-scoped extension data + typed dependencies` is the next dependency-valid workpack after this process adoption reaches `main`. It depends on completed HK04 and must add an optional object subject plus declared typed dependency edges to opaque extensions, then propagate that semantic shape through canonical identity/hash, HK03 inspection and HK04 mutation/change coverage.
+`WP-HK-02A — Object-scoped extension data + typed dependencies` is the active dependency-valid workpack. It started from process-adoption main SHA `5a07c55aeb79406a84bff579b34c09459707b713`, after proof standard v1.3 and Worker protocol v1.6 became non-circular binding predecessors. It depends on completed HK04 and must add an optional object subject plus declared typed dependency edges to opaque extensions, then propagate that semantic shape through canonical identity/hash, HK03 inspection and HK04 mutation/change coverage.
 
-HK05 is paused behind HK02A. No HK02A implementation Worker may start until the process adoption commit is on `main`; this makes the v1.3 proof standard and v1.6 Worker protocol non-circular predecessors of the later candidate.
+HK05 is paused behind HK02A. The earlier mixed Draft PR `#23` was closed as superseded before freeze; it has no candidate or Reviewer verdict. The replacement HK02A cycle is independent and begins only from the accepted process baseline.
 
 ## Operating model
 

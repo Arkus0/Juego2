@@ -90,11 +90,9 @@ namespace Arkus.Game.World
         public IReadOnlyList<WorldReference> References => _references;
     }
 
-    public sealed class WorldExtensionData
+    public readonly struct WorldExtensionIdentity : IEquatable<WorldExtensionIdentity>, IComparable<WorldExtensionIdentity>
     {
-        private readonly byte[] _payload;
-
-        public WorldExtensionData(string owner, int schemaVersion, byte[] payload)
+        public WorldExtensionIdentity(string owner, int schemaVersion, WorldObjectId? subjectId = null)
         {
             Owner = StableToken.Validate(owner, nameof(owner));
             if (schemaVersion <= 0)
@@ -102,18 +100,105 @@ namespace Arkus.Game.World
                 throw new ArgumentOutOfRangeException(nameof(schemaVersion), "Extension schema versions must be positive.");
             }
 
-            if (payload is null)
+            if (subjectId.HasValue && string.IsNullOrEmpty(subjectId.Value.Value))
             {
-                throw new ArgumentNullException(nameof(payload));
+                throw new ArgumentException("Extension subject IDs must be initialized.", nameof(subjectId));
             }
 
             SchemaVersion = schemaVersion;
-            _payload = (byte[])payload.Clone();
+            SubjectId = subjectId;
         }
 
         public string Owner { get; }
 
         public int SchemaVersion { get; }
+
+        public WorldObjectId? SubjectId { get; }
+
+        public string ResourceKey =>
+            Owner + "@" + SchemaVersion.ToString(System.Globalization.CultureInfo.InvariantCulture) + "@" +
+            (SubjectId.HasValue ? "object:" + SubjectId.Value.Value : "global");
+
+        public int CompareTo(WorldExtensionIdentity other)
+        {
+            var comparison = StringComparer.Ordinal.Compare(Owner, other.Owner);
+            if (comparison != 0)
+            {
+                return comparison;
+            }
+
+            comparison = SchemaVersion.CompareTo(other.SchemaVersion);
+            if (comparison != 0)
+            {
+                return comparison;
+            }
+
+            if (!SubjectId.HasValue)
+            {
+                return other.SubjectId.HasValue ? -1 : 0;
+            }
+
+            return other.SubjectId.HasValue ? SubjectId.Value.CompareTo(other.SubjectId.Value) : 1;
+        }
+
+        public bool Equals(WorldExtensionIdentity other)
+        {
+            return StringComparer.Ordinal.Equals(Owner, other.Owner) &&
+                SchemaVersion == other.SchemaVersion &&
+                SubjectId == other.SubjectId;
+        }
+
+        public override bool Equals(object? obj) => obj is WorldExtensionIdentity other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hash = StringComparer.Ordinal.GetHashCode(Owner ?? string.Empty);
+                hash = (hash * 397) ^ SchemaVersion;
+                hash = (hash * 397) ^ (SubjectId.HasValue ? SubjectId.Value.GetHashCode() : 0);
+                return hash;
+            }
+        }
+
+        public override string ToString() => ResourceKey;
+
+        public static bool operator ==(WorldExtensionIdentity left, WorldExtensionIdentity right) => left.Equals(right);
+
+        public static bool operator !=(WorldExtensionIdentity left, WorldExtensionIdentity right) => !left.Equals(right);
+    }
+
+    public sealed class WorldExtensionData
+    {
+        private readonly IReadOnlyList<WorldReference> _dependencies;
+        private readonly byte[] _payload;
+
+        public WorldExtensionData(
+            string owner,
+            int schemaVersion,
+            byte[] payload,
+            WorldObjectId? subjectId = null,
+            IEnumerable<WorldReference>? dependencies = null)
+        {
+            if (payload is null)
+            {
+                throw new ArgumentNullException(nameof(payload));
+            }
+
+            Identity = new WorldExtensionIdentity(owner, schemaVersion, subjectId);
+            _dependencies = new List<WorldReference>(dependencies ?? Array.Empty<WorldReference>()).AsReadOnly();
+            _payload = (byte[])payload.Clone();
+        }
+
+        public WorldExtensionIdentity Identity { get; }
+
+        public string Owner => Identity.Owner;
+
+        public int SchemaVersion => Identity.SchemaVersion;
+
+        public WorldObjectId? SubjectId => Identity.SubjectId;
+
+        public IReadOnlyList<WorldReference> Dependencies => _dependencies;
 
         public int PayloadLength => _payload.Length;
 
@@ -124,7 +209,7 @@ namespace Arkus.Game.World
 
     public sealed class WorldState
     {
-        public const int CurrentSchemaVersion = 1;
+        public const int CurrentSchemaVersion = 2;
 
         private readonly IReadOnlyList<WorldObject> _objects;
         private readonly IReadOnlyList<WorldExtensionData> _extensions;
