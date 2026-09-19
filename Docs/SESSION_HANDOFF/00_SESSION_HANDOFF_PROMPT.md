@@ -22,26 +22,26 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03` and `WP-HK-04` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04` and `WP-HK-02A` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-04 — Planning + transactional mutation`.
+Latest accepted workpack: `WP-HK-02A — Object-scoped extension data + typed dependencies`.
 
-- implementation PR: `#19`
-- reviewed frozen candidate: `849ed68e41d674ab0d50883ccd9af394e9d2e456`
-- independent Reviewer: `PASS` (PR review `#5256156672`)
-- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35450965678`)
-- merge SHA: `b1810a5f7c5378ff06272718a11e08720d714a65`
-- accepted mutation boundary: deterministic plan/dry-run/apply over the HK02 canonical world, atomic whole-state commit, expected revision/hash CAS, explicit idempotency replay/conflict semantics, machine-readable change sets/conditions and mechanically reconciled mutation/transaction/dispatcher surfaces
-- authority boundary: `TransactionalWorldAuthoringSession` has no public commit method; canonical commit authority is internal to the Authoring→Runtime boundary and only the canonical transactional apply handler receives it
-- proof convergence: the prior hidden-mutation proof loop was closed by removing public commit authority and using effective behaviour over the accepted HK01 route universe; `MutationAuthorityInspector` remains defence in depth only and must not regrow into container/wrapper enumeration
+- implementation PR: `#25`;
+- baseline SHA: `5a07c55aeb79406a84bff579b34c09459707b713`;
+- reviewed frozen candidate: `f39a1994524c42213dafb63d440faaf9de7c040f`;
+- independent Reviewer: `PASS` (PR review `#5256593405`);
+- exact-SHA candidate observation: GREEN, Actions `35456397714`;
+- exact-SHA freeze validation: GREEN, Actions `35456445373`;
+- implementation run `35456331653`: Release 0 warnings/errors, 11/11 focused and 98/98 regression;
+- merge SHA: `ac7ce1180b462f093cf0ee02bbbd6f853938e27c`;
+- accepted semantic addition: global or object-scoped opaque extensions with canonical composite identity `(owner, schemaVersion, subjectId-or-global)`, declared typed dependencies and referential integrity; V2 canonical codec/hash; complete bounded HK03 inspection; HK04 composite mutations and dependency change coverage;
+- accepted scope limits: opaque payload semantics are not inferred, whole-world revision/hash CAS is unchanged, V1 migration and total world budgets are deferred.
 
-HK04 required two repair cycles before PASS. The accepted lesson is binding for downstream work: do not reopen HK01 route completeness without concrete contradictory evidence, and do not reintroduce syntax-specific whack-a-mole where an authority/effective-behaviour boundary can prove the actual claim.
+The first HK02A frozen candidate `9d0dc3739f31bcc6a7f8df12b5f6e876837efacc` independently FAILed due to a global/object `"-"` idempotency fingerprint collision and a missing dependency-page-two causal proof. Both gaps were corrected, validated and independently reviewed in the merged candidate. Preserve this history; do not reopen HK04 predecessor claims or duplicate already accepted upstream proof without concrete contrary evidence.
 
 ## Current next product target
 
-`WP-HK-02A — Object-scoped extension data + typed dependencies` is the active dependency-valid workpack. It started from process-adoption main SHA `5a07c55aeb79406a84bff579b34c09459707b713`, after proof standard v1.3 and Worker protocol v1.6 became non-circular binding predecessors. It depends on completed HK04 and must add an optional object subject plus declared typed dependency edges to opaque extensions, then propagate that semantic shape through canonical identity/hash, HK03 inspection and HK04 mutation/change coverage.
-
-HK05 is paused behind HK02A. The earlier mixed Draft PR `#23` was closed as superseded before freeze; it has no candidate or Reviewer verdict. The replacement HK02A cycle is independent and begins only from the accepted process baseline.
+`WP-HK-05 — Validation + repairable diagnostics` is the next dependency-valid workpack after the HK02A post-merge DocSync. It consumes HK02A's completed subject/typed-dependency state shape, and owns machine-actionable validator inventory, invariant identity, deterministic multi-violation diagnostics and consistent public pre-commit validation. Read `Docs/workpacks/HK/WP-HK-05.md` and accepted predecessor evidence before implementation. No HK05 Worker has been started by this DocSync.
 
 ## Operating model
 
