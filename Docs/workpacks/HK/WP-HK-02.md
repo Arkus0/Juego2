@@ -1,9 +1,19 @@
 # WP-HK-02 — Canonical world state + deterministic identity
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
-Depends on: `WP-HK-01`  
+Depends on: `WP-HK-01` ✅ COMPLETE  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+Baseline SHA: `82ad746961145c2c779f5086cbc6bfde2b348c3c`
+Implementation PR: `#17`
+
+Completion:
+- Reviewed candidate SHA: `f23fba9ab81566e682237183cf92618bbce504bd`
+- Independent Reviewer verdict: `PASS`
+- Reviewer evidence: PR review `#5255346033`
+- Exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35436836349`)
+- Merge SHA: `1605f922b74d4f0b71bba7896c311a914ffed3f7`
+- Completed: `2026-09-19`
 
 ## Objective
 
