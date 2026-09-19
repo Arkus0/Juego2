@@ -45,60 +45,79 @@ namespace Arkus.Harness.Runtime
         public IReadOnlyList<RouteUniverseIssue> Issues { get; }
     }
 
+    /// <summary>
+    /// Independently enumerates concrete public capability handlers from effective assemblies.
+    /// Provider/registry metadata is deliberately not an input: an unknown or unregistered
+    /// provider must remain observable rather than being filtered out of its own proof universe.
+    /// </summary>
     public static class RouteUniverse
     {
-        public static RouteUniverseResult Enumerate(Assembly assembly, IEnumerable<string> providerIds)
+        public static RouteUniverseResult Enumerate(Assembly assembly)
         {
             if (assembly == null)
             {
                 throw new ArgumentNullException(nameof(assembly));
             }
 
-            if (providerIds == null)
+            return Enumerate(new[] { assembly });
+        }
+
+        public static RouteUniverseResult Enumerate(IEnumerable<Assembly> assemblies)
+        {
+            if (assemblies == null)
             {
-                throw new ArgumentNullException(nameof(providerIds));
+                throw new ArgumentNullException(nameof(assemblies));
             }
 
-            var selectedProviders = new HashSet<string>(providerIds, StringComparer.Ordinal);
             var routes = new List<PublicRouteFact>();
             var issues = new List<RouteUniverseIssue>();
+            var visitedAssemblies = new HashSet<string>(StringComparer.Ordinal);
 
-            foreach (var type in assembly.GetTypes())
+            foreach (var assembly in assemblies)
             {
-                if (!type.IsClass || type.IsAbstract || !typeof(ICanonicalCapabilityHandler).IsAssignableFrom(type))
+                if (assembly == null)
+                {
+                    throw new ArgumentException("Route universe assemblies may not contain null entries.", nameof(assemblies));
+                }
+
+                var assemblyIdentity = assembly.FullName ?? assembly.GetName().Name ?? assembly.ToString();
+                if (!visitedAssemblies.Add(assemblyIdentity))
                 {
                     continue;
                 }
 
-                var attributes = type.GetCustomAttributes(typeof(PublicCapabilityRouteAttribute), false);
-                if (attributes.Length != 1)
+                foreach (var type in assembly.GetTypes())
                 {
-                    issues.Add(new RouteUniverseIssue(
-                        "route-universe.binding-metadata-count",
-                        type.FullName ?? type.Name,
-                        "Every concrete public capability handler in an enumerated assembly must declare exactly one route identity."));
-                    continue;
-                }
+                    if (!type.IsClass || type.IsAbstract || !typeof(ICanonicalCapabilityHandler).IsAssignableFrom(type))
+                    {
+                        continue;
+                    }
 
-                var attribute = (PublicCapabilityRouteAttribute)attributes[0];
-                if (!selectedProviders.Contains(attribute.ProviderId))
-                {
-                    continue;
-                }
+                    var attributes = type.GetCustomAttributes(typeof(PublicCapabilityRouteAttribute), false);
+                    if (attributes.Length != 1)
+                    {
+                        issues.Add(new RouteUniverseIssue(
+                            "route-universe.binding-metadata-count",
+                            type.FullName ?? type.Name,
+                            "Every concrete public capability handler in an enumerated assembly must declare exactly one route identity."));
+                        continue;
+                    }
 
-                try
-                {
-                    routes.Add(new PublicRouteFact(
-                        attribute.ProviderId,
-                        new CapabilityKey(attribute.CapabilityName, ContractVersion.Parse(attribute.ContractVersion)),
-                        type.FullName ?? type.Name));
-                }
-                catch (FormatException)
-                {
-                    issues.Add(new RouteUniverseIssue(
-                        "route-universe.invalid-version",
-                        type.FullName ?? type.Name,
-                        "Route binding metadata contains an invalid canonical contract version."));
+                    var attribute = (PublicCapabilityRouteAttribute)attributes[0];
+                    try
+                    {
+                        routes.Add(new PublicRouteFact(
+                            attribute.ProviderId,
+                            new CapabilityKey(attribute.CapabilityName, ContractVersion.Parse(attribute.ContractVersion)),
+                            type.FullName ?? type.Name));
+                    }
+                    catch (FormatException)
+                    {
+                        issues.Add(new RouteUniverseIssue(
+                            "route-universe.invalid-version",
+                            type.FullName ?? type.Name,
+                            "Route binding metadata contains an invalid canonical contract version."));
+                    }
                 }
             }
 
