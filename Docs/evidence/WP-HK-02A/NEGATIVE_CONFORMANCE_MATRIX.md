@@ -16,3 +16,13 @@ All controls are repository-local software conformance tests in `Hk02AObjectScop
 | public semantic identity grows outside proof inventory | extended HK02/HK03 reflection inventories | adding/changing public identity inputs/properties without updating proof makes exact property/constructor sets fail | GREEN |
 
 The focused class is executed by `scripts/hk02a-observe-exact-sha.sh`; the complete regression runs immediately afterward. Final evidence-bearing SHA execution is required before freeze.
+
+## Repair cycle 1 — reviewer-found false-green classes
+
+| Defect class | Effective control and outcome on implementation `2cb7a3d` | Failure condition |
+|---|---|---|
+| Global and object subject `"-"` fingerprint collide for put-extension | `GlobalAndDashSubjectHaveDistinctIdempotencyFingerprints(false)`, Actions `35456331653` GREEN | Same-key replay instead of `world.change.idempotency_conflict`, or a second commit, turns RED. |
+| Global and object subject `"-"` fingerprint collide for remove-extension | `GlobalAndDashSubjectHaveDistinctIdempotencyFingerprints(true)`, same GREEN run | Same-key replay, unintended second remove, or failure to remove scoped resource with a distinct key turns RED. |
+| HK03 extension dependency pages silently omit page two | `SecondDependencyPageIsRequiredForExactCanonicalReconstruction`, same GREEN run | Missing `nextDependencyOffset`, second page, any of 101 edges, or exact reconstructed hash turns RED. A 100-edge-only reconstructed world is explicitly compared and has a different hash. |
+
+The pre-repair frozen candidate `9d0dc373...` was reviewed FAIL despite GREEN historical tests; these controls are owned by the repaired candidate. Do not reinterpret earlier 8/8 or 95/95 as covering these classes. The existing bounded object-reference test remains inherited rather than copied.
