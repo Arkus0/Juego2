@@ -10,6 +10,8 @@ A fresh AI agent, without C# implementation knowledge, must be able to discover 
 
 **No serious game production begins before `WP-HK-GATE` passes.**
 
+Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Robustness work in H0 is repository-local testing of the harness's own code, fixtures and contracts. New work uses the neutral negative-conformance terminology defined in `AGENTS.md`.
+
 ## Product architecture direction
 
 ```text
@@ -58,8 +60,8 @@ Next dependency-valid workpack after DocSync: `WP-HK-04`.
 | 8 | `WP-HK-06` | Provenance, semantic diff, journal, snapshot/export and deterministic replay |
 | 9 | `WP-HK-07` | Production headless host + reference JSONL + standards-compatible MCP projection |
 | 10 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination and round-trip budgets |
-| 11 | `WP-HK-09` | Safety boundary: filesystem/network/process isolation and resource limits |
-| 12 | `WP-HK-10` | Adversarial/property/fuzz/fault-injection quality closure |
+| 11 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
+| 12 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure |
 | 13 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
 
 ### H0 exit criteria
@@ -77,7 +79,7 @@ Next dependency-valid workpack after DocSync: `WP-HK-04`.
 - concurrent/stale edits are detected rather than silently overwriting state;
 - snapshots and journal replay reproduce the same canonical state hash;
 - provenance identifies what changed, why and from which request;
-- malformed/adversarial inputs fail closed;
+- malformed/out-of-contract inputs fail closed;
 - the harness runs headlessly in CI with no hidden editor/manual step;
 - no direct repository/world-state edits are required to complete the benchmark;
 - a measured interaction-budget baseline exists and batching prevents pathological one-command-per-field authoring;
@@ -139,7 +141,7 @@ The detailed gameplay roadmap will be replanned from the accepted harness and en
 
 1. Two Reviewer FAILs that expose the same foundational class trigger architecture re-audit, not another local patch.
 2. A finding that the proof universe can self-shrink — for example by omitting projects, sources, commands, validators or adapters from the inventory that claims completeness — triggers immediate proof-boundary re-audit.
-3. If a proof starts growing by enumerating endless syntax-specific bypasses, prefer an independent/evaluated oracle or simplify the boundary.
+3. If a proof starts growing by enumerating endless syntax-specific alternate paths, prefer an independent/evaluated oracle or simplify the boundary.
 4. No downstream WP patches around a false predecessor claim.
 5. No feature pressure may waive the harness gate.
 6. No external framework is adopted merely to save time if doing so reduces Arkus scope, engine neutrality, transport neutrality, replaceability or commercial viability.
