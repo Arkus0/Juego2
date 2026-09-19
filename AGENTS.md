@@ -12,11 +12,13 @@ Arkus Harness is also being designed as a commercially viable, engine-agnostic A
 
 Juego2 uses **Automation V2** for mechanical GitHub Actions validation and state transitions, but has no automation bootstrap, role leases, dependency-routing daemon or automatic AI-session spawning.
 
-The human still explicitly starts each reasoning role/session: Worker, independent Reviewer and DocSync. Every role reconstructs current GitHub state before acting and stops at the next role boundary.
+The human explicitly starts Worker and fresh independent Reviewer sessions. Every reasoning session reconstructs current GitHub state before acting.
 
-Automation may run canonical validation, persist handoff markers and merge an exact reviewed SHA after a valid PASS. It never substitutes for Worker pre-review or independent Reviewer judgment.
+A failed Reviewer stops at FAIL and never becomes the repair Worker. A successful Reviewer, however, should normally close the accepted cycle without another human handoff: after persisting exact-SHA PASS, the same session may transition one-way into finalization/DocSync, merge the exact reviewed SHA (or observe Automation V2 doing so), reconcile documentation only, emit `DOCSYNC_COMPLETE`, resolve the dependency-valid next WP, and stop. This post-PASS continuation may not modify implementation bytes or repair the reviewed candidate.
 
-If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Juego2`, reconstruct current state, identify the next dependency-valid role, and do not silently cross from Worker to independent Reviewer or from Reviewer to repair Worker in the same context.
+Automation may run canonical validation, persist handoff markers and merge an exact reviewed SHA after a valid PASS. It never substitutes for Worker pre-review or independent Reviewer judgment, and it does not perform semantic DocSync reasoning by itself.
+
+If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Juego2`, reconstruct current state, identify the next dependency-valid role, and do not silently cross from Worker to independent Reviewer or from Reviewer FAIL to repair Worker in the same context.
 
 ## Sources of truth
 
@@ -24,7 +26,7 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 2. `Docs/ROADMAP.md` — milestone order and gates.
 3. `Docs/workpacks/**` — exact scope and Definition of Done for one unit of work.
 4. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md` — exact-SHA execution and evidence binding.
-5. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, Worker pre-review, exact-SHA freeze and independent review.
+5. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, Worker pre-review, exact-SHA freeze, independent review and successful finalization.
 6. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` — binding proof rules for foundational WPs.
 7. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
 8. `Docs/engineering/AUTOMATION_V2.md` — minimal replaceable GitHub Actions orchestration.
@@ -49,7 +51,7 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 - Completeness claims may not rely solely on an inventory/registry/configuration controlled by the thing being proved; the universe under proof must be independently discoverable or checked against effective behaviour.
 - Do not add gameplay semantics merely to make harness tests convenient; use a deliberately tiny micro-world fixture.
 
-## Worker → Reviewer flow
+## Worker → Reviewer → finalization flow
 
 - GitHub is the persistent repository, PR and evidence truth; sessions are disposable.
 - Draft + ACTIVE: Worker may write; Automation V2 runs candidate observation on relevant updates.
@@ -59,9 +61,10 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 - Automation V2 runs frozen exact-SHA verification. Only after it is green and metadata agrees does it persist `REVIEW_READY`.
 - The human then starts a fresh independent Reviewer. The Reviewer reconstructs state and tries to falsify the frozen candidate; it never repairs implementation.
 - PASS/FAIL binds the exact Frozen candidate SHA.
-- FAIL produces `REPAIR_REQUIRED`; a fresh repair Worker is started manually on the same WP.
-- PASS plus exact-SHA green preflight may be merged automatically by Automation V2.
-- Merge produces `DOCSYNC_REQUIRED`; DocSync is started manually and must complete before the next WP is selected.
+- FAIL produces `REPAIR_REQUIRED`; a fresh repair Worker is started on the same WP.
+- PASS fixes the independent verdict. Automation V2 may merge the exact SHA automatically after green preflight.
+- The successful Reviewer session then continues in finalization/DocSync mode: confirm merge, reconcile affected docs/evidence/handoff from current `main`, emit `DOCSYNC_COMPLETE`, resolve `Next WP`, and stop.
+- No next WP starts before `DOCSYNC_COMPLETE`.
 - Automation never proves role independence. That remains a session/process obligation under `WORKER_REVIEW_PROTOCOL.md`.
 
 ## Skills / profiles
