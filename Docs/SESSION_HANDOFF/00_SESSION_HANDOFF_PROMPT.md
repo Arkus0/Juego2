@@ -14,12 +14,15 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 4. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`
 5. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 6. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md`
+7. `Docs/engineering/AUTOMATION_V2.md`
 
-## Manual operating model
+## Operating model
 
-There is no automation bootstrap, GitHub Actions orchestration, Telegram workflow or automatic Worker→Reviewer handoff.
+Automation V2 provides mechanical candidate validation, exact-SHA state transitions and optional low-noise Telegram notifications. It does not spawn Worker, independent Reviewer or DocSync reasoning roles.
 
-The human starts each role/session manually. Every session reconstructs current GitHub state, performs only its assigned role, persists evidence/PR state, and stops at the next role boundary.
+The human starts each reasoning role/session manually. Every session reconstructs current GitHub state, performs only its assigned role, persists evidence/PR state, and stops at the next role boundary.
+
+Telegram is convenience only. GitHub state and accepted evidence remain authoritative.
 
 ## Current next product target
 
@@ -31,7 +34,7 @@ Use current `main`, open PRs and accepted evidence to determine the next depende
 
 ## Process invariants
 
-GitHub is truth. Draft Worker writes; Ready means frozen exact-SHA and independent review. FAIL returns to the same WP. PASS binds the exact SHA. After merge, reconcile affected docs/evidence manually before selecting the next WP.
+GitHub is truth. Draft Worker writes; Ready means frozen exact-SHA and independent review. FAIL returns to the same WP. PASS binds the exact SHA. After merge, reconcile affected docs/evidence manually, emit the durable `DOCSYNC_COMPLETE` marker with the dependency-valid `Next WP`, then select the next WP.
 
 ## Update rule
 
