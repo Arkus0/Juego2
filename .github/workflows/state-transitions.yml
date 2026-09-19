@@ -47,7 +47,7 @@ jobs:
           fi
 
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
-          sha=$(python - <<'PY'
+          read -r sha wp < <(python - <<'PY'
           import json, re
           pr = json.load(open('pr.json', encoding='utf-8'))
           body = pr.get('body') or ''
@@ -74,7 +74,8 @@ jobs:
               raise SystemExit('Frozen candidate SHA is missing/invalid')
           if frozen != head or candidate != head:
               raise SystemExit(f'Frozen/Candidate SHA must equal PR HEAD {head}')
-          print(head)
+          wp = (field('WP') or f'PR-{pr["number"]}').replace(' ', '_')
+          print(head, wp)
           PY
           )
           [[ "${sha}" == "${RUN_SHA}" ]] || { echo "::error::Workflow SHA ${RUN_SHA} != frozen PR SHA ${sha}"; exit 2; }
@@ -83,15 +84,26 @@ jobs:
           if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
             exit 0
           fi
+          detail="frozen metadata and exact-SHA validation are green. Start a fresh independent Reviewer."
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: REVIEW_READY
           Key: ${key}
           Target SHA: ${sha}
-          Detail: frozen metadata and exact-SHA validation are green. Start a fresh independent Reviewer.
+          Detail: ${detail}
           EOF
           )
           gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
+
+          jq -n \
+            --arg state "REVIEW_READY" \
+            --arg key "${key}" \
+            --arg wp "${wp}" \
+            --arg detail "${detail}" \
+            --arg target_sha "${sha}" \
+            --argjson pr "${PR}" \
+            '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,pr:$pr}}' \
+            | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
 
   review-transition:
     name: Process reviewer verdict
@@ -130,13 +142,13 @@ jobs:
           [[ "${verdict}" != "NONE" ]] || exit 0
 
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
-          frozen_sha=$(python - <<'PY'
+          read -r frozen_sha wp < <(python - <<'PY'
           import json, re
           pr = json.load(open('pr.json', encoding='utf-8'))
           body = pr.get('body') or ''
           head = pr['head']['sha'].lower()
           if pr.get('merged'):
-              print(head)
+              print(head, f'PR-{pr["number"]}')
               raise SystemExit(0)
           def field(name):
               m = re.search(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
@@ -154,7 +166,8 @@ jobs:
           frozen = (field('Frozen candidate SHA') or '').lower()
           if not re.fullmatch(r'[0-9a-f]{40}', frozen) or frozen != head:
               raise SystemExit(f'Frozen candidate SHA must equal PR HEAD {head}')
-          print(frozen)
+          wp = (field('WP') or f'PR-{pr["number"]}').replace(' ', '_')
+          print(frozen, wp)
           PY
           )
           [[ "${reviewed_sha}" == "${frozen_sha}" ]] || { echo "::error::Reviewed SHA ${reviewed_sha} != frozen SHA ${frozen_sha}"; exit 2; }
@@ -162,15 +175,25 @@ jobs:
           if [[ "${verdict}" == "FAIL" ]]; then
             key="repair-required:${PR}:${reviewed_sha}"
             if ! gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
+              detail="independent Reviewer FAIL. Start a fresh repair Worker on the same WP; do not advance downstream."
               body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: REPAIR_REQUIRED
           Key: ${key}
           Target SHA: ${reviewed_sha}
-          Detail: independent Reviewer FAIL. Start a fresh repair Worker on the same WP; do not advance downstream.
+          Detail: ${detail}
           EOF
               )
               gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
+              jq -n \
+                --arg state "REPAIR_REQUIRED" \
+                --arg key "${key}" \
+                --arg wp "${wp}" \
+                --arg detail "${detail}" \
+                --arg target_sha "${reviewed_sha}" \
+                --argjson pr "${PR}" \
+                '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,pr:$pr}}' \
+                | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
             fi
             exit 0
           fi
@@ -180,15 +203,25 @@ jobs:
 
           key="pass-merge:${PR}:${reviewed_sha}"
           if ! gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
+            detail="exact Reviewer PASS and freeze validation agree. Merging this exact SHA."
             body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: PASS_PREFLIGHT_GREEN
           Key: ${key}
           Target SHA: ${reviewed_sha}
-          Detail: exact Reviewer PASS and freeze validation agree. Merging this exact SHA.
+          Detail: ${detail}
           EOF
             )
             gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
+            jq -n \
+              --arg state "PASS_PREFLIGHT_GREEN" \
+              --arg key "${key}" \
+              --arg wp "${wp}" \
+              --arg detail "${detail}" \
+              --arg target_sha "${reviewed_sha}" \
+              --argjson pr "${PR}" \
+              '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,pr:$pr}}' \
+              | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
           fi
 
           gh api --method PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/merge" \
