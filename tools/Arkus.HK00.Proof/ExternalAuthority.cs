@@ -10,16 +10,23 @@ namespace Arkus.HK00.Proof
         private const string TestLockPath = "tests/Arkus.Harness.Tests/packages.lock.json";
         private readonly Dictionary<string, string> lockedPackages;
 
-        private ExternalAuthority(string sdkDirectory, string packsDirectory, string packageRoot, Dictionary<string, string> lockedPackages)
+        private ExternalAuthority(
+            string sdkDirectory,
+            string packsDirectory,
+            string manifestsDirectory,
+            string packageRoot,
+            Dictionary<string, string> lockedPackages)
         {
             SdkDirectory = sdkDirectory;
             PacksDirectory = packsDirectory;
+            ManifestsDirectory = manifestsDirectory;
             PackageRoot = packageRoot;
             this.lockedPackages = lockedPackages;
         }
 
         public string SdkDirectory { get; }
         public string PacksDirectory { get; }
+        public string ManifestsDirectory { get; }
         public string PackageRoot { get; }
 
         public static ExternalAuthority Create(string root)
@@ -55,6 +62,7 @@ namespace Arkus.HK00.Proof
 
             var dotnetRoot = Directory.GetParent(Directory.GetParent(sdkDirectory)!.FullName)!.FullName;
             var packsDirectory = Path.Combine(dotnetRoot, "packs");
+            var manifestsDirectory = Path.Combine(dotnetRoot, "sdk-manifests");
             var configuredPackages = Environment.GetEnvironmentVariable("NUGET_PACKAGES");
             var packageRoot = !string.IsNullOrWhiteSpace(configuredPackages)
                 ? Path.GetFullPath(configuredPackages)
@@ -100,14 +108,15 @@ namespace Arkus.HK00.Proof
                 throw new InvalidOperationException("Committed test package lock contains no resolved packages.");
             }
 
-            return new ExternalAuthority(sdkDirectory, packsDirectory, packageRoot, packages);
+            return new ExternalAuthority(sdkDirectory, packsDirectory, manifestsDirectory, packageRoot, packages);
         }
 
         public bool IsSdkOrPack(string path)
         {
             var full = Path.GetFullPath(path);
             return ProcessExec.IsInside(SdkDirectory, full)
-                || (Directory.Exists(PacksDirectory) && ProcessExec.IsInside(PacksDirectory, full));
+                || (Directory.Exists(PacksDirectory) && ProcessExec.IsInside(PacksDirectory, full))
+                || (Directory.Exists(ManifestsDirectory) && ProcessExec.IsInside(ManifestsDirectory, full));
         }
 
         public bool IsFrameworkReference(string path)
