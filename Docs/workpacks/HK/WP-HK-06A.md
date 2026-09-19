@@ -18,13 +18,26 @@ Make every accepted authored-world mutation leave a trustworthy machine-readable
 - Provenance is emitted only for persisted mutations; a failed, rejected, dry-run or read-only request does not create a successful mutation entry.
 - Provenance cannot claim success when persisted state/hash disagrees with the recorded result.
 - Journal ordering and entry identity are deterministic and machine-consumable.
-- Journal/provenance APIs are versioned and discoverable through the canonical contract rather than a side registry.
-- The journal composes with the accepted HK04 transaction boundary and HK05 validation boundary; it does not reopen or duplicate their proofs without concrete contradictory evidence.
-- A bounded content-shape probe models a scheduled H2 NPC and demonstrates that ordinary world ticks/runtime observations cannot create authored mutation journal entries or CAS churn.
+- The **journal/provenance entry schema and its version identifier are owned by HK06A** and are discoverable through the canonical contract. Later HK06C may define replay compatibility across accepted versions, but does not redefine the journal format/schema.
+- The journal composes with the accepted HK04 transaction boundary and HK05 validation boundary; those guarantees remain consumed, not re-proved, unless concrete contradictory evidence appears.
+
+## Required authored/live boundary oracle
+
+HK06A does not implement a gameplay clock, scheduler, AI runtime or deterministic simulation engine, so the authored/live negative claim must not depend on an invented fake gameplay subsystem.
+
+The bounded content-shape proof uses a **test-owned runtime-observation surrogate** representing a scheduled H2 NPC observation:
+
+- the surrogate is explicitly outside canonical `WorldState`, the authored mutation planner/session and journal-append authority;
+- it is stamped with the authored base revision/hash it observes;
+- its transient observation fields can advance across synthetic ticks/steps without invoking an authored mutation;
+- the oracle captures canonical authored state/hash/revision and journal contents before and after those transient changes and requires them to remain unchanged while the surrogate itself changes;
+- the proof establishes the storage/authority boundary only. It does **not** claim deterministic gameplay simulation or validate future NPC movement semantics.
+
+A surrogate implemented by sending authored no-op mutations is invalid evidence because it would exercise the wrong authority path.
 
 ## Required negative-conformance tests
 
-RED→GREEN for: missing journal entry after an accepted mutation, entry emitted for rejected/dry-run/read-only work, wrong before/after revision or hash, wrong affected-resource set, provenance claiming a mutation that did not persist, and runtime/tick activity advancing authored revision/history.
+RED→GREEN for: missing journal entry after an accepted mutation, entry emitted for rejected/dry-run/read-only work, wrong before/after revision or hash, wrong affected-resource set, provenance claiming a mutation that did not persist, runtime-observation surrogate activity advancing authored revision/hash/history, and a runtime-observation path acquiring journal/commit authority.
 
 ## Forbidden scope
 
@@ -32,4 +45,4 @@ Semantic diff, snapshot export/import, journal replay, Git integration as source
 
 ## DoD
 
-A nontrivial sequence of accepted micro-world edits produces a deterministic, discoverable provenance journal whose entries agree exactly with persisted authored state, while runtime-like observations remain outside authored revision/history semantics; independent PASS.
+A nontrivial sequence of accepted micro-world edits produces a deterministic, discoverable and versioned provenance journal whose entries agree exactly with persisted authored state, while a bounded runtime-observation surrogate can change independently without authored revision/hash/history churn; independent PASS.
