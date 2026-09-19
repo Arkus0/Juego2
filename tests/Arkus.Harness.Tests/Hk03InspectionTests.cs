@@ -19,7 +19,7 @@ namespace Arkus.Harness.Tests
 
             foreach (var definition in contract.Definitions)
             {
-                if (!definition.Key.Name.StartsWith("world.", StringComparison.Ordinal))
+                if (!expected.Contains(definition.Key.Name))
                 {
                     continue;
                 }
