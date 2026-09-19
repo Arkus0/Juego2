@@ -219,6 +219,13 @@ namespace Arkus.Harness.Tests
                 Dependency("works_at", "building.shop"),
                 Dependency("visits", "plaza.main")
             };
+            var objects = new List<WorldObject>(TownObjects());
+            if (reverseInput)
+            {
+                objects.Reverse();
+                anaDependencies.Reverse();
+            }
+
             var extensions = new List<WorldExtensionData>
             {
                 new WorldExtensionData(
@@ -234,12 +241,9 @@ namespace Arkus.Harness.Tests
                     new WorldObjectId("npc.bob"),
                     new[] { Dependency("visits", "plaza.main") })
             };
-            var objects = new List<WorldObject>(TownObjects());
             if (reverseInput)
             {
-                objects.Reverse();
                 extensions.Reverse();
-                anaDependencies.Reverse();
             }
 
             return NewWorld(objects, extensions);
@@ -352,13 +356,13 @@ namespace Arkus.Harness.Tests
                     dependencies.Add(Dependency((string)dependency["kind"]!, (string)dependency["targetId"]!));
                 }
 
-                var subjectId = read.Data.TryGetValue("subjectId", out var rawSubject)
+                var subjectId = read.Data!.TryGetValue("subjectId", out var rawSubject)
                     ? new WorldObjectId((string)rawSubject!)
                     : (WorldObjectId?)null;
                 values.Add(new WorldExtensionData(
-                    (string)read.Data["owner"]!,
-                    Convert.ToInt32(read.Data["schemaVersion"], System.Globalization.CultureInfo.InvariantCulture),
-                    Convert.FromBase64String((string)read.Data["payloadBase64"]!),
+                    (string)read.Data!["owner"]!,
+                    Convert.ToInt32(read.Data!["schemaVersion"], System.Globalization.CultureInfo.InvariantCulture),
+                    Convert.FromBase64String((string)read.Data!["payloadBase64"]!),
                     subjectId,
                     dependencies));
             }

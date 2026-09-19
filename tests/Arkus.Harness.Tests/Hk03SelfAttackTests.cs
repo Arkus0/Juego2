@@ -402,7 +402,7 @@ namespace Arkus.Harness.Tests
                                 new WorldObjectId((string)dependency["targetId"]!)));
                         }
 
-                        if (!dependencyRead.Data.TryGetValue("nextDependencyOffset", out var nextDependencyOffset))
+                        if (!dependencyRead.Data!.TryGetValue("nextDependencyOffset", out var nextDependencyOffset))
                         {
                             break;
                         }
