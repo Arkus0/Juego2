@@ -22,5 +22,6 @@
     <ProjectReference Include="../../src/Arkus.Game.World/Arkus.Game.World.csproj" />
     <ProjectReference Include="../../src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
     <ProjectReference Include="../../src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
+    <ProjectReference Include="../Arkus.Harness.MutationAttackFixture/Arkus.Harness.MutationAttackFixture.csproj" />
   </ItemGroup>
 </Project>
