@@ -6,11 +6,12 @@ using Arkus.Harness.Protocol;
 namespace Arkus.Harness.Runtime
 {
     /// <summary>Marker for the separately classified HK06C canonical replay orchestration path.</summary>
-    internal interface ICanonicalReplayHandler : ICapabilityHandler
+    internal interface ICanonicalReplayHandler : ICanonicalCapabilityHandler
     {
     }
 
-    internal sealed class WorldReplayCompatibilityHandler : ICapabilityHandler
+    [PublicCapabilityRoute("arkus.base", WorldReplayContract.CompatibilityName, WorldReplayContract.ContractVersionText)]
+    internal sealed class WorldReplayCompatibilityHandler : ICanonicalCapabilityHandler
     {
         private readonly IWorldReplayService _service;
 
@@ -19,12 +20,16 @@ namespace Arkus.Harness.Runtime
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
-        public CapabilityInvocationResult Invoke(IReadOnlyDictionary<string, object?> request)
+        public CapabilityInvocationResult Invoke(
+            CapabilityInvocationContext context,
+            IReadOnlyDictionary<string, object?> request)
         {
-            return _service.CheckReplayCompatibility(request);
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            return _service.CheckReplayCompatibility(request ?? throw new ArgumentNullException(nameof(request)));
         }
     }
 
+    [PublicCapabilityRoute("arkus.base", WorldReplayContract.ReplayName, WorldReplayContract.ContractVersionText)]
     internal sealed class WorldReplayHandler : ICanonicalReplayHandler
     {
         private readonly ICanonicalWorldReplayExecutor _executor;
@@ -34,9 +39,12 @@ namespace Arkus.Harness.Runtime
             _executor = executor ?? throw new ArgumentNullException(nameof(executor));
         }
 
-        public CapabilityInvocationResult Invoke(IReadOnlyDictionary<string, object?> request)
+        public CapabilityInvocationResult Invoke(
+            CapabilityInvocationContext context,
+            IReadOnlyDictionary<string, object?> request)
         {
-            return _executor.Replay(request);
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            return _executor.Replay(request ?? throw new ArgumentNullException(nameof(request)));
         }
     }
 
@@ -47,11 +55,9 @@ namespace Arkus.Harness.Runtime
             if (mutation == null) throw new ArgumentNullException(nameof(mutation));
             return new List<CapabilityRoute>
             {
-                new CapabilityRoute(
-                    new CapabilityKey(WorldReplayContract.CompatibilityName, ContractVersion.Parse(WorldReplayContract.ContractVersionText)),
+                CapabilityRoute.FromHandler(
                     new WorldReplayCompatibilityHandler(CanonicalWorldReplayAuthority.BindCompatibility(mutation))),
-                new CapabilityRoute(
-                    new CapabilityKey(WorldReplayContract.ReplayName, ContractVersion.Parse(WorldReplayContract.ContractVersionText)),
+                CapabilityRoute.FromHandler(
                     new WorldReplayHandler(CanonicalWorldReplayAuthority.Bind(mutation)))
             }.AsReadOnly();
         }
