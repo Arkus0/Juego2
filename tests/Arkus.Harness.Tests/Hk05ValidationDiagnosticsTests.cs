@@ -156,8 +156,8 @@ namespace Arkus.Harness.Tests
         public void EveryPublicCanonicalMutationRouteEnforcesExplicitValidation()
         {
             var initial = Hk02TestFixtures.MicroWorld();
-            var session = new TransactionalWorldAuthoringSession(initial);
-            var contract = Hk04TransactionalMutationTests.Compose(session);
+            var session = new PortableWorldAuthoringSession(initial);
+            var contract = CanonicalWorldContract.Compose(new WorldInspectionService(session), session);
             var request = InvalidMutation(initial);
             var before = CanonicalWorldStateCodec.ComputeContentHash(session.Current);
             var explicitValidation = contract.Dispatch(
@@ -175,20 +175,56 @@ namespace Arkus.Harness.Tests
             }
 
             Assert.NotEmpty(mutationRoutes);
+            var covered = new HashSet<string>(StringComparer.Ordinal);
             foreach (var definition in mutationRoutes)
             {
-                var result = contract.Dispatch(
-                    definition.Key.Name,
-                    ContractVersionRange.Exact(definition.Key.Version),
-                    request);
-                Assert.Empty(MutationValidationIssues(explicitValidation, result));
+                if (string.Equals(definition.Key.Name, WorldMutationContract.ApplyName, StringComparison.Ordinal))
+                {
+                    var result = contract.Dispatch(
+                        definition.Key.Name,
+                        ContractVersionRange.Exact(definition.Key.Version),
+                        request);
+                    Assert.Empty(MutationValidationIssues(explicitValidation, result));
+                    Assert.True(covered.Add(definition.Key.Name));
+                    continue;
+                }
+
+                if (string.Equals(definition.Key.Name, WorldPortabilityContract.ImportName, StringComparison.Ordinal))
+                {
+                    var snapshot = session.ExportSnapshot(Hk01TestFixtures.EmptyRequest()).Data!;
+                    var invalidSnapshot = new Dictionary<string, object?>(snapshot, StringComparer.Ordinal)
+                    {
+                        ["authoredStateBase64"] = Convert.ToBase64String(new byte[] { 0x00 })
+                    };
+                    var invalidImport = new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["idempotencyKey"] = "request.hk05-invalid-snapshot",
+                        ["expectedRevision"] = session.Current.Revision,
+                        ["expectedHash"] = CanonicalWorldStateCodec.ComputeContentHash(session.Current),
+                        ["snapshot"] = invalidSnapshot
+                    };
+                    var result = contract.Dispatch(
+                        definition.Key.Name,
+                        ContractVersionRange.Exact(definition.Key.Version),
+                        invalidImport);
+                    Assert.Empty(SnapshotImportValidationIssues(result));
+                    Assert.True(covered.Add(definition.Key.Name));
+                    continue;
+                }
+
+                Assert.True(false, "Canonical mutation route lacks an explicit route-specific validation control: " + definition.Key);
             }
+
+            Assert.Equal(mutationRoutes.Count, covered.Count);
 
             var acceptedInvalidMutant = CapabilityInvocationResult.Succeeded(
                 new Dictionary<string, object?>(StringComparer.Ordinal));
             Assert.Contains(
                 "mutation-accepted-invalid-state",
                 MutationValidationIssues(explicitValidation, acceptedInvalidMutant));
+            Assert.Contains(
+                "snapshot-import-accepted-invalid-state",
+                SnapshotImportValidationIssues(acceptedInvalidMutant));
 
             var skippedValidationMutant = contract.Dispatch(
                 WorldMutationContract.ApplyName,
@@ -315,6 +351,24 @@ namespace Arkus.Harness.Tests
 
             if (!SequencesEqual(DataSignatures(explicitValidation.Data), DataSignatures(applyValidation)))
                 issues.Add("validate-apply-disagreement");
+            return issues.AsReadOnly();
+        }
+
+        private static IReadOnlyList<string> SnapshotImportValidationIssues(CapabilityInvocationResult mutation)
+        {
+            var issues = new List<string>();
+            if (mutation.Success)
+            {
+                issues.Add("snapshot-import-accepted-invalid-state");
+                return issues.AsReadOnly();
+            }
+
+            if (mutation.Error == null ||
+                !string.Equals(mutation.Error.MachineCode, "world.snapshot.invalid_state", StringComparison.Ordinal))
+            {
+                issues.Add("snapshot-import-validation-skipped");
+            }
+
             return issues.AsReadOnly();
         }
 
