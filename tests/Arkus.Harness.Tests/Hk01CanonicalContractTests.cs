@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
+using Arkus.Game.Authoring;
 using Arkus.Harness.Protocol;
 using Arkus.Harness.Runtime;
 using Xunit;
@@ -56,7 +57,7 @@ namespace Arkus.Harness.Tests
         public void AcceptedSyntheticScopedSurfaceIsIndependentlyEnumerableAndConformant()
         {
             var composition = ContractComposer.Compose(
-                BaseContract.CreateContribution(),
+                CanonicalWorldContract.CreateContribution(new UnavailableWorldInspectionService()),
                 Hk01TestFixtures.CompleteFixtureProviders());
             Assert.True(composition.Success);
             Assert.NotNull(composition.Contract);
@@ -70,9 +71,9 @@ namespace Arkus.Harness.Tests
 
             Assert.True(report.IsConformant, FormatIssues(report.Issues));
             Assert.Empty(routeUniverse.Issues);
-            Assert.Equal(4, composition.Contract.Definitions.Count);
-            Assert.Equal(4, routeUniverse.Routes.Count);
-            Assert.Equal(4, composition.Contract.Projection.Capabilities.Count);
+            Assert.Equal(10, composition.Contract.Definitions.Count);
+            Assert.Equal(10, routeUniverse.Routes.Count);
+            Assert.Equal(10, composition.Contract.Projection.Capabilities.Count);
         }
 
         [Fact]
@@ -169,7 +170,7 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void IndependentRouteUniverseMatchesDispatcherDiscoveryAndSchemas()
         {
-            var baseContract = BaseContract.Compose();
+            var baseContract = CanonicalWorldContract.Compose(new UnavailableWorldInspectionService());
             var productionAssemblies = LoadProductionAssemblies();
             var routeUniverse = RouteUniverse.Enumerate(productionAssemblies);
 
@@ -177,8 +178,11 @@ namespace Arkus.Harness.Tests
 
             Assert.True(report.IsConformant, FormatIssues(report.Issues));
             Assert.Empty(routeUniverse.Issues);
-            Assert.Single(routeUniverse.Routes);
-            Assert.Equal("arkus.base", routeUniverse.Routes[0].ProviderId);
+            Assert.Equal(7, routeUniverse.Routes.Count);
+            foreach (var route in routeUniverse.Routes)
+            {
+                Assert.Equal("arkus.base", route.ProviderId);
+            }
         }
 
         [Fact]
