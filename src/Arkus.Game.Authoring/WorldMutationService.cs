@@ -10,10 +10,10 @@ using Arkus.Harness.Protocol;
 namespace Arkus.Game.Authoring
 {
     /// <summary>
-    /// Engine-neutral authoritative authoring session. The only state-changing operation is
-    /// Apply; plan and dry-run share its planner but never replace the current immutable state.
+    /// Engine-neutral authoritative authoring session. Canonical commit authority is internal;
+    /// public callers can inspect current state and use plan/dry-run only.
     /// </summary>
-    public sealed class TransactionalWorldAuthoringSession : IWorldStateSource, IWorldMutationService
+    public sealed class TransactionalWorldAuthoringSession : IWorldStateSource, IWorldMutationService, ICanonicalWorldMutationCommitter
     {
         private const string FingerprintVersion = "arkus-world-mutation-request-v1";
         private const string PlanVersion = "arkus-world-mutation-plan-v1";
@@ -63,7 +63,12 @@ namespace Arkus.Game.Authoring
             return planError ?? Success("dry-run", false, false, plan!);
         }
 
-        public CapabilityInvocationResult Apply(IReadOnlyDictionary<string, object?> request)
+        CapabilityInvocationResult ICanonicalWorldMutationCommitter.Apply(IReadOnlyDictionary<string, object?> request)
+        {
+            return Apply(request);
+        }
+
+        internal CapabilityInvocationResult Apply(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
             var parseError = ParseRequest(request, out var parsed);
