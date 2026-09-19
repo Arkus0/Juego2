@@ -2,7 +2,7 @@
 
 Status: PLANNED  
 Class: FOUNDATIONAL  
-Depends on: `WP-HK-07`  
+Depends on: `WP-HK-07B`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 
 ## Objective
