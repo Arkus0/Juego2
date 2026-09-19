@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.10 — 2026-09-19
+Version: 1.11 — 2026-09-19
 
 ## North star
 
@@ -44,7 +44,7 @@ All H0 workpacks are foundational and must pass independent review before the ne
 
 Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03` and `WP-HK-04` are COMPLETE. `WP-HK-04` PR `#19` passed independent review on frozen candidate `849ed68e41d674ab0d50883ccd9af394e9d2e456` and merged as `b1810a5f7c5378ff06272718a11e08720d714a65` on 2026-09-19.
 
-Next dependency-valid workpack after DocSync: `WP-HK-05`.
+Next dependency-valid workpack after this process adoption reaches `main`: `WP-HK-02A`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -54,13 +54,14 @@ Next dependency-valid workpack after DocSync: `WP-HK-05`.
 | 4 | `WP-HK-02` ✅ COMPLETE | Canonical world state, stable identity, deterministic serialization + hash |
 | 5 | `WP-HK-03` ✅ COMPLETE | Complete read/inspection/query surface |
 | 6 | `WP-HK-04` ✅ COMPLETE | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
-| 7 | `WP-HK-05` | Validation/invariants and structured repairable diagnostics |
-| 8 | `WP-HK-06` | Provenance, semantic diff, journal, snapshot/export and deterministic replay |
-| 9 | `WP-HK-07` | Production headless host + reference JSONL + standards-compatible MCP projection |
-| 10 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination and round-trip budgets |
-| 11 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
-| 12 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure |
-| 13 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
+| 7 | `WP-HK-02A` | Object-scoped opaque extension data + typed declared dependencies |
+| 8 | `WP-HK-05` | Validation/invariants and structured repairable diagnostics |
+| 9 | `WP-HK-06` | Provenance, semantic diff, journal, snapshot/export and deterministic replay |
+| 10 | `WP-HK-07` | Production headless host + reference JSONL + standards-compatible MCP projection |
+| 11 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination and round-trip budgets |
+| 12 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
+| 13 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure |
+| 14 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
 
 ### H0 exit criteria
 

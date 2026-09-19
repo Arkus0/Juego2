@@ -65,6 +65,7 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 - Completeness claims may not rely solely on an inventory/registry/configuration controlled by the thing being proved; the universe under proof must be independently discoverable or checked against effective behaviour.
 - Accepted predecessor guarantees compose forward. A downstream WP consumes binding guarantees already accepted upstream and must not re-prove them merely as defence-in-depth unless the current WP explicitly owns that guarantee or concrete evidence shows the predecessor claim is false/inapplicable.
 - Do not add gameplay semantics merely to make harness tests convenient; use a deliberately tiny micro-world fixture.
+- Before freezing a foundational WP that defines or changes authorable-state or public-contract semantics, run one bounded content-shape probe against the currently approved representative Juego2 target. The probe is an exploratory omission detector, not a completeness oracle and not permission to add gameplay scope. Classify each finding as a current-WP blocker, concrete predecessor reopen condition, named future/residual decision, or out-of-boundary observation.
 
 ## Mandatory predecessor contract check
 
