@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Arkus.Harness.Tests
 {
-    public sealed class Hk01PortabilityCompatibilityRepairTests
+    public sealed class Hk01SelfAttackTestsPortabilityCompatibility
     {
         [Fact]
         public void AllowedLogicalReferenceFormatCannotCarryClrOrEngineTypeNamespace()
