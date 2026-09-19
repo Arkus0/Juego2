@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.12 — 2026-09-19
+Version: 1.13 — 2026-09-19
 
 ## North star
 
@@ -42,11 +42,11 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04` and `WP-HK-02A` are COMPLETE. `WP-HK-04` PR `#19` passed independent review on frozen candidate `849ed68e41d674ab0d50883ccd9af394e9d2e456` and merged as `b1810a5f7c5378ff06272718a11e08720d714a65` on 2026-09-19.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A` and `WP-HK-05` are COMPLETE.
 
-`WP-HK-02A` PR `#25` passed independent review on frozen candidate `f39a1994524c42213dafb63d440faaf9de7c040f` (review `#5256593405`), exact-SHA freeze validation Actions `35456445373` GREEN, and merged as `ac7ce1180b462f093cf0ee02bbbd6f853938e27c` on 2026-09-19. The earlier FAIL on `9d0dc3739f31bcc6a7f8df12b5f6e876837efacc` remains historical; its two gaps were repaired in the reviewed candidate.
+`WP-HK-05` PR `#26` passed independent review on frozen candidate `23a9fd4373a803187cd9391b1459cd48975177f6` (review `#5257350871`), exact-SHA candidate observation Actions `35464742544` GREEN, freeze validation Actions `35464834162` GREEN, and merged as `ed65661680aea2a9be79f892c96aa42bf788a842` on 2026-09-19. Two prior frozen candidates failed in the same aggregate-validation-under-ambiguous-identity class; the circuit breaker triggered a causal architecture re-audit, and the accepted candidate uses dependency-local ambiguity deferral rather than global suppression.
 
-Next dependency-valid workpack: `WP-HK-05 — Validation + repairable diagnostics`.
+Next dependency-valid workpack: `WP-HK-06 — Provenance, diff, snapshot + replay`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -57,7 +57,7 @@ Next dependency-valid workpack: `WP-HK-05 — Validation + repairable diagnostic
 | 5 | `WP-HK-03` ✅ COMPLETE | Complete read/inspection/query surface |
 | 6 | `WP-HK-04` ✅ COMPLETE | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
 | 7 | `WP-HK-02A` ✅ COMPLETE | Object-scoped opaque extension data + typed declared dependencies |
-| 8 | `WP-HK-05` | Validation/invariants and structured repairable diagnostics |
+| 8 | `WP-HK-05` ✅ COMPLETE | Validation/invariants and structured repairable diagnostics |
 | 9 | `WP-HK-06` | Provenance, semantic diff, journal, snapshot/export and deterministic replay |
 | 10 | `WP-HK-07` | Production headless host + reference JSONL + standards-compatible MCP projection |
 | 11 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination and round-trip budgets |
