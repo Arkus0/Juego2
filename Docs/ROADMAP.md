@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.2 — 2026-09-18
+Version: 1.3 — 2026-09-19
 
 ## North star
 
@@ -39,9 +39,13 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
+Accepted progress: `WP-HK-00` is COMPLETE. PR `#8` passed independent review on frozen candidate `014345b44035c796aa8509f88dcec227c476fcc7` and merged as `80dd20cf09b31e1d2b050410d46619b06511878f` on 2026-09-19.
+
+Next dependency-valid workpack after DocSync: `WP-HK-00A`.
+
 | Order | Workpack | Outcome |
 |---|---|---|
-| 1 | `WP-HK-00` | Canonical portable module boundary, pinned toolchain and headless CI |
+| 1 | `WP-HK-00` ✅ COMPLETE | Canonical portable module boundary, pinned toolchain and headless CI |
 | 2 | `WP-HK-00A` | Product architecture, adoption/IP boundary and anti-lock-in contract |
 | 3 | `WP-HK-01` | Canonical contract model + machine-readable capability/schema discovery |
 | 4 | `WP-HK-02` | Canonical world state, stable identity, deterministic serialization + hash |
