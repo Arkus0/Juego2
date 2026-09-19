@@ -70,9 +70,30 @@ namespace Arkus.Game.Authoring
                 {
                     ["expectedRevision"] = SchemaNode.Integer(),
                     ["expectedHash"] = SchemaNode.String(),
-                    ["journal"] = WorldProvenanceContract.JournalResultSchema().Root
+                    ["journal"] = VersionedJournalEnvelopeSchema()
                 },
                 new[] { "expectedRevision", "expectedHash", "journal" }));
+        }
+
+        /// <summary>
+        /// Compatibility envelope only. HK06A remains the sole owner of the accepted journal schema;
+        /// replay deliberately accepts version identifiers as strings so unsupported/future artifacts
+        /// reach the HK06C compatibility policy and fail with a stable replay diagnostic instead of
+        /// being rejected by generic dispatcher validation first.
+        /// </summary>
+        private static SchemaNode VersionedJournalEnvelopeSchema()
+        {
+            return SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["schemaId"] = SchemaNode.String(),
+                    ["entrySchemaId"] = SchemaNode.String(),
+                    ["base"] = SchemaNode.Object(additionalPropertiesAllowed: true),
+                    ["current"] = SchemaNode.Object(additionalPropertiesAllowed: true),
+                    ["entryCount"] = SchemaNode.Integer(),
+                    ["entries"] = SchemaNode.Array(SchemaNode.Any())
+                },
+                new[] { "schemaId", "entrySchemaId", "base", "current", "entryCount", "entries" });
         }
 
         public static JsonSchemaDocument ReplayResultSchema()
