@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.5 — 2026-09-19
+Version: 1.6 — 2026-09-19
 
 ## North star
 
@@ -42,15 +42,15 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00` and `WP-HK-00A` are COMPLETE. `WP-HK-00A` PR `#15` passed independent review on frozen candidate `e66ed729c75d94fb7efdfc304cf51ec52fa25e53` and merged as `0a4253443326ccab8e910c3265b015fc757cc4a2` on 2026-09-19. Its product/adoption boundary is now binding.
+Accepted progress: `WP-HK-00`, `WP-HK-00A` and `WP-HK-01` are COMPLETE. `WP-HK-01` PR `#16` passed independent review on frozen candidate `c16c0a7bbe4afe440252b921516b5e9b4635e082` and merged as `24d761ba0bc33a70fc06e5ea351054b5d3c51488` on 2026-09-19. The canonical transport-neutral contract, single composed capability inventory, portable scoped-provider composition boundary, version compatibility enforcement and independent capability/discovery conformance are now binding.
 
-Next dependency-valid workpack after DocSync: `WP-HK-01`.
+Next dependency-valid workpack after DocSync: `WP-HK-02`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
 | 1 | `WP-HK-00` ✅ COMPLETE | Canonical portable module boundary, pinned toolchain and headless CI |
 | 2 | `WP-HK-00A` ✅ COMPLETE | Product architecture, adoption/IP boundary and anti-lock-in contract |
-| 3 | `WP-HK-01` | Canonical contract model + machine-readable capability/schema discovery |
+| 3 | `WP-HK-01` ✅ COMPLETE | Canonical contract model + machine-readable capability/schema discovery |
 | 4 | `WP-HK-02` | Canonical world state, stable identity, deterministic serialization + hash |
 | 5 | `WP-HK-03` | Complete read/inspection/query surface |
 | 6 | `WP-HK-04` | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
