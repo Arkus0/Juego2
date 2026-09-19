@@ -277,7 +277,7 @@ namespace Arkus.Harness.Tests
                         new WorldObjectId(id),
                         new WorldTypeId((string)data["typeId"]!),
                         container,
-                        references ?? Array.Empty<WorldReference>()));
+                        references ?? new List<WorldReference>()));
                 }
 
                 objectCursor = objectResult.Data!.TryGetValue("nextCursor", out var next)
