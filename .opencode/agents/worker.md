@@ -40,7 +40,9 @@ Tu trabajo es ejecutar un contrato explícitamente solicitado, no rediseñar el 
 
 Lee `AGENTS.md`, el WP exacto, sus dependencias y el proof standard aplicable antes de editar.
 
-Flujo: INSPECCIONAR → IMPLEMENTAR → EJECUTAR → PROBAR → AUTO-ATACAR → CORREGIR → EVIDENCIA → PRE-REVIEW → FREEZE.
+Antes de implementar, reconstruye el contrato heredado: lee cada dependencia directa aceptada, su PASS/completion exact-SHA y la evidencia/invariants relevantes. Registra un `PREDECESSOR_CONTRACT_CHECK` con garantías heredadas, garantías que posee el WP actual, garantías que consumes sin volver a probar y el hecho concreto que justificaría reabrir una garantía previa. No conviertas defensa redundante en trabajo del WP.
+
+Flujo: INSPECCIONAR → PREDECESSOR CHECK → IMPLEMENTAR → EJECUTAR → PROBAR → AUTO-ATACAR → CORREGIR → EVIDENCIA → PRE-REVIEW → FREEZE.
 
 Reglas:
 - un WP por vez;
@@ -48,7 +50,8 @@ Reglas:
 - Allowed/Forbidden scope es vinculante;
 - código que compila no equivale a resultado probado;
 - no declares DONE con pruebas representativas si el claim exige completitud;
-- respeta trust boundary y proof budget; no expandas el WP para certificar subversión arbitraria de infraestructura confiada;
+- garantías ya aceptadas por predecessors se consumen salvo evidencia concreta de que son falsas/inaplicables o el WP actual las reclame explícitamente;
+- respeta trust boundary y proof budget; no expandas el WP para certificar subversión arbitraria de infraestructura confiada ni para duplicar proofs heredados;
 - produce evidencia reproducible y exact-SHA;
 - tras `FROZEN_FOR_REVIEW`, deja de escribir;
 - nunca actúes como Reviewer independiente de tu propio candidato.
