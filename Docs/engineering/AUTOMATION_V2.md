@@ -1,6 +1,6 @@
 # Automation V2 — minimal GitHub Actions orchestration
 
-Version: 1.0 — 2026-09-19
+Version: 1.1 — 2026-09-19
 
 ## Purpose
 
@@ -38,7 +38,8 @@ Draft Worker PR
      PASS -> exact-SHA merge preflight -> automatic merge
   -> DOCSYNC_REQUIRED marker
   -> human starts DocSync
-  -> next WP only after DocSync
+  -> DOCSYNC_COMPLETE marker with dependency-valid Next WP
+  -> next WP may start
 ```
 
 Only the mechanical parts above are automated. Worker, independent Reviewer and DocSync reasoning remain explicit role invocations unless a future provider integration can prove those role boundaries correctly.
@@ -79,6 +80,27 @@ It performs only GitHub-state transitions:
 
 This separation is deliberate for a public repository: untrusted PR code never receives the workflow token that can write/merge.
 
+### `.github/workflows/telegram-notify.yml`
+
+Optional low-noise notification projection. It never decides state and never executes PR code. It only renders already-persisted `ARKUS_AUTOMATION_V2` markers into Telegram messages.
+
+Normal Telegram notifications are intentionally limited to high-value transitions:
+
+- `REVIEW_READY` -> Worker finished and the exact candidate is ready for an independent Reviewer;
+- `PASS_PREFLIGHT_GREEN` -> Reviewer PASS is bound to the exact candidate and merge is authorized;
+- `REPAIR_REQUIRED` -> Reviewer FAIL requires a fresh repair Worker on the same WP;
+- `DOCSYNC_COMPLETE` -> merge + DocSync are complete and the dependency-valid `Next WP` is included;
+- `MILESTONE_COMPLETE`, `BLOCKED` and `HUMAN_ACTION_REQUIRED` are supported for future explicit markers.
+
+`DOCSYNC_REQUIRED` is deliberately not sent to avoid an extra routine notification between merge and final DocSync completion.
+
+The notifier expects repository secrets named:
+
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
+
+If either secret is absent, the job exits successfully after logging that the notification was skipped. Telegram is convenience only; GitHub state remains authoritative.
+
 ## Reviewer handoff contract
 
 Automation recognizes a Reviewer transition only when the review body contains both:
@@ -98,6 +120,21 @@ A `PASS` cannot merge unless all of these agree:
 - `Reviewed candidate SHA`;
 - successful `Freeze exact-SHA validation` check.
 
+## DocSync completion marker
+
+After post-merge reconciliation is complete, the DocSync/finalization role persists one comment on the merged implementation PR:
+
+```text
+ARKUS_AUTOMATION_V2
+State: DOCSYNC_COMPLETE
+Key: docsync-complete:<PR>:<reconciled-main-sha>
+WP: <WP-ID>
+Next WP: <dependency-valid next WP, or NONE>
+Detail: <short reconciliation result>
+```
+
+`Next WP` is derived from current accepted GitHub state after DocSync; it is not chosen by the Telegram workflow.
+
 ## Cost policy
 
 Automation V2 uses only standard GitHub-hosted runners by default. Do not introduce larger/paid runners or paid third-party CI as a normal gate without an explicit human decision.
@@ -112,7 +149,7 @@ Automation V2 does not:
 - choose a different WP when the requested WP is blocked;
 - create hidden dependency routing;
 - maintain role leases;
-- require Telegram or another notification transport;
+- make Telegram or another notification transport authoritative;
 - weaken Worker pre-review, trust-boundary, proof-budget or Reviewer independence rules.
 
 Keep this layer small. If automation starts accumulating product semantics, move that logic back into canonical scripts/contracts or delete the automation.
