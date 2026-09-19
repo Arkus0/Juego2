@@ -2,6 +2,8 @@
 
 Implement exactly one explicitly authorized Juego2 workpack.
 
+Juego2 / Arkus Harness is a game-development and software-verification project. Work is limited to repository-owned game-authoring code, fixtures, tests, CI and documentation. Legacy terms such as `self-attack`, `attack fixture`, `bypass` or `adversarial review` refer only to internal negative/conformance testing; use the neutral terminology defined in `AGENTS.md` for new work.
+
 ## Preconditions
 
 - Read `AGENTS.md`, `Docs/ROADMAP.md`, the exact WP, `WORKER_REVIEW_PROTOCOL.md`, and `FOUNDATIONAL_PROOF_STANDARD.md` when bound.
@@ -18,16 +20,16 @@ Implement exactly one explicitly authorized Juego2 workpack.
 4. Implement only Allowed scope.
 5. Run exact positive tests through the canonical validation entrypoint.
 6. Build a completeness inventory for finite in-claim surfaces where required.
-7. For foundational claims, self-attack material defect classes inside the declared trust boundary and prove causal RED→GREEN.
+7. For foundational claims, exercise material defect classes inside the declared trust boundary with causal negative-conformance / defect-injection tests and prove causal RED→GREEN.
 8. Prefer an independent/effective oracle where self-confirmation is possible.
 9. Record exact commands, outputs, residual risk and candidate SHA in evidence.
-10. Perform the mandatory adversarial Worker pre-review while still Draft + ACTIVE:
+10. Perform the mandatory strict Worker pre-review while still Draft + ACTIVE:
    - re-read the complete WP/DoD and binding protocol/proof rules;
    - verify the predecessor contract check still matches the accepted dependency state and avoid duplicating inherited proof unless concrete evidence invalidates it;
    - inspect the complete baseline→candidate diff, not only the latest change;
-   - try to falsify acceptance, negative/error paths, scope, completeness, fail-closed behaviour and handoff requirements;
+   - independently challenge acceptance, negative/error paths, scope, completeness, fail-closed behaviour and handoff requirements;
    - search for omission classes/effective behaviour inside the declared claim;
-   - respect the proof budget and trusted base instead of expanding proof into arbitrary toolchain subversion;
+   - respect the proof budget and trusted base instead of expanding proof into arbitrary toolchain-pathology scenarios;
    - classify findings as local/trivial versus causal architectural/proof-boundary defects.
 11. If pre-review finds an in-claim blocker, keep Draft + ACTIVE, repair the causal defect boundary, rerun affected validation/evidence, and repeat step 10.
 12. Record `WORKER_PRE_REVIEW: CLEAN`, findings fixed count and evidence path only when no known in-claim blocker remains. `CLEAN` is Worker readiness evidence, never independent `PASS`.
