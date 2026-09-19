@@ -57,7 +57,54 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void UnboundedResultPathsFailClosedAtDeclaredBounds()
+        public void UnboundedNestedRelationshipMutantIsSplitIntoBoundedReferencePages()
+        {
+            var objects = new List<WorldObject>();
+            var references = new List<WorldReference>();
+            for (var index = 0; index < 130; index++)
+            {
+                var suffix = index.ToString("D3", System.Globalization.CultureInfo.InvariantCulture);
+                var targetId = new WorldObjectId("node.target." + suffix);
+                objects.Add(new WorldObject(targetId, new WorldTypeId("fixture.target")));
+                references.Add(new WorldReference(new WorldReferenceKind("fixture.link"), targetId));
+            }
+
+            objects.Add(new WorldObject(
+                new WorldObjectId("node.root"),
+                new WorldTypeId("fixture.root"),
+                null,
+                references));
+            var state = new WorldState(new WorldId("world.many-links"), 4, objects);
+            var contract = Compose(state);
+
+            var objectRequest = Anchor(state);
+            objectRequest["id"] = "node.root";
+            var objectResult = Success(contract, WorldInspectionContract.ObjectGetName, objectRequest);
+            var projected = Hk03InspectionTests.Map(objectResult.Data!, "object");
+            Assert.False(projected.ContainsKey("references"));
+
+            var firstRequest = Anchor(state);
+            firstRequest["limit"] = WorldInspectionService.MaximumPageSize;
+            firstRequest["filter"] = Hk03InspectionTests.ReadOnlyMap(
+                new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["sourceIds"] = Hk03InspectionTests.ReadOnlyList("node.root")
+                });
+            var first = Success(contract, WorldInspectionContract.ReferenceQueryName, firstRequest);
+            Assert.Equal(WorldInspectionService.MaximumPageSize, Hk03InspectionTests.List(first.Data!, "items").Count);
+            Assert.True(first.Data!.TryGetValue("nextCursor", out var cursor));
+
+            var secondRequest = Anchor(state);
+            secondRequest["limit"] = WorldInspectionService.MaximumPageSize;
+            secondRequest["filter"] = firstRequest["filter"];
+            secondRequest["cursor"] = cursor;
+            var second = Success(contract, WorldInspectionContract.ReferenceQueryName, secondRequest);
+            Assert.Equal(30, Hk03InspectionTests.List(second.Data!, "items").Count);
+            Assert.False(second.Data!.ContainsKey("nextCursor"));
+        }
+
+        [Fact]
+        public void UnboundedDeclaredLimitsFailClosed()
         {
             var state = Hk02TestFixtures.MicroWorld();
             var contract = Compose(state);
@@ -202,69 +249,143 @@ namespace Arkus.Harness.Tests
                 new Dictionary<string, object?>(StringComparer.Ordinal));
             var metadata = Hk03InspectionTests.Map(summary.Data!, "world");
 
-            var objectResult = Success(contract, WorldInspectionContract.ObjectQueryName, Anchor(source));
+            var referencesBySource = ReadAllReferences(contract, source);
             var objects = new List<WorldObject>();
-            foreach (var rawObject in Hk03InspectionTests.List(objectResult.Data!, "items"))
+            string? objectCursor = null;
+            do
             {
-                var data = (IReadOnlyDictionary<string, object?>)rawObject!;
-                WorldObjectId? container = null;
-                if (data.TryGetValue("containerId", out var rawContainer))
+                var objectRequest = Anchor(source);
+                objectRequest["limit"] = WorldInspectionService.MaximumPageSize;
+                if (objectCursor != null)
                 {
-                    container = new WorldObjectId((string)rawContainer!);
+                    objectRequest["cursor"] = objectCursor;
                 }
 
-                var references = new List<WorldReference>();
-                foreach (var rawReference in Hk03InspectionTests.List(data, "references"))
+                var objectResult = Success(contract, WorldInspectionContract.ObjectQueryName, objectRequest);
+                foreach (var rawObject in Hk03InspectionTests.List(objectResult.Data!, "items"))
                 {
-                    var reference = (IReadOnlyDictionary<string, object?>)rawReference!;
-                    references.Add(new WorldReference(
-                        new WorldReferenceKind((string)reference["kind"]!),
-                        new WorldObjectId((string)reference["targetId"]!)));
-                }
-
-                objects.Add(new WorldObject(
-                    new WorldObjectId((string)data["id"]!),
-                    new WorldTypeId((string)data["typeId"]!),
-                    container,
-                    references));
-            }
-
-            var extensionResult = Success(contract, WorldInspectionContract.ExtensionQueryName, Anchor(source));
-            var extensions = new List<WorldExtensionData>();
-            foreach (var rawExtension in Hk03InspectionTests.List(extensionResult.Data!, "items"))
-            {
-                var descriptor = (IReadOnlyDictionary<string, object?>)rawExtension!;
-                var owner = (string)descriptor["owner"]!;
-                var schemaVersion = Convert.ToInt32(descriptor["schemaVersion"], System.Globalization.CultureInfo.InvariantCulture);
-                var payloadLength = Convert.ToInt32(descriptor["payloadLength"], System.Globalization.CultureInfo.InvariantCulture);
-                var bytes = new List<byte>();
-                var offset = 0;
-                while (offset < payloadLength)
-                {
-                    var readRequest = Anchor(source);
-                    readRequest["owner"] = owner;
-                    readRequest["schemaVersion"] = schemaVersion;
-                    readRequest["offset"] = offset;
-                    readRequest["limit"] = WorldInspectionService.MaximumExtensionChunkBytes;
-                    var read = Success(contract, WorldInspectionContract.ExtensionReadName, readRequest);
-                    bytes.AddRange(Convert.FromBase64String((string)read.Data!["payloadBase64"]!));
-                    if (!read.Data.TryGetValue("nextOffset", out var nextOffset))
+                    var data = (IReadOnlyDictionary<string, object?>)rawObject!;
+                    WorldObjectId? container = null;
+                    if (data.TryGetValue("containerId", out var rawContainer))
                     {
-                        break;
+                        container = new WorldObjectId((string)rawContainer!);
                     }
 
-                    offset = Convert.ToInt32(nextOffset, System.Globalization.CultureInfo.InvariantCulture);
+                    var id = (string)data["id"]!;
+                    referencesBySource.TryGetValue(id, out var references);
+                    objects.Add(new WorldObject(
+                        new WorldObjectId(id),
+                        new WorldTypeId((string)data["typeId"]!),
+                        container,
+                        references ?? Array.Empty<WorldReference>()));
                 }
 
-                extensions.Add(new WorldExtensionData(owner, schemaVersion, bytes.ToArray()));
+                objectCursor = objectResult.Data!.TryGetValue("nextCursor", out var next)
+                    ? (string)next!
+                    : null;
             }
+            while (objectCursor != null);
 
+            var extensions = ReadAllExtensions(contract, source);
             return new WorldState(
                 new WorldId((string)metadata["worldId"]!),
                 Convert.ToInt64(metadata["revision"], System.Globalization.CultureInfo.InvariantCulture),
                 objects,
                 extensions,
                 Convert.ToInt32(metadata["schemaVersion"], System.Globalization.CultureInfo.InvariantCulture));
+        }
+
+        private static Dictionary<string, List<WorldReference>> ReadAllReferences(
+            ComposedContract contract,
+            WorldState source)
+        {
+            var bySource = new Dictionary<string, List<WorldReference>>(StringComparer.Ordinal);
+            string? cursor = null;
+            do
+            {
+                var request = Anchor(source);
+                request["limit"] = WorldInspectionService.MaximumPageSize;
+                if (cursor != null)
+                {
+                    request["cursor"] = cursor;
+                }
+
+                var result = Success(contract, WorldInspectionContract.ReferenceQueryName, request);
+                foreach (var rawReference in Hk03InspectionTests.List(result.Data!, "items"))
+                {
+                    var row = (IReadOnlyDictionary<string, object?>)rawReference!;
+                    var sourceId = (string)row["sourceId"]!;
+                    if (!bySource.TryGetValue(sourceId, out var references))
+                    {
+                        references = new List<WorldReference>();
+                        bySource.Add(sourceId, references);
+                    }
+
+                    references.Add(new WorldReference(
+                        new WorldReferenceKind((string)row["kind"]!),
+                        new WorldObjectId((string)row["targetId"]!)));
+                }
+
+                cursor = result.Data!.TryGetValue("nextCursor", out var next)
+                    ? (string)next!
+                    : null;
+            }
+            while (cursor != null);
+
+            return bySource;
+        }
+
+        private static List<WorldExtensionData> ReadAllExtensions(
+            ComposedContract contract,
+            WorldState source)
+        {
+            var extensions = new List<WorldExtensionData>();
+            string? cursor = null;
+            do
+            {
+                var query = Anchor(source);
+                query["limit"] = WorldInspectionService.MaximumPageSize;
+                if (cursor != null)
+                {
+                    query["cursor"] = cursor;
+                }
+
+                var extensionResult = Success(contract, WorldInspectionContract.ExtensionQueryName, query);
+                foreach (var rawExtension in Hk03InspectionTests.List(extensionResult.Data!, "items"))
+                {
+                    var descriptor = (IReadOnlyDictionary<string, object?>)rawExtension!;
+                    var owner = (string)descriptor["owner"]!;
+                    var schemaVersion = Convert.ToInt32(descriptor["schemaVersion"], System.Globalization.CultureInfo.InvariantCulture);
+                    var payloadLength = Convert.ToInt32(descriptor["payloadLength"], System.Globalization.CultureInfo.InvariantCulture);
+                    var bytes = new List<byte>();
+                    var offset = 0;
+                    while (offset < payloadLength)
+                    {
+                        var readRequest = Anchor(source);
+                        readRequest["owner"] = owner;
+                        readRequest["schemaVersion"] = schemaVersion;
+                        readRequest["offset"] = offset;
+                        readRequest["limit"] = WorldInspectionService.MaximumExtensionChunkBytes;
+                        var read = Success(contract, WorldInspectionContract.ExtensionReadName, readRequest);
+                        bytes.AddRange(Convert.FromBase64String((string)read.Data!["payloadBase64"]!));
+                        if (!read.Data.TryGetValue("nextOffset", out var nextOffset))
+                        {
+                            break;
+                        }
+
+                        offset = Convert.ToInt32(nextOffset, System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
+                    extensions.Add(new WorldExtensionData(owner, schemaVersion, bytes.ToArray()));
+                }
+
+                cursor = extensionResult.Data!.TryGetValue("nextCursor", out var next)
+                    ? (string)next!
+                    : null;
+            }
+            while (cursor != null);
+
+            return extensions;
         }
 
         private static void AssertCurrentSemanticSurfaceIsExplicitlyMapped()
