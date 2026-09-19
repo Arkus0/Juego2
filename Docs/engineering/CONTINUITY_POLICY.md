@@ -1,6 +1,6 @@
 # WP Continuity Policy — Juego2
 
-Version: 1.1 — 2026-09-19
+Version: 1.2 — 2026-09-19
 
 Complements `WORKER_REVIEW_PROTOCOL.md` with manual post-review/merge continuity.
 
@@ -26,7 +26,20 @@ Perform DocSync/reconciliation manually before selecting another WP. Inspect onl
 - evidence indexes when applicable;
 - `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md`.
 
-If no documentation change is needed, record that fact in the merge/finalization evidence; no automation marker is required.
+If no documentation content change is needed, record that fact in the merge/finalization evidence.
+
+After reconciliation, persist exactly one completion marker on the merged implementation PR:
+
+```text
+ARKUS_AUTOMATION_V2
+State: DOCSYNC_COMPLETE
+Key: docsync-complete:<PR>:<reconciled-main-sha>
+WP: <WP-ID>
+Next WP: <dependency-valid next WP, or NONE>
+Detail: <short reconciliation result>
+```
+
+The marker is durable handoff/notification metadata only. It does not replace the underlying accepted GitHub evidence. `Next WP` must be resolved from current `main`, open ownership and dependency state after DocSync; never copy a stale value from an earlier session.
 
 ## Compact handoff
 
