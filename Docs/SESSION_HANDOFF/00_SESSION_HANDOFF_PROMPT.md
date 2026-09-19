@@ -22,21 +22,21 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A` and `WP-HK-05` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05` and `WP-HK-06A` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-05 — Validation + repairable diagnostics`.
+Latest accepted workpack: `WP-HK-06A — Provenance journal + authored/live boundary`.
 
-- implementation PR: `#26`;
-- baseline SHA: `dbd8121411079f22a01d5cb85345e180ff41f7e2`;
-- reviewed frozen candidate: `23a9fd4373a803187cd9391b1459cd48975177f6`;
-- independent Reviewer: `PASS` (PR review `#5257350871`);
-- exact-SHA candidate observation: GREEN, Actions `35464742544`;
-- exact-SHA freeze validation: GREEN, Actions `35464834162`;
-- merge SHA: `ed65661680aea2a9be79f892c96aa42bf788a842`;
-- accepted semantic addition: discoverable/versioned current and proposed validation; mechanically reconciled finite invariant inventory; deterministic multi-violation structured diagnostics; consistent validation before canonical commit; duplicate identities get index-addressable diagnostics while only genuinely ambiguity-dependent secondary diagnostics are deferred;
-- accepted scope limits: no AI natural-language repair generation, Unity validation, final gameplay invariants, journal/replay or HK06+ behavior.
+- implementation PR: `#32`;
+- baseline SHA: `bc6241d2db2b6e15f1a9ac78c673f7ef0735ffff`;
+- reviewed frozen candidate: `4ed9a925791ae14b0b5c0d92625161504021542e`;
+- independent Reviewer: `PASS` (PR review `#5257682288`);
+- exact-SHA candidate observation: GREEN, Actions `35469103222`;
+- exact-SHA freeze validation: GREEN, Actions `35469154331`;
+- merge SHA: `8089a52e8a7bbdde46e97705df6906c0d38d593a`;
+- accepted semantic addition: versioned/discoverable authored mutation journal; deterministic entry identity and ordering; complete normalized accepted mutation envelope bound to parsed request fingerprint/base anchor; truthful before/result anchors and affected resources; atomic publication of canonical state + idempotency receipts + journal under the accepted commit lock; explicit runtime-observation stamp and authored/live authority boundary;
+- accepted scope limits: no semantic diff, snapshot export/import, replay execution/compatibility, Unity serialization, gameplay scheduler/AI or deterministic simulation.
 
-HK05 had two historical Reviewer FAILs on frozen candidates `e0c865efd2127ca53d9e25064215e09a4579acd4` and `8c8d8c1a66b4995bbc9f3f933ba1791e49d69e97`, both in the same aggregate-validation-under-ambiguous-identity class. The circuit breaker was correctly triggered before the accepted repair: the final policy is dependency-local rather than a growing list of special cases. Preserve this history as evidence of the causal boundary, but do not reopen HK02/HK04 predecessor claims without concrete contradictory evidence.
+HK06A had one historical Reviewer FAIL on frozen candidate `046134fd3acd9641798dbad180406688fb5d31aa`: the journal could theoretically serialize a schema-valid but semantically false replay envelope while state/fingerprint anchors stayed green. The accepted repair addressed the causal provenance boundary rather than special-casing `typeId`: the complete machine-readable request is independently re-fingerprinted across all four current operation kinds and entry identity is revalidated before publication, with a separate test-owned accepted-request oracle. Preserve that accepted truthfulness guarantee for downstream HK06B/HK06C rather than redundantly re-proving it without contradictory evidence.
 
 ## Current next product target
 
@@ -44,15 +44,13 @@ The original HK06 and HK07 monoliths were split **before implementation** to red
 
 Execution chain:
 
-`HK06A → HK06B → HK06C → HK07A → HK07B → HK08 → HK09 → HK10 → HK-GATE`
+`HK06A ✅ → HK06B → HK06C → HK07A → HK07B → HK08 → HK09 → HK10 → HK-GATE`
 
-The next dependency-valid workpack is `WP-HK-06A — Provenance journal + authored/live boundary`.
+The next dependency-valid workpack is `WP-HK-06B — Semantic diff + canonical snapshot portability`.
 
-HK06A consumes HK05's accepted validation/pre-commit semantics and owns trustworthy mutation provenance plus the authored-state versus live/runtime boundary. Every accepted authored mutation must journal request/tool identity, before/after revision+hash and affected resources; failed/dry-run/read-only work must not create successful mutation entries; runtime-like ticks/observations must not advance authored revisions, hashes, CAS or journal history. Read `Docs/workpacks/HK/WP-HK-06A.md` plus accepted HK05 evidence before implementation.
+HK06B consumes the accepted HK06A journal truthfulness and authored/live authority boundary. It owns deterministic semantic diff plus the canonical snapshot format/schema and import/export semantics. Snapshot round-trip must reconstruct identical canonical authored state/hash; invalid or unsupported snapshots must not partially replace state; transient runtime observations must not leak into snapshots; import must explicitly define lineage/history behavior and must not fabricate mutation provenance. Read `Docs/workpacks/HK/WP-HK-06B.md` plus accepted HK06A evidence before implementation.
 
-After 06A PASS+merge+DocSync: 06B owns semantic diff + canonical snapshot export/import; 06C owns deterministic replay + end-to-end audit consistency. After 06C, 07A establishes the real headless process and deterministic JSONL/reference transport; only then does 07B add MCP and prove cross-transport semantic equivalence. HK08, HK09, HK10 and HK-GATE remain unsplit.
-
-No HK06A Worker has been started by this planning change.
+After 06B PASS+merge+DocSync: 06C consumes both accepted artifact contracts to own deterministic journal replay + end-to-end audit consistency. After 06C, 07A establishes the real headless process and deterministic JSONL/reference transport; only then does 07B add MCP and prove cross-transport semantic equivalence. HK08, HK09, HK10 and HK-GATE remain unsplit.
 
 ## Operating model
 
@@ -70,7 +68,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A → HK-06B → HK-06C → HK-07A → HK-07B → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B → HK-06C → HK-07A → HK-07B → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
