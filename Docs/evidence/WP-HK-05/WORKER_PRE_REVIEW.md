@@ -1,118 +1,91 @@
 # WP-HK-05 Worker pre-review
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 7
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 9
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-05
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
 Baseline: `dbd8121411079f22a01d5cb85345e180ff41f7e2`
+Previous failed frozen candidate: `e0c865efd2127ca53d9e25064215e09a4579acd4`
+Repair cycle: `1`
 
-Latest complete implementation/evidence observation before this report: exact SHA `a2196550c07caeac851e7f81d1edb9d4fe31ef60`, Actions `35460829594` — Release build 0 warnings / 0 errors, focused HK05 7/7 GREEN, full regression 106/106 GREEN, canonical receipt `Result: GREEN`.
+Repair implementation + regression observation: exact SHA `06f749b2b8b700803b955dd394a08d7e5d58c3fe`, Actions `35461795461` — Release build 0 warnings / 0 errors, original focused HK05 contract suite 7/7 GREEN, full regression 109/109 GREEN, canonical receipt `Result: GREEN`.
 
-This report is the final branch-content reconciliation. Its resulting exact SHA must receive a fresh canonical observation and exact-SHA freeze validation before handoff; no later Worker branch write is permitted after freeze.
+That observation also exposed an evidence-gate gap: the focused command still named only `Hk05ValidationDiagnosticsTests`, so the three new ambiguous-identity tests were proven only by full regression. The Worker corrected the filter to `FullyQualifiedName~Hk05`, which includes the contract tests, the bounded content-shape probe and the ambiguity regression class. The exact documentation-reconciled SHA resulting from this report must receive a fresh canonical observation under that corrected gate and then a fresh exact-SHA freeze validation before handoff. No previous green is reusable as the frozen-candidate receipt.
 
 ## Contract and predecessor re-check
 
 Re-read `WP-HK-05`, `AGENTS.md`, `WORKER_REVIEW_PROTOCOL.md` v1.6, `FOUNDATIONAL_PROOF_STANDARD.md` v1.3, the direct accepted HK02A contract/evidence, and the inherited HK01/HK02/HK03/HK04 guarantees materially consumed by HK05.
 
-The `PREDECESSOR_CONTRACT_CHECK` in `WORKER_PLAN.md` remains accurate:
+The predecessor split remains unchanged:
 
 - direct predecessor HK02A reviewed SHA `f39a1994524c42213dafb63d440faaf9de7c040f`, independent PASS review `5256593405`, merge `ac7ce1180b462f093cf0ee02bbbd6f853938e27c`;
-- HK05 consumes accepted route composition/discovery, finite canonical state/codec, inspection, and closed transactional commit authority;
-- HK05 newly owns aggregate validator/diagnostic completeness, explicit current/proposed validation and validation-before-commit behavior;
-- no concrete evidence falsified a predecessor guarantee. The CI authority failure instead proved that HK05 initially violated HK04's already accepted boundary, and the repair now reuses that boundary correctly.
+- HK05 consumes accepted route composition/discovery, finite canonical state/codec, inspection, duplicate-ID invalidity and closed transactional commit authority;
+- HK05 owns aggregate validator/diagnostic completeness, actionability, deterministic multi-violation semantics, explicit current/proposed validation and validation-before-commit behavior;
+- the Reviewer FAIL supplied no concrete evidence that HK02/HK04 guarantees were false, so those boundaries were not reopened.
 
-## Complete baseline-to-candidate audit
+## Repair-cycle causal finding
 
-The complete `dbd8121…` → candidate diff was inspected, not only the last repair. Product changes are confined to:
+Reviewer FAIL `5257015987` on `e0c865…` proved one material HK05-owned class: **aggregate validation under ambiguous identity**.
 
-- `Arkus.Game.World`: explicit finite invariant catalog, candidate shape and aggregate invariant evaluation while preserving throw-first compatibility for legacy constructor/API boundaries;
-- `Arkus.Game.Validation`: stable/versioned diagnostic/result model, validator inventory/reconciliation and deterministic aggregate conversion;
-- `Arkus.Game.Authoring`: explicit validation service/contract and reuse of the same candidate validation before plan/dry-run/apply materialization;
-- `Arkus.Harness.Runtime`: two canonical validation routes, bound through the existing HK04 non-committing attenuation facade;
-- tests: independent 17-invariant universe, effective fixtures, required causal mutants, representative Potes probe, and extension of inherited HK03/HK04 conformance universes to the new routes;
-- exact-SHA scripts, lockfile reconciliation and Worker evidence.
+The failure was not the literal `node.a` fixture. Duplicate object identity allowed secondary diagnostics to share identity-based resource/path while differing in remediation context, and containment traversal used a first-wins representative. Reversing duplicate entries could therefore change ordering and, more seriously, diagnostic set/count.
 
-No Unity/engine validation, AI-generated repair prose, gameplay-specific invariant system, journal/replay, arbitrary filesystem mutation, new concurrency model, alternate commit authority or external validation framework was introduced.
+The adopted semantic policy is deterministic deferral:
 
-## Strict falsification performed
+1. detect duplicated object IDs and extension identities before public aggregate diagnostics are materialized;
+2. always emit the duplicate-identity defect itself;
+3. rewrite that defect to an index-addressable source location and preserve `firstIndex` / `duplicateIndex` plus the duplicated semantic identity;
+4. defer secondary diagnostics whose source resource is ambiguous;
+5. while any object identity is ambiguous, defer containment-cycle diagnostics globally because traversal through a duplicated target would otherwise require choosing a representative;
+6. sort remaining diagnostics using remediation context as the final stable comparison field.
 
-### Completeness could self-shrink
+This fixes the semantic class without per-validator provenance/index infrastructure. A client receives a concrete entry to repair, fixes identity, and revalidates to reveal any deferred secondary errors.
 
-Challenge: production catalog and production validator registry could omit the same invariant and still agree.
+## Causal regression and stronger oracle
 
-Result: fixed by a test-owned independent exact 17-ID universe. It must equal both `WorldInvariantCatalog.All` and the validator inventory. Separate effective fixtures require every one of those IDs to occur in real diagnostics. Removing one copied descriptor turns the inventory oracle RED.
+`Hk05AmbiguousIdentityRegressionTests` covers both material variants of the same cause:
 
-### Registration could exist without effective behavior
+- **objects:** two `node.a` entries have different container defects while `node.b -> node.a` makes first-wins containment traversal observably divergent; reversing only the duplicate entries must preserve the complete semantic result;
+- **extensions:** two extensions with the same owner/schema/subject identity have different dangling dependencies; reversing them must likewise preserve the complete semantic result.
 
-Challenge: one descriptor per ID might still point to ineffective validator behavior.
+The equality oracle includes diagnostic count and every emitted semantic field: severity, invariant ID, machine code, resource, path, message and sorted remediation context.
 
-Result: `EveryOwnedInvariantHasAnEffectiveDiagnosticFixture` observes the complete independent ID set from actual invalid candidates, so registration-only false green is rejected.
+The ambiguity oracle is no longer “non-empty means actionable.” A synthetic duplicate diagnostic with non-empty resource/path/context is rejected unless it carries distinct source indices and its resource/path identify the concrete duplicate index. Effective object duplicates additionally carry `duplicateId`; effective extension duplicates carry `duplicateIdentity`.
 
-### Diagnostics could be unstable or not actionable
+## Complete repair diff audit
 
-Challenge: aggregation could reorder with caller input or return ambiguous location/context.
+The exact failed-candidate → repair diff was inspected. Before this report it contains only:
 
-Result: semantically equivalent reversed-input candidates produce identical ordered signatures; an injected reversed signature sequence is detected. All effective diagnostics require resource, `$/...` path, invariant ID, machine code and non-empty remediation context; an injected ambiguous diagnostic is detected.
+- `src/Arkus.Game.Validation/WorldValidation.cs` — ambiguity classification, deterministic deferral, index-addressable duplicate materialization and remediation-context sorting;
+- `tests/Arkus.Harness.Tests/Hk05AmbiguousIdentityRegressionTests.cs` — one causal regression class covering object + extension identity and the strengthened actionability oracle;
+- `scripts/hk05-observe-exact-sha.sh` — one-line focused-filter broadening so every `Hk05*` test participates in the focused gate;
+- `PROOF_MATRIX.md`, `NEGATIVE_CONFORMANCE_MATRIX.md`, `RESIDUAL_RISK.md` and this report — evidence reconciliation.
 
-### Explicit validation could disagree with apply
+No HK02/HK04 implementation, route/commit authority, gameplay schema, Unity path, AI repair generation, journal/replay, external validator framework or generalized provenance/index subsystem was added.
 
-Challenge: `authoring.change.validate` could use a different semantic path or apply could skip validation.
+## Effective-path check
 
-Result: public explicit validation and public apply are independently dispatched for the same invalid request and their ordered diagnostic signatures must match. Synthetic success, missing validation context and a different invalid candidate each turn the comparison oracle RED. Revision/hash stay unchanged.
+Public current/proposed validation and mutation rejection materialize diagnostics through `WorldValidationEngine.ValidateCandidate`, which now owns the ambiguity policy before sorting/serialization. The raw `WorldStateValidator` remains the finite invariant evaluator; its constructor compatibility path is throw-first rather than the public aggregate-diagnostic contract, and duplicate identity is registered before identity-dependent secondary evaluators. No second public aggregate route was found that bypasses `WorldValidationEngine`.
 
-### A new public mutation route could escape validation
-
-Challenge: testing only the named apply handler could miss another accepted canonical mutation definition.
-
-Result: HK05 consumes HK01's accepted composed definition universe and executes the invalid request against every effective definition whose `SideEffect == CanonicalMutation`. No second hand-maintained mutation-route list is introduced.
-
-### Expected invalid input could escape as an exception
-
-Challenge: malformed or invalid authoring requests might throw instead of returning machine-readable results.
-
-Result: malformed public proposed validation is rejected by the canonical schema/parser layers as structured `contract.invalid_request` or `world.change.invalid_request`; invalid complete candidates return aggregate diagnostics / `world.change.invalid_candidate`. An injected throwing callback is detected by the exception oracle.
-
-### Read-only validation handler could accidentally carry commit authority
-
-Challenge: the first implementation stored the authoritative `TransactionalWorldAuthoringSession` directly behind validation handlers.
-
-Result: HK04's accepted `CapabilityRoute` authority guard correctly rejected that candidate in Actions `35460353246`. The repair does not weaken or special-case the inspector; validation now receives the already accepted `WorldMutationPlannerView` attenuation facade, while only canonical apply receives `ICanonicalWorldMutationCommitter`. Regression is GREEN.
-
-### New routes could fall outside predecessor conformance universes
-
-Challenge: adding validation routes changed the effective public surface while inherited HK03/HK04 tests still enumerated the old route set.
-
-Result: full regression caught both omissions. HK04's effective non-mutation vector now executes both validation routes and proves canonical hash/revision unchanged. HK03's world-read discovery universe now includes `world.validation.current`. The predecessor assertions were expanded, not relaxed.
-
-### Representative product shape could expose a missing semantic boundary
-
-Challenge: abstract `node.*` fixtures might hide a granularity/reference problem relevant to the approved game target.
-
-Result: the bounded Potes/Liébana probe models plaza + bar + shop + NPC + typed declared dependencies using only the existing generic model. Current validation succeeds; removing the referenced bar produces object and extension diagnostics; apply fails closed with unchanged state. No gameplay schema or Unity assumption is promoted into H0.
+The existing validate/apply agreement test still proves that explicit proposal validation and canonical apply use the same effective aggregate diagnostics. Existing HK03/HK04 conformance universes remain unchanged by this repair and full regression is GREEN on the repair implementation observation.
 
 ## Findings fixed before CLEAN
 
-1. Test project lockfile did not include the new Authoring → Validation project dependency; locked restore caught it.
-2. Initial focused tests referenced internal/nonexistent schema helpers instead of the public schema surface; tests now use `SemanticFingerprint()` and `RequiredProperties`.
-3. Validation handlers directly carried the authoritative session, violating HK04 commit-authority attenuation; repaired by reusing `WorldMutationPlannerView` without weakening the guard.
-4. The malformed-request test assumed service-layer `world.change.invalid_request` even when HK01 schema validation correctly rejects earlier as `contract.invalid_request`; the assertion now verifies the structured expected-error contract across the accepted layers.
-5. The required v1.3 representative content-shape probe was made executable and documented rather than left implicit.
-6. HK04's exhaustive non-mutation request-vector universe lacked the two new validation routes; both are now included and effectively executed against the live authoritative session.
-7. HK03's exhaustive `world.*` read inventory lacked `world.validation.current`; it now includes the new public read and retains schema/read-only/determinism checks.
+The original pre-review fixed seven findings recorded in the prior report. Repair cycle 1 adds two more:
+
+8. Reviewer-discovered ambiguous-identity aggregation could be order-dependent and non-actionable; repaired at the aggregate semantic boundary with deterministic deferral, index-addressable duplicate diagnostics and object/extension causal regressions.
+9. The canonical focused HK05 observation command still selected only the original contract test class, so the new repair regressions would have relied on the full suite alone; broadened to all `Hk05*` tests.
 
 ## Rejection sites, residual risk and proof budget
 
-The HK05 diff's newly introduced expected public rejection sites are classified in `NEGATIVE_CONFORMANCE_MATRIX.md`; inherited HK01 schema and HK04 mutation errors are consumed rather than copied into a second taxonomy. No known HK05 expected-error path uses an escaping runtime exception as its public contract.
+`NEGATIVE_CONFORMANCE_MATRIX.md` now records the duplicate-object causal mutant, the equivalent duplicate-extension variant and the stronger non-empty-but-ambiguous diagnostic mutant. `RESIDUAL_RISK.md` makes deferred secondary diagnostics an explicit semantic policy rather than hiding them as a risk: repair identity first, then revalidate.
 
-`RESIDUAL_RISK.md` names only out-of-claim risks: direct CLR programmer misuse, semantics hidden in opaque payload bytes, future gameplay/Unity invariants, total-size/performance budgets, future invariant growth and arbitrary trusted-infrastructure failure.
-
-Proof machinery remains proportional: one validation component, two routes, two focused test files and thin evidence, while route/commit completeness continue to come from accepted predecessor mechanisms. The authority defect was repaired by reuse, not another generalized defensive framework.
+Proof machinery remains proportional. The repair adds one small ambiguity classification and one causal regression class; it does not introduce per-validator addressing machinery or a provenance layer. Accepted predecessor completeness/authority mechanisms are consumed, not re-proved.
 
 `PROOF_BUDGET_VERDICT: WITHIN_BUDGET`.
 
 ## Handoff readiness
 
-No known in-claim blocker remains. The exact pre-report candidate `a2196550c07caeac851e7f81d1edb9d4fe31ef60` is canonically GREEN. After this report commit, the resulting SHA must itself become GREEN, then be recorded unchanged as Candidate/Frozen SHA, with PR state `FROZEN_FOR_REVIEW`, `Branch frozen: YES` and the PR marked Ready for a fresh independent Reviewer.
+No known in-claim blocker remains after the repair-cycle challenge. The implementation/regression SHA `06f749b…` is canonically GREEN with full regression 109/109. The resulting exact SHA containing the corrected focused gate plus reconciled evidence must now itself pass canonical observation, then be recorded unchanged as Candidate/Frozen SHA and pass exact-SHA freeze validation before the PR returns to Ready.
 
 This Worker does not issue the independent PASS/FAIL verdict.
