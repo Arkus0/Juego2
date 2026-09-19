@@ -6,6 +6,8 @@ on:
     types: [completed]
   pull_request_review:
     types: [submitted]
+  issue_comment:
+    types: [created]
   pull_request:
     types: [closed]
 
@@ -46,7 +48,7 @@ jobs:
 
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
           sha=$(python - <<'PY'
-          import json, re, sys
+          import json, re
           pr = json.load(open('pr.json', encoding='utf-8'))
           body = pr.get('body') or ''
           head = pr['head']['sha'].lower()
@@ -94,17 +96,22 @@ jobs:
   review-transition:
     name: Process reviewer verdict
     if: >-
-      github.event_name == 'pull_request_review' &&
-      (github.event.review.author_association == 'OWNER' ||
-       github.event.review.author_association == 'MEMBER' ||
-       github.event.review.author_association == 'COLLABORATOR')
+      (github.event_name == 'pull_request_review' &&
+       (github.event.review.author_association == 'OWNER' ||
+        github.event.review.author_association == 'MEMBER' ||
+        github.event.review.author_association == 'COLLABORATOR')) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       (github.event.comment.author_association == 'OWNER' ||
+        github.event.comment.author_association == 'MEMBER' ||
+        github.event.comment.author_association == 'COLLABORATOR'))
     runs-on: ubuntu-24.04
     steps:
       - name: Validate exact verdict and transition
         env:
           GH_TOKEN: ${{ github.token }}
-          PR: ${{ github.event.pull_request.number }}
-          REVIEW_BODY: ${{ github.event.review.body }}
+          PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+          REVIEW_BODY: ${{ github.event.review.body || github.event.comment.body }}
         shell: bash
         run: |
           set -euo pipefail
