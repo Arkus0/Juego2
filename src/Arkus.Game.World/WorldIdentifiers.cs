@@ -141,3 +141,4 @@ namespace Arkus.Game.World
 
         public static bool operator !=(WorldReferenceKind left, WorldReferenceKind right) => !left.Equals(right);
     }
+}
