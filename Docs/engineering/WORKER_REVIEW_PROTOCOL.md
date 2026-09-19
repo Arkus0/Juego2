@@ -1,6 +1,6 @@
 # Worker → Reviewer Protocol
 
-Version: 1.6 — 2026-09-19
+Version: 1.7 — 2026-09-19
 
 ## Purpose
 
@@ -20,9 +20,11 @@ Accepted predecessor guarantees are compositional. A downstream WP is expected t
 
 ## Adoption boundary
 
-Version 1.6 applies to Worker/review cycles that start after the commit containing this version reaches `main`. It does not retroactively bind an already-started cycle and does not bind the `PROCESS_ONLY` PR that adopts it.
+Version 1.7 applies to Worker/review cycles that start after the commit containing this version reaches `main`. It does not retroactively bind an already-started cycle and does not bind the `PROCESS_ONLY` PR that adopts it.
 
-The v1.6 change adds the bounded representative content-shape probe to the pre-review duties for applicable foundational WPs. It retains the v1.5 predecessor-contract reconstruction and v1.4 post-PASS continuity rules, and does not weaken implementation acceptance, proof obligations, Worker/Reviewer independence or FAIL repair rules.
+The v1.7 change adds one documentation-only DocSync step: reconciling the residual ledger. It adds no Worker or Reviewer duty, no acceptance criterion and no proof obligation.
+
+The v1.6 change added the bounded representative content-shape probe to the pre-review duties for applicable foundational WPs. It retains the v1.5 predecessor-contract reconstruction and v1.4 post-PASS continuity rules, and does not weaken implementation acceptance, proof obligations, Worker/Reviewer independence or FAIL repair rules.
 
 ## Predecessor contract inheritance
 
@@ -238,4 +240,6 @@ Repeated attempts to re-prove an accepted predecessor guarantee without concrete
 
 DocSync is the documentation-only completion phase of a successful PASS/finalization flow, not a mandatory separate reasoning session.
 
-After implementation merge, reconcile only affected surfaces: ROADMAP, WP state, architecture/ADR where changed, evidence/final verdict, and compact handoff. Then emit `DOCSYNC_COMPLETE` with the dependency-valid `Next WP`. Only after that marker may the next WP be selected.
+After implementation merge, reconcile only affected surfaces: ROADMAP, WP state, architecture/ADR where changed, evidence/final verdict, `Docs/engineering/RESIDUAL_LEDGER.md`, and compact handoff. Then emit `DOCSYNC_COMPLETE` with the dependency-valid `Next WP`. Only after that marker may the next WP be selected.
+
+Reconciling the residual ledger means appending the residuals this workpack declared and updating any entry it closed, citing the accepted evidence. It is a transcription step: DocSync records residuals, it does not classify contested ones and does not decide whether a residual falls inside the boundary.
