@@ -1,8 +1,9 @@
 # WP-HK-01 Worker plan
 
-Status: ACTIVE  
+Status: READY FOR FREEZE — repair cycle 1
+
 Baseline main: `9db7a1ffffa02c02af7889de29960de1f19d2755`  
-Worker: ChatGPT / GPT-5.6 Sol
+Worker: ChatGPT / GPT-5.6 Sol (initial + fresh repair cycle 1)
 
 ## Goal
 
@@ -21,12 +22,14 @@ The proof universe will not be sourced only from discovery/registration metadata
 - Base H0 exposes only `system.describe` in HK01; later WPs add real world/authoring capabilities through the same boundary.
 - Synthetic scoped providers exercise future engine-scoped contribution without importing an engine type system.
 - Projection/conformance code consumes only the composed canonical inventory; no adapter-owned registry is introduced.
+- Semantic equality is structural. Serialized fingerprints are diagnostic only and use unambiguous framing.
+- Conformance dispatches canonical `system.describe` and checks its emitted portable artifact with an independent expected-data oracle that does not call the production projectors.
 
 ## Proof strategy
 
 1. Positive contract/composition/discovery/runtime tests.
 2. Independent/effective route enumeration versus canonical inventory.
-3. Projection semantic-equivalence checks.
+3. Structural projection semantic-equivalence checks over the artifact actually emitted by `system.describe`, including an independent oracle for projector omissions/remapping.
 4. Required RED→GREEN causal self-attacks for omission, schema, version, unknown route, implementation-detail leakage, transport leakage, projection omission, self-shrinking discovery and scoped-provider rejection classes.
 5. Exact-SHA observation/verification through HK01-specific canonical scripts routed by `scripts/arkus-*.sh`.
 6. Evidence matrix, self-attack record, residual-risk audit and mandatory Worker pre-review before freeze.

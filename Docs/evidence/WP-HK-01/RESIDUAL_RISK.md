@@ -15,6 +15,8 @@ The canonical surface currently contains only the H0 `system.describe` base capa
 - Concrete Unity/editor/runtime types and capabilities are deliberately absent. H1 must instantiate this scoped-provider boundary with portable canonical data and prove its own engine parity.
 - HK01 defines policy/transaction/provenance declarations and ensures they cannot be omitted. Enforcement of later authoring transaction, validation and provenance behavior belongs to the corresponding downstream kernel workpacks.
 - The current compatibility policy is conservative: only limited optional request evolution is considered additive within a higher minor version. Conservative false-breaking classifications are acceptable at this stage; silently accepting semantic breakage is not.
+- Semantic fingerprints are now collision-safe framed diagnostics, but they are deliberately not correctness authorities. Compatibility and schema equality use exact structural comparison, while discovery conformance evaluates emitted portable data against an independent expected-data oracle.
+- The independent projection oracle intentionally duplicates the finite public artifact shape as proof machinery. A future contract-model field addition must update the production projector and the oracle; divergence fails closed as `projection.semantic_mismatch`. This cost is bounded to HK01's explicit generated-artifact equivalence claim.
 
 ## Dependency/IP
 
@@ -22,6 +24,6 @@ HK01 adds no third-party package or shipped dependency. Existing pinned build/te
 
 ## Proof budget
 
-The final proof machinery is bounded to explicit HK01 acceptance, required self-attacks and defect classes discovered during Worker falsification. It does not attempt to prove arbitrary hostile behavior of the trusted .NET/Git/CI substrate.
+The final proof machinery is bounded to explicit HK01 acceptance, required self-attacks and defect classes discovered during Worker/Reviewer falsification. Repair cycle 1 adds structural equality and an independent emitted-artifact oracle specifically because the rejected candidate had a demonstrated false-green path at that boundary. It does not attempt to prove arbitrary hostile behavior of the trusted .NET/Git/CI substrate.
 
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET

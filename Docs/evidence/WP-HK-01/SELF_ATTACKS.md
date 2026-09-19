@@ -1,8 +1,10 @@
 # WP-HK-01 causal self-attacks
 
-Implementation observation: `6cf1e6c5cdd76946f57a92b9d56a6b77267fc1dd`  
-GitHub Actions run: `35432812488`  
-Observed result: 18/18 HK01 negative controls GREEN; 9/9 positive contract tests GREEN; 28/28 total regression GREEN.
+Implementation observation: `38783856d89a9ec7cff376086ae8702b0bb72501`
+
+GitHub Actions run: `35434057309`
+
+Observed result: 22/22 HK01 negative controls GREEN; 9/9 positive contract tests GREEN; 32/32 total regression GREEN.
 
 The attacks below inject invalid contract/runtime variants in-memory against the same production guards used by the canonical composer, projection conformance and dispatcher. RED means the injected defect is rejected/detected for the intended causal reason; the valid baseline remains GREEN in the same canonical run.
 
@@ -26,6 +28,16 @@ The attacks below inject invalid contract/runtime variants in-memory against the
 | permissive `Any` admits CLR/engine object | `AnySchemaCannotAdmitClrOrEngineObjectAtCanonicalBoundary` | `portable.non_json_value`, handler not invoked |
 | mandatory privilege/transaction/provenance policy missing | `MissingMandatoryPolicyMetadataFailsComposition` | `contract.missing_policy` |
 | semantic contract changes without version increment | `SemanticChangeWithoutVersionIncrementIsBreaking` | compatibility classification `Breaking` |
+| delimiter-bearing precondition lists collide in a serialized fingerprint | `DelimiterBearingMetadataCannotCollideInSemanticComparison` | distinct diagnostic fingerprints; structural compatibility `Breaking`; projection `projection.semantic_mismatch` |
+| delimiter-bearing schema enum values collide in a serialized fingerprint | `DelimiterBearingSchemaValuesCannotCollideInSemanticComparison` | distinct diagnostic fingerprints; structural compatibility `Breaking` |
+| emitted discovery artifact changes semantic metadata after projection | `EmittedDiscoveryArtifactCannotAlterSemanticMetadata` | `projection.semantic_mismatch` against the actual portable artifact |
+| optional semantic field disappears from the emitted artifact and its public schema alone would allow omission | `ProjectionOracleDetectsOptionalSemanticFieldOmittedFromArtifact` | independent projection oracle reports `projection.semantic_mismatch` |
+
+## Semantic/projection boundary regression
+
+The rejected candidate used delimiter-joined fingerprints as its correctness oracle and compared canonical definitions with definition objects retained inside `CanonicalContractProjection`. Two different valid metadata or schema lists could therefore collide, and conformance was not bound to the portable data returned by `system.describe`.
+
+Repair cycle 1 removes fingerprints from compatibility and conformance decisions. Exact structural equality now owns model comparison; fingerprints remain diagnostic and use length/cardinality framing. Runtime conformance dispatches `system.describe` and validates that emitted artifact against an independent model-to-data oracle that deliberately does not call the production `ToData()` projectors. The four controls above cover both collision and shared-projector false-green paths.
 
 ## Independent-universe regression
 
