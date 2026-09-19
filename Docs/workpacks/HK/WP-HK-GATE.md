@@ -62,13 +62,13 @@ The gate FAILs if any of these occur:
 - an error requires reading source code to understand the corrective action;
 - hidden Unity/editor/network/model-vendor dependency is required for canonical H0 behaviour;
 - the AI workflow degenerates into pathological one-field-per-request authoring contrary to the accepted interaction budget;
-- proof infrastructure itself is missing/bypassable or can self-shrink its universe;
+- proof infrastructure itself is missing or can omit required obligations from its own universe;
 - an external component silently becomes the semantic source of truth for a canonical guarantee;
 - `UNRESOLVED_PROOF_OBLIGATIONS != 0` or `KNOWN_UNDETECTED_DEFECT_CLASSES != 0`.
 
 ## Evidence
 
-Gate evidence must include exact candidate SHA, clean-checkout commands, canonical discovered capability inventory, transport-conformance results, scenario transcripts, state hashes, semantic diffs, provenance/journal output, interaction metrics, adversarial test summary, dependency/IP inventory for material H0 dependencies, reference-client result and independent AI trial transcript.
+Gate evidence must include exact candidate SHA, clean-checkout commands, canonical discovered capability inventory, transport-conformance results, scenario transcripts, state hashes, semantic diffs, provenance/journal output, interaction metrics, negative-conformance test summary, dependency/IP inventory for material H0 dependencies, reference-client result and independent AI trial transcript.
 
 ## PASS consequence
 
