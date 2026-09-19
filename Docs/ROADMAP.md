@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.9 — 2026-09-19
+Version: 1.10 — 2026-09-19
 
 ## North star
 
@@ -9,6 +9,8 @@ Build an engine-agnostic, commercially viable AI-native game-authoring platform 
 A fresh AI agent, without C# implementation knowledge, must be able to discover available capabilities and safely create, inspect, modify, validate, diff, replay and test a representative world through stable machine-readable contracts.
 
 **No serious game production begins before `WP-HK-GATE` passes.**
+
+Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Robustness work in H0 is repository-local testing of the harness's own code, fixtures and contracts. New work uses the neutral negative-conformance terminology defined in `AGENTS.md`.
 
 ## Product architecture direction
 
@@ -42,9 +44,9 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02` and `WP-HK-03` are COMPLETE. `WP-HK-03` PR `#18` passed independent review on frozen candidate `8c20a380003c082fa9bd472d3233afa9654fb231` and merged as `d8b808450ee7863726d718a25c5756534113fcfd` on 2026-09-19. Arkus now exposes the accepted canonical world state through one complete canonical read surface with schema-described summary/object/reference/extension reads, deterministic pagination/cursors, revision/hash binding, bounded output and a reconstruction oracle proving the current HK02 semantic state is inspectable without a second truth.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03` and `WP-HK-04` are COMPLETE. `WP-HK-04` PR `#19` passed independent review on frozen candidate `849ed68e41d674ab0d50883ccd9af394e9d2e456` and merged as `b1810a5f7c5378ff06272718a11e08720d714a65` on 2026-09-19. Arkus now has one engine-neutral transactional authoring pipeline with deterministic plan/dry-run/apply semantics, atomic whole-state commit, expected revision/hash compare-and-swap, idempotent retry/conflict handling, machine-readable change sets and conditions, and an accepted proof boundary in which canonical commit authority is internal rather than publicly obtainable through the authoring session. The final repair explicitly converged away from wrapper/container enumeration: structural authority inspection is defence in depth only, while current non-mutation public behaviour is effectively checked against canonical revision/hash and the mutation definition/policy/transactional-handler/dispatcher surfaces are mechanically reconciled.
 
-Next dependency-valid workpack after DocSync: `WP-HK-04`.
+Next dependency-valid workpack after DocSync: `WP-HK-05`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -53,13 +55,13 @@ Next dependency-valid workpack after DocSync: `WP-HK-04`.
 | 3 | `WP-HK-01` ✅ COMPLETE | Canonical contract model + machine-readable capability/schema discovery |
 | 4 | `WP-HK-02` ✅ COMPLETE | Canonical world state, stable identity, deterministic serialization + hash |
 | 5 | `WP-HK-03` ✅ COMPLETE | Complete read/inspection/query surface |
-| 6 | `WP-HK-04` | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
+| 6 | `WP-HK-04` ✅ COMPLETE | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
 | 7 | `WP-HK-05` | Validation/invariants and structured repairable diagnostics |
 | 8 | `WP-HK-06` | Provenance, semantic diff, journal, snapshot/export and deterministic replay |
 | 9 | `WP-HK-07` | Production headless host + reference JSONL + standards-compatible MCP projection |
 | 10 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination and round-trip budgets |
-| 11 | `WP-HK-09` | Safety boundary: filesystem/network/process isolation and resource limits |
-| 12 | `WP-HK-10` | Adversarial/property/fuzz/fault-injection quality closure |
+| 11 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
+| 12 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure |
 | 13 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
 
 ### H0 exit criteria
@@ -77,7 +79,7 @@ Next dependency-valid workpack after DocSync: `WP-HK-04`.
 - concurrent/stale edits are detected rather than silently overwriting state;
 - snapshots and journal replay reproduce the same canonical state hash;
 - provenance identifies what changed, why and from which request;
-- malformed/adversarial inputs fail closed;
+- malformed/out-of-contract inputs fail closed;
 - the harness runs headlessly in CI with no hidden editor/manual step;
 - no direct repository/world-state edits are required to complete the benchmark;
 - a measured interaction-budget baseline exists and batching prevents pathological one-command-per-field authoring;
@@ -120,8 +122,9 @@ Detailed H1 WPs remain intentionally **not frozen yet**. They will be authored f
 
 Only after the Unity bridge is proven:
 
-- import/select Quaternius assets under a documented licensing/content pipeline;
-- rebuild the visual target from the visual bible (`Docs/art/VISUAL_BIBLE.md`, owned by `WP-ART-00`);
+- import/select Quaternius assets under a documented licensing/content pipeline (`DEPENDENCY_IP_POLICY.md`);
+- rebuild the visual target from the visual bible (`Docs/art/VISUAL_BIBLE.md`, seeded by `WP-ART-00`);
+- setting anchor: **fictional Potes / Liébana** valley market town (`Docs/art/SETTING.md`); optional later river + small inland landing;
 - camera, movement, interaction shell and one representative street/plaza;
 - no system is accepted unless it is inspectable/modifiable/testable through the harness.
 
@@ -143,8 +146,16 @@ It exists because H2 consumes a visual bible that has to be written before H2 st
 
 | Order | Workpack | Outcome |
 |---|---|---|
-| 1 | `WP-ART-00` | Minimal visual bible + Quaternius→Cantabria adaptation rules (`Docs/art/VISUAL_BIBLE.md`) |
-| 2+ | not yet authored | Later ART workpacks are written from the accepted bible and the then-current H1/H2 contracts rather than guessed in advance |
+| 1 | `WP-ART-00` ✅ SEED MERGED | Minimal visual bible + Quaternius→Liébana adaptation rules; setting lock; refs index; animation policy; triage dry-run |
+| 2+ | not yet authored | Later ART workpacks only if the bible needs a formal freeze or content pipeline WP before H2 |
+
+**Deliverables on main after this merge:**
+
+- `Docs/art/VISUAL_BIBLE.md`
+- `Docs/art/SETTING.md` (Potes/Liébana lock; river+small port as future expansion)
+- `Docs/art/Refs/**` (SOURCES index + folder SOURCES)
+- `Docs/workpacks/ART/WP-ART-00.md`
+- `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`
 
 Art *direction* is permitted now. Art *content* — importing packs, building scenes, any engine work — remains blocked by the H0 gate and the Unity parity gate.
 
@@ -154,7 +165,7 @@ Art *direction* is permitted now. Art *content* — importing packs, building sc
 
 1. Two Reviewer FAILs that expose the same foundational class trigger architecture re-audit, not another local patch.
 2. A finding that the proof universe can self-shrink — for example by omitting projects, sources, commands, validators or adapters from the inventory that claims completeness — triggers immediate proof-boundary re-audit.
-3. If a proof starts growing by enumerating endless syntax-specific bypasses, prefer an independent/evaluated oracle or simplify the boundary.
+3. If a proof starts growing by enumerating endless syntax-specific alternate paths, prefer an independent/evaluated oracle or simplify the boundary.
 4. No downstream WP patches around a false predecessor claim.
 5. No feature pressure may waive the harness gate.
 6. No external framework is adopted merely to save time if doing so reduces Arkus scope, engine neutrality, transport neutrality, replaceability or commercial viability.
