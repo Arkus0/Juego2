@@ -36,22 +36,26 @@ namespace Arkus.Harness.Runtime
     /// <summary>
     /// Capability attenuation boundary: exposes only non-committing authoring operations and
     /// deliberately does not expose or implement canonical commit authority even when the wrapped
-    /// service does. HK05 reuses the same accepted attenuation boundary for explicit validation.
+    /// service does. HK05/HK06A/HK06B reuse the same accepted attenuation boundary for validation,
+    /// provenance reads, semantic diff and snapshot export.
     /// </summary>
     internal sealed class WorldMutationPlannerView :
         IWorldMutationService,
         IWorldValidationService,
-        IWorldProvenanceService
+        IWorldProvenanceService,
+        IWorldPortabilityService
     {
         private readonly IWorldMutationService _service;
         private readonly IWorldValidationService _validation;
         private readonly IWorldProvenanceService _provenance;
+        private readonly IWorldPortabilityService _portability;
 
         public WorldMutationPlannerView(IWorldMutationService service)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _validation = service as IWorldValidationService ?? new UnavailableWorldValidationService();
             _provenance = service as IWorldProvenanceService ?? new UnavailableWorldProvenanceService();
+            _portability = service as IWorldPortabilityService ?? new UnavailableWorldPortabilityService();
         }
 
         public CapabilityInvocationResult Plan(IReadOnlyDictionary<string, object?> request)
@@ -77,6 +81,16 @@ namespace Arkus.Harness.Runtime
         public CapabilityInvocationResult ReadJournal(IReadOnlyDictionary<string, object?> request)
         {
             return _provenance.ReadJournal(request);
+        }
+
+        public CapabilityInvocationResult CompareSnapshots(IReadOnlyDictionary<string, object?> request)
+        {
+            return _portability.CompareSnapshots(request);
+        }
+
+        public CapabilityInvocationResult ExportSnapshot(IReadOnlyDictionary<string, object?> request)
+        {
+            return _portability.ExportSnapshot(request);
         }
     }
 
