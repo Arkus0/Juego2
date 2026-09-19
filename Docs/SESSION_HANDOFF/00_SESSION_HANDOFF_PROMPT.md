@@ -22,21 +22,22 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05` and `WP-HK-06A` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A` and `WP-HK-06B` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-06A — Provenance journal + authored/live boundary`.
+Latest accepted workpack: `WP-HK-06B — Semantic diff + canonical snapshot portability`.
 
-- implementation PR: `#32`;
-- baseline SHA: `bc6241d2db2b6e15f1a9ac78c673f7ef0735ffff`;
-- reviewed frozen candidate: `4ed9a925791ae14b0b5c0d92625161504021542e`;
-- independent Reviewer: `PASS` (PR review `#5257682288`);
-- exact-SHA candidate observation: GREEN, Actions `35469103222`;
-- exact-SHA freeze validation: GREEN, Actions `35469154331`;
-- merge SHA: `8089a52e8a7bbdde46e97705df6906c0d38d593a`;
-- accepted semantic addition: versioned/discoverable authored mutation journal; deterministic entry identity and ordering; complete normalized accepted mutation envelope bound to parsed request fingerprint/base anchor; truthful before/result anchors and affected resources; atomic publication of canonical state + idempotency receipts + journal under the accepted commit lock; explicit runtime-observation stamp and authored/live authority boundary;
-- accepted scope limits: no semantic diff, snapshot export/import, replay execution/compatibility, Unity serialization, gameplay scheduler/AI or deterministic simulation.
+- implementation PR: `#35`;
+- baseline SHA: `5281160ce4eff601ab52dfb568fd4e4976560383`;
+- reviewed frozen candidate: `2b05e982c96e7ece08cca999075c183e75eee2fd`;
+- independent Reviewer: `PASS` (PR review `#5258130916`);
+- exact-SHA validation: GREEN, Actions `35473614054`, artifact `10594111979`;
+- merge SHA: `28e2d0aadf63fe322eac636955e9223dc9249328`;
+- accepted semantic addition: deterministic field/resource semantic diff over the accepted authored `WorldState`; versioned canonical snapshot artifact; fail-closed snapshot import; explicit authored/live exclusion; keyed import idempotency; and snapshot import as a distinct `CanonicalRebase` that atomically establishes the imported state as a new local lineage root with truthful rebase evidence and an empty HK06A mutation journal;
+- accepted scope limits: no journal replay, deterministic gameplay simulation, Unity serialization, cloud/file/network persistence semantics or transport-specific framing.
 
-HK06A had one historical Reviewer FAIL on frozen candidate `046134fd3acd9641798dbad180406688fb5d31aa`: the journal could theoretically serialize a schema-valid but semantically false replay envelope while state/fingerprint anchors stayed green. The accepted repair addressed the causal provenance boundary rather than special-casing `typeId`: the complete machine-readable request is independently re-fingerprinted across all four current operation kinds and entry identity is revalidated before publication, with a separate test-owned accepted-request oracle. Preserve that accepted truthfulness guarantee for downstream HK06B/HK06C rather than redundantly re-proving it without contradictory evidence.
+HK06B had one historical Reviewer FAIL on frozen candidate `bebc1b6165f7228f33dc593534052cd80eb6e041`: snapshot import was publicly classified as `CanonicalMutation + CanonicalTransaction + Provenance Required` while execution used a separate whole-session replacement authority and deliberately left the HK06A journal empty. The accepted repair closes that causal classification/authority/history seam by introducing explicit `CanonicalRebase` semantics and required machine-readable rebase evidence rather than weakening HK04 mutation conformance or fabricating HK06A provenance.
+
+The accepted HK06A guarantee remains unchanged: ordinary canonical mutations still publish truthful journal entries at the accepted commit boundary. HK06B adds a distinct whole-root rebase class; it does not reinterpret mutation provenance. Preserve this split in HK06C.
 
 ## Current next product target
 
@@ -44,19 +45,19 @@ The original HK06 and HK07 monoliths were split **before implementation** to red
 
 Execution chain:
 
-`HK06A ✅ → HK06B → HK06C → HK07A → HK07B → HK08 → HK09 → HK10 → HK-GATE`
+`HK06A ✅ → HK06B ✅ → HK06C → HK07A → HK07B → HK08 → HK09 → HK10 → HK-GATE`
 
-The next dependency-valid workpack is `WP-HK-06B — Semantic diff + canonical snapshot portability`.
+The next dependency-valid workpack is `WP-HK-06C — Deterministic journal replay + end-to-end audit consistency`.
 
-HK06B consumes the accepted HK06A journal truthfulness and authored/live authority boundary. It owns deterministic semantic diff plus the canonical snapshot format/schema and import/export semantics. Snapshot round-trip must reconstruct identical canonical authored state/hash; invalid or unsupported snapshots must not partially replace state; transient runtime observations must not leak into snapshots; import must explicitly define lineage/history behavior and must not fabricate mutation provenance. Read `Docs/workpacks/HK/WP-HK-06B.md` plus accepted HK06A evidence before implementation.
+HK06C consumes both accepted artifacts rather than redefining them: HK06A owns the truthful normalized mutation-journal envelope; HK06B owns snapshot/diff semantics and the explicit canonical-rebase root. HK06C must reconstruct the final authored state/hash from an accepted base/snapshot plus journal evidence, fail closed on reordered/missing/tampered/incompatible evidence, preserve canonical validation/transaction semantics, and prove an empty HK06B semantic diff between original and replayed final states. Read `Docs/workpacks/HK/WP-HK-06C.md` plus accepted HK06A/HK06B evidence before implementation.
 
-After 06B PASS+merge+DocSync: 06C consumes both accepted artifact contracts to own deterministic journal replay + end-to-end audit consistency. After 06C, 07A establishes the real headless process and deterministic JSONL/reference transport; only then does 07B add MCP and prove cross-transport semantic equivalence. HK08, HK09, HK10 and HK-GATE remain unsplit.
+After 06C PASS+merge+DocSync: 07A establishes the real headless process and deterministic JSONL/reference transport; only then does 07B add MCP and prove cross-transport semantic equivalence. HK08, HK09, HK10 and HK-GATE remain unsplit.
 
 ## Operating model
 
 Automation V2 provides mechanical candidate validation, exact-SHA state transitions and optional low-noise Telegram notifications. It does not replace independent Reviewer judgment.
 
-`WORKER_REVIEW_PROTOCOL.md` v1.6 retains mandatory predecessor-contract reconstruction and adds a bounded representative content-shape probe for applicable foundational WPs. Worker records `Predecessor contract check` before implementation. Reviewer independently reconstructs the same inherited/current ownership split and may not issue FAIL for an accepted predecessor guarantee merely because the current WP does not redundantly re-prove it; concrete evidence of inapplicability/falsehood is required.
+`WORKER_REVIEW_PROTOCOL.md` v1.7 retains mandatory predecessor-contract reconstruction, bounded representative content-shape probes for applicable foundational WPs and same-session post-PASS finalization/DocSync. Worker records `Predecessor contract check` before implementation. Reviewer independently reconstructs the same inherited/current ownership split and may not issue FAIL for an accepted predecessor guarantee merely because the current WP does not redundantly re-prove it; concrete evidence of inapplicability/falsehood is required.
 
 Use the exact handoff enum values defined by the protocol (`FROZEN_FOR_REVIEW`, `IN_REVIEW`, etc.); alternate aliases can be rejected by Automation V2 even when the candidate itself is valid.
 
@@ -68,7 +69,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B → HK-06C → HK-07A → HK-07B → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C → HK-07A → HK-07B → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
