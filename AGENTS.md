@@ -8,6 +8,20 @@ The harness exists to let an AI agent create, inspect, modify, validate, replay,
 
 Arkus Harness is also being designed as a commercially viable, engine-agnostic AI-native game-authoring platform. Juego2 is its proving ground, not a reason to narrow the platform to one game, one engine, one model vendor, or one transport.
 
+## Project domain and testing terminology
+
+Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Repository work is limited to the game-authoring harness, its own source code, fixtures, tests, CI and documentation. Do not infer or introduce work against external systems, networks, accounts, services or third-party infrastructure.
+
+All robustness work in this repository means ordinary software-quality verification of repository-owned code. Use clear software-testing language in new prompts, evidence and documentation:
+
+- `negative conformance test` or `defect-injection test` instead of `self-attack`;
+- `negative test fixture` instead of `attack fixture`;
+- `undeclared/alternate code path` instead of `bypass` when describing an internal contract path;
+- `strict pre-review` / `independent strict review` instead of `adversarial pre-review/reviewer`;
+- `reproduction case` instead of `exploit` when the intent is only to reproduce a software defect.
+
+Legacy names may still exist in historical evidence, old commits or frozen candidates. Interpret them according to the software-testing meanings above; do not expand their meaning beyond repository-owned conformance testing. Terminology cleanup must never weaken the underlying proof obligation.
+
 ## Operating model
 
 Juego2 uses **Automation V2** for mechanical GitHub Actions validation and state transitions, but has no automation bootstrap, role leases, dependency-routing daemon or automatic AI-session spawning.
@@ -35,7 +49,7 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 ## Product rules
 
 - One active Worker per WP candidate and one canonical implementation PR.
-- Foundational work is not done because one execution is green; completeness, self-attacks and residual-risk evidence are required within the accepted trust boundary.
+- Foundational work is not done because one execution is green; completeness, causal negative-conformance tests and residual-risk evidence are required within the accepted trust boundary.
 - Validation is exact-SHA and executor-neutral. Automation V2 normally supplies hosted execution; Worker, independent Reviewer or capable local environments remain valid fallbacks.
 - GitHub Actions workflow YAML is orchestration only. Canonical scripts/contracts own validation semantics.
 - Standard GitHub-hosted runners are allowed. Do not introduce larger/paid runners or paid CI as a normal dependency without explicit human approval.
@@ -75,11 +89,11 @@ This rule does not make predecessor prose unquestionable. Concrete contradictory
 - GitHub is the persistent repository, PR and evidence truth; sessions are disposable.
 - Draft + ACTIVE: Worker may write; Automation V2 runs candidate observation on relevant updates.
 - Before implementation, Worker completes and records the mandatory predecessor contract check.
-- Before freeze, Worker performs the required adversarial pre-review and repairs any in-claim blocker while still Draft + ACTIVE.
+- Before freeze, Worker performs the required strict pre-review and repairs any in-claim blocker while still Draft + ACTIVE.
 - `WORKER_PRE_REVIEW: CLEAN` is readiness evidence, never independent PASS.
 - Worker stops all writers, binds exact HEAD as `Frozen candidate SHA`, records `Candidate HEAD SHA`, sets `FROZEN_FOR_REVIEW`/`Branch frozen: YES`, and marks the PR Ready.
 - Automation V2 runs frozen exact-SHA verification. Only after it is green and metadata agrees does it persist `REVIEW_READY`.
-- The human then starts a fresh independent Reviewer. The Reviewer reconstructs state and tries to falsify the frozen candidate; it never repairs implementation.
+- The human then starts a fresh independent Reviewer. The Reviewer reconstructs state and independently challenges the frozen candidate against its acceptance claims; it never repairs implementation.
 - PASS/FAIL binds the exact Frozen candidate SHA.
 - FAIL produces `REPAIR_REQUIRED`; a fresh repair Worker is started on the same WP.
 - PASS fixes the independent verdict. Automation V2 may merge the exact SHA automatically after green preflight.
