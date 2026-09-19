@@ -133,7 +133,6 @@ namespace Arkus.Game.Validation
 
             public HashSet<string> ObjectResources { get; }
             public HashSet<string> ExtensionResources { get; }
-            public bool HasAmbiguousObjectIdentity => ObjectResources.Count != 0;
         }
 
         private static readonly IReadOnlyList<WorldValidatorDescriptor> Descriptors = BuildInventory();
@@ -157,7 +156,7 @@ namespace Arkus.Game.Validation
             for (var index = 0; index < violations.Count; index++)
             {
                 var violation = violations[index];
-                if (ShouldDeferForAmbiguousIdentity(violation, ambiguity)) continue;
+                if (ShouldDeferForAmbiguousIdentity(candidate, violation, ambiguity)) continue;
                 diagnostics.Add(ToDiagnostic(violation));
             }
 
@@ -244,13 +243,13 @@ namespace Arkus.Game.Validation
         }
 
         /// <summary>
-        /// HK05 ambiguity policy: duplicate identity is reported first at an index-addressable
-        /// source location. Secondary diagnostics whose source location is itself ambiguous are
-        /// deferred until identity is repaired. Containment-cycle diagnostics are also deferred
-        /// whenever the object namespace is ambiguous because graph traversal otherwise depends on
-        /// choosing one of several objects for the same ID.
+        /// HK05 ambiguity policy: duplicate identity is reported at an index-addressable source
+        /// location. Secondary diagnostics are deferred only when their own source or the specific
+        /// graph traversal that produced them needs an ambiguous identity representative. Unrelated
+        /// components remain independently reportable in the same aggregate validation pass.
         /// </summary>
         private static bool ShouldDeferForAmbiguousIdentity(
+            WorldStateCandidate candidate,
             WorldStateViolation violation,
             IdentityAmbiguity ambiguity)
         {
@@ -263,8 +262,53 @@ namespace Arkus.Game.Validation
             if (ambiguity.ObjectResources.Contains(violation.Resource)) return true;
             if (ambiguity.ExtensionResources.Contains(violation.Resource)) return true;
 
-            return ambiguity.HasAmbiguousObjectIdentity &&
-                ReferenceEquals(violation.Invariant, WorldInvariantCatalog.ContainmentAcyclic);
+            return ReferenceEquals(violation.Invariant, WorldInvariantCatalog.ContainmentAcyclic) &&
+                ContainmentTraversalUsesAmbiguousIdentity(candidate, violation, ambiguity);
+        }
+
+        private static bool ContainmentTraversalUsesAmbiguousIdentity(
+            WorldStateCandidate candidate,
+            WorldStateViolation violation,
+            IdentityAmbiguity ambiguity)
+        {
+            WorldObject? current = null;
+            for (var index = 0; index < candidate.Objects.Count; index++)
+            {
+                var candidateObject = candidate.Objects[index];
+                if (candidateObject == null) continue;
+                if (!string.Equals(
+                    "world.object:" + candidateObject.Id.Value,
+                    violation.Resource,
+                    StringComparison.Ordinal)) continue;
+
+                current = candidateObject;
+                break;
+            }
+
+            if (current == null) return false;
+
+            var seen = new HashSet<WorldObjectId> { current.Id };
+            while (current.ContainerId.HasValue)
+            {
+                var parentId = current.ContainerId.Value;
+                var parentResource = "world.object:" + parentId.Value;
+                if (ambiguity.ObjectResources.Contains(parentResource)) return true;
+
+                WorldObject? parent = null;
+                for (var index = 0; index < candidate.Objects.Count; index++)
+                {
+                    var candidateObject = candidate.Objects[index];
+                    if (candidateObject == null || candidateObject.Id != parentId) continue;
+                    parent = candidateObject;
+                    break;
+                }
+
+                if (parent == null) return false;
+                if (!seen.Add(parentId)) return false;
+                current = parent;
+            }
+
+            return false;
         }
 
         private static IdentityAmbiguity FindIdentityAmbiguity(WorldStateCandidate candidate)
