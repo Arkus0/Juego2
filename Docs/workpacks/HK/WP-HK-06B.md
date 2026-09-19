@@ -1,9 +1,21 @@
 # WP-HK-06B — Semantic diff + canonical snapshot portability
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: `WP-HK-06A`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+## Completion metadata
+
+- implementation PR: `#35`;
+- baseline SHA: `5281160ce4eff601ab52dfb568fd4e4976560383`;
+- reviewed frozen candidate: `2b05e982c96e7ece08cca999075c183e75eee2fd`;
+- independent Reviewer verdict: `PASS` (review `#5258130916`);
+- exact-SHA validation: GREEN, Actions `35473614054`, artifact `10594111979`;
+- implementation merge SHA: `28e2d0aadf63fe322eac636955e9223dc9249328`;
+- historical failed candidate: `bebc1b6165f7228f33dc593534052cd80eb6e041` (review `#5258024978`), repaired causally at the classification ↔ authority ↔ history/evidence seam.
+
+Accepted semantics: semantic authored-state diff over the complete current `WorldState` resource model; versioned canonical snapshot export/import; fail-closed snapshot validation before replacement; explicit authored/live exclusion; and snapshot import as a distinct `CanonicalRebase` that starts a new local lineage, emits truthful rebase evidence and does not fabricate HK06A mutation history.
 
 ## Objective
 
