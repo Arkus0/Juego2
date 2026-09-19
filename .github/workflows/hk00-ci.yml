@@ -1,11 +1,60 @@
-name: DISABLED - HK00 hosted CI (use exact-SHA execution receipt)
+name: HK00 Remote Validation
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - validation/hk00-observe
+      - validation/hk00-verify
+
+permissions:
+  contents: read
 
 jobs:
-  disabled:
-    if: ${{ false }}
+  validate:
     runs-on: ubuntu-24.04
+    timeout-minutes: 120
     steps:
-      - run: echo "Disabled. Run scripts/hk00-verify-exact-sha.sh on a compliant Worker/Reviewer/local execution substrate."
+      - name: Checkout exact validation SHA
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Install pinned .NET SDK
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: 8.0.425
+
+      - name: Verify exact candidate and toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(dotnet --version)" = "8.0.425"
+          dotnet --list-runtimes | grep -F 'Microsoft.NETCore.App 8.0.31 '
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Observe candidate
+        if: github.ref_name == 'validation/hk00-observe'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARKUS_EXECUTION_SUBSTRATE=github-hosted-linux-x64 \
+            bash scripts/hk00-observe-exact-sha.sh "${GITHUB_SHA}" | tee artifacts/observed/EXECUTION_RECEIPT.txt
+
+      - name: Verify evidence-bearing candidate
+        if: github.ref_name == 'validation/hk00-verify'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARKUS_EXECUTOR_ROLE=WORKER \
+          ARKUS_EXECUTION_SUBSTRATE=github-hosted-linux-x64 \
+            bash scripts/hk00-verify-exact-sha.sh "${GITHUB_SHA}" | tee artifacts/observed/EXECUTION_RECEIPT.txt
+
+      - name: Upload observed evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hk00-observed-${{ github.sha }}-${{ github.ref_name }}
+          path: artifacts/observed
+          if-no-files-found: warn
+          retention-days: 7
