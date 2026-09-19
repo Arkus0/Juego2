@@ -1,7 +1,7 @@
 # Arkus Product Architecture
 
-Version: 1.0 — 2026-09-18
-Status: proposed by `WP-HK-00A`; becomes binding only after that WP is independently accepted.
+Version: 1.1 — 2026-09-19
+Status: candidate contract for `WP-HK-00A`; becomes binding only after that WP is independently accepted.
 
 ## Product position
 
@@ -44,7 +44,17 @@ The canonical Arkus Contract owns:
 - policy/privilege metadata;
 - cost/weight metadata when measured and useful.
 
-Transport adapters project this contract. They may add framing/transport metadata, but may not invent a second semantic command model.
+Canonical world/game state, transaction semantics, invariant identity, provenance/replay meaning and persisted canonical formats are also Arkus-owned semantic authorities. No transport, engine adapter, SDK or third-party framework may become the only definition of any of those semantics.
+
+Transport adapters project the canonical contract. They may add framing or transport metadata, but may not invent a second semantic command model.
+
+## Mutation authority
+
+Transport and engine adapters may not mutate canonical state directly. Every canonical mutation must enter through the accepted Arkus authoring transaction pipeline and its validation/concurrency/provenance rules before downstream realization occurs.
+
+An adapter may reject, translate, observe or realize accepted canonical intent. It may not create a hidden side door whose state changes bypass canonical plan/apply, validation, journal or replay semantics.
+
+If an engine realization fails after a canonical decision, the failure must be represented explicitly at the adapter/projection boundary; the adapter must not silently rewrite canonical meaning to match engine state.
 
 ## Transport rule
 
@@ -92,17 +102,35 @@ Borrow patterns or selected permissively licensed components when useful, with e
 
 Reject or isolate components that impose product-level scope ceilings, engine lock-in, transport lock-in, model-vendor lock-in, avoidable copyleft propagation, opaque hosted dependency, or semantic authority outside Arkus.
 
+Wholesale adoption of an engine harness is specifically rejected when required Arkus semantics are absent. Shorter implementation is not sufficient justification for inheriting a narrower state model, transaction model, discovery model, replay model or engine boundary.
+
 ## One-source contract rule
 
 Request/result/error schemas, discovery metadata, generated SDK types, Creator-form metadata and transport projections must derive from one canonical contract source or from mechanically proven equivalent generated artifacts.
 
-Hand-maintained parallel schemas are forbidden as a normal architecture.
+Hand-maintained parallel schemas are forbidden as a normal architecture. Adapter-only framing metadata may be authored separately only when it cannot change canonical semantic meaning and conformance proves that relationship.
+
+A projection cannot decide which canonical capabilities exist. Canonical capability inventory is upstream; projection completeness is checked against it.
 
 ## Superset rule
 
 External harnesses are capability benchmarks, not architectural masters. Arkus may reuse their strong generic ideas, but a dependency or adapter is not accepted if the result becomes narrower than the strongest relevant practical capabilities without a deliberate reviewed tradeoff.
 
 The external benchmark snapshot lives in `EXTERNAL_HARNESS_ADOPTION_AUDIT.md` and must be refreshed before H1/Unity bridge planning.
+
+## H0 dependency route
+
+The product boundary is intentionally frozen before protocol/runtime expansion:
+
+- `WP-HK-00` owns the portable module/build boundary only.
+- `WP-HK-00A` owns this product/adoption boundary.
+- `WP-HK-01` must define the canonical contract and independently/effectively prove the complete canonical capability/schema surface; it may not make MCP, JSONL or any discovery registry the source of semantic truth.
+- `WP-HK-02` through `WP-HK-06` build state, inspection, transaction, validation and provenance/replay semantics below transports and engines.
+- `WP-HK-07` projects the already-accepted canonical contract through the deterministic reference transport and MCP, and proves adapter completeness/equivalence against the canonical inventory.
+- `WP-HK-GATE` must prove the full H0 product boundary before any engine bridge can unblock.
+- H1 defines engine bridge abstractions and Unity as the first implementation only after H0 acceptance.
+
+No downstream WP may patch around a transport- or engine-owned semantic shortcut that contradicts this route; the predecessor contract must be corrected and independently reviewed instead.
 
 ## Commercial portability
 
