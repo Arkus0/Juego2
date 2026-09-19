@@ -88,10 +88,9 @@ namespace Arkus.Harness.Tests
         public void UnknownExtraRouteIsFoundByIndependentUniverse()
         {
             var contract = BaseContract.Compose();
-            var universe = RouteUniverse.Enumerate(
-                typeof(OrphanHandler).Assembly,
-                new[] { "fixture.orphan" });
+            var universe = RouteUniverse.Enumerate(typeof(OrphanHandler).Assembly);
 
+            Assert.Contains(universe.Routes, route => route.ProviderId == "fixture.orphan");
             var report = CanonicalContractConformance.Evaluate(contract, universe);
 
             Assert.False(report.IsConformant);
@@ -187,9 +186,7 @@ namespace Arkus.Harness.Tests
             var composition = ContractComposer.Compose(emptyBase);
             Assert.True(composition.Success);
 
-            var universe = RouteUniverse.Enumerate(
-                typeof(SystemDescribeHandler).Assembly,
-                new[] { "arkus.base" });
+            var universe = RouteUniverse.Enumerate(typeof(SystemDescribeHandler).Assembly);
             var report = CanonicalContractConformance.Evaluate(composition.Contract!, universe);
 
             Assert.False(report.IsConformant);
@@ -200,10 +197,9 @@ namespace Arkus.Harness.Tests
         public void SyntheticScopedPublicRouteWithoutCanonicalCompositionIsRejectedByConformance()
         {
             var contract = BaseContract.Compose();
-            var universe = RouteUniverse.Enumerate(
-                typeof(FixtureEngineHandler).Assembly,
-                new[] { "fixture.engine" });
+            var universe = RouteUniverse.Enumerate(typeof(FixtureEngineHandler).Assembly);
 
+            Assert.Contains(universe.Routes, route => route.ProviderId == "fixture.engine");
             var report = CanonicalContractConformance.Evaluate(contract, universe);
 
             Assert.False(report.IsConformant);
