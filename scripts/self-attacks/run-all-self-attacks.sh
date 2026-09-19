@@ -59,6 +59,18 @@ run_shard() {
     core)
       bash "${ROOT}/scripts/self-attacks/run-self-attacks.sh"
       ;;
+    core-fast)
+      bash "${ROOT}/scripts/self-attacks/run-core-shard.sh" fast
+      ;;
+    core-effective-a)
+      bash "${ROOT}/scripts/self-attacks/run-core-shard.sh" effective-a
+      ;;
+    core-effective-b)
+      bash "${ROOT}/scripts/self-attacks/run-core-shard.sh" effective-b
+      ;;
+    core-effective-c)
+      bash "${ROOT}/scripts/self-attacks/run-core-shard.sh" effective-c
+      ;;
     closure)
       run_family "${ROOT}/scripts/self-attacks/run-closure-attacks.sh"
       ;;
