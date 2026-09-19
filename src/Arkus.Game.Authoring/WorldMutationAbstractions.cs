@@ -21,11 +21,46 @@ namespace Arkus.Game.Authoring
 
     /// <summary>
     /// Canonical write capability. It is intentionally internal to the authoring/runtime
-    /// boundary so public/scoped handlers cannot obtain commit authority through the public API.
+    /// boundary so ordinary public/scoped handlers cannot receive it through the public API.
     /// </summary>
     internal interface ICanonicalWorldMutationCommitter
     {
         CapabilityInvocationResult Apply(IReadOnlyDictionary<string, object?> request);
+    }
+
+    /// <summary>
+    /// Authoring-owned authority binder. Runtime gets a narrow commit capability rather than
+    /// the public planning service. TransactionalWorldAuthoringSession remains the implementation
+    /// of HK04 semantics, but its public Apply method is treated as write authority by the
+    /// independent runtime conformance oracle until the API can be narrowed without a source break.
+    /// </summary>
+    internal static class CanonicalWorldMutationAuthority
+    {
+        public static ICanonicalWorldMutationCommitter Bind(IWorldMutationService service)
+        {
+            if (service == null) throw new ArgumentNullException(nameof(service));
+            if (service is ICanonicalWorldMutationCommitter committer) return committer;
+            if (service is TransactionalWorldAuthoringSession session) return new SessionCommitter(session);
+
+            throw new ArgumentException(
+                "Canonical mutation bindings require an Authoring-owned commit authority.",
+                nameof(service));
+        }
+
+        private sealed class SessionCommitter : ICanonicalWorldMutationCommitter
+        {
+            private readonly TransactionalWorldAuthoringSession _session;
+
+            public SessionCommitter(TransactionalWorldAuthoringSession session)
+            {
+                _session = session ?? throw new ArgumentNullException(nameof(session));
+            }
+
+            public CapabilityInvocationResult Apply(IReadOnlyDictionary<string, object?> request)
+            {
+                return _session.Apply(request);
+            }
+        }
     }
 
     public sealed class UnavailableWorldMutationService : IWorldMutationService, ICanonicalWorldMutationCommitter
