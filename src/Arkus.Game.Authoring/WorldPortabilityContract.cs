@@ -16,6 +16,7 @@ namespace Arkus.Game.Authoring
         public const string SnapshotSchemaId = "arkus.authoring.snapshot@1";
         public const string DiffSchemaId = "arkus.authoring.semantic-diff@1";
         public const string ImportResultSchemaId = "arkus.authoring.snapshot-import-result@1";
+        public const string RebaseEvidenceSchemaId = "arkus.authoring.snapshot-rebase-evidence@1";
         public const string StateFormat = "arkus.world-state.canonical";
         public const int SnapshotVersion = 1;
 
@@ -76,12 +77,13 @@ namespace Arkus.Game.Authoring
                     ["lineageDisposition"] = SchemaNode.String(new[] { "new-local-lineage" }),
                     ["retainedJournalEntries"] = SchemaNode.Integer(),
                     ["importedJournalEntries"] = SchemaNode.Integer(),
+                    ["rebaseEvidence"] = RebaseEvidenceNode(),
                     ["replayed"] = SchemaNode.Boolean()
                 },
                 new[]
                 {
                     "schemaId", "previous", "current", "lineageDisposition",
-                    "retainedJournalEntries", "importedJournalEntries", "replayed"
+                    "retainedJournalEntries", "importedJournalEntries", "rebaseEvidence", "replayed"
                 }));
         }
 
@@ -103,6 +105,29 @@ namespace Arkus.Game.Authoring
                 {
                     "schemaId", "snapshotVersion", "stateFormat", "stateFormatVersion", "anchor",
                     "authoredStateBase64", "provenanceIncluded", "runtimeObservationsIncluded"
+                });
+        }
+
+        private static SchemaNode RebaseEvidenceNode()
+        {
+            return SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["schemaId"] = SchemaNode.String(new[] { RebaseEvidenceSchemaId }),
+                    ["idempotencyKey"] = SchemaNode.String(),
+                    ["requestFingerprint"] = SchemaNode.String(),
+                    ["snapshotSchemaId"] = SchemaNode.String(new[] { SnapshotSchemaId }),
+                    ["snapshotVersion"] = SchemaNode.Integer(),
+                    ["snapshotAnchor"] = WorldProvenanceContract.AuthoredAnchorSchema(),
+                    ["previous"] = WorldProvenanceContract.AuthoredAnchorSchema(),
+                    ["current"] = WorldProvenanceContract.AuthoredAnchorSchema(),
+                    ["lineageDisposition"] = SchemaNode.String(new[] { "new-local-lineage" }),
+                    ["mutationJournalDisposition"] = SchemaNode.String(new[] { "new-local-lineage-empty" })
+                },
+                new[]
+                {
+                    "schemaId", "idempotencyKey", "requestFingerprint", "snapshotSchemaId", "snapshotVersion",
+                    "snapshotAnchor", "previous", "current", "lineageDisposition", "mutationJournalDisposition"
                 });
         }
 
@@ -184,7 +209,7 @@ namespace Arkus.Game.Authoring
                 request,
                 ImportResultSchema(),
                 CanonicalContractSchemas.StructuredError(),
-                SideEffectClass.CanonicalMutation,
+                SideEffectClass.CanonicalRebase,
                 DeterminismClass.Deterministic,
                 new[]
                 {
@@ -198,6 +223,7 @@ namespace Arkus.Game.Authoring
                     "imported-state-hash-preserved",
                     "new-local-lineage-rooted-at-imported-state",
                     "local-mutation-history-empty",
+                    "rebase-evidence-emitted",
                     "replacement-atomic-or-state-unchanged"
                 },
                 new ConcurrencySemantics(ConcurrencyClass.OptimisticVersioned, "expectedRevision+expectedHash"),
@@ -206,7 +232,7 @@ namespace Arkus.Game.Authoring
                 new RepairSemantics(true, true),
                 new PolicySemantics(
                     PrivilegeClass.Authoring,
-                    TransactionRequirement.CanonicalTransaction,
+                    TransactionRequirement.CanonicalRebase,
                     ProvenanceRequirement.Required),
                 new CostSemantics(6, "validated authored-session rebase from canonical snapshot"));
         }
