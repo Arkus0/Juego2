@@ -91,6 +91,17 @@ namespace Arkus.Harness.Tests
             Assert.Contains(result.Issues, issue => issue.Code == "contract.missing_policy");
         }
 
+        [Fact]
+        public void SemanticChangeWithoutVersionIncrementIsBreaking()
+        {
+            var previous = Hk01TestFixtures.FixtureDefinition(new ContractVersion(1, 0), false);
+            var sameVersionWithNewOptionalField = Hk01TestFixtures.FixtureDefinition(new ContractVersion(1, 0), true);
+
+            var result = ContractCompatibility.Compare(previous, sameVersionWithNewOptionalField);
+
+            Assert.Equal(CompatibilityKind.Breaking, result.Kind);
+        }
+
         private sealed class RuntimeOnlyReference
         {
         }
