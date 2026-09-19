@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.8 — 2026-09-19
+Version: 1.9 — 2026-09-19
 
 ## North star
 
@@ -121,7 +121,7 @@ Detailed H1 WPs remain intentionally **not frozen yet**. They will be authored f
 Only after the Unity bridge is proven:
 
 - import/select Quaternius assets under a documented licensing/content pipeline;
-- rebuild the visual target from the visual bible;
+- rebuild the visual target from the visual bible (`Docs/art/VISUAL_BIBLE.md`, owned by `WP-ART-00`);
 - camera, movement, interaction shell and one representative street/plaza;
 - no system is accepted unless it is inspectable/modifiable/testable through the harness.
 
@@ -132,6 +132,21 @@ Only after the Unity bridge is proven:
 Gameplay systems, NPC simulation, schedules, relationships, quests, shops, minigames, combat and content follow only after H0/H1 prove that the AI can safely evolve the project.
 
 The detailed gameplay roadmap will be replanned from the accepted harness and engine contracts rather than copied from `Juego`.
+
+---
+
+# ART — Visual direction track (parallel, non-gating)
+
+This track produces art **direction** documentation only. It is not part of the H0 kernel sequence, is not bound by `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`, requires no exact-SHA evidence, and can neither block nor unblock any `HK-*` workpack. It may run in parallel with H0 by a different contributor.
+
+It exists because H2 consumes a visual bible that has to be written before H2 starts rather than during it.
+
+| Order | Workpack | Outcome |
+|---|---|---|
+| 1 | `WP-ART-00` | Minimal visual bible + Quaternius→Cantabria adaptation rules (`Docs/art/VISUAL_BIBLE.md`) |
+| 2+ | not yet authored | Later ART workpacks are written from the accepted bible and the then-current H1/H2 contracts rather than guessed in advance |
+
+Art *direction* is permitted now. Art *content* — importing packs, building scenes, any engine work — remains blocked by the H0 gate and the Unity parity gate.
 
 ---
 
