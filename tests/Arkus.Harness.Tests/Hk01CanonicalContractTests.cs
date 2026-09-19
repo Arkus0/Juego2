@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Loader;
 using Arkus.Harness.Protocol;
 using Arkus.Harness.Runtime;
 using Xunit;
@@ -144,14 +147,15 @@ namespace Arkus.Harness.Tests
         public void IndependentRouteUniverseMatchesDispatcherDiscoveryAndSchemas()
         {
             var baseContract = BaseContract.Compose();
-            var routeUniverse = RouteUniverse.Enumerate(
-                typeof(SystemDescribeHandler).Assembly,
-                new[] { "arkus.base" });
+            var productionAssemblies = LoadProductionAssemblies();
+            var routeUniverse = RouteUniverse.Enumerate(productionAssemblies);
 
             var report = CanonicalContractConformance.Evaluate(baseContract, routeUniverse);
 
             Assert.True(report.IsConformant, FormatIssues(report.Issues));
             Assert.Empty(routeUniverse.Issues);
+            Assert.Single(routeUniverse.Routes);
+            Assert.Equal("arkus.base", routeUniverse.Routes[0].ProviderId);
         }
 
         [Fact]
@@ -164,6 +168,103 @@ namespace Arkus.Harness.Tests
             Assert.DoesNotContain(typeof(FixtureEngineHandler).FullName!, definition.SemanticFingerprint());
             Assert.Equal("arkus-logical-reference", definition.RequestSchema!.Root.Properties["target"].Format);
             Assert.Equal("fixture.engine.entity", definition.RequestSchema.Root.Properties["target"].LogicalReferenceNamespace);
+        }
+
+        private static IReadOnlyList<Assembly> LoadProductionAssemblies()
+        {
+            var repositoryRoot = FindRepositoryRoot();
+            var sourceRoot = Path.Combine(repositoryRoot, "src");
+            var projectDirectories = Directory.GetDirectories(sourceRoot);
+            System.Array.Sort(projectDirectories, StringComparer.Ordinal);
+
+            var loadedByName = new Dictionary<string, Assembly>(StringComparer.Ordinal);
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                var name = assembly.GetName().Name;
+                if (name != null)
+                {
+                    loadedByName[name] = assembly;
+                }
+            }
+
+            var assemblies = new List<Assembly>();
+            foreach (var projectDirectory in projectDirectories)
+            {
+                var projectName = Path.GetFileName(projectDirectory);
+                if (!File.Exists(Path.Combine(projectDirectory, projectName + ".csproj")))
+                {
+                    continue;
+                }
+
+                var output = FindReleaseAssembly(projectDirectory, projectName);
+                if (loadedByName.TryGetValue(projectName, out var loaded))
+                {
+                    assemblies.Add(loaded);
+                }
+                else
+                {
+                    var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(output);
+                    loadedByName.Add(projectName, assembly);
+                    assemblies.Add(assembly);
+                }
+            }
+
+            if (assemblies.Count == 0)
+            {
+                throw new InvalidOperationException("No production Arkus assemblies were independently discovered under src/.");
+            }
+
+            return assemblies.AsReadOnly();
+        }
+
+        private static string FindReleaseAssembly(string projectDirectory, string projectName)
+        {
+            var candidates = Directory.GetFiles(projectDirectory, projectName + ".dll", SearchOption.AllDirectories);
+            string? selected = null;
+            var releaseSegment = Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar + "Release" + Path.DirectorySeparatorChar;
+            var referenceSegment = Path.DirectorySeparatorChar + "ref" + Path.DirectorySeparatorChar;
+            var referenceIntermediateSegment = Path.DirectorySeparatorChar + "refint" + Path.DirectorySeparatorChar;
+
+            foreach (var candidate in candidates)
+            {
+                var normalized = candidate.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                if (!normalized.Contains(releaseSegment, StringComparison.Ordinal) ||
+                    normalized.Contains(referenceSegment, StringComparison.Ordinal) ||
+                    normalized.Contains(referenceIntermediateSegment, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                if (selected != null && !string.Equals(selected, candidate, StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException("Multiple effective Release assemblies found for production project '" + projectName + "'.");
+                }
+
+                selected = candidate;
+            }
+
+            if (selected == null)
+            {
+                throw new InvalidOperationException("No effective Release assembly found for production project '" + projectName + "'.");
+            }
+
+            return Path.GetFullPath(selected);
+        }
+
+        private static string FindRepositoryRoot()
+        {
+            DirectoryInfo? current = new DirectoryInfo(AppContext.BaseDirectory);
+            while (current != null)
+            {
+                if (File.Exists(Path.Combine(current.FullName, "Juego2.sln")))
+                {
+                    return current.FullName;
+                }
+
+                current = current.Parent;
+            }
+
+            throw new InvalidOperationException("Unable to locate Juego2 repository root from the test execution directory.");
         }
 
         private static string FormatIssues(IReadOnlyList<ConformanceIssue> issues)
