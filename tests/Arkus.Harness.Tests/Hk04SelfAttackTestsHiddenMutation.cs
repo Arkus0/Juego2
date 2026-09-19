@@ -110,6 +110,8 @@ namespace Arkus.Harness.Tests
                 [WorldInspectionContract.ReferenceQueryName] = Hk03InspectionTests.Anchor(state),
                 [WorldInspectionContract.ExtensionQueryName] = Hk03InspectionTests.Anchor(state),
                 [WorldInspectionContract.ExtensionReadName] = extensionRead,
+                [WorldValidationContract.CurrentName] = Hk01TestFixtures.EmptyRequest(),
+                [WorldValidationContract.ProposedName] = plannedMutation,
                 [WorldMutationContract.PlanName] = plannedMutation,
                 [WorldMutationContract.DryRunName] = plannedMutation
             };
