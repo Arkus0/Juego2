@@ -22,26 +22,25 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04` and `WP-HK-02A` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A` and `WP-HK-05` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-02A — Object-scoped extension data + typed dependencies`.
+Latest accepted workpack: `WP-HK-05 — Validation + repairable diagnostics`.
 
-- implementation PR: `#25`;
-- baseline SHA: `5a07c55aeb79406a84bff579b34c09459707b713`;
-- reviewed frozen candidate: `f39a1994524c42213dafb63d440faaf9de7c040f`;
-- independent Reviewer: `PASS` (PR review `#5256593405`);
-- exact-SHA candidate observation: GREEN, Actions `35456397714`;
-- exact-SHA freeze validation: GREEN, Actions `35456445373`;
-- implementation run `35456331653`: Release 0 warnings/errors, 11/11 focused and 98/98 regression;
-- merge SHA: `ac7ce1180b462f093cf0ee02bbbd6f853938e27c`;
-- accepted semantic addition: global or object-scoped opaque extensions with canonical composite identity `(owner, schemaVersion, subjectId-or-global)`, declared typed dependencies and referential integrity; V2 canonical codec/hash; complete bounded HK03 inspection; HK04 composite mutations and dependency change coverage;
-- accepted scope limits: opaque payload semantics are not inferred, whole-world revision/hash CAS is unchanged, V1 migration and total world budgets are deferred.
+- implementation PR: `#26`;
+- baseline SHA: `dbd8121411079f22a01d5cb85345e180ff41f7e2`;
+- reviewed frozen candidate: `23a9fd4373a803187cd9391b1459cd48975177f6`;
+- independent Reviewer: `PASS` (PR review `#5257350871`);
+- exact-SHA candidate observation: GREEN, Actions `35464742544`;
+- exact-SHA freeze validation: GREEN, Actions `35464834162`;
+- merge SHA: `ed65661680aea2a9be79f892c96aa42bf788a842`;
+- accepted semantic addition: discoverable/versioned current and proposed validation; mechanically reconciled finite invariant inventory; deterministic multi-violation structured diagnostics; consistent validation before canonical commit; duplicate identities get index-addressable diagnostics while only genuinely ambiguity-dependent secondary diagnostics are deferred;
+- accepted scope limits: no AI natural-language repair generation, Unity validation, final gameplay invariants, journal/replay or HK06+ behavior.
 
-The first HK02A frozen candidate `9d0dc3739f31bcc6a7f8df12b5f6e876837efacc` independently FAILed due to a global/object `"-"` idempotency fingerprint collision and a missing dependency-page-two causal proof. Both gaps were corrected, validated and independently reviewed in the merged candidate. Preserve this history; do not reopen HK04 predecessor claims or duplicate already accepted upstream proof without concrete contrary evidence.
+HK05 had two historical Reviewer FAILs on frozen candidates `e0c865efd2127ca53d9e25064215e09a4579acd4` and `8c8d8c1a66b4995bbc9f3f933ba1791e49d69e97`, both in the same aggregate-validation-under-ambiguous-identity class. The circuit breaker was correctly triggered before the accepted repair: the final policy is dependency-local rather than a growing list of special cases. Preserve this history as evidence of the causal boundary, but do not reopen HK02/HK04 predecessor claims without concrete contradictory evidence.
 
 ## Current next product target
 
-`WP-HK-05 — Validation + repairable diagnostics` is the next dependency-valid workpack after the HK02A post-merge DocSync. It consumes HK02A's completed subject/typed-dependency state shape, and owns machine-actionable validator inventory, invariant identity, deterministic multi-violation diagnostics and consistent public pre-commit validation. Read `Docs/workpacks/HK/WP-HK-05.md` and accepted predecessor evidence before implementation. No HK05 Worker has been started by this DocSync.
+`WP-HK-06 — Provenance, diff, snapshot + replay` is the next dependency-valid workpack. It consumes HK05's accepted validation/pre-commit semantics and adds auditable committed mutation provenance, semantic diff, canonical snapshot export/import and deterministic authored-state journal replay. It must preserve the authored-vs-live-state boundary: ordinary runtime observations/ticks must not silently create authoring revisions, journal entries or CAS churn. Read `Docs/workpacks/HK/WP-HK-06.md` plus accepted HK05 evidence before implementation. No HK06 Worker has been started by this DocSync.
 
 ## Operating model
 
@@ -59,7 +58,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
