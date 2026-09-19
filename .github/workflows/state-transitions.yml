@@ -1,0 +1,230 @@
+name: Arkus State Transitions
+
+on:
+  workflow_run:
+    workflows: ["Arkus Candidate Validation"]
+    types: [completed]
+  pull_request_review:
+    types: [submitted]
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [closed]
+
+permissions:
+  actions: read
+  checks: read
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  review-ready:
+    name: Mark review ready
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate frozen handoff and persist marker
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+          PR: ${{ github.event.workflow_run.pull_requests[0].number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "${PR:-}" ]] || exit 0
+
+          freeze_job=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100" --jq '.jobs[] | select(.name == "Freeze exact-SHA validation") | .conclusion' | tail -n1)
+          [[ "${freeze_job}" == "success" ]] || exit 0
+
+          pr_body=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.body // ""')
+          if printf '%s\n' "${pr_body}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
+            exit 0
+          fi
+
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
+          sha=$(python - <<'PY'
+          import json, re
+          pr = json.load(open('pr.json', encoding='utf-8'))
+          body = pr.get('body') or ''
+          head = pr['head']['sha'].lower()
+          if pr.get('draft'):
+              raise SystemExit('PR is still Draft')
+          def field(name):
+              m = re.search(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
+              return m.group(1).strip() if m else None
+          expected = {
+              'Worker state': 'FROZEN_FOR_REVIEW',
+              'Branch frozen': 'YES',
+              'Worker verdict': 'IN_REVIEW',
+              'Worker pre-review': 'CLEAN',
+              'Reviewer verdict': 'PENDING',
+          }
+          for k, v in expected.items():
+              got = field(k)
+              if not got or got.upper() != v:
+                  raise SystemExit(f'{k} must be {v}, got {got!r}')
+          frozen = (field('Frozen candidate SHA') or '').lower()
+          candidate = (field('Candidate HEAD SHA') or '').lower()
+          if not re.fullmatch(r'[0-9a-f]{40}', frozen):
+              raise SystemExit('Frozen candidate SHA is missing/invalid')
+          if frozen != head or candidate != head:
+              raise SystemExit(f'Frozen/Candidate SHA must equal PR HEAD {head}')
+          print(head)
+          PY
+          )
+          [[ "${sha}" == "${RUN_SHA}" ]] || { echo "::error::Workflow SHA ${RUN_SHA} != frozen PR SHA ${sha}"; exit 2; }
+
+          key="review-ready:${PR}:${sha}"
+          if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
+            exit 0
+          fi
+          body=$(cat <<EOF
+          ARKUS_AUTOMATION_V2
+          State: REVIEW_READY
+          Key: ${key}
+          Target SHA: ${sha}
+          Detail: frozen metadata and exact-SHA validation are green. Start a fresh independent Reviewer.
+          EOF
+          )
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
+
+  review-transition:
+    name: Process reviewer verdict
+    if: >-
+      (github.event_name == 'pull_request_review' &&
+       (github.event.review.author_association == 'OWNER' ||
+        github.event.review.author_association == 'MEMBER' ||
+        github.event.review.author_association == 'COLLABORATOR')) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       (github.event.comment.author_association == 'OWNER' ||
+        github.event.comment.author_association == 'MEMBER' ||
+        github.event.comment.author_association == 'COLLABORATOR'))
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate exact verdict and transition
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+          REVIEW_BODY: ${{ github.event.review.body || github.event.comment.body }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          read -r verdict reviewed_sha < <(python - <<'PY'
+          import os, re
+          body = os.environ.get('REVIEW_BODY') or ''
+          vm = re.search(r'^Reviewer verdict:\s*`?(PASS|FAIL)`?\s*$', body, re.M | re.I)
+          sm = re.search(r'^Reviewed candidate SHA:\s*`?([0-9a-fA-F]{40})`?\s*$', body, re.M | re.I)
+          if not vm or not sm:
+              print('NONE NONE')
+          else:
+              print(vm.group(1).upper(), sm.group(1).lower())
+          PY
+          )
+          [[ "${verdict}" != "NONE" ]] || exit 0
+
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
+          frozen_sha=$(python - <<'PY'
+          import json, re
+          pr = json.load(open('pr.json', encoding='utf-8'))
+          body = pr.get('body') or ''
+          head = pr['head']['sha'].lower()
+          if pr.get('merged'):
+              print(head)
+              raise SystemExit(0)
+          def field(name):
+              m = re.search(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
+              return m.group(1).strip() if m else None
+          expected = {
+              'Worker state': 'FROZEN_FOR_REVIEW',
+              'Branch frozen': 'YES',
+              'Worker verdict': 'IN_REVIEW',
+              'Worker pre-review': 'CLEAN',
+          }
+          for k, v in expected.items():
+              got = field(k)
+              if not got or got.upper() != v:
+                  raise SystemExit(f'{k} must be {v}, got {got!r}')
+          frozen = (field('Frozen candidate SHA') or '').lower()
+          if not re.fullmatch(r'[0-9a-f]{40}', frozen) or frozen != head:
+              raise SystemExit(f'Frozen candidate SHA must equal PR HEAD {head}')
+          print(frozen)
+          PY
+          )
+          [[ "${reviewed_sha}" == "${frozen_sha}" ]] || { echo "::error::Reviewed SHA ${reviewed_sha} != frozen SHA ${frozen_sha}"; exit 2; }
+
+          if [[ "${verdict}" == "FAIL" ]]; then
+            key="repair-required:${PR}:${reviewed_sha}"
+            if ! gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
+              body=$(cat <<EOF
+          ARKUS_AUTOMATION_V2
+          State: REPAIR_REQUIRED
+          Key: ${key}
+          Target SHA: ${reviewed_sha}
+          Detail: independent Reviewer FAIL. Start a fresh repair Worker on the same WP; do not advance downstream.
+          EOF
+              )
+              gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
+            fi
+            exit 0
+          fi
+
+          freeze_check=$(gh api -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/commits/${reviewed_sha}/check-runs?per_page=100" --jq '.check_runs[] | select(.name == "Freeze exact-SHA validation" and .conclusion == "success") | .id' | head -n1)
+          [[ -n "${freeze_check}" ]] || { echo "::error::No successful Freeze exact-SHA validation check for ${reviewed_sha}"; exit 2; }
+
+          key="pass-merge:${PR}:${reviewed_sha}"
+          if ! gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
+            body=$(cat <<EOF
+          ARKUS_AUTOMATION_V2
+          State: PASS_PREFLIGHT_GREEN
+          Key: ${key}
+          Target SHA: ${reviewed_sha}
+          Detail: exact Reviewer PASS and freeze validation agree. Merging this exact SHA.
+          EOF
+            )
+            gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
+          fi
+
+          gh api --method PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/merge" \
+            -f sha="${reviewed_sha}" \
+            -f merge_method=merge >/dev/null
+
+  docsync-marker:
+    name: Mark DocSync required
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Persist post-merge marker
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          PR_BODY: ${{ github.event.pull_request.body || '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if printf '%s\n' "${PR_BODY}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
+            exit 0
+          fi
+          key="docsync-required:${PR}:${MERGE_SHA}"
+          if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
+            exit 0
+          fi
+          body=$(cat <<EOF
+          ARKUS_AUTOMATION_V2
+          State: DOCSYNC_REQUIRED
+          Key: ${key}
+          Target SHA: ${MERGE_SHA}
+          Detail: implementation merged. Run DocSync before selecting the next WP.
+          EOF
+          )
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
