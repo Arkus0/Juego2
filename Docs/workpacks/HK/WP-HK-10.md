@@ -15,7 +15,8 @@ Stress the accepted harness with broad malformed, conflicting and failure-case i
 - Robustness testing covers malformed/truncated/unknown-version/unknown-command/schema-invalid inputs and never produces undefined public output.
 - Mutation tests or equivalent defect-injection controls demonstrate that material validator/provenance/transaction guards are actually capable of catching seeded defects.
 - Fault injection covers persistence interruption, thrown handler/validator failures, cancellation and restart/recovery.
-- Concurrency tests exercise stale revisions and conflicting writers deterministically.
+- Concurrency tests exercise stale revisions and conflicting writers deterministically, including the accepted HK08 stale-plan recovery path; H0 does not claim automatic merging or multi-agent writer throughput.
+- A bounded long-authoring-session endurance case repeatedly exercises representative inspect/validate/mutate/journal/snapshot flows under the accepted HK08/HK09 budgets and records process/session growth. Journal/session growth must remain within the declared H0 resource envelope for that bounded case; if it does not, the failure is resolved explicitly rather than assuming future compaction will save the gate.
 - Compatibility corpus locks accepted Protocol v1 behaviour and schema evolution rules.
 - Seeded/random tests record seeds and minimize/reproduce failures.
 - Test suite distinguishes harness defect from fixture/tool failure and fails closed when proof infrastructure is missing.
@@ -24,12 +25,12 @@ Stress the accepted harness with broad malformed, conflicting and failure-case i
 
 ## Required negative-conformance tests
 
-At minimum seed controlled defects in each accepted foundational layer (protocol discovery, state/hash, inspection, transaction, validation, provenance/replay, host framing, batching/efficiency and capability containment) and prove the intended oracle goes red causally.
+At minimum seed controlled defects in each accepted foundational layer (protocol discovery, state/hash, inspection, transaction, validation, provenance/replay, host framing, batching/efficiency and capability containment) and prove the intended oracle goes red causally. Include a stale-conflict recovery defect that loses/misanchors HK08 recovery context and a bounded-session/resource-growth defect that exceeds an accepted limit without being detected.
 
 ## Forbidden scope
 
-Unity/graphics/gameplay testing, model-vendor benchmarking, production cloud load testing, penetration testing or external-system testing.
+Unity/graphics/gameplay testing, model-vendor benchmarking, production cloud load testing, distributed/multi-agent load testing, penetration testing or external-system testing.
 
 ## DoD
 
-All material H0 guarantees have strict negative-conformance evidence; zero known undetected classes inside the declared boundary; exact-SHA CI and independent PASS.
+All material H0 guarantees have strict negative-conformance evidence; the accepted stale-conflict recovery path and bounded long-session resource behaviour survive closure testing; zero known undetected classes inside the declared boundary; exact-SHA CI and independent PASS.
