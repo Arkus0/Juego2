@@ -17,20 +17,20 @@ namespace Arkus.Harness.Tests
             var added = AddExtension(baseline);
             var removed = RemoveExtension(baseline, "future.alpha@2@global");
 
-            AssertExactSemanticResources(baseline, added, "world.extension:future.beta@1@global");
+            AssertExactSemanticResources(baseline, added, "world.extension:future.gamma@3@global");
             AssertExactSemanticResources(baseline, removed, "world.extension:future.alpha@2@global");
 
             var expectedAdded = IndependentChangedResources(baseline, added);
-            Assert.Equal(new[] { "world.extension:future.beta@1@global" }, expectedAdded);
+            Assert.Equal(new[] { "world.extension:future.gamma@3@global" }, expectedAdded);
 
             var omissionMutant = Array.Empty<string>();
             Assert.Contains(
-                "missing:world.extension:future.beta@1@global",
+                "missing:world.extension:future.gamma@3@global",
                 SemanticCoverageIssues(expectedAdded, omissionMutant));
 
             var falseExtraMutant = new[]
             {
-                "world.extension:future.beta@1@global",
+                "world.extension:future.gamma@3@global",
                 "world.object:invented"
             };
             Assert.Contains(
@@ -74,7 +74,7 @@ namespace Arkus.Harness.Tests
         {
             var extensions = new List<WorldExtensionData>(source.Extensions)
             {
-                new WorldExtensionData("future.beta", 1, new byte[] { 0x21, 0x22 })
+                new WorldExtensionData("future.gamma", 3, new byte[] { 0x21, 0x22 })
             };
             return new WorldState(source.Id, source.Revision, source.Objects, extensions, source.SchemaVersion);
         }
