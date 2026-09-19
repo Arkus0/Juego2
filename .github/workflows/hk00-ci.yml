@@ -10,9 +10,10 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  proof:
+    name: Foundational proof
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: 30
     steps:
       - name: Checkout exact validation SHA
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -33,28 +34,126 @@ jobs:
           dotnet --list-runtimes | grep -F 'Microsoft.NETCore.App 8.0.31 '
           test -z "$(git status --porcelain --untracked-files=all)"
 
-      - name: Observe candidate
-        if: github.ref_name == 'validation/hk00-observe'
+      - name: Run foundational proof
         shell: bash
         run: |
           set -euo pipefail
-          ARKUS_EXECUTION_SUBSTRATE=github-hosted-linux-x64 \
-            bash scripts/hk00-observe-exact-sha.sh "${GITHUB_SHA}" | tee artifacts/observed/EXECUTION_RECEIPT.txt
+          bash scripts/proof.sh
+          test -z "$(git status --porcelain --untracked-files=all)"
 
-      - name: Verify evidence-bearing candidate
+      - name: Require committed inventory to match observation
         if: github.ref_name == 'validation/hk00-verify'
         shell: bash
         run: |
           set -euo pipefail
-          ARKUS_EXECUTOR_ROLE=WORKER \
-          ARKUS_EXECUTION_SUBSTRATE=github-hosted-linux-x64 \
-            bash scripts/hk00-verify-exact-sha.sh "${GITHUB_SHA}" | tee artifacts/observed/EXECUTION_RECEIPT.txt
+          test -d artifacts/observed/inventory
+          diff -ru Docs/evidence/WP-HK-00/inventory artifacts/observed/inventory
 
-      - name: Upload observed evidence
+      - name: Upload proof observation
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: hk00-observed-${{ github.sha }}-${{ github.ref_name }}
+          name: hk00-proof-${{ github.sha }}
           path: artifacts/observed
           if-no-files-found: warn
           retention-days: 7
+
+  causal-controls:
+    name: 37 causal negative controls
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact validation SHA
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Install pinned .NET SDK
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: 8.0.425
+
+      - name: Verify exact candidate and toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(dotnet --version)" = "8.0.425"
+          dotnet --list-runtimes | grep -F 'Microsoft.NETCore.App 8.0.31 '
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Run 37 causal controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/self-attacks/run-readonly-self-attacks.sh
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Require committed attack summary to match observation
+        if: github.ref_name == 'validation/hk00-verify'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f artifacts/observed/self-attacks/results.md
+          diff -u Docs/evidence/WP-HK-00/self-attacks/results.md artifacts/observed/self-attacks/results.md
+
+      - name: Upload attack observation
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hk00-attacks-${{ github.sha }}
+          path: artifacts/observed/self-attacks
+          if-no-files-found: warn
+          retention-days: 7
+
+  receipt:
+    name: Exact-SHA receipt
+    needs: [proof, causal-controls]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Emit execution receipt
+        shell: bash
+        env:
+          PROOF_RESULT: ${{ needs.proof.result }}
+          ATTACK_RESULT: ${{ needs.causal-controls.result }}
+        run: |
+          set -euo pipefail
+          if [[ "${PROOF_RESULT}" == "success" && "${ATTACK_RESULT}" == "success" ]]; then
+            if [[ "${GITHUB_REF_NAME}" == "validation/hk00-verify" ]]; then
+              result=GREEN
+              reconciliation=GREEN
+            else
+              result=BLOCKED
+              reconciliation=PENDING
+            fi
+          else
+            result=RED
+            reconciliation=UNKNOWN
+          fi
+
+          cat > EXECUTION_RECEIPT.txt <<EOF
+          EXECUTION_RECEIPT_V1
+          WP: WP-HK-00
+          Candidate SHA: ${GITHUB_SHA}
+          Executor role: WORKER
+          Execution substrate: github-hosted-linux-x64
+          Canonical commands: scripts/proof.sh; scripts/self-attacks/run-readonly-self-attacks.sh
+          Candidate clean before: YES
+          Candidate clean after: YES
+          Required gates: foundational-proof=${PROOF_RESULT}; causal-negative-controls=${ATTACK_RESULT}; evidence-reconciliation=${reconciliation}
+          Result: ${result}
+          Evidence: workflow artifacts for ${GITHUB_SHA}
+          EOF
+          cat EXECUTION_RECEIPT.txt
+          [[ "${result}" != "RED" ]]
+
+      - name: Upload execution receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hk00-receipt-${{ github.sha }}
+          path: EXECUTION_RECEIPT.txt
+          if-no-files-found: error
+          retention-days: 30
