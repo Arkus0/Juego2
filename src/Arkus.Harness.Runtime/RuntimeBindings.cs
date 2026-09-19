@@ -46,6 +46,14 @@ namespace Arkus.Harness.Runtime
             ProviderId = providerId ?? throw new ArgumentNullException(nameof(providerId));
             Key = key ?? throw new ArgumentNullException(nameof(key));
             Handler = handler ?? throw new ArgumentNullException(nameof(handler));
+
+            if (MutationAuthorityInspector.CarriesCanonicalWriteAuthority(handler) &&
+                !(handler is ITransactionalMutationHandler))
+            {
+                throw new ArgumentException(
+                    "A public handler carrying canonical world write authority must implement the transactional mutation boundary.",
+                    nameof(handler));
+            }
         }
 
         public string ProviderId { get; }
