@@ -1,6 +1,6 @@
 # Worker → Reviewer Protocol
 
-Version: 1.3 — 2026-09-18
+Version: 1.4 — 2026-09-19
 
 ## Purpose
 
@@ -16,9 +16,9 @@ Adversarial does **not** mean unbounded. Worker and Reviewer must attack the WP'
 
 ## Adoption boundary
 
-Version 1.3 applies to implementation candidates frozen after the commit containing this protocol version reaches `main`.
+Version 1.4 applies to implementation candidates whose final independent review starts after this version reaches `main`.
 
-A candidate already validly frozen before that adoption point remains reviewable under the handoff/protocol that governed its freeze. An ACTIVE/Draft candidate that has not frozen yet must reconcile its pre-review and foundational proof claim with v1.3 before freeze. This process change alone does not create an implementation defect in an already-frozen candidate.
+The v1.4 change is continuity-only: after a valid independent PASS is fixed on the exact frozen SHA, that same independent session may continue into merge finalization and documentation-only DocSync. It does not change implementation acceptance, proof obligations, Worker/Reviewer independence or FAIL repair rules.
 
 ## State machine
 
@@ -32,14 +32,16 @@ WORKER_PRE_REVIEW: CLEAN
   -> candidate may proceed to freeze
 READY + FROZEN_FOR_REVIEW
   -> no Worker writes
-  -> independent Reviewer owns next action
+  -> fresh independent Reviewer owns next action
 FAIL
-  -> same WP returns to Draft for repair
+  -> same WP returns to Draft for a fresh repair Worker
   -> pre-review must be rerun on the repaired candidate before the next freeze
 PASS
-  -> exact reviewed SHA may proceed to finalization/merge
-MERGE
-  -> DocSync before selecting next WP
+  -> verdict is fixed to exact reviewed SHA
+  -> same session may switch to FINALIZATION/DOCSYNC mode
+  -> exact-SHA merge preflight + merge
+  -> documentation-only DocSync
+  -> DOCSYNC_COMPLETE + dependency-valid Next WP
 ```
 
 ## Worker rules
@@ -157,11 +159,13 @@ A green Worker test suite and a clean Worker pre-review are necessary, never suf
 
 A FAIL must identify the violated criterion, evidence, expected behavior and minimal correction boundary. The same WP remains unresolved. Repair creates a new candidate SHA and requires a fresh Worker pre-review followed by a fresh independent review.
 
-A local/trivial defect may be repaired locally. A finding that invalidates the proof boundary, architecture or completeness argument **inside the accepted claim** must be repaired at that causal boundary rather than by special-casing the reported example.
+A Reviewer that emitted FAIL stops as Reviewer. It must not repair implementation in the same context; start a fresh repair Worker.
+
+A local/trivial defect may be repaired locally by that fresh Worker. A finding that invalidates the proof boundary, architecture or completeness argument **inside the accepted claim** must be repaired at that causal boundary rather than by special-casing the reported example.
 
 A finding outside the claim/trust boundary should normally be recorded as residual risk or proposed as a future hardening WP, not converted into an implicit expansion of the current WP.
 
-## PASS / merge preflight
+## PASS / merge preflight / finalization
 
 Merge is valid only when:
 
@@ -172,7 +176,20 @@ Merge is valid only when:
 - no later implementation mutation exists;
 - no blocking in-claim finding remains.
 
-If documentation-only review finalization is used, it must not redefine the reviewed implementation SHA.
+Once the Reviewer persists a valid PASS, the verdict is immutable for that candidate unless new factual evidence proves the prerequisites were false. The same session may then leave Reviewer mode and enter **FINALIZATION/DOCSYNC** mode. This is a one-way transition: it does not permit further adversarial implementation edits or repair work.
+
+Finalization should immediately:
+
+1. verify PR HEAD, Frozen candidate SHA and Reviewed candidate SHA still agree;
+2. merge that exact SHA, or recognize an Automation V2 exact-SHA auto-merge as equivalent;
+3. reconstruct current `main` after merge;
+4. perform documentation-only DocSync for the accepted result;
+5. resolve the next dependency-valid WP from current accepted state;
+6. emit the durable `DOCSYNC_COMPLETE` marker on the merged implementation PR.
+
+If merge is blocked by a code/implementation issue, if the SHA moved, or if DocSync reveals that the accepted implementation itself must change, stop. Do not patch implementation during finalization; reopen the proper Worker → Reviewer cycle.
+
+Documentation-only post-merge reconciliation does not redefine the reviewed implementation SHA.
 
 ## Foundational circuit breaker
 
@@ -184,4 +201,6 @@ Independently, if two consecutive repair/pre-review cycles materially expand pro
 
 ## DocSync
 
-After implementation merge, reconcile ROADMAP, WP state, architecture/ADR, evidence and handoff. Only then may the next WP be selected.
+DocSync is the documentation-only completion phase of a successful PASS/finalization flow, not a mandatory separate reasoning session.
+
+After implementation merge, reconcile only affected surfaces: ROADMAP, WP state, architecture/ADR where changed, evidence/final verdict, and compact handoff. Then emit `DOCSYNC_COMPLETE` with the dependency-valid `Next WP`. Only after that marker may the next WP be selected.
