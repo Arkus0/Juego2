@@ -36,9 +36,13 @@ HK01 had two rejected candidates before PASS. The final repair cycle re-audited 
 
 `WP-HK-02 — Canonical world state + deterministic identity` is the next dependency-valid workpack. It depends on completed HK01 and must establish stable typed identity, deterministic canonical serialization/state hashing, explicit versioning, referential integrity and a minimal representative micro-world fixture without leaking Unity/gameplay design into H0.
 
+Before any HK02 implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: read accepted HK01 contract/PASS/proof evidence, identify the HK01 guarantees HK02 consumes, separate them from HK02-owned guarantees, and record what concrete evidence would justify reopening an inherited boundary. Do not duplicate HK00/HK01 proofs merely for defence-in-depth.
+
 ## Operating model
 
 Automation V2 provides mechanical candidate validation, exact-SHA state transitions and optional low-noise Telegram notifications. It does not replace independent Reviewer judgment.
+
+`WORKER_REVIEW_PROTOCOL.md` v1.5 makes predecessor-contract reconstruction mandatory for both roles. Worker records `Predecessor contract check` before implementation. Reviewer independently reconstructs the same inherited/current ownership split and may not issue FAIL for an accepted predecessor guarantee merely because the current WP does not redundantly re-prove it; concrete evidence of inapplicability/falsehood is required.
 
 A fresh independent Reviewer remains mandatory. On exact-SHA PASS, the successful Reviewer/finalization session should close the accepted cycle immediately when permissions permit: exact-SHA merge preflight → merge → documentation-only DocSync → `DOCSYNC_COMPLETE` with dependency-valid `Next WP`. No extra human session is required solely for routine DocSync. The post-PASS phase may not modify implementation bytes or reconsider the reviewed candidate; any required implementation change starts a new Worker/review cycle.
 
@@ -52,7 +56,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## Process invariants
 
-GitHub is truth. Draft Worker writes; Ready means frozen exact-SHA and independent review. FAIL returns to the same WP. PASS binds the exact SHA. After PASS, merge and DocSync should be completed in the same successful finalization flow before the next WP is selected. The durable close marker is `DOCSYNC_COMPLETE` with the dependency-valid `Next WP`.
+GitHub is truth. Draft Worker writes; Ready means frozen exact-SHA and independent review. FAIL returns to the same WP. PASS binds the exact SHA. Accepted predecessor guarantees compose forward and are consumed rather than re-proved unless contradictory evidence reopens them. After PASS, merge and DocSync should be completed in the same successful finalization flow before the next WP is selected. The durable close marker is `DOCSYNC_COMPLETE` with the dependency-valid `Next WP`.
 
 ## Update rule
 
