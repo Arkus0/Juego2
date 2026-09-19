@@ -7,9 +7,9 @@ namespace Arkus.Game.Authoring
     /// <summary>Canonical schema/definition source for HK04 transactional mutation.</summary>
     public static class WorldMutationContract
     {
-        public const string PlanName = "world.change.plan";
-        public const string DryRunName = "world.change.dry-run";
-        public const string ApplyName = "world.change.apply";
+        public const string PlanName = "authoring.change.plan";
+        public const string DryRunName = "authoring.change.dry-run";
+        public const string ApplyName = "authoring.change.apply";
         public const int MaximumOperations = 64;
 
         private static readonly ContractVersion Version = new ContractVersion(1, 0);
@@ -72,7 +72,7 @@ namespace Arkus.Game.Authoring
 
         private static ProviderMetadata Provider()
         {
-            return new ProviderMetadata("arkus.base", ProviderKind.Base, "base", "world");
+            return new ProviderMetadata("arkus.base", ProviderKind.Base, "base", "authoring");
         }
 
         private static JsonSchemaDocument MutationRequestSchema()
