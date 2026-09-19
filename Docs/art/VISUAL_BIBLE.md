@@ -1,7 +1,7 @@
 # Visual Bible — Juego2
 
-Version: 0.1 — 2026-09-19  
-Status: DRAFT — seed draft, pending human approval under `WP-ART-00`  
+Version: 0.1.1 — 2026-09-19  
+Status: DRAFT — seed draft under `WP-ART-00`; palette **APPROVED-DRAFT**; triage dry-run recorded in `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`  
 Scope: art direction and asset selection only. **This document does not block, gate or modify H0.** No `HK-*` acceptance criterion depends on it.
 
 ## 1. Style one-liner
@@ -36,9 +36,9 @@ Three looks this excludes outright: photorealism; the Dreamcast/Shenmue graphica
 - Realistic "Cantabrian" facial physiognomy for characters (see §5).
 - Regional caricature: no costume-folklore villagers, no stereotype props used as a joke.
 
-## 3. Palette (draft)
+## 3. Palette (APPROVED-DRAFT)
 
-Hex values are **albedo targets in sRGB, before lighting**. Lit results will read darker and cooler under the default overcast key. This palette is a draft pending human approval.
+Hex values are **albedo targets in sRGB, before lighting**. Lit results will read darker and cooler under the default overcast key. Status: **APPROVED-DRAFT** (2026-09-19) — valid for triage and H2 seed; revise only with a concrete color-block objection.
 
 ### Stone and walls
 
@@ -137,7 +137,7 @@ Hero-target archetypes (6 of these 8):
 
 ## 6. Authorized Quaternius packs
 
-**Verification status legend** — `URL-CONFIRMED`: pack page confirmed to exist, contents summarized from search results, **not** read first-hand; `HYPOTHESIS`: believed to exist, name unconfirmed; `REJECTED`: not to be used.
+**Verification status legend** — `URL-CONFIRMED`: pack page or site index confirmed 2026-09-19; `HYPOTHESIS`: believed to exist, name unconfirmed; `REJECTED`: not to be used.
 
 A `URL-CONFIRMED` row is not an adoption approval. See §10.
 
@@ -153,12 +153,12 @@ A `URL-CONFIRMED` row is not an adoption approval. See §10.
 | Modular Streets Pack | URL-CONFIRMED | Carriageway, pavement, kerb, drain | Multi-lane highway pieces; American lane markings; traffic signals |
 | Downtown City MegaKit | URL-CONFIRMED | **Loose props only**: bench, streetlight, bollard, litter bin, drain cover | Whole blocks; brownstone or NYC/Boston facades; any building mass |
 | Ultimate Nature Pack | URL-CONFIRMED | Trees, rocks, grass, hedges | Palms, cacti, tropical species; conifer-only massing; autumn-red variants in bulk |
-| Ultimate Stylized Nature Pack | URL-CONFIRMED | Higher-fidelity vegetation for foreground | Mixing its normal-mapped look into flat-atlas hero facades |
+| Ultimate Stylized Nature Pack | URL-CONFIRMED | Higher-fidelity vegetation for foreground | Mixing its normal-mapped look into flat-atlas hero facades; palms |
 | Ultimate House Interior Pack | URL-CONFIRMED | Bar and shop interior: doors, windows, kitchen, fittings | Suburban American set dressing that reads non-European |
 | Ultimate Furniture Pack | URL-CONFIRMED | Tables, chairs, shelving, counter | Modern luxury or designer furniture |
 | Ultimate Modular Ruins Pack | URL-CONFIRMED | Optional ruined chapel or boundary wall | Fantasy ruins; classical columns; anything monumental |
 | Survival Pack | URL-CONFIRMED | Crates, barrels, rope, sacks | Weapons; camping and wilderness gear |
-| Ships / small boats pack | **HYPOTHESIS** | Moored boats for the quay, if the quay is in scope | Galleons, pirate ships, cruise or military vessels. Confirm the exact pack name at quaternius.com before relying on it |
+| Ships Pack | URL-CONFIRMED | Small working craft only (raft, small sailboat) if quay is in scope | Viking longships, cruise ships, military vessels, large multi-mast spectacle boats |
 | Modular Character Outfits – Fantasy | **REJECTED** | — | Entire pack: fantasy outfits are out of style |
 
 Cross-pack rule: assets from different packs may share a scene only when their shading style matches after recoloring. A normal-mapped asset next to a flat-atlas asset on the same facade is a rejection, not a compromise.
@@ -183,7 +183,7 @@ The validation slice. Building it proves the bible; nothing here authorizes star
 - One to two streets, ~40 m each, connecting to the plaza.
 - One simple interior, ~8 × 6 m — a bar or a shop, enterable.
 - Six archetype NPCs from §5.
-- Optional, pending §11: a short quay with two moored boats.
+- Quay / boats: **out of hero-target v1** (optional later). Keeps water shading and an extra material set out of the budget below.
 
 Budget: **≤ 120 unique meshes** and **≤ 6 material/atlas sets** across the whole slice. Exceeding either budget means the slice is being built from unique assets rather than from a kit, which is the failure this bible exists to prevent.
 
@@ -199,18 +199,20 @@ Apply to any candidate Quaternius asset. Produces exactly one verdict.
 
 Modelling new geometry is not one of the mechanisms. If an asset needs new geometry to fit, it is a reject for this slice.
 
+Dry-run record: `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md` (five candidates, three rejects).
+
 ## 10. Licensing
 
-Quaternius publicly states its packs are CC0: commercial use permitted, attribution not required, modification permitted; the paid *Source* tiers carry the same terms. This is **research-level observation only** — status: `UNVERIFIED-FOR-ADOPTION`.
+Quaternius site presents packs under the Quaternius Asset License (QAL) / CC0-equivalent messaging: commercial use permitted, attribution not required, modification permitted; paid *Source* tiers are described with the same use terms. This is **research-level observation only** — status: `UNVERIFIED-FOR-ADOPTION`.
 
 `Docs/engineering/DEPENDENCY_IP_POLICY.md` governs: a license claim seen during research does not satisfy the adoption gate. Before any pack is downloaded into a project, a human must read the license line on that pack's own page at that version and record: pack identity, version or download date, license as stated there, source URL, linked/vendored/copied classification, and notice obligations. Unknown or ambiguous terms fail closed.
 
-Practical rule kept regardless of CC0: **do not redistribute a Quaternius pack as a pack.** Assets ship inside the game; the kit does not ship as a kit.
+Practical rule kept regardless of QAL/CC0: **do not redistribute a Quaternius pack as a pack.** Assets ship inside the game; the kit does not ship as a kit.
 
 ## 11. Open questions
 
-1. What is the exact name of the Quaternius boats/ships pack, and does it contain small working craft rather than only large vessels? (§6, `HYPOTHESIS`.)
-2. Is the quay inside the H2 hero target or deferred? It adds water shading and a second material set to a slice budgeted at six. (§8.)
-3. Is roof recoloring done by editing the shared atlas or by vertex color? Atlas editing changes every pack asset at once; vertex color is per-instance. This decides how much Blender work H2 needs. (§7.)
-4. Are any paid *Source* tiers needed, or is the free tier sufficient through the hero target? Current assumption: free tier is sufficient; Source only if heavy mesh editing proves necessary.
-5. Palette hex values in §3 are a draft and need human sign-off, ideally against a flat color-block sheet rather than in text.
+1. ~~What is the exact name of the Quaternius boats/ships pack?~~ **Resolved:** Ships Pack (URL-CONFIRMED 2026-09-19). Small craft only; large/viking/cruise vetoed.
+2. Is the quay inside the H2 hero target or deferred? **Recommendation recorded:** deferred from hero-target v1 (see §8).
+3. Is roof recoloring done by editing the shared atlas or by vertex color? **Recommendation:** atlas first; vertex only for per-instance exceptions.
+4. Are any paid *Source* tiers needed through the hero target? **Recommendation:** free tier sufficient unless a mesh forces Blender work.
+5. Palette hex values: **APPROVED-DRAFT** (2026-09-19). Still welcome a flat color-block sheet for human eyeballing.
