@@ -41,21 +41,25 @@ Reopen inherited HK01/HK02/HK03 only if concrete evidence shows, for example, st
 
 ## Implementation boundary
 
-`Arkus.Game.Authoring` owns engine-neutral mutation planning, validation and the transactional world store over `Arkus.Game.World`. `Arkus.Harness.Runtime` owns canonical bindings/composition only. Existing inspection can read the same store through `IWorldStateSource`. No Unity, filesystem writes, gameplay-specific authoring, undo UI, transport host or natural-language mutation is added.
+`Arkus.Game.Authoring` owns engine-neutral mutation planning, validation and the transactional authoring session over `Arkus.Game.World`. `Arkus.Harness.Runtime` owns canonical bindings/composition only. Existing inspection reads the same session through `IWorldStateSource`. No Unity, filesystem writes, gameplay-specific authoring, undo UI, transport host or natural-language mutation is added.
 
 ## Planned surface
 
-- `world.change.plan@1.0`: validate and return deterministic plan + predicted result revision/hash, no persistence.
-- `world.change.dry-run@1.0`: same semantic planner/validator, explicit non-persisted outcome.
-- `world.change.apply@1.0`: same planner for new requests, then atomic compare-and-swap commit with idempotency.
+The accepted HK03 read namespace remains `world.*`. HK04 adds a distinct authoring namespace while entering the same HK01 canonical inventory:
+
+- `authoring.change.plan@1.0`: validate and return deterministic plan + predicted result revision/hash, no persistence.
+- `authoring.change.dry-run@1.0`: same semantic planner/validator, explicit non-persisted outcome.
+- `authoring.change.apply@1.0`: same planner for new requests, then atomic compare-and-swap commit with idempotency.
 
 The envelope carries `idempotencyKey`, `expectedRevision`, `expectedHash` and ordered generic operations: `put-object`, `remove-object`, `put-extension`, `remove-extension`. Object replacement carries type/container/references as one canonical object value; no gameplay semantics are introduced.
 
-Planning copies one immutable base state into private working collections, applies all operations, and constructs one validated `WorldState` at `baseRevision + 1`. No store state changes during planning. Apply commits only the completed candidate inside one critical section if revision/hash still match. Exact accepted retries replay the stored result; the same key with different request semantics fails closed.
+Planning copies one immutable base state into private working collections, applies every operation, and constructs one validated `WorldState` at `baseRevision + 1`. No session state changes during planning. Apply commits only the completed candidate inside one critical section if revision/hash still match. Exact accepted retries replay the stored receipt; the same key with different request semantics fails closed.
+
+The production session exposes no public state replacement API: its only externally callable mutation methods are the three phase methods above, with the `_current` replacement kept private inside successful apply. Runtime mutation handlers can only delegate through `IWorldMutationService`.
 
 ## Foundational proof approach
 
-The finite claim universe is the three HK04 public routes, four generic operation kinds, accepted HK02 state and the transactional store reachable through those routes.
+The finite claim universe is the three HK04 public routes, four generic operation kinds, accepted HK02 state and the transactional authoring session reachable through those routes.
 
 Independent/evaluated oracles:
 
