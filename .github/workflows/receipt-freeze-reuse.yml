@@ -1,0 +1,150 @@
+name: Arkus Receipt Freeze Reuse
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  actions: read
+  checks: write
+  contents: write
+  issues: write
+  pull-requests: read
+
+jobs:
+  reuse-freeze:
+    name: Reuse exact-SHA receipt for freeze
+    if: >-
+      github.event.issue.pull_request != null &&
+      (github.event.comment.author_association == 'OWNER' ||
+       github.event.comment.author_association == 'MEMBER' ||
+       github.event.comment.author_association == 'COLLABORATOR') &&
+      contains(github.event.comment.body, 'Action: RECHECK_REVIEW_READY')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.issue.number }}
+    steps:
+      - name: Validate frozen metadata and exact-SHA GREEN receipt
+        id: validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
+          read -r sha wp < <(python - <<'PY'
+          import json, re
+          pr = json.load(open('pr.json', encoding='utf-8'))
+          body = pr.get('body') or ''
+          head = pr['head']['sha'].lower()
+          if pr.get('draft'):
+              raise SystemExit('PR is still Draft')
+          def field(name):
+              m = re.search(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
+              return m.group(1).strip() if m else None
+          expected = {
+              'Worker state': 'FROZEN_FOR_REVIEW',
+              'Branch frozen': 'YES',
+              'Worker verdict': 'IN_REVIEW',
+              'Worker pre-review': 'CLEAN',
+              'Reviewer verdict': 'PENDING',
+          }
+          for k, v in expected.items():
+              got = field(k)
+              if not got or got.upper() != v:
+                  raise SystemExit(f'{k} must be {v}, got {got!r}')
+          frozen = (field('Frozen candidate SHA') or '').lower()
+          candidate = (field('Candidate HEAD SHA') or '').lower()
+          if not re.fullmatch(r'[0-9a-f]{40}', frozen):
+              raise SystemExit('Frozen candidate SHA is missing/invalid')
+          if frozen != head or candidate != head:
+              raise SystemExit(f'Frozen/Candidate SHA must equal PR HEAD {head}')
+          wp = (field('WP') or f'PR-{pr["number"]}').replace(' ', '_')
+          print(head, wp)
+          PY
+          )
+
+          artifact_name="hk00-receipt-${sha}"
+          artifact_json="$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?name=${artifact_name}&per_page=100")"
+          artifact_id="$(jq -r '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | reverse | .[0].id // empty' <<<"${artifact_json}")"
+          source_run_id="$(jq -r '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | reverse | .[0].workflow_run.id // empty' <<<"${artifact_json}")"
+          [[ -n "${artifact_id}" && -n "${source_run_id}" ]] || { echo "::error::No reusable receipt artifact for ${sha}"; exit 2; }
+
+          run_json="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${source_run_id}")"
+          [[ "$(jq -r '.conclusion // empty' <<<"${run_json}")" == "success" ]] || { echo "::error::Source run is not successful"; exit 2; }
+          [[ "$(jq -r '.head_sha // empty' <<<"${run_json}")" == "${sha}" ]] || { echo "::error::Source run SHA does not match frozen SHA"; exit 2; }
+
+          tmp="${RUNNER_TEMP}/receipt-reuse"
+          mkdir -p "${tmp}"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip" > "${tmp}/receipt.zip"
+          unzip -p "${tmp}/receipt.zip" EXECUTION_RECEIPT.txt > "${tmp}/EXECUTION_RECEIPT.txt"
+          receipt="${tmp}/EXECUTION_RECEIPT.txt"
+
+          grep -Fxq 'EXECUTION_RECEIPT_V1' "${receipt}"
+          grep -Fxq 'WP: WP-HK-00' "${receipt}"
+          grep -Fxq "Candidate SHA: ${sha}" "${receipt}"
+          grep -Fxq 'Candidate clean before: YES' "${receipt}"
+          grep -Fxq 'Candidate clean after: YES' "${receipt}"
+          grep -Eq '^Required gates: .*foundational-proof=success; .*causal-negative-controls=success; .*evidence-reconciliation=GREEN$' "${receipt}"
+          grep -Fxq 'Result: GREEN' "${receipt}"
+
+          echo "sha=${sha}" >> "${GITHUB_OUTPUT}"
+          echo "wp=${wp}" >> "${GITHUB_OUTPUT}"
+          echo "source_run_id=${source_run_id}" >> "${GITHUB_OUTPUT}"
+          echo "artifact_id=${artifact_id}" >> "${GITHUB_OUTPUT}"
+
+      - name: Persist successful freeze check on frozen SHA
+        env:
+          SHA: ${{ steps.validate.outputs.sha }}
+          SOURCE_RUN_ID: ${{ steps.validate.outputs.source_run_id }}
+          ARTIFACT_ID: ${{ steps.validate.outputs.artifact_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          existing=$(gh api -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/commits/${SHA}/check-runs?per_page=100" --jq '.check_runs[] | select(.name == "Freeze exact-SHA validation" and .conclusion == "success") | .id' | head -n1)
+          if [[ -n "${existing}" ]]; then
+            echo "Successful freeze check already exists: ${existing}"
+            exit 0
+          fi
+
+          summary="Validated and reused durable exact-SHA GREEN receipt from workflow run ${SOURCE_RUN_ID}, artifact ${ARTIFACT_ID}. Candidate bytes were not re-executed or modified during this mechanical handoff."
+          jq -n \
+            --arg name "Freeze exact-SHA validation" \
+            --arg head_sha "${SHA}" \
+            --arg title "Exact-SHA GREEN receipt reused" \
+            --arg summary "${summary}" \
+            '{name:$name,head_sha:$head_sha,status:"completed",conclusion:"success",output:{title:$title,summary:$summary}}' \
+            | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
+
+      - name: Persist REVIEW_READY marker
+        env:
+          SHA: ${{ steps.validate.outputs.sha }}
+          WP: ${{ steps.validate.outputs.wp }}
+          SOURCE_RUN_ID: ${{ steps.validate.outputs.source_run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          key="review-ready:${PR}:${SHA}"
+          if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
+            exit 0
+          fi
+          detail="frozen metadata and durable exact-SHA GREEN receipt are verified (source run ${SOURCE_RUN_ID}). Start a fresh independent Reviewer."
+          body=$(cat <<EOF
+          ARKUS_AUTOMATION_V2
+          State: REVIEW_READY
+          Key: ${key}
+          Target SHA: ${SHA}
+          Detail: ${detail}
+          EOF
+          )
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
+
+          jq -n \
+            --arg state "REVIEW_READY" \
+            --arg key "${key}" \
+            --arg wp "${WP}" \
+            --arg detail "${detail}" \
+            --arg target_sha "${SHA}" \
+            --argjson pr "${PR}" \
+            '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,pr:$pr}}' \
+            | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
