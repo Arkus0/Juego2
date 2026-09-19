@@ -1,7 +1,7 @@
 # Arkus Product Architecture
 
 Version: 1.2 — 2026-09-19
-Status: candidate contract for `WP-HK-00A`; becomes binding only after that WP is independently accepted.
+Status: BINDING — accepted by `WP-HK-00A` independent PASS on 2026-09-19.
 
 ## Product position
 

@@ -1,7 +1,7 @@
 # Dependency / IP Policy
 
 Version: 1.1 — 2026-09-19
-Status: candidate contract for `WP-HK-00A`; binding after independent acceptance.
+Status: BINDING — accepted by `WP-HK-00A` independent PASS on 2026-09-19.
 
 ## Goal
 

@@ -18,19 +18,23 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00` is COMPLETE.
+`WP-HK-00` and `WP-HK-00A` are COMPLETE.
 
-- implementation PR: `#8`
-- reviewed frozen candidate: `014345b44035c796aa8509f88dcec227c476fcc7`
+Latest accepted workpack: `WP-HK-00A — Product architecture + adoption boundary`.
+
+- implementation PR: `#15`
+- reviewed frozen candidate: `e66ed729c75d94fb7efdfc304cf51ec52fa25e53`
 - independent Reviewer: `PASS`
-- merge SHA: `80dd20cf09b31e1d2b050410d46619b06511878f`
-- exact-SHA proof: GREEN, including 37/37 causal controls
+- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35430543113`)
+- merge SHA: `0a4253443326ccab8e910c3265b015fc757cc4a2`
+- accepted product architecture: canonical Arkus contract is engine/transport neutral, supports reviewed scoped capability composition, and forbids bridge/transport-owned parallel public registries
+- dependency/adoption policy: binding; exact-version review remains required before direct external-code adoption
 
-The previous self-shrinking project/source-universe defect is closed. Do not reopen HK00 merely to add theoretical defence-in-depth outside its accepted finite claim/proof budget.
+The prior HK00 project/source-universe defect and the HK00A engine-scoped-capability ownership ambiguity are closed inside their accepted finite claims. Do not reopen either WP merely for theoretical defence-in-depth outside its proof budget.
 
 ## Current next product target
 
-`WP-HK-00A — Product architecture + adoption boundary` is the next dependency-valid workpack after HK00 DocSync. It freezes engine/transport/dependency ownership boundaries before HK01 protocol implementation.
+`WP-HK-01 — Canonical contract model + capability discovery` is the next dependency-valid workpack. It must implement and prove the engine-neutral canonical contract/composition model required by the accepted HK00A boundary, including synthetic scoped-provider composition and independently/effectively enumerable completeness.
 
 ## Operating model
 
@@ -44,7 +48,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A → HK-01 → HK-02 → HK-03 → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 → HK-02 → HK-03 → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 

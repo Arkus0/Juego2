@@ -1,11 +1,19 @@
 # WP-HK-00A — Product architecture + adoption boundary
 
-Status: ACTIVE  
+Status: COMPLETE  
 Class: FOUNDATIONAL ARCHITECTURE  
 Depends on: `WP-HK-00` ✅ COMPLETE  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 Baseline SHA: `95aa0080a5a4ddd55bd02aa29fcad7aa34252c21`
 Implementation PR: `#15`
+
+Completion:
+- Reviewed candidate SHA: `e66ed729c75d94fb7efdfc304cf51ec52fa25e53`
+- Independent Reviewer verdict: `PASS`
+- Reviewer evidence: PR review `#5255049240`
+- Exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35430543113`)
+- Merge SHA: `0a4253443326ccab8e910c3265b015fc757cc4a2`
+- Completed: `2026-09-19`
 
 ## Objective
 
