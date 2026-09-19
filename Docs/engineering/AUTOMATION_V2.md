@@ -1,6 +1,6 @@
 # Automation V2 — minimal GitHub Actions orchestration
 
-Version: 1.3 — 2026-09-19
+Version: 1.4 — 2026-09-19
 
 ## Purpose
 
@@ -38,12 +38,15 @@ Draft Worker PR
   -> Reviewer emits exact-SHA PASS or FAIL
      FAIL -> REPAIR_REQUIRED marker; human starts fresh repair Worker
      PASS -> exact-SHA merge preflight -> automatic merge
-          -> the same successful Reviewer session continues in FINALIZATION/DOCSYNC mode
-          -> documentation-only reconciliation
+          -> DOCSYNC_REQUIRED after confirmed merge
+          -> successful Reviewer/finalizer performs documentation-only DocSync
           -> DOCSYNC_COMPLETE marker with dependency-valid Next WP
+          -> human starts the next Worker
 ```
 
-Only the mechanical validation/state-transition parts above are automated. Worker and independent Reviewer reasoning remain explicit. Routine post-PASS DocSync no longer requires a separate human reasoning-session handoff: once PASS is fixed, that same independent session may switch one-way into finalization/DocSync, provided it does not alter implementation bytes or reconsider the accepted candidate.
+Only the mechanical validation/state-transition parts above are automated. Worker and independent Reviewer reasoning remain explicit. Routine post-PASS DocSync may continue in the successful Reviewer session or in a dedicated finalization session, but it may never alter implementation bytes or reconsider the accepted candidate.
+
+Telegram is an optional control surface for these human-started reasoning sessions: high-value transitions may include a short copyable ChatGPT handoff prompt plus links to ChatGPT and the relevant PR. The prompt is convenience only and always instructs the new session to reconstruct GitHub state instead of trusting Telegram context.
 
 ## Workflows
 
@@ -84,23 +87,33 @@ It performs only GitHub-state transitions:
 - on canonical Reviewer `PASS`, verifies the reviewed SHA equals PR HEAD/Frozen SHA, requires a successful `Freeze exact-SHA validation` check, and merges that exact SHA;
 - after an implementation merge, emits `DOCSYNC_REQUIRED` as durable machine state for recovery/audit.
 
-`DOCSYNC_REQUIRED` does not imply a mandatory new session. Under `WORKER_REVIEW_PROTOCOL.md` v1.4+, the successful Reviewer session should normally continue immediately into documentation-only finalization and emit `DOCSYNC_COMPLETE` when reconciliation is actually complete.
+`DOCSYNC_REQUIRED` is the first safe point for a Telegram DocSync action because the merge is already confirmed. A successful Reviewer session may continue into finalization, or the human may start a dedicated finalization/DocSync session from the Telegram handoff. Either way, `WORKER_REVIEW_PROTOCOL.md` rules remain binding.
 
 This separation is deliberate for a public repository: untrusted PR code never receives the workflow token that can write/merge.
 
 ### `.github/workflows/telegram-notify.yml`
 
-Optional low-noise notification projection. It never decides state and never executes PR code. It only renders already-persisted `ARKUS_AUTOMATION_V2` markers into Telegram messages.
+Optional notification/control projection. It never decides acceptance state and never executes PR code. It renders already-persisted `ARKUS_AUTOMATION_V2` markers and the objective merged-PR event into Telegram messages.
 
-Normal Telegram notifications are intentionally limited to high-value transitions:
+Normal Telegram notifications cover the high-value transitions:
 
-- `REVIEW_READY` -> Worker finished and the exact candidate is ready for an independent Reviewer;
-- `PASS_PREFLIGHT_GREEN` -> Reviewer PASS is bound to the exact candidate and merge is authorized;
-- `REPAIR_REQUIRED` -> Reviewer FAIL requires a fresh repair Worker on the same WP;
-- `DOCSYNC_COMPLETE` -> merge + DocSync are complete and the dependency-valid `Next WP` is included;
-- `MILESTONE_COMPLETE`, `BLOCKED` and `HUMAN_ACTION_REQUIRED` are supported for future explicit markers.
+- `REVIEW_READY` -> Worker finished; includes a short prompt for a fresh independent Reviewer;
+- `PASS_PREFLIGHT_GREEN` -> Reviewer PASS is bound to the exact candidate and automatic merge is in progress; status only, so the user does not race the merge;
+- `REPAIR_REQUIRED` -> Reviewer FAIL; includes a short prompt for a fresh repair Worker on the same PR/WP;
+- `DOCSYNC_REQUIRED` -> merge is confirmed; includes a finalization/DocSync prompt;
+- `DOCSYNC_COMPLETE` -> merge + DocSync are complete and the dependency-valid `Next WP` is included; when `Next WP != NONE`, includes a prompt for the next Worker;
+- `BLOCKED` and `HUMAN_ACTION_REQUIRED` -> includes a read-only diagnostic prompt;
+- `MILESTONE_COMPLETE` remains informational.
 
-`DOCSYNC_REQUIRED` is deliberately not sent to avoid an extra routine notification between merge and final DocSync completion.
+Actionable notifications use a Telegram inline keyboard:
+
+- `📋 Copiar siguiente prompt` copies a compact handoff prompt;
+- `🤖 Abrir ChatGPT` opens `https://chatgpt.com/` (the platform/client decides whether that resolves to the app or web);
+- `🔗 Abrir PR` opens the authoritative GitHub surface.
+
+Telegram Bot API `copy_text` is limited to 256 characters, so handoff prompts intentionally carry only stable identifiers and role intent. They do **not** embed review findings, repository state or long instructions. Every prompt requires the receiving ChatGPT session to reconstruct current GitHub state and read the authoritative WP/PR evidence before acting.
+
+No OpenAI API key is used by this workflow. Telegram does not send a prompt into ChatGPT automatically; the human copies the prompt, opens ChatGPT and submits it in the normal app/chat experience.
 
 The notifier expects repository secrets named:
 
@@ -108,6 +121,8 @@ The notifier expects repository secrets named:
 - `TELEGRAM_CHAT_ID`
 
 If either secret is absent, the job exits successfully after logging that the notification was skipped. Telegram is convenience only; GitHub state remains authoritative.
+
+`Mode: PROCESS_ONLY` merged PRs are excluded from the post-merge DocSync action because process-only changes do not represent a product-WP implementation merge.
 
 ## Reviewer handoff contract
 
@@ -130,7 +145,7 @@ A `PASS` cannot merge unless all of these agree:
 
 That successful freeze check may represent either a fresh canonical execution or strict reuse of an already-durable exact-SHA GREEN receipt for the identical frozen SHA.
 
-After PASS is persisted and these conditions hold, automation may merge immediately. The same Reviewer session then treats the verdict as fixed and may perform only post-merge documentation/finalization actions.
+After PASS is persisted and these conditions hold, automation may merge immediately. Finalization then treats the verdict as fixed and may perform only post-merge documentation/finalization actions.
 
 ## DocSync completion marker
 
@@ -145,7 +160,7 @@ Next WP: <dependency-valid next WP, or NONE>
 Detail: <short reconciliation result>
 ```
 
-`Next WP` is derived from current accepted GitHub state after DocSync; it is not chosen by the Telegram workflow.
+`Next WP` is derived from current accepted GitHub state after DocSync; it is not chosen by the Telegram workflow. Telegram merely uses the already-recorded value to offer the next Worker handoff.
 
 ## Cost policy
 
