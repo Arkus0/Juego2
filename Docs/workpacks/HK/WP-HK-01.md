@@ -1,9 +1,19 @@
 # WP-HK-01 — Canonical contract model + capability discovery
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
-Depends on: `WP-HK-00A`  
+Depends on: `WP-HK-00A` ✅ COMPLETE  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+Baseline SHA: `9db7a1ffffa02c02af7889de29960de1f19d2755`
+Implementation PR: `#16`
+
+Completion:
+- Reviewed candidate SHA: `c16c0a7bbe4afe440252b921516b5e9b4635e082`
+- Independent Reviewer verdict: `PASS`
+- Reviewer evidence: PR review `#5255264042`
+- Exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35435429932`)
+- Merge SHA: `24d761ba0bc33a70fc06e5ea351054b5d3c51488`
+- Completed: `2026-09-19`
 
 ## Objective
 
