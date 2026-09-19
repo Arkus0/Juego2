@@ -22,6 +22,33 @@ namespace Arkus.Harness.Tests
                 new[] { CapabilityRoute.FromHandler(new FixtureEngineHandler()) });
         }
 
+        internal static IReadOnlyList<CanonicalProviderContribution> CompleteFixtureProviders()
+        {
+            var engineV10 = FixtureDefinition(new ContractVersion(1, 0), true);
+            var engineV11 = FixtureDefinition(new ContractVersion(1, 1), true);
+            var engine = new CanonicalProviderContribution(
+                new ProviderDescriptor("fixture.engine", ProviderKind.Scoped, "engine", new[] { "engine" }),
+                new[] { engineV10, engineV11 },
+                new[]
+                {
+                    CapabilityRoute.FromHandler(new FixtureEngineHandler()),
+                    CapabilityRoute.FromHandler(new FixtureEngineV11Handler())
+                });
+
+            var orphanDefinition = DefinitionForProvider(
+                "fixture.orphan",
+                "orphan",
+                "orphan.route",
+                new ContractVersion(1, 0),
+                false);
+            var orphan = new CanonicalProviderContribution(
+                new ProviderDescriptor("fixture.orphan", ProviderKind.Scoped, "engine", new[] { "orphan" }),
+                new[] { orphanDefinition },
+                new[] { CapabilityRoute.FromHandler(new OrphanHandler()) });
+
+            return new[] { engine, orphan };
+        }
+
         internal static CapabilityDefinition FixtureDefinition(ContractVersion version, bool includeOptionalTarget)
         {
             return DefinitionForProvider(
@@ -146,7 +173,10 @@ namespace Arkus.Harness.Tests
             CapabilityInvocationContext context,
             IReadOnlyDictionary<string, object?> request)
         {
-            return CapabilityInvocationResult.Succeeded(new Dictionary<string, object?>(StringComparer.Ordinal));
+            return CapabilityInvocationResult.Succeeded(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["value"] = "orphan"
+            });
         }
     }
 }
