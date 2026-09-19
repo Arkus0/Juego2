@@ -51,8 +51,8 @@ namespace Arkus.Harness.Tests
         public void EveryEffectiveNonMutationRouteIsEvaluatedAndCannotChangeCanonicalState()
         {
             var initial = Hk02TestFixtures.MicroWorld();
-            var session = new TransactionalWorldAuthoringSession(initial);
-            var contract = Hk04TransactionalMutationTests.Compose(session);
+            var session = new PortableWorldAuthoringSession(initial);
+            var contract = CanonicalWorldContract.Compose(new WorldInspectionService(session), session);
             var requests = ValidNonMutationRequests(initial);
             var nonMutationNames = new HashSet<string>(StringComparer.Ordinal);
 
@@ -101,6 +101,14 @@ namespace Arkus.Harness.Tests
                 "request.nonmutation-oracle",
                 Hk04TransactionalMutationTests.PutObject("node.peer", "fixture.oracle"));
 
+            var portable = new PortableWorldAuthoringSession(state);
+            var snapshot = portable.ExportSnapshot(Hk01TestFixtures.EmptyRequest()).Data!;
+            var diff = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["base"] = snapshot,
+                ["target"] = snapshot
+            };
+
             return new Dictionary<string, IReadOnlyDictionary<string, object?>>(StringComparer.Ordinal)
             {
                 ["system.describe"] = Hk01TestFixtures.EmptyRequest(),
@@ -114,7 +122,9 @@ namespace Arkus.Harness.Tests
                 [WorldValidationContract.ProposedName] = plannedMutation,
                 [WorldMutationContract.PlanName] = plannedMutation,
                 [WorldMutationContract.DryRunName] = plannedMutation,
-                [WorldProvenanceContract.ReadName] = Hk01TestFixtures.EmptyRequest()
+                [WorldProvenanceContract.ReadName] = Hk01TestFixtures.EmptyRequest(),
+                [WorldPortabilityContract.CompareName] = diff,
+                [WorldPortabilityContract.ExportName] = Hk01TestFixtures.EmptyRequest()
             };
         }
     }
