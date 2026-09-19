@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.16 — 2026-09-20
+Version: 1.17 — 2026-09-20
 
 ## North star
 
@@ -69,20 +69,34 @@ Next dependency-valid workpack: `WP-HK-06C — Deterministic journal replay + en
 | 11 | `WP-HK-06C` | Deterministic journal replay + end-to-end audit consistency |
 | 12 | `WP-HK-07A` | Production headless host + deterministic JSONL/reference transport |
 | 13 | `WP-HK-07B` | Standards-compatible MCP projection + cross-transport conformance |
-| 14 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination and round-trip budgets |
+| 14 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination, structured CAS recovery and round-trip budgets |
 | 15 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
-| 16 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure |
+| 16 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
 | 17 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
+
+## H0 interaction/concurrency decision
+
+H0 keeps the accepted whole-world revision/hash CAS and does not speculate into per-resource locking, automatic merge, distributed transactions or autonomous multi-agent scheduling.
+
+Before `WP-HK-GATE`, HK08 must make the existing optimistic-concurrency model **cheap to recover from**: an ordinary same-lineage stale plan must receive bounded machine-readable context anchored to the expected and current world so the agent can preserve intent, re-plan the affected slice and retry through the normal transaction path without ordinarily reconstructing the complete world. When lineage/history is insufficient to establish a trustworthy delta, the harness must say so explicitly rather than inventing one.
+
+Batching is the primary H0 mitigation for whole-world commit cost. The current 64-operation request limit is not a permanent product constant: HK08 measures a representative coherent multi-resource edit, and the accepted request shape/limit must allow that edit to remain one atomic transaction inside the HK09 resource envelope. Do not build logical multi-plan transactions merely because an arbitrary number such as 64 exists; add them only if measured representative work proves one atomic request is insufficient.
+
+Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling are post-GATE product work unless HK08/GATE evidence proves they are necessary for the representative single-client authoring contract. A future concurrent-agent requirement is a valid reason to revisit CAS granularity, but not a reason to delay H0 today.
+
+HK08 also re-runs reference-transport ↔ MCP conformance for every interaction primitive it changes or adds. HK07B proves the initial neutral projection; it cannot pre-prove semantics introduced later by HK08.
 
 ### H0 exit criteria
 
-See prior accepted ROADMAP body; gate criteria unchanged from v1.9.
+`WP-HK-GATE` is authoritative for the executable gate scenario. In addition to correctness/replay/transport neutrality, H0 must demonstrate bounded same-lineage stale-plan recovery, an atomic representative batch that fits the accepted resource budget, and bounded long-session resource behaviour. Multi-agent throughput and automatic concurrent merge are explicitly not H0 gate criteria unless earlier measured evidence reclassifies them.
 
 ---
 
 # H1 — Engine Bridge Foundation: Unity First (blocked by H0)
 
 Only after `WP-HK-GATE` PASS. Detailed H1 WPs not frozen yet.
+
+The first H1/scoped-extension producer work must preserve the HK02A opaque-kernel boundary while removing an avoidable AI footgun: when a schema-aware producer/codec understands references embedded in its payload, it must derive the corresponding typed dependency surface mechanically from the structured input it serializes. The AI should not normally be responsible for manually keeping opaque payload references and `dependencies` synchronized. Direct opaque payload + dependency authoring remains a low-level primitive; the engine-agnostic kernel still does not introspect arbitrary payload bytes.
 
 ---
 
