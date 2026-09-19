@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using Arkus.Harness.Protocol;
 
 [assembly: InternalsVisibleTo("Arkus.Harness.Runtime")]
+[assembly: InternalsVisibleTo("Arkus.Harness.Tests")]
 
 namespace Arkus.Game.Authoring
 {
@@ -19,8 +20,8 @@ namespace Arkus.Game.Authoring
     }
 
     /// <summary>
-    /// Canonical write capability. It is intentionally internal to the authoring/runtime
-    /// boundary so ordinary public/scoped handlers cannot receive it through the public API.
+    /// Canonical write capability. It is intentionally internal to the Authoring/Runtime
+    /// boundary so ordinary public/scoped handlers cannot obtain commit authority from public API.
     /// </summary>
     internal interface ICanonicalWorldMutationCommitter
     {
@@ -28,10 +29,8 @@ namespace Arkus.Game.Authoring
     }
 
     /// <summary>
-    /// Authoring-owned authority binder. Runtime gets a narrow commit capability rather than
-    /// the public planning service. TransactionalWorldAuthoringSession remains the implementation
-    /// of HK04 semantics, but its public Apply method is treated as write authority by the
-    /// independent runtime conformance oracle until the API can be narrowed without a source break.
+    /// Authoring-owned authority binder. Runtime receives the narrow internal commit capability;
+    /// public callers receive only IWorldMutationService planning/dry-run semantics.
     /// </summary>
     internal static class CanonicalWorldMutationAuthority
     {
@@ -39,26 +38,10 @@ namespace Arkus.Game.Authoring
         {
             if (service == null) throw new ArgumentNullException(nameof(service));
             if (service is ICanonicalWorldMutationCommitter committer) return committer;
-            if (service is TransactionalWorldAuthoringSession session) return new SessionCommitter(session);
 
             throw new ArgumentException(
                 "Canonical mutation bindings require an Authoring-owned commit authority.",
                 nameof(service));
-        }
-
-        private sealed class SessionCommitter : ICanonicalWorldMutationCommitter
-        {
-            private readonly TransactionalWorldAuthoringSession _session;
-
-            public SessionCommitter(TransactionalWorldAuthoringSession session)
-            {
-                _session = session ?? throw new ArgumentNullException(nameof(session));
-            }
-
-            public CapabilityInvocationResult Apply(IReadOnlyDictionary<string, object?> request)
-            {
-                return _session.Apply(request);
-            }
         }
     }
 
