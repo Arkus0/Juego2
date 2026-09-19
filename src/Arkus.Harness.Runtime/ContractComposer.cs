@@ -26,6 +26,7 @@ namespace Arkus.Harness.Runtime
 
             var issues = new List<CompositionIssue>();
             var providerIds = new HashSet<string>(StringComparer.Ordinal);
+            var scopes = new Dictionary<string, string>(StringComparer.Ordinal);
             var namespaces = new List<NamespaceOwner>();
             var definitions = new Dictionary<CapabilityKey, CapabilityDefinition>();
             var routes = new Dictionary<CapabilityKey, CapabilityRoute>();
@@ -36,7 +37,7 @@ namespace Arkus.Harness.Runtime
                 var descriptor = contribution.Descriptor;
                 var path = "$.providers[" + index + "]";
 
-                ValidateDescriptor(descriptor, index == 0, path, providerIds, namespaces, issues);
+                ValidateDescriptor(descriptor, index == 0, path, providerIds, scopes, namespaces, issues);
                 ValidateContribution(contribution, path, definitions, routes, issues);
             }
 
@@ -77,6 +78,7 @@ namespace Arkus.Harness.Runtime
             bool isBase,
             string path,
             ISet<string> providerIds,
+            IDictionary<string, string> scopes,
             IList<NamespaceOwner> namespaces,
             IList<CompositionIssue> issues)
         {
@@ -106,6 +108,18 @@ namespace Arkus.Harness.Runtime
                     "composition.duplicate_provider",
                     path + ".id",
                     "Provider identities must be unique within one composed contract."));
+            }
+
+            if (scopes.TryGetValue(descriptor.Scope, out var existingScopeProvider))
+            {
+                issues.Add(new CompositionIssue(
+                    "composition.scope_conflict",
+                    path + ".scope",
+                    "Provider scope '" + descriptor.Scope + "' is already owned by '" + existingScopeProvider + "'."));
+            }
+            else
+            {
+                scopes.Add(descriptor.Scope, descriptor.ProviderId);
             }
 
             if (descriptor.OwnedNamespaces.Count == 0)
