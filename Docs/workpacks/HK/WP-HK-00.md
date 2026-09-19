@@ -1,9 +1,16 @@
 # WP-HK-00 — Canonical portable kernel boundary
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: none  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+Completion:
+- Implementation PR: `#8`
+- Reviewed candidate SHA: `014345b44035c796aa8509f88dcec227c476fcc7`
+- Independent Reviewer verdict: `PASS`
+- Merge SHA: `80dd20cf09b31e1d2b050410d46619b06511878f`
+- Completed: `2026-09-19`
 
 ## Objective
 
