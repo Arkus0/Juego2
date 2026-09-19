@@ -33,7 +33,7 @@ namespace Arkus.Harness.Tests
                 Assert.Equal(PrivilegeClass.PublicRead, definition.Policy!.Privilege);
             }
 
-            Assert.Equal(expected, discovered);
+            Assert.True(expected.SetEquals(discovered));
 
             var describe = contract.Dispatch(
                 "system.describe",
@@ -44,7 +44,7 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void SummaryAndObjectLookupBindEveryResponseToRevisionAndHash()
+        public void SummaryAndObjectLookupBindEverySuccessToRevisionAndHash()
         {
             var state = Hk02TestFixtures.MicroWorld();
             var contract = Compose(state);
@@ -70,7 +70,7 @@ namespace Arkus.Harness.Tests
             Assert.Equal("node.child", value["id"]);
             Assert.Equal("fixture.item", value["typeId"]);
             Assert.Equal("node.root", value["containerId"]);
-            Assert.Equal(2, List(value, "references").Count);
+            Assert.False(value.ContainsKey("references"));
         }
 
         [Fact]
@@ -123,6 +123,7 @@ namespace Arkus.Harness.Tests
             Assert.Equal(2, rows.Count);
             var first = (IReadOnlyDictionary<string, object?>)rows[0]!;
             var second = (IReadOnlyDictionary<string, object?>)rows[1]!;
+            Assert.Equal("node.child", first["sourceId"]);
             Assert.Equal("fixture.peer", first["kind"]);
             Assert.Equal("node.peer", first["targetId"]);
             Assert.Equal("fixture.root", second["kind"]);
@@ -162,6 +163,7 @@ namespace Arkus.Harness.Tests
                 request["limit"] = WorldInspectionService.MaximumExtensionChunkBytes;
                 var chunk = Dispatch(contract, WorldInspectionContract.ExtensionReadName, request);
                 var bytes = Convert.FromBase64String((string)chunk.Data!["payloadBase64"]!);
+                Assert.InRange(bytes.Length, 0, WorldInspectionService.MaximumExtensionChunkBytes);
                 reconstructed.AddRange(bytes);
                 if (!chunk.Data.TryGetValue("nextOffset", out var next))
                 {
