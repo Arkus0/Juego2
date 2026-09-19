@@ -30,12 +30,14 @@ namespace Arkus.Harness.Runtime
             definitions.AddRange(WorldValidationContract.CreateDefinitions());
             definitions.AddRange(WorldMutationContract.CreateDefinitions());
             definitions.AddRange(WorldProvenanceContract.CreateDefinitions());
+            definitions.AddRange(WorldPortabilityContract.CreateDefinitions());
 
             var routes = new List<CapabilityRoute>(acceptedBase.Routes);
             routes.AddRange(WorldInspectionBindings.CreateRoutes(inspection));
             routes.AddRange(WorldValidationBindings.CreateRoutes(mutation));
             routes.AddRange(WorldMutationBindings.CreateRoutes(mutation));
             routes.AddRange(WorldProvenanceBindings.CreateRoutes(mutation));
+            routes.AddRange(WorldPortabilityBindings.CreateRoutes(mutation));
 
             return new CanonicalProviderContribution(
                 new ProviderDescriptor(
