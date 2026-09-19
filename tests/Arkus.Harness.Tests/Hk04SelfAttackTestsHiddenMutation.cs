@@ -1,4 +1,4 @@
-using System;
+using System.Reflection;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
 using Arkus.Harness.MutationAttackFixture;
@@ -8,57 +8,38 @@ using Xunit;
 namespace Arkus.Harness.Tests
 {
     /// <summary>
-    /// Repair-cycle causal control for the independent Reviewer finding on candidate
-    /// 28695c9d20d018d96f3afdacb402c0d0ec02288e. Unlike the original metadata-only mutant,
-    /// this handler really commits the authoritative WorldState while remaining declared/read-only
-    /// and outside ITransactionalMutationHandler.
+    /// Circuit-breaker causal control for the hidden-mutation class. The fixture keeps the real
+    /// session behind List&lt;TransactionalWorldAuthoringSession&gt; (the exact cycle-2 miss) and uses
+    /// only public API. Completeness no longer depends on structural object-graph traversal.
     /// </summary>
     public sealed class Hk04SelfAttackTestsHiddenMutation
     {
         [Fact]
-        public void RealReadOnlyHandlerMutationIsBlockedAndTurnsIndependentAuthorityOracleRed()
+        public void IndirectReadOnlyHandlerCannotCommitThroughPublicSessionApi()
         {
+            Assert.Null(typeof(TransactionalWorldAuthoringSession).GetMethod(
+                "Apply",
+                BindingFlags.Instance | BindingFlags.Public));
+
             var initial = Hk02TestFixtures.MicroWorld();
             var session = new TransactionalWorldAuthoringSession(initial);
             var request = Hk04TransactionalMutationTests.Request(
                 initial,
-                "request.hidden-bypass-real",
+                "request.hidden-bypass-indirect",
                 Hk04TransactionalMutationTests.PutObject("node.peer", "fixture.hidden-mutator"));
             var hidden = new HiddenCanonicalMutationBypassHandler(session, request);
             var beforeHash = CanonicalWorldStateCodec.ComputeContentHash(session.Current);
+            var beforeRevision = session.Current.Revision;
 
-            // Causal premise: this is not a metadata fiction. Invoking the handler directly really
-            // changes the authoritative canonical state through a forbidden read-only command path.
-            var mutation = hidden.Invoke(null!, Hk01TestFixtures.EmptyRequest());
-            Assert.True(mutation.Success);
-            Assert.NotEqual(beforeHash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
-            Assert.Equal(initial.Revision + 1, session.Current.Revision);
+            // The List<> shape is intentionally not special-cased by the structural guard. The
+            // route may publish because possessing a public session no longer grants commit power.
+            var route = CapabilityRoute.FromHandler(hidden);
+            Assert.Equal("engine.observe", route.Key.Name);
 
-            // Runtime publication fails closed even though the route metadata itself still says
-            // engine.observe/read-only in the fixture contract.
-            var freshInitial = Hk02TestFixtures.MicroWorld();
-            var freshSession = new TransactionalWorldAuthoringSession(freshInitial);
-            var freshHidden = new HiddenCanonicalMutationBypassHandler(
-                freshSession,
-                Hk04TransactionalMutationTests.Request(
-                    freshInitial,
-                    "request.hidden-bypass-publication",
-                    Hk04TransactionalMutationTests.PutObject("node.peer", "fixture.hidden-mutator")));
-            Assert.Throws<ArgumentException>(() => CapabilityRoute.FromHandler(freshHidden));
-
-            // Independent proof universe: keep the canonical definition ReadOnly and independently
-            // enumerate executable handler authority from the isolated attack assembly. SideEffect is
-            // never used to decide that HiddenCanonicalMutationBypassHandler can write.
-            var contract = Hk01TestFixtures.ComposeWithFixture();
-            var report = MutationSurfaceConformance.Evaluate(
-                contract,
-                new[] { typeof(HiddenCanonicalMutationBypassHandler).Assembly });
-
-            Assert.False(report.IsConformant);
-            Assert.Contains(report.Issues, issue =>
-                issue.Code == "mutation-surface.extra" &&
-                issue.Subject == "engine.observe@1.0" &&
-                issue.Message.Contains("effective-write-authority", StringComparison.Ordinal));
+            var result = hidden.Invoke(null!, Hk01TestFixtures.EmptyRequest());
+            Assert.True(result.Success);
+            Assert.Equal(beforeRevision, session.Current.Revision);
+            Assert.Equal(beforeHash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
         }
     }
 }
