@@ -66,7 +66,7 @@ namespace Arkus.Harness.Tests
             Assert.Equal(state.Revision, world["revision"]);
             Assert.Equal(CanonicalWorldStateCodec.ComputeContentHash(state), world["hash"]);
 
-            var value = Map(result.Data, "object");
+            var value = Map(result.Data!, "object");
             Assert.Equal("node.child", value["id"]);
             Assert.Equal("fixture.item", value["typeId"]);
             Assert.Equal("node.root", value["containerId"]);
