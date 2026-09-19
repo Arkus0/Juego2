@@ -71,9 +71,9 @@ namespace Arkus.Harness.Tests
 
             Assert.True(report.IsConformant, FormatIssues(report.Issues));
             Assert.Empty(routeUniverse.Issues);
-            Assert.Equal(10, composition.Contract.Definitions.Count);
-            Assert.Equal(10, routeUniverse.Routes.Count);
-            Assert.Equal(10, composition.Contract.Projection.Capabilities.Count);
+            Assert.Equal(13, composition.Contract.Definitions.Count);
+            Assert.Equal(13, routeUniverse.Routes.Count);
+            Assert.Equal(13, composition.Contract.Projection.Capabilities.Count);
         }
 
         [Fact]
@@ -178,7 +178,7 @@ namespace Arkus.Harness.Tests
 
             Assert.True(report.IsConformant, FormatIssues(report.Issues));
             Assert.Empty(routeUniverse.Issues);
-            Assert.Equal(7, routeUniverse.Routes.Count);
+            Assert.Equal(10, routeUniverse.Routes.Count);
             foreach (var route in routeUniverse.Routes)
             {
                 Assert.Equal("arkus.base", route.ProviderId);
