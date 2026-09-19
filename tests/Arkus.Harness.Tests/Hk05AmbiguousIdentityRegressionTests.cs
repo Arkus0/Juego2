@@ -36,6 +36,34 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void DuplicateObjectIdentityDoesNotHideDisjointUniqueCycle()
+        {
+            var first = WorldValidationEngine.ValidateCandidate(DuplicateObjectWithDisjointCycleCandidate(false));
+            var reordered = WorldValidationEngine.ValidateCandidate(DuplicateObjectWithDisjointCycleCandidate(true));
+
+            Assert.False(first.Valid);
+            Assert.False(reordered.Valid);
+            Assert.Equal(first.Diagnostics.Count, reordered.Diagnostics.Count);
+            Assert.Equal(CompleteSignatures(first.Diagnostics), CompleteSignatures(reordered.Diagnostics));
+            Assert.Empty(ActionabilityIssues(first.Diagnostics));
+            Assert.Empty(ActionabilityIssues(reordered.Diagnostics));
+
+            Assert.Equal(3, first.Diagnostics.Count);
+            Assert.Equal(1, CountInvariant(first.Diagnostics, WorldInvariantCatalog.ObjectIdentityUnique.InvariantId));
+            Assert.Equal(2, CountInvariant(first.Diagnostics, WorldInvariantCatalog.ContainmentAcyclic.InvariantId));
+            Assert.True(ContainsResourceInvariant(
+                first.Diagnostics,
+                "world.object:cycle.a",
+                WorldInvariantCatalog.ContainmentAcyclic.InvariantId));
+            Assert.True(ContainsResourceInvariant(
+                first.Diagnostics,
+                "world.object:cycle.b",
+                WorldInvariantCatalog.ContainmentAcyclic.InvariantId));
+
+            Assert.False(ContainsInvariant(first.Diagnostics, WorldInvariantCatalog.ContainerResolves.InvariantId));
+        }
+
+        [Fact]
         public void DuplicateExtensionIdentityDefersIdentityDependentDiagnosticsDeterministically()
         {
             var first = WorldValidationEngine.ValidateCandidate(DuplicateExtensionCandidate(false));
@@ -98,6 +126,27 @@ namespace Arkus.Harness.Tests
                 : new WorldObject?[] { aToB, aToMissing, bToA };
 
             return new WorldStateCandidate(new WorldId("world.ambiguous-object"), 1, objects);
+        }
+
+        private static WorldStateCandidate DuplicateObjectWithDisjointCycleCandidate(bool reverseDuplicates)
+        {
+            var type = new WorldTypeId("fixture.item");
+            var duplicateId = new WorldObjectId("dup.x");
+            var missingOne = new WorldObjectId("dup.missing-one");
+            var missingTwo = new WorldObjectId("dup.missing-two");
+            var cycleAId = new WorldObjectId("cycle.a");
+            var cycleBId = new WorldObjectId("cycle.b");
+
+            var duplicateOne = new WorldObject(duplicateId, type, missingOne);
+            var duplicateTwo = new WorldObject(duplicateId, type, missingTwo);
+            var cycleA = new WorldObject(cycleAId, type, cycleBId);
+            var cycleB = new WorldObject(cycleBId, type, cycleAId);
+
+            var objects = reverseDuplicates
+                ? new WorldObject?[] { duplicateTwo, duplicateOne, cycleA, cycleB }
+                : new WorldObject?[] { duplicateOne, duplicateTwo, cycleA, cycleB };
+
+            return new WorldStateCandidate(new WorldId("world.ambiguous-object-disjoint-cycle"), 1, objects);
         }
 
         private static WorldStateCandidate DuplicateExtensionCandidate(bool reverseDuplicates)
@@ -223,9 +272,34 @@ namespace Arkus.Harness.Tests
             IReadOnlyList<WorldValidationDiagnostic> diagnostics,
             string invariantId)
         {
+            return CountInvariant(diagnostics, invariantId) != 0;
+        }
+
+        private static int CountInvariant(
+            IReadOnlyList<WorldValidationDiagnostic> diagnostics,
+            string invariantId)
+        {
+            var count = 0;
             for (var index = 0; index < diagnostics.Count; index++)
             {
-                if (string.Equals(diagnostics[index].InvariantId, invariantId, StringComparison.Ordinal)) return true;
+                if (string.Equals(diagnostics[index].InvariantId, invariantId, StringComparison.Ordinal)) count++;
+            }
+
+            return count;
+        }
+
+        private static bool ContainsResourceInvariant(
+            IReadOnlyList<WorldValidationDiagnostic> diagnostics,
+            string resource,
+            string invariantId)
+        {
+            for (var index = 0; index < diagnostics.Count; index++)
+            {
+                if (string.Equals(diagnostics[index].Resource, resource, StringComparison.Ordinal) &&
+                    string.Equals(diagnostics[index].InvariantId, invariantId, StringComparison.Ordinal))
+                {
+                    return true;
+                }
             }
 
             return false;
