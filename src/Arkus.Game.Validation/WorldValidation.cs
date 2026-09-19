@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using Arkus.Game.World;
 using Arkus.Harness.Protocol;
 
@@ -122,6 +123,19 @@ namespace Arkus.Game.Validation
 
     public static class WorldValidationEngine
     {
+        private sealed class IdentityAmbiguity
+        {
+            public IdentityAmbiguity(HashSet<string> objectResources, HashSet<string> extensionResources)
+            {
+                ObjectResources = objectResources;
+                ExtensionResources = extensionResources;
+            }
+
+            public HashSet<string> ObjectResources { get; }
+            public HashSet<string> ExtensionResources { get; }
+            public bool HasAmbiguousObjectIdentity => ObjectResources.Count != 0;
+        }
+
         private static readonly IReadOnlyList<WorldValidatorDescriptor> Descriptors = BuildInventory();
 
         public static IReadOnlyList<WorldValidatorDescriptor> ValidatorInventory => Descriptors;
@@ -137,11 +151,14 @@ namespace Arkus.Game.Validation
             if (candidate is null) throw new ArgumentNullException(nameof(candidate));
             if (target == null) throw new ArgumentNullException(nameof(target));
 
+            var ambiguity = FindIdentityAmbiguity(candidate);
             var diagnostics = new List<WorldValidationDiagnostic>();
             var violations = WorldStateValidator.ValidateCandidate(candidate);
             for (var index = 0; index < violations.Count; index++)
             {
-                diagnostics.Add(ToDiagnostic(violations[index]));
+                var violation = violations[index];
+                if (ShouldDeferForAmbiguousIdentity(violation, ambiguity)) continue;
+                diagnostics.Add(ToDiagnostic(violation));
             }
 
             diagnostics.Sort(CompareDiagnostics);
@@ -226,16 +243,92 @@ namespace Arkus.Game.Validation
             return values.AsReadOnly();
         }
 
+        /// <summary>
+        /// HK05 ambiguity policy: duplicate identity is reported first at an index-addressable
+        /// source location. Secondary diagnostics whose source location is itself ambiguous are
+        /// deferred until identity is repaired. Containment-cycle diagnostics are also deferred
+        /// whenever the object namespace is ambiguous because graph traversal otherwise depends on
+        /// choosing one of several objects for the same ID.
+        /// </summary>
+        private static bool ShouldDeferForAmbiguousIdentity(
+            WorldStateViolation violation,
+            IdentityAmbiguity ambiguity)
+        {
+            if (ReferenceEquals(violation.Invariant, WorldInvariantCatalog.ObjectIdentityUnique) ||
+                ReferenceEquals(violation.Invariant, WorldInvariantCatalog.ExtensionIdentityUnique))
+            {
+                return false;
+            }
+
+            if (ambiguity.ObjectResources.Contains(violation.Resource)) return true;
+            if (ambiguity.ExtensionResources.Contains(violation.Resource)) return true;
+
+            return ambiguity.HasAmbiguousObjectIdentity &&
+                ReferenceEquals(violation.Invariant, WorldInvariantCatalog.ContainmentAcyclic);
+        }
+
+        private static IdentityAmbiguity FindIdentityAmbiguity(WorldStateCandidate candidate)
+        {
+            var objectCounts = new Dictionary<WorldObjectId, int>();
+            for (var index = 0; index < candidate.Objects.Count; index++)
+            {
+                var current = candidate.Objects[index];
+                if (current == null) continue;
+                objectCounts.TryGetValue(current.Id, out var count);
+                objectCounts[current.Id] = count + 1;
+            }
+
+            var objectResources = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var pair in objectCounts)
+            {
+                if (pair.Value > 1) objectResources.Add("world.object:" + pair.Key.Value);
+            }
+
+            var extensionCounts = new Dictionary<WorldExtensionIdentity, int>();
+            for (var index = 0; index < candidate.Extensions.Count; index++)
+            {
+                var current = candidate.Extensions[index];
+                if (current == null) continue;
+                extensionCounts.TryGetValue(current.Identity, out var count);
+                extensionCounts[current.Identity] = count + 1;
+            }
+
+            var extensionResources = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var pair in extensionCounts)
+            {
+                if (pair.Value > 1) extensionResources.Add("world.extension:" + pair.Key.ResourceKey);
+            }
+
+            return new IdentityAmbiguity(objectResources, extensionResources);
+        }
+
         private static WorldValidationDiagnostic ToDiagnostic(WorldStateViolation violation)
         {
             var context = new Dictionary<string, object?>(StringComparer.Ordinal);
             foreach (var pair in violation.RemediationContext) context.Add(pair.Key, pair.Value);
 
+            var resource = violation.Resource;
+            var path = violation.Path;
+            if (ReferenceEquals(violation.Invariant, WorldInvariantCatalog.ObjectIdentityUnique) &&
+                TryGetContextString(context, "duplicateIndex", out var objectIndex))
+            {
+                resource = "world.object@index:" + objectIndex;
+                path = "$/objects/" + objectIndex + "/id";
+                context["duplicateId"] = RemovePrefix(violation.Resource, "world.object:");
+            }
+            else if (ReferenceEquals(violation.Invariant, WorldInvariantCatalog.ExtensionIdentityUnique) &&
+                TryGetContextString(context, "duplicateIndex", out var extensionIndex))
+            {
+                resource = "world.extension@index:" + extensionIndex;
+                path = "$/extensions/" + extensionIndex;
+                context["duplicateIdentity"] = RemovePrefix(violation.Resource, "world.extension:");
+            }
+
             return new WorldValidationDiagnostic(
                 violation.Invariant.MachineCode,
                 WorldDiagnosticSeverity.Error,
-                violation.Resource,
-                violation.Path,
+                resource,
+                path,
                 violation.Invariant.InvariantId,
                 violation.Message,
                 new ReadOnlyDictionary<string, object?>(context));
@@ -252,7 +345,59 @@ namespace Arkus.Game.Validation
             comparison = StringComparer.Ordinal.Compare(left.Path, right.Path);
             if (comparison != 0) return comparison;
             comparison = StringComparer.Ordinal.Compare(left.MachineCode, right.MachineCode);
-            return comparison != 0 ? comparison : StringComparer.Ordinal.Compare(left.Message, right.Message);
+            if (comparison != 0) return comparison;
+            comparison = StringComparer.Ordinal.Compare(left.Message, right.Message);
+            return comparison != 0 ? comparison : CompareRemediationContext(left.RemediationContext, right.RemediationContext);
+        }
+
+        private static int CompareRemediationContext(
+            IReadOnlyDictionary<string, object?> left,
+            IReadOnlyDictionary<string, object?> right)
+        {
+            var leftKeys = new List<string>(left.Keys);
+            var rightKeys = new List<string>(right.Keys);
+            leftKeys.Sort(StringComparer.Ordinal);
+            rightKeys.Sort(StringComparer.Ordinal);
+
+            var count = Math.Min(leftKeys.Count, rightKeys.Count);
+            for (var index = 0; index < count; index++)
+            {
+                var comparison = StringComparer.Ordinal.Compare(leftKeys[index], rightKeys[index]);
+                if (comparison != 0) return comparison;
+
+                comparison = StringComparer.Ordinal.Compare(
+                    StableContextValue(left[leftKeys[index]]),
+                    StableContextValue(right[rightKeys[index]]));
+                if (comparison != 0) return comparison;
+            }
+
+            return leftKeys.Count.CompareTo(rightKeys.Count);
+        }
+
+        private static string StableContextValue(object? value)
+        {
+            if (value == null) return "null";
+            if (value is string text) return "string:" + text;
+            if (value is bool flag) return flag ? "bool:true" : "bool:false";
+            if (value is IFormattable formattable)
+                return value.GetType().FullName + ":" + formattable.ToString(null, CultureInfo.InvariantCulture);
+            return value.GetType().FullName + ":" + value;
+        }
+
+        private static bool TryGetContextString(
+            IReadOnlyDictionary<string, object?> context,
+            string key,
+            out string value)
+        {
+            value = string.Empty;
+            if (!context.TryGetValue(key, out var raw) || raw == null) return false;
+            value = raw as string ?? Convert.ToString(raw, CultureInfo.InvariantCulture) ?? string.Empty;
+            return value.Length != 0;
+        }
+
+        private static string RemovePrefix(string value, string prefix)
+        {
+            return value.StartsWith(prefix, StringComparison.Ordinal) ? value.Substring(prefix.Length) : value;
         }
     }
 
