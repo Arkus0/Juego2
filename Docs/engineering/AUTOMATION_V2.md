@@ -1,10 +1,10 @@
 # Automation V2 — minimal GitHub Actions orchestration
 
-Version: 1.2 — 2026-09-19
+Version: 1.3 — 2026-09-19
 
 ## Purpose
 
-Juego2 uses GitHub Actions again because the repository is public and standard hosted runners can provide practical validation compute without consuming the previous private-repository minute budget.
+Juego2 uses GitHub Actions because the repository is public and standard hosted runners can provide practical validation compute without consuming the previous private-repository minute budget.
 
 Automation V2 is intentionally small. It automates mechanical validation and state transitions; it does **not** become the semantic authority for Arkus and it does not spawn or impersonate independent AI roles.
 
@@ -38,13 +38,12 @@ Draft Worker PR
   -> Reviewer emits exact-SHA PASS or FAIL
      FAIL -> REPAIR_REQUIRED marker; human starts fresh repair Worker
      PASS -> exact-SHA merge preflight -> automatic merge
-  -> DOCSYNC_REQUIRED marker
-  -> human starts DocSync
-  -> DOCSYNC_COMPLETE marker with dependency-valid Next WP
-  -> next WP may start
+          -> the same successful Reviewer session continues in FINALIZATION/DOCSYNC mode
+          -> documentation-only reconciliation
+          -> DOCSYNC_COMPLETE marker with dependency-valid Next WP
 ```
 
-Only the mechanical parts above are automated. Worker, independent Reviewer and DocSync reasoning remain explicit role invocations unless a future provider integration can prove those role boundaries correctly.
+Only the mechanical validation/state-transition parts above are automated. Worker and independent Reviewer reasoning remain explicit. Routine post-PASS DocSync no longer requires a separate human reasoning-session handoff: once PASS is fixed, that same independent session may switch one-way into finalization/DocSync, provided it does not alter implementation bytes or reconsider the accepted candidate.
 
 ## Workflows
 
@@ -83,7 +82,9 @@ It performs only GitHub-state transitions:
 - after successful frozen handoff validation (fresh execution or validated receipt reuse), verifies handoff metadata and emits `REVIEW_READY`;
 - on canonical Reviewer `FAIL` for the exact frozen SHA, emits `REPAIR_REQUIRED`;
 - on canonical Reviewer `PASS`, verifies the reviewed SHA equals PR HEAD/Frozen SHA, requires a successful `Freeze exact-SHA validation` check, and merges that exact SHA;
-- after an implementation merge, emits `DOCSYNC_REQUIRED`.
+- after an implementation merge, emits `DOCSYNC_REQUIRED` as durable machine state for recovery/audit.
+
+`DOCSYNC_REQUIRED` does not imply a mandatory new session. Under `WORKER_REVIEW_PROTOCOL.md` v1.4+, the successful Reviewer session should normally continue immediately into documentation-only finalization and emit `DOCSYNC_COMPLETE` when reconciliation is actually complete.
 
 This separation is deliberate for a public repository: untrusted PR code never receives the workflow token that can write/merge.
 
@@ -129,9 +130,11 @@ A `PASS` cannot merge unless all of these agree:
 
 That successful freeze check may represent either a fresh canonical execution or strict reuse of an already-durable exact-SHA GREEN receipt for the identical frozen SHA.
 
+After PASS is persisted and these conditions hold, automation may merge immediately. The same Reviewer session then treats the verdict as fixed and may perform only post-merge documentation/finalization actions.
+
 ## DocSync completion marker
 
-After post-merge reconciliation is complete, the DocSync/finalization role persists one comment on the merged implementation PR:
+After post-merge reconciliation is complete, the finalization/DocSync phase persists one comment on the merged implementation PR:
 
 ```text
 ARKUS_AUTOMATION_V2
@@ -156,7 +159,8 @@ If hosted Actions are unavailable, quota/policy changes, or a workflow platform 
 
 Automation V2 does not:
 
-- start ChatGPT/Claude/Codex sessions automatically;
+- start ChatGPT/Claude/Codex Worker or Reviewer sessions automatically;
+- perform semantic DocSync reasoning by itself;
 - choose a different WP when the requested WP is blocked;
 - create hidden dependency routing;
 - maintain role leases;
