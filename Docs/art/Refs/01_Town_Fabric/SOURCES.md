@@ -1,15 +1,17 @@
 # 01 — Town fabric
 
-Retrieved: 2026-09-19  
-What to judge: plaza scale, street width, block depth, village not downtown.
+Retrieved: 2026-09-19 (updated: **Potes / Liébana primary**)
+
+**Setting anchor:** fictionalized **Potes-in-Liébana** — mountain-valley market town, river confluence, stone streets, peaks on the horizon. **Not** a coastal harbour town (Castro-style refs are secondary only).
 
 | ID | Why it matters | Link |
 |----|----------------|------|
-| TF-01 | Harbour + dense coastal town massing (Castro Urdiales) — scale reference, not a castle fantasy target | https://commons.wikimedia.org/wiki/File:Casas_en_Castro_Urdiales._Cantabria.jpg |
-| TF-02 | Church/castle/harbour ensemble from water — skyline silhouette, wet stone read | https://commons.wikimedia.org/wiki/File:View_of_church_and_castle_in_Castro_Urdiales.jpg |
-| TF-03 | Harbour of Castro Urdiales — quay grain (optional H2.1, not hero v1) | https://commons.wikimedia.org/wiki/File:Harbour_of_CastroUrdiales.jpg |
-| TF-04 | Category browse: Comillas streets/buildings | https://commons.wikimedia.org/wiki/Category:Comillas_(Cantabria) |
-| TF-05 | Category browse: Santillana del Mar (stone street grain; avoid “pure medieval tourist set” as sole target) | https://commons.wikimedia.org/wiki/Category:Santillana_del_Mar |
-| TF-06 | Rural village massing (Talledo / Castro Urdiales area) | https://commons.wikimedia.org/wiki/Category:Talledo |
+| TF-01 | **Primary** — Vista de Potes / Liébana massing | https://commons.wikimedia.org/wiki/File:Vista_de_Potes_-_Liebana.jpg |
+| TF-02 | **Primary** — Panorama of Potes | https://commons.wikimedia.org/wiki/File:Potes_001.JPG |
+| TF-03 | **Primary** — Potes with Picos de Europa backdrop | https://commons.wikimedia.org/wiki/File:Potes,_arropada_por_los_Picos_de_Europa.JPG |
+| TF-04 | **Primary** — Street grain in Potes | https://commons.wikimedia.org/wiki/File:Potes,_Cantabria_by_%C3%81ngel_Herraiz.jpg |
+| TF-05 | **Primary** — Browse category Potes | https://commons.wikimedia.org/wiki/Category:Potes |
+| TF-06 | Valley / peaks leaving Potes | https://commons.wikimedia.org/wiki/File:Vista_de_los_Picos_de_Europa_saliendo_desde_Potes..jpg |
+| TF-07 | Secondary only — coastal density (do not drive hero look) | https://commons.wikimedia.org/wiki/File:Casas_en_Castro_Urdiales._Cantabria.jpg |
 
-**Read for game:** 4–6 m streets, low 2–3 storey continuous facade, plaza as social pocket — not NYC blocks, not open fantasy square with keep.
+**Read for game:** tight stone streets, low continuous facades, plaza as market/social pocket, **green slopes + rock silhouettes** beyond the roofscape — not open sea, not NYC blocks, not fantasy keep-in-square.
