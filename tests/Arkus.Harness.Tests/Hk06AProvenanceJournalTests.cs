@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
 using Arkus.Harness.Protocol;
@@ -29,6 +31,18 @@ namespace Arkus.Harness.Tests
                 "world.object:node.peer");
             AssertEntry(entries[1], 2L, "request.hk06a.second", first.States[1], first.States[2],
                 "world.object:node.extra");
+
+            var normalized = Hk04TransactionalMutationTests.Map(entries[0], "request");
+            Assert.Equal(first.States[0].Revision, normalized["expectedRevision"]);
+            Assert.Equal(CanonicalWorldStateCodec.ComputeContentHash(first.States[0]), normalized["expectedHash"]);
+            var normalizedOperations = Hk04TransactionalMutationTests.List(normalized, "operations");
+            Assert.Equal(2, normalizedOperations.Count);
+            Assert.Equal(
+                "put-object",
+                ((IReadOnlyDictionary<string, object?>)normalizedOperations[0]!)["kind"]);
+            var normalizedExtension = (IReadOnlyDictionary<string, object?>)normalizedOperations[1]!;
+            Assert.Equal("put-extension", normalizedExtension["kind"]);
+            Assert.Equal(Convert.ToBase64String(new byte[] { 0x44, 0x55, 0x66 }), normalizedExtension["payloadBase64"]);
 
             var secondEntries = Entries(second.Journal);
             Assert.Equal(entries[0]["entryId"], secondEntries[0]["entryId"]);
@@ -160,6 +174,57 @@ namespace Arkus.Harness.Tests
 
             // A synthetic successful entry after a non-persisting operation is an extra transition.
             Assert.Contains("entry-count-mismatch", Audit(run.Journal, Array.Empty<ExpectedTransition>()));
+        }
+
+        [Fact]
+        public async Task ConcurrentCommitRacePublishesExactlyOneMatchingJournalEntry()
+        {
+            var initial = Hk02TestFixtures.MicroWorld();
+            var session = new TransactionalWorldAuthoringSession(initial);
+            var contract = Hk04TransactionalMutationTests.Compose(session);
+            var requestA = Hk04TransactionalMutationTests.Request(
+                initial,
+                "request.hk06a.concurrent-a",
+                Hk04TransactionalMutationTests.PutObject("node.peer", "fixture.concurrent-a"));
+            var requestB = Hk04TransactionalMutationTests.Request(
+                initial,
+                "request.hk06a.concurrent-b",
+                Hk04TransactionalMutationTests.PutObject("node.peer", "fixture.concurrent-b"));
+            using var start = new Barrier(2);
+
+            Task<KeyValuePair<string, CapabilityInvocationResult>> Run(
+                string idempotencyKey,
+                IReadOnlyDictionary<string, object?> request)
+            {
+                return Task.Run(() =>
+                {
+                    start.SignalAndWait();
+                    return new KeyValuePair<string, CapabilityInvocationResult>(
+                        idempotencyKey,
+                        contract.Dispatch(
+                            WorldMutationContract.ApplyName,
+                            Hk04TransactionalMutationTests.ExactVersion(),
+                            request));
+                });
+            }
+
+            var results = await Task.WhenAll(
+                Run("request.hk06a.concurrent-a", requestA),
+                Run("request.hk06a.concurrent-b", requestB));
+            string? acceptedKey = null;
+            foreach (var result in results)
+            {
+                if (result.Value.Success) acceptedKey = result.Key;
+            }
+
+            Assert.NotNull(acceptedKey);
+            var journal = ReadJournal(contract).Data!;
+            var entry = Assert.Single(Entries(journal));
+            Assert.Equal(1L, entry["sequence"]);
+            Assert.Equal(
+                acceptedKey,
+                Hk04TransactionalMutationTests.Map(entry, "requestIdentity")["idempotencyKey"]);
+            AssertAnchor(Hk04TransactionalMutationTests.Map(entry, "result"), session.Current);
         }
 
         internal static CapabilityInvocationResult ReadJournal(ComposedContract contract)

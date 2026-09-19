@@ -35,12 +35,12 @@ namespace Arkus.Game.Authoring
     {
         public AuthoredWorldAnchor(string worldId, int stateSchemaVersion, long revision, string hash)
         {
-            if (string.IsNullOrEmpty(worldId)) throw new ArgumentException("World identity is required.", nameof(worldId));
+            var validatedWorldId = new WorldId(worldId);
             if (stateSchemaVersion <= 0) throw new ArgumentOutOfRangeException(nameof(stateSchemaVersion));
             if (revision < 0) throw new ArgumentOutOfRangeException(nameof(revision));
             if (!IsCanonicalHash(hash)) throw new ArgumentException("Hash must be lowercase SHA-256 hex.", nameof(hash));
 
-            WorldId = worldId;
+            WorldId = validatedWorldId.Value;
             StateSchemaVersion = stateSchemaVersion;
             Revision = revision;
             Hash = hash;
