@@ -145,8 +145,8 @@ The product boundary is intentionally frozen before protocol/runtime expansion:
 - `WP-HK-00` owns the portable module/build boundary only.
 - `WP-HK-00A` owns this product/adoption boundary, including the ownership path for later scoped capabilities.
 - `WP-HK-01` must define the canonical contract/composition model and independently/effectively prove the complete canonical capability/schema surface; it may not make MCP, JSONL, an engine bridge or any discovery registry the source of semantic truth.
-- `WP-HK-02` through `WP-HK-06` build state, inspection, transaction, validation and provenance/replay semantics below transports and engines.
-- `WP-HK-07` projects the already-accepted composed canonical contract through the deterministic reference transport and MCP, and proves adapter completeness/equivalence against the canonical inventory.
+- `WP-HK-02` through `WP-HK-06C` build state, inspection, transaction, validation and provenance/replay semantics below transports and engines.
+- `WP-HK-07A` projects the already-accepted composed canonical contract through the deterministic reference transport and freezes the transport-neutral projection contract; `WP-HK-07B` then proves MCP conforms to that accepted contract as a second projection without amending it. Both prove adapter completeness/equivalence against the canonical inventory.
 - `WP-HK-GATE` must prove the full H0 product boundary before any engine bridge can unblock.
 - H1 defines engine bridge abstractions and Unity as the first implementation only after H0 acceptance, and must register any public engine-scoped capability through the accepted Arkus-owned composition path.
 

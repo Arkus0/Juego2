@@ -45,18 +45,18 @@ A row moves to `COVERED` on accepted evidence, never on this file's assertion.
 | 8 | State attached to a pair of objects | relationship axes between two NPCs | `OPEN` | Expressible as a relation object plus two references; not yet a deliberate decision |
 | 9 | References embedded in opaque payload | an authored condition naming other state | `OPEN` | Producer may redeclare each as a typed dependency; nothing enforces agreement between payload and declaration |
 | 10 | Ordered interval data with wrap-around | daily schedule blocks crossing midnight | `OPEN` | Payload-opaque today; no kernel time semantics |
-| 11 | Authored versus live/runtime state separation | ticking clock, transient position | `ASSIGNED` | `WP-HK-06`, whose acceptance already names this probe |
-| 12 | Provenance and journal of authored change | who changed what, from which revision | `ASSIGNED` | `WP-HK-06` |
-| 13 | Per-agent derived state | beliefs, current abstract location | `ASSIGNED` then `OPEN` | Authored/live boundary is HK-06; representation beyond it is undecided |
+| 11 | Authored versus live/runtime state separation | ticking clock, transient position | `COVERED` | `WP-HK-06A`, accepted with its own content-shape probe |
+| 12 | Provenance and journal of authored change | who changed what, from which revision | `COVERED` | `WP-HK-06A` |
+| 13 | Per-agent derived state | beliefs, current abstract location | `OPEN` | The authored/live boundary is closed by `WP-HK-06A`; representation of the derived state itself is undecided |
 | 14 | Concurrency granularity and world partition | many independent edits in one valley | `OPEN` | Whole-world CAS and single-world aggregate are named residuals in the HK-02A probe |
 | 15 | Localization of authored text | one string, several locales | `OPEN` | Not modeled |
 | 16 | Asset and engine binding | prefab, mesh, material | `OUT` | H1 engine bridge |
 | 17 | Dialogue and narrative runtime content | branching conversation | `OUT` | Later reviewed architecture decision |
 | 18 | Navigation, physics and animation state | paths, colliders, clips | `OUT` | Presentation and runtime |
 
-## Probe coverage as of WP-HK-05 acceptance
+## Probe coverage as of WP-HK-06A acceptance
 
-Rows 6–10 have not been exercised by any accepted probe. The accepted HK-02A and HK-05 probes both modeled direct object-identifier references only.
+Rows 6–10 have not been exercised by any accepted probe. The accepted HK-02A and HK-05 probes both modeled direct object-identifier references only, and the HK-06A probe used a test-owned runtime observation surrogate rather than authored schedule data — it names actual schedules, clock source and simulation determinism as future decisions.
 
 This is a statement about probe coverage, not a defect claim against any accepted workpack. HK-02A's accepted boundary is explicit that opaque payload meaning is not inferred, and HK-05's invariant set operates on declared structure. Neither guarantee is weakened by a shape no probe has visited; per `AGENTS.md`, reopening an accepted guarantee requires concrete evidence that it is inapplicable or false, which nothing in this file supplies.
 
