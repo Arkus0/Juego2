@@ -1,102 +1,104 @@
 # Visual Bible — Juego2
 
-Version: 0.1.2 — 2026-09-19  
-Status: DRAFT — seed draft under `WP-ART-00`; palette **APPROVED-DRAFT**; triage dry-run recorded in `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`; animation policy in §12  
-Scope: art direction and asset selection only. **This document does not block, gate or modify H0.** No `HK-*` acceptance criterion depends on it.
+Version: 0.1.3 — 2026-09-19  
+Status: DRAFT — seed under `WP-ART-00`; palette **APPROVED-DRAFT**; setting anchor **fictional Potes / Liébana** (see `Docs/art/SETTING.md`)  
+Scope: art direction and asset selection only. **This document does not block, gate or modify H0.**
 
 ## 1. Style one-liner
 
-A low-poly, stylized Atlantic-coastal Cantabrian village — wet stone, dark tile, saturated damp green under a high overcast sky — built from a restricted Quaternius-compatible kit, readable at 15 metres, with the shape language of a late-PS2 / early-PS3 game reinterpreted rather than emulated.
+A low-poly, stylized **Cantabrian mountain-valley market town** — a fictionalized **Potes in Liébana** — wet stone, dark tile, damp green slopes and rock silhouettes under a high overcast sky — built from a restricted Quaternius-compatible kit, readable at 15 metres, with the shape language of a late-PS2 / early-PS3 game reinterpreted rather than emulated.
 
-Three looks this excludes outright: photorealism; the Dreamcast/Shenmue graphical style (its lived-in-world *feeling* is kept, its rendering is not); and the generic sunny Mediterranean village (whitewash, flat blue sky, terracotta warmth).
+It is **not** a coastal harbour town as the primary identity (Castro-style coast may inform secondary mood only).
+
+Three looks this excludes outright: photorealism; the Dreamcast/Shenmue graphical style (lived-in *feeling* kept, rendering not); and the generic sunny Mediterranean village (whitewash, flat blue sky, terracotta warmth).
 
 ## 2. Yes / No
 
 ### Yes
 
-- Flat or lightly gradient albedo, atlas-driven, consistent with how Quaternius packs are authored.
-- Chunky readable silhouettes; detail carried by shape and color, not by texture resolution.
-- Humidity as the dominant mood: darker value range, lower contrast, green bias in shadow.
-- Stone as the primary wall material; dark tile as the primary roof material.
-- Overcast, diffuse key light as the default weather; sun is an event, not the norm.
-- A village that looks inhabited: laundry, crates, a bar terrace, fishing tackle, worn kerbs.
-- Modular reuse: the same six wall modules recolored beat sixty unique ones.
-- Shared humanoid retarget; a small **civilian** animation allowlist (see §12).
+- Flat or lightly gradient albedo, atlas-driven, consistent with Quaternius packs.
+- Chunky readable silhouettes; detail from shape and color, not texture resolution.
+- Humidity as dominant mood: darker values, lower contrast, green bias in shadow.
+- Stone as primary wall; dark tile as primary roof.
+- Overcast, diffuse key light as default; sun is an event.
+- **Valley town life:** market grain, bar terrace, workshops, laundry, worn kerbs; optional river/bridge edge later.
+- Green slopes / rock masses beyond the roofscape (Picos-adjacent read, not alpine postcard).
+- Modular reuse of a small kit.
+- Shared humanoid retarget; civilian animation allowlist (§12).
 
 ### No
 
-- Photorealism, or "top-tier realistic PS3" as a target.
-- PBR detail maps, roughness/metallic authoring or normal-mapped micro-detail layered onto flat atlas assets.
-- Dreamcast/Shenmue as a *graphical* reference, or any hardware-nostalgia rendering trick (dithering, fixed low-res buffer, PS1 vertex jitter, affine texture warping).
-- Alpine or Germanic half-timbering; steep chalet roofs.
-- Mediterranean whitewash-and-cobalt; terracotta warm-ochre ground.
-- Fantasy: thatched roofs, castles, palisades, ruins-as-fantasy, medieval signage, weapons.
-- American road language: wide multi-lane asphalt, yellow center lines, stop signs, fire hydrants.
-- Skyscrapers, glass curtain walls, downtown blocks.
-- Palms, cacti, tropical foliage, or a mass of autumn red.
-- Realistic "Cantabrian" facial physiognomy for characters (see §5).
-- Regional caricature: no costume-folklore villagers, no stereotype props used as a joke.
-- Combat, gun, parkour, or fantasy-cast animations as default village behaviour (see §12).
+- Photorealism or "top-tier realistic PS3".
+- PBR micro-detail layered onto flat atlas assets.
+- Dreamcast/Shenmue as *graphical* target.
+- Alpine half-timbering; steep chalet roofs.
+- Mediterranean whitewash-and-cobalt; terracotta warmth as default.
+- Fantasy: thatch, castles, palisades, ruins-as-fantasy, medieval signage, weapons.
+- American road language; downtown blocks; skyscrapers.
+- **Harbour / open sea / fishing-port identity as the hero read** (wrong valley).
+- Palms, cacti, tropical foliage, bulk autumn red.
+- Realistic regional facial physiognomy; folkloric costume jokes.
+- Combat / gun / parkour animations as village default (§12).
 
 ## 3. Palette (APPROVED-DRAFT)
 
-Hex values are **albedo targets in sRGB, before lighting**. Lit results will read darker and cooler under the default overcast key. Status: **APPROVED-DRAFT** (2026-09-19) — valid for triage and H2 seed; revise only with a concrete color-block objection.
+Hex values are **albedo targets in sRGB, before lighting**. Status: **APPROVED-DRAFT** (2026-09-19).
 
 ### Stone and walls
 
 | Role | Hex | Notes |
 |---|---|---|
-| Light stone | `#C9C3B6` | Dressed ashlar catching sky light |
-| Mid stone | `#A79F92` | Default wall value |
-| Shadowed stone / quoins | `#7E7568` | Corner stones, lintels, wet lower courses |
-| Dirty render / limewash | `#E6E1D6` | Used sparingly — never a whole facade run |
+| Light stone | `#C9C3B6` | Dressed ashlar |
+| Mid stone | `#A79F92` | Default wall |
+| Shadowed stone / quoins | `#7E7568` | Lintels, wet lower courses |
+| Dirty render / limewash | `#E6E1D6` | Sparingly |
 
 ### Roof
 
 | Role | Hex | Notes |
 |---|---|---|
-| Tile, base | `#6B4A3E` | Default roof value |
-| Tile, dry | `#8A5E4C` | Sunlit or sheltered pitches only |
-| Tile, wet | `#4A3730` | Dominant after rain; safest default for hero shots |
+| Tile, base | `#6B4A3E` | Default |
+| Tile, dry | `#8A5E4C` | Sheltered pitches |
+| Tile, wet | `#4A3730` | Hero default after rain |
 
 ### Carpentry and metal
 
 | Role | Hex | Notes |
 |---|---|---|
 | Dark timber | `#5C4433` | Doors, beams, balcony rails |
-| Shutter green-blue | `#3E5A57` | The signature joinery color; keep it consistent village-wide |
+| Shutter green-blue | `#3E5A57` | Signature joinery |
 
 ### Vegetation and ground
 
 | Role | Hex | Notes |
 |---|---|---|
-| Deep wet green | `#2F4A32` | Shadowed foliage, hedge interiors |
-| Mid meadow green | `#4E7A43` | Default grass |
-| Lit grass | `#7BA35A` | Highlights only — never a full field |
+| Deep wet green | `#2F4A32` | Shadowed foliage |
+| Mid meadow green | `#4E7A43` | Default grass / slope |
+| Lit grass | `#7BA35A` | Highlights only |
 
 ### Sky and water
 
 | Role | Hex | Notes |
 |---|---|---|
 | Overcast, high | `#B9C4C9` | Zenith |
-| Overcast, low | `#93A3AC` | Horizon |
-| Cantabrian sea | `#3F5A5E` | Grey-green, never tropical blue |
+| Overcast, low | `#93A3AC` | Horizon (may meet hills, not open ocean) |
+| River / stream | `#3F5A5E` | Grey-green; same family as former "sea" swatch |
 
 ### Accents
 
-Accents are bounded: **no more than 5% of visible surface in any framing.**
+**≤ 5%** of visible surface in any framing.
 
 | Role | Hex | Notes |
 |---|---|---|
-| Hydrangea | `#6F79B8` | Balconies, front gardens |
-| Buoy / net red | `#C24B34` | Harbour and fishing props |
-| Warm interior light | `#E8B26A` | Bar and shop windows; the only warm value at street level |
+| Hydrangea | `#6F79B8` | Balconies, gardens |
+| Market / crate accent | `#C24B34` | Sparse warm accent (was buoy red; still OK for market goods) |
+| Warm interior light | `#E8B26A` | Bar and shop windows |
 
-Darkest neutral permitted: `#2A2622`. Pure black and pure white are not used as albedo.
+Darkest neutral: `#2A2622`. No pure black / pure white albedo.
 
 ## 4. Scale and camera
 
-Indicative for the H2 hero target. **Not a gameplay contract** — camera and movement tuning belong to H2, not here.
+Indicative for H2. **Not a gameplay contract.**
 
 | Quantity | Value |
 |---|---|
@@ -106,160 +108,80 @@ Indicative for the H2 hero target. **Not a gameplay contract** — camera and mo
 | Floor-to-floor | 3.0 m |
 | Street width (facade to facade) | 4–6 m |
 | Plaza | ~25 × 20 m |
-| Modular grid | 1 m, with facade modules at 2 m and 4 m |
+| Modular grid | 1 m; facade modules 2 m / 4 m |
 
-Camera, third person: vertical FOV 55–60°; pivot at 1.6 m; distance 3.5–4.5 m; default pitch −8° to −12°.
+Camera, third person: vFOV 55–60°; pivot 1.6 m; distance 3.5–4.5 m; pitch −8° to −12°.
 
-Readability rule: a building's material, a character's archetype and an interactable's affordance must all be identifiable at 15 m at this FOV. If an asset only reads up close, it is background dressing, not a hero asset.
+Readability at 15 m: material, archetype, interactable affordance.
 
 ## 5. Characters
 
-Identity comes from **archetype + outfit + prop + silhouette**. It never comes from facial detail, and it never attempts realistic regional physiognomy — that goal is out of scope, technically unsupported by the kit, and creatively unnecessary.
+Identity = **archetype + outfit + prop + silhouette**. Not facial "Lebaniego realism".
 
-Rules:
-
-- Build NPCs from the modular character packs (§6) by swapping parts and recoloring, not by sculpting new heads.
-- Faces stay at pack fidelity. No unique facial likenesses, no real-person references.
-- Two NPCs sharing a base mesh must still be distinguishable at 15 m by outfit value and one silhouette-breaking prop.
-- Outfit colors draw from §3; work clothing uses the muted stone/timber ranges, with at most one accent per character.
-- No folkloric costume, no dialect-as-visual-joke, no character whose design exists to mark them as rural or provincial.
-- Motion identity is secondary to outfit/silhouette: prefer shared humanoid clips from §12 over unique authored motion per NPC.
-
-Hero-target archetypes (6 of these 8):
+Hero-target archetypes (pick 6 of 8):
 
 | Archetype | Read-at-distance cue |
 |---|---|
-| Fisherman | Oilskin value block, boots, coiled rope or crate |
-| Bar server | Apron, tray, short sleeves in cold weather |
-| Older neighbour | Long coat, headscarf or cardigan, shopping trolley |
-| Shopkeeper | Overall or work coat, standing in a doorway |
-| Teenager on a bike | Bright single accent, bicycle silhouette |
-| Builder | Hi-vis or dusty blue overall, hard hat, tool |
-| Dog walker | Lead and dog extend the silhouette laterally |
-| Outsider | Clean, unweathered clothing; reads wrong on purpose |
+| Valley worker / farmer | Boots, work coat, crate or tool |
+| Bar server | Apron, tray |
+| Older neighbour | Long coat, cardigan, trolley/bag |
+| Shopkeeper / market stall | Work coat, doorway or stall |
+| Teenager on a bike | Single bright accent, bike silhouette |
+| Builder | Overall / dusty blue, tool |
+| Dog walker | Lead + dog |
+| Outsider | Too-clean clothes; reads wrong on purpose |
+
+(Former coastal "fisherman" is demoted; use only if a river/angling beat appears later.)
 
 ## 6. Authorized Quaternius packs
 
-**Verification status legend** — `URL-CONFIRMED`: pack page or site index confirmed 2026-09-19; `HYPOTHESIS`: believed to exist, name unconfirmed; `REJECTED`: not to be used.
+Unchanged adoption rules; see pack table in v0.1.2 history. **Ships Pack** stays authorized only if a river craft beat exists — not for coastal harbour identity. Prefer Survival crates, furniture, modular masonry, nature without palms.
 
-A `URL-CONFIRMED` row is not an adoption approval. See §10.
+Full pack table: keep prior rows; **Ships Pack** note becomes: *optional small river craft only; no harbour identity*.
 
-| Pack | Status | Authorized for | Forbidden from this pack |
-|---|---|---|---|
-| Ultimate Modular Men Pack | URL-CONFIRMED | NPC bases, modular part swapping, animation set | Fantasy and sci-fi variants; using a character unaltered as a named NPC |
-| Ultimate Modular Women Pack | URL-CONFIRMED | NPC bases, modular part swapping | Same as above |
-| Universal Base Characters | URL-CONFIRMED | Base mesh when a custom outfit is needed; humanoid retarget target | Shipping a base character with no outfit pass |
-| Universal Animation Library | URL-CONFIRMED | Civilian locomotion and idle/sit/interact clips after whitelist (§12) | Combat, gun, parkour, swimming-as-default, death loops in the village slice |
-| Universal Animation Library 2 | URL-CONFIRMED | Extra civilian / work-adjacent clips after whitelist (§12); fishing/farming tags only if they read civilian | Combat, gun, parkour as village defaults |
-| Medieval Village Pack | URL-CONFIRMED | Stone wall modules, doors, windows, small props | Thatched roofs; half-timbering; castle, keep or tower pieces; wooden palisade; medieval signage |
-| Medieval Village MegaKit | URL-CONFIRMED | Modular masonry, kerbs, stairs, fences | Same vetoes as above, plus whole prefabricated village blocks used unedited |
-| Modular Medieval Building Pack | URL-CONFIRMED | Facade modules at 2 m / 4 m | Half-timbered variants; any piece whose roof pitch exceeds the tile rule in §7 |
-| Ultimate Buildings Pack | URL-CONFIRMED | Contemporary infill blocks; atlas recoloring | Glass curtain walls; anything above three storeys |
-| Modular Streets Pack | URL-CONFIRMED | Carriageway, pavement, kerb, drain | Multi-lane highway pieces; American lane markings; traffic signals |
-| Downtown City MegaKit | URL-CONFIRMED | **Loose props only**: bench, streetlight, bollard, litter bin, drain cover | Whole blocks; brownstone or NYC/Boston facades; any building mass |
-| Ultimate Nature Pack | URL-CONFIRMED | Trees, rocks, grass, hedges | Palms, cacti, tropical species; conifer-only massing; autumn-red variants in bulk |
-| Ultimate Stylized Nature Pack | URL-CONFIRMED | Higher-fidelity vegetation for foreground | Mixing its normal-mapped look into flat-atlas hero facades; palms |
-| Ultimate House Interior Pack | URL-CONFIRMED | Bar and shop interior: doors, windows, kitchen, fittings | Suburban American set dressing that reads non-European |
-| Ultimate Furniture Pack | URL-CONFIRMED | Tables, chairs, shelving, counter | Modern luxury or designer furniture |
-| Ultimate Modular Ruins Pack | URL-CONFIRMED | Optional ruined chapel or boundary wall | Fantasy ruins; classical columns; anything monumental |
-| Survival Pack | URL-CONFIRMED | Crates, barrels, rope, sacks | Weapons; camping and wilderness gear |
-| Ships Pack | URL-CONFIRMED | Small working craft only (raft, small sailboat) if quay is in scope | Viking longships, cruise ships, military vessels, large multi-mast spectacle boats |
-| Modular Character Outfits – Fantasy | **REJECTED** | — | Entire pack: fantasy outfits are out of style |
+## 7. Adaptation rules: Quaternius → Liébana / Potes-fiction
 
-Cross-pack rule: assets from different packs may share a scene only when their shading style matches after recoloring. A normal-mapped asset next to a flat-atlas asset on the same facade is a rejection, not a compromise.
-
-## 7. Adaptation rules: Quaternius → Cantabria
-
-| Element | Quaternius default | Cantabria rule | Mechanism | Reject if |
-|---|---|---|---|---|
-| **Roof** | Bright or orange tile, sometimes thatch or shingle; varied pitch | Dark tile, wet-biased (`#4A3730`–`#6B4A3E`); moderate pitch; deep eaves overhanging the facade | Recolor atlas; swap the mesh where pitch is chalet-steep | Thatch, shingle, chalet pitch, or a roof with no eave overhang |
-| **Stone** | Clean light blocks, uniform value, sometimes fantasy-scaled | Stone is the default wall; visible dressed quoins and lintels against a rougher wall field; lower courses darker (damp wicking) | Recolor to `#A79F92` field with `#7E7568` quoins; vertex-darken the bottom ~0.5 m | Uniform untouched value across a whole facade, or block scale that reads as castle masonry |
-| **Vegetation** | Bright saturated green, dry-climate massing, mixed exotic species | Dense damp green, low value, oak/eucalyptus/hedge massing; hydrangea as the one flowering accent; moss at wall bases | Recolor to the §3 green ramp; delete non-Atlantic species; scatter moss decals or vertex tint | Palms, cacti, tropical forms, or a green brighter than `#7BA35A` covering more than a highlight |
-| **Clothing** | Saturated primaries, fantasy or generic-modern cuts | Muted work clothing from the stone/timber ranges; at most one accent per character; weather-appropriate layers | Recolor material slots; swap part meshes across the modular packs | More than one accent per character, bare arms as a village default, or a fantasy silhouette |
-| **Sky** | Clear blue gradient or stylized sunset | High overcast as the default: `#B9C4C9` zenith to `#93A3AC` horizon, diffuse key, soft shadows, no hard sun disc | Replace skybox/gradient; lower directional intensity; raise ambient | A clear blue sky or a hard-shadow sunny setup used as the default state |
-| **Water / quay** | Tropical blue-cyan, flat plane | Grey-green (`#3F5A5E`), choppy, opaque rather than transparent-tropical | Recolor material; reduce transparency and specular | Turquoise, visible sandy seabed, or a calm mirror surface |
-| **Props / street life** | Generic or American street furniture | European village scale: narrow pavement, short bollards, small bins, bar terrace, fishing tackle near water | Select loose props only; rescale to the 1 m grid | American-coded props (hydrants, mailboxes, yellow school signage) or props at city rather than village scale |
+| Element | Cantabria-valley rule | Reject if |
+|---|---|---|
+| **Roof** | Dark wet tile; moderate pitch; eaves | Thatch, chalet pitch |
+| **Stone** | Mid stone + darker quoins/damp course | Castle-scale blocks |
+| **Vegetation** | Damp green slopes, hedge, mixed Atlantic trees | Palms, tropical, dry scrub |
+| **Clothing** | Muted work layers | Fantasy / beach defaults |
+| **Sky** | Overcast; horizon meets **hills** | Default hard blue sea-horizon |
+| **Water** | River/stream grey-green if present | Tropical sea, beach resort |
+| **Props** | Market, bar, workshop, village street | US street kit; harbour as hero |
 
 ## 8. H2 hero target
 
-The validation slice. Building it proves the bible; nothing here authorizes starting it before the Unity parity gate.
-
-- One plaza, ~25 × 20 m.
-- One to two streets, ~40 m each, connecting to the plaza.
-- One simple interior, ~8 × 6 m — a bar or a shop, enterable.
-- Six archetype NPCs from §5.
-- Player + NPCs on **one shared humanoid** with the §12 H2 animation allowlist only.
-- Quay / boats: **out of hero-target v1** (optional later). Keeps water shading and an extra material set out of the budget below.
-
-Budget: **≤ 120 unique meshes** and **≤ 6 material/atlas sets** across the whole slice. Exceeding either budget means the slice is being built from unique assets rather than from a kit, which is the failure this bible exists to prevent.
-
-Animation budget (H2): **≤ ~20 distinct clips** on the shared controller (locomotion + idle variants + sit + short interact). Importing the full 120+ library into the runtime graph without a whitelist is a process failure, not a feature.
+- One plaza (~25 × 20 m) — market/social, not harbour square.
+- One to two streets (~40 m) into the plaza.
+- One interior (~8 × 6 m) — bar or shop.
+- Six archetypes from §5 (valley-weighted).
+- Shared humanoid + §12 allowlist.
+- **No quay/sea** in hero v1. Optional river glimpse later without expanding material budget carelessly.
+- ≤ 120 unique meshes; ≤ 6 material/atlas sets; ≤ ~20 animation clips.
 
 ## 9. Asset triage test
 
-Apply to any candidate Quaternius asset. Produces exactly one verdict.
+Same five steps as before. Additional mental check: **Does this read Potes/Liébana valley, or coastal postcard / fantasy keep?** If the latter, REJECT.
 
-1. **Pack check.** Is the asset's pack listed in §6 and not `REJECTED`, **and does the asset fall inside that row's "Authorized for" column**? No to either → **REJECT**. A pack being authorized never authorizes all of its contents.
-2. **Per-pack veto.** Does it fall under that pack's forbidden column? Yes → **REJECT**.
-3. **No-list check.** Does it match any entry in §2 "No"? Yes → **REJECT**.
-4. **Shading match.** After recoloring, will it sit on-screen beside already-accepted assets without a visible authoring-style break (flat atlas vs normal-mapped, detail density, silhouette chunkiness)? No → **REJECT**.
-5. **Adaptation check.** Read §7 for every element the asset contains. If each element already satisfies its Cantabria rule → **ACCEPT**. If each failing element is fixable by recolor, part swap, hiding sub-meshes or rescaling to the 1 m grid → **RECOLOR-THEN-ACCEPT**, and record which mechanism. If any element fails and cannot be fixed by those four mechanisms → **REJECT**.
-
-Modelling new geometry is not one of the mechanisms. If an asset needs new geometry to fit, it is a reject for this slice.
-
-For **animation clips**, apply the same spirit: pack authorized + §12 allowlist membership. A combat/gun/parkour clip is **REJECT** for the village hero target even if the Animation Library pack is authorized.
-
-Dry-run record: `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md` (five candidates, three rejects).
+Dry-run: `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`.
 
 ## 10. Licensing
 
-Quaternius site presents packs under the Quaternius Asset License (QAL) / CC0-equivalent messaging: commercial use permitted, attribution not required, modification permitted; paid *Source* tiers are described with the same use terms. This is **research-level observation only** — status: `UNVERIFIED-FOR-ADOPTION`.
-
-`Docs/engineering/DEPENDENCY_IP_POLICY.md` governs: a license claim seen during research does not satisfy the adoption gate. Before any pack is downloaded into a project, a human must read the license line on that pack's own page at that version and record: pack identity, version or download date, license as stated there, source URL, linked/vendored/copied classification, and notice obligations. Unknown or ambiguous terms fail closed.
-
-Practical rule kept regardless of QAL/CC0: **do not redistribute a Quaternius pack as a pack.** Assets ship inside the game; the kit does not ship as a kit.
+Unchanged: QAL/CC0 research-level only; `DEPENDENCY_IP_POLICY.md` governs adoption.
 
 ## 11. Open questions
 
-1. ~~What is the exact name of the Quaternius boats/ships pack?~~ **Resolved:** Ships Pack (URL-CONFIRMED 2026-09-19). Small craft only; large/viking/cruise vetoed.
-2. Is the quay inside the H2 hero target or deferred? **Recommendation recorded:** deferred from hero-target v1 (see §8).
-3. Is roof recoloring done by editing the shared atlas or by vertex color? **Recommendation:** atlas first; vertex only for per-instance exceptions.
-4. Are any paid *Source* tiers needed through the hero target? **Recommendation:** free tier sufficient unless a mesh forces Blender work.
-5. Palette hex values: **APPROVED-DRAFT** (2026-09-19). Still welcome a flat color-block sheet for human eyeballing.
-6. Exact clip names inside Universal Animation Library free tier vs Source — confirm at download time when H2 starts; this bible only constrains categories.
+1. Ships Pack — only if river craft; else ignore.
+2. River edge in H2? **Default: no** (same budget logic as old quay deferral).
+3. Atlas vs vertex roof recolor — atlas first.
+4. Free tier through hero — yes.
+5. Palette APPROVED-DRAFT — still OK under valley read.
+6. Clip names at H2 import.
 
 ## 12. Animation
 
-Animation is part of the kit language, not a separate art style. The village must move like **civilians in damp weather**, not like an action demo.
+Unchanged principles: civilian valley town, not action demo. Allowlist: walk/jog/idle/turn, sit, short interact; optional carry. No combat/guns/parkour/swim-as-default/death-in-plaza.
 
-### Principles
-
-- **One shared humanoid rig** for player and NPCs (Universal Base Characters / Modular packs as mesh; Universal Animation Library as primary clip source).
-- **Retarget once**; do not maintain per-NPC custom skeletons in H2.
-- Identity stays with **outfit + silhouette + prop** (§5). Motion differentiates weakly (idle A vs idle B), not by unique mocap.
-- Prefer a **short whitelist** over shipping the full 120+ library into the runtime graph.
-
-### H2 allowlist (categories)
-
-| Category | In H2 | Notes |
-|---|---|---|
-| Walk / jog / idle / turn | Yes | Core locomotion |
-| Sit / stand-from-sit | Yes | Bar / bench |
-| Short interact (reach, nod, examine) | Yes | Door, prop, talk beat |
-| Carry light prop (crate/bag) | Optional | Only if a clean clip exists without combat pose |
-| Combat / hit / block | No | |
-| Guns / aim / reload | No | |
-| Parkour / slide / climb-spectacle | No | |
-| Swim as default traversal | No | |
-| Death loops in the plaza | No | |
-| Fantasy cast / weapon idle | No | |
-
-Exact clip filenames are chosen at H2 import time from the free tier; if a needed civilian clip is missing, substitute the nearest idle/walk — do not unlock combat packs to fill the gap.
-
-### Forbidden as village default
-
-Any clip whose read-at-15 m is “FPS lobby”, “RPG battle”, or “parkour trailer”. Fishing/farming-tagged clips from Animation Library 2 are allowed only when they read as ordinary work, not as minigame spectacle.
-
-### Downstream (after H2)
-
-Work loops, dialogue gestures, and schedule-driven variants can expand the whitelist. Custom authored cinematic motion is out of scope for this bible and is not required to prove the Cantabrian kit look.
+See v0.1.2 §12 for full table.
