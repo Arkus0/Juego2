@@ -1,0 +1,55 @@
+ARKUS SOURCE-VISIBLE PROPRIETARY LICENSE
+Version 1.0 — 2026-09-19
+
+Copyright (c) 2026 Arkus0. All rights reserved.
+
+1. Ownership
+
+The source code, documentation, architecture, designs, tests, build/proof tooling, and other original material in this repository (collectively, the "Arkus Materials") are proprietary works owned by the copyright holder, except for third-party material expressly identified as such.
+
+Making this repository publicly visible does not place the Arkus Materials in the public domain and does not grant an open-source license.
+
+2. Limited permission to view
+
+You may access, read, and evaluate the Arkus Materials through GitHub and may exercise only those limited rights that GitHub's applicable Terms of Service require the repository owner to grant for operation of the GitHub service, including GitHub-hosted viewing and forking where applicable.
+
+No additional copyright license is granted by this repository.
+
+3. No permission to use or redistribute
+
+Except with prior written permission from the copyright holder, you may not:
+
+- copy or reproduce the Arkus Materials outside the limited permissions required for GitHub service operation;
+- modify, adapt, translate, or create derivative works from the Arkus Materials;
+- redistribute, publish, sublicense, sell, lease, or otherwise provide the Arkus Materials to third parties;
+- incorporate the Arkus Materials, in whole or in part, into another software product, game, service, framework, model, dataset, or commercial offering;
+- use the Arkus Materials to provide a competing product or service;
+- remove or alter copyright, ownership, licensing, or attribution notices.
+
+4. No patent, trademark, or commercial rights
+
+No patent license, trademark license, trade-name license, branding right, or commercial exploitation right is granted.
+
+The names "Arkus", "Juego2", associated branding, and project identifiers may not be used to imply endorsement, affiliation, or authorization without prior written permission.
+
+5. Third-party components
+
+Third-party software, packages, assets, and other materials remain governed by their respective licenses and notices. Nothing in this license limits rights that you receive directly from the owners of those third-party materials.
+
+6. Contributions
+
+No right to submit, use, or accept contributions is implied by public visibility of the repository. Any contribution terms must be agreed separately or stated in a specific contribution policy.
+
+7. No warranty
+
+THE ARKUS MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER SHALL NOT BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM ACCESS TO OR USE OF THE ARKUS MATERIALS.
+
+8. Commercial licensing and permissions
+
+For permission to use, modify, redistribute, integrate, or commercially exploit any Arkus Materials, obtain prior written authorization from the copyright holder.
+
+9. Reservation of rights
+
+All rights not expressly granted are reserved.
