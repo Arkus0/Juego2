@@ -5,6 +5,15 @@ using Arkus.Harness.Protocol;
 
 namespace Arkus.Harness.Runtime
 {
+    /// <summary>
+    /// Marker for effective public handlers that can atomically replace the complete canonical
+    /// authored session root from a validated snapshot. A rebase is intentionally distinct from
+    /// an HK04/HK06A canonical mutation and therefore does not claim mutation-journal semantics.
+    /// </summary>
+    internal interface ICanonicalRebaseHandler : ICanonicalCapabilityHandler
+    {
+    }
+
     internal static class WorldPortabilityBindings
     {
         public static IReadOnlyList<CapabilityRoute> CreateRoutes(IWorldMutationService service)
@@ -63,7 +72,7 @@ namespace Arkus.Harness.Runtime
     }
 
     [PublicCapabilityRoute("arkus.base", WorldPortabilityContract.ImportName, "1.0")]
-    internal sealed class WorldSnapshotImportHandler : ITransactionalMutationHandler
+    internal sealed class WorldSnapshotImportHandler : ICanonicalRebaseHandler
     {
         private readonly ICanonicalWorldSnapshotImporter _importer;
 
