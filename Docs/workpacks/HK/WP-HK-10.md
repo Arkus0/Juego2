@@ -20,6 +20,7 @@ Stress the accepted harness with broad malformed, conflicting and failure-case i
 - Seeded/random tests record seeds and minimize/reproduce failures.
 - Test suite distinguishes harness defect from fixture/tool failure and fails closed when proof infrastructure is missing.
 - Residual-risk audit explicitly names what is outside the boundary (for example arbitrary out-of-contract OS/toolchain behaviour) rather than pretending absolute certainty.
+- The residual-risk audit is reconciled against an independently obtained inventory of residuals declared by accepted predecessor workpacks (`Docs/engineering/RESIDUAL_LEDGER.md`) rather than composed from this workpack's own reading, and every entry is resolved as inside the boundary with a seeded causal control, outside the boundary and named for the gate, or closed by cited accepted evidence.
 
 ## Required negative-conformance tests
 
