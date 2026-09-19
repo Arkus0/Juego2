@@ -63,8 +63,8 @@ publish either state or provenance.
 ## Proof-budget assessment
 
 The implementation adds one journal contract/read binding and integrates one entry construction
-into the existing commit section. One immutable holder replaces three separately published session
-collections, which simplifies the atomicity argument. The tests use one bounded transition audit
+into the existing commit section. One immutable holder publishes current state, receipts and journal
+together, which simplifies the atomicity argument. The tests use one bounded transition audit
 and one runtime-boundary oracle tied directly to required defect classes. No generalized event
 store, replay engine, simulation framework or redundant predecessor verifier exists.
 

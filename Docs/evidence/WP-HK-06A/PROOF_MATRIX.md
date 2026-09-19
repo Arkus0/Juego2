@@ -32,7 +32,7 @@ simulation claim.
 | ordering and entry identity are deterministic | one journal lineage from explicit base anchor | sequence is commit order under the commit lock; entry ID hashes a length-framed versioned identity containing sequence, request fingerprint, anchors and sorted resources | two clean sessions executing the same requests produce identical ordered IDs and final hash | invalid/noncanonical entry ID is rejected by the independent audit | PASS | identity is lineage-specific; cross-version compatibility belongs to HK06C |
 | journal schema/version is canonical and discoverable | composed Arkus contract | definition and handler are added through the accepted canonical composer; no journal-owned registry exists | `system.describe` exposes `authoring.journal.read@1.0`; its success schema validates effective output carrying `arkus.authoring.journal@1` and `arkus.authoring.journal-entry@1` | inherited route-universe/conformance regression would turn RED if definition/handler/discovery drift | PASS | pagination/compact history reads belong to HK08 |
 | authored/live boundary is explicit | bounded runtime-observation stamp and test-owned surrogate | observation stamp is a separately named schema containing an authored anchor only; surrogate owns transient step/position and receives no authoring service | two synthetic steps change surrogate values while revision/hash/journal IDs remain byte-semantically unchanged | unsafe test surrogate granted an apply callback turns the boundary oracle RED for revision, hash and journal | PASS | gameplay timing, movement meaning and deterministic simulation are deliberately unclaimed |
-| accepted predecessor guarantees remain composed | HK01-HK05 integration seams only | new read route uses HK04 attenuation; commit still uses HK04 internal committer and HK05 validation before planning; no second writer/validator/state model added | full 115-test regression GREEN on implementation observation | accepted HK04 effective non-mutation oracle includes the new journal route and proves it state-neutral | PASS | concrete contrary evidence would reopen the relevant predecessor, none observed |
+| accepted predecessor guarantees remain composed | HK01-HK05 integration seams only | new read route uses HK04 attenuation; commit still uses HK04 internal committer and HK05 validation before planning; no second writer/validator/state model added | full 116-test regression GREEN on implementation observation | accepted HK04 effective non-mutation oracle includes the new journal route and proves it state-neutral | PASS | concrete contrary evidence would reopen the relevant predecessor, none observed |
 | forbidden scope absent | baseline-to-candidate diff | changes are limited to provenance/stamp contracts, transaction-boundary integration, one read binding, focused tests/scripts/evidence | strict diff audit | no diff/snapshot/replay/Unity/scheduler/AI/GUI/cloud/Git-history implementation present | PASS | none |
 
 ## Independent/effective universes
@@ -50,18 +50,18 @@ simulation claim.
 6. **Public schema universe:** inherited canonical composition/discovery reconciles the new
    definition and route; effective output is validated by the discovered definition's schema.
 
-## Observation receipt before evidence reconciliation
+## Observation receipt before final pre-review evidence reconciliation
 
-Implementation SHA `611ec0ea06f4b4cd5a2a2fca149d89f6a5e44b9e` passed candidate observation
-Actions `35467452640` on Ubuntu 24.04 with pinned .NET SDK 8.0.425:
+Implementation SHA `d46f397eed6f22f7dbe5113c154dd8c06837d0f1` passed candidate observation
+Actions `35467676205` on Ubuntu 24.04 with pinned .NET SDK 8.0.425:
 
 - Release build: 0 warnings / 0 errors;
-- focused `Hk06A*`: 5/5 GREEN;
-- full regression: 115/115 GREEN;
+- focused `Hk06A*`: 6/6 GREEN;
+- full regression: 116/116 GREEN;
 - exact-SHA clean-before/clean-after receipt: GREEN.
 
-Subsequent evidence and concurrency-regression changes require a fresh exact-SHA observation before
-freeze; this earlier run is implementation feedback, not the final receipt.
+The final evidence-only pre-review commit requires a fresh exact-SHA observation before freeze;
+this implementation run is strong feedback but is not reused as the final receipt.
 
 ## Proof-budget verdict
 
