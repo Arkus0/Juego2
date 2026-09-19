@@ -191,9 +191,17 @@ namespace Arkus.Harness.Protocol
                 return Breaking("Capability identity changed.");
             }
 
-            if (next.Key.Version.CompareTo(previous.Key.Version) < 0)
+            var versionComparison = next.Key.Version.CompareTo(previous.Key.Version);
+            if (versionComparison < 0)
             {
                 return Breaking("Contract version moved backwards.");
+            }
+
+            if (versionComparison == 0)
+            {
+                return string.Equals(previous.SemanticFingerprint(), next.SemanticFingerprint(), StringComparison.Ordinal)
+                    ? new CompatibilityDecision(CompatibilityKind.Compatible, "Canonical semantics and version are unchanged.")
+                    : Breaking("Canonical semantics changed without incrementing the contract version.");
             }
 
             if (next.Key.Version.Major != previous.Key.Version.Major)
@@ -216,7 +224,7 @@ namespace Arkus.Harness.Protocol
                 next.RequestSchema.SemanticFingerprint(),
                 StringComparison.Ordinal))
             {
-                return new CompatibilityDecision(CompatibilityKind.Compatible, "Canonical semantics are unchanged.");
+                return new CompatibilityDecision(CompatibilityKind.Compatible, "Canonical semantics are unchanged across the version increment.");
             }
 
             if (IsAdditiveRequestChange(previous.RequestSchema.Root, next.RequestSchema.Root))
