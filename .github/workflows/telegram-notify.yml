@@ -1,6 +1,8 @@
 name: Telegram Notify
 
 on:
+  repository_dispatch:
+    types: [arkus_notification]
   issue_comment:
     types: [created]
   workflow_dispatch:
@@ -11,18 +13,18 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: telegram-notify-${{ github.event.comment.id || github.run_id }}
+  group: telegram-notify-${{ github.event.comment.id || github.event.client_payload.key || github.run_id }}
   cancel-in-progress: false
 
 jobs:
   notify:
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'repository_dispatch' ||
       (
         github.event.issue.pull_request != null &&
         contains(github.event.comment.body, 'ARKUS_AUTOMATION_V2') &&
         (
-          github.event.comment.user.login == 'github-actions[bot]' ||
           github.event.comment.author_association == 'OWNER' ||
           github.event.comment.author_association == 'MEMBER' ||
           github.event.comment.author_association == 'COLLABORATOR'
@@ -45,29 +47,50 @@ jobs:
           event_name = os.environ['GITHUB_EVENT_NAME']
           event_path = os.environ['GITHUB_EVENT_PATH']
           output_path = os.environ['GITHUB_OUTPUT']
+          repo = os.environ['GITHUB_REPOSITORY']
+
+          with open(event_path, 'r', encoding='utf-8') as fh:
+              event = json.load(fh)
 
           if event_name == 'workflow_dispatch':
               message = '🔔 Arkus0/Juego2\nNotificaciones de Telegram operativas.'
           else:
-              with open(event_path, 'r', encoding='utf-8') as fh:
-                  event = json.load(fh)
+              if event_name == 'repository_dispatch':
+                  payload = event.get('client_payload', {})
+                  state = str(payload.get('state', '')).upper()
+                  detail = str(payload.get('detail', '')).strip()[:420]
+                  next_wp = str(payload.get('next_wp', '')).strip()[:120]
+                  milestone = str(payload.get('milestone', '')).strip()[:120]
+                  wp = str(payload.get('wp', '')).strip()[:120]
+                  pr_number = payload.get('pr')
+                  pr_url = f"https://github.com/{repo}/pull/{pr_number}" if pr_number else f"https://github.com/{repo}"
+                  title = ''
+              else:
+                  body = event.get('comment', {}).get('body', '')
+                  if 'ARKUS_AUTOMATION_V2' not in body:
+                      sys.exit(0)
 
-              body = event.get('comment', {}).get('body', '')
-              if 'ARKUS_AUTOMATION_V2' not in body:
-                  sys.exit(0)
+                  fields = {}
+                  for raw in body.splitlines():
+                      line = raw.strip()
+                      if ':' not in line:
+                          continue
+                      key, value = line.split(':', 1)
+                      fields[key.strip()] = value.strip()
 
-              fields = {}
-              for raw in body.splitlines():
-                  line = raw.strip()
-                  if ':' not in line:
-                      continue
-                  key, value = line.split(':', 1)
-                  fields[key.strip()] = value.strip()
+                  state = fields.get('State', '').upper()
+                  detail = fields.get('Detail', '').strip()[:420]
+                  next_wp = fields.get('Next WP', '').strip()[:120]
+                  milestone = fields.get('Milestone', '').strip()[:120]
 
-              state = fields.get('State', '').upper()
-              detail = fields.get('Detail', '').strip()[:420]
-              next_wp = fields.get('Next WP', '').strip()[:120]
-              milestone = fields.get('Milestone', '').strip()[:120]
+                  issue = event.get('issue', {})
+                  pr_number = issue.get('number')
+                  pr_url = issue.get('html_url') or event.get('comment', {}).get('html_url')
+                  pr_body = issue.get('body') or ''
+                  title = issue.get('title') or ''
+
+                  wp_match = re.search(r'^WP:\s*`?([^`\r\n]+?)`?\s*$', pr_body, re.M | re.I)
+                  wp = (fields.get('WP') or (wp_match.group(1).strip() if wp_match else '')).strip()[:120]
 
               # Intentionally low-noise: routine DOCSYNC_REQUIRED is not sent.
               labels = {
@@ -85,15 +108,7 @@ jobs:
               if state not in labels:
                   sys.exit(0)
 
-              issue = event.get('issue', {})
-              pr_number = issue.get('number')
-              pr_url = issue.get('html_url') or event.get('comment', {}).get('html_url')
-              pr_body = issue.get('body') or ''
-              title = issue.get('title') or ''
-
-              wp_match = re.search(r'^WP:\s*`?([^`\r\n]+?)`?\s*$', pr_body, re.M | re.I)
-              wp = (fields.get('WP') or (wp_match.group(1).strip() if wp_match else '')).strip()[:120]
-              subject = wp or milestone or title[:120] or f'PR #{pr_number}'
+              subject = wp or milestone or title[:120] or (f'PR #{pr_number}' if pr_number else 'Juego2')
 
               if state == 'DOCSYNC_COMPLETE' and not next_wp:
                   print('DOCSYNC_COMPLETE requires a non-empty Next WP field', file=sys.stderr)
