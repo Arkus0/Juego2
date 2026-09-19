@@ -92,3 +92,20 @@ Proof converges on existing effective oracles and one focused test class. No ext
 ## Handoff readiness
 
 No known in-claim blocker remains in the complete intended candidate tree. `WORKER_PRE_REVIEW: CLEAN` is justified. After this documentation reconciliation is committed, that exact SHA must receive GREEN canonical observation; only then may PR metadata bind the same Candidate/Frozen SHA, set `FROZEN_FOR_REVIEW`/`Branch frozen: YES`, and mark the PR Ready. This Worker does not issue the independent PASS/FAIL verdict.
+
+## Repair cycle 1 — fresh Worker strict pre-review (2026-09-19)
+
+Independent Reviewer FAIL on frozen `9d0dc3739f31bcc6a7f8df12b5f6e876837efacc` identified two in-claim gaps. This section supersedes the earlier CLEAN claim for that candidate; the earlier record remains as historical evidence, not evidence of review PASS.
+
+1. **Nullable subject request fingerprint (P1).** The previously added `SubjectId ?? "-"` collapsed a global extension and valid object ID `"-"` into the same fingerprint under the same key. The repair encodes absence as `global` and presence as `object:<length>:<value>`, with a discriminator and length, for both put and remove. Neither canonical ID validation nor HK04 receipt ordering is altered. The two-case public-dispatch test applies a global request, checks same-key object request returns `world.change.idempotency_conflict` with revision/hash unchanged, and verifies a separate key commits the scoped operation. For removal the fixture contains both distinct resources, so first removing the global resource leaves the object resource addressable.
+
+2. **Dependency page-two completeness (P2).** The previous focused helper stopped after the first 100 dependency edges. It now follows `nextDependencyOffset` through the public HK03 extension read command. A valid world with 101 distinct target objects/edges requires a full first page and a second one-edge page; the control checks cursor, page size, termination, full reconstructed dependency count and original canonical hash. A deliberately first-page-only copy has a different hash. The inherited HK03 object-reference paging control is consumed without duplication.
+
+**Review of causality and scope:** These fixes target HK02A's newly owned optional subject and extension-dependency read semantics, not HK04's accepted unrelated transaction semantics. No new registry, public route, alternate commit authority, payload interpreter or content-specific schema was introduced. The focused first-page omission comparison and same-key/public-dispatch conflict cover the observed false-green classes; the new tests remain within the existing focused suite. Content-shape implications remain the same as in `CONTENT_SHAPE_PROBE.md`; the repaired dependency pagination also accommodates finite authored reference-rich extensions without claiming world-size budgeting.
+
+**Worker pre-review on implementation SHA `2cb7a3daaa565a6b0ca5b68882541191750dac60`:** Release build 0 warnings/errors; focused 11/11; regression 98/98; canonical GREEN, Actions `35456331653`. One initial test assertion in the repair cycle confused the surviving global put resource with the surviving scoped remove resource; the actual public result exposed the incorrect expectation, corrected in `2cb7a3d` before this CLEAN conclusion. Both original reviewer blockers are corrected. The documentation-reconciled final candidate must receive new exact-SHA observation before freeze.
+
+WORKER_PRE_REVIEW: CLEAN
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 2 reviewer blockers + 1 repair-test expectation
+WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-02A/WORKER_PRE_REVIEW.md
+PROOF_BUDGET_VERDICT: WITHIN_BUDGET
