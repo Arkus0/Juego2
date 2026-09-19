@@ -12,7 +12,7 @@ Make the harness efficient for real AI use, not merely correct: minimize unneces
 ## Acceptance
 
 - Batch authoring supports multiple related changes in one transaction without weakening atomicity or validation.
-- Read APIs support bounded projections/pagination and compact machine responses.
+- Read APIs support bounded projections/pagination and compact machine responses. This includes the accepted HK-06A provenance journal read, which currently returns the complete session-local journal in one response and must become bounded here without changing its accepted semantics.
 - Discovery distinguishes cheap reads, expensive reads and mutating operations where relevant.
 - Structured errors include enough local context for repair without forcing full-world reinspection in ordinary cases.
 - A reference micro-world authoring benchmark measures request count, response bytes and elapsed harness time for representative create/inspect/modify/repair flows.

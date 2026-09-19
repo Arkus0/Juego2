@@ -51,15 +51,14 @@ Arkus checks identity, configuration and effective observations at these boundar
 | `R-01-07` | HK-01 | No external plugin loader; a future reviewed loader must extend the independent universe rather than trust registration metadata | future loader WP | `DEFERRED` |
 | `R-01-08` | HK-01 | Concrete MCP/JSONL projection parity | HK-07A, HK-07B | `DEFERRED` |
 | `R-01-09` | HK-01 | Unity/editor types absent; H1 instantiates the scoped-provider boundary | H1 | `DEFERRED` |
-| `R-02A-04` | HK-02A | Total payload bytes, dependency count and world size not capped | HK-08 | `DEFERRED` |
-| `R-03-01` | HK-03 | Query evaluation is bounded in output, not in scan cost; no index or asymptotic claim | future scale work | `DEFERRED` |
-| `R-04-04` | HK-04 | Resource/cost bounds beyond the 64-operation request limit | HK-08, HK-09 | `DEFERRED` |
+| `R-02A-04` | HK-02A | Total payload bytes, dependency count and world size not capped | HK-09 | `DEFERRED` |
+| `R-04-04` | HK-04 | Byte quota on opaque extension payloads, beyond the 64-operation request limit | HK-09 | `DEFERRED` |
 | `R-05-05` | HK-05 | Unity/engine validation: scene serialization, prefab/component rules, editor constraints | H1 | `DEFERRED` |
-| `R-05-06` | HK-05 | Whole-world size and latency budgets are not product guarantees | HK-08 | `DEFERRED` |
+| `R-05-06` | HK-05 | Whole-world size and latency budgets are not product guarantees | HK-09 for content-size caps; HK-08 for latency baselines | `DEFERRED` |
 | `R-06A-02` | HK-06A | Whether an imported snapshot starts a new local lineage or retains external evidence | HK-06B | `DEFERRED` |
 | `R-06A-03` | HK-06A | Replay interpretation, missing/reordered/tampered entry behaviour, journal/snapshot version compatibility | HK-06C | `DEFERRED` |
 | `R-06A-04` | HK-06A | Field-level semantic diff; affected-resource identity is journal metadata only | HK-06B | `DEFERRED` |
-| `R-06A-05` | HK-06A | Journal growth and pagination; compact interaction budgets | HK-08 | `DEFERRED` |
+| `R-06A-05` | HK-06A | Journal growth and pagination; the journal read currently returns the complete session-local journal in one response | HK-08 | `DEFERRED` |
 | `R-06A-07` | HK-06A | Transport/storage framing may not redefine journal meaning | HK-07A, HK-07B | `DEFERRED` |
 
 A `DEFERRED` entry closes when its owner is accepted. The owner's DocSync should move it to `CLOSED-BY` with the accepted evidence, or restate it.
@@ -80,10 +79,12 @@ These are the entries that decide whether `WP-HK-10` can claim zero, and they ar
 | `R-02-05` | HK-02 | Cross-world and external asset references | touches `CONTENT_SHAPE_BACKLOG.md` row 16 |
 | `R-02A-01` | HK-02A, HK-05 | A producer that embeds an object identity in opaque payload bytes without declaring it cannot be detected generically | matches `CONTENT_SHAPE_BACKLOG.md` row 9 |
 | `R-02A-02` | HK-02A | Whole-world revision/hash CAS; no per-resource concurrency and no automatic merge of disjoint edits | candidate to fall inside HK-09, which claims deterministic stale-revision and conflicting-writer tests |
+| `R-03-01` | HK-03 | Query evaluation is bounded in output, not in scan cost; no index, sublinear complexity or world-size-independent CPU claim | HK-03 defers this to "future scale work", which does not exist. H0 gates on a micro-world, so this is a candidate for `OUT-BOUNDARY` |
 | `R-03-02` | HK-03 | Cursors are deterministic continuation tokens, not authenticated capabilities, and are not an authorization boundary | candidate to fall inside HK-09's capability boundary |
 | `R-03-03` | HK-03 | No multi-command snapshot lease; a state source may advance between calls | stale anchors fail closed rather than mixing revisions |
 | `R-04-01` | HK-04, HK-06A | Canonical state, idempotency receipts and the journal share one in-memory session lifetime; no durable replay protection across restart | both declaring WPs require a future durable substrate to preserve the aggregate atomically |
 | `R-04-02` | HK-04 | Multi-process and distributed writers | requires a later authoritative persistence/locking substrate |
+| `R-04-05` | HK-04 | Asymptotic performance for very large worlds | split out of `R-04-04`: HK-04 defers it to "later harness budget/guardrail work", which does not exist. Same candidate as `R-03-01` |
 | `R-05-01` | HK-05 | Secondary diagnostics whose own source or dependency traversal is ambiguous are deferred and not visible in the same validation pass; the contract is iterative for those | HK-05 declares this as claimed semantics, not a gap. Open question for classification: `arkus.world-validation-result/v1` carries no field indicating the report is partial |
 
 ## D. Entries declared more than once
@@ -96,8 +97,11 @@ A residual restated by several workpacks is a signal that it sits on a seam rath
 | In-memory lifetime and durability | `R-04-01` | HK-04, HK-06A |
 | Undeclared identity inside opaque payloads | `R-02A-01` | HK-02A, HK-05 |
 | Size, byte and latency budgets | `R-02A-04`, `R-04-04`, `R-05-06`, `R-06A-05` | HK-02A, HK-04, HK-05, HK-06A |
+| Large-world scaling with no owner | `R-03-01`, `R-04-05` | HK-03, HK-04 |
 
-The budget theme is the densest: four accepted workpacks have each deferred a different budget to HK-08 without anyone owning the aggregate.
+The budget theme is the densest, and the declaring workpacks use "budget" for two different mechanisms. HK-08 owns **measured baselines**: a benchmark plus regression thresholds. HK-09 owns **enforced caps**: explicit input/batch/page/depth/resource limits that fail closed. Three of the four entries need the second and were re-pointed accordingly; only the journal and latency parts are HK-08 interaction work.
+
+Neither owns large-world scaling. `R-03-01` and `R-04-05` are deferred to a workpack that does not exist, which reads as owned when it is not. H0 benchmarks a micro-world and `WP-HK-GATE` is a micro-world gate, so the likely resolution is `OUT-BOUNDARY` and a named gate residual rather than a new workpack — but that is a classification decision and is deliberately not taken here.
 
 ## E. Deliberate non-goals already stated as such
 
