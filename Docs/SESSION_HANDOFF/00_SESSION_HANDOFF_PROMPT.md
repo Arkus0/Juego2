@@ -40,7 +40,19 @@ HK05 had two historical Reviewer FAILs on frozen candidates `e0c865efd2127ca53d9
 
 ## Current next product target
 
-`WP-HK-06 — Provenance, diff, snapshot + replay` is the next dependency-valid workpack. It consumes HK05's accepted validation/pre-commit semantics and adds auditable committed mutation provenance, semantic diff, canonical snapshot export/import and deterministic authored-state journal replay. It must preserve the authored-vs-live-state boundary: ordinary runtime observations/ticks must not silently create authoring revisions, journal entries or CAS churn. Read `Docs/workpacks/HK/WP-HK-06.md` plus accepted HK05 evidence before implementation. No HK06 Worker has been started by this DocSync.
+The original HK06 and HK07 monoliths were split **before implementation** to reduce coupled foundational freeze/review risk without reducing scope. Their old files remain SUPERSEDED umbrella records and must not be implemented directly.
+
+Execution chain:
+
+`HK06A → HK06B → HK06C → HK07A → HK07B → HK08 → HK09 → HK10 → HK-GATE`
+
+The next dependency-valid workpack is `WP-HK-06A — Provenance journal + authored/live boundary`.
+
+HK06A consumes HK05's accepted validation/pre-commit semantics and owns trustworthy mutation provenance plus the authored-state versus live/runtime boundary. Every accepted authored mutation must journal request/tool identity, before/after revision+hash and affected resources; failed/dry-run/read-only work must not create successful mutation entries; runtime-like ticks/observations must not advance authored revisions, hashes, CAS or journal history. Read `Docs/workpacks/HK/WP-HK-06A.md` plus accepted HK05 evidence before implementation.
+
+After 06A PASS+merge+DocSync: 06B owns semantic diff + canonical snapshot export/import; 06C owns deterministic replay + end-to-end audit consistency. After 06C, 07A establishes the real headless process and deterministic JSONL/reference transport; only then does 07B add MCP and prove cross-transport semantic equivalence. HK08, HK09, HK10 and HK-GATE remain unsplit.
+
+No HK06A Worker has been started by this planning change.
 
 ## Operating model
 
@@ -58,7 +70,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A → HK-06B → HK-06C → HK-07A → HK-07B → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
