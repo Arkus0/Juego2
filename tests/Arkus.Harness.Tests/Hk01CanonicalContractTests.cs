@@ -27,7 +27,7 @@ namespace Arkus.Harness.Tests
             Assert.True(result.Success);
             Assert.NotNull(result.Data);
             Assert.True(result.Data!.ContainsKey("capabilities"));
-            Assert.Empty(CanonicalProjectionConformance.Compare(contract.Definitions, contract.Projection));
+            Assert.Empty(CanonicalProjectionConformance.Compare(contract.Definitions, result.Data));
         }
 
         [Fact]

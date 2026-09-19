@@ -102,6 +102,59 @@ namespace Arkus.Harness.Tests
             Assert.Equal(CompatibilityKind.Breaking, result.Kind);
         }
 
+        [Fact]
+        public void DelimiterBearingMetadataCannotCollideInSemanticComparison()
+        {
+            var original = Hk01TestFixtures.FixtureDefinition(new ContractVersion(1, 0), true);
+            var left = CopyWithPreconditions(original, new[] { "a;b", "c" });
+            var right = CopyWithPreconditions(original, new[] { "a", "b;c" });
+
+            Assert.NotEqual(left.SemanticFingerprint(), right.SemanticFingerprint());
+            Assert.Equal(CompatibilityKind.Breaking, ContractCompatibility.Compare(left, right).Kind);
+            Assert.Contains(
+                CanonicalProjectionConformance.Compare(
+                    new[] { left },
+                    new CanonicalContractProjection(new[] { right }).ToData()),
+                issue => issue.Code == "projection.semantic_mismatch");
+        }
+
+        [Fact]
+        public void DelimiterBearingSchemaValuesCannotCollideInSemanticComparison()
+        {
+            var original = Hk01TestFixtures.FixtureDefinition(new ContractVersion(1, 0), true);
+            var left = Hk01TestFixtures.CopyWithRequest(
+                original,
+                new JsonSchemaDocument(SchemaNode.String(new[] { "a;b", "c" })));
+            var right = Hk01TestFixtures.CopyWithRequest(
+                original,
+                new JsonSchemaDocument(SchemaNode.String(new[] { "a", "b;c" })));
+
+            Assert.NotEqual(left.RequestSchema!.SemanticFingerprint(), right.RequestSchema!.SemanticFingerprint());
+            Assert.Equal(CompatibilityKind.Breaking, ContractCompatibility.Compare(left, right).Kind);
+        }
+
+        private static CapabilityDefinition CopyWithPreconditions(
+            CapabilityDefinition source,
+            IEnumerable<string> preconditions)
+        {
+            return new CapabilityDefinition(
+                source.Key,
+                source.Provider,
+                source.RequestSchema,
+                source.SuccessSchema,
+                source.ErrorSchema,
+                source.SideEffect,
+                source.Determinism,
+                preconditions,
+                source.Postconditions,
+                source.Concurrency,
+                source.Idempotency,
+                source.Batching,
+                source.Repair,
+                source.Policy,
+                source.Cost);
+        }
+
         private sealed class RuntimeOnlyReference
         {
         }

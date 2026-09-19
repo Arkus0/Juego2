@@ -90,13 +90,73 @@ namespace Arkus.Harness.Protocol
                 throw new ArgumentNullException(nameof(projection));
             }
 
+            return Compare(canonicalDefinitions, projection.ToData());
+        }
+
+        public static IReadOnlyList<ProjectionConformanceIssue> Compare(
+            IEnumerable<CapabilityDefinition> canonicalDefinitions,
+            IReadOnlyDictionary<string, object?> projectionArtifact)
+        {
+            if (canonicalDefinitions == null)
+            {
+                throw new ArgumentNullException(nameof(canonicalDefinitions));
+            }
+
+            if (projectionArtifact == null)
+            {
+                throw new ArgumentNullException(nameof(projectionArtifact));
+            }
+
             var canonical = ToMap(canonicalDefinitions);
-            var projected = ToMap(projection.Capabilities);
             var issues = new List<ProjectionConformanceIssue>();
+            foreach (var portableIssue in PortableData.Validate(projectionArtifact))
+            {
+                issues.Add(new ProjectionConformanceIssue(
+                    "projection.invalid_artifact",
+                    portableIssue.Path,
+                    portableIssue.Message));
+            }
+
+            if (issues.Count != 0)
+            {
+                return issues.AsReadOnly();
+            }
+
+            if (projectionArtifact.Count != 2 ||
+                !projectionArtifact.ContainsKey("contractModelVersion") ||
+                !projectionArtifact.ContainsKey("capabilities"))
+            {
+                issues.Add(new ProjectionConformanceIssue(
+                    "projection.semantic_mismatch",
+                    "$",
+                    "Projection root fields differ from the canonical discovery artifact."));
+            }
+
+            if (!projectionArtifact.TryGetValue("contractModelVersion", out var modelVersionValue) ||
+                !(modelVersionValue is string modelVersion) ||
+                !string.Equals(modelVersion, CanonicalContractProjection.ContractModelVersion, StringComparison.Ordinal))
+            {
+                issues.Add(new ProjectionConformanceIssue(
+                    "projection.contract_model_version_mismatch",
+                    "$.contractModelVersion",
+                    "Projection contract-model version differs from the canonical projection model."));
+            }
+
+            if (!projectionArtifact.TryGetValue("capabilities", out var capabilitiesValue) ||
+                !(capabilitiesValue is IReadOnlyList<object?> capabilityArtifacts))
+            {
+                issues.Add(new ProjectionConformanceIssue(
+                    "projection.invalid_artifact",
+                    "$.capabilities",
+                    "Projection capabilities must be a portable array of capability objects."));
+                return issues.AsReadOnly();
+            }
+
+            var projected = ToArtifactMap(capabilityArtifacts, issues);
 
             foreach (var pair in canonical)
             {
-                if (!projected.TryGetValue(pair.Key, out var projectedDefinition))
+                if (!projected.TryGetValue(pair.Key, out var projectedDefinitionData))
                 {
                     issues.Add(new ProjectionConformanceIssue(
                         "projection.omitted_capability",
@@ -105,10 +165,9 @@ namespace Arkus.Harness.Protocol
                     continue;
                 }
 
-                if (!string.Equals(
-                    pair.Value.SemanticFingerprint(),
-                    projectedDefinition.SemanticFingerprint(),
-                    StringComparison.Ordinal))
+                if (!CanonicalDataEquality.AreEqual(
+                    CanonicalProjectionOracleData.FromDefinition(pair.Value),
+                    projectedDefinitionData))
                 {
                     issues.Add(new ProjectionConformanceIssue(
                         "projection.semantic_mismatch",
@@ -129,6 +188,63 @@ namespace Arkus.Harness.Protocol
             }
 
             return issues.AsReadOnly();
+        }
+
+        private static Dictionary<CapabilityKey, IReadOnlyDictionary<string, object?>> ToArtifactMap(
+            IReadOnlyList<object?> capabilityArtifacts,
+            IList<ProjectionConformanceIssue> issues)
+        {
+            var result = new Dictionary<CapabilityKey, IReadOnlyDictionary<string, object?>>();
+            for (var index = 0; index < capabilityArtifacts.Count; index++)
+            {
+                var path = "$.capabilities[" + index + "]";
+                if (!(capabilityArtifacts[index] is IReadOnlyDictionary<string, object?> capabilityData))
+                {
+                    issues.Add(new ProjectionConformanceIssue(
+                        "projection.invalid_artifact",
+                        path,
+                        "Projected capability entry must be a portable object."));
+                    continue;
+                }
+
+                if (!capabilityData.TryGetValue("name", out var nameValue) || !(nameValue is string name) ||
+                    !capabilityData.TryGetValue("version", out var versionValue) || !(versionValue is string versionText))
+                {
+                    issues.Add(new ProjectionConformanceIssue(
+                        "projection.invalid_artifact",
+                        path,
+                        "Projected capability entry must contain string name and version fields."));
+                    continue;
+                }
+
+                ContractVersion version;
+                try
+                {
+                    version = ContractVersion.Parse(versionText);
+                }
+                catch (FormatException)
+                {
+                    issues.Add(new ProjectionConformanceIssue(
+                        "projection.invalid_artifact",
+                        path + ".version",
+                        "Projected capability version is not a canonical contract version."));
+                    continue;
+                }
+
+                var key = new CapabilityKey(name, version);
+                if (result.ContainsKey(key))
+                {
+                    issues.Add(new ProjectionConformanceIssue(
+                        "projection.duplicate_capability",
+                        key.ToString(),
+                        "Projection emitted a duplicate capability identity."));
+                    continue;
+                }
+
+                result.Add(key, capabilityData);
+            }
+
+            return result;
         }
 
         private static Dictionary<CapabilityKey, CapabilityDefinition> ToMap(IEnumerable<CapabilityDefinition> definitions)
@@ -199,7 +315,7 @@ namespace Arkus.Harness.Protocol
 
             if (versionComparison == 0)
             {
-                return string.Equals(previous.SemanticFingerprint(), next.SemanticFingerprint(), StringComparison.Ordinal)
+                return CanonicalSemanticEquality.DefinitionsEqual(previous, next)
                     ? new CompatibilityDecision(CompatibilityKind.Compatible, "Canonical semantics and version are unchanged.")
                     : Breaking("Canonical semantics changed without incrementing the contract version.");
             }
@@ -219,10 +335,7 @@ namespace Arkus.Harness.Protocol
                 return Breaking("Compatibility cannot be evaluated with a missing request schema.");
             }
 
-            if (string.Equals(
-                previous.RequestSchema.SemanticFingerprint(),
-                next.RequestSchema.SemanticFingerprint(),
-                StringComparison.Ordinal))
+            if (CanonicalSemanticEquality.SchemaDocumentsEqual(previous.RequestSchema, next.RequestSchema))
             {
                 return new CompatibilityDecision(CompatibilityKind.Compatible, "Canonical semantics are unchanged across the version increment.");
             }
@@ -301,10 +414,7 @@ namespace Arkus.Harness.Protocol
 
         private static bool SchemaNodeEquals(SchemaNode left, SchemaNode right)
         {
-            return string.Equals(
-                new JsonSchemaDocument(left).SemanticFingerprint(),
-                new JsonSchemaDocument(right).SemanticFingerprint(),
-                StringComparison.Ordinal);
+            return CanonicalSemanticEquality.SchemaNodesEqual(left, right);
         }
 
         private static bool SchemaEquals(JsonSchemaDocument? left, JsonSchemaDocument? right)
@@ -314,7 +424,7 @@ namespace Arkus.Harness.Protocol
                 return left == null && right == null;
             }
 
-            return string.Equals(left.SemanticFingerprint(), right.SemanticFingerprint(), StringComparison.Ordinal);
+            return CanonicalSemanticEquality.SchemaDocumentsEqual(left, right);
         }
 
         private static bool ProviderEquals(ProviderMetadata left, ProviderMetadata right)

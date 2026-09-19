@@ -217,7 +217,20 @@ namespace Arkus.Harness.Runtime
             CompareSets(definitionKeys, routeKeys, "dispatcher", issues);
             CompareSets(definitionKeys, independentKeys, "independent-route-universe", issues);
 
-            foreach (var projectionIssue in CanonicalProjectionConformance.Compare(contract.Definitions, contract.Projection))
+            var discovery = contract.Dispatch(
+                "system.describe",
+                ContractVersionRange.Exact(new ContractVersion(1, 0)),
+                new Dictionary<string, object?>(StringComparer.Ordinal));
+            if (!discovery.Success || discovery.Data == null)
+            {
+                issues.Add(new ConformanceIssue(
+                    "projection.discovery_failed",
+                    "system.describe@1.0",
+                    "Canonical discovery could not emit a schema-valid projection artifact."));
+                return new ContractConformanceReport(issues.AsReadOnly());
+            }
+
+            foreach (var projectionIssue in CanonicalProjectionConformance.Compare(contract.Definitions, discovery.Data))
             {
                 issues.Add(new ConformanceIssue(projectionIssue.Code, projectionIssue.Identity, projectionIssue.Message));
             }

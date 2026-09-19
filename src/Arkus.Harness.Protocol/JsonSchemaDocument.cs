@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace Arkus.Harness.Protocol
 {
@@ -48,11 +47,11 @@ namespace Arkus.Harness.Protocol
 
         public string SemanticFingerprint()
         {
-            var builder = new StringBuilder();
-            builder.Append(Dialect);
-            builder.Append('|');
-            Root.AppendFingerprint(builder);
-            return builder.ToString();
+            var writer = new SemanticFingerprintWriter();
+            writer.WriteString("arkus-schema-fingerprint-v1");
+            writer.WriteString(Dialect);
+            Root.AppendFingerprint(writer);
+            return writer.ToString();
         }
     }
 }

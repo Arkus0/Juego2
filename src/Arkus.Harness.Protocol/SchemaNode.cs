@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Text;
 
 namespace Arkus.Harness.Protocol
 {
@@ -190,53 +189,29 @@ namespace Arkus.Harness.Protocol
             return new ReadOnlyDictionary<string, object?>(data);
         }
 
-        internal void AppendFingerprint(StringBuilder builder)
+        internal void AppendFingerprint(SemanticFingerprintWriter writer)
         {
-            builder.Append('(');
-            builder.Append((int)ValueType);
-            builder.Append('|');
-            builder.Append(AdditionalPropertiesAllowed ? '1' : '0');
-            builder.Append('|');
-            builder.Append(Format ?? string.Empty);
-            builder.Append('|');
-            builder.Append(LogicalReferenceNamespace ?? string.Empty);
-
-            var required = new List<string>(RequiredProperties);
-            required.Sort(StringComparer.Ordinal);
-            builder.Append("|R:");
-            foreach (var value in required)
-            {
-                builder.Append(value);
-                builder.Append(';');
-            }
-
-            var enumValues = new List<string>(AllowedStringValues);
-            enumValues.Sort(StringComparer.Ordinal);
-            builder.Append("|E:");
-            foreach (var value in enumValues)
-            {
-                builder.Append(value);
-                builder.Append(';');
-            }
+            writer.WriteInt((int)ValueType);
+            writer.WriteBool(AdditionalPropertiesAllowed);
+            writer.WriteString(Format);
+            writer.WriteString(LogicalReferenceNamespace);
+            writer.WriteSet(RequiredProperties);
+            writer.WriteSet(AllowedStringValues);
 
             var propertyNames = new List<string>(Properties.Keys);
             propertyNames.Sort(StringComparer.Ordinal);
-            builder.Append("|P:");
+            writer.WriteInt(propertyNames.Count);
             foreach (var propertyName in propertyNames)
             {
-                builder.Append(propertyName);
-                builder.Append('=');
-                Properties[propertyName].AppendFingerprint(builder);
-                builder.Append(';');
+                writer.WriteString(propertyName);
+                Properties[propertyName].AppendFingerprint(writer);
             }
 
+            writer.WriteBool(Items != null);
             if (Items != null)
             {
-                builder.Append("|I:");
-                Items.AppendFingerprint(builder);
+                Items.AppendFingerprint(writer);
             }
-
-            builder.Append(')');
         }
 
         internal void ValidateDefinition(string path, IList<SchemaValidationIssue> issues)

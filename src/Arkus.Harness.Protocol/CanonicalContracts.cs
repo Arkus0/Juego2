@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Text;
 
 namespace Arkus.Harness.Protocol
 {
@@ -476,51 +475,71 @@ namespace Arkus.Harness.Protocol
 
         private string BuildSemanticFingerprint(bool includeRequest)
         {
-            var builder = new StringBuilder();
-            builder.Append(Key);
-            builder.Append('|');
-            builder.Append(Provider.ProviderId);
-            builder.Append('|');
-            builder.Append((int)Provider.Kind);
-            builder.Append('|');
-            builder.Append(Provider.Scope);
-            builder.Append('|');
-            builder.Append(Provider.CapabilityNamespace);
-            builder.Append('|');
-            builder.Append(includeRequest ? RequestSchema?.SemanticFingerprint() ?? "<missing>" : "<request-ignored>");
-            builder.Append('|');
-            builder.Append(SuccessSchema?.SemanticFingerprint() ?? "<missing>");
-            builder.Append('|');
-            builder.Append(ErrorSchema?.SemanticFingerprint() ?? "<missing>");
-            builder.Append('|');
-            builder.Append((int)SideEffect);
-            builder.Append('|');
-            builder.Append((int)Determinism);
-            AppendList(builder, Preconditions);
-            AppendList(builder, Postconditions);
-            builder.Append('|');
-            builder.Append(Concurrency == null ? "<missing>" : ((int)Concurrency.Class).ToString(CultureInfo.InvariantCulture) + ":" + (Concurrency.VersionTokenName ?? string.Empty));
-            builder.Append('|');
-            builder.Append(Idempotency == null ? "<missing>" : ((int)Idempotency.Class).ToString(CultureInfo.InvariantCulture) + ":" + (Idempotency.KeyField ?? string.Empty));
-            builder.Append('|');
-            builder.Append(Batching == null ? "<missing>" : ((int)Batching.Class).ToString(CultureInfo.InvariantCulture) + ":" + (Batching.MaximumItems?.ToString(CultureInfo.InvariantCulture) ?? string.Empty));
-            builder.Append('|');
-            builder.Append(Repair == null ? "<missing>" : (Repair.Retryable ? "1" : "0") + ":" + (Repair.ExposesRepairHint ? "1" : "0"));
-            builder.Append('|');
-            builder.Append(Policy == null ? "<missing>" : ((int)Policy.Privilege).ToString(CultureInfo.InvariantCulture) + ":" + ((int)Policy.TransactionRequirement).ToString(CultureInfo.InvariantCulture) + ":" + ((int)Policy.ProvenanceRequirement).ToString(CultureInfo.InvariantCulture));
-            builder.Append('|');
-            builder.Append(Cost == null ? string.Empty : Cost.RelativeWeight.ToString(CultureInfo.InvariantCulture) + ":" + (Cost.Note ?? string.Empty));
-            return builder.ToString();
-        }
-
-        private static void AppendList(StringBuilder builder, IReadOnlyList<string> values)
-        {
-            builder.Append('|');
-            foreach (var value in values)
+            var writer = new SemanticFingerprintWriter();
+            writer.WriteString("arkus-capability-fingerprint-v1");
+            writer.WriteString(Key.Name);
+            writer.WriteInt(Key.Version.Major);
+            writer.WriteInt(Key.Version.Minor);
+            writer.WriteString(Provider.ProviderId);
+            writer.WriteInt((int)Provider.Kind);
+            writer.WriteString(Provider.Scope);
+            writer.WriteString(Provider.CapabilityNamespace);
+            writer.WriteBool(includeRequest);
+            if (includeRequest)
             {
-                builder.Append(value);
-                builder.Append(';');
+                writer.WriteString(RequestSchema?.SemanticFingerprint());
             }
+
+            writer.WriteString(SuccessSchema?.SemanticFingerprint());
+            writer.WriteString(ErrorSchema?.SemanticFingerprint());
+            writer.WriteInt((int)SideEffect);
+            writer.WriteInt((int)Determinism);
+            writer.WriteSequence(Preconditions);
+            writer.WriteSequence(Postconditions);
+            writer.WriteBool(Concurrency != null);
+            if (Concurrency != null)
+            {
+                writer.WriteInt((int)Concurrency.Class);
+                writer.WriteString(Concurrency.VersionTokenName);
+            }
+
+            writer.WriteBool(Idempotency != null);
+            if (Idempotency != null)
+            {
+                writer.WriteInt((int)Idempotency.Class);
+                writer.WriteString(Idempotency.KeyField);
+            }
+
+            writer.WriteBool(Batching != null);
+            if (Batching != null)
+            {
+                writer.WriteInt((int)Batching.Class);
+                writer.WriteNullableInt(Batching.MaximumItems);
+            }
+
+            writer.WriteBool(Repair != null);
+            if (Repair != null)
+            {
+                writer.WriteBool(Repair.Retryable);
+                writer.WriteBool(Repair.ExposesRepairHint);
+            }
+
+            writer.WriteBool(Policy != null);
+            if (Policy != null)
+            {
+                writer.WriteInt((int)Policy.Privilege);
+                writer.WriteInt((int)Policy.TransactionRequirement);
+                writer.WriteInt((int)Policy.ProvenanceRequirement);
+            }
+
+            writer.WriteBool(Cost != null);
+            if (Cost != null)
+            {
+                writer.WriteInt(Cost.RelativeWeight);
+                writer.WriteString(Cost.Note);
+            }
+
+            return writer.ToString();
         }
 
         private static IReadOnlyList<string> CopyStrings(IEnumerable<string>? values)
@@ -742,10 +761,9 @@ namespace Arkus.Harness.Protocol
             ValidateSchema(definition.ErrorSchema, "$.errorSchema", issues);
 
             if (definition.ErrorSchema != null &&
-                !string.Equals(
-                    definition.ErrorSchema.SemanticFingerprint(),
-                    CanonicalContractSchemas.StructuredError().SemanticFingerprint(),
-                    StringComparison.Ordinal))
+                !CanonicalSemanticEquality.SchemaDocumentsEqual(
+                    definition.ErrorSchema,
+                    CanonicalContractSchemas.StructuredError()))
             {
                 issues.Add(new ContractValidationIssue(
                     "contract.noncanonical_error_schema",

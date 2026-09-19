@@ -177,6 +177,65 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void EmittedDiscoveryArtifactCannotAlterSemanticMetadata()
+        {
+            var contract = Hk01TestFixtures.ComposeWithFixture();
+            var discovery = contract.Dispatch(
+                "system.describe",
+                ContractVersionRange.Exact(new ContractVersion(1, 0)),
+                Hk01TestFixtures.EmptyRequest());
+            Assert.True(discovery.Success);
+
+            var alteredRoot = new Dictionary<string, object?>(discovery.Data!, StringComparer.Ordinal);
+            var emittedCapabilities = Assert.IsAssignableFrom<IReadOnlyList<object?>>(alteredRoot["capabilities"]);
+            var alteredCapabilities = new List<object?>(emittedCapabilities);
+            for (var index = 0; index < alteredCapabilities.Count; index++)
+            {
+                var emittedCapability = Assert.IsAssignableFrom<IReadOnlyDictionary<string, object?>>(alteredCapabilities[index]);
+                if (string.Equals(emittedCapability["name"] as string, "engine.observe", StringComparison.Ordinal))
+                {
+                    var alteredCapability = new Dictionary<string, object?>(emittedCapability, StringComparer.Ordinal)
+                    {
+                        ["preconditions"] = new List<object?> { "artifact-semantic-drift" }.AsReadOnly()
+                    };
+                    alteredCapabilities[index] = alteredCapability;
+                    break;
+                }
+            }
+
+            alteredRoot["capabilities"] = alteredCapabilities.AsReadOnly();
+            var issues = CanonicalProjectionConformance.Compare(contract.Definitions, alteredRoot);
+
+            Assert.Contains(issues, issue => issue.Code == "projection.semantic_mismatch");
+        }
+
+        [Fact]
+        public void ProjectionOracleDetectsOptionalSemanticFieldOmittedFromArtifact()
+        {
+            var contract = Hk01TestFixtures.ComposeWithFixture();
+            var emitted = contract.Projection.ToData();
+            var alteredRoot = new Dictionary<string, object?>(emitted, StringComparer.Ordinal);
+            var emittedCapabilities = Assert.IsAssignableFrom<IReadOnlyList<object?>>(emitted["capabilities"]);
+            var alteredCapabilities = new List<object?>(emittedCapabilities);
+            for (var index = 0; index < alteredCapabilities.Count; index++)
+            {
+                var emittedCapability = Assert.IsAssignableFrom<IReadOnlyDictionary<string, object?>>(alteredCapabilities[index]);
+                if (string.Equals(emittedCapability["name"] as string, "engine.observe", StringComparison.Ordinal))
+                {
+                    var alteredCapability = new Dictionary<string, object?>(emittedCapability, StringComparer.Ordinal);
+                    Assert.True(alteredCapability.Remove("cost"));
+                    alteredCapabilities[index] = alteredCapability;
+                    break;
+                }
+            }
+
+            alteredRoot["capabilities"] = alteredCapabilities.AsReadOnly();
+            var issues = CanonicalProjectionConformance.Compare(contract.Definitions, alteredRoot);
+
+            Assert.Contains(issues, issue => issue.Code == "projection.semantic_mismatch");
+        }
+
+        [Fact]
         public void DeletingRegistryMetadataCannotShrinkIndependentRouteProofUniverse()
         {
             var emptyBase = new CanonicalProviderContribution(
