@@ -1,36 +1,33 @@
 # WP-HK-06 — Provenance, diff, snapshot + replay
 
-Status: PLANNED  
-Class: FOUNDATIONAL  
+Status: SUPERSEDED — SPLIT BEFORE IMPLEMENTATION  
+Class: FOUNDATIONAL UMBRELLA  
 Depends on: `WP-HK-05`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 
-## Objective
+## Resolution
 
-Make every accepted harness change auditable and reproducible from machine-readable evidence.
+This workpack was intentionally split before implementation because it combined three independently reviewable semantic boundaries whose failure modes would otherwise be coupled into one large freeze/review cycle.
 
-## Acceptance
+Do **not** implement or review this umbrella as a single WP.
 
-- Canonical snapshots, hashes, revisions and mutation journals own **authored world state**. Live simulation state (clock ticks, transient NPC positions, animation/physics state and equivalent runtime observations) does not silently advance authoring revisions or participate in authoring CAS.
-- Runtime observations, when later exposed, identify the canonical authored base revision/hash they were produced from and use a separately named contract; deterministic scenario simulation is not falsely claimed by authored-journal replay.
-- Every committed mutation records request identity, protocol/tool version, base revision/hash, resulting revision/hash and affected resources.
-- Semantic diff reports added/removed/changed authorable state without relying on raw serializer text diff.
-- Canonical snapshot export/import is versioned and round-trips to the same semantic state/hash.
-- Journal replay from an accepted base reconstructs the same final canonical hash.
-- Replay order, failure policy and version compatibility are explicit.
-- Provenance cannot claim success if persisted state/hash disagrees with the recorded result.
-- Read-only requests do not pollute mutation history.
-- Journal/snapshot evidence can be consumed headlessly by tests and future tooling.
-- A bounded content-shape probe models a scheduled H2 NPC against this authored/live boundary and demonstrates that ordinary world ticks cannot create authoring journal entries or CAS churn.
+Execution order is now:
 
-## Required negative-conformance tests
+1. `WP-HK-06A — Provenance journal + authored/live boundary`
+2. `WP-HK-06B — Semantic diff + canonical snapshot portability`
+3. `WP-HK-06C — Deterministic journal replay + end-to-end audit consistency`
+4. `WP-HK-07A` only after `WP-HK-06C` PASS + merge + DocSync.
 
-RED→GREEN for: missing journal entry, wrong before/after hash, reordered replay, altered snapshot data, hidden state change absent from semantic diff, and provenance claiming a mutation that did not persist.
+## Split rationale
 
-## Forbidden scope
+The original HK06 objective remains unchanged in aggregate: accepted authored changes must become auditable, comparable, portable and reproducible from machine-readable evidence. The split changes only proof/review granularity.
 
-Git integration as source of truth, Unity serialization, GUI history browser, cloud persistence, gameplay clock/scheduler implementation, runtime AI or deterministic simulation engine.
+- HK06A establishes the authoritative mutation-history model and fixes the authored-state versus live/runtime boundary.
+- HK06B consumes that boundary to provide semantic diff and canonical snapshot portability without replay complexity.
+- HK06C consumes both accepted predecessors to prove deterministic replay and end-to-end audit consistency.
 
-## DoD
+Accepted predecessor guarantees from HK02/HK02A/HK03/HK04/HK05 compose forward. Each child WP must prove only its owned boundary plus concrete integration with its accepted predecessors; it must not reopen upstream guarantees merely to accumulate proof volume.
 
-A nontrivial sequence of micro-world edits can be exported, replayed in a clean process and proven hash-identical with auditable provenance; independent PASS.
+## Original aggregate DoD
+
+When HK06A, HK06B and HK06C are all COMPLETE, a nontrivial sequence of micro-world edits can be journaled, semantically diffed, exported, reconstructed and replayed in a clean process to the identical canonical authored-state hash with trustworthy provenance and an explicit authored/live boundary.
