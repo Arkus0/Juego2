@@ -53,6 +53,29 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void AcceptedSyntheticScopedSurfaceIsIndependentlyEnumerableAndConformant()
+        {
+            var composition = ContractComposer.Compose(
+                BaseContract.CreateContribution(),
+                Hk01TestFixtures.CompleteFixtureProviders());
+            Assert.True(composition.Success);
+            Assert.NotNull(composition.Contract);
+
+            var routeUniverse = RouteUniverse.Enumerate(new[]
+            {
+                typeof(SystemDescribeHandler).Assembly,
+                typeof(FixtureEngineHandler).Assembly
+            });
+            var report = CanonicalContractConformance.Evaluate(composition.Contract!, routeUniverse);
+
+            Assert.True(report.IsConformant, FormatIssues(report.Issues));
+            Assert.Empty(routeUniverse.Issues);
+            Assert.Equal(4, composition.Contract.Definitions.Count);
+            Assert.Equal(4, routeUniverse.Routes.Count);
+            Assert.Equal(4, composition.Contract.Projection.Capabilities.Count);
+        }
+
+        [Fact]
         public void RuntimeFailsClosedForUnknownVersionAndSchemaInvalidPayload()
         {
             var contract = Hk01TestFixtures.ComposeWithFixture();
