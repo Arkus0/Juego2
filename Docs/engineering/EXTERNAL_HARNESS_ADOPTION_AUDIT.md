@@ -23,7 +23,7 @@ Public upstream material was rechecked for this architecture freeze. Observation
 
 | Candidate | Upstream checked | Current public license observation | Architecture note |
 |---|---|---|---|
-| Official Model Context Protocol C# SDK | `modelcontextprotocol/csharp-sdk` | Apache-2.0; current upstream documents it as the official C# SDK | strong standards adapter candidate; pin/review exact package only when HK07 adopts it |
+| Official Model Context Protocol C# SDK | `modelcontextprotocol/csharp-sdk` | Apache-2.0; current upstream documents it as the official C# SDK | strong standards adapter candidate; pin/review exact package only when `WP-HK-07B` adopts it. `WP-HK-07A` must not take this dependency: it freezes the transport-neutral host/projection contract against the reference transport alone, and a second projection pre-accommodated in 07A would not test that contract |
 | Unity Biome MCP | `german-krasnikov/unity-biome-mcp` | MIT | useful deterministic playtest/visual-diff benchmark; Unity/MCP architecture is not Arkus kernel authority |
 | Coplay MCP for Unity | `CoplayDev/unity-mcp` | MIT | broad Unity/editor tooling benchmark; engine-specific surface remains downstream |
 | IvanMurzak Unity-MCP | `IvanMurzak/Unity-MCP` | Apache-2.0 | useful server/plugin and remote/runtime patterns; canonical state remains Arkus-owned |
