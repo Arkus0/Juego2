@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.9 — 2026-09-19
+Version: 1.10 — 2026-09-19
 
 ## North star
 
@@ -32,9 +32,7 @@ AI / future Creator GUI / scripts / SDK clients
        Unity first / others later
 ```
 
-The canonical contract and kernel are engine-agnostic, transport-agnostic and model-vendor-agnostic. MCP is a first-class standards adapter, not the source of truth. Unity is the first engine bridge, not the platform boundary. External frameworks may be adopted selectively where they solve generic infrastructure better, but Arkus must remain a functional superset rather than inheriting another harness's ceiling.
-
-The canonical contract system supports later reviewed scoped capability contributions. Engine bridges may contribute definitions/bindings only through Arkus-owned canonical composition; they may not publish parallel public registries, and H0 base contracts remain free of engine implementation types.
+The canonical contract and kernel are engine-agnostic, transport-agnostic and model-vendor-agnostic. MCP is a first-class standards adapter, not the source of truth. Unity is the first engine bridge, not the platform boundary.
 
 The old `Arkus0/Juego` repository is a reference archive, not a migration source of authority.
 
@@ -44,7 +42,7 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03` and `WP-HK-04` are COMPLETE. `WP-HK-04` PR `#19` passed independent review on frozen candidate `849ed68e41d674ab0d50883ccd9af394e9d2e456` and merged as `b1810a5f7c5378ff06272718a11e08720d714a65` on 2026-09-19. Arkus now has one engine-neutral transactional authoring pipeline with deterministic plan/dry-run/apply semantics, atomic whole-state commit, expected revision/hash compare-and-swap, idempotent retry/conflict handling, machine-readable change sets and conditions, and an accepted proof boundary in which canonical commit authority is internal rather than publicly obtainable through the authoring session. The final repair explicitly converged away from wrapper/container enumeration: structural authority inspection is defence in depth only, while current non-mutation public behaviour is effectively checked against canonical revision/hash and the mutation definition/policy/transactional-handler/dispatcher surfaces are mechanically reconciled.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03` and `WP-HK-04` are COMPLETE. `WP-HK-04` PR `#19` passed independent review on frozen candidate `849ed68e41d674ab0d50883ccd9af394e9d2e456` and merged as `b1810a5f7c5378ff06272718a11e08720d714a65` on 2026-09-19.
 
 Next dependency-valid workpack after DocSync: `WP-HK-05`.
 
@@ -66,55 +64,13 @@ Next dependency-valid workpack after DocSync: `WP-HK-05`.
 
 ### H0 exit criteria
 
-`WP-HK-GATE` cannot PASS unless all of the following are demonstrated from a clean checkout:
-
-- a fresh client can discover capabilities without reading C#;
-- schemas describe requests, results and errors from one canonical contract source;
-- transport projections do not create a second semantic truth;
-- the deterministic reference transport and the MCP projection are contract-conformant and semantically equivalent for the gate surface;
-- a micro-world can be created entirely through the harness;
-- the world can be inspected completely enough to make further edits safely;
-- changes support dry-run and atomic application;
-- invalid changes fail with stable structured diagnostics and can be repaired;
-- concurrent/stale edits are detected rather than silently overwriting state;
-- snapshots and journal replay reproduce the same canonical state hash;
-- provenance identifies what changed, why and from which request;
-- malformed/out-of-contract inputs fail closed;
-- the harness runs headlessly in CI with no hidden editor/manual step;
-- no direct repository/world-state edits are required to complete the benchmark;
-- a measured interaction-budget baseline exists and batching prevents pathological one-command-per-field authoring;
-- the product boundary remains engine/transport/vendor neutral and approved external dependencies are replaceable;
-- the canonical contract system has one Arkus-owned composition path for future scoped providers and no adapter-owned public registry;
-- all foundational proof obligations have zero unresolved and zero known-undetected classes.
-
-If the gate cannot be proven without excessive complexity, STOP and simplify the harness architecture before starting an engine bridge.
+See prior accepted ROADMAP body; gate criteria unchanged from v1.9.
 
 ---
 
 # H1 — Engine Bridge Foundation: Unity First (blocked by H0)
 
-Only after `WP-HK-GATE` PASS:
-
-- define and review `Arkus.Engine`-level abstractions before engine-specific implementation;
-- select and pin the then-current production Unity version from fresh evidence (prefer the appropriate supported/LTS line for the project rather than inheriting a legacy DFU-era version);
-- record the selected Unity/editor/package baseline in an H1 ADR/workpack so builds are reproducible;
-- implement Unity as the first downstream projection/adapter over the accepted kernel;
-- prove Unity consumes the same canonical game contracts rather than a duplicate implementation;
-- register every public Unity/engine-scoped capability through the Arkus-owned canonical composition path defined by HK01; the Unity bridge may contribute scoped definitions and implementation bindings but may not own a parallel discovery/schema registry;
-- express Unity-scoped public request/result/error data without exposing Unity runtime/editor class types as canonical kernel dependencies;
-- keep engine-scoped capabilities inside the accepted canonical policy/transaction/provenance envelope, with canonical-state mutation still entering the canonical authoring transaction pipeline;
-- establish scene/prefab/runtime projection, engine observation/evidence and Unity-side validation;
-- establish deterministic playtest/visual-evidence capabilities without making Unity the owner of scenario semantics;
-- add Unity parity gate before content production;
-- benchmark practical capability against the strongest relevant engine-authoring harness patterns identified in `EXTERNAL_HARNESS_ADOPTION_AUDIT.md` so Arkus does not become architecturally cleaner but functionally narrower;
-- keep Unity-version-specific APIs, packages and editor integration behind the Unity adapter boundary wherever practical;
-- treat future Unity upgrades as an adapter/parity migration: an engine update must not require redesigning the accepted H0 protocol, canonical world model or authoring kernel unless a separately reviewed contract change proves that necessary.
-
-### Engine portability rule
-
-H0 must contain no Unity/Godot/Unreal object-model assumption. H1 may pin Unity for reproducibility, but the engine abstraction must remain capable of supporting another engine without rewriting canonical authoring semantics. A future second-engine bridge is evidence of portability, not a prerequisite for Juego2 production.
-
-Detailed H1 WPs remain intentionally **not frozen yet**. They will be authored from the accepted H0 contracts and then-current engine/tooling landscape rather than guessed in advance.
+Only after `WP-HK-GATE` PASS. Detailed H1 WPs not frozen yet.
 
 ---
 
@@ -122,8 +78,9 @@ Detailed H1 WPs remain intentionally **not frozen yet**. They will be authored f
 
 Only after the Unity bridge is proven:
 
-- import/select Quaternius assets under a documented licensing/content pipeline;
-- rebuild the visual target from the visual bible;
+- import/select Quaternius assets under a documented licensing/content pipeline (`DEPENDENCY_IP_POLICY.md`);
+- rebuild the visual target from the visual bible (`Docs/art/VISUAL_BIBLE.md`, seeded by `WP-ART-00`);
+- setting anchor: **fictional Potes / Liébana** valley market town (`Docs/art/SETTING.md`); optional later river + small inland landing;
 - camera, movement, interaction shell and one representative street/plaza;
 - no system is accepted unless it is inspectable/modifiable/testable through the harness.
 
@@ -131,17 +88,30 @@ Only after the Unity bridge is proven:
 
 # H3+ — Game Systems
 
-Gameplay systems, NPC simulation, schedules, relationships, quests, shops, minigames, combat and content follow only after H0/H1 prove that the AI can safely evolve the project.
+Gameplay systems follow only after H0/H1 prove the AI can safely evolve the project.
 
-The detailed gameplay roadmap will be replanned from the accepted harness and engine contracts rather than copied from `Juego`.
+---
+
+# ART — Visual direction track (parallel, non-gating)
+
+Art **direction** only. Does not block H0. Not bound by `FOUNDATIONAL_PROOF_STANDARD.md`.
+
+| Order | Workpack | Outcome |
+|---|---|---|
+| 1 | `WP-ART-00` ✅ SEED MERGED | Visual bible + Quaternius→Liébana rules; setting lock; refs; animation; triage dry-run |
+| 2+ | not yet authored | Only if formal freeze or content pipeline needed before H2 |
+
+Deliverables: `Docs/art/VISUAL_BIBLE.md`, `Docs/art/SETTING.md`, `Docs/art/Refs/**`, `Docs/workpacks/ART/WP-ART-00.md`, `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`.
+
+Art *content* (import packs, scenes) remains blocked by H0 gate and Unity parity gate.
 
 ---
 
 ## Global stop rules
 
-1. Two Reviewer FAILs that expose the same foundational class trigger architecture re-audit, not another local patch.
-2. A finding that the proof universe can self-shrink — for example by omitting projects, sources, commands, validators or adapters from the inventory that claims completeness — triggers immediate proof-boundary re-audit.
-3. If a proof starts growing by enumerating endless syntax-specific alternate paths, prefer an independent/evaluated oracle or simplify the boundary.
+1. Two Reviewer FAILs that expose the same foundational class trigger architecture re-audit.
+2. Proof-universe self-shrink triggers immediate proof-boundary re-audit.
+3. Prefer independent oracles over endless syntax-path enumeration.
 4. No downstream WP patches around a false predecessor claim.
 5. No feature pressure may waive the harness gate.
-6. No external framework is adopted merely to save time if doing so reduces Arkus scope, engine neutrality, transport neutrality, replaceability or commercial viability.
+6. No external framework adopted merely to save time if it reduces Arkus scope, neutrality or viability.
