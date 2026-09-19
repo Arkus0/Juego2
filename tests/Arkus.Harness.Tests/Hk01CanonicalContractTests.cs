@@ -190,7 +190,7 @@ namespace Arkus.Harness.Tests
             Assert.Empty(issues);
             Assert.DoesNotContain(typeof(FixtureEngineHandler).FullName!, definition.SemanticFingerprint());
             Assert.Equal("arkus-logical-reference", definition.RequestSchema!.Root.Properties["target"].Format);
-            Assert.Equal("fixture.engine.entity", definition.RequestSchema.Root.Properties["target"].LogicalReferenceNamespace);
+            Assert.Equal("ref.fixture.engine.entity", definition.RequestSchema.Root.Properties["target"].LogicalReferenceNamespace);
         }
 
         private static IReadOnlyList<Assembly> LoadProductionAssemblies()

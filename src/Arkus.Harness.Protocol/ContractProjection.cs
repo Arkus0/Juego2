@@ -344,10 +344,10 @@ namespace Arkus.Harness.Protocol
             {
                 return new CompatibilityDecision(
                     CompatibilityKind.Additive,
-                    "Request schema changed only by adding optional properties or relaxing requiredness within the same major version.");
+                    "Every request accepted by the previous schema remains accepted; the newer request schema only widens canonical acceptance within the same major version.");
             }
 
-            return Breaking("Request schema changed incompatibly.");
+            return Breaking("Request schema changed incompatibly or narrows the set of previously valid requests.");
         }
 
         private static CompatibilityDecision Breaking(string reason)
@@ -375,20 +375,61 @@ namespace Arkus.Harness.Protocol
             return SchemaEquals(left.SuccessSchema, right.SuccessSchema) && SchemaEquals(left.ErrorSchema, right.ErrorSchema);
         }
 
+        /// <summary>
+        /// Returns true only when the supported canonical schema subset proves that every value
+        /// accepted by <paramref name="previous"/> is also accepted by <paramref name="next"/>.
+        /// The relation is intentionally conservative: uncertainty is Breaking, never Additive.
+        /// </summary>
         private static bool IsAdditiveRequestChange(SchemaNode previous, SchemaNode next)
         {
-            if (previous.ValueType != SchemaValueType.Object || next.ValueType != SchemaValueType.Object ||
-                previous.AdditionalPropertiesAllowed != next.AdditionalPropertiesAllowed)
+            if (next.ValueType == SchemaValueType.Any)
+            {
+                return true;
+            }
+
+            if (previous.ValueType == SchemaValueType.Any)
             {
                 return false;
             }
 
-            foreach (var pair in previous.Properties)
+            if (previous.ValueType == SchemaValueType.Integer && next.ValueType == SchemaValueType.Number)
             {
-                if (!next.Properties.TryGetValue(pair.Key, out var nextSchema) || !SchemaNodeEquals(pair.Value, nextSchema))
-                {
+                return true;
+            }
+
+            if (previous.ValueType != next.ValueType)
+            {
+                return false;
+            }
+
+            switch (previous.ValueType)
+            {
+                case SchemaValueType.Object:
+                    return IsObjectAcceptanceWidening(previous, next);
+                case SchemaValueType.String:
+                    return IsStringAcceptanceWidening(previous, next);
+                case SchemaValueType.Array:
+                    return previous.Items != null && next.Items != null &&
+                        IsRequestAcceptancePreserved(previous.Items, next.Items);
+                case SchemaValueType.Integer:
+                case SchemaValueType.Number:
+                case SchemaValueType.Boolean:
+                    return true;
+                default:
                     return false;
-                }
+            }
+        }
+
+        private static bool IsRequestAcceptancePreserved(SchemaNode previous, SchemaNode next)
+        {
+            return SchemaNodeEquals(previous, next) || IsAdditiveRequestChange(previous, next);
+        }
+
+        private static bool IsObjectAcceptanceWidening(SchemaNode previous, SchemaNode next)
+        {
+            if (previous.AdditionalPropertiesAllowed && !next.AdditionalPropertiesAllowed)
+            {
+                return false;
             }
 
             var previousRequired = new HashSet<string>(previous.RequiredProperties, StringComparer.Ordinal);
@@ -401,15 +442,86 @@ namespace Arkus.Harness.Protocol
                 }
             }
 
+            foreach (var pair in previous.Properties)
+            {
+                if (next.Properties.TryGetValue(pair.Key, out var nextSchema))
+                {
+                    if (!IsRequestAcceptancePreserved(pair.Value, nextSchema))
+                    {
+                        return false;
+                    }
+                }
+                else if (!next.AdditionalPropertiesAllowed)
+                {
+                    return false;
+                }
+            }
+
             foreach (var pair in next.Properties)
             {
-                if (!previous.Properties.ContainsKey(pair.Key) && nextRequired.Contains(pair.Key))
+                if (previous.Properties.ContainsKey(pair.Key))
+                {
+                    continue;
+                }
+
+                if (nextRequired.Contains(pair.Key))
+                {
+                    return false;
+                }
+
+                // If the old object was open, this property name previously accepted any portable
+                // value. Giving the same name a typed schema narrows that old acceptance set.
+                if (previous.AdditionalPropertiesAllowed && pair.Value.ValueType != SchemaValueType.Any)
                 {
                     return false;
                 }
             }
 
             return true;
+        }
+
+        private static bool IsStringAcceptanceWidening(SchemaNode previous, SchemaNode next)
+        {
+            if (!FormatAcceptanceIsPreserved(previous, next))
+            {
+                return false;
+            }
+
+            if (previous.AllowedStringValues.Count == 0)
+            {
+                return next.AllowedStringValues.Count == 0;
+            }
+
+            if (next.AllowedStringValues.Count == 0)
+            {
+                return true;
+            }
+
+            var nextValues = new HashSet<string>(next.AllowedStringValues, StringComparer.Ordinal);
+            foreach (var value in previous.AllowedStringValues)
+            {
+                if (!nextValues.Contains(value))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool FormatAcceptanceIsPreserved(SchemaNode previous, SchemaNode next)
+        {
+            if (string.Equals(previous.Format, next.Format, StringComparison.Ordinal))
+            {
+                return string.Equals(
+                    previous.LogicalReferenceNamespace,
+                    next.LogicalReferenceNamespace,
+                    StringComparison.Ordinal);
+            }
+
+            // Removing a request format relaxes the canonical constraint. Introducing or changing
+            // one is conservatively breaking. Logical-reference namespaces may not survive format removal.
+            return previous.Format != null && next.Format == null && next.LogicalReferenceNamespace == null;
         }
 
         private static bool SchemaNodeEquals(SchemaNode left, SchemaNode right)

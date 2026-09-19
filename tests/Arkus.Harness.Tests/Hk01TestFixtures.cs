@@ -104,7 +104,7 @@ namespace Arkus.Harness.Tests
         {
             return SchemaNode.String(
                 format: "arkus-logical-reference",
-                logicalReferenceNamespace: "fixture.engine.entity");
+                logicalReferenceNamespace: "ref.fixture.engine.entity");
         }
 
         internal static CapabilityDefinition CopyWithRequest(CapabilityDefinition source, JsonSchemaDocument requestSchema)

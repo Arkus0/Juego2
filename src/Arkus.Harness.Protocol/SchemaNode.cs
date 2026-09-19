@@ -264,6 +264,24 @@ namespace Arkus.Harness.Protocol
                         path,
                         "Logical references must be strings with a non-empty Arkus logical namespace."));
                 }
+                else
+                {
+                    if (!CanonicalIdentityRules.IsPortableLogicalReferenceNamespace(LogicalReferenceNamespace!))
+                    {
+                        issues.Add(new SchemaValidationIssue(
+                            "schema.non_portable_logical_reference_namespace",
+                            path + "/x-arkus-reference-namespace",
+                            "Logical-reference namespaces must use the Arkus-owned 'ref.<provider>.<domain>' portable identity space."));
+                    }
+
+                    if (AllowedStringValues.Count != 0)
+                    {
+                        issues.Add(new SchemaValidationIssue(
+                            "schema.logical_reference_enum_forbidden",
+                            path + "/enum",
+                            "Logical references are opaque provider-owned identities and may not encode implementation choices as string enums."));
+                    }
+                }
             }
             else if (LogicalReferenceNamespace != null)
             {

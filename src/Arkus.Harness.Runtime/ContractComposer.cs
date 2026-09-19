@@ -63,6 +63,8 @@ namespace Arkus.Harness.Runtime
                 }
             }
 
+            ValidateVersionEvolution(definitions, issues);
+
             if (issues.Count != 0)
             {
                 return new ContractCompositionResult(null, issues.AsReadOnly());
@@ -178,6 +180,8 @@ namespace Arkus.Harness.Runtime
                     issues.Add(new CompositionIssue(validationIssue.Code, path + validationIssue.Path.Substring(1), validationIssue.Message));
                 }
 
+                ValidateLogicalReferenceOwnership(definition, path, issues);
+
                 if (definitions.ContainsKey(definition.Key))
                 {
                     issues.Add(new CompositionIssue(
@@ -219,6 +223,100 @@ namespace Arkus.Harness.Runtime
                 else
                 {
                     routes.Add(route.Key, route);
+                }
+            }
+        }
+
+        private static void ValidateLogicalReferenceOwnership(
+            CapabilityDefinition definition,
+            string path,
+            IList<CompositionIssue> issues)
+        {
+            ValidateLogicalReferenceOwnership(
+                definition.RequestSchema?.Root,
+                definition.Provider.ProviderId,
+                path + ".requestSchema",
+                issues);
+            ValidateLogicalReferenceOwnership(
+                definition.SuccessSchema?.Root,
+                definition.Provider.ProviderId,
+                path + ".successSchema",
+                issues);
+            ValidateLogicalReferenceOwnership(
+                definition.ErrorSchema?.Root,
+                definition.Provider.ProviderId,
+                path + ".errorSchema",
+                issues);
+        }
+
+        private static void ValidateLogicalReferenceOwnership(
+            SchemaNode? schema,
+            string providerId,
+            string path,
+            IList<CompositionIssue> issues)
+        {
+            if (schema == null)
+            {
+                return;
+            }
+
+            if (schema.LogicalReferenceNamespace != null &&
+                !CanonicalIdentityRules.IsPortableLogicalReferenceNamespace(schema.LogicalReferenceNamespace, providerId))
+            {
+                issues.Add(new CompositionIssue(
+                    "composition.logical_reference_namespace_mismatch",
+                    path,
+                    "Logical-reference namespaces must be portable identities owned by the contributing provider: ref.<provider-id>.<domain>."));
+            }
+
+            foreach (var pair in schema.Properties)
+            {
+                ValidateLogicalReferenceOwnership(pair.Value, providerId, path + ".properties." + pair.Key, issues);
+            }
+
+            if (schema.Items != null)
+            {
+                ValidateLogicalReferenceOwnership(schema.Items, providerId, path + ".items", issues);
+            }
+        }
+
+        private static void ValidateVersionEvolution(
+            IDictionary<CapabilityKey, CapabilityDefinition> definitions,
+            IList<CompositionIssue> issues)
+        {
+            var byName = new Dictionary<string, List<CapabilityDefinition>>(StringComparer.Ordinal);
+            foreach (var definition in definitions.Values)
+            {
+                if (!byName.TryGetValue(definition.Key.Name, out var versions))
+                {
+                    versions = new List<CapabilityDefinition>();
+                    byName.Add(definition.Key.Name, versions);
+                }
+
+                versions.Add(definition);
+            }
+
+            foreach (var pair in byName)
+            {
+                var versions = pair.Value;
+                versions.Sort((left, right) => left.Key.Version.CompareTo(right.Key.Version));
+                for (var index = 1; index < versions.Count; index++)
+                {
+                    var previous = versions[index - 1];
+                    var next = versions[index];
+                    if (previous.Key.Version.Major != next.Key.Version.Major)
+                    {
+                        continue;
+                    }
+
+                    var compatibility = ContractCompatibility.Compare(previous, next);
+                    if (compatibility.Kind == CompatibilityKind.Breaking)
+                    {
+                        issues.Add(new CompositionIssue(
+                            "composition.breaking_same_major_version",
+                            next.Key.ToString(),
+                            "Same-major public versions must form a compatible acceptance chain before negotiation. " + compatibility.Reason));
+                    }
                 }
             }
         }
