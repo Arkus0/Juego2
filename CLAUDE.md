@@ -2,6 +2,8 @@
 
 Read `AGENTS.md` first.
 
+Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Work is limited to repository-owned game-authoring code, fixtures, tests, CI and documentation. Legacy terms such as `self-attack`, `attack fixture`, `bypass` or `adversarial review` mean ordinary negative/conformance testing of this repository only; use the neutral terminology defined in `AGENTS.md` for new work.
+
 Juego2 is harness-first. H0 (`HK-*`) builds and proves the AI-native authoring kernel before Unity/gameplay.
 
 There is no automation bootstrap. The human invokes Worker, Reviewer and finalization/documentation roles manually.
