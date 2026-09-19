@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.6 — 2026-09-19
+Version: 1.7 — 2026-09-19
 
 ## North star
 
@@ -42,16 +42,16 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A` and `WP-HK-01` are COMPLETE. `WP-HK-01` PR `#16` passed independent review on frozen candidate `c16c0a7bbe4afe440252b921516b5e9b4635e082` and merged as `24d761ba0bc33a70fc06e5ea351054b5d3c51488` on 2026-09-19. The canonical transport-neutral contract, single composed capability inventory, portable scoped-provider composition boundary, version compatibility enforcement and independent capability/discovery conformance are now binding.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01` and `WP-HK-02` are COMPLETE. `WP-HK-02` PR `#17` passed independent review on frozen candidate `f23fba9ab81566e682237183cf92618bbce504bd` and merged as `1605f922b74d4f0b71bba7896c311a914ffed3f7` on 2026-09-19. Arkus now has a canonical engine-neutral world-state substrate with typed stable identity, explicit schema/revision, deterministic canonical serialization and SHA-256 content identity, fail-closed referential integrity, and an explicit opaque-extension/unknown-structure policy.
 
-Next dependency-valid workpack after DocSync: `WP-HK-02`.
+Next dependency-valid workpack after DocSync: `WP-HK-03`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
 | 1 | `WP-HK-00` ✅ COMPLETE | Canonical portable module boundary, pinned toolchain and headless CI |
 | 2 | `WP-HK-00A` ✅ COMPLETE | Product architecture, adoption/IP boundary and anti-lock-in contract |
 | 3 | `WP-HK-01` ✅ COMPLETE | Canonical contract model + machine-readable capability/schema discovery |
-| 4 | `WP-HK-02` | Canonical world state, stable identity, deterministic serialization + hash |
+| 4 | `WP-HK-02` ✅ COMPLETE | Canonical world state, stable identity, deterministic serialization + hash |
 | 5 | `WP-HK-03` | Complete read/inspection/query surface |
 | 6 | `WP-HK-04` | Plan/dry-run/atomic apply, conflict detection and transactional mutation |
 | 7 | `WP-HK-05` | Validation/invariants and structured repairable diagnostics |
