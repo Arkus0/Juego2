@@ -113,6 +113,29 @@ namespace Arkus.Game.Authoring
                 {
                     effects.Add(Field(resource, "payload"));
                 }
+
+                var oldDependencies = ExtensionDependencySet(oldValue);
+                var newDependencies = ExtensionDependencySet(newValue);
+                foreach (var dependency in newDependencies)
+                {
+                    if (!oldDependencies.Contains(dependency))
+                    {
+                        effects.Add(Reference(resource, true, dependency));
+                    }
+                }
+
+                foreach (var dependency in oldDependencies)
+                {
+                    if (!newDependencies.Contains(dependency))
+                    {
+                        effects.Add(Reference(resource, false, dependency));
+                    }
+                }
+
+                if (!oldDependencies.SetEquals(newDependencies))
+                {
+                    effects.Add(Field(resource, "dependencies"));
+                }
             }
 
             return effects;
@@ -160,7 +183,7 @@ namespace Arkus.Game.Authoring
             for (var index = 0; index < state.Extensions.Count; index++)
             {
                 var value = state.Extensions[index];
-                values.Add(ExtensionKey(value.Owner, value.SchemaVersion), value);
+                values.Add(ExtensionKey(value.Owner, value.SchemaVersion, value.SubjectId), value);
             }
 
             return values;
@@ -203,6 +226,23 @@ namespace Arkus.Game.Authoring
             return true;
         }
 
+        private static HashSet<string> ExtensionDependencySet(WorldExtensionData? value)
+        {
+            var dependencies = new HashSet<string>(StringComparer.Ordinal);
+            if (value == null)
+            {
+                return dependencies;
+            }
+
+            for (var index = 0; index < value.Dependencies.Count; index++)
+            {
+                var current = value.Dependencies[index];
+                dependencies.Add(current.Kind.Value + "->" + current.TargetId.Value);
+            }
+
+            return dependencies;
+        }
+
         private static string Field(string resource, string field) => resource + "|field|" + field;
 
         private static string Reference(string resource, bool added, string reference)
@@ -210,9 +250,9 @@ namespace Arkus.Game.Authoring
             return resource + (added ? "|reference+|" : "|reference-|" ) + reference;
         }
 
-        internal static string ExtensionKey(string owner, int schemaVersion)
+        internal static string ExtensionKey(string owner, int schemaVersion, WorldObjectId? subjectId)
         {
-            return owner + "@" + schemaVersion.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            return new WorldExtensionIdentity(owner, schemaVersion, subjectId).ResourceKey;
         }
     }
 }

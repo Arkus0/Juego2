@@ -99,7 +99,7 @@ namespace Arkus.Harness.Tests
         public void UnsupportedSchemaPayloadFailsClosed()
         {
             var canonical = Encoding.UTF8.GetString(CanonicalWorldStateCodec.Serialize(Hk02TestFixtures.MicroWorld()));
-            var unsupported = canonical.Replace("schema\t1\n", "schema\t2\n", StringComparison.Ordinal);
+            var unsupported = canonical.Replace("schema\t2\n", "schema\t3\n", StringComparison.Ordinal);
 
             var exception = Assert.Throws<WorldStateException>(() =>
                 CanonicalWorldStateCodec.Deserialize(Encoding.UTF8.GetBytes(unsupported)));

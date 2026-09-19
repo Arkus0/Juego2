@@ -8,7 +8,7 @@ namespace Arkus.Game.World
 {
     public static class CanonicalWorldStateCodec
     {
-        private const string Header = "ARKUS_WORLD_STATE_V1";
+        private const string Header = "ARKUS_WORLD_STATE_V2";
         private static readonly UTF8Encoding StrictUtf8 = new UTF8Encoding(false, true);
 
         public static byte[] Serialize(WorldState state)
@@ -75,7 +75,30 @@ namespace Arkus.Game.World
                 builder.Append("extension\t")
                     .Append(EncodeText(current.Owner)).Append('\t')
                     .Append(current.SchemaVersion.ToString(CultureInfo.InvariantCulture)).Append('\t')
+                    .Append(EncodeSubject(current.SubjectId)).Append('\t')
                     .Append(Convert.ToBase64String(current.PayloadBytes)).Append('\n');
+            }
+
+            var extensionDependencies = new List<ExtensionDependencyRecord>();
+            for (var extensionIndex = 0; extensionIndex < state.Extensions.Count; extensionIndex++)
+            {
+                var source = state.Extensions[extensionIndex];
+                for (var dependencyIndex = 0; dependencyIndex < source.Dependencies.Count; dependencyIndex++)
+                {
+                    extensionDependencies.Add(new ExtensionDependencyRecord(source.Identity, source.Dependencies[dependencyIndex]));
+                }
+            }
+
+            extensionDependencies.Sort(CompareExtensionDependencies);
+            for (var index = 0; index < extensionDependencies.Count; index++)
+            {
+                var current = extensionDependencies[index];
+                builder.Append("extension-dependency\t")
+                    .Append(EncodeText(current.Identity.Owner)).Append('\t')
+                    .Append(current.Identity.SchemaVersion.ToString(CultureInfo.InvariantCulture)).Append('\t')
+                    .Append(EncodeSubject(current.Identity.SubjectId)).Append('\t')
+                    .Append(EncodeText(current.Dependency.Kind.Value)).Append('\t')
+                    .Append(EncodeText(current.Dependency.TargetId.Value)).Append('\n');
             }
 
             builder.Append("end\n");
@@ -118,7 +141,8 @@ namespace Arkus.Game.World
             long? revision = null;
             var parsedObjects = new List<ParsedObject>();
             var parsedReferences = new List<ParsedReference>();
-            var extensions = new List<WorldExtensionData>();
+            var parsedExtensions = new List<ParsedExtension>();
+            var parsedExtensionDependencies = new List<ParsedExtensionDependency>();
             var sawEnd = false;
 
             for (var lineIndex = 1; lineIndex < lines.Length - 1; lineIndex++)
@@ -195,11 +219,25 @@ namespace Arkus.Game.World
                         break;
 
                     case "extension":
-                        RequireFieldCount(fields, 4, "$/extensions");
-                        extensions.Add(new WorldExtensionData(
-                            DecodeText(fields[1], "$/extensions/owner"),
-                            ParseInt(fields[2], "$/extensions/schemaVersion"),
-                            DecodeBytes(fields[3], "$/extensions/payload")));
+                        RequireFieldCount(fields, 5, "$/extensions");
+                        parsedExtensions.Add(new ParsedExtension(
+                            new WorldExtensionIdentity(
+                                DecodeText(fields[1], "$/extensions/owner"),
+                                ParseInt(fields[2], "$/extensions/schemaVersion"),
+                                DecodeSubject(fields[3], "$/extensions/subjectId")),
+                            DecodeBytes(fields[4], "$/extensions/payload")));
+                        break;
+
+                    case "extension-dependency":
+                        RequireFieldCount(fields, 6, "$/extensionDependencies");
+                        parsedExtensionDependencies.Add(new ParsedExtensionDependency(
+                            new WorldExtensionIdentity(
+                                DecodeText(fields[1], "$/extensionDependencies/owner"),
+                                ParseInt(fields[2], "$/extensionDependencies/schemaVersion"),
+                                DecodeSubject(fields[3], "$/extensionDependencies/subjectId")),
+                            new WorldReference(
+                                new WorldReferenceKind(DecodeText(fields[4], "$/extensionDependencies/kind")),
+                                new WorldObjectId(DecodeText(fields[5], "$/extensionDependencies/target")))));
                         break;
 
                     case "end":
@@ -259,6 +297,46 @@ namespace Arkus.Game.World
                     referencesForObject ?? (IEnumerable<WorldReference>)Array.Empty<WorldReference>()));
             }
 
+            var knownExtensionIdentities = new HashSet<WorldExtensionIdentity>();
+            for (var index = 0; index < parsedExtensions.Count; index++)
+            {
+                knownExtensionIdentities.Add(parsedExtensions[index].Identity);
+            }
+
+            var dependenciesByExtension = new Dictionary<WorldExtensionIdentity, List<WorldReference>>();
+            for (var index = 0; index < parsedExtensionDependencies.Count; index++)
+            {
+                var current = parsedExtensionDependencies[index];
+                if (!knownExtensionIdentities.Contains(current.Identity))
+                {
+                    throw Error(
+                        "world.dangling_extension_dependency_source",
+                        "Extension dependency source must identify an extension in the same world state.",
+                        "$/extensionDependencies/source");
+                }
+
+                if (!dependenciesByExtension.TryGetValue(current.Identity, out var list))
+                {
+                    list = new List<WorldReference>();
+                    dependenciesByExtension.Add(current.Identity, list);
+                }
+
+                list.Add(current.Dependency);
+            }
+
+            var extensions = new List<WorldExtensionData>();
+            for (var index = 0; index < parsedExtensions.Count; index++)
+            {
+                var parsed = parsedExtensions[index];
+                dependenciesByExtension.TryGetValue(parsed.Identity, out var dependencies);
+                extensions.Add(new WorldExtensionData(
+                    parsed.Identity.Owner,
+                    parsed.Identity.SchemaVersion,
+                    parsed.Payload,
+                    parsed.Identity.SubjectId,
+                    dependencies ?? (IEnumerable<WorldReference>)Array.Empty<WorldReference>()));
+            }
+
             var state = new WorldState(worldId.Value, revision.Value, objects, extensions, schemaVersion.Value);
             var reserialized = Serialize(state);
             if (!ByteArraysEqual(canonicalBytes, reserialized))
@@ -316,13 +394,35 @@ namespace Arkus.Game.World
 
         private static int CompareExtensions(WorldExtensionData left, WorldExtensionData right)
         {
-            var comparison = StringComparer.Ordinal.Compare(left.Owner, right.Owner);
+            return left.Identity.CompareTo(right.Identity);
+        }
+
+        private static int CompareExtensionDependencies(
+            ExtensionDependencyRecord left,
+            ExtensionDependencyRecord right)
+        {
+            var comparison = left.Identity.CompareTo(right.Identity);
             if (comparison != 0)
             {
                 return comparison;
             }
 
-            return left.SchemaVersion.CompareTo(right.SchemaVersion);
+            comparison = left.Dependency.Kind.CompareTo(right.Dependency.Kind);
+            return comparison != 0
+                ? comparison
+                : left.Dependency.TargetId.CompareTo(right.Dependency.TargetId);
+        }
+
+        private static string EncodeSubject(WorldObjectId? subjectId)
+        {
+            return subjectId.HasValue ? EncodeText(subjectId.Value.Value) : "-";
+        }
+
+        private static WorldObjectId? DecodeSubject(string encoded, string path)
+        {
+            return StringComparer.Ordinal.Equals(encoded, "-")
+                ? (WorldObjectId?)null
+                : new WorldObjectId(DecodeText(encoded, path));
         }
 
         private static string EncodeText(string value)
@@ -422,6 +522,19 @@ namespace Arkus.Game.World
             public WorldReference Reference { get; }
         }
 
+        private readonly struct ExtensionDependencyRecord
+        {
+            public ExtensionDependencyRecord(WorldExtensionIdentity identity, WorldReference dependency)
+            {
+                Identity = identity;
+                Dependency = dependency;
+            }
+
+            public WorldExtensionIdentity Identity { get; }
+
+            public WorldReference Dependency { get; }
+        }
+
         private sealed class ParsedObject
         {
             public ParsedObject(WorldObjectId id, WorldTypeId typeId, WorldObjectId? containerId)
@@ -449,6 +562,32 @@ namespace Arkus.Game.World
             public WorldObjectId SourceId { get; }
 
             public WorldReference Reference { get; }
+        }
+
+        private sealed class ParsedExtension
+        {
+            public ParsedExtension(WorldExtensionIdentity identity, byte[] payload)
+            {
+                Identity = identity;
+                Payload = payload;
+            }
+
+            public WorldExtensionIdentity Identity { get; }
+
+            public byte[] Payload { get; }
+        }
+
+        private sealed class ParsedExtensionDependency
+        {
+            public ParsedExtensionDependency(WorldExtensionIdentity identity, WorldReference dependency)
+            {
+                Identity = identity;
+                Dependency = dependency;
+            }
+
+            public WorldExtensionIdentity Identity { get; }
+
+            public WorldReference Dependency { get; }
         }
     }
 }

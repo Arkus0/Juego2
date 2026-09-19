@@ -98,6 +98,8 @@ namespace Arkus.Game.Authoring
                     ["references"] = SchemaNode.Array(reference),
                     ["owner"] = SchemaNode.String(),
                     ["schemaVersion"] = SchemaNode.Integer(),
+                    ["subjectId"] = SchemaNode.String(),
+                    ["dependencies"] = SchemaNode.Array(reference),
                     ["payloadBase64"] = SchemaNode.String()
                 },
                 new[] { "kind" });

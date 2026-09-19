@@ -15,6 +15,7 @@ namespace Arkus.Game.Authoring
         public const int MaximumPageSize = 100;
         public const int DefaultPageSize = 50;
         public const int MaximumExtensionChunkBytes = 768;
+        public const int MaximumExtensionDependencyPageSize = 100;
 
         private const string CursorVersion = "arkus-cursor-v1";
         private static readonly UTF8Encoding StrictUtf8 = new UTF8Encoding(false, true);
@@ -323,12 +324,20 @@ namespace Arkus.Game.Authoring
             for (var index = offset; index < end; index++)
             {
                 var current = matched[index];
-                items.Add(ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                var descriptor = new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["owner"] = current.Owner,
                     ["schemaVersion"] = current.SchemaVersion,
-                    ["payloadLength"] = current.PayloadLength
-                }));
+                    ["scope"] = current.SubjectId.HasValue ? "object" : "global",
+                    ["payloadLength"] = current.PayloadLength,
+                    ["dependencyCount"] = current.Dependencies.Count
+                };
+                if (current.SubjectId.HasValue)
+                {
+                    descriptor["subjectId"] = current.SubjectId.Value.Value;
+                }
+
+                items.Add(ReadOnly(descriptor));
             }
 
             var payload = new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -372,6 +381,17 @@ namespace Arkus.Game.Authoring
                 return SelectorError("$.schemaVersion", "Extension schemaVersion must be a positive 32-bit integer.");
             }
 
+            WorldObjectId? subjectId = null;
+            if (request.ContainsKey("subjectId"))
+            {
+                if (!TryGetRequiredString(request, "subjectId", out var subjectText) || !IsStableToken(subjectText))
+                {
+                    return SelectorError("$.subjectId", "Extension subjectId must use the stable identifier grammar.");
+                }
+
+                subjectId = new WorldObjectId(subjectText);
+            }
+
             var offset = 0;
             if (request.ContainsKey("offset"))
             {
@@ -394,12 +414,40 @@ namespace Arkus.Game.Authoring
                 return limitError;
             }
 
+            var dependencyOffset = 0;
+            if (request.ContainsKey("dependencyOffset"))
+            {
+                if (!TryGetInteger(request, "dependencyOffset", out var requestedDependencyOffset) ||
+                    requestedDependencyOffset < 0 || requestedDependencyOffset > int.MaxValue)
+                {
+                    return SelectorError("$.dependencyOffset", "dependencyOffset must be a non-negative 32-bit integer.");
+                }
+
+                dependencyOffset = (int)requestedDependencyOffset;
+            }
+
+            var dependencyLimit = MaximumExtensionDependencyPageSize;
+            if (request.ContainsKey("dependencyLimit"))
+            {
+                if (!TryGetInteger(request, "dependencyLimit", out var requestedDependencyLimit) ||
+                    requestedDependencyLimit <= 0 || requestedDependencyLimit > MaximumExtensionDependencyPageSize)
+                {
+                    return SelectorError(
+                        "$.dependencyLimit",
+                        "dependencyLimit must be between 1 and " +
+                        MaximumExtensionDependencyPageSize.ToString(CultureInfo.InvariantCulture) + ".");
+                }
+
+                dependencyLimit = (int)requestedDependencyLimit;
+            }
+
             WorldExtensionData? extension = null;
             for (var index = 0; index < snapshot.State.Extensions.Count; index++)
             {
                 var current = snapshot.State.Extensions[index];
                 if (string.Equals(current.Owner, owner, StringComparison.Ordinal) &&
-                    current.SchemaVersion == (int)schemaVersion)
+                    current.SchemaVersion == (int)schemaVersion &&
+                    current.SubjectId == subjectId)
                 {
                     extension = current;
                     break;
@@ -415,7 +463,9 @@ namespace Arkus.Game.Authoring
                     new Dictionary<string, object?>(StringComparer.Ordinal)
                     {
                         ["owner"] = owner,
-                        ["schemaVersion"] = schemaVersion
+                        ["schemaVersion"] = schemaVersion,
+                        ["scope"] = subjectId.HasValue ? "object" : "global",
+                        ["subjectId"] = subjectId.HasValue ? (object?)subjectId.Value.Value : null
                     },
                     false,
                     "Refresh world extension descriptors and select an owner/schemaVersion present in this revision.");
@@ -426,22 +476,57 @@ namespace Arkus.Game.Authoring
                 return SelectorError("$.offset", "Extension offset is beyond the payload length.");
             }
 
+            if (dependencyOffset > extension.Dependencies.Count)
+            {
+                return SelectorError("$.dependencyOffset", "Extension dependencyOffset is beyond the dependency count.");
+            }
+
             var bytes = extension.GetPayloadCopy();
             var count = Math.Min(limit, bytes.Length - offset);
             var chunk = new byte[count];
             Array.Copy(bytes, offset, chunk, 0, count);
 
+            var sortedDependencies = new List<WorldReference>(extension.Dependencies);
+            sortedDependencies.Sort((left, right) =>
+            {
+                var comparison = left.Kind.CompareTo(right.Kind);
+                return comparison != 0 ? comparison : left.TargetId.CompareTo(right.TargetId);
+            });
+            var dependencyEnd = Math.Min(sortedDependencies.Count, dependencyOffset + dependencyLimit);
+            var dependencies = new List<object?>();
+            for (var index = dependencyOffset; index < dependencyEnd; index++)
+            {
+                dependencies.Add(ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["kind"] = sortedDependencies[index].Kind.Value,
+                    ["targetId"] = sortedDependencies[index].TargetId.Value
+                }));
+            }
+
             var payload = new Dictionary<string, object?>(StringComparer.Ordinal)
             {
                 ["owner"] = extension.Owner,
                 ["schemaVersion"] = extension.SchemaVersion,
+                ["scope"] = extension.SubjectId.HasValue ? "object" : "global",
                 ["payloadLength"] = extension.PayloadLength,
                 ["offset"] = offset,
-                ["payloadBase64"] = Convert.ToBase64String(chunk)
+                ["payloadBase64"] = Convert.ToBase64String(chunk),
+                ["dependencyCount"] = extension.Dependencies.Count,
+                ["dependencyOffset"] = dependencyOffset,
+                ["dependencies"] = dependencies.AsReadOnly()
             };
+            if (extension.SubjectId.HasValue)
+            {
+                payload["subjectId"] = extension.SubjectId.Value.Value;
+            }
             if (offset + count < bytes.Length)
             {
                 payload["nextOffset"] = offset + count;
+            }
+
+            if (dependencyEnd < sortedDependencies.Count)
+            {
+                payload["nextDependencyOffset"] = dependencyEnd;
             }
 
             return Success(snapshot, payload);
@@ -624,7 +709,7 @@ namespace Arkus.Game.Authoring
             IReadOnlyDictionary<string, object?> request,
             out ExtensionFilter filter)
         {
-            filter = new ExtensionFilter(null, null);
+            filter = new ExtensionFilter(null, null, null, null);
             if (!request.TryGetValue("filter", out var raw))
             {
                 return null;
@@ -661,7 +746,31 @@ namespace Arkus.Game.Authoring
                 }
             }
 
-            filter = new ExtensionFilter(owners, versions);
+            error = ReadTokenSet(data, "scopes", "$.filter.scopes", out var scopes);
+            if (error != null)
+            {
+                return error;
+            }
+
+            if (scopes != null)
+            {
+                foreach (var scope in scopes)
+                {
+                    if (!StringComparer.Ordinal.Equals(scope, "global") &&
+                        !StringComparer.Ordinal.Equals(scope, "object"))
+                    {
+                        return SelectorError("$.filter.scopes", "scopes contains a value outside global/object.");
+                    }
+                }
+            }
+
+            error = ReadTokenSet(data, "subjectIds", "$.filter.subjectIds", out var subjectIds);
+            if (error != null)
+            {
+                return error;
+            }
+
+            filter = new ExtensionFilter(owners, versions, scopes, subjectIds);
             return null;
         }
 
@@ -1006,8 +1115,7 @@ namespace Arkus.Game.Authoring
 
         private static int CompareExtensions(WorldExtensionData left, WorldExtensionData right)
         {
-            var owner = StringComparer.Ordinal.Compare(left.Owner, right.Owner);
-            return owner != 0 ? owner : left.SchemaVersion.CompareTo(right.SchemaVersion);
+            return left.Identity.CompareTo(right.Identity);
         }
 
         private static IReadOnlyDictionary<string, object?> ReadOnly(IDictionary<string, object?> data)
@@ -1119,24 +1227,39 @@ namespace Arkus.Game.Authoring
 
         private sealed class ExtensionFilter
         {
-            public ExtensionFilter(HashSet<string>? owners, HashSet<int>? versions)
+            public ExtensionFilter(
+                HashSet<string>? owners,
+                HashSet<int>? versions,
+                HashSet<string>? scopes,
+                HashSet<string>? subjectIds)
             {
                 Owners = owners;
                 Versions = versions;
+                Scopes = scopes;
+                SubjectIds = subjectIds;
             }
 
             private HashSet<string>? Owners { get; }
             private HashSet<int>? Versions { get; }
+            private HashSet<string>? Scopes { get; }
+            private HashSet<string>? SubjectIds { get; }
 
             public bool Matches(WorldExtensionData value)
             {
+                var scope = value.SubjectId.HasValue ? "object" : "global";
                 return (Owners == null || Owners.Contains(value.Owner)) &&
-                    (Versions == null || Versions.Contains(value.SchemaVersion));
+                    (Versions == null || Versions.Contains(value.SchemaVersion)) &&
+                    (Scopes == null || Scopes.Contains(scope)) &&
+                    (SubjectIds == null ||
+                        (value.SubjectId.HasValue && SubjectIds.Contains(value.SubjectId.Value.Value)));
             }
 
             public string Fingerprint()
             {
-                return "owners=" + FingerprintSet(Owners) + "\nversions=" + FingerprintInts(Versions);
+                return "owners=" + FingerprintSet(Owners) +
+                    "\nversions=" + FingerprintInts(Versions) +
+                    "\nscopes=" + FingerprintSet(Scopes) +
+                    "\nsubjects=" + FingerprintSet(SubjectIds);
             }
         }
 
