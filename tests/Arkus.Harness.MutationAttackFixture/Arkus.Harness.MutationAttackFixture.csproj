@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Arkus.Harness.MutationAttackFixture</AssemblyName>
+    <RootNamespace>Arkus.Harness.MutationAttackFixture</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
+  </ItemGroup>
+</Project>
