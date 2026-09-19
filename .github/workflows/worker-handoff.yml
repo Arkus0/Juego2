@@ -1,60 +1,11 @@
-name: Worker Handoff
+name: DISABLED - Worker Handoff (runner-neutral process)
 
 on:
-  pull_request:
-    types: [opened, edited, synchronize, ready_for_review, converted_to_draft, reopened]
-
-permissions:
-  contents: read
-  pull-requests: read
+  workflow_dispatch:
 
 jobs:
-  validate-handoff:
+  disabled:
+    if: ${{ false }}
     runs-on: ubuntu-24.04
     steps:
-      - name: Validate PR state
-        env:
-          PR_DRAFT: ${{ github.event.pull_request.draft }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-          PR_HEAD: ${{ github.event.pull_request.head.sha }}
-        shell: python
-        run: |
-          import os, re, sys
-          draft = os.environ.get('PR_DRAFT','').lower() == 'true'
-          body = os.environ.get('PR_BODY') or ''
-          head = os.environ['PR_HEAD'].lower()
-
-          # Draft is mutable Worker state. Still reject impossible frozen metadata.
-          if draft:
-              if re.search(r'^Branch frozen:\s*`?YES`?\s*$', body, re.M|re.I):
-                  print('::error::Draft PR cannot declare Branch frozen: YES')
-                  sys.exit(1)
-              print('Draft Worker state accepted.')
-              sys.exit(0)
-
-          required = {
-              'Worker state': r'^Worker state:\s*`?FROZEN_FOR_REVIEW`?\s*$',
-              'Branch frozen': r'^Branch frozen:\s*`?YES`?\s*$',
-              'Worker verdict': r'^Worker verdict:\s*`?IN_REVIEW`?\s*$',
-              'Reviewer verdict': r'^Reviewer verdict:\s*`?PENDING`?\s*$',
-          }
-          for label, pat in required.items():
-              if not re.search(pat, body, re.M|re.I):
-                  print(f'::error::{label} is invalid for Ready state')
-                  sys.exit(1)
-
-          m = re.search(r'^Frozen candidate SHA:\s*`?([0-9a-fA-F]{40})`?\s*$', body, re.M)
-          if not m:
-              print('::error::Ready PR requires exact 40-char Frozen candidate SHA')
-              sys.exit(1)
-          frozen = m.group(1).lower()
-          if frozen != head:
-              print(f'::error::Frozen candidate SHA {frozen} != PR HEAD {head}')
-              sys.exit(1)
-
-          c = re.search(r'^Candidate HEAD SHA:\s*`?([0-9a-fA-F]{40})`?\s*$', body, re.M)
-          if not c or c.group(1).lower() != head:
-              print('::error::Candidate HEAD SHA must equal Ready PR HEAD')
-              sys.exit(1)
-
-          print(f'FROZEN_VALID head={head}')
+      - run: echo "Disabled. Validate handoff through repository protocol and exact-SHA execution receipts."

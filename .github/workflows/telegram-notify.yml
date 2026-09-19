@@ -1,88 +1,11 @@
-name: Telegram Notify
+name: DISABLED - Telegram Notify (runner-neutral process)
 
 on:
-  issue_comment:
-    types: [created]
   workflow_dispatch:
-    inputs:
-      subject:
-        description: Test subject
-        required: false
-        default: Juego2 notification test
-      detail:
-        description: Test detail
-        required: false
-        default: Telegram transport is configured.
-
-permissions:
-  contents: read
-  issues: read
-  pull-requests: read
 
 jobs:
-  notify:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      contains(github.event.comment.body || '', 'TELEGRAM_NOTIFY_V1')
+  disabled:
+    if: ${{ false }}
     runs-on: ubuntu-24.04
     steps:
-      - name: Build message
-        id: build
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          COMMENT_BODY: ${{ github.event.comment.body }}
-          COMMENT_URL: ${{ github.event.comment.html_url }}
-          AUTHOR_ASSOC: ${{ github.event.comment.author_association }}
-          AUTHOR_LOGIN: ${{ github.event.comment.user.login }}
-          TEST_SUBJECT: ${{ inputs.subject }}
-          TEST_DETAIL: ${{ inputs.detail }}
-        shell: python
-        run: |
-          import os, re
-          from pathlib import Path
-
-          if os.environ['EVENT_NAME'] == 'workflow_dispatch':
-              msg = f"🧪 {os.environ.get('TEST_SUBJECT') or 'Juego2 test'}\n{os.environ.get('TEST_DETAIL') or ''}\nhttps://github.com/{os.environ['GITHUB_REPOSITORY']}"
-          else:
-              assoc = os.environ.get('AUTHOR_ASSOC','')
-              login = os.environ.get('AUTHOR_LOGIN','')
-              if assoc not in {'OWNER','MEMBER','COLLABORATOR'} and login != 'github-actions[bot]':
-                  raise SystemExit('Untrusted marker author; refusing delivery.')
-              body = os.environ.get('COMMENT_BODY') or ''
-              def field(name, default=''):
-                  m = re.search(rf'^{re.escape(name)}:\s*(.+)$', body, re.M)
-                  return m.group(1).strip() if m else default
-              typ = field('Type')
-              subject = field('Subject','Juego2')
-              detail = field('Detail')
-              items = re.findall(r'^Item:\s*(.+)$', body, re.M)
-              icons = {'WP_COMPLETE':'✅','HUMAN_ACTION_REQUIRED':'⚠️','BLOCKED':'🛑','GATE_COMPLETE':'🏁'}
-              labels = {'WP_COMPLETE':'WP completado','HUMAN_ACTION_REQUIRED':'Atención requerida','BLOCKED':'Bloqueado','GATE_COMPLETE':'Milestone completado'}
-              if typ not in icons:
-                  raise SystemExit(f'Unknown notification type: {typ}')
-              lines = [f"{icons[typ]} {labels[typ]}", subject]
-              if detail: lines.append(detail)
-              if items:
-                  lines += ['', 'Implementado:'] + [f'• {x}' for x in items[:6]]
-              url = os.environ.get('COMMENT_URL') or f"https://github.com/{os.environ['GITHUB_REPOSITORY']}"
-              lines += ['', url]
-              msg = '\n'.join(lines)
-
-          out = Path(os.environ['GITHUB_OUTPUT'])
-          with out.open('a', encoding='utf-8') as f:
-              f.write('message<<EOF\n')
-              f.write(msg + '\n')
-              f.write('EOF\n')
-
-      - name: Send Telegram
-        env:
-          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          MESSAGE: ${{ steps.build.outputs.message }}
-        run: |
-          test -n "$BOT_TOKEN" || { echo 'TELEGRAM_BOT_TOKEN is not configured'; exit 1; }
-          test -n "$CHAT_ID" || { echo 'TELEGRAM_CHAT_ID is not configured'; exit 1; }
-          curl --fail --silent --show-error \
-            --request POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
-            --data-urlencode "chat_id=${CHAT_ID}" \
-            --data-urlencode "text=${MESSAGE}" >/dev/null
+      - run: echo "Disabled while Juego2 uses zero-budget runner-neutral execution. Telegram transport is optional notification infrastructure, never a workflow gate."
