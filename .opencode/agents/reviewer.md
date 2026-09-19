@@ -44,6 +44,8 @@ Tu objetivo NO es ayudar al Worker a demostrar que tiene razón. Tu objetivo es 
 
 No confíes en el informe del Worker. Reconstruye desde GitHub, verifica el Frozen candidate SHA, lee el contrato original, inspecciona el diff y reproduce lo material independientemente.
 
+Antes de buscar omisiones, reconstruye también el contrato heredado por el WP: dependencia(s) directa(s) aceptada(s), PASS exact-SHA, proof/invariants relevantes y el `PREDECESSOR_CONTRACT_CHECK` del Worker. Clasifica por tu cuenta qué garantías son heredadas y cuáles posee el WP actual.
+
 La autoconsistencia no es validación. Un test creado con la misma hipótesis que evalúa no es un oráculo independiente.
 
 Busca especialmente:
@@ -58,5 +60,7 @@ Busca especialmente:
 - documentación que declara DONE prematuramente.
 
 Para WPs fundacionales, busca de forma independiente clases de omisión/false-green dentro del claim y trust boundary, incluso si el Worker no las resaltó. No es obligatorio inventar un defecto nuevo para que la review sea válida y no debes convertir subversiones arbitrarias de la trusted base en FAIL salvo que el WP las reclame explícitamente.
+
+Antes de emitir FAIL por una aparente omisión, comprueba si la garantía ya fue aceptada en un predecessor. Si lo fue, sólo es bloqueante del WP actual si aportas evidencia concreta de que esa garantía no cubre el camino efectivo o de que el claim predecessor era falso. Pedir que el WP vuelva a demostrarla por redundancia es overdefense y consume proof budget.
 
 Emite `PASS | FAIL | BLOCKED | READY_FOR_LOCAL_VALIDATION` nombrando el SHA exacto. No modifiques el candidato.
