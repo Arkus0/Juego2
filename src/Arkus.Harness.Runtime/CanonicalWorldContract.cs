@@ -38,7 +38,7 @@ namespace Arkus.Harness.Runtime
                     "arkus.base",
                     ProviderKind.Base,
                     "base",
-                    new[] { "system", "world" }),
+                    new[] { "system", "world", "authoring" }),
                 definitions,
                 routes);
         }
