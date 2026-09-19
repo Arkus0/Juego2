@@ -6,13 +6,15 @@ Version: 1.5 — 2026-09-19
 
 GitHub is the complete handoff surface between Worker, independent Reviewer, finalization and DocSync. Private chat memory is never required to reconstruct state.
 
+Juego2 / Arkus Harness is a game-development and software-verification project. Review activity is limited to repository-owned game-authoring code, fixtures, tests, CI and documentation. Historical terms such as `self-attack`, `attack fixture`, `bypass` or `adversarial review` mean ordinary negative/conformance testing in this repository; new work uses the neutral terminology defined in `AGENTS.md`. This terminology clarification does not weaken any acceptance or proof obligation.
+
 ## Core bias
 
-A Worker tries to satisfy the contract. Before freeze, that same Worker must also adversarially pre-review the candidate and try to falsify its own work. An independent Reviewer then tries to falsify the frozen candidate from a fresh context.
+A Worker tries to satisfy the contract. Before freeze, that same Worker must also perform a strict pre-review of the candidate and try to disprove its own acceptance assumptions. An independent Reviewer then strictly challenges the frozen candidate from a fresh context.
 
 Worker pre-review is a quality gate, not an independent review. `WORKER_PRE_REVIEW: CLEAN` never means `PASS`, never satisfies the Reviewer obligation and never permits the Reviewer to trust Worker conclusions.
 
-Adversarial does **not** mean unbounded. Worker and Reviewer must attack the WP's actual acceptance claims inside the trust boundary established by `FOUNDATIONAL_PROOF_STANDARD.md`; they do not earn quality by inventing arbitrary subversions of explicitly trusted infrastructure.
+Strict review does **not** mean unbounded review. Worker and Reviewer must challenge the WP's actual acceptance claims inside the trust boundary established by `FOUNDATIONAL_PROOF_STANDARD.md`; they do not earn quality by inventing arbitrary out-of-contract behavior of explicitly trusted infrastructure.
 
 Accepted predecessor guarantees are compositional. A downstream WP is expected to consume binding guarantees already accepted by its dependencies rather than defensively re-proving them. Concrete evidence may reopen an inherited causal boundary; theoretical possibility or a desire for redundant proof may not.
 
@@ -44,7 +46,7 @@ The independent Reviewer reconstructs the same split independently. Before issui
 DRAFT + ACTIVE
   -> Worker performs PREDECESSOR_CONTRACT_CHECK before implementation
   -> Worker may write
-  -> Worker must complete adversarial pre-review before freeze
+  -> Worker must complete strict pre-review before freeze
   -> any in-claim pre-review finding is repaired while still Draft + ACTIVE
   -> out-of-boundary residual risks are recorded, not automatically hardened
 WORKER_PRE_REVIEW: CLEAN
@@ -74,7 +76,7 @@ PASS
 7. For foundational WPs, satisfy `FOUNDATIONAL_PROOF_STANDARD.md` including explicit trust boundary and proof-budget verdict before freeze.
 8. Before freeze, perform the mandatory Worker pre-review defined below against the complete candidate, contract, inherited guarantees, evidence and proof boundary.
 9. If pre-review finds an in-claim defect, remain Draft + ACTIVE, repair the causal defect boundary, rerun affected validation/evidence and repeat pre-review. Do not freeze a knowingly defective candidate.
-10. If pre-review finds only a risk that requires arbitrary subversion of infrastructure explicitly inside the trusted base, duplicate re-proof of an accepted predecessor guarantee, or a non-canonical unsupported path, record it as residual risk unless the WP explicitly owns that guarantee. Do not automatically open another hardening cycle.
+10. If pre-review finds only a risk that requires arbitrary out-of-contract behavior of infrastructure explicitly inside the trusted base, duplicate re-proof of an accepted predecessor guarantee, or a non-canonical unsupported path, record it as residual risk unless the WP explicitly owns that guarantee. Do not automatically open another hardening cycle.
 11. A candidate may freeze only with a valid predecessor contract check, `WORKER_PRE_REVIEW: CLEAN`, `PROOF_BUDGET_VERDICT: WITHIN_BUDGET` where applicable, and no known blocking defect.
 12. Before Ready, stop every writer, read the exact 40-char HEAD and record it as `Frozen candidate SHA`.
 13. Mark `Worker state: FROZEN_FOR_REVIEW` and `Branch frozen: YES`.
@@ -85,20 +87,20 @@ A superseded implementation PR must be explicitly marked/closed so GitHub does n
 
 ## Mandatory Worker pre-review
 
-The pre-review is an adversarial quality gate performed by the Worker while the PR is still Draft. Its purpose is to catch defects that should not consume an independent Reviewer cycle while staying bounded to the contract actually being delivered.
+The pre-review is a strict quality gate performed by the Worker while the PR is still Draft. Its purpose is to catch defects that should not consume an independent Reviewer cycle while staying bounded to the contract actually being delivered.
 
-The Worker must temporarily switch from implementation reasoning to falsification reasoning and inspect the candidate as if trying to issue a Reviewer FAIL. At minimum it must:
+The Worker must temporarily switch from implementation reasoning to independent-challenge reasoning and inspect the candidate as if trying to issue a Reviewer FAIL. At minimum it must:
 
 - re-read the exact WP acceptance criteria, DoD, allowed/forbidden scope and every binding engineering/proof document;
 - verify the `PREDECESSOR_CONTRACT_CHECK` still matches current accepted dependency evidence and distinguish inherited guarantees from guarantees actually owned by this WP;
-- identify the explicit claim and trust boundary before inventing attacks;
+- identify the explicit claim and trust boundary before inventing negative scenarios;
 - inspect the complete baseline→candidate diff rather than only the last repair;
 - verify tests/CI/evidence actually prove the contract rather than merely exercising representative happy paths;
 - inspect negative/error behaviour, boundary conditions, fail-closed behaviour and handoff/freeze requirements;
 - search for missing objects, paths, variants or effective behaviour that could sit outside an asserted completeness/proof universe **inside the declared claim**;
 - distinguish a local/trivial defect from a causal architectural/proof-boundary defect and repair at the correct level;
-- for foundational WPs, actively attempt material causal self-attacks against completeness, independent-oracle assumptions and false-green paths that remain inside `FOUNDATIONAL_PROOF_STANDARD.md`;
-- record any material in-claim class discovered and the regression/self-attack that now protects it;
+- for foundational WPs, actively exercise material causal negative-conformance tests against completeness, independent-oracle assumptions and false-green paths that remain inside `FOUNDATIONAL_PROOF_STANDARD.md`;
+- record any material in-claim class discovered and the regression/negative-conformance test that now protects it;
 - classify accepted predecessor guarantees as consumed unless concrete evidence shows they are inapplicable/false; do not add duplicate proof merely for defence-in-depth;
 - classify out-of-boundary findings as residual risk rather than silently expanding the claim;
 - perform the proof-budget check and stop for re-audit if proof/support machinery is expanding without corresponding acceptance/product progress;
@@ -106,7 +108,7 @@ The Worker must temporarily switch from implementation reasoning to falsificatio
 
 The pre-review must stay cheaper than the independent review: it does not need to duplicate every Reviewer action or produce a second full review report. It must, however, be substantive enough that an obvious contract breach cannot knowingly be handed off.
 
-The pre-review is not required to discover a novel defect in order to be valid. `CLEAN` may mean that serious falsification attempts found no in-boundary blocker.
+The pre-review is not required to discover a novel defect in order to be valid. `CLEAN` may mean that serious independent challenge found no in-boundary blocker.
 
 A valid clean result is recorded as:
 
@@ -172,15 +174,15 @@ Reviewer must:
 - for candidates governed by v1.5+, independently reconstruct direct accepted predecessor guarantees and verify a predecessor contract check was recorded before implementation;
 - inspect complete baseline→candidate diff, tests, CI and evidence;
 - challenge claims rather than trust Worker prose, Worker pre-review conclusions or the Worker's predecessor classification;
-- for foundational WPs, independently search for omission/false-green classes and attack completeness **inside the WP claim and declared trust boundary**, including risks not highlighted by the Worker;
+- for foundational WPs, independently search for omission/false-green classes and challenge completeness **inside the WP claim and declared trust boundary**, including risks not highlighted by the Worker;
 - before issuing FAIL for an apparent missing proof/coverage surface, check whether an accepted predecessor already owns that guarantee; if so, require concrete evidence of inapplicability or predecessor falsehood rather than duplicate proof;
-- distinguish an in-claim material defect from a risk that requires compromising the declared trusted base, re-proving an accepted upstream claim, or using an unsupported path;
+- distinguish an in-claim material defect from a risk that requires arbitrary out-of-contract behavior of the declared trusted base, re-proving an accepted upstream claim, or using an unsupported path;
 - not require discovery of a novel defect as a condition of a valid review;
-- not FAIL solely because an explicitly trusted infrastructure component could theoretically be subverted, or because an accepted predecessor guarantee is not redundantly re-proven, unless the current WP acceptance criteria place that component/guarantee inside the claim or factual evidence invalidates the inherited guarantee;
+- not FAIL solely because an explicitly trusted infrastructure component could theoretically behave outside its documented contract, or because an accepted predecessor guarantee is not redundantly re-proven, unless the current WP acceptance criteria place that component/guarantee inside the claim or factual evidence invalidates the inherited guarantee;
 - never repair implementation;
 - emit `PASS | FAIL | BLOCKED | READY_FOR_LOCAL_VALIDATION` naming the exact reviewed SHA.
 
-A green Worker test suite and a clean Worker pre-review are necessary, never sufficient. Reviewer independence means independent judgment, not an obligation to expand the product's security/proof claim.
+A green Worker test suite and a clean Worker pre-review are necessary, never sufficient. Reviewer independence means independent judgment, not an obligation to expand the product's proof claim.
 
 ## FAIL
 
@@ -206,7 +208,7 @@ Merge is valid only when:
 - no later implementation mutation exists;
 - no blocking in-claim finding remains.
 
-Once the Reviewer persists a valid PASS, the verdict is immutable for that candidate unless new factual evidence proves the prerequisites were false. The same session may then leave Reviewer mode and enter **FINALIZATION/DOCSYNC** mode. This is a one-way transition: it does not permit further adversarial implementation edits or repair work.
+Once the Reviewer persists a valid PASS, the verdict is immutable for that candidate unless new factual evidence proves the prerequisites were false. The same session may then leave Reviewer mode and enter **FINALIZATION/DOCSYNC** mode. This is a one-way transition: it does not permit further implementation edits or repair work.
 
 Finalization should immediately:
 
@@ -227,7 +229,7 @@ If two independent Reviewer FAILs expose the same foundational defect class, sto
 
 A single FAIL proving that the universe used by an in-claim completeness assertion can self-shrink, omit material objects by construction, or circularly define its own proof set is already an architectural finding. Re-audit that proof boundary immediately before another implementation cycle.
 
-Independently, if two consecutive repair/pre-review cycles materially expand proof/support machinery without corresponding progress in product behaviour, an explicit acceptance gap or a realistic in-boundary false-green class, stop and re-audit the claim/trust boundary under the proof-budget rule. Do not continue merely to accumulate attacks.
+Independently, if two consecutive repair/pre-review cycles materially expand proof/support machinery without corresponding progress in product behaviour, an explicit acceptance gap or a realistic in-boundary false-green class, stop and re-audit the claim/trust boundary under the proof-budget rule. Do not continue merely to accumulate negative scenarios.
 
 Repeated attempts to re-prove an accepted predecessor guarantee without concrete contradictory evidence are themselves a proof-budget warning: stop the duplicate-hardening loop and restore the predecessor/current-WP ownership split.
 

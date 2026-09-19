@@ -20,9 +20,9 @@ Make invalid world states and invalid authoring intents detectable through stabl
 - Validator inventory is mechanically enumerable and mapped to owned invariants; unclassified invariants/rejection sites are zero.
 - A known-invalid change cannot enter canonical state through any public mutation route.
 
-## Required self-attacks
+## Required negative-conformance tests
 
-RED→GREEN for: validator bypass, missing invariant registration, exception escaping as public error, nondeterministic diagnostic order, ambiguous path/context, and mutation route accepting state rejected by explicit validation.
+RED→GREEN for: validation being skipped on a public mutation path, missing invariant registration, exception escaping as public error, nondeterministic diagnostic order, ambiguous path/context, and mutation route accepting state rejected by explicit validation.
 
 ## Forbidden scope
 

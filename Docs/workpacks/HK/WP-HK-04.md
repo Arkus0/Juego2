@@ -18,12 +18,12 @@ Give the AI a safe mutation model based on plan → validate/dry-run → atomic 
 - Request/idempotency semantics are explicit and tested; retries cannot accidentally duplicate accepted mutations.
 - Change sets identify resources/fields/references affected before apply.
 - Preconditions/postconditions are machine-readable where practical.
-- No public command may bypass the canonical mutation pipeline to change authorable state privately.
+- No public command may use an undeclared alternate path to change authorable state outside the canonical mutation pipeline.
 - Mutation dispatcher surface == discovered mutation surface == transactional surface is mechanically checked.
 
-## Required self-attacks
+## Required negative-conformance tests
 
-RED→GREEN for: partial apply after mid-operation failure, stale revision overwrite, duplicate retry, hidden mutation bypass, dry-run differing semantically from apply, and command whose effects are absent from its plan/change set.
+RED→GREEN for: partial apply after mid-operation failure, stale revision overwrite, duplicate retry, undeclared canonical mutation path, dry-run differing semantically from apply, and command whose effects are absent from its plan/change set.
 
 ## Forbidden scope
 
@@ -31,4 +31,4 @@ Undo history UI, Unity scene writes, arbitrary filesystem edits, gameplay-specif
 
 ## DoD
 
-The micro-world can be created and modified transactionally with deterministic plans and zero hidden mutation paths; independent PASS.
+The micro-world can be created and modified transactionally with deterministic plans and zero undeclared mutation paths; independent PASS.

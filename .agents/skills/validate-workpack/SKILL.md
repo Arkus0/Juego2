@@ -2,6 +2,8 @@
 
 Independently review one frozen Juego2 candidate. Do not edit implementation.
 
+Juego2 / Arkus Harness is a game-development and software-verification project. Review is limited to repository-owned game-authoring code, fixtures, tests, CI and documentation. Legacy terms such as `self-attack`, `attack fixture`, `bypass` or `adversarial review` refer only to internal negative/conformance testing; use the neutral terminology defined in `AGENTS.md` for new work.
+
 ## Preconditions
 
 - PR is Ready and `Worker state=FROZEN_FOR_REVIEW`.
@@ -19,12 +21,12 @@ Independently review one frozen Juego2 candidate. Do not edit implementation.
 6. Inspect exact-SHA validation/evidence but do not trust Worker conclusions.
 7. Reproduce material tests/checks independently where possible.
 8. Verify Allowed/Forbidden scope.
-9. For foundational WPs, challenge completeness and false-green paths **inside the WP claim and declared trust boundary**. Search independently for omissions not highlighted by the Worker, but do not invent out-of-boundary attacks merely to force a finding.
+9. For foundational WPs, challenge completeness and false-green paths **inside the WP claim and declared trust boundary**. Search independently for omissions not highlighted by the Worker, but do not invent out-of-boundary pathological scenarios merely to force a finding.
 10. Before treating an apparent omission as a blocker, check whether a predecessor already owns and has accepted that guarantee. Do not require duplicate proof unless concrete evidence shows the inherited guarantee is inapplicable or false.
 11. Check negative controls are causal rather than incidental compile failures.
 12. Check exact-SHA binding of evidence.
-13. Search for hidden dual behavior, duplicated truths, unowned in-claim surfaces and effective/runtime bypasses.
-14. Respect the proof budget: trusted-base subversion, duplicate re-proof of accepted predecessor guarantees, or unsupported non-canonical paths are residual risks/overdefense unless the WP explicitly owns them or contradictory evidence reopens the causal boundary.
+13. Search for hidden dual behavior, duplicated truths, unowned in-claim surfaces and undeclared/alternate effective runtime paths.
+14. Respect the proof budget: trusted-base pathology scenarios, duplicate re-proof of accepted predecessor guarantees, or unsupported non-canonical paths are residual risks/overdefense unless the WP explicitly owns them or contradictory evidence reopens the causal boundary.
 
 ## Verdict
 
@@ -32,4 +34,4 @@ Emit exactly one of `PASS | FAIL | BLOCKED | READY_FOR_LOCAL_VALIDATION`, naming
 
 FAIL includes criterion, observed evidence, expected behavior and minimal correction boundary. If the finding appears predecessor-owned, the FAIL must also state why the accepted predecessor guarantee does not cover the case or what evidence proves that guarantee false. Do not repair the candidate.
 
-A valid review is not required to discover a novel defect. PASS is appropriate when serious independent falsification finds no blocking in-claim defect.
+A valid review is not required to discover a novel defect. PASS is appropriate when serious independent challenge finds no blocking in-claim defect.

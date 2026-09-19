@@ -2,6 +2,10 @@
 
 This file is a compact resumption aid, not an authority above current GitHub evidence.
 
+## Project context
+
+Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Repository work is limited to the game-authoring harness, its own source code, fixtures, tests, CI and documentation. Historical terminology such as `self-attack`, `attack fixture`, `bypass` or `adversarial review` means ordinary internal negative/conformance testing only. New work should use the neutral vocabulary defined in `AGENTS.md`.
+
 ## Current direction
 
 Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 builds an engine-agnostic AI authoring harness and blocks Unity/gameplay until `WP-HK-GATE` PASS.
@@ -34,7 +38,7 @@ HK03 passed on its first independent review. The Reviewer explicitly classified 
 
 ## Current next product target
 
-`WP-HK-04 — Planning + transactional mutation` is the next dependency-valid workpack. It depends on completed HK03 and must introduce a safe canonical mutation model based on deterministic plan → validate/dry-run → atomic apply, with optimistic revision/hash concurrency, idempotent retries, explicit change sets and no hidden mutation bypass.
+`WP-HK-04 — Planning + transactional mutation` is the next dependency-valid workpack. It depends on completed HK03 and must introduce a safe canonical mutation model based on deterministic plan → validate/dry-run → atomic apply, with optimistic revision/hash concurrency, idempotent retries, explicit change sets and no undeclared canonical mutation path.
 
 Before any HK04 implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: read accepted HK03 contract/PASS/proof evidence, identify which inspection/query guarantees HK04 consumes, separate them from HK04-owned planning/transaction guarantees, and record what concrete evidence would justify reopening an inherited boundary. Do not re-prove HK00/HK01/HK02/HK03 merely for defence-in-depth.
 
