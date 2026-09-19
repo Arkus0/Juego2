@@ -18,25 +18,25 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A`, `WP-HK-01` and `WP-HK-02` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02` and `WP-HK-03` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-02 — Canonical world state + deterministic identity`.
+Latest accepted workpack: `WP-HK-03 — Inspection/query surface`.
 
-- implementation PR: `#17`
-- reviewed frozen candidate: `f23fba9ab81566e682237183cf92618bbce504bd`
-- independent Reviewer: `PASS` (PR review `#5255346033`)
-- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35436836349`)
-- merge SHA: `1605f922b74d4f0b71bba7896c311a914ffed3f7`
-- accepted state boundary: typed stable world/object/type/reference identity, explicit schema/revision, one deterministic canonical byte representation, SHA-256 content identity, fail-closed referential integrity and explicit namespaced/versioned opaque extension preservation
-- canonicalization boundary: object/reference/extension caller ordering and process culture are non-semantic; deserialization reserializes and requires the unique byte-canonical representation
+- implementation PR: `#18`
+- reviewed frozen candidate: `8c20a380003c082fa9bd472d3233afa9654fb231`
+- independent Reviewer: `PASS` (PR review `#5255545669`)
+- exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35438687868`)
+- merge SHA: `d8b808450ee7863726d718a25c5756534113fcfd`
+- accepted read boundary: six canonical `world.*@1.0` capabilities provide world summary, object lookup/query, flattened reference query, extension descriptors and bounded opaque-extension chunks through the single HK01 composed inventory
+- inspection guarantees: deterministic ordering/cursors, revision/hash anchoring, structured stale/selector/missing-resource failures, fixed/paginated output, side-effect-free reads and public-read reconstruction of the current HK02 semantic world state
 
-HK02 passed on its first independent review. A non-blocking future-hardening note remains: if later WPs expand the public state-bearing type surface, their predecessor/current proof must ensure the HK02 semantic-surface/mutation coverage remains applicable rather than assuming the original finite surface covers newly introduced semantics.
+HK03 passed on its first independent review. The Reviewer explicitly classified selector-array cardinality/resource-exhaustion limits as downstream `WP-HK-09` ownership because HK09 owns input size and execution/resource limits; do not reopen HK03 for that alone without concrete evidence that the accepted inspection semantics are false. HK03's own bounded-output and finite query-language guarantees remain binding.
 
 ## Current next product target
 
-`WP-HK-03 — Inspection/query surface` is the next dependency-valid workpack. It depends on completed HK02 and must make accepted world state completely inspectable through bounded, deterministic, schema-described reads, including stable pagination/cursors, revision/hash binding and a completeness argument that no authorable state required for safe later mutation is hidden.
+`WP-HK-04 — Planning + transactional mutation` is the next dependency-valid workpack. It depends on completed HK03 and must introduce a safe canonical mutation model based on deterministic plan → validate/dry-run → atomic apply, with optimistic revision/hash concurrency, idempotent retries, explicit change sets and no hidden mutation bypass.
 
-Before any HK03 implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: read accepted HK02 contract/PASS/proof evidence, identify which canonical-state guarantees HK03 consumes, separate them from HK03-owned inspection/query guarantees, and record what concrete evidence would justify reopening an inherited boundary. Do not re-prove HK00/HK01/HK02 merely for defence-in-depth.
+Before any HK04 implementation, the Worker must execute the protocol v1.5 `PREDECESSOR_CONTRACT_CHECK`: read accepted HK03 contract/PASS/proof evidence, identify which inspection/query guarantees HK04 consumes, separate them from HK04-owned planning/transaction guarantees, and record what concrete evidence would justify reopening an inherited boundary. Do not re-prove HK00/HK01/HK02/HK03 merely for defence-in-depth.
 
 ## Operating model
 
@@ -54,7 +54,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 → HK-05 → HK-06 → HK-07 → HK-08 → HK-09 → HK-10 → HK-GATE`.
 
 ## Process invariants
 
