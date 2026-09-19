@@ -1,7 +1,7 @@
 # Visual Bible — Juego2
 
-Version: 0.1.1 — 2026-09-19  
-Status: DRAFT — seed draft under `WP-ART-00`; palette **APPROVED-DRAFT**; triage dry-run recorded in `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`  
+Version: 0.1.2 — 2026-09-19  
+Status: DRAFT — seed draft under `WP-ART-00`; palette **APPROVED-DRAFT**; triage dry-run recorded in `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`; animation policy in §12  
 Scope: art direction and asset selection only. **This document does not block, gate or modify H0.** No `HK-*` acceptance criterion depends on it.
 
 ## 1. Style one-liner
@@ -21,6 +21,7 @@ Three looks this excludes outright: photorealism; the Dreamcast/Shenmue graphica
 - Overcast, diffuse key light as the default weather; sun is an event, not the norm.
 - A village that looks inhabited: laundry, crates, a bar terrace, fishing tackle, worn kerbs.
 - Modular reuse: the same six wall modules recolored beat sixty unique ones.
+- Shared humanoid retarget; a small **civilian** animation allowlist (see §12).
 
 ### No
 
@@ -35,6 +36,7 @@ Three looks this excludes outright: photorealism; the Dreamcast/Shenmue graphica
 - Palms, cacti, tropical foliage, or a mass of autumn red.
 - Realistic "Cantabrian" facial physiognomy for characters (see §5).
 - Regional caricature: no costume-folklore villagers, no stereotype props used as a joke.
+- Combat, gun, parkour, or fantasy-cast animations as default village behaviour (see §12).
 
 ## 3. Palette (APPROVED-DRAFT)
 
@@ -121,6 +123,7 @@ Rules:
 - Two NPCs sharing a base mesh must still be distinguishable at 15 m by outfit value and one silhouette-breaking prop.
 - Outfit colors draw from §3; work clothing uses the muted stone/timber ranges, with at most one accent per character.
 - No folkloric costume, no dialect-as-visual-joke, no character whose design exists to mark them as rural or provincial.
+- Motion identity is secondary to outfit/silhouette: prefer shared humanoid clips from §12 over unique authored motion per NPC.
 
 Hero-target archetypes (6 of these 8):
 
@@ -145,7 +148,9 @@ A `URL-CONFIRMED` row is not an adoption approval. See §10.
 |---|---|---|---|
 | Ultimate Modular Men Pack | URL-CONFIRMED | NPC bases, modular part swapping, animation set | Fantasy and sci-fi variants; using a character unaltered as a named NPC |
 | Ultimate Modular Women Pack | URL-CONFIRMED | NPC bases, modular part swapping | Same as above |
-| Universal Base Characters | URL-CONFIRMED | Base mesh when a custom outfit is needed | Shipping a base character with no outfit pass |
+| Universal Base Characters | URL-CONFIRMED | Base mesh when a custom outfit is needed; humanoid retarget target | Shipping a base character with no outfit pass |
+| Universal Animation Library | URL-CONFIRMED | Civilian locomotion and idle/sit/interact clips after whitelist (§12) | Combat, gun, parkour, swimming-as-default, death loops in the village slice |
+| Universal Animation Library 2 | URL-CONFIRMED | Extra civilian / work-adjacent clips after whitelist (§12); fishing/farming tags only if they read civilian | Combat, gun, parkour as village defaults |
 | Medieval Village Pack | URL-CONFIRMED | Stone wall modules, doors, windows, small props | Thatched roofs; half-timbering; castle, keep or tower pieces; wooden palisade; medieval signage |
 | Medieval Village MegaKit | URL-CONFIRMED | Modular masonry, kerbs, stairs, fences | Same vetoes as above, plus whole prefabricated village blocks used unedited |
 | Modular Medieval Building Pack | URL-CONFIRMED | Facade modules at 2 m / 4 m | Half-timbered variants; any piece whose roof pitch exceeds the tile rule in §7 |
@@ -183,9 +188,12 @@ The validation slice. Building it proves the bible; nothing here authorizes star
 - One to two streets, ~40 m each, connecting to the plaza.
 - One simple interior, ~8 × 6 m — a bar or a shop, enterable.
 - Six archetype NPCs from §5.
+- Player + NPCs on **one shared humanoid** with the §12 H2 animation allowlist only.
 - Quay / boats: **out of hero-target v1** (optional later). Keeps water shading and an extra material set out of the budget below.
 
 Budget: **≤ 120 unique meshes** and **≤ 6 material/atlas sets** across the whole slice. Exceeding either budget means the slice is being built from unique assets rather than from a kit, which is the failure this bible exists to prevent.
+
+Animation budget (H2): **≤ ~20 distinct clips** on the shared controller (locomotion + idle variants + sit + short interact). Importing the full 120+ library into the runtime graph without a whitelist is a process failure, not a feature.
 
 ## 9. Asset triage test
 
@@ -198,6 +206,8 @@ Apply to any candidate Quaternius asset. Produces exactly one verdict.
 5. **Adaptation check.** Read §7 for every element the asset contains. If each element already satisfies its Cantabria rule → **ACCEPT**. If each failing element is fixable by recolor, part swap, hiding sub-meshes or rescaling to the 1 m grid → **RECOLOR-THEN-ACCEPT**, and record which mechanism. If any element fails and cannot be fixed by those four mechanisms → **REJECT**.
 
 Modelling new geometry is not one of the mechanisms. If an asset needs new geometry to fit, it is a reject for this slice.
+
+For **animation clips**, apply the same spirit: pack authorized + §12 allowlist membership. A combat/gun/parkour clip is **REJECT** for the village hero target even if the Animation Library pack is authorized.
 
 Dry-run record: `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md` (five candidates, three rejects).
 
@@ -216,3 +226,40 @@ Practical rule kept regardless of QAL/CC0: **do not redistribute a Quaternius pa
 3. Is roof recoloring done by editing the shared atlas or by vertex color? **Recommendation:** atlas first; vertex only for per-instance exceptions.
 4. Are any paid *Source* tiers needed through the hero target? **Recommendation:** free tier sufficient unless a mesh forces Blender work.
 5. Palette hex values: **APPROVED-DRAFT** (2026-09-19). Still welcome a flat color-block sheet for human eyeballing.
+6. Exact clip names inside Universal Animation Library free tier vs Source — confirm at download time when H2 starts; this bible only constrains categories.
+
+## 12. Animation
+
+Animation is part of the kit language, not a separate art style. The village must move like **civilians in damp weather**, not like an action demo.
+
+### Principles
+
+- **One shared humanoid rig** for player and NPCs (Universal Base Characters / Modular packs as mesh; Universal Animation Library as primary clip source).
+- **Retarget once**; do not maintain per-NPC custom skeletons in H2.
+- Identity stays with **outfit + silhouette + prop** (§5). Motion differentiates weakly (idle A vs idle B), not by unique mocap.
+- Prefer a **short whitelist** over shipping the full 120+ library into the runtime graph.
+
+### H2 allowlist (categories)
+
+| Category | In H2 | Notes |
+|---|---|---|
+| Walk / jog / idle / turn | Yes | Core locomotion |
+| Sit / stand-from-sit | Yes | Bar / bench |
+| Short interact (reach, nod, examine) | Yes | Door, prop, talk beat |
+| Carry light prop (crate/bag) | Optional | Only if a clean clip exists without combat pose |
+| Combat / hit / block | No | |
+| Guns / aim / reload | No | |
+| Parkour / slide / climb-spectacle | No | |
+| Swim as default traversal | No | |
+| Death loops in the plaza | No | |
+| Fantasy cast / weapon idle | No | |
+
+Exact clip filenames are chosen at H2 import time from the free tier; if a needed civilian clip is missing, substitute the nearest idle/walk — do not unlock combat packs to fill the gap.
+
+### Forbidden as village default
+
+Any clip whose read-at-15 m is “FPS lobby”, “RPG battle”, or “parkour trailer”. Fishing/farming-tagged clips from Animation Library 2 are allowed only when they read as ordinary work, not as minigame spectacle.
+
+### Downstream (after H2)
+
+Work loops, dialogue gestures, and schedule-driven variants can expand the whitelist. Custom authored cinematic motion is out of scope for this bible and is not required to prove the Cantabrian kit look.
