@@ -66,3 +66,14 @@ FOUNDATIONAL_PROOF_VERDICT: READY
 UNRESOLVED_PROOF_OBLIGATIONS: 0
 KNOWN_UNDETECTED_DEFECT_CLASSES: 0
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
+
+## Independent acceptance — post-merge DocSync (2026-09-19)
+
+- Baseline SHA: `5a07c55aeb79406a84bff579b34c09459707b713`.
+- Frozen and exact reviewed candidate: `f39a1994524c42213dafb63d440faaf9de7c040f`.
+- Independent Reviewer: `PASS`, PR #25 review `5256593405`.
+- Final candidate observation: Actions `35456397714` GREEN; frozen exact-SHA validation: Actions `35456445373` GREEN.
+- Implementation observation: `2cb7a3daaa565a6b0ca5b68882541191750dac60`, Actions `35456331653`, Release 0 warnings/0 errors, focused 11/11, full regression 98/98.
+- Merged implementation commit: `ac7ce1180b462f093cf0ee02bbbd6f853938e27c`.
+- Earlier independent FAIL `5256487874` applies only to superseded `9d0dc3739f31bcc6a7f8df12b5f6e876837efacc`; its fingerprint and extension-dependency-page proof gaps were independently rechecked as closed on the accepted SHA.
+- Trust boundary and accepted residuals remain as documented in `RESIDUAL_RISK.md`. Do not interpret historical pre-repair 8/8 or 95/95 evidence as the final accepted run.
