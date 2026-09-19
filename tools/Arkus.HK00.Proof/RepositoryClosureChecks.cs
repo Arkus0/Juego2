@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 
 namespace Arkus.HK00.Proof
 {
@@ -97,8 +96,12 @@ namespace Arkus.HK00.Proof
                 return Report("HK00-EXTERNAL-AUTHORITY", "static", "external-authority", ex.Message);
             }
 
+            var observationDirectory = Path.Combine(root, "artifacts", "proof", "import-closure");
+            Directory.CreateDirectory(observationDirectory);
+
             foreach (var spec in FixedContract.Projects)
             {
+                var preprocessedPath = Path.Combine(observationDirectory, spec.Name + ".xml");
                 var args = new List<string>
                 {
                     "msbuild",
@@ -106,13 +109,12 @@ namespace Arkus.HK00.Proof
                     "-nologo",
                     "-noAutoResponse",
                     "-p:Configuration=" + configuration,
-                    "-getProperty:MSBuildAllProjects",
+                    "-preprocess:" + preprocessedPath,
                 };
 
-                ProcessResult result;
                 try
                 {
-                    result = ProcessExec.Run("dotnet", args, root);
+                    ProcessExec.Run("dotnet", args, root);
                 }
                 catch (Exception ex)
                 {
@@ -120,87 +122,119 @@ namespace Arkus.HK00.Proof
                     continue;
                 }
 
-                string imports;
+                IReadOnlyList<string> imports;
                 try
                 {
-                    var stdout = result.Stdout.Trim();
-                    if (stdout.StartsWith("{", StringComparison.Ordinal))
-                    {
-                        using var document = JsonDocument.Parse(stdout);
-                        imports = document.RootElement.TryGetProperty("Properties", out var properties)
-                            && properties.TryGetProperty("MSBuildAllProjects", out var allProjects)
-                                ? allProjects.GetString() ?? string.Empty
-                                : string.Empty;
-                    }
-                    else
-                    {
-                        imports = stdout;
-                    }
+                    imports = ReadPreprocessedImportBoundaries(preprocessedPath);
                 }
                 catch (Exception ex)
-                {
-                    findings += Report("HK00-MSBUILD-IMPORT-ORACLE", "static", spec.Name, "MSBuildAllProjects output is unreadable: " + ex.Message);
-                    continue;
-                }
-
-                if (string.IsNullOrWhiteSpace(imports))
                 {
                     findings += Report(
                         "HK00-MSBUILD-IMPORT-ORACLE",
                         "static",
                         spec.Name,
-                        "MSBuildAllProjects was empty; evaluated import closure is not inspectable.");
+                        "Preprocessed import closure is unreadable: " + ex.Message);
                     continue;
                 }
 
-                foreach (var raw in imports.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                if (imports.Count == 0)
                 {
-                    var token = raw.Trim();
-                    if (token.Length == 0)
-                    {
-                        continue;
-                    }
-
-                    var absolute = Path.IsPathRooted(token)
-                        ? Path.GetFullPath(token)
-                        : Path.GetFullPath(Path.Combine(root, token));
-
-                    if (authority.IsSdkOrPack(absolute)
-                        || (spec.Kind == ProjectKind.Tests && authority.IsLockedTestPackagePath(absolute)))
-                    {
-                        continue;
-                    }
-
-                    if (!ProcessExec.IsInside(root, absolute))
-                    {
-                        findings += Report(
-                            "HK00-MSBUILD-IMPORT-EXTERNAL-UNTRUSTED",
-                            "static",
-                            spec.Name + ":" + absolute,
-                            "Evaluated MSBuild import comes from outside Arkus ownership and the single external-authority model.");
-                        continue;
-                    }
-
-                    var relative = ProcessExec.Relative(root, absolute);
-                    if (IsAllowedRepositoryImport(spec, relative))
-                    {
-                        continue;
-                    }
-
-                    if (IsGeneratedIntermediate(relative) && !tracked.Contains(relative))
-                    {
-                        continue;
-                    }
-
                     findings += Report(
-                        "HK00-MSBUILD-IMPORT-UNTRUSTED",
+                        "HK00-MSBUILD-IMPORT-ORACLE",
                         "static",
-                        spec.Name + ":" + relative,
-                        "Evaluated MSBuild import closure contains repository-owned build logic outside the fixed HK00 surface.");
+                        spec.Name,
+                        "MSBuild -preprocess exposed no import boundaries; evaluated import closure is not inspectable.");
+                    continue;
+                }
+
+                foreach (var absolute in imports)
+                {
+                    findings += CheckImportAuthority(root, spec, absolute, tracked, authority);
                 }
             }
 
             return findings;
+        }
+
+        private static IReadOnlyList<string> ReadPreprocessedImportBoundaries(string path)
+        {
+            if (!File.Exists(path))
+            {
+                throw new InvalidOperationException("MSBuild did not produce the requested preprocessed project: " + path);
+            }
+
+            var lines = File.ReadAllLines(path);
+            var imports = new SortedSet<string>(StringComparer.Ordinal);
+            for (var i = 0; i < lines.Length; i++)
+            {
+                if (!IsBoundarySeparator(lines[i]))
+                {
+                    continue;
+                }
+
+                for (var j = i + 1; j < lines.Length && !IsBoundarySeparator(lines[j]); j++)
+                {
+                    var candidate = lines[j].Trim();
+                    if (candidate.Length == 0 || !Path.IsPathRooted(candidate))
+                    {
+                        continue;
+                    }
+
+                    var full = Path.GetFullPath(candidate);
+                    if (File.Exists(full))
+                    {
+                        imports.Add(full);
+                    }
+                }
+            }
+
+            return imports.ToArray();
+        }
+
+        private static bool IsBoundarySeparator(string line)
+        {
+            var trimmed = line.Trim();
+            return trimmed.Length >= 32 && trimmed.All(ch => ch == '=');
+        }
+
+        private static int CheckImportAuthority(
+            string root,
+            ProjectSpec spec,
+            string absolute,
+            SortedSet<string> tracked,
+            ExternalAuthority authority)
+        {
+            if (authority.IsSdkOrPack(absolute)
+                || (spec.Kind == ProjectKind.Tests && authority.IsLockedTestPackagePath(absolute)))
+            {
+                return 0;
+            }
+
+            if (!ProcessExec.IsInside(root, absolute))
+            {
+                return Report(
+                    "HK00-MSBUILD-IMPORT-EXTERNAL-UNTRUSTED",
+                    "static",
+                    spec.Name + ":" + absolute,
+                    "Evaluated MSBuild import comes from outside Arkus ownership and the single external-authority model.");
+            }
+
+            var relative = ProcessExec.Relative(root, absolute);
+            if (IsAllowedRepositoryImport(spec, relative))
+            {
+                return 0;
+            }
+
+            if (IsGeneratedIntermediate(relative) && !tracked.Contains(relative))
+            {
+                return 0;
+            }
+
+            return Report(
+                "HK00-MSBUILD-IMPORT-UNTRUSTED",
+                "static",
+                spec.Name + ":" + relative,
+                "Evaluated MSBuild import closure contains repository-owned build logic outside the fixed HK00 surface.");
         }
 
         private static SortedSet<string> ReadTrackedFiles(string root)
