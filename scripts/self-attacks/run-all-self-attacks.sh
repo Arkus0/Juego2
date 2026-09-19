@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 BOOT="${ROOT}/artifacts/bootstrap-proof"
 LEGACY="${ROOT}/tools/Arkus.HK00.Proof/bin/Release/net8.0"
+RESULTS="${ROOT}/Docs/evidence/WP-HK-00/self-attacks/results.md"
+SHARD="${1:-all}"
 
 bash "${ROOT}/scripts/build-proof-oracle.sh" >/dev/null
 
@@ -26,11 +28,60 @@ dotnet() {
 }
 export -f dotnet
 
-bash "${ROOT}/scripts/self-attacks/run-self-attacks.sh"
-bash "${ROOT}/scripts/self-attacks/run-closure-attacks.sh"
-bash "${ROOT}/scripts/self-attacks/run-test-surface-attack.sh"
-bash "${ROOT}/scripts/self-attacks/run-external-authority-attacks.sh"
-bash "${ROOT}/scripts/self-attacks/run-reference-authority-attack.sh"
-bash "${ROOT}/scripts/self-attacks/run-terminal-inventory-attack.sh"
+reset_results() {
+  mkdir -p "$(dirname "${RESULTS}")"
+  cat >"${RESULTS}" <<'MD'
+# WP-HK-00 causal self-attacks
 
-echo "all 37 causal self-attacks passed"
+| Attack | Intended oracle/check | Result |
+|---|---|---|
+MD
+}
+
+run_shard() {
+  case "${SHARD}" in
+    core)
+      bash "${ROOT}/scripts/self-attacks/run-self-attacks.sh"
+      ;;
+    closure)
+      reset_results
+      bash "${ROOT}/scripts/self-attacks/run-closure-attacks.sh"
+      ;;
+    test-surface)
+      reset_results
+      bash "${ROOT}/scripts/self-attacks/run-test-surface-attack.sh"
+      ;;
+    external-authority)
+      reset_results
+      bash "${ROOT}/scripts/self-attacks/run-external-authority-attacks.sh"
+      ;;
+    reference-authority)
+      reset_results
+      bash "${ROOT}/scripts/self-attacks/run-reference-authority-attack.sh"
+      ;;
+    terminal-inventory)
+      reset_results
+      bash "${ROOT}/scripts/self-attacks/run-terminal-inventory-attack.sh"
+      ;;
+    all)
+      bash "${ROOT}/scripts/self-attacks/run-self-attacks.sh"
+      bash "${ROOT}/scripts/self-attacks/run-closure-attacks.sh"
+      bash "${ROOT}/scripts/self-attacks/run-test-surface-attack.sh"
+      bash "${ROOT}/scripts/self-attacks/run-external-authority-attacks.sh"
+      bash "${ROOT}/scripts/self-attacks/run-reference-authority-attack.sh"
+      bash "${ROOT}/scripts/self-attacks/run-terminal-inventory-attack.sh"
+      ;;
+    *)
+      echo "Unknown self-attack shard: ${SHARD}" >&2
+      exit 2
+      ;;
+  esac
+}
+
+run_shard
+
+if [[ "${SHARD}" == "all" ]]; then
+  echo "all 37 causal self-attacks passed"
+else
+  echo "causal self-attack shard '${SHARD}' passed"
+fi
