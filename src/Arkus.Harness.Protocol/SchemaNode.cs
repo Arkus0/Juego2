@@ -31,11 +31,6 @@ namespace Arkus.Harness.Protocol
         public string Message { get; }
     }
 
-    /// <summary>
-    /// Small engine-neutral JSON Schema 2020-12 model used by the canonical Arkus contract.
-    /// It intentionally models only the semantic subset Arkus currently owns; transports may
-    /// project it but may not extend canonical meaning independently.
-    /// </summary>
     public sealed class SchemaNode
     {
         private static readonly IReadOnlyDictionary<string, SchemaNode> EmptyProperties =
@@ -140,10 +135,10 @@ namespace Arkus.Harness.Protocol
             var data = new Dictionary<string, object?>(StringComparer.Ordinal);
             if (ValueType != SchemaValueType.Any)
             {
-                data["type"] = GetJsonTypeName(ValueType);
+                data["type"] = JsonTypeName(ValueType);
             }
 
-            if (Properties.Count > 0)
+            if (Properties.Count != 0)
             {
                 var properties = new Dictionary<string, object?>(StringComparer.Ordinal);
                 foreach (var pair in Properties)
@@ -162,7 +157,7 @@ namespace Arkus.Harness.Protocol
                     required.Add(property);
                 }
 
-                data["required"] = required;
+                data["required"] = required.AsReadOnly();
                 data["additionalProperties"] = AdditionalPropertiesAllowed;
             }
 
@@ -171,7 +166,7 @@ namespace Arkus.Harness.Protocol
                 data["items"] = Items.ToData();
             }
 
-            if (AllowedStringValues.Count > 0)
+            if (AllowedStringValues.Count != 0)
             {
                 var values = new List<object?>();
                 foreach (var value in AllowedStringValues)
@@ -179,7 +174,7 @@ namespace Arkus.Harness.Protocol
                     values.Add(value);
                 }
 
-                data["enum"] = values;
+                data["enum"] = values.AsReadOnly();
             }
 
             if (Format != null)
@@ -224,14 +219,14 @@ namespace Arkus.Harness.Protocol
                 builder.Append(';');
             }
 
-            var keys = new List<string>(Properties.Keys);
-            keys.Sort(StringComparer.Ordinal);
+            var propertyNames = new List<string>(Properties.Keys);
+            propertyNames.Sort(StringComparer.Ordinal);
             builder.Append("|P:");
-            foreach (var key in keys)
+            foreach (var propertyName in propertyNames)
             {
-                builder.Append(key);
+                builder.Append(propertyName);
                 builder.Append('=');
-                Properties[key].AppendFingerprint(builder);
+                Properties[propertyName].AppendFingerprint(builder);
                 builder.Append(';');
             }
 
@@ -244,9 +239,9 @@ namespace Arkus.Harness.Protocol
             builder.Append(')');
         }
 
-        internal void ValidateWellFormed(string path, IList<SchemaValidationIssue> issues)
+        internal void ValidateDefinition(string path, IList<SchemaValidationIssue> issues)
         {
-            if (ValueType != SchemaValueType.Object && (Properties.Count > 0 || RequiredProperties.Count > 0))
+            if (ValueType != SchemaValueType.Object && (Properties.Count != 0 || RequiredProperties.Count != 0))
             {
                 issues.Add(new SchemaValidationIssue(
                     "schema.properties_on_non_object",
@@ -261,8 +256,7 @@ namespace Arkus.Harness.Protocol
                     path,
                     "Array schemas must declare an item schema."));
             }
-
-            if (ValueType != SchemaValueType.Array && Items != null)
+            else if (ValueType != SchemaValueType.Array && Items != null)
             {
                 issues.Add(new SchemaValidationIssue(
                     "schema.items_on_non_array",
@@ -270,20 +264,20 @@ namespace Arkus.Harness.Protocol
                     "Only array schemas may declare items."));
             }
 
-            if (AllowedStringValues.Count > 0 && ValueType != SchemaValueType.String)
+            if (AllowedStringValues.Count != 0 && ValueType != SchemaValueType.String)
             {
                 issues.Add(new SchemaValidationIssue(
                     "schema.enum_on_non_string",
                     path,
-                    "The current canonical subset supports enum values only on strings."));
+                    "The canonical subset supports enum values only on string schemas."));
             }
 
-            if (Format != null && !IsAllowedPortableFormat(Format))
+            if (Format != null && !IsPortableFormat(Format))
             {
                 issues.Add(new SchemaValidationIssue(
                     "schema.non_portable_format",
                     path + "/format",
-                    "Schema format is not part of the portable canonical format set."));
+                    "Schema format is outside the portable Arkus canonical format set."));
             }
 
             if (string.Equals(Format, "arkus-logical-reference", StringComparison.Ordinal))
@@ -293,7 +287,7 @@ namespace Arkus.Harness.Protocol
                     issues.Add(new SchemaValidationIssue(
                         "schema.invalid_logical_reference",
                         path,
-                        "Arkus logical references must be strings with a non-empty logical reference namespace."));
+                        "Logical references must be strings with a non-empty Arkus logical namespace."));
                 }
             }
             else if (LogicalReferenceNamespace != null)
@@ -301,13 +295,22 @@ namespace Arkus.Harness.Protocol
                 issues.Add(new SchemaValidationIssue(
                     "schema.reference_namespace_without_reference_format",
                     path,
-                    "A logical reference namespace is valid only for arkus-logical-reference strings."));
+                    "A logical reference namespace requires the arkus-logical-reference format."));
             }
 
             if (ValueType == SchemaValueType.Object)
             {
+                var seenRequired = new HashSet<string>(StringComparer.Ordinal);
                 foreach (var required in RequiredProperties)
                 {
+                    if (!seenRequired.Add(required))
+                    {
+                        issues.Add(new SchemaValidationIssue(
+                            "schema.duplicate_required",
+                            path + "/required",
+                            "Required property names may not be duplicated."));
+                    }
+
                     if (!Properties.ContainsKey(required))
                     {
                         issues.Add(new SchemaValidationIssue(
@@ -319,25 +322,22 @@ namespace Arkus.Harness.Protocol
 
                 foreach (var pair in Properties)
                 {
-                    pair.Value.ValidateWellFormed(path + "/properties/" + pair.Key, issues);
+                    pair.Value.ValidateDefinition(path + "/properties/" + pair.Key, issues);
                 }
             }
 
             if (Items != null)
             {
-                Items.ValidateWellFormed(path + "/items", issues);
+                Items.ValidateDefinition(path + "/items", issues);
             }
         }
 
         internal void ValidateValue(object? value, string path, IList<SchemaValidationIssue> issues)
         {
-            if (ValueType == SchemaValueType.Any)
-            {
-                return;
-            }
-
             switch (ValueType)
             {
+                case SchemaValueType.Any:
+                    return;
                 case SchemaValueType.Object:
                     ValidateObject(value, path, issues);
                     return;
@@ -349,30 +349,24 @@ namespace Arkus.Harness.Protocol
                     {
                         AddTypeMismatch(path, "integer", issues);
                     }
-
                     return;
                 case SchemaValueType.Number:
                     if (!IsNumber(value))
                     {
                         AddTypeMismatch(path, "number", issues);
                     }
-
                     return;
                 case SchemaValueType.Boolean:
                     if (!(value is bool))
                     {
                         AddTypeMismatch(path, "boolean", issues);
                     }
-
                     return;
                 case SchemaValueType.Array:
                     ValidateArray(value, path, issues);
                     return;
                 default:
-                    issues.Add(new SchemaValidationIssue(
-                        "schema.unknown_type",
-                        path,
-                        "Unknown schema value type."));
+                    issues.Add(new SchemaValidationIssue("schema.unknown_type", path, "Unknown schema value type."));
                     return;
             }
         }
@@ -389,18 +383,15 @@ namespace Arkus.Harness.Protocol
             {
                 if (!map.ContainsKey(required))
                 {
-                    issues.Add(new SchemaValidationIssue(
-                        "schema.required",
-                        path + "/" + required,
-                        "Required property is missing."));
+                    issues.Add(new SchemaValidationIssue("schema.required", path + "/" + required, "Required property is missing."));
                 }
             }
 
             foreach (var pair in map)
             {
-                if (Properties.TryGetValue(pair.Key, out var propertySchema))
+                if (Properties.TryGetValue(pair.Key, out var schema))
                 {
-                    propertySchema.ValidateValue(pair.Value, path + "/" + pair.Key, issues);
+                    schema.ValidateValue(pair.Value, path + "/" + pair.Key, issues);
                 }
                 else if (!AdditionalPropertiesAllowed)
                 {
@@ -420,7 +411,7 @@ namespace Arkus.Harness.Protocol
                 return;
             }
 
-            if (AllowedStringValues.Count > 0)
+            if (AllowedStringValues.Count != 0)
             {
                 var found = false;
                 foreach (var allowed in AllowedStringValues)
@@ -460,10 +451,7 @@ namespace Arkus.Harness.Protocol
 
             if (Items == null)
             {
-                issues.Add(new SchemaValidationIssue(
-                    "schema.array_missing_items",
-                    path,
-                    "Array schema has no item definition."));
+                issues.Add(new SchemaValidationIssue("schema.array_missing_items", path, "Array schema has no item definition."));
                 return;
             }
 
@@ -484,6 +472,14 @@ namespace Arkus.Harness.Protocol
             return IsInteger(value) || value is float || value is double || value is decimal;
         }
 
+        private static bool IsPortableFormat(string format)
+        {
+            return string.Equals(format, "uuid", StringComparison.Ordinal) ||
+                string.Equals(format, "date-time", StringComparison.Ordinal) ||
+                string.Equals(format, "uri", StringComparison.Ordinal) ||
+                string.Equals(format, "arkus-logical-reference", StringComparison.Ordinal);
+        }
+
         private static void AddTypeMismatch(string path, string expected, IList<SchemaValidationIssue> issues)
         {
             issues.Add(new SchemaValidationIssue(
@@ -492,15 +488,7 @@ namespace Arkus.Harness.Protocol
                 "Value does not match expected type '" + expected + "'."));
         }
 
-        private static bool IsAllowedPortableFormat(string format)
-        {
-            return string.Equals(format, "uuid", StringComparison.Ordinal) ||
-                string.Equals(format, "date-time", StringComparison.Ordinal) ||
-                string.Equals(format, "uri", StringComparison.Ordinal) ||
-                string.Equals(format, "arkus-logical-reference", StringComparison.Ordinal);
-        }
-
-        private static string GetJsonTypeName(SchemaValueType valueType)
+        private static string JsonTypeName(SchemaValueType valueType)
         {
             switch (valueType)
             {
@@ -537,7 +525,9 @@ namespace Arkus.Harness.Protocol
                     throw new ArgumentException("Schema property names may not be empty.", nameof(properties));
                 }
 
-                copy.Add(pair.Key, pair.Value ?? throw new ArgumentException("Schema property values may not be null.", nameof(properties)));
+                copy.Add(
+                    pair.Key,
+                    pair.Value ?? throw new ArgumentException("Schema property values may not be null.", nameof(properties)));
             }
 
             return new ReadOnlyDictionary<string, SchemaNode>(copy);
@@ -547,72 +537,16 @@ namespace Arkus.Harness.Protocol
         {
             if (values == null)
             {
-                return Array.Empty<string>();
+                return System.Array.Empty<string>();
             }
 
             var copy = new List<string>();
             foreach (var value in values)
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("String collections may not contain null values.", nameof(values));
-                }
-
-                copy.Add(value);
+                copy.Add(value ?? throw new ArgumentException("String collections may not contain null values.", nameof(values)));
             }
 
             return copy.AsReadOnly();
-        }
-    }
-
-    public sealed class JsonSchemaDocument
-    {
-        public const string Draft202012 = "https://json-schema.org/draft/2020-12/schema";
-
-        public JsonSchemaDocument(SchemaNode root)
-        {
-            Root = root ?? throw new ArgumentNullException(nameof(root));
-        }
-
-        public string Dialect => Draft202012;
-        public SchemaNode Root { get; }
-
-        public IReadOnlyList<SchemaValidationIssue> ValidateDefinition()
-        {
-            var issues = new List<SchemaValidationIssue>();
-            Root.ValidateWellFormed("$", issues);
-            return issues.AsReadOnly();
-        }
-
-        public IReadOnlyList<SchemaValidationIssue> ValidateValue(object? value)
-        {
-            var issues = new List<SchemaValidationIssue>();
-            Root.ValidateValue(value, "$", issues);
-            return issues.AsReadOnly();
-        }
-
-        public IReadOnlyDictionary<string, object?> ToData()
-        {
-            var data = new Dictionary<string, object?>(StringComparer.Ordinal)
-            {
-                ["$schema"] = Dialect
-            };
-
-            foreach (var pair in Root.ToData())
-            {
-                data[pair.Key] = pair.Value;
-            }
-
-            return new ReadOnlyDictionary<string, object?>(data);
-        }
-
-        public string SemanticFingerprint()
-        {
-            var builder = new StringBuilder();
-            builder.Append(Dialect);
-            builder.Append('|');
-            Root.AppendFingerprint(builder);
-            return builder.ToString();
         }
     }
 }
