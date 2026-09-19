@@ -81,3 +81,51 @@ validate/apply disagreement, followed by GREEN after restoring the candidate.
 The representative content-shape probe will use the accepted bounded Potes/Liébana authored slice
 without adding schedules, transforms, gameplay schemas or payload interpretation.
 
+## Repair cycle 2 — foundational ambiguity-policy re-audit
+
+Independent Reviewer FAIL `5257239932` on frozen SHA
+`8c8d8c1a66b4995bbc9f3f933ba1791e49d69e97` is the second FAIL in the same HK05-owned defect class:
+**aggregate validation under ambiguous identity**. Under the foundational circuit breaker, this is
+not treated as another fixture exception.
+
+### Root cause found
+
+Repair cycle 1 correctly identified that containment traversal may become representative-dependent
+when object identity is duplicated, but it placed the uncertainty boundary too high: the aggregate
+layer suppressed every `ContainmentAcyclic` diagnostic whenever *any* object ID was ambiguous. That
+converted a local uncertainty into a world-wide blind spot and contradicted HK05's requirement to
+report multiple independent violations.
+
+The underlying HK02 evaluator remains intentionally unchanged. It is an inherited finite invariant
+evaluator and may internally use a first representative while the candidate is already invalid for
+duplicate identity. HK05 owns whether such raw violations are safe to expose as deterministic public
+diagnostics. Reopening HK02 would therefore be both unnecessary and contrary to the predecessor
+ownership split.
+
+### Corrected semantic boundary
+
+Ambiguity deferral is **dependency-local**:
+
+1. the duplicate-identity violation itself is always emitted at an index-addressable source entry;
+2. a secondary violation sourced from an ambiguous object/extension identity is deferred;
+3. for a graph-derived containment-cycle violation whose source is unique, HK05 replays only that
+   source's containment dependency chain without selecting an ambiguous representative;
+4. if that specific chain reaches a duplicated ID, the cycle diagnostic is deferred;
+5. if the chain closes entirely through uniquely identified objects, the cycle diagnostic is stable
+   and remains in the same aggregate result even when an unrelated duplicate exists elsewhere.
+
+This policy is causal rather than name/fixture-specific: the decision is based on whether the
+reported diagnostic depends on an ambiguous representative, not on the presence of ambiguity in the
+world as a whole.
+
+### Regression shape required by the re-audit
+
+The existing connected-ambiguity case remains as the negative half of the boundary: a containment
+result that traverses `node.a` while `node.a` is duplicated must be deferred under duplicate-order
+inversion. A new disjoint case supplies the positive half: two divergent `dup.x` entries coexist with
+an independent unique-ID `cycle.a <-> cycle.b`; reversing only the duplicates must preserve the full
+semantic output and both cycle diagnostics must remain visible.
+
+This pair would turn the repair-cycle-1 global suppression red while preserving the intended
+identity-dependent deferral. No new provenance/index subsystem, second invariant registry or
+predecessor re-proof is introduced.
