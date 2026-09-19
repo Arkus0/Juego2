@@ -181,7 +181,7 @@ namespace Arkus.Harness.Tests
             var mutationNames = new HashSet<string>(StringComparer.Ordinal);
             foreach (var definition in contract.Definitions)
             {
-                if (definition.Key.Name.StartsWith("world.change.", StringComparison.Ordinal))
+                if (definition.Key.Name.StartsWith("authoring.change.", StringComparison.Ordinal))
                 {
                     mutationNames.Add(definition.Key.Name);
                     Assert.NotNull(definition.RequestSchema);
