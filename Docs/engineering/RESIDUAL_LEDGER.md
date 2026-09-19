@@ -78,7 +78,7 @@ These are the entries that decide whether `WP-HK-10` can claim zero, and they ar
 | `R-02-04` | HK-02 | Richer display names and localization layered over the narrow stable identity syntax | matches `CONTENT_SHAPE_BACKLOG.md` row 15 |
 | `R-02-05` | HK-02 | Cross-world and external asset references | touches `CONTENT_SHAPE_BACKLOG.md` row 16 |
 | `R-02A-01` | HK-02A, HK-05 | A producer that embeds an object identity in opaque payload bytes without declaring it cannot be detected generically | matches `CONTENT_SHAPE_BACKLOG.md` row 9 |
-| `R-02A-02` | HK-02A | Whole-world revision/hash CAS; no per-resource concurrency and no automatic merge of disjoint edits | candidate to fall inside HK-09, which claims deterministic stale-revision and conflicting-writer tests |
+| `R-02A-02` | HK-02A | Whole-world revision/hash CAS; no per-resource concurrency and no automatic merge of disjoint edits | candidate to fall inside HK-09, which claims deterministic stale-revision and conflicting-writer tests. Measured cost context below |
 | `R-03-01` | HK-03 | Query evaluation is bounded in output, not in scan cost; no index, sublinear complexity or world-size-independent CPU claim | HK-03 defers this to "future scale work", which does not exist. H0 gates on a micro-world, so this is a candidate for `OUT-BOUNDARY` |
 | `R-03-02` | HK-03 | Cursors are deterministic continuation tokens, not authenticated capabilities, and are not an authorization boundary | candidate to fall inside HK-09's capability boundary |
 | `R-03-03` | HK-03 | No multi-command snapshot lease; a state source may advance between calls | stale anchors fail closed rather than mixing revisions |
@@ -86,6 +86,27 @@ These are the entries that decide whether `WP-HK-10` can claim zero, and they ar
 | `R-04-02` | HK-04 | Multi-process and distributed writers | requires a later authoritative persistence/locking substrate |
 | `R-04-05` | HK-04 | Asymptotic performance for very large worlds | split out of `R-04-04`: HK-04 defers it to "later harness budget/guardrail work", which does not exist. Same candidate as `R-03-01` |
 | `R-05-01` | HK-05 | Secondary diagnostics whose own source or dependency traversal is ambiguous are deferred and not visible in the same validation pass; the contract is iterative for those | HK-05 declares this as claimed semantics, not a gap. Open question for classification: `arkus.world-validation-result/v1` carries no field indicating the report is partial |
+
+### Measured cost context for `R-02A-02`
+
+An exploratory probe on 2026-09-19 measured what a whole-world commit pays as the authored world grows: candidate validation of the 17 invariants, canonical serialization and canonical content hash, over a synthetic town-shaped world (containment tree of branching factor 8, one typed reference per 10 objects, one object-scoped extension per 5).
+
+| Objects | Validate | Serialize | Hash | Total | Canonical bytes |
+|---|---|---|---|---|---|
+| 1 000 | 4.2 ms | 6.3 ms | 6.6 ms | 17 ms | 92 KiB |
+| 10 000 | 13.6 ms | 23.1 ms | 31.9 ms | 69 ms | 958 KiB |
+| 25 000 | 34.7 ms | 87.7 ms | 69.5 ms | 192 ms | 2.4 MiB |
+| 50 000 | 80.2 ms | 150.3 ms | 151.9 ms | 382 ms | 4.8 MiB |
+| 100 000 | 231.2 ms | 385.1 ms | 420.4 ms | 1 037 ms | 9.6 MiB |
+| 200 000 | 541.2 ms | 949.6 ms | 984.4 ms | 2 475 ms | 19.4 MiB |
+
+Growth is roughly `O(n log n)` — 20x the objects costs 36x the time between 10 000 and 200 000 — with no discontinuity up to 200 000 objects. Per-object cost rises slowly from about 7 to 12 microseconds.
+
+Reading it: the cost is per **transaction**, not per edited object, because identity is whole-world. A batched authoring flow pays it once; an unbatched one pays it per edit. `WP-HK-08` owns batching and is therefore the direct mitigation, not merely an ergonomics improvement.
+
+Limits of the measurement, which is **not evidence**: it is not bound to a candidate SHA, was not produced by canonical validation, and ran on shared container CPU. It covers `Arkus.Game.Core` and `Arkus.Game.World` only, so it is a lower bound — a real commit also pays HK-04 plan/change-set work, HK-05 diagnostic aggregation and the HK-06A journal entry. The synthetic world's reference density is uniform and real content will differ.
+
+What would make this a live decision rather than recorded context: a representative target whose authored object count approaches the high tens of thousands, or a requirement for concurrent disjoint writers, which batching does not help and whole-world CAS rejects by design.
 
 ## D. Entries declared more than once
 
