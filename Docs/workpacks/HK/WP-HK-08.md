@@ -18,12 +18,12 @@ Make the harness efficient for real AI use, not merely correct: minimize unneces
 - A reference micro-world authoring benchmark measures request count, response bytes and elapsed harness time for representative create/inspect/modify/repair flows.
 - Baseline budgets are recorded from evidence rather than guessed; regressions above explicit thresholds fail CI or require reviewed budget update.
 - No “one API call per field/property” requirement exists for common authoring flows.
-- Compact/batch modes are semantically equivalent to canonical single operations and cannot bypass validation/provenance.
+- Compact/batch modes are semantically equivalent to canonical single operations and cannot skip validation/provenance.
 - Responses do not echo unnecessary implementation/internal state by default.
 
-## Required self-attacks
+## Required negative-conformance tests
 
-RED→GREEN for: batch partially committing, compact response omitting required repair context, pagination causing duplicate/missed resources, pathological per-field round-trip regression, and batch path bypassing provenance/validation.
+RED→GREEN for: batch partially committing, compact response omitting required repair context, pagination causing duplicate/missed resources, pathological per-field round-trip regression, and batch path omitting provenance/validation.
 
 ## Forbidden scope
 
