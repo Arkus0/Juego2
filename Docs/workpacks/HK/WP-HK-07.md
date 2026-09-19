@@ -15,6 +15,7 @@ Expose the accepted runtime through a production-quality, transport-neutral host
 - Deterministic reference transport is supported (baseline: JSON Lines over stdin/stdout plus one-shot file/stdin mode or an explicitly reviewed equivalent).
 - A first-party MCP adapter projects the accepted canonical Arkus contract through a pinned approved SDK/implementation rather than maintaining an independent command/schema registry.
 - MCP and reference transport expose semantically equivalent capabilities for the accepted H0 surface; framing differences are allowed, semantic drift is not.
+- Transport projections consume the composed canonical capability inventory generically rather than a transport-owned or engine-bridge-owned list, so later accepted scoped providers can become visible without creating a second registry or rewriting canonical semantics.
 - Protocol output is isolated from diagnostic logging; machine streams cannot be corrupted by incidental logs.
 - Exit codes and fatal reference-transport errors are stable/documented.
 - Request timeout/cancellation semantics are explicit and map cleanly into canonical cancellation/failure semantics.
@@ -38,6 +39,8 @@ RED→GREEN for:
 - MCP projection changing request/result/error meaning;
 - MCP adapter introducing a hidden mutation path;
 - transport registry being used as the only completeness oracle;
+- synthetic scoped canonical capability present in the composed inventory but omitted because the transport reads a fixed/base-only registry;
+- engine/transport adapter attempting to publish an adapter-only capability that was never accepted by canonical composition;
 - removing/replacing the transport SDK causing canonical kernel code changes rather than adapter-only changes.
 
 ## Forbidden scope
@@ -46,4 +49,4 @@ HTTP/cloud service, Unity Editor bridge, GUI, model-vendor-specific orchestratio
 
 ## DoD
 
-External processes can discover and exercise the complete accepted harness contract through the deterministic reference transport and the MCP projection; conformance proves both are projections of the same canonical semantics with deterministic failure behaviour; independent PASS.
+External processes can discover and exercise the complete accepted harness contract through the deterministic reference transport and the MCP projection; conformance proves both are projections of the same composed canonical semantics with deterministic failure behaviour and no parallel adapter registry; independent PASS.
