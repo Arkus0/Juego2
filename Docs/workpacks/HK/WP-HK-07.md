@@ -26,7 +26,7 @@ Expose the accepted runtime through a production-quality, transport-neutral host
 - The transport inventory cannot self-shrink: canonical capability inventory is the authority and adapters are checked against it, not vice versa.
 - External transport SDK usage satisfies `DEPENDENCY_IP_POLICY.md` and is replaceable behind Arkus conformance tests.
 
-## Required self-attacks
+## Required negative-conformance tests
 
 RED→GREEN for:
 
@@ -34,10 +34,10 @@ RED→GREEN for:
 - truncated/malformed/oversized reference frame;
 - cancellation/timeout;
 - unexpected process environment changing semantics;
-- alternate public host path bypassing canonical runtime;
+- alternate public host path that skips the canonical runtime;
 - canonical capability missing from MCP projection;
 - MCP projection changing request/result/error meaning;
-- MCP adapter introducing a hidden mutation path;
+- MCP adapter exposing an undeclared mutation path;
 - transport registry being used as the only completeness oracle;
 - synthetic scoped canonical capability present in the composed inventory but omitted because the transport reads a fixed/base-only registry;
 - engine/transport adapter attempting to publish an adapter-only capability that was never accepted by canonical composition;
