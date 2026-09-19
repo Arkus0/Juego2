@@ -1,0 +1,124 @@
+name: HK00 Final Evidence Reconcile
+
+on:
+  push:
+    branches:
+      - validation/hk00-reconcile-final
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TARGET_BRANCH: wp-hk-00-v4-sol-exclusive
+      EXPECTED_BASE_SHA: 56919bfd71fa5f28a370e7ba03a49d07b76e722a
+      PROOF_ARTIFACT_ID: '10579531278'
+      ATTACKS_ARTIFACT_ID: '10579691406'
+      EXPECT_PROJECTS_BLOB: dad900922231a44cad92b4c2adf88d3eef1e9bfb
+      EXPECT_GRAPH_BLOB: 09422a82e65762137e833abe18a9ac6d4ea45ae1
+      EXPECT_SOURCES_BLOB: 944f7487a2e85e2f459a7c5ab80902665803884b
+      EXPECT_COMPILER_ARGS_BLOB: 07cfb38681df2701b91c04071587f88c1ee10684
+      EXPECT_RESULTS_BLOB: caaf89d2e6b7b8a3b5c4d94cc0d030761726bbe8
+      PRE_REVIEW_BLOB: c4d6fc37d79ffe9a71d6e9ec1fd1f867463c9a68
+      VERDICT_BLOB: 2901b08d794bbf340fb261c0c180bbdd33b4eb93
+      PROOF_MATRIX_BLOB: 6a6ab90185f530d2ee06d543234c3a2da679c788
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout exact Worker branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+
+      - name: Assert exclusive expected parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXPECTED_BASE_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Download exact observation artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hk00-proof /tmp/hk00-attacks
+          curl -fsSL -L \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${PROOF_ARTIFACT_ID}/zip" \
+            -o /tmp/hk00-proof.zip
+          curl -fsSL -L \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ATTACKS_ARTIFACT_ID}/zip" \
+            -o /tmp/hk00-attacks.zip
+          unzip -q /tmp/hk00-proof.zip -d /tmp/hk00-proof
+          unzip -q /tmp/hk00-attacks.zip -d /tmp/hk00-attacks
+
+      - name: Verify observation identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_blob() {
+            local path="$1" expected="$2"
+            test -f "${path}"
+            actual="$(git hash-object "${path}")"
+            test "${actual}" = "${expected}" || {
+              echo "blob mismatch for ${path}: expected ${expected}, got ${actual}" >&2
+              exit 2
+            }
+          }
+          assert_blob /tmp/hk00-proof/inventory/projects.json "${EXPECT_PROJECTS_BLOB}"
+          assert_blob /tmp/hk00-proof/inventory/graph.json "${EXPECT_GRAPH_BLOB}"
+          assert_blob /tmp/hk00-proof/inventory/sources.json "${EXPECT_SOURCES_BLOB}"
+          assert_blob /tmp/hk00-proof/inventory/compiler-args.json "${EXPECT_COMPILER_ARGS_BLOB}"
+          assert_blob /tmp/hk00-attacks/results.md "${EXPECT_RESULTS_BLOB}"
+          cmp Docs/evidence/WP-HK-00/inventory/projects.json /tmp/hk00-proof/inventory/projects.json
+          cmp Docs/evidence/WP-HK-00/inventory/graph.json /tmp/hk00-proof/inventory/graph.json
+          test "$(grep -c '^| `' /tmp/hk00-attacks/results.md)" = "37"
+          test "$(grep '^| `' /tmp/hk00-attacks/results.md | cut -d'|' -f2 | sed 's/^ *//;s/ *$//' | sort -u | wc -l | tr -d ' ')" = "37"
+
+      - name: Reconcile evidence and final Worker documents
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp /tmp/hk00-proof/inventory/sources.json Docs/evidence/WP-HK-00/inventory/sources.json
+          cp /tmp/hk00-proof/inventory/compiler-args.json Docs/evidence/WP-HK-00/inventory/compiler-args.json
+          cp /tmp/hk00-attacks/results.md Docs/evidence/WP-HK-00/self-attacks/results.md
+
+          fetch_blob() {
+            local sha="$1" out="$2"
+            gh api "repos/${GITHUB_REPOSITORY}/git/blobs/${sha}" --jq '.content' \
+              | tr -d '\n' | base64 --decode > "${out}"
+            test "$(git hash-object "${out}")" = "${sha}"
+          }
+          fetch_blob "${PRE_REVIEW_BLOB}" Docs/evidence/WP-HK-00/WORKER_PRE_REVIEW.md
+          fetch_blob "${VERDICT_BLOB}" Docs/evidence/WP-HK-00/VERDICT.md
+          fetch_blob "${PROOF_MATRIX_BLOB}" Docs/evidence/WP-HK-00/PROOF_MATRIX.md
+
+      - name: Commit exactly the reconciled final candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- \
+            Docs/evidence/WP-HK-00/inventory/sources.json \
+            Docs/evidence/WP-HK-00/inventory/compiler-args.json \
+            Docs/evidence/WP-HK-00/self-attacks/results.md \
+            Docs/evidence/WP-HK-00/WORKER_PRE_REVIEW.md \
+            Docs/evidence/WP-HK-00/VERDICT.md \
+            Docs/evidence/WP-HK-00/PROOF_MATRIX.md
+          git diff --cached --check
+          test -z "$(git status --porcelain --untracked-files=all | grep -vE '^(M |A | M|AM|MM) Docs/evidence/WP-HK-00/(inventory/(sources|compiler-args)\.json|self-attacks/results\.md|WORKER_PRE_REVIEW\.md|VERDICT\.md|PROOF_MATRIX\.md)$' || true)"
+          git config user.name "HK00 Evidence Reconciler"
+          git config user.email "hk00@example.invalid"
+          git commit -m "docs(hk00): reconcile final proof evidence"
+          new_sha="$(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD^)" = "${EXPECTED_BASE_SHA}"
+          echo "FINAL_CANDIDATE_SHA=${new_sha}"
+          git push origin HEAD:"${TARGET_BRANCH}"
