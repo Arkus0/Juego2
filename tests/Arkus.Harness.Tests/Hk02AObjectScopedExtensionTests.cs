@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
 using Arkus.Harness.Protocol;
+using Arkus.Harness.Runtime;
 using Xunit;
 
 namespace Arkus.Harness.Tests
