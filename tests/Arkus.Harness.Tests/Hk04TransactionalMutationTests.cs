@@ -192,6 +192,7 @@ namespace Arkus.Harness.Tests
 
             Assert.True(new HashSet<string>(StringComparer.Ordinal)
             {
+                WorldValidationContract.ProposedName,
                 WorldMutationContract.PlanName,
                 WorldMutationContract.DryRunName,
                 WorldMutationContract.ApplyName

@@ -183,7 +183,10 @@ namespace Arkus.Harness.Tests
             Assert.False(apply.Success);
             Assert.Equal("world.change.invalid_candidate", plan.Error!.MachineCode);
             Assert.Equal("world.change.invalid_candidate", apply.Error!.MachineCode);
-            Assert.Equal(sourceCode, plan.Error.Context["sourceCode"]);
+            var validation = (IReadOnlyDictionary<string, object?>)plan.Error.Context["validation"]!;
+            var diagnostics = (IReadOnlyList<object?>)validation["diagnostics"]!;
+            Assert.Contains(diagnostics, value =>
+                ((IReadOnlyDictionary<string, object?>)value!)["machineCode"] as string == sourceCode);
             Assert.Equal(initial.Revision, session.Current.Revision);
             Assert.Equal(beforeHash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
         }

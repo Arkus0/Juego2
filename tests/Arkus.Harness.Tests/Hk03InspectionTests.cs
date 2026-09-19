@@ -284,7 +284,8 @@ namespace Arkus.Harness.Tests
                 WorldInspectionContract.ObjectQueryName,
                 WorldInspectionContract.ReferenceQueryName,
                 WorldInspectionContract.ExtensionQueryName,
-                WorldInspectionContract.ExtensionReadName
+                WorldInspectionContract.ExtensionReadName,
+                WorldValidationContract.CurrentName
             };
         }
 

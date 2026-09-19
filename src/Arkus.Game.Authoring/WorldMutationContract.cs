@@ -75,7 +75,7 @@ namespace Arkus.Game.Authoring
             return new ProviderMetadata("arkus.base", ProviderKind.Base, "base", "authoring");
         }
 
-        private static JsonSchemaDocument MutationRequestSchema()
+        internal static JsonSchemaDocument MutationRequestSchema()
         {
             var reference = SchemaNode.Object(
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)

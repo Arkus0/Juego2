@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using Arkus.Game.Validation;
 using Arkus.Game.World;
 using Arkus.Harness.Protocol;
 
@@ -13,7 +14,11 @@ namespace Arkus.Game.Authoring
     /// Engine-neutral authoritative authoring session. Canonical commit authority is internal;
     /// public callers can inspect current state and use plan/dry-run only.
     /// </summary>
-    public sealed class TransactionalWorldAuthoringSession : IWorldStateSource, IWorldMutationService, ICanonicalWorldMutationCommitter
+    public sealed class TransactionalWorldAuthoringSession :
+        IWorldStateSource,
+        IWorldMutationService,
+        IWorldValidationService,
+        ICanonicalWorldMutationCommitter
     {
         private const string FingerprintVersion = "arkus-world-mutation-request-v2";
         private const string PlanVersion = "arkus-world-mutation-plan-v2";
@@ -39,6 +44,23 @@ namespace Arkus.Game.Authoring
                     return _current;
                 }
             }
+        }
+
+        public CapabilityInvocationResult ValidateCurrent(IReadOnlyDictionary<string, object?> request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (request.Count != 0) return InvalidRequest("$", "Current-state validation takes an empty request.");
+            return CapabilityInvocationResult.Succeeded(WorldValidationEngine.ValidateCurrent(Capture().State).ToData());
+        }
+
+        public CapabilityInvocationResult ValidateProposed(IReadOnlyDictionary<string, object?> request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            var parseError = ParseRequest(request, out var parsed);
+            if (parseError != null) return parseError;
+
+            var candidateError = BuildCandidate(Capture(), parsed, out _, out var validation);
+            return candidateError ?? CapabilityInvocationResult.Succeeded(validation!.ToData());
         }
 
         public CapabilityInvocationResult Plan(IReadOnlyDictionary<string, object?> request)
@@ -121,6 +143,59 @@ namespace Arkus.Game.Authoring
             out MutationPlan? plan)
         {
             plan = null;
+            var candidateError = BuildCandidate(snapshot, request, out var candidate, out var validation);
+            if (candidateError != null) return candidateError;
+            if (!validation!.Valid) return InvalidCandidate(validation);
+
+            var changes = BuildChanges(snapshot.State, candidate!);
+            if (changes.Count == 0)
+            {
+                return Failure(
+                    "world.change.no_effect",
+                    "The accepted operations produce no net authorable-state change.",
+                    "$.operations",
+                    EmptyContext(),
+                    false,
+                    "Remove cancelling/no-op operations or change at least one canonical authorable value.");
+            }
+
+            var coverageIssues = WorldMutationCoverage.FindMismatches(snapshot.State, candidate!, changes);
+            if (coverageIssues.Count != 0)
+            {
+                return Failure(
+                    "world.change.plan_incomplete",
+                    "The deterministic change set does not cover the candidate state's effective semantic changes.",
+                    "$.operations",
+                    new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["firstMismatch"] = coverageIssues[0]
+                    },
+                    false,
+                    "Treat this as a canonical planner invariant failure; do not apply the request.");
+            }
+
+            var resultHash = CanonicalWorldStateCodec.ComputeContentHash(candidate!);
+            var planId = ComputePlanId(snapshot, candidate!, resultHash, changes);
+            plan = new MutationPlan(
+                planId,
+                snapshot.State.Id.Value,
+                snapshot.State.SchemaVersion,
+                snapshot.State.Revision,
+                snapshot.Hash,
+                candidate!,
+                resultHash,
+                changes);
+            return null;
+        }
+
+        private static CapabilityInvocationResult? BuildCandidate(
+            WorldSnapshot snapshot,
+            ParsedMutationRequest request,
+            out WorldState? candidate,
+            out WorldValidationResult? validation)
+        {
+            candidate = null;
+            validation = null;
             if (request.ExpectedRevision != snapshot.State.Revision)
             {
                 return Failure(
@@ -192,7 +267,15 @@ namespace Arkus.Game.Authoring
             var extensionValues = new List<WorldExtensionData>(extensions.Values);
             extensionValues.Sort(CompareExtensions);
 
-            WorldState candidate;
+            var rawCandidate = new WorldStateCandidate(
+                snapshot.State.Id,
+                snapshot.State.Revision + 1,
+                objectValues,
+                extensionValues,
+                snapshot.State.SchemaVersion);
+            validation = WorldValidationEngine.ValidateCandidate(rawCandidate);
+            if (!validation.Valid) return null;
+
             try
             {
                 candidate = new WorldState(
@@ -204,51 +287,12 @@ namespace Arkus.Game.Authoring
             }
             catch (WorldStateException exception)
             {
-                return InvalidCandidate(exception.MachineCode, exception.Message, exception.Path);
+                return InternalValidationFailure(exception.MachineCode, exception.Message, exception.Path);
             }
             catch (ArgumentException exception)
             {
-                return InvalidCandidate("world.invalid_value", exception.Message, "$.operations");
+                return InternalValidationFailure("world.invalid_value", exception.Message, "$.operations");
             }
-
-            var changes = BuildChanges(snapshot.State, candidate);
-            if (changes.Count == 0)
-            {
-                return Failure(
-                    "world.change.no_effect",
-                    "The accepted operations produce no net authorable-state change.",
-                    "$.operations",
-                    EmptyContext(),
-                    false,
-                    "Remove cancelling/no-op operations or change at least one canonical authorable value.");
-            }
-
-            var coverageIssues = WorldMutationCoverage.FindMismatches(snapshot.State, candidate, changes);
-            if (coverageIssues.Count != 0)
-            {
-                return Failure(
-                    "world.change.plan_incomplete",
-                    "The deterministic change set does not cover the candidate state's effective semantic changes.",
-                    "$.operations",
-                    new Dictionary<string, object?>(StringComparer.Ordinal)
-                    {
-                        ["firstMismatch"] = coverageIssues[0]
-                    },
-                    false,
-                    "Treat this as a canonical planner invariant failure; do not apply the request.");
-            }
-
-            var resultHash = CanonicalWorldStateCodec.ComputeContentHash(candidate);
-            var planId = ComputePlanId(snapshot, candidate, resultHash, changes);
-            plan = new MutationPlan(
-                planId,
-                snapshot.State.Id.Value,
-                snapshot.State.SchemaVersion,
-                snapshot.State.Revision,
-                snapshot.Hash,
-                candidate,
-                resultHash,
-                changes);
             return null;
         }
 
@@ -827,15 +871,34 @@ namespace Arkus.Game.Authoring
                 "Refresh state or remove the invalid delete operation before retrying.");
         }
 
-        private static CapabilityInvocationResult InvalidCandidate(string sourceCode, string message, string path)
+        private static CapabilityInvocationResult InvalidCandidate(WorldValidationResult validation)
         {
+            var path = validation.Diagnostics.Count == 0 ? "$.operations" : validation.Diagnostics[0].Path;
             return Failure(
                 "world.change.invalid_candidate",
-                message,
+                "The proposed operations violate canonical world invariants.",
                 path,
-                new Dictionary<string, object?>(StringComparer.Ordinal) { ["sourceCode"] = sourceCode },
+                new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["validation"] = validation.ToData()
+                },
                 false,
-                "Repair the proposed operations so the complete candidate satisfies canonical world invariants.");
+                "Use the ordered validation diagnostics to repair the complete proposed state before retrying.");
+        }
+
+        private static CapabilityInvocationResult InternalValidationFailure(string sourceCode, string message, string path)
+        {
+            return Failure(
+                "world.validation.internal_error",
+                "Validated candidate materialization disagreed with the canonical invariant evaluator.",
+                path,
+                new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["sourceCode"] = sourceCode,
+                    ["detail"] = message
+                },
+                false,
+                "Treat this as an Arkus validator defect; do not commit the candidate.");
         }
 
         private static CapabilityInvocationResult InvalidRequest(string path, string message)

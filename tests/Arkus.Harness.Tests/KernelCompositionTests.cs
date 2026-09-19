@@ -15,7 +15,9 @@ namespace Arkus.Harness.Tests
         {
             Assert.Equal("Arkus.Game.Core", CoreModule.Name);
             Assert.Equal("Arkus.Game.Core", WorldModule.CoreBoundary);
-            Assert.Equal("Arkus.Game.Core:Arkus.Game.World:Arkus.Harness.Protocol", AuthoringModule.Composition);
+            Assert.Equal(
+                "Arkus.Game.Core:Arkus.Game.World:Arkus.Game.Validation:Arkus.Harness.Protocol",
+                AuthoringModule.Composition);
             Assert.Equal("Arkus.Game.Core:Arkus.Game.World:Arkus.Harness.Protocol", ValidationModule.Composition);
             Assert.Equal("Arkus.Harness.Protocol:Arkus.Game.Authoring:Arkus.Game.Validation", RuntimeModule.Composition);
             Assert.Equal("Arkus.Harness.Protocol", ProtocolModule.Name);

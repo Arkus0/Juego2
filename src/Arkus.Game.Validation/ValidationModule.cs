@@ -4,7 +4,7 @@ using Arkus.Harness.Protocol;
 
 namespace Arkus.Game.Validation
 {
-    /// <summary>Boundary marker that causally exercises the required validation edges.</summary>
+    /// <summary>Canonical validation and repairable-diagnostic boundary.</summary>
     public static class ValidationModule
     {
         public static string Name => "Arkus.Game.Validation";
