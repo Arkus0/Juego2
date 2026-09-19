@@ -75,12 +75,13 @@ namespace Arkus.Game.Authoring
                     ["current"] = WorldProvenanceContract.AuthoredAnchorSchema(),
                     ["lineageDisposition"] = SchemaNode.String(new[] { "new-local-lineage" }),
                     ["retainedJournalEntries"] = SchemaNode.Integer(),
-                    ["importedJournalEntries"] = SchemaNode.Integer()
+                    ["importedJournalEntries"] = SchemaNode.Integer(),
+                    ["replayed"] = SchemaNode.Boolean()
                 },
                 new[]
                 {
                     "schemaId", "previous", "current", "lineageDisposition",
-                    "retainedJournalEntries", "importedJournalEntries"
+                    "retainedJournalEntries", "importedJournalEntries", "replayed"
                 }));
         }
 
@@ -170,11 +171,12 @@ namespace Arkus.Game.Authoring
             var request = new JsonSchemaDocument(SchemaNode.Object(
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
                 {
+                    ["idempotencyKey"] = SchemaNode.String(),
                     ["expectedRevision"] = SchemaNode.Integer(),
                     ["expectedHash"] = SchemaNode.String(),
                     ["snapshot"] = SnapshotNode()
                 },
-                new[] { "expectedRevision", "expectedHash", "snapshot" }));
+                new[] { "idempotencyKey", "expectedRevision", "expectedHash", "snapshot" }));
 
             return new CapabilityDefinition(
                 new CapabilityKey(ImportName, Version),
@@ -188,7 +190,8 @@ namespace Arkus.Game.Authoring
                 {
                     "expected-revision-and-hash-match",
                     "snapshot-valid-and-version-supported",
-                    "snapshot-anchor-matches-embedded-state"
+                    "snapshot-anchor-matches-embedded-state",
+                    "idempotency-key-not-conflicting"
                 },
                 new[]
                 {
@@ -198,7 +201,7 @@ namespace Arkus.Game.Authoring
                     "replacement-atomic-or-state-unchanged"
                 },
                 new ConcurrencySemantics(ConcurrencyClass.OptimisticVersioned, "expectedRevision+expectedHash"),
-                new IdempotencySemantics(IdempotencyClass.Idempotent),
+                new IdempotencySemantics(IdempotencyClass.IdempotentWithKey, "idempotencyKey"),
                 new BatchingSemantics(BatchingClass.Unsupported),
                 new RepairSemantics(true, true),
                 new PolicySemantics(
