@@ -57,6 +57,17 @@ Adding only `SubjectId` would also leave payload-internal object references invi
 
 The independently enumerated HK02 semantic-property universe grows for the new public properties. The codec hash mutation matrix, HK03 public reconstruction hash and HK04 independent semantic change oracle remain the evaluated boundaries; they are extended for the new semantics rather than replaced. Focused defect injections remove subject/dependency contribution at each boundary and must turn the corresponding oracle red.
 
-The required representative content-shape probe is recorded separately and will be rerun against the complete candidate before freeze.
+The required representative content-shape probe is recorded separately and has been rerun against the complete candidate surfaces before freeze.
 
-`PROOF_BUDGET_VERDICT` remains pending implementation and strict pre-review.
+## Implementation observation
+
+- Observed candidate SHA: `f3c9a8f918a4389298cbb4a9515e4cd701f990ad`.
+- GitHub Actions run: `35454985416`.
+- Release build: 0 warnings / 0 errors.
+- Focused HK02A contract and negative-conformance tests: 8/8 GREEN.
+- Full regression: 95/95 GREEN.
+- Canonical receipt: `Result: GREEN`.
+
+The final evidence-bearing SHA must rerun the same canonical entrypoint read-only before freeze.
+
+`PROOF_BUDGET_VERDICT: WITHIN_BUDGET` — the implementation extends the existing HK02 codec/semantic inventory, HK03 read surface and HK04 mutation/change oracle directly. It adds no external dependency, generalized framework or duplicate predecessor proof system.

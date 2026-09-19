@@ -2,7 +2,7 @@
 
 Date: 2026-09-19
 Product sources: `Docs/art/VISUAL_BIBLE.md` §4–5/§8 and `Docs/art/SETTING.md`
-Status: pre-implementation probe; rerun against the complete candidate before freeze
+Status: complete against observed candidate `f3c9a8f918a4389298cbb4a9515e4cd701f990ad`; final evidence-bearing SHA revalidation pending
 
 ## Bounded scenario
 
@@ -37,6 +37,19 @@ Payload bytes remain opaque. `arkus.npc-profile` and `arkus.spatial` are illustr
 
 None of these adjacent findings falsifies an accepted predecessor guarantee. They do not justify reopening HK01–HK04 without concrete evidence on their effective paths.
 
-## Probe verdict before implementation
+## Candidate execution
 
-The proposed optional subject plus typed dependency surface is the smallest generic change that closes the observed per-object anchoring and referential-visibility gaps. The probe introduces no content-specific validator, payload interpreter, simulation system or gameplay schema. Final status remains pending execution through the completed candidate surfaces.
+The completed candidate exercises the bounded shape through the canonical surfaces:
+
+- two NPC subjects carry the same owner/schema version as distinct resources;
+- query filtering returns Ana's object-scoped descriptor and dependency count;
+- bounded read returns subject plus sorted typed dependencies and reconstructs the exact canonical world hash;
+- transactional put addresses two subjects independently and reports dependency field/reference effects;
+- removing either Ana (the subject) or the shop (a dependency target) fails candidate validation before commit;
+- global extensions used by the accepted regression fixtures retain their prior call shape and semantics.
+
+Observed evidence: Actions run `35454985416`, focused HK02A 8/8 GREEN and full regression 95/95 GREEN on `f3c9a8f918a4389298cbb4a9515e4cd701f990ad`.
+
+## Probe verdict
+
+The optional subject plus typed dependency surface is sufficient for the bounded H2 content shape and is the smallest generic change that closes the observed per-object anchoring and referential-visibility gaps. The candidate introduces no content-specific validator, payload interpreter, simulation system or gameplay schema. No in-scope blocker or predecessor reopen condition remains.
