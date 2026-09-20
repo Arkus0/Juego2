@@ -17,7 +17,7 @@ The representative external-process client then proves the ordinary same-lineage
 | Proof obligation | Completeness argument | Positive/effective evidence | Causal negative control | Result |
 |---|---|---|---|---|
 | stale errors carry stable structured recovery | recovery decorates only stale plan/dry-run/apply results and preserves original machine error fields while adding canonical context | same-lineage test checks schema, expected/current anchors, disposition and history proof | opaque/missing recovery causes direct assertions to fail | PASS |
-| all three public mutation routes expose one recovery truth | bindings use the same read-only recovery source/decorator; route test dispatches one stale base through plan/dry-run/apply | `PlanDryRunAndApplyExposeTheSameRecoveryTruthForOneStaleBase` requires identical recovery maps | any route omission/drift turns the test red | PASS |
+| all three public mutation routes expose one recovery truth | bindings use the same read-only recovery source/decorator; route test dispatches one stale base through plan/dry-run/apply | `PlanDryRunAndApplyExposeTheSameRecoveryTruthForOneStaleBase` requires complete serialized recovery payload equality | any route omission/drift turns the test red | PASS |
 | ancestry requires exact base and complete local history | recovery validates journal base/current against captured authored anchor, sequence continuity, anchor continuity, identity/schema continuity and +1 revisions | two real mutations from the expected journal base produce `history-complete` with two transitions | gapped-sequence service must fail closed as `required-history-unavailable` | PASS |
 | rebase/non-ancestor does not fabricate precision | HK06B's new lineage has a new empty local journal; revision equality alone is insufficient | same-revision/different-hash snapshot-rebase case returns bounded fallback and empty delta | a revision-only ancestry algorithm would make the test red | PASS |
 | changed-resource delta is complete and deterministic | delta is sorted union of every HK06A `affectedResources` after the proven base | independent changes to `node.peer` and `node.child` require exact two-resource list | omission of either resource fails exact list comparison | PASS |
@@ -41,14 +41,16 @@ The representative external-process client then proves the ordinary same-lineage
 5. **Transport universe:** reference JSONL and MCP execute as independent external processes and compare neutral response semantics, not shared in-process objects.
 6. **Benchmark universe:** the measurement client itself is public-process based; shape oracles separately reject private measurement, omitted flow, full-world reload, missing affected inspection and mutation chatter.
 7. **Budget universe:** request/byte/time limits are executable code reviewed with the WP. Threshold increases cannot happen as an unreviewed runtime configuration change.
+8. **Route-equivalence universe:** recovery maps from plan/dry-run/apply are compared through complete deterministic JSON signatures, avoiding dependence on reference equality or collection-specific test-framework overloads.
 
 ## Worker convergence before freeze
 
-The recovery truth contract was persisted before benchmark budgets. During implementation/convergence the Worker corrected three material issues before handoff:
+The recovery truth contract was persisted before benchmark budgets. During implementation/convergence the Worker corrected four material proof/quality issues before handoff:
 
 1. the first recovery integration let the plan/dry-run handler object graph retain the raw mutation service; HK04 correctly rejected that as apparent write authority. Recovery was moved behind the accepted `WorldMutationPlannerView` attenuation rather than weakening the inspector;
 2. the first green benchmark measured cost but did not yet make the recorded values executable regression gates. The first green observation (`8b04a66079cd8a637f0abd8aa1eeb18cd90d9f99`, Actions `35501506939`) was used to freeze explicit constants and causal +1 red controls;
-3. strong recovery evidence centered on `plan` even though the implementation decorates plan/dry-run/apply. A route-symmetry test was added to require identical recovery truth on all three public mutation paths without state/provenance change.
+3. strong recovery evidence centered on `plan` even though the implementation decorates plan/dry-run/apply. A route-symmetry test was added to require identical recovery truth on all three public mutation paths without state/provenance change;
+4. the first route-symmetry assertion risked exercising dictionary/object equality semantics rather than payload semantics. Candidate `9968d119648996531aa8823ab97786e9a8eb1855` changed the oracle to compare complete deterministic JSON signatures, without changing production behavior.
 
 Incidental compile/fixture syntax mistakes encountered before these gates were corrected before candidate freeze and are not counted as proof discoveries.
 
@@ -65,7 +67,7 @@ Candidate `8b04a66079cd8a637f0abd8aa1eeb18cd90d9f99` passed Actions run `3550150
 - candidate clean before/after: YES;
 - artifact: `10602945775`.
 
-The final reconciled candidate must additionally pass the exact-SHA verifier containing the executable budget and route-symmetry controls before handoff.
+The final reconciled candidate must additionally pass the exact-SHA verifier containing the executable budget, route-symmetry and evidence gates before handoff.
 
 ## Proof-budget verdict
 
