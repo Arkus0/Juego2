@@ -42,14 +42,14 @@ HK07A turns the accepted composed canonical H0 contract into a non-interactive p
 
 ## Implementation observation
 
-Implementation/test/evidence SHA `9632884059abf483254e7f15eb01e1083c6e1762` passed the canonical local exact-SHA observation on the pinned .NET SDK 8.0.425:
+Remote implementation/test/evidence SHA `acd112665db0fec32e238ed847ae18702cf02320` passed the canonical local exact-SHA observation on the pinned .NET SDK 8.0.425:
 
 - locked restore: GREEN;
 - Release build: 0 warnings / 0 errors;
 - focused `Hk07A*`: 15/15 GREEN;
 - full regression: 151/151 GREEN;
 - clean candidate before and after: YES;
-- receipt command: `scripts/hk07a-observe-exact-sha.sh 9632884059abf483254e7f15eb01e1083c6e1762`.
+- receipt command: `scripts/hk07a-observe-exact-sha.sh acd112665db0fec32e238ed847ae18702cf02320` from a clean worktree fetched from the GitHub branch.
 
 The directly bootstrapped HK00 oracle also reported GREEN for its independent repository universe and evaluated static project graph on that clean implementation tree. This reconciled the new Projection project and two inherited graph omissions exposed during pre-review. The current managed local substrate cannot run the optional HK00 effective phase's repeated parallel rebuild/query pattern reliably; HK07A's canonical exact-SHA gate uses a single-node restore/build plus effective focused/full tests and is GREEN.
 

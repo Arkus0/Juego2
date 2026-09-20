@@ -10,7 +10,7 @@ WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-07A/WORKER_PRE_REVIEW.md
 - Baseline: `9173dcef32f6e020b64c3db2816fe5f4d0994058`.
 - Branch: `wp/hk-07a-headless-host`.
 - Direct accepted dependency: `WP-HK-06C`.
-- Implementation/test/evidence SHA observed GREEN: `9632884059abf483254e7f15eb01e1083c6e1762`.
+- Remote implementation/test/evidence SHA observed GREEN: `acd112665db0fec32e238ed847ae18702cf02320`.
 - Remote PR/Actions observation: pending publication; the current execution environment rejected the remote write, so this report does not claim a GitHub run or frozen handoff.
 
 This is Worker quality-gate evidence only. It is not an independent Reviewer verdict.
@@ -70,7 +70,7 @@ Adding Projection and running the independently bootstrapped oracle exposed that
 
 ## Green implementation observation
 
-Exact implementation/test/evidence SHA `9632884059abf483254e7f15eb01e1083c6e1762` passed:
+Exact remote implementation/test/evidence SHA `acd112665db0fec32e238ed847ae18702cf02320` passed from a clean fetched worktree:
 
 - locked restore: GREEN;
 - Release build: 0 warnings / 0 errors;
@@ -111,4 +111,4 @@ No MCP SDK/type, second adapter, batching/pagination/stale recovery, host capabi
 
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
-The final exact-SHA reconciliation after `9632884059abf483254e7f15eb01e1083c6e1762` is documentation-only. The resulting exact HEAD must pass `scripts/hk07a-verify-exact-sha.sh` unchanged before the branch may be marked `FROZEN_FOR_REVIEW` and handed to a fresh independent Reviewer.
+The final exact-SHA reconciliation after `acd112665db0fec32e238ed847ae18702cf02320` is documentation-only. The resulting exact remote HEAD must pass `scripts/hk07a-verify-exact-sha.sh` unchanged before the branch may be marked `FROZEN_FOR_REVIEW` and handed to a fresh independent Reviewer.

@@ -23,7 +23,7 @@ The client:
 
 ## Result
 
-Implementation/test/evidence SHA `9632884059abf483254e7f15eb01e1083c6e1762` passed:
+Remote implementation/test/evidence SHA `acd112665db0fec32e238ed847ae18702cf02320` passed from a clean fetched worktree:
 
 - real source and target process launch/clean EOF;
 - public discovery before use;

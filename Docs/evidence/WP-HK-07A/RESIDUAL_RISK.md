@@ -4,7 +4,7 @@
 
 HK07A claims one process-local canonical host, a transport-neutral projection contract, and a deterministic local JSONL reference adapter with generic composed-inventory projection, stable framing/failure/admission semantics, isolated stdout/stderr and a fresh external-client demonstration of the accepted H0 authoring surface.
 
-Within that boundary, no known material defect class remains undetected after the focused positive/negative controls, content-shape probe, exact-SHA observation and full inherited regression at implementation/test/evidence SHA `9632884059abf483254e7f15eb01e1083c6e1762`.
+Within that boundary, no known material defect class remains undetected after the focused positive/negative controls, content-shape probe, exact-SHA observation and full inherited regression at remote implementation/test/evidence SHA `acd112665db0fec32e238ed847ae18702cf02320`.
 
 ## Non-blocking residuals outside the claim
 

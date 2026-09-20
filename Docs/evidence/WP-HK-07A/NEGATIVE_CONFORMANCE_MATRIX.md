@@ -26,4 +26,4 @@ All controls execute either the public neutral service, the compiled reference p
 - canonical response objects are emitted with recursively ordinal-sorted keys;
 - the independent repository/static oracle turns RED for unowned projects, undeclared graph edges or candidate/index divergence.
 
-Implementation/test/evidence SHA `9632884059abf483254e7f15eb01e1083c6e1762`: focused HK07A 15/15 GREEN, full regression 151/151 GREEN, exact-SHA receipt GREEN.
+Remote implementation/test/evidence SHA `acd112665db0fec32e238ed847ae18702cf02320`: focused HK07A 15/15 GREEN, full regression 151/151 GREEN, exact-SHA receipt GREEN from a clean fetched worktree.
