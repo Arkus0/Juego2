@@ -1,6 +1,6 @@
 # WP-HK-09B Worker plan and implementation record
 
-Status: REPAIRING_AFTER_REVIEW_FAIL  
+Status: READY_FOR_FREEZE  
 Branch: `wp/hk-09b-resource-persistence`  
 Baseline SHA: `ada532f99282c96db15813eb17963bc9cb6d08fb`
 
@@ -25,7 +25,7 @@ HK09B consumes, rather than re-proves, these accepted guarantees unless concrete
 4. HK08A: the representative coherent 96-operation mixed-resource edit is one accepted transaction, one revision advance and one HK06A entry; query and journal pages are bounded to accepted deterministic semantics.
 5. HK08B: same-lineage recovery remains truthful and bounded; retry is a normal canonical transaction; the five-flow reference client remains within 12 requests, 15,064 serialized response bytes and the coarse 1,480 ms regression guard.
 
-No predecessor reopen condition was observed. The independent review later found one HK09B regression against item 2; that is repaired locally below rather than reopening HK07A.
+No predecessor reopen condition was observed. The independent review later found one HK09B regression against item 2; that was repaired locally rather than reopening HK07A.
 
 ## Newly owned HK09B guarantee
 
@@ -63,7 +63,7 @@ HK08B's accepted 12-request / 15,064-byte / 1,480-ms interaction guards remain s
 
 ## Convergence and regression repair
 
-The implementation first reached focused HK09B GREEN while full regression exposed four stale inherited assertions introduced by the new legitimate base read capability `system.resource-envelope.describe@1.0`:
+The implementation first reached focused HK09B GREEN while full regression exposed stale inherited assertions introduced by the new legitimate base read capability `system.resource-envelope.describe@1.0`:
 
 - HK01 base inventory assumed exactly one base definition;
 - HK01 synthetic/scoped discovery assumed the old total counts;
@@ -77,9 +77,10 @@ The repair is deliberately local:
 
 - commit `6b35791049bbfe4a3fcda7f65562337671504d95` restores the HK07A `ReferenceTransport.cs` and `Hk07AReferenceTransportTests.cs` blobs exactly to the accepted baseline, preserving 1 MiB + `transport.frame_too_large`;
 - commit `dadb0168ab014cb5155aef28315fd6dc7a8a2dba` lowers the new neutral envelope to 896 KiB canonical arguments and 640 KiB canonical world/snapshot bytes, with the machine-readable frame compatibility value at 1 MiB;
+- commit `7762d4ef0da2bbce5b5b5a1cc008c56b2bc9cd78` reconciles the evidence/plan with the compatibility repair;
 - the external-process HK09B conformance test still sends the neutral byte-limit negative through both real JSONL and MCP, so a regression that again places the canonical byte test beyond JSONL framing will turn the comparison red.
 
-Post-review validation is required before this branch may be frozen again. The original pre-FAIL run `35521120979` is historical evidence only and is not sufficient for refreeze.
+Post-review validation is GREEN: exact-SHA run `35522285009` passed on the code repair, and exact-SHA run `35522382987` passed on the code + reconciled evidence checkpoint `7762d4ef0da2bbce5b5b5a1cc008c56b2bc9cd78`. The original pre-FAIL run `35521120979` is historical evidence only and is not used for refreeze.
 
 ## Proof/evidence record
 
@@ -89,14 +90,14 @@ Post-review validation is required before this branch may be frozen again. The o
 - `PERSISTENCE_INTERRUPTION.md` — mutation/import/replay stage/publish proof at the claimed durability level.
 - `CONTENT_SHAPE_PROBE.md` — approved `Docs/art/VISUAL_BIBLE.md` Potes slice, 96 operations, checkpoint rebase.
 - `RESIDUAL_RISK.md` — trust boundary, non-claims and concrete reopen conditions.
-- `WORKER_PRE_REVIEW.md` — strict Worker pre-review; must be refreshed after the reviewer repair is GREEN.
+- `WORKER_PRE_REVIEW.md` — strict post-review Worker pre-review CLEAN, including the independent-review compatibility finding and repaired evidence.
 
 ## Freeze condition
 
-Refreeze is allowed only after the post-review evidence-bearing HEAD receives GREEN canonical observation and a refreshed Worker pre-review is CLEAN. The PR body must then record that exact SHA as both Candidate HEAD and Frozen candidate, set `Branch frozen: YES`, and require `scripts/hk09b-verify-exact-sha.sh <SHA>` GREEN in the exact-SHA freeze job. No Worker commit may follow that freeze; a fresh independent Reviewer must then decide PASS/FAIL.
+The next/last Worker action is metadata refreeze: this final evidence-bearing commit must receive GREEN exact-SHA validation, then the PR body must record that exact SHA as both Candidate HEAD and Frozen candidate, set `Branch frozen: YES`, and point to the validation run. No Worker commit may follow that freeze; a fresh independent Reviewer must then decide PASS/FAIL.
 
-FOUNDATIONAL_PROOF_VERDICT: REPAIR_VALIDATION_PENDING  
-UNRESOLVED_PROOF_OBLIGATIONS: 1  
+FOUNDATIONAL_PROOF_VERDICT: READY  
+UNRESOLVED_PROOF_OBLIGATIONS: 0  
 KNOWN_UNDETECTED_DEFECT_CLASSES: 0  
 TRUST_BOUNDARY: Docs/evidence/WP-HK-09B/RESIDUAL_RISK.md  
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
