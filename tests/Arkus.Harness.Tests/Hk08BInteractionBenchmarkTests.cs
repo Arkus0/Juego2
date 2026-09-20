@@ -11,6 +11,18 @@ namespace Arkus.Harness.Tests
 {
     public sealed class Hk08BInteractionBenchmarkTests
     {
+        // Frozen from the first green public-client observation on GitHub Actions run 35501506939
+        // (candidate 8b04a66079cd8a637f0abd8aa1eeb18cd90d9f99), after recovery truth was fixed.
+        // Requests are structural and receive no growth allowance. Serialized bytes receive 25%
+        // headroom for legitimate additive diagnostic/recovery payload growth. Elapsed time is a
+        // coarse regression guard with 8x runner-noise headroom; it is not a latency SLO.
+        private const int BaselineRequestCount = 12;
+        private const long BaselineSerializedResponseBytes = 12051;
+        private const long BaselineElapsedMilliseconds = 185;
+        private const int MaximumRequestCount = BaselineRequestCount;
+        private const long MaximumSerializedResponseBytes = 15064;
+        private const long MaximumElapsedMilliseconds = BaselineElapsedMilliseconds * 8;
+
         [Fact]
         public void RepresentativePublicClientFlowMeasuresInteractionCostWithoutWholeWorldConflictReload()
         {
@@ -136,12 +148,14 @@ namespace Arkus.Harness.Tests
             Assert.True(recovered.GetProperty("persisted").GetBoolean());
 
             stopwatch.Stop();
+            var elapsedMilliseconds = (long)Math.Ceiling(stopwatch.Elapsed.TotalMilliseconds);
 
             var recoveryCapabilities = client.CapabilitiesFrom(recoveryPhaseStart);
             Assert.DoesNotContain("world.summary", recoveryCapabilities);
             Assert.DoesNotContain("world.object.query", recoveryCapabilities);
             Assert.DoesNotContain("world.extension.query", recoveryCapabilities);
-            Assert.Equal(12, client.RequestCount);
+            Assert.Equal(BaselineRequestCount, client.RequestCount);
+            Assert.Empty(BudgetIssues(client.RequestCount, client.SerializedResponseBytes, elapsedMilliseconds));
 
             var metrics = new Dictionary<string, object?>(StringComparer.Ordinal)
             {
@@ -150,13 +164,19 @@ namespace Arkus.Harness.Tests
                 ["flowCount"] = 5,
                 ["requestCount"] = client.RequestCount,
                 ["serializedResponseBytes"] = client.SerializedResponseBytes,
-                ["elapsedMilliseconds"] = (long)Math.Ceiling(stopwatch.Elapsed.TotalMilliseconds),
+                ["elapsedMilliseconds"] = elapsedMilliseconds,
                 ["invalidDiagnosticCount"] = diagnosticCount,
                 ["recoveryChangedResourceCount"] = recovery.GetProperty("changedResources").GetArrayLength(),
                 ["recoveryInspectionRequestCount"] = recoveryInspectionRequests,
                 ["recoveryFullWorldReloadCount"] = 0,
                 ["multiResourceModifyRequestCount"] = 1,
-                ["publicTransportOnly"] = true
+                ["publicTransportOnly"] = true,
+                ["baselineRequestCount"] = BaselineRequestCount,
+                ["baselineSerializedResponseBytes"] = BaselineSerializedResponseBytes,
+                ["baselineElapsedMilliseconds"] = BaselineElapsedMilliseconds,
+                ["maximumRequestCount"] = MaximumRequestCount,
+                ["maximumSerializedResponseBytes"] = MaximumSerializedResponseBytes,
+                ["maximumElapsedMilliseconds"] = MaximumElapsedMilliseconds
             };
             EmitMetrics(metrics);
         }
@@ -180,6 +200,23 @@ namespace Arkus.Harness.Tests
             Assert.Contains("full-world-reload", BenchmarkShapeIssues(true, true, 1, 2, 2, 1));
             Assert.Contains("affected-resource-omitted", BenchmarkShapeIssues(true, true, 0, 2, 1, 1));
             Assert.Contains("per-resource-mutation-chatter", BenchmarkShapeIssues(true, true, 0, 2, 2, 2));
+
+            Assert.Empty(BudgetIssues(
+                BaselineRequestCount,
+                BaselineSerializedResponseBytes,
+                BaselineElapsedMilliseconds));
+            Assert.Contains("request-budget-regression", BudgetIssues(
+                MaximumRequestCount + 1,
+                BaselineSerializedResponseBytes,
+                BaselineElapsedMilliseconds));
+            Assert.Contains("response-budget-regression", BudgetIssues(
+                BaselineRequestCount,
+                MaximumSerializedResponseBytes + 1,
+                BaselineElapsedMilliseconds));
+            Assert.Contains("elapsed-budget-regression", BudgetIssues(
+                BaselineRequestCount,
+                BaselineSerializedResponseBytes,
+                MaximumElapsedMilliseconds + 1));
         }
 
         private static IReadOnlyList<string> DiagnosticCompletenessIssues(
@@ -207,6 +244,18 @@ namespace Arkus.Harness.Tests
             if (recoveryFullWorldReloadCount != 0) issues.Add("full-world-reload");
             if (recoveryInspectionRequestCount < conceptualChangedResourceCount) issues.Add("affected-resource-omitted");
             if (multiResourceModifyRequestCount > 1) issues.Add("per-resource-mutation-chatter");
+            return issues.AsReadOnly();
+        }
+
+        private static IReadOnlyList<string> BudgetIssues(
+            int requestCount,
+            long serializedResponseBytes,
+            long elapsedMilliseconds)
+        {
+            var issues = new List<string>();
+            if (requestCount > MaximumRequestCount) issues.Add("request-budget-regression");
+            if (serializedResponseBytes > MaximumSerializedResponseBytes) issues.Add("response-budget-regression");
+            if (elapsedMilliseconds > MaximumElapsedMilliseconds) issues.Add("elapsed-budget-regression");
             return issues.AsReadOnly();
         }
 
