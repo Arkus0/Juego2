@@ -8,7 +8,7 @@ namespace Arkus.Game.Authoring
     public static class WorldProvenanceContract
     {
         public const string ReadName = "authoring.journal.read";
-        public const string ContractVersionText = "1.1";
+        public const string ContractVersionText = "1.0";
         public const string JournalSchemaId = "arkus.authoring.journal@1";
         public const string JournalPageSchemaId = "arkus.authoring.journal-page@1";
         public const string EntrySchemaId = "arkus.authoring.journal-entry@1";
@@ -24,8 +24,10 @@ namespace Arkus.Game.Authoring
 
         /// <summary>
         /// Complete persisted journal artifact used by accepted HK06 replay/audit semantics.
-        /// HK08A does not redefine this artifact; the public read capability returns bounded pages
-        /// described separately by <see cref="JournalPageResultSchema"/>.
+        /// HK08A leaves this artifact unchanged. When one bounded read covers the complete journal,
+        /// the public capability returns this exact shape so accepted replay clients remain truthful.
+        /// Multi-page reads use the separate page marker below and cannot be mistaken for a complete
+        /// replay artifact.
         /// </summary>
         public static JsonSchemaDocument JournalResultSchema()
         {
@@ -56,6 +58,12 @@ namespace Arkus.Game.Authoring
                 }));
         }
 
+        /// <summary>
+        /// Public read result accepts either the unchanged complete HK06A artifact (when the complete
+        /// journal fits the requested page) or an explicitly marked HK08A bounded page. Conditional
+        /// schema constraints are intentionally enforced by the implementation/conformance tests;
+        /// partial pages always carry pageOffset/journalSchemaId and the page schema marker.
+        /// </summary>
         public static JsonSchemaDocument JournalPageResultSchema()
         {
             var anchor = AuthoredAnchorSchema();
@@ -63,7 +71,7 @@ namespace Arkus.Game.Authoring
             return new JsonSchemaDocument(SchemaNode.Object(
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
                 {
-                    ["schemaId"] = SchemaNode.String(new[] { JournalPageSchemaId }),
+                    ["schemaId"] = SchemaNode.String(new[] { JournalSchemaId, JournalPageSchemaId }),
                     ["journalSchemaId"] = SchemaNode.String(new[] { JournalSchemaId }),
                     ["entrySchemaId"] = SchemaNode.String(new[] { EntrySchemaId }),
                     ["base"] = anchor,
@@ -73,11 +81,7 @@ namespace Arkus.Game.Authoring
                     ["entries"] = SchemaNode.Array(entry),
                     ["nextCursor"] = SchemaNode.String()
                 },
-                new[]
-                {
-                    "schemaId", "journalSchemaId", "entrySchemaId", "base", "current",
-                    "entryCount", "pageOffset", "entries"
-                }));
+                new[] { "schemaId", "entrySchemaId", "base", "current", "entryCount", "entries" }));
         }
 
         public static JsonSchemaDocument RuntimeObservationStampSchema()
@@ -155,6 +159,7 @@ namespace Arkus.Game.Authoring
                 {
                     "journal-page-preserves-persisted-sequence-order",
                     "page-is-bound-to-one-authored-revision-and-hash",
+                    "complete-single-page-read-preserves-hk06a-journal-artifact",
                     "canonical-authored-state-unchanged"
                 },
                 new ConcurrencySemantics(ConcurrencyClass.ParallelSafe),
