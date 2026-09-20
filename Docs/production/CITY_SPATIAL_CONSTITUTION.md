@@ -62,7 +62,7 @@ territorial movement.** That asymmetry is the constitution's core mechanism.
                                           la barca                        |
   ~~~~~~~~~~~~~~~~~~~~~~~~~~ R I O ~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~
                                               |                           |
-                                 ORILLA SUR --+------ camino sur ---------+
+                            ORILLA SUR [transitional] --- camino sur -----+
                                  (ermita / cementerio / carretera de valle)
 ```
 
@@ -97,12 +97,12 @@ Seven substantial families plus two edge families.
 | Crossing | Over | Character | Connects | Availability | If closed |
 |---|---|---|---|---|---|
 | **Puente Viejo** | río | stone, narrow, historic; pedestrian and handcart | casco ↔ camino sur, ermita, cementerio, valley road | permanent, both states | the south bank is **not** cut off — see §2.4.1 |
-| **Puente del Mercado** | arroyo | road-capable stone arch | Calle Mayor ↔ Ensanche | permanent | commercial: carts detour ~200 m |
-| **Pasarela del Lavadero** | arroyo | wooden footbridge | Barrio Alto ↔ upper Ensanche | permanent | local: a two-minute detour |
-| **Puente de la Vega** | arroyo | rural bridge upstream | huertas ↔ north Ensanche | seasonal; flood-closable | rural: the upstream huerta route lengthens |
+| **Puente del Mercado** | arroyo | road-capable stone arch | Calle Mayor ↔ Ensanche | permanent | commercial: carts detour upstream to the Puente de la Vega, ~200 m; pedestrians use the pasarela or the pasos |
+| **Pasarela del Lavadero** | arroyo | wooden footbridge | Barrio Alto ↔ upper Ensanche | permanent | local: a two-minute detour to the Puente del Mercado |
+| **Puente de la Vega** | arroyo | rural bridge upstream | huertas ↔ north Ensanche | seasonal; flood-closable | rural: the huerta route detours downstream to the Puente del Mercado |
 | **Pasos / vado** | arroyo | stepping stones on the low reach | lower casco lanes ↔ Ensanche | low water only | nothing on its own — it is a convenience, never a dependency |
 | **La barca** | río | roped ferry; people, animals and small loads | Puerto ↔ orilla sur | **State 1 only**; hours and fare are a municipal decision, high water suspends it | the south bank depends on the Puente Viejo alone until it runs again |
-| **Puente del Muelle** | río | freight road bridge | Puerto ↔ south-bank road | **State 2 only**; it replaces the barca | freight cannot cross at all — the Puente Viejo takes handcarts, not carts — so the yards wait |
+| **Puente del Muelle** | río | freight road bridge | Puerto ↔ south-bank road | **State 2 only**; it replaces the barca | people still cross at the casco, but freight cannot cross at all — the Puente Viejo takes handcarts, not carts — so the yards wait |
 
 The arroyo is crossed casually and often. The río is crossed rarely and deliberately — the barca does
 not change that, because it has hours, a fare and a far-end location, which makes crossing there a

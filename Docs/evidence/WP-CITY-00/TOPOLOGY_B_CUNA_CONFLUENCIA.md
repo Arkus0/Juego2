@@ -58,7 +58,7 @@ shapes **territorial** movement.
                                           la barca                 |
   ~~~~~~~~~~~~~~~~~~~~ R I O ~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~|~~~~~
                                               |                    |
-                                 ORILLA SUR --+---- camino sur ----+
+                        ORILLA SUR [transitional] - camino sur ---+
                                  (ermita / cementerio / valle)
 ```
 
@@ -88,12 +88,12 @@ three ways: towpath, quay road, and the steep Cuesta from the casco.
 | Crossing | Over | Character | Connects | Availability | Closure consequence |
 |---|---|---|---|---|---|
 | Puente Viejo | río | stone, narrow, historic; pedestrian and handcart | casco ↔ camino sur, ermita, cementerio, left-bank rural | permanent, both states | the south bank is **not** cut off: it is reached by the barca at the far end of town, ≈500 m plus the ferry wait instead of ≈80 m |
-| Puente del Mercado | arroyo | road-capable stone arch | Calle Mayor ↔ Ensanche | permanent | commercial: carts detour ~200 m |
+| Puente del Mercado | arroyo | road-capable stone arch | Calle Mayor ↔ Ensanche | permanent | commercial: carts detour upstream to the Puente de la Vega, ~200 m |
 | Pasarela del Lavadero | arroyo | wooden footbridge | Barrio Alto ↔ Ensanche upper | permanent | local: a 2-minute detour for residents |
-| Puente de la Vega | arroyo | rural bridge, upstream | huertas ↔ Ensanche north | seasonal; flood-closable | rural: the upstream huerta route lengthens |
+| Puente de la Vega | arroyo | rural bridge, upstream | huertas ↔ Ensanche north | seasonal; flood-closable | rural: the huerta route detours downstream to the Puente del Mercado |
 | Pasos / vado | arroyo | stepping stones at the low reach | casco lower lanes ↔ Ensanche | low water only | nothing on its own — a convenience, never a dependency |
 | La barca | río | roped ferry; people, animals and small loads | Puerto ↔ orilla sur | State 1 only; hours, fare, suspended by high water | the south bank depends on the Puente Viejo alone until it runs again |
-| Puente del Muelle | río | freight road bridge | Puerto ↔ south-bank road | State 2 only; it replaces the barca | freight cannot cross at all, since the Puente Viejo takes handcarts and not carts |
+| Puente del Muelle | río | freight road bridge | Puerto ↔ south-bank road | State 2 only; it replaces the barca | people still cross at the casco; freight cannot cross at all, since the Puente Viejo takes handcarts and not carts |
 
 Connectivity states and the full closure consequences are owned by `CITY_SPATIAL_CONSTITUTION.md`
 §2.4.1. The south bank is never left on a single crossing except when the Puente Viejo and the barca

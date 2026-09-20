@@ -7,7 +7,25 @@ Branch: `claude/city-urban-topologies-ehn6qf`
 Active Worker: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Worker history: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Transfer SHA: NONE
-fail_cycle: 1
+fail_cycle: 2
+
+## Repair cycle 2
+
+Frozen candidate `6091584313488bcfb1840132f22adcc9b1b5de4f` received independent **FAIL**, review
+[#5261418045](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261418045).
+
+The cycle-1 repair held, but it had added the barca as a crossing without reconciling what that edge
+falsifies: both crossing tables still said closing the Puente Viejo cut the south side off, and
+neither semantic graph drew the ferry — so the district graph and the crossing strategy described
+two different cities.
+
+Reconciled around two explicit connectivity states (`CITY_SPATIAL_CONSTITUTION.md` §2.4.1), with
+closure consequences derived from the dimensional sketch instead of asserted, both graphs redrawn,
+and both tables restructured to separate availability from closure. No spatial decision changed.
+
+**Both failures share one shape:** closing over something without checking what else depended on it.
+The pre-review now carries a cross-check for it (`WORKER_PRE_REVIEW.md` §4) and `WORKER_PLAN.md`
+carries the rule.
 
 ## Repair cycle 1
 
@@ -85,9 +103,12 @@ the Worker highlighted.
    whether Topology A's rejection really is coupled to the size decision rather than to preference.
 5. **The blueprint edit.** Whether v0.3 stays inside "sharpen or explicitly propose amendments" and
    changes nothing it should not.
-6. **The repair's own side effects.** The barca closes a long south-bank loop the constitution did
-   not previously have (§2.4, Q12). Whether naming it as a CITY-01 question is enough, or whether the
-   constitution should say more about it.
+6. **A third instance of the same error.** Two cycles have failed on the same shape — closing over
+   something without checking what depends on it. Assume a third is likelier than a clean sheet, and
+   hunt for it rather than re-checking the two boundaries already repaired.
+7. **The State 1 → State 2 transition.** It is a real change in the city's connectivity and no
+   workpack yet owns *when* it happens (residual 6). Whether CITY-00 was right to leave that
+   unscheduled, or whether it should have named an owner, is a fair challenge.
 
 ## What is deliberately left undone
 
