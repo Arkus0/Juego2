@@ -28,6 +28,23 @@ The serial gate prevents parallel implementation from baking unreviewed assumpti
 
 A non-foundational workpack is never a valid reason to delay, weaken or reinterpret an H0 acceptance criterion.
 
-`CITY/` is the single operational product-space track: accepted macro geography → place grammar → mobility/access → systemic locations → streets/parcels/buildings → interiors/discovery → keeper seed → local validation/realization. `WP-CITY-01` through `WP-CITY-06` are documentation/research/planning only and may run remotely before `WP-HK-GATE`. `WP-CITY-07` and `WP-CITY-08` are LOCAL and MUST NOT begin before `WP-HK-GATE` and their stated Unity/bridge prerequisites have passed.
+`CITY/` is the single operational product-space track. Because accepted `WP-CITY-00` already references `CITY-01..04`, those IDs retain their original owners and the accepted post-CITY-00 spine is intentionally non-numeric:
 
-`WP-CITY-00` is COMPLETE. The next CITY workpack is `WP-CITY-01 — Place grammar + spatial depth tiers` once this programme revision is accepted.
+```text
+CITY-00 -> CITY-01 -> CITY-02 -> CITY-05 -> CITY-06 -> CITY-03 -> CITY-04 -> CITY-07 -> CITY-08
+```
+
+Responsibilities:
+
+- `CITY-01`: mobility / route graph / walk-time hypotheses;
+- `CITY-02`: systemic locations + A–D importance + S0–S4 spatial depth + interior programme;
+- `CITY-05`: streets/parcels/reusable building families;
+- `CITY-06`: detailed interiors + layered discovery;
+- `CITY-03`: exact retained seed + scenario specification;
+- `CITY-04`: LOCAL Unity greybox/traversal validation;
+- `CITY-07`: LOCAL keeper realization;
+- `CITY-08`: LOCAL Arkus authoring proof + reuse closure.
+
+`CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are documentation/research/planning only. `CITY-04`, `CITY-07` and `CITY-08` are LOCAL and MUST NOT begin before their stated Unity/bridge/catalogue prerequisites have passed.
+
+`WP-CITY-00` is COMPLETE. The next CITY workpack is `WP-CITY-01 — Mobility, district graph + walk-time topology` once the programme revision is accepted.

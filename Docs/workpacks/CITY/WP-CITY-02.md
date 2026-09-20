@@ -1,60 +1,82 @@
-# WP-CITY-02 — Mobility + access topology
+# WP-CITY-02 — Systemic locations + spatial-depth/interior programme
 
 Status: **FROZEN PLAN / NOT_STARTED**  
-Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)  
+Class: PRODUCT / PLACE & INTERIOR PREPRODUCTION (NON-FOUNDATIONAL)  
 Mode: **REMOTE**  
 Depends on: `WP-CITY-01` PASS  
-Blocks: `WP-CITY-03` only
+Blocks: `WP-CITY-05` only
+
+## Contract continuity
+
+The accepted Production Blueprint delegates the location/interior programme to `CITY-02`, and CITY-00 binds `CITY-01..04`. This WP preserves that owner while making its scope more precise.
 
 ## Objective
 
-Turn the accepted CITY-00 constitution into a movement topology that supports daily life, following/searching, schedule pressure, route choice, service access and municipal disruption without turning traversal into empty commute.
+Convert accepted geography and mobility into a feasible programme of meaningful places, interior promises and reactive density. Freeze the two classifications later WPs need so they can reason about scope without pretending every visible building is equally playable or equally systemic.
 
-CITY-02 owns movement/access logic, not building or interior design.
+## Two orthogonal classifications
+
+### Systemic importance — A..D
+
+- `A` — primary systemic anchor;
+- `B` — supporting systemic/playable location;
+- `C` — ambient urban fabric;
+- `D` — scenic context.
+
+### Spatial production depth — S0..S4
+
+- `S0` — scenic envelope / inaccessible context;
+- `S1` — authored shell or façade only;
+- `S2` — shallow playable space with bounded interaction;
+- `S3` — deep playable place with multiple authored spaces/thresholds/anchors;
+- `S4` — hero layered place with multiple meaningful access/discovery opportunities.
+
+The axes MUST NOT be collapsed. A location's systemic importance does not determine its spatial depth, or vice versa.
+
+## Place/access vocabulary
+
+Define only the vocabulary required to programme locations and hand constraints onward: place, frontage, shell, threshold, public/private/semi-private, service access, vertical relation, interior anchor and scenic envelope. Detailed parcel/building composition belongs to `CITY-05`; detailed interior/discovery design belongs to `CITY-06`.
+
+## Required domain coverage
+
+Civic/governance; food/drink/social; retail/service; work/workshop/logistics; port/waterfront; residential; leisure/minigames; health/safety/authority where needed; rural/river activity; quiet/private/semi-private spaces; arrival/visitor edge.
 
 ## Work
 
-1. Derive the district-to-district route graph from accepted CITY-00 landmasses/crossings.
-2. Define primary, secondary, quiet and service-route families.
-3. Define elevation classes, stairs/ramps/roads and relevant travel restrictions.
-4. Reserve plausible rear/service/vertical access opportunities using CITY-01 vocabulary without laying out interiors.
-5. Produce target walk-time bands between representative anchors.
-6. Test pedestrian, slower pedestrian, bicycle, service/delivery, arrival/bus, following and time-sensitive travel profiles.
-7. Test port ↔ commercial/workshop logistics and rural edge ↔ market/civic travel.
-8. Identify chokepoints governance/events may alter without deadlocking the city.
-
-## Required scenario matrix
-
-At minimum:
-
-- home in upper/residential district → workplace;
-- old quarter → port/work edge without mandatory plaza traversal;
-- port delivery → commercial destination;
-- rural/valley arrival → market/civic core;
-- player follows an NPC across ≥2 district boundaries;
-- closure forces a plausible alternate route;
-- late actor chooses a faster but contextually different route;
-- quiet evening route differs meaningfully from market-day flow;
-- at least one service/back-route opportunity differs from the obvious public route.
+1. Build the district × location programme.
+2. Assign provisional A–D importance and S0–S4 depth independently.
+3. For A/B candidates record who plausibly uses the place and when, activity/material role, information/witness potential, governance/access hooks, interior need, change potential and whether it functions when the player is absent.
+4. Identify interior priority: which locations require no interior, shallow access, deep access or hero layering.
+5. Define a family of reactive-density measurements for later blockout/playtest: meaningful destinations per traversal, repeated-use ratio, route-choice density, quiet-space balance and depth distribution.
+6. Protect quiet/ordinary fabric so systemic density does not become permanent spectacle.
+7. Record spatial requirements that later Living World/PA work may consume without pre-accepting beliefs, schedules, dialogue or decisions.
 
 ## Deliverables
 
-- `Docs/production/CITY_MOBILITY_TOPOLOGY.md`
-- semantic route/access graph;
-- representative walk-time matrix;
-- mobility-profile assumptions;
-- chokepoint/alternate-route ledger;
-- later local measurements required from CITY-07.
+- `Docs/production/CITY_LOCATION_PROGRAMME.md`
+- shared place/access vocabulary;
+- district × A–D × S0–S4 matrix;
+- A/B systemic-use profiles;
+- interior-priority ledger;
+- reactive-density measurement proposal;
+- explicit C/D and S0/S1 scope declaration.
 
 ## Acceptance
 
-- Every edge is compatible with CITY-00 connectivity truth.
-- Core movement has meaningful loops and ≥2 nontrivial alternate-route cases.
-- Follow/search gameplay is not just corridor traversal.
-- Service/private access opportunities exist without becoming universal shortcuts.
-- A municipal closure can matter without making the city unusable.
-- Walk-time targets remain hypotheses until local validation.
+- Every core district has reasons to revisit beyond visual novelty.
+- Old quarter/civic centre do not monopolise A locations.
+- Port contains ordinary work/logistics/social hooks.
+- Quiet/low-intensity place families survive the programme.
+- Openable/playable interiors are distinguished from façade-only promises.
+- A–D and S0–S4 are demonstrably independent dimensions.
+- Activities/minigames have physical homes rather than UI-only portals where the product needs them.
+- Reactive density can be measured later without demanding every prop be interactive.
+- Scope explicitly allows substantial C/D and S0/S1 fabric.
 
-## Forbidden
+## Definition of Done
 
-Redrawing CITY-00 crossings/landmasses; Unity navmesh; final road engineering; live schedules; interior layouts; fast-travel design.
+`CITY-05` can design constrained streets/parcels/building families against a reviewed place programme, while `CITY-06` later receives an explicit interior-depth backlog. Neither needs to decide anew which places matter.
+
+## Negative gates
+
+FAIL if “reactive city” becomes every door open, every prop interactive, every pedestrian persistent or every location incident-generating; FAIL if A–D is treated as a synonym for S0–S4.

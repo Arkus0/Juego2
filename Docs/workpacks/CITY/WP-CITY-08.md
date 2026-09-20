@@ -1,25 +1,23 @@
-# WP-CITY-08 — LOCAL keeper realization + Arkus authoring proof
+# WP-CITY-08 — LOCAL Arkus authoring proof + reuse closure
 
 Status: **DORMANT / NOT_STARTED**  
-Class: PRODUCT / LOCAL KEEPER REALIZATION (NON-FOUNDATIONAL)  
+Class: PRODUCT / LOCAL AUTHORING VALIDATION (NON-FOUNDATIONAL)  
 Mode: **LOCAL**  
-Depends on: `WP-CITY-07` PASS + accepted relevant Unity bridge/catalogue/authoring prerequisites  
+Depends on: `WP-CITY-07` PASS + accepted relevant Arkus/Unity bridge/catalogue/authoring prerequisites  
 Blocks: none automatically; informs later product implementation/expansion gates
 
 ## Objective
 
-Turn the validated greybox into the first structurally keeper piece of the shipping city and prove that Arkus can materially reduce environment-authoring cost using reviewed street/building/interior compositions rather than a blank-scene workflow.
+Prove on the realized keeper slice that accepted Arkus public authoring surfaces materially reduce environment-authoring cost through constrained discovery, composition, application, inspection and reuse. This WP validates the workflow; it does not invent bridge/catalogue/canonical semantics.
 
-This WP consumes bridge/catalogue semantics; it does not invent them.
+## Required independent authoring proof
 
-## Required authoring proof
-
-A fresh capable agent must be able to perform a bounded representative flow such as:
+A fresh capable agent, operating through accepted public surfaces rather than source inspection or hidden Unity registries, must be able to perform a bounded flow such as:
 
 ```text
 inspect accepted seed + parcel/place constraints
 → discover available reviewed modules/compositions
-→ propose/select a composition
+→ propose/select a legal composition
 → plan/dry-run/validate through accepted Arkus authority
 → apply
 → inspect realized Unity result
@@ -27,27 +25,41 @@ inspect accepted seed + parcel/place constraints
 → reuse or variant the reviewed composition elsewhere
 ```
 
-The exact public capabilities come from accepted H1/H2 architecture, not from this WP.
+The exact public capabilities and authority boundaries come from accepted H1/H2 architecture at execution time, not from this WP.
 
 ## Work
 
-- replace greybox selectively with accepted real asset/composition slice;
-- realize keeper street/building shells and chosen interiors without changing validated topology;
-- execute and record the bounded Arkus authoring proof;
-- compare one-off first composition cost with reuse/variant cost;
-- inspect realization failures such as pivots, bounds, sockets, material/scale, hierarchy, collider/nav assumptions and missing dependencies;
-- record residuals rather than masking missing bridge/catalogue capability inside CITY.
+- execute and record the bounded public-client authoring proof on the CITY-07 keeper slice;
+- compare first legal assembly cost with reuse/variant cost using observable steps/operations and documented assumptions;
+- prove discoverability of relevant composition metadata/dependencies through accepted surfaces;
+- prove missing/unavailable dependencies fail visibly;
+- inspect the realized result after apply and after one bounded correction;
+- demonstrate at least one reuse/variant case without dropping reviewed constraints;
+- record residual bridge/catalogue/authoring gaps instead of masking them inside CITY.
+
+## Deliverables
+
+- independent agent trial brief and transcript/evidence appropriate to the accepted authoring surface;
+- first-assembly vs reuse/variant cost comparison;
+- public-discovery and failure evidence;
+- inspection/correction evidence;
+- residual/dependency ledger;
+- CITY programme closure note stating what is proven and what remains future product work.
 
 ## Acceptance
 
-- The keeper seed preserves validated CITY-07 structure.
-- At least one street/building/interior composition is discoverable and reusable through accepted Arkus surfaces.
-- Agent workflow does not require reading C# or using a hidden adapter-only registry.
+- At least one street/building/interior composition is discoverable and reusable through accepted Arkus public surfaces.
+- The agent workflow does not require reading implementation source or using a hidden adapter-only/Unity-only registry.
 - Missing/unavailable composition dependencies fail visibly.
-- Reuse demonstrates a real reduction in authoring steps relative to first assembly.
-- Temporary visual assets may remain, but retained urban structure/composition semantics are explicit.
+- Reuse demonstrates a real, observable reduction in authoring effort relative to first assembly; merely asserting reuse is insufficient.
+- The proof preserves CITY-07 keeper structure and CITY-05/06 constraints.
 - Existing Living World/research/planning tracks are not retroactively blocked by this WP.
+- No new canonical/bridge/catalogue semantics are introduced to make the proof pass.
+
+## Definition of Done
+
+The programme has evidence that its first retained city slice is both structurally keeper and materially cheaper to extend through accepted Arkus authoring surfaces. Any remaining engine/contract gap is explicitly owned outside CITY rather than hidden in the scene.
 
 ## Negative gates
 
-FAIL if CITY introduces new canonical/bridge semantics to make the proof pass, if a hidden Unity registry becomes semantic authority, if this WP claims ownership over Living World semantics, or if the “keeper” claim is only visual polish on a disposable structure.
+FAIL if CITY introduces new canonical/bridge semantics to make the proof pass, if a hidden Unity registry becomes semantic authority, if this WP claims Living World semantics, or if the cost comparison lacks an observable baseline/reuse distinction.

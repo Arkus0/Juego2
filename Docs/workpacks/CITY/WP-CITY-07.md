@@ -1,33 +1,47 @@
-# WP-CITY-07 — LOCAL Unity greybox + traversal validation
+# WP-CITY-07 — LOCAL keeper realization
 
 Status: **DORMANT / NOT_STARTED**  
-Class: PRODUCT / LOCAL ENGINE VALIDATION (NON-FOUNDATIONAL)  
+Class: PRODUCT / LOCAL KEEPER REALIZATION (NON-FOUNDATIONAL)  
 Mode: **LOCAL**  
-Depends on: `WP-CITY-06` PASS + `WP-HK-GATE` PASS + accepted relevant Unity bridge prerequisites  
+Depends on: `WP-CITY-04` PASS + accepted relevant asset/Unity bridge/catalogue prerequisites  
 Blocks: `WP-CITY-08` only
 
 ## Objective
 
-Make the retained seed physically walkable in Unity at greybox fidelity and falsify paper assumptions about scale, route choice, sightlines, elevation, crossings, access and expansion seams before keeper art/content investment.
+Turn the CITY-04 validated greybox into the first structurally keeper piece of the shipping city using accepted assets/compositions while preserving validated topology and the production constraints authored by CITY-02/05/06.
+
+Keeper realization is separate from the Arkus authoring-efficiency proof so each has a reviewable causal boundary.
 
 ## Work
 
-- build only the bounded CITY-06 greybox;
-- measure representative route times and alternate routes;
-- validate slopes/stairs/bridge widths/river separation and landmark visibility;
-- validate follow/search branching and service-route readability;
-- validate parcel/building envelopes and planned access layers at blockout scale;
-- record where paper assumptions fail and route those failures back to their causal CITY WP rather than silently improvising.
+- preserve the validated CITY-04 street/bridge/route structure unless a measured defect is formally routed back to its owner;
+- replace greybox selectively with accepted real asset/composition slices;
+- realize reviewed street/building shells and chosen interiors against CITY-05/06 constraints;
+- preserve expansion seams and retained-vs-temporary declarations from CITY-03;
+- inspect pivots, bounds, sockets, material/scale, hierarchy, collider/nav assumptions and missing dependencies;
+- record catalogue/bridge gaps as residuals rather than inventing hidden CITY-local semantics.
+
+## Deliverables
+
+- keeper-realization captures/inspection notes;
+- mapping from greybox structures to retained compositions/assets;
+- retained-vs-temporary realization ledger;
+- dependency/realization defect ledger;
+- bounded realized slice handed to CITY-08.
 
 ## Acceptance
 
-- Seed is traversable and spatially legible at intended human scale.
-- Key route/time hypotheses are measured, not guessed.
-- At least one alternate-route and one follow/search case works physically.
-- Expansion seams remain viable.
-- No geometry is treated as keeper solely because it exists in Unity.
-- Structural contradictions reopen the owning CITY WP rather than being hidden by local tweaks.
+- Keeper realization preserves CITY-04 validated structure.
+- At least one representative street/building/interior chain is realized with accepted dependencies.
+- Missing/unavailable dependencies fail visibly rather than being hand-waved.
+- Temporary visual assets may remain, but retained urban structure/composition intent is explicit.
+- Unity realization does not become semantic authority over CITY or Arkus contracts.
+- No Living World semantics are claimed or implemented merely to make the district look alive.
 
-## Forbidden
+## Definition of Done
 
-Polish pass; final art; broad asset production; Living World/gameplay implementation; inventing new bridge semantics.
+`CITY-08` receives a bounded keeper slice that is structurally accepted and inspectable; remaining questions concern public authoring workflow/reuse cost, not whether the seed itself should be thrown away.
+
+## Negative gates
+
+FAIL if polish hides a structurally failed greybox, if hidden Unity-only metadata becomes CITY semantic authority, or if missing bridge/catalogue capability is patched by inventing a local contract.

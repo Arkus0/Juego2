@@ -1,4 +1,4 @@
-# WP-CITY-01 — Place grammar + spatial depth tiers
+# WP-CITY-01 — Mobility, district graph + walk-time topology
 
 Status: **FROZEN PLAN / NOT_STARTED**  
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)  
@@ -6,50 +6,64 @@ Mode: **REMOTE**
 Depends on: `WP-CITY-00` PASS + DocSync  
 Blocks: `WP-CITY-02` only
 
+## Contract continuity
+
+Accepted CITY-00 assigns exact route costs/walk-time work to `CITY-01`. This WP preserves that delegation. It may sharpen mobility evidence and access vocabulary, but it MUST NOT become a different owner.
+
 ## Objective
 
-Define the shared micro-spatial vocabulary that every later CITY workpack uses: what counts as a place, shell, threshold, access route, parcel relation, private/service/vertical layer and how much production depth a location promises.
+Turn the selected city constitution into a movement topology that supports daily life, following/searching, schedule pressure, route choice, service access, municipal disruption and believable travel without turning traversal into empty commute.
 
-This WP deliberately happens before detailed mobility so CITY-02 can reason about more than district-to-district lines without designing interiors itself.
-
-## Spatial depth model
-
-Freeze a practical production-depth classification:
-
-- `S0` — scenic envelope / inaccessible context;
-- `S1` — façade or shell only;
-- `S2` — shallow playable space with bounded interaction;
-- `S3` — deep playable place with multiple authored spaces/thresholds/anchors;
-- `S4` — hero layered place with multiple meaningful access/discovery opportunities.
-
-Depth is a production promise, not a prestige or systemic-importance score. CITY-03 owns the separate A–D systemic-importance axis.
+CITY-01 owns movement/access topology and measurable travel hypotheses. It does not choose which locations are systemic and does not design interiors.
 
 ## Work
 
-1. Define place/parcel/shell/interior/threshold/access terminology.
-2. Define public, private, semi-private, service and vertical access classes.
-3. Define when rear courts, alleys, stairs, roofs, basements, service doors or river edges are meaningful planning entities rather than decoration.
-4. Define S0–S4 entry/exit expectations and what each tier explicitly does **not** promise.
-5. Define minimal machine-readable facts later authoring work will need: bounds, frontage, access sides, vertical relation, sockets/anchors, constraints and dependency references.
-6. Map several accepted CITY-00 anchors through the vocabulary as examples without redesigning them.
+1. Derive the district-to-district graph from accepted CITY-00 landmasses, crossings and the connectivity matrix.
+2. Define primary, secondary, quiet and service-route families.
+3. Define elevation classes, stairs/ramps/roads and relevant travel restrictions.
+4. Produce target walk-time bands between representative anchors, including the CITY-00 routes whose exact costs were explicitly deferred here.
+5. Model pedestrian, slower pedestrian, bicycle, service/delivery, arrival/bus, following and time-sensitive travel profiles.
+6. Test port ↔ commercial/workshop logistics and rural edge ↔ market/civic travel.
+7. Identify chokepoints governance/events may alter without deadlocking the city.
+8. Identify service/back-route opportunities without laying out building interiors.
+
+## Required scenario matrix
+
+At minimum:
+
+- home in upper/residential district → workplace;
+- old quarter → port/work edge without mandatory plaza traversal;
+- port delivery → commercial destination;
+- rural/valley arrival → market/civic core;
+- player follows an NPC across ≥2 district boundaries;
+- closure forces a plausible alternate route;
+- late actor chooses a faster but contextually different route;
+- quiet evening route differs meaningfully from market-day flow;
+- one service/back-route opportunity differs from the obvious public route.
 
 ## Deliverables
 
-- `Docs/production/CITY_PLACE_GRAMMAR.md`
-- S0–S4 production-depth contract;
-- access/threshold vocabulary;
-- representative examples against accepted CITY-00 geography;
-- explicit residuals for later street/building/interior work.
+- `Docs/production/CITY_MOBILITY_TOPOLOGY.md`
+- one authoritative semantic route/access graph;
+- representative walk-time matrix;
+- mobility-profile assumptions;
+- chokepoint/alternate-route ledger;
+- explicit measurement questions later consumed by `CITY-04`.
 
 ## Acceptance
 
-- Later WPs can describe a place without inventing competing terms.
-- S0–S4 distinguishes façade-only, shallow, deep-playable and hero-layered depth without implying every door opens.
-- S-depth does not encode systemic importance, NPC behaviour or narrative priority.
-- Access vocabulary supports main entrance, secondary/service access and verticality where justified.
-- The grammar can express an ordinary house, bar, shop, warehouse, civic building, street segment and rural/river place.
-- No building family, interior layout, secret, Unity object or runtime behaviour is implemented.
+- Every edge is compatible with accepted CITY-00 connectivity truth.
+- Core movement has meaningful loops and ≥2 nontrivial alternate-route cases.
+- No plaza or bridge becomes a universal connector contrary to the accepted constitution.
+- Follow/search traversal is not just a corridor.
+- Port and rural edge participate in ordinary movement, not only story missions.
+- A municipal closure can matter without making the city unusable.
+- Walk-time targets are documented as hypotheses for `CITY-04`, not treated as measured fact.
 
-## Negative gates
+## Definition of Done
 
-FAIL if the vocabulary becomes an architectural CAD schema, promises ubiquitous interiors, encodes Living World behaviour, collapses into the A–D importance axis, or alters accepted CITY-00 geography.
+`CITY-02` receives one reviewable movement/access model with explicit target costs and residual measurement questions; it does not need to reinterpret CITY-00 connectivity or invent routes ad hoc.
+
+## Forbidden
+
+Redrawing CITY-00 crossings/landmasses; Unity navmesh work; vehicle simulation; final road engineering; live schedules; interior layouts; fast-travel design; reopening H0.
