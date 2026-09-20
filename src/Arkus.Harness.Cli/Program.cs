@@ -1,13 +1,24 @@
 using System;
-using Arkus.Harness.Runtime;
 
 namespace Arkus.Harness.Cli
 {
     internal static class Program
     {
-        private static void Main()
+        private static int Main(string[] args)
         {
-            Console.WriteLine(RuntimeModule.Name);
+            try
+            {
+                return ReferenceTransportHost.Run(
+                    args,
+                    Console.OpenStandardInput(),
+                    Console.OpenStandardOutput(),
+                    Console.Error);
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine("arkus-host fatal: " + exception.GetType().Name);
+                return ReferenceTransportHost.SoftwareFailureExitCode;
+            }
         }
     }
 }

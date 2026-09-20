@@ -8,5 +8,6 @@
     <ProjectReference Include="../Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
     <ProjectReference Include="../Arkus.Game.Authoring/Arkus.Game.Authoring.csproj" />
     <ProjectReference Include="../Arkus.Game.Validation/Arkus.Game.Validation.csproj" />
+    <ProjectReference Include="../Arkus.Game.World/Arkus.Game.World.csproj" />
   </ItemGroup>
 </Project>
