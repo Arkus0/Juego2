@@ -1,7 +1,7 @@
 # WP-HK-08B Worker pre-review
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 3
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 4
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-08B/WORKER_PRE_REVIEW.md
 
 ## Candidate challenged
@@ -12,7 +12,7 @@ WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-08B/WORKER_PRE_REVIEW.md
 - Direct predecessor: accepted + DocSynced `WP-HK-08A`.
 - First measured benchmark candidate: `8b04a66079cd8a637f0abd8aa1eeb18cd90d9f99`.
 - Benchmark observation: Actions `35501506939`, artifact `10602945775`.
-- Implementation/test SHA after final substantive Worker finding repair: `6ea3a6fb3152c76c18379ef79e7780006de7aaba`.
+- Implementation/test SHA after final Worker test-oracle repair: `9968d119648996531aa8823ab97786e9a8eb1855`.
 
 This is Worker quality-gate evidence, not an independent Reviewer verdict. The eventual frozen SHA must still pass the exact-SHA verification job after evidence-only reconciliation.
 
@@ -65,6 +65,19 @@ Repair:
 - identical structured recovery maps;
 - no extra authored-state revision or provenance entry from the failed plan/dry-run/apply calls.
 
+## Finding 4 — route-symmetry oracle initially risked testing object equality instead of semantic equality
+
+The first form of the new route-symmetry test compared `IReadOnlyDictionary` values directly with `Assert.Equal`. That leaves overload/equality behavior as an unnecessary test-framework ambiguity and could produce a false red even when the public recovery payloads are semantically identical.
+
+Repair:
+
+- each recovery map is serialized deterministically through `System.Text.Json`;
+- the test compares those complete serialized semantic signatures;
+- no field is removed or normalized away;
+- production behavior is unchanged.
+
+This is a test-oracle hardening finding, not a new product semantic.
+
 ## False-green challenge
 
 The reconciled candidate has been challenged for:
@@ -81,7 +94,8 @@ The reconciled candidate has been challenged for:
 - silently omitting one of the five representative flows;
 - per-resource mutation chatter for a coherent multi-resource intent;
 - request, response-volume or elapsed-time regression beyond frozen budget;
-- JSONL/MCP semantic drift in recovery disposition/context.
+- JSONL/MCP semantic drift in recovery disposition/context;
+- route-equivalence proof depending on reference/object equality rather than complete semantic payload equality.
 
 The causal controls for these classes are enumerated in `NEGATIVE_CONFORMANCE_MATRIX.md`. No known in-boundary blocker remains.
 
@@ -102,7 +116,7 @@ Budget derivation and interpretation are recorded in `INTERACTION_BENCHMARK.md`.
 
 ## Final handoff condition
 
-Evidence-only reconciliation after `6ea3a6fb3152c76c18379ef79e7780006de7aaba` must not alter production/test semantics. The final branch HEAD is eligible for freeze only when:
+Evidence-only reconciliation after `9968d119648996531aa8823ab97786e9a8eb1855` must not alter production/test semantics. The final branch HEAD is eligible for freeze only when:
 
 - canonical observation is GREEN on that exact HEAD;
 - `scripts/hk08b-verify-exact-sha.sh` is GREEN on the exact frozen SHA;
