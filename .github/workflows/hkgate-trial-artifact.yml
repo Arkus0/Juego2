@@ -55,8 +55,6 @@ jobs:
             --no-restore \
             --no-self-contained \
             -p:UseAppHost=false \
-            -p:DebugType=None \
-            -p:DebugSymbols=false \
             -o "${OUT_DIR}/app"
           test -f "${OUT_DIR}/app/Arkus.Harness.Mcp.dll"
 
