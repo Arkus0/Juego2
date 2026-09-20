@@ -1,7 +1,7 @@
 # Topology B — "Cuña de Confluencia" (confluence wedge)
 
 WP: `WP-CITY-00`
-Status: selected option after refutation, amended through repair cycle 4.
+Status: selected option after refutation, amended through repair cycle 5.
 
 ## Repair history
 
@@ -11,9 +11,12 @@ Status: selected option after refutation, amended through repair cycle 4.
 - **Cycle 4:** independent review #5261556774 proved the previous planar embedding impossible: a
   wedge between two channels cannot continue dry past their confluence. The landmasses are now fixed
   first in `PLANAR_EMBEDDING.md`, and connectivity is regenerated in `CONNECTIVITY_MATRIX.md`.
+- **Cycle 5:** independent review #5261646488 found that the ASCII graph still visually connected the
+  Ensanche bank to Puerto even though the matrix defines no such edge. The graph now renders the
+  landmasses separately and treats only explicit labeled connectors as graph edges.
 
-The selected topology survives, but cycle 4 is a **real spatial correction**, not a documentation-only
-patch.
+The selected topology survives. Cycle 5 changes no landmass, crossing, route count or scale claim; it
+removes a contradictory rendering of the already-correct cycle-4 embedding.
 
 ## 1. Premise and bank choice
 
@@ -36,38 +39,47 @@ That is the topology's physical embedding. All route/crossing counts derive from
 
 ## 2. Semantic graph
 
+Only explicit labeled connectors below are graph edges. Whitespace, columns and landmass grouping do
+not imply connectivity.
+
 ```text
-                          VEGA / HUERTAS (NE)          laderas / peñas [scenic]
-                                |                              |
-        BARRIO ALTO ------- callejas altas ---------------------+
-           |   \                |                    \
-       escaleras  lavadero      |                     mirador
-           |          \         |                       |
-   ENSANCHE =puentecillos= CALLE MAYOR =========== PLAZA / AYUNTAMIENTO
-      |    |    |    |          |        \              |      \
-      |  (Arroyo: X2-X5)        |         \             |       \
-      |    |    |    |     RIBERA / TALLERES         CASCO VIEJO
-      |    |    |    |          |                       |      \
-      |    |    |    |     PASEO / SIRGA -------- landing head  X1 PUENTE VIEJO
-      |    |    |    |                                  |              |
-      |    |    |    |                         X6 barca / X7 bridge     |
-      |    |    |    |                                  |              |
-      +----+----+----+-------------------------------  [RÍO] -----------+
-                                                         |              |
-                                          PUERTO FLUVIAL +---- camino sur ----+
-                                                |        |   ermita/cementerio
-                                         ENTRADA / BUS / CARRETERA
-                                                |
-                                      valley road / downstream road
+[ENSANCHE BANK]                         [WEDGE]
+
+ENSANCHE == X2-X5 / ARROYO == CALLE MAYOR =========== PLAZA / AYUNTAMIENTO
+                                      |        \              |      \
+                                RIBERA / TALLERES       CASCO VIEJO   \
+                                      |                      |         \
+                               PASEO / SIRGA ------ landing head       \
+                                      |                  *              \
+                            BARRIO ALTO / callejas altas   \              \
+                                      |                     \              \
+                               VEGA / HUERTAS (NE)           \              \
+                                                             \              \
+                                             X6 barca / X7 bridge    X1 PUENTE VIEJO
+                                                   |                       |
+                                                   v                       v
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ joined RÍO / water boundary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[ORILLA SUR]
+
+                             upstream PUERTO edge ---- PUERTO FLUVIAL ---- camino sur ---- X1 far end
+                                      |                      |                                  |
+                                      +----------------------+                          ermita/cementerio
+                                                             |
+                                                    ENTRADA / BUS / CARRETERA
+                                                             |
+                                                   valley / downstream road
 ```
 
 Topological meaning, not metric drawing:
 
 - the Wedge stops at `landing head` / confluence tip;
-- X1 reaches Orilla sur near the casco;
+- X1 reaches Orilla sur near the casco, then `camino sur` stays dry on that landmass to Puerto;
 - X6/X7 reaches the upstream edge of Puerto on the same Orilla-sur landmass downstream;
-- the dry south-bank `camino sur` links X1's far end to Puerto;
-- Entrada and the valley road are dry-continuous with Puerto.
+- Entrada and the valley road are dry-continuous with Puerto;
+- **no Ensanche-bank ↔ Orilla-sur edge exists.** Any Ensanche→Puerto route first crosses X2–X5 to
+  the Wedge and then uses X1 or X6/X7 as defined by the matrix.
 
 ## 3. Longitudinal route families
 
@@ -113,8 +125,9 @@ Summary of design only:
 - each state therefore designs exactly two Río crossings, and the prior 2 → 1 → 0 State-1
   availability ladder remains intact.
 
-There is **no** Puerto ↔ Orilla-sur crossing because Puerto is on Orilla sur. That was the old
-embedding error.
+There is **no** Puerto ↔ Orilla-sur crossing because Puerto is on Orilla sur. There is likewise **no
+Ensanche-bank ↔ Orilla-sur crossing**. Any route between those landmasses necessarily traverses the
+Wedge through one of X2–X5 and then a named Río crossing.
 
 ## 6. Port logic and approaches
 
