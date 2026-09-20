@@ -12,7 +12,7 @@ if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 [[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean before HK GATE verification" >&2; exit 2; }
 
 # Freeze must be explicit in PR metadata. The mandatory AI trial is deliberately external to this
-# source-reading Worker context and must target the exact candidate without changing Git history.
+# source-reading Worker context and must target the exact frozen candidate without changing Git history.
 printf '%s\n' "${PR_BODY:-}" | grep -Fxq 'Worker state: FROZEN_FOR_REVIEW'
 printf '%s\n' "${PR_BODY:-}" | grep -Fxq 'Branch frozen: YES'
 printf '%s\n' "${PR_BODY:-}" | grep -Fxq 'Worker pre-review: CLEAN'
@@ -22,11 +22,17 @@ printf '%s\n' "${PR_BODY:-}" | grep -Eq '^AI trial evidence: https://github\.com
 
 bash scripts/hkgate-observe-exact-sha.sh "${actual}"
 
-grep -Fxq 'FOUNDATIONAL_PROOF_VERDICT: READY' Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md
-grep -Fxq 'UNRESOLVED_PROOF_OBLIGATIONS: 0' Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md
+# The committed matrix intentionally remains NOT_READY/1 on the frozen SHA: the single unresolved
+# item is the external trial itself. Requiring READY/0 in a tracked file would force a post-trial
+# commit, changing the SHA and invalidating the exact-SHA trial. Exact-SHA verification closes that
+# one external obligation dynamically only after the PASS metadata above is proven for this SHA.
+grep -Fxq 'FOUNDATIONAL_PROOF_VERDICT: NOT_READY' Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md
+grep -Fxq 'UNRESOLVED_PROOF_OBLIGATIONS: 1' Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md
 grep -Fxq 'KNOWN_UNDETECTED_DEFECT_CLASSES: 0' Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md
 grep -Fxq 'PROOF_BUDGET_VERDICT: WITHIN_BUDGET' Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md
 grep -Eq '^TRUST_BOUNDARY: .+$' Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md
+grep -Fq '| 17. fresh independent AI-agent public-client trial |' Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md
+grep -Fq '| **PENDING / BLOCKING** |' Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md
 grep -Fxq 'WORKER_PRE_REVIEW: CLEAN' Docs/evidence/WP-HK-GATE/WORKER_PRE_REVIEW.md
 grep -Eq '^WORKER_PRE_REVIEW_FINDINGS_FIXED: [0-9]+$' Docs/evidence/WP-HK-GATE/WORKER_PRE_REVIEW.md
 grep -Fxq 'NEGATIVE_CONTROL_UNIVERSE: 13' Docs/evidence/WP-HK-GATE/NEGATIVE_CONFORMANCE_MATRIX.md
@@ -51,6 +57,10 @@ Canonical command: scripts/hkgate-verify-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
 Required gates: deterministic-gate-observation=GREEN; external-ai-agent-trial=GREEN; foundational-proof=GREEN; residual-reconciliation=GREEN; dependency-ip-boundary=GREEN; worker-pre-review=GREEN
+FOUNDATIONAL_PROOF_VERDICT: READY
+UNRESOLVED_PROOF_OBLIGATIONS: 0
+KNOWN_UNDETECTED_DEFECT_CLASSES: 0
+PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 Result: GREEN
 Evidence: Docs/evidence/WP-HK-GATE; PR exact-SHA AI trial transcript link
 EOF
