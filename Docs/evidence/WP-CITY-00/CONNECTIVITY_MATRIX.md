@@ -97,21 +97,21 @@ Orilla-sur landmass that the old matrix simultaneously treated as separate from 
 ## 6. Route counts and plaza dependence
 
 The WP test is: **remove the plaza node and the designed city remains connected.** Availability can
-make a particular bypass temporarily unavailable without invalidating that design claim.
+remove a short bypass and impose a long detour without invalidating that design claim.
 
 Representative pairs, excluding pairs containing the plaza itself:
 
 | Pair | Route using plaza | Plaza-free designed route | Availability note |
 |---|---|---|---|
 | Barrio Alto ↔ Ribera | escaleras → plaza → Calle Mayor → down | callejas altas → east stairs → Ribera | unconditional |
-| Casco ↔ Ensanche | plaza → X2 | lower lanes → X5 | **X5 is low-water only; in high water this pair routes through the plaza** |
+| Casco ↔ Ensanche | plaza → X2 | low water: lower lanes → X5; high water: Cuesta → landing head → paseo → Ribera → east stairs → Barrio Alto → X3 | X5 disappears in high water, so the plaza-free trip becomes a long detour rather than vanishing |
 | Ensanche ↔ Puerto | X2 → Calle Mayor → plaza → lower casco → X6/X7 (or X1 in high water) | X3 → Barrio Alto → callejas altas → east stairs → Ribera → paseo → X6/X7; if X6 is suspended, paseo/lower-casco route → X1 → camino sur | designed plaza-free route exists; exact cost is CITY-01 work |
 | Vega ↔ Puerto | Calle Mayor → plaza → X1 → camino sur | paseo/Ribera → confluence-tip head → X6/X7; if X6 is suspended, paseo/lower-casco route → X1 → camino sur | designed plaza-free route exists; exact cost is CITY-01 work |
 | Barrio Alto ↔ Ensanche | plaza → X2 | X3 Pasarela del Lavadero | unconditional |
 
-The matrix does **not** claim two plaza-free routes per pair. It claims at least one designed bypass.
-It also does **not** claim that bypass is always available: Casco ↔ Ensanche deliberately routes
-through the plaza in high water because X5, its direct plaza-free crossing, is submerged.
+The matrix does **not** claim two plaza-free routes per pair or that the shortest bypass is always
+available. In particular, high water removes Casco ↔ Ensanche's direct X5 bypass; the surviving
+plaza-free route is intentionally much longer.
 
 ## 7. Port approaches
 
@@ -125,7 +125,7 @@ The port is on Orilla sur downstream. It is **not** dry-connected to the Wedge.
 | **Ribera / paseo approach** | Ribera → paseo/sirga → confluence-tip head → X6/X7 → upstream Puerto edge | X6/X7 |
 
 The last two are distinct route families to the same landing-side crossing. They are **not** counted
-as separate crossings. The port has two independent dry approaches on its own bank plus the direct
+as separate crossings. The port has two named dry approach directions on its own bank plus the direct
 core crossing and therefore is not a cul-de-sac.
 
 `Cuesta del Puerto` ends at the Wedge-side landing head. `Paseo/sirga` reaches the same head. Neither
@@ -168,8 +168,8 @@ Applied:
 
 - CSI-02 binds three designed longitudinal route families; its low route reaches the port through the
   landing-side crossing and may be unavailable at X6 during State-1 high water.
-- CSI-03 binds plaza independence by design; it explicitly permits the named Casco ↔ Ensanche
-  high-water state to route through the plaza when X5 is submerged.
+- CSI-03 binds plaza independence by design. Seasonal water can replace a short plaza-free route with
+  a much longer one, but the base graph still remains connected with the plaza node removed.
 - CSI-06 binds two designed Río crossings per state: X1 plus X6/X7.
 - CSI-07 binds four designed Arroyo crossings, with two permanent.
 
