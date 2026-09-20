@@ -1,7 +1,9 @@
 # Juego2 Production Blueprint
 
-Version: 0.2 — 2026-09-20  
+Version: 0.3 — 2026-09-20  
 Status: **NON-BINDING, owner-reviewed production proposal.** This document creates no H0 acceptance criterion, reopens no accepted H0 guarantee, starts no gameplay work and does not modify the `WP-HK-GATE` precondition. It is planning input for the roadmap author after GATE.
+
+Revision 0.3 reconciles this document with `Docs/production/CITY_SPATIAL_CONSTITUTION.md`, produced by `WP-CITY-00`. Where the two disagreed about the shape of the town, the constitution now owns the topology, the district families and the scale band, and this document keeps the production reasoning built on top of them. Nothing else in this revision changes, and this remains non-binding planning input.
 
 ## 0. Decisions captured by this revision
 
@@ -36,34 +38,28 @@ The first product seed should already contain enough of those ideas that a scree
 
 ## 1.2 Semantic topology
 
-```text
-                         LADERA / BARRIO ALTO
-                       /        |          \
-                viviendas -- callejas -- mirador
-                    |           |             |
-                 escaleras      |        camino exterior
-                    |           |             |
-             CASCO VIEJO ---- BAR/CALLEJON   |
-                 |     \          |           |
-                 |      \         |           |
-             PUENTE VIEJO ---- PLAZA/MERCADO ---- CALLE COMERCIAL ---- ENTRADA / BUS
-                 |                 |      \              |                  |
-                 |                 |       \             |                  |
-          RIBERA / TALLERES ------+---- PASEO FLUVIAL ---+----------- carretera exterior
-                 |                                                        |
-              huertas ---------------------------------------------- camino de valle
-```
+The town's topology is no longer defined here. It is owned by
+`Docs/production/CITY_SPATIAL_CONSTITUTION.md` §2.2, which selected a **confluence-wedge** city after
+comparing three materially different alternatives.
 
-This topology has **loops**. The plaza is still important, but it is no longer the only possible route between every pair of places.
+What the earlier draft of this section got right survives unchanged:
 
-That matters to the game as much as to the art:
+> The town needs **loops**. The plaza is important, but it must never be the only possible route
+> between every pair of places.
 
-- Antonio can descend from Barrio Alto, cross the old bridge and reach the workshops without traversing the whole commercial street.
-- Ana can take a short lane from her home to the bar.
-- Pilar can choose the riverside walk rather than the market route.
-- Javier's bicycle prefers the exterior/commercial route and avoids steep steps.
-- Tomás can arrive from the valley/huertas directly toward the market.
-- Bernardo arrives by bus and enters through the commercial edge.
+What it lacked was a river port, a second residential character, and any reason the river had to be
+crossed. The selected constitution supplies all three: two watercourses with different roles — a
+tributary stream crossed casually and often, a valley river crossed rarely and deliberately — and a
+working fluvial landing downstream of the confluence.
+
+The actor examples that motivated the original diagram all still hold, now on the new graph:
+
+- Antonio descends from the Barrio Alto and reaches the workshops along the Ribera without traversing the whole commercial street.
+- Ana takes a short lane from her home to the bar in the casco.
+- Pilar chooses the riverside paseo rather than the market terrace.
+- Javier's bicycle prefers the Calle Mayor and the Puente del Mercado, avoiding the stepped lanes.
+- Tomás arrives from the huertas along the vega path and reaches the market directly.
+- Bernardo arrives by bus at the Entrada — which now sits beside the port, so outsiders enter through the working edge rather than at an abstract road edge.
 
 NPC schedules therefore create believable traffic because the **town affords different routes**, not because a script funnels actors past the player.
 
@@ -71,14 +67,19 @@ NPC schedules therefore create believable traffic because the **town affords dif
 
 | Zone | Product character | Core POIs | Purpose |
 |---|---|---|---|
-| `zone.cascoverde` / old-quarter equivalent | tight stone lanes, small level changes, irregular frontages | bar alley, old residences, small courtyard | strongest town identity; intimate social encounters |
-| `zone.plaza_mercado` | civic/commercial meeting space near a crossing | market, fountain, benches, civic frontage | visible convergence without becoming the only hub |
-| `zone.calle_comercial` | main everyday spine | shop, bakery, pharmacy, residential portals | interaction, opening hours, everyday pedestrian flow |
+| `zone.casco` / old-quarter equivalent | tight stone lanes on the confluence tip, level changes, houses over the stream | bar alley, old residences, small courtyard, mirador | strongest town identity; intimate social encounters |
+| `zone.plaza_mercado` | civic/commercial meeting space on the first terrace | market, fountain, benches, town hall frontage | visible convergence without becoming the only hub |
+| `zone.calle_comercial` | main everyday spine along the terrace | shop, bakery, pharmacy, residential portals | interaction, opening hours, everyday pedestrian flow |
 | `zone.barrio_alto` | stepped residential lanes on the slope | homes, wash place/patio, viewpoint | schedules, vertical navigation, off-screen transitions |
-| `zone.ribera` | work edge along the water | workshop, storage, huerta access, river walk | work routines, alternate routes, later expansion |
-| `zone.entrada` | road/bus arrival and outward connection | bus stop, road, path to later cemetery/valley | arrivals, departures, outsider traffic, expansion seam |
+| `zone.ensanche` | flat, regular, newer residential across the stream | homes with gardens, corner shop, small square | a second residential social character; cheapest large expansion |
+| `zone.ribera` | work edge between the terrace and the river | workshop, storage, river walk, towpath | work routines, alternate low route |
+| `zone.puerto` | fluvial landing downstream of the confluence | quay, warehouses, weighbridge, boatyard, fonda | arrivals, goods, work shifts, outsiders, municipal concessions |
+| `zone.entrada` | road/bus arrival, adjacent to the port | bus stop, road junction, depot | arrivals, departures, outsider traffic, expansion seam |
+| `zone.vega` | huertas, paths and terraces upstream | huerta plots, mill, paths to ermita/cemetery | rural edge, quiet, seasonal work, market supply |
 
-Names are placeholders; identifiers are not frozen by this document.
+Names are placeholders; identifiers are not frozen by this document. District identity and intensity
+are owned by `CITY_SPATIAL_CONSTITUTION.md` §2.3; the location and interior programme belongs to
+`WP-CITY-02`.
 
 ## 1.4 The first buildable product seed
 
@@ -89,9 +90,16 @@ The first serious H2 town build should be **small enough to finish and good enou
 - approximately 60–100 m of the commercial/old-quarter connection;
 - the bar exterior and one bar interior;
 - one ascending lane toward Barrio Alto;
+- one stream crossing, so route choice exists inside the seed itself;
 - 6–8 authored building frontages;
 - a short visible river/stream strip and riverside edge;
+- the first metres of the descent toward the port, as a visible seam rather than a built district;
 - distant green slopes / rock silhouettes.
+
+Laid out at the scale anchors in §1.5 this occupies roughly **0.03–0.06 km²**. That band replaces the
+0.10–0.15 km² starting hypothesis, which `WP-CITY-00` falsified against both the corrected city size
+and this very element list (see `Docs/evidence/WP-CITY-00/SCALE_ENVELOPE.md`). The exact seed
+boundary is owned by `WP-CITY-03`, not by this document.
 
 The water can initially be presentation-simple. H2 does **not** need a river simulation, swimming, hydrology or boats. The river is included because it is structural town identity and route geometry.
 
@@ -109,6 +117,8 @@ Use the current visual-bible anchors as starting values, not final geometry:
 - most early daily-life POIs should remain roughly 30–90 seconds apart on foot for observability.
 
 The 30–90 second rule is a development convenience, **not** a requirement that every route be short or pass through the plaza.
+
+District-scale figures are not listed here. `CITY_SPATIAL_CONSTITUTION.md` §3 owns the city's dense-fabric band, playable envelope, walk-time hypotheses and the explicit conditions that would shrink or expand them.
 
 ## 1.6 Urban grammar for AI authoring
 
@@ -532,7 +542,10 @@ Place:
 - old bridge + visible river strip;
 - 60–100 m old-quarter/commercial connection;
 - bar interior;
-- one ascending residential lane.
+- one ascending residential lane;
+- one stream crossing, so the "follows an NPC through a route choice" scenario has a real branch.
+
+This is the §1.4 seed, not a second area. Where the two lists differ, §1.4 is the one that counts.
 
 Cast: six NPCs in full simulation; additional persistent actors may exist abstractly.
 
@@ -667,7 +680,9 @@ Nothing in this section carries an old repository PASS into Juego2. It is design
 |---|---|---|
 | Quaternius timing | current roadmap puts import/select in H2 | explicitly move a tiny representative real-asset slice into H1 when post-GATE roadmap is authored |
 | Quaternius tier | visual bible says free tier | decide free vs Source after exact dependency/license review |
-| town layout | first draft was a radial test hub | use the product-seed river/bridge/loops topology in this revision |
+| town layout | first draft was a radial test hub; revision 0.2 proposed a single-river loop diagram | **resolved** — `CITY_SPATIAL_CONSTITUTION.md` owns the topology, district families and crossings |
+| river port plausibility | **resolved** — the landing is justified by timber rafting, gravel working, a roped ferry and road break-bulk, all inside the small-landing/working-boats direction `Docs/art/SETTING.md` already gives | none required; if ART later wants a larger river role for the valley, that decision would widen the landing rather than validate it |
+| city scale band | 0.8–1.2 km² dense fabric and a 0.10–0.15 km² first seed were working hypotheses | **corrected** to ≈0.30–0.45 km² and ≈0.03–0.06 km² on traversal, density and content-cost grounds; reopen the constitution rather than stretch it if the band ever rises above ~0.7 km² |
 | prefab catalogue authority | first draft proposed canonical `WorldObject` catalogue | review in H1; require discoverability without pre-deciding storage authority |
 | phase order | first draft put cinematics/QTE/combat before social simulation | Living World Core first; drama then combat; deeper agency later |
 | durable authored persistence | H0 has no production project store claim | use canonical snapshot/checkpoint-based project workspace first; escalate only with evidence |
