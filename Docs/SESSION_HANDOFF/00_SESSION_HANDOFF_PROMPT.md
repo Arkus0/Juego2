@@ -22,22 +22,22 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B` and `WP-HK-06C` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C` and `WP-HK-07A` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-06C — Deterministic journal replay + end-to-end audit consistency`.
+Latest accepted workpack: `WP-HK-07A — Headless host + neutral projection contract + reference transport`.
 
-- implementation PR: `#40`;
-- baseline SHA: `c6534fa42f6bdd18a5bff4c3fe23f3868af993e8`;
-- reviewed frozen candidate: `55fecbd8a4a5e17ce247b164cd375d652d066fdf`;
-- independent Reviewer: `PASS` (PR review `#5259530509`);
-- exact-SHA validation: GREEN, Actions `35488920548`, artifact `10598675153`;
-- merge SHA: `e44a5e93bf0912f5b5fb80dd749e294e21a740f2`;
-- accepted semantic addition: deterministic replay of accepted HK06A journal evidence from the exact accepted authored base; explicit compatibility policy; every replayed step executes through the accepted HK04/HK05 canonical mutation authority inside a staged session; replay publishes only after complete result/journal audit; successful replay regenerates truthful local HK06A history and proves identical final canonical hash plus empty HK06B semantic diff;
-- accepted scope limits: no deterministic gameplay/runtime replay, durable journal/WAL/crash recovery, cross-lineage history merge, cross-process writer coordination, transport framing, MCP, cloud persistence or Unity replay.
+- implementation PR: `#44`;
+- baseline SHA: `9173dcef32f6e020b64c3db2816fe5f4d0994058`;
+- reviewed frozen candidate: `f2ef88980b38482a1a635f4eeb0582ee49d735ec`;
+- independent Reviewer: `PASS` (PR review `#5259732343`);
+- exact-SHA validation: GREEN, Actions `35492562005`, artifact `10599004891`;
+- merge SHA: `f70a81b5115cd2a6b0c8b1cb9c5dd657d5f3792b`;
+- accepted semantic addition: non-interactive process-local canonical host; `arkus.neutral-projection@1` as the accepted transport-neutral projection contract; deterministic `arkus.reference.jsonl@1` framing as the first reference transport; generic composed-inventory discovery and dispatch; stable transport/canonical/cancelled/timed-out outcomes; strict framing and stdout/stderr separation; fresh external-process exercise of accepted read, validation, mutation, provenance, diff, snapshot and replay flows;
+- accepted scope limits: no MCP implementation, HTTP/cloud service, Unity/editor integration, durable storage/crash recovery, authentication/network tenancy, multi-process writer coordination, post-dispatch execution abort/resource governor, HK08 interaction-efficiency/recovery semantics or gameplay/runtime-state semantics.
 
-HK06C introduced no predecessor contradiction. The accepted authority split is now explicit: ordinary authored changes use `CanonicalMutation`, whole-root snapshot import uses `CanonicalRebase`, and journal reconstruction uses `CanonicalReplay`. Replay consumes HK06A journal identity/provenance plus HK06B snapshot/diff semantics and does not redefine either.
+HK07A did not reopen accepted HK01-HK06C semantics. It projects the accepted composed `ComposedContract` and canonical dispatcher rather than owning a transport registry or write path. Cancellation/timeout are explicitly admission-only: once synchronous canonical dispatch begins, the canonical outcome remains authoritative.
 
-The independent Reviewer specifically checked the staged aggregate publication seam, HK06B rebase-receipt lifetime, canonical mutation routing, replay compatibility, downstream HK07A projection and the WP's clean-process wording. No concrete false-green class remained inside HK06C's declared boundary.
+The independent Reviewer specifically checked completeness against scoped composition rather than the observed production capability count, JSONL/framing isolation from the neutral layer, Runtime/Projection dependency direction, representative process-boundary mutation/provenance/snapshot/diff/replay behaviour, and downstream HK07B neutrality. The only review note was non-blocking evidence wording: the xUnit assembly has product references even though the external-client code path itself communicates only through compiled child processes and calls no implementation API.
 
 ## Current next product target
 
@@ -45,13 +45,13 @@ The original HK06 and HK07 monoliths were split **before implementation** to red
 
 Execution chain:
 
-`HK06A ✅ → HK06B ✅ → HK06C ✅ → HK07A → HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`
+`HK06A ✅ → HK06B ✅ → HK06C ✅ → HK07A ✅ → HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`
 
-The next dependency-valid workpack is `WP-HK-07A — Headless host + neutral projection contract + reference transport`.
+The next dependency-valid workpack is `WP-HK-07B — MCP as second projection + cross-transport conformance`.
 
-HK07A must turn the accepted canonical runtime into a production-quality non-interactive process and freeze a transport-neutral projection contract above one deterministic reference transport. The reference transport must project the composed canonical capability inventory generically rather than own a second registry, keep protocol output isolated from diagnostics, define stable framing/failure/cancellation semantics, require no Unity/editor/network/user prompt for the local canonical path, and allow a fresh external client to discover and exercise representative read, validation, mutation, provenance, diff, snapshot and replay capabilities without source-code knowledge. Read `Docs/workpacks/HK/WP-HK-07A.md` plus accepted HK01–HK06C evidence before implementation.
+HK07B must implement MCP as a standards-compatible **second projection** of the already accepted HK07A neutral projection contract. It must not change canonical or neutral semantics merely to make MCP convenient. Discovery/request/result/error meaning must be derived from or mechanically reconciled with the composed canonical contract; scoped capabilities must appear without an MCP-owned registry; MCP must expose no adapter-only mutation path; cancellation/error behaviour must map to the accepted HK07A semantics; and representative discovery, read, validation, mutation, provenance, diff, snapshot and replay flows must be semantically equivalent across JSONL and MCP. Read `Docs/workpacks/HK/WP-HK-07B.md`, `Docs/reference/HK07A_REFERENCE_TRANSPORT.md` and accepted HK07A evidence before implementation.
 
-After 07A PASS+merge+DocSync: 07B adds standards-compatible MCP projection and proves cross-transport semantic equivalence. HK08A then owns atomic batching plus compact/bounded reads and pagination; HK08B owns structured stale-CAS recovery, repair ergonomics and measured end-to-end interaction budgets; HK09A owns repository-local host capability containment; HK09B owns explicit resource limits plus import/persistence interruption integrity; HK10 remains the unsplit closure workpack before HK-GATE.
+After 07B PASS+merge+DocSync: HK08A owns atomic batching plus compact/bounded reads and pagination; HK08B owns structured stale-CAS recovery, repair ergonomics and measured end-to-end interaction budgets; HK09A owns repository-local host capability containment; HK09B owns explicit resource limits plus import/persistence interruption integrity; HK10 remains the unsplit closure workpack before HK-GATE.
 
 Whole-world CAS/hash remains the H0 global consistency anchor but does **not** require clients or AI agents to reload/reconstruct the complete world after each commit. Bounded revision-anchored inspection, semantic diff and HK08B recovery are the client-side coherence mechanisms. Serialized commit execution alone does not cure a stale plan; a request planned on an old revision still requires rejection/recovery/re-plan.
 
@@ -73,7 +73,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C ✅ → HK-07A → HK-07B → HK-08A → HK-08B → HK-09A → HK-09B → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C ✅ → HK-07A ✅ → HK-07B → HK-08A → HK-08B → HK-09A → HK-09B → HK-10 → HK-GATE`.
 
 ## Process invariants
 

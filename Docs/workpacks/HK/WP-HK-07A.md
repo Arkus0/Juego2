@@ -1,9 +1,20 @@
 # WP-HK-07A — Headless host + neutral projection contract + reference transport
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: `WP-HK-06C`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+## Completion metadata
+
+- implementation PR: `#44`;
+- baseline SHA: `9173dcef32f6e020b64c3db2816fe5f4d0994058`;
+- reviewed frozen candidate: `f2ef88980b38482a1a635f4eeb0582ee49d735ec`;
+- independent Reviewer verdict: `PASS` (review `#5259732343`);
+- exact-SHA validation: GREEN, Actions `35492562005`, artifact `10599004891`;
+- implementation merge SHA: `f70a81b5115cd2a6b0c8b1cb9c5dd657d5f3792b`.
+
+Accepted semantics: one non-interactive process-local canonical host; `arkus.neutral-projection@1` as the accepted transport-neutral request/outcome/completeness boundary above canonical composition; `arkus.reference.jsonl@1` as the deterministic JSONL reference transport; generic discovery and dispatch from the composed canonical inventory with no adapter-owned registry or mutation authority; explicit admission-only cancellation/timeout semantics; strict framing/failure/exit behaviour with protocol stdout isolated from diagnostics; and fresh-process exercise of accepted read, validation, mutation, provenance, snapshot, diff and replay semantics. HK07B must fit MCP as a genuine second projection without amending these accepted neutral semantics merely to accommodate the adapter.
 
 ## Objective
 
