@@ -20,6 +20,9 @@ DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj
   --configuration Release --no-build --no-restore -m:1 --disable-build-servers \
   --logger 'console;verbosity=detailed' \
   --filter 'FullyQualifiedName~Hk10'
+DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+  --configuration Release --no-build --no-restore -m:1 --disable-build-servers \
+  --filter 'FullyQualifiedName~Hk09BContentShapeProbeTests.PotesHeroSliceFitsOneBoundedTransactionAndCheckpointRebase'
 bash scripts/hk10-negative-conformance.sh
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore -m:1 --disable-build-servers
@@ -35,7 +38,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/hk10-observe-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: locked-restore=GREEN; release-build=GREEN; hk10-property-robustness=GREEN; hk10-endurance-compatibility=GREEN; causal-negative-controls=GREEN; regression=GREEN
+Required gates: locked-restore=GREEN; release-build=GREEN; hk10-property-robustness=GREEN; hk10-endurance-compatibility=GREEN; representative-content-shape-probe=GREEN; causal-negative-controls=GREEN; regression=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-HK-10
 EOF

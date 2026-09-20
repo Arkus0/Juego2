@@ -25,6 +25,10 @@ The corpus is deliberately independent from runtime constants: it records accept
 
 The corpus also requires exact v1.0 discoverability with non-null request/success/error schemas for `system.describe`, `system.resource-envelope.describe`, `world.summary`, `world.object.get`, `world.object.query`, `authoring.change.apply`, `authoring.journal.read`, `authoring.snapshot.export` and `authoring.snapshot.import`.
 
+## Schema/version evolution rule
+
+HK10 does not invent a second evolution policy. The inherited canonical composer remains authoritative: same-major capability versions are checked through `ContractCompatibility.Compare` and a breaking same-major change is rejected as `composition.breaking_same_major_version`; explicit major changes remain breaking boundaries. Full regression keeps those inherited composition/version tests live while this corpus independently freezes the concrete accepted v1 identities and limits. Unknown future journal/snapshot versions continue to fail closed under the accepted replay/compatibility contract.
+
 ## Scope
 
 This is a compatibility corpus, not a cross-major migration mechanism. Future journal/snapshot/MCP SDK/protocol versions remain explicit reviewed lifecycle work. HK10 proves that the accepted current v1 facts cannot silently drift while retaining the same public identity.
