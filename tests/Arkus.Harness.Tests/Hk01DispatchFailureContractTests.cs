@@ -111,7 +111,7 @@ namespace Arkus.Harness.Tests
             return new Dictionary<string, object?>(StringComparer.Ordinal);
         }
 
-        private sealed class ThrowingHandlerProxy : DispatchProxy
+        public class ThrowingHandlerProxy : DispatchProxy
         {
             public bool CommitBeforeThrow { get; set; }
             public string Sentinel { get; set; } = string.Empty;
