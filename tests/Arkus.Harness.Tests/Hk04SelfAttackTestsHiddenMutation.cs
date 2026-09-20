@@ -60,7 +60,8 @@ namespace Arkus.Harness.Tests
             foreach (var definition in contract.Definitions)
             {
                 if (definition.SideEffect == SideEffectClass.CanonicalMutation ||
-                    definition.SideEffect == SideEffectClass.CanonicalRebase)
+                    definition.SideEffect == SideEffectClass.CanonicalRebase ||
+                    definition.SideEffect == SideEffectClass.CanonicalReplay)
                 {
                     continue;
                 }
@@ -110,6 +111,13 @@ namespace Arkus.Harness.Tests
                 ["base"] = snapshot,
                 ["target"] = snapshot
             };
+            var replayCompatibility = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["journalSchemaId"] = WorldProvenanceContract.JournalSchemaId,
+                ["entrySchemaId"] = WorldProvenanceContract.EntrySchemaId,
+                ["snapshotSchemaId"] = WorldPortabilityContract.SnapshotSchemaId,
+                ["snapshotVersion"] = WorldPortabilityContract.SnapshotVersion
+            };
 
             return new Dictionary<string, IReadOnlyDictionary<string, object?>>(StringComparer.Ordinal)
             {
@@ -126,7 +134,8 @@ namespace Arkus.Harness.Tests
                 [WorldMutationContract.DryRunName] = plannedMutation,
                 [WorldProvenanceContract.ReadName] = Hk01TestFixtures.EmptyRequest(),
                 [WorldPortabilityContract.CompareName] = diff,
-                [WorldPortabilityContract.ExportName] = Hk01TestFixtures.EmptyRequest()
+                [WorldPortabilityContract.ExportName] = Hk01TestFixtures.EmptyRequest(),
+                [WorldReplayContract.CompatibilityName] = replayCompatibility
             };
         }
     }

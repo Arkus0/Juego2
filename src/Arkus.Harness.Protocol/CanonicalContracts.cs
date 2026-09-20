@@ -153,7 +153,8 @@ namespace Arkus.Harness.Protocol
         CanonicalMutation = 3,
         ExternalReversible = 4,
         ExternalIrreversible = 5,
-        CanonicalRebase = 6
+        CanonicalRebase = 6,
+        CanonicalReplay = 7
     }
 
     public enum DeterminismClass
@@ -195,7 +196,8 @@ namespace Arkus.Harness.Protocol
         None = 1,
         ReadOnlyEnvelope = 2,
         CanonicalTransaction = 3,
-        CanonicalRebase = 4
+        CanonicalRebase = 4,
+        CanonicalReplay = 5
     }
 
     public enum ProvenanceRequirement

@@ -31,6 +31,7 @@ namespace Arkus.Harness.Runtime
             definitions.AddRange(WorldMutationContract.CreateDefinitions());
             definitions.AddRange(WorldProvenanceContract.CreateDefinitions());
             definitions.AddRange(WorldPortabilityContract.CreateDefinitions());
+            definitions.AddRange(WorldReplayContract.CreateDefinitions());
 
             var routes = new List<CapabilityRoute>(acceptedBase.Routes);
             routes.AddRange(WorldInspectionBindings.CreateRoutes(inspection));
@@ -38,6 +39,11 @@ namespace Arkus.Harness.Runtime
             routes.AddRange(WorldMutationBindings.CreateRoutes(mutation));
             routes.AddRange(WorldProvenanceBindings.CreateRoutes(mutation));
             routes.AddRange(WorldPortabilityBindings.CreateRoutes(mutation));
+            routes.AddRange(WorldReplayBindings.CreateRoutes(mutation));
+
+            var replayIssues = ReplaySurfaceConformance.Validate(definitions, routes);
+            if (replayIssues.Count != 0)
+                throw new InvalidOperationException(replayIssues[0]);
 
             return new CanonicalProviderContribution(
                 new ProviderDescriptor(
