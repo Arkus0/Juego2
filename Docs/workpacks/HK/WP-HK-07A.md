@@ -31,7 +31,7 @@ RED→GREEN for: protocol-stream log contamination, truncated/malformed/oversize
 
 ## Forbidden scope
 
-MCP adapter, MCP-specific request/tool/schema abstractions, speculative second-transport abstraction added only in anticipation of MCP, HTTP/cloud service, Unity Editor bridge, GUI, model-vendor-specific orchestration, agent ergonomics/batching work owned by HK08.
+MCP adapter, MCP-specific request/tool/schema abstractions, speculative second-transport abstraction added only in anticipation of MCP, HTTP/cloud service, Unity Editor bridge, GUI, model-vendor-specific orchestration, or later interaction-efficiency/recovery work owned by HK08A/HK08B.
 
 ## DoD
 
