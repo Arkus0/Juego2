@@ -16,6 +16,7 @@ Every row below is an in-scope causal attack or false-green class. A negative co
 | independent HK05 diagnostic hidden | synthetic authoritative set `{a,b,c}` compared with presentation omitting `b` | `independent-diagnostic-hidden` | GREEN |
 | benchmark measures private path | benchmark client launches external JSONL process; shape oracle injects `publicTransportOnly=false` | `private-surface` | GREEN |
 | representative benchmark flow omitted | benchmark executes all five named flows; synthetic omission flag | `representative-flow-omitted` | GREEN |
+| required representative content-shape probe omitted or detached from its executable scenario | exact-SHA verifier requires the probe file, approved `VISUAL_BIBLE` source marker, PASS/zero-unresolved markers, executable test identifier, test file and matching test method | deleting the evidence/test or changing any required reconciliation marker makes `hk08b-verify-exact-sha.sh` red | GREEN |
 | conflict recovery reloads whole world | recovery-phase capability log forbids `world.summary`, object query and extension query | `full-world-reload` / direct capability assertion | GREEN |
 | affected-resource inspection omitted | representative stale conflict has one changed resource and exactly one descriptor-driven inspection; synthetic 2 vs 1 case | `affected-resource-omitted` | GREEN |
 | coherent edit degenerates to mutation chatter | two-resource modify is one `authoring.change.apply`; synthetic count 2 | `per-resource-mutation-chatter` | GREEN |
