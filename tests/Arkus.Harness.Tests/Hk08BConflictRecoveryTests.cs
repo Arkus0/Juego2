@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
 using Arkus.Harness.Protocol;
@@ -122,7 +123,7 @@ namespace Arkus.Harness.Tests
                     "request.hk08b.route-writer",
                     Hk04TransactionalMutationTests.PutObject("node.peer", "fixture.route-writer")));
 
-            IReadOnlyDictionary<string, object?>? canonicalRecovery = null;
+            string? canonicalRecovery = null;
             foreach (var capability in new[]
             {
                 WorldMutationContract.PlanName,
@@ -144,13 +145,14 @@ namespace Arkus.Harness.Tests
                 Assert.Equal(WorldConflictRecoveryContract.SameLineageReplan, recovery["disposition"]);
                 Assert.Equal(new[] { "world.object:node.peer" }, Hk04TransactionalMutationTests.Strings(recovery, "changedResources"));
 
+                var signature = JsonSerializer.Serialize(recovery);
                 if (canonicalRecovery == null)
                 {
-                    canonicalRecovery = recovery;
+                    canonicalRecovery = signature;
                 }
                 else
                 {
-                    Assert.Equal(canonicalRecovery, recovery);
+                    Assert.Equal(canonicalRecovery, signature);
                 }
             }
 
