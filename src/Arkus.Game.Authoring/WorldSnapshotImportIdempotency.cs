@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using Arkus.Harness.Protocol;
 
 namespace Arkus.Game.Authoring
 {
@@ -36,7 +37,7 @@ namespace Arkus.Game.Authoring
 
             public CapabilityInvocationResult ImportSnapshot(
                 IReadOnlyDictionary<string, object?> request,
-                Arkus.Harness.Protocol.InvocationResourceBudget resourceBudget)
+                InvocationResourceBudget resourceBudget)
             {
                 return _importer.ImportSnapshot(
                     request ?? throw new ArgumentNullException(nameof(request)),
