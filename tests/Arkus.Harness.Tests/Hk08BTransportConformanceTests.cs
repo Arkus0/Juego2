@@ -69,9 +69,9 @@ namespace Arkus.Harness.Tests
         public void CrossTransportRecoveryOracleTurnsRedWhenRecoveryContextDrifts()
         {
             using var leftDocument = JsonDocument.Parse(
-                "{\"requestId\":\"left\",\"status\":\"error\",\"error\":{\"context\":{\"recovery\":{\"schemaId\":\"arkus.world-conflict-recovery@1\",\"disposition\":\"same-lineage-replan\",\"changedResources\":[\"world.object:a\"]}}}}}");
+                "{\"requestId\":\"left\",\"status\":\"error\",\"error\":{\"context\":{\"recovery\":{\"schemaId\":\"arkus.world-conflict-recovery@1\",\"disposition\":\"same-lineage-replan\",\"changedResources\":[\"world.object:a\"]}}}}");
             using var rightDocument = JsonDocument.Parse(
-                "{\"requestId\":\"right\",\"status\":\"error\",\"error\":{\"context\":{\"recovery\":{\"schemaId\":\"arkus.world-conflict-recovery@1\",\"disposition\":\"same-lineage-replan\",\"changedResources\":[\"world.object:a\"]}}}}}");
+                "{\"requestId\":\"right\",\"status\":\"error\",\"error\":{\"context\":{\"recovery\":{\"schemaId\":\"arkus.world-conflict-recovery@1\",\"disposition\":\"same-lineage-replan\",\"changedResources\":[\"world.object:a\"]}}}}");
             Assert.Empty(NeutralSemanticIssues(leftDocument.RootElement, rightDocument.RootElement));
 
             var drifted = (JsonObject)JsonNode.Parse(rightDocument.RootElement.GetRawText())!;
