@@ -187,7 +187,7 @@ Worth stating precisely, because it narrows the disagreement: the archive's prio
 
 Two further CC0 seed libraries recorded in the archive are worth keeping in view, and neither costs anything: **Kenney** retro urban and road kits, and the **ALEX Modular PSX Building Asset Pack** (188 modular assets, explicitly PS1/PS2-era). The second is arguably closer to the visual bible's "late-PS2 / early-PS3 shape language reinterpreted" than the Medieval kit is, and deserves a place in the first triage pass rather than being assumed away.
 
-**This contradicts the repository as written.** `VISUAL_BIBLE.md` §6–7 says "Quaternius free tier". That divergence is recorded in §9 below, not silently resolved here.
+**This contradicts the repository as written.** `VISUAL_BIBLE.md` §6–7 says "Quaternius free tier". That divergence is recorded in §10 below, not silently resolved here.
 
 ### 2.3 Representative asset slice for H1
 
@@ -307,7 +307,7 @@ This costs nothing new: `CONTENT_SHAPE_BACKLOG.md` rows 1, 3 and 4 are already `
 
 ### 4.4 Deliberately absent
 
-No backstories, no dialogue lines, no quest structure, no faction alignments, no relationship values. One line of role per character is enough to develop the town and exercise the systems. Writing narrative before the dialogue runtime is decided is listed as a rabbit hole in §8 — `CONTENT_SHAPE_BACKLOG.md` row 17 marks dialogue and narrative runtime content `OUT`, pending a later reviewed architecture decision.
+No backstories, no dialogue lines, no quest structure, no faction alignments, no relationship values. One line of role per character is enough to develop the town and exercise the systems. Writing narrative before the dialogue runtime is decided is listed as a rabbit hole in §9 — `CONTENT_SHAPE_BACKLOG.md` row 17 marks dialogue and narrative runtime content `OUT`, pending a later reviewed architecture decision.
 
 ---
 
@@ -356,7 +356,7 @@ Ordered so nothing depends forward. Backlog rows are tagged where a layer first 
 - **Abstract off-screen simulation depends on activity intents and explicitly not on navigation or animation.** If it needs a path or a clip, it is not abstract. An abstract action must still produce the same kind of domain outcome as its full-simulation equivalent.
 - **Combat depends on GameFlow authority, animation and actors** — never directly on narrative. Narrative consumes the outcome.
 - **QTE depends on GameFlow and cinematics**, not on combat. It is an input-authority mechanism that combat happens to use.
-- **Autonomous agency depends on knowledge, relationships, schedules and events together.** It is the last thing, not an early one. Building a general decision engine before one NPC lives one day is listed as a rabbit hole in §8.
+- **Autonomous agency depends on knowledge, relationships, schedules and events together.** It is the last thing, not an early one. Building a general decision engine before one NPC lives one day is listed as a rabbit hole in §9.
 - **Runtime save/load is a separate contract from authored persistence.** HK-06A/B/C solved journal, snapshot and replay for **authored** state. Live simulation state is a different problem with a different lifetime, and reusing the canonical mechanism for it would violate the boundary in §5.1.
 
 ### 5.4 A trap inside the archive itself
@@ -374,7 +374,95 @@ Two charters from B are worth recovering close to verbatim because they are chea
 
 ---
 
-## 6. Suggested post-GATE phases
+## 6. Recovered research: living world and combat
+
+Two research tracks ran in the reference archive before the restart, each under its own constitution and review protocol. They are in very different states, and the difference matters more than the similarity.
+
+### 6.1 What the archive actually holds
+
+**Living city** — `Juego/Docs/living-city-research/`
+
+| Unit | Lines | Status in the archive | Output |
+|---|---|---|---|
+| `LCRT-00_CONSTITUTION.md` | 177 | accepted | 15 laws, `LC-01`…`LC-15` |
+| `PA-01` NPC daily life | 773 | `DELTAS_READY` | 11 findings, 8 deltas, a 24-hour reference routine |
+| `PA-02` NPC agency | 1 068 | `DELTAS_READY — INDEPENDENT PASS; MERGED` | 8 deltas, social-action vocabulary, agency profiles, budget dimensions, a 16-entry failure register |
+| `PA-03` Social graph | 1 020 | `DELTAS_READY — INDEPENDENT PASS; MERGED` | 11 findings, 10 deltas |
+| `PA-04` Knowledge and belief | 849 | `DELTAS_READY — INDEPENDENT PASS; MERGED` | 10 findings, 10 deltas, 6 acceptance scenarios |
+| `PA-05` Rumours | 1 096 | `DELTAS_READY — CANDIDATE; REVIEW REQUIRED` | 10 findings, 10 deltas, 8 acceptance scenarios |
+| `PA-06`…`PA-12` | ~170 each | `NOT_STARTED` | preregistered plans only |
+
+Roughly **4 800 lines of findings and 46 deltas**, three of the five worked tracks carrying an independent PASS.
+
+**Combat** — `Juego/Docs/combat-research/`
+
+| Unit | Lines | Status | Output |
+|---|---|---|---|
+| `CCRT-00_CONSTITUTION.md` | 240 | accepted | 20 laws, `CC-01`…`CC-20`, plus a crowd proof and a duel proof |
+| `C-PA-01`…`C-PA-12` | ~170 each | **all `NOT_STARTED` — plan preregistered** | no findings, no deltas |
+
+The asymmetry is worth stating plainly rather than averaging away: the NPC work was largely done and reviewed; the combat work is a charter plus twelve research plans that were never run.
+
+### 6.2 Three layers, three different answers
+
+**Layer 1 — the charters transfer whole.** `LC-01`…`LC-15` and `CC-01`…`CC-20` are game-design decisions, not architecture: the city does not wait for the player; NPCs may be primary causes; actor-to-actor is first-class; no omniscient agents; schedule is baseline, not destiny; agency must be explainable; bounded autonomy beats unlimited emergence. On the combat side: clean hits matter; mobs are flow and masters are openings; responsiveness outranks synchronization; the environment is part of the moveset; combat returns state to the living world; feel requires instrumented play, not document confidence. `AGENTS.md:57` permits reusing process and design lessons that are engine and game independent, and these are exactly that. Cost to carry: close to zero.
+
+**Layer 2 — the findings transfer with translation.** Truth is not belief; relationship is not opinion; the receiver owns its own decision; relaying a rumour is a new decision rather than an automatic propagation; engine lineage and actor-accessible provenance are two different authorities. None of that depends on Unity, on the donor engine, or on any particular implementation. It describes what the simulation must be true of.
+
+**Layer 3 — the `PROJECT_DELTAS` do not transfer as deltas.** Each delta is written as `Decision / Target / Change / Why / Acceptance / Dependencies / Remote class / Risk / Do not`. Three of those fields are archive-specific and one is actively dangerous here.
+
+### 6.3 Why the deltas need rewriting, concretely
+
+1. **`Target` names workpacks that do not exist.** The deltas point at `WP-M9-00`, `M9-02`, `M10-01`, `M10-04`, `Docs/LIVING_WORLD_RUNTIME.md`. Juego2 has no `M*` series and no living-world runtime document. The destination has to be re-derived, not translated.
+2. **`Remote class` belongs to the archive's execution model.** `REMOTE-DONE` / `REMOTE-PREP` / `LOCAL-UNITY` classify work against the donor project's cloud/local split. Juego2 does not have that split and should not acquire it.
+3. **Every delta assumes a runtime `WorldState`.** They add beliefs, relationships, reservations, goals and clocks to a ticking world state. Arkus's `WorldState` is *authored*; `WP-HK-06A` drew that boundary and it is an accepted guarantee, with `R-06B-04` recording that gameplay and runtime state stay outside canonical state and replay. A delta that says "add `ActorBelief` to `WorldState`" would, applied literally in Juego2, break an accepted guarantee. This is the same seam §5.1 runs along, and it is the single reason the deltas cannot be lifted.
+
+What survives each delta is its `Change`, `Acceptance` and `Do not` — which is where the research value actually sits.
+
+### 6.4 The independent PASSes do not travel
+
+`PA-02`, `PA-03` and `PA-04` passed independent review, but under the archive's own proof standard and bound to the archive's SHAs. Juego2 has its own `FOUNDATIONAL_PROOF_STANDARD.md` and `EXECUTION_RECEIPT_PROTOCOL.md`, and `AGENTS.md:66` plus the roadmap's fourth stop rule both forbid building on a predecessor claim that was never accepted here.
+
+So these enter Juego2 the same way the archive's design material already enters `CONTENT_SHAPE_BACKLOG.md` — as **cited, non-binding design input**. Citing a reviewed finding is not the same as inheriting its verdict, and this blueprint claims no verdict.
+
+### 6.5 The highest-value salvage is the "Do not" lines
+
+They read as rabbit-hole guards bought with research rather than with a postmortem, and they are the cheapest thing in the archive to carry across. A representative sample, quoted from the deltas:
+
+- do not create one executable day-script per actor;
+- do not model every prop as a smart object;
+- do not hide a global enumeration of all persistent actors inside a "bounded" query provider;
+- do not build generic GOAP, or re-evaluate every agent every tick;
+- do not introduce an ambient tier as an agency profile, or a second AI architecture for narratively important characters;
+- do not implement a receiver's answer as a conditional inside the initiator's action;
+- do not let dialogue consume rumour flags instead of querying knowledge;
+- do not treat a false claim as a mutation of truth;
+- do not freeze agency priority rules before the agency research is integrated.
+
+Several of these describe mistakes that are actively tempting when a system is first built, which is exactly when the archive is least likely to be re-read.
+
+### 6.6 Where each track attaches
+
+| Archive track | Attaches to | Note |
+|---|---|---|
+| `LCRT-00` laws | the whole of L6–L9 | Adopt as a charter early; it is cheap and it constrains later choices |
+| `PA-01` daily life | L6 time and routine | Its 24-hour reference routine is a ready-made schedule fixture shape, including the perturbations it demands |
+| `PA-02` agency | L9 autonomous agency | The failure register and budget dimensions are more valuable than the architecture it sketches |
+| `PA-03` social graph | L9 relationships | Carries the sibling-is-not-trust and expiring-obligation cases already used in §4.3 |
+| `PA-04` knowledge | L9 knowledge | Backlog row 13 is the modelling decision this track presumes |
+| `PA-05` rumours | L9 events and memory | Least mature of the worked tracks; review was never completed |
+| `CCRT-00` laws | L8 drama | The charter is usable now; the twelve plans are a backlog, not findings |
+| `PA-06`…`PA-12`, `C-PA-01`…`C-PA-12` | later | Twenty-four preregistered research plans. Useful as a backlog with questions already framed, and as evidence of how much was deliberately left unanswered |
+
+### 6.7 What this means for sequencing
+
+Nothing here changes §7. The research is design input, and it lands in phases that are several gates away. The one thing worth doing early is Layer 1: adopting the two charters costs a reading and prevents the expensive mistakes, whereas re-deriving them after building the systems costs a rewrite.
+
+The one thing worth *not* doing early is treating `PA-02` as an implementation plan. Its own conclusion, and this blueprint's §9.5, agree: a general agency engine before one NPC has lived one full day is the classic way to spend a phase and have nothing to show.
+
+---
+
+## 7. Suggested post-GATE phases
 
 Seven phases, sized so each ends in something a person can watch. **No workpacks are drafted here** — that is the roadmap author's job, after GATE.
 
@@ -387,17 +475,17 @@ Seven phases, sized so each ends in something a person can watch. **No workpacks
 | **H4** | Flags and stages, conditions, dialogue adapter, GameFlow authority, structured outcomes | A conversation gated on something the player knows, with a consequence that is still there later |
 | **H5** | Cinematics, QTE, combat | One sequence that takes every authority — player, camera, actors — and returns all of them cleanly, including on skip and on failure |
 | **H6** | Knowledge, relationships, events and memory, autonomous agency, abstract simulation | Before/after state diff across an event; one NPC behaves differently and can say why |
-| **VS** | Vertical slice — integration only, no new systems | The full chain, end to end (§7) |
+| **VS** | Vertical slice — integration only, no new systems | The full chain, end to end (§8) |
 
 Running in parallel: the **H0S** post-GATE scale and concurrency track already defined in `ROADMAP.md:105-117`. It is explicitly not a prerequisite for starting H1, and the §1.7 sizing suggests this town will not trigger it.
 
-Two notes on sizing. H2 and H3 are the phases where a project like this usually stalls, because they are the first that require content rather than contracts — budget accordingly. H5 is the most droppable: §7 gives a reduced slice that survives without it.
+Two notes on sizing. H2 and H3 are the phases where a project like this usually stalls, because they are the first that require content rather than contracts — budget accordingly. H5 is the most droppable: §8 gives a reduced slice that survives without it.
 
 ---
 
-## 7. Vertical-slice target
+## 8. Vertical-slice target
 
-### 7.1 The minimum that proves this is the game
+### 8.1 The minimum that proves this is the game
 
 Place: `zone.plaza` + `zone.calle_mayor` + `interior.bar`. A recognisably Liébana street — wet stone, dark tile, green slopes and rock on the skyline, overcast key light — built from real transformed assets, not primitives.
 
@@ -418,7 +506,7 @@ arrive at the plaza
 
 The last two steps are the ones that matter. Anything can show a conversation. What separates a game from a framework demo is that something said in a bar at midday changes what a different person does that evening, and that the causal chain is inspectable rather than scripted.
 
-### 7.2 Reduced slice if drama is not ready
+### 8.2 Reduced slice if drama is not ready
 
 If H5 has not landed, drop the dramatic beat and keep:
 
@@ -430,17 +518,17 @@ arrive -> dialogue -> knowledge transfer
 
 That alone demonstrates the game. The combat and QTE beat makes it a better demo, not a more convincing one. Saying so now is cheaper than discovering it under deadline.
 
-### 7.3 Budget reconciliation
+### 8.3 Budget reconciliation
 
 `VISUAL_BIBLE.md` §8 caps the H2 hero at **≤120 meshes, ≤6 atlases, ~20 animation clips, 6 NPCs**. The slice above stays at 6 full-simulation NPCs, but two zones plus a bar interior plus a bus and a bicycle will likely need **~160 meshes**.
 
-That is a real divergence from an approved-draft budget, recorded in §9 rather than quietly exceeded. The cap may well be the right number; if so, the slice should shrink to one zone rather than the budget being stretched to fit.
+That is a real divergence from an approved-draft budget, recorded in §10 rather than quietly exceeded. The cap may well be the right number; if so, the slice should shrink to one zone rather than the budget being stretched to fit.
 
 ---
 
-## 8. Do not overengineer
+## 9. Do not overengineer
 
-### 8.1 Needed before H1 starts
+### 9.1 Needed before H1 starts
 
 All cheap, all documentation-only, all able to run in parallel with the remaining H0 work without touching it:
 
@@ -448,12 +536,12 @@ All cheap, all documentation-only, all able to run in parallel with the remainin
 |---|---|
 | Decide backlog rows **7** (namespaced state), **8** (pair state), **10** (interval wrap-around) as *decisions*, not implementations | These are precisely the three shapes the town plan demands first, and `CONTENT_SHAPE_BACKLOG.md:59` notes no accepted probe has exercised rows 6–10 |
 | Create the human Quaternius pack record required by `DEPENDENCY_IP_POLICY.md` | Nothing can be imported without it, and it is fail-closed |
-| Reconcile the free-tier vs paid-Source divergence (§9) | An asset plan built on the wrong tier wastes the triage pass |
+| Reconcile the free-tier vs paid-Source divergence (§10) | An asset plan built on the wrong tier wastes the triage pass |
 | Fill the six missing `Docs/art/Refs/` folders | `SOURCES_INDEX.md` declares eight; only `01_Town_Fabric` and `08_Anti_Refs` exist on disk. The two most useful absentees are `05_Characters_Outfits` and `07_Style_Targets` |
 | Settle the town identifier convention (§1.2) | The HK-02A probe used `building.tienda` and `plaza.mayor`; HK-05 onward use `building.shop` and `place.plaza`. Cheap now, expensive after content exists |
 | Decide camera and render pipeline | Neither is specified anywhere in the repository today. Both shape every asset decision |
 
-### 8.2 Two observations for the roadmap author
+### 9.2 Two observations for the roadmap author
 
 Recorded as observations, explicitly **not** as proposed workpacks:
 
@@ -462,15 +550,15 @@ Recorded as observations, explicitly **not** as proposed workpacks:
 
 Separately, and flagged only: `Docs/workpacks/README.md` still prints the pre-split chain (`… HK-07B → HK-08 → HK-09 → HK-10 → HK-GATE`), which no longer matches `ROADMAP.md` v1.19 after the HK08/HK09 split. Documentation drift, not a contract problem.
 
-### 8.3 Needed during H1 and H2
+### 9.3 Needed during H1 and H2
 
 Presentation-binding contract and asset lineage; spatial and transform authoring; prefab composition and catalogue contracts; navigation as a derived artifact; the interaction shell; zone and interior transitions; the ambient population tier.
 
-### 8.4 Can wait
+### 9.4 Can wait
 
 The river and the landing; the cemetery zone; combat; QTE; cinematics; weather events; localization (row 15); economy; crowd density tuning; the Creator GUI; valley-scale world partition (row 14); final art.
 
-### 8.5 Tempting ideas that would start another rabbit hole
+### 9.5 Tempting ideas that would start another rabbit hole
 
 Each of these is attractive, defensible in isolation, and has a precedent worth remembering.
 
@@ -488,19 +576,19 @@ Each of these is attractive, defensible in isolation, and has a precedent worth 
 | PBR micro-detail on flat atlas assets | Doubles asset cost and fights the style one-liner | `VISUAL_BIBLE.md` §2 "No" list |
 | Writing narrative content now | Dialogue and narrative runtime is `OUT` pending a reviewed architecture decision; content written against no runtime gets rewritten | `CONTENT_SHAPE_BACKLOG.md` row 17 |
 
-A useful test for anything not on this list: **does it make the next demo in §6 happen sooner?** If not, it can wait.
+A useful test for anything not on this list: **does it make the next demo in §7 happen sooner?** If not, it can wait.
 
 ---
 
-## 9. Open reconciliation items
+## 10. Open reconciliation items
 
 Divergences this document surfaces but does not resolve. Each would be settled by a human decision or a future art-track workpack, never by this file.
 
 | # | Item | Current repository text | This blueprint assumes | Suggested home |
 |---|---|---|---|---|
 | 1 | Asset tier | `VISUAL_BIBLE.md` §6–7: "Quaternius free tier" | Paid Source packs, ~USD 95, ≤100 EUR cap | A future `WP-ART-01` |
-| 2 | Mesh budget | §8: ≤120 meshes | ~160 meshes for the two-zone slice | Same, or shrink the slice |
-| 3 | NPC count | §8: 6 NPCs | 6 in full simulation, 13 persistent identities total | Compatible; worth stating explicitly |
+| 2 | Mesh budget | `VISUAL_BIBLE.md` §8: ≤120 meshes | ~160 meshes for the two-zone slice | Same, or shrink the slice |
+| 3 | NPC count | `VISUAL_BIBLE.md` §8: 6 NPCs | 6 in full simulation, 13 persistent identities total | Compatible; worth stating explicitly |
 | 4 | Town identifiers | HK-02A probe: `building.tienda`, `plaza.mayor`; HK-05+: `building.shop`, `place.plaza` | The later English convention | Settle before content exists |
 | 5 | Camera and render pipeline | Not specified anywhere | Third person; pipeline undecided | H1 planning |
 | 6 | Missing reference folders | `SOURCES_INDEX.md` declares 8; 2 exist | — | Art track |
@@ -509,7 +597,7 @@ Divergences this document surfaces but does not resolve. Each would be settled b
 
 ---
 
-## 10. What this document deliberately does not do
+## 11. What this document deliberately does not do
 
 - It does not start, unblock, reorder or delay any `HK-*` workpack. The next dependency-valid workpack remains `WP-HK-07A`.
 - It does not propose any new harness workpack.
