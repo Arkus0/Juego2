@@ -58,9 +58,9 @@ namespace Arkus.Harness.Tests
         public void TransportDriftOracleTurnsRedForDifferentResourceDimension()
         {
             using var left = JsonDocument.Parse(
-                "{\"status\":\"error\",\"failureKind\":\"resource\",\"error\":{\"code\":\"resource.page_size_exceeded\",\"context\":{\"dimension\":\"pageItems\"}}}");
+                "{\"status\":\"error\",\"failureKind\":\"resource\",\"error\":{\"machineCode\":\"resource.page_size_exceeded\",\"context\":{\"dimension\":\"pageItems\"}}}");
             using var same = JsonDocument.Parse(
-                "{\"status\":\"error\",\"failureKind\":\"resource\",\"error\":{\"code\":\"resource.page_size_exceeded\",\"context\":{\"dimension\":\"pageItems\"}}}");
+                "{\"status\":\"error\",\"failureKind\":\"resource\",\"error\":{\"machineCode\":\"resource.page_size_exceeded\",\"context\":{\"dimension\":\"pageItems\"}}}");
             Assert.Empty(NeutralSemanticIssues(left.RootElement, same.RootElement));
 
             var drifted = (JsonObject)JsonNode.Parse(same.RootElement.GetRawText())!;
@@ -102,7 +102,7 @@ namespace Arkus.Harness.Tests
             Assert.Equal("error", response.GetProperty("status").GetString());
             Assert.Equal("resource", response.GetProperty("failureKind").GetString());
             var error = response.GetProperty("error");
-            Assert.Equal(code, error.GetProperty("code").GetString());
+            Assert.Equal(code, error.GetProperty("machineCode").GetString());
             Assert.Equal(H0ResourceEnvelope.SchemaId, error.GetProperty("context").GetProperty("resourceEnvelope").GetString());
             Assert.Equal(dimension, error.GetProperty("context").GetProperty("dimension").GetString());
         }
