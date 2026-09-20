@@ -1,13 +1,17 @@
 # CITY track — Keeper City spatial programme
 
-Status: **PLANNED / NON-FOUNDATIONAL**  
+Status: **ACTIVE / NON-FOUNDATIONAL**  
 Date: 2026-09-20  
 Repository: `Arkus0/Juego2`  
 Scope: product-space preproduction for the fictional Potes/Liébana keeper city
 
+Accepted progress: `WP-CITY-00` is **COMPLETE**. It passed independent review on frozen candidate `f5c684461b525841487158d873a9b135008df3ab` (review `#5261672961`) and merged via PR `#65` as `69bbba2603e67cb233a3e1cc36a4173bed41cfc4`.
+
+The downstream CITY programme is being replanned after CITY-00 so macro urbanism, streets, buildings, interiors, discovery depth and keeper-seed production remain one cognitively simple workpack track. Until that replanning is accepted, do **not** start the previously drafted `WP-CITY-01` automatically.
+
 ## Purpose
 
-Design the spatial skeleton of the shipping city early enough that the first playable/demo district can remain part of the final game.
+Design the spatial skeleton and producible places of the shipping city early enough that the first playable/demo district can remain part of the final game.
 
 The CITY track does **not** build a disposable test town and does not compete with the Harness Kernel. It converts the current Production Blueprint into independently reviewable spatial decisions before expensive Unity geometry exists.
 
@@ -35,33 +39,9 @@ Permanent spatial ingredients to test and preserve:
 
 The river port is not required to imply a giant shipping harbour. Its scale must fit the fictional valley city. Its value is systemic: arrivals, goods, work, schedules, visitors, storage, fishing/waterfront activity and municipal decisions can intersect there.
 
-## Scale hypothesis — to test, not silently freeze
+## Accepted CITY-00 constitution
 
-`WP-CITY-00` starts from this **working hypothesis** and must challenge it before adoption:
-
-- roughly **0.8–1.2 km² of dense urban playable fabric** as a plausible final-core band;
-- roughly **1.5–2.5 km² total playable envelope** if river, roads, slopes and rural edge are included;
-- approximately **12–18 minutes on foot** for a representative long cross-city route before shortcuts/fast travel;
-- **6–8 recognisable districts/zone families** rather than one undifferentiated town;
-- first retained product seed roughly **0.10–0.15 km²** only if traversal/density tests support it.
-
-These numbers are planning hypotheses, not production commitments or acceptance criteria. CITY-00 may shrink or reshape them if causal density, content cost or travel quality argues otherwise.
-
-## Dependency story
-
-```text
-CITY-00  Spatial constitution + scale envelope
-   ↓
-CITY-01  Mobility, district graph + walk-time topology
-   ↓
-CITY-02  Systemic locations/interiors + reactive-density programme
-   ↓
-CITY-03  Retained product seed + expansion seams
-   ↓
-CITY-04  LOCAL Unity greybox/blockout validation
-```
-
-`CITY-00..03` are REMOTE planning work and may run before GATE because they produce documents only. `CITY-04` is dormant until GATE + relevant Unity bridge readiness.
+The accepted spatial constitution lives in `Docs/production/CITY_SPATIAL_CONSTITUTION.md` and its reviewed evidence under `Docs/evidence/WP-CITY-00/`. Downstream work consumes that accepted constitution; it does not silently redraw the river, landmasses, crossings, port placement or district relations.
 
 ## Relationship to other programmes
 
@@ -83,9 +63,8 @@ CITY-04  LOCAL Unity greybox/blockout validation
 8. **Expansion without demolition:** the seed must expose clean seams toward port, residential, commercial/peripheral and rural growth.
 9. **No fake scale:** inaccessible backdrop may sell silhouette, but it must not substitute for promised playable districts.
 10. **No pre-GATE production:** planning cannot be used to sneak scene construction or asset adoption past `WP-HK-GATE`.
+11. **One CITY vocabulary:** macro topology and place-production depth may be separate responsibilities, but they stay in one operational workpack track unless evidence later proves a real ownership boundary is needed.
 
-## Completion condition
+## Current execution rule
 
-The CITY planning programme is ready for local blockout only when CITY-00..03 have independent PASS verdicts and together answer:
-
-> What city are we building, how is it connected, what meaningful places must it contain, and exactly which first piece can we build once and keep?
+`WP-CITY-00` is complete. The next CITY workpack will be declared by the accepted post-CITY-00 programme revision; the old draft chain `CITY-01 -> CITY-04` must not be executed by inertia.
