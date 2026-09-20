@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.18 — 2026-09-20
+Version: 1.19 — 2026-09-20
 
 ## North star
 
@@ -52,7 +52,9 @@ Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, 
 
 `WP-HK-06C` PR `#40` passed independent review on frozen candidate `55fecbd8a4a5e17ce247b164cd375d652d066fdf` (review `#5259530509`), exact-SHA validation Actions `35488920548` GREEN, and merged as `e44a5e93bf0912f5b5fb80dd749e294e21a740f2` on 2026-09-20. Replay is explicitly a distinct `CanonicalReplay` authority: accepted HK06A journal evidence is verified and replayed through the accepted HK04/HK05 mutation authority inside a staged session, audited against regenerated HK06A entry identities/results, and published only after complete success; final canonical hash and HK06B semantic diff must agree.
 
-Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is now `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
+Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
+
+Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
 Next dependency-valid workpack: `WP-HK-07A — Headless host + neutral projection contract + reference transport`.
 
@@ -71,26 +73,48 @@ Next dependency-valid workpack: `WP-HK-07A — Headless host + neutral projectio
 | 11 | `WP-HK-06C` ✅ COMPLETE | Deterministic journal replay + end-to-end audit consistency |
 | 12 | `WP-HK-07A` | Production headless host + deterministic JSONL/reference transport |
 | 13 | `WP-HK-07B` | Standards-compatible MCP projection + cross-transport conformance |
-| 14 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination, structured CAS recovery and round-trip budgets |
-| 15 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
-| 16 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
-| 17 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
+| 14 | `WP-HK-08A` | Efficient interaction primitives: atomic batching, compact/bounded reads, pagination and discovery cost metadata |
+| 15 | `WP-HK-08B` | Structured stale-CAS recovery, repair ergonomics and measured agent interaction budgets |
+| 16 | `WP-HK-09A` | Capability containment: filesystem/network/process authority and below-transport policy |
+| 17 | `WP-HK-09B` | Resource/input limits plus import/persistence interruption integrity |
+| 18 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
+| 19 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
 
 ## H0 interaction/concurrency decision
 
 H0 keeps the accepted whole-world revision/hash CAS and does not speculate into per-resource locking, automatic merge, distributed transactions or autonomous multi-agent scheduling.
 
-Before `WP-HK-GATE`, HK08 must make the existing optimistic-concurrency model **cheap to recover from**: an ordinary same-lineage stale plan must receive bounded machine-readable context anchored to the expected and current world so the agent can preserve intent, re-plan the affected slice and retry through the normal transaction path without ordinarily reconstructing the complete world. When lineage/history is insufficient to establish a trustworthy delta, the harness must say so explicitly rather than inventing one.
+Whole-world CAS/hash is an **internal consistency boundary**, not a requirement that every client download or reconstruct the whole world after every commit. The kernel may validate/serialize/hash the accepted authored state as a whole while clients operate on bounded revision-anchored queries, semantic diffs and HK08B recovery context. AI coherence comes from stable anchors, complete relevant slices and fail-closed stale detection; repeatedly sending the entire world to an agent is neither required nor assumed to improve coherence.
 
-Batching is the primary H0 mitigation for whole-world commit cost. The current 64-operation request limit is not a permanent product constant: HK08 measures a representative coherent multi-resource edit, and the accepted request shape/limit must allow that edit to remain one atomic transaction inside the HK09 resource envelope. Do not build logical multi-plan transactions merely because an arbitrary number such as 64 exists; add them only if measured representative work proves one atomic request is insufficient.
+Before `WP-HK-GATE`, HK08B must make the existing optimistic-concurrency model **cheap to recover from**: an ordinary same-lineage stale plan must receive bounded machine-readable context anchored to the expected and current world so the agent can preserve intent, re-plan the affected slice and retry through the normal transaction path without ordinarily reconstructing the complete world. When lineage/history is insufficient to establish a trustworthy delta, the harness must say so explicitly rather than inventing one.
 
-Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling are post-GATE product work unless HK08/GATE evidence proves they are necessary for the representative single-client authoring contract. A future concurrent-agent requirement is a valid reason to revisit CAS granularity, but not a reason to delay H0 today.
+Batching is the primary H0 mitigation for whole-world commit cost. HK08A validates a representative coherent multi-resource edit and the accepted request shape/limit must allow that edit to remain one atomic transaction inside the later HK09B resource envelope. The current 64-operation request limit is not a permanent product constant. Do not build logical multi-plan transactions merely because an arbitrary number such as 64 exists; add them only if measured representative work proves one atomic request is insufficient.
 
-HK08 also re-runs reference-transport ↔ MCP conformance for every interaction primitive it changes or adds. HK07B proves the initial neutral projection; it cannot pre-prove semantics introduced later by HK08.
+Serializing commit execution can protect the mutation authority from simultaneous publication, but it does **not** make an already planned stale request current. A writer that planned against an older revision still requires HK08B rejection/recovery/re-plan semantics. Likewise, HK06B semantic diff is an on-demand semantic comparison primitive; H0 does not claim a revision subscription/change-feed service unless a later workpack explicitly adds one.
+
+Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling are post-GATE product work unless HK08B/GATE evidence proves they are necessary for the representative single-client authoring contract. A future concurrent-agent requirement is a valid reason to revisit CAS granularity, but not a reason to delay H0 today.
+
+HK08A re-runs reference-transport ↔ MCP conformance for batching/compact/pagination semantics it changes or adds; HK08B does the same for recovery/repair semantics. HK07B proves the initial neutral projection and cannot pre-prove semantics introduced later.
 
 ### H0 exit criteria
 
-`WP-HK-GATE` is authoritative for the executable gate scenario. In addition to correctness/replay/transport neutrality, H0 must demonstrate bounded same-lineage stale-plan recovery, an atomic representative batch that fits the accepted resource budget, and bounded long-session resource behaviour. Multi-agent throughput and automatic concurrent merge are explicitly not H0 gate criteria unless earlier measured evidence reclassifies them.
+`WP-HK-GATE` is authoritative for the executable gate scenario. In addition to correctness/replay/transport neutrality, H0 must demonstrate bounded same-lineage stale-plan recovery, an atomic representative batch that fits the accepted HK09B resource budget, explicit capability containment from HK09A and bounded long-session resource behaviour. Multi-agent throughput and automatic concurrent merge are explicitly not H0 gate criteria unless earlier measured evidence reclassifies them.
+
+---
+
+# H0S — Post-GATE scale + concurrent authoring track (parallel, non-blocking by default)
+
+`WP-HK-GATE` validates the correctness and usability foundation; it is not a claim that whole-world work or serialized writer semantics are the final commercial scaling architecture.
+
+After GATE, a dedicated scale/concurrency track may run in parallel with H1 Unity integration. It is **not a prerequisite for starting H1** unless measured GATE/H1 evidence shows the representative product cannot operate acceptably without it.
+
+This track begins from evidence, not a predetermined implementation. Trigger measurements include authored object count, whole-world validation/hash cost, p50/p95 commit latency, stale-plan rate, bounded-recovery cost, simultaneous-writer collision rate, memory growth and the amount of state a client must read to preserve intent.
+
+Candidate techniques may include cached/incremental indexes, incremental validation/hash computation, resource-scoped preconditions, server-side coordination/leases, revision change feeds or finer-grained state partitioning. A Merkle tree, per-resource CAS or scope lock is an option only if evidence justifies it, not the definition of the solution.
+
+Any concurrency/coordination semantic that affects whether or when a valid canonical request may execute must live in a transport-neutral reviewed service/contract boundary. It may not exist only inside MCP, JSONL or another adapter, and it may not silently weaken canonical validation, provenance, replay or deterministic state identity.
+
+The commercial target is therefore two-layered: H0 provides a simple globally coherent correctness model; post-GATE scaling may optimize its implementation and writer coordination while preserving or explicitly versioning those semantics.
 
 ---
 
