@@ -11,17 +11,19 @@ namespace Arkus.Harness.Runtime
         {
             if (service == null) throw new ArgumentNullException(nameof(service));
 
-            // The authoritative session also owns internal commit authority. Journal reads receive
-            // the accepted HK04 attenuation facade so observation cannot acquire that authority.
-            var provenance = (IWorldProvenanceService)new WorldMutationPlannerView(service);
+            // The authoritative session still owns the complete HK06A journal artifact. Public HK08A
+            // reads receive the accepted read-only attenuation facade plus a bounded deterministic
+            // paging view; neither layer can acquire canonical commit authority.
+            var complete = (IWorldProvenanceService)new WorldMutationPlannerView(service);
+            var bounded = (IWorldProvenanceService)new BoundedWorldProvenanceService(complete);
             return new List<CapabilityRoute>
             {
-                CapabilityRoute.FromHandler(new WorldProvenanceReadHandler(provenance))
+                CapabilityRoute.FromHandler(new WorldProvenanceReadHandler(bounded))
             }.AsReadOnly();
         }
     }
 
-    [PublicCapabilityRoute("arkus.base", WorldProvenanceContract.ReadName, "1.0")]
+    [PublicCapabilityRoute("arkus.base", WorldProvenanceContract.ReadName, WorldProvenanceContract.ContractVersionText)]
     internal sealed class WorldProvenanceReadHandler : ICanonicalCapabilityHandler
     {
         private readonly IWorldProvenanceService _service;
