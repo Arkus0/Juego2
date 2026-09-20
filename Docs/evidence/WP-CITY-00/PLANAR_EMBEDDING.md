@@ -26,6 +26,10 @@ Use the confluence as the reference vertex.
    downstream, genuinely on a bank of the joined river, and dry-connected to the valley road and the
    south-bank camino. It is **not** dry-connected to the Wedge.
 
+The port district begins at a small **upstream bridgehead/landing edge opposite the Wedge-tip head**
+and extends downstream from there. X6/X7 therefore spans the river channel at the top of the port; it
+does not span the full ~300 m longitudinal extent of the port district.
+
 That bank choice is the minimum structural change that preserves the landing rationale, the historic
 bridge, the two-state crossing strategy and the 2 → 1 → 0 availability ladder.
 
@@ -74,9 +78,9 @@ Every edge that moves between the three landmasses is explicit:
 - **Wedge ↔ Ensanche bank:** X2 Puente del Mercado, X3 Pasarela del Lavadero, X4 Puente de la Vega,
   X5 Pasos/vado. All cross the Arroyo.
 - **Wedge ↔ Orilla sur near the casco:** X1 Puente Viejo. It crosses the Río above/at the core edge.
-- **Wedge tip ↔ Puerto on Orilla sur downstream:** X6 La barca in State 1, replaced by X7 Puente del
-  Muelle in State 2. They cross the upper joined-river reach from the confluence-tip landing head to
-  the port bank.
+- **Wedge tip ↔ upstream Puerto edge on Orilla sur:** X6 La barca in State 1, replaced by X7 Puente
+  del Muelle in State 2. They cross the upper joined-river reach from the confluence-tip landing head
+  to the port-bank bridgehead.
 
 There is no hidden eighth crossing and no dry Wedge → Puerto edge.
 
@@ -87,10 +91,11 @@ There is no hidden eighth crossing and no dry Wedge → Puerto edge.
 1. **Valley-road approach:** Entrada / Bus / Carretera → Puerto. Dry, entirely on Orilla sur.
 2. **South-bank approach:** Puente Viejo far end → camino sur → Puerto. X1 is the only water crossing
    on a trip that starts in the Wedge; after X1 the route stays on Orilla sur.
-3. **Core crossing:** Casco / lower Cuesta → X6 (State 1) or X7 (State 2) → Puerto. The Cuesta ends at
-   the Wedge-side ferry/bridge head; it does **not** pretend to continue as dry land to the port.
-4. **Ribera / paseo approach:** Ribera → paseo/sirga → casco-tip landing head → X6/X7 → Puerto. The
-   riverside path reaches the crossing head, not the opposite bank by magic.
+3. **Core crossing:** Casco / lower Cuesta → X6 (State 1) or X7 (State 2) → upstream Puerto edge. The
+   Cuesta ends at the Wedge-side ferry/bridge head; it does **not** pretend to continue as dry land to
+   the port.
+4. **Ribera / paseo approach:** Ribera → paseo/sirga → casco-tip landing head → X6/X7 → upstream
+   Puerto edge. The riverside path reaches the crossing head, not the opposite bank by magic.
 
 The port therefore remains on ordinary routes without requiring three dry approaches.
 
@@ -128,13 +133,14 @@ No core demolition is introduced.
 
 ## 7. Planarity checks
 
-The corrected embedding passes all four checks:
+The corrected embedding passes all five checks:
 
 | Check | Result |
 |---|---|
 | Wedge terminates at the confluence | PASS |
 | Every inter-landmass route names a water crossing | PASS |
 | Puerto is downstream on a real bank of the joined river | PASS |
+| X6/X7 crosses channel width to upstream port edge rather than spanning port length | PASS |
 | Crossing set is complete under this embedding | PASS — seven across the constitution's life; six per state |
 
 This file is evidence for physical realizability. `CONNECTIVITY_MATRIX.md` remains the owner of
