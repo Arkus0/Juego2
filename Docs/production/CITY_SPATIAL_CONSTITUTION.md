@@ -1,6 +1,6 @@
 # Keeper City — Spatial Constitution and Scale Envelope
 
-Version: 1.0 — 2026-09-20
+Version: 1.1 — 2026-09-20
 Workpack: `Docs/workpacks/CITY/WP-CITY-00.md`
 Class: **PRODUCT / SPATIAL PREPRODUCTION — NON-FOUNDATIONAL**
 
@@ -8,472 +8,370 @@ Status: this document answers **what city we are making**. It creates no H0 acce
 reopens no accepted H0 guarantee, authorizes no Unity scene, asset import or runtime contract, and
 does not modify the `WP-HK-GATE` precondition. It binds `CITY-01..04` and nothing else.
 
-Evidence behind every decision here: `Docs/evidence/WP-CITY-00/`.
+Evidence: `Docs/evidence/WP-CITY-00/`.
+Connectivity owner: `Docs/evidence/WP-CITY-00/CONNECTIVITY_MATRIX.md`.
+Planar-realizability proof: `Docs/evidence/WP-CITY-00/PLANAR_EMBEDDING.md`.
 
 ---
 
 ## 1. The city in one paragraph
 
-A fictional Potes/Liébana valley city built in the **wedge between two waters**: a valley river
-coming down from the north-east and an incised tributary stream coming down from the north, meeting
-at a rocky tip where the old quarter stands. The city climbs the spur behind that tip in three
-terraces, spills west across the stream into a newer flat residential quarter, works along the river
-bank below the commercial terrace, and keeps a small working landing downstream of the confluence,
-on the wide slow reach where the joined water braids over gravel bars. It is a walkable town of roughly a
-quarter of an hour end to end, not a small open world, and it is dense on purpose.
+A fictional Potes/Liébana valley city built around a **wedge between two waters**: a valley river
+coming from the NE and an incised tributary from the N meet at the rocky southern tip of the old
+quarter. The historic/civic/commercial core occupies that wedge and climbs it in three readable
+levels; the Ensanche sits across the tributary; the working river edge follows the main river; and a
+small Puerto Fluvial sits **downstream on the opposite, Orilla-sur bank of the joined river**, beside
+the valley road. The wedge ends at the confluence. Reaching the port directly from the casco therefore
+requires a named river crossing — La barca in State 1, Puente del Muelle in State 2 — rather than an
+imaginary dry continuation through the confluence.
 
-The two waters do deliberately different jobs. **The stream shapes daily movement; the river shapes
-territorial movement.** That asymmetry is the constitution's core mechanism.
+The city is roughly a quarter-hour end to end, dense on purpose, and organized by two different water
+roles: **the Arroyo shapes daily movement; the Río shapes territorial movement.**
 
 ---
 
 ## 2. Selected constitution — "Cuña de Confluencia"
 
-### 2.1 Geography
+### 2.1 Geography and landmasses
 
 | Element | Character |
 |---|---|
-| **Río** (main) | from the NE, 18–25 m wide, shallow and fast above the confluence; widens and slows below it |
-| **Arroyo** (tributary) | from the N, 4–10 m wide, incised in a steep channel; houses of the old quarter overhang it |
-| **Confluencia** | at the south tip; the rocky shelf above it carries the casco viejo and a mirador |
-| **Espolón / terraces** | the wedge rises N/NE in three readable levels: bank, terrace, slope |
-| **Laderas** | green slopes and rock masses beyond the roofline — scenic envelope, not fabric |
+| **Río** | main valley river from NE, ~18–25 m wide above confluence; joined reach widens/slows below it |
+| **Arroyo** | tributary from N, ~4–10 m wide, incised; old-quarter houses can overhang it |
+| **Wedge** | land between Río and Arroyo; Casco/Plaza/Calle Mayor/Ribera/Barrio Alto; **ends at confluence** |
+| **Ensanche bank** | land outside Arroyo, west of the Wedge |
+| **Orilla sur** | land outside Río above confluence and continuous with south/east bank of joined river below it |
+| **Puerto / Entrada bank choice** | downstream on Orilla sur; dry-connected to valley road and camino sur, **not** dry-connected to Wedge |
+| **Laderas** | scenic green slopes / rock masses beyond roofline |
 
-### 2.2 Semantic district graph
+This landmass statement is binding. If a later drawing shows the Wedge continuing dry past the
+confluence, the drawing is wrong.
+
+### 2.2 Selected semantic district graph
+
+Topological schematic, not a metric map:
 
 ```text
-                          VEGA / HUERTAS (NE)             laderas / peñas  [escénico]
-                                |                                 |
-        BARRIO ALTO -------- callejas altas ----------------------+
-           |   \                 |                      \
-       escaleras   lavadero      |                       mirador alto
-           |           \         |                         |
-   ENSANCHE ==puentecillos== CALLE MAYOR (terraza) ==== PLAZA / AYUNTAMIENTO
-      |   |   |   |              |          \              |        \
-      |  (arroyo: 4 cruces)      |           \             |         \
-      |   |   |   |         RIBERA / TALLERES           CASCO VIEJO (punta)
-      |   |   |   |              |                        /          \
-      |   |   |   |     PASEO FLUVIAL / SIRGA    Cuesta del Puerto   PUENTE VIEJO
-      |   |   |   |              |                   /                    |
-   ENTRADA / BUS / CARRETERA     |                  /                     |
-           \                     |                 /                      |
-            \--- carretera del muelle -- PUERTO FLUVIAL                   |
-                                              |                           |
-                                          la barca                        |
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~ R I O ~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~
-                                              |                           |
-                            ORILLA SUR [transitional] --- camino sur -----+
-                                 (ermita / cementerio / carretera de valle)
+                          VEGA / HUERTAS (NE)             laderas / peñas [scenic]
+                                |                                  |
+        BARRIO ALTO -------- callejas altas -----------------------+
+           |   \                 |                       \
+       escaleras   lavadero      |                        mirador
+           |           \         |                          |
+   ENSANCHE == X2-X5 == CALLE MAYOR (terrace) ===== PLAZA / AYUNTAMIENTO
+      |                      |           \                    |       \
+      |                 RIBERA / TALLERES \              CASCO VIEJO  X1 PUENTE VIEJO
+      |                      |              \                  *----------- ORILLA SUR
+      |               PASEO / SIRGA --------\------ landing head            |
+      |                                                 |                    | camino sur
+      |                                           X6 barca / X7 bridge       |
+      |                                                 |                    |
+      |                                      ~~~~~ joined RÍO ~~~~~~~~~~~~~~~|
+      |                                                 |                    |
+      +-------------------------------------------  PUERTO FLUVIAL -----------+
+                                                        |
+                                                ENTRADA / BUS / CARRETERA
+                                                        |
+                                                   valley road
 ```
 
-All names are **placeholders**. This document does not freeze identifiers.
+`*` is the confluence-tip Wedge vertex. Dry Wedge routes stop there. X6/X7 crosses from the landing
+head to Puerto. X1 reaches Orilla sur separately at the historic bridge.
 
-Three longitudinal routes run the length of the wedge and must all stay continuous:
-
-| Level | Route | Character |
-|---|---|---|
-| low | **Paseo Fluvial / camino de sirga** | quiet, waterside, continues to the port |
-| middle | **Calle Mayor** | commercial spine on the terrace |
-| high | **Callejas altas** | residential, stepped, links the Barrio Alto |
+All place names are placeholders; identifiers are not frozen.
 
 ### 2.3 District families
 
 | Family | Identity | Why it exists | Intensity |
 |---|---|---|---|
-| **Casco Viejo** | rocky tip above the confluence; tight irregular lanes, verticality, houses over the arroyo | strongest town identity; intimate social encounter; the bar alley | high |
-| **Plaza y Ayuntamiento** | first terrace where the casco lanes meet the commercial spine | civic core, market, town hall, the physical home of municipal decisions | high |
-| **Calle Mayor** | the terrace spine running NE | everyday retail/service, opening hours, ordinary pedestrian flow | high |
-| **Barrio Alto** | stepped residential on the N slope, with lavadero and mirador | schedules, vertical navigation, off-screen transitions, vantage | medium |
-| **Ensanche** | flat, regular, newer residential across the arroyo | a second residential social character; the cheapest large expansion | medium |
-| **Ribera y Talleres** | work edge between the terrace and the river | workshops, service, storage, alternate low route | medium |
-| **Puerto Fluvial** | timber and gravel yards, sheds, weighbridge, boat repair shed, ferry slip, fielato, fishermen's corner | seasonal river work, road break-bulk, the crossing, work shifts, municipal concessions | medium |
-| **Entrada y Carretera** | road junction and bus stop, adjacent to the port | arrivals and departures, outsider traffic, freight | low (edge family) |
-| **La Vega** | huertas, paths and terraces upstream along both waters | rural edge, quiet, seasonal work, market supply | low (edge family) |
+| **Casco Viejo** | rocky Wedge tip, irregular lanes, houses over Arroyo | strongest identity, intimate social encounter | high |
+| **Plaza y Ayuntamiento** | first terrace behind casco | civic core, market, town hall, visible municipal decisions | high |
+| **Calle Mayor** | terrace spine NE | everyday retail/services/opening-hours traffic | high |
+| **Barrio Alto** | stepped residential slope | schedules, vertical navigation, vantage | medium |
+| **Ensanche** | flatter regular residential across Arroyo | second residential character; cheapest large expansion | medium |
+| **Ribera y Talleres** | work edge between terrace and Río | workshops, storage, alternate low corridor | medium |
+| **Puerto Fluvial** | downstream Orilla-sur yards, quay, ferry/bridge landing, sheds, weighbridge | seasonal river work, road break-bulk, crossing, concessions | medium |
+| **Entrada y Carretera** | road junction / bus beside Puerto | arrivals, departures, outsider/freight traffic | low edge family |
+| **La Vega** | huertas/paths upstream | rural edge, quiet, seasonal work, market supply | low edge family |
 
 Seven substantial families plus two edge families.
 
 ### 2.4 Crossing strategy
 
-Connectivity semantics — which crossings exist, what is available when, how many routes each pair
-has, and what every closure and combined failure does — are owned by one file,
-`Docs/evidence/WP-CITY-00/CONNECTIVITY_MATRIX.md`. This section and §2.4.1 present it; they do not
-restate it in their own words, because three independent FAILs were caused by surfaces doing exactly
-that.
+Connectivity semantics are owned by `CONNECTIVITY_MATRIX.md`; this section mirrors the named design
+edges only.
 
-| Crossing | Over | Character | Connects | Availability | If closed |
-|---|---|---|---|---|---|
-| **Puente Viejo** | río | stone, narrow, historic; pedestrian and handcart | casco ↔ camino sur, ermita, cementerio, valley road | permanent, both states | the south bank is **not** cut off — see §2.4.1 |
-| **Puente del Mercado** | arroyo | road-capable stone arch | Calle Mayor ↔ Ensanche | permanent | commercial: carts detour upstream to the Puente de la Vega, ~200 m; pedestrians use the pasarela or the pasos |
-| **Pasarela del Lavadero** | arroyo | wooden footbridge | Barrio Alto ↔ upper Ensanche | permanent | local: a two-minute detour to the Puente del Mercado |
-| **Puente de la Vega** | arroyo | rural bridge upstream | huertas ↔ north Ensanche | seasonal; flood-closable | rural: the huerta route detours downstream to the Puente del Mercado |
-| **Pasos / vado** | arroyo | stepping stones on the low reach | lower casco lanes ↔ Ensanche | low water only | nothing on its own — it is a convenience, never a dependency |
-| **La barca** | río | roped ferry; people, animals and small loads | Puerto ↔ orilla sur | **State 1 only**; hours and fare are a municipal decision, high water suspends it | the south bank depends on the Puente Viejo alone until it runs again |
-| **Puente del Muelle** | río | freight road bridge | Puerto ↔ south-bank road | **State 2 only**; it replaces the barca | people still cross at the casco, but freight cannot cross at all — the Puente Viejo takes handcarts, not carts — so the yards wait |
+| ID | Crossing | Water | Connects | Availability |
+|---|---|---|---|---|
+| **X1** | Puente Viejo | Río | Wedge/casco ↔ Orilla sur | permanent; pedestrians + handcarts, not carts |
+| **X2** | Puente del Mercado | Arroyo | Calle Mayor ↔ Ensanche | permanent; road-capable |
+| **X3** | Pasarela del Lavadero | Arroyo | Barrio Alto ↔ upper Ensanche | permanent; foot only |
+| **X4** | Puente de la Vega | Arroyo | north huertas ↔ north Ensanche | seasonal; flood-closable |
+| **X5** | Pasos / vado | Arroyo | lower casco lanes ↔ Ensanche | low water only |
+| **X6** | La barca | joined Río | confluence-tip landing head ↔ Puerto on Orilla sur | **State 1 only**; hours/fare; high water suspends |
+| **X7** | Puente del Muelle | joined Río | confluence-tip landing head ↔ Puerto / port road | **State 2 only**; permanent, carts |
 
-The arroyo is crossed casually and often. The río is crossed rarely and deliberately — the barca does
-not change that, because it has hours, a fare and a far-end location, which makes crossing there a
-decision rather than a habit. Four cheap short spans buy more movement structure than one additional
-main-river bridge would, at a fraction of the geometry.
+Seven crossing IDs exist across the constitution's life; six coexist in each state because X6 and X7
+are mutually exclusive. Four are Arroyo crossings. Two Río crossings are designed in either state:
+X1 + X6, then X1 + X7.
 
-#### 2.4.1 Two connectivity states, and what closures actually do
+The Arroyo is crossed casually/often. The Río is crossed rarely/deliberately.
 
-The city's crossing set changes exactly once across production. Leaving that implicit is how the
-crossing table came to contradict the graph, so it is stated here and the table's Availability column
-refers to it.
+#### 2.4.1 Two connectivity states
 
-- **State 1 — the barca era.** The río is crossed at the Puente Viejo (casco) and by the barca
-  (landing). The barca is *conditional*: hours, a fare, and high water suspends it.
-- **State 2 — the Puente del Muelle era.** The bridge replaces the ferry and the south bank has two
-  unconditional crossings.
+- **State 1 — barca era:** X1 + X6 serve Orilla sur.
+- **State 2 — Puente del Muelle era:** X7 replaces X6 one-for-one; X1 remains.
 
-Each state **designs** two crossings for the south bank. How many are *available* is a separate
-question, answered by counting rather than by describing — describing effects without counting is how
-this document once called a zero-crossing state a single-crossing one.
+Availability is separate from design:
 
-The ladder is reproduced from `CONNECTIVITY_MATRIX.md` §4, which owns it. The arroyo has its own
-ladder in §5 of that file, because two invariants depend on it and earlier cycles never counted it.
-
-| Situation | Crossings serving the south bank | Character |
+| Situation | Río crossings available | Consequence |
 |---|---|---|
-| State 1, normal | **2** — Puente Viejo + barca | casco → ermita/cementerio over the bridge, ≈80 m |
-| State 1, high water | **1** — Puente Viejo | routine and seasonal; the landing loses its crossing and south-bank traffic walks the length of town |
-| State 1, Puente Viejo closed | **1** — the barca | casco → Cuesta → landing (≈150 m) → ferry → upstream along the camino sur (≈350 m): ≈**500 m plus the wait**, a detour of order 6×, bounded by ferry hours, fare and high water |
-| **State 1, a flood takes both** | **0** — genuinely cut off | rare and bounded, and not contrived: one flood can suspend the ferry and threaten the old bridge on the same day |
-| State 2, normal | **2** — Puente Viejo + Puente del Muelle, both unconditional | |
-| State 2, either one closed | **1** | a long detour, with no condition attached |
+| State 1 normal | **2** — X1 + X6 | short historic crossing + landing ferry |
+| State 1 high water | **1** — X1 | Puerto reached by X1 + camino sur |
+| State 1 X1 closed | **1** — X6 | south bank reached through landing ferry |
+| State 1 flood takes both | **0** | Wedge and Orilla sur disconnected |
+| State 2 normal | **2** — X1 + X7 | both unconditional |
+| State 2 X1 closed | **1** — X7 | movement detours to port bridge |
+| State 2 X7 closed | **1** — X1 | people/handcarts cross; cart freight waits |
 
-Two rows do the work. The **zero** row gives flood, repair priority and ferry policy a real stake,
-which a flat "the south side is cut off" never did. The **State 1 high water** row is the ordinary
-one: for part of the year the south bank runs on a single crossing, and that is content rather than a
-defect — but it is also why CSI-06 promises a designed second crossing and not a guaranteed second
-crossing.
+The already-reviewed 2 → 1 → 0 State-1 ladder is preserved. What changed in v1.1 is the physically
+correct endpoint of X6/X7.
 
-Together the Puente Viejo and the barca close a **loop along the south bank** — `CONNECTIVITY_MATRIX.md`
-§8 **L1**, State 1 only, roughly 650–750 m of walking plus the ferry wait, drawn in the §2.2 graph.
-State 2 has the same loop without the wait (**L1′**) once the Puente del Muelle replaces the ferry.
-Either way it is a detour, not a shortcut: casco to landing over the Cuesta is ≈150 m directly.
-Whether it carries ordinary traffic or stays a rural detour is a `WP-CITY-01` question (§8, Q12).
+### 2.5 Working landing — why it exists and where it sits
 
-### 2.5 The working landing — why it exists and how big it is
+The joined reach below the confluence is wider/slower and braids over gravel bars. That is used as a
+**workable** river edge, not as a claim of long-distance navigability.
 
-Below the confluence the joined water is wider, slower and shallower, braiding over gravel bars. That
-is ordinary confluence hydrology, not a claim about navigation: the reach is **workable, not
-navigable**. Nothing in this constitution depends on the river carrying cargo out of the valley.
+The landing sits on the Orilla-sur downstream bank because four ordinary uses coincide there with flat
+ground and the valley road:
 
-Four ordinary reasons put a working landing there, and they coincide at one place — flat ground, a
-wide slow reach, workable bars, and the arriving valley road:
+1. **Madera:** timber arrives by road/cart, is assembled into rafts and leaves only during high-water
+   windows; destination beyond the city is outside this document.
+2. **Áridos:** gravel/sand/lime are worked from bars under concession and moved by cart.
+3. **Crossing:** X6 ferry, then X7 bridge, ties the port directly to the core.
+4. **Road break-bulk:** weighbridge, yards, sheds and fielato serve the valley road; they do not depend
+   on riverborne long-distance freight.
 
-1. **Madera.** Cut timber comes down from the valley by road and cart, is assembled into rafts on the
-   bars, and goes downstream **only during a few weeks of high water**. Where it ends up is outside
-   this city and outside this document. The landing owns the yards, the assembly and the season.
-2. **Áridos.** Gravel, sand and lime are worked off the bars under municipal concession and move
-   *upstream into the city* by cart. Year-round, undramatic, constant traffic.
-3. **La barca.** In State 1 (§2.4.1) a roped ferry works the reach, and it is the south bank's second
-   crossing until the Puente del Muelle takes that role in State 2. Either way the landing is a
-   movement node and not only a work node.
-4. **Break-bulk for the road.** The valley road junction is here (CSI-04) because this is where the
-   road meets flat ground and water. Freight arriving by road is weighed, stored and broken down at
-   the yards. The weighbridge, the sheds and the fielato belong to the **road**, not to the river.
+Plus fishing and ordinary waterfront routine.
 
-Plus fishing, and the ordinary waterfront routine of people who live beside working water.
+Scale is **consumed from** `Docs/art/SETTING.md` and `Docs/art/VISUAL_BIBLE.md`, not imposed on ART:
 
-What that yields systemically: work shifts that pull actors out of the core and return them; yard and
-storage capacity that can be full or contested; a **season**, because the river works only at high
-water and nothing else in the city has one; a crossing whose hours and fare are a municipal decision;
-and a set of levers with a physical address — quay slots, extraction concessions, raft-assembly
-permits and high-water windows, ferry hours, yard rents, priority of repair.
+- working frontage roughly 120–150 m;
+- working craft only: rafts, flat-bottomed boats, ferry;
+- 3–6 sheds/warehouses, small repair shed, hand crane/derrick, weighbridge, timber/drying yard,
+  municipal office and a small carter/raft-crew social corner;
+- same inland stone/dark-tile material family as town;
+- never the city's hero harbour identity.
 
-What it gives up, stated rather than hidden: this city is **not** a node on a long-distance trade
-route, and visitors do not arrive by water from far away. Outsiders arrive by road at the adjacent
-junction (CSI-04), and the raft crews are seasonal outsiders who leave and come back. That is a
-smaller landing than an inland trading quay would be. It is the one the inherited setting supports,
-and it needs no premise this workpack is not entitled to make.
+Nothing here depends on a long-distance navigable trade corridor.
 
-Scale, **consumed from** `Docs/art/SETTING.md` and `Docs/art/VISUAL_BIBLE.md` §2 rather than imposed
-on them — ART owns setting and visual direction, and this constitution reads that direction and stays
-inside it:
+### 2.6 Port approaches and route structure
 
-- quay and working frontage on the order of 120–150 m, not a dock system;
-- working craft only — rafts, flat-bottomed boats, the ferry; no marina, no sea-going vessels;
-- 3–6 sheds and warehouses, a hand crane or derrick, a weighbridge, a timber and drying yard, a small
-  boat repair shed, a municipal office, a tavern corner for raft crews and carters;
-- material language identical to the town: stone, dark tile, muted props;
-- the harbour read is **never** the city's hero identity.
+The port is not a dry extension of the Wedge. Its route families are:
 
-If ART ever wants a larger river role for the fictional valley, that is an ART decision and it would
-*widen* this landing. Nothing here requires it, and nothing here is invalidated without it.
+1. **Entrada / valley road → Puerto:** dry on Orilla sur.
+2. **X1 far end → camino sur → Puerto:** dry after the historic crossing.
+3. **Casco / Cuesta → X6/X7 → Puerto:** direct core route.
+4. **Ribera / paseo → landing head → X6/X7 → Puerto:** low route to the same named crossing.
 
-### 2.6 Route structure — why this is not a hub with spokes
+The last two share X6/X7 and are not double-counted as crossings.
 
-Between any two adjacent district families there are at least two credible routes with different
-character. The plaza is a convergence point because the casco lanes and the commercial spine meet
-there — not because it is a mandatory connector. The paseo below it and the callejas above it bypass
-it end to end.
+The workpack's anti-hub test is design-level: **remove the plaza and the designed city remains
+connected.** Representative route families from `CONNECTIVITY_MATRIX.md` §6:
 
-Stated as the test the workpack actually applies: **remove the plaza from the graph and the city
-still connects.**
-
-Reproduced from `CONNECTIVITY_MATRIX.md` §6, which owns it. Pairs of which the plaza is itself a
-member are excluded, since "avoid the plaza on the way to the plaza" is not a question.
-
-| Trip | Route through the plaza | Route avoiding it | Always available? |
+| Pair | Route using plaza | Designed plaza-free route | Availability note |
 |---|---|---|---|
-| Barrio Alto → Ribera workshop | escaleras → plaza → Calle Mayor → down | callejas altas → escaleras east → Ribera | yes |
-| Casco → Ensanche | plaza → Puente del Mercado | lower lanes → pasos/vado | **no — the pasos are low water only** |
-| Ensanche → Puerto | Puente del Mercado → plaza → Cuesta | quay road south from Entrada | yes |
-| Vega → Puerto | Calle Mayor → plaza → Cuesta | paseo fluvial / camino de sirga the whole way | yes |
-| Barrio Alto → Ensanche | plaza → Puente del Mercado | Pasarela del Lavadero | yes |
+| Barrio Alto ↔ Ribera | stairs → plaza → Calle Mayor → down | callejas altas → east stairs → Ribera | unconditional |
+| Casco ↔ Ensanche | plaza → X2 | lower lanes → X5 | X5 low-water only; longer high-water bypasses remain |
+| Ensanche ↔ Puerto | X2 → terrace/plaza → lower casco → X6/X7 (or X1) | X3 → Barrio Alto → high lanes → casco routes → X6/X7; high-water fallback through X1 | exact cost belongs to CITY-01 |
+| Vega ↔ Puerto | Calle Mayor/plaza → X1 → camino sur | paseo/Ribera → landing head → X6/X7; high-water fallback to X1 without requiring plaza | exact cost belongs to CITY-01 |
+| Barrio Alto ↔ Ensanche | plaza → X2 | X3 | unconditional |
 
-A hub-and-spokes city fails every row. This one fails none, and the reason is structural rather than
-decorative: three parallel longitudinal routes (CSI-02) and four arroyo crossings by design (CSI-07)
-make the graph a mesh rather than a star.
+This constitution does **not** promise two plaza-free routes per pair or permanent availability of the
+shortest bypass.
 
-Two things this table shows that earlier drafts overstated, and that CSI-03 now matches. Each pair
-has **one** plaza-free route, not two. And **Casco → Ensanche does route through the plaza in high
-water**, because the pasos are its only plaza-free way across the arroyo. That is a named seasonal
-condition rather than a structural funnel, and it is content worth keeping — a town where one quarter
-becomes harder to reach when the water rises is more interesting than one where it never does.
+### 2.7 Three longitudinal route families
 
-The port is reached four ways: three by land — the towpath from Ribera, the quay road from Entrada,
-the steep Cuesta del Puerto from the casco tip — plus the río crossing from the south bank, the barca
-in State 1 and the Puente del Muelle in State 2. It is a destination, not a cul-de-sac, in both
-states.
+| Level | Route | Design obligation |
+|---|---|---|
+| low | **Paseo / sirga** | continuous to confluence-tip landing head; Puerto extension is through X6/X7 |
+| middle | **Calle Mayor** | continuous commercial terrace |
+| high | **Callejas altas** | continuous stepped residential route |
 
-### 2.7 "Elsewhere in town" — why the long routes are long enough
+The low route's State-1 port extension is weather-conditional because X6 can suspend. That is an
+availability fact, not a design breach.
 
-The workpack requires that long-route scale be sufficient for an actor to genuinely be *elsewhere in
-town*. The test is not the total distance; it is whether the player can casually verify where somebody
-is.
+### 2.8 "Elsewhere in town"
 
-At the adopted scale a yard hand at the landing is 8–9 minutes from the Calle Mayor and 15–17 from the
-upper vega. A player who sees Manolo at the plaza at ten o'clock cannot cheaply confirm where he is at
-half past — checking costs a real round trip, and on the way the target may have taken any of three
-longitudinal routes. That is the condition under which a schedule becomes knowledge worth having,
-routine absence becomes noticeable, and following becomes a decision rather than a formality.
+The adopted scale keeps the port genuinely elsewhere: planning hypotheses remain ~8–9 minutes from
+Puerto quay to a Calle Mayor shop and ~15–17 minutes from upper Vega to Puerto. These are targets for
+CITY-01/CITY-04, not measurements.
 
-It is also the condition under which the town stops needing the player: an actor who spends a shift at
-the port is, for that shift, genuinely out of the player's world without any simulation trick.
+A port worker can therefore spend a shift outside the player's cheaply verifiable radius without any
+simulation trick.
 
-### 2.8 Where the retained seed sits
+### 2.9 Retained seed
 
-The seed is chosen by `WP-CITY-03`, not here. What this constitution owes it is the guarantee that a
-real retained piece exists.
+The retained seed remains on the Wedge tip: casco lanes, plaza edge, Puente Viejo head, bar, one
+Arroyo crossing, short river edge, and the first metres of the Cuesta to the **landing-side X6/X7
+head**. The Puerto can be visible across/downstream without being built in the seed.
 
-The wedge tip satisfies it: casco lanes, the plaza edge, the Puente Viejo head, the bar, one stream
-crossing, a river strip, and the first metres of the Cuesta as a visible seam toward the port. That is
-four of the nine district families in some form, inside the 0.03–0.06 km² band, with expansion seams
-1, 4 and 5 all touching it.
-
-It is also, deliberately, the seed `PRODUCTION_BLUEPRINT.md` §1.4 already described, plus a stream
-crossing and a port seam. Adopting this constitution does not discard the seed thinking the project
-has already done, and nothing in it has to be demolished to reach the full city.
+Band remains **0.03–0.06 km²**; exact boundary belongs to CITY-03.
 
 ---
 
 ## 3. Scale envelope
 
-Derived in `Docs/evidence/WP-CITY-00/SCALE_ENVELOPE.md`. These are **hypotheses with stated change
-conditions**, not production commitments.
+Derived in `Docs/evidence/WP-CITY-00/SCALE_ENVELOPE.md`.
 
-| Quantity | Track's starting hypothesis | Adopted | Why |
-|---|---|---|---|
-| dense urban playable fabric | 0.8–1.2 km² | **0.30–0.45 km²** | falsified: 1.0 km² implies a 23–27 min cross-city walk, not 12–18 |
-| total playable envelope | 1.5–2.5 km² | **0.9–1.4 km²** | revised proportionally with the fabric |
-| representative long cross-city walk | 12–18 min | **13–17 min** | retained; it is the binding constraint |
-| substantial district families | 6–8 | **7** (+2 edge families) | retained with clarification |
-| first retained seed | 0.10–0.15 km² | **0.03–0.06 km²** | falsified against both the corrected core and the blueprint's own seed list |
-| scenic, non-traversable envelope | not stated | unbounded silhouette, never counted as playable | added |
+| Quantity | Starting hypothesis | Adopted |
+|---|---|---|
+| dense urban playable fabric | 0.8–1.2 km² | **0.30–0.45 km²** |
+| total playable envelope | 1.5–2.5 km² | **0.9–1.4 km²** |
+| representative long walk | 12–18 min | **13–17 min** |
+| substantial district families | 6–8 | **7** (+2 edge families) |
+| retained seed | 0.10–0.15 km² | **0.03–0.06 km²** |
+| scenic envelope | unstated | unbounded silhouette, never counted as playable |
 
-Dimensional sketch of the selected constitution:
+Dimensional sketch:
 
 | Part | Approx. extent | Approx. area |
 |---|---|---|
-| Wedge (casco + plaza + Calle Mayor + Ribera) | 600 m × 150→350 m | ≈0.15 km² |
+| Wedge core | 600 m × 150→350 m | ≈0.15 km² |
 | Ensanche | 350 × 250 m | ≈0.09 km² |
 | Barrio Alto | 300 × 200 m | ≈0.06 km² |
-| Puerto Fluvial | 300 × 150 m | ≈0.045 km² |
-| Entrada / carretera | — | ≈0.02 km² |
+| Puerto | 300 × 150 m | ≈0.045 km² |
+| Entrada / road edge | — | ≈0.02 km² |
 | **dense fabric** | — | **≈0.365 km²** |
 
-At the district coverage ratios assumed in `Docs/evidence/WP-CITY-00/SCALE_ENVELOPE.md` §2 this is on
-the order of **830 buildings**. That figure matters because it sets the ratio `WP-CITY-02` has to
-work against: 40–60 systemic Tier A/B locations would be 5–7% of the fabric here, and about 2% in a
-1.0 km² city.
+At the planning coverage ratios in `SCALE_ENVELOPE.md`, this is roughly 830 buildings; ratios and
+footprints are assumptions, not measurements.
 
 ### Walk-time hypotheses
 
-At an **assumed** effective 1.15 m/s. This speed is a planning assumption for `CITY-01` to reason
-with and `CITY-04` to measure. It is not a measured fact and must never be cited as one.
+Assumed effective pedestrian speed: **1.15 m/s**, to be measured later.
 
 | Route | Path length | Hypothesised time |
 |---|---:|---:|
-| Plaza ↔ bar in the casco | ~120 m | 1.5–2 min |
+| Plaza ↔ casco bar | ~120 m | 1.5–2 min |
 | Ensanche home ↔ Plaza | ~300 m | 4–5 min |
-| Barrio Alto home ↔ Ribera workshop | ~400 m + descent | 6–7 min |
-| Vega ↔ Plaza/market | ~450 m | 6–7 min |
-| Puente Viejo ↔ Entrada/bus | ~500 m | 7–8 min |
+| Barrio Alto ↔ Ribera workshop | ~400 m + descent | 6–7 min |
+| Vega ↔ Plaza | ~450 m | 6–7 min |
+| Puente Viejo far end ↔ Entrada/bus | ~500 m | 7–8 min |
 | Puerto quay ↔ Calle Mayor shop | ~550 m | 8–9 min |
-| Casco tip ↔ NE end of Calle Mayor | ~600 m | 8–10 min |
-| South-bank loop **L1** (State 1): casco → Puente Viejo → camino sur → barca → landing → Cuesta → casco | ~650–750 m + ferry wait | 10–12 min + wait |
-| South-bank loop **L1′** (State 2): the same over the Puente del Muelle | ~650–750 m | 10–12 min |
+| Casco tip ↔ NE Calle Mayor | ~600 m | 8–10 min |
+| **L1 State 1:** casco → X1 → camino sur → Puerto → X6 → landing head → Cuesta → casco | ~650–750 m + wait | 10–12 min + wait |
+| **L1′ State 2:** same via X7 | ~650–750 m | 10–12 min |
 | **Vega NE ↔ Puerto quay** | **~1.05–1.15 km** | **15–17 min** |
 
-### Conditions that would change the envelope
+Shrink/expand conditions remain those in `SCALE_ENVELOPE.md`; moving the port to the correct bank does
+not change the adopted area band.
 
-Shrink it: CITY-02 cannot programme enough systemic locations to inhabit ≈0.36 km²; CITY-04 measures
-effective speed materially below 1.15 m/s; authored frontage cost forces repetition that reads as
-procedural; the hero mesh/atlas budget survives art review and the fabric cannot reach its silhouette
-inside it.
-
-Expand it: CITY-04 measures the city as cramped, or districts read as adjacent rather than distinct;
-CITY-02 produces materially more systemic locations than this fabric can house without crowding the
-protected quiet fabric.
-
-**Special case:** if the dense band is ever raised above roughly **0.7 km²**, the rejection of
-Topology A no longer holds and this constitution must be **reopened**, not stretched.
-
-Not a reason to change it: a wish for a bigger city, another game's acreage, or a desire to use more
-of an asset kit.
+Special case remains: if dense fabric rises above roughly **0.7 km²**, Topology A's rejection must be
+reopened rather than stretching this constitution.
 
 ---
 
 ## 4. Playable fabric versus scenic envelope
 
-| Class | What it is | Promise made |
+| Class | Content | Promise |
 |---|---|---|
-| **Fabric** | casco, plaza, Calle Mayor, Barrio Alto, Ensanche, Ribera, Puerto | traversable, populated, systemically programmed by CITY-02 |
-| **Transitional** | paseo/sirga, arroyo ravine walk, camino sur, vega paths, quay road, slope terraces | traversable, deliberately low-intensity, quiet by design |
-| **Scenic envelope** | green slopes, rock masses, distant caseríos, upper valley, the river beyond the port bend | **visible only**; sells silhouette and continuation |
+| **Fabric** | casco, plaza, Calle Mayor, Barrio Alto, Ensanche, Ribera, Puerto | traversable/populated/systemically programmed |
+| **Transitional** | Wedge paseo, Arroyo ravine, camino sur, Vega paths, quay/road approaches, slope terraces | traversable, deliberately low-intensity |
+| **Scenic** | green slopes, rock masses, distant caseríos, upper valley, river beyond port bend | visible only; never counted as playable |
 
-The scenic envelope may never be presented as, or counted toward, a promised playable district.
+Orilla sur is a **landmass**, not a content class: it contains fabric at Puerto/Entrada and
+transitional/rural content along camino sur.
 
 ---
 
 ## 5. Permanent spatial invariants
 
-These bind `CITY-01..04`. Breaking one is a constitutional change, not a production decision.
+These bind CITY-01..04. Connectivity invariants bind **design** unless stated otherwise; availability
+belongs to `CONNECTIVITY_MATRIX.md`.
 
-- **CSI-01 — Two waters, two roles.** The arroyo is the everyday crossing; the río is the territorial
-  crossing. Neither may be reduced to scenery.
-- **CSI-02 — Three continuous longitudinal routes.** Paseo fluvial, Calle Mayor and callejas altas
-  stay continuous end to end. No production phase may leave only the terrace. *(This is the answer to
-  charge B-2 in the refutation log; without it the constitution is a single-spine town.)*
-- **CSI-03 — The plaza converges, it does not connect.** *Binds design.* Every adjacent pair of
-  district families, excluding pairs containing the plaza itself, is designed with at least one route
-  that does not pass through it (`CONNECTIVITY_MATRIX.md` §6). Availability is a separate matter and
-  belongs to that matrix: Casco ↔ Ensanche routes through the plaza in high water, because the pasos
-  are its only plaza-free crossing. What this invariant forbids is a pair *structurally* dependent on
-  the plaza.
-- **CSI-04 — The port sits on ordinary routes.** The road junction and bus stop stay adjacent to the
-  port, and at least two everyday non-port services live there. *(Answer to charge B-1; without it the
-  port is decoration with a job title.)*
-- **CSI-05 — The landing keeps valley scale, and depends on no unauthorized premise.** Working craft
-  only, quay and working frontage ≈120–150 m, no marina, no sea-going read, and **no dependence on
-  the river carrying cargo out of the valley**. This invariant is *consumed from*
-  `Docs/art/SETTING.md`: ART owns setting direction and CITY reads it rather than redefining it.
-- **CSI-06 — One historic bridge in the core, and a second crossing always designed for the south
-  bank.** The core has exactly one río bridge, the Puente Viejo. The landing always carries a second
-  south-bank crossing: the barca in State 1, the Puente del Muelle in State 2. No third río crossing
-  exists in either state. The transition makes the second crossing unconditional; it never removes it.
-
-  *Binds design.* Degrading to one crossing (high water, or a closure) and even to none (a flood
-  taking both) are bounded conditions owned by `CONNECTIVITY_MATRIX.md` §4, not breaches of this
-  invariant. What it forbids is a constitution in which the south bank is *structurally* served by a
-  single crossing.
-- **CSI-07 — Arroyo crossings are plural, cheap and differentiated.** *Binds design.* Four exist —
-  Puente del Mercado, Pasarela del Lavadero, Puente de la Vega, pasos — each with a distinct
-  character and a distinct consequence when closed. Two of the four are permanent, and that is the
-  floor this invariant guarantees; availability runs from four at low water down to two in flood and
-  is owned by `CONNECTIVITY_MATRIX.md` §5.
-- **CSI-08 — Quiet is protected fabric.** The upstream paseo, the arroyo ravine walk with the
-  lavadero, and the upper vega lanes stay low-intensity and may not be converted into reactive-density
-  showcase.
-- **CSI-09 — Five spatial characters stay distinct.** Old quarter, civic/commercial, residential (in
-  two characters), work/port edge and rural edge are never merged or substituted for one another.
-- **CSI-10 — Expansion without demolition.** Six named seams exist — enumerated in §5 below and
-  owned by `CONNECTIVITY_MATRIX.md` §9 — and none requires moving the plaza, the Puente Viejo, the
-  Calle Mayor alignment or the quay.
-- **CSI-11 — Backdrop is not fabric.** Scenic envelope sells silhouette and is never counted toward
-  promised playable districts.
-- **CSI-12 — Every municipal lever has an address.** Each lever family in `PA-12_AMENDMENT_01` §3 —
-  access/permission, schedule, capacity/allocation, cost/support, sponsorship, enforcement, public
-  commitment — has at least one physical place in this constitution where its effect is walkable:
-  the quay, an arroyo crossing, the market terrace, the town hall, the depot, the fonda, the Cuesta.
+- **CSI-01 — Two waters, two roles.** Arroyo = everyday crossing; Río = territorial crossing. Neither
+  may become scenery-only.
+- **CSI-02 — Three longitudinal route families.** Low paseo/sirga, middle Calle Mayor and high
+  callejas remain designed end-to-end through the Wedge. The low route reaches Puerto through X6/X7;
+  State-1 high-water interruption at X6 is availability, not a design breach.
+- **CSI-03 — Plaza converges, it does not structurally connect.** Every district family has a designed
+  route network that does not require the plaza as the sole connector. The matrix owns representative
+  bypasses and temporary availability.
+- **CSI-04 — Port sits on ordinary routes.** Entrada/bus/road junction remains adjacent to Puerto and
+  at least two everyday non-port services live there.
+- **CSI-05 — Landing keeps valley scale and needs no unauthorized premise.** Working craft only,
+  ~120–150 m working frontage, no marina/sea-going read, no dependency on long-distance navigability.
+- **CSI-06 — Two designed Río crossings per state.** X1 Puente Viejo is the one historic Río bridge
+  inside the casco fabric. Landing crossing is X6 in State 1 and X7 in State 2; no third Río crossing
+  exists in either state. Availability can degrade to 1 or 0 as matrix §4 records.
+- **CSI-07 — Arroyo crossings are plural/differentiated.** Four designed: X2–X5; X2/X3 permanent.
+  Availability belongs to matrix §5.
+- **CSI-08 — Quiet is protected fabric.** Upstream paseo, Arroyo ravine/lavadero and upper Vega lanes
+  stay low-intensity.
+- **CSI-09 — Five spatial characters remain distinct.** Old quarter; civic/commercial; two residential
+  characters; work/port edge; rural edge.
+- **CSI-10 — Expansion without demolition.** Six seams exist and none requires moving Plaza, Puente
+  Viejo, Calle Mayor or quay.
+- **CSI-11 — Backdrop is not fabric.** Scenic envelope never counts toward promised playable area.
+- **CSI-12 — Municipal levers have physical addresses.** Quay, crossings, market terrace, town hall,
+  depot, fonda and Cuesta/landing head make access/schedule/capacity/cost/sponsorship/enforcement/
+  commitment consequences walkable.
 
 ### Expansion seams
 
-1. **NE along the río** → vega, more Calle Mayor, a second huerta quarter.
-2. **N up the arroyo** → upper huertas, mill, hamlet.
+1. **NE along Río / Vega** → more Calle Mayor / huerta quarter.
+2. **N up Arroyo** → upper huertas, mill, hamlet.
 3. **Up-slope N/NE** → Barrio Alto growth, terraces, miradores.
-4. **W across the arroyo** → Ensanche growth — the cheapest large residential expansion.
-5. **SW downstream** → port growth, yards, depot, boatyard.
-6. *(Later)* **S across the río** at the Puente del Muelle, which moves the city from State 1 to
-   State 2 by replacing the barca with a permanent crossing (§2.4.1). It is also the only seam that
-   would promote a *transitional* area — the Orilla sur, §4 — into fabric. That promotion is a
-   CITY-02/CITY-03 decision and is not taken here.
+4. **W across Arroyo** → Ensanche growth.
+5. **Downstream on Orilla sur from Puerto / Entrada** → yards, depot, boatyard, road-edge growth.
+6. **X6 → X7 landing-crossing transition** → State 2; may later support more south-bank fabric, but
+   CITY-00 does not schedule that expansion.
+
+Seam 5 is no longer described as a dry Wedge→Puerto expansion.
 
 ---
 
 ## 6. Rejected alternatives
 
-Full charges, defences and verdicts: `Docs/evidence/WP-CITY-00/REFUTATION_LOG.md`. Dossiers:
-`TOPOLOGY_A_DOS_ORILLAS.md`, `TOPOLOGY_C_RIBERA_LARGA.md`. Matrix:
-`COMPARISON_MATRIX.md`.
+Full evidence: `REFUTATION_LOG.md`, `COMPARISON_MATRIX.md`, topology dossiers.
 
-### A — "Dos Orillas": the river splits the city, two bank spines, two crossings
+### A — Dos Orillas
 
-**Rejected because** at the corrected scale band it cannot be both dense and representable by a small
-seed. Splitting ≈0.40 km² into two half-towns forces CITY-02 to programme systemic anchors twice or
-leave one bank visibly thin; and no cheap seed shows a two-bank city — a one-bank seed omits the
-residential majority, the workshops and the port, while a straddling seed must build two bridge heads
-and the bridge itself.
+Rejected at the adopted scale because splitting ~0.40 km² into two half-towns dilutes reactive density
+and makes a representative cheap retained seed difficult. Its raw barrier logic survives in CSI-06.
+If dense fabric later rises above ~0.7 km², reopen A.
 
-**What it won on, and what was carried forward:** A had the strongest raw river logic and the most
-powerful governance levers. Its barrier logic survives as CSI-06.
+### C — Ribera Larga
 
-**Recorded coupling:** A's rejection is a consequence of the size decision, not of its quality. Above
-a dense band of roughly 0.7 km² its density objection dissolves and A becomes the stronger option.
+Rejected because the river shapes land use more than ordinary movement, and its single axis weakens
+follow/search branching and granular governance. Its cost discipline survives in the scale envelope.
 
-### C — "Ribera Larga": a linear single-bank city between slope and water
+### Why B survives cycle 4
 
-**Rejected because** the river is crossed at the two ends and essentially never in ordinary life. The
-acceptance criterion is that the river shapes **movement**, not only land use; C satisfies the land-use
-half and not the movement half. Fixing it by adding a mid-town crossing gives the far bank something
-to be — which is Topology A. Its single axis also collapses follow/search branching and leaves
-governance without a cheap, frequently used crossing to act on.
+The fourth review did not show that confluence-wedge structure is impossible; it showed that the
+**old bank assignment for the port was impossible**. After assigning Puerto/Entrada to the real
+Orilla-sur downstream bank, every inter-landmass edge is named, both Río crossings remain meaningful,
+and the landing is more clearly territorial rather than decorative.
 
-**What it won on, and what was carried forward:** C was clearly the cheapest to build well and the
-densest per square metre. That cost discipline is carried into §3's scale envelope rather than
-discarded.
-
-### Why the survivor was chosen
-
-B was not selected for winning the most rows. It was selected because it is the only option whose
-charges are answerable **by structure** rather than by intent — and those answers are now CSI-02 and
-CSI-04 rather than good intentions. Its remaining risks are declared: verticality is a CITY-04
-measurement risk, its most expensive fabric is at the tip where production was already going to
-start. Its landing, after repair cycle 1, depends on no premise beyond the inherited setting.
+B remains selected because its charges are answered structurally: route continuity, ordinary port
+routes, explicit bank/crossing logic and a retained seed that grows without demolition.
 
 ---
 
-## 7. Reconciliation with the Production Blueprint
+## 7. Reconciliation with Production Blueprint
 
-`Docs/workpacks/CITY/README.md` authorizes CITY to sharpen or explicitly propose amendments to
-`Docs/production/PRODUCTION_BLUEPRINT.md`. The blueprint has been updated to v0.3 in the same change
-so that `main` does not carry two contradictory topologies.
+`PRODUCTION_BLUEPRINT.md` v0.3 remains non-binding and points to this constitution for topology.
+Its existing statements remain valid after the bank correction:
 
-| Blueprint section | Before | After |
-|---|---|---|
-| §1.2 semantic topology | a single-river loop diagram with no port; plaza adjacent to almost every route | replaced by a pointer to this document's §2.2 graph; the loop *principle* and the actor route examples survive, the diagram does not |
-| §1.3 zones | six zones, no port, no second residential character | aligned with §2.3: `zone.ensanche`, `zone.puerto` and `zone.vega` added; `zone.ribera` narrowed to the work edge; `zone.entrada` moved adjacent to the port |
-| §1.4 first product seed | element list with no stated area | element list retained, plus an arroyo crossing and a visible port seam; area stated as 0.03–0.06 km² and the final boundary assigned to CITY-03 |
-| §1.5 approximate scale | street/plaza/frontage/floor anchors | anchors unchanged (they belong to the visual bible); the district-scale band added by reference |
-| §12 open items — "town layout" | "use the product-seed river/bridge/loops topology in this revision" | resolved: points at this constitution; a new row records the scale-band correction |
+- `zone.puerto` stays downstream of confluence;
+- `zone.entrada` stays adjacent to Puerto;
+- the seed keeps a visible descent/seam toward the port, now understood as descent to the landing-side
+  crossing head rather than a dry road through the confluence;
+- actor examples and the 0.03–0.06 km² seed band remain valid.
 
-The blueprint's actor examples — Antonio descending from the Barrio Alto to the workshops, Ana's
-short lane to the bar, Pilar choosing the riverside walk, Javier's bicycle preferring the flatter
-route, Tomás arriving from the huertas, Bernardo arriving by bus — all hold on the new graph, and
-Bernardo's arrival now lands beside the port rather than at an abstract road edge.
+No blueprint amendment is required for the bank correction because the blueprint never asserted the
+invalid dry Wedge→Puerto edge.
 
 ---
 
@@ -481,29 +379,28 @@ Bernardo's arrival now lands beside the port rather than at an abstract road edg
 
 | # | Question | Owner |
 |---|---|---|
-| Q1 | Visual and material language for a working timber-and-gravel landing, its yards and the roped ferry, inside the existing kit allowlist. This is a **consumption** question: no answer to it can invalidate this constitution, because §2.5 rests on no premise beyond the inherited setting. | `WP-ART-00` / art direction |
-| Q2 | How much total level change does the wedge carry, and does it survive readability and followability validation? | CITY-04, measured; CITY-01 to bound |
-| Q3 | Measured walk times against the §3 hypotheses, and the real effective pedestrian speed. | CITY-04 |
-| Q4 | Primary and secondary route graph, travel profiles (older walker, bicycle, delivery, bus, following player, time-pressured trip) and chokepoint ledger. | CITY-01 |
-| Q5 | Which arroyo crossing is the one the municipality can plausibly close, and what the alternate route costs. | CITY-01 |
-| Q6 | Tier A/B location programme per district, and whether ≈0.36 km² houses it without crowding the quiet fabric CSI-08 protects. | CITY-02 |
-| Q7 | Which two everyday non-port services live at the Entrada/Puerto junction (CSI-04 requires at least two; it does not name them). | CITY-02 |
-| Q8 | Physical homes for activities with real scarcity — the bar table, the bolera, fishing spots on the paseo. | CITY-02 |
-| Q9 | Exact retained-seed boundary inside the 0.03–0.06 km² band, and its hard boundary versus soft visual envelope. | CITY-03 |
-| Q10 | Whether the seed includes the Pasos/vado or the Puente del Mercado as its arroyo crossing. | CITY-03 |
-| Q11 | Whether the hero mesh/atlas budget and this fabric are compatible, or whether one of them must move with evidence. | art review, with CITY-04 input |
-| Q12 | The south-bank loop exists and is drawn (§2.2, §2.4.1). Does it carry ordinary traffic, or is it a rural detour taken only when the ferry is running and the errand suits it? And does the answer change between State 1 and State 2? | CITY-01 |
+| Q1 | Visual/material language for timber-and-gravel landing, yards and ferry inside art allowlist; no answer may invalidate topology | ART direction |
+| Q2 | Total level change / readability / followability | CITY-04 measured; CITY-01 bounds |
+| Q3 | Measured walk times and effective pedestrian speed | CITY-04 |
+| Q4 | Primary/secondary route graph, profiles and chokepoint ledger | CITY-01 |
+| Q5 | Which Arroyo crossing is the practical municipal closure lever and detour cost | CITY-01 |
+| Q6 | Tier A/B location programme and whether ~0.36 km² houses it without crowding quiet fabric | CITY-02 |
+| Q7 | Two everyday non-port services at Entrada/Puerto | CITY-02 |
+| Q8 | Physical homes for scarce ordinary activities | CITY-02 |
+| Q9 | Exact retained-seed boundary inside 0.03–0.06 km² | CITY-03 |
+| Q10 | Whether seed includes X5 pasos or X2 Puente del Mercado as its Arroyo crossing | CITY-03 |
+| Q11 | Hero mesh/atlas budget compatibility with fabric | art review + CITY-04 |
+| Q12 | L1/L1′ traffic character: ordinary route or rural detour, and how State 1/2 changes usage | CITY-01 |
+| Q13 | When State 1 transitions to State 2 | unassigned until a later production WP owns it |
 
 ---
 
-## 9. What this document deliberately does not do
+## 9. Deliberate non-goals
 
-- It does not authorize Unity work, scene construction, navmesh, asset import or any runtime contract.
-- It does not modify `Docs/ROADMAP.md`, any `WP-HK-*`, `WP-HK-GATE` or any accepted H0 guarantee.
-- It does not freeze identifiers, final geometry, street alignments or building placement.
-- It does not decide the location/interior programme, the seed boundary or the mobility graph — those
-  belong to CITY-02, CITY-03 and CITY-01.
-- It does not pre-accept any Living World PA finding; it consumes PA material only as spatial
-  requirements.
-- It does not make real Potes the shipping map.
-- It does not treat any walk time or area in §3 as a measured result.
+- no Unity scene, navmesh, asset import or runtime contract;
+- no change to ROADMAP, HK workpacks, H0 guarantees or HK-GATE;
+- no frozen identifiers/final geometry/building placement;
+- no CITY-02 programme, CITY-03 seed boundary or CITY-01 measured mobility graph;
+- no pre-acceptance of Living World PA findings;
+- no 1:1 Potes map;
+- no claim that scale/walk-time hypotheses are measured facts.
