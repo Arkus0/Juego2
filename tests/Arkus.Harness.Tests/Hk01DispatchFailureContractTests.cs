@@ -46,7 +46,10 @@ namespace Arkus.Harness.Tests
                 retryable: true,
                 publicationCommitted: true,
                 "HK01_AFTER_PUBLICATION_SENTINEL");
-            Assert.Contains("Inspect the current canonical anchor", result.Error!.RepairHint, StringComparison.Ordinal);
+            Assert.Contains(
+                "Inspect the current canonical anchor",
+                result.Error!.RepairHint ?? string.Empty,
+                StringComparison.Ordinal);
         }
 
         private static ComposedContract ContractWith(ICanonicalCapabilityHandler handler)
