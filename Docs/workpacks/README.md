@@ -47,4 +47,4 @@ Responsibilities:
 
 `CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are documentation/research/planning only. `CITY-04`, `CITY-07` and `CITY-08` are LOCAL and MUST NOT begin before their stated Unity/bridge/catalogue prerequisites have passed.
 
-`WP-CITY-00` is COMPLETE. The next CITY workpack is `WP-CITY-01 — Mobility, district graph + walk-time topology` once the programme revision is accepted.
+`WP-CITY-00` is COMPLETE. CITY Programme v2 is ACCEPTED on candidate `87a902584f2c46b2d256f6fef26829e9182e7605` (review `#5261734418`, PR `#70`, merge `058e2f4f7c5b018d60cce84e9c89bd07249dd36a`). The next CITY workpack is `WP-CITY-01 — Mobility, district graph + walk-time topology`.

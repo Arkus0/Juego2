@@ -1,7 +1,16 @@
 # CITY Programme v2 — Planning rationale
 
-Status: **PROCESS_ONLY / CANDIDATE — REVIEW CYCLE 2**  
+Status: **PROCESS_ONLY / ACCEPTED**  
 Date: 2026-09-20
+
+## Accepted result
+
+- Accepted candidate SHA: `87a902584f2c46b2d256f6fef26829e9182e7605`
+- Independent Reviewer verdict: **PASS**
+- Review: `#5261734418`
+- PR: `#70`
+- Merge commit: `058e2f4f7c5b018d60cce84e9c89bd07249dd36a`
+- Next CITY workpack: `WP-CITY-01 — Mobility, district graph + walk-time topology`
 
 ## Why this revision exists
 
