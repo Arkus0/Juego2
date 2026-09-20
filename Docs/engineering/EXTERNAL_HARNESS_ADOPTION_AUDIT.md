@@ -1,6 +1,6 @@
 # External Harness Adoption Audit
 
-Snapshot date: 2026-09-19
+Snapshot date: 2026-09-20
 Status: binding architecture/adoption input after `WP-HK-00A` acceptance; refresh before H1 planning and before copying, vendoring or directly depending on external code.
 
 ## Purpose
@@ -31,6 +31,20 @@ Public upstream material was rechecked for this architecture freeze. Observation
 | AltTester Unity SDK | `alttester/AltTester-Unity-SDK` | GPL-3.0 | useful black-box automation ideas, but embedded commercial use requires explicit legal/architecture exception or isolation |
 
 These observations may change upstream. They are insufficient to copy/vendor/link code without the exact-version record required by `DEPENDENCY_IP_POLICY.md`.
+
+## 2026-09-20 H1 planning refresh
+
+The H1 architecture review rechecked the engine/tooling assumptions before freezing workpack boundaries:
+
+- official Unity material identifies Unity 6.3 as an LTS release with support through December 2027; H1 therefore selects the 6.3 LTS family, while `WP-H1-02` owns selection and recording of one exact maintained patch;
+- Unity's project manifest and lock file are both required inputs to the effective resolved package fingerprint; the declared manifest alone is not the proof universe;
+- `AssetDatabase`, GUID/local-file identity and `GlobalObjectId` are useful editor resolution mechanisms, but remain Unity locators rather than canonical Arkus identity;
+- batchmode/EditMode is the primary deterministic engine proof surface, with a graphics-capable/editor run only when the owned claim truly needs rendered evidence;
+- the public repositories listed above remained available under their observed MIT/Apache-2.0 license declarations at planning time, but none is adopted by this plan and none becomes the bridge or contract authority.
+
+Authoritative planning references: [Unity release support](https://unity.com/releases/release-overview), [GlobalObjectId scripting API](https://docs.unity3d.com/ScriptReference/GlobalObjectId.html), [AssetDatabase scripting API](https://docs.unity3d.com/ScriptReference/AssetDatabase.html), [project manifest](https://docs.unity3d.com/Manual/upm-manifestPrj.html), [lock files](https://docs.unity3d.com/Manual/upm-conflicts-auto.html), and [command-line/batch mode](https://docs.unity3d.com/Manual/EditorCommandLineArguments.html).
+
+This refresh is architecture evidence, not an exact dependency approval. H1-02 and H1-11 must revalidate their exact editor/package/content selections when implemented.
 
 ## Current findings
 

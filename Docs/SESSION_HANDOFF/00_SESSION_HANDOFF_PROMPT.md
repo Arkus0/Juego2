@@ -10,11 +10,13 @@ Juego2 / Arkus Harness is a game-development and software-verification project. 
 
 1. `AGENTS.md`
 2. `Docs/ROADMAP.md`
-3. exact active workpack once the next H1 workpack is authored
-4. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`
-5. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
-6. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md`
-7. `Docs/engineering/AUTOMATION_V2.md`
+3. `Docs/workpacks/H1/README.md`
+4. `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md`
+5. exact active workpack after a human starts one; currently none
+6. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`
+7. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+8. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md`
+9. `Docs/engineering/AUTOMATION_V2.md`
 
 ## Current accepted state
 
@@ -46,9 +48,15 @@ H0 therefore exits with effective foundational proof READY, zero unresolved proo
 
 No H0 workpack remains.
 
-The next product action is to **author the detailed H1 Engine Bridge / Unity-first workpack sequence** from the accepted H0 boundary. `Docs/ROADMAP.md` explicitly says detailed H1 workpacks are not yet frozen, so this DocSync does not invent a `WP-H1-*` identifier.
+The H1 Engine Bridge / Unity-first architecture and full sequence have been authored in a `PROCESS_ONLY` planning candidate. H0 reconstruction began from `main` SHA `c87c4c195d63cc9255745014f2b9757d9cd34050`; the candidate was then reconciled onto `7fe44840076eba05f1b67a7633cd33fc67b9023d` after CITY programme v2 PASS, merge and DocSync. It contains 12 claim-owned implementation workpacks plus `WP-H1-GATE`. The plan does not mark any H1 WP active.
 
-H1 is now unblocked by H0, but gameplay implementation is still not authorized. The first H1 work must establish the Unity Engine Bridge / parity boundary and preserve the accepted engine-neutral canonical semantics. In particular, schema-aware engine/scoped-extension producers should mechanically derive typed dependencies from structured references they understand rather than making the AI manually synchronize opaque payload references with dependency metadata.
+After the planning PR is accepted and merged, the first default Worker is `WP-H1-00 — Engine-neutral projection contract + reference materializer` (`REMOTE_OK`). `WP-H1-02` is independently dependency-valid from H0 and may run in parallel only with explicit authorization; the default execution order remains numeric. Every transition still requires Worker -> independent Reviewer -> PASS -> merge -> DocSync.
+
+H1 architecture keeps canonical `WorldState` and all H0 authoring authority engine-neutral. Unity binding intent is canonical opaque extension data produced by a schema-aware provider; the Unity catalogue, locators and materialized scene/assets remain bridge-owned derived state. Unity-to-canonical flow is an explicit proposal that must re-enter H0 plan/dry-run/apply. Gameplay and CITY-07 keeper realization remain blocked until `WP-H1-GATE` passes, merges and completes DocSync. CITY-04 is a narrower non-blocking greybox sidecar after CITY-03 + H1-08; it cannot invent bridge semantics or count as H1 evidence by implication.
+
+Accepted CITY programme v2 keeps its own spine and owners. H1 uses `CITY_SPATIAL_CONSTITUTION.md` as representative shape input only. CITY-08's later keeper-slice reuse/cost trial remains distinct from H1-GATE's bounded public-client readiness trial.
+
+The binding final scenario is `Docs/engineering/H1_UNITY_PARITY_GATE.md`. Ordinary H1 WPs use deterministic evidence and seam-specific H0 deltas. One fresh external AI-agent trial is reserved for `WP-H1-GATE`, where public Unity-bridge readiness is the new acceptance claim.
 
 The non-blocking H0S scale/concurrency track may run in parallel with H1 if useful. It starts from measurements rather than a predetermined Merkle/per-resource-CAS/lock design and must not make a transport adapter the semantic concurrency authority.
 

@@ -3,7 +3,7 @@
 Status: **FROZEN PLAN / DORMANT UNTIL PREREQUISITES**  
 Class: PRODUCT / LOCAL ENGINE VALIDATION (NON-FOUNDATIONAL)  
 Mode: **LOCAL / UNITY**  
-Depends on: `WP-CITY-03` PASS + `WP-HK-GATE` PASS + accepted relevant Unity bridge prerequisites  
+Depends on: `WP-CITY-03` PASS + `WP-H1-08` PASS
 Blocks: `WP-CITY-07` only
 
 ## Contract continuity
@@ -75,4 +75,4 @@ The exact seed has a measured spatial verdict and an owner-tagged defect ledger.
 
 ## Forbidden before prerequisites
 
-Do not begin before `WP-HK-GATE` and accepted relevant Unity-bridge prerequisites. No final art/polish, broad asset production, Living World/gameplay implementation or new bridge semantics.
+Do not begin before `WP-CITY-03` and `WP-H1-08` have each passed, merged and completed DocSync. This bounded greybox may consume accepted H1 scene/prefab/component/diagnostic surfaces, but it may not become H1 acceptance evidence by implication. No final art/polish, broad asset production, keeper realization, Living World/gameplay implementation or new bridge semantics.

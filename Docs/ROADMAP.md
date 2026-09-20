@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.27 — 2026-09-20
+Version: 1.28 — 2026-09-20
 
 ## North star
 
@@ -8,7 +8,7 @@ Build an engine-agnostic, commercially viable AI-native game-authoring platform 
 
 A fresh AI agent, without C# implementation knowledge, must be able to discover available capabilities and safely create, inspect, modify, validate, diff, replay and test a representative world through stable machine-readable contracts.
 
-**H0 / `WP-HK-GATE` has passed. Detailed Engine Bridge / Unity-first H1 workpack authoring is now permitted; gameplay implementation remains blocked until the downstream Unity bridge/parity gate.**
+**H0 / `WP-HK-GATE` has passed. The complete Engine Bridge / Unity-first H1 plan is defined, but no H1 implementation WP is active merely because the planning PR exists. Gameplay and keeper realization remain blocked until `WP-H1-GATE` passes, merges and completes DocSync; the bounded CITY-04 greybox has the narrower H1-08 prerequisite recorded below.**
 
 Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Robustness work in H0 is repository-local testing of the harness's own code, fixtures and contracts. New work uses the neutral negative-conformance terminology defined in `AGENTS.md`.
 
@@ -72,7 +72,7 @@ Before implementation, the original HK06 and HK07 workpacks were deliberately sp
 
 Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-No H0 workpack remains. Next product action: author the detailed H1 Engine Bridge / Unity-first workpack sequence from the accepted H0 boundary. No H1 implementation workpack is frozen yet, so DocSync does not invent a `WP-H1-*` identifier.
+No H0 workpack remains. The accepted H0 boundary is the predecessor for the proposed H1 plan below. Once that plan is accepted and merged, the first dependency-valid H1 Worker is `WP-H1-00`; this planning change does not activate or freeze it.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -138,19 +138,68 @@ The commercial target is therefore two-layered: H0 provides a simple globally co
 
 # H1 — Engine Bridge Foundation: Unity First
 
-`WP-HK-GATE` has passed. Detailed H1 workpacks may now be authored and independently frozen/reviewed; none is frozen by this DocSync.
+Status: **PLANNED / NOT_STARTED**. Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`; reconciled integration base after CITY programme v2 PASS, merge and DocSync: `7fe44840076eba05f1b67a7633cd33fc67b9023d`.
 
-The first H1/scoped-extension producer work must preserve the HK02A opaque-kernel boundary while removing an avoidable AI footgun: when a schema-aware producer/codec understands references embedded in its payload, it must derive the corresponding typed dependency surface mechanically from the structured input it serializes. The AI should not normally be responsible for manually keeping opaque payload references and `dependencies` synchronized. Direct opaque payload + dependency authoring remains a low-level primitive; the engine-agnostic kernel still does not introspect arbitrary payload bytes.
+The binding planning set is:
 
-H1 must establish a Unity Engine Bridge / parity boundary before gameplay implementation is authorized. H0 acceptance is inherited; H1 must map and exercise it rather than redefine canonical semantics inside Unity.
+- architecture and authority: `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md` plus `Docs/architecture/ADR-H1-*`;
+- causal H0 lessons: `Docs/engineering/H0_TO_H1_RETROSPECTIVE.md`;
+- DAG and complete workpack contracts: `Docs/workpacks/H1/README.md` and `Docs/workpacks/H1/WP-H1-*.md`;
+- final reference scenario: `Docs/engineering/H1_UNITY_PARITY_GATE.md`;
+- risk/residual handoff: `Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md`;
+- architect pre-review: `Docs/evidence/H1-PLAN/ARCHITECTURE_PRE_REVIEW.md`.
+
+H1 keeps `WorldState`, H0 mutation/validation/provenance and public composition canonical. Unity binding intent is authored through a versioned schema-aware scoped producer; the Unity catalogue, native locators and materialized objects remain bridge/project-owned. Canonical-to-Unity is the normal projection direction. A supported Unity edit can produce only an explicit stale-aware canonical mutation proposal, which gains authority/provenance solely through the accepted H0 `plan -> dry-run -> apply` path.
+
+The producer mechanically derives every canonical-object dependency and provider-owned catalogue dependency that it understands. The AI does not normally synchronize structured payload references with duplicate metadata manually. Raw opaque payload authoring remains a low-level primitive; the engine-neutral kernel does not inspect Unity payload meaning.
+
+## H1 dependency graph
+
+```text
+WP-HK-GATE
+   +--> H1-00 neutral bridge contract --> H1-01 scoped producer -------+
+   +--> H1-02 Unity toolchain/project ---------------------------------+
+                                                                        v
+ H1-03 host policy -> H1-04 catalogue/identity -> H1-05 managed scenes
+      -> H1-06 assets/prefabs -> H1-07 components -> H1-08 validation
+      -> H1-09 reconciliation -> H1-10 checkpoint/rebuild
+      -> H1-11 representative real-asset slice -> H1-GATE
+
+ H1-08 -. non-blocking prerequisite .-> CITY-04 (after CITY-03)
+ H1-GATE -. keeper authorization .----> CITY-07 (after CITY-04)
+```
+
+`H1-00` and `H1-02` share only the accepted H0 predecessor and may run in parallel only if separately authorized. The default human sequence is numeric. Every later edge requires predecessor PASS, merge and DocSync.
+
+| Order | Workpack | Owned outcome | Execution |
+|---:|---|---|---|
+| 1 | `WP-H1-00` | neutral projection contract + deterministic reference materializer | `REMOTE_OK` |
+| 2 | `WP-H1-01` | Unity scoped producer + automatic dependency derivation | `REMOTE_OK` |
+| 3 | `WP-H1-02` | exact reproducible Unity project/toolchain/package baseline | `LOCAL_UNITY_REQUIRED` |
+| 4 | `WP-H1-03` | project-scoped Unity host authority below transports | `HYBRID` |
+| 5 | `WP-H1-04` | effective catalogue + logical/native identity mapping | `LOCAL_UNITY_REQUIRED` |
+| 6 | `WP-H1-05` | managed scene graph + generational publication | `LOCAL_UNITY_REQUIRED` |
+| 7 | `WP-H1-06` | source asset/prefab fidelity + managed derivatives | `LOCAL_UNITY_REQUIRED` |
+| 8 | `WP-H1-07` | finite allowlisted component schema/adapters | `LOCAL_UNITY_REQUIRED` |
+| 9 | `WP-H1-08` | Unity-owned validation + actionable diagnostics | `HYBRID` |
+| 10 | `WP-H1-09` | drift/reconciliation + explicit import proposals | `LOCAL_UNITY_REQUIRED` |
+| 11 | `WP-H1-10` | project checkpoint + clean Unity reconstruction | `HYBRID` |
+| 12 | `WP-H1-11` | exact licensed real-asset Juego2 conformance slice | `LOCAL_UNITY_REQUIRED` |
+| 13 | `WP-H1-GATE` | composed Unity parity/readiness + one fresh public AI trial | `HYBRID` |
+
+The split is claim-driven, not quota-driven. Adjacent workpacks remain separate where authority or proof can fail independently; component types and individual assets remain together where further division would create administrative micro-WPs. H0 guarantees are inherited and only delta-checked at changed seams. The sole planned fresh external AI-agent trial is the final Gate.
+
+H1 consumes accepted CITY-00 geography only as representative shape pressure; it does not own or redraw it. CITY remote planning remains independent. `CITY-04` may use the accepted scene/prefab/component/diagnostic surface after `H1-08` to falsify the CITY-03 greybox, without becoming an H1 acceptance stage. `CITY-07` keeper realization waits for H1-GATE. CITY-08 later owns keeper-slice authoring-efficiency/reuse proof and is not duplicated by the smaller H1 Gate readiness trial.
+
+H1 ends only when `WP-H1-GATE` answers the published reference question affirmatively without adding semantics: Arkus can create, inspect, modify, validate, materialize and reconstruct the bounded Juego2 Unity slice from public contracts while canonical identity, transactions/provenance, dependencies, diagnostics and normalized parity remain truthful.
 
 ---
 
 # H2 — Vertical Slice Foundation (blocked by Unity parity gate)
 
-Only after the Unity bridge is proven:
+Only after `WP-H1-GATE` PASS, merge and DocSync:
 
-- import/select Quaternius assets under a documented licensing/content pipeline (`DEPENDENCY_IP_POLICY.md`);
+- expand beyond the exact H1-11 representative asset slice under the documented licensing/content pipeline (`DEPENDENCY_IP_POLICY.md`);
 - rebuild the visual target from the visual bible (`Docs/art/VISUAL_BIBLE.md`, seeded by `WP-ART-00`);
 - setting anchor: **fictional Potes / Liébana** valley market town (`Docs/art/SETTING.md`); optional later river + small inland landing;
 - camera, movement, interaction shell and one representative street/plaza;

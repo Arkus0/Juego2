@@ -2,7 +2,7 @@
 
 Each workpack is one independently reviewable contract. Work only inside its allowed scope and stop when its Definition of Done is met.
 
-For all `HK-*` workpacks through `WP-HK-GATE`:
+For all `HK-*` workpacks through `WP-HK-GATE`, and all H1 workpacks marked `FOUNDATIONAL`:
 
 - `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` is binding;
 - exact-SHA evidence is required;
@@ -10,17 +10,17 @@ For all `HK-*` workpacks through `WP-HK-GATE`:
 - completeness universes must be independently/effectively justified and must not self-shrink;
 - a fresh independent Reviewer must PASS before the dependent WP begins.
 
-The H0 sequence is intentionally serial:
+The accepted H0 sequence was intentionally serial after its reviewed splits:
 
 ```text
 HK-00 -> HK-00A -> HK-01 -> HK-02 -> HK-03 -> HK-04 -> HK-02A -> HK-05
        -> HK-06A -> HK-06B -> HK-06C -> HK-07A -> HK-07B
-       -> HK-08 -> HK-09 -> HK-10 -> HK-GATE
+       -> HK-08A -> HK-08B -> HK-09A -> HK-09B -> HK-10 -> HK-GATE
 ```
 
 `HK-00A` freezes the commercial product/adoption boundary before contract implementation. It prevents later WPs from accidentally making MCP, Unity or an external harness the semantic source of truth.
 
-The serial gate prevents parallel implementation from baking unreviewed assumptions into later layers.
+H0 is complete. The H1 plan, DAG and boundary rationale live in `Docs/workpacks/H1/README.md`. No H1 WP is active merely because its plan exists. Each starts only after the plan is accepted, its dependencies have PASS + merge + DocSync, and the human starts the Worker.
 
 ## Non-foundational tracks
 
@@ -45,6 +45,6 @@ Responsibilities:
 - `CITY-07`: LOCAL keeper realization;
 - `CITY-08`: LOCAL Arkus authoring proof + reuse closure.
 
-`CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are documentation/research/planning only. `CITY-04`, `CITY-07` and `CITY-08` are LOCAL and MUST NOT begin before their stated Unity/bridge/catalogue prerequisites have passed.
+`CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are documentation/research/planning only. `CITY-04`, `CITY-07` and `CITY-08` are LOCAL and MUST NOT begin before their stated Unity/bridge/catalogue prerequisites have passed. The H1 plan makes that interlock explicit: `H1-08 -> CITY-04` is a non-blocking greybox side edge, while `H1-GATE -> CITY-07` protects keeper realization; CITY-08 remains its own later authoring-efficiency owner.
 
 `WP-CITY-00` is COMPLETE. CITY Programme v2 is ACCEPTED on candidate `87a902584f2c46b2d256f6fef26829e9182e7605` (review `#5261734418`, PR `#70`, merge `058e2f4f7c5b018d60cce84e9c89bd07249dd36a`). The next CITY workpack is `WP-CITY-01 — Mobility, district graph + walk-time topology`.

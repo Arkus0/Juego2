@@ -1,0 +1,77 @@
+# H1 Unity parity gate — deterministic reference scenario
+
+Version: 1.0-planned — 2026-09-20
+Owner: `WP-H1-GATE`
+
+## Representative slice
+
+The gate builds one bounded **non-keeper conformance assembly** shaped by the accepted fictional Potes/Liebana `Cuña de Confluencia`, not a gameplay scene or the exact CITY-03 seed:
+
+- Wedge-tip sample root with a plaza/market edge, facade hierarchy and a separate bridge/river-edge marker;
+- wall, roof, door and window/shutter modules;
+- bench/table/chair class, lamp, tree and rock;
+- one humanoid with idle/walk/sit clip references;
+- at least one nested/source prefab relationship;
+- shared material and one allowed override;
+- at least one canonical-object reference and several catalogue dependencies;
+- multiple allowlisted components and three-level hierarchy.
+
+Exact third-party pieces come from the accepted H1-11 adoption record. CITY-00 supplies shape pressure only; no exact route graph, seed boundary or keeper geometry is claimed. No player controller, AI, navmesh, physics behavior, schedule or dialogue is required.
+
+## Deterministic stages
+
+1. clean checkout; verify H0 baseline, exact Unity editor, package lock and adopted content hashes;
+2. run remote H0/bridge-neutral delta validation;
+3. open/import the exact Unity project in batchmode and enumerate the effective package/assembly universe;
+4. discover the composed public H1 capability/schema surface through the reference path;
+5. inspect the effective Unity catalogue and resolve every selected logical ID;
+6. use the schema-aware producer to compile binding extensions and derived dependencies;
+7. use ordinary H0 plan/dry-run/apply to create the canonical slice and record canonical hash/provenance;
+8. preflight Unity validation, generate a projection plan and inspect its semantic changes;
+9. materialize a staged generation, publish it and compare normalized observation to plan;
+10. inspect scene, managed GameObjects, prefab/source relationships, assets, components and diagnostics through public capabilities;
+11. repeat same-input materialization and require no semantic delta;
+12. submit one intentionally invalid/missing asset or component reference, require structured diagnostics and prove no active-generation/receipt false publication; repair through canonical authoring and succeed;
+13. introduce a supported managed Unity edit, observe deterministic drift, compile a canonical proposal, force one stale-base conflict, recover through HK08B, apply through H0 and rematerialize to parity;
+14. save a project checkpoint, close processes, remove generated projection output, restore canonical state through accepted snapshot/replay semantics and rebuild the same normalized Unity digest;
+15. rerun the H1 public semantic delta through MCP and compare normalized results with the reference path;
+16. produce one supplementary rendered/editor capture and confirm the real asset slice loads with no owned error diagnostics;
+17. run the complete required H1 exact-SHA validation and reconcile dependencies/residuals.
+
+## Parity tuple
+
+Gate PASS records and binds:
+
+```text
+canonical world hash + revision
+binding schema/version
+catalogue snapshot fingerprint
+bridge contract/version
+Unity editor + package fingerprint
+projection plan digest
+active generation ID + receipt
+normalized Unity observation digest
+```
+
+The plan and observation digests must agree under the accepted normalization. Rebuilding from the same first five inputs must reproduce the same semantic plan/observation. Serialized YAML bytes and screenshot pixels are not the parity authority.
+
+## Headless versus local evidence
+
+Plain .NET contract/codec/reference proofs run remotely. Unity catalogue, scene/prefab/component/save/reload and batchmode evidence require the exact local editor installation. The rendered capture may require a graphics-capable editor/player run. A remote machine without the required editor cannot substitute fixtures and cannot issue PASS; the valid intermediate state is `READY_FOR_LOCAL_VALIDATION`.
+
+## Fresh AI-agent trial scope
+
+The fresh agent must prove the new public-client claim, not reproduce all deterministic stages. Starting only with launch/bootstrap instructions, it must discover H1 capabilities/schemas, catalogue entries and binding shapes; author the bounded slice through H0; materialize/inspect it; consume one structured Unity diagnostic; repair and close with canonical hash/journal plus active generation/observation evidence. It may not read implementation source, infer semantics from binaries, receive Worker-supplied intermediate calls or use private product APIs.
+
+## Hard blockers
+
+- Unity/native identity is required as canonical authored identity;
+- canonical state can change through bridge/materialization/import without H0 authority/provenance;
+- catalogue/managed/component universe can omit a real in-scope object and remain green;
+- partial/failed materialization becomes the active generation or yields success evidence;
+- plan/observation/rebuild digests diverge;
+- invalid engine state requires implementation knowledge rather than structured diagnostics;
+- source assets are overwritten or unapproved assets are required;
+- full H0 semantics are redefined to accommodate Unity;
+- gate or AI-trial evidence is not bound to the exact candidate/toolchain/content inputs;
+- closure introduces new product semantics.

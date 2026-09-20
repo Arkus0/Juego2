@@ -1,7 +1,7 @@
 # CITY track — Keeper City production-space programme
 
 Status: **ACTIVE / NON-FOUNDATIONAL**  
-Version: 2.1 — 2026-09-20  
+Version: 2.2 — 2026-09-20
 Repository: `Arkus0/Juego2`
 
 Accepted progress: `WP-CITY-00` is **COMPLETE**. It passed independent review on frozen candidate `f5c684461b525841487158d873a9b135008df3ab` (review `#5261672961`) and merged via PR `#65` as `69bbba2603e67cb233a3e1cc36a4173bed41cfc4`.
@@ -55,6 +55,8 @@ CITY-08    LOCAL Arkus authoring proof + reuse closure
 
 `CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are REMOTE planning work. `CITY-04`, `CITY-07` and `CITY-08` are gated LOCAL work. Do **not** infer sequence by sorting filenames; the graph above and each WP's dependency fields are authoritative.
 
+H1 supplies engine prerequisites without taking CITY ownership. Under the proposed H1 plan, `CITY-04` may start after its own chain reaches CITY-03 and `WP-H1-08` has accepted managed scenes/assets/components plus Unity diagnostics. It is then a bounded greybox/falsification sidecar, not H2/gameplay authorization and not hidden H1 proof. `CITY-07` remains blocked until `WP-H1-GATE` because keeper realization consumes the accepted bridge and real-asset boundary. `CITY-08` remains a later CITY-owned authoring-efficiency/reuse proof; the H1 Gate's smaller fresh-agent readiness trial does not pre-accept it.
+
 ## Two orthogonal classifications
 
 CITY uses two separate axes so production scope does not get confused with systemic importance. Both are frozen in `CITY-02`, where locations are programmed, but they remain independent dimensions.
@@ -107,7 +109,7 @@ Important discoveries may be authored, systemic or hybrid. Martial arts/kung-fu/
 8. **Reuse compounds:** streets/buildings/compositions should become cheaper to author as reviewed families accumulate.
 9. **Player absence matters:** locations/routes must make sense when actors use them off-screen.
 10. **Discovery has truthful causes:** information/access is not granted merely because the player approached a marker.
-11. **No pre-gate production:** REMOTE planning cannot smuggle Unity construction, asset adoption or runtime semantics ahead of accepted gates.
+11. **No pre-gate production:** REMOTE planning cannot smuggle Unity construction, asset adoption or runtime semantics ahead of the exact gates named by each LOCAL WP; CITY-04's H1-08 greybox exception does not authorize keeper realization or gameplay.
 12. **Bridge neutrality:** CITY consumes accepted Arkus/Unity capabilities; it does not invent bridge semantics to make a scene plan pass.
 
 ## Current next workpack

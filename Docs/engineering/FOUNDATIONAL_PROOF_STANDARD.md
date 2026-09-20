@@ -1,8 +1,8 @@
 # Foundational Proof Standard
 
-Version: 1.3 — 2026-09-19
+Version: 1.4 — 2026-09-20
 
-This standard binds every `HK-*` workpack through `WP-HK-GATE`.
+This standard binds every `HK-*` workpack through `WP-HK-GATE` and every workpack marked `FOUNDATIONAL` in the accepted H1 Engine Bridge plan, including `WP-H1-GATE`.
 
 Green CI is necessary but insufficient. A foundational candidate must show why its central architectural claim is complete enough to trust downstream work **inside an explicit, finite trust boundary**. Foundational proof is not a mandate to prove arbitrary pathological behavior of the language toolchain, operating system, package manager, CI runner or other declared trusted infrastructure.
 
@@ -14,9 +14,21 @@ Historical evidence may use terms such as `self-attack`, `attack fixture`, `bypa
 
 ## Adoption boundary
 
-Version 1.3 applies to every foundational Worker/review cycle that starts after the commit containing this version reaches `main`. It does not retroactively bind a candidate whose Worker cycle started earlier, and it does not bind the `PROCESS_ONLY` PR that adopts it.
+Version 1.4 applies to every H1 foundational Worker/review cycle that starts after the H1 planning commit containing this version reaches `main`. It does not retroactively alter accepted H0 evidence and it does not bind the `PROCESS_ONLY` PR that adopts the H1 plan.
 
-A workpack registered or resequenced by that same adoption commit may start only after the commit is on `main`; its later implementation candidate is therefore governed by v1.3. A candidate already validly frozen remains reviewable under the proof standard that governed its freeze. This process change does not itself create an implementation defect; it defines the evidence required of later cycles.
+A workpack registered or resequenced by that same adoption commit may start only after the commit is on `main`; its later implementation candidate is therefore governed by v1.4. A candidate already validly frozen remains reviewable under the proof standard that governed its freeze. This process change does not itself create an implementation defect; it defines the evidence required of later cycles.
+
+Version 1.3 remains the accepted standard under which the final H0 candidates were reviewed. Version 1.4 adds H1 applicability and the engine-backed evidence rule below; it does not reopen H0.
+
+## Engine-backed evidence rule
+
+For a workpack whose contract says `EXECUTION_REQUIREMENT: LOCAL_UNITY_REQUIRED | HYBRID`:
+
+- evidence binds the exact Unity editor version, resolved package graph, project identity, platform and any material content/adoption fingerprints named by the claim;
+- plain .NET fixtures may prove portable contracts but cannot substitute for an effective `AssetDatabase`, scene, prefab, component, save/reload or import claim;
+- batchmode is preferred for deterministic engine evidence; a graphics-capable/editor run is additionally required only when the WP claims a rendered or interactive result;
+- an environment that can complete only the remote portion emits `READY_FOR_LOCAL_VALIDATION`, not `PASS`, `READY` or a zero-obligation foundational verdict;
+- byte-identical Unity serialization or screenshots are not completeness/parity oracles unless a workpack explicitly owns and justifies that narrower claim; prefer normalized effective engine observation.
 
 ## Required sequence
 
