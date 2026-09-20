@@ -2,9 +2,11 @@
 
 ## Claim boundary
 
-HK07B claims that the repository-owned MCP stdio executable is a genuine second projection of the accepted HK07A neutral contract: canonical inventory/schema identity remains authoritative, MCP requests enter the same neutral dispatch path, representative accepted H0 semantics agree with the JSONL reference transport, and the external MCP SDK remains isolated/replaceable behind that conformance boundary.
+HK07B claims that the repository-owned MCP stdio executable is a genuine second projection of the accepted HK07A neutral contract: canonical inventory/schema identity remains authoritative, MCP requests enter the same neutral dispatch path, representative accepted H0 semantics agree with the JSONL reference transport, every canonical-valid composed capability is representable within MCP tool-name framing, and the external MCP SDK remains isolated/replaceable behind that conformance boundary.
 
-Within that boundary, no known material false-green defect class remains after the independent inventory/schema comparison, real cross-transport process flow, scoped-provider probe, cancellation/no-dispatch control, dependency/framing defect injections, exact-SHA observation and inherited regression.
+Within that boundary, no known material false-green defect class remains after the independent inventory/schema comparison, real cross-transport process flow, ordinary and over-limit scoped-provider probes, cancellation/no-dispatch control, dependency/framing defect injections, exact-SHA observation and inherited regression.
+
+The previous candidate incorrectly classified over-limit canonical tool names as a non-blocking residual. Independent review showed that this directly falsified HK07B's scoped-provider projection-completeness claim. That item is closed by the bounded long-name allocator and causal two-capability discovery/invocation test; it is no longer a residual.
 
 ## Non-blocking residuals outside or beyond the current claim
 
@@ -12,9 +14,9 @@ Within that boundary, no known material false-green defect class remains after t
 
 The adapter advertises MCP protocol `2025-11-25` and pins `ModelContextProtocol.Core` 2.2.0. A later SDK/protocol revision may add or change optional transport features. Upgrading requires dependency/license review and rerunning HK07B conformance; it does not authorize modifying canonical or neutral semantics silently.
 
-### MCP tool-name length
+### Transport handle stability across inventory changes
 
-Current accepted canonical keys fit MCP's tool-name limit and are reversibly traceable through canonical metadata. A future canonical identity whose encoded tool name exceeds the protocol limit would require an explicit adapter/version compatibility decision. HK07B does not constrain future canonical naming solely for MCP.
+For canonical identities whose reversible encoded form exceeds MCP's 128-character limit, the adapter derives a bounded handle from that identity's ordinal in the deterministically sorted composed inventory plus its fingerprint. The handle is deterministic for one composed inventory and collision-safe within it, but adding/removing capabilities can change long-name ordinals. MCP tool names are therefore discovery handles, not durable canonical identifiers. Clients must rediscover after inventory changes; exact canonical identity remains available in metadata and remains the dispatch/semantic identity. HK07B does not claim stable transport handles across a changed canonical inventory.
 
 ### SDK implementation behavior
 
@@ -46,7 +48,7 @@ HK07B trusts exact Git/checkout behavior, pinned .NET/MSBuild/NuGet lock semanti
 
 ## Blocking-risk conclusion
 
-No residual above can falsify the stated HK07B claim without leaving its declared boundary. No concrete evidence requires reopening HK07A or an earlier accepted predecessor.
+No residual above can falsify the stated HK07B claim without leaving its declared boundary. The former long-name limit was an in-boundary blocker and has been repaired rather than residualized. No concrete evidence requires reopening HK07A or an earlier accepted predecessor.
 
 KNOWN_UNDETECTED_DEFECT_CLASSES: 0
 UNRESOLVED_PROOF_OBLIGATIONS: 0
