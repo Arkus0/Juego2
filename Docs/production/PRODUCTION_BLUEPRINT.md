@@ -12,6 +12,8 @@ This revision turns the first draft from a good test-town plan into a **product-
 3. **Living World Core comes before combat.** A social consequence that changes another NPC's later behaviour is a more important early proof of Juego2 than a fight. Directed drama and combat build on the living town, not the reverse.
 4. **Asset and prefab discovery must be machine-readable, but the catalogue is not declared canonical `WorldState` by fiat.** H1 must decide the reviewed catalogue authority and projection boundary. The likely shape is bridge-owned catalogue data projected through Arkus scoped capabilities, with canonical world objects referring to stable catalogue/composition IDs.
 5. **Authored project state and live game/save state remain separate authorities.** Multi-session authoring needs durable project checkpoints; gameplay needs its own runtime/save contract. Neither is allowed to smuggle live simulation into the accepted HK06 authored journal/replay semantics.
+6. **The player must be able to act on the town, not only read it.** The recovered research designs a town that runs without the player and channels through which the player finds out what it did. It never designs a player verb. A living world the player can only observe is a museum; §6.3 closes that gap, and it is cheap because the machinery already exists on the NPC side.
+7. **Combat is scoped to short, lethal and rare, and gated behind one feel prototype.** Feel cannot be established on paper. §12 records the scope and the single experiment that should settle viability before further research is opened.
 
 Nothing above changes H0. The next dependency-valid H0 work remains `WP-HK-07A`.
 
@@ -460,9 +462,9 @@ Combat can then return outcomes into that already-working world rather than beco
 
 ---
 
-# 6. Two production seams that must be owned explicitly
+# 6. Production seams that must be owned explicitly
 
-The first draft correctly identified two gaps. This revision gives them a planning direction without promoting them into H0 obligations.
+The first draft correctly identified two gaps, and review since has surfaced a third. This section gives all three a planning direction without promoting them into H0 obligations.
 
 ## 6.1 Multi-session authored project persistence
 
@@ -499,6 +501,60 @@ Planning constraints:
 - a future "promote runtime result into authored content" feature, if ever useful, must be an explicit authoring operation rather than an implicit side effect.
 
 The exact runtime schema is intentionally deferred until L4/L5 has real systems to save.
+
+## 6.3 Player agency
+
+The first draft and this revision both describe a town that becomes socially causal. Neither describes what the **player** does to it. That is a third seam of the same kind: identified, unowned, and cheap to close now because nothing is built.
+
+It is measurable rather than interpretive. A verb sweep across the ~4 800 lines of living-city research in the reference archive returns only epistemic or passive constructions — *can learn*, *can reconstruct*, *can predict*, *puede presenciar*, *puede conocer*, *no presencia*. Not one causal verb. The nearest is the constitutional "el player puede entrar en la cadena", which grants permission without naming an action.
+
+Four findings are sharper than the count:
+
+- **The exclusion is visible in the API.** `Juego/Docs/Architecture/GAMEPLAY_SYSTEMS_ARCHITECTURE.md:343-348` defines `Tell(from, to, fact, sincerity)` — bidirectional in shape and explicitly lie-capable — and then a *separate, receive-only* verb, `LearnPlayer(fact)`. If the player were a peer in `Tell`, `LearnPlayer` would not need to exist. The knowledge pipeline at `:326-337` runs `WorldFact → NPCBelief → PlayerKnowledge` with no upward arrow, and no transfer originating from the player exists anywhere in the archive.
+- **The player exists as a causal origin only in order to be excluded.** `Juego/Docs/living-city-research/PA-02_NPC_AGENCY.md:362-384` defines `originKind: PLAYER | ACTOR | WORLD_SYSTEM | AUTHORED_STORY`, then rules that "only `originKind = ACTOR` can satisfy the actor-originated proof". Nothing downstream consumes `PLAYER`.
+- **A drift nobody recorded.** `Juego/Docs/living-city-research/ROADMAP.md:410` asked *"¿Como hacemos que **ser alcalde** modifique vidas y flujos reales del pueblo…?"*. The frozen `PA-10_PLAN_GOVERNANCE.md:14` restates it as *"¿Cómo puede **una decisión municipal** cambiar horarios…?"*. The player was the subject of the question and is not the subject of the answer.
+- **The archive's own review gate already caught the risk.** `Juego/Docs/living-city-research/PA-12_PLAN_INTEGRATION_REVIEW.md:74`, failure mode F12-10: *"Causal proof existe pero player no puede percibir/explotar nada."* The risk is written down. "Explotar" is never defined anywhere.
+
+Four documents assert player-side causality as a premise — `ADR-013:10` ("el player debe poder presenciar, descubrir, **alterar** o ignorar esas cadenas"), `ADR-011:42` ("eventos del jugador pueden alterar organicamente conocimiento, relaciones y rutinas"), `LC-03`, and the archive README. Zero documents specify it.
+
+### Three different things, not one mistake
+
+| | What it is | What to do |
+|---|---|---|
+| A defensible exclusion | The knowledge and rumour tracks keep the player out of the epistemic model on purpose. NPCs must reason from information they can reach, and letting the player write beliefs directly is a real omniscience hazard, warded off as failure mode F09-9, *"Player knowledge = NPC belief"* | Keep it, and design around it |
+| An unnoticed drift | The governance question lost its subject between the roadmap and the frozen plan | Recover the original question. The frozen plan is a rules-mutation contract that works identically whether the mayor is the player, an NPC or a die roll |
+| A structural gap with no owner | Player-side causality asserted in four documents, specified in none | This is the part that needs new design |
+
+### Adding verbs without breaking the epistemic boundary
+
+The unsafe design is "the player writes a belief". F09-9 is right to forbid it.
+
+The safe design is already specified, for NPCs: the player issues a `TELL`, which is an **assertion**, and the receiver decides whether to accept it through the same receiver-owned interpretation boundary the rumour track already requires (`PA-05-H02`, `D-05-02`). A false or partial claim is already modelled as an assertion payload that leaves canonical truth untouched (`D-05-08`), distortion already transforms an assertion edge rather than mutating truth (`PA-05-H06`), and deception already has to create epistemic state rather than merely deceptive text (`PA-04-H07`).
+
+So lying is modelled, receiver autonomy is modelled, provenance is modelled. What is missing is only the player's legality as a sender. The player becomes a peer in the transfer contract, not an exception to it, and nothing the player says is automatically believed.
+
+### Verb inventory by cost
+
+| Tier | Verbs | Why it costs what it costs |
+|---|---|---|
+| **0 — already modelled** | `TELL` (player as a claim source), lie, `ASK`, `CONFRONT`, `REPORT`, `OFFER_HELP` / `REQUEST` | The machinery exists on the NPC side: belief with source categories, receiver-owned interpretation, false claims as payloads, an identified debtor/creditor obligation lifecycle. Only the player's legality as an actor is missing |
+| **1 — small addition** | occupy or deny a POI; give or take an object; be witnessed | Reuses POI capacity and reservation, resource/ownership change, and witness metadata — which yields reputation without needing a reputation system |
+| **2 — real work** | governance, economy, violence | Both governance and economy research remain unstarted; violence is the combat→living-world edge |
+
+Tier 0 is the striking one: six verbs, and the cost is a design decision rather than an engineering project.
+
+### The highest-leverage single verb
+
+**The player as a node in the knowledge and rumour graph.** In an investigation game this is not one feature among several: it means investigating alters what is being investigated. Ask Carmen about Manolo and Carmen now knows you are asking, and may tell him. Say something false and it propagates with you as its source. It reuses the knowledge and rumour design wholesale, respects every epistemic boundary those tracks established, and converts the strongest asset in the recovered design from scenery into a system the player plays.
+
+Planning constraints:
+
+- the player is a peer in the transfer contract, never an exception to it;
+- nothing the player asserts is automatically believed;
+- player actions are themselves events with witnesses;
+- do not build a player-only social subsystem — the archive rejects that in two places, and it is still right;
+- tier 0 is a design decision, not a research track; do not defer it to one.
+
 
 ---
 
@@ -542,20 +598,23 @@ Core chain:
 arrive through the town edge
  -> cross / approach the old bridge and market area
  -> enter the bar
- -> speak with Manolo
+ -> ask Manolo about Antonio
  -> learn or witness a fact with source/provenance
- -> leave and continue normal town activity
- -> information/event reaches another actor through accepted social rules
- -> Carmen later speaks or behaves differently
+ -> tell Carmen yourself, truthfully or not
+ -> Carmen decides whether to believe you
+ -> her later routine or dialogue changes because YOU told her
+ -> Manolo learns that you were asking
  -> the player can notice the changed regularity
- -> the system can explain the causal chain
+ -> the system can explain the chain and name the player as its source
 ```
 
 That is already a convincing Juego2 slice without combat.
 
+The sixth and eighth steps are what make it a game rather than a diorama. A world that rearranges itself while the player watches proves the simulation; a world that rearranges itself **because of something the player chose to say** proves the game. The receiver stays free to disbelieve, per §6.3, so this costs no omniscience — and the eighth step matters as much as the sixth, because acting on the town has to be observable *by the town*.
+
 A later enhanced slice may insert a directed dramatic beat, QTE or fight. Those improve spectacle; they are not prerequisites for proving the living-town identity.
 
-## 8.2 The player must be able to learn the town
+## 8.2 The player must be able to learn the town, and then use what they learned
 
 Longer term, the town succeeds when routine knowledge becomes useful:
 
@@ -567,6 +626,8 @@ Longer term, the town succeeds when routine knowledge becomes useful:
 - how an event changed visible behaviour.
 
 The vertical slice only needs one or two of these to be useful. The product can expand the same grammar rather than replace it.
+
+Learning is half of it. The other half is that knowing these things must let the player *do* something — tell the right person, ask in front of the wrong one, be somewhere at the hour that matters. A regularity the player can only admire is a fact sheet.
 
 ## 8.3 Visual budget
 
@@ -617,6 +678,9 @@ The project has already paid for several lessons. Keep them visible:
 - Do not model the whole valley before the keeper town core is fun and useful.
 - Do not make combat a prerequisite for proving the living town.
 - Do not write large amounts of final narrative before the dialogue/Living World runtime has a stable authoring shape.
+- Do not open twelve combat research tracks before one prototype has answered whether the feel is reachable at all.
+- Do not build a living world the player can only watch; a player verb that reuses an existing NPC-side mechanism is cheaper than the system it plugs into.
+- Do not give the player a private social subsystem either; the same abstractions run in both directions.
 
 A useful question for any proposed subsystem before VS: **does it make the next visible demo materially better or unlock a required causal dependency?** If neither, it probably waits.
 
@@ -661,7 +725,92 @@ Nothing in this section carries an old repository PASS into Juego2. It is design
 
 ---
 
-# 12. Open reconciliation items
+# 12. Combat: scope, viability and the feel spike
+
+The phase ladder already places combat at H6, after Living World Core. This section records why the scope is what it is, and the one experiment that should settle it.
+
+## 12.1 Three questions wearing one coat
+
+"Is this combat viable for five people without an animator" is unanswerable as asked, because it bundles three things with different answers.
+
+| | Question | Answer |
+|---|---|---|
+| **a** | Moveset breadth — a large bespoke martial vocabulary | Not viable at this team size. Flatly |
+| **b** | Kinesthetics — does a hit feel immediate and physical | Viable, and mostly *not* an animation problem |
+| **c** | Music-action synchronisation | The cheapest of the three, and the most under-rated |
+
+## 12.2 What the archive already concluded
+
+Two recorded answers, neither of them opinion.
+
+`Juego/Docs/ASSET_FACTORY.md:99-106` states the two Universal Animation Libraries "deberían cubrir una gran parte del trabajo rutinario", then lists what they do not cover — naming explicitly *"kung-fu/moves de personajes cuando el set genérico no alcance calidad"*. Its production rule: **"comprar/reutilizar lo genérico; autorar lo memorable"**.
+
+`Docs/art/VISUAL_BIBLE.md` §8 budgets ~20 animation clips, §9–12 restricts animation to a civilian allowlist, and §2 puts combat animation on the No list. So the generic libraries are not enough for kung fu, and the current art direction does not budget for combat animation at all. Both were already written down.
+
+## 12.3 Feel is not primarily an animation problem
+
+This is the reframe that changes the estimate, and it is the archive's own preregistered hypothesis rather than a claim invented here. `Juego/Docs/combat-research/C-PA-01_PLAN_FEEL_IMPACT.md` hypothesis **H2**: *"La sensación física depende más de sincronía/contraste/latencia que de fidelidad gráfica."*
+
+Feel lives in frame data, cancel windows, hit stop, camera and audio — programming and tuning, not animation. Mediocre clips with excellent timing feel good; excellent clips with bad timing do not.
+
+The bar that plan sets is also lower than it sounds. Acceptance scenario **A2** asks only that a player reliably distinguish **four** contact categories — block, deflect, glancing hit, clean decisive hit — presented without damage numbers, and without every category using maximum intensity. Four states, not a moveset.
+
+## 12.4 The charter is accidentally budget-friendly
+
+Read together, "clean hits matter", "mobs are flow, masters are openings" and "boss difficulty comes from access, not durability" describe **short, lethal exchanges**. That needs far fewer animations than combo-heavy design, and puts the target closer to Sekiro or Sifu than to the combo game the ambition is usually compared against.
+
+`C-PA-12`'s hypothesis **H3** makes the same move at the content level: *"Una vertical pequeña con pocos enemigos/props bien instrumentados es mejor gate que una gran demo content-heavy."*
+
+## 12.5 The music goal is the cheap half
+
+Moments where music and action coincide are, mechanically, adaptive audio: vertical layering, stingers on finishers, tempo-aware transitions, intensity tracking. Middleware work a musician can own nearly end to end, requiring no additional animation.
+
+The expensive version — combat animation authored to land on a beat — is already forbidden by the charter's own ranking of responsiveness above synchronisation. The correct design is music reacting to combat, which is also the affordable one.
+
+## 12.6 Accepted scope: short, lethal, rare
+
+| | |
+|---|---|
+| Vocabulary | 1 stance; 4–6 attacks; 1 deflect; 1 dodge; 1 finisher; ~3 reaction sets |
+| Encounters | 6–10 authored, each tuned individually |
+| Frequency | Rare and consequential, never a routine traversal cost |
+
+Rarity does real work here, not just budget saving. Combat is required to return state to the living town, and a fight the whole town talks about is meaningless if there is one every ten minutes. The failure mode that makes beloved experimental games clunky is usually frequency: combat performed constantly cannot be hand-tuned; eight authored encounters can.
+
+## 12.7 Closing the animation gap
+
+Three routes, chosen together, with no contracted animator:
+
+- **markerless mocap from video** — enough fidelity for stylized low-poly, and it makes the team autonomous for iteration, which matters because timing is where feel lives;
+- **martial-arts-specific packs** instead of generic libraries, accepting a worse fit against the base rig and a transform pass onto the presentation profile;
+- **designing around the gap** — fewer moves, better transitions, cancellation and warping.
+
+The honest note on the combination: **mocap supplies motion, not timing.** Capture gives raw clips; frame data, cancel windows, hit stop and reaction matching still have to be authored. Design-around is therefore load-bearing rather than a fallback, and the bulk of combat-feel work is programming.
+
+## 12.8 The feel spike
+
+**Run `C-PA-01` as a prototype rather than as a document.**
+
+| | |
+|---|---|
+| Content | One enemy. Three attacks, one deflect, one dodge. Quaternius clips as they come |
+| Work | Hit stop, camera, audio and input handling tuned to death. No new animation |
+| Exit test | A2's four-state discrimination without damage numbers, plus a playtest |
+| Output | A decision. Not code that ships |
+
+The charter already rules that headless tests cannot establish feel, and that claims about responsiveness, readability, camera, hit stop, audio or haptics need instrumented play. No document can answer this question, including this one.
+
+**The governance collision, stated rather than buried.** `AGENTS.md:5` forbids gameplay, Unity scene production and Quaternius integration before `WP-HK-GATE` passes. A combat feel spike is all three. This document does **not** authorize it and cannot: the decision belongs to the human, and running it would be a deliberate, time-boxed, throwaway exception whose output is a go/no-go rather than product code. The precedent for the shape is `WP-ART-00` — non-foundational, outside H0, gating nothing, producing direction rather than product.
+
+## 12.9 Where the rabbit hole actually starts
+
+The unbounded commitment is not combat. It is **twelve unstarted research tracks**, each with mandatory prior art, preregistered hypotheses and an exit criterion, ahead of a five-person team with no animator. That is the largest open-ended obligation anywhere in the recovered plan.
+
+One prototype that answers the binding question is the opposite of a rabbit hole. It is the cheapest way to find out whether the other eleven are worth opening.
+
+---
+
+# 13. Open reconciliation items
 
 | Item | Current state | Desired future decision |
 |---|---|---|
@@ -674,10 +823,13 @@ Nothing in this section carries an old repository PASS into Juego2. It is design
 | runtime/save state | deliberately outside canonical authored journal | define separate runtime/save authority when H3/H4 requires it |
 | mesh budget | approved-draft hero cap may be tighter than keeper seed | preserve cap unless an art review explicitly changes it |
 | camera/render pipeline | not yet frozen | decide before real H1 asset adoption |
+| player agency | asserted in `ADR-013`, `ADR-011` and `LC-03`; specified nowhere | adopt a tier-0 verb set as a design decision; do not defer it to a research track |
+| combat animation | visual bible puts combat animation on the No list and caps at ~20 clips | a feel spike and the accepted scope both need combat clips; revise with the asset-tier decision |
+| pre-GATE feel spike | `AGENTS.md:5` forbids gameplay and Quaternius integration before GATE | human decision on a time-boxed throwaway exception; this document does not authorize it |
 
 ---
 
-# 13. What this document deliberately does not do
+# 14. What this document deliberately does not do
 
 - It does not modify `ROADMAP.md`, `WP-HK-GATE`, any H0 workpack, accepted proof or accepted guarantee.
 - It does not authorize H1 before GATE.
@@ -687,6 +839,8 @@ Nothing in this section carries an old repository PASS into Juego2. It is design
 - It does not merge authored project state with live gameplay state.
 - It does not require combat for the first convincing game slice.
 - It does not claim that any design research PASS from `Arkus0/Juego` transfers to Juego2.
+- It does not authorize the combat feel spike in §12.8, which collides with `AGENTS.md:5` and needs an explicit human decision.
+- It does not specify the player-verb contract; §6.3 argues the gap and its cost, and leaves the design to the owner.
 
 The intended production philosophy is simple:
 
