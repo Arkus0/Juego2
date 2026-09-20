@@ -1,7 +1,7 @@
 # WP-HK-08B Worker pre-review
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 4
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 5
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-08B/WORKER_PRE_REVIEW.md
 
 ## Candidate challenged
@@ -12,13 +12,19 @@ WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-08B/WORKER_PRE_REVIEW.md
 - Direct predecessor: accepted + DocSynced `WP-HK-08A`.
 - First measured benchmark candidate: `8b04a66079cd8a637f0abd8aa1eeb18cd90d9f99`.
 - Benchmark observation: Actions `35501506939`, artifact `10602945775`.
-- Implementation/test SHA after final Worker test-oracle repair: `9968d119648996531aa8823ab97786e9a8eb1855`.
+- Implementation/test SHA after first-handoff Worker test-oracle repair: `9968d119648996531aa8823ab97786e9a8eb1855`.
+- First reviewed frozen SHA: `470665b0bf5d709142bb2de1b1650fec80bba705`.
+- First independent review: FAIL, review `5260300588`, solely for the missing required v1.3 representative content-shape probe / exact-SHA proof false green.
+- Approved product source for the repair probe: `Docs/art/VISUAL_BIBLE.md` v0.1.3.
+- Repair evidence: `Docs/evidence/WP-HK-08B/CONTENT_SHAPE_PROBE.md`.
 
-This is Worker quality-gate evidence, not an independent Reviewer verdict. The eventual frozen SHA must still pass the exact-SHA verification job after evidence-only reconciliation.
+This is Worker quality-gate evidence, not an independent Reviewer verdict. The repaired frozen SHA must still pass exact-SHA verification and fresh independent review.
 
 ## Scope/predecessor challenge
 
 The pre-review treated HK04 mutation authority, HK05 diagnostic completeness, HK06A provenance truth, HK06B rebase lineage semantics and HK07/08A transport/interaction primitives as accepted predecessors. They were reopened only where the new HK08B effective path supplied evidence that their boundary mattered: specifically, the HK04 authority inspector caught the first recovery wiring because the read-only handlers retained the raw service object graph.
+
+The repair after review does not reopen those predecessors or redesign recovery. It satisfies the proof standard that HK08B itself binds: one bounded approved-product content-shape probe must exercise the public-contract semantics changed by this foundational WP before freeze.
 
 No automatic merge, per-resource CAS/locks, distributed coordination, autonomous scheduling, final quota layer or gameplay semantics were introduced.
 
@@ -78,6 +84,23 @@ Repair:
 
 This is a test-oracle hardening finding, not a new product semantic.
 
+## Finding 5 — first frozen candidate omitted the binding v1.3 representative content-shape probe
+
+Independent review correctly found that the first frozen candidate could claim `FOUNDATIONAL_PROOF_VERDICT: READY` while `Docs/evidence/WP-HK-08B/` contained no representative content-shape probe. `INTERACTION_BENCHMARK.md` was not a substitute because its abstract micro-world measures interaction cost rather than confronting the recovery contract with an approved Juego2 content slice. The exact-SHA verifier also did not require such evidence, so the omission was a real proof false green.
+
+Repair:
+
+- added `Hk08BContentShapeProbeTests.RepresentativeMarketMicroBlockStaleEditRecoversByInspectingOnlyChangedResources`;
+- sourced the bounded scenario from `Docs/art/VISUAL_BIBLE.md` v0.1.3: market grain, bar terrace, workshops and modular reuse;
+- represented that slice only through the existing generic H0 object/containment grammar (`market.root`, `plaza.stalls`, `street.bar.front`, `street.workshop.front`), without promoting product/Unity/gameplay fields into canonical schemas;
+- made two real same-lineage commits stale a coherent two-resource client intent;
+- requires exact changed-resource delta for the two concurrent changes, exactly two descriptor-driven object inspections, normal plan/dry-run/apply recovery, preservation of the two-resource transaction and exactly one provenance append for the retry;
+- recorded representability, identity/granularity, inspect/mutate/validate/diff/provenance findings and future/out-of-boundary classifications in `CONTENT_SHAPE_PROBE.md`;
+- added the omitted-probe defect class to `NEGATIVE_CONFORMANCE_MATRIX.md`;
+- changed `scripts/hk08b-verify-exact-sha.sh` so removal/detachment of the probe, approved source marker, PASS/zero-unresolved markers or executable test link makes the foundational gate red.
+
+No production recovery, CAS, journal or transport code changed in this repair.
+
 ## False-green challenge
 
 The reconciled candidate has been challenged for:
@@ -95,11 +118,12 @@ The reconciled candidate has been challenged for:
 - per-resource mutation chatter for a coherent multi-resource intent;
 - request, response-volume or elapsed-time regression beyond frozen budget;
 - JSONL/MCP semantic drift in recovery disposition/context;
-- route-equivalence proof depending on reference/object equality rather than complete semantic payload equality.
+- route-equivalence proof depending on reference/object equality rather than complete semantic payload equality;
+- declaring foundational proof GREEN while the required approved-product content-shape probe is absent or detached from its executable scenario.
 
 The causal controls for these classes are enumerated in `NEGATIVE_CONFORMANCE_MATRIX.md`. No known in-boundary blocker remains.
 
-## Benchmark evidence
+## Benchmark and content-shape evidence
 
 The first post-truth-contract public-process observation on candidate `8b04a66079cd8a637f0abd8aa1eeb18cd90d9f99` produced:
 
@@ -114,16 +138,18 @@ The first post-truth-contract public-process observation on candidate `8b04a6607
 
 Budget derivation and interpretation are recorded in `INTERACTION_BENCHMARK.md`.
 
+The v1.3 product-shaped probe is deliberately separate from that benchmark. It exercises a market/plaza/bar/workshop slice from the approved visual bible and requires the same accepted recovery truth at more realistic identity/granularity without altering benchmark budgets or H0 schemas. Its assumptions and classifications are recorded in `CONTENT_SHAPE_PROBE.md`.
+
 ## Final handoff condition
 
-Evidence-only reconciliation after `9968d119648996531aa8823ab97786e9a8eb1855` must not alter production/test semantics. The final branch HEAD is eligible for freeze only when:
+The repaired branch HEAD is eligible for freeze only when:
 
-- canonical observation is GREEN on that exact HEAD;
-- `scripts/hk08b-verify-exact-sha.sh` is GREEN on the exact frozen SHA;
+- canonical observation is GREEN on that exact HEAD, including the new Hk08B content-shape test;
+- `scripts/hk08b-verify-exact-sha.sh` is GREEN on the exact frozen SHA and reports `representative-content-shape-probe=GREEN`;
 - candidate is clean before/after;
 - PR body `Frozen candidate SHA` equals HEAD;
 - no Worker commits follow freeze.
 
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
-No known in-boundary Worker blocker remains; independent review is still required.
+No known in-boundary Worker blocker remains; fresh independent review is still required.
