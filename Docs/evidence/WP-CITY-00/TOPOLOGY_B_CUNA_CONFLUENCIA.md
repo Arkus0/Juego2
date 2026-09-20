@@ -28,7 +28,8 @@ south/east bank of the joined river.
 
 **Puerto Fluvial + Entrada / Bus / Carretera occupy that Orilla-sur downstream bank.** They do not
 continue the Wedge. The direct core-to-port route therefore crosses the joined river at the landing:
-La barca in State 1, Puente del Muelle in State 2.
+La barca in State 1, Puente del Muelle in State 2. The crossing lands at the **upstream edge of the
+Puerto district**, which extends downstream from that bridgehead.
 
 That is the topology's physical embedding. All route/crossing counts derive from
 `CONNECTIVITY_MATRIX.md`.
@@ -64,7 +65,7 @@ Topological meaning, not metric drawing:
 
 - the Wedge stops at `landing head` / confluence tip;
 - X1 reaches Orilla sur near the casco;
-- X6/X7 reaches Puerto on the same Orilla-sur landmass farther downstream;
+- X6/X7 reaches the upstream edge of Puerto on the same Orilla-sur landmass downstream;
 - the dry south-bank `camino sur` links X1's far end to Puerto;
 - Entrada and the valley road are dry-continuous with Puerto.
 
@@ -107,8 +108,8 @@ Summary of design only:
 
 - four Arroyo crossings connect Wedge ↔ Ensanche bank;
 - X1 connects core Wedge ↔ Orilla sur;
-- X6 in State 1, replaced by X7 in State 2, connects the confluence-tip landing head ↔ Puerto on
-  Orilla sur;
+- X6 in State 1, replaced by X7 in State 2, connects the confluence-tip landing head ↔ upstream Puerto
+  edge on Orilla sur;
 - each state therefore designs exactly two Río crossings, and the prior 2 → 1 → 0 State-1
   availability ladder remains intact.
 
@@ -125,11 +126,11 @@ Approach families are now physically honest:
 
 1. valley road / Entrada → Puerto, dry on Orilla sur;
 2. Puente Viejo far end → camino sur → Puerto, dry after X1;
-3. Casco / Cuesta → X6 or X7 → Puerto;
-4. Ribera / paseo → confluence-tip landing head → X6 or X7 → Puerto.
+3. Casco / Cuesta → X6 or X7 → upstream Puerto edge;
+4. Ribera / paseo → confluence-tip landing head → X6 or X7 → upstream Puerto edge.
 
 The last two share the same named crossing and are not double-counted. The port is not a cul-de-sac:
-it has two independent dry approaches on its own bank plus the direct core crossing.
+it has two named dry approach directions on its own bank plus the direct core crossing.
 
 ## 7. Axis profile
 
