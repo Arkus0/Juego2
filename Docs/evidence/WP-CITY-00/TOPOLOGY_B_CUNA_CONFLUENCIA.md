@@ -78,7 +78,8 @@ three ways: towpath, quay road, and the steep Cuesta from the casco.
 | Pasarela del Lavadero | arroyo | wooden footbridge | Barrio Alto ↔ Ensanche upper | local: a 2-minute detour for residents |
 | Puente de la Vega | arroyo | rural bridge, upstream | huertas ↔ Ensanche north | seasonal, flood-closable |
 | Pasos / vado | arroyo | stepping stones at the low reach | casco lower lanes ↔ Ensanche | disappears when the arroyo rises |
-| Puente del Muelle | río | freight road bridge, later | Puerto ↔ south bank road | production-phase seam |
+| La barca | río | roped working ferry at the landing | Puerto ↔ south bank | hours and fare are a municipal decision; high water suspends it |
+| Puente del Muelle | río | freight road bridge, later | Puerto ↔ south bank road | production-phase seam; it replaces the barca |
 
 The arroyo is crossed casually and often; the río is crossed rarely and deliberately. That asymmetry
 is the topology's core mechanism, and it is cheap: four short spans cost far less geometry than one

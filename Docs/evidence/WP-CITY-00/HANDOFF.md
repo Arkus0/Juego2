@@ -7,7 +7,22 @@ Branch: `claude/city-urban-topologies-ehn6qf`
 Active Worker: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Worker history: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Transfer SHA: NONE
-fail_cycle: 0
+fail_cycle: 1
+
+## Repair cycle 1
+
+Frozen candidate `b9473f04da72462619e9561c097083afdc6c436d` received independent **FAIL**, review
+[#5261386416](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261386416).
+
+The constitution had justified the landing on a premise it itself called invented and unaccepted by
+ART, and left it open while admitting its refusal would reopen the topology. The same defect had
+inverted the CITY→ART authority direction in §2.5 and CSI-05.
+
+Repaired by removing the need for the premise rather than arguing or deferring it: the landing now
+rests on confluence hydrology plus timber rafting at high water, áridos worked off the bars, a roped
+ferry and break-bulk for the arriving valley road — all inside the small-landing/working-boats
+direction `Docs/art/SETTING.md` already gives. The spatial work the review found sound is unchanged.
+No ART decision is required or pending.
 
 The exact `Frozen candidate SHA` is recorded in the PR body and equals PR HEAD at freeze. Evidence
 files cannot name their own commit; the PR body is the binding record.
@@ -62,13 +77,17 @@ the Worker highlighted.
    1.25–1.4. Both are declared assumptions. If they are wrong, the areas move.
 2. **The building-count estimate.** Coverage ratios and average footprints per district are planning
    assumptions stated so they can be contested.
-3. **The port.** Its plausibility depends on a fictional premise about the river below the confluence
-   that `WP-ART-00` has not confirmed (constitution §8, Q1). Whether leaving it open is correct, or
-   whether it should have blocked the selection, is a fair challenge.
+3. **The landing after repair.** Whether §2.5's four reasons really need nothing beyond the inherited
+   setting, and whether the district still earns its place now that the city is not on a trade route.
+   The honest weak point is seasonality: on its river side the landing works only at high water, so
+   CSI-04 carries more weight than it looks.
 4. **The refutation.** Whether Topology C was rejected on a sound reading of the river criterion, and
    whether Topology A's rejection really is coupled to the size decision rather than to preference.
 5. **The blueprint edit.** Whether v0.3 stays inside "sharpen or explicitly propose amendments" and
    changes nothing it should not.
+6. **The repair's own side effects.** The barca closes a long south-bank loop the constitution did
+   not previously have (§2.4, Q12). Whether naming it as a CITY-01 question is enough, or whether the
+   constitution should say more about it.
 
 ## What is deliberately left undone
 

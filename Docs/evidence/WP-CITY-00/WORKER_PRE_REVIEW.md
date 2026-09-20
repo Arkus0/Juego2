@@ -1,168 +1,160 @@
-# WP-CITY-00 — Worker pre-review
+# WP-CITY-00 — Worker pre-review (repair cycle 1)
 
 WP: WP-CITY-00 — Keeper City spatial constitution + scale envelope
 Contract: `Docs/workpacks/CITY/WP-CITY-00.md`
 Baseline SHA: 290f92e9c21f1e454e0d6924b29f4d778b9875f8
 Active Worker: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Governing protocol: `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` v1.7
+fail_cycle: 1
 
-This is the mandatory strict pre-review required before freeze. It is a **quality gate, not an
-independent review**. `WORKER_PRE_REVIEW: CLEAN` never means PASS, does not satisfy the Reviewer
-obligation, and gives the independent Reviewer no reason to trust any conclusion below.
+This pre-review supersedes the one run on the failed candidate. That `CLEAN` was invalidated by the
+repair mutation and by the FAIL itself.
 
-`FOUNDATIONAL_PROOF_STANDARD.md` is **not** binding here: `Docs/workpacks/README.md` places `CITY/`
-outside the H0 DAG and exempts it from the foundational standard and from exact-SHA evidence. The
-pre-review duty, the predecessor contract check and the freeze/handoff rules still apply.
+It remains a **quality gate, not an independent review**. `WORKER_PRE_REVIEW: CLEAN` never means
+PASS and gives the fresh independent Reviewer no reason to trust anything below.
 
-## 1. What was inspected
+`FOUNDATIONAL_PROOF_STANDARD.md` is not binding: `Docs/workpacks/README.md` places `CITY/` outside
+the H0 DAG and exempts it from the foundational standard and from exact-SHA evidence. The pre-review
+duty, the predecessor contract check and the freeze/handoff rules still apply.
 
-- The complete baseline→candidate diff (`git diff 290f92e..HEAD`), not only the last repair.
-- The exact WP acceptance criteria, Definition of Done, required ingredients and negative gates.
-- The inherited direction documents named in `WORKER_PLAN.md`'s predecessor contract check.
-- Internal numeric consistency across the constitution, the three dossiers, the matrix and the scale
-  document.
-- Every cross-referenced path, mechanically.
+## 1. The FAIL, and why it was right
 
-## 2. Findings, all repaired while Draft
+Frozen candidate `b9473f04da72462619e9561c097083afdc6c436d` received independent FAIL, review
+[#5261386416](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261386416).
 
-Seven in-claim findings. None were discovered by reading the last commit; all came from re-reading
-the candidate against the contract as if writing a FAIL.
+The blocker: the constitution justified the landing's placement and its road↔water transfer role on
+the premise that the joined river carries loaded craft downstream — a premise the candidate itself
+called invented, stated CITY was not entitled to make, and left open while admitting its refusal
+would move the landing and reopen the topology. A workpack whose Definition of Done is a constitution
+stable enough for `WP-CITY-01` cannot close over a condition capable of invalidating it. The same
+defect produced an authority inversion: §2.5 claimed the port scale was "binding on" `SETTING.md` and
+CSI-05 said it "Binds" it, when `Docs/workpacks/CITY/README.md` says ART owns setting direction and
+CITY consumes it.
 
-### F1 — material: the content-cost argument was wrong and leaned on the wrong cap
+**The finding is accepted in full.** The previous pre-review recorded this as residual risk #1 and
+argued that deciding the premise would be CITY restyling the game. That reasoning was not wrong so
+much as incomplete: it treated the charge as a binary — assume the premise or defer it — and never
+asked the third question, whether the landing needed the premise at all. It did not. Missing an
+available third option is exactly the class of defect a pre-review exists to catch, and this one
+reached an independent Reviewer instead.
 
-`SCALE_ENVELOPE.md` justified shrinking the fabric partly by claiming "~0.40 km² … needs on the order
-of 300–450 authored building frontages", citing the visual bible's ≤120-mesh cap.
+## 2. The repair, and why it is causal rather than local
 
-Both halves were defective. The figure was undefended and low by roughly a factor of three; and the
-mesh cap counts **distinct meshes**, which a modular kit exists precisely to decouple from building
-count, so it was not the constraint the argument needed.
+The Reviewer allowed two minimal boundaries: obtain an explicit binding ART decision, or make the
+constitution valid under the `SETTING.md` that already exists. The project owner chose the second.
 
-This mattered because it was load-bearing: it was one of only two independent checks supporting the
-falsification of the area hypothesis. A reviewer entitled to reject the number would have been
-entitled to reject the conclusion.
+The landing's reason for existing was rewritten from scratch (`CITY_SPATIAL_CONSTITUTION.md` §2.5).
+It now rests on confluence hydrology — below a junction the water is wider, slower and braided over
+gravel bars, which is a fact about confluences and not a claim about navigation — plus four ordinary
+reasons that coincide at one place: timber rafted on the bars and released at high water, áridos
+worked under municipal concession and carted *upstream into the city*, a roped ferry to the south
+bank, and break-bulk for the valley road whose junction is already adjacent under CSI-04.
 
-Repaired at the causal level rather than by adjusting the number: the claim is now derived from the
-constitution's own district breakdown with stated coverage ratios and footprints (≈830 buildings at
-0.365 km², ≈1,800–2,800 at the original hypothesis), the assumptions are declared as assumptions, and
-the argument is moved to the ratio that actually binds — systemic Tier A/B locations against ambient
-fabric (5–7% here versus about 2% at 1.0 km²).
+This is a repair at the causal boundary, not a patch on the reported sentence:
 
-### F2 — material: loops were asserted, not tested
+- **CSI-05** now states that the landing depends on no premise beyond the inherited setting, and that
+  the invariant is *consumed from* `SETTING.md` rather than binding on it. Both halves of the FAIL
+  are closed by the same invariant.
+- **`WORKER_PLAN.md`** records the rule the cycle taught, so it constrains future CITY work rather
+  than this document only: *an open question is legitimate only when no answer to it can invalidate
+  the constitution; if a spatial decision needs a setting premise ART has not given, redesign the
+  decision to need less.*
+- **§8 Q1** is no longer a validity question. It is a consumption question about visual and material
+  language, and says explicitly that no answer to it can invalidate the constitution.
 
-The constitution claimed loops and a non-mandatory plaza without applying the workpack's own test.
-Added §2.6's explicit table: five representative trips, each with a plaza route and a plaza-free
-route, plus the structural reason (CSI-02 and CSI-07) rather than a decorative one.
+What the swap costs is stated in the deliverable rather than hidden: the city is no longer a node on
+a long-distance trade route and visitors do not arrive by water. What it gains is a **season** — the
+river works only at high water — which nothing else in the city has.
 
-### F3 — material: an acceptance criterion had no answer in the deliverable
+## 3. Findings from this pre-review
 
-*"Long-route scale is sufficient that an actor can genuinely be 'elsewhere in town'"* was implied by
-the walk-time table and argued nowhere. Added §2.7, framed as verification cost — a player who sees
-somebody at the plaza cannot cheaply confirm where they are half an hour later — rather than as raw
-distance, because distance alone does not satisfy the criterion.
+Two, both arising from the repair itself and both fixed before freeze.
 
-### F4 — material: the seed guarantee was in the evidence but not in the deliverable
+### F8 — the barca existed in only one document
 
-*"Demo/product seed can occupy a real retained part of the selected constitution"* was argued in the
-Topology B dossier and absent from the constitution the Reviewer reads. Added §2.8, stating where a
-retained seed can sit and what it contains, while leaving the boundary to `WP-CITY-03`.
+The repair introduced the roped ferry as a crossing and put it in the constitution's crossing table
+and CSI-06, but not in the Topology B dossier's crossing table. A Reviewer comparing the two would
+find the selected option described with a crossing its own dossier does not list. Added.
 
-### F5 — consistency: district family count
+### F9 — the repair created an unstated route and left it for someone to discover
 
-The Topology B dossier said "four of the eight district families"; the constitution defines nine
-(seven substantial plus two edge). Corrected in the dossier.
-
-### F6, F7 — consistency: a superseded scale band survived in two places
-
-`REFUTATION_LOG.md` and `COMPARISON_MATRIX.md` still cited "≈0.35–0.45 km²" after the adopted band
-became 0.30–0.45 km², and the derived half-town figure moved with it. Both corrected; a repository
-sweep confirms no stale band reference remains.
+The barca and the Puente Viejo together close a **long loop along the south bank** that the
+constitution did not previously have. Leaving a new route implicit is the same failure mode as
+leaving a premise implicit: it hands `WP-CITY-01` a city slightly different from the one on paper.
+Named in §2.4 and recorded as open question Q12 for CITY-01, framed as a question rather than as a
+claim about traffic the constitution has no basis to make.
 
 ```text
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 7
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 2
+CUMULATIVE_FINDINGS_FIXED_ACROSS_CYCLES: 9
 ```
 
-## 3. Acceptance criteria, walked one at a time
+## 4. Mechanical verification on the repaired candidate
+
+| Check | Result |
+|---|---|
+| diff contains only `.md` under `Docs/` | pass |
+| no `binds`/`binding on` claim aimed at an ART document anywhere in the candidate | pass |
+| no remaining "transfer point", "toward the coast" or downstream-cargo claim | pass |
+| every cross-referenced repository path resolves | pass |
+| every Markdown table has consistent column counts | pass |
+| twelve CSI invariants defined, and every CSI cited in prose is defined | pass |
+| open questions numbered contiguously and in order | pass |
+| worktree clean before freeze | pass |
+
+## 5. Acceptance criteria, rewalked
+
+Only the rows the repair touches are re-argued; the rest were walked on the prior candidate and the
+review did not disturb them.
 
 | # | Criterion | Verdict | Where |
 |---|---|---|---|
-| 1 | ≥3 genuine topology alternatives compared | met | three dossiers, each placing all twelve required ingredients and declaring its own weaknesses; `COMPARISON_MATRIX.md` covers the union of the eight required axes and the ten WP criteria |
-| 2 | Selected topology contains loops and cannot be described as one hub with spokes | met | constitution §2.6, remove-the-plaza table over five trips |
-| 3 | River shapes movement rather than functioning only as scenery | met | §2.1, §2.4, CSI-01: the stream is crossed casually and often, the river rarely and deliberately; this criterion is also what rejected Topology C |
-| 4 | Port has a gameplay/material/social reason to exist and a setting-appropriate scale | met, **conditionally** | §2.5: the landing is where valley road freight changes medium below the confluence; quay 120–150 m, working craft only. The fictional navigability premise is referred to `WP-ART-00` as open question Q1 rather than assumed |
-| 5 | Old quarter, civic/commercial, residential, port/work edge and rural edge spatially distinct | met | §2.3 and CSI-09; residential is deliberately two characters, Barrio Alto and Ensanche |
-| 6 | At least two credible outward/expansion directions | met | five named seams plus a later sixth; §5 |
-| 7 | Long-route scale sufficient for "elsewhere in town" | met | §2.7 and the §3 walk-time table |
-| 8 | Size justified through density/travel/content cost, not comparison vanity | met | `SCALE_ENVELOPE.md`: no comparison to another game appears anywhere in the candidate; the argument is traversal arithmetic, a derived building count and a location-to-fabric ratio |
-| 9 | Demo/product seed can occupy a real retained part | met | §2.8; it is the blueprint's existing seed plus a stream crossing and a port seam |
-| 10 | No Unity scene, asset import or runtime contract created | met | the diff is nine Markdown files under `Docs/`; every occurrence of Unity/navmesh/asset-import vocabulary in the candidate is a negation or a deferral, verified mechanically |
+| 4 | Port has a gameplay/material/social reason to exist and a setting-appropriate scale | **met, unconditionally** | §2.5: four reasons that need no unaccepted premise; scale consumed from `SETTING.md`; the smaller claim is stated rather than concealed |
+| 3 | River shapes movement rather than functioning only as scenery | met, and strengthened | the barca makes the río a crossing at a second point, with hours and a fare, and CSI-06 keeps it from becoming a habit |
+| 2 | Loops, not a hub with spokes | met, and extended | §2.6's remove-the-plaza table is unchanged; the south-bank loop is now named rather than latent |
+| 1, 5–10 | topology alternatives, district distinctness, expansion, long-route scale, size justification, retained seed, no engine work | unchanged by this repair | walked on the prior candidate; the review challenged none of them |
 
-Definition of Done — *"strong enough for CITY-01 to calculate movement/topology without inventing a
-different city"*: the district graph, the crossing table with closure consequences, the three
-longitudinal routes, the dimensional sketch and the eight-route walk-time table are together enough
-for CITY-01 to build a route graph without choosing a city. Met.
+Definition of Done — a constitution strong enough for `WP-CITY-01` to calculate movement and topology
+without inventing a different city. This is the criterion the FAIL was about, and it is now met for
+the reason it was not before: no pending external decision can move the landing or reopen the
+topology.
 
-## 4. Negative gates
+Negative gates: unchanged from the prior walk, except that *"uses the river/port as decorative labels
+only"* is now clear outright rather than conditional.
 
-| Gate | Verdict |
-|---|---|
-| effectively four streets plus scenery | clear — nine district families, three longitudinal routes, six crossings, two watercourses |
-| chases acreage without a reactive-density argument | clear — the candidate **shrinks** the hypothesised city and states the density ratio that forced it |
-| puts every meaningful route through the plaza | clear — §2.6; and CSI-02 makes route continuity a contract rather than an intention |
-| uses the river/port as decorative labels only | clear on the movement half (CSI-01) and on the port's function (§2.5); the setting premise behind the port is an open question, not a hidden assumption |
-| requires demolishing the first serious demo district | clear — the retained seed is the blueprint's existing seed, and no seam requires moving the plaza, the Puente Viejo, the Calle Mayor alignment or the quay (CSI-10) |
-| pre-decides implementation authority owned by H1/H2 | clear — no identifier is frozen, no storage authority is named, no runtime or catalogue decision is made |
+## 6. Residual risks
 
-## 5. Scope decisions a Reviewer should challenge deliberately
-
-**The candidate edits `Docs/production/PRODUCTION_BLUEPRINT.md`.** `Docs/workpacks/CITY/README.md`
-authorizes CITY to "sharpen or explicitly propose amendments to it", and the project owner chose
-editing over proposing so that `main` does not carry two contradictory topologies. The edit is
-confined to §1.2, §1.3, §1.4, §1.5, §8.1 and §12, hands topology and scale authority to the
-constitution rather than restating it, and changes nothing about assets, phases, architecture or the
-H0 boundary. The blueprint remains explicitly non-binding.
-
-**The candidate does not touch `Docs/workpacks/CITY/WP-CITY-00.md`.** Workpack status transitions
-belong to post-PASS DocSync, not to the Worker.
-
-**The candidate does not touch `Docs/engineering/RESIDUAL_LEDGER.md`.** That ledger declares itself
-as covering accepted **H0** workpacks; CITY residuals are carried as open questions in the
-constitution §8 instead.
-
-## 6. Residual risks, recorded rather than hardened
-
-1. **The port's setting premise is unresolved.** If `WP-ART-00` refuses the fictional navigability of
-   the river below the confluence, the port's placement and therefore the selected topology must be
-   reopened. This is deliberately left open: deciding it here would be CITY silently restyling the
-   game, which the track README forbids.
-2. **Every walk time and area is a hypothesis.** The 1.15 m/s effective speed is an assumption stated
-   as one. `WP-CITY-04` measures; nothing here may be cited as measured.
-3. **Verticality is the selected topology's declared weakness.** Three terraces plus two watercourses
-   is the hardest of the three options to read on the ground; it is named for CITY-04 rather than
+1. **Every walk time and area remains a hypothesis.** 1.15 m/s effective is a declared assumption for
+   `WP-CITY-04` to measure.
+2. **Verticality remains the selected topology's declared weakness**, named for CITY-04 rather than
    argued away.
-4. **The coverage ratios and footprints behind the ~830-building estimate are planning assumptions.**
-   They are stated so they can be contested; they are not measured.
-5. **The rejection of Topology A is coupled to the size decision, not to quality.** Above a dense band
-   of roughly 0.7 km² it no longer holds. The correct response is recorded as reopening the
-   constitution, never stretching it.
+3. **The coverage ratios and footprints behind the ~830-building estimate are planning assumptions**,
+   stated so they can be contested.
+4. **The rejection of Topology A stays coupled to the size decision**, not to its quality. Above a
+   dense band of roughly 0.7 km² the constitution should be reopened rather than stretched.
+5. **The landing is seasonal on its river side**, so its year-round life leans on the road junction,
+   the yards and the ferry. CSI-04 is therefore load-bearing rather than a nicety.
+
+Residual risk #1 of the prior cycle — the unresolved port premise — is **closed**, not carried
+forward. It was never a residual; it was a blocker, and the Reviewer was right to say so.
 
 ## 7. Scope discipline
 
-No new process machinery, no new document class, no new registry and no new proof apparatus were
-introduced. The candidate is nine Markdown files: one product deliverable, seven pieces of reasoning
-evidence, and a reconciliation of a document that already existed. Nothing was added to make review
-feel thorough.
+The repair added no document, no process machinery and no new claim. It rewrote one section, two
+invariants, one open question and the corresponding passages in three evidence files, and recorded
+what changed in each rather than quietly restating them. The spatial work the review found sound is
+untouched.
 
 ## 8. Verdict
 
-No known blocking defect remains inside the claim. The four material findings were repaired at their
-causal level rather than patched at the reported example, and the three consistency findings were
-swept repository-wide rather than fixed where spotted.
+No known blocking defect remains inside the claim.
 
 ```text
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 7
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 2
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-CITY-00/WORKER_PRE_REVIEW.md
 ```
 
-The independent Reviewer must not treat this report as a checklist or limit its search to the risks
-named here.
+The fresh independent Reviewer must not treat this report as a checklist, must not limit its search
+to the risks named here, and must not treat the previous FAIL's boundary as the only place a defect
+can live.

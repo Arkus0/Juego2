@@ -98,9 +98,15 @@ Seven substantial families plus two edge families.
 | **La barca** | río | roped working ferry on the wide reach | Puerto ↔ south bank | hours and fare are a municipal decision; high water suspends it |
 | **Puente del Muelle** | río | freight road bridge | Puerto ↔ south bank road | late production seam; it replaces the barca |
 
-The arroyo is crossed casually and often. The río is crossed rarely and deliberately. Four cheap
-short spans buy more movement structure than one additional main-river bridge would, at a fraction of
-the geometry.
+The arroyo is crossed casually and often. The río is crossed rarely and deliberately — the barca does
+not change that, because it has hours, a fare and a far-end location, which makes crossing there a
+decision rather than a habit. Four cheap short spans buy more movement structure than one additional
+main-river bridge would, at a fraction of the geometry.
+
+One consequence is worth naming rather than leaving for someone to discover: the barca and the Puente
+Viejo together close a **long loop along the south bank**, which the constitution did not have before
+repair cycle 1. Whether that loop carries ordinary traffic or stays a rural detour is a `WP-CITY-01`
+question (§8, Q12), not a claim made here.
 
 ### 2.5 The working landing — why it exists and how big it is
 
@@ -410,6 +416,7 @@ Bernardo's arrival now lands beside the port rather than at an abstract road edg
 | Q9 | Exact retained-seed boundary inside the 0.03–0.06 km² band, and its hard boundary versus soft visual envelope. | CITY-03 |
 | Q10 | Whether the seed includes the Pasos/vado or the Puente del Mercado as its arroyo crossing. | CITY-03 |
 | Q11 | Whether the hero mesh/atlas budget and this fabric are compatible, or whether one of them must move with evidence. | art review, with CITY-04 input |
+| Q12 | The barca plus the Puente Viejo close a long south-bank loop. Does it carry ordinary traffic, or is it a rural detour used only when the ferry is running and the errand suits it? | CITY-01 |
 
 ---
 
