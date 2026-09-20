@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.17 — 2026-09-20
+Version: 1.18 — 2026-09-20
 
 ## North star
 
@@ -50,7 +50,9 @@ Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, 
 
 `WP-HK-06B` PR `#35` passed independent review on frozen candidate `2b05e982c96e7ece08cca999075c183e75eee2fd` (review `#5258130916`), exact-SHA validation Actions `35473614054` GREEN, and merged as `28e2d0aadf63fe322eac636955e9223dc9249328` on 2026-09-19. One earlier frozen candidate failed because snapshot import publicly claimed `CanonicalMutation + CanonicalTransaction` while actually replacing the whole authored session and intentionally starting a fresh empty HK06A lineage. The accepted repair models import explicitly as `CanonicalRebase`, with separate truthful rebase authority/evidence, keyed idempotency, and no fabricated HK06A mutation history.
 
-Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is now `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
+Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
+
+Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
 Next dependency-valid workpack: `WP-HK-06C — Deterministic journal replay + end-to-end audit consistency`.
 
@@ -69,26 +71,28 @@ Next dependency-valid workpack: `WP-HK-06C — Deterministic journal replay + en
 | 11 | `WP-HK-06C` | Deterministic journal replay + end-to-end audit consistency |
 | 12 | `WP-HK-07A` | Production headless host + deterministic JSONL/reference transport |
 | 13 | `WP-HK-07B` | Standards-compatible MCP projection + cross-transport conformance |
-| 14 | `WP-HK-08` | Agent ergonomics: batching, compact responses, pagination, structured CAS recovery and round-trip budgets |
-| 15 | `WP-HK-09` | Capability boundary: filesystem/network/process isolation and resource limits |
-| 16 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
-| 17 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
+| 14 | `WP-HK-08A` | Efficient interaction primitives: atomic batching, compact/bounded reads, pagination and discovery cost metadata |
+| 15 | `WP-HK-08B` | Structured stale-CAS recovery, repair ergonomics and measured agent interaction budgets |
+| 16 | `WP-HK-09A` | Capability containment: filesystem/network/process authority and below-transport policy |
+| 17 | `WP-HK-09B` | Resource/input limits plus import/persistence interruption integrity |
+| 18 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
+| 19 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
 
 ## H0 interaction/concurrency decision
 
 H0 keeps the accepted whole-world revision/hash CAS and does not speculate into per-resource locking, automatic merge, distributed transactions or autonomous multi-agent scheduling.
 
-Before `WP-HK-GATE`, HK08 must make the existing optimistic-concurrency model **cheap to recover from**: an ordinary same-lineage stale plan must receive bounded machine-readable context anchored to the expected and current world so the agent can preserve intent, re-plan the affected slice and retry through the normal transaction path without ordinarily reconstructing the complete world. When lineage/history is insufficient to establish a trustworthy delta, the harness must say so explicitly rather than inventing one.
+Before `WP-HK-GATE`, HK08B must make the existing optimistic-concurrency model **cheap to recover from**: an ordinary same-lineage stale plan must receive bounded machine-readable context anchored to the expected and current world so the agent can preserve intent, re-plan the affected slice and retry through the normal transaction path without ordinarily reconstructing the complete world. When lineage/history is insufficient to establish a trustworthy delta, the harness must say so explicitly rather than inventing one.
 
-Batching is the primary H0 mitigation for whole-world commit cost. The current 64-operation request limit is not a permanent product constant: HK08 measures a representative coherent multi-resource edit, and the accepted request shape/limit must allow that edit to remain one atomic transaction inside the HK09 resource envelope. Do not build logical multi-plan transactions merely because an arbitrary number such as 64 exists; add them only if measured representative work proves one atomic request is insufficient.
+Batching is the primary H0 mitigation for whole-world commit cost. HK08A validates a representative coherent multi-resource edit and the accepted request shape/limit must allow that edit to remain one atomic transaction inside the later HK09B resource envelope. The current 64-operation request limit is not a permanent product constant. Do not build logical multi-plan transactions merely because an arbitrary number such as 64 exists; add them only if measured representative work proves one atomic request is insufficient.
 
-Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling are post-GATE product work unless HK08/GATE evidence proves they are necessary for the representative single-client authoring contract. A future concurrent-agent requirement is a valid reason to revisit CAS granularity, but not a reason to delay H0 today.
+Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling are post-GATE product work unless HK08B/GATE evidence proves they are necessary for the representative single-client authoring contract. A future concurrent-agent requirement is a valid reason to revisit CAS granularity, but not a reason to delay H0 today.
 
-HK08 also re-runs reference-transport ↔ MCP conformance for every interaction primitive it changes or adds. HK07B proves the initial neutral projection; it cannot pre-prove semantics introduced later by HK08.
+HK08A re-runs reference-transport ↔ MCP conformance for batching/compact/pagination semantics it changes or adds; HK08B does the same for recovery/repair semantics. HK07B proves the initial neutral projection and cannot pre-prove semantics introduced later.
 
 ### H0 exit criteria
 
-`WP-HK-GATE` is authoritative for the executable gate scenario. In addition to correctness/replay/transport neutrality, H0 must demonstrate bounded same-lineage stale-plan recovery, an atomic representative batch that fits the accepted resource budget, and bounded long-session resource behaviour. Multi-agent throughput and automatic concurrent merge are explicitly not H0 gate criteria unless earlier measured evidence reclassifies them.
+`WP-HK-GATE` is authoritative for the executable gate scenario. In addition to correctness/replay/transport neutrality, H0 must demonstrate bounded same-lineage stale-plan recovery, an atomic representative batch that fits the accepted HK09B resource budget, explicit capability containment from HK09A and bounded long-session resource behaviour. Multi-agent throughput and automatic concurrent merge are explicitly not H0 gate criteria unless earlier measured evidence reclassifies them.
 
 ---
 
