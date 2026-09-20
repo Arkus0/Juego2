@@ -36,7 +36,9 @@ namespace Arkus.Harness.Tests
             var applied = Success(contract, WorldMutationContract.ApplyName, request);
             Assert.True((bool)applied.Data!["persisted"]!);
             Assert.Equal(initial.Revision + 1, session.Current.Revision);
-            Assert.Equal(96, session.Current.Objects.Count);
+            Assert.Equal(72, session.Current.Objects.Count);
+            Assert.Equal(24, session.Current.Extensions.Count);
+            Assert.Equal(96, session.Current.Objects.Count + session.Current.Extensions.Count);
 
             var journal = Success(contract, WorldProvenanceContract.ReadName, Empty()).Data!;
             Assert.Equal(WorldProvenanceContract.JournalSchemaId, journal["schemaId"]);
