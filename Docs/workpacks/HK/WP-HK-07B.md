@@ -1,9 +1,22 @@
 # WP-HK-07B — MCP as second projection + cross-transport conformance
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: `WP-HK-07A`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+## Completion metadata
+
+- implementation PR: `#47`;
+- baseline SHA: `6173471245da081b21cf66fd164cbb3a30dcba1d`;
+- reviewed frozen candidate: `37ea185f28dd28e41b406f2c9407fdfe6f9b752b`;
+- independent Reviewer verdict: `PASS` (review `#5259854121`);
+- exact-SHA validation: GREEN, Actions `35495563546`, artifact `10600393826`;
+- implementation merge SHA: `58b6571b96eac4c73e5c3cf28a42a6630ea13505`.
+
+Accepted semantics: MCP over local stdio is a genuine second first-party projection of the accepted `arkus.neutral-projection@1` boundary; discovery, schemas, request/result/error meaning and invocation remain mechanically rooted in the composed canonical contract; scoped canonical providers project generically without an MCP-owned registry; representative accepted H0 read, validation, mutation, provenance, diff, snapshot and replay flows remain semantically equivalent to the deterministic JSONL reference transport; MCP timeout/cancellation preserves accepted admission semantics; and MCP-specific naming/framing stays adapter-local. Canonical-valid identities whose reversible MCP tool name would exceed 128 characters receive deterministic bounded transport-local handles while exact canonical identity remains in metadata/descriptor lookup and drives neutral dispatch.
+
+The first frozen candidate `1447e56642414ce2e75219fdfcb191ada41d6378` failed independent review `#5259817513` because MCP naming was not total over the accepted canonical capability universe. The accepted repair stayed inside HK07B adapter/test ownership, added causal two-capability over-limit coverage, preserved HK07A/canonical semantics unchanged and passed full regression before the fresh independent PASS above.
 
 ## Objective
 
