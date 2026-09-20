@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.25 — 2026-09-20
+Version: 1.26 — 2026-09-20
 
 ## North star
 
@@ -42,7 +42,7 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B`, `WP-HK-08A`, `WP-HK-08B`, `WP-HK-09A` and `WP-HK-09B` are COMPLETE.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B`, `WP-HK-08A`, `WP-HK-08B`, `WP-HK-09A`, `WP-HK-09B` and `WP-HK-10` are COMPLETE.
 
 `WP-HK-05` PR `#26` passed independent review on frozen candidate `23a9fd4373a803187cd9391b1459cd48975177f6` (review `#5257350871`), exact-SHA candidate observation Actions `35464742544` GREEN, freeze validation Actions `35464834162` GREEN, and merged as `ed65661680aea2a9be79f892c96aa42bf788a842` on 2026-09-19. Two prior frozen candidates failed in the same aggregate-validation-under-ambiguous-identity class; the circuit breaker triggered a causal architecture re-audit, and the accepted candidate uses dependency-local ambiguity deferral rather than global suppression.
 
@@ -64,11 +64,13 @@ Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, 
 
 `WP-HK-09B` PR `#56` passed independent review on frozen candidate `8ed02586da9a5b6e159e1cdc76a47ae7ca89c763` (review `#5261068513`), exact-SHA freeze validation Actions `35522581043` GREEN, and merged as `2e7a258fdcec2e26492d308c3cb199ab62201dcd` on 2026-09-20. The accepted `arkus.h0-resource-envelope@1` bounds canonical arguments to 896 KiB, portable depth to 32, coherent mutation batches to 96 operations, decoded mutation payload to 512 KiB, query pages to 100 items, canonical world/snapshot state to 640 KiB, world resources to 10,000, local mutation transactions to 10,000, snapshot-import receipts to 1,024 and cooperative execution to 5 s. Materialized Authoring state is rechecked before publication; mutation/import/replay publish one staged process-local aggregate only after the authoritative budget/interruption seam, preventing rejected/expired/interrupted work from producing partial state or false evidence. `arkus.reference.jsonl@1` remains frozen at 1 MiB + `transport.frame_too_large`; one earlier candidate failed because it changed that predecessor contract in place, and the accepted repair instead fits the neutral envelope beneath it. Power-loss/WAL/fsync durability, arbitrary production scale and shipping SLOs are not claimed.
 
+`WP-HK-10` PR `#60` passed independent review on frozen candidate `813ccf08e33fdd77a34c59da5ed766882840cbee` (review `#5261301248`), exact-SHA freeze validation Actions `35527218067` GREEN, and merged as `f893ad51d756090eeecac41b8fc7cb14f8bd359a` on 2026-09-20. The accepted closure supplies deterministic property/robustness coverage, twelve causal negative-conformance controls spanning the named H0 foundational layers, a frozen Protocol v1 compatibility corpus, bounded 512-transaction endurance with fresh-session recovery inside HK09B limits, deterministic conflicting-writer recovery and complete residual-ledger reconciliation with zero unclassified residuals and zero known undetected in-boundary defect classes. One earlier frozen candidate failed because closure had introduced structured thrown-handler public semantics as HK10-owned behavior; the accepted repair obeys the closure-only rule by reopening/amending HK01 as causal owner of `contract.handler_failure` / `contract.handler_failure_after_publication` while HK10 consumes that owner proof as fault-injection evidence.
+
 Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
 Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-Next dependency-valid workpack: `WP-HK-10 — Strict quality closure`.
+Next dependency-valid workpack: `WP-HK-GATE — AI authoring readiness gate`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -89,7 +91,7 @@ Next dependency-valid workpack: `WP-HK-10 — Strict quality closure`.
 | 15 | `WP-HK-08B` ✅ COMPLETE | Structured stale-CAS recovery, repair ergonomics and measured agent interaction budgets |
 | 16 | `WP-HK-09A` ✅ COMPLETE | Capability containment: filesystem/network/process authority and below-transport policy |
 | 17 | `WP-HK-09B` ✅ COMPLETE | Resource/input limits plus import/persistence interruption integrity |
-| 18 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
+| 18 | `WP-HK-10` ✅ COMPLETE | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
 | 19 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
 
 ## H0 interaction/concurrency decision
@@ -98,21 +100,21 @@ H0 keeps the accepted whole-world revision/hash CAS and does not speculate into 
 
 Whole-world CAS/hash is an **internal consistency boundary**, not a requirement that every client download or reconstruct the whole world after every commit. The kernel may validate/serialize/hash the accepted authored state as a whole while clients operate on bounded revision-anchored queries, semantic diffs and HK08B recovery context. AI coherence comes from stable anchors, complete relevant slices and fail-closed stale detection; repeatedly sending the entire world to an agent is neither required nor assumed to improve coherence.
 
-HK08B now makes the existing optimistic-concurrency model **cheap to recover from** in the ordinary same-lineage case: a stale plan receives bounded machine-readable context anchored to the expected and current authored world, exact changed-resource identity derived from proven local lineage history, and current-resource inspection descriptors so the client can preserve intent and retry through the normal transaction path without reconstructing the complete world. When lineage/history is insufficient, the accepted contract says so explicitly and returns bounded reinspection rather than invented precision.
+HK08B makes the existing optimistic-concurrency model **cheap to recover from** in the ordinary same-lineage case: a stale plan receives bounded machine-readable context anchored to the expected and current authored world, exact changed-resource identity derived from proven local lineage history, and current-resource inspection descriptors so the client can preserve intent and retry through the normal transaction path without reconstructing the complete world. When lineage/history is insufficient, the accepted contract says so explicitly and returns bounded reinspection rather than invented precision.
 
-Batching is the primary H0 mitigation for whole-world commit cost. HK08A accepted a representative 96-operation mixed-resource edit as one atomic validated/provenanced transaction, and HK09B has now fixed that representative shape inside the accepted H0 resource envelope rather than forcing it to split. The 96-operation ceiling is an H0 reviewed bound, not a permanent shipping-scale promise; later approved product evidence may justify a reviewed/version-compatible envelope change, but clients must not silently split a coherent intent merely to satisfy a legacy cap.
+Batching is the primary H0 mitigation for whole-world commit cost. HK08A accepted a representative 96-operation mixed-resource edit as one atomic validated/provenanced transaction, and HK09B fixed that representative shape inside the accepted H0 resource envelope rather than forcing it to split. The 96-operation ceiling is an H0 reviewed bound, not a permanent shipping-scale promise; later approved product evidence may justify a reviewed/version-compatible envelope change, but clients must not silently split a coherent intent merely to satisfy a legacy cap.
 
-Serializing commit execution can protect the mutation authority from simultaneous publication, but it does **not** make an already planned stale request current. HK08B now supplies deterministic rejection/recovery/re-plan semantics for that case; a further writer may still make the retry stale again, which is handled by the same optimistic-CAS loop rather than hidden merge.
+Serializing commit execution can protect the mutation authority from simultaneous publication, but it does **not** make an already planned stale request current. HK08B supplies deterministic rejection/recovery/re-plan semantics for that case; a further writer may still make the retry stale again, which is handled by the same optimistic-CAS loop rather than hidden merge.
 
-Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling remain post-GATE product work. HK08B's accepted benchmark did not promote them into H0; only later GATE/H1/H0S product evidence may justify revisiting CAS granularity or coordination semantics.
+Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling remain post-GATE product work. HK08B's accepted benchmark did not promote them into H0; HK10 subsequently stress-tested the accepted whole-world stale/conflict recovery semantics without adding hidden merge. Only later GATE/H1/H0S product evidence may justify revisiting CAS granularity or coordination semantics.
 
-HK08A passed reference-transport ↔ MCP conformance for batching/compact/pagination semantics, HK08B separately passed it for recovery semantics, and HK09B now passes it for successfully framed neutral resource-limit/error semantics. Physical malformed/oversized JSONL framing remains governed by the frozen HK07A transport contract and is intentionally not redefined as a neutral resource error.
+HK08A passed reference-transport ↔ MCP conformance for batching/compact/pagination semantics, HK08B separately passed it for recovery semantics, and HK09B passes it for successfully framed neutral resource-limit/error semantics. Physical malformed/oversized JSONL framing remains governed by the frozen HK07A transport contract and is intentionally not redefined as a neutral resource error.
 
-HK09A constrains the production H0 host-power envelope beneath those transports: conforming neutral projections cannot expose or dispatch an H0-forbidden composed capability, and the reference executable cannot acquire caller-selected filesystem authority through `--file`. HK09B now adds the finite machine-readable resource/publication envelope beneath the same neutral boundary. HK10 consumes both accepted guarantees; it closes quality broadly rather than redesigning host authority or persistence architecture.
+HK09A constrains the production H0 host-power envelope beneath those transports and HK09B adds the finite machine-readable resource/publication envelope beneath the same neutral boundary. HK10 has now completed strict closure over those accepted guarantees, including fault injection, compatibility, bounded endurance and residual classification, without inventing a replacement architecture.
 
 ### H0 exit criteria
 
-`WP-HK-GATE` is authoritative for the executable gate scenario. In addition to correctness/replay/transport neutrality, H0 must demonstrate bounded same-lineage stale-plan recovery, an atomic representative batch inside the accepted HK09B resource budget, explicit capability containment from HK09A and bounded long-session resource behaviour. Multi-agent throughput and automatic concurrent merge are explicitly not H0 gate criteria unless earlier measured evidence reclassifies them.
+`WP-HK-GATE` is now the dependency-valid final H0 proof. In addition to correctness/replay/transport neutrality, it must demonstrate bounded same-lineage stale-plan recovery, an atomic representative batch inside the accepted HK09B resource budget, explicit capability containment from HK09A, bounded long-session resource behaviour accepted by HK10, and a fresh AI-agent trial using public discovered contracts. Multi-agent throughput and automatic concurrent merge are explicitly not H0 gate criteria unless measured gate evidence reclassifies them.
 
 ---
 
