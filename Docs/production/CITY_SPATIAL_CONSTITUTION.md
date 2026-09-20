@@ -1,6 +1,6 @@
 # Keeper City — Spatial Constitution and Scale Envelope
 
-Version: 1.1 — 2026-09-20
+Version: 1.2 — 2026-09-20
 Workpack: `Docs/workpacks/CITY/WP-CITY-00.md`
 Class: **PRODUCT / SPATIAL PREPRODUCTION — NON-FOUNDATIONAL**
 
@@ -51,34 +51,43 @@ than spanning the district's longitudinal extent.
 
 ### 2.2 Selected semantic district graph
 
-Topological schematic, not a metric map:
+Topological schematic, not a metric map. **Only explicit labeled connectors below are graph edges;
+vertical alignment and whitespace are not connectivity.** Every inter-landmass edge is one of X1–X7.
 
 ```text
-                          VEGA / HUERTAS (NE)             laderas / peñas [scenic]
-                                |                                  |
-        BARRIO ALTO -------- callejas altas -----------------------+
-           |   \                 |                       \
-       escaleras   lavadero      |                        mirador
-           |           \         |                          |
-   ENSANCHE == X2-X5 == CALLE MAYOR (terrace) ===== PLAZA / AYUNTAMIENTO
-      |                      |           \                    |       \
-      |                 RIBERA / TALLERES \              CASCO VIEJO  X1 PUENTE VIEJO
-      |                      |              \                  *----------- ORILLA SUR
-      |               PASEO / SIRGA --------\------ landing head            |
-      |                                                 |                    | camino sur
-      |                                           X6 barca / X7 bridge       |
-      |                                                 |                    |
-      |                                      ~~~~~ joined RÍO ~~~~~~~~~~~~~~~|
-      |                                                 |                    |
-      +-------------------------------------------  PUERTO FLUVIAL -----------+
-                                                        |
-                                                ENTRADA / BUS / CARRETERA
-                                                        |
-                                                   valley road
+[ENSANCHE BANK]                         [WEDGE]
+
+ENSANCHE == X2-X5 / ARROYO == CALLE MAYOR (terrace) ===== PLAZA / AYUNTAMIENTO
+                                      |          \                    |       \
+                                RIBERA / TALLERES  \              CASCO VIEJO  \
+                                      |             \                  |        \
+                               PASEO / SIRGA --------\------ landing head       \
+                                      |                        *                 \
+                              BARRIO ALTO / callejas altas      \                 \
+                                      |                          \                 \
+                               VEGA / HUERTAS (NE)                \                 \
+                                                                  \                 \
+                                                  X6 barca / X7 bridge        X1 PUENTE VIEJO
+                                                        |                         |
+                                                        v                         v
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ joined RÍO / water boundary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[ORILLA SUR]
+
+                                  upstream PUERTO edge ---- PUERTO FLUVIAL ---- camino sur ---- X1 far end
+                                           |                      |                                  |
+                                           +----------------------+                          ermita/cementerio
+                                                                  |
+                                                         ENTRADA / BUS / CARRETERA
+                                                                  |
+                                                             valley road
 ```
 
 `*` is the confluence-tip Wedge vertex. Dry Wedge routes stop there. X6/X7 crosses from the landing
-head to the upstream Puerto edge. X1 reaches Orilla sur separately at the historic bridge.
+head to the upstream Puerto edge. X1 reaches Orilla sur separately at the historic bridge; its far end
+then reaches Puerto by the dry `camino sur`. There is **no Ensanche-bank ↔ Orilla-sur edge** in this
+constitution.
 
 All place names are placeholders; identifiers are not frozen.
 
@@ -137,7 +146,8 @@ Availability is separate from design:
 | State 2 X7 closed | **1** — X1 | people/handcarts cross; cart freight waits |
 
 The already-reviewed 2 → 1 → 0 State-1 ladder is preserved. What changed in v1.1 is the physically
-correct endpoint of X6/X7.
+correct endpoint of X6/X7; v1.2 changes only the graph rendering so it no longer implies an
+Ensanche-bank ↔ Orilla-sur edge forbidden by the same topology.
 
 ### 2.5 Working landing — why it exists and where it sits
 
@@ -357,6 +367,9 @@ The fourth review did not show that confluence-wedge structure is impossible; it
 **old bank assignment for the port was impossible**. After assigning Puerto/Entrada to the real
 Orilla-sur downstream bank, every inter-landmass edge is named, both Río crossings remain meaningful,
 and the landing is more clearly territorial rather than decorative.
+
+Cycle 5 does not alter that embedding or add an edge: it removes a misleading ASCII continuation from
+Ensanche to Puerto so the selected semantic graph finally renders the same connectivity as the matrix.
 
 B remains selected because its charges are answered structurally: route continuity, ordinary port
 routes, explicit bank/crossing logic and a retained seed that grows without demolition.
