@@ -9,6 +9,7 @@ namespace Arkus.Game.Authoring
     {
         public const string ReadName = "authoring.journal.read";
         public const string ContractVersionText = "1.0";
+        public const string PagedContractVersionText = "2.0";
         public const string JournalSchemaId = "arkus.authoring.journal@1";
         public const string JournalPageSchemaId = "arkus.authoring.journal-page@1";
         public const string EntrySchemaId = "arkus.authoring.journal-entry@1";
@@ -16,18 +17,16 @@ namespace Arkus.Game.Authoring
         public const int DefaultPageSize = 50;
 
         private static readonly ContractVersion Version = ContractVersion.Parse(ContractVersionText);
+        private static readonly ContractVersion PagedVersion = ContractVersion.Parse(PagedContractVersionText);
 
         public static IReadOnlyList<CapabilityDefinition> CreateDefinitions()
         {
-            return new List<CapabilityDefinition> { DefineRead() }.AsReadOnly();
+            return new List<CapabilityDefinition> { DefineRead(), DefinePagedRead() }.AsReadOnly();
         }
 
         /// <summary>
         /// Complete persisted journal artifact used by accepted HK06 replay/audit semantics.
-        /// HK08A leaves this artifact unchanged. When one bounded read covers the complete journal,
-        /// the public capability returns this exact shape so accepted replay clients remain truthful.
-        /// Multi-page reads use the separate page marker below and cannot be mistaken for a complete
-        /// replay artifact.
+        /// This exact shape remains the success contract of authoring.journal.read@1.0.
         /// </summary>
         public static JsonSchemaDocument JournalResultSchema()
         {
@@ -46,7 +45,14 @@ namespace Arkus.Game.Authoring
                 new[] { "schemaId", "entrySchemaId", "base", "current", "entryCount", "entries" }));
         }
 
+        /// <summary>Accepted HK06A request contract: empty request means complete journal.</summary>
         public static JsonSchemaDocument JournalReadRequestSchema()
+        {
+            return CanonicalContractSchemas.EmptyObject();
+        }
+
+        /// <summary>HK08A paged request contract, exposed only by authoring.journal.read@2.0.</summary>
+        public static JsonSchemaDocument JournalPageReadRequestSchema()
         {
             return new JsonSchemaDocument(SchemaNode.Object(
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
@@ -59,10 +65,9 @@ namespace Arkus.Game.Authoring
         }
 
         /// <summary>
-        /// Public read result accepts either the unchanged complete HK06A artifact (when the complete
-        /// journal fits the requested page) or an explicitly marked HK08A bounded page. Conditional
-        /// schema constraints are intentionally enforced by the implementation/conformance tests;
-        /// partial pages always carry pageOffset/journalSchemaId and the page schema marker.
+        /// Version 2 may return either the unchanged complete HK06A artifact (when the requested page
+        /// covers the whole journal) or an explicitly marked bounded page. Partial pages always carry
+        /// pageOffset/journalSchemaId and the page schema marker.
         /// </summary>
         public static JsonSchemaDocument JournalPageResultSchema()
         {
@@ -146,10 +151,35 @@ namespace Arkus.Game.Authoring
 
         private static CapabilityDefinition DefineRead()
         {
+            // Keep the accepted HK06A public identity and semantics byte-for-byte equivalent at the
+            // canonical model level: empty request -> complete journal artifact.
             return new CapabilityDefinition(
                 new CapabilityKey(ReadName, Version),
                 new ProviderMetadata("arkus.base", ProviderKind.Base, "base", "authoring"),
                 JournalReadRequestSchema(),
+                JournalResultSchema(),
+                CanonicalContractSchemas.StructuredError(),
+                SideEffectClass.ReadOnly,
+                DeterminismClass.Deterministic,
+                Array.Empty<string>(),
+                new[] { "journal-reflects-only-persisted-authored-mutations", "canonical-authored-state-unchanged" },
+                new ConcurrencySemantics(ConcurrencyClass.ParallelSafe),
+                new IdempotencySemantics(IdempotencyClass.Idempotent),
+                new BatchingSemantics(BatchingClass.Unsupported),
+                new RepairSemantics(false, true),
+                new PolicySemantics(
+                    PrivilegeClass.Authoring,
+                    TransactionRequirement.ReadOnlyEnvelope,
+                    ProvenanceRequirement.Minimal),
+                new CostSemantics(2, "read deterministic session-local authored mutation provenance"));
+        }
+
+        private static CapabilityDefinition DefinePagedRead()
+        {
+            return new CapabilityDefinition(
+                new CapabilityKey(ReadName, PagedVersion),
+                new ProviderMetadata("arkus.base", ProviderKind.Base, "base", "authoring"),
+                JournalPageReadRequestSchema(),
                 JournalPageResultSchema(),
                 CanonicalContractSchemas.StructuredError(),
                 SideEffectClass.ReadOnly,
