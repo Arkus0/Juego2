@@ -8,6 +8,25 @@ Worker state: ACTIVE
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)
 fail_cycle: 3
 
+> **CIRCUIT BREAKER — global connectivity re-audit.** Three independent FAILs landed in one causal
+> family, so `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` requires that local patching stop and the
+> foundation be re-audited. The freeze at `814c8c959285535bae13251bd0a5bc3474b711e1` was withdrawn
+> rather than handed to a fourth review. `fail_cycle` stays at 3: this is a Worker-initiated re-audit
+> directed by the project owner, not a fourth FAIL.
+>
+> The audit built `Docs/evidence/WP-CITY-00/CONNECTIVITY_MATRIX.md` as the single source of
+> connectivity semantics and derived every surface from it. It found one live contradiction the
+> reviews had not yet reached — §2.4.1 claimed the south bank "is reached two ways in both states"
+> seven lines above the ladder showing one and zero — plus CSI-03 promising two plaza-free routes
+> where the evidence shows one, CSI-07 promising three arroyo crossings where flood leaves two, a
+> port described as reachable three ways when the ferry makes four, an unlabelled State-1 loop in the
+> walk-time table, and two summaries omitting the south bank's second crossing entirely.
+>
+> The audit explicitly tested whether the topology itself is contradictory. It is not: every finding
+> is a documentation defect, and the one with real spatial content — Casco ↔ Ensanche routing through
+> the plaza in high water — is a seasonal condition worth keeping. **Topology B stands; the city is
+> not redesigned.**
+>
 > **Repair cycle 3.** Frozen candidate `daefc6a1e4959c1cffacd662f5578a4c13a642d3` received
 > independent FAIL, review
 > [#5261488049](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261488049). A summarising
@@ -96,6 +115,18 @@ claim and is exempt. This check absorbs and replaces the narrower cycle-2 crossi
 A corollary, because cycle 3's defect entered through a paraphrase: **an evidence document must not
 restate an invariant in its own words.** It points at the owner. Two copies of a rule are two things
 that can disagree.
+
+**From the circuit-breaker audit — connectivity has one owner, and every invariant declares what it
+binds.** Three cycles of per-surface patching produced three new contradictions because connectivity
+semantics lived in six places at once. `CONNECTIVITY_MATRIX.md` is now the single source: crossings,
+states, availability ladders for *both* waters, route counts, closure and combined-failure
+consequences, loops and seam count. Every other surface cites it and none paraphrases it.
+
+And the rule that explains all three FAILs at once: **an invariant that promises an availability
+count is refutable by weather.** Each connectivity invariant now declares whether it binds **design**
+— what the constitution must provide, not refutable by a closure or a flood — or **availability**,
+which no invariant may assert because the matrix owns it. CSI-03, CSI-06 and CSI-07 all bind design.
+That distinction, applied uniformly, is what a re-audit produces instead of a fourth patch.
 
 ### Dependency 2 — `Docs/production/PRODUCTION_BLUEPRINT.md` v0.2
 

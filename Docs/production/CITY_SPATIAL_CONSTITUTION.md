@@ -94,6 +94,12 @@ Seven substantial families plus two edge families.
 
 ### 2.4 Crossing strategy
 
+Connectivity semantics — which crossings exist, what is available when, how many routes each pair
+has, and what every closure and combined failure does — are owned by one file,
+`Docs/evidence/WP-CITY-00/CONNECTIVITY_MATRIX.md`. This section and §2.4.1 present it; they do not
+restate it in their own words, because three independent FAILs were caused by surfaces doing exactly
+that.
+
 | Crossing | Over | Character | Connects | Availability | If closed |
 |---|---|---|---|---|---|
 | **Puente Viejo** | río | stone, narrow, historic; pedestrian and handcart | casco ↔ camino sur, ermita, cementerio, valley road | permanent, both states | the south bank is **not** cut off — see §2.4.1 |
@@ -120,12 +126,12 @@ refers to it.
 - **State 2 — the Puente del Muelle era.** The bridge replaces the ferry and the south bank has two
   unconditional crossings.
 
-The south bank is therefore reached two ways in both states, and the closure consequences follow from
-the dimensional sketch in §3 rather than from assertion:
+Each state **designs** two crossings for the south bank. How many are *available* is a separate
+question, answered by counting rather than by describing — describing effects without counting is how
+this document once called a zero-crossing state a single-crossing one.
 
-The ladder below **counts** the crossings serving the south bank in each situation. It is counted
-rather than described because describing effects without counting is how this document previously
-came to call a zero-crossing state a single-crossing one.
+The ladder is reproduced from `CONNECTIVITY_MATRIX.md` §4, which owns it. The arroyo has its own
+ladder in §5 of that file, because two invariants depend on it and earlier cycles never counted it.
 
 | Situation | Crossings serving the south bank | Character |
 |---|---|---|
@@ -142,10 +148,11 @@ one: for part of the year the south bank runs on a single crossing, and that is 
 defect — but it is also why CSI-06 promises a designed second crossing and not a guaranteed second
 crossing.
 
-Together the Puente Viejo and the barca close a **loop along the south bank** of roughly 650–750 m of
-walking plus the ferry wait, drawn in the §2.2 graph. It is a detour, not a shortcut: casco to landing
-over the Cuesta is ≈150 m directly. Whether it carries ordinary traffic or stays a rural detour is a
-`WP-CITY-01` question (§8, Q12), not a claim made here.
+Together the Puente Viejo and the barca close a **loop along the south bank** — `CONNECTIVITY_MATRIX.md`
+§8 **L1**, State 1 only, roughly 650–750 m of walking plus the ferry wait, drawn in the §2.2 graph.
+State 2 has the same loop without the wait (**L1′**) once the Puente del Muelle replaces the ferry.
+Either way it is a detour, not a shortcut: casco to landing over the Cuesta is ≈150 m directly.
+Whether it carries ordinary traffic or stays a rural detour is a `WP-CITY-01` question (§8, Q12).
 
 ### 2.5 The working landing — why it exists and how big it is
 
@@ -206,20 +213,31 @@ it end to end.
 Stated as the test the workpack actually applies: **remove the plaza from the graph and the city
 still connects.**
 
-| Trip | Route through the plaza | Route avoiding it |
-|---|---|---|
-| Barrio Alto → Ribera workshop | escaleras → plaza → Calle Mayor → down | callejas altas → escaleras east → Ribera |
-| Casco → Ensanche | plaza → Puente del Mercado | lower lanes → pasos/vado |
-| Ensanche → Puerto | Puente del Mercado → plaza → Cuesta | quay road south from Entrada |
-| Vega → Puerto | Calle Mayor → plaza → Cuesta | paseo fluvial / camino de sirga the whole way |
-| Barrio Alto → Ensanche | plaza → Puente del Mercado | Pasarela del Lavadero |
+Reproduced from `CONNECTIVITY_MATRIX.md` §6, which owns it. Pairs of which the plaza is itself a
+member are excluded, since "avoid the plaza on the way to the plaza" is not a question.
+
+| Trip | Route through the plaza | Route avoiding it | Always available? |
+|---|---|---|---|
+| Barrio Alto → Ribera workshop | escaleras → plaza → Calle Mayor → down | callejas altas → escaleras east → Ribera | yes |
+| Casco → Ensanche | plaza → Puente del Mercado | lower lanes → pasos/vado | **no — the pasos are low water only** |
+| Ensanche → Puerto | Puente del Mercado → plaza → Cuesta | quay road south from Entrada | yes |
+| Vega → Puerto | Calle Mayor → plaza → Cuesta | paseo fluvial / camino de sirga the whole way | yes |
+| Barrio Alto → Ensanche | plaza → Puente del Mercado | Pasarela del Lavadero | yes |
 
 A hub-and-spokes city fails every row. This one fails none, and the reason is structural rather than
-decorative: there are three parallel longitudinal routes (CSI-02) and four lateral stream crossings
-(CSI-07), so the graph is a mesh rather than a star.
+decorative: three parallel longitudinal routes (CSI-02) and four arroyo crossings by design (CSI-07)
+make the graph a mesh rather than a star.
 
-The port is reached three ways: the towpath from Ribera, the quay road from Entrada, and the steep
-Cuesta del Puerto from the casco tip. It is a destination, not a cul-de-sac.
+Two things this table shows that earlier drafts overstated, and that CSI-03 now matches. Each pair
+has **one** plaza-free route, not two. And **Casco → Ensanche does route through the plaza in high
+water**, because the pasos are its only plaza-free way across the arroyo. That is a named seasonal
+condition rather than a structural funnel, and it is content worth keeping — a town where one quarter
+becomes harder to reach when the water rises is more interesting than one where it never does.
+
+The port is reached four ways: three by land — the towpath from Ribera, the quay road from Entrada,
+the steep Cuesta del Puerto from the casco tip — plus the río crossing from the south bank, the barca
+in State 1 and the Puente del Muelle in State 2. It is a destination, not a cul-de-sac, in both
+states.
 
 ### 2.7 "Elsewhere in town" — why the long routes are long enough
 
@@ -296,7 +314,8 @@ with and `CITY-04` to measure. It is not a measured fact and must never be cited
 | Puente Viejo ↔ Entrada/bus | ~500 m | 7–8 min |
 | Puerto quay ↔ Calle Mayor shop | ~550 m | 8–9 min |
 | Casco tip ↔ NE end of Calle Mayor | ~600 m | 8–10 min |
-| South-bank loop: casco → Puente Viejo → camino sur → barca → landing → Cuesta → casco | ~650–750 m + ferry wait | 10–12 min + wait |
+| South-bank loop **L1** (State 1): casco → Puente Viejo → camino sur → barca → landing → Cuesta → casco | ~650–750 m + ferry wait | 10–12 min + wait |
+| South-bank loop **L1′** (State 2): the same over the Puente del Muelle | ~650–750 m | 10–12 min |
 | **Vega NE ↔ Puerto quay** | **~1.05–1.15 km** | **15–17 min** |
 
 ### Conditions that would change the envelope
@@ -339,8 +358,12 @@ These bind `CITY-01..04`. Breaking one is a constitutional change, not a product
 - **CSI-02 — Three continuous longitudinal routes.** Paseo fluvial, Calle Mayor and callejas altas
   stay continuous end to end. No production phase may leave only the terrace. *(This is the answer to
   charge B-2 in the refutation log; without it the constitution is a single-spine town.)*
-- **CSI-03 — The plaza converges, it does not connect.** At least two plaza-free routes exist between
-  any pair of adjacent district families.
+- **CSI-03 — The plaza converges, it does not connect.** *Binds design.* Every adjacent pair of
+  district families, excluding pairs containing the plaza itself, is designed with at least one route
+  that does not pass through it (`CONNECTIVITY_MATRIX.md` §6). Availability is a separate matter and
+  belongs to that matrix: Casco ↔ Ensanche routes through the plaza in high water, because the pasos
+  are its only plaza-free crossing. What this invariant forbids is a pair *structurally* dependent on
+  the plaza.
 - **CSI-04 — The port sits on ordinary routes.** The road junction and bus stop stay adjacent to the
   port, and at least two everyday non-port services live there. *(Answer to charge B-1; without it the
   port is decoration with a job title.)*
@@ -350,23 +373,26 @@ These bind `CITY-01..04`. Breaking one is a constitutional change, not a product
   `Docs/art/SETTING.md`: ART owns setting direction and CITY reads it rather than redefining it.
 - **CSI-06 — One historic bridge in the core, and a second crossing always designed for the south
   bank.** The core has exactly one río bridge, the Puente Viejo. The landing always carries a second
-  south-bank crossing: the barca in State 1, the Puente del Muelle in State 2 (§2.4.1). No third río
-  crossing exists in either state. The transition makes the second crossing unconditional; it never
-  removes it.
+  south-bank crossing: the barca in State 1, the Puente del Muelle in State 2. No third río crossing
+  exists in either state. The transition makes the second crossing unconditional; it never removes it.
 
-  This invariant binds the **design**, not the weather. Degrading to one crossing (high water, or a
-  closure) and even to none (a flood taking both) are bounded conditions owned by the §2.4.1 ladder,
-  not breaches of this invariant. What the invariant forbids is a constitution in which the south
-  bank is *structurally* served by a single crossing.
-- **CSI-07 — Arroyo crossings are plural, cheap and differentiated.** At least three, each with a
-  distinct character and a distinct consequence when closed.
+  *Binds design.* Degrading to one crossing (high water, or a closure) and even to none (a flood
+  taking both) are bounded conditions owned by `CONNECTIVITY_MATRIX.md` §4, not breaches of this
+  invariant. What it forbids is a constitution in which the south bank is *structurally* served by a
+  single crossing.
+- **CSI-07 — Arroyo crossings are plural, cheap and differentiated.** *Binds design.* Four exist —
+  Puente del Mercado, Pasarela del Lavadero, Puente de la Vega, pasos — each with a distinct
+  character and a distinct consequence when closed. Two of the four are permanent, and that is the
+  floor this invariant guarantees; availability runs from four at low water down to two in flood and
+  is owned by `CONNECTIVITY_MATRIX.md` §5.
 - **CSI-08 — Quiet is protected fabric.** The upstream paseo, the arroyo ravine walk with the
   lavadero, and the upper vega lanes stay low-intensity and may not be converted into reactive-density
   showcase.
 - **CSI-09 — Five spatial characters stay distinct.** Old quarter, civic/commercial, residential (in
   two characters), work/port edge and rural edge are never merged or substituted for one another.
-- **CSI-10 — Expansion without demolition.** Six named seams exist (§5, *Expansion seams*) and none
-  requires moving the plaza, the Puente Viejo, the Calle Mayor alignment or the quay.
+- **CSI-10 — Expansion without demolition.** Six named seams exist — enumerated in §5 below and
+  owned by `CONNECTIVITY_MATRIX.md` §9 — and none requires moving the plaza, the Puente Viejo, the
+  Calle Mayor alignment or the quay.
 - **CSI-11 — Backdrop is not fabric.** Scenic envelope sells silhouette and is never counted toward
   promised playable districts.
 - **CSI-12 — Every municipal lever has an address.** Each lever family in `PA-12_AMENDMENT_01` §3 —
@@ -382,7 +408,9 @@ These bind `CITY-01..04`. Breaking one is a constitutional change, not a product
 4. **W across the arroyo** → Ensanche growth — the cheapest large residential expansion.
 5. **SW downstream** → port growth, yards, depot, boatyard.
 6. *(Later)* **S across the río** at the Puente del Muelle, which moves the city from State 1 to
-   State 2 by replacing the barca with a permanent crossing (§2.4.1).
+   State 2 by replacing the barca with a permanent crossing (§2.4.1). It is also the only seam that
+   would promote a *transitional* area — the Orilla sur, §4 — into fabric. That promotion is a
+   CITY-02/CITY-03 decision and is not taken here.
 
 ---
 

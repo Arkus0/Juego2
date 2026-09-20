@@ -9,6 +9,31 @@ Worker history: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Transfer SHA: NONE
 fail_cycle: 3
 
+## Circuit breaker — global connectivity re-audit
+
+Three independent FAILs landed in one causal family, so local patching stopped and the foundation was
+re-audited. The freeze at `814c8c959285535bae13251bd0a5bc3474b711e1` was **withdrawn** rather than
+handed to a fourth reviewer. `fail_cycle` stays at 3: this is a Worker-initiated re-audit, not a
+fourth FAIL.
+
+The defect was never any of the three failing sentences. Connectivity semantics lived in six surfaces
+at once, each free to drift, so patching one per cycle could only produce the next contradiction —
+and did, three times.
+
+`Docs/evidence/WP-CITY-00/CONNECTIVITY_MATRIX.md` is now the single source: areas, the complete
+crossing set with availability, the two states, availability ladders for **both** waters, route
+counts and plaza dependence per pair, port approaches, loops, and the seam count. Every other surface
+cites it; none paraphrases it.
+
+Six findings, including one live contradiction no review had reached yet (§2.4.1 claimed the south
+bank is "reached two ways in both states" seven lines above the ladder showing one and zero). See
+`WORKER_PRE_REVIEW.md` §3.
+
+**The audit tested whether the topology itself is contradictory. It is not.** Every finding is a
+documentation defect; the one with real spatial content — Casco ↔ Ensanche routing through the plaza
+in high water — is a seasonal condition worth keeping. Topology B stands and the city is not
+redesigned.
+
 ## Repair cycle 3
 
 Frozen candidate `daefc6a1e4959c1cffacd662f5578a4c13a642d3` received independent **FAIL**, review
@@ -69,8 +94,10 @@ files cannot name their own commit; the PR body is the binding record.
 ## What this workpack decided
 
 A **confluence-wedge** city: two watercourses with deliberately different roles, seven substantial
-district families plus two edge families, one historic river crossing plus four cheap stream
-crossings, and a working fluvial landing below the confluence.
+district families plus two edge families, four cheap stream crossings and two river crossings — the
+historic Puente Viejo at the casco and, at the landing, the barca until the Puente del Muelle
+replaces it — plus a working fluvial landing below the confluence. The complete set and every
+availability state live in `CONNECTIVITY_MATRIX.md`.
 
 It also **shrank the city**. The track's starting size hypotheses were not merely debatable, they
 were internally inconsistent: a 12–18 minute cross-city walk and 0.8–1.2 km² of dense fabric cannot
@@ -82,6 +109,7 @@ hypothesis was replaced with 0.30–0.45 km², and the first retained seed with 
 | Document | What it carries |
 |---|---|
 | `Docs/production/CITY_SPATIAL_CONSTITUTION.md` | the deliverable: district graph, crossings, port, scale envelope, fabric vs scenic envelope, twelve invariants, rejected alternatives, open questions |
+| `Docs/evidence/WP-CITY-00/CONNECTIVITY_MATRIX.md` | **the single source of connectivity semantics** — read this before any crossing, route, loop or seam claim elsewhere |
 | `Docs/evidence/WP-CITY-00/WORKER_PLAN.md` | predecessor contract check, claim boundary, scope guard |
 | `…/TOPOLOGY_A_DOS_ORILLAS.md`, `…_B_CUNA_CONFLUENCIA.md`, `…_C_RIBERA_LARGA.md` | the three candidate cities in full |
 | `…/REFUTATION_LOG.md` | charges, defences and verdicts for all three |
@@ -124,14 +152,17 @@ the Worker highlighted.
    whether Topology A's rejection really is coupled to the size decision rather than to preference.
 5. **The blueprint edit.** Whether v0.3 stays inside "sharpen or explicitly propose amendments" and
    changes nothing it should not.
-6. **Whether the new audit's scope is right.** Three cycles failed on one shape, and the
+6. **Whether the matrix is right, not just whether the surfaces agree.** The surfaces now derive
+   from one source, so drift between them is largely designed out. The remaining risk is that they
+   agree on something false. Challenge the matrix's contents.
+7. **Whether the new audit's scope is right.** Three cycles failed on one shape, and the
    countermeasure (`WORKER_PRE_REVIEW.md` §3) is unproven on a fresh candidate. A fourth instance
    would most likely live where the grep pattern does not reach — a claim phrased without an absolute
    quantifier, or one inside the evidence files rather than the deliverable.
-7. **The State 1 → State 2 transition.** A real change in the city's connectivity that no workpack
+8. **The State 1 → State 2 transition.** A real change in the city's connectivity that no workpack
    yet owns the timing of (residual 6). Whether CITY-00 was right to leave it unscheduled is a fair
    challenge.
-8. **The seasonal single-crossing state.** For part of the year the south bank runs on the Puente
+9. **The seasonal single-crossing state.** For part of the year the south bank runs on the Puente
    Viejo alone (§2.4.1). It is deliberate, but whether the constitution should say more about what
    may and may not be sited across the river is arguable.
 

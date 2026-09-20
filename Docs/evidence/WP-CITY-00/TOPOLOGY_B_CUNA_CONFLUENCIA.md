@@ -83,7 +83,7 @@ three ways: towpath, quay road, and the steep Cuesta from the casco.
 | 3 | commercial everyday spine | Calle Mayor along the terrace, NE, one level above the river |
 | 4 | residential family beyond the old quarter | Barrio Alto (stepped, on the slope) **and** Ensanche (flat, regular, across the arroyo) — two distinct social characters |
 | 5 | river corridor and waterfront paths | paseo fluvial / camino de sirga along the río; the arroyo ravine walk |
-| 6 | old bridge + crossing strategy | Puente Viejo over the río at the casco tip; four arroyo crossings; later Puente del Muelle at the port |
+| 6 | old bridge + crossing strategy | Puente Viejo over the río at the casco tip; four arroyo crossings; the barca at the landing, replaced later by the Puente del Muelle. Complete set: `CONNECTIVITY_MATRIX.md` §2 |
 | 7 | fluvial-port / wharf-storage-work | Puerto Fluvial downstream of the confluence, SW |
 | 8 | workshops/service/peripheral edge | Ribera y Talleres between the Calle Mayor terrace and the río |
 | 9 | outward road/bus/valley connections | Entrada, bus and carretera de valle at the SW, adjacent to the port; camino sur over the Puente Viejo |
@@ -103,9 +103,10 @@ three ways: towpath, quay road, and the steep Cuesta from the casco.
 | La barca | río | roped ferry; people, animals and small loads | Puerto ↔ orilla sur | State 1 only; hours, fare, suspended by high water | the south bank depends on the Puente Viejo alone until it runs again |
 | Puente del Muelle | río | freight road bridge | Puerto ↔ south-bank road | State 2 only; it replaces the barca | people still cross at the casco; freight cannot cross at all, since the Puente Viejo takes handcarts and not carts |
 
-Connectivity states, the crossing-count ladder and the full closure consequences are owned by
-`CITY_SPATIAL_CONSTITUTION.md` §2.4.1 and CSI-06. This dossier does not restate them: restating an
-invariant in its own words is how a contradiction got into the candidate in the first place.
+Connectivity semantics — states, availability, route counts, closure and combined-failure
+consequences, loops and seam count — are owned by `CONNECTIVITY_MATRIX.md`. This dossier does not
+restate them: three independent FAILs were caused by surfaces restating connectivity in their own
+words and drifting.
 
 The arroyo is crossed casually and often; the río is crossed rarely and deliberately. That asymmetry
 is the topology's core mechanism, and it is cheap: four short spans cost far less geometry than one
