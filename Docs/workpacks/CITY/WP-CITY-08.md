@@ -4,7 +4,7 @@ Status: **DORMANT / NOT_STARTED**
 Class: PRODUCT / LOCAL KEEPER REALIZATION (NON-FOUNDATIONAL)  
 Mode: **LOCAL**  
 Depends on: `WP-CITY-07` PASS + accepted relevant Unity bridge/catalogue/authoring prerequisites  
-Blocks: later Living World/product-seed implementation planning
+Blocks: none automatically; informs later product implementation/expansion gates
 
 ## Objective
 
@@ -46,7 +46,8 @@ The exact public capabilities come from accepted H1/H2 architecture, not from th
 - Missing/unavailable composition dependencies fail visibly.
 - Reuse demonstrates a real reduction in authoring steps relative to first assembly.
 - Temporary visual assets may remain, but retained urban structure/composition semantics are explicit.
+- Existing Living World/research/planning tracks are not retroactively blocked by this WP.
 
 ## Negative gates
 
-FAIL if CITY introduces new canonical/bridge semantics to make the proof pass, if a hidden Unity registry becomes semantic authority, or if the “keeper” claim is only visual polish on a disposable structure.
+FAIL if CITY introduces new canonical/bridge semantics to make the proof pass, if a hidden Unity registry becomes semantic authority, if this WP claims ownership over Living World semantics, or if the “keeper” claim is only visual polish on a disposable structure.
