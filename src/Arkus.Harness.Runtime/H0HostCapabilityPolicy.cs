@@ -48,8 +48,8 @@ namespace Arkus.Harness.Runtime
                     continue;
                 }
 
-                if (definition.SideEffects == SideEffectClass.ExternalReversible ||
-                    definition.SideEffects == SideEffectClass.ExternalIrreversible)
+                if (definition.SideEffect == SideEffectClass.ExternalReversible ||
+                    definition.SideEffect == SideEffectClass.ExternalIrreversible)
                 {
                     issues.Add(new H0HostCapabilityPolicyIssue(
                         ExternalEffectCode,
@@ -57,7 +57,17 @@ namespace Arkus.Harness.Runtime
                         "H0 exposes no generic external host-side-effect authority."));
                 }
 
-                if (definition.Policy.Privilege == PrivilegeClass.Elevated)
+                var policy = definition.Policy;
+                if (policy == null)
+                {
+                    issues.Add(new H0HostCapabilityPolicyIssue(
+                        MetadataMismatchCode,
+                        definition.Key.ToString(),
+                        "An effective H0 capability must declare canonical policy semantics."));
+                    continue;
+                }
+
+                if (policy.Privilege == PrivilegeClass.Elevated)
                 {
                     issues.Add(new H0HostCapabilityPolicyIssue(
                         ElevatedPrivilegeCode,
@@ -65,9 +75,9 @@ namespace Arkus.Harness.Runtime
                         "H0 exposes no elevated host privilege through its canonical inventory."));
                 }
 
-                var expectedTransaction = ExpectedTransaction(definition.SideEffects);
+                var expectedTransaction = ExpectedTransaction(definition.SideEffect);
                 if (expectedTransaction == TransactionRequirement.Unknown ||
-                    definition.Policy.TransactionRequirement != expectedTransaction)
+                    policy.TransactionRequirement != expectedTransaction)
                 {
                     issues.Add(new H0HostCapabilityPolicyIssue(
                         MetadataMismatchCode,
@@ -79,9 +89,9 @@ namespace Arkus.Harness.Runtime
             return issues.AsReadOnly();
         }
 
-        private static TransactionRequirement ExpectedTransaction(SideEffectClass sideEffects)
+        private static TransactionRequirement ExpectedTransaction(SideEffectClass sideEffect)
         {
-            switch (sideEffects)
+            switch (sideEffect)
             {
                 case SideEffectClass.None:
                 case SideEffectClass.ReadOnly:
