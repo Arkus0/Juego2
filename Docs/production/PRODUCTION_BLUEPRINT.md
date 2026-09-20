@@ -1,734 +1,693 @@
 # Juego2 Production Blueprint
 
-Version: 0.1 — 2026-09-20
+Version: 0.2 — 2026-09-20  
+Status: **NON-BINDING, owner-reviewed production proposal.** This document creates no H0 acceptance criterion, reopens no accepted H0 guarantee, starts no gameplay work and does not modify the `WP-HK-GATE` precondition. It is planning input for the roadmap author after GATE.
 
-Status: **NON-BINDING proposal.** This document creates no acceptance criterion, reopens no accepted guarantee, alters no workpack contract and commits the roadmap to nothing. It does not authorize H1 or H2 work, proposes no `WP-HK-*` workpack, and does not modify the `WP-HK-GATE` precondition in `Docs/ROADMAP.md`.
+## 0. Decisions captured by this revision
 
-## 0. Scope and standing
+This revision turns the first draft from a good test-town plan into a **product-seed plan**. Five planning decisions guide everything below:
 
-### 0.1 Why this exists
+1. **The demo is the first piece of the game, not a disposable prototype.** The first serious town geometry should be extendable into the shipping town rather than replaced after proving systems.
+2. **H1 should prove the Unity bridge with a small slice of real Quaternius-derived assets, not only primitives.** This deliberately differs from the current `ROADMAP.md`, which places Quaternius content in H2. Because this file is non-binding, it records the desired future H1/H2 boundary; the roadmap must be amended explicitly after GATE before implementation.
+3. **Living World Core comes before combat.** A social consequence that changes another NPC's later behaviour is a more important early proof of Juego2 than a fight. Directed drama and combat build on the living town, not the reverse.
+4. **Asset and prefab discovery must be machine-readable, but the catalogue is not declared canonical `WorldState` by fiat.** H1 must decide the reviewed catalogue authority and projection boundary. The likely shape is bridge-owned catalogue data projected through Arkus scoped capabilities, with canonical world objects referring to stable catalogue/composition IDs.
+5. **Authored project state and live game/save state remain separate authorities.** Multi-session authoring needs durable project checkpoints; gameplay needs its own runtime/save contract. Neither is allowed to smuggle live simulation into the accepted HK06 authored journal/replay semantics.
 
-`Docs/ROADMAP.md:11` states: **"No serious game production begins before `WP-HK-GATE` passes."** That rule is correct and this document does not touch it.
+Nothing above changes H0. The next dependency-valid H0 work remains `WP-HK-07A`.
 
-The risk it leaves open is different. H0 is 11 of 19 workpacks complete and the next dependency-valid unit is `WP-HK-07A`. When GATE eventually passes, the entire production-side inventory is 116 lines of art direction (`Docs/art/VISUAL_BIBLE.md`, `Docs/art/SETTING.md`) plus the non-binding `Docs/engineering/CONTENT_SHAPE_BACKLOG.md`. `Docs/ROADMAP.md:123` says plainly: "Detailed H1 WPs not frozen yet."
+---
 
-Without preparation, the H0 → production transition would be improvised under feature pressure. That is the failure mode that cost the `Arkus0/Juego` reference archive its M1/M2 Shenmue track and its DFU-as-world-foundation bet. Preparing on paper is cheap; improvising after a gate is not.
+# 1. Town plan — a product seed, not a test diagram
 
-This blueprint therefore does one thing: it recovers the useful planning that already exists, re-expresses it in Arkus's canonical vocabulary, and sizes the jump. It is input for a future roadmap author, not an instruction to anyone.
+## 1.1 Design target
 
-### 0.2 Standing relative to accepted contracts
+The setting remains a **fictional Potes / Liébana valley market town**, not a 1:1 reconstruction of real Potes. The useful morphological lesson from Potes is not a specific street map; it is that water, bridges, narrow historic streets, slope, compact neighbourhoods and a commercial centre produce the town's spatial identity.
 
-| Rule | Where | Honoured here by |
-|---|---|---|
-| Harness-first; no production before GATE | `AGENTS.md:5`, `ROADMAP.md:11` | Nothing here starts, unblocks or reorders any `HK-*` work |
-| `Arkus0/Juego` is a reference archive, never an authority | `AGENTS.md:56`, `CLAUDE.md` | Every recovered idea is cited, restated in Arkus terms, and marked as adapted — no architecture or code is imported |
-| Engine types may not enter canonical contracts | `PRODUCT_ARCHITECTURE.md:88` | No `GameObject`, `Prefab`, `Scene` or `MonoBehaviour` appears in any proposed canonical shape |
-| Asset/engine binding is `OUT` of the harness boundary | `CONTENT_SHAPE_BACKLOG.md` row 16 | Presentation binding is described as H1 bridge work, never as kernel work |
-| Dependency/IP adoption is fail-closed | `DEPENDENCY_IP_POLICY.md` | Asset acquisition is described as a human decision requiring an exact-version record |
+Public tourism references describe Potes as a town where the Deva and Quiviesa and smaller watercourses condition the disposition of neighbourhoods along the banks, with numerous bridges, narrow historic streets and houses perched over the Quiviesa. Those are **reference principles**, not content to copy.
 
-### 0.3 Sources
+The town therefore uses four permanent spatial ideas:
 
-Juego2 (authoritative for current state): `Docs/ROADMAP.md` v1.19, `Docs/workpacks/HK/WP-HK-GATE.md`, `Docs/engineering/PRODUCT_ARCHITECTURE.md`, `Docs/engineering/CONTENT_SHAPE_BACKLOG.md`, `Docs/engineering/RESIDUAL_LEDGER.md`, `Docs/engineering/DEPENDENCY_IP_POLICY.md`, `Docs/art/VISUAL_BIBLE.md`, `Docs/art/SETTING.md`, `src/Arkus.Game.World/WorldState.cs`, `tests/Arkus.Harness.Tests/Hk05ContentShapeProbeTests.cs`.
+- a river/stream corridor that actually shapes movement;
+- at least two crossings eventually, with **one old bridge in the first product seed**;
+- an irregular old quarter and stepped residential lanes rather than a radial test layout;
+- a commercial/civic centre that is important because routes naturally meet there, not because every route is forced through one debugging plaza.
 
-`Arkus0/Juego` (reference archive only — paths below are relative to *that* repository, written `Juego/…` throughout this document to avoid confusion): `Juego/Docs/DEV_REFERENCE_TOWN.md`, `Juego/Docs/ASSET_FACTORY.md`, `Juego/Docs/PRIOR_ART_HARVEST.md`, `Juego/Docs/ROADMAP_TO_DFU_AND_QUATERNIUS_DEMOS.md`, `Juego/Docs/LIVING_WORLD_RUNTIME.md`, `Juego/Docs/GAMEFLOW_RUNTIME.md`, `Juego/Docs/GAME_FIRST_POLICY.md`, `Juego/Docs/Architecture/GAMEPLAY_SYSTEMS_ARCHITECTURE.md`, `Juego/Docs/Architecture/GAMEPLAY_DEPENDENCY_GRAPH.md`, `Juego/Docs/Architecture/GAMEPLAY_IMPLEMENTATION_ROADMAP.md`, `Juego/Docs/ROADMAP.md`, `Juego/Docs/workpacks/M12/PLAN.md`, `Juego/Docs/living-city-research/LCRT-00_CONSTITUTION.md`, `Juego/Docs/living-city-research/PA-01_NPC_DAILY_LIFE.md`, `Juego/Docs/living-city-research/PA-03_SOCIAL_GRAPH.md`, `Juego/Docs/combat-research/CCRT-00_CONSTITUTION.md`.
+The first product seed should already contain enough of those ideas that a screenshot reads as our game.
 
-One calibration note about that archive: it is roughly **95% documentation**. Living world, narrative, GameFlow, cinematics, QTE, combat and the asset factory were specified in depth and never implemented. That is exactly why it is worth reading for planning and worth ignoring for architecture.
-
-### 0.4 The two gates
-
-Easy to misread, so stated once: `WP-HK-GATE.md:84` says a GATE PASS lets the roadmap **author** detailed Engine Bridge / Unity workpacks. `WP-HK-GATE.md:86` adds: "A PASS does **not** authorize gameplay implementation directly; Unity must first receive its own downstream parity/bridge gate." `ROADMAP.md:129` and `:158` place H2 content behind that second gate.
+## 1.2 Semantic topology
 
 ```text
-WP-HK-GATE  ->  H1 engine bridge  ->  Unity parity/bridge gate  ->  H2 content onwards
+                         LADERA / BARRIO ALTO
+                       /        |          \
+                viviendas -- callejas -- mirador
+                    |           |             |
+                 escaleras      |        camino exterior
+                    |           |             |
+             CASCO VIEJO ---- BAR/CALLEJON   |
+                 |     \          |           |
+                 |      \         |           |
+             PUENTE VIEJO ---- PLAZA/MERCADO ---- CALLE COMERCIAL ---- ENTRADA / BUS
+                 |                 |      \              |                  |
+                 |                 |       \             |                  |
+          RIBERA / TALLERES ------+---- PASEO FLUVIAL ---+----------- carretera exterior
+                 |                                                        |
+              huertas ---------------------------------------------- camino de valle
 ```
 
-Everything in sections 1–7 below sits to the right of the first arrow.
+This topology has **loops**. The plaza is still important, but it is no longer the only possible route between every pair of places.
 
----
+That matters to the game as much as to the art:
 
-## 1. Town semantic plane
+- Antonio can descend from Barrio Alto, cross the old bridge and reach the workshops without traversing the whole commercial street.
+- Ana can take a short lane from her home to the bar.
+- Pilar can choose the riverside walk rather than the market route.
+- Javier's bicycle prefers the exterior/commercial route and avoids steep steps.
+- Tomás can arrive from the valley/huertas directly toward the market.
+- Bernardo arrives by bus and enters through the commercial edge.
 
-### 1.1 What this section is and is not
+NPC schedules therefore create believable traffic because the **town affords different routes**, not because a script funnels actors past the player.
 
-It is a **semantic** plan: which zones exist, what they contain, how they connect, roughly how big they are, and which system each zone is meant to stress. It is deliberately not geometry. No metre-by-metre layout, no street centrelines, no building footprints are designed here. Those belong to whoever builds the reference zone, after the Unity parity gate.
+## 1.3 Zones
 
-Sizing anchors come from `VISUAL_BIBLE.md` §4–5: **streets 4–6 m, plaza ~25×20 m, 1 m grid**. The traversal constraint is recovered from the reference archive (`Juego/Docs/DEV_REFERENCE_TOWN.md:93`): most test POIs should sit **30–90 seconds apart on foot**. That is a testing constraint, not a shipping one — it keeps a day of schedules observable without waiting in real time.
-
-### 1.2 Identifier convention
-
-The existing harness fixtures already seed a convention (`tests/Arkus.Harness.Tests/Hk05ContentShapeProbeTests.cs:15-31`): world `world.potes`, `place.plaza`, `building.bar`, `building.shop`, `npc.ana`, reference kind `works.at`. Extending it:
-
-| Prefix | Meaning | Example |
-|---|---|---|
-| `world.` | World root | `world.potes` |
-| `zone.` | Named zone / barrio | `zone.plaza` |
-| `place.` | Open space or street segment | `place.calle_mayor_01` |
-| `building.` | Building shell | `building.ayuntamiento` |
-| `interior.` | Authorable interior space | `interior.bar` |
-| `poi.` | Semantic point of interest (function, not geometry) | `poi.bar_terraza` |
-| `npc.` | Persistent actor identity | `npc.antonio` |
-| `prop.` | Placed prop | `prop.banco_04` |
-
-Proposed reference kinds: `contains` (expressed as containment, not a reference), `works.at`, `lives.at`, `frequents`, `entrance.of`, `connects.to`, `serves.at`.
-
-### 1.3 Zones
-
-Five zones — a civic core plus a belt. 25 POIs and 6 authorable interiors.
-
-| Zone | Character | POIs | Approx. extent |
+| Zone | Product character | Core POIs | Purpose |
 |---|---|---|---|
-| `zone.plaza` | Plaza Mayor and civic core; the social hotspot | `poi.plaza_mayor`, `poi.ayuntamiento`, `poi.iglesia`, `poi.bar_terraza`, `poi.fuente`, `poi.mercado`, `poi.bancos_plaza` | Plaza ~25×20 m; 4 building frontages |
-| `zone.calle_mayor` | Commerce spine running off the plaza | `poi.tienda`, `poi.panaderia`, `poi.farmacia`, `poi.bar_puerta`, `poi.portal_residencial` | ~90 m long, 4–6 m wide |
-| `zone.barrio_alto` | Stepped residential lanes above the plaza | `poi.casa_antonio`, `poi.casa_carmen`, `poi.casa_ana`, `poi.lavadero`, `poi.patio_alto` | ~60 m of lanes, 6–8 m rise |
-| `zone.ribera` | Working edge toward the water; reserves the later river | `poi.taller`, `poi.almacen`, `poi.puente`, `poi.huerta` | ~70 m along the bank line |
-| `zone.entrada` | Arrival and outward edge | `poi.parada_autobus`, `poi.carretera`, `poi.mirador`, `poi.camino_cementerio` | ~50 m of road + verge |
+| `zone.cascoverde` / old-quarter equivalent | tight stone lanes, small level changes, irregular frontages | bar alley, old residences, small courtyard | strongest town identity; intimate social encounters |
+| `zone.plaza_mercado` | civic/commercial meeting space near a crossing | market, fountain, benches, civic frontage | visible convergence without becoming the only hub |
+| `zone.calle_comercial` | main everyday spine | shop, bakery, pharmacy, residential portals | interaction, opening hours, everyday pedestrian flow |
+| `zone.barrio_alto` | stepped residential lanes on the slope | homes, wash place/patio, viewpoint | schedules, vertical navigation, off-screen transitions |
+| `zone.ribera` | work edge along the water | workshop, storage, huerta access, river walk | work routines, alternate routes, later expansion |
+| `zone.entrada` | road/bus arrival and outward connection | bus stop, road, path to later cemetery/valley | arrivals, departures, outsider traffic, expansion seam |
 
-Total walkable footprint: roughly **250 × 180 m**. Building frontage 8–12 m, depth 8–10 m, 2–3 floors at 3–3.5 m. Interiors are one-room-scale, ~6 × 8 m with 3 m ceilings.
+Names are placeholders; identifiers are not frozen by this document.
 
-The river itself and the small landing stay **deferred**, exactly as `SETTING.md` places them ("Later"). `zone.ribera` reserves the slot so that adding water later is an extension, not a re-plan. `poi.camino_cementerio` is likewise a path stub, not a built zone — the cemetery is recovered from the archive's slice as a future beat, not as H1/H2 content.
+## 1.4 The first buildable product seed
 
-### 1.4 Connections and routes
+The first serious H2 town build should be **small enough to finish and good enough to keep**:
+
+- one side of `zone.plaza_mercado`;
+- one old stone bridge;
+- approximately 60–100 m of the commercial/old-quarter connection;
+- the bar exterior and one bar interior;
+- one ascending lane toward Barrio Alto;
+- 6–8 authored building frontages;
+- a short visible river/stream strip and riverside edge;
+- distant green slopes / rock silhouettes.
+
+The water can initially be presentation-simple. H2 does **not** need a river simulation, swimming, hydrology or boats. The river is included because it is structural town identity and route geometry.
+
+When this area is good, later phases **extend it at its seams**. They do not rebuild it as a different town.
+
+## 1.5 Approximate scale
+
+Use the current visual-bible anchors as starting values, not final geometry:
+
+- ordinary streets: ~4–6 m;
+- narrow old-quarter lanes may be tighter where navigation/readability still works;
+- plaza/market space: roughly the current ~25×20 m order of magnitude, but irregular edges are preferred to a perfect rectangle;
+- ordinary frontages: ~6–12 m;
+- 2–3 floors, typically ~3–3.5 m per floor;
+- most early daily-life POIs should remain roughly 30–90 seconds apart on foot for observability.
+
+The 30–90 second rule is a development convenience, **not** a requirement that every route be short or pass through the plaza.
+
+## 1.6 Urban grammar for AI authoring
+
+A capable LLM should not receive an empty plane and the instruction "place a nice house." The town needs machine-readable **urban constraints**.
+
+A parcel/building site should be able to expose, where relevant:
+
+- parcel polygon or bounded placement region;
+- required street/frontage edge;
+- approximate frontage and depth range;
+- allowed floor/height range;
+- party-wall / detached-edge rules;
+- required public entrance side;
+- roof-orientation / silhouette constraints where authored;
+- permitted rear relation: patio, lane, river edge, neighbouring wall;
+- semantic sockets: door, sign, shopfront, interior link, balcony, service entrance;
+- collision/navigation clearance;
+- important view corridor or no-build region;
+- style/kit allowlist and vetoes.
+
+A street or path should expose, where relevant:
+
+- width and slope class;
+- pedestrian/bicycle/vehicle affordances;
+- surface family;
+- frontage alignment rules;
+- junction/connectivity identity;
+- furniture/vegetation bands;
+- stairs/ramp constraints;
+- sightline or landmark intent.
+
+A zone should expose:
+
+- intended urban character;
+- density range;
+- allowed building archetypes;
+- landmark/POI obligations;
+- route connections that must remain open;
+- dressing budget and visual vetoes.
+
+The desired agent workflow becomes:
 
 ```text
-                zone.barrio_alto
-                       |
-                   (steps)
-                       |
-zone.entrada --- zone.plaza --- zone.calle_mayor
-                       |
-                   (bajada)
-                       |
-                  zone.ribera
+inspect zone + parcel constraints
+    -> discover available modules/compositions
+    -> propose coherent composition
+    -> plan/dry-run
+    -> validate geometry/semantic dependencies
+    -> apply atomically
+    -> inspect realized engine result
+    -> adjust if necessary
 ```
 
-The plaza is the single hub: every other zone touches it and nothing else. That is deliberate. It keeps schedule convergence observable (everyone crosses one readable space), keeps traversal inside the 30–90 s window, and means one small zone carries the demo weight.
+This is the mechanism by which the harness can make a weaker model useful at environment construction: the model still chooses; Arkus and the bridge make the legal/design space explicit and reject incoherent states.
 
-Indicative on-foot times from the plaza: tienda ~25 s, casa Antonio ~45 s, taller ~60 s, parada de autobús ~75 s, extremes ~90 s.
+## 1.7 Product-first rule
 
-### 1.5 Interiors
-
-Six authorable interiors, which is what the systems need rather than what dressing would want: `interior.bar`, `interior.tienda`, `interior.ayuntamiento_oficina`, `interior.casa_antonio`, `interior.taller`, and optionally `interior.iglesia`.
-
-`VISUAL_BIBLE.md` §8 asks for exactly **one** bar/shop interior in the H2 hero. The three beyond that (`casa_antonio`, `ayuntamiento_oficina`, `taller`) exist because home, work and institution are three different schedule and knowledge contexts, and testing all three in one room hides bugs. They are cheap: an interior at this scale is a room shell plus a dozen props.
-
-### 1.6 What each zone is for
-
-| Zone | Systems it is designed to stress |
-|---|---|
-| `zone.plaza` | Containment depth; dense typed references; social hotspot behaviour; schedule convergence; ambient population; the "is this readable at 15 m" art test |
-| `zone.calle_mayor` | Traversal and navigation; POI opening hours (interval data crossing boundaries); contextual interaction; smart-object slots and reservation contention |
-| `zone.barrio_alto` | Home assignment; night and sleep schedule blocks; vertical navigation over steps; abstract off-screen simulation when the player is elsewhere |
-| `zone.ribera` | Work POIs with capacity; reservation conflicts; extension versioning rehearsal for the later river; kit stress outside the hero street |
-| `zone.entrada` | Arrival and departure flow; zone and interior transitions; save/load anchoring; seeding knowledge from outside the town |
-
-### 1.7 Sizing against measured cost
-
-`Docs/engineering/RESIDUAL_LEDGER.md:99-110` records an exploratory probe over a synthetic **town-shaped** world (containment tree of branching factor 8, one typed reference per 10 objects, one object-scoped extension per 5):
-
-| Objects | Validate + serialize + hash | Canonical bytes |
-|---|---|---|
-| 1 000 | 17 ms | 92 KiB |
-| 10 000 | 69 ms | 958 KiB |
-| 25 000 | 192 ms | 2.4 MiB |
-| 200 000 | 2 475 ms | 19.4 MiB |
-
-Rough estimate for the plane above: ~30 place/street objects, ~28 building shells, 6 interiors at ~12 objects each, 24 POIs, 400–900 props and street furniture, 200–600 vegetation objects, 13 NPCs, plus one presentation-binding extension per placed object. That lands between **~1 200 objects (undressed)** and **~2 500 objects (dressed)** — a **17–40 ms** whole-world commit.
-
-Two conclusions. First, this town does not make world partition (`CONTENT_SHAPE_BACKLOG.md` row 14) a live decision; `RESIDUAL_LEDGER.md:116` sets that threshold at "high tens of thousands". Second, the ledger is explicit that this measurement "is **not** evidence" — it is not SHA-bound and ran on shared CPU. It is used here to bound ambition, not to claim performance.
+No H1/H2 demo requirement should deliberately force a layout decision that we already expect to delete for the shipping town. Temporary presentation is fine; temporary **urban structure** should be avoided once H2 begins.
 
 ---
 
-## 2. Asset strategy
+# 2. Asset strategy
 
-### 2.1 Categories, coverage and gaps
+## 2.1 H1 uses real assets on purpose
 
-| # | Category | Quaternius Source coverage | Gap to adapt or author |
-|---|---|---|---|
-| 1 | Ground and paving | Medieval Village (partial), Downtown (kerbs) | Worn Cantabrian stone paving; wet variants; damp kerbs |
-| 2 | Masonry walls | Medieval Village — strong | Damp course; mid-stone recolor; strip medieval signage language |
-| 3 | Roofs | Medieval Village — shape only | Wet dark tile at `#4A3730`; thatch is vetoed outright |
-| 4 | Openings (doors, windows, shutters) | Medieval Village + Downtown | Shutter green-blue `#3E5A57`; Spanish proportions |
-| 5 | **Balconies / galerías** | none | **Author.** The single strongest Potes silhouette signature |
-| 6 | Street furniture | Downtown (modern), Medieval (rustic) | Recolor pass; Spanish signage and shopfront lettering |
-| 7 | Market props | Survival (crates), Medieval (stalls) | Produce variants; market-day dressing |
-| 8 | Interior kit | Medieval Village (300+ modules incl. interiors) | Contemporary rural bar and shop fittings |
-| 9 | Vegetation | Stylized Nature (116 assets) | Hydrangeas (`#6F79B8`); Picos-adjacent rock masses; no palms |
-| 10 | Characters | Universal Base Characters (6 bodies, 20 hairstyles) | Facial variety within the "no realistic regional physiognomy" rule |
-| 11 | **Wardrobe** | none | **Author.** Already flagged as the known gap in the archive's asset plan |
-| 12 | Animation | Universal Animation Library 1 + 2 (250+ clips) | Bicycle; paired interactions; acting and contextual gesture |
-| 13 | Vehicles | Downtown (partial) | **Author** bus and bicycle; both are slice-critical |
-| 14 | River craft | Ships pack | Deferred with the river itself |
-| 15 | Cemetery elements | none | **Author** niches/wall tombs; must not read as fantasy graves |
+The Unity bridge should not earn its meaningful parity claim only against cubes and synthetic fixtures. Real assets exercise failure classes that primitives hide:
 
-Rows 5, 11, 13 and 15 are where identity actually lives. Everything else is raw material. The archive's production rule is worth keeping verbatim in spirit: **buy or reuse the generic; author the memorable.**
+- pivots and local origins;
+- nested hierarchies;
+- imported materials and atlases;
+- scale conventions;
+- colliders;
+- prefab/module references;
+- humanoid rigs and retargeting;
+- animation clips;
+- engine-side asset identity and missing references.
 
-### 2.2 Acquisition
+Therefore the desired future H1 boundary includes a **representative real-asset slice**. This is a planning decision; because the current roadmap still puts Quaternius adoption in H2, the roadmap author must make that boundary change explicitly after GATE.
 
-Per the decision recorded for this blueprint, the paid **Source** tier is assumed, at the prices observed in the archive on 2026-09-16 (re-verify at checkout):
+## 2.2 Representative H1 slice
 
-| Pack | Observed | Role |
-|---|---|---|
-| Universal Base Characters | USD 19.99 | 6 base bodies, 20 hairstyles, humanoid rig |
-| Universal Animation Library | USD 14.99 | 120+ clips, root-motion and in-place |
-| Universal Animation Library 2 | USD 14.99 | 130+ clips |
-| Medieval Village MegaKit | USD 14.99 | 300+ building and interior modules |
-| Stylized Nature MegaKit | USD 14.99 | 116 vegetation and rock assets |
-| *(optional)* Downtown City MegaKit | USD 14.99 | Modern street furniture and shopfronts only |
+Small, real, deliberately boring in scope:
 
-Core five ≈ **USD 79.95**; with Downtown ≈ **USD 94.94**; cap **100 EUR at checkout**, Downtown deferred if the cap is exceeded.
+| Piece | Approx. count | What it proves |
+|---|---:|---|
+| masonry wall modules | 3 | modular placement, scale, shared material |
+| roof section | 1 | material/style treatment, pivot |
+| door | 1 | opening/socket and transition anchor |
+| window/shutter module | 1 | façade assembly and accent material |
+| bench/table/chair class | 1–2 | prop placement and later affordance anchor |
+| street lamp | 1 | vertical prop / lighting assumptions |
+| tree | 1 | vegetation import |
+| rock mass | 1 | large scenic mesh / silhouette |
+| base humanoid | 1 | rig, scale, presentation binding |
+| idle/walk/sit clips | 3 | civilian retarget minimum |
 
-Three constraints that do not relax:
+Target: roughly **10–15 source pieces**, enough for one real street corner and one character.
 
-1. `DEPENDENCY_IP_POLICY.md` requires exact-version license reverification before adoption, plus a full dependency record. "A README statement seen during research is not sufficient adoption evidence."
-2. `VISUAL_BIBLE.md` §9–12 currently reads **`UNVERIFIED-FOR-ADOPTION` until human pack record**. Acquisition is a human action.
-3. `WP-ART-00.md` forbids binary assets in the repository, and `Docs/art/Refs/README.md` forbids pack ZIPs. Source archives stay outside the repo; only manifests, hashes, licenses, recipes and validated transformed outputs are versioned.
+H1 is **not** the point to build wardrobe, vehicles, a full bar interior, market dressing, dozens of houses or a whole asset pipeline.
 
-Worth stating precisely, because it narrows the disagreement: the archive's prior-art catalogue classifies the Quaternius packs as **CC0**. The paid itch.io tier does not buy different licence terms — it buys the **Source** distribution (`.blend` files, shaders, colliders, Unity/URP projects). For a project whose whole asset plan is transformation rather than direct use, source files are the difference between a recipe and a guess.
+## 2.3 Production kit categories
 
-Two further CC0 seed libraries recorded in the archive are worth keeping in view, and neither costs anything: **Kenney** retro urban and road kits, and the **ALEX Modular PSX Building Asset Pack** (188 modular assets, explicitly PS1/PS2-era). The second is arguably closer to the visual bible's "late-PS2 / early-PS3 shape language reinterpreted" than the Medieval kit is, and deserves a place in the first triage pass rather than being assumed away.
+The long-lived kit should cover at least:
 
-**This contradicts the repository as written.** `VISUAL_BIBLE.md` §6–7 says "Quaternius free tier". That divergence is recorded in §10 below, not silently resolved here.
+- ground/paving and kerbs;
+- masonry walls and corners;
+- dark-tile roofs;
+- doors/windows/shutters;
+- balconies / galerías;
+- stairs and retaining edges;
+- street furniture and signage sockets;
+- market props;
+- bar/shop/home interior basics;
+- vegetation and Picos-adjacent rock masses;
+- base humanoids, civilian wardrobe and hairstyles;
+- civilian animation;
+- bicycle/bus presentation later.
 
-### 2.3 Representative asset slice for H1
+The likely identity gaps remain the same as the first draft: balconies/galerías, convincing contemporary rural wardrobe, selected vehicles and some locally distinctive props are more likely to need custom/adapted work than generic walls, rocks or crates.
 
-The point of the H1 slice is to prove the Unity bridge against **real** assets rather than primitives — real atlases, real pivots, real rigs, real colliders. It should be as small as possible while still being real.
+## 2.4 Quaternius and licensing
 
-| Piece | Count | What it proves |
-|---|---|---|
-| Wall modules | 3 | Modularity, grid snapping, atlas sharing |
-| Roof section | 1 | Material policy, the wet-tile treatment |
-| Door | 1 | Semantic socket, interior transition anchor |
-| Window + shutter | 1 | Accent colour discipline (≤5% surface) |
-| Bench | 1 | Prop placement, smart-object slot anchor |
-| Street lamp | 1 | Vertical prop, lighting assumption |
-| Tree | 1 | Vegetation import, billboard/LOD policy |
-| Rock mass | 1 | Silhouette read at distance |
-| Base character | 1 | Humanoid rig, scale, retarget |
-| Animation clips | 3 | idle / walk / sit — the civilian allowlist floor |
+The working preference is to use Quaternius Source distributions when the source files materially improve adaptation, subject to the project's dependency/IP policy.
 
-Roughly **14 source assets → ~10 transformed outputs**: enough for one street corner plus one NPC. Sufficient to exercise import, scale and pivot conventions, atlas and material policy, collider generation, navigation surface, humanoid retarget, and harness → engine reference resolution end to end.
+Before any pack becomes an adopted project dependency:
 
-Deliberately **not** in the H1 slice: wardrobe, vehicles, galerías, market dressing, interiors beyond a doorway. Those are H2 concerns and would turn a bridge proof into a content push.
+- a human verifies the exact current license/version/source record;
+- the pack receives the required dependency record;
+- source archives remain outside the repository as required by the art/dependency policy;
+- only permitted manifests, hashes, recipes and project outputs are versioned.
 
----
+The current visual bible says "Quaternius free tier" while this blueprint prefers paid Source access where useful. That is an **explicit open reconciliation item**, not something this document silently changes.
 
-## 3. Prefab and composition strategy
+## 2.5 Art-production rule
 
-### 3.1 From modules to buildings
+**Reuse the generic; author/adapt the memorable.**
 
-Six levels, each a consumer of the one below:
-
-| Level | Unit | Example |
-|---|---|---|
-| L0 | Module — a single mesh piece, no semantics | wall bay, roof section, door leaf |
-| L1 | Assembly — a small fixed grouping | ground-floor bay with door, window bay with shutters |
-| L2 | Building shell — facade grammar applied | ground floor + 1–2 upper floors + roof |
-| L3 | Building prefab — shell plus semantic sockets | door socket, window sockets, sign socket, interior link |
-| L4 | POI prefab — building plus function | smart-object slots, capacity, opening rules |
-| L5 | Segment — a street or block run | straight run, corner, stepped run, plaza edge |
-| L6 | Zone — segments plus dressing | `zone.calle_mayor` |
-
-### 3.2 Prefabs worth making reusable
-
-`casa_base` in three variants; `casa_con_galeria`; `bar_esquina`; `tienda_planta_baja`; `ayuntamiento`; `iglesia`; `taller`; `puente`; market stall; bar terrace set; street segment (straight, corner, steps); plaza paving set.
-
-Twelve or so families. With three variants each and rotation, that covers ~28 building shells without visible repetition at the readability distance the visual bible sets (15 m).
-
-### 3.3 How Arkus should see them — the part that must not be copied
-
-The reference archive routed prefab knowledge through a Unity-aware domain. Arkus cannot do that: `PRODUCT_ARCHITECTURE.md:88` forbids `GameObject`, `Scene`, `Prefab` and `MonoBehaviour` in canonical contracts, and `CONTENT_SHAPE_BACKLOG.md` row 16 marks asset and engine binding `OUT` of the harness boundary.
-
-The proposal that respects both:
-
-- **Arkus authors semantics only.** A building is a `WorldObject { Id, TypeId, ContainerId, References[] }` (`src/Arkus.Game.World/WorldState.cs:58`). Its composition, dressing and prefab identity live in an object-scoped `WorldExtensionData` payload that the kernel treats as opaque bytes.
-- **The bridge owns resolution.** A scoped capability contributed by the Unity bridge resolves a presentation binding to a concrete prefab. Per `PRODUCT_ARCHITECTURE.md:56-66`, it registers through the Arkus-owned composer and appears in the single composed canonical inventory — never as a parallel registry.
-- **Dependencies are derived, not hand-kept.** `ROADMAP.md:125` already commits to this: when a schema-aware producer understands references embedded in its payload, it must derive the typed dependency surface mechanically. An agent authoring `casa_base` should not also have to remember to list every asset it references.
-
-Discovery and modification for Arkus then work the ordinary way, with no new mechanism: `system.describe` for the capability surface; `world.object.query` to find every `town.building` in a zone; `world.extension.read` to read a composition document; `authoring.change.plan` → `validate` → `apply` to change one; `authoring.diff.compare` to see what a dressing pass did.
-
-### 3.4 Catalogue discovery
-
-An agent asked to "add a shop to Calle Mayor" needs to find `tienda_planta_baja` without reading C#. The proposal is that the prefab catalogue is itself authored canonical content — catalogue entries as `WorldObject`s with typed references to their modules — so it is queryable through the same read surface as the town. No second catalogue format, no engine-side manifest that the harness cannot see.
+A generic wall, tree or chair does not need to prove originality. The things that make the fictional Liébana town recognisable — silhouette, galleries/balconies, wet dark roofs, river edges, street proportions, wardrobe, signage and selected hero props — deserve the project's art effort.
 
 ---
 
-## 4. NPC foundation
+# 3. Composition, prefabs and catalogue discovery
 
-### 4.1 Roster
+## 3.1 Reusable composition ladder
 
-Thirteen persistent actors. The names Antonio, Manolo, Carmen and Paco are recovered from the reference archive, where they are already the shared vocabulary of the social-graph research; `npc.ana` already exists in the Juego2 harness fixtures. Archetypes in brackets are the eight from `VISUAL_BIBLE.md` §4–5.
+| Level | Meaning | Example |
+|---|---|---|
+| L0 | module | wall bay, roof piece, door |
+| L1 | assembly | door bay, shuttered window bay |
+| L2 | shell | façade grammar + floors + roof |
+| L3 | reusable building composition | house/bar/shop shell with semantic sockets |
+| L4 | functional POI composition | bar/shop/workplace with capacities/affordances |
+| L5 | street segment | straight/corner/steps/bridge edge |
+| L6 | authored zone | segments + buildings + dressing + constraints |
 
-| Id | Role [archetype] | Home | Work | Frequents |
-|---|---|---|---|---|
-| `npc.ana` | Bar server [bar server] | `poi.casa_ana` | `poi.bar_terraza` | `poi.plaza_mayor` |
-| `npc.antonio` | Valley worker; the deep reference actor [valley worker] | `poi.casa_antonio` | `poi.taller` | `poi.bar_terraza` |
-| `npc.manolo` | Bar owner; opinionated [neighbour] | above the bar | `poi.bar_terraza` | `poi.plaza_mayor` |
-| `npc.carmen` | Shopkeeper; Manolo's sister [shopkeeper] | `poi.casa_carmen` | `poi.tienda` | `poi.mercado` |
-| `npc.paco` | Builder [builder] | `zone.ribera` | rotating sites | `poi.bar_terraza` |
-| `npc.rosa` | Neighbour, dog walker [dog walker] | `zone.barrio_alto` | — | `poi.plaza_mayor`, `poi.mirador` |
-| `npc.teresa` | Panadera [valley worker] | above the bakery | `poi.panaderia` | `poi.mercado` |
-| `npc.javier` | Teen with a bike [teen+bike] | `zone.barrio_alto` | — | `poi.plaza_mayor`, `poi.carretera` |
-| `npc.lucia` | Municipal clerk [shopkeeper] | `zone.calle_mayor` | `poi.ayuntamiento` | `poi.fuente` |
-| `npc.bernardo` | Outsider; arrives by bus [outsider] | — (no home in town) | — | `poi.parada_autobus`, `poi.bar_terraza` |
-| `npc.pilar` | Elderly neighbour, plaza bench [neighbour] | `zone.barrio_alto` | — | `poi.bancos_plaza`, `poi.iglesia` |
-| `npc.guardia` | Municipal officer [builder silhouette, distinct outfit] | outside town | `poi.ayuntamiento` | patrol route |
-| `npc.tomas` | Farmhand from the outskirts; market days only [valley worker] | outside town | `poi.huerta` | `poi.mercado` |
+Early reusable families should include a few houses, a gallery house, bar, ground-floor shop, workshop, bridge edge, market stall/terrace grouping and street segments. The exact list follows real asset triage rather than being frozen on paper.
 
-Plus three ambient archetypes that are deliberately **not** actor identities and carry no persistent knowledge or relationships: `ambient.shopper`, `ambient.walker`, `ambient.worker`. Promotion from ambient to persistent must be explicit, never implicit — that rule is worth keeping from the archive.
+## 3.2 What the LLM must be able to discover
 
-### 4.2 Identity independent of presentation
+An agent asked to "add a bakery on this parcel" needs to discover without reading C#:
 
-The separation the archive got right, restated in Arkus terms:
+- available modules and reusable compositions;
+- stable composition/asset IDs;
+- tags/archetypes;
+- physical dimensions and sockets relevant to placement;
+- compatibility/material/style metadata needed to choose correctly;
+- licensing/adoption status where it affects legal use;
+- dependency relationships;
+- whether an item is an engine asset, transformed project asset or project-authored composition.
+
+This discovery surface is a **product requirement**.
+
+## 3.3 What is deliberately not decided yet
+
+The first draft proposed putting the prefab catalogue itself into canonical `WorldState` as `WorldObject`s. This revision withdraws that proposed implementation.
+
+There is a real requirement — one discoverable source of catalogue truth visible through Arkus — but there are several possible correct ownership models. H1 must review them against accepted architecture.
+
+The current preferred direction is:
 
 ```text
-npc.antonio                        <- WorldObject, TypeId town.npc
-  references                       <- lives.at, works.at, frequents
-  extension arkus.npc-profile@1    <- opaque authored profile/schedule document
-  extension <bridge>.presentation  <- H1-owned binding to a prefab
+Unity/project asset catalogue
+        owned by bridge/project integration
+                    ↓
+transport-neutral Arkus scoped capability
+                    ↓
+agent discovers stable catalogue/composition IDs
+                    ↓
+canonical authored world refers to selected IDs + authored overrides
 ```
 
-Swapping the presentation extension changes the model on screen. It changes no identifier, no reference, no profile, no schedule, no knowledge and no relationship. `npc.antonio` can be a grey capsule in H1, a transformed base character in H2 and final art later, and nothing downstream notices.
+The important guarantees are:
 
-This costs nothing new: `CONTENT_SHAPE_BACKLOG.md` rows 1, 3 and 4 are already `COVERED`, and row 16 keeps the binding itself outside the kernel.
+- no hidden adapter-only registry;
+- no hand-maintained second semantic command universe;
+- changing the installed asset library must not arbitrarily rewrite the canonical town hash when no authored town choice changed;
+- a canonical world reference to an unavailable asset/composition must fail visibly and diagnostically;
+- composition references understood by a schema-aware producer derive their typed dependency surface mechanically where the accepted contract requires it.
 
-### 4.3 What each character is there to prove
+Whether catalogue entries themselves ever become canonical authored objects is therefore a **reviewed H1 decision**, not a premise of this blueprint.
 
-| System | Characters | Why these |
-|---|---|---|
-| Schedules | Ana (baseline day), **Teresa** (pre-dawn block crossing midnight — backlog row 10), **Tomás** (weekly market cadence) | Three different interval shapes, not three copies of one |
-| POI contention | Paco, Antonio, Tomás | Rotating and shared work slots force reservation conflicts |
-| Dialogue | Carmen, Lucía | Shop counter and institutional desk are different gating contexts |
-| Knowledge | **Manolo** (source) → **Pilar** (witness and relay) → **Antonio** (consumer) | A three-hop provenance chain is the minimum that makes provenance visible |
-| Relationships | Antonio / Manolo / Carmen / Paco | Recovered from the archive's social-graph research: Carmen is Manolo's sister but does not share his opinions; Paco owes Carmen a favour that expires once spent. Both cases break naive affinity-only models |
-| Living World | Ana, Antonio, Manolo, Rosa around the plaza/bar hotspot | Enough density for emergent overlap in one readable space |
-| Abstract simulation | Tomás | Lives outside the full-simulation area by design |
-| GameFlow authority | Bernardo (arrival), `npc.guardia` (event override) | Entering and interrupting are the two authority transitions worth proving early |
-| Bicycle locomotion | Javier | The one non-pedestrian movement in the slice |
+## 3.4 Promote good compositions instead of rebuilding them
 
-### 4.4 Deliberately absent
+When an agent constructs a coherent house/bar/shop from lower-level modules and that composition passes human/automated review, the project should be able to promote it to a reusable composition with:
 
-No backstories, no dialogue lines, no quest structure, no faction alignments, no relationship values. One line of role per character is enough to develop the town and exercise the systems. Writing narrative before the dialogue runtime is decided is listed as a rabbit hole in §9 — `CONTENT_SHAPE_BACKLOG.md` row 17 marks dialogue and narrative runtime content `OUT`, pending a later reviewed architecture decision.
+- stable ID;
+- source/module lineage;
+- parameter/variant surface;
+- validated sockets and bounds;
+- style/category tags;
+- compatibility/version metadata.
 
----
-
-## 5. System dependency map
-
-### 5.1 The one adaptation that matters
-
-The reference archive's dependency graph is good and mostly recoverable. But its `WorldState` was a **runtime** kernel holding a clock, flags, facts, beliefs and relationships, all ticking.
-
-In Arkus, `WorldState` is **authored** canonical state, and `WP-HK-06A` drew a hard authored/live boundary that is now an accepted guarantee. Residual `R-06B-04` records it: gameplay and runtime state — transforms, clocks, schedules, physics, animation, AI, simulation — stays outside canonical `WorldState` and replay unless a later reviewed workpack promotes it.
-
-Copying the archive's graph as-is would re-merge the two and break that guarantee. So every layer below carries the split explicitly:
-
-| | Arkus authors | The runtime owns |
-|---|---|---|
-| Time | schedule definitions, opening hours | the ticking clock, current time |
-| Actors | identity, home/work references, profile | position, current activity, animation state |
-| Knowledge | fact definitions, authored starting beliefs | live beliefs, who currently knows what |
-| Relationships | initial edges, relationship kinds | current values after play |
-| World | the town, its objects, its structure | which door is open right now |
-
-`R-06B-04` has **no owner named** in the ledger. That is the highest-value unowned question standing between here and production, and this document flags it rather than answering it.
-
-### 5.2 Layers
-
-Ordered so nothing depends forward. Backlog rows are tagged where a layer first needs an `OPEN` shape.
-
-| L | Layer | Contents | Depends on | Backlog rows |
-|---|---|---|---|---|
-| L0 | Canonical kernel | contract, world state, inspection, transactions, validation, provenance, diff, replay | — | 1–5, 11, 12 `COVERED` |
-| L1 | Host and protocol | headless host, reference transport, MCP projection, batching, recovery, containment, limits, endurance | L0 | — |
-| L2 | Engine bridge | scoped capability composition; presentation binding; deterministic projection of canonical state into engine artifacts; parity evidence | GATE | 16 (`OUT`) |
-| L3 | World composition | modular kit ingestion; prefab and catalogue contracts; spatial/transform authoring; navigation as a **derived artifact**, not authored state | L2 | 9 |
-| L4 | Playable shell | player movement, camera, contextual interaction, zone and interior transitions | L3 | 18 (`OUT`) |
-| L5 | Actors and presentation | actor identity, presentation binding, animation port, ambient population tier | L3, L4 | 3, 4 |
-| L6 | Time and routine | clock; schedule intervals; POIs and smart objects; reservations; activity intents; behaviour resolver v0 | L5 | **10** |
-| L7 | Narrative and flow | world flags and stages; condition evaluation; dialogue adapter; GameFlow authority; structured outcomes | L6 | **7**, 17 (`OUT`) |
-| L8 | Drama | cinematics; QTE; combat | L7 | — |
-| L9 | Social simulation | knowledge and beliefs; relationships; events and memory; autonomous agency; abstract off-screen simulation | L6, L7 | **8**, **13**, 6 |
-| L10 | Integration | runtime save/load; the vertical slice | all | 14, 15 |
-
-### 5.3 Edges worth stating because they are counter-intuitive
-
-- **Navigation depends on world composition, not on actors.** A navigable surface is a property of built geometry. Building it after actors exist is the usual ordering mistake.
-- **Schedules depend on POIs and time, not on dialogue.** An NPC can live a full day before it can say a word. The archive's spike track proved this ordering works.
-- **Abstract off-screen simulation depends on activity intents and explicitly not on navigation or animation.** If it needs a path or a clip, it is not abstract. An abstract action must still produce the same kind of domain outcome as its full-simulation equivalent.
-- **Combat depends on GameFlow authority, animation and actors** — never directly on narrative. Narrative consumes the outcome.
-- **QTE depends on GameFlow and cinematics**, not on combat. It is an input-authority mechanism that combat happens to use.
-- **Autonomous agency depends on knowledge, relationships, schedules and events together.** It is the last thing, not an early one. Building a general decision engine before one NPC lives one day is listed as a rabbit hole in §9.
-- **Runtime save/load is a separate contract from authored persistence.** HK-06A/B/C solved journal, snapshot and replay for **authored** state. Live simulation state is a different problem with a different lifetime, and reusing the canonical mechanism for it would violate the boundary in §5.1.
-
-### 5.4 A trap inside the archive itself
-
-The reference archive contains **two gameplay architectures, written a day apart, that do not compose**:
-
-- **A — the deterministic kernel** (`Juego/Docs/Architecture/GAMEPLAY_SYSTEMS_ARCHITECTURE.md`, `Juego/Docs/Architecture/GAMEPLAY_DEPENDENCY_GRAPH.md`, `Juego/Docs/Architecture/GAMEPLAY_IMPLEMENTATION_ROADMAP.md`). Clock, state stores, one condition language, a fixed simulation phase order, seeded randomness, decision logging, a dialogue adapter, near/mid/far simulation levels. Concrete: it carries schemas, phase orderings and binary test criteria.
-- **B — the living-world charter** (`Juego/Docs/LIVING_WORLD_RUNTIME.md`, `Juego/Docs/GAMEFLOW_RUNTIME.md`, and the living-city and combat research tracks). Bounded autonomous agency, receiver-owned social decisions, belief provenance separate from engine lineage, agency budgets, presentation binding, GameFlow authority. Conceptually stronger and better argued; mostly not reduced to schemas.
-
-They agree on fundamentals — truth versus belief, directed relationships, schedules as intent rather than paths, headless determinism, explainability, adapters at the edges. They disagree on where state lives and who decides.
-
-Reading the archive without noticing this is how a reader ends up building half of each. The proposal here: **take A's ordering and schema discipline as the implementation substrate, take B's design laws as the charter, and take B's research deltas as the backlog** — and in both cases re-home the state according to the authored/live split in §5.1, since A's kernel assumed a runtime `WorldState` that Arkus does not have.
-
-Two charters from B are worth recovering close to verbatim because they are cheap and they prevent expensive mistakes: the living-city laws (the city does not wait for the player; NPCs may be primary causes; actor-to-actor is first-class; no omniscient agents; schedule is baseline not destiny; agency must be explainable; bounded autonomy beats unlimited emergence) and the combat laws (combat returns state to the living world; feel requires instrumented play, not document confidence; budget choreography rather than brute-forcing animation count).
+That is how early expensive agent work turns into later cheap model work. A weaker model should often be instantiating and adapting reviewed compositions rather than designing every façade from first principles.
 
 ---
 
-## 6. Recovered research: living world and combat
+# 4. NPC foundation
 
-Two research tracks ran in the reference archive before the restart, each under its own constitution and review protocol. They are in very different states, and the difference matters more than the similarity.
+## 4.1 Persistent identity is independent of the model
 
-### 6.1 What the archive actually holds
+The useful idea from `Arkus0/Juego` survives unchanged at the design level:
 
-**Living city** — `Juego/Docs/living-city-research/`
+```text
+npc.antonio
+  authored identity/profile
+  home/work/frequents references
+  authored schedule definition
+  authored initial social/knowledge setup
+  presentation binding -> replaceable character asset
+```
 
-| Unit | Lines | Status in the archive | Output |
+Antonio can be a placeholder humanoid, a transformed Quaternius base character and later bespoke art without changing his ID, authored relationships, home, work or narrative role.
+
+Live position, current activity, current emotion/relationship values and current beliefs during a running save do **not** automatically become canonical authored `WorldState`; see §6.
+
+## 4.2 Initial persistent cast
+
+Thirteen identities are enough to plan the town without pretending to write the whole population now:
+
+| ID | Working role | Home/work anchor | Primary system value |
 |---|---|---|---|
-| `LCRT-00_CONSTITUTION.md` | 177 | accepted | 15 laws, `LC-01`…`LC-15` |
-| `PA-01` NPC daily life | 773 | `DELTAS_READY` | 11 findings, 8 deltas, a 24-hour reference routine |
-| `PA-02` NPC agency | 1 068 | `DELTAS_READY — INDEPENDENT PASS; MERGED` | 8 deltas, social-action vocabulary, agency profiles, budget dimensions, a 16-entry failure register |
-| `PA-03` Social graph | 1 020 | `DELTAS_READY — INDEPENDENT PASS; MERGED` | 11 findings, 10 deltas |
-| `PA-04` Knowledge and belief | 849 | `DELTAS_READY — INDEPENDENT PASS; MERGED` | 10 findings, 10 deltas, 6 acceptance scenarios |
-| `PA-05` Rumours | 1 096 | `DELTAS_READY — CANDIDATE; REVIEW REQUIRED` | 10 findings, 10 deltas, 8 acceptance scenarios |
-| `PA-06`…`PA-12` | ~170 each | `NOT_STARTED` | preregistered plans only |
+| `npc.ana` | bar server | home nearby / bar | baseline schedule + service interaction |
+| `npc.antonio` | valley worker | Barrio Alto / workshop | deep reference actor |
+| `npc.manolo` | bar owner | above/near bar / bar | source of social information |
+| `npc.carmen` | shopkeeper | residential / shop | relationship + later behaviour change |
+| `npc.paco` | builder | town / rotating work | changing work target / obligations |
+| `npc.rosa` | neighbour + dog walker | Barrio Alto | alternate walking routes |
+| `npc.teresa` | baker | above bakery / bakery | schedule crossing midnight/pre-dawn |
+| `npc.javier` | teen + bicycle | Barrio Alto | non-pedestrian route affordance |
+| `npc.lucia` | municipal clerk | town / civic office | institutional interaction |
+| `npc.bernardo` | outsider | outside / none | bus arrival / outsider knowledge |
+| `npc.pilar` | older neighbour | Barrio Alto | witness/relay/bench routine |
+| `npc.guardia` | municipal officer | outside/town / civic patrol | event override / authority interruption |
+| `npc.tomas` | farmhand/market visitor | outside / huerta/market | abstract/off-screen simulation |
 
-Roughly **4 800 lines of findings and 46 deltas**, three of the five worked tracks carrying an independent PASS.
+Plus a small ambient tier (`ambient.shopper`, `ambient.walker`, `ambient.worker`) that does not acquire persistent social identity unless explicitly promoted.
 
-**Combat** — `Juego/Docs/combat-research/`
+These are **development roles**, not final character writing. No detailed backstories, dialogue scripts or relationship numbers are frozen here.
 
-| Unit | Lines | Status | Output |
-|---|---|---|---|
-| `CCRT-00_CONSTITUTION.md` | 240 | accepted | 20 laws, `CC-01`…`CC-20`, plus a crowd proof and a duel proof |
-| `C-PA-01`…`C-PA-12` | ~170 each | **all `NOT_STARTED` — plan preregistered** | no findings, no deltas |
+## 4.3 The cast should use the town, not decorate it
 
-The asymmetry is worth stating plainly rather than averaging away: the NPC work was largely done and reviewed; the combat work is a charter plus twelve research plans that were never run.
+The new topology lets NPCs prove different spatial behaviours:
 
-### 6.2 Three layers, three different answers
+- Antonio uses slope + old bridge + work edge;
+- Ana has a short home-to-bar commute and service schedule;
+- Pilar can choose plaza or riverside walk;
+- Javier has a bicycle-compatible path distinct from stair routes;
+- Tomás can remain outside full simulation and enter through huerta/market edge;
+- Bernardo enters from the bus edge rather than spawning inside the social hotspot.
 
-**Layer 1 — the charters transfer whole**, and are restated in full in **Annex A** so they survive independently of the archive. `LC-01`…`LC-15` and `CC-01`…`CC-20` are game-design decisions, not architecture: the city does not wait for the player; NPCs may be primary causes; actor-to-actor is first-class; no omniscient agents; schedule is baseline, not destiny; agency must be explainable; bounded autonomy beats unlimited emergence. On the combat side: clean hits matter; mobs are flow and masters are openings; responsiveness outranks synchronization; the environment is part of the moveset; combat returns state to the living world; feel requires instrumented play, not document confidence. `AGENTS.md:57` permits reusing process and design lessons that are engine and game independent, and these are exactly that. Cost to carry: close to zero.
+This prevents the common failure where every NPC is technically scheduled but all routines look like variations of "walk to the same square."
 
-**Layer 2 — the findings transfer with translation.** Truth is not belief; relationship is not opinion; the receiver owns its own decision; relaying a rumour is a new decision rather than an automatic propagation; engine lineage and actor-accessible provenance are two different authorities. None of that depends on Unity, on the donor engine, or on any particular implementation. It describes what the simulation must be true of.
+## 4.4 Early causal social fixture
 
-**Layer 3 — the `PROJECT_DELTAS` do not transfer as deltas.** Each delta is written as `Decision / Target / Change / Why / Acceptance / Dependencies / Remote class / Risk / Do not`. Three of those fields are archive-specific and one is actively dangerous here.
+The most valuable pre-combat fixture is intentionally simple:
 
-### 6.3 Why the deltas need rewriting, concretely
+```text
+Manolo possesses / communicates fact F
+    -> Pilar witnesses or receives F with provenance
+    -> Pilar may relay F to Antonio
+    -> Antonio's later eligible behaviour changes
+    -> Carmen later reacts differently because of a related event/belief/relationship state
+    -> the runtime can explain the causal chain
+```
 
-1. **`Target` names workpacks that do not exist.** The deltas point at `WP-M9-00`, `M9-02`, `M10-01`, `M10-04`, `Juego/Docs/LIVING_WORLD_RUNTIME.md`. Juego2 has no `M*` series and no living-world runtime document. The destination has to be re-derived, not translated.
-2. **`Remote class` belongs to the archive's execution model.** `REMOTE-DONE` / `REMOTE-PREP` / `LOCAL-UNITY` classify work against the donor project's cloud/local split. Juego2 does not have that split and should not acquire it.
-3. **Every delta assumes a runtime `WorldState`.** They add beliefs, relationships, reservations, goals and clocks to a ticking world state. Arkus's `WorldState` is *authored*; `WP-HK-06A` drew that boundary and it is an accepted guarantee, with `R-06B-04` recording that gameplay and runtime state stay outside canonical state and replay. A delta that says "add `ActorBelief` to `WorldState`" would, applied literally in Juego2, break an accepted guarantee. This is the same seam §5.1 runs along, and it is the single reason the deltas cannot be lifted.
-
-What survives each delta is its `Change`, `Acceptance` and `Do not` — which is where the research value actually sits.
-
-### 6.4 The independent PASSes do not travel
-
-`PA-02`, `PA-03` and `PA-04` passed independent review, but under the archive's own proof standard and bound to the archive's SHAs. Juego2 has its own `FOUNDATIONAL_PROOF_STANDARD.md` and `EXECUTION_RECEIPT_PROTOCOL.md`, and `AGENTS.md:66` plus the roadmap's fourth stop rule both forbid building on a predecessor claim that was never accepted here.
-
-So these enter Juego2 the same way the archive's design material already enters `CONTENT_SHAPE_BACKLOG.md` — as **cited, non-binding design input**. Citing a reviewed finding is not the same as inheriting its verdict, and this blueprint claims no verdict.
-
-### 6.5 The highest-value salvage is the "Do not" lines
-
-They read as rabbit-hole guards bought with research rather than with a postmortem, and they are the cheapest thing in the archive to carry across. A representative sample, quoted from the deltas:
-
-- do not create one executable day-script per actor;
-- do not model every prop as a smart object;
-- do not hide a global enumeration of all persistent actors inside a "bounded" query provider;
-- do not build generic GOAP, or re-evaluate every agent every tick;
-- do not introduce an ambient tier as an agency profile, or a second AI architecture for narratively important characters;
-- do not implement a receiver's answer as a conditional inside the initiator's action;
-- do not let dialogue consume rumour flags instead of querying knowledge;
-- do not treat a false claim as a mutation of truth;
-- do not freeze agency priority rules before the agency research is integrated.
-
-Several of these describe mistakes that are actively tempting when a system is first built, which is exactly when the archive is least likely to be re-read.
-
-### 6.6 Where each track attaches
-
-| Archive track | Attaches to | Note |
-|---|---|---|
-| `LCRT-00` laws | the whole of L6–L9 | Adopt as a charter early; it is cheap and it constrains later choices |
-| `PA-01` daily life | L6 time and routine | Its 24-hour reference routine is a ready-made schedule fixture shape, including the perturbations it demands |
-| `PA-02` agency | L9 autonomous agency | The failure register and budget dimensions are more valuable than the architecture it sketches |
-| `PA-03` social graph | L9 relationships | Carries the sibling-is-not-trust and expiring-obligation cases already used in §4.3 |
-| `PA-04` knowledge | L9 knowledge | Backlog row 13 is the modelling decision this track presumes |
-| `PA-05` rumours | L9 events and memory | Least mature of the worked tracks; review was never completed |
-| `CCRT-00` laws | L8 drama | The charter is usable now; the twelve plans are a backlog, not findings |
-| `PA-06`…`PA-12`, `C-PA-01`…`C-PA-12` | later | Twenty-four preregistered research plans. Useful as a backlog with questions already framed, and as evidence of how much was deliberately left unanswered |
-
-### 6.7 What this means for sequencing
-
-Nothing here changes §7. The research is design input, and it lands in phases that are several gates away. The one thing worth doing early is Layer 1: adopting the two charters costs a reading and prevents the expensive mistakes, whereas re-deriving them after building the systems costs a rewrite.
-
-The one thing worth *not* doing early is treating `PA-02` as an implementation plan. Its own conclusion, and this blueprint's §9.5, agree: a general agency engine before one NPC has lived one full day is the classic way to spend a phase and have nothing to show.
+The exact story content is not important yet. The architecture should make the chain possible without scripting each downstream reaction as a bespoke quest trigger.
 
 ---
 
-## 7. Suggested post-GATE phases
+# 5. System dependency map
 
-Seven phases, sized so each ends in something a person can watch. **No workpacks are drafted here** — that is the roadmap author's job, after GATE.
+## 5.1 Preserve the authored/live boundary
+
+`WP-HK-06A` accepted a hard distinction between authored canonical history and runtime observation. Production planning must not erase it.
+
+| Concern | Authored/project definition | Live runtime/save |
+|---|---|---|
+| town | objects, zones, parcel constraints, POIs | currently loaded/visible realization |
+| time | schedule/opening-hour definitions | current clock/date |
+| actor | identity, role, home/work, schedule profile | position, current activity, temporary state |
+| knowledge | facts and authored initial beliefs/rules | who currently believes what and why |
+| relationships | relation kinds + authored initial edges | current relationship values/obligations after play |
+| doors/props | authored existence and setup | currently open/broken/occupied state |
+| story | authored conditions/outcome definitions | current stage/consequences in this save |
+
+The runtime may expose inspection/testing capabilities through Arkus, but that does **not** imply the live save becomes the authoring journal.
+
+## 5.2 Product layers
+
+| Layer | Purpose | Depends on |
+|---|---|---|
+| L0 | accepted H0 canonical kernel | — |
+| L1 | H0 host/protocol/efficiency/closure | L0 |
+| L2 | Unity engine bridge + real representative assets + presentation/catalogue projection | GATE |
+| L3 | product-seed world composition, spatial constraints, navigation, player/camera/interaction shell | L2 + Unity parity gate |
+| L4 | actors, animation, time, schedules, POIs/smart objects, routine resolver | L3 |
+| L5 | **Living World Core:** dialogue conditions, knowledge/beliefs, relationships, events, minimal memory, structured outcomes and behaviour changes | L4 |
+| L6 | Directed Drama: full GameFlow authority, cinematics and QTE | L5 |
+| L7 | Combat | L6 + actors/animation + living-world outcome bridge |
+| L8 | deeper autonomous agency, richer social simulation, abstract/off-screen continuity and population scaling | L5, optionally L7 consequences |
+| L9 | integrated vertical slice and runtime save/load closure | preceding required layers |
+
+Key ordering rule: **L5 precedes combat.** The town should become socially causal before combat becomes a production dependency.
+
+## 5.3 Why Living World moves earlier
+
+The reference archive contains much more completed/reviewed research on NPC daily life, agency, social graph, knowledge and rumours than on combat. The combat track largely remained a design constitution plus preregistered research plans.
+
+More importantly, Juego2's distinctive product promise is better demonstrated early by:
+
+```text
+something happens / is said
+ -> somebody else learns it
+ -> a relationship/belief changes
+ -> a later routine/dialogue/action changes
+ -> the player can observe and understand why
+```
+
+Combat can then return outcomes into that already-working world rather than becoming a large isolated system waiting for social consequences later.
+
+## 5.4 Navigation and simulation boundaries
+
+- Navigation derives from built geometry; do not wait for actor AI to define the walkable world.
+- Schedules describe intentions and destinations, not hand-authored waypoint scripts.
+- Abstract/off-screen simulation preserves semantic activity/outcome state without requiring NavMesh/Animator frame-by-frame execution.
+- Dialogue consumes structured conditions/beliefs/relationships; text is not authority.
+- Combat emits structured outcomes; it does not own a duplicate social state model.
+- Autonomous agency comes **after** one NPC can live a stable day and after knowledge/relationship/event primitives exist.
+
+---
+
+# 6. Two production seams that must be owned explicitly
+
+The first draft correctly identified two gaps. This revision gives them a planning direction without promoting them into H0 obligations.
+
+## 6.1 Multi-session authored project persistence
+
+Current H0 semantics provide canonical state identity, snapshots, import/rebase, provenance and replay; they do not claim a production project database or durable WAL.
+
+For H1/H2, the simplest product architecture should be preferred first:
+
+```text
+canonical authored session
+      -> atomic project checkpoint / canonical snapshot
+      -> project workspace storage
+      -> next session loads through accepted import/rebase mechanism
+```
+
+Planning constraints:
+
+- storage must preserve the accepted canonical artifact rather than invent a second world format;
+- a failed checkpoint must not produce a false authoritative project version;
+- project workspace metadata (asset catalogue location, editor preferences, caches) is not automatically part of canonical world state;
+- do not add a complex WAL/event-store architecture unless real multi-session recovery evidence requires it.
+
+This is **post-GATE project infrastructure**, not a reason to reopen HK04/HK06 now.
+
+## 6.2 Runtime/save-state authority
+
+Gameplay needs a separate versioned runtime state/save contract. It should contain only what a running game needs to resume/continue, for example current time, actor live state, current beliefs/relationships/events/stages and other simulation values that have actually become product requirements.
+
+Planning constraints:
+
+- runtime save state is not the HK06 authored journal;
+- authoring a schedule definition and playing through that schedule are different authorities;
+- runtime state may be inspected/simulated/tested headlessly where useful;
+- gameplay outcomes may be persisted in a save without rewriting the authored project definition;
+- a future "promote runtime result into authored content" feature, if ever useful, must be an explicit authoring operation rather than an implicit side effect.
+
+The exact runtime schema is intentionally deferred until L4/L5 has real systems to save.
+
+---
+
+# 7. Suggested post-GATE phase ladder
+
+These are **planning phases, not authored workpacks**.
 
 | Phase | Scope | Demo worth showing |
 |---|---|---|
-| **H1** | Engine bridge foundation; presentation binding; representative asset slice (§2.3) | A harness command changes canonical state; the engine reflects it deterministically; parity report; one street corner and one character standing in real assets |
-| *(gate)* | **Unity parity / bridge gate** — per `WP-HK-GATE.md:86` | — |
-| **H2** | World composition from the modular kit; player movement, camera, interaction shell; the reference zone | Walk the plaza, Calle Mayor and one interior in third person under overcast light |
-| **H3** | Actors, presentation binding, time, schedules, POIs, smart objects | Six NPCs live a full day; time-lapse; a readable explanation of why each one is where it is |
-| **H4** | Flags and stages, conditions, dialogue adapter, GameFlow authority, structured outcomes | A conversation gated on something the player knows, with a consequence that is still there later |
-| **H5** | Cinematics, QTE, combat | One sequence that takes every authority — player, camera, actors — and returns all of them cleanly, including on skip and on failure |
-| **H6** | Knowledge, relationships, events and memory, autonomous agency, abstract simulation | Before/after state diff across an event; one NPC behaves differently and can say why |
-| **VS** | Vertical slice — integration only, no new systems | The full chain, end to end (§8) |
+| **H1** | Unity bridge foundation, presentation binding, catalogue projection decision, representative **real asset** slice | Arkus changes authored state; Unity realizes it deterministically; one real street corner + one real humanoid/animation set |
+| **Unity parity gate** | prove bridge semantics and real-asset boundary | no gameplay expansion until this passes |
+| **H2** | product-seed town composition, urban constraints, navigation, player movement, third-person camera, interaction, one bar interior | walk a **keeper** plaza/bridge/street/bar area that will remain in the final town |
+| **H3** | actors, animation, clock, schedules, POIs/smart objects, routine resolver | six NPCs live a readable day and use different routes/places for understandable reasons |
+| **H4** | **Living World Core:** dialogue conditions, beliefs/knowledge, relationships, events, memory minimum, structured outcomes, runtime/save minimum | Manolo/Pilar/Antonio/Carmen causal chain changes later behaviour and the system can explain why |
+| **H5** | GameFlow authority, cinematics, directed sequences, QTE | one skippable/failable dramatic sequence acquires and returns player/camera/actor authority cleanly |
+| **H6** | combat prototype/runtime, returning outcomes into Living World | one instrumented encounter affects witnesses/relationships/events rather than living in a separate dimension |
+| **H7** | deeper actor-to-actor agency, abstract simulation, ambient population scaling | player absent: actor-originated causal chain continues, remains bounded and explainable |
+| **VS** | integration only; no new foundational systems | full product-seed vertical slice |
 
-Running in parallel: the **H0S** post-GATE scale and concurrency track already defined in `ROADMAP.md:105-117`. It is explicitly not a prerequisite for starting H1, and the §1.7 sizing suggests this town will not trigger it.
-
-Two notes on sizing. H2 and H3 are the phases where a project like this usually stalls, because they are the first that require content rather than contracts — budget accordingly. H5 is the most droppable: §8 gives a reduced slice that survives without it.
+H0S scale/concurrency work can run in parallel after GATE exactly as the current roadmap already allows; it should not delay H1 by default.
 
 ---
 
-## 8. Vertical-slice target
+# 8. Vertical-slice target
 
-### 8.1 The minimum that proves this is the game
+## 8.1 Minimum product slice
 
-Place: `zone.plaza` + `zone.calle_mayor` + `interior.bar`. A recognisably Liébana street — wet stone, dark tile, green slopes and rock on the skyline, overcast key light — built from real transformed assets, not primitives.
+Place:
 
-Cast: six NPCs in full simulation (Ana, Antonio, Manolo, Carmen, Pilar, Javier), the rest abstract.
+- product-seed plaza/market edge;
+- old bridge + visible river strip;
+- 60–100 m old-quarter/commercial connection;
+- bar interior;
+- one ascending residential lane.
 
-Chain, observable start to finish:
+Cast: six NPCs in full simulation; additional persistent actors may exist abstractly.
+
+Core chain:
 
 ```text
-arrive at the plaza
-  -> enter the bar, talk to Manolo
-  -> learn one fact, with provenance
-  -> a short dramatic beat
-  -> outcome persists
-  -> later: Carmen speaks or behaves differently
-     because Manolo told her
-  -> the harness can explain the whole chain
+arrive through the town edge
+ -> cross / approach the old bridge and market area
+ -> enter the bar
+ -> speak with Manolo
+ -> learn or witness a fact with source/provenance
+ -> leave and continue normal town activity
+ -> information/event reaches another actor through accepted social rules
+ -> Carmen later speaks or behaves differently
+ -> the player can notice the changed regularity
+ -> the system can explain the causal chain
 ```
 
-The last two steps are the ones that matter. Anything can show a conversation. What separates a game from a framework demo is that something said in a bar at midday changes what a different person does that evening, and that the causal chain is inspectable rather than scripted.
+That is already a convincing Juego2 slice without combat.
 
-### 8.2 Reduced slice if drama is not ready
+A later enhanced slice may insert a directed dramatic beat, QTE or fight. Those improve spectacle; they are not prerequisites for proving the living-town identity.
 
-If H5 has not landed, drop the dramatic beat and keep:
+## 8.2 The player must be able to learn the town
 
-```text
-arrive -> dialogue -> knowledge transfer
-       -> schedule or behaviour change
-       -> different dialogue later
-```
+Longer term, the town succeeds when routine knowledge becomes useful:
 
-That alone demonstrates the game. The combat and QTE beat makes it a better demo, not a more convincing one. Saying so now is cheaper than discovering it under deadline.
+- where somebody tends to be at a given hour;
+- which route or place they prefer;
+- who they know/trust/fear/owe;
+- who could plausibly know a fact;
+- when an absence or changed routine is suspicious;
+- how an event changed visible behaviour.
 
-### 8.3 Budget reconciliation
+The vertical slice only needs one or two of these to be useful. The product can expand the same grammar rather than replace it.
 
-`VISUAL_BIBLE.md` §8 caps the H2 hero at **≤120 meshes, ≤6 atlases, ~20 animation clips, 6 NPCs**. The slice above stays at 6 full-simulation NPCs, but two zones plus a bar interior plus a bus and a bicycle will likely need **~160 meshes**.
+## 8.3 Visual budget
 
-That is a real divergence from an approved-draft budget, recorded in §10 rather than quietly exceeded. The cap may well be the right number; if so, the slice should shrink to one zone rather than the budget being stretched to fit.
+The current visual bible's hero budget (≤120 meshes, ≤6 atlases, ~20 animation clips, six NPCs) should remain a **constraint to test**, not an invisible promise to violate.
+
+If the keeper seed genuinely cannot achieve the intended silhouette and route structure inside 120 meshes, the future art/roadmap owner should either:
+
+- shrink the first visible extent while preserving the topology; or
+- explicitly revise the budget with evidence.
+
+Do not quietly inflate the budget because a more ambitious sketch was written here.
 
 ---
 
-## 9. Do not overengineer
+# 9. What should be decided before H1, without starting H1 early
 
-### 9.1 Needed before H1 starts
+These are cheap planning decisions or human prerequisites that may be prepared while H0 finishes, but they do not authorize implementation:
 
-All cheap, all documentation-only, all able to run in parallel with the remaining H0 work without touching it:
+1. Exact Quaternius pack/version/license record and whether Source tier is adopted.
+2. Camera target and Unity render-pipeline choice.
+3. Stable naming convention for town IDs before content proliferates.
+4. The initial asset slice and adaptation recipes.
+5. Which open content shapes are actually required by H3/H4 (especially ordered/wrapping intervals, pair-state/relationship representation, namespaced story/runtime state) — decide only when their consumer is clear.
+6. H1 catalogue authority/projection boundary, explicitly **without assuming catalogue = `WorldState`**.
+7. Project-workspace checkpoint ownership for multi-session authoring.
+8. Runtime/save-state authority boundary for H4+, preserving HK06 authored/live separation.
+9. A better visual/reference board for buildings, characters/wardrobe, river/bridge edges and late-PS2/early-PS3 style target.
 
-| Item | Why it is first |
-|---|---|
-| Decide backlog rows **7** (namespaced state), **8** (pair state), **10** (interval wrap-around) as *decisions*, not implementations | These are precisely the three shapes the town plan demands first, and `CONTENT_SHAPE_BACKLOG.md:59` notes no accepted probe has exercised rows 6–10 |
-| Create the human Quaternius pack record required by `DEPENDENCY_IP_POLICY.md` | Nothing can be imported without it, and it is fail-closed |
-| Reconcile the free-tier vs paid-Source divergence (§10) | An asset plan built on the wrong tier wastes the triage pass |
-| Fill the six missing `Docs/art/Refs/` folders | `SOURCES_INDEX.md` declares eight; only `01_Town_Fabric` and `08_Anti_Refs` exist on disk. The two most useful absentees are `05_Characters_Outfits` and `07_Style_Targets` |
-| Settle the town identifier convention (§1.2) | The HK-02A probe used `building.tienda` and `plaza.mayor`; HK-05 onward use `building.shop` and `place.plaza`. Cheap now, expensive after content exists |
-| Decide camera and render pipeline | Neither is specified anywhere in the repository today. Both shape every asset decision |
+None of these should mutate accepted H0 semantics merely to make future planning feel complete.
 
-### 9.2 Two observations for the roadmap author
+---
 
-Recorded as observations, explicitly **not** as proposed workpacks:
+# 10. Rabbit-hole guards
 
-- **Canonical authored state is currently process-local.** Residual `R-04-01` records no durable WAL, recovery or cross-process persistence claim; snapshot export/import is the only portability mechanism. Authoring a ~2 500-object town across sessions implies durable canonical storage somewhere. This document names the implication; who owns it and when is not its call.
-- **`R-06B-04` has no owner.** The authored/live boundary is exactly the seam the whole system map in §5 runs along. It is the single most valuable unowned question for the production jump.
+The project has already paid for several lessons. Keep them visible:
 
-Separately, and flagged only: `Docs/workpacks/README.md` still prints the pre-split chain (`… HK-07B → HK-08 → HK-09 → HK-10 → HK-GATE`), which no longer matches `ROADMAP.md` v1.19 after the HK08/HK09 split. Documentation drift, not a contract problem.
+- Do not expand proof/process machinery after it stops reducing meaningful product risk.
+- Do not reverse-engineer another game's implementation to obtain fidelity that can be specified behaviourally.
+- Do not adopt another engine/world foundation merely to get a town quickly.
+- Do not build the Creator GUI before the contracts have survived real game authoring.
+- Do not build generic GOAP/Utility AI before one actor can live one stable day.
+- Do not build a giant asset-transformation factory before roughly ten real assets have shipped end-to-end through the bridge.
+- Do not model every prop as a smart object.
+- Do not create a bespoke executable day script for every NPC.
+- Do not let dialogue text become knowledge/state authority.
+- Do not assume rumours propagate automatically; receiving/relaying information is behaviour with provenance.
+- Do not add per-resource CAS, Merkle trees, locks or multi-agent orchestration before H0S measurements justify them.
+- Do not model the whole valley before the keeper town core is fun and useful.
+- Do not make combat a prerequisite for proving the living town.
+- Do not write large amounts of final narrative before the dialogue/Living World runtime has a stable authoring shape.
 
-### 9.3 Needed during H1 and H2
+A useful question for any proposed subsystem before VS: **does it make the next visible demo materially better or unlock a required causal dependency?** If neither, it probably waits.
 
-Presentation-binding contract and asset lineage; spatial and transform authoring; prefab composition and catalogue contracts; navigation as a derived artifact; the interaction shell; zone and interior transitions; the ambient population tier.
+---
 
-### 9.4 Can wait
+# 11. Recovered design principles worth carrying forward
 
-The river and the landing; the cemetery zone; combat; QTE; cinematics; weather events; localization (row 15); economy; crowd density tuning; the Creator GUI; valley-scale world partition (row 14); final art.
+The old `Arkus0/Juego` repository remains reference material only, but several design principles are valuable independent of its abandoned architecture.
 
-### 9.5 Tempting ideas that would start another rabbit hole
+## 11.1 Living city
 
-Each of these is attractive, defensible in isolation, and has a precedent worth remembering.
+- The city does not wait for the player.
+- Persistent NPCs may be primary causes of events.
+- Actor→Actor interaction is first-class; the player is not required for every chain.
+- Actors act from beliefs/perception/relationships, not omniscient world truth.
+- Schedule is baseline, not destiny.
+- Relevant autonomous decisions should be explainable.
+- Meaningful actions produce structured consequences.
+- Relationships affect decisions, not only dialogue filters.
+- Bounded autonomy is better than unlimited invisible emergence.
+- Ambient population and persistent actors have different budgets/identity requirements.
+- An LLM may author or explain but is not runtime simulation authority.
+- Causal simulation should be testable headlessly even when presentation requires Unity.
 
-| Temptation | Why it is a trap | Precedent |
+## 11.2 Combat
+
+The combat charter remains useful product direction, but its implementation research is far less mature than the Living World research. Preserve the principles without pulling combat forward in the schedule:
+
+- clean hits matter;
+- difficulty comes from access/openings/timing/space, not ordinary-human damage sponges;
+- defence can preserve/steal initiative;
+- crowds need active but readable pressure;
+- target transitions and environment use are part of the choreography;
+- camera serves play readability first;
+- responsiveness outranks cinematic synchronization;
+- impact presentation derives from gameplay truth;
+- combat consequences return to the living town;
+- feel claims require instrumented play, not only headless proof;
+- animation count is not a substitute for a coherent combat grammar.
+
+Nothing in this section carries an old repository PASS into Juego2. It is design input only.
+
+---
+
+# 12. Open reconciliation items
+
+| Item | Current state | Desired future decision |
 |---|---|---|
-| Letting process machinery outgrow the product | Proof standards, review protocols and orchestration are load-bearing here and should stay. The failure mode is different: they keep growing after they have stopped reducing risk, and the game never starts | The archive's own `Juego/Docs/GAME_FIRST_POLICY.md` is a written self-correction saying exactly this had happened, and cancelled its own mandatory pre-milestone chain |
-| Reverse-engineering a reference game's systems for fidelity | Unbounded scope, no shippable output, and the fidelity never transfers | The archive's M1/M2 track, closed by pivot |
-| Adopting a whole external world foundation to "get a town for free" | The foundation's model becomes the ceiling, and removing it later costs more than building small | `AGENTS.md:58` already ruled DFU off the critical path |
-| Building the Creator GUI before the contracts are used in anger | A GUI over unexercised contracts hardens the wrong shapes | The archive correctly deferred its Creator track behind the slice gate |
-| A general Utility-AI or GOAP agency engine up front | You cannot tune a decision system against zero observed behaviour | The archive's own agency research warns against exactly this, by name |
-| A full deterministic asset-transformation pipeline before ~10 assets have shipped end to end | Pipeline cost is paid before any evidence about what the pipeline needs to do | The archive's asset-factory plan gates production behind a bootstrap for this reason |
-| Per-resource CAS, Merkle trees or multi-agent concurrency | `ROADMAP.md:113` is explicit: these are options only if evidence justifies them, "not the definition of the solution" | H0S exists precisely to measure first |
-| Full event sourcing for world memory | Every event forever, to answer questions a snapshot plus selected events already answers | The archive concluded snapshots + relevant events suffice |
-| Modelling the whole valley | The town core is ~2 500 objects; partition becomes live in the high tens of thousands | `RESIDUAL_LEDGER.md:116` |
-| PBR micro-detail on flat atlas assets | Doubles asset cost and fights the style one-liner | `VISUAL_BIBLE.md` §2 "No" list |
-| Writing narrative content now | Dialogue and narrative runtime is `OUT` pending a reviewed architecture decision; content written against no runtime gets rewritten | `CONTENT_SHAPE_BACKLOG.md` row 17 |
-
-A useful test for anything not on this list: **does it make the next demo in §7 happen sooner?** If not, it can wait.
+| Quaternius timing | current roadmap puts import/select in H2 | explicitly move a tiny representative real-asset slice into H1 when post-GATE roadmap is authored |
+| Quaternius tier | visual bible says free tier | decide free vs Source after exact dependency/license review |
+| town layout | first draft was a radial test hub | use the product-seed river/bridge/loops topology in this revision |
+| prefab catalogue authority | first draft proposed canonical `WorldObject` catalogue | review in H1; require discoverability without pre-deciding storage authority |
+| phase order | first draft put cinematics/QTE/combat before social simulation | Living World Core first; drama then combat; deeper agency later |
+| durable authored persistence | H0 has no production project store claim | use canonical snapshot/checkpoint-based project workspace first; escalate only with evidence |
+| runtime/save state | deliberately outside canonical authored journal | define separate runtime/save authority when H3/H4 requires it |
+| mesh budget | approved-draft hero cap may be tighter than keeper seed | preserve cap unless an art review explicitly changes it |
+| camera/render pipeline | not yet frozen | decide before real H1 asset adoption |
 
 ---
 
-## 10. Open reconciliation items
+# 13. What this document deliberately does not do
 
-Divergences this document surfaces but does not resolve. Each would be settled by a human decision or a future art-track workpack, never by this file.
+- It does not modify `ROADMAP.md`, `WP-HK-GATE`, any H0 workpack, accepted proof or accepted guarantee.
+- It does not authorize H1 before GATE.
+- It does not freeze final geometry or final character writing.
+- It does not make real Potes the shipping map; the town remains fictional.
+- It does not decree a prefab-catalogue storage model.
+- It does not merge authored project state with live gameplay state.
+- It does not require combat for the first convincing game slice.
+- It does not claim that any design research PASS from `Arkus0/Juego` transfers to Juego2.
 
-| # | Item | Current repository text | This blueprint assumes | Suggested home |
-|---|---|---|---|---|
-| 1 | Asset tier | `VISUAL_BIBLE.md` §6–7: "Quaternius free tier" | Paid Source packs, ~USD 95, ≤100 EUR cap | A future `WP-ART-01` |
-| 2 | Mesh budget | `VISUAL_BIBLE.md` §8: ≤120 meshes | ~160 meshes for the two-zone slice | Same, or shrink the slice |
-| 3 | NPC count | `VISUAL_BIBLE.md` §8: 6 NPCs | 6 in full simulation, 13 persistent identities total | Compatible; worth stating explicitly |
-| 4 | Town identifiers | HK-02A probe: `building.tienda`, `plaza.mayor`; HK-05+: `building.shop`, `place.plaza` | The later English convention | Settle before content exists |
-| 5 | Camera and render pipeline | Not specified anywhere | Third person; pipeline undecided | H1 planning |
-| 6 | Missing reference folders | `SOURCES_INDEX.md` declares 8; 2 exist | — | Art track |
-| 7 | Durable canonical persistence | `R-04-01`: none, unowned | Assumed necessary for multi-session authoring | Roadmap author |
-| 8 | Runtime/live state ownership | `R-06B-04`: no owner named | Assumed separate from authored state | Roadmap author |
+The intended production philosophy is simple:
 
----
-
-## 11. What this document deliberately does not do
-
-- It does not start, unblock, reorder or delay any `HK-*` workpack. The next dependency-valid workpack remains `WP-HK-07A`.
-- It does not propose any new harness workpack.
-- It does not modify `Docs/ROADMAP.md`, `Docs/art/VISUAL_BIBLE.md`, `Docs/art/SETTING.md` or any accepted contract or evidence.
-- It does not import architecture, code or systems from `Arkus0/Juego`. Ideas are cited and restated; nothing is inherited.
-- It does not claim acceptance, PASS, evidence or exact-SHA validation of anything.
-- It does not design geometry, write narrative, or select final assets.
-
-Its only claim is that the jump from H0 to production is now sized on paper, so that when `WP-HK-GATE` passes, the next decision is a choice between prepared options rather than an improvisation.
-
----
-
-## Annex A — Recovered design charters
-
-The two constitutions from the reference archive, restated in full so the prior art survives independently of that repository. `LCRT-00_CONSTITUTION.md` was marked `ACCEPTED DESIGN PRINCIPLES`; `CCRT-00_CONSTITUTION.md` was marked `PROPOSED — REVIEW REQUIRED`. Both were authored in Spanish; the statements below are faithful restatements in this document's language, keeping the original identifiers so a reader can always go back to the source.
-
-Standing is unchanged by restatement: these are **cited design input, not inherited verdicts** (§6.4). Nothing here is binding on Juego2 until someone decides to adopt it.
-
-Both charters carry the same change rule, worth preserving: changing a law requires an explicit decision, and an ADR where it alters architecture. Research may refine mechanisms without reopening a law, absent strong evidence that the law itself produces a systemic failure.
-
-### A.1 Living city — `LC-01` … `LC-15`
-
-**LC-01 — The city does not wait for the player.** The world may change while the player is elsewhere or absent. Absence does not freeze goals, schedules, relationships, knowledge or consequences that sit inside the simulation budget.
-
-**LC-02 — NPCs may be primary causes.** A persistent actor can be the initial cause of a significant event. Not every world event must derive from a quest, a trigger, a cinematic or a player action.
-
-**LC-03 — Actor → Actor is first-class.** The player is not a privileged endpoint of the social model. The same basic abstractions must support `Antonio → confront → Manolo`, `Manolo → ask_favor → Carmen`, `Carmen → tell → Paco`. The player may enter a chain; a chain does not require the player to exist.
-
-**LC-04 — No omniscient agents.** An actor may decide only from information it can actually reach: its own state, perception, belief, relationship, memory, an explicit authored rule, or public information. A world fact is not automatically an actor belief.
-
-**LC-05 — Schedule is baseline, not destiny.** A daily routine defines normal expectations and intentions. Goals, events, obligations and decisions may interrupt or replace it. A schedule is not a total script of an actor's life.
-
-**LC-06 — Agency must be explainable.** Every relevant autonomous decision must be able to answer: what was chosen, why this action, why this target, why now, which alternatives lost, and what information was used. A decision that tooling cannot explain is a defect.
-
-**LC-07 — Meaningful actions create state.** A relevant social or material action does not end in animation. Where applicable it produces structured effects: a world event, a relationship delta, a belief change, a resource or ownership change, a schedule or goal change, a domain outcome, a memory reference.
-
-**LC-08 — Consequences must be perceptible.** Depth is not simulated for technical prestige. A complex system needs channels through which the player can notice, discover or exploit its consequences — behaviour, dialogue, absence or presence, objects, records, rumours, schedule changes, economy, the state of a space.
-
-**LC-09 — Missing an event is allowed; losing causality is not.** The player may fail to witness things. When an event is playably relevant, the world must leave enough traces or testimony for the chain to be reconstructed reasonably.
-
-**LC-10 — Relationships alter decisions.** Affinity, trust, fear, debts, obligations, kinship and authority do not exist only to filter dialogue. They must be able to change target selection, willingness, risk tolerance, help, confrontation, concealment and information transfer.
-
-**LC-11 — Authored story constrains; it does not monopolize causality.** The main story may fix invariants, reserve actors, or force outcomes where necessary. Outside those limits, the simulation may produce events nobody wrote by hand.
-
-**LC-12 — Bounded autonomy beats unlimited emergence.** Total social simulation is not the goal. Agency has budgets, cooldowns, scopes, tiers and guardrails. Ten intelligible chains beat a hundred irrelevant events.
-
-**LC-13 — Different actor tiers get different agency budgets.** A persistent actor may hold identity, beliefs, relationships, goals and selected memory. Ambient population supplies density and cheap feedback but generates no persistent social truth without explicit promotion. Within persistent actors, an agency profile may limit the frequency and kind of initiative without creating a second, incompatible identity model.
-
-**LC-14 — An LLM is never simulation authority.** A model may help author, explain, vary text or propose content offline. It does not decide the canonical runtime state of goals, beliefs, relationships or outcomes. Authority is structured, reproducible and checkable.
-
-**LC-15 — Headless before spectacle.** The causal part of schedules, goals, decisions, social interactions, events and consequences should be simulable without scene objects, animator or navigation mesh. The engine presents and integrates; it must not be the only way to check that the town makes sense.
-
-### A.2 Combat — `CC-01` … `CC-20`
-
-**CC-01 — Martial-arts cinema is the target experience, not decoration.** The reference is not merely "a good brawler". Player decisions should produce legible choreography comparable in intent to Chinese and Hong Kong martial-arts cinema: whole body, use of space, tempo changes, clear cause and effect, audiovisual punctuation. Slow motion added at the end does not satisfy this law.
-
-**CC-02 — The protagonist is already a master.** Progression cannot depend on the protagonist starting unable to perform fundamentals the fiction says he already owns. The player learns to *govern* the master: reading, timing, space, initiative, response selection, expression. Progression may widen vocabulary, context, specialisation or expressiveness; it must not sell basic competence as an unlock.
-
-**CC-03 — Clean hits matter.** An ordinary human should not absorb long chains of clean hits as the routine cost of combat. Difficulty should come from failing to get an opening, from defence, position, multiple threats, timing, and the consequences of mistakes. Hit points may exist internally, but cannot be the main explanation for why an ordinary enemy is still fighting after numerous clean impacts.
-
-**CC-04 — Mobs are flow; masters are openings.** Against ordinary groups the fantasy is continuity: moving from threat to threat and governing space. Against elites and masters the fantasy is earning an opening against someone hard to touch cleanly. Raising health does not substitute for changing the grammar of the encounter.
-
-**CC-05 — Defence preserves or steals initiative.** Defending must not reduce to waiting behind a block. Deflect, parry, avoid, redirect, intercept and counter should be studied as ways to keep, recover or steal initiative.
-
-**CC-06 — Timing and reading beat mashing.** Pressing faster is not playing better. The system may tolerate imperfect input, but the best execution comes from pressing at the useful moment — reading threat, distance, recovery and tempo, and varying the response when the opponent changes pattern.
-
-**CC-07 — Responsiveness outranks synchronization.** No rhythm, animation, camera, music or choreography system may delay a critical input merely to align it with a beat or a pose. Synchronisation adapts presentation and lead-ins where safe; movement, defence and survival actions keep response priority.
-
-**CC-08 — Flow is a consequence of good combat, not a damage combo meter.** Flow may measure continuity, timing, transitions, variety and threat control. Its main reward should be continuity and staging — fewer dead moments, better transitions, richer music, foley, camera and haptics, contextual access to choreography — before raw damage multipliers. A player should not chase Flow while ignoring the martial situation.
-
-**CC-09 — Impact is multisensory and comes from one combat truth.** A relevant impact does not exist only as animation. One gameplay fact — contact quality, location, direction, force, timing — feeds reaction and time shaping, audio, haptics, camera, effects and music accents. Presentation must not invent a hit that gameplay did not resolve, nor may gameplay resolve an important one without enough feedback.
-
-**CC-10 — The environment is part of the moveset.** Walls, furniture, bicycles, bars, doors, kerbs and tables can change options, trajectories and finishers. The environment is neither visual cover nor a catalogue of disconnected contextual prompts; it must affect real spatial decisions.
-
-**CC-11 — Crowd pressure must be active but readable.** Two extremes are rejected: seven enemies waiting theatrically for one to finish, and seven enemies attacking with perfect precision until combat becomes noise. The director must produce overlapping threats, flanking, wind-up, recovery and coordinated action, with enough readability for the player to govern them.
-
-**CC-12 — Target transitions are first-class combat actions.** Moving from A to B must not feel like ending a combo, finding a target and starting another. Spatial continuity, contextual selection, attack locomotion and body transitions should make switching opponents part of the choreography.
-
-**CC-13 — Camera serves bodies, geometry and threat readability.** During complex kung fu, seeing body, feet, opponents and environment usually matters more than pushing in to look intense. Close-ups, reframes, shake and slow motion are punctuation; they cannot hide information the player needs in order to play.
-
-**CC-14 — Slow motion and hit stop are punctuation.** Time shaping marks significant moments rather than becoming permanent noise. Frequent use that trivialises important impacts is a defect.
-
-**CC-15 — Depth must not require a fighting-game command list.** Sophisticated kung fu should come from a relatively compact input vocabulary. Depth emerges from timing, direction, state, position, threat, transition and context. If a basic action requires memorising an arbitrary sequence for the character to look competent, the design must justify it.
-
-**CC-16 — Boss difficulty comes from access, not inflated durability.** A human boss may need few genuinely clean impacts to be beaten. Difficulty should come from guard, footwork, feints, counters, initiative, adaptation, rhythmic patterns and the ability to deny openings. A giant posture bar can become another sponge under a different name.
-
-**CC-17 — Enemy archetypes alter the problem, not merely the stats.** Mob, disruptor or elite, boss and master should pose different questions. More damage, more health and more speed without behavioural change is not an archetype.
-
-**CC-18 — Combat returns state to the living city.** A fight in a living town must not exist in a separate dimension. Where appropriate, its start and its outcome produce observable consequences: witnesses, injuries, fear, reputation, damaged objects, third-party intervention, relationship changes, events. Semantic authority belongs to the living-world side; combat does not duplicate its social systems.
-
-**CC-19 — Feel requires instrumented play, not document confidence.** Headless tests can validate targeting, threat, resolution, determinism and rules. They cannot by themselves show that combat feels good. Claims about responsiveness, readability, camera, hit stop, audio or haptics need an instrumented prototype and a playtest before they become a product PASS.
-
-**CC-20 — Budget choreography; do not brute-force animation count.** The indie / PS2-plus target requires semantic reuse, data-driven transitions and contextual selection. Quality cannot be bought by accumulating hundreds of bespoke animations that serve one enemy, object and angle combination. Every unit of work must weigh authoring cost against a cheaper alternative.
-
-### A.3 Four laws Juego2 already satisfies, harder than the charter asked
-
-These are not adaptations. They are places where the restart independently arrived at the same principle and then went further, which is the strongest available evidence that the charters were pointing the right way.
-
-| Law | What Juego2 already does |
-|---|---|
-| `LC-15` headless before spectacle | H0 is headless by construction, with no engine dependency anywhere in the kernel. `WP-HK-GATE.md:31` requires the full validation and test surface to run headlessly with no manual or editor intervention, and a hidden engine dependency is a listed hard blocker. The charter asked for a tendency; Juego2 made it the gate |
-| `LC-14` no model is the authority | The whole product thesis. An agent authors through discoverable contracts with validation, transactions, provenance and replay; `PRODUCT_ARCHITECTURE.md` keeps semantic authority in the canonical contract and out of any model vendor, transport or engine |
-| `LC-06` agency must be explainable | The authoring-side analogue already exists and is accepted: the `WP-HK-06A` provenance journal answers who changed what, from which revision, with deterministic entry identity. The runtime needs its own decision-level equivalent, but the shape is proven and the vocabulary is there to borrow |
-| `CC-09` presentation must not invent what gameplay did not resolve | Structurally identical to `PRODUCT_ARCHITECTURE.md:74`: if an engine realization fails after a canonical decision, the failure is represented explicitly at the adapter boundary, and the adapter must not silently rewrite canonical meaning to match engine state. Same rule, one layer down |
-
-### A.4 Where the charters need translating
-
-| Law | Why it does not land as written | Translation |
-|---|---|---|
-| `LC-01`, `LC-05`, `LC-07` | All describe a world that ticks. Arkus's `WorldState` is authored and does not tick | Arkus authors what makes the behaviour possible — schedules, goals, POIs, initial edges. The ticking belongs to the runtime layer that `R-06B-04` leaves unowned (§5.1) |
-| `LC-04` truth is not belief | Presumes per-agent derived state | This is exactly `CONTENT_SHAPE_BACKLOG.md` row 13, still `OPEN`. The law is the reason that row matters |
-| `LC-10` relationships alter decisions | Presumes state attached to a pair of objects | Backlog row 8, still `OPEN`. Expressible as a relation object plus two typed references, but that has never been a deliberate decision |
-| `LC-05` schedule blocks | Presumes ordered interval data that wraps past midnight | Backlog row 10, still `OPEN`, and the reason `npc.teresa` exists in §4.3 |
-| `LC-13` actor tiers | Ambient population has no persistent identity | Fits Arkus cleanly: persistent actors get canonical objects and identity; ambient archetypes are authored as archetypes, never as identities. Already reflected in §4.1 |
-| `CC-19` feel needs instrumented play | Directly limits Juego2's proof culture | Honest tension, worth naming rather than smoothing: `FOUNDATIONAL_PROOF_STANDARD.md` is built on headless determinism and exact-SHA evidence, and has no vocabulary for a playtest. A feel claim will need an evidence form that does not exist yet. `CONTINUITY_POLICY.md:70` already anticipates the adjacent case — local editor evidence belongs to the environment that actually produced it, and may never be fabricated |
-| `CC-18` combat returns state | Crosses two layers | This is the `L8 → L9` edge in §5.2. The charter is explicit that social authority stays on the living-world side; combat must not grow its own copy |
-
-Everything not listed above transfers as written. Most of `CC-01` through `CC-17` is product and feel design that the harness has no opinion about, which is the point: they are decisions worth having made in advance, not architecture worth porting.
-
-### A.5 Anti-goals, preserved
-
-The charters' rejection lists are as valuable as the laws, and cheaper to lose. Living city: NPCs that merely walk more; hundreds of invisible needs; numeric relationships that only unlock lines; random events with no legible cause; a model improvising runtime canon; full psychology for every extra; maximising the sheer quantity of off-screen activity; sacrificing authored story, pacing or debuggability to emergence.
-
-Combat: a visible attack queue read as fake choreography; a perfect-AI dogpile passed off as difficulty; ordinary enemies surviving clean hits behind an arbitrary bar; rhythm-game scaffolding bolted onto kung fu; contextual autoplay where the system decides and the player only aims; a QTE for every spectacular moment; a camera that hides threats to look cinematic; constant slow motion; aerial juggling as the central identity; copying a full combat-deck system wholesale; a bespoke animation for every object in town; progression premised on a master forgetting his art; sacrificing control response to fit a song; mistaking more animations for more depth.
-
-### A.6 The two product tests
-
-The charters each end in an acceptance shape rather than a metric, which is the right altitude for something non-binding.
-
-**City in miniature.** The player should be able to learn, and then exploit: where a person usually is at a given hour; who they deal with; which businesses and services they use; who knows something and why; which absence or change of routine is anomalous; that a municipal decision changed real human patterns; that a conflict between two NPCs happened without the player starting it. Knowing these regularities must confer practical advantage in investigation, dialogue, anticipation, governance or side stories.
-
-**Crowd and duel.** A crowd encounter should show one master against several ordinary opponents, with continuous transitions across targets, at least one genuinely overlapping threat, at least one environment-mediated action, no visible long attack queue, no routine sponge, a combat-readable camera, and impact-driven audio and haptics. A duel should show one skilled opponent, few meaningful clean hits, most of the exchange spent on denial, deflection, avoidance, footwork and initiative, at least one feint or tempo disruption, and a win earned by creating openings rather than by draining a durability pool. Exact numbers were deliberately left to prototype; this document does not invent them either.
-
-The first of these is the direct ancestor of §8, and is a stronger statement of it. §8 asks for one causal chain the player can observe. The city-in-miniature test asks for regularities the player can *learn and then use* — which is the difference between a demo and a game. It is the right long-term target and the wrong first milestone, and both should stay written down.
+> **Do not build a demo and then build the game. Build a small, keeper-quality piece of the game, and let the demo prove that piece already works.**
