@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using Arkus.Harness.Protocol;
 using Xunit;
 
 namespace Arkus.Harness.Tests
@@ -50,14 +49,12 @@ namespace Arkus.Harness.Tests
                 Hk07AProcessHarness.Run(new[] { "--once" }, new byte[] { 0xc3, 0x28, (byte)'\n' }),
                 "transport.invalid_utf8");
 
-            var oversized = Enumerable.Repeat(
-                (byte)'x',
-                H0ResourceEnvelope.MaximumTransportFrameBytes + 1).ToArray();
+            var oversized = Enumerable.Repeat((byte)'x', (1024 * 1024) + 1).ToArray();
             Array.Resize(ref oversized, oversized.Length + 1);
             oversized[oversized.Length - 1] = (byte)'\n';
             AssertErrorCode(
                 Hk07AProcessHarness.Run(new[] { "--once" }, oversized),
-                "resource.request_bytes_exceeded");
+                "transport.frame_too_large");
         }
 
         [Fact]

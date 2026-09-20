@@ -14,7 +14,7 @@ namespace Arkus.Harness.Cli
     internal static class ReferenceTransportHost
     {
         internal const string ProtocolVersion = "arkus.reference.jsonl@1";
-        internal const int MaximumFrameBytes = H0ResourceEnvelope.MaximumTransportFrameBytes;
+        internal const int MaximumFrameBytes = 1024 * 1024;
         internal const int SuccessExitCode = 0;
         internal const int RequestFailureExitCode = 2;
         internal const int UsageFailureExitCode = 64;
@@ -155,8 +155,8 @@ namespace Arkus.Harness.Cli
                 return TransportFailure(
                     null,
                     null,
-                    "resource.request_bytes_exceeded",
-                    "The JSON Lines frame exceeded the H0 transport framing bound.",
+                    "transport.frame_too_large",
+                    "The JSON Lines frame exceeded the reference transport framing bound.",
                     "$",
                     false,
                     "Send one frame no larger than " + MaximumFrameBytes.ToString(CultureInfo.InvariantCulture) + " UTF-8 bytes.");
@@ -403,11 +403,6 @@ namespace Arkus.Harness.Cli
 
     internal static class ReferenceFrameCodec
     {
-        // Framing adds protocol/request/version/arguments containers around portable arguments.
-        // Keep that adapter overhead outside the canonical portable-depth budget so JSONL and MCP
-        // reach the same below-transport rejection boundary.
-        private const int MaximumJsonFrameDepth = H0ResourceEnvelope.MaximumPortableDepth + 16;
-
         internal static bool TryParseRequest(
             string json,
             out NeutralProjectionRequest? request,
@@ -427,7 +422,7 @@ namespace Arkus.Harness.Cli
                 {
                     AllowTrailingCommas = false,
                     CommentHandling = JsonCommentHandling.Disallow,
-                    MaxDepth = MaximumJsonFrameDepth
+                    MaxDepth = 256
                 });
             }
             catch (JsonException)
@@ -597,7 +592,7 @@ namespace Arkus.Harness.Cli
                 {
                     AllowTrailingCommas = false,
                     CommentHandling = JsonCommentHandling.Disallow,
-                    MaxDepth = MaximumJsonFrameDepth
+                    MaxDepth = 256
                 }));
             try
             {
