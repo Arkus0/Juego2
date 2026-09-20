@@ -134,3 +134,4 @@ jobs:
           path: artifacts/hkgate-mcp-linux-x64
           if-no-files-found: error
           retention-days: 14
+          include-hidden-files: true
