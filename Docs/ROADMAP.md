@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.19 — 2026-09-20
+Version: 1.20 — 2026-09-20
 
 ## North star
 
@@ -42,7 +42,7 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B` and `WP-HK-06C` are COMPLETE.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C` and `WP-HK-07A` are COMPLETE.
 
 `WP-HK-05` PR `#26` passed independent review on frozen candidate `23a9fd4373a803187cd9391b1459cd48975177f6` (review `#5257350871`), exact-SHA candidate observation Actions `35464742544` GREEN, freeze validation Actions `35464834162` GREEN, and merged as `ed65661680aea2a9be79f892c96aa42bf788a842` on 2026-09-19. Two prior frozen candidates failed in the same aggregate-validation-under-ambiguous-identity class; the circuit breaker triggered a causal architecture re-audit, and the accepted candidate uses dependency-local ambiguity deferral rather than global suppression.
 
@@ -52,11 +52,13 @@ Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, 
 
 `WP-HK-06C` PR `#40` passed independent review on frozen candidate `55fecbd8a4a5e17ce247b164cd375d652d066fdf` (review `#5259530509`), exact-SHA validation Actions `35488920548` GREEN, and merged as `e44a5e93bf0912f5b5fb80dd749e294e21a740f2` on 2026-09-20. Replay is explicitly a distinct `CanonicalReplay` authority: accepted HK06A journal evidence is verified and replayed through the accepted HK04/HK05 mutation authority inside a staged session, audited against regenerated HK06A entry identities/results, and published only after complete success; final canonical hash and HK06B semantic diff must agree.
 
+`WP-HK-07A` PR `#44` passed independent review on frozen candidate `f2ef88980b38482a1a635f4eeb0582ee49d735ec` (review `#5259732343`), exact-SHA validation Actions `35492562005` GREEN, and merged as `f70a81b5115cd2a6b0c8b1cb9c5dd657d5f3792b` on 2026-09-20. The accepted host freezes `arkus.neutral-projection@1` above a deterministic `arkus.reference.jsonl@1` adapter: composed canonical discovery/dispatch remains the sole semantic authority, scoped capabilities project generically without an adapter registry, cancellation/timeout are admission-only, framing and stdout/stderr boundaries are explicit, and a fresh external process flow exercises read, validation, mutation, provenance, diff, snapshot and replay. HK07B must now fit MCP as a genuine second projection without changing those accepted neutral semantics merely to accommodate MCP.
+
 Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
 Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-Next dependency-valid workpack: `WP-HK-07A — Headless host + neutral projection contract + reference transport`.
+Next dependency-valid workpack: `WP-HK-07B — MCP as second projection + cross-transport conformance`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -71,7 +73,7 @@ Next dependency-valid workpack: `WP-HK-07A — Headless host + neutral projectio
 | 9 | `WP-HK-06A` ✅ COMPLETE | Provenance journal + authored/live-state boundary |
 | 10 | `WP-HK-06B` ✅ COMPLETE | Semantic diff + canonical snapshot export/import portability |
 | 11 | `WP-HK-06C` ✅ COMPLETE | Deterministic journal replay + end-to-end audit consistency |
-| 12 | `WP-HK-07A` | Production headless host + deterministic JSONL/reference transport |
+| 12 | `WP-HK-07A` ✅ COMPLETE | Production headless host + deterministic JSONL/reference transport |
 | 13 | `WP-HK-07B` | Standards-compatible MCP projection + cross-transport conformance |
 | 14 | `WP-HK-08A` | Efficient interaction primitives: atomic batching, compact/bounded reads, pagination and discovery cost metadata |
 | 15 | `WP-HK-08B` | Structured stale-CAS recovery, repair ergonomics and measured agent interaction budgets |
