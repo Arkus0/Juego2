@@ -18,7 +18,13 @@ export ARKUS_HK08B_BENCHMARK_OUTPUT="${ROOT}/${EVIDENCE_DIR}/hk08b-interaction-b
 
 test -f tests/Arkus.Harness.Tests/HkGateReadinessTests.cs
 test -f scripts/hkgate-negative-conformance.sh
+test -f scripts/hkgate-proof-infrastructure-check.sh
 test -f Docs/evidence/WP-HK-GATE/WORKER_PLAN.md
+
+# GATE-owned proof infrastructure is checked independently of the declarative
+# step list. In particular, stage 14 must be wired as a real unfiltered test
+# execution in this runner; G1 mutates that execution rather than its label.
+bash scripts/hkgate-proof-infrastructure-check.sh
 
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
 DOTNET_NOLOGO=1 dotnet build Juego2.sln --configuration Release --no-restore -m:1 --disable-build-servers
@@ -82,7 +88,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/hkgate-observe-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: locked-restore=GREEN; release-build=GREEN; public-reference-scenario=GREEN; reference-mcp-conformance=GREEN; hk08b-interaction-budget=GREEN; hk09a-authority-boundary=GREEN; hk09b-resource-persistence=GREEN; hk10-endurance=GREEN; gate-negative-control=GREEN; inherited-causal-negative-controls=GREEN; headless-regression=GREEN
+Required gates: proof-infrastructure-wiring=GREEN; locked-restore=GREEN; release-build=GREEN; public-reference-scenario=GREEN; reference-mcp-conformance=GREEN; hk08b-interaction-budget=GREEN; hk09a-authority-boundary=GREEN; hk09b-resource-persistence=GREEN; hk10-endurance=GREEN; gate-negative-control=GREEN; inherited-causal-negative-controls=GREEN; headless-regression=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-HK-GATE; artifacts/observed/WP-HK-GATE
 EOF
