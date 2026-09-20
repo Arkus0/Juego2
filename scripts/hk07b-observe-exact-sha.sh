@@ -11,21 +11,9 @@ if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 [[ "${actual}" == "${EXPECTED_SHA}" ]] || { echo "SHA mismatch: expected ${EXPECTED_SHA}, observed ${actual}" >&2; exit 2; }
 [[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean before HK07B observation" >&2; exit 2; }
 
-lock="src/Arkus.Harness.Mcp/packages.lock.json"
-if [[ ! -f "${lock}" ]]; then
-  echo "HK07B_LOCK_BOOTSTRAP_REQUIRED"
-  DOTNET_NOLOGO=1 dotnet restore src/Arkus.Harness.Mcp/Arkus.Harness.Mcp.csproj -p:RestorePackagesWithLockFile=true -m:1 --disable-build-servers
-  echo "HK07B_LOCKFILE_BEGIN"
-  cat "${lock}"
-  echo "HK07B_LOCKFILE_END"
-  echo "Generated MCP lockfile must be committed before canonical observation can pass." >&2
-  exit 2
-fi
-
+test -f src/Arkus.Harness.Mcp/packages.lock.json
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
-DOTNET_NOLOGO=1 dotnet restore src/Arkus.Harness.Mcp/Arkus.Harness.Mcp.csproj --locked-mode -m:1 --disable-build-servers
 DOTNET_NOLOGO=1 dotnet build Juego2.sln --configuration Release --no-restore -m:1 --disable-build-servers
-DOTNET_NOLOGO=1 dotnet build src/Arkus.Harness.Mcp/Arkus.Harness.Mcp.csproj --configuration Release --no-restore -m:1 --disable-build-servers
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore -m:1 --disable-build-servers \
   --filter 'FullyQualifiedName~Hk07B'
