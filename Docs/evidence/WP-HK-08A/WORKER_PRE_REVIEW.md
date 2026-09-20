@@ -1,7 +1,7 @@
 # WP-HK-08A Worker pre-review
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 3
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 4
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-08A/WORKER_PRE_REVIEW.md
 
 ## Candidate challenged
@@ -9,103 +9,77 @@ WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-08A/WORKER_PRE_REVIEW.md
 - WP: `WP-HK-08A`.
 - Baseline: `13db4f890f4b6fe917fdf0d0c4e99cecfeed368d`.
 - Branch: `wp/hk-08a-efficient-interaction`.
-- Direct predecessor: accepted `WP-HK-07B`; predecessor reconstruction is recorded in `WORKER_PLAN.md`.
-- Final implementation/test SHA challenged here: `7102330e9a3030d8f4f333d2715a8633312eeb7b`.
-- GitHub Actions observation: `35498188203`; artifact `10600817518`.
+- Direct predecessor: accepted `WP-HK-07B`.
+- Reviewer-failed candidate: `0b835891d70666dab41846017e79eb3f7c3b311a`.
+- Reviewer review: `5260042576` on PR #50.
+- Repaired implementation/test SHA challenged here: `300c4b65bcbe1b547837dffc76e241c9500a9e0c`.
+- GREEN Actions observation: `35499408516`; artifact `10601643061`.
 
 This is Worker quality-gate evidence only. It is not an independent Reviewer verdict.
 
 ## Scope and predecessor check
 
-The diff was challenged against the literal HK08A contract and the accepted HK03→HK07B architecture. The implementation does not add a second mutation authority, validator, provenance journal, discovery registry or transport-specific semantic model:
+The repair was constrained to the public provenance-read version boundary, its runtime routes, affected conformance tests and evidence. It does not change HK06A journal truth, HK06C replay semantics or HK08B conflict recovery. Existing batching, validation, provenance authority, compact reads and JSONL/MCP projection remain on their accepted paths.
 
-- batching continues through the accepted HK04 transaction/commit authority;
-- candidate validation remains HK05/accepted world validation;
-- provenance remains the complete HK06A journal authority, with HK08A providing only a bounded public read view;
-- compact object reads reuse HK03 field projection;
-- JSONL and MCP continue to project the same canonical definitions and neutral dispatch;
-- stale-CAS mutation recovery, repair prioritization and final budgets remain absent and owned by HK08B/HK09B.
+## Findings 1–3 retained from the original Worker pre-review
 
-No predecessor reopen condition was observed.
+The earlier Worker pre-review found and repaired three in-scope defects before the first freeze:
 
-## Finding 1 — cursor offset context was editable without an integrity guard
+1. cursor offset context could be edited without an integrity guard;
+2. ordinary modify evidence changed too little to prove the anti-chattiness claim;
+3. an operation-level failure did not independently prove candidate-level world validation remained in the batch path.
 
-The first green implementation observation (`98b4696fe33f2cd26631249a058305993ec12a75`) had a real HK08A-owned false green. Its cursor was canonical Base64 framing over revision/hash/base/count/limit/offset, but a client could decode it, change the offset while keeping the same valid journal anchor, re-encode it and cause a gap/duplicate while the stale-anchor checks still passed.
+Their causal tests remain GREEN: altered v2 cursor context fails closed; one coherent mutation changes multiple object properties in one request; and a parseable but globally invalid candidate cannot publish state or provenance.
 
-This directly contradicted HK08A's pagination completeness claim, so the candidate was **not** frozen despite green CI.
+## Finding 4 — Reviewer FAIL: v1 public semantics changed without a version bump
 
-Repair:
-
-- `IntegrityBoundWorldProvenanceService` now wraps every public continuation cursor in a deterministic integrity envelope before transport projection;
-- the envelope covers the complete underlying cursor context and rejects altered/corrupted context as `world.provenance.invalid_cursor` before paging resumes;
-- this is framing integrity only, not a security/authentication claim;
-- `AlteredCursorOffsetFailsClosedInsteadOfSkippingJournalEntries` reproduces the original false-green class by changing only the inner offset while retaining the old checksum; the altered cursor fails closed, while the unchanged cursor resumes at pageOffset 1 / sequence 2.
-
-## Finding 2 — ordinary modify evidence was too weak for the anti-chattiness claim
-
-The initial external flow performed an object update, but only one effective property changed. That was enough for transport parity but not a strong demonstration of the explicit HK08A rule that an ordinary coherent update must not require one public call per property.
+The independent Reviewer correctly identified that candidate `0b835891...` kept `authoring.journal.read@1.0` while changing its accepted HK06A meaning from `{}` -> complete journal to a default-50 paged read. A distinct page `schemaId` did not preserve the contract for existing v1 clients.
 
 Repair:
 
-- `OneCoherentMutationRequestUpdatesSeveralObjectPropertiesTogether` updates type, container and references in one `put-object` operation / one canonical request;
-- the resulting canonical plan reports a single `update` resource change containing all three changed fields;
-- the persisted result advances one revision and appends one provenance entry;
-- the independent shape oracle still turns red for the artificial one-request-per-property pattern.
+- `authoring.journal.read@1.0` is restored to its accepted empty request schema, complete `arkus.authoring.journal@1` success shape and direct binding to the complete provenance authority;
+- HK08A pagination is published as the breaking major version `authoring.journal.read@2.0` with revision/hash/limit/cursor request fields and the bounded page success contract;
+- v2 retains cursor integrity, stale-anchor behavior and complete-page compatibility shaping;
+- JSONL and MCP conformance clients now negotiate v1 or v2 explicitly and require both canonical tool identities;
+- a 55-entry causal regression proves v1 `{}` returns all 55 while v2 default paging returns 50 + continuation;
+- independently enumerated HK01 route-universe tests require both journal versions and compare route count to canonical definitions instead of freezing a pre-v2 magic total.
 
-No new field-setter API or high-level planner was introduced.
+## False-green challenge after repair
 
-## Finding 3 — operation failure was not sufficient proof that global validation remains in the batch path
+The repaired surface was challenged for:
 
-The first atomic negative used a later `remove-object` for a missing resource. That proves no partial commit after an operation-level failure, but a path that accidentally omitted candidate-level HK05/world validation could still pass that test.
-
-Repair:
-
-- `ParsedBatchThatViolatesWorldValidationCannotPublishOrAppendProvenance` uses two operations that both parse/apply locally;
-- the resulting candidate contains a missing containment target, so the accepted global validator is the reason the batch must be rejected;
-- state revision/hash/objects and journal remain unchanged.
-
-This closes the exact "batch path omitting validation" defect class without duplicating the validator.
-
-## Complete diff / false-green challenge
-
-The final diff was challenged for:
-
-- keeping the old 64-operation ceiling while claiming the representative intent is atomic;
-- implementing a hidden multi-batch transaction or committing halves;
-- applying earlier operations when a later operation or global validation fails;
-- reporting success without one matching provenance entry;
-- returning a partial journal page under the accepted complete HK06A schema and thereby confusing replay;
-- duplicate/missing sequence across pages;
-- stale anchor/cursor continuation after authored state changes;
-- altered cursor offset producing a gap while the same anchor remains current;
-- compact reads removing the required authored-world anchor;
-- introducing a transport-local cost or batching registry;
-- JSONL/MCP drift for batch, page, compact or discovery semantics;
-- claiming anti-chattiness while only proving one changed property;
-- silently pulling stale-CAS recovery, resource quotas, multi-agent orchestration or engine/gameplay semantics into HK08A.
+- accidentally routing v1 through the bounded service;
+- allowing v1 paging fields despite the restored empty request schema;
+- returning only the v2 default page under v1 with a large journal;
+- exposing v2 in definitions without an independently discoverable route or MCP tool;
+- letting JSONL and MCP negotiate different journal semantics;
+- confusing a partial v2 page with a complete HK06A replay artifact;
+- weakening stale cursor/anchor or cursor-integrity behavior while splitting routes;
+- reopening HK06A journal meaning or HK06C replay;
+- hard-coding predecessor route totals so a legitimate version addition causes a false regression.
 
 No such blocker remains in the implementation/test SHA.
 
-## Product-shape recheck
+## Validation convergence
 
-`Docs/art/VISUAL_BIBLE.md` is the approved-draft source used only for scale/context: fictional Potes/Liébana, modular reuse and an H2 hero target of at most roughly 120 meshes. The 96-operation probe deliberately stays below that future hero-scale envelope while crossing the old 64 ceiling. Its 72 objects + 24 opaque extensions are fixture records, not a new canonical town/Unity schema. `CONTENT_SHAPE_PROBE.md` records the assumptions and future-owner classifications.
+First repaired SHA `21b13bf571c7295d2907d972f2eaa95e9a4c5031` produced the desired build and focused result, but full regression found two stale HK01 numeric inventory assertions (expected 18/21, actual 19/22). This was a test-oracle maintenance issue caused by the legitimate new version identity, not a production contract failure. The repair replaced those magic totals with the actual completeness invariant and explicit v1/v2 presence checks.
 
-## Green observation after all findings
-
-Exact implementation/test SHA `7102330e9a3030d8f4f333d2715a8633312eeb7b` passed:
+Exact implementation/test SHA `300c4b65bcbe1b547837dffc76e241c9500a9e0c` then passed:
 
 - locked restore: GREEN;
 - Release build: 0 warnings / 0 errors;
 - focused `Hk08A*`: 13/13 GREEN;
 - full regression: 173/173 GREEN;
+- cross-transport: GREEN;
+- foundational-proof/evidence/Worker-pre-review verifier gates: GREEN;
 - candidate clean before/after: YES;
-- Actions run `35498188203`: GREEN;
-- artifact `10600817518`.
+- Actions run `35499408516`: GREEN;
+- artifact `10601643061`.
 
 ## Proof-budget conclusion
 
-All three pre-review additions close explicit HK08A acceptance gaps or a concrete false green found in the candidate. None introduces generic hardening machinery. The remaining named risks belong to HK08B/HK09B or later host/engine work. Adding further proof for hostile cursor fabrication, final performance limits or stale mutation recovery would expand the claim rather than converge it.
+The fail-cycle changes only the version boundary that the Reviewer identified and the conformance needed to prove it. No generic hardening, second registry, replay reinterpretation, conflict-recovery machinery or speculative transport behavior was added. HK08B/HK09B boundaries remain intact.
 
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
-No known in-boundary blocker remains. The resulting evidence-reconciliation SHA is eligible for exact-SHA verification and freeze; a fresh independent Reviewer is still required after that handoff.
+No known in-boundary blocker remains. The resulting evidence-reconciliation commit is eligible for exact-SHA verification and freeze; a fresh independent Reviewer is still required after handoff.
