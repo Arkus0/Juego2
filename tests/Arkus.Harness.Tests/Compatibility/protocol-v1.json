@@ -1,0 +1,35 @@
+{
+  "schemaId": "arkus.hk10.protocol-v1-compatibility-corpus@1",
+  "protocolMajor": 1,
+  "referenceTransport": {
+    "contract": "arkus.reference.jsonl@1",
+    "maximumFrameBytes": 1048576,
+    "oversizeMachineCode": "transport.frame_too_large"
+  },
+  "resourceEnvelope": {
+    "schemaId": "arkus.h0-resource-envelope@1",
+    "maximumCanonicalArgumentBytes": 917504,
+    "maximumPortableDepth": 32,
+    "maximumOperations": 96,
+    "maximumDecodedPayloadBytes": 524288,
+    "maximumPageSize": 100,
+    "maximumCanonicalWorldBytes": 655360,
+    "maximumWorldResources": 10000,
+    "maximumSessionTransactions": 10000,
+    "maximumImportReceipts": 1024,
+    "maximumExecutionMilliseconds": 5000,
+    "durabilityLevel": "process-local-checkpoint",
+    "powerLossDurabilityClaimed": false
+  },
+  "requiredCapabilities": [
+    { "name": "system.describe", "version": "1.0" },
+    { "name": "system.resource-envelope.describe", "version": "1.0" },
+    { "name": "world.summary", "version": "1.0" },
+    { "name": "world.object.get", "version": "1.0" },
+    { "name": "world.object.query", "version": "1.0" },
+    { "name": "authoring.change.apply", "version": "1.0" },
+    { "name": "authoring.journal.read", "version": "1.0" },
+    { "name": "authoring.snapshot.export", "version": "1.0" },
+    { "name": "authoring.snapshot.import", "version": "1.0" }
+  ]
+}
