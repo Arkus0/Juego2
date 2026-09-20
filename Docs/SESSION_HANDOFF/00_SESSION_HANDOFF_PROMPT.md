@@ -41,17 +41,17 @@ The accepted HK06A guarantee remains unchanged: ordinary canonical mutations sti
 
 ## Current next product target
 
-The original HK06 and HK07 monoliths were split **before implementation** to reduce coupled foundational freeze/review risk without reducing scope. Their old files remain SUPERSEDED umbrella records and must not be implemented directly.
+The original HK06 and HK07 monoliths were split **before implementation** to reduce coupled foundational freeze/review risk without reducing scope. HK08 and HK09 were later split on the same principle after their planned contracts accumulated two independently reviewable claims each. All four old umbrella files remain SUPERSEDED records and must not be implemented directly.
 
 Execution chain:
 
-`HK06A ✅ → HK06B ✅ → HK06C → HK07A → HK07B → HK08 → HK09 → HK10 → HK-GATE`
+`HK06A ✅ → HK06B ✅ → HK06C → HK07A → HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`
 
 The next dependency-valid workpack is `WP-HK-06C — Deterministic journal replay + end-to-end audit consistency`.
 
 HK06C consumes both accepted artifacts rather than redefining them: HK06A owns the truthful normalized mutation-journal envelope; HK06B owns snapshot/diff semantics and the explicit canonical-rebase root. HK06C must reconstruct the final authored state/hash from an accepted base/snapshot plus journal evidence, fail closed on reordered/missing/tampered/incompatible evidence, preserve canonical validation/transaction semantics, and prove an empty HK06B semantic diff between original and replayed final states. Read `Docs/workpacks/HK/WP-HK-06C.md` plus accepted HK06A/HK06B evidence before implementation.
 
-After 06C PASS+merge+DocSync: 07A establishes the real headless process and deterministic JSONL/reference transport; only then does 07B add MCP and prove cross-transport semantic equivalence. HK08, HK09, HK10 and HK-GATE remain unsplit.
+After 06C PASS+merge+DocSync: 07A establishes the real headless process and deterministic JSONL/reference transport; only then does 07B add MCP and prove cross-transport semantic equivalence. HK08A then owns batching/compact/bounded reads/pagination; HK08B owns structured stale-CAS recovery and the measured agent interaction benchmark; HK09A owns host capability containment; HK09B owns resource limits and persistence/import interruption integrity; HK10 remains the unsplit closure workpack before HK-GATE.
 
 ## Operating model
 
@@ -69,7 +69,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C → HK-07A → HK-07B → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C → HK-07A → HK-07B → HK-08A → HK-08B → HK-09A → HK-09B → HK-10 → HK-GATE`.
 
 ## Process invariants
 
