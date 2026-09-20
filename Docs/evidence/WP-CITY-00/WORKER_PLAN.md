@@ -1,218 +1,160 @@
-# WP-CITY-00 Worker plan
+# WP-CITY-00 — Worker plan (transfer repair)
 
-WP: WP-CITY-00 — Keeper City spatial constitution + scale envelope
+WP: `WP-CITY-00 — Keeper City spatial constitution + scale envelope`
 Contract: `Docs/workpacks/CITY/WP-CITY-00.md`
-Baseline SHA: 290f92e9c21f1e454e0d6924b29f4d778b9875f8
-Active Worker: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
-Worker state: ACTIVE
+Baseline SHA: `290f92e9c21f1e454e0d6924b29f4d778b9875f8`
+Branch: `claude/city-urban-topologies-ehn6qf`
+Active Worker: `ChatGPT GPT-5.6 Sol — transfer Worker`
+Worker history: `Claude Code — session 01KC1S5dCRLuMq6qeht4n34L → ChatGPT GPT-5.6 Sol`
+Transfer SHA: `d2d5f7a7277d8949264d62e6ac2ecbbb171aae9b`
+fail_cycle: **4**
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)
-fail_cycle: 3
 
-> **CIRCUIT BREAKER — global connectivity re-audit.** Three independent FAILs landed in one causal
-> family, so `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` requires that local patching stop and the
-> foundation be re-audited. The freeze at `814c8c959285535bae13251bd0a5bc3474b711e1` was withdrawn
-> rather than handed to a fourth review. `fail_cycle` stays at 3: this is a Worker-initiated re-audit
-> directed by the project owner, not a fourth FAIL.
->
-> The audit built `Docs/evidence/WP-CITY-00/CONNECTIVITY_MATRIX.md` as the single source of
-> connectivity semantics and derived every surface from it. It found one live contradiction the
-> reviews had not yet reached — §2.4.1 claimed the south bank "is reached two ways in both states"
-> seven lines above the ladder showing one and zero — plus CSI-03 promising two plaza-free routes
-> where the evidence shows one, CSI-07 promising three arroyo crossings where flood leaves two, a
-> port described as reachable three ways when the ferry makes four, an unlabelled State-1 loop in the
-> walk-time table, and two summaries omitting the south bank's second crossing entirely.
->
-> The audit explicitly tested whether the topology itself is contradictory. It is not: every finding
-> is a documentation defect, and the one with real spatial content — Casco ↔ Ensanche routing through
-> the plaza in high water — is a seasonal condition worth keeping. **Topology B stands; the city is
-> not redesigned.**
->
-> **Repair cycle 3.** Frozen candidate `daefc6a1e4959c1cffacd662f5578a4c13a642d3` received
-> independent FAIL, review
-> [#5261488049](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261488049). A summarising
-> sentence written in the same commit as the table that refutes it claimed the south bank is never
-> left on a single crossing, and miscounted the double-failure case as one crossing instead of zero;
-> CSI-06 carried the claim into the permanent contract. Repaired by restating CSI-06 as a design
-> obligation, giving §2.4.1 an explicit crossing-count ladder, and deleting the dossier's paraphrase.
-> No spatial decision changed.
->
-> **Repair cycle 2.** Frozen candidate `6091584313488bcfb1840132f22adcc9b1b5de4f` received
-> independent FAIL, review
-> [#5261418045](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261418045). The cycle-1
-> repair was confirmed sound, but it had added the barca as a crossing without reconciling what that
-> edge falsifies: the crossing tables still said closing the Puente Viejo cut the south side off, and
-> neither semantic graph drew the ferry, so the selected district graph and the crossing strategy
-> described two different cities. Reconciled around two explicit connectivity states
-> (`CITY_SPATIAL_CONSTITUTION.md` §2.4.1). No spatial decision changed.
->
-> **Repair cycle 1.** Frozen candidate `b9473f04da72462619e9561c097083afdc6c436d` received
-> independent FAIL, review
-> [#5261386416](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261386416). The
-> constitution had closed over an unaccepted setting premise capable of invalidating it, and had
-> inverted the CITY→ART authority direction while doing so. The repair removes the premise instead
-> of arguing or deferring it. The predecessor contract check below is updated accordingly; the
-> spatial work the review found sound is unchanged.
+`WORKER_TRANSFER.md` preserves the handoff from the outgoing Worker. This plan supersedes the old
+conclusion that the circuit-breaker audit found only documentation defects. Independent review
+#5261556774 proved the matrix itself described an impossible planar embedding.
 
-## PREDECESSOR_CONTRACT_CHECK
+## 1. Repair boundary after FAIL 4
 
-`WP-CITY-00` declares three inputs: the `WP-ART-00` seed, `Docs/production/PRODUCTION_BLUEPRINT.md`,
-and the current Living World PA roadmap **as non-binding product input**.
+Reopen exactly the causal boundary the review named:
 
-None of them is an independently PASSed foundational workpack, and this check does not pretend
-otherwise. The honest inherited surface is: *documents merged on `main` at the baseline SHA*.
+1. which real downstream bank contains Puerto;
+2. how Puerto physically connects to Casco, Ribera and Entrada;
+3. which water each approach crosses;
+4. whether the crossing set remains seven;
+5. then regenerate route counts, L1/L1′ and affected seams/invariants.
 
-### Dependency 1 — `WP-ART-00` (art/setting direction seed)
+Do **not** redo unless falsified by that geometry:
 
-- Status in `Docs/workpacks/ART/WP-ART-00.md`: **SEED MERGED** (direction docs on `main` via PR).
-- No independent Reviewer PASS, no reviewed candidate SHA and no exact-SHA evidence exist for it.
-  It is explicitly outside `FOUNDATIONAL_PROOF_STANDARD.md` and gates no `HK-*`.
-- Inherited state as merged at `290f92e9c21f1e454e0d6924b29f4d778b9875f8`:
-  `Docs/art/SETTING.md`, `Docs/art/VISUAL_BIBLE.md` v0.1.3,
-  `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`.
+- the three materially different topology alternatives and original preference ordering;
+- corrected 0.30–0.45 km² dense scale and 0.03–0.06 km² seed;
+- the landing's timber/áridos/ferry/road-break-bulk rationale;
+- two connectivity states;
+- the south-bank 2 → 1 → 0 availability ladder;
+- CITY→ART authority direction.
 
-Guarantees consumed rather than re-argued by CITY-00:
+## 2. Causal solution selected before rewriting routes
 
-1. The town is a **fictionalized Potes / Liébana mountain-valley market town**, not a 1:1 rebuild of
-   real Potes and **not** primarily a coastal harbour town.
-2. Harbour / open sea / fishing-port identity as the hero read is a declared **No**
-   (`VISUAL_BIBLE.md` §2). A later river feature is permitted only as a **small port / landing on
-   that river, working boats only**, keeping inland-waterway identity (`SETTING.md`).
-3. Street/plaza/frontage/floor anchors (streets 4–6 m, plaza ~25×20 m order, 1 m grid) come from the
-   visual bible, not from CITY.
-4. The H2 hero budget (≤120 meshes, ≤6 atlases, ~20 clips, 6 NPCs) is a constraint to test, not a
-   promise CITY may quietly inflate (`PRODUCTION_BLUEPRINT.md` §8.3 restates this).
+`PLANAR_EMBEDDING.md` fixes landmasses first:
 
-`WP-ART-00` owns visual/setting direction. CITY consumes it and must not silently restyle the game
-(`Docs/workpacks/CITY/README.md`).
+- Wedge lies between Río and Arroyo and **ends at the confluence**;
+- Ensanche bank is outside Arroyo;
+- Orilla sur is outside Río and continues onto a real bank of the joined river;
+- **Puerto + Entrada sit downstream on that Orilla-sur bank**;
+- X6/X7 crosses from the Wedge-tip landing head to Puerto;
+- X1 + camino sur is the other core↔Puerto route.
 
-Two governing rules, each learned the hard way, and recorded here so they bind future CITY work
-rather than this document alone.
+This keeps seven crossing IDs across the constitution's life and six per state. It changes endpoint
+semantics rather than adding a hidden eighth crossing.
 
-**From cycle 1 — CITY-00 may not need a setting fact that ART has not stated.** An open question is legitimate only when no answer to it can
-invalidate the constitution. If a spatial decision requires a setting premise ART has not given,
-the decision has to be redesigned to need less — not argued, and not deferred. The working landing
-in §2.5 of the constitution is built to that rule: it rests on confluence hydrology and on the
-small-landing/working-boats direction `SETTING.md` already grants, and on nothing else.
+## 3. Repair rules accumulated from all four FAILs
 
-**From cycle 2 — a repair that adds an edge must reconcile the graph and every consequence that edge
-falsifies.** Adding a crossing is never a local addition: it changes what happens when *other*
-crossings close, and it changes what the semantic graph has to show. Cycle 1 added the barca, wrote
-one paragraph about the loop it created, and left the crossing table asserting an isolation that the
-same repair had just made impossible. Both cycles are the same failure in different clothes —
-closing over something without checking what else depended on it — which is why the check now
-belongs in the pre-review rather than in a reviewer's reading.
+### From FAIL 1 — authority closure
 
-**From cycle 3 — every absolute claim about this document's own artefacts is audited mechanically
-before freeze, not read carefully.** Three cycles have now failed on one shape: a summarising
-sentence asserting *never / always / only / exactly / a count*, written beside the table that refutes
-it, with the contradiction under twenty lines away. Cycle 3's sentence was written in the same commit
-as its own refutation, immediately after cycle 2 added a cross-check — so "be more careful" has been
-tried and has failed three times. The pre-review therefore greps the deliverable for absolute
-quantifiers and counts, and tabulates each factual one against the table or graph it describes
-(`WORKER_PRE_REVIEW.md` §3). A policy prohibition — "no production phase may…" — is not a factual
-claim and is exempt. This check absorbs and replaces the narrower cycle-2 crossing cross-check.
+CITY may not require a setting fact ART has not granted. A spatial decision that needs such a fact is
+redesigned to need less, not deferred with an answer that could invalidate the constitution.
 
-A corollary, because cycle 3's defect entered through a paraphrase: **an evidence document must not
-restate an invariant in its own words.** It points at the owner. Two copies of a rule are two things
-that can disagree.
+### From FAIL 2 — adding an edge is global
 
-**From the circuit-breaker audit — connectivity has one owner, and every invariant declares what it
-binds.** Three cycles of per-surface patching produced three new contradictions because connectivity
-semantics lived in six places at once. `CONNECTIVITY_MATRIX.md` is now the single source: crossings,
-states, availability ladders for *both* waters, route counts, closure and combined-failure
-consequences, loops and seam count. Every other surface cites it and none paraphrases it.
+A crossing changes graphs, closure consequences, loops and route counts. Every edge mutation requires
+reconciliation of all affected surfaces.
 
-And the rule that explains all three FAILs at once: **an invariant that promises an availability
-count is refutable by weather.** Each connectivity invariant now declares whether it binds **design**
-— what the constitution must provide, not refutable by a closure or a flood — or **availability**,
-which no invariant may assert because the matrix owns it. CSI-03, CSI-06 and CSI-07 all bind design.
-That distinction, applied uniformly, is what a re-audit produces instead of a fourth patch.
+### From FAIL 3 — design is not availability
 
-### Dependency 2 — `Docs/production/PRODUCTION_BLUEPRINT.md` v0.2
+Weather/closure counts live in the connectivity matrix. Permanent invariants bind designed provision
+unless explicitly stated otherwise. Absolute count/never/always claims must be checked against the
+owning table.
 
-- Declared **NON-BINDING, owner-reviewed production proposal**. It creates no acceptance criterion
-  and authorizes nothing.
-- Inherited product decisions consumed by CITY-00: the demo is the first piece of the game (§0.1);
-  the river/bridge/loops product-seed direction supersedes the earlier radial test hub (§12); the
-  first serious build must be small enough to finish and good enough to keep (§1.4); reactive
-  density and retained-first take priority over acreage; §10 rabbit-hole guards, in particular *do
-  not model the whole valley before the keeper town core is fun and useful*.
-- Explicitly **not** inherited as settled: the §1.2 semantic topology diagram. It predates the
-  fluvial-port and city-size direction, contains no port, and `Docs/workpacks/CITY/README.md`
-  authorizes CITY to sharpen or propose amendments to the blueprint. CITY-00 reconciles it (WP Work
-  item 1) rather than treating it as fixed.
+### From FAIL 4 — source agreement is not physical truth
 
-### Dependency 3 — Living World PA programme (non-binding product input)
+A single connectivity owner removes surface drift but cannot prove that owner's geometry. Therefore:
 
-- `Docs/research/living-world/PA_ROADMAP.md` v1.1 is `PROCESS_ONLY` and explicitly non-binding until
-  reviewed/adopted. Old `Arkus0/Juego` PASS status carries no authority here.
-- CITY-00 consumes PA material **only as spatial requirements**, and pre-accepts no PA finding:
-  - `LIVING_WORLD_CROSSCUTTING_AMENDMENT_01` LW-X04/LW-X09: ordinary life and low-stakes play are
-    first-class, so quiet ordinary fabric is a spatial obligation, not filler.
-  - `PA-08` §4.3: activities consume real place/time/capacity, so activities need physical homes with
-    scarcity (one table, limited spots, a bolera, fishing places).
-  - `PA-12_AMENDMENT_01` §3 and §5.3: municipal levers (access/permission, schedule, capacity and
-    allocation, cost/support, sponsorship, enforcement, public commitment) must be followable on foot
-    — inspect a site, attend a meeting, talk to affected citizens. That is a requirement for
-    *places*, and CITY-00 owns whether those places exist.
-  - `PA-11` (Investigation, Legibility & Traces) needs branching routes and legitimate vantage, not
-    an omniscient map.
+1. landmasses and planar embedding are fixed first;
+2. every inter-landmass edge must name a crossing;
+3. loops are decomposed into dry segments + named crossings;
+4. a planarity table is part of pre-review, not merely a prose sanity check.
 
-### Guarantees newly owned by WP-CITY-00
+## 4. PREDECESSOR_CONTRACT_CHECK
 
-CITY-00 owns, and CITY-01..04 inherit:
+`WP-CITY-00` declares three inputs: `WP-ART-00` seed, `PRODUCTION_BLUEPRINT.md`, and Living World PA
+roadmap as non-binding product input.
 
-- the selected semantic district graph and the spatial role of each district family;
-- the river/tributary/crossing/port structure and the reasons the port exists;
-- the corrected scale envelope plus the explicit conditions that would shrink or expand it;
-- the boundary between promised playable fabric and scenic envelope;
-- the permanent spatial invariants;
-- the rejected alternatives and the recorded reason each was rejected.
+### Dependency 1 — WP-ART-00 seed
 
-CITY-00 does **not** own walk-time measurement (CITY-01/04), the location/interior programme
-(CITY-02), the seed boundary (CITY-03), or any engine/implementation authority.
+Status: **SEED MERGED**, not an independently PASSed foundational WP. CITY consumes merged direction
+at baseline rather than pretending a stronger proof status.
 
-### Concrete condition that would reopen an inherited input
+Relevant inherited direction:
 
-- ART fixes a landing scale or material language incompatible with a working timber-and-gravel
-  landing with a roped ferry → reconcile the landing's programme, which is a CITY-02/CITY-03
-  question. It no longer threatens the topology, because after repair cycle 1 the landing's reason
-  for existing depends on no ART premise.
-- An owner revision of `PRODUCTION_BLUEPRINT.md` restores a topology incompatible with the selected
-  constitution → reconcile again rather than maintaining two contradictory topologies on `main`.
-- A future measured traversal result from CITY-04 falsifies the travel-time arithmetic used here →
-  reopen the scale envelope at its stated conditions, not by stretching the selected topology.
+- fictionalized Potes/Liébana mountain-valley market town, not 1:1 real Potes;
+- no coastal/hero-harbour identity;
+- a **small river landing / working boats** is allowed if it remains inland in character;
+- visual-bible street/plaza/frontage/floor anchors are ART-owned;
+- CITY consumes visual/setting direction and does not bind ART backwards.
 
-A theoretical preference for a different city, or a wish for a bigger one, is not such a condition.
+Concrete reopening condition: ART later fixes a material/scale rule incompatible with the small
+working landing. That can force CITY-02/03 programme reconciliation; it does not justify CITY-00
+inventing a navigability premise.
 
-## Claim and boundary
+### Dependency 2 — Production Blueprint
 
-CITY-00 claims only this: that three materially different city topologies were constructed, that each
-was attacked before any preference was formed, that the selected constitution answers the WP's
-acceptance criteria, and that the resulting scale envelope follows from traversal, density and
-content-cost reasoning rather than from the track's starting hypotheses.
+Non-binding owner-reviewed production proposal. CITY consumes retained-first/product-seed reasoning,
+river/bridge/loop direction, reactive density priority and rabbit-hole guards. The blueprint's old
+semantic topology was explicitly not settled; CITY-00 owns reconciling it.
 
-Outside the claim: measured walk times, navmesh feasibility, final geometry, the location/interior
-programme, the seed boundary, asset selection, engine behaviour and any `HK-*` guarantee.
+Concrete reopening condition: owner revision restores a topology incompatible with the accepted CITY
+constitution; reconcile rather than keep two towns on `main`.
 
-CITY is non-foundational (`Docs/workpacks/README.md`): `FOUNDATIONAL_PROOF_STANDARD.md` is not
-binding, exact-SHA validation evidence is not required, and nothing in this workpack may block,
-weaken or reinterpret any `HK-*` acceptance criterion or the `WP-HK-GATE` precondition.
+### Dependency 3 — Living World PA programme
 
-## Planned work and evidence
+Non-binding product input only. CITY consumes spatial consequences: ordinary-life places, scarce
+activity homes, walkable municipal levers and branching/followable routes. No PA workpack is
+pre-accepted by CITY-00.
 
-1. Build three topology dossiers, each placing all twelve required spatial ingredients.
-2. Attack all three in `REFUTATION_LOG.md` **before** forming a preference.
-3. Compare on the eight required axes plus the WP's six negative gates.
-4. Select one constitution and record what each rejected option lost on.
-5. Derive the scale envelope arithmetically and state its change conditions.
-6. Write `Docs/production/CITY_SPATIAL_CONSTITUTION.md`.
-7. Reconcile `PRODUCTION_BLUEPRINT.md` to the selected constitution.
-8. Run the mandatory strict Worker pre-review, then freeze.
+### Guarantees newly owned by CITY-00
 
-## Scope guard
+- selected semantic district graph and district-family roles;
+- landmass / river / tributary / crossing / port structure;
+- port rationale and scale envelope;
+- playable vs scenic boundary;
+- permanent spatial invariants;
+- rejected alternatives and reasons;
+- open questions handed to CITY-01..04.
 
-No Unity scene, asset import, navmesh, runtime contract or `src/`/`tests/`/`tools/`/`scripts/`
-change. No edit to `Docs/ROADMAP.md`, any `WP-HK-*`, or `Docs/engineering/RESIDUAL_LEDGER.md` (that
-inventory is declared as covering accepted H0 workpacks). The starting size hypotheses are treated as
-falsifiable, never as targets to justify after the fact.
+### Guarantees deliberately not owned
+
+Measured walk times/navmesh; CITY-02 programme/interiors; CITY-03 seed boundary; final geometry;
+asset implementation; any HK guarantee.
+
+## 5. Claim and trust boundary
+
+Claim: three genuine topologies were compared/refuted; selected B is now physically planar and meets
+WP acceptance; scale follows density/travel/content-cost reasoning.
+
+Trusted inputs: merged ART/setting direction and non-binding blueprint/PA inputs exactly as classified
+above.
+
+Outside claim: engine behavior, exact travel measurement, asset feasibility, runtime contracts and
+H0 proof.
+
+CITY is non-foundational. `FOUNDATIONAL_PROOF_STANDARD.md` and exact-SHA validation are not binding;
+CI in PROCESS_ONLY mode is not semantic evidence.
+
+## 6. Planned execution for repair cycle 4
+
+1. establish `PLANAR_EMBEDDING.md` before route prose;
+2. regenerate `CONNECTIVITY_MATRIX.md` from it;
+3. reconcile selected topology dossier, constitution, comparison/refutation surfaces;
+4. check blueprint/scale surfaces for assumptions invalidated by the bank change;
+5. run strict pre-review from baseline→new HEAD;
+6. perform mechanical absolute/count search plus planar route decomposition;
+7. freeze only if CLEAN.
+
+## 7. Scope guard
+
+Allowed: Markdown under CITY production/evidence surfaces needed by WP-CITY-00.
+
+Forbidden: Unity scenes/assets/navmesh; `src/`, `tests/`, `tools/`, `scripts/`; ROADMAP/HK semantics;
+`RESIDUAL_LEDGER.md`; CITY-01 implementation.
+
+No review is requested while PR remains Draft + ACTIVE.
