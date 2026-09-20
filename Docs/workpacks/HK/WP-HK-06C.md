@@ -1,9 +1,20 @@
 # WP-HK-06C — Deterministic journal replay + end-to-end audit consistency
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: `WP-HK-06B`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+## Completion metadata
+
+- implementation PR: `#40`;
+- baseline SHA: `c6534fa42f6bdd18a5bff4c3fe23f3868af993e8`;
+- reviewed frozen candidate: `55fecbd8a4a5e17ce247b164cd375d652d066fdf`;
+- independent Reviewer verdict: `PASS` (review `#5259530509`);
+- exact-SHA validation: GREEN, Actions `35488920548`, artifact `10598675153`;
+- implementation merge SHA: `e44a5e93bf0912f5b5fb80dd749e294e21a740f2`.
+
+Accepted semantics: deterministic replay of accepted HK06A mutation-journal evidence from the exact accepted authored base; explicit replay-version compatibility; every replayed mutation executes through the accepted HK04/HK05 canonical mutation authority; the complete sequence is staged and audited before one outer aggregate publication; successful replay regenerates truthful local HK06A mutation history and proves final canonical hash plus empty HK06B semantic diff. Replay is a distinct `CanonicalReplay` authority rather than an ordinary mutation or snapshot rebase.
 
 ## Objective
 
