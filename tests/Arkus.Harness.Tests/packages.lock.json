@@ -129,6 +129,13 @@
           "Arkus.Harness.Runtime": "[1.0.0, )"
         }
       },
+      "arkus.harness.projection": {
+        "type": "Project",
+        "dependencies": {
+          "Arkus.Harness.Protocol": "[1.0.0, )",
+          "Arkus.Harness.Runtime": "[1.0.0, )"
+        }
+      },
       "arkus.harness.protocol": {
         "type": "Project"
       },
@@ -137,6 +144,7 @@
         "dependencies": {
           "Arkus.Game.Authoring": "[1.0.0, )",
           "Arkus.Game.Validation": "[1.0.0, )",
+          "Arkus.Game.World": "[1.0.0, )",
           "Arkus.Harness.Protocol": "[1.0.0, )"
         }
       }
