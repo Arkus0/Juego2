@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.23 — 2026-09-20
+Version: 1.24 — 2026-09-20
 
 ## North star
 
@@ -42,7 +42,7 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B`, `WP-HK-08A` and `WP-HK-08B` are COMPLETE.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B`, `WP-HK-08A`, `WP-HK-08B` and `WP-HK-09A` are COMPLETE.
 
 `WP-HK-05` PR `#26` passed independent review on frozen candidate `23a9fd4373a803187cd9391b1459cd48975177f6` (review `#5257350871`), exact-SHA candidate observation Actions `35464742544` GREEN, freeze validation Actions `35464834162` GREEN, and merged as `ed65661680aea2a9be79f892c96aa42bf788a842` on 2026-09-19. Two prior frozen candidates failed in the same aggregate-validation-under-ambiguous-identity class; the circuit breaker triggered a causal architecture re-audit, and the accepted candidate uses dependency-local ambiguity deferral rather than global suppression.
 
@@ -60,11 +60,13 @@ Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, 
 
 `WP-HK-08B` PR `#52` passed independent review on frozen candidate `31370f91b48408b90a587d7ad5178ba1be8d6bfe` (review `#5260337340`), exact-SHA freeze validation Actions `35503766435` GREEN, and merged as `bdf4675c17d842d73ff59637fa36314d14c2707a` on 2026-09-20. The accepted recovery contract emits a precise changed-resource delta only when the exact expected revision+hash is proven inside complete contiguous current local HK06A history; unavailable/gapped history or a non-ancestor/rebase lineage fails closed as `bounded-reinspection-required`. Ordinary same-lineage recovery inspects only affected resources, retries through normal plan/dry-run/apply, preserves validation/provenance authority and remains semantically equivalent through JSONL/MCP. The representative public-client benchmark covers five authoring/repair flows in 12 requests without recovery full-world reload, with executable byte/time regression guards. One earlier frozen candidate failed solely because the binding v1.3 content-shape probe was missing; the accepted repair added an executable approved Juego2 market/plaza/bar/workshop probe and exact-SHA gate linkage without changing production recovery semantics.
 
+`WP-HK-09A` PR `#54` passed independent review on frozen candidate `acb1ccc341aec5131dc2ef979bd322e40e208b53` (review `#5260496498`), exact-SHA freeze validation Actions `35508529666` GREEN, and merged as `614ad941881fdefa83fd46a1a8db989cfaba2cbb` on 2026-09-20. The accepted H0 authority boundary exposes no generic shell/process power, no protocol-triggered ambient network authority and no caller-selected filesystem path authority; production `--file` is rejected before the legacy framing host can open a path. `H0HostCapabilityPolicy` rejects external/elevated/unknown authority and contradictory canonical state-change metadata, while `NeutralProjectionService` independently enforces H0 admission on every composed contract before transport-visible exposure/dispatch. One earlier frozen candidate failed because public generic composition could reach neutral projection without crossing the policy; the accepted repair closes that causal seam below JSONL/MCP/future conforming transports while keeping `ContractComposer` generic, with an executable direct-composition→projection rejection fixture and an approved Juego2 content-shape probe.
+
 Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
 Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-Next dependency-valid workpack: `WP-HK-09A — Capability containment boundary`.
+Next dependency-valid workpack: `WP-HK-09B — Resource limits + persistence integrity`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -83,7 +85,7 @@ Next dependency-valid workpack: `WP-HK-09A — Capability containment boundary`.
 | 13 | `WP-HK-07B` ✅ COMPLETE | Standards-compatible MCP projection + cross-transport conformance |
 | 14 | `WP-HK-08A` ✅ COMPLETE | Efficient interaction primitives: atomic batching, compact/bounded reads, pagination and discovery cost metadata |
 | 15 | `WP-HK-08B` ✅ COMPLETE | Structured stale-CAS recovery, repair ergonomics and measured agent interaction budgets |
-| 16 | `WP-HK-09A` | Capability containment: filesystem/network/process authority and below-transport policy |
+| 16 | `WP-HK-09A` ✅ COMPLETE | Capability containment: filesystem/network/process authority and below-transport policy |
 | 17 | `WP-HK-09B` | Resource/input limits plus import/persistence interruption integrity |
 | 18 | `WP-HK-10` | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
 | 19 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
@@ -103,6 +105,8 @@ Serializing commit execution can protect the mutation authority from simultaneou
 Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling remain post-GATE product work. HK08B's accepted benchmark did not promote them into H0; only later GATE/H1/H0S product evidence may justify revisiting CAS granularity or coordination semantics.
 
 HK08A has passed reference-transport ↔ MCP conformance for batching/compact/pagination semantics, and HK08B has now separately passed it for the recovery semantics introduced later. Accepted transport parity is therefore current through the complete HK08 interaction/recovery layer; later workpacks must rerun conformance for any public semantics they add or change.
+
+HK09A now constrains the production H0 host-power envelope beneath those transports: conforming neutral projections cannot expose or dispatch an H0-forbidden composed capability, and the reference executable cannot acquire caller-selected filesystem authority through `--file`. HK09B consumes this authority boundary; it owns quotas and persistence/interruption integrity rather than reopening which host powers exist.
 
 ### H0 exit criteria
 
