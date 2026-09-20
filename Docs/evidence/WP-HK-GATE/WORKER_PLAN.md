@@ -69,7 +69,7 @@ Outside the claim: Unity/gameplay behavior, automatic merge/per-resource locking
 4. Persist gate evidence for capability inventory, scenario anchors/hashes/diffs/provenance, stale recovery, batching/interaction metrics, HK09A/HK09B checks, dependency/IP boundary and negative-conformance coverage.
 5. Prepare a concise public-only AI trial brief and evidence template. Do not mark the trial complete in Worker evidence unless a genuinely fresh independent agent supplies the transcript.
 6. Perform strict Worker pre-review over the complete baseline→candidate diff, hard blockers, proof universe and evidence before freeze.
-7. Freeze only with zero unresolved in-claim obligations/known undetected classes and complete mandatory evidence; otherwise remain `NOT_READY`.
+7. After deterministic evidence and Worker pre-review are clean, freeze the exact candidate with the single explicitly external AI-agent trial still recorded as `NOT_READY/1`. The external trial must then bind to that frozen SHA through PR evidence without changing Git history; final exact-SHA verification is what closes the external obligation to effective `READY/0`. Any additional tracked-file change after freeze invalidates the trial binding and requires a new freeze/trial cycle.
 
 ## Proof-budget guard
 
