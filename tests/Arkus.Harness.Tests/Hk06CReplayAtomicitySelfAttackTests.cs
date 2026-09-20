@@ -12,16 +12,50 @@ using Xunit;
 namespace Arkus.Harness.Tests
 {
     /// <summary>
-    /// Causal RED->GREEN control for HK06C aggregate atomicity. The forged journal remains
-    /// internally valid according to the accepted HK06A identity binding, so replay executes both
-    /// canonical mutations in its staging session. Only the second persisted result diverges from
-    /// the forged evidence. A replay implementation that publishes incrementally would therefore
-    /// leak a partial/full mutation sequence before discovering the mismatch.
+    /// Causal RED->GREEN controls for HK06C aggregate atomicity and canonical-authority reuse.
+    /// The forged journals remain internally valid according to the accepted HK06A identity
+    /// binding, so generic replay parsing alone cannot make these tests green.
     /// </summary>
     public sealed class Hk06CReplayAtomicitySelfAttackTests
     {
         [Fact]
         public void IntegrityValidLateResultDivergenceCannotPublishStagedStateOrJournal()
+        {
+            var fixture = BuildTwoStepSource();
+            var forgedJournal = ForgeLateResultDivergence(fixture.Journal);
+
+            var target = ImportCleanBase(fixture.BaseSnapshot);
+            var targetContract = Compose(target);
+            var beforeRevision = target.Current.Revision;
+            var beforeHash = CanonicalWorldStateCodec.ComputeContentHash(target.Current);
+
+            var replay = DispatchReplay(targetContract, target, forgedJournal);
+
+            Assert.False(replay.Success);
+            Assert.Equal("world.replay.result_divergence", replay.Error!.MachineCode);
+            AssertUnchanged(targetContract, target, beforeRevision, beforeHash);
+        }
+
+        [Fact]
+        public void IntegrityValidSemanticallyInvalidLaterStepMustBeRejectedByCanonicalValidationWithoutPartialPublish()
+        {
+            var fixture = BuildTwoStepSource();
+            var forgedJournal = ForgeCanonicalValidationFailure(fixture.Journal);
+
+            var target = ImportCleanBase(fixture.BaseSnapshot);
+            var targetContract = Compose(target);
+            var beforeRevision = target.Current.Revision;
+            var beforeHash = CanonicalWorldStateCodec.ComputeContentHash(target.Current);
+
+            var replay = DispatchReplay(targetContract, target, forgedJournal);
+
+            Assert.False(replay.Success);
+            Assert.Equal("world.replay.step_failed", replay.Error!.MachineCode);
+            Assert.Equal(2L, Convert.ToInt64(replay.Error.Context["sequence"], CultureInfo.InvariantCulture));
+            AssertUnchanged(targetContract, target, beforeRevision, beforeHash);
+        }
+
+        private static SourceFixture BuildTwoStepSource()
         {
             var initial = Hk02TestFixtures.MicroWorld();
             var source = new PortableWorldAuthoringSession(initial);
@@ -43,26 +77,33 @@ namespace Arkus.Harness.Tests
                     "request.hk06c.atomicity.second",
                     Hk04TransactionalMutationTests.PutObject("node.child", "fixture.atomicity-second")));
 
-            var sourceJournal = Hk06AProvenanceJournalTests.ReadJournal(sourceContract).Data!;
-            var forgedJournal = ForgeLateResultDivergence(sourceJournal);
+            return new SourceFixture(
+                baseSnapshot,
+                Hk06AProvenanceJournalTests.ReadJournal(sourceContract).Data!);
+        }
 
-            var target = ImportCleanBase(baseSnapshot);
-            var targetContract = Compose(target);
-            var beforeRevision = target.Current.Revision;
-            var beforeHash = CanonicalWorldStateCodec.ComputeContentHash(target.Current);
-
-            var replay = targetContract.Dispatch(
+        private static CapabilityInvocationResult DispatchReplay(
+            ComposedContract contract,
+            PortableWorldAuthoringSession target,
+            IReadOnlyDictionary<string, object?> journal)
+        {
+            return contract.Dispatch(
                 WorldReplayContract.ReplayName,
                 Hk04TransactionalMutationTests.ExactVersion(),
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
-                    ["expectedRevision"] = beforeRevision,
-                    ["expectedHash"] = beforeHash,
-                    ["journal"] = forgedJournal
+                    ["expectedRevision"] = target.Current.Revision,
+                    ["expectedHash"] = CanonicalWorldStateCodec.ComputeContentHash(target.Current),
+                    ["journal"] = journal
                 });
+        }
 
-            Assert.False(replay.Success);
-            Assert.Equal("world.replay.result_divergence", replay.Error!.MachineCode);
+        private static void AssertUnchanged(
+            ComposedContract targetContract,
+            PortableWorldAuthoringSession target,
+            long beforeRevision,
+            string beforeHash)
+        {
             Assert.Equal(beforeRevision, target.Current.Revision);
             Assert.Equal(beforeHash, CanonicalWorldStateCodec.ComputeContentHash(target.Current));
             Assert.Equal(
@@ -86,6 +127,46 @@ namespace Arkus.Harness.Tests
             ((Dictionary<string, object?>)journal["current"]!)["hash"] = result["hash"];
             second["entryId"] = ComputeEntryId(second);
             return journal;
+        }
+
+        private static IReadOnlyDictionary<string, object?> ForgeCanonicalValidationFailure(
+            IReadOnlyDictionary<string, object?> source)
+        {
+            var journal = (Dictionary<string, object?>)Clone(source)!;
+            var entries = (List<object?>)journal["entries"]!;
+            Assert.Equal(2, entries.Count);
+            var second = (Dictionary<string, object?>)entries[1]!;
+            var request = (Dictionary<string, object?>)second["request"]!;
+
+            // Syntactically valid HK04 mutation request, but removing node.root leaves the accepted
+            // micro-world containment graph invalid because node.child still names it as container.
+            // A private replay mutator that bypasses HK05 could publish this; the canonical committer
+            // must instead fail the staged second step.
+            request["operations"] = new List<object?>
+            {
+                new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["kind"] = "remove-object",
+                    ["id"] = "node.root"
+                }
+            };
+
+            var identity = (Dictionary<string, object?>)second["requestIdentity"]!;
+            identity["fingerprint"] = ComputeRemoveObjectRequestFingerprint(request, "node.root");
+            second["entryId"] = ComputeEntryId(second);
+            return journal;
+        }
+
+        private static string ComputeRemoveObjectRequestFingerprint(
+            IReadOnlyDictionary<string, object?> request,
+            string objectId)
+        {
+            var builder = new StringBuilder();
+            builder.Append("arkus-world-mutation-request-v2").Append('\n');
+            builder.Append(Convert.ToInt64(request["expectedRevision"], CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture)).Append('\n');
+            builder.Append((string)request["expectedHash"]!).Append('\n');
+            builder.Append(1).Append('\t').Append(objectId).Append('\n');
+            return Sha256(builder.ToString());
         }
 
         private static string ComputeEntryId(IReadOnlyDictionary<string, object?> entry)
@@ -112,12 +193,7 @@ namespace Arkus.Harness.Tests
             foreach (var raw in (IReadOnlyList<object?>)entry["affectedResources"]!)
                 Append(builder, (string)raw!);
 
-            using var sha = SHA256.Create();
-            var digest = sha.ComputeHash(new UTF8Encoding(false, true).GetBytes(builder.ToString()));
-            var text = new StringBuilder(digest.Length * 2);
-            for (var index = 0; index < digest.Length; index++)
-                text.Append(digest[index].ToString("x2", CultureInfo.InvariantCulture));
-            return text.ToString();
+            return Sha256(builder.ToString());
         }
 
         private static void Append(StringBuilder builder, string value)
@@ -126,6 +202,16 @@ namespace Arkus.Harness.Tests
                 .Append(':')
                 .Append(value)
                 .Append('\n');
+        }
+
+        private static string Sha256(string value)
+        {
+            using var sha = SHA256.Create();
+            var digest = sha.ComputeHash(new UTF8Encoding(false, true).GetBytes(value));
+            var text = new StringBuilder(digest.Length * 2);
+            for (var index = 0; index < digest.Length; index++)
+                text.Append(digest[index].ToString("x2", CultureInfo.InvariantCulture));
+            return text.ToString();
         }
 
         private static PortableWorldAuthoringSession ImportCleanBase(IReadOnlyDictionary<string, object?> snapshot)
@@ -176,6 +262,20 @@ namespace Arkus.Harness.Tests
             }
 
             return value;
+        }
+
+        private sealed class SourceFixture
+        {
+            public SourceFixture(
+                IReadOnlyDictionary<string, object?> baseSnapshot,
+                IReadOnlyDictionary<string, object?> journal)
+            {
+                BaseSnapshot = baseSnapshot;
+                Journal = journal;
+            }
+
+            public IReadOnlyDictionary<string, object?> BaseSnapshot { get; }
+            public IReadOnlyDictionary<string, object?> Journal { get; }
         }
     }
 }
