@@ -122,15 +122,59 @@ Scale, binding on later work (`Docs/art/SETTING.md`, `Docs/art/VISUAL_BIBLE.md` 
 - material language identical to the town: stone, dark tile, muted props;
 - the harbour read is **never** the city's hero identity.
 
-### 2.6 Route structure
+### 2.6 Route structure — why this is not a hub with spokes
 
 Between any two adjacent district families there are at least two credible routes with different
 character. The plaza is a convergence point because the casco lanes and the commercial spine meet
 there — not because it is a mandatory connector. The paseo below it and the callejas above it bypass
 it end to end.
 
+Stated as the test the workpack actually applies: **remove the plaza from the graph and the city
+still connects.**
+
+| Trip | Route through the plaza | Route avoiding it |
+|---|---|---|
+| Barrio Alto → Ribera workshop | escaleras → plaza → Calle Mayor → down | callejas altas → escaleras east → Ribera |
+| Casco → Ensanche | plaza → Puente del Mercado | lower lanes → pasos/vado |
+| Ensanche → Puerto | Puente del Mercado → plaza → Cuesta | quay road south from Entrada |
+| Vega → Puerto | Calle Mayor → plaza → Cuesta | paseo fluvial / camino de sirga the whole way |
+| Barrio Alto → Ensanche | plaza → Puente del Mercado | Pasarela del Lavadero |
+
+A hub-and-spokes city fails every row. This one fails none, and the reason is structural rather than
+decorative: there are three parallel longitudinal routes (CSI-02) and four lateral stream crossings
+(CSI-07), so the graph is a mesh rather than a star.
+
 The port is reached three ways: the towpath from Ribera, the quay road from Entrada, and the steep
 Cuesta del Puerto from the casco tip. It is a destination, not a cul-de-sac.
+
+### 2.7 "Elsewhere in town" — why the long routes are long enough
+
+The workpack requires that long-route scale be sufficient for an actor to genuinely be *elsewhere in
+town*. The test is not the total distance; it is whether the player can casually verify where somebody
+is.
+
+At the adopted scale a dockhand at the quay is 8–9 minutes from the Calle Mayor and 15–17 from the
+upper vega. A player who sees Manolo at the plaza at ten o'clock cannot cheaply confirm where he is at
+half past — checking costs a real round trip, and on the way the target may have taken any of three
+longitudinal routes. That is the condition under which a schedule becomes knowledge worth having,
+routine absence becomes noticeable, and following becomes a decision rather than a formality.
+
+It is also the condition under which the town stops needing the player: an actor who spends a shift at
+the port is, for that shift, genuinely out of the player's world without any simulation trick.
+
+### 2.8 Where the retained seed sits
+
+The seed is chosen by `WP-CITY-03`, not here. What this constitution owes it is the guarantee that a
+real retained piece exists.
+
+The wedge tip satisfies it: casco lanes, the plaza edge, the Puente Viejo head, the bar, one stream
+crossing, a river strip, and the first metres of the Cuesta as a visible seam toward the port. That is
+four of the nine district families in some form, inside the 0.03–0.06 km² band, with expansion seams
+1, 4 and 5 all touching it.
+
+It is also, deliberately, the seed `PRODUCTION_BLUEPRINT.md` §1.4 already described, plus a stream
+crossing and a port seam. Adopting this constitution does not discard the seed thinking the project
+has already done, and nothing in it has to be demolished to reach the full city.
 
 ---
 
@@ -158,6 +202,11 @@ Dimensional sketch of the selected constitution:
 | Puerto Fluvial | 300 × 150 m | ≈0.045 km² |
 | Entrada / carretera | — | ≈0.02 km² |
 | **dense fabric** | — | **≈0.365 km²** |
+
+At the district coverage ratios assumed in `Docs/evidence/WP-CITY-00/SCALE_ENVELOPE.md` §2 this is on
+the order of **830 buildings**. That figure matters because it sets the ratio `WP-CITY-02` has to
+work against: 40–60 systemic Tier A/B locations would be 5–7% of the fabric here, and about 2% in a
+1.0 km² city.
 
 ### Walk-time hypotheses
 

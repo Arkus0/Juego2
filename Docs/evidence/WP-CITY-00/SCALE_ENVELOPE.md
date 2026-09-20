@@ -45,15 +45,57 @@ of path**, i.e. **23–27 minutes** at 1.15 m/s — and more with slope.
 cannot both be true. One of them had to go, and the travel-time hypothesis is the one tied to felt
 experience, while the area hypothesis is tied to nothing but ambition.
 
-Two independent checks agree with dropping the area:
+Two independent checks agree with dropping the area.
 
-- **Content cost.** At ~0.40 km² the city already needs on the order of 300–450 authored building
-  frontages before any interior. `Docs/art/VISUAL_BIBLE.md` §8 caps the H2 hero slice at ≤120 meshes
-  and ≤6 atlases, and `PRODUCTION_BLUEPRINT.md` §8.3 says that cap is a constraint to test, not a
-  promise to quietly violate. Tripling the fabric does not triple the kit; it triples the repetition.
-- **Reactive density.** Track invariant 4 — *"empty expansion is worse than a smaller city with
-  meaningful locations"* — and the WP's own negative gate against chasing acreage both push the same
-  way. CITY-02 has to fill whatever CITY-00 promises.
+#### Content cost — how many buildings an area actually implies
+
+Building count, not mesh count, is the cost that scales with area. The mesh cap in
+`Docs/art/VISUAL_BIBLE.md` §8 counts **distinct meshes**, and a modular kit is precisely the
+mechanism for instancing many buildings from few meshes — so the cap is not the binding constraint
+here. What scales is the number of authored **building compositions, parcels and frontage
+decisions**: `PRODUCTION_BLUEPRINT.md` §1.6 requires every parcel to carry its own constraints, and
+§3.1's composition ladder has to be instanced and varied once per building.
+
+Estimated from the selected constitution's own district breakdown, using declared coverage ratios
+and average footprints:
+
+| District | Area | Building coverage | Avg. footprint | ≈ buildings |
+|---|---:|---:|---:|---:|
+| Casco Viejo | 0.035 km² | 40% | 90 m² | ~155 |
+| Plaza / civic | 0.020 km² | 35% | 120 m² | ~58 |
+| Calle Mayor | 0.050 km² | 40% | 110 m² | ~180 |
+| Ribera / Talleres | 0.045 km² | 20% | 180 m² | ~50 |
+| Ensanche | 0.090 km² | 25% | 120 m² | ~190 |
+| Barrio Alto | 0.060 km² | 25% | 90 m² | ~165 |
+| Puerto | 0.045 km² | 12% | 250 m² (sheds) | ~22 |
+| Entrada | 0.020 km² | 10% | 200 m² | ~10 |
+| **Total at ≈0.365 km²** | | | | **≈830** |
+
+Across the adopted 0.30–0.45 km² band that is roughly **700–1,050 buildings**. Applying the same
+ratios to the 0.8–1.2 km² hypothesis gives roughly **1,800–2,800 buildings**.
+
+The coverage ratios and footprints above are planning assumptions stated so they can be argued with,
+not measured values.
+
+#### Reactive density — the ratio that actually decides it
+
+Track invariant 4 is *"empty expansion is worse than a smaller city with meaningful locations"*, and
+the WP's negative gate rejects chasing acreage without a reactive-density argument. The concrete form
+of that argument is a ratio: `WP-CITY-02` will programme some number of Tier A/B systemic locations,
+and every other building is Tier C ambient frontage.
+
+If CITY-02 lands on the order of 40–60 Tier A/B locations — a plausible number for a cast of about a
+dozen persistent actors plus an ambient tier — then:
+
+- at ≈830 buildings, roughly **5–7%** of the fabric participates in life. That reads as a town where
+  meaningful places are common enough to stumble into.
+- at ≈2,300 buildings, roughly **2%** does. The same content, spread over three times the walking,
+  reads as a city that is 98% façade.
+
+Reaching 5% at 1.0 km² would instead require CITY-02 to programme on the order of 115–140 systemic
+locations, which is a different and much larger product than this project has planned.
+
+That is the whole argument for the smaller city, and it is a ratio argument rather than a taste one.
 
 **Replacement: dense urban playable fabric ≈ 0.30–0.45 km².**
 
