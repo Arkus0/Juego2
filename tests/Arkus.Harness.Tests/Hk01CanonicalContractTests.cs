@@ -71,9 +71,14 @@ namespace Arkus.Harness.Tests
 
             Assert.True(report.IsConformant, FormatIssues(report.Issues));
             Assert.Empty(routeUniverse.Issues);
-            Assert.Equal(21, composition.Contract.Definitions.Count);
-            Assert.Equal(21, routeUniverse.Routes.Count);
-            Assert.Equal(21, composition.Contract.Projection.Capabilities.Count);
+            Assert.Equal(composition.Contract.Definitions.Count, routeUniverse.Routes.Count);
+            Assert.Equal(composition.Contract.Definitions.Count, composition.Contract.Projection.Capabilities.Count);
+            Assert.Contains(composition.Contract.Definitions, definition =>
+                definition.Key.Name == WorldProvenanceContract.ReadName &&
+                definition.Key.Version.Equals(new ContractVersion(1, 0)));
+            Assert.Contains(composition.Contract.Definitions, definition =>
+                definition.Key.Name == WorldProvenanceContract.ReadName &&
+                definition.Key.Version.Equals(new ContractVersion(2, 0)));
         }
 
         [Fact]
@@ -178,7 +183,13 @@ namespace Arkus.Harness.Tests
 
             Assert.True(report.IsConformant, FormatIssues(report.Issues));
             Assert.Empty(routeUniverse.Issues);
-            Assert.Equal(18, routeUniverse.Routes.Count);
+            Assert.Equal(baseContract.Definitions.Count, routeUniverse.Routes.Count);
+            Assert.Contains(routeUniverse.Routes, route =>
+                route.Key.Name == WorldProvenanceContract.ReadName &&
+                route.Key.Version.Equals(new ContractVersion(1, 0)));
+            Assert.Contains(routeUniverse.Routes, route =>
+                route.Key.Name == WorldProvenanceContract.ReadName &&
+                route.Key.Version.Equals(new ContractVersion(2, 0)));
             foreach (var route in routeUniverse.Routes)
             {
                 Assert.Equal("arkus.base", route.ProviderId);

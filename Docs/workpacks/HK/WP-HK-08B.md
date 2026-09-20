@@ -1,9 +1,22 @@
 # WP-HK-08B — Structured conflict recovery + agent interaction benchmark
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: `WP-HK-08A`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+## Completion metadata
+
+- implementation PR: `#52`;
+- baseline SHA: `dc8b6ee3d4ea62df70e28605268526c726de69d8`;
+- reviewed frozen candidate: `31370f91b48408b90a587d7ad5178ba1be8d6bfe`;
+- independent Reviewer verdict: `PASS` (review `#5260337340`);
+- exact-SHA freeze validation: GREEN, Actions `35503766435`, artifact `10603256605`;
+- implementation merge SHA: `bdf4675c17d842d73ff59637fa36314d14c2707a`.
+
+Accepted semantics: stale whole-world revision/hash conflicts now expose stable `arkus.world-conflict-recovery@1` context. A precise changed-resource delta is emitted only when the exact expected revision+hash is positively proven inside the complete contiguous current local HK06A lineage; otherwise recovery fails closed as `bounded-reinspection-required` without fabricating ancestry or delta. Same-lineage recovery returns deterministic changed-resource identities plus bounded current-resource inspection descriptors, and retry remains an ordinary public `plan` → `dry-run` → `apply` transaction under accepted HK04/HK05/HK06A authority. The representative external-process workflow covers create, bounded inspect, coherent multi-resource modify, invalid→repair and stale-conflict recovery in 12 public requests with no recovery full-world reload; reviewed regression limits are 12 requests, 15,064 serialized response bytes and a 1,480 ms coarse elapsed guard. Recovery meaning is equivalent through JSONL and MCP, and the required representative content-shape probe proves the same boundary against the approved Juego2 market/plaza/bar/workshop slice without introducing product-specific H0 schemas.
+
+The first frozen candidate `470665b0bf5d709142bb2de1b1650fec80bba705` failed independent review `#5260300588` solely because the binding v1.3 representative content-shape probe was absent and the exact-SHA gate could still declare foundational proof ready without it. The accepted repair added the approved-product executable probe, boundary analysis and verifier linkage without changing production recovery, CAS, journal or transport semantics; the fresh Reviewer then passed the repaired frozen candidate above.
 
 ## Objective
 
@@ -35,6 +48,14 @@ RED→GREEN for:
 - benchmark silently omitting a required representative flow or measuring a path different from the public accepted client surface;
 - pathological round-trip/response-volume regression beyond the reviewed budget; and
 - reference-transport versus MCP semantic drift for HK08B recovery/repair behaviour.
+
+## Pre-implementation contract check
+
+Before interaction budgets are frozen, the Worker must first make the recovery semantics independently reviewable: exact recovery-context fields/anchors, the proof condition for declaring the expected base recoverable in the current lineage, the required-history condition, and the stable disposition used when either condition is not met.
+
+The recovery truth contract is prior to the benchmark. A request-count, byte or elapsed-time target may not justify weakening ancestry/history proof, omitting a material changed resource, fabricating a delta, or reclassifying an unprovable case as recoverable. Optimize only after the truthful recovery shape is fixed.
+
+For the representative ordinary same-lineage stale case, a full-world reload is a conformance failure, not an acceptable slower fallback. For genuinely unprovable lineage/history cases, bounded reinspection is correct and must be preferred to invented precision.
 
 ## Explicit concurrency boundary
 

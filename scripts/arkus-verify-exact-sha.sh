@@ -9,6 +9,26 @@ resolve_wp() {
     printf '%s\n' "${ARKUS_WP}"
     return
   fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Fq 'WP: `WP-HK-09A`'; then
+    printf '%s\n' 'WP-HK-09A'
+    return
+  fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Fq 'WP: `WP-HK-08B`'; then
+    printf '%s\n' 'WP-HK-08B'
+    return
+  fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Fq 'WP: `WP-HK-08A`'; then
+    printf '%s\n' 'WP-HK-08A'
+    return
+  fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Fq 'WP: `WP-HK-07B`'; then
+    printf '%s\n' 'WP-HK-07B'
+    return
+  fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Fq 'WP: `WP-HK-07A`'; then
+    printf '%s\n' 'WP-HK-07A'
+    return
+  fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Fq 'WP: `WP-HK-06C`'; then
     printf '%s\n' 'WP-HK-06C'
     return
@@ -58,6 +78,21 @@ resolve_wp() {
 }
 
 case "$(resolve_wp)" in
+  WP-HK-09A)
+    exec bash scripts/hk09a-verify-exact-sha.sh "$@"
+    ;;
+  WP-HK-08B)
+    exec bash scripts/hk08b-verify-exact-sha.sh "$@"
+    ;;
+  WP-HK-08A)
+    exec bash scripts/hk08a-verify-exact-sha.sh "$@"
+    ;;
+  WP-HK-07B)
+    exec bash scripts/hk07b-verify-exact-sha.sh "$@"
+    ;;
+  WP-HK-07A)
+    exec bash scripts/hk07a-verify-exact-sha.sh "$@"
+    ;;
   WP-HK-06C)
     exec bash scripts/hk06c-verify-exact-sha.sh "$@"
     ;;

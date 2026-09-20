@@ -8,6 +8,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <!-- Proof-harness load closure only: HK01 independently scans every production assembly under src/.
+         Keeping the MCP runtime dependency private here lets Reflection inspect that assembly without
+         excluding it from the universe or making the test source depend on MCP APIs. -->
+    <PackageReference Include="ModelContextProtocol.Core" PrivateAssets="all" />
     <PackageReference Include="xunit.core" />
     <PackageReference Include="xunit.assert" />
     <PackageReference Include="xunit.runner.visualstudio">
@@ -20,6 +24,7 @@
     <ProjectReference Include="../../src/Arkus.Game.Core/Arkus.Game.Core.csproj" />
     <ProjectReference Include="../../src/Arkus.Game.Validation/Arkus.Game.Validation.csproj" />
     <ProjectReference Include="../../src/Arkus.Game.World/Arkus.Game.World.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Projection/Arkus.Harness.Projection.csproj" />
     <ProjectReference Include="../../src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
     <ProjectReference Include="../../src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
     <ProjectReference Include="../Arkus.Harness.MutationAttackFixture/Arkus.Harness.MutationAttackFixture.csproj" />

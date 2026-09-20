@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Arkus.Game.Authoring;
+using Arkus.Game.World;
 using Arkus.Harness.Protocol;
 
 namespace Arkus.Harness.Runtime
@@ -70,7 +71,22 @@ namespace Arkus.Harness.Runtime
                 throw new InvalidOperationException("The canonical world contract must compose successfully.");
             }
 
-            return result.Contract;
+            // This is the host-capability boundary consumed by every production projection.
+            // JSONL, MCP and future adapters receive only an H0-policy-admitted canonical inventory.
+            return H0HostCapabilityPolicy.Enforce(result.Contract);
+        }
+
+        /// <summary>
+        /// Compose the complete canonical contract over one empty portable session. Keeping this
+        /// pairing inside Runtime prevents hosts from accidentally binding reads and writes to
+        /// different aggregates while preserving the existing interface-based embedding overloads.
+        /// </summary>
+        public static ComposedContract ComposeEmptyPortableSession(string worldId)
+        {
+            if (worldId == null) throw new ArgumentNullException(nameof(worldId));
+            var initial = new WorldState(new WorldId(worldId), 0, Array.Empty<WorldObject>());
+            var session = new PortableWorldAuthoringSession(initial);
+            return Compose(new WorldInspectionService(session), session);
         }
     }
 }
