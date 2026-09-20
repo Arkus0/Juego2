@@ -15,7 +15,7 @@ namespace Arkus.Harness.Tests
         private static readonly string[] RequiredCapabilityKeys =
         {
             "system.describe@1.0", "world.summary@1.0", "world.object.get@1.0",
-            "world.object.query@1.0", "world.validation.current@1.0",
+            "world.object.query@1.0", "world.reference.query@1.0", "world.validation.current@1.0",
             "authoring.change.plan@1.0", "authoring.change.dry-run@1.0", "authoring.change.apply@1.0",
             "authoring.journal.read@1.0", "authoring.journal.read@2.0",
             "authoring.snapshot.export@1.0", "authoring.snapshot.import@1.0",
@@ -81,7 +81,7 @@ namespace Arkus.Harness.Tests
                 {
                     ["typeIds"] = new[] { "fixture.gate.place", "fixture.gate.market", "fixture.gate.npc" }
                 },
-                ["fields"] = new[] { "typeId", "containerId", "references" }
+                ["fields"] = new[] { "typeId", "containerId" }
             }));
             Assert.Equal(3, query.GetProperty("items").GetArrayLength());
             Assert.False(query.TryGetProperty("nextCursor", out _));
@@ -91,10 +91,28 @@ namespace Arkus.Harness.Tests
                 ["revision"] = currentAnchor.GetProperty("revision").GetInt64(),
                 ["hash"] = currentAnchor.GetProperty("hash").GetString(),
                 ["id"] = "gate.npc.ana",
-                ["fields"] = new[] { "typeId", "containerId", "references" }
+                ["fields"] = new[] { "typeId", "containerId" }
             }));
             Assert.Equal("gate.npc.ana", npc.GetProperty("object").GetProperty("id").GetString());
             Assert.Equal("gate.place.plaza", npc.GetProperty("object").GetProperty("containerId").GetString());
+
+            var references = Success(source.Invoke("world.reference.query", new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["revision"] = currentAnchor.GetProperty("revision").GetInt64(),
+                ["hash"] = currentAnchor.GetProperty("hash").GetString(),
+                ["limit"] = 20,
+                ["filter"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["sourceIds"] = new[] { "gate.npc.ana" },
+                    ["kinds"] = new[] { "works.at" },
+                    ["targetIds"] = new[] { "gate.building.market" }
+                }
+            }));
+            Assert.Equal(1, references.GetProperty("items").GetArrayLength());
+            var reference = references.GetProperty("items")[0];
+            Assert.Equal("gate.npc.ana", reference.GetProperty("sourceId").GetString());
+            Assert.Equal("works.at", reference.GetProperty("kind").GetString());
+            Assert.Equal("gate.building.market", reference.GetProperty("targetId").GetString());
 
             var invalid = source.Invoke("authoring.change.apply", MutationRequest(
                 currentAnchor,
