@@ -6,6 +6,15 @@ Baseline SHA: 290f92e9c21f1e454e0d6924b29f4d778b9875f8
 Active Worker: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Worker state: ACTIVE
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)
+fail_cycle: 1
+
+> **Repair cycle 1.** Frozen candidate `b9473f04da72462619e9561c097083afdc6c436d` received
+> independent FAIL, review
+> [#5261386416](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261386416). The
+> constitution had closed over an unaccepted setting premise capable of invalidating it, and had
+> inverted the CITY→ART authority direction while doing so. The repair removes the premise instead
+> of arguing or deferring it. The predecessor contract check below is updated accordingly; the
+> spatial work the review found sound is unchanged.
 
 ## PREDECESSOR_CONTRACT_CHECK
 
@@ -37,9 +46,14 @@ Guarantees consumed rather than re-argued by CITY-00:
    promise CITY may quietly inflate (`PRODUCTION_BLUEPRINT.md` §8.3 restates this).
 
 `WP-ART-00` owns visual/setting direction. CITY consumes it and must not silently restyle the game
-(`Docs/workpacks/CITY/README.md`). Where CITY-00 needs a setting fact that ART has not stated — the
-fictional navigability premise that makes a fluvial landing plausible — it is recorded as an **open
-question addressed to ART**, not decided here.
+(`Docs/workpacks/CITY/README.md`).
+
+The governing consequence, learned the hard way in repair cycle 1: **CITY-00 may not need a setting
+fact that ART has not stated.** An open question is legitimate only when no answer to it can
+invalidate the constitution. If a spatial decision requires a setting premise ART has not given,
+the decision has to be redesigned to need less — not argued, and not deferred. The working landing
+in §2.5 of the constitution is built to that rule: it rests on confluence hydrology and on the
+small-landing/working-boats direction `SETTING.md` already grants, and on nothing else.
 
 ### Dependency 2 — `Docs/production/PRODUCTION_BLUEPRINT.md` v0.2
 
@@ -87,9 +101,10 @@ CITY-00 does **not** own walk-time measurement (CITY-01/04), the location/interi
 
 ### Concrete condition that would reopen an inherited input
 
-- ART confirms the fictional river-navigability premise is refused, or fixes a port scale
-  incompatible with a working-craft landing → the port's placement and therefore the selected
-  topology must be reopened, not patched.
+- ART fixes a landing scale or material language incompatible with a working timber-and-gravel
+  landing with a roped ferry → reconcile the landing's programme, which is a CITY-02/CITY-03
+  question. It no longer threatens the topology, because after repair cycle 1 the landing's reason
+  for existing depends on no ART premise.
 - An owner revision of `PRODUCTION_BLUEPRINT.md` restores a topology incompatible with the selected
   constitution → reconcile again rather than maintaining two contradictory topologies on `main`.
 - A future measured traversal result from CITY-04 falsifies the travel-time arithmetic used here →

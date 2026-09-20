@@ -66,10 +66,12 @@ followability; B is the option most likely to fail that validation, and a failur
 because it invalidates level placement rather than dressing.
 
 **B-4 — The navigability premise is invented.**
-A Liébana mountain river does not carry loaded working craft. B's port depends on a fictional claim
-that below the confluence the joined river is floatable for shallow craft toward the coast. `WP-ART-00`
-owns setting direction and `Docs/workpacks/CITY/README.md` forbids CITY from silently restyling the
-game. B may not assume this premise into existence.
+A Liébana mountain river does not carry loaded working craft. As first drafted, B's port depended on a
+fictional claim that below the confluence the joined river is floatable for shallow craft toward the
+coast. `WP-ART-00` owns setting direction and `Docs/workpacks/CITY/README.md` forbids CITY from
+silently restyling the game. B may not assume this premise into existence.
+
+*This charge was correct and was underestimated. See the repair-cycle-1 note under its verdict.*
 
 **B-5 — The wedge tip concentrates identity in the most expensive fabric.**
 Casco, plaza, old bridge, mirador and the port approach all meet at the tip. That is where the
@@ -130,8 +132,12 @@ B-3 is partly a false charge: verticality is already mandated by the setting (`S
 cost every option carries. What is attributable to B is the *amount* of level change, which can be
 capped and named as a CITY-04 measurement risk.
 
-B-4 is not answerable here at all, and should not be: it is an open question for ART, recorded as
-such.
+B-4 **is** answerable here, and the first draft of this log was wrong to say otherwise. The answer is
+not to argue the premise or to defer it, but to remove the need for it: a landing justified by timber
+rafted at high water, áridos worked off the bars, a roped ferry and road break-bulk requires only that
+the water below a confluence be wide and slow, which is hydrology rather than setting. Everything
+systemically valuable about the district survives that swap, and the city stops being a node on a
+long-distance trade route — a real reduction, stated rather than hidden.
 
 B-5 is real, but it is also where the project already intended to start (`PRODUCTION_BLUEPRINT.md`
 §1.4 seed = plaza side + old bridge + bar + old-quarter connection + river edge). B does not add that
@@ -187,9 +193,16 @@ are answerable **by structure** rather than by hoping. Two of its answers must b
    everyday non-port services live there. Without this, B's port is decoration and B should lose.
 2. **B-2 → invariant.** All three longitudinal routes stay continuous end to end. A phase that leaves
    only the terrace breaks the constitution.
-3. **B-4 → open question.** The fictional navigability premise is referred to `WP-ART-00` and is not
-   decided by CITY-00. If ART refuses it, the port's placement — and therefore this topology — must be
-   reopened, not patched.
+3. **B-4 → invariant (repaired in cycle 1).** Originally this was recorded as an open question
+   referred to `WP-ART-00`, with the admission that a refusal would reopen the topology. Independent
+   review [#5261386416](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261386416) FAILed
+   the candidate for exactly that: a constitution whose Definition of Done is stability for CITY-01
+   cannot close over a condition capable of invalidating it, and the deferral had also inverted the
+   CITY→ART authority direction.
+
+   The error was treating the charge as a binary — assume the premise or defer it — when a third
+   option existed. CSI-05 now states that the landing depends on no premise beyond the inherited
+   setting, and §2.5 of the constitution gives four reasons for the landing that need none.
 
 B-3 and B-5 are accepted as declared risks: verticality is capped and named for CITY-04 measurement,
 and the expensive tip is where production was already going to start.

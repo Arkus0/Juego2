@@ -2,6 +2,15 @@
 
 WP: WP-CITY-00
 Status: candidate option, constructed before any preference was formed.
+Amended in repair cycle 1 after independent FAIL on `b9473f04da72462619e9561c097083afdc6c436d`.
+
+> **Repair cycle 1.** As first written, this dossier justified the landing on a premise the
+> refutation log itself called invented — that the joined river carries loaded craft downstream —
+> and deferred that premise to ART. Independent review
+> [#5261386416](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261386416) found that a
+> constitution cannot close over a condition whose refusal would move the landing and reopen the
+> topology. The landing's reason for existing has been rewritten to need nothing beyond the
+> inherited setting. The spatial structure of this option is unchanged.
 
 ## 1. Premise
 
@@ -89,9 +98,11 @@ longitudinal routes, four lateral arroyo crossings, and the casco's dense lane w
 frequent, short-range and consequential (level change vs distance vs weather vs company).
 
 **River / port logic.** Strong on both counts. The arroyo is a genuine everyday movement constraint,
-not scenery; the río is a genuine territorial boundary. The port's placement is the most physically
-plausible of the three: a shallow valley river first carries loaded working craft **below** a
-confluence. Three approaches keep it from being a cul-de-sac.
+not scenery; the río is a genuine territorial boundary. The landing's placement is the most physically
+plausible of the three and needs no premise beyond confluence hydrology: below the junction the water
+is wider, slower and braided over gravel bars, which is exactly where timber is rafted at high water,
+where áridos are worked, and where a roped ferry can run. Three land approaches plus the ferry keep it
+from being a cul-de-sac.
 
 **Reactive density.** Good. The dense core stays contiguous on the wedge; only the Ensanche is across
 water, and it is deliberately the lower-intensity residential family. The port is separate but
@@ -163,5 +174,7 @@ seam. Adopting this topology does not discard the seed work already described in
   only through route and the funnel returns.
 - Three levels plus two watercourses is the hardest of the three to read on the ground and to block
   out; level change is a real CITY-04 risk.
-- The navigability premise below the confluence is fiction, not a fact about Liébana, and needs ART
-  confirmation.
+- The landing is seasonal on its river side, so its year-round life leans on the road junction, the
+  yards and the ferry. That is deliberate, but it means CSI-04 is load-bearing rather than optional.
+- *(Closed in repair cycle 1: the original fourth weakness here was the invented navigability
+  premise. It is gone because the landing no longer rests on it.)*

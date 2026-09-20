@@ -18,8 +18,8 @@ A fictional Potes/Liébana valley city built in the **wedge between two waters**
 coming down from the north-east and an incised tributary stream coming down from the north, meeting
 at a rocky tip where the old quarter stands. The city climbs the spur behind that tip in three
 terraces, spills west across the stream into a newer flat residential quarter, works along the river
-bank below the commercial terrace, and keeps a small fluvial landing downstream of the confluence
-where the joined river finally carries loaded working craft. It is a walkable town of roughly a
+bank below the commercial terrace, and keeps a small working landing downstream of the confluence,
+on the wide slow reach where the joined water braids over gravel bars. It is a walkable town of roughly a
 quarter of an hour end to end, not a small open world, and it is dense on purpose.
 
 The two waters do deliberately different jobs. **The stream shapes daily movement; the river shapes
@@ -80,7 +80,7 @@ Three longitudinal routes run the length of the wedge and must all stay continuo
 | **Barrio Alto** | stepped residential on the N slope, with lavadero and mirador | schedules, vertical navigation, off-screen transitions, vantage | medium |
 | **Ensanche** | flat, regular, newer residential across the arroyo | a second residential social character; the cheapest large expansion | medium |
 | **Ribera y Talleres** | work edge between the terrace and the river | workshops, service, storage, alternate low route | medium |
-| **Puerto Fluvial** | quay, warehouses, weighbridge, boatyard, fielato, fishermen's corner | arrivals, goods, work shifts, outsiders, municipal concessions | medium |
+| **Puerto Fluvial** | timber and gravel yards, sheds, weighbridge, boat repair shed, ferry slip, fielato, fishermen's corner | seasonal river work, road break-bulk, the crossing, work shifts, municipal concessions | medium |
 | **Entrada y Carretera** | road junction and bus stop, adjacent to the port | arrivals and departures, outsider traffic, freight | low (edge family) |
 | **La Vega** | huertas, paths and terraces upstream along both waters | rural edge, quiet, seasonal work, market supply | low (edge family) |
 
@@ -95,32 +95,61 @@ Seven substantial families plus two edge families.
 | **Pasarela del Lavadero** | arroyo | wooden footbridge | Barrio Alto ↔ upper Ensanche | local: a two-minute detour |
 | **Puente de la Vega** | arroyo | rural bridge upstream | huertas ↔ north Ensanche | seasonal, flood-closable |
 | **Pasos / vado** | arroyo | stepping stones on the low reach | lower casco lanes ↔ Ensanche | disappears when the water rises |
-| **Puente del Muelle** | río | freight road bridge | Puerto ↔ south bank road | late production seam |
+| **La barca** | río | roped working ferry on the wide reach | Puerto ↔ south bank | hours and fare are a municipal decision; high water suspends it |
+| **Puente del Muelle** | río | freight road bridge | Puerto ↔ south bank road | late production seam; it replaces the barca |
 
 The arroyo is crossed casually and often. The río is crossed rarely and deliberately. Four cheap
 short spans buy more movement structure than one additional main-river bridge would, at a fraction of
 the geometry.
 
-### 2.5 The fluvial port — why it exists and how big it is
+### 2.5 The working landing — why it exists and how big it is
 
-The port exists because the valley's freight has to change medium somewhere. Above the confluence
-the río is too shallow and fast for loaded craft; below it, the joined water finally carries flat
-shallow boats downstream toward the coast. The landing is therefore the **transfer point between
-valley road and water**, and it sits exactly where physics puts it.
+Below the confluence the joined water is wider, slower and shallower, braiding over gravel bars. That
+is ordinary confluence hydrology, not a claim about navigation: the reach is **workable, not
+navigable**. Nothing in this constitution depends on the river carrying cargo out of the valley.
 
-What that yields systemically: goods arriving and leaving on a schedule; storage with capacity that
-can be full or contested; work shifts that pull actors out of the core and return them; outsiders
-arriving with knowledge from elsewhere; fishing and waterfront routine; and a set of municipal
-decisions — quay slots, opening hours, tolls, priority of repair — that have a physical address.
+Four ordinary reasons put a working landing there, and they coincide at one place — flat ground, a
+wide slow reach, workable bars, and the arriving valley road:
 
-Scale, binding on later work (`Docs/art/SETTING.md`, `Docs/art/VISUAL_BIBLE.md` §2):
+1. **Madera.** Cut timber comes down from the valley by road and cart, is assembled into rafts on the
+   bars, and goes downstream **only during a few weeks of high water**. Where it ends up is outside
+   this city and outside this document. The landing owns the yards, the assembly and the season.
+2. **Áridos.** Gravel, sand and lime are worked off the bars under municipal concession and move
+   *upstream into the city* by cart. Year-round, undramatic, constant traffic.
+3. **La barca.** Until the Puente del Muelle exists, a roped ferry works the reach. It is the only
+   way to the south bank other than the Puente Viejo at the far end of town, so the landing is a
+   movement node and not only a work node.
+4. **Break-bulk for the road.** The valley road junction is here (CSI-04) because this is where the
+   road meets flat ground and water. Freight arriving by road is weighed, stored and broken down at
+   the yards. The weighbridge, the sheds and the fielato belong to the **road**, not to the river.
 
-- quay frontage on the order of **120–150 m**, not a dock system;
-- **working craft only** — flat-bottomed boats, rafts, a lighter; no marina, no sea-going vessels;
-- 3–6 warehouses/sheds, one derrick or hand crane, a weighbridge, a drying yard, a boatyard/repair
-  shed, a small municipal office, a fondas/tavern corner for boatmen and carters;
+Plus fishing, and the ordinary waterfront routine of people who live beside working water.
+
+What that yields systemically: work shifts that pull actors out of the core and return them; yard and
+storage capacity that can be full or contested; a **season**, because the river works only at high
+water and nothing else in the city has one; a crossing whose hours and fare are a municipal decision;
+and a set of levers with a physical address — quay slots, extraction concessions, raft-assembly
+permits and high-water windows, ferry hours, yard rents, priority of repair.
+
+What it gives up, stated rather than hidden: this city is **not** a node on a long-distance trade
+route, and visitors do not arrive by water from far away. Outsiders arrive by road at the adjacent
+junction (CSI-04), and the raft crews are seasonal outsiders who leave and come back. That is a
+smaller landing than an inland trading quay would be. It is the one the inherited setting supports,
+and it needs no premise this workpack is not entitled to make.
+
+Scale, **consumed from** `Docs/art/SETTING.md` and `Docs/art/VISUAL_BIBLE.md` §2 rather than imposed
+on them — ART owns setting and visual direction, and this constitution reads that direction and stays
+inside it:
+
+- quay and working frontage on the order of 120–150 m, not a dock system;
+- working craft only — rafts, flat-bottomed boats, the ferry; no marina, no sea-going vessels;
+- 3–6 sheds and warehouses, a hand crane or derrick, a weighbridge, a timber and drying yard, a small
+  boat repair shed, a municipal office, a tavern corner for raft crews and carters;
 - material language identical to the town: stone, dark tile, muted props;
 - the harbour read is **never** the city's hero identity.
+
+If ART ever wants a larger river role for the fictional valley, that is an ART decision and it would
+*widen* this landing. Nothing here requires it, and nothing here is invalidated without it.
 
 ### 2.6 Route structure — why this is not a hub with spokes
 
@@ -153,7 +182,7 @@ The workpack requires that long-route scale be sufficient for an actor to genuin
 town*. The test is not the total distance; it is whether the player can casually verify where somebody
 is.
 
-At the adopted scale a dockhand at the quay is 8–9 minutes from the Calle Mayor and 15–17 from the
+At the adopted scale a yard hand at the landing is 8–9 minutes from the Calle Mayor and 15–17 from the
 upper vega. A player who sees Manolo at the plaza at ten o'clock cannot cheaply confirm where he is at
 half past — checking costs a real round trip, and on the way the target may have taken any of three
 longitudinal routes. That is the condition under which a schedule becomes knowledge worth having,
@@ -269,10 +298,13 @@ These bind `CITY-01..04`. Breaking one is a constitutional change, not a product
 - **CSI-04 — The port sits on ordinary routes.** The road junction and bus stop stay adjacent to the
   port, and at least two everyday non-port services live there. *(Answer to charge B-1; without it the
   port is decoration with a job title.)*
-- **CSI-05 — The port keeps valley scale.** Working craft only, quay ≈120–150 m, no marina, no
-  sea-going read. Binds `Docs/art/SETTING.md`.
-- **CSI-06 — One historic main-river crossing.** The core has exactly one río crossing, the Puente
-  Viejo. The second río crossing belongs to the port and arrives later.
+- **CSI-05 — The landing keeps valley scale, and depends on no unauthorized premise.** Working craft
+  only, quay and working frontage ≈120–150 m, no marina, no sea-going read, and **no dependence on
+  the river carrying cargo out of the valley**. This invariant is *consumed from*
+  `Docs/art/SETTING.md`: ART owns setting direction and CITY reads it rather than redefining it.
+- **CSI-06 — One historic bridge over the río.** The core has exactly one río bridge, the Puente
+  Viejo. At the landing the río is crossed by the barca until the Puente del Muelle replaces it. No
+  other río crossing exists.
 - **CSI-07 — Arroyo crossings are plural, cheap and differentiated.** At least three, each with a
   distinct character and a distinct consequence when closed.
 - **CSI-08 — Quiet is protected fabric.** The upstream paseo, the arroyo ravine walk with the
@@ -338,7 +370,7 @@ B was not selected for winning the most rows. It was selected because it is the 
 charges are answerable **by structure** rather than by intent — and those answers are now CSI-02 and
 CSI-04 rather than good intentions. Its remaining risks are declared: verticality is a CITY-04
 measurement risk, its most expensive fabric is at the tip where production was already going to
-start, and its port depends on an open setting question (§8, Q1).
+start. Its landing, after repair cycle 1, depends on no premise beyond the inherited setting.
 
 ---
 
@@ -354,7 +386,7 @@ so that `main` does not carry two contradictory topologies.
 | §1.3 zones | six zones, no port, no second residential character | aligned with §2.3: `zone.ensanche`, `zone.puerto` and `zone.vega` added; `zone.ribera` narrowed to the work edge; `zone.entrada` moved adjacent to the port |
 | §1.4 first product seed | element list with no stated area | element list retained, plus an arroyo crossing and a visible port seam; area stated as 0.03–0.06 km² and the final boundary assigned to CITY-03 |
 | §1.5 approximate scale | street/plaza/frontage/floor anchors | anchors unchanged (they belong to the visual bible); the district-scale band added by reference |
-| §12 open items — "town layout" | "use the product-seed river/bridge/loops topology in this revision" | resolved: points at this constitution; new rows added for the port navigability question and for the scale-band correction |
+| §12 open items — "town layout" | "use the product-seed river/bridge/loops topology in this revision" | resolved: points at this constitution; a new row records the scale-band correction |
 
 The blueprint's actor examples — Antonio descending from the Barrio Alto to the workshops, Ana's
 short lane to the bar, Pilar choosing the riverside walk, Javier's bicycle preferring the flatter
@@ -367,7 +399,7 @@ Bernardo's arrival now lands beside the port rather than at an abstract road edg
 
 | # | Question | Owner |
 |---|---|---|
-| Q1 | Does the setting accept the fictional premise that the joined river below the confluence carries shallow working craft downstream? If refused, the port's placement and therefore this topology must be reopened. | **`WP-ART-00` / art direction** |
+| Q1 | Visual and material language for a working timber-and-gravel landing, its yards and the roped ferry, inside the existing kit allowlist. This is a **consumption** question: no answer to it can invalidate this constitution, because §2.5 rests on no premise beyond the inherited setting. | `WP-ART-00` / art direction |
 | Q2 | How much total level change does the wedge carry, and does it survive readability and followability validation? | CITY-04, measured; CITY-01 to bound |
 | Q3 | Measured walk times against the §3 hypotheses, and the real effective pedestrian speed. | CITY-04 |
 | Q4 | Primary and secondary route graph, travel profiles (older walker, bicycle, delivery, bus, following player, time-pressured trip) and chokepoint ledger. | CITY-01 |
