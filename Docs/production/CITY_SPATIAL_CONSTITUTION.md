@@ -52,12 +52,18 @@ territorial movement.** That asymmetry is the constitution's core mechanism.
       |   |   |   |              |          \              |        \
       |  (arroyo: 4 cruces)      |           \             |         \
       |   |   |   |         RIBERA / TALLERES           CASCO VIEJO (punta)
-      |   |   |   |              |                         |        \
-      |   |   |   |     PASEO FLUVIAL / CAMINO DE SIRGA    |     PUENTE VIEJO === camino sur
-      |   |   |   |              |                         |              (ermita / cementerio
-   ENTRADA / BUS / CARRETERA     |                  Cuesta del Puerto       / carretera de valle)
-           \                     |                         /
-            \--- carretera del muelle ---- PUERTO FLUVIAL (aguas abajo de la confluencia)
+      |   |   |   |              |                        /          \
+      |   |   |   |     PASEO FLUVIAL / SIRGA    Cuesta del Puerto   PUENTE VIEJO
+      |   |   |   |              |                   /                    |
+   ENTRADA / BUS / CARRETERA     |                  /                     |
+           \                     |                 /                      |
+            \--- carretera del muelle -- PUERTO FLUVIAL                   |
+                                              |                           |
+                                          la barca                        |
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~ R I O ~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~
+                                              |                           |
+                                 ORILLA SUR --+------ camino sur ---------+
+                                 (ermita / cementerio / carretera de valle)
 ```
 
 All names are **placeholders**. This document does not freeze identifiers.
@@ -88,25 +94,50 @@ Seven substantial families plus two edge families.
 
 ### 2.4 Crossing strategy
 
-| Crossing | Over | Character | Connects | If closed |
-|---|---|---|---|---|
-| **Puente Viejo** | río | stone, narrow, historic; pedestrian and handcart | casco ↔ camino sur, ermita, cementerio, valley road | territorial: the south side is cut off |
-| **Puente del Mercado** | arroyo | road-capable stone arch | Calle Mayor ↔ Ensanche | commercial: carts detour ~200 m |
-| **Pasarela del Lavadero** | arroyo | wooden footbridge | Barrio Alto ↔ upper Ensanche | local: a two-minute detour |
-| **Puente de la Vega** | arroyo | rural bridge upstream | huertas ↔ north Ensanche | seasonal, flood-closable |
-| **Pasos / vado** | arroyo | stepping stones on the low reach | lower casco lanes ↔ Ensanche | disappears when the water rises |
-| **La barca** | río | roped working ferry on the wide reach | Puerto ↔ south bank | hours and fare are a municipal decision; high water suspends it |
-| **Puente del Muelle** | río | freight road bridge | Puerto ↔ south bank road | late production seam; it replaces the barca |
+| Crossing | Over | Character | Connects | Availability | If closed |
+|---|---|---|---|---|---|
+| **Puente Viejo** | río | stone, narrow, historic; pedestrian and handcart | casco ↔ camino sur, ermita, cementerio, valley road | permanent, both states | the south bank is **not** cut off — see §2.4.1 |
+| **Puente del Mercado** | arroyo | road-capable stone arch | Calle Mayor ↔ Ensanche | permanent | commercial: carts detour ~200 m |
+| **Pasarela del Lavadero** | arroyo | wooden footbridge | Barrio Alto ↔ upper Ensanche | permanent | local: a two-minute detour |
+| **Puente de la Vega** | arroyo | rural bridge upstream | huertas ↔ north Ensanche | seasonal; flood-closable | rural: the upstream huerta route lengthens |
+| **Pasos / vado** | arroyo | stepping stones on the low reach | lower casco lanes ↔ Ensanche | low water only | nothing on its own — it is a convenience, never a dependency |
+| **La barca** | río | roped ferry; people, animals and small loads | Puerto ↔ orilla sur | **State 1 only**; hours and fare are a municipal decision, high water suspends it | the south bank depends on the Puente Viejo alone until it runs again |
+| **Puente del Muelle** | río | freight road bridge | Puerto ↔ south-bank road | **State 2 only**; it replaces the barca | freight cannot cross at all — the Puente Viejo takes handcarts, not carts — so the yards wait |
 
 The arroyo is crossed casually and often. The río is crossed rarely and deliberately — the barca does
 not change that, because it has hours, a fare and a far-end location, which makes crossing there a
 decision rather than a habit. Four cheap short spans buy more movement structure than one additional
 main-river bridge would, at a fraction of the geometry.
 
-One consequence is worth naming rather than leaving for someone to discover: the barca and the Puente
-Viejo together close a **long loop along the south bank**, which the constitution did not have before
-repair cycle 1. Whether that loop carries ordinary traffic or stays a rural detour is a `WP-CITY-01`
-question (§8, Q12), not a claim made here.
+#### 2.4.1 Two connectivity states, and what closures actually do
+
+The city's crossing set changes exactly once across production. Leaving that implicit is how the
+crossing table came to contradict the graph, so it is stated here and the table's Availability column
+refers to it.
+
+- **State 1 — the barca era.** The río is crossed at the Puente Viejo (casco) and by the barca
+  (landing). The barca is *conditional*: hours, a fare, and high water suspends it.
+- **State 2 — the Puente del Muelle era.** The bridge replaces the ferry and the south bank has two
+  unconditional crossings.
+
+The south bank is therefore reached two ways in both states, and the closure consequences follow from
+the dimensional sketch in §3 rather than from assertion:
+
+| Situation | Effect on the south bank |
+|---|---|
+| normal, State 1 or 2 | casco → ermita/cementerio over the Puente Viejo, ≈80 m |
+| **Puente Viejo closed, State 1** | reachable via casco → Cuesta → landing (≈150 m) → barca → upstream along the camino sur (≈350 m): roughly **500 m plus the ferry wait**, a detour of order 6×, bounded by ferry hours, fare and high water |
+| **Puente Viejo closed, State 2** | a long detour over the Puente del Muelle, with no condition attached |
+| **Puente Viejo and barca both out, State 1** | *this* is the cut-off case, and it is not contrived: one flood can suspend the ferry and threaten the old bridge on the same day |
+| barca suspended alone | the landing loses its crossing; south-bank traffic walks the length of town to the Puente Viejo |
+
+The double-failure row is the useful one. It gives flood, repair priority and ferry policy a real
+stake, which a flat "the south side is cut off" never did — and unlike that claim, it is true.
+
+Together the Puente Viejo and the barca close a **loop along the south bank** of roughly 650–750 m of
+walking plus the ferry wait, drawn in the §2.2 graph. It is a detour, not a shortcut: casco to landing
+over the Cuesta is ≈150 m directly. Whether it carries ordinary traffic or stays a rural detour is a
+`WP-CITY-01` question (§8, Q12), not a claim made here.
 
 ### 2.5 The working landing — why it exists and how big it is
 
@@ -257,6 +288,7 @@ with and `CITY-04` to measure. It is not a measured fact and must never be cited
 | Puente Viejo ↔ Entrada/bus | ~500 m | 7–8 min |
 | Puerto quay ↔ Calle Mayor shop | ~550 m | 8–9 min |
 | Casco tip ↔ NE end of Calle Mayor | ~600 m | 8–10 min |
+| South-bank loop: casco → Puente Viejo → camino sur → barca → landing → Cuesta → casco | ~650–750 m + ferry wait | 10–12 min + wait |
 | **Vega NE ↔ Puerto quay** | **~1.05–1.15 km** | **15–17 min** |
 
 ### Conditions that would change the envelope
@@ -308,9 +340,11 @@ These bind `CITY-01..04`. Breaking one is a constitutional change, not a product
   only, quay and working frontage ≈120–150 m, no marina, no sea-going read, and **no dependence on
   the river carrying cargo out of the valley**. This invariant is *consumed from*
   `Docs/art/SETTING.md`: ART owns setting direction and CITY reads it rather than redefining it.
-- **CSI-06 — One historic bridge over the río.** The core has exactly one río bridge, the Puente
-  Viejo. At the landing the río is crossed by the barca until the Puente del Muelle replaces it. No
-  other río crossing exists.
+- **CSI-06 — One historic bridge over the río, and one crossing at the landing.** The core has
+  exactly one río bridge, the Puente Viejo. At the landing the río is crossed by the barca in State 1
+  and by the Puente del Muelle in State 2 (§2.4.1). No other río crossing exists in either state. The
+  transition converts a conditional crossing into a permanent one; it does not change the core's
+  crossing count, and it never leaves the south bank on a single crossing.
 - **CSI-07 — Arroyo crossings are plural, cheap and differentiated.** At least three, each with a
   distinct character and a distinct consequence when closed.
 - **CSI-08 — Quiet is protected fabric.** The upstream paseo, the arroyo ravine walk with the
@@ -334,7 +368,8 @@ These bind `CITY-01..04`. Breaking one is a constitutional change, not a product
 3. **Up-slope N/NE** → Barrio Alto growth, terraces, miradores.
 4. **W across the arroyo** → Ensanche growth — the cheapest large residential expansion.
 5. **SW downstream** → port growth, yards, depot, boatyard.
-6. *(Later)* **S across the río** at the Puente del Muelle.
+6. *(Later)* **S across the río** at the Puente del Muelle, which moves the city from State 1 to
+   State 2 by replacing the barca with a permanent crossing (§2.4.1).
 
 ---
 
@@ -416,7 +451,7 @@ Bernardo's arrival now lands beside the port rather than at an abstract road edg
 | Q9 | Exact retained-seed boundary inside the 0.03–0.06 km² band, and its hard boundary versus soft visual envelope. | CITY-03 |
 | Q10 | Whether the seed includes the Pasos/vado or the Puente del Mercado as its arroyo crossing. | CITY-03 |
 | Q11 | Whether the hero mesh/atlas budget and this fabric are compatible, or whether one of them must move with evidence. | art review, with CITY-04 input |
-| Q12 | The barca plus the Puente Viejo close a long south-bank loop. Does it carry ordinary traffic, or is it a rural detour used only when the ferry is running and the errand suits it? | CITY-01 |
+| Q12 | The south-bank loop exists and is drawn (§2.2, §2.4.1). Does it carry ordinary traffic, or is it a rural detour taken only when the ferry is running and the errand suits it? And does the answer change between State 1 and State 2? | CITY-01 |
 
 ---
 

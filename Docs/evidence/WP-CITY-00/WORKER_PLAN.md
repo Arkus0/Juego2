@@ -6,8 +6,17 @@ Baseline SHA: 290f92e9c21f1e454e0d6924b29f4d778b9875f8
 Active Worker: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Worker state: ACTIVE
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)
-fail_cycle: 1
+fail_cycle: 2
 
+> **Repair cycle 2.** Frozen candidate `6091584313488bcfb1840132f22adcc9b1b5de4f` received
+> independent FAIL, review
+> [#5261418045](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261418045). The cycle-1
+> repair was confirmed sound, but it had added the barca as a crossing without reconciling what that
+> edge falsifies: the crossing tables still said closing the Puente Viejo cut the south side off, and
+> neither semantic graph drew the ferry, so the selected district graph and the crossing strategy
+> described two different cities. Reconciled around two explicit connectivity states
+> (`CITY_SPATIAL_CONSTITUTION.md` §2.4.1). No spatial decision changed.
+>
 > **Repair cycle 1.** Frozen candidate `b9473f04da72462619e9561c097083afdc6c436d` received
 > independent FAIL, review
 > [#5261386416](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261386416). The
@@ -48,12 +57,22 @@ Guarantees consumed rather than re-argued by CITY-00:
 `WP-ART-00` owns visual/setting direction. CITY consumes it and must not silently restyle the game
 (`Docs/workpacks/CITY/README.md`).
 
-The governing consequence, learned the hard way in repair cycle 1: **CITY-00 may not need a setting
-fact that ART has not stated.** An open question is legitimate only when no answer to it can
+Two governing rules, each learned the hard way, and recorded here so they bind future CITY work
+rather than this document alone.
+
+**From cycle 1 — CITY-00 may not need a setting fact that ART has not stated.** An open question is legitimate only when no answer to it can
 invalidate the constitution. If a spatial decision requires a setting premise ART has not given,
 the decision has to be redesigned to need less — not argued, and not deferred. The working landing
 in §2.5 of the constitution is built to that rule: it rests on confluence hydrology and on the
 small-landing/working-boats direction `SETTING.md` already grants, and on nothing else.
+
+**From cycle 2 — a repair that adds an edge must reconcile the graph and every consequence that edge
+falsifies.** Adding a crossing is never a local addition: it changes what happens when *other*
+crossings close, and it changes what the semantic graph has to show. Cycle 1 added the barca, wrote
+one paragraph about the loop it created, and left the crossing table asserting an isolation that the
+same repair had just made impossible. Both cycles are the same failure in different clothes —
+closing over something without checking what else depended on it — which is why the check now
+belongs in the pre-review rather than in a reviewer's reading.
 
 ### Dependency 2 — `Docs/production/PRODUCTION_BLUEPRINT.md` v0.2
 

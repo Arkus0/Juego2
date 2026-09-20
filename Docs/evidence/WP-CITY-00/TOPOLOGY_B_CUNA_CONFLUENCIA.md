@@ -11,6 +11,14 @@ Amended in repair cycle 1 after independent FAIL on `b9473f04da72462619e9561c097
 > constitution cannot close over a condition whose refusal would move the landing and reopen the
 > topology. The landing's reason for existing has been rewritten to need nothing beyond the
 > inherited setting. The spatial structure of this option is unchanged.
+>
+> **Repair cycle 2.** Adding the barca in cycle 1 falsified consequences that were never reconciled:
+> this dossier and the constitution both still said that closing the Puente Viejo cut the south side
+> off, and neither graph drew the ferry. Independent review
+> [#5261418045](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261418045) FAILed the
+> candidate because the district graph and the crossing strategy had stopped describing the same
+> city. The graph, the crossing table and the closure consequences are now reconciled around the two
+> connectivity states. Again, no spatial structure changed.
 
 ## 1. Premise
 
@@ -40,12 +48,18 @@ shapes **territorial** movement.
       |    |    |    |          |        \              |      \
       |  (arroyo: 4 cruces)     |         \             |       \
       |    |    |    |     RIBERA / TALLERES         CASCO VIEJO (punta)
-      |    |    |    |          |                       |      \
-      |    |    |    |     PASEO FLUVIAL / SIRGA        |    PUENTE VIEJO === camino sur
-      |    |    |    |          |                       |            (ermita / cementerio)
-   ENTRADA / BUS / CARRETERA    |                 Cuesta del Puerto
-           \                    |                       /
-            \--- carretera del muelle --- PUERTO FLUVIAL (aguas abajo de la confluencia)
+      |    |    |    |          |                      /        \
+      |    |    |    |     PASEO FLUVIAL / SIRGA  Cuesta      PUENTE VIEJO
+      |    |    |    |          |               del Puerto         |
+   ENTRADA / BUS / CARRETERA    |                  /               |
+           \                    |                 /                |
+            \--- carretera del muelle --- PUERTO FLUVIAL           |
+                                              |                    |
+                                          la barca                 |
+  ~~~~~~~~~~~~~~~~~~~~ R I O ~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~|~~~~~
+                                              |                    |
+                                 ORILLA SUR --+---- camino sur ----+
+                                 (ermita / cementerio / valle)
 ```
 
 Three continuous longitudinal routes run the length of the wedge: **paseo fluvial** (low, quiet),
@@ -71,15 +85,19 @@ three ways: towpath, quay road, and the steep Cuesta from the casco.
 
 ## 4. Crossing strategy
 
-| Crossing | Over | Character | Connects | Closure consequence |
-|---|---|---|---|---|
-| Puente Viejo | río | stone, narrow, historic | casco ↔ camino sur, ermita, cementerio, left-bank rural | territorial: the south side is cut off |
-| Puente del Mercado | arroyo | road-capable stone arch | Calle Mayor ↔ Ensanche | commercial: carts detour ~200 m |
-| Pasarela del Lavadero | arroyo | wooden footbridge | Barrio Alto ↔ Ensanche upper | local: a 2-minute detour for residents |
-| Puente de la Vega | arroyo | rural bridge, upstream | huertas ↔ Ensanche north | seasonal, flood-closable |
-| Pasos / vado | arroyo | stepping stones at the low reach | casco lower lanes ↔ Ensanche | disappears when the arroyo rises |
-| La barca | río | roped working ferry at the landing | Puerto ↔ south bank | hours and fare are a municipal decision; high water suspends it |
-| Puente del Muelle | río | freight road bridge, later | Puerto ↔ south bank road | production-phase seam; it replaces the barca |
+| Crossing | Over | Character | Connects | Availability | Closure consequence |
+|---|---|---|---|---|---|
+| Puente Viejo | río | stone, narrow, historic; pedestrian and handcart | casco ↔ camino sur, ermita, cementerio, left-bank rural | permanent, both states | the south bank is **not** cut off: it is reached by the barca at the far end of town, ≈500 m plus the ferry wait instead of ≈80 m |
+| Puente del Mercado | arroyo | road-capable stone arch | Calle Mayor ↔ Ensanche | permanent | commercial: carts detour ~200 m |
+| Pasarela del Lavadero | arroyo | wooden footbridge | Barrio Alto ↔ Ensanche upper | permanent | local: a 2-minute detour for residents |
+| Puente de la Vega | arroyo | rural bridge, upstream | huertas ↔ Ensanche north | seasonal; flood-closable | rural: the upstream huerta route lengthens |
+| Pasos / vado | arroyo | stepping stones at the low reach | casco lower lanes ↔ Ensanche | low water only | nothing on its own — a convenience, never a dependency |
+| La barca | río | roped ferry; people, animals and small loads | Puerto ↔ orilla sur | State 1 only; hours, fare, suspended by high water | the south bank depends on the Puente Viejo alone until it runs again |
+| Puente del Muelle | río | freight road bridge | Puerto ↔ south-bank road | State 2 only; it replaces the barca | freight cannot cross at all, since the Puente Viejo takes handcarts and not carts |
+
+Connectivity states and the full closure consequences are owned by `CITY_SPATIAL_CONSTITUTION.md`
+§2.4.1. The south bank is never left on a single crossing except when the Puente Viejo and the barca
+fail together, which one flood can cause.
 
 The arroyo is crossed casually and often; the río is crossed rarely and deliberately. That asymmetry
 is the topology's core mechanism, and it is cheap: four short spans cost far less geometry than one
