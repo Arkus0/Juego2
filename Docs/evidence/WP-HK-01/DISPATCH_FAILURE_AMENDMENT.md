@@ -4,7 +4,11 @@ CAUSAL_OWNER: WP-HK-01
 AMENDMENT_TRIGGER: WP-HK-10 independent review #5261225652
 AMENDMENT_REVIEW_VEHICLE: PR #60
 OWNER_PROOF: Hk01DispatchFailureContractTests
-AMENDMENT_STATUS: CANDIDATE_PENDING_INDEPENDENT_PASS
+AMENDMENT_STATUS: ACCEPTED
+ACCEPTED_REVIEW: #5261301248
+ACCEPTED_CANDIDATE_SHA: 813ccf08e33fdd77a34c59da5ed766882840cbee
+EXACT_SHA_FREEZE_VALIDATION: 35527218067 GREEN
+MERGE_SHA: f893ad51d756090eeecac41b8fc7cb14f8bd359a
 
 ## Why HK01 owns this
 
@@ -22,11 +26,11 @@ This does not add a public capability, change a capability identity/version, alt
 
 `Hk01DispatchFailureContractTests` uses the already accepted `system.describe@1.0` definition and constructs a dispatcher-only test binding without declaring an extra public route. One handler throws before publication; another explicitly marks publication committed and then throws. The tests require the two distinct machine codes, retryability/publication flags, diagnostic context and absence of internal sentinel leakage.
 
-HK10 retains thrown accepted inspection/validator fixtures only because HK10 explicitly requires handler/validator fault injection. Those closure fixtures now consume the HK01-owned semantics rather than define them.
+HK10 retains thrown accepted inspection/validator fixtures only because HK10 explicitly requires handler/validator fault injection. Those closure fixtures consume the HK01-owned semantics rather than define them.
 
-## Review ordering
+## Acceptance
 
-The exact-SHA HK10 observation runs the HK01 owner proof before the HK10 closure tests. Independent review of PR #60 must accept this HK01 amendment on the same exact SHA before treating HK10's handler/validator fault evidence as inherited-contract closure. If the amendment fails review, HK10 remains unresolved.
+Independent review `#5261301248` accepted the combined exact candidate after verifying that the prior HK10 closure-only ownership defect was repaired by reopening HK01 as the causal owner. Exact-SHA freeze validation Actions `35527218067` was GREEN and the accepted candidate merged as `f893ad51d756090eeecac41b8fc7cb14f8bd359a`.
 
 POST_PUBLICATION_MACHINE_CODE: contract.handler_failure_after_publication
 PRE_PUBLICATION_MACHINE_CODE: contract.handler_failure
