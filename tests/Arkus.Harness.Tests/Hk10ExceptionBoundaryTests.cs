@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Arkus.Game.Authoring;
 using Arkus.Game.Validation;
 using Arkus.Game.World;
@@ -31,19 +32,24 @@ namespace Arkus.Harness.Tests
         {
             var definition = Assert.Single(WorldValidationContract.CreateDefinitions().Where(candidate =>
                 string.Equals(candidate.Key.Name, WorldValidationContract.CurrentName, StringComparison.Ordinal)));
-            var route = CapabilityRoute.FromHandler(
-                new WorldValidationCurrentHandler(new ThrowingValidationService()));
-            var contract = new ComposedContract(
-                new Dictionary<CapabilityKey, CapabilityDefinition>
-                {
-                    [definition.Key] = definition
-                },
-                new Dictionary<CapabilityKey, CapabilityRoute>
-                {
-                    [definition.Key] = route
-                });
+            var handlerType = typeof(CanonicalWorldContract).Assembly.GetType(
+                "Arkus.Harness.Runtime.WorldValidationCurrentHandler",
+                throwOnError: true)!;
+            var handler = Assert.IsAssignableFrom<ICanonicalCapabilityHandler>(Activator.CreateInstance(
+                handlerType,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                binder: null,
+                args: new object[] { new ThrowingValidationService() },
+                culture: null));
+            var contribution = new CanonicalProviderContribution(
+                new ProviderDescriptor("arkus.base", ProviderKind.Base, "base", new[] { "world" }),
+                new[] { definition },
+                new[] { CapabilityRoute.FromHandler(handler) });
+            var composition = ContractComposer.Compose(contribution);
+            Assert.True(composition.Success, string.Join(";", composition.Issues));
+            Assert.NotNull(composition.Contract);
 
-            var result = contract.Dispatch(
+            var result = composition.Contract!.Dispatch(
                 WorldValidationContract.CurrentName,
                 ContractVersionRange.Exact(new ContractVersion(1, 0)),
                 new Dictionary<string, object?>(StringComparer.Ordinal));
