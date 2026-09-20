@@ -24,6 +24,8 @@ The serial gate prevents parallel implementation from baking unreviewed assumpti
 
 ## Non-foundational tracks
 
-`OPS/` and `ART/` are parallel non-foundational tracks. They are not bound by `FOUNDATIONAL_PROOF_STANDARD.md`, require no exact-SHA evidence or self-attack matrix, do not appear in the H0 DAG, and can neither block nor unblock any `HK-*` workpack.
+`OPS/`, `ART/` and `CITY/` are parallel non-foundational tracks. They are not bound by `FOUNDATIONAL_PROOF_STANDARD.md`, require no exact-SHA evidence or self-attack matrix, do not appear in the H0 DAG, and can neither block nor unblock any `HK-*` workpack.
 
 A non-foundational workpack is never a valid reason to delay, weaken or reinterpret an H0 acceptance criterion.
+
+`CITY/` exists so spatial/product preproduction can be reasoned about before local production begins. `WP-CITY-00` through `WP-CITY-03` are documentation/research/planning only and may run remotely before `WP-HK-GATE`; they do not authorize Unity scene construction, asset import or serious game production. `WP-CITY-04` is the first local blockout/engine-validation workpack and MUST NOT begin before `WP-HK-GATE` has passed and the relevant Unity bridge prerequisites are accepted.
