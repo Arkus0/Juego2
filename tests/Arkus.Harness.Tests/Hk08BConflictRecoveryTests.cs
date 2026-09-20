@@ -108,6 +108,57 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void PlanDryRunAndApplyExposeTheSameRecoveryTruthForOneStaleBase()
+        {
+            var initial = Hk02TestFixtures.MicroWorld();
+            var session = new TransactionalWorldAuthoringSession(initial);
+            var contract = Hk04TransactionalMutationTests.Compose(session);
+
+            Hk04TransactionalMutationTests.Success(
+                contract,
+                WorldMutationContract.ApplyName,
+                Hk04TransactionalMutationTests.Request(
+                    initial,
+                    "request.hk08b.route-writer",
+                    Hk04TransactionalMutationTests.PutObject("node.peer", "fixture.route-writer")));
+
+            IReadOnlyDictionary<string, object?>? canonicalRecovery = null;
+            foreach (var capability in new[]
+            {
+                WorldMutationContract.PlanName,
+                WorldMutationContract.DryRunName,
+                WorldMutationContract.ApplyName
+            })
+            {
+                var result = contract.Dispatch(
+                    capability,
+                    Hk04TransactionalMutationTests.ExactVersion(),
+                    Hk04TransactionalMutationTests.Request(
+                        initial,
+                        "request.hk08b.route-stale." + capability,
+                        Hk04TransactionalMutationTests.PutObject("node.child", "fixture.route-client", "node.root")));
+
+                Assert.False(result.Success);
+                Assert.Equal("world.change.stale_revision", result.Error!.MachineCode);
+                var recovery = Recovery(result);
+                Assert.Equal(WorldConflictRecoveryContract.SameLineageReplan, recovery["disposition"]);
+                Assert.Equal(new[] { "world.object:node.peer" }, Hk04TransactionalMutationTests.Strings(recovery, "changedResources"));
+
+                if (canonicalRecovery == null)
+                {
+                    canonicalRecovery = recovery;
+                }
+                else
+                {
+                    Assert.Equal(canonicalRecovery, recovery);
+                }
+            }
+
+            Assert.Equal(initial.Revision + 1, session.Current.Revision);
+            Assert.Equal(1, Convert.ToInt32(Hk06AProvenanceJournalTests.ReadJournal(contract).Data!["entryCount"]));
+        }
+
+        [Fact]
         public void ChangedResourceRemovedSinceExpectedBaseIsReturnedExplicitlyAsAbsent()
         {
             var initial = Hk02TestFixtures.MicroWorld();
