@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Arkus.Game.Authoring;
 using Arkus.Game.Validation;
+using Arkus.Game.World;
 using Arkus.Harness.Protocol;
 
 namespace Arkus.Harness.Runtime
@@ -20,15 +21,16 @@ namespace Arkus.Harness.Runtime
         {
             if (service == null) throw new ArgumentNullException(nameof(service));
 
-            // Plan/dry-run receive an attenuated facade whose runtime object is not the
-            // authoritative session. Only apply receives the Authoring-owned commit capability.
+            // Plan/dry-run and HK08B recovery reads share the accepted attenuated facade whose
+            // runtime object is not the authoritative session. Only apply retains commit authority.
             var planner = new WorldMutationPlannerView(service);
             var committer = CanonicalWorldMutationAuthority.Bind(service);
+            var recovery = new WorldConflictRecovery(planner);
             return new List<CapabilityRoute>
             {
-                CapabilityRoute.FromHandler(new WorldChangePlanHandler(planner)),
-                CapabilityRoute.FromHandler(new WorldChangeDryRunHandler(planner)),
-                CapabilityRoute.FromHandler(new WorldChangeApplyHandler(committer))
+                CapabilityRoute.FromHandler(new WorldChangePlanHandler(planner, recovery)),
+                CapabilityRoute.FromHandler(new WorldChangeDryRunHandler(planner, recovery)),
+                CapabilityRoute.FromHandler(new WorldChangeApplyHandler(committer, recovery))
             }.AsReadOnly();
         }
     }
@@ -36,19 +38,21 @@ namespace Arkus.Harness.Runtime
     /// <summary>
     /// Capability attenuation boundary: exposes only non-committing authoring operations and
     /// deliberately does not expose or implement canonical commit authority even when the wrapped
-    /// service does. HK05/HK06A/HK06B reuse the same accepted attenuation boundary for validation,
-    /// provenance reads, semantic diff and snapshot export.
+    /// service does. HK05/HK06A/HK06B/HK08B reuse the same accepted attenuation boundary for
+    /// validation, provenance, portability and recovery reads.
     /// </summary>
     internal sealed class WorldMutationPlannerView :
         IWorldMutationService,
         IWorldValidationService,
         IWorldProvenanceService,
-        IWorldPortabilityService
+        IWorldPortabilityService,
+        IWorldConflictRecoverySource
     {
         private readonly IWorldMutationService _service;
         private readonly IWorldValidationService _validation;
         private readonly IWorldProvenanceService _provenance;
         private readonly IWorldPortabilityService _portability;
+        private readonly IWorldStateSource? _stateSource;
 
         public WorldMutationPlannerView(IWorldMutationService service)
         {
@@ -56,6 +60,7 @@ namespace Arkus.Harness.Runtime
             _validation = service as IWorldValidationService ?? new UnavailableWorldValidationService();
             _provenance = service as IWorldProvenanceService ?? new UnavailableWorldProvenanceService();
             _portability = service as IWorldPortabilityService ?? new UnavailableWorldPortabilityService();
+            _stateSource = service as IWorldStateSource;
         }
 
         public CapabilityInvocationResult Plan(IReadOnlyDictionary<string, object?> request)
@@ -92,16 +97,30 @@ namespace Arkus.Harness.Runtime
         {
             return _portability.ExportSnapshot(request);
         }
+
+        bool IWorldConflictRecoverySource.TryGetCurrent(out WorldState state)
+        {
+            if (_stateSource == null)
+            {
+                state = null!;
+                return false;
+            }
+
+            state = _stateSource.Current;
+            return true;
+        }
     }
 
     internal abstract class WorldMutationHandlerBase : ICanonicalCapabilityHandler
     {
-        protected WorldMutationHandlerBase(IWorldMutationService service)
+        protected WorldMutationHandlerBase(IWorldMutationService service, WorldConflictRecovery recovery)
         {
             Service = service ?? throw new ArgumentNullException(nameof(service));
+            Recovery = recovery ?? throw new ArgumentNullException(nameof(recovery));
         }
 
         protected IWorldMutationService Service { get; }
+        protected WorldConflictRecovery Recovery { get; }
 
         public abstract CapabilityInvocationResult Invoke(
             CapabilityInvocationContext context,
@@ -119,28 +138,30 @@ namespace Arkus.Harness.Runtime
     [PublicCapabilityRoute("arkus.base", WorldMutationContract.PlanName, "1.0")]
     internal sealed class WorldChangePlanHandler : WorldMutationHandlerBase
     {
-        public WorldChangePlanHandler(IWorldMutationService service) : base(service) { }
+        public WorldChangePlanHandler(IWorldMutationService service, WorldConflictRecovery recovery)
+            : base(service, recovery) { }
 
         public override CapabilityInvocationResult Invoke(
             CapabilityInvocationContext context,
             IReadOnlyDictionary<string, object?> request)
         {
             Validate(context, request);
-            return Service.Plan(request);
+            return Recovery.Enrich(Service.Plan(request), request);
         }
     }
 
     [PublicCapabilityRoute("arkus.base", WorldMutationContract.DryRunName, "1.0")]
     internal sealed class WorldChangeDryRunHandler : WorldMutationHandlerBase
     {
-        public WorldChangeDryRunHandler(IWorldMutationService service) : base(service) { }
+        public WorldChangeDryRunHandler(IWorldMutationService service, WorldConflictRecovery recovery)
+            : base(service, recovery) { }
 
         public override CapabilityInvocationResult Invoke(
             CapabilityInvocationContext context,
             IReadOnlyDictionary<string, object?> request)
         {
             Validate(context, request);
-            return Service.DryRun(request);
+            return Recovery.Enrich(Service.DryRun(request), request);
         }
     }
 
@@ -148,10 +169,12 @@ namespace Arkus.Harness.Runtime
     internal sealed class WorldChangeApplyHandler : ITransactionalMutationHandler
     {
         private readonly ICanonicalWorldMutationCommitter _committer;
+        private readonly WorldConflictRecovery _recovery;
 
-        public WorldChangeApplyHandler(ICanonicalWorldMutationCommitter committer)
+        public WorldChangeApplyHandler(ICanonicalWorldMutationCommitter committer, WorldConflictRecovery recovery)
         {
             _committer = committer ?? throw new ArgumentNullException(nameof(committer));
+            _recovery = recovery ?? throw new ArgumentNullException(nameof(recovery));
         }
 
         public CapabilityInvocationResult Invoke(
@@ -160,7 +183,7 @@ namespace Arkus.Harness.Runtime
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (request == null) throw new ArgumentNullException(nameof(request));
-            return _committer.Apply(request);
+            return _recovery.Enrich(_committer.Apply(request), request);
         }
     }
 }
