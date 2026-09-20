@@ -82,7 +82,7 @@ replace_once \
   src/Arkus.Game.Authoring/WorldInspectionService.cs \
   'matched.Sort((left, right) => left.Id.CompareTo(right.Id));' \
   'matched.Reverse(); // HK10 SEEDED DEFECT: non-canonical query order'
-expect_red inspection 'FullyQualifiedName~Hk03InspectionTests'
+expect_red inspection 'FullyQualifiedName~Hk10InspectionOrderingTests.ObjectQueryOrderMatchesIndependentOrdinalIdOracle'
 
 # Transaction/idempotency: force the accepted receipt lookup to miss an existing request key.
 replace_once \
