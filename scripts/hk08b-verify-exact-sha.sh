@@ -22,6 +22,13 @@ grep -Eq '^WORKER_PRE_REVIEW_FINDINGS_FIXED: [0-9]+$' Docs/evidence/WP-HK-08B/WO
 test -f Docs/evidence/WP-HK-08B/NEGATIVE_CONFORMANCE_MATRIX.md
 test -f Docs/evidence/WP-HK-08B/INTERACTION_BENCHMARK.md
 test -f Docs/evidence/WP-HK-08B/RESIDUAL_RISK.md
+test -f Docs/evidence/WP-HK-08B/CONTENT_SHAPE_PROBE.md
+grep -Fxq 'CONTENT_SHAPE_PROBE_VERDICT: PASS' Docs/evidence/WP-HK-08B/CONTENT_SHAPE_PROBE.md
+grep -Fxq 'APPROVED_PRODUCT_SOURCE: Docs/art/VISUAL_BIBLE.md' Docs/evidence/WP-HK-08B/CONTENT_SHAPE_PROBE.md
+grep -Fxq 'EXECUTABLE_PROBE: Hk08BContentShapeProbeTests.RepresentativeMarketMicroBlockStaleEditRecoversByInspectingOnlyChangedResources' Docs/evidence/WP-HK-08B/CONTENT_SHAPE_PROBE.md
+grep -Fxq 'UNRESOLVED_IN_SCOPE_FINDINGS: 0' Docs/evidence/WP-HK-08B/CONTENT_SHAPE_PROBE.md
+test -f tests/Arkus.Harness.Tests/Hk08BContentShapeProbeTests.cs
+grep -Fq 'public void RepresentativeMarketMicroBlockStaleEditRecoversByInspectingOnlyChangedResources()' tests/Arkus.Harness.Tests/Hk08BContentShapeProbeTests.cs
 
 [[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean after HK08B verification" >&2; exit 2; }
 
@@ -34,7 +41,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/hk08b-verify-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: locked-restore=GREEN; release-build=GREEN; structured-recovery=GREEN; lineage-history-truth=GREEN; affected-only-reinspection=GREEN; diagnostic-preservation=GREEN; interaction-benchmark=GREEN; cross-transport=GREEN; causal-negative-controls=GREEN; regression=GREEN; foundational-proof=GREEN; evidence-reconciliation=GREEN; worker-pre-review=GREEN
+Required gates: locked-restore=GREEN; release-build=GREEN; structured-recovery=GREEN; lineage-history-truth=GREEN; affected-only-reinspection=GREEN; diagnostic-preservation=GREEN; interaction-benchmark=GREEN; cross-transport=GREEN; causal-negative-controls=GREEN; representative-content-shape-probe=GREEN; regression=GREEN; foundational-proof=GREEN; evidence-reconciliation=GREEN; worker-pre-review=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-HK-08B
 EOF
