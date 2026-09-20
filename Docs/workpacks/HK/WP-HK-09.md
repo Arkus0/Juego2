@@ -1,34 +1,28 @@
 # WP-HK-09 — Safety + capability boundary
 
-Status: PLANNED  
-Class: FOUNDATIONAL  
-Depends on: `WP-HK-08`  
+Status: SUPERSEDED — split before implementation into `WP-HK-09A` and `WP-HK-09B`  
+Class: FOUNDATIONAL UMBRELLA RECORD  
+Depends on: `WP-HK-08B`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 
-## Objective
+## Historical objective
 
-Constrain what the harness can affect so an AI can author aggressively inside the game model without gaining accidental arbitrary host powers. This is repository-local software capability containment, not external-system testing.
+Constrain what the harness can affect and consume so an AI can author aggressively inside the game model without gaining accidental arbitrary host powers or leaving canonical persistence in an invalid partial state.
 
-## Acceptance
+This umbrella workpack was intentionally split before implementation because it combined two independently reviewable claims:
 
-- Canonical harness kernel has no generic shell/process execution capability.
-- Network access is absent by default from the kernel/host and cannot be triggered by protocol payloads.
-- Filesystem access is limited to explicit harness-owned persistence/evidence locations; parent-directory and symbolic-link path escapes fail closed.
-- Input size, batch size, query page size, recursion/depth and execution-time/resource limits are explicit and tested.
-- Capability metadata identifies mutating vs read-only operations and any privileged persistence/export operation.
-- Deserialization does not instantiate arbitrary runtime types from user-controlled names.
-- Import/snapshot paths validate format/version/size before replacing canonical state.
-- Crash/interruption during persistence cannot leave a half-committed canonical world.
-- Capability policy is enforced below transport-specific adapters so a future MCP/GUI cannot skip it.
+1. **authority/capability containment** — what host powers are available at all; and
+2. **resource/persistence limits** — how much accepted work may consume and how interruption/import boundaries fail closed.
 
-## Required negative-conformance tests
+## Executable replacement chain
 
-RED→GREEN for: parent-directory path escape, symbolic-link boundary escape, oversized/deep payload, unsupported runtime-type hint, request for an unsupported process-execution capability, unexpected network dependency, batch/resource-limit violation and interrupted persistence.
+`WP-HK-09A → WP-HK-09B`
 
-## Forbidden scope
+- `WP-HK-09A` owns repository-local capability containment: no generic shell/process authority, no network authority by default, filesystem authority restricted to explicit harness-owned locations, safe type handling, truthful privileged-capability metadata and enforcement below transport adapters.
+- `WP-HK-09B` owns explicit input/batch/page/depth/time/resource limits, import/snapshot size validation and persistence/interruption integrity. Its limits consume the measured/representative interaction shapes accepted by HK08A/HK08B rather than choosing arbitrary caps that break them.
 
-Authentication/multi-user cloud security, anti-cheat, Unity sandboxing, OS container orchestration, penetration testing or testing of external systems.
+The aggregate intent of this record remains binding only through those replacement workpacks. **Do not implement or review `WP-HK-09` directly.**
 
-## DoD
+## Preserved boundary
 
-Malformed or out-of-contract protocol inputs remain inside the declared game-authoring/persistence boundary; limits are machine-tested and independently reviewed.
+This split remains repository-local software containment for the Arkus game-authoring harness. It does not add authentication/multi-user cloud security, anti-cheat, Unity sandboxing, OS container orchestration, penetration testing or testing of external systems.
