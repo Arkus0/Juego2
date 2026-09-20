@@ -185,14 +185,14 @@ connected.** Representative route families from `CONNECTIVITY_MATRIX.md` §6:
 | Pair | Route using plaza | Designed plaza-free route | Availability note |
 |---|---|---|---|
 | Barrio Alto ↔ Ribera | stairs → plaza → Calle Mayor → down | callejas altas → east stairs → Ribera | unconditional |
-| Casco ↔ Ensanche | plaza → X2 | lower lanes → X5 | **X5 is low-water only; in high water this pair routes through the plaza** |
+| Casco ↔ Ensanche | plaza → X2 | low water: lower lanes → X5; high water: Cuesta → landing head → paseo → Ribera → east stairs → Barrio Alto → X3 | X5 disappears in high water, so the plaza-free trip becomes a long detour |
 | Ensanche ↔ Puerto | X2 → terrace/plaza → lower casco → X6/X7 (or X1) | X3 → Barrio Alto → high lanes → east stairs → Ribera → paseo → X6/X7; high-water fallback continues via lower casco → X1 → camino sur | exact cost belongs to CITY-01 |
 | Vega ↔ Puerto | Calle Mayor/plaza → X1 → camino sur | paseo/Ribera → landing head → X6/X7; high-water fallback follows paseo/lower casco → X1 → camino sur | exact cost belongs to CITY-01 |
 | Barrio Alto ↔ Ensanche | plaza → X2 | X3 | unconditional |
 
-This constitution does **not** promise two plaza-free routes per pair or permanent availability of a
-bypass. The named Casco ↔ Ensanche high-water state is deliberately plaza-dependent because X5 is its
-direct plaza-free crossing and is then submerged.
+This constitution does **not** promise two plaza-free routes per pair or permanent availability of the
+shortest bypass. High water removes Casco ↔ Ensanche's direct X5 bypass but leaves the longer
+Cuesta→paseo→Ribera→Barrio Alto→X3 route available.
 
 ### 2.7 Three longitudinal route families
 
@@ -300,9 +300,8 @@ belongs to `CONNECTIVITY_MATRIX.md`.
   callejas remain designed end-to-end through the Wedge. The low route reaches Puerto through X6/X7;
   State-1 high-water interruption at X6 is availability, not a design breach.
 - **CSI-03 — Plaza converges, it does not structurally connect.** By design, representative adjacent
-  pairs have a plaza-free route in `CONNECTIVITY_MATRIX.md` §6. Availability may temporarily remove
-  one: **Casco ↔ Ensanche routes through the plaza in high water because X5 is submerged.** What this
-  invariant forbids is making the plaza the only designed connector in the base graph.
+  pairs have a plaza-free route in `CONNECTIVITY_MATRIX.md` §6. Seasonal water may replace a short
+  bypass with a long one; the base graph remains connected with the plaza node removed.
 - **CSI-04 — Port sits on ordinary routes.** Entrada/bus/road junction remains adjacent to Puerto and
   at least two everyday non-port services live there.
 - **CSI-05 — Landing keeps valley scale and needs no unauthorized premise.** Working craft only,
