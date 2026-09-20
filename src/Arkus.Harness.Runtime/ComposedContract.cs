@@ -35,6 +35,19 @@ namespace Arkus.Harness.Runtime
             ContractVersionRange acceptedVersions,
             IReadOnlyDictionary<string, object?> request)
         {
+            return Dispatch(
+                capabilityName,
+                acceptedVersions,
+                request,
+                InvocationResourceBudget.Unlimited());
+        }
+
+        public CapabilityInvocationResult Dispatch(
+            string capabilityName,
+            ContractVersionRange acceptedVersions,
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget)
+        {
             if (capabilityName == null)
             {
                 throw new ArgumentNullException(nameof(capabilityName));
@@ -48,6 +61,11 @@ namespace Arkus.Harness.Runtime
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
+            }
+
+            if (resourceBudget == null)
+            {
+                throw new ArgumentNullException(nameof(resourceBudget));
             }
 
             var available = new List<CapabilityDefinition>();
@@ -148,7 +166,14 @@ namespace Arkus.Harness.Runtime
                 return InternalFailure("contract.route_missing", "Accepted canonical capability has no implementation binding.");
             }
 
-            var result = route.Handler.Invoke(new CapabilityInvocationContext(this, selected), request);
+            var result = route.Handler.Invoke(
+                new CapabilityInvocationContext(this, selected, resourceBudget),
+                request);
+            if (!resourceBudget.PublicationCommitted &&
+                !resourceBudget.TryContinue("canonical-dispatch", out var budgetError))
+            {
+                return CapabilityInvocationResult.Failed(budgetError!);
+            }
             if (result.Success)
             {
                 if (result.Data == null || selected.SuccessSchema == null)
@@ -246,12 +271,25 @@ namespace Arkus.Harness.Runtime
         }
     }
 
+    [PublicCapabilityRoute("arkus.base", "system.resource-envelope.describe", "1.0")]
+    public sealed class SystemResourceEnvelopeDescribeHandler : ICanonicalCapabilityHandler
+    {
+        public CapabilityInvocationResult Invoke(
+            CapabilityInvocationContext context,
+            IReadOnlyDictionary<string, object?> request)
+        {
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            return CapabilityInvocationResult.Succeeded(H0ResourceEnvelope.ToData());
+        }
+    }
+
     public static class BaseContract
     {
         public static CanonicalProviderContribution CreateContribution()
         {
             var provider = new ProviderMetadata("arkus.base", ProviderKind.Base, "base", "system");
-            var definition = new CapabilityDefinition(
+            var describeDefinition = new CapabilityDefinition(
                 new CapabilityKey("system.describe", new ContractVersion(1, 0)),
                 provider,
                 CanonicalContractSchemas.EmptyObject(),
@@ -271,10 +309,78 @@ namespace Arkus.Harness.Runtime
                     ProvenanceRequirement.Required),
                 new CostSemantics(1, "single canonical inventory projection"));
 
+            var resourceDefinition = new CapabilityDefinition(
+                new CapabilityKey("system.resource-envelope.describe", new ContractVersion(1, 0)),
+                provider,
+                CanonicalContractSchemas.EmptyObject(),
+                ResourceEnvelopeSchema(),
+                CanonicalContractSchemas.StructuredError(),
+                SideEffectClass.ReadOnly,
+                DeterminismClass.Deterministic,
+                Array.Empty<string>(),
+                new[] { "returns-the-enforced-h0-resource-envelope" },
+                new ConcurrencySemantics(ConcurrencyClass.ParallelSafe),
+                new IdempotencySemantics(IdempotencyClass.Idempotent),
+                new BatchingSemantics(BatchingClass.Unsupported),
+                new RepairSemantics(false, true),
+                new PolicySemantics(
+                    PrivilegeClass.PublicRead,
+                    TransactionRequirement.ReadOnlyEnvelope,
+                    ProvenanceRequirement.Required),
+                new CostSemantics(1, "constant machine-readable H0 resource envelope"));
+
             return new CanonicalProviderContribution(
                 new ProviderDescriptor("arkus.base", ProviderKind.Base, "base", new[] { "system" }),
-                new[] { definition },
-                new[] { CapabilityRoute.FromHandler(new SystemDescribeHandler()) });
+                new[] { describeDefinition, resourceDefinition },
+                new[]
+                {
+                    CapabilityRoute.FromHandler(new SystemDescribeHandler()),
+                    CapabilityRoute.FromHandler(new SystemResourceEnvelopeDescribeHandler())
+                });
+        }
+
+        private static JsonSchemaDocument ResourceEnvelopeSchema()
+        {
+            var persistence = SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["durabilityLevel"] = SchemaNode.String(new[] { "process-local-checkpoint" }),
+                    ["publicationBoundary"] = SchemaNode.String(new[] { "validate-stage-aggregate-publish" }),
+                    ["powerLossDurabilityClaimed"] = SchemaNode.Boolean()
+                },
+                new[] { "durabilityLevel", "publicationBoundary", "powerLossDurabilityClaimed" });
+            return new JsonSchemaDocument(SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["schemaId"] = SchemaNode.String(new[] { H0ResourceEnvelope.SchemaId }),
+                    ["request"] = IntegerObject(
+                        "maximumTransportFrameBytes",
+                        "maximumCanonicalArgumentBytes",
+                        "maximumPortableDepth",
+                        "maximumExecutionMilliseconds"),
+                    ["mutation"] = IntegerObject(
+                        "maximumOperations",
+                        "maximumDecodedPayloadBytes",
+                        "maximumRelationsPerResource",
+                        "maximumSessionTransactions"),
+                    ["query"] = IntegerObject("maximumPageSize"),
+                    ["world"] = IntegerObject(
+                        "maximumCanonicalBytes",
+                        "maximumResources",
+                        "maximumExtensionPayloadBytes"),
+                    ["snapshot"] = IntegerObject(
+                        "maximumDecodedStateBytes",
+                        "maximumImportReceipts"),
+                    ["persistence"] = persistence
+                },
+                new[] { "schemaId", "request", "mutation", "query", "world", "snapshot", "persistence" }));
+        }
+
+        private static SchemaNode IntegerObject(params string[] fields)
+        {
+            var properties = new Dictionary<string, SchemaNode>(StringComparer.Ordinal);
+            for (var index = 0; index < fields.Length; index++) properties.Add(fields[index], SchemaNode.Integer());
+            return SchemaNode.Object(properties, fields);
         }
 
         public static ComposedContract Compose()

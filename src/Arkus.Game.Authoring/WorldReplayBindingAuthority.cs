@@ -22,9 +22,13 @@ namespace Arkus.Game.Authoring
             _compatibility = CanonicalWorldReplayAuthority.BindCompatibility(service);
         }
 
-        public CapabilityInvocationResult Replay(IReadOnlyDictionary<string, object?> request)
+        public CapabilityInvocationResult Replay(
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget)
         {
-            return _executor.Replay(request ?? throw new ArgumentNullException(nameof(request)));
+            return _executor.Replay(
+                request ?? throw new ArgumentNullException(nameof(request)),
+                resourceBudget ?? throw new ArgumentNullException(nameof(resourceBudget)));
         }
 
         public CapabilityInvocationResult CheckReplayCompatibility(IReadOnlyDictionary<string, object?> request)

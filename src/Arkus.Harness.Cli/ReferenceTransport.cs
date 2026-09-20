@@ -14,7 +14,7 @@ namespace Arkus.Harness.Cli
     internal static class ReferenceTransportHost
     {
         internal const string ProtocolVersion = "arkus.reference.jsonl@1";
-        internal const int MaximumFrameBytes = 1024 * 1024;
+        internal const int MaximumFrameBytes = H0ResourceEnvelope.MaximumTransportFrameBytes;
         internal const int SuccessExitCode = 0;
         internal const int RequestFailureExitCode = 2;
         internal const int UsageFailureExitCode = 64;
@@ -155,8 +155,8 @@ namespace Arkus.Harness.Cli
                 return TransportFailure(
                     null,
                     null,
-                    "transport.frame_too_large",
-                    "The JSON Lines frame exceeded the reference transport framing bound.",
+                    "resource.request_bytes_exceeded",
+                    "The JSON Lines frame exceeded the H0 transport framing bound.",
                     "$",
                     false,
                     "Send one frame no larger than " + MaximumFrameBytes.ToString(CultureInfo.InvariantCulture) + " UTF-8 bytes.");
@@ -422,7 +422,7 @@ namespace Arkus.Harness.Cli
                 {
                     AllowTrailingCommas = false,
                     CommentHandling = JsonCommentHandling.Disallow,
-                    MaxDepth = 256
+                    MaxDepth = H0ResourceEnvelope.MaximumPortableDepth + 4
                 });
             }
             catch (JsonException)
@@ -592,7 +592,7 @@ namespace Arkus.Harness.Cli
                 {
                     AllowTrailingCommas = false,
                     CommentHandling = JsonCommentHandling.Disallow,
-                    MaxDepth = 256
+                    MaxDepth = H0ResourceEnvelope.MaximumPortableDepth + 4
                 }));
             try
             {

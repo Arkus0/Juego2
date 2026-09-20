@@ -13,7 +13,7 @@ namespace Arkus.Game.Authoring
         public const string JournalSchemaId = "arkus.authoring.journal@1";
         public const string JournalPageSchemaId = "arkus.authoring.journal-page@1";
         public const string EntrySchemaId = "arkus.authoring.journal-entry@1";
-        public const int MaximumPageSize = 100;
+        public const int MaximumPageSize = H0ResourceEnvelope.MaximumPageSize;
         public const int DefaultPageSize = 50;
 
         private static readonly ContractVersion Version = ContractVersion.Parse(ContractVersionText);

@@ -115,14 +115,19 @@ namespace Arkus.Game.Authoring
             return planError ?? Success("dry-run", false, false, plan!);
         }
 
-        CapabilityInvocationResult ICanonicalWorldMutationCommitter.Apply(IReadOnlyDictionary<string, object?> request)
+        CapabilityInvocationResult ICanonicalWorldMutationCommitter.Apply(
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget)
         {
-            return Apply(request);
+            return Apply(request, resourceBudget);
         }
 
-        internal CapabilityInvocationResult Apply(IReadOnlyDictionary<string, object?> request)
+        internal CapabilityInvocationResult Apply(
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
+            if (resourceBudget == null) throw new ArgumentNullException(nameof(resourceBudget));
             var parseError = ParseRequest(request, out var parsed);
             if (parseError != null) return parseError;
 
@@ -143,6 +148,18 @@ namespace Arkus.Game.Authoring
                 if (_state.Receipts.TryGetValue(parsed.IdempotencyKey, out var racedReceipt))
                 {
                     return ReplayOrConflict(parsed, racedReceipt);
+                }
+
+                if (_state.Journal.Count >= H0ResourceEnvelope.MaximumSessionTransactions)
+                {
+                    return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
+                        "resource.session_transactions_exceeded",
+                        "The H0 authored session reached its bounded transaction-history limit.",
+                        "$",
+                        "sessionTransactions",
+                        H0ResourceEnvelope.MaximumSessionTransactions,
+                        _state.Journal.Count + 1L,
+                        "Export a canonical checkpoint and begin a new local lineage before authoring further changes."));
                 }
 
                 var actualHash = CanonicalWorldStateCodec.ComputeContentHash(_state.Current);
@@ -166,12 +183,16 @@ namespace Arkus.Game.Authoring
                     [parsed.IdempotencyKey] = new IdempotencyReceipt(parsed.Fingerprint, plan)
                 };
 
+                if (!resourceBudget.TryBeginPublication("canonical-mutation", out var budgetError))
+                    return CapabilityInvocationResult.Failed(budgetError!);
+
                 // Publish authored state, mutation receipt and journal append as one immutable
                 // session-state reference while holding the accepted HK04 commit lock.
                 _state = new AuthoringState(
                     plan.CandidateState,
                     nextReceipts,
                     nextJournal.AsReadOnly());
+                resourceBudget.MarkPublicationCommitted();
             }
 
             return Success("apply", true, false, plan!);
@@ -334,6 +355,12 @@ namespace Arkus.Game.Authoring
                     objectValues,
                     extensionValues,
                     snapshot.State.SchemaVersion);
+                var resourceError = WorldResourceLimits.ValidateState(candidate, "$.operations", out _);
+                if (resourceError != null)
+                {
+                    candidate = null;
+                    return CapabilityInvocationResult.Failed(resourceError);
+                }
             }
             catch (WorldStateException exception)
             {
@@ -503,11 +530,23 @@ namespace Arkus.Game.Authoring
 
             if (!request.TryGetValue("operations", out var rawOperations) ||
                 !(rawOperations is IReadOnlyList<object?> operationValues) ||
-                operationValues.Count == 0 || operationValues.Count > WorldMutationContract.MaximumOperations)
+                operationValues.Count == 0)
             {
                 return InvalidRequest(
                     "$.operations",
                     "operations must contain between 1 and " + WorldMutationContract.MaximumOperations.ToString(CultureInfo.InvariantCulture) + " entries.");
+            }
+
+            if (operationValues.Count > WorldMutationContract.MaximumOperations)
+            {
+                return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
+                    "resource.batch_operations_exceeded",
+                    "The mutation batch exceeds the measured H0 atomic operation envelope.",
+                    "$.operations",
+                    "batchOperations",
+                    WorldMutationContract.MaximumOperations,
+                    operationValues.Count,
+                    "Keep the coherent intent at or below the advertised 96-operation atomic envelope."));
             }
 
             var operations = new List<MutationOperation>();
@@ -521,6 +560,24 @@ namespace Arkus.Game.Authoring
                 var operationError = ParseOperation(operationData, index, out var operation);
                 if (operationError != null) return operationError;
                 operations.Add(operation!);
+            }
+
+            long payloadBytes = 0;
+            for (var index = 0; index < operations.Count; index++)
+            {
+                if (operations[index].Payload != null)
+                    payloadBytes = checked(payloadBytes + operations[index].Payload!.Length);
+            }
+            if (payloadBytes > H0ResourceEnvelope.MaximumBatchPayloadBytes)
+            {
+                return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
+                    "resource.batch_payload_exceeded",
+                    "The mutation batch exceeds the H0 decoded-payload byte limit.",
+                    "$.operations",
+                    "decodedBatchPayloadBytes",
+                    H0ResourceEnvelope.MaximumBatchPayloadBytes,
+                    payloadBytes,
+                    "Reduce opaque payload volume without splitting the accepted coherent authoring intent."));
             }
 
             var fingerprint = ComputeRequestFingerprint(expectedRevision, expectedHash, operations);
@@ -583,6 +640,17 @@ namespace Arkus.Game.Authoring
                         return InvalidRequest(OperationPath(index) + ".schemaVersion", "Extension schemaVersion must be a positive 32-bit integer.");
                     if (!TryGetString(data, "payloadBase64", out var payloadText) || !TryCanonicalBase64(payloadText, out var payload))
                         return InvalidRequest(OperationPath(index) + ".payloadBase64", "payloadBase64 must use canonical Base64 encoding.");
+                    if (payload.Length > H0ResourceEnvelope.MaximumExtensionPayloadBytes)
+                    {
+                        return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
+                            "resource.extension_payload_exceeded",
+                            "One extension payload exceeds the H0 per-resource byte limit.",
+                            OperationPath(index) + ".payloadBase64",
+                            "extensionPayloadBytes",
+                            H0ResourceEnvelope.MaximumExtensionPayloadBytes,
+                            payload.Length,
+                            "Reduce this extension payload before retrying the same coherent transaction."));
+                    }
                     string? subjectId = null;
                     if (data.ContainsKey("subjectId"))
                     {
@@ -630,6 +698,18 @@ namespace Arkus.Game.Authoring
             if (!(raw is IReadOnlyList<object?> values))
             {
                 return InvalidRequest(OperationPath(operationIndex) + "." + fieldName, fieldName + " must be an array.");
+            }
+
+            if (values.Count > H0ResourceEnvelope.MaximumRelationsPerResource)
+            {
+                return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
+                    "resource.relation_count_exceeded",
+                    "One authored resource exceeds the H0 relation-count limit.",
+                    OperationPath(operationIndex) + "." + fieldName,
+                    "relationsPerResource",
+                    H0ResourceEnvelope.MaximumRelationsPerResource,
+                    values.Count,
+                    "Reduce the relations attached to this resource and retry."));
             }
 
             var parsed = new List<ReferenceValue>();

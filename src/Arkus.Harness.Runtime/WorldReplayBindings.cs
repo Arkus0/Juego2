@@ -44,7 +44,9 @@ namespace Arkus.Harness.Runtime
             IReadOnlyDictionary<string, object?> request)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
-            return _executor.Replay(request ?? throw new ArgumentNullException(nameof(request)));
+            return _executor.Replay(
+                request ?? throw new ArgumentNullException(nameof(request)),
+                context.ResourceBudget);
         }
     }
 
