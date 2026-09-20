@@ -10,7 +10,13 @@ This matrix covers every negative class required by WP-HK-09A. The tests act onl
 | Network-shaped payload | `Hk09AHostCapabilityContainmentTests.NetworkShapedPayloadCannotAcquireNetworkAuthority` | URL-shaped data is canonical input only; a loopback listener observes no connection | PASS |
 | Runtime type selector | `Hk09AHostCapabilityContainmentTests.RuntimeTypeSelectorCannotAcquireRuntimeActivationAuthority` plus effective-source inventory | `$type`-shaped data is rejected by schema and no arbitrary runtime activation primitive is present | PASS |
 | Adapter-only privileged capability | `Hk09AHostCapabilityContainmentTests.AdapterOnlyPrivilegedCapabilityCannotAppearOutsideCanonicalInventory` | Production discovery contains no external/elevated capability and invented filesystem authority remains unknown | PASS |
-| Transport bypass | `ProductionH0InventoryPassesTheHostCapabilityPolicy`, `EffectiveProductionSourceSurfaceHasNoShellNetworkOrRuntimeActivationPrimitive`, and the MCP production entrypoint check | JSONL/MCP consume the policy-admitted production composition; adapters have no independent host-power registry | PASS |
+| Transport path skipping host policy | `Hk09ATransportPolicyBoundaryTests.TransportPathCannotProjectCompositionThatSkippedHostCapabilityAdmission` | A direct `ContractComposer` result containing H0-forbidden external authority may exist at the generic canonical layer, but `NeutralProjectionService` re-applies H0 admission before any transport can expose capabilities or dispatch | PASS |
+
+## Causal RED→GREEN for the below-transport boundary
+
+The independent review of candidate `1c85a64a5d3930ad2e39451fb8db2c1fac6ae78b` found a real alternate path: `ContractComposer.Compose(...)` could create a canonical `ComposedContract` and the public `NeutralProjectionService(ComposedContract)` constructor accepted it without crossing `H0HostCapabilityPolicy`. A transport could therefore remain a faithful HK07 projection while still skipping the new HK09A host-policy admission.
+
+`TransportPathCannotProjectCompositionThatSkippedHostCapabilityAdmission` isolates that defect causally. The fixture first proves that generic canonical composition succeeds with a valid scoped capability whose declared side effect is `ExternalReversible`; the test then attempts the exact composition → neutral-projection seam. The repaired constructor rejects with `host-policy.external-effect-forbidden` before a projection instance exists and before the fixture handler can run. Under the reviewed pre-repair constructor, the same composed contract would have been accepted by the projection and the negative would fail.
 
 ## Independent effective-surface oracle
 

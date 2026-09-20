@@ -18,9 +18,11 @@ HK09A does not choose final numeric limits for request/page/batch/depth/time/siz
 
 The H0 executable rejects `--file` before delegating to the legacy JSONL framing host, so traversal and symlink path strings cannot produce a filesystem effect. The internal HK07A parser code still contains the retired file-framing implementation as implementation residue; it is not an accepted production entrypoint or capability. The effective-surface oracle pins that residue and verifies the executable rejection precedes delegation. A future production entrypoint that chose to expose file authority would require a reviewed policy/location boundary and new evidence rather than silently inheriting HK07A's old convenience.
 
-### Policy admission is intentionally H0-specific
+### Policy admission is intentionally H0-specific while generic composition remains generic
 
-`H0HostCapabilityPolicy` admits the current H0 canonical read/mutation/rebase/replay classes and rejects external side effects/elevated privilege. It is attached at `CanonicalWorldContract.Compose`, below transports but above adapters. Generic `ContractComposer` remains engine-neutral and extensible; H1 may introduce separately reviewed host authority without weakening the H0 policy.
+`H0HostCapabilityPolicy` admits the current H0 canonical read/mutation/rebase/replay classes and rejects external side effects/elevated privilege. `CanonicalWorldContract.Compose` performs early admission for the normal production path. Independently, `NeutralProjectionService` enforces the same H0 policy on any `ComposedContract` it is asked to project, so a transport cannot use public generic `ContractComposer.Compose(...)` as an alternate route around admission. `ContractComposer` itself remains engine-neutral and policy-agnostic; H1 may introduce separately reviewed host authority by deliberately evolving the below-transport policy boundary rather than weakening or silently skipping it.
+
+The policy is checked when a composed inventory crosses into the projection boundary, not on every individual dispatch. This is sufficient for the current immutable `ComposedContract` definition/route inventory and avoids creating a transport-owned authorization registry.
 
 ### Source-surface oracle is a repository conformance proof, not an OS sandbox
 
@@ -34,7 +36,8 @@ HK09A must be reopened if any accepted production H0 entrypoint can:
 - open caller-selected filesystem paths;
 - activate arbitrary runtime types from selectors;
 - expose external/elevated capability semantics without H0 policy rejection;
-- mint an adapter-only capability that bypasses canonical composition; or
+- construct a neutral/transport projection from a canonical composition without crossing the host-policy boundary;
+- mint an adapter-only capability outside canonical composition; or
 - make the approved product-shaped inspect/author/snapshot/replay path depend on one of those forbidden powers.
 
 No such in-scope residual is accepted by this candidate.

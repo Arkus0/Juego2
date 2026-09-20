@@ -21,13 +21,13 @@ HK09A re-runs the full test suite to detect contradictions but does not reopen t
 | Traversal/symlink fail before external effect | production CLI rejects the entire file-authority route | traversal/symlink executable negatives, stdout remains empty | PASS |
 | Truthful canonical policy metadata | `H0HostCapabilityPolicy.Validate` checks admitted side-effect/transaction pairing and rejects elevated/external semantics | invalid-definition negative controls + production discovery inspection | PASS |
 | No arbitrary runtime-type activation | protocol data remains schema data; no production dynamic activation primitive | `$type` negative + effective-source inventory | PASS |
-| Policy below transports | `CanonicalWorldContract.Compose` enforces H0 policy before neutral projection is created | production composition test; MCP entrypoint/source oracle | PASS |
-| JSONL/MCP cannot mint authority | both projections consume production canonical composition and unknown invented powers fail canonically | adapter-only capability negative + source oracle | PASS |
+| Policy below transports | `CanonicalWorldContract.Compose` pre-admits the production contract and `NeutralProjectionService` independently enforces H0 policy on every composed contract crossing into projection | causal direct `ContractComposer` → projection negative plus production JSONL/MCP regression | PASS |
+| JSONL/MCP cannot mint authority | both projections consume the same policy-enforcing neutral projection and unknown invented powers fail canonically | adapter-only capability negative + source oracle | PASS |
 | Accepted H0 workflows remain useful | policy admits read/canonical mutation/rebase/replay and no shell/network/filesystem power is required | representative Juego2 content-shape probe: inspect → author → snapshot/import → replay | PASS |
 
 ## Negative-conformance completeness
 
-`NEGATIVE_CONFORMANCE_MATRIX.md` maps every required HK09A negative class to an executable causal oracle. The source-surface oracle is deliberately independent of the capability registry under test, preventing a hidden host path from becoming green merely because it was omitted from canonical metadata.
+`NEGATIVE_CONFORMANCE_MATRIX.md` maps every required HK09A negative class to an executable causal oracle. The transport-boundary fixture specifically starts from a generic `ContractComposer` result so the test cannot become green merely because production composition already called the policy. The source-surface oracle is deliberately independent of the capability registry under test, preventing a hidden host path from becoming green merely because it was omitted from canonical metadata.
 
 ## Representative product proof
 
