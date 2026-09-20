@@ -149,7 +149,7 @@ Longest ordinary route: Vega NE → Puerto quay ≈ 1.05–1.15 km of path.
 
 The wedge tip is the natural seed: casco lanes + plaza edge + Puente Viejo head + bar + one arroyo
 crossing + a river strip + the first metres of the Cuesta del Puerto as a visible seam. That fits
-inside 0.03–0.06 km², contains four of the eight district families in some form, and shows the port
+inside 0.03–0.06 km², contains four of the nine district families in some form, and shows the port
 direction without building the port.
 
 Crucially it is also **the existing blueprint seed**, plus an arroyo crossing and a visible port

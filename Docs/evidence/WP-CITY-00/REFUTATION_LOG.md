@@ -19,8 +19,8 @@ Order of work: all charges were written before any defence, and all defences bef
 
 **A-1 — Density is split at exactly the wrong scale.**
 Track invariant 4 is *"reactive density over acreage: empty expansion is worse than a smaller city
-with meaningful locations."* At the corrected dense band (≈0.35–0.45 km², see `SCALE_ENVELOPE.md`),
-A produces two ≈0.18–0.22 km² half-towns. CITY-02 then either programmes systemic anchors twice —
+with meaningful locations."* At the corrected dense band (0.30–0.45 km², see `SCALE_ENVELOPE.md`),
+A produces two ≈0.15–0.22 km² half-towns. CITY-02 then either programmes systemic anchors twice —
 two bars, two shops, two civic touchpoints — or accepts that one bank is visibly thinner than the
 other. Both outcomes are worse than one contiguous core of the same total area.
 
