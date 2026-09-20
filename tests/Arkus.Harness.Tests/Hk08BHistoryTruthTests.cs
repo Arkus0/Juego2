@@ -73,8 +73,9 @@ namespace Arkus.Harness.Tests
                 _inner.DryRun(request);
 
             CapabilityInvocationResult ICanonicalWorldMutationCommitter.Apply(
-                IReadOnlyDictionary<string, object?> request) =>
-                ((ICanonicalWorldMutationCommitter)_inner).Apply(request);
+                IReadOnlyDictionary<string, object?> request,
+                InvocationResourceBudget resourceBudget) =>
+                ((ICanonicalWorldMutationCommitter)_inner).Apply(request, resourceBudget);
 
             public CapabilityInvocationResult ReadJournal(IReadOnlyDictionary<string, object?> request)
             {

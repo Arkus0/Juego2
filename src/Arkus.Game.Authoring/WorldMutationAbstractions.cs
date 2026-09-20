@@ -26,7 +26,9 @@ namespace Arkus.Game.Authoring
     /// </summary>
     internal interface ICanonicalWorldMutationCommitter
     {
-        CapabilityInvocationResult Apply(IReadOnlyDictionary<string, object?> request);
+        CapabilityInvocationResult Apply(
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget);
     }
 
     /// <summary>
@@ -61,7 +63,9 @@ namespace Arkus.Game.Authoring
         public CapabilityInvocationResult ValidateProposed(IReadOnlyDictionary<string, object?> request) =>
             _validation.ValidateProposed(request);
         public CapabilityInvocationResult ReadJournal(IReadOnlyDictionary<string, object?> request) => Unavailable();
-        CapabilityInvocationResult ICanonicalWorldMutationCommitter.Apply(IReadOnlyDictionary<string, object?> request) => Unavailable();
+        CapabilityInvocationResult ICanonicalWorldMutationCommitter.Apply(
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget) => Unavailable();
 
         private static CapabilityInvocationResult Unavailable()
         {

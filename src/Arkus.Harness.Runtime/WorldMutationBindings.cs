@@ -183,7 +183,7 @@ namespace Arkus.Harness.Runtime
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (request == null) throw new ArgumentNullException(nameof(request));
-            return _recovery.Enrich(_committer.Apply(request), request);
+            return _recovery.Enrich(_committer.Apply(request, context.ResourceBudget), request);
         }
     }
 }

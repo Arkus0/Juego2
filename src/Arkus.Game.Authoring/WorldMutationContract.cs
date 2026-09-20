@@ -14,7 +14,7 @@ namespace Arkus.Game.Authoring
         // HK08A product-shape evidence requires one coherent 96-operation micro-block edit to remain
         // a single HK04 transaction. HK09B may revise this bounded implementation envelope after
         // resource measurements; it is not a permanent semantic constant or permission to split intent.
-        public const int MaximumOperations = 96;
+        public const int MaximumOperations = H0ResourceEnvelope.MaximumBatchOperations;
 
         private static readonly ContractVersion Version = ContractVersion.Parse(ContractVersionText);
 

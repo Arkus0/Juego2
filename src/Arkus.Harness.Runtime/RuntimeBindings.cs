@@ -29,14 +29,19 @@ namespace Arkus.Harness.Runtime
 
     public sealed class CapabilityInvocationContext
     {
-        internal CapabilityInvocationContext(ComposedContract contract, CapabilityDefinition definition)
+        internal CapabilityInvocationContext(
+            ComposedContract contract,
+            CapabilityDefinition definition,
+            InvocationResourceBudget resourceBudget)
         {
             Contract = contract ?? throw new ArgumentNullException(nameof(contract));
             Definition = definition ?? throw new ArgumentNullException(nameof(definition));
+            ResourceBudget = resourceBudget ?? throw new ArgumentNullException(nameof(resourceBudget));
         }
 
         public ComposedContract Contract { get; }
         public CapabilityDefinition Definition { get; }
+        public InvocationResourceBudget ResourceBudget { get; }
     }
 
     public sealed class CapabilityRoute

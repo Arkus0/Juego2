@@ -74,7 +74,8 @@ namespace Arkus.Harness.Projection
         None = 0,
         Canonical = 1,
         Cancelled = 2,
-        TimedOut = 3
+        TimedOut = 3,
+        Resource = 4
     }
 
     /// <summary>
@@ -148,6 +149,19 @@ namespace Arkus.Harness.Projection
                 "Retry with a sufficient admission timeout; canonical state was not invoked by this request.");
         }
 
+        internal static NeutralProjectionOutcome ResourceRejected(
+            NeutralProjectionRequest request,
+            StructuredError error)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            return new NeutralProjectionOutcome(
+                request.RequestId,
+                request.CapabilityName,
+                null,
+                error ?? throw new ArgumentNullException(nameof(error)),
+                NeutralProjectionFailureKind.Resource);
+        }
+
         public IReadOnlyDictionary<string, object?> ToData()
         {
             var data = new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -201,6 +215,7 @@ namespace Arkus.Harness.Projection
                 case NeutralProjectionFailureKind.Canonical: return "canonical";
                 case NeutralProjectionFailureKind.Cancelled: return "cancelled";
                 case NeutralProjectionFailureKind.TimedOut: return "timed-out";
+                case NeutralProjectionFailureKind.Resource: return "resource";
                 default: throw new InvalidOperationException("Success has no failure token.");
             }
         }
@@ -234,6 +249,10 @@ namespace Arkus.Harness.Projection
             if (request == null) throw new ArgumentNullException(nameof(request));
             ThrowIfDisposed();
 
+            var resourceError = H0ResourcePolicy.Validate(request);
+            if (resourceError != null)
+                return NeutralProjectionOutcome.ResourceRejected(request, resourceError);
+
             if (cancellationToken.IsCancellationRequested)
                 return NeutralProjectionOutcome.Cancelled(request);
             if (request.TimeoutMilliseconds == 0)
@@ -259,10 +278,12 @@ namespace Arkus.Harness.Projection
                 if (cancellationToken.IsCancellationRequested)
                     return NeutralProjectionOutcome.Cancelled(request);
 
+                var budget = InvocationResourceBudget.Start(cancellationToken);
                 var result = _contract.Dispatch(
                     request.CapabilityName,
                     request.AcceptedVersions,
-                    request.Arguments);
+                    request.Arguments,
+                    budget);
                 return NeutralProjectionOutcome.FromCanonical(request, result);
             }
             finally

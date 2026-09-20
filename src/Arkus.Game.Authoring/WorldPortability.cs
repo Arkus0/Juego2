@@ -20,7 +20,9 @@ namespace Arkus.Game.Authoring
     /// </summary>
     internal interface ICanonicalWorldSnapshotImporter
     {
-        CapabilityInvocationResult ImportSnapshot(IReadOnlyDictionary<string, object?> request);
+        CapabilityInvocationResult ImportSnapshot(
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget);
     }
 
     internal static class CanonicalWorldSnapshotAuthority
@@ -65,9 +67,12 @@ namespace Arkus.Game.Authoring
 
     internal sealed class UnavailableWorldSnapshotImporter : ICanonicalWorldSnapshotImporter
     {
-        public CapabilityInvocationResult ImportSnapshot(IReadOnlyDictionary<string, object?> request)
+        public CapabilityInvocationResult ImportSnapshot(
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
+            if (resourceBudget == null) throw new ArgumentNullException(nameof(resourceBudget));
             return UnavailableWorldPortabilityService.Unavailable();
         }
     }
@@ -88,12 +93,14 @@ namespace Arkus.Game.Authoring
         ICanonicalWorldSnapshotImporter
     {
         private readonly object _gate = new object();
-        private TransactionalWorldAuthoringSession _inner;
+        private PortableSessionState _session;
 
         public PortableWorldAuthoringSession(WorldState initialState)
         {
-            _inner = new TransactionalWorldAuthoringSession(
-                initialState ?? throw new ArgumentNullException(nameof(initialState)));
+            if (initialState == null) throw new ArgumentNullException(nameof(initialState));
+            var resourceError = WorldResourceLimits.ValidateState(initialState, "$", out _);
+            if (resourceError != null) throw new ArgumentException(resourceError.Message, nameof(initialState));
+            _session = PortableSessionState.Initial(new TransactionalWorldAuthoringSession(initialState));
         }
 
         public WorldState Current
@@ -102,7 +109,7 @@ namespace Arkus.Game.Authoring
             {
                 lock (_gate)
                 {
-                    return _inner.Current;
+                    return _session.Inner.Current;
                 }
             }
         }
@@ -110,40 +117,42 @@ namespace Arkus.Game.Authoring
         public CapabilityInvocationResult Plan(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            lock (_gate) return _inner.Plan(request);
+            lock (_gate) return _session.Inner.Plan(request);
         }
 
         public CapabilityInvocationResult DryRun(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            lock (_gate) return _inner.DryRun(request);
+            lock (_gate) return _session.Inner.DryRun(request);
         }
 
         public CapabilityInvocationResult ValidateCurrent(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            lock (_gate) return _inner.ValidateCurrent(request);
+            lock (_gate) return _session.Inner.ValidateCurrent(request);
         }
 
         public CapabilityInvocationResult ValidateProposed(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            lock (_gate) return _inner.ValidateProposed(request);
+            lock (_gate) return _session.Inner.ValidateProposed(request);
         }
 
         public CapabilityInvocationResult ReadJournal(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            lock (_gate) return _inner.ReadJournal(request);
+            lock (_gate) return _session.Inner.ReadJournal(request);
         }
 
         CapabilityInvocationResult ICanonicalWorldMutationCommitter.Apply(
-            IReadOnlyDictionary<string, object?> request)
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
+            if (resourceBudget == null) throw new ArgumentNullException(nameof(resourceBudget));
             lock (_gate)
             {
-                return CanonicalWorldMutationAuthority.Bind(_inner).Apply(request);
+                return CanonicalWorldMutationAuthority.Bind(_session.Inner).Apply(request, resourceBudget);
             }
         }
 
@@ -168,21 +177,25 @@ namespace Arkus.Game.Authoring
 
             lock (_gate)
             {
-                return CapabilityInvocationResult.Succeeded(WorldSnapshotArtifact.CreateData(_inner.Current));
+                return CapabilityInvocationResult.Succeeded(WorldSnapshotArtifact.CreateData(_session.Inner.Current));
             }
         }
 
         CapabilityInvocationResult ICanonicalWorldSnapshotImporter.ImportSnapshot(
-            IReadOnlyDictionary<string, object?> request)
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            if (!WorldPortabilityEngine.OnlyFields(request, "expectedRevision", "expectedHash", "snapshot") ||
+            if (resourceBudget == null) throw new ArgumentNullException(nameof(resourceBudget));
+            if (!WorldPortabilityEngine.OnlyFields(request, "idempotencyKey", "expectedRevision", "expectedHash", "snapshot") ||
+                !WorldPortabilityEngine.TryString(request, "idempotencyKey", out var idempotencyKey) ||
+                !WorldSnapshotImportIdentity.IsStableKey(idempotencyKey) ||
                 !WorldPortabilityEngine.TryInteger(request, "expectedRevision", out var expectedRevision) ||
                 expectedRevision < 0)
             {
                 return WorldPortabilityEngine.Failure(
                     "world.snapshot.invalid_request",
-                    "Snapshot import requires only a non-negative expectedRevision, expectedHash and snapshot.",
+                    "Snapshot import requires a stable idempotencyKey, non-negative expectedRevision, expectedHash and snapshot.",
                     "$",
                     false,
                     "Refresh world.summary and use the import request declared by system.describe.");
@@ -213,9 +226,46 @@ namespace Arkus.Game.Authoring
             var parseError = WorldSnapshotArtifact.TryRead(snapshotData, "$.snapshot", out var imported);
             if (parseError != null) return CapabilityInvocationResult.Failed(parseError);
 
+            var semanticRequest = new Dictionary<string, object?>(StringComparer.Ordinal);
+            foreach (var pair in request)
+            {
+                if (!string.Equals(pair.Key, "idempotencyKey", StringComparison.Ordinal))
+                    semanticRequest.Add(pair.Key, pair.Value);
+            }
+            var requestFingerprint = WorldSnapshotImportIdentity.Fingerprint(
+                new ReadOnlyDictionary<string, object?>(semanticRequest));
+
             lock (_gate)
             {
-                var previousState = _inner.Current;
+                if (_session.ImportReceipts.TryGetValue(idempotencyKey, out var existing))
+                {
+                    if (!string.Equals(existing.Fingerprint, requestFingerprint, StringComparison.Ordinal))
+                    {
+                        return WorldPortabilityEngine.Failure(
+                            "world.snapshot.idempotency_conflict",
+                            "This idempotency key was already accepted for different snapshot-import semantics.",
+                            "$.idempotencyKey",
+                            false,
+                            "Retry the original import for this key or allocate a new key for different semantics.");
+                    }
+
+                    return CapabilityInvocationResult.Succeeded(
+                        WorldSnapshotImportIdentity.WithReplay(existing.Result, true));
+                }
+
+                if (_session.ImportReceipts.Count >= H0ResourceEnvelope.MaximumSnapshotImportReceipts)
+                {
+                    return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
+                        "resource.snapshot_receipts_exceeded",
+                        "The H0 session reached its bounded snapshot-import receipt limit.",
+                        "$.idempotencyKey",
+                        "snapshotImportReceipts",
+                        H0ResourceEnvelope.MaximumSnapshotImportReceipts,
+                        _session.ImportReceipts.Count + 1L,
+                        "Start a new process-local authoring session from a canonical checkpoint."));
+                }
+
+                var previousState = _session.Inner.Current;
                 var previousAnchor = AuthoredWorldAnchor.FromState(previousState);
                 if (previousAnchor.Revision != expectedRevision ||
                     !string.Equals(previousAnchor.Hash, expectedHash, StringComparison.Ordinal))
@@ -228,11 +278,9 @@ namespace Arkus.Game.Authoring
                         "Refresh world.summary and retry against the current revision/hash.");
                 }
 
-                // One reference swap publishes the imported canonical state together with a fresh
-                // HK06A lineage base, empty receipts and an empty local mutation journal.
-                _inner = new TransactionalWorldAuthoringSession(imported!);
+                var stagedInner = new TransactionalWorldAuthoringSession(imported!);
                 var currentAnchor = AuthoredWorldAnchor.FromState(imported!);
-                return CapabilityInvocationResult.Succeeded(WorldPortabilityEngine.ReadOnly(
+                var baseResult = WorldPortabilityEngine.ReadOnly(
                     new Dictionary<string, object?>(StringComparer.Ordinal)
                     {
                         ["schemaId"] = WorldPortabilityContract.ImportResultSchemaId,
@@ -241,8 +289,67 @@ namespace Arkus.Game.Authoring
                         ["lineageDisposition"] = "new-local-lineage",
                         ["retainedJournalEntries"] = 0,
                         ["importedJournalEntries"] = 0
-                    }));
+                    });
+                var result = WorldSnapshotImportIdentity.WithReplayAndEvidence(
+                    baseResult,
+                    false,
+                    idempotencyKey,
+                    requestFingerprint,
+                    request);
+                var nextReceipts = new Dictionary<string, SnapshotImportReceipt>(
+                    _session.ImportReceipts,
+                    StringComparer.Ordinal)
+                {
+                    [idempotencyKey] = new SnapshotImportReceipt(requestFingerprint, result)
+                };
+                var nextSession = new PortableSessionState(stagedInner, nextReceipts);
+
+                if (!resourceBudget.TryBeginPublication("snapshot-import", out var budgetError))
+                    return CapabilityInvocationResult.Failed(budgetError!);
+
+                // One reference swap publishes imported state, the fresh HK06A lineage, the keyed
+                // import receipt and its truthful rebase evidence as one authoritative aggregate.
+                _session = nextSession;
+                resourceBudget.MarkPublicationCommitted();
+                return CapabilityInvocationResult.Succeeded(result);
             }
+        }
+
+        private sealed class PortableSessionState
+        {
+            public PortableSessionState(
+                TransactionalWorldAuthoringSession inner,
+                IReadOnlyDictionary<string, SnapshotImportReceipt> importReceipts)
+            {
+                Inner = inner ?? throw new ArgumentNullException(nameof(inner));
+                ImportReceipts = new ReadOnlyDictionary<string, SnapshotImportReceipt>(
+                    new Dictionary<string, SnapshotImportReceipt>(
+                        importReceipts ?? throw new ArgumentNullException(nameof(importReceipts)),
+                        StringComparer.Ordinal));
+            }
+
+            public TransactionalWorldAuthoringSession Inner { get; }
+            public IReadOnlyDictionary<string, SnapshotImportReceipt> ImportReceipts { get; }
+
+            public static PortableSessionState Initial(TransactionalWorldAuthoringSession inner)
+            {
+                return new PortableSessionState(
+                    inner,
+                    new ReadOnlyDictionary<string, SnapshotImportReceipt>(
+                        new Dictionary<string, SnapshotImportReceipt>(StringComparer.Ordinal)));
+            }
+        }
+
+        private sealed class SnapshotImportReceipt
+        {
+            public SnapshotImportReceipt(string fingerprint, IReadOnlyDictionary<string, object?> result)
+            {
+                Fingerprint = fingerprint ?? throw new ArgumentNullException(nameof(fingerprint));
+                Result = result ?? throw new ArgumentNullException(nameof(result));
+            }
+
+            public string Fingerprint { get; }
+            public IReadOnlyDictionary<string, object?> Result { get; }
         }
     }
 
@@ -506,8 +613,21 @@ namespace Arkus.Game.Authoring
                     "Remove external history/runtime payloads and export canonical authored state only.");
             }
 
-            if (!WorldPortabilityEngine.TryString(data, "authoredStateBase64", out var base64) ||
-                !TryCanonicalBase64(base64, out var bytes))
+            if (!WorldPortabilityEngine.TryString(data, "authoredStateBase64", out var base64))
+            {
+                return Error(
+                    "world.snapshot.invalid_request",
+                    "authoredStateBase64 must be canonical Base64.",
+                    path + ".authoredStateBase64",
+                    "Use the exact Base64 payload emitted by snapshot export.");
+            }
+
+            var snapshotSizeError = WorldResourceLimits.ValidateEncodedSnapshotSize(
+                base64,
+                path + ".authoredStateBase64");
+            if (snapshotSizeError != null) return snapshotSizeError;
+
+            if (!TryCanonicalBase64(base64, out var bytes))
             {
                 return Error(
                     "world.snapshot.invalid_request",
@@ -535,6 +655,13 @@ namespace Arkus.Game.Authoring
                     "Embedded canonical authored state is invalid: " + exception.Message,
                     path + ".authoredStateBase64",
                     "Repair or re-export the canonical authored state before importing it.");
+            }
+
+            var stateResourceError = WorldResourceLimits.ValidateState(state, path, out _);
+            if (stateResourceError != null)
+            {
+                state = null;
+                return stateResourceError;
             }
 
             if (!data.TryGetValue("anchor", out var rawAnchor) ||

@@ -24,7 +24,7 @@ namespace Arkus.Harness.Tests
             Assert.True(result.Success);
             Assert.NotNull(result.Data);
             var capabilities = Assert.IsAssignableFrom<IReadOnlyList<object?>>(result.Data!["capabilities"]);
-            Assert.Equal(4, capabilities.Count);
+            Assert.Equal(5, capabilities.Count);
 
             var discovered = new HashSet<string>(StringComparer.Ordinal);
             foreach (var value in capabilities)
@@ -34,6 +34,7 @@ namespace Arkus.Harness.Tests
             }
 
             Assert.Contains("system.describe@1.0", discovered);
+            Assert.Contains("system.resource-envelope.describe@1.0", discovered);
             Assert.Contains("engine.observe@1.0", discovered);
             Assert.Contains("engine.observe@1.1", discovered);
             Assert.Contains("orphan.route@1.0", discovered);

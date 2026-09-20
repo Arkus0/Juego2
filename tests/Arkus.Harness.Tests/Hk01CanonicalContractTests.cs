@@ -17,8 +17,13 @@ namespace Arkus.Harness.Tests
         {
             var contract = BaseContract.Compose();
 
-            Assert.Single(contract.Definitions);
-            Assert.Equal("system.describe", contract.Definitions[0].Key.Name);
+            Assert.Equal(2, contract.Definitions.Count);
+            Assert.Contains(contract.Definitions, definition =>
+                definition.Key.Name == "system.describe" &&
+                definition.Key.Version.Equals(new ContractVersion(1, 0)));
+            Assert.Contains(contract.Definitions, definition =>
+                definition.Key.Name == "system.resource-envelope.describe" &&
+                definition.Key.Version.Equals(new ContractVersion(1, 0)));
 
             var result = contract.Dispatch(
                 "system.describe",
@@ -40,7 +45,7 @@ namespace Arkus.Harness.Tests
 
             Assert.True(composition.Success);
             Assert.NotNull(composition.Contract);
-            Assert.Equal(2, composition.Contract!.Definitions.Count);
+            Assert.Equal(3, composition.Contract!.Definitions.Count);
 
             var names = new HashSet<string>(StringComparer.Ordinal);
             foreach (var definition in composition.Contract.Definitions)
@@ -49,8 +54,9 @@ namespace Arkus.Harness.Tests
             }
 
             Assert.Contains("system.describe", names);
+            Assert.Contains("system.resource-envelope.describe", names);
             Assert.Contains("engine.observe", names);
-            Assert.Equal(2, composition.Contract.Projection.Capabilities.Count);
+            Assert.Equal(3, composition.Contract.Projection.Capabilities.Count);
         }
 
         [Fact]

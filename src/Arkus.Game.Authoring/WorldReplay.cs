@@ -18,7 +18,9 @@ namespace Arkus.Game.Authoring
     /// </summary>
     internal interface ICanonicalWorldReplayExecutor
     {
-        CapabilityInvocationResult Replay(IReadOnlyDictionary<string, object?> request);
+        CapabilityInvocationResult Replay(
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget);
     }
 
     internal static class CanonicalWorldReplayAuthority
@@ -60,9 +62,12 @@ namespace Arkus.Game.Authoring
 
     internal sealed class UnavailableWorldReplayAuthority : ICanonicalWorldReplayExecutor
     {
-        public CapabilityInvocationResult Replay(IReadOnlyDictionary<string, object?> request)
+        public CapabilityInvocationResult Replay(
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
+            if (resourceBudget == null) throw new ArgumentNullException(nameof(resourceBudget));
             return new UnavailableWorldReplayService().CheckReplayCompatibility(request);
         }
     }
@@ -462,9 +467,11 @@ namespace Arkus.Game.Authoring
         }
 
         CapabilityInvocationResult ICanonicalWorldReplayExecutor.Replay(
-            IReadOnlyDictionary<string, object?> request)
+            IReadOnlyDictionary<string, object?> request,
+            InvocationResourceBudget resourceBudget)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
+            if (resourceBudget == null) throw new ArgumentNullException(nameof(resourceBudget));
             if (!ReplayJournalReader.OnlyFields(request, "expectedRevision", "expectedHash", "journal") ||
                 !ReplayJournalReader.TryLong(request, "expectedRevision", out var expectedRevision) || expectedRevision < 0 ||
                 !ReplayJournalReader.TryString(request, "expectedHash", out var expectedHash) ||
@@ -480,9 +487,21 @@ namespace Arkus.Game.Authoring
             var parseError = ReplayJournalReader.TryRead(journalData, "$.journal", out var sourceJournal);
             if (parseError != null) return CapabilityInvocationResult.Failed(parseError);
 
+            if (sourceJournal!.Entries.Count > H0ResourceEnvelope.MaximumSessionTransactions)
+            {
+                return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
+                    "resource.session_transactions_exceeded",
+                    "The replay journal exceeds the bounded H0 process-local transaction envelope.",
+                    "$.journal.entries",
+                    "sessionTransactions",
+                    H0ResourceEnvelope.MaximumSessionTransactions,
+                    sourceJournal.Entries.Count,
+                    "Replay a bounded journal into a fresh process-local session."));
+            }
+
             lock (_gate)
             {
-                var targetPrevious = AuthoredWorldAnchor.FromState(_inner.Current);
+                var targetPrevious = AuthoredWorldAnchor.FromState(_session.Inner.Current);
                 if (targetPrevious.Revision != expectedRevision ||
                     !string.Equals(targetPrevious.Hash, expectedHash, StringComparison.Ordinal))
                 {
@@ -504,7 +523,7 @@ namespace Arkus.Game.Authoring
                         "Import or otherwise establish the exact accepted replay base before replaying this journal."));
                 }
 
-                var existingJournalResult = _inner.ReadJournal(EmptyRequest());
+                var existingJournalResult = _session.Inner.ReadJournal(EmptyRequest());
                 if (!existingJournalResult.Success || existingJournalResult.Data == null ||
                     !ReplayJournalReader.TryLong(existingJournalResult.Data, "entryCount", out var existingEntryCount) ||
                     existingEntryCount != 0)
@@ -517,14 +536,15 @@ namespace Arkus.Game.Authoring
                         "Establish the replay base as a fresh local lineage, for example with the accepted snapshot rebase capability."));
                 }
 
-                var staged = new TransactionalWorldAuthoringSession(_inner.Current);
+                var staged = new TransactionalWorldAuthoringSession(_session.Inner.Current);
                 var stagedCommitter = CanonicalWorldMutationAuthority.Bind(staged);
+                var stagedBudget = resourceBudget.ForStaging();
                 var audit = new List<object?>();
 
                 for (var index = 0; index < sourceJournal.Entries.Count; index++)
                 {
                     var sourceEntry = sourceJournal.Entries[index];
-                    var apply = stagedCommitter.Apply(sourceEntry.Request);
+                    var apply = stagedCommitter.Apply(sourceEntry.Request, stagedBudget);
                     if (!apply.Success)
                     {
                         var context = new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -611,10 +631,7 @@ namespace Arkus.Game.Authoring
                         "Replay completed its steps but final canonical anchor differs from journal current; target remains unchanged.",
                         "$.journal.current"));
 
-                // One reference swap publishes state, HK04 idempotency receipts and HK06A journal as
-                // one aggregate only after the complete replay and independent audit have succeeded.
-                _inner = staged;
-                return CapabilityInvocationResult.Succeeded(ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                var result = ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["schemaId"] = WorldReplayContract.ReplayResultSchemaId,
                     ["journalSchemaId"] = WorldProvenanceContract.JournalSchemaId,
@@ -626,7 +643,16 @@ namespace Arkus.Game.Authoring
                     ["replayedEntries"] = sourceJournal.Entries.Count,
                     ["journalDisposition"] = "replayed-local-mutation-history",
                     ["audit"] = audit.AsReadOnly()
-                }));
+                });
+
+                if (!resourceBudget.TryBeginPublication("journal-replay", out var budgetError))
+                    return CapabilityInvocationResult.Failed(budgetError!);
+
+                // One reference swap publishes state, HK04 idempotency receipts and HK06A journal as
+                // one aggregate only after the complete replay and independent audit have succeeded.
+                _session = new PortableSessionState(staged, _session.ImportReceipts);
+                resourceBudget.MarkPublicationCommitted();
+                return CapabilityInvocationResult.Succeeded(result);
             }
         }
 

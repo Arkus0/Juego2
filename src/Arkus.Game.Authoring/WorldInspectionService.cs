@@ -12,10 +12,10 @@ namespace Arkus.Game.Authoring
     /// <summary>Pure, deterministic and bounded reads over the canonical HK02 state.</summary>
     public sealed class WorldInspectionService : IWorldInspectionService
     {
-        public const int MaximumPageSize = 100;
+        public const int MaximumPageSize = H0ResourceEnvelope.MaximumPageSize;
         public const int DefaultPageSize = 50;
         public const int MaximumExtensionChunkBytes = 768;
-        public const int MaximumExtensionDependencyPageSize = 100;
+        public const int MaximumExtensionDependencyPageSize = H0ResourceEnvelope.MaximumPageSize;
 
         private const string CursorVersion = "arkus-cursor-v1";
         private static readonly UTF8Encoding StrictUtf8 = new UTF8Encoding(false, true);
