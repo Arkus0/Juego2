@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -40,11 +41,15 @@ namespace Arkus.Harness.Mcp
         {
             var names = new HashSet<string>(StringComparer.Ordinal);
             var projected = new List<McpProjectedCapability>();
-            foreach (var definition in _projection.Capabilities
+            var definitions = _projection.Capabilities
                 .OrderBy(value => value.Key.Name, StringComparer.Ordinal)
-                .ThenBy(value => value.Key.Version))
+                .ThenBy(value => value.Key.Version)
+                .ToArray();
+
+            for (var canonicalOrdinal = 0; canonicalOrdinal < definitions.Length; canonicalOrdinal++)
             {
-                var toolName = McpToolNameCodec.Encode(definition.Key);
+                var definition = definitions[canonicalOrdinal];
+                var toolName = McpToolNameCodec.Encode(definition.Key, canonicalOrdinal);
                 if (!names.Add(toolName))
                 {
                     throw new InvalidOperationException("MCP tool-name projection collision for canonical capability '" + definition.Key + "'.");
@@ -235,14 +240,50 @@ namespace Arkus.Harness.Mcp
     }
 
     /// <summary>
-    /// Reversible MCP-safe transport naming. '_' and every non [A-Za-z0-9.-] UTF-8 byte are escaped,
-    /// so the mapping cannot collapse two canonical keys. It is framing only: canonical identity remains untouched.
+    /// MCP-safe transport naming. Canonical keys that fit the MCP framing limit retain the reversible byte escape.
+    /// Over-limit keys receive a bounded adapter-local surrogate. The canonical ordinal supplies collision separation
+    /// inside the deterministically sorted composed inventory; the SHA-256 fingerprint is diagnostic only. Exact
+    /// canonical identity remains in tool metadata and is used for neutral dispatch.
     /// </summary>
     public static class McpToolNameCodec
     {
+        public const int MaxToolNameLength = 128;
+        private const string LongNamePrefix = "arkus-long-";
+
         public static string Encode(CapabilityKey key)
         {
+            return Encode(key, 0);
+        }
+
+        internal static string Encode(CapabilityKey key, int canonicalOrdinal)
+        {
             if (key == null) throw new ArgumentNullException(nameof(key));
+            if (canonicalOrdinal < 0) throw new ArgumentOutOfRangeException(nameof(canonicalOrdinal));
+
+            var reversible = EncodeReversible(key);
+            if (reversible.Length <= MaxToolNameLength)
+            {
+                return reversible;
+            }
+
+            var canonicalKey = key.ToString();
+            var digest = SHA256.HashData(Encoding.UTF8.GetBytes(canonicalKey));
+            var fingerprint = Convert.ToHexString(digest).ToLowerInvariant();
+            var surrogate = LongNamePrefix
+                + canonicalOrdinal.ToString("D10", CultureInfo.InvariantCulture)
+                + "-"
+                + fingerprint;
+
+            if (surrogate.Length == 0 || surrogate.Length > MaxToolNameLength)
+            {
+                throw new InvalidOperationException("Internal MCP long-name allocator produced an invalid tool name for canonical capability '" + key + "'.");
+            }
+
+            return surrogate;
+        }
+
+        private static string EncodeReversible(CapabilityKey key)
+        {
             var source = key.Name + "@" + key.Version.ToString();
             var bytes = Encoding.UTF8.GetBytes(source);
             var builder = new StringBuilder(bytes.Length);
@@ -260,11 +301,6 @@ namespace Arkus.Harness.Mcp
                     builder.Append('_');
                     builder.Append(value.ToString("X2", CultureInfo.InvariantCulture));
                 }
-            }
-
-            if (builder.Length == 0 || builder.Length > 128)
-            {
-                throw new InvalidOperationException("Canonical capability key cannot be represented as an MCP tool name without violating the MCP 128-character framing limit: '" + key + "'.");
             }
 
             return builder.ToString();
