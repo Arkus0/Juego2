@@ -15,7 +15,8 @@ namespace Arkus.Harness.Tests
         private static readonly string[] RequiredCapabilityKeys =
         {
             "system.describe@1.0", "world.summary@1.0", "world.object.get@1.0",
-            "world.object.query@1.0", "world.reference.query@1.0", "world.validation.current@1.0",
+            "world.object.query@1.0", "world.reference.query@1.0", "world.extension.query@1.0",
+            "world.extension.read@1.0", "world.validation.current@1.0",
             "authoring.change.plan@1.0", "authoring.change.dry-run@1.0", "authoring.change.apply@1.0",
             "authoring.journal.read@1.0", "authoring.journal.read@2.0",
             "authoring.snapshot.export@1.0", "authoring.snapshot.import@1.0",
@@ -113,6 +114,35 @@ namespace Arkus.Harness.Tests
             Assert.Equal("gate.npc.ana", reference.GetProperty("sourceId").GetString());
             Assert.Equal("works.at", reference.GetProperty("kind").GetString());
             Assert.Equal("gate.building.market", reference.GetProperty("targetId").GetString());
+
+            var extensions = Success(source.Invoke("world.extension.query", new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["revision"] = currentAnchor.GetProperty("revision").GetInt64(),
+                ["hash"] = currentAnchor.GetProperty("hash").GetString(),
+                ["limit"] = 20
+            }));
+            Assert.Equal(1, extensions.GetProperty("items").GetArrayLength());
+            var extensionDescriptor = extensions.GetProperty("items")[0];
+            Assert.Equal("future.gate.social", extensionDescriptor.GetProperty("owner").GetString());
+            Assert.Equal(1, extensionDescriptor.GetProperty("schemaVersion").GetInt32());
+            Assert.Equal("gate.npc.ana", extensionDescriptor.GetProperty("subjectId").GetString());
+
+            var extension = Success(source.Invoke("world.extension.read", new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["revision"] = currentAnchor.GetProperty("revision").GetInt64(),
+                ["hash"] = currentAnchor.GetProperty("hash").GetString(),
+                ["owner"] = "future.gate.social",
+                ["schemaVersion"] = 1,
+                ["subjectId"] = "gate.npc.ana"
+            }));
+            Assert.Equal("ECAw", extension.GetProperty("payloadBase64").GetString());
+            Assert.Equal(1, extension.GetProperty("dependencyCount").GetInt32());
+            Assert.Equal("works.at", extension.GetProperty("dependencies")[0].GetProperty("kind").GetString());
+            Assert.Equal("gate.building.market", extension.GetProperty("dependencies")[0].GetProperty("targetId").GetString());
+
+            var validation = Success(source.Invoke("world.validation.current", Empty()));
+            Assert.True(validation.GetProperty("valid").GetBoolean());
+            Assert.Equal(0, validation.GetProperty("diagnosticCount").GetInt32());
 
             var invalid = source.Invoke("authoring.change.apply", MutationRequest(
                 currentAnchor,
