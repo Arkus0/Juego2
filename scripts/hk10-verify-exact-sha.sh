@@ -13,6 +13,11 @@ if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 
 bash scripts/hk10-observe-exact-sha.sh "${actual}"
 
+grep -Fxq 'CAUSAL_OWNER: WP-HK-01' Docs/evidence/WP-HK-01/DISPATCH_FAILURE_AMENDMENT.md
+grep -Fxq 'OWNER_PROOF: Hk01DispatchFailureContractTests' Docs/evidence/WP-HK-01/DISPATCH_FAILURE_AMENDMENT.md
+grep -Fxq 'POST_PUBLICATION_MACHINE_CODE: contract.handler_failure_after_publication' Docs/evidence/WP-HK-01/DISPATCH_FAILURE_AMENDMENT.md
+grep -Fxq 'PRE_PUBLICATION_MACHINE_CODE: contract.handler_failure' Docs/evidence/WP-HK-01/DISPATCH_FAILURE_AMENDMENT.md
+grep -Fxq 'RAW_EXCEPTION_MESSAGE_PUBLIC: NO' Docs/evidence/WP-HK-01/DISPATCH_FAILURE_AMENDMENT.md
 grep -Fxq 'FOUNDATIONAL_PROOF_VERDICT: READY' Docs/evidence/WP-HK-10/PROOF_MATRIX.md
 grep -Fxq 'UNRESOLVED_PROOF_OBLIGATIONS: 0' Docs/evidence/WP-HK-10/PROOF_MATRIX.md
 grep -Fxq 'KNOWN_UNDETECTED_DEFECT_CLASSES: 0' Docs/evidence/WP-HK-10/PROOF_MATRIX.md
@@ -40,7 +45,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/hk10-verify-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: locked-restore=GREEN; release-build=GREEN; hk10-property-robustness=GREEN; hk10-endurance-compatibility=GREEN; representative-content-shape-probe=GREEN; causal-negative-controls=GREEN; regression=GREEN; foundational-proof=GREEN; residual-reconciliation=GREEN; worker-pre-review=GREEN
+Required gates: locked-restore=GREEN; release-build=GREEN; hk01-dispatch-failure-amendment=GREEN; hk10-property-robustness=GREEN; hk10-endurance-compatibility=GREEN; representative-content-shape-probe=GREEN; causal-negative-controls=GREEN; regression=GREEN; foundational-proof=GREEN; residual-reconciliation=GREEN; worker-pre-review=GREEN
 Result: GREEN
-Evidence: Docs/evidence/WP-HK-10
+Evidence: Docs/evidence/WP-HK-01/DISPATCH_FAILURE_AMENDMENT.md; Docs/evidence/WP-HK-10
 EOF
