@@ -43,37 +43,51 @@ grep -Fxq 'RESIDUAL_LEDGER_RECONCILIATION: COMPLETE' Docs/evidence/WP-HK-GATE/RE
 grep -Fxq 'UNCLASSIFIED_RESIDUALS: 0' Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md
 grep -Fxq 'HK10_RECONCILED_ENTRY_COUNT: 53' Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md
 
-# COMPLETE/0 is accepted only when the GATE evidence explicitly consumes the full accepted HK10
-# residual universe. This prevents a smaller hand-written summary from self-certifying as complete.
+# COMPLETE/0 is accepted only when the GATE evidence consumes the accepted HK10 handoff exactly.
+# Compare both identity and classification so a row cannot be omitted, invented, duplicated or
+# silently promoted from OUT-BOUNDARY/DEFERRED into a stronger green claim.
 python3 - <<'PY'
 from pathlib import Path
 import re
 
-expected = {
-    "R-TB-01", "R-TB-02", "R-TB-03", "R-TB-04", "R-TB-05",
-    "R-00A-02", "R-00A-05", "R-01-07", "R-01-08", "R-01-09",
-    "R-02A-04", "R-04-04", "R-05-05", "R-05-06", "R-06A-02",
-    "R-06A-03", "R-06A-04", "R-06A-05", "R-06A-07", "R-06B-02",
-    "R-06B-03", "R-07A-01", "R-07A-02", "R-07A-03",
-    "R-00-05", "R-00-06", "R-01-01", "R-01-03", "R-01-05",
-    "R-02-01", "R-02-04", "R-02-05", "R-02A-01", "R-02A-02",
-    "R-03-01", "R-03-02", "R-03-03", "R-04-01", "R-04-02",
-    "R-04-05", "R-05-01", "R-06B-04", "R-06B-05", "R-06B-06",
-    "R-06C-01", "R-06C-02", "R-07A-04", "R-07B-01", "R-07B-02",
-    "R-07B-03", "R-08A-01", "R-08B-01", "R-09B-01",
-}
-path = Path("Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md")
-rows = re.findall(r"^\| (R-[A-Za-z0-9-]+) \|", path.read_text(encoding="utf-8"), flags=re.MULTILINE)
-found = set(rows)
-if len(rows) != len(found):
-    raise SystemExit("HK GATE residual reconciliation contains duplicate residual IDs")
-if found != expected:
-    missing = sorted(expected - found)
-    extra = sorted(found - expected)
-    raise SystemExit(f"HK GATE residual reconciliation universe mismatch missing={missing} extra={extra}")
-if len(found) != 53:
-    raise SystemExit(f"HK GATE residual reconciliation expected 53 entries, observed {len(found)}")
-print("HK_GATE_RESIDUAL_RECONCILIATION GREEN inherited_entries=53")
+SOURCE = Path("Docs/evidence/WP-HK-10/RESIDUAL_RISK.md")
+GATE = Path("Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md")
+allowed = "OUT-BOUNDARY|CLOSED-BY|DEFERRED|HK10-COVERED"
+pattern = re.compile(rf"^\| (R-[A-Za-z0-9-]+) \| ({allowed}) \|", flags=re.MULTILINE)
+
+def parse(path: Path):
+    text = path.read_text(encoding="utf-8")
+    rows = pattern.findall(text)
+    ids = [row[0] for row in rows]
+    if len(ids) != len(set(ids)):
+        duplicates = sorted({item for item in ids if ids.count(item) > 1})
+        raise SystemExit(f"duplicate residual IDs in {path}: {duplicates}")
+    return dict(rows), text
+
+source, source_text = parse(SOURCE)
+gate, _ = parse(GATE)
+
+if "RESIDUAL_LEDGER_RECONCILIATION: COMPLETE" not in source_text or "UNCLASSIFIED_RESIDUALS: 0" not in source_text:
+    raise SystemExit("accepted HK10 residual handoff is not COMPLETE/0")
+if len(source) != 53:
+    raise SystemExit(f"accepted HK10 residual handoff expected 53 entries, observed {len(source)}")
+
+missing = sorted(source.keys() - gate.keys())
+extra = sorted(gate.keys() - source.keys())
+reclassified = sorted(
+    f"{key}:{source[key]}->{gate[key]}"
+    for key in source.keys() & gate.keys()
+    if source[key] != gate[key]
+)
+if missing or extra or reclassified:
+    raise SystemExit(
+        "HK GATE residual reconciliation mismatch "
+        f"missing={missing} extra={extra} reclassified={reclassified}"
+    )
+if len(gate) != 53:
+    raise SystemExit(f"HK GATE residual reconciliation expected 53 entries, observed {len(gate)}")
+
+print("HK_GATE_RESIDUAL_RECONCILIATION GREEN inherited_entries=53 classifications_preserved=YES")
 PY
 
 grep -Fxq 'DEPENDENCY_IP_INVENTORY: COMPLETE' Docs/evidence/WP-HK-GATE/DEPENDENCY_IP_INVENTORY.md
