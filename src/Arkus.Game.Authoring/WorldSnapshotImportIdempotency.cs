@@ -16,8 +16,32 @@ namespace Arkus.Game.Authoring
     {
         public static ICanonicalWorldSnapshotImporter Bind(IWorldMutationService service)
         {
-            return CanonicalWorldSnapshotAuthority.Bind(
-                service ?? throw new ArgumentNullException(nameof(service)));
+            return new SnapshotImportBindingAuthority(
+                CanonicalWorldSnapshotAuthority.Bind(
+                    service ?? throw new ArgumentNullException(nameof(service))));
+        }
+
+        /// <summary>
+        /// Keeps the public Runtime handler from directly carrying the multi-surface session object.
+        /// The actual import remains one Authoring-owned atomic authority behind this narrow adapter.
+        /// </summary>
+        private sealed class SnapshotImportBindingAuthority : ICanonicalWorldSnapshotImporter
+        {
+            private readonly ICanonicalWorldSnapshotImporter _importer;
+
+            public SnapshotImportBindingAuthority(ICanonicalWorldSnapshotImporter importer)
+            {
+                _importer = importer ?? throw new ArgumentNullException(nameof(importer));
+            }
+
+            public CapabilityInvocationResult ImportSnapshot(
+                IReadOnlyDictionary<string, object?> request,
+                Arkus.Harness.Protocol.InvocationResourceBudget resourceBudget)
+            {
+                return _importer.ImportSnapshot(
+                    request ?? throw new ArgumentNullException(nameof(request)),
+                    resourceBudget ?? throw new ArgumentNullException(nameof(resourceBudget)));
+            }
         }
     }
 

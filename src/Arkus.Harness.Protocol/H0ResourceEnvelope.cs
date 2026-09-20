@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -188,13 +187,11 @@ namespace Arkus.Harness.Protocol
 
         public static InvocationResourceBudget Start(CancellationToken cancellationToken = default)
         {
-            var now = Stopwatch.GetTimestamp();
-            var duration = (long)Math.Ceiling(
-                H0ResourceEnvelope.MaximumExecutionMilliseconds * (double)Stopwatch.Frequency / 1000d);
+            var now = Environment.TickCount64;
             return new InvocationResourceBudget(
                 cancellationToken,
-                checked(now + duration),
-                Stopwatch.GetTimestamp,
+                checked(now + H0ResourceEnvelope.MaximumExecutionMilliseconds),
+                () => Environment.TickCount64,
                 null,
                 true);
         }
