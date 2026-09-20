@@ -27,16 +27,21 @@ namespace Arkus.Harness.Tests
             Assert.True(Result(applied.Reference).GetProperty("persisted").GetBoolean());
             Assert.Equal(96, Result(applied.Reference).GetProperty("plan").GetProperty("changes").GetArrayLength());
 
+            // One coherent object update carries the object's fields in one mutation operation/request;
+            // HK08A does not introduce field-by-field mutation chatter.
             var afterBatch = Equivalent(reference, mcp, "world.summary", Empty());
             var referenceSecond = MutationRequest(
                 Result(afterBatch.Reference).GetProperty("world"),
-                "request.hk08a.transport.second",
-                BatchOperations(1, 96));
+                "request.hk08a.transport.modify",
+                new object?[] { UpdateOperation() });
             var mcpSecond = MutationRequest(
                 Result(afterBatch.Mcp).GetProperty("world"),
-                "request.hk08a.transport.second",
-                BatchOperations(1, 96));
-            Equivalent(reference, mcp, "authoring.change.apply", referenceSecond, mcpSecond);
+                "request.hk08a.transport.modify",
+                new object?[] { UpdateOperation() });
+            var modified = Equivalent(reference, mcp, "authoring.change.apply", referenceSecond, mcpSecond);
+            var modification = Result(modified.Reference).GetProperty("plan").GetProperty("changes").EnumerateArray().Single();
+            Assert.Equal("update", modification.GetProperty("action").GetString());
+            Assert.Equal("object:transport.item.000", modification.GetProperty("resource").GetString());
 
             var firstPage = Equivalent(
                 reference,
@@ -96,6 +101,28 @@ namespace Arkus.Harness.Tests
             Assert.True(summary.GetProperty("cost").GetProperty("relativeWeight").GetInt32() < apply.GetProperty("cost").GetProperty("relativeWeight").GetInt32());
         }
 
+        [Fact]
+        public void CrossTransportOracleTurnsRedWhenAnHk08AResultDrifts()
+        {
+            using var leftDocument = JsonDocument.Parse("{\"requestId\":\"left\",\"status\":\"success\",\"result\":{\"schemaId\":\"arkus.authoring.journal-page@1\",\"entryCount\":2,\"pageOffset\":0}}");
+            using var rightDocument = JsonDocument.Parse("{\"requestId\":\"right\",\"status\":\"success\",\"result\":{\"schemaId\":\"arkus.authoring.journal-page@1\",\"entryCount\":2,\"pageOffset\":0}}");
+            Assert.Empty(NeutralSemanticIssues(leftDocument.RootElement, rightDocument.RootElement));
+
+            var drifted = (JsonObject)JsonNode.Parse(rightDocument.RootElement.GetRawText())!;
+            ((JsonObject)drifted["result"]!)["entryCount"] = 1;
+            using var driftedDocument = JsonDocument.Parse(drifted.ToJsonString());
+            Assert.Contains("semantic-drift", NeutralSemanticIssues(leftDocument.RootElement, driftedDocument.RootElement));
+        }
+
+        [Fact]
+        public void OrdinaryFlowShapeOracleRejectsOneMutationRequestPerProperty()
+        {
+            Assert.Empty(InteractionShapeIssues(conceptualPropertyCount: 4, canonicalMutationRequestCount: 1));
+            Assert.Contains(
+                "one-field-per-request",
+                InteractionShapeIssues(conceptualPropertyCount: 4, canonicalMutationRequestCount: 4));
+        }
+
         private static (JsonElement Reference, JsonElement Mcp) Equivalent(
             IClient reference,
             IClient mcp,
@@ -114,14 +141,37 @@ namespace Arkus.Harness.Tests
         {
             var left = reference.Invoke(capability, referenceArguments);
             var right = mcp.Invoke(capability, mcpArguments);
-            var leftNode = (JsonObject)JsonNode.Parse(left.GetRawText())!;
-            var rightNode = (JsonObject)JsonNode.Parse(right.GetRawText())!;
-            leftNode.Remove("requestId");
-            rightNode.Remove("requestId");
+            var issues = NeutralSemanticIssues(left, right);
             Assert.True(
-                JsonNode.DeepEquals(leftNode, rightNode),
-                "HK08A transport drift. JSONL=" + leftNode.ToJsonString() + " MCP=" + rightNode.ToJsonString());
+                issues.Count == 0,
+                "HK08A transport drift: " + string.Join(",", issues) +
+                " JSONL=" + left.GetRawText() + " MCP=" + right.GetRawText());
             return (left, right);
+        }
+
+        private static IReadOnlyList<string> NeutralSemanticIssues(JsonElement reference, JsonElement mcp)
+        {
+            var referenceNode = (JsonObject)JsonNode.Parse(reference.GetRawText())!;
+            var mcpNode = (JsonObject)JsonNode.Parse(mcp.GetRawText())!;
+            referenceNode.Remove("requestId");
+            mcpNode.Remove("requestId");
+            return JsonNode.DeepEquals(referenceNode, mcpNode)
+                ? Array.Empty<string>()
+                : new[] { "semantic-drift" };
+        }
+
+        private static IReadOnlyList<string> InteractionShapeIssues(
+            int conceptualPropertyCount,
+            int canonicalMutationRequestCount)
+        {
+            if (conceptualPropertyCount <= 1 || canonicalMutationRequestCount <= 1)
+            {
+                return Array.Empty<string>();
+            }
+
+            return canonicalMutationRequestCount >= conceptualPropertyCount
+                ? new[] { "one-field-per-request" }
+                : Array.Empty<string>();
         }
 
         private static JsonElement Result(JsonElement outcome)
@@ -144,6 +194,17 @@ namespace Arkus.Harness.Tests
                 });
             }
             return operations.AsReadOnly();
+        }
+
+        private static IReadOnlyDictionary<string, object?> UpdateOperation()
+        {
+            return new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["kind"] = "put-object",
+                ["id"] = "transport.item.000",
+                ["typeId"] = "fixture.hk08a.transport-item.modified",
+                ["references"] = Array.Empty<object?>()
+            };
         }
 
         private static IReadOnlyDictionary<string, object?> MutationRequest(
