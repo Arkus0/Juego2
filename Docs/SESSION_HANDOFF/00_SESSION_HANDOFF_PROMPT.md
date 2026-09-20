@@ -20,21 +20,22 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A` and `WP-HK-07B` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B` and `WP-HK-08A` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-07B — MCP as second projection + cross-transport conformance`.
+Latest accepted workpack: `WP-HK-08A — Efficient interaction primitives`.
 
-- implementation PR: `#47`;
-- baseline SHA: `6173471245da081b21cf66fd164cbb3a30dcba1d`;
-- reviewed frozen candidate: `37ea185f28dd28e41b406f2c9407fdfe6f9b752b`;
-- independent Reviewer: `PASS` (PR review `#5259854121`);
-- exact-SHA freeze validation: GREEN, Actions `35495563546`, artifact `10600393826`;
-- merge SHA: `58b6571b96eac4c73e5c3cf28a42a6630ea13505`;
-- accepted semantic addition: local-stdio MCP as a genuine second first-party projection of accepted `arkus.neutral-projection@1`; canonical composition remains the sole capability/schema/dispatch authority; scoped providers project without an MCP registry; representative accepted H0 read, validation, mutation, provenance, diff, snapshot and replay semantics remain equivalent to the deterministic JSONL reference transport; MCP framing/timeout metadata stay adapter-local; the pinned MCP SDK remains replaceable behind Arkus conformance;
-- accepted naming boundary: short canonical keys retain reversible MCP encoding; canonical-valid keys whose reversible tool name exceeds MCP's 128-character limit receive deterministic bounded adapter-local handles, while exact canonical identity remains in metadata/descriptor lookup and drives neutral dispatch;
-- accepted scope limits: no HTTP/cloud/authentication, vendor-specific orchestration, Unity/editor bridge, durable/crash-recovery store, multi-process writer coordination, batching/compact/pagination efficiency semantics, structured stale-conflict recovery or gameplay/runtime-state semantics.
+- implementation PR: `#50`;
+- baseline SHA: `13db4f890f4b6fe917fdf0d0c4e99cecfeed368d`;
+- reviewed frozen candidate: `324102d40fa0b7e36c7320216914f9d3fddadcc8`;
+- independent Reviewer: `PASS` (PR review `#5260092080`);
+- exact-SHA freeze validation: GREEN, Actions `35499569973`, artifact `10601679693`;
+- merge SHA: `eb9d3df58df1114abafaca435da64683fdb1480e`;
+- accepted interaction shape: one representative 96-operation mixed object/extension authoring intent remains one HK04 transaction, one revision and one HK06A provenance entry; compact reads retain required world anchors while omitting optional fields; canonical discovery exposes relative cost/side-effect/batching metadata;
+- accepted journal version boundary: `authoring.journal.read@1.0` remains the accepted empty-request complete `arkus.authoring.journal@1` read; bounded deterministic pagination is an explicit breaking `authoring.journal.read@2.0` contract with integrity-bound continuation and stale-anchor failure; paged responses are not silently treated as complete HK06C replay artifacts;
+- accepted transport boundary: HK08A changed batch/compact/pagination/discovery shapes are exercised through real JSONL and MCP processes and remain semantically equivalent;
+- accepted scope limits: no stale-CAS recovery planner, repair prioritization, automatic merge, multi-plan atomicity, final interaction/resource budgets, durable storage, Unity/editor integration or gameplay/runtime-state semantics.
 
-HK07B had one repair cycle. Frozen SHA `1447e56642414ce2e75219fdfcb191ada41d6378` failed review `#5259817513` because an accepted long canonical capability could make MCP discovery throw. The repair remained inside HK07B adapter/test ownership, preserved HK07A/canonical semantics unchanged, added causal two-capability over-limit composition/discovery/invocation coverage, and then received the fresh PASS above.
+HK08A had one Reviewer repair cycle. Frozen SHA `0b835891d70666dab41846017e79eb3f7c3b311a` failed review `#5260042576` because it changed `authoring.journal.read@1.0` from complete-journal semantics to default-bounded pagination without a version increment. The repair restored v1 exactly and moved pagination to explicit v2, preserving HK06A/HK06C semantics and the HK08B ownership boundary; the fresh Reviewer then passed the repaired frozen candidate above.
 
 ## Current next product target
 
@@ -42,17 +43,17 @@ The original HK06/HK07 and later HK08/HK09 monoliths were split **before impleme
 
 Execution chain:
 
-`HK06A ✅ → HK06B ✅ → HK06C ✅ → HK07A ✅ → HK07B ✅ → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`
+`HK06A ✅ → HK06B ✅ → HK06C ✅ → HK07A ✅ → HK07B ✅ → HK08A ✅ → HK08B → HK09A → HK09B → HK10 → HK-GATE`
 
-The next dependency-valid workpack is `WP-HK-08A — Efficient interaction primitives`.
+The next dependency-valid workpack is `WP-HK-08B — Structured stale-CAS recovery + agent interaction benchmark`.
 
-HK08A owns **atomic batching, compact/bounded reads, pagination and cheap discovery metadata** while preserving accepted canonical semantics and the now-accepted JSONL↔MCP transport neutrality. A representative coherent multi-resource authoring intent must fit in one accepted atomic batch rather than being split solely by an arbitrary implementation cap; the current 64-operation limit is a starting constraint, not a permanent semantic constant. Journal reads become bounded/paginated without changing HK06A ordering/completeness. Pagination must not duplicate/omit resources and must fail closed on stale anchors. Every primitive HK08A adds or changes must rerun cross-transport conformance through both reference transport and MCP. HK08A does **not** own structured stale-CAS recovery, diagnostic repair prioritization or final interaction budgets; those belong to HK08B.
+HK08B consumes the accepted HK08A efficient primitives and owns **structured same-lineage stale-CAS recovery, repair ergonomics and measured end-to-end agent interaction budgets**. It must make ordinary stale-plan recovery cheap and machine-readable without changing the accepted whole-world CAS consistency model: return trustworthy bounded context anchored to expected/current authored state, preserve intent where possible, distinguish when lineage/history is insufficient, and route retry through the normal canonical transaction path rather than inventing an automatic merge authority. Recovery/repair semantics must remain transport-neutral and rerun JSONL↔MCP conformance. HK08B must measure representative create/inspect/modify/correct flows rather than importing arbitrary final resource caps from HK09B.
 
-Read `Docs/workpacks/HK/WP-HK-08A.md`, accepted HK07A/HK07B verdict/proof evidence, and the H0 interaction/concurrency section of `Docs/ROADMAP.md` before implementation.
+Read `Docs/workpacks/HK/WP-HK-08B.md`, accepted HK08A verdict/proof evidence, the HK06A/HK06B lineage/diff contracts, and the H0 interaction/concurrency section of `Docs/ROADMAP.md` before implementation.
 
-After HK08A: HK08B owns structured same-lineage stale-CAS recovery, repair ergonomics and measured end-to-end interaction budgets; HK09A owns repository-local host capability containment; HK09B owns explicit resource/input limits plus import/persistence interruption integrity; HK10 remains the closure workpack before HK-GATE.
+After HK08B: HK09A owns repository-local host capability containment; HK09B owns explicit resource/input limits plus import/persistence interruption integrity; HK10 remains the closure workpack before HK-GATE.
 
-Whole-world CAS/hash remains the H0 global consistency anchor but does **not** require clients or AI agents to reload/reconstruct the complete world after each commit. Bounded revision-anchored inspection, semantic diff and HK08B recovery are the client-side coherence mechanisms. Serialized commit execution alone does not cure a stale plan; a request planned on an old revision still requires rejection/recovery/re-plan.
+Whole-world CAS/hash remains the H0 global consistency anchor but does **not** require clients or AI agents to reload/reconstruct the complete world after each commit. HK08A now supplies the bounded/compact interaction primitives; HK08B must supply the bounded same-lineage recovery semantics when an authored plan is stale. Serialized commit execution alone does not cure a stale plan.
 
 After HK-GATE, `Docs/ROADMAP.md` defines a non-blocking-by-default H0S scale/concurrency track that may run in parallel with H1. It measures real object counts, commit cost, collision/stale rate, recovery cost and memory before selecting incremental hashing/indexing, resource-scoped preconditions, coordination/leases, change feeds or finer state partitioning. No Merkle/per-resource-CAS/scope-lock design is preselected, and no transport adapter may become a separate concurrency authority.
 
@@ -70,7 +71,7 @@ FAIL returns to a fresh repair Worker; a Reviewer never repairs a failed candida
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C ✅ → HK-07A ✅ → HK-07B ✅ → HK-08A → HK-08B → HK-09A → HK-09B → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C ✅ → HK-07A ✅ → HK-07B ✅ → HK-08A ✅ → HK-08B → HK-09A → HK-09B → HK-10 → HK-GATE`.
 
 ## Process invariants
 
