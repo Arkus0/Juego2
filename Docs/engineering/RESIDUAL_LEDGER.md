@@ -1,6 +1,6 @@
 # Residual Ledger — declared residuals across accepted H0 workpacks
 
-Version: 1.1 — 2026-09-20
+Version: 1.2 — 2026-09-20
 
 Status: **NON-BINDING inventory.** This document creates no acceptance criterion, reopens no accepted guarantee and alters no workpack contract. It records what accepted workpacks already declared.
 
@@ -26,7 +26,7 @@ Risks a workpack recorded as closed inside its own claim do not belong here — 
 - `DEFERRED` — a named workpack or milestone owns it and has not run yet.
 - `UNCLASSIFIED` — not yet classified. **This is the default and carries no judgement.**
 
-Version 1.0 was the initial transcription pass. Version 1.1 records accepted HK06B: it closes only the HK06A residuals that HK06B explicitly owned and transcribes HK06B's own declared residuals without assigning new classifications not present in accepted evidence.
+Version 1.0 was the initial transcription pass. Version 1.1 records accepted HK06B: it closes only the HK06A residuals that HK06B explicitly owned and transcribes HK06B's own declared residuals without assigning new classifications not present in accepted evidence. Version 1.2 re-points only planned ownership after the pre-implementation `HK08 → HK08A/HK08B` and `HK09 → HK09A/HK09B` split; it makes no new residual classification.
 
 ## A. Trusted base
 
@@ -51,14 +51,14 @@ Arkus checks identity, configuration and effective observations at these boundar
 | `R-01-07` | HK-01 | No external plugin loader; a future reviewed loader must extend the independent universe rather than trust registration metadata | future loader WP | `DEFERRED` |
 | `R-01-08` | HK-01 | Concrete MCP/JSONL projection parity | HK-07A, HK-07B | `DEFERRED` |
 | `R-01-09` | HK-01 | Unity/editor types absent; H1 instantiates the scoped-provider boundary | H1 | `DEFERRED` |
-| `R-02A-04` | HK-02A | Total payload bytes, dependency count and world size not capped | HK-09 | `DEFERRED` |
-| `R-04-04` | HK-04 | Byte quota on opaque extension payloads, beyond the 64-operation request limit | HK-09 | `DEFERRED` |
+| `R-02A-04` | HK-02A | Total payload bytes, dependency count and world size not capped | HK-09B | `DEFERRED` |
+| `R-04-04` | HK-04 | Byte quota on opaque extension payloads, beyond the 64-operation request limit | HK-09B | `DEFERRED` |
 | `R-05-05` | HK-05 | Unity/engine validation: scene serialization, prefab/component rules, editor constraints | H1 | `DEFERRED` |
-| `R-05-06` | HK-05 | Whole-world size and latency budgets are not product guarantees | HK-09 for content-size caps; HK-08 for latency baselines | `DEFERRED` |
+| `R-05-06` | HK-05 | Whole-world size and latency budgets are not product guarantees | HK-09B for content-size caps; HK-08B for measured latency/interaction baselines | `DEFERRED` |
 | `R-06A-02` | HK-06A | Whether an imported snapshot starts a new local lineage or retains external evidence | HK-06B | `CLOSED-BY` — HK06B PASS `#5258130916`; snapshot import is an explicit canonical rebase that starts `new-local-lineage` and emits truthful rebase evidence |
 | `R-06A-03` | HK-06A | Replay interpretation, missing/reordered/tampered entry behaviour, journal/snapshot version compatibility | HK-06C | `DEFERRED` |
 | `R-06A-04` | HK-06A | Field-level semantic diff; affected-resource identity is journal metadata only | HK-06B | `CLOSED-BY` — HK06B PASS `#5258130916`; deterministic semantic diff covers the complete accepted authored-resource model |
-| `R-06A-05` | HK-06A | Journal growth and pagination; the journal read currently returns the complete session-local journal in one response | HK-08 | `DEFERRED` |
+| `R-06A-05` | HK-06A | Journal growth and pagination; the journal read currently returns the complete session-local journal in one response | HK-08A for bounded journal read/pagination; HK-10 for bounded-session growth evidence inside the HK-09B envelope | `DEFERRED` |
 | `R-06A-07` | HK-06A | Transport/storage framing may not redefine journal meaning | HK-07A, HK-07B | `DEFERRED` |
 | `R-06B-02` | HK-06B | Deterministic journal replay and policy for accepted journal/snapshot version combinations are not implemented by snapshot portability | HK-06C | `DEFERRED` |
 | `R-06B-03` | HK-06B | File/JSONL/MCP/network/cloud transport framing and persistence may not redefine snapshot semantics | HK-07A, HK-07B | `DEFERRED` |
@@ -80,9 +80,9 @@ These are the entries that decide whether `WP-HK-10` can claim zero, and they ar
 | `R-02-04` | HK-02 | Richer display names and localization layered over the narrow stable identity syntax | matches `CONTENT_SHAPE_BACKLOG.md` row 15 |
 | `R-02-05` | HK-02 | Cross-world and external asset references | touches `CONTENT_SHAPE_BACKLOG.md` row 16 |
 | `R-02A-01` | HK-02A, HK-05 | A producer that embeds an object identity in opaque payload bytes without declaring it cannot be detected generically | matches `CONTENT_SHAPE_BACKLOG.md` row 9 |
-| `R-02A-02` | HK-02A | Whole-world revision/hash CAS; no per-resource concurrency and no automatic merge of disjoint edits | candidate to fall inside HK-09, which claims deterministic stale-revision and conflicting-writer tests. Measured cost context below |
+| `R-02A-02` | HK-02A | Whole-world revision/hash CAS; no per-resource concurrency and no automatic merge of disjoint edits | HK08B owns cheap same-lineage recovery under the accepted whole-world CAS; HK10 later stress-tests stale/conflicting writers. Finer concurrent-writer semantics remain a separate post-GATE decision unless measured evidence promotes them. Measured cost context below |
 | `R-03-01` | HK-03 | Query evaluation is bounded in output, not in scan cost; no index, sublinear complexity or world-size-independent CPU claim | HK-03 defers this to "future scale work", which does not exist. H0 gates on a micro-world, so this is a candidate for `OUT-BOUNDARY` |
-| `R-03-02` | HK-03 | Cursors are deterministic continuation tokens, not authenticated capabilities, and are not an authorization boundary | candidate to fall inside HK-09's capability boundary |
+| `R-03-02` | HK-03 | Cursors are deterministic continuation tokens, not authenticated capabilities, and are not an authorization boundary | HK09A constrains host authority but deliberately does not turn cursors into authentication/authorization capabilities; classification remains open |
 | `R-03-03` | HK-03 | No multi-command snapshot lease; a state source may advance between calls | stale anchors fail closed rather than mixing revisions |
 | `R-04-01` | HK-04, HK-06A, HK-06B | Canonical state, mutation idempotency receipts/journal, snapshots and snapshot-rebase receipts/evidence remain process-local; no durable recovery or cross-process persistence claim | HK06B restates the same lifetime seam for snapshot/rebase evidence |
 | `R-04-02` | HK-04 | Multi-process and distributed writers | requires a later authoritative persistence/locking substrate |
@@ -107,7 +107,7 @@ An exploratory probe on 2026-09-19 measured what a whole-world commit pays as th
 
 Growth is roughly `O(n log n)` — 20x the objects costs 36x the time between 10 000 and 200 000 — with no discontinuity up to 200 000 objects. Per-object cost rises slowly from about 7 to 12 microseconds.
 
-Reading it: the cost is per **transaction**, not per edited object, because identity is whole-world. A batched authoring flow pays it once; an unbatched one pays it per edit. `WP-HK-08` owns batching and is therefore the direct mitigation, not merely an ergonomics improvement.
+Reading it: the cost is per **transaction**, not per edited object, because identity is whole-world. A batched authoring flow pays it once; an unbatched one pays it per edit. `WP-HK-08A` owns batching and is therefore the direct H0 mitigation, while `WP-HK-08B` owns the measured end-to-end interaction baseline.
 
 Limits of the measurement, which is **not evidence**: it is not bound to a candidate SHA, was not produced by canonical validation, and ran on shared container CPU. It covers `Arkus.Game.Core` and `Arkus.Game.World` only, so it is a lower bound — a real commit also pays HK-04 plan/change-set work, HK-05 diagnostic aggregation and the HK-06A journal entry. The synthetic world's reference density is uniform and real content will differ.
 
@@ -127,9 +127,9 @@ A residual restated by several workpacks is a signal that it sits on a seam rath
 | Replay/compatibility | `R-06A-03`, `R-06B-02` | HK-06A, HK-06B |
 | Transport framing | `R-06A-07`, `R-06B-03` | HK-06A, HK-06B |
 
-The budget theme is the densest, and the declaring workpacks use "budget" for two different mechanisms. HK-08 owns **measured baselines**: a benchmark plus regression thresholds. HK-09 owns **enforced caps**: explicit input/batch/page/depth/resource limits that fail closed. Three of the four entries need the second and were re-pointed accordingly; only the journal and latency parts are HK-08 interaction work.
+The budget theme uses three different mechanisms after the split. HK-08A owns **interaction primitives** such as batching and bounded journal/page reads. HK-08B owns **measured end-to-end baselines and regression budgets**. HK-09B owns **enforced caps** such as input/batch/page/depth/resource limits that fail closed. Journal/session growth itself is exercised by HK10 against the accepted HK09B resource envelope.
 
-Neither owns large-world scaling. `R-03-01` and `R-04-05` are deferred to a workpack that does not exist, and HK06B likewise only points `R-06B-06` at generic later ergonomics/performance work. H0 benchmarks a micro-world and `WP-HK-GATE` is a micro-world gate, so the likely resolution is `OUT-BOUNDARY` and a named gate residual rather than a new workpack — but that is a classification decision and is deliberately not taken here.
+None of those workpacks owns arbitrary large-world asymptotic optimization. `R-03-01` and `R-04-05` are deferred to work that does not exist, and HK06B likewise only points `R-06B-06` at generic later ergonomics/performance work. H0 benchmarks a micro-world and `WP-HK-GATE` is a micro-world gate, so the likely resolution is `OUT-BOUNDARY` and a named gate residual rather than a new workpack — but that is a classification decision and is deliberately not taken here.
 
 ## E. Deliberate non-goals already stated as such
 
