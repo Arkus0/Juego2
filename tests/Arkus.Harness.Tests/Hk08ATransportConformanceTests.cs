@@ -41,7 +41,7 @@ namespace Arkus.Harness.Tests
             var modified = Equivalent(reference, mcp, "authoring.change.apply", referenceSecond, mcpSecond);
             var modification = Result(modified.Reference).GetProperty("plan").GetProperty("changes").EnumerateArray().Single();
             Assert.Equal("update", modification.GetProperty("action").GetString());
-            Assert.Equal("object:transport.item.000", modification.GetProperty("resource").GetString());
+            Assert.Equal("world.object:transport.item.000", modification.GetProperty("resource").GetString());
 
             var firstPage = Equivalent(
                 reference,
