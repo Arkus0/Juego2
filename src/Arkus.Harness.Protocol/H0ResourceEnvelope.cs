@@ -12,21 +12,22 @@ using System.Threading;
 namespace Arkus.Harness.Protocol
 {
     /// <summary>
-    /// The measured H0 resource envelope. These are product limits shared by the canonical
-    /// authoring/runtime boundary and every conforming transport; they are not adapter defaults.
+    /// The measured H0 resource envelope. Canonical limits are chosen below the frozen
+    /// arkus.reference.jsonl@1 framing ceiling so successfully framed requests reach the same
+    /// transport-neutral admission policy used by MCP and future projections.
     /// </summary>
     public static class H0ResourceEnvelope
     {
         public const string SchemaId = "arkus.h0-resource-envelope@1";
-        public const int MaximumTransportFrameBytes = 2 * 1024 * 1024;
-        public const int MaximumCanonicalRequestBytes = 1792 * 1024;
+        public const int MaximumTransportFrameBytes = 1024 * 1024;
+        public const int MaximumCanonicalRequestBytes = 896 * 1024;
         public const int MaximumPortableDepth = 32;
         public const int MaximumBatchOperations = 96;
         public const int MaximumBatchPayloadBytes = 512 * 1024;
         public const int MaximumPageSize = 100;
         public const int MaximumRelationsPerResource = 256;
         public const int MaximumExtensionPayloadBytes = 256 * 1024;
-        public const int MaximumCanonicalWorldBytes = 1024 * 1024;
+        public const int MaximumCanonicalWorldBytes = 640 * 1024;
         public const int MaximumWorldResources = 10000;
         public const int MaximumSessionTransactions = 10000;
         public const int MaximumSnapshotImportReceipts = 1024;
