@@ -1,9 +1,24 @@
 # WP-HK-09B — Resource limits + persistence integrity
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: `WP-HK-09A`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+## Completion metadata
+
+- implementation PR: `#56`;
+- baseline SHA: `ada532f99282c96db15813eb17963bc9cb6d08fb`;
+- reviewed frozen candidate: `8ed02586da9a5b6e159e1cdc76a47ae7ca89c763`;
+- independent Reviewer verdict: `PASS` (review `#5261068513`);
+- exact-SHA freeze validation: GREEN, Actions `35522581043` (Candidate Validation run #470);
+- implementation merge SHA: `2e7a258fdcec2e26492d308c3cb199ab62201dcd`.
+
+Accepted semantics: `arkus.h0-resource-envelope@1`, discoverable through `system.resource-envelope.describe@1.0`, is the machine-readable H0 envelope. Enforcement is two-layer and transport-neutral: `H0ResourcePolicy` admits portable request bytes (896 KiB canonical arguments), nesting depth (32), mutation operations (96), decoded mutation payload (512 KiB), relations per resource (256), extension payload (256 KiB), query page size (100) and snapshot size before canonical dispatch; `WorldResourceLimits` independently rechecks the materialized canonical state (640 KiB canonical world bytes, 10,000 resources) before publication. Bounded session growth is enforced at the canonical write authorities (10,000 mutation transactions, 1,024 snapshot import receipts). A 5,000 ms execution budget is checked cooperatively and again before authoritative publication. Mutation, snapshot import and replay each stage a complete aggregate — state plus receipt, lineage, rebase evidence and journal — and publish atomically, so an interrupted, expired or rejected writer cannot leave a partial canonical world, advance revision/hash, or acquire false success evidence. Persistence is explicitly declared: `durabilityLevel=process-local-checkpoint`, `publicationBoundary=validate-stage-aggregate-publish`, `powerLossDurabilityClaimed=false`. The accepted HK08A 96-operation coherent edit remains one atomic transaction, and successfully framed JSONL and MCP requests reach identical neutral resource semantics.
+
+The inherited `arkus.reference.jsonl@1` transport contract is unchanged: 1,048,576 bytes per frame with `transport.frame_too_large` for larger input. The HK09B envelope is derived to fit beneath it, leaving 128 KiB of framing headroom and keeping the advertised snapshot envelope traversable through the frozen reference transport.
+
+One earlier frozen candidate `dcea0901a4fe78549d81271a7f192bbae77e58b7` failed review `#5261028914` because it changed the frozen `arkus.reference.jsonl@1` frame bound and oversized-frame code in place and moved the inherited HK07A regression oracle with the implementation, producing a false green against the predecessor compatibility guarantee. The accepted repair restores the HK07A implementation and oracle exactly to baseline and fits the neutral envelope below the inherited frame instead of widening it.
 
 ## Objective
 
