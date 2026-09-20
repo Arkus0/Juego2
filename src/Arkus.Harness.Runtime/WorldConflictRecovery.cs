@@ -9,6 +9,17 @@ using Arkus.Harness.Protocol;
 namespace Arkus.Harness.Runtime
 {
     /// <summary>
+    /// Read-only attenuation used by HK08B recovery. The concrete implementation is the already
+    /// accepted WorldMutationPlannerView, so public plan/dry-run handlers never retain the underlying
+    /// canonical committer merely to inspect current state or provenance.
+    /// </summary>
+    internal interface IWorldConflictRecoverySource
+    {
+        bool TryGetCurrent(out WorldState state);
+        CapabilityInvocationResult ReadJournal(IReadOnlyDictionary<string, object?> request);
+    }
+
+    /// <summary>
     /// HK08B canonical-route recovery decoration. It never mutates state and never guesses ancestry:
     /// a bounded changed-resource delta is emitted only when the complete current local HK06A journal
     /// positively proves the request base is an ancestor of the current authored anchor.
@@ -18,14 +29,11 @@ namespace Arkus.Harness.Runtime
         private static readonly IReadOnlyDictionary<string, object?> EmptyRequest =
             ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal));
 
-        private readonly IWorldStateSource? _source;
-        private readonly IWorldProvenanceService? _provenance;
+        private readonly IWorldConflictRecoverySource _source;
 
-        public WorldConflictRecovery(IWorldMutationService service)
+        public WorldConflictRecovery(IWorldConflictRecoverySource source)
         {
-            if (service == null) throw new ArgumentNullException(nameof(service));
-            _source = service as IWorldStateSource;
-            _provenance = service as IWorldProvenanceService;
+            _source = source ?? throw new ArgumentNullException(nameof(source));
         }
 
         public CapabilityInvocationResult Enrich(
@@ -57,7 +65,7 @@ namespace Arkus.Harness.Runtime
 
         private IReadOnlyDictionary<string, object?> Build(long expectedRevision, string expectedHash)
         {
-            if (_source == null)
+            if (!_source.TryGetCurrent(out var currentState))
             {
                 return Fallback(expectedRevision, expectedHash, null, null,
                     WorldConflictRecoveryContract.RequiredHistoryUnavailable);
@@ -65,15 +73,8 @@ namespace Arkus.Harness.Runtime
 
             // One immutable authored snapshot owns both the reported current anchor and resource
             // presence. A concurrent writer after this read cannot make descriptors disagree with it.
-            var currentState = _source.Current;
             var current = Anchor.FromState(currentState);
-            if (_provenance == null)
-            {
-                return Fallback(expectedRevision, expectedHash, current, null,
-                    WorldConflictRecoveryContract.RequiredHistoryUnavailable);
-            }
-
-            var journalResult = _provenance.ReadJournal(EmptyRequest);
+            var journalResult = _source.ReadJournal(EmptyRequest);
             if (!journalResult.Success || journalResult.Data == null)
             {
                 return Fallback(expectedRevision, expectedHash, current, null,
