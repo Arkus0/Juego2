@@ -1,9 +1,22 @@
 # WP-HK-08A — Efficient interaction primitives
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: `WP-HK-07B`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+## Completion metadata
+
+- implementation PR: `#50`;
+- baseline SHA: `13db4f890f4b6fe917fdf0d0c4e99cecfeed368d`;
+- reviewed frozen candidate: `324102d40fa0b7e36c7320216914f9d3fddadcc8`;
+- independent Reviewer verdict: `PASS` (review `#5260092080`);
+- exact-SHA freeze validation: GREEN, Actions `35499569973`, artifact `10601679693`;
+- implementation merge SHA: `eb9d3df58df1114abafaca435da64683fdb1480e`.
+
+Accepted semantics: representative coherent authoring can carry 96 mixed object/extension operations in one accepted HK04 transaction, with one revision advance and one HK06A provenance entry; compact reads reuse accepted projection semantics while retaining required anchors; `authoring.journal.read@1.0` preserves the accepted HK06A empty-request complete-journal contract; bounded deterministic journal pagination is exposed only through explicit breaking-version negotiation as `authoring.journal.read@2.0`, with continuation bound to the authored journal context and altered/stale cursors failing closed; canonical discovery exposes relative cost/side-effect/batching information; and every HK08A-changed public interaction shape is semantically equivalent through the accepted JSONL reference transport and MCP projection.
+
+The first frozen candidate `0b835891d70666dab41846017e79eb3f7c3b311a` failed independent review `#5260042576` because it changed `authoring.journal.read@1.0` from complete-journal semantics to default-bounded pagination without a version increment. The accepted repair restores v1 exactly at the public boundary and introduces v2 for the breaking paged contract, without reopening HK06A journal truth, HK06C replay semantics or HK08B recovery ownership.
 
 ## Objective
 
