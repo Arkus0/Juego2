@@ -6,186 +6,181 @@ Baseline SHA: `290f92e9c21f1e454e0d6924b29f4d778b9875f8`
 Branch: `claude/city-urban-topologies-ehn6qf`
 Worker history: `Claude Code — session 01KC1S5dCRLuMq6qeht4n34L → ChatGPT GPT-5.6 Sol`
 Transfer SHA: `d2d5f7a7277d8949264d62e6ac2ecbbb171aae9b`
-fail_cycle: **4**
+fail_cycle: **5**
 
-The exact candidate/freeze status is recorded in the PR body after this file and the final Worker
-pre-review are committed. Evidence files cannot safely name their own final commit SHA.
+The exact candidate/freeze status is recorded in PR #65 after this file is committed. Evidence files
+cannot safely name their own final commit SHA.
 
-`WORKER_TRANSFER.md` is the historical transfer record. It is not the current-state authority.
-
----
-
-## 1. What changed in repair cycle 4
-
-Independent review #5261556774 proved that candidate
-`d2d5f7a7277d8949264d62e6ac2ecbbb171aae9b` described an impossible planar embedding: the selected
-city occupied a Wedge between two channels that meet at its southern point, but the same candidate let
-that Wedge continue dry through the confluence to a downstream Puerto.
-
-The repair starts from geometry rather than prose:
-
-- the **Wedge ends at the confluence**;
-- Ensanche remains outside the Arroyo;
-- **Orilla sur** continues onto the south/east bank of the joined river;
-- **Puerto Fluvial + Entrada / Bus / Carretera sit on that Orilla-sur downstream bank**;
-- X1 Puente Viejo remains the historic Wedge↔Orilla-sur crossing;
-- X6 La barca (State 1), replaced by X7 Puente del Muelle (State 2), crosses from the Wedge-tip landing
-  head to the **upstream edge of Puerto**;
-- the Puerto district extends downstream from that bridgehead, so X6/X7 spans the channel rather than
-  the district's full longitudinal length;
-- X1 + camino sur is the other core↔Puerto route.
-
-`PLANAR_EMBEDDING.md` is the bounded physical-realizability proof.
-`CONNECTIVITY_MATRIX.md` owns connectivity semantics regenerated from it.
-
-This is a **real spatial correction**. It is not another documentation-only patch.
+`WORKER_TRANSFER.md` remains the historical transfer record, not the current-state authority.
 
 ---
 
-## 2. What survives unchanged
+## 1. What review cycle 5 found
 
-The fourth FAIL did not falsify:
+Independent review #5261646488 reviewed candidate
+`bc9f1c850b2d9eedc9f3bb4393bb62a11ffcde35` and confirmed that the cycle-4 physical repair was real:
 
-- the three materially different alternatives A/B/C and the reason B was selected;
-- the 0.30–0.45 km² dense-fabric scale envelope;
-- the 0.03–0.06 km² retained-seed band;
-- the landing rationale based on timber rafting at high water, áridos, ferry work and road break-bulk;
-- the two connectivity states;
-- the State-1 Río availability ladder **2 → 1 → 0**;
-- the CITY→ART authority direction;
-- the rule that design provision and momentary availability are separate claims.
+- Wedge ends at the confluence;
+- Puerto/Entrada are on Orilla sur;
+- X1 and X6/X7 are the only Wedge↔Orilla-sur crossing families;
+- the connectivity matrix is internally consistent on that point.
 
-Comparison/refutation surfaces were updated only where the corrected bank assignment changes their
-reasoning.
+The remaining blocker was narrower but still contractual: the **selected semantic ASCII graph** drew
+the Ensanche branch down into a horizontal line continuing directly to `PUERTO FLUVIAL`. The selected
+option dossier had the same visual implication.
+
+Because those drawings are semantic graphs, that line implied a dry Ensanche-bank↔Orilla-sur edge
+which the authoritative matrix explicitly does not define.
 
 ---
 
-## 3. Corrected connectivity at a glance
+## 2. Cycle-5 repair
+
+No topology or scale redesign was performed.
+
+The two semantic graphs were redrawn around explicit landmass groups:
+
+- `[ENSANCHE BANK]` contains Ensanche;
+- `[WEDGE]` contains the historic/civic/commercial core, Ribera, Barrio Alto and Vega;
+- `[ORILLA SUR]` contains Puerto, Entrada, camino sur and the outward road.
+
+The graph rule is now explicit:
+
+> **Only labeled connectors are graph edges.** Whitespace, alignment and grouping have no connectivity
+> semantics.
+
+Allowed inter-landmass edges remain exactly those in `CONNECTIVITY_MATRIX.md`:
+
+- X2–X5: Ensanche bank ↔ Wedge over Arroyo;
+- X1: Wedge/casco ↔ Orilla sur over Río;
+- X6 State 1 / X7 State 2: Wedge-tip landing head ↔ upstream Puerto edge over joined Río.
+
+There is **no Ensanche-bank ↔ Orilla-sur edge**. Any Ensanche→Puerto route must first cross the Arroyo
+into the Wedge and then cross the Río using X1 or X6/X7.
+
+---
+
+## 3. What did not change
+
+Cycle 5 does not reopen:
+
+- selection of Topology B;
+- cycle-4 planar embedding;
+- Puerto/Entrada bank choice;
+- seven crossing IDs / six coexisting per state;
+- State-1 Río availability 2 → 1 → 0;
+- four Arroyo crossings;
+- L1/L1′ territorial loops;
+- port approach families;
+- six expansion seams;
+- 0.30–0.45 km² dense-fabric scale envelope;
+- 0.03–0.06 km² retained-seed band;
+- CITY→ART authority direction;
+- the landing rationale independent of long-distance navigability.
+
+`CONNECTIVITY_MATRIX.md`, `PLANAR_EMBEDDING.md`, scale evidence and Production Blueprint therefore did
+not need semantic changes.
+
+---
+
+## 4. Correct connectivity at a glance
+
+### Landmasses
+
+- **Ensanche bank** — across Arroyo from Wedge.
+- **Wedge** — between Río and Arroyo; ends at confluence.
+- **Orilla sur** — across Río; continues downstream and contains Puerto/Entrada.
 
 ### Crossings
 
-Seven IDs exist across the constitution's life; six coexist in either state:
+- X1 Puente Viejo — Wedge ↔ Orilla sur;
+- X2 Puente del Mercado — Wedge ↔ Ensanche;
+- X3 Pasarela del Lavadero — Wedge ↔ upper Ensanche;
+- X4 Puente de la Vega — Wedge ↔ north Ensanche;
+- X5 Pasos/vado — Wedge ↔ Ensanche;
+- X6 La barca — State 1 only, Wedge tip ↔ upstream Puerto edge;
+- X7 Puente del Muelle — State 2 only, same endpoints as X6.
 
-- X1 Puente Viejo — Río, Wedge↔Orilla sur;
-- X2 Puente del Mercado — Arroyo;
-- X3 Pasarela del Lavadero — Arroyo;
-- X4 Puente de la Vega — Arroyo;
-- X5 Pasos/vado — Arroyo;
-- X6 La barca — joined Río, State 1 only, Wedge-tip landing head↔upstream Puerto edge;
-- X7 Puente del Muelle — joined Río, State 2 only, same endpoints as X6.
+### Ensanche ↔ Puerto
 
-Thus: four Arroyo crossings; two Río crossings per state; no hidden eighth crossing.
+There is no direct edge. Representative route families are:
 
-### Port approaches
+- X2/X3/X4/X5 → Wedge → X6/X7 → Puerto when the landing crossing is available;
+- X2/X3/X4/X5 → Wedge → X1 → camino sur → Puerto when routing through the historic bridge.
 
-1. Entrada / valley road → Puerto, dry on Orilla sur;
-2. X1 far end → camino sur → Puerto, dry after the historic crossing;
-3. Casco / Cuesta → X6/X7 → upstream Puerto edge;
-4. Ribera / paseo → landing head → X6/X7 → upstream Puerto edge.
-
-The last two are route families sharing the same crossing, not extra crossing IDs.
-
-### Loops
-
-- **L1, State 1:** Casco → X1 → camino sur → Puerto → X6 → landing head → Cuesta → Casco.
-- **L1′, State 2:** same, X7 replacing X6.
-
-Every landmass change in both loops is now a named crossing.
-
-### Expansion seams
-
-Six remain. Seam 5 is now downstream **on Orilla sur from Puerto/Entrada**. Seam 6 is the X6→X7
-transition. No seam asks the Wedge to continue through the confluence.
+This is exactly the matrix semantics that the previous ASCII rendering failed to show.
 
 ---
 
-## 4. One inherited audit conclusion was also corrected
+## 5. Files changed in cycle 5
 
-The outgoing circuit-breaker pre-review had concluded that, in high water, Casco↔Ensanche must route
-through the plaza because X5 is submerged.
+Semantic repair:
 
-The transfer repair rechecked the **full graph**, not only the local crossing pair. That absolute is
-also false: a longer plaza-free route already exists through the same edges the candidate otherwise
-uses:
+- `Docs/production/CITY_SPATIAL_CONSTITUTION.md` — version 1.2; selected semantic graph redrawn and
+  explicit no-edge statement added;
+- `Docs/evidence/WP-CITY-00/TOPOLOGY_B_CUNA_CONFLUENCIA.md` — selected-option graph redrawn with the
+  same landmass/edge semantics and repair history extended to cycle 5.
 
-`Casco → Cuesta → landing head → paseo → Ribera → east stairs → Barrio Alto → X3 → Ensanche`.
+Process/evidence refresh:
 
-High water therefore removes the **short** direct X5 bypass and imposes a long detour; it does not make
-the plaza a mandatory connector. `CONNECTIVITY_MATRIX.md` §6 and CSI-03 now say exactly that.
+- `Docs/evidence/WP-CITY-00/WORKER_PRE_REVIEW.md` — fresh cycle-5 pre-review, prior CLEAN superseded;
+- `Docs/evidence/WP-CITY-00/HANDOFF.md` — this handoff.
 
-This is not a new street invented to save the invariant. Every segment was already present in the
-selected graph; the earlier audit simply stopped its reachability analysis too early.
-
----
-
-## 5. Where to read the candidate
-
-| File | Role |
-|---|---|
-| `Docs/production/CITY_SPATIAL_CONSTITUTION.md` | reviewable product constitution and scale envelope |
-| `Docs/evidence/WP-CITY-00/PLANAR_EMBEDDING.md` | landmasses + physical-realizability proof for FAIL 4 |
-| `Docs/evidence/WP-CITY-00/CONNECTIVITY_MATRIX.md` | authoritative crossings, states, availability, routes, loops and seams |
-| `TOPOLOGY_B_CUNA_CONFLUENCIA.md` | selected-option dossier after cycle-4 correction |
-| `TOPOLOGY_A_DOS_ORILLAS.md`, `TOPOLOGY_C_RIBERA_LARGA.md` | rejected alternatives |
-| `COMPARISON_MATRIX.md` | required multi-axis comparison + negative gates |
-| `REFUTATION_LOG.md` | charges, defences, original selection and post-selection FAIL history |
-| `SCALE_ENVELOPE.md` | travel/density/content-cost arithmetic and change conditions |
-| `WORKER_PLAN.md` | current predecessor check, claim boundary and repair rules |
-| `WORKER_PRE_REVIEW.md` | final Worker quality gate for this transferred candidate |
-| `WORKER_TRANSFER.md` | historical state handed from the outgoing Worker |
-
-`PRODUCTION_BLUEPRINT.md` v0.3 remains non-binding and delegates topology/scale to the constitution.
-Its retained-seed and actor-route reasoning remains compatible with the corrected bank choice.
+No code, test, Unity, asset, H0, ART-source or scale-calculation file was changed in this repair.
 
 ---
 
-## 6. Four prior independent FAILs remain part of the record
+## 6. Prior independent review history
 
 1. `b9473f04…` — unauthorized navigability premise / CITY→ART inversion.
 2. `60915843…` — ferry added without reconciling graph/closure semantics.
-3. `daefc6a1…` — false availability absolute despite 2→1→0 table.
-4. `d2d5f7a…` — authoritative matrix itself physically impossible at the confluence.
+3. `daefc6a1…` — false single-crossing availability absolute.
+4. `d2d5f7a…` — physically impossible dry continuation of the Wedge past the confluence.
+5. `bc9f1c85…` — semantic graph visually reintroduced a forbidden Ensanche→Puerto edge.
 
-`fail_cycle` remains **4**. No transfer or repair resets it, and none of those candidates is presented
-as accepted.
+All five remain part of the record. `fail_cycle` is **5**; no repair resets it.
 
 ---
 
 ## 7. Validation / proof boundary
 
-CITY is non-foundational. No canonical `WP-HK-*` exact-SHA validation entrypoint applies here.
-`Mode: PROCESS_ONLY` can therefore produce a synthetic green receipt; that receipt is **not semantic
-proof** of this spatial constitution.
+CITY is non-foundational. `PROCESS_ONLY` validation can produce a synthetic green receipt but cannot
+prove spatial semantics.
 
-The meaningful Worker evidence is the WP acceptance walkthrough, complete diff/scope check,
-planar-realizability audit, connectivity counts and strict Worker pre-review.
+The meaningful Worker evidence for this cycle is:
 
-The independent Reviewer must reconstruct the candidate and challenge the source data itself rather
-than trusting this handoff or the Worker's matrix conclusions.
+- reproduction of review #5261646488's graph contradiction;
+- exact comparison against `CONNECTIVITY_MATRIX.md` and `PLANAR_EMBEDDING.md`;
+- explicit landmass partition in both semantic graphs;
+- state/count and route regression audit;
+- fresh `WORKER_PRE_REVIEW.md` marked CLEAN only after those checks.
+
+The independent Reviewer should still reconstruct the exact frozen SHA and challenge the drawings
+against the matrix rather than trusting this handoff.
 
 ---
 
-## 8. Product risks deliberately left to downstream owners
+## 8. Downstream risks deliberately left open
 
-- walk-time values and 1.15 m/s effective speed remain hypotheses for CITY-04 measurement;
-- verticality/readability remains a CITY-01/CITY-04 risk;
-- the 830-building estimate depends on planning coverage/footprint assumptions;
-- Topology A's rejection remains coupled to the small-city scale and must reopen above roughly 0.7 km²;
-- State-1 high water removes X6 and makes Puerto a long X1+camino-sur detour;
-- CITY-02 still has to place at least two ordinary non-port services at Entrada/Puerto;
-- exact seed boundary belongs to CITY-03;
-- timing of State 1→2 remains unassigned.
+Unchanged:
 
-Those are residual/product questions, not hidden claims of this WP.
+- measured walk times and effective speed belong to CITY-04;
+- verticality/readability and route-cost detail belong to CITY-01/CITY-04;
+- CITY-02 must place ordinary non-port services at Entrada/Puerto;
+- CITY-03 owns the exact retained seed boundary;
+- State 1→2 timing remains unassigned;
+- Topology A must reopen if the dense city grows far beyond the selected small-city envelope.
+
+None of those creates a hidden direct Ensanche↔Puerto connection.
 
 ---
 
 ## 9. Reviewer boundary
 
-This session is the receiving **Worker**. It must not act as independent Reviewer of the candidate it
-prepared.
+This session is the **Worker** and must not independently review its own candidate.
 
-Once the PR body records `Worker pre-review: CLEAN`, exact `Frozen candidate SHA`, `Branch frozen:
-YES`, and the PR is Ready, the next action is a **fresh independent Reviewer** on that exact SHA.
+After this commit, PR #65 must record the exact new `Candidate HEAD SHA` / `Frozen candidate SHA`,
+`Worker pre-review: CLEAN`, `Branch frozen: YES`, `fail_cycle: 5`, and return to Ready for a **fresh
+independent Reviewer**.
 
 No CITY-01 work has begun.
