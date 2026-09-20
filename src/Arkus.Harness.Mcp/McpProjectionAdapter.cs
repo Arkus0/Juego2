@@ -95,15 +95,7 @@ namespace Arkus.Harness.Mcp
             RequestContext<CallToolRequestParams> request,
             CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var parameters = request.Params ?? throw new McpException("MCP tools/call requires parameters.");
-            var projected = DescribeCapabilities();
-            var descriptor = projected.FirstOrDefault(value => string.Equals(value.ToolName, parameters.Name, StringComparison.Ordinal));
-            if (descriptor == null)
-            {
-                throw new McpException("Unknown MCP tool name. Rediscover tools from this server before invocation.");
-            }
-
             var arguments = new Dictionary<string, object?>(StringComparer.Ordinal);
             if (parameters.Arguments != null)
             {
@@ -115,14 +107,12 @@ namespace Arkus.Harness.Mcp
 
             var timeoutMilliseconds = ReadTimeoutMilliseconds(parameters.Meta);
             var jsonRpcId = request.JsonRpcRequest.Id.ToString();
-            var neutralRequest = new NeutralProjectionRequest(
-                "mcp:" + jsonRpcId,
-                descriptor.Definition.Key.Name,
-                ContractVersionRange.Exact(descriptor.Definition.Key.Version),
+            var outcome = await InvokeProjectedAsync(
+                parameters.Name,
                 arguments,
-                timeoutMilliseconds);
-
-            var outcome = await _projection.InvokeAsync(neutralRequest, cancellationToken).ConfigureAwait(false);
+                "mcp:" + jsonRpcId,
+                timeoutMilliseconds,
+                cancellationToken).ConfigureAwait(false);
             var outcomeData = outcome.ToData();
             var structured = JsonSerializer.SerializeToElement(outcomeData);
             var text = JsonSerializer.Serialize(outcomeData);
@@ -135,6 +125,33 @@ namespace Arkus.Harness.Mcp
                     new TextContentBlock { Text = text }
                 }
             };
+        }
+
+        internal Task<NeutralProjectionOutcome> InvokeProjectedAsync(
+            string toolName,
+            IReadOnlyDictionary<string, object?> arguments,
+            string requestId,
+            int? timeoutMilliseconds,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(toolName)) throw new ArgumentException("MCP tool name is required.", nameof(toolName));
+            if (arguments == null) throw new ArgumentNullException(nameof(arguments));
+            if (string.IsNullOrWhiteSpace(requestId)) throw new ArgumentException("Neutral request ID is required.", nameof(requestId));
+
+            var descriptor = DescribeCapabilities()
+                .FirstOrDefault(value => string.Equals(value.ToolName, toolName, StringComparison.Ordinal));
+            if (descriptor == null)
+            {
+                throw new McpException("Unknown MCP tool name. Rediscover tools from this server before invocation.");
+            }
+
+            var neutralRequest = new NeutralProjectionRequest(
+                requestId,
+                descriptor.Definition.Key.Name,
+                ContractVersionRange.Exact(descriptor.Definition.Key.Version),
+                arguments,
+                timeoutMilliseconds);
+            return _projection.InvokeAsync(neutralRequest, cancellationToken);
         }
 
         private static Tool ToTool(McpProjectedCapability projected)
