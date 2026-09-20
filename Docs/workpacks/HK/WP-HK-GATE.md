@@ -1,9 +1,22 @@
 # WP-HK-GATE — AI authoring readiness gate
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL GATE  
-Depends on: `WP-HK-10`  
+Depends on: `WP-HK-10` ✅ COMPLETE  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+Baseline SHA: `290f92e9c21f1e454e0d6924b29f4d778b9875f8`
+Implementation PR: `#64`
+
+Completion:
+- Reviewed candidate SHA: `0fa3d4fb039a3d0049cea0f3eed1c83128ec7dcd`
+- Independent Reviewer verdict: `PASS`
+- Reviewer evidence: PR review `#5261636151`
+- Deterministic exact-SHA observation: GREEN (`Arkus Candidate Validation` run `35533486939`)
+- Exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35534660950`)
+- Independent AI-agent MCP trial: PASS (PR comment `#5752332211`)
+- Merge SHA: `048d2e449d5ff81e8bcc35bc15664ea4ceec18ca`
+- Completed: `2026-09-20`
+- Repair cycles: `1`; prior frozen SHA `2c0df70c1ec8245999e4d144e710816d2f7eb335` failed review `#5261512538` because residual reconciliation did not consume the full accepted HK10 universe and the GATE-owned omission control protected only a declarative label rather than the real stage-14 execution. The accepted repair closes both proof-boundary defects without adding product semantics.
 
 ## Objective
 
@@ -79,10 +92,18 @@ The gate FAILs if any of these occur:
 
 Gate evidence must include exact candidate SHA, clean-checkout commands, canonical discovered capability inventory, transport-conformance results, scenario transcripts, state hashes, semantic diffs, provenance/journal output, stale-conflict recovery transcript/anchors, HK08A batch metrics for the representative coherent edit, HK08B interaction metrics/budgets, HK09A capability-boundary evidence, HK09B limit/persistence evidence, bounded-session resource metrics, negative-conformance test summary, dependency/IP inventory for material H0 dependencies, reference-client result and independent AI trial transcript.
 
+## Accepted gate result
+
+The accepted candidate closes the full 14-stage readiness scenario on the exact frozen SHA through the public reference path, re-executes the accepted cross-transport, interaction-budget, host-authority, resource/persistence, endurance and full-regression surfaces, and preserves the HK01→HK10 semantic ownership boundaries rather than adding a new product subsystem at the gate.
+
+The external AI-agent trial independently launched the exact-SHA self-contained MCP artifact, performed public `tools/list` discovery before product calls, derived argument shapes from returned schemas, completed plan/dry-run/apply and public inspection, consumed a structured invalid-state diagnostic, demonstrated no partial commit, repaired the request, validated the result and closed with snapshot/journal evidence without implementation-source access or hidden/private product calls.
+
+The accepted repair also closes the two earlier Reviewer proof blockers: `RESIDUAL_RISK.md` consumes all 53 HK10 handoff rows and exact-SHA verification checks ID + classification equality against the predecessor handoff; G1 removes the real unfiltered stage-14 execution while preserving its declarative label and must RED through the same executable-wiring oracle used on the normal path. Effective foundational proof is `READY`, with zero unresolved proof obligations and zero known undetected in-boundary defect classes.
+
 ## PASS consequence
 
-Only after an independent Reviewer PASS on the exact gate SHA may the roadmap author and begin detailed Engine Bridge / Unity-first workpacks.
+Independent Reviewer PASS on the exact gate SHA has now been obtained. H0 is complete and the roadmap may author detailed Engine Bridge / Unity-first workpacks.
 
 A PASS does **not** authorize gameplay implementation directly; Unity must first receive its own downstream parity/bridge gate.
 
-Per-resource concurrency, automatic disjoint-write merge, multi-process writer coordination and multi-agent scheduling remain post-GATE product work unless the gate itself produced measured evidence that one of them is required for the representative single-client authoring contract. A theoretical future multi-agent scenario alone is not a reason to delay the gate. The post-GATE H0S scale/concurrency track in `Docs/ROADMAP.md` is the default home for measured follow-up that is not required to start H1.
+Per-resource concurrency, automatic disjoint-write merge, multi-process writer coordination and multi-agent scheduling remain post-GATE product work unless the gate itself produced measured evidence that one of them is required for the representative single-client authoring contract. The accepted GATE produced no such blocker. The post-GATE H0S scale/concurrency track in `Docs/ROADMAP.md` remains the default home for measured follow-up and may run in parallel with H1.

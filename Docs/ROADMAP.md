@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.26 — 2026-09-20
+Version: 1.27 — 2026-09-20
 
 ## North star
 
@@ -8,7 +8,7 @@ Build an engine-agnostic, commercially viable AI-native game-authoring platform 
 
 A fresh AI agent, without C# implementation knowledge, must be able to discover available capabilities and safely create, inspect, modify, validate, diff, replay and test a representative world through stable machine-readable contracts.
 
-**No serious game production begins before `WP-HK-GATE` passes.**
+**H0 / `WP-HK-GATE` has passed. Detailed Engine Bridge / Unity-first H1 workpack authoring is now permitted; gameplay implementation remains blocked until the downstream Unity bridge/parity gate.**
 
 Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Robustness work in H0 is repository-local testing of the harness's own code, fixtures and contracts. New work uses the neutral negative-conformance terminology defined in `AGENTS.md`.
 
@@ -40,9 +40,9 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 # H0 — Harness Kernel
 
-All H0 workpacks are foundational and must pass independent review before the next begins.
+All H0 workpacks are foundational and require independent review before acceptance.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B`, `WP-HK-08A`, `WP-HK-08B`, `WP-HK-09A`, `WP-HK-09B` and `WP-HK-10` are COMPLETE.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B`, `WP-HK-08A`, `WP-HK-08B`, `WP-HK-09A`, `WP-HK-09B`, `WP-HK-10` and `WP-HK-GATE` are COMPLETE. H0 is complete.
 
 `WP-HK-05` PR `#26` passed independent review on frozen candidate `23a9fd4373a803187cd9391b1459cd48975177f6` (review `#5257350871`), exact-SHA candidate observation Actions `35464742544` GREEN, freeze validation Actions `35464834162` GREEN, and merged as `ed65661680aea2a9be79f892c96aa42bf788a842` on 2026-09-19. Two prior frozen candidates failed in the same aggregate-validation-under-ambiguous-identity class; the circuit breaker triggered a causal architecture re-audit, and the accepted candidate uses dependency-local ambiguity deferral rather than global suppression.
 
@@ -66,11 +66,13 @@ Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, 
 
 `WP-HK-10` PR `#60` passed independent review on frozen candidate `813ccf08e33fdd77a34c59da5ed766882840cbee` (review `#5261301248`), exact-SHA freeze validation Actions `35527218067` GREEN, and merged as `f893ad51d756090eeecac41b8fc7cb14f8bd359a` on 2026-09-20. The accepted closure supplies deterministic property/robustness coverage, twelve causal negative-conformance controls spanning the named H0 foundational layers, a frozen Protocol v1 compatibility corpus, bounded 512-transaction endurance with fresh-session recovery inside HK09B limits, deterministic conflicting-writer recovery and complete residual-ledger reconciliation with zero unclassified residuals and zero known undetected in-boundary defect classes. One earlier frozen candidate failed because closure had introduced structured thrown-handler public semantics as HK10-owned behavior; the accepted repair obeys the closure-only rule by reopening/amending HK01 as causal owner of `contract.handler_failure` / `contract.handler_failure_after_publication` while HK10 consumes that owner proof as fault-injection evidence.
 
+`WP-HK-GATE` PR `#64` passed independent review on frozen candidate `0fa3d4fb039a3d0049cea0f3eed1c83128ec7dcd` (review `#5261636151`), deterministic exact-SHA observation Actions `35533486939` GREEN, frozen exact-SHA validation Actions `35534660950` GREEN, and merged as `048d2e449d5ff81e8bcc35bc15664ea4ceec18ca` on 2026-09-20. The accepted gate closes the full 14-stage public readiness scenario, including bounded recovery, coherent batching, snapshot/journal/replay/diff, cross-transport equivalence, HK09A authority, HK09B resource/persistence boundaries, HK10 endurance and full headless validation. A fresh independent AI-agent MCP trial on the same exact SHA used public discovery/schemas only, completed the representative authoring/diagnostic/repair flow with no hidden/private product call, and closed with snapshot/journal evidence. One earlier frozen candidate failed because residual reconciliation was incomplete and the GATE-owned omission control attacked only a declarative label; the accepted repair mechanically reconciles all 53 HK10 residual rows and causally removes/detects the real stage-14 execution. No new product semantics were introduced by GATE.
+
 Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
 Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-Next dependency-valid workpack: `WP-HK-GATE — AI authoring readiness gate`.
+No H0 workpack remains. Next product action: author the detailed H1 Engine Bridge / Unity-first workpack sequence from the accepted H0 boundary. No H1 implementation workpack is frozen yet, so DocSync does not invent a `WP-H1-*` identifier.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -92,7 +94,7 @@ Next dependency-valid workpack: `WP-HK-GATE — AI authoring readiness gate`.
 | 16 | `WP-HK-09A` ✅ COMPLETE | Capability containment: filesystem/network/process authority and below-transport policy |
 | 17 | `WP-HK-09B` ✅ COMPLETE | Resource/input limits plus import/persistence interruption integrity |
 | 18 | `WP-HK-10` ✅ COMPLETE | Strict property/malformed-input/fault-injection quality closure + bounded endurance |
-| 19 | `WP-HK-GATE` | End-to-end AI-authoring readiness benchmark on a representative micro-world |
+| 19 | `WP-HK-GATE` ✅ COMPLETE | End-to-end AI-authoring readiness benchmark on a representative micro-world |
 
 ## H0 interaction/concurrency decision
 
@@ -106,15 +108,15 @@ Batching is the primary H0 mitigation for whole-world commit cost. HK08A accepte
 
 Serializing commit execution can protect the mutation authority from simultaneous publication, but it does **not** make an already planned stale request current. HK08B supplies deterministic rejection/recovery/re-plan semantics for that case; a further writer may still make the retry stale again, which is handled by the same optimistic-CAS loop rather than hidden merge.
 
-Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling remain post-GATE product work. HK08B's accepted benchmark did not promote them into H0; HK10 subsequently stress-tested the accepted whole-world stale/conflict recovery semantics without adding hidden merge. Only later GATE/H1/H0S product evidence may justify revisiting CAS granularity or coordination semantics.
+Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling remain post-GATE product work. HK08B's accepted benchmark did not promote them into H0; HK10 stress-tested the accepted whole-world stale/conflict recovery semantics without adding hidden merge, and HK-GATE found no measured reason to make finer concurrency a precondition for H1. Later H1/H0S evidence may justify revisiting CAS granularity or coordination semantics.
 
-HK08A passed reference-transport ↔ MCP conformance for batching/compact/pagination semantics, HK08B separately passed it for recovery semantics, and HK09B passes it for successfully framed neutral resource-limit/error semantics. Physical malformed/oversized JSONL framing remains governed by the frozen HK07A transport contract and is intentionally not redefined as a neutral resource error.
+HK08A passed reference-transport ↔ MCP conformance for batching/compact/pagination semantics, HK08B separately passed it for recovery semantics, and HK09B passes it for successfully framed neutral resource-limit/error semantics. HK-GATE composed those accepted surfaces in the final readiness proof and added an independent external MCP client trial without changing canonical authority. Physical malformed/oversized JSONL framing remains governed by the frozen HK07A transport contract and is intentionally not redefined as a neutral resource error.
 
-HK09A constrains the production H0 host-power envelope beneath those transports and HK09B adds the finite machine-readable resource/publication envelope beneath the same neutral boundary. HK10 has now completed strict closure over those accepted guarantees, including fault injection, compatibility, bounded endurance and residual classification, without inventing a replacement architecture.
+HK09A constrains the production H0 host-power envelope beneath those transports and HK09B adds the finite machine-readable resource/publication envelope beneath the same neutral boundary. HK10 completed strict closure over those accepted guarantees; HK-GATE then proved the composed public path and H0→Engine Bridge boundary without inventing a replacement architecture.
 
-### H0 exit criteria
+### H0 exit criteria — ACCEPTED
 
-`WP-HK-GATE` is now the dependency-valid final H0 proof. In addition to correctness/replay/transport neutrality, it must demonstrate bounded same-lineage stale-plan recovery, an atomic representative batch inside the accepted HK09B resource budget, explicit capability containment from HK09A, bounded long-session resource behaviour accepted by HK10, and a fresh AI-agent trial using public discovered contracts. Multi-agent throughput and automatic concurrent merge are explicitly not H0 gate criteria unless measured gate evidence reclassifies them.
+`WP-HK-GATE` was the final H0 proof and has passed on exact frozen SHA `0fa3d4fb039a3d0049cea0f3eed1c83128ec7dcd`. H0 has demonstrated correctness/replay/transport neutrality, bounded same-lineage stale-plan recovery, an atomic representative batch inside the accepted HK09B resource budget, explicit capability containment from HK09A, bounded long-session resource behaviour accepted by HK10, full headless validation and a fresh AI-agent trial using public discovered contracts. Multi-agent throughput and automatic concurrent merge remain outside H0 because the accepted gate produced no measured evidence requiring them for the representative authoring contract.
 
 ---
 
@@ -122,7 +124,7 @@ HK09A constrains the production H0 host-power envelope beneath those transports 
 
 `WP-HK-GATE` validates the correctness and usability foundation; it is not a claim that whole-world work or serialized writer semantics are the final commercial scaling architecture.
 
-After GATE, a dedicated scale/concurrency track may run in parallel with H1 Unity integration. It is **not a prerequisite for starting H1** unless measured GATE/H1 evidence shows the representative product cannot operate acceptably without it.
+After GATE, a dedicated scale/concurrency track may run in parallel with H1 Unity integration. It is **not a prerequisite for starting H1** unless measured H1/H0S evidence shows the representative product cannot operate acceptably without it.
 
 This track begins from evidence, not a predetermined implementation. Trigger measurements include authored object count, whole-world validation/hash cost, p50/p95 commit latency, stale-plan rate, bounded-recovery cost, simultaneous-writer collision rate, memory growth and the amount of state a client must read to preserve intent.
 
@@ -134,11 +136,13 @@ The commercial target is therefore two-layered: H0 provides a simple globally co
 
 ---
 
-# H1 — Engine Bridge Foundation: Unity First (blocked by H0)
+# H1 — Engine Bridge Foundation: Unity First
 
-Only after `WP-HK-GATE` PASS. Detailed H1 WPs not frozen yet.
+`WP-HK-GATE` has passed. Detailed H1 workpacks may now be authored and independently frozen/reviewed; none is frozen by this DocSync.
 
 The first H1/scoped-extension producer work must preserve the HK02A opaque-kernel boundary while removing an avoidable AI footgun: when a schema-aware producer/codec understands references embedded in its payload, it must derive the corresponding typed dependency surface mechanically from the structured input it serializes. The AI should not normally be responsible for manually keeping opaque payload references and `dependencies` synchronized. Direct opaque payload + dependency authoring remains a low-level primitive; the engine-agnostic kernel still does not introspect arbitrary payload bytes.
+
+H1 must establish a Unity Engine Bridge / parity boundary before gameplay implementation is authorized. H0 acceptance is inherited; H1 must map and exercise it rather than redefine canonical semantics inside Unity.
 
 ---
 
@@ -171,7 +175,7 @@ Art **direction** only. Does not block H0. Not bound by `FOUNDATIONAL_PROOF_STAN
 
 Deliverables: `Docs/art/VISUAL_BIBLE.md`, `Docs/art/SETTING.md`, `Docs/art/Refs/**`, `Docs/workpacks/ART/WP-ART-00.md`, `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`.
 
-Art *content* (import packs, scenes) remains blocked by H0 gate and Unity parity gate.
+Art *content* (import packs, scenes) is no longer blocked by H0, but remains blocked by the Unity bridge/parity gate and the relevant downstream H1/H2 workpacks.
 
 ---
 
@@ -181,5 +185,5 @@ Art *content* (import packs, scenes) remains blocked by H0 gate and Unity parity
 2. Proof-universe self-shrink triggers immediate proof-boundary re-audit.
 3. Prefer independent oracles over endless syntax-path enumeration.
 4. No downstream WP patches around a false predecessor claim.
-5. No feature pressure may waive the harness gate.
+5. No feature pressure may bypass accepted harness guarantees or downstream Engine Bridge / Unity parity gates.
 6. No external framework adopted merely to save time if it reduces Arkus scope, neutrality or viability.
