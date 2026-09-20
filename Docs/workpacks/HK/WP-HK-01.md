@@ -14,7 +14,7 @@ Completion:
 - Exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35435429932`)
 - Merge SHA: `24d761ba0bc33a70fc06e5ea351054b5d3c51488`
 - Completed: `2026-09-19`
-- Causal dispatch-failure amendment: review vehicle `PR #60` / `WP-HK-10` repair cycle 1. This amendment is not independently accepted until the exact amended candidate receives fresh Reviewer PASS.
+- Causal dispatch-failure amendment: ACCEPTED on reviewed candidate `813ccf08e33fdd77a34c59da5ed766882840cbee` through PR `#60` / HK10 repair cycle 1; independent PASS review `#5261301248`; exact-SHA freeze validation Actions `35527218067` GREEN; merged as `f893ad51d756090eeecac41b8fc7cb14f8bd359a` on `2026-09-20`.
 
 ## Objective
 
@@ -85,7 +85,7 @@ The amended HK01 contract is:
 
 Owner proof is `Hk01DispatchFailureContractTests`, which exercises both the pre-publication and post-publication branches directly at the canonical dispatcher without registering an extra public route. HK10 may inject thrown accepted handlers/validators as closure evidence, but those tests consume this HK01-owned outcome instead of defining it.
 
-The amendment becomes binding only when the exact candidate containing this section, the dispatcher behavior and the HK01 owner tests receives fresh independent PASS. Until then, the original HK01 completion metadata remains historical evidence and must not be misread as prior acceptance of this amendment.
+The amendment is binding as of the independent PASS on exact candidate `813ccf08e33fdd77a34c59da5ed766882840cbee` (PR `#60`, review `#5261301248`), whose exact-SHA freeze validation `35527218067` was GREEN and which merged as `f893ad51d756090eeecac41b8fc7cb14f8bd359a`.
 
 ## Required self-attacks
 
