@@ -187,11 +187,14 @@ namespace Arkus.Harness.Protocol
 
         public static InvocationResourceBudget Start(CancellationToken cancellationToken = default)
         {
-            var now = Environment.TickCount64;
+            var now = System.Diagnostics.Stopwatch.GetTimestamp();
+            var duration = (long)Math.Ceiling(
+                H0ResourceEnvelope.MaximumExecutionMilliseconds *
+                (double)System.Diagnostics.Stopwatch.Frequency / 1000d);
             return new InvocationResourceBudget(
                 cancellationToken,
-                checked(now + H0ResourceEnvelope.MaximumExecutionMilliseconds),
-                () => Environment.TickCount64,
+                checked(now + duration),
+                System.Diagnostics.Stopwatch.GetTimestamp,
                 null,
                 true);
         }
