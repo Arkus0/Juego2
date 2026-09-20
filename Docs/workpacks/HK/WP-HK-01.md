@@ -14,6 +14,7 @@ Completion:
 - Exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35435429932`)
 - Merge SHA: `24d761ba0bc33a70fc06e5ea351054b5d3c51488`
 - Completed: `2026-09-19`
+- Causal dispatch-failure amendment: review vehicle `PR #60` / `WP-HK-10` repair cycle 1. This amendment is not independently accepted until the exact amended candidate receives fresh Reviewer PASS.
 
 ## Objective
 
@@ -69,6 +70,23 @@ HK01 does not implement Unity or choose concrete engine APIs. Its obligation is 
 - The completeness universe is independently/effectively enumerable: removing or unregistering a public route cannot make both the capability and its proof obligation disappear.
 - Contract projection tests prove a generated/projection artifact cannot silently omit a canonical capability or alter semantic schema meaning.
 
+## Canonical handler-failure amendment
+
+HK10 closure produced concrete evidence that the accepted HK01 dispatcher left one public-runtime branch undefined: an exception escaping `route.Handler.Invoke(...)` crossed the canonical dispatch boundary as a raw exception. The semantic owner is HK01 because HK01 owns the canonical dispatcher and structured error model; HK10 only owns fault-injection closure over that contract.
+
+The amended HK01 contract is:
+
+- an exception escaping a canonical handler **before** authoritative publication returns a structured `contract.handler_failure` result rather than escaping the dispatcher;
+- that pre-publication result is non-retryable by default and reports `publicationCommitted=false`, because the dispatcher has no authoritative publication signal from the request budget;
+- an exception escaping a canonical handler **after** `InvocationResourceBudget` records authoritative publication returns `contract.handler_failure_after_publication`, reports `publicationCommitted=true`, and is retryable only through the capability's accepted idempotency/recovery semantics;
+- the public error may identify the canonical capability and exception type for diagnosis, but raw exception message/stack/internal sentinel text must not leak into the public message or repair hint;
+- the post-publication branch must never claim “no effect”: repair guidance directs the client to inspect the current canonical anchor before retrying;
+- successful request/result semantics, capability identities/versions, schemas, mutation authority, transport framing and persistence ownership are unchanged. This amendment defines a previously unspecified dispatcher-failure boundary; it does not add a capability family or second semantic registry.
+
+Owner proof is `Hk01DispatchFailureContractTests`, which exercises both the pre-publication and post-publication branches directly at the canonical dispatcher without registering an extra public route. HK10 may inject thrown accepted handlers/validators as closure evidence, but those tests consume this HK01-owned outcome instead of defining it.
+
+The amendment becomes binding only when the exact candidate containing this section, the dispatcher behavior and the HK01 owner tests receives fresh independent PASS. Until then, the original HK01 completion metadata remains historical evidence and must not be misread as prior acceptance of this amendment.
+
 ## Required self-attacks
 
 RED→GREEN for:
@@ -84,7 +102,9 @@ RED→GREEN for:
 - self-shrinking discovery proof where deleting registry metadata would otherwise erase the proof obligation;
 - synthetic scoped provider attempting to expose a public capability without canonical composition;
 - duplicate/conflicting scoped capability identity or namespace;
-- scoped capability schema attempting to require an implementation/runtime type rather than portable contract data.
+- scoped capability schema attempting to require an implementation/runtime type rather than portable contract data;
+- thrown handler failure escaping the canonical structured-error boundary before publication;
+- thrown handler failure after authoritative publication being mislabeled as a no-effect failure.
 
 ## Forbidden scope
 
@@ -92,4 +112,4 @@ World semantics, mutation behaviour, concrete Unity/DFU APIs or engine packages,
 
 ## DoD
 
-A standalone canonical contract conformance suite can independently enumerate and validate the whole public composed capability surface and its request/success/error contracts, including synthetic scoped-provider composition and rejection of parallel registries; exact-SHA evidence and independent PASS.
+A standalone canonical contract conformance suite can independently enumerate and validate the whole public composed capability surface and its request/success/error contracts, including synthetic scoped-provider composition and rejection of parallel registries; the amended dispatcher additionally has defined structured outcomes on both sides of authoritative publication; exact-SHA evidence and independent PASS.
