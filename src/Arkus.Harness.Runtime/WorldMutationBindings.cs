@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Arkus.Game.Authoring;
 using Arkus.Game.Validation;
+using Arkus.Game.World;
 using Arkus.Harness.Protocol;
 
 namespace Arkus.Harness.Runtime
@@ -20,11 +21,11 @@ namespace Arkus.Harness.Runtime
         {
             if (service == null) throw new ArgumentNullException(nameof(service));
 
-            // Plan/dry-run receive an attenuated facade whose runtime object is not the
-            // authoritative session. Only apply receives the Authoring-owned commit capability.
+            // Plan/dry-run and HK08B recovery reads share the accepted attenuated facade whose
+            // runtime object is not the authoritative session. Only apply retains commit authority.
             var planner = new WorldMutationPlannerView(service);
             var committer = CanonicalWorldMutationAuthority.Bind(service);
-            var recovery = new WorldConflictRecovery(service);
+            var recovery = new WorldConflictRecovery(planner);
             return new List<CapabilityRoute>
             {
                 CapabilityRoute.FromHandler(new WorldChangePlanHandler(planner, recovery)),
@@ -37,19 +38,21 @@ namespace Arkus.Harness.Runtime
     /// <summary>
     /// Capability attenuation boundary: exposes only non-committing authoring operations and
     /// deliberately does not expose or implement canonical commit authority even when the wrapped
-    /// service does. HK05/HK06A/HK06B reuse the same accepted attenuation boundary for validation,
-    /// provenance reads, semantic diff and snapshot export.
+    /// service does. HK05/HK06A/HK06B/HK08B reuse the same accepted attenuation boundary for
+    /// validation, provenance, portability and recovery reads.
     /// </summary>
     internal sealed class WorldMutationPlannerView :
         IWorldMutationService,
         IWorldValidationService,
         IWorldProvenanceService,
-        IWorldPortabilityService
+        IWorldPortabilityService,
+        IWorldConflictRecoverySource
     {
         private readonly IWorldMutationService _service;
         private readonly IWorldValidationService _validation;
         private readonly IWorldProvenanceService _provenance;
         private readonly IWorldPortabilityService _portability;
+        private readonly IWorldStateSource? _stateSource;
 
         public WorldMutationPlannerView(IWorldMutationService service)
         {
@@ -57,6 +60,7 @@ namespace Arkus.Harness.Runtime
             _validation = service as IWorldValidationService ?? new UnavailableWorldValidationService();
             _provenance = service as IWorldProvenanceService ?? new UnavailableWorldProvenanceService();
             _portability = service as IWorldPortabilityService ?? new UnavailableWorldPortabilityService();
+            _stateSource = service as IWorldStateSource;
         }
 
         public CapabilityInvocationResult Plan(IReadOnlyDictionary<string, object?> request)
@@ -92,6 +96,18 @@ namespace Arkus.Harness.Runtime
         public CapabilityInvocationResult ExportSnapshot(IReadOnlyDictionary<string, object?> request)
         {
             return _portability.ExportSnapshot(request);
+        }
+
+        bool IWorldConflictRecoverySource.TryGetCurrent(out WorldState state)
+        {
+            if (_stateSource == null)
+            {
+                state = null!;
+                return false;
+            }
+
+            state = _stateSource.Current;
+            return true;
         }
     }
 
