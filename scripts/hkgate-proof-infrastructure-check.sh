@@ -7,6 +7,7 @@ TEST_SOURCE="${ROOT}/tests/Arkus.Harness.Tests/HkGateReadinessTests.cs"
 
 python3 - "${RUNNER}" "${TEST_SOURCE}" <<'PY'
 from pathlib import Path
+import re
 import sys
 
 runner = Path(sys.argv[1])
@@ -61,9 +62,14 @@ if len(full_validation) != 1:
     raise SystemExit(1)
 
 source = test_source.read_text(encoding="utf-8")
-if source.count('"14-headless-full-validation"') != 1:
+universe = re.search(
+    r"private static readonly string\[\] GateStepUniverse\s*=\s*\{(?P<body>.*?)\n\s*\};",
+    source,
+    flags=re.DOTALL,
+)
+if universe is None or universe.group("body").count('"14-headless-full-validation"') != 1:
     print("HK_GATE_PROOF_INFRA_RED stage-14-universe-label-missing-or-ambiguous", file=sys.stderr)
     raise SystemExit(1)
 
-print("HK_GATE_PROOF_INFRA GREEN stage14_execution_matches=1 stage14_universe_labels=1")
+print("HK_GATE_PROOF_INFRA GREEN stage14_execution_matches=1 stage14_universe_entries=1")
 PY
