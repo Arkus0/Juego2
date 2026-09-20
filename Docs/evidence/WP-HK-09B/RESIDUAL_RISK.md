@@ -13,7 +13,7 @@ Inside the claim are:
 - bounded session transaction/import-receipt growth;
 - cooperative execution/cancellation checks at canonical dispatch/publication seams;
 - atomic in-process publication of mutation state+receipt+journal, snapshot state+lineage+receipt+rebase evidence, and replay state+receipts+journal;
-- reference JSONL/MCP equivalence for resource semantics;
+- reference JSONL/MCP equivalence for resource semantics below successfully framed requests;
 - preservation of the accepted 96-operation coherent authoring shape.
 
 ## Non-blocking residuals
@@ -28,7 +28,13 @@ The 5 s execution budget is checked through `InvocationResourceBudget` and befor
 
 ### Adapter framing versus canonical request bytes
 
-Reference JSONL has a larger 2 MiB framing ceiling while canonical argument bytes are limited to 1792 KiB. Malformed, incomplete or impossible transport frames may be rejected before a neutral canonical request exists. HK09B claims semantic equivalence for successfully framed canonical requests and verifies representative bytes/depth/page failures end-to-end; it does not require all malformed transport syntax to share canonical diagnostics.
+`arkus.reference.jsonl@1` remains exactly as frozen by HK07A: a maximum 1,048,576-byte frame and `transport.frame_too_large` for larger input. HK09B does not redefine that transport behavior. Its transport-neutral canonical argument ceiling is 896 KiB, leaving 128 KiB of framing headroom; the cross-transport byte-limit probe therefore fits inside JSONL @1 and reaches the same neutral `resource.request_bytes_exceeded` result as MCP.
+
+Malformed, incomplete or physically oversized transport frames can still be rejected before a neutral canonical request exists and keep their inherited transport diagnostics. HK09B claims semantic equivalence only once a valid request is successfully framed. The machine-readable 1 MiB frame value mirrors the inherited compatibility boundary; the HK07A implementation/test remain the authority for @1 framing semantics.
+
+### Snapshot/base64 compatibility reserve
+
+The canonical world/snapshot limit is 640 KiB. At that maximum, base64 expansion is at most 873,816 characters, leaving 43,688 bytes inside the 896 KiB canonical-argument ceiling for snapshot/import metadata before JSONL framing overhead. This is intentionally conservative so the advertised H0 snapshot envelope remains usable through the inherited reference transport rather than only through MCP.
 
 ### Base64 early estimates
 
@@ -36,7 +42,7 @@ Neutral admission estimates decoded base64 volume to reject clearly oversized pa
 
 ### Future production scale
 
-The H0 world/session ceilings are finite proof/operability bounds, not throughput or scale promises for a complete shipped game. HK10 owns bounded long-session measurement. H1/H2 may provide evidence that specific ceilings require revision; such a change must preserve atomicity rather than silently splitting coherent intents.
+The H0 world/session ceilings are finite proof/operability bounds, not throughput or scale promises for a complete shipped game. HK10 owns bounded long-session measurement. H1/H2 may provide evidence that specific ceilings require revision; such a change must preserve atomicity and transport/version compatibility rather than silently splitting coherent intents or mutating a frozen protocol in place.
 
 ### Multi-process/distributed writers
 
@@ -54,8 +60,8 @@ HK09B should be reopened (rather than merely tuned downstream) if evidence shows
 2. a rejected/expired/interrupted writer changes canonical revision/hash, HK06A journal, idempotency receipt or rebase evidence;
 3. imported state can become visible separately from its fresh lineage/receipt/evidence aggregate;
 4. replay can publish staged state separately from staged provenance;
-5. a valid framed canonical request produces materially different resource semantics between reference JSONL and MCP;
-6. the public machine-readable envelope diverges from the actually enforced H0 limits;
+5. a valid successfully framed canonical request produces materially different resource semantics between reference JSONL and MCP;
+6. the public machine-readable envelope diverges from the actually enforced H0 limits or advertises snapshot/request sizes that cannot traverse the frozen reference transport;
 7. an HK10 bounded-session measurement demonstrates that the declared session ceiling prevents an accepted H0 workflow rather than merely bounding deferred production scale.
 
 ## Blocking audit
