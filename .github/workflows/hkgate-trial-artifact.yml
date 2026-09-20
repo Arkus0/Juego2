@@ -1,0 +1,90 @@
+name: HK GATE Trial Artifact
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/hkgate-trial-artifact.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-trial-artifact:
+    name: Build frozen MCP trial artifact
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      TARGET_SHA: 2c0df70c1ec8245999e4d144e710816d2f7eb335
+      OUT_DIR: artifacts/hkgate-mcp-linux-x64
+    steps:
+      - name: Checkout frozen candidate exactly
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact clean checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Install candidate-pinned .NET SDK
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+
+      - name: Restore candidate exactly
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet --version | tee /tmp/dotnet-version.txt
+          test "$(dotnet --version)" = "8.0.425"
+          dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
+          dotnet restore src/Arkus.Harness.Mcp/Arkus.Harness.Mcp.csproj --locked-mode -r linux-x64 -m:1 --disable-build-servers
+
+      - name: Publish self-contained MCP host
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "${OUT_DIR}"
+          dotnet publish src/Arkus.Harness.Mcp/Arkus.Harness.Mcp.csproj \
+            --configuration Release \
+            --runtime linux-x64 \
+            --self-contained true \
+            --no-restore \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:DebugType=None \
+            -p:DebugSymbols=false \
+            -o "${OUT_DIR}"
+          test -x "${OUT_DIR}/Arkus.Harness.Mcp"
+
+      - name: Bind artifact to candidate and checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "${OUT_DIR}/ARTIFACT_PROVENANCE.txt" <<EOF
+          HK_GATE_TRIAL_ARTIFACT_V1
+          Candidate SHA: ${TARGET_SHA}
+          Build SDK: $(cat /tmp/dotnet-version.txt)
+          Runtime identifier: linux-x64
+          Self-contained: YES
+          Single-file publish: YES
+          Source workflow commit: ${GITHUB_SHA}
+          Source workflow run: ${GITHUB_RUN_ID}
+          Repository: ${GITHUB_REPOSITORY}
+          EOF
+          (cd "${OUT_DIR}" && sha256sum Arkus.Harness.Mcp > SHA256SUMS.txt)
+          cat "${OUT_DIR}/ARTIFACT_PROVENANCE.txt"
+          cat "${OUT_DIR}/SHA256SUMS.txt"
+
+      - name: Upload self-contained trial artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hkgate-mcp-linux-x64-2c0df70c1ec8245999e4d144e710816d2f7eb335
+          path: artifacts/hkgate-mcp-linux-x64
+          if-no-files-found: error
+          retention-days: 14
