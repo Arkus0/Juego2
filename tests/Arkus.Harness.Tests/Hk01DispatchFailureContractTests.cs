@@ -13,7 +13,9 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void HandlerExceptionBeforePublicationBecomesDefinedNonRetryableCanonicalFailure()
         {
-            var contract = ContractWith(new ThrowBeforePublicationHandler());
+            var contract = ContractWith(ThrowingHandler(
+                commitBeforeThrow: false,
+                "HK01_BEFORE_PUBLICATION_SENTINEL"));
 
             var result = contract.Dispatch(
                 "system.describe",
@@ -32,7 +34,9 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void HandlerExceptionAfterPublicationBecomesDefinedRetryableRecoveryFailure()
         {
-            var contract = ContractWith(new ThrowAfterPublicationHandler());
+            var contract = ContractWith(ThrowingHandler(
+                commitBeforeThrow: true,
+                "HK01_AFTER_PUBLICATION_SENTINEL"));
 
             var result = contract.Dispatch(
                 "system.describe",
@@ -50,6 +54,17 @@ namespace Arkus.Harness.Tests
                 "Inspect the current canonical anchor",
                 result.Error!.RepairHint ?? string.Empty,
                 StringComparison.Ordinal);
+        }
+
+        private static ICanonicalCapabilityHandler ThrowingHandler(
+            bool commitBeforeThrow,
+            string sentinel)
+        {
+            var handler = DispatchProxy.Create<ICanonicalCapabilityHandler, ThrowingHandlerProxy>();
+            var proxy = (ThrowingHandlerProxy)(object)handler;
+            proxy.CommitBeforeThrow = commitBeforeThrow;
+            proxy.Sentinel = sentinel;
+            return handler;
         }
 
         private static ComposedContract ContractWith(ICanonicalCapabilityHandler handler)
@@ -96,24 +111,27 @@ namespace Arkus.Harness.Tests
             return new Dictionary<string, object?>(StringComparer.Ordinal);
         }
 
-        private sealed class ThrowBeforePublicationHandler : ICanonicalCapabilityHandler
+        private sealed class ThrowingHandlerProxy : DispatchProxy
         {
-            public CapabilityInvocationResult Invoke(
-                CapabilityInvocationContext context,
-                IReadOnlyDictionary<string, object?> request)
-            {
-                throw new InvalidOperationException("HK01_BEFORE_PUBLICATION_SENTINEL");
-            }
-        }
+            public bool CommitBeforeThrow { get; set; }
+            public string Sentinel { get; set; } = string.Empty;
 
-        private sealed class ThrowAfterPublicationHandler : ICanonicalCapabilityHandler
-        {
-            public CapabilityInvocationResult Invoke(
-                CapabilityInvocationContext context,
-                IReadOnlyDictionary<string, object?> request)
+            protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
             {
-                context.ResourceBudget.MarkPublicationCommitted();
-                throw new InvalidOperationException("HK01_AFTER_PUBLICATION_SENTINEL");
+                if (!string.Equals(targetMethod?.Name, nameof(ICanonicalCapabilityHandler.Invoke), StringComparison.Ordinal) ||
+                    args == null ||
+                    args.Length != 2 ||
+                    !(args[0] is CapabilityInvocationContext context))
+                {
+                    throw new InvalidOperationException("Unexpected HK01 test proxy invocation.");
+                }
+
+                if (CommitBeforeThrow)
+                {
+                    context.ResourceBudget.MarkPublicationCommitted();
+                }
+
+                throw new InvalidOperationException(Sentinel);
             }
         }
     }
