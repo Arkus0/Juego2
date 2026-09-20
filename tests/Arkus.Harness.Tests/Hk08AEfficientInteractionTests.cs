@@ -13,6 +13,8 @@ namespace Arkus.Harness.Tests
     {
         private static readonly ContractVersionRange ExactV1 =
             ContractVersionRange.Exact(new ContractVersion(1, 0));
+        private static readonly ContractVersionRange ExactV2 =
+            ContractVersionRange.Exact(new ContractVersion(2, 0));
 
         [Fact]
         public void RepresentativeNinetySixOperationIntentRemainsOneAtomicTransactionAndOneJournalEntry()
@@ -40,6 +42,7 @@ namespace Arkus.Harness.Tests
             Assert.Equal(24, session.Current.Extensions.Count);
             Assert.Equal(96, session.Current.Objects.Count + session.Current.Extensions.Count);
 
+            // The accepted v1 read remains the complete HK06A artifact.
             var journal = Success(contract, WorldProvenanceContract.ReadName, Empty()).Data!;
             Assert.Equal(WorldProvenanceContract.JournalSchemaId, journal["schemaId"]);
             Assert.Equal(1, Convert.ToInt32(journal["entryCount"]));
@@ -87,7 +90,7 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void JournalPagesReconstructOneAnchoredSequenceWithoutDuplicateOrOmissionAndFailClosedWhenStale()
+        public void JournalV1RemainsCompleteWhileV2PagesAndReconstructsOneAnchoredSequence()
         {
             var initial = EmptyWorld("world.hk08a.journal-pages");
             var session = new TransactionalWorldAuthoringSession(initial);
@@ -100,7 +103,30 @@ namespace Arkus.Harness.Tests
 
             var anchor = session.Current;
             var anchorHash = CanonicalWorldStateCodec.ComputeContentHash(anchor);
-            var first = Success(
+
+            // Direct regression for the Reviewer blocker: the pre-HK08A v1 identity keeps its exact
+            // request semantics (empty request) and returns the complete artifact even above v2's
+            // default page size. Pagination is available only after explicit v2 negotiation.
+            var legacy = Success(contract, WorldProvenanceContract.ReadName, Empty()).Data!;
+            Assert.Equal(WorldProvenanceContract.JournalSchemaId, legacy["schemaId"]);
+            Assert.Equal(55, Convert.ToInt32(legacy["entryCount"]));
+            Assert.Equal(55, List(legacy, "entries").Count);
+            Assert.False(legacy.ContainsKey("pageOffset"));
+            Assert.False(legacy.ContainsKey("nextCursor"));
+            Assert.Empty(WorldProvenanceContract.JournalResultSchema().ValidateValue(legacy));
+
+            var versions = contract.Definitions
+                .Where(value => value.Key.Name == WorldProvenanceContract.ReadName)
+                .Select(value => value.Key.Version.ToString())
+                .ToArray();
+            Assert.Equal(new[] { "1.0", "2.0" }, versions);
+
+            var defaultPaged = SuccessV2(contract, WorldProvenanceContract.ReadName, Empty()).Data!;
+            Assert.Equal(WorldProvenanceContract.JournalPageSchemaId, defaultPaged["schemaId"]);
+            Assert.Equal(WorldProvenanceContract.DefaultPageSize, List(defaultPaged, "entries").Count);
+            Assert.True(defaultPaged.ContainsKey("nextCursor"));
+
+            var first = SuccessV2(
                 contract,
                 WorldProvenanceContract.ReadName,
                 JournalPageRequest(anchor, 20)).Data!;
@@ -111,7 +137,7 @@ namespace Arkus.Harness.Tests
             Assert.Equal(20, List(first, "entries").Count);
             var firstCursor = Assert.IsType<string>(first["nextCursor"]);
 
-            var second = Success(
+            var second = SuccessV2(
                 contract,
                 WorldProvenanceContract.ReadName,
                 new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -123,7 +149,7 @@ namespace Arkus.Harness.Tests
             Assert.Equal(20, List(second, "entries").Count);
             var secondCursor = Assert.IsType<string>(second["nextCursor"]);
 
-            var third = Success(
+            var third = SuccessV2(
                 contract,
                 WorldProvenanceContract.ReadName,
                 new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -147,9 +173,9 @@ namespace Arkus.Harness.Tests
                 Assert.Equal(index + 1L, Convert.ToInt64(reconstructed[index]["sequence"]));
             }
 
-            // A sufficiently large bounded page that covers the complete journal preserves the exact
-            // HK06A artifact shape, so accepted replay/audit consumers do not need a second meaning.
-            var complete = Success(
+            // A sufficiently large v2 page that covers the complete journal preserves the exact
+            // HK06A artifact shape, so accepted replay/audit consumers can recognize the full artifact.
+            var complete = SuccessV2(
                 contract,
                 WorldProvenanceContract.ReadName,
                 JournalPageRequest(anchor, WorldProvenanceContract.MaximumPageSize)).Data!;
@@ -164,7 +190,7 @@ namespace Arkus.Harness.Tests
             ApplyOneObject(contract, session, 55);
             var staleCursor = contract.Dispatch(
                 WorldProvenanceContract.ReadName,
-                ExactV1,
+                ExactV2,
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["limit"] = 20,
@@ -175,7 +201,7 @@ namespace Arkus.Harness.Tests
 
             var staleAnchor = contract.Dispatch(
                 WorldProvenanceContract.ReadName,
-                ExactV1,
+                ExactV2,
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["revision"] = anchor.Revision,
@@ -338,7 +364,24 @@ namespace Arkus.Harness.Tests
             string capability,
             IReadOnlyDictionary<string, object?> request)
         {
-            var result = contract.Dispatch(capability, ExactV1, request);
+            return Success(contract, capability, ExactV1, request);
+        }
+
+        private static CapabilityInvocationResult SuccessV2(
+            ComposedContract contract,
+            string capability,
+            IReadOnlyDictionary<string, object?> request)
+        {
+            return Success(contract, capability, ExactV2, request);
+        }
+
+        private static CapabilityInvocationResult Success(
+            ComposedContract contract,
+            string capability,
+            ContractVersionRange version,
+            IReadOnlyDictionary<string, object?> request)
+        {
+            var result = contract.Dispatch(capability, version, request);
             Assert.True(result.Success, result.Error == null ? "Expected success." : result.Error.MachineCode + ": " + result.Error.Message);
             Assert.NotNull(result.Data);
             return result;
