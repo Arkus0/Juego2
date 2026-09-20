@@ -43,11 +43,18 @@ namespace Arkus.Harness.Tests
             Assert.Equal("update", modification.GetProperty("action").GetString());
             Assert.Equal("world.object:transport.item.000", modification.GetProperty("resource").GetString());
 
+            // Existing v1 clients still negotiate the accepted complete journal contract.
+            var legacyJournal = Equivalent(reference, mcp, "authoring.journal.read", Empty());
+            Assert.Equal("arkus.authoring.journal@1", Result(legacyJournal.Reference).GetProperty("schemaId").GetString());
+            Assert.Equal(2, Result(legacyJournal.Reference).GetProperty("entries").GetArrayLength());
+
+            // HK08A paging is explicitly negotiated as the breaking v2 contract on both transports.
             var firstPage = Equivalent(
                 reference,
                 mcp,
                 "authoring.journal.read",
-                new Dictionary<string, object?>(StringComparer.Ordinal) { ["limit"] = 1 });
+                new Dictionary<string, object?>(StringComparer.Ordinal) { ["limit"] = 1 },
+                "2.0");
             var referencePage = Result(firstPage.Reference);
             var mcpPage = Result(firstPage.Mcp);
             Assert.Equal("arkus.authoring.journal-page@1", referencePage.GetProperty("schemaId").GetString());
@@ -69,7 +76,8 @@ namespace Arkus.Harness.Tests
                 {
                     ["limit"] = 1,
                     ["cursor"] = mcpCursor
-                });
+                },
+                "2.0");
             Assert.Equal(1, Result(secondPage.Reference).GetProperty("pageOffset").GetInt32());
             Assert.False(Result(secondPage.Reference).TryGetProperty("nextCursor", out _));
 
@@ -84,7 +92,7 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void Hk08ACostAndBatchDiscoveryMetadataAreIdenticalAcrossTransports()
+        public void Hk08ACostBatchAndVersionDiscoveryMetadataAreIdenticalAcrossTransports()
         {
             using var reference = new ReferenceClient();
             using var mcp = new McpClient();
@@ -92,12 +100,16 @@ namespace Arkus.Harness.Tests
             var describe = Equivalent(reference, mcp, "system.describe", Empty());
             var referenceCapabilities = Result(describe.Reference).GetProperty("capabilities").EnumerateArray().ToArray();
             var apply = referenceCapabilities.Single(value => value.GetProperty("name").GetString() == "authoring.change.apply");
-            var journal = referenceCapabilities.Single(value => value.GetProperty("name").GetString() == "authoring.journal.read");
+            var journals = referenceCapabilities
+                .Where(value => value.GetProperty("name").GetString() == "authoring.journal.read")
+                .ToArray();
             var summary = referenceCapabilities.Single(value => value.GetProperty("name").GetString() == "world.summary");
 
             Assert.Equal(96, apply.GetProperty("batching").GetProperty("maximumItems").GetInt32());
             Assert.Equal("canonicalmutation", apply.GetProperty("sideEffect").GetString());
-            Assert.Equal("readonly", journal.GetProperty("sideEffect").GetString());
+            Assert.Equal(2, journals.Length);
+            Assert.Equal(new[] { "1.0", "2.0" }, journals.Select(value => value.GetProperty("version").GetString()).ToArray());
+            Assert.All(journals, journal => Assert.Equal("readonly", journal.GetProperty("sideEffect").GetString()));
             Assert.True(summary.GetProperty("cost").GetProperty("relativeWeight").GetInt32() < apply.GetProperty("cost").GetProperty("relativeWeight").GetInt32());
         }
 
@@ -127,9 +139,10 @@ namespace Arkus.Harness.Tests
             IClient reference,
             IClient mcp,
             string capability,
-            object arguments)
+            object arguments,
+            string version = "1.0")
         {
-            return Equivalent(reference, mcp, capability, arguments, arguments);
+            return Equivalent(reference, mcp, capability, arguments, arguments, version);
         }
 
         private static (JsonElement Reference, JsonElement Mcp) Equivalent(
@@ -137,10 +150,11 @@ namespace Arkus.Harness.Tests
             IClient mcp,
             string capability,
             object referenceArguments,
-            object mcpArguments)
+            object mcpArguments,
+            string version = "1.0")
         {
-            var left = reference.Invoke(capability, referenceArguments);
-            var right = mcp.Invoke(capability, mcpArguments);
+            var left = reference.Invoke(capability, referenceArguments, version);
+            var right = mcp.Invoke(capability, mcpArguments, version);
             var issues = NeutralSemanticIssues(left, right);
             Assert.True(
                 issues.Count == 0,
@@ -237,7 +251,7 @@ namespace Arkus.Harness.Tests
 
         private interface IClient : IDisposable
         {
-            JsonElement Invoke(string capability, object arguments);
+            JsonElement Invoke(string capability, object arguments, string version);
         }
 
         private sealed class ReferenceClient : IClient
@@ -252,15 +266,40 @@ namespace Arkus.Harness.Tests
                 _error = _process.StandardError.ReadToEndAsync();
             }
 
-            public JsonElement Invoke(string capability, object arguments)
+            public JsonElement Invoke(string capability, object arguments, string version)
             {
                 var requestId = "hk08a.reference." + (++_sequence).ToString(System.Globalization.CultureInfo.InvariantCulture);
-                _process.StandardInput.WriteLine(Hk07AProcessHarness.Frame(requestId, capability, arguments));
+                _process.StandardInput.WriteLine(Frame(requestId, capability, arguments, version));
                 _process.StandardInput.Flush();
                 var line = _process.StandardOutput.ReadLine();
                 Assert.False(string.IsNullOrWhiteSpace(line), "Reference JSONL process ended before response.");
                 using var document = JsonDocument.Parse(line!);
                 return document.RootElement.GetProperty("response").Clone();
+            }
+
+            private static string Frame(string requestId, string capability, object arguments, string version)
+            {
+                var parts = version.Split('.');
+                Assert.Equal(2, parts.Length);
+                var major = int.Parse(parts[0], System.Globalization.CultureInfo.InvariantCulture);
+                var minor = int.Parse(parts[1], System.Globalization.CultureInfo.InvariantCulture);
+                return JsonSerializer.Serialize(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["protocol"] = "arkus.reference.jsonl@1",
+                    ["request"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["projectionVersion"] = "arkus.neutral-projection@1",
+                        ["requestId"] = requestId,
+                        ["capability"] = capability,
+                        ["acceptedVersions"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+                        {
+                            ["major"] = major,
+                            ["minimumMinor"] = minor,
+                            ["maximumMinor"] = minor
+                        },
+                        ["arguments"] = arguments
+                    }
+                });
             }
 
             public void Dispose()
@@ -307,9 +346,9 @@ namespace Arkus.Harness.Tests
                 }
             }
 
-            public JsonElement Invoke(string capability, object arguments)
+            public JsonElement Invoke(string capability, object arguments, string version)
             {
-                var key = capability + "@1.0";
+                var key = capability + "@" + version;
                 Assert.True(_toolNames.TryGetValue(key, out var toolName), "MCP discovery omitted " + key);
                 var response = Request(
                     "tools/call",
