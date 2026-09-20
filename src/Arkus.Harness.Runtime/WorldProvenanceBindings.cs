@@ -13,12 +13,14 @@ namespace Arkus.Harness.Runtime
 
             // The authoritative session still owns the complete HK06A journal artifact. Public HK08A
             // reads receive the accepted read-only attenuation facade plus a bounded deterministic
-            // paging view; neither layer can acquire canonical commit authority.
+            // paging view. If one bounded page covers the whole journal, the final compatibility view
+            // restores the exact HK06A complete artifact so replay/audit meaning stays unchanged.
             var complete = (IWorldProvenanceService)new WorldMutationPlannerView(service);
             var bounded = (IWorldProvenanceService)new BoundedWorldProvenanceService(complete);
+            var publicRead = (IWorldProvenanceService)new CompleteJournalPreservingProvenanceService(bounded);
             return new List<CapabilityRoute>
             {
-                CapabilityRoute.FromHandler(new WorldProvenanceReadHandler(bounded))
+                CapabilityRoute.FromHandler(new WorldProvenanceReadHandler(publicRead))
             }.AsReadOnly();
         }
     }
