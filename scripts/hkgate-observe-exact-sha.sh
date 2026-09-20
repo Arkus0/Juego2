@@ -13,8 +13,8 @@ if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 
 EVIDENCE_DIR="artifacts/observed/WP-HK-GATE"
 mkdir -p "${EVIDENCE_DIR}"
-export ARKUS_HK_GATE_TRANSCRIPT_OUTPUT="${EVIDENCE_DIR}/reference-scenario.json"
-export ARKUS_HK08B_BENCHMARK_OUTPUT="${EVIDENCE_DIR}/hk08b-interaction-benchmark.json"
+export ARKUS_HK_GATE_TRANSCRIPT_OUTPUT="${ROOT}/${EVIDENCE_DIR}/reference-scenario.json"
+export ARKUS_HK08B_BENCHMARK_OUTPUT="${ROOT}/${EVIDENCE_DIR}/hk08b-interaction-benchmark.json"
 
 test -f tests/Arkus.Harness.Tests/HkGateReadinessTests.cs
 test -f scripts/hkgate-negative-conformance.sh
