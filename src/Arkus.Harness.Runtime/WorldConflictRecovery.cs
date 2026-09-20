@@ -41,10 +41,9 @@ namespace Arkus.Harness.Runtime
                 return result;
             }
 
-            var recovery = Build(expectedRevision, expectedHash);
             var context = new Dictionary<string, object?>(result.Error.Context, StringComparer.Ordinal)
             {
-                ["recovery"] = recovery
+                ["recovery"] = Build(expectedRevision, expectedHash)
             };
 
             return CapabilityInvocationResult.Failed(new StructuredError(
@@ -60,39 +59,37 @@ namespace Arkus.Harness.Runtime
         {
             if (_source == null)
             {
-                return Fallback(
-                    expectedRevision,
-                    expectedHash,
-                    null,
-                    null,
+                return Fallback(expectedRevision, expectedHash, null, null,
                     WorldConflictRecoveryContract.RequiredHistoryUnavailable);
             }
 
+            // One immutable authored snapshot owns both the reported current anchor and resource
+            // presence. A concurrent writer after this read cannot make descriptors disagree with it.
             var currentState = _source.Current;
             var current = Anchor.FromState(currentState);
             if (_provenance == null)
             {
-                return Fallback(
-                    expectedRevision,
-                    expectedHash,
-                    current,
-                    null,
+                return Fallback(expectedRevision, expectedHash, current, null,
                     WorldConflictRecoveryContract.RequiredHistoryUnavailable);
             }
 
             var journalResult = _provenance.ReadJournal(EmptyRequest);
-            if (!journalResult.Success || journalResult.Data == null ||
-                !TryAnchor(journalResult.Data, "base", out var journalBase) ||
-                !TryAnchor(journalResult.Data, "current", out var journalCurrent) ||
+            if (!journalResult.Success || journalResult.Data == null)
+            {
+                return Fallback(expectedRevision, expectedHash, current, null,
+                    WorldConflictRecoveryContract.RequiredHistoryUnavailable);
+            }
+
+            Anchor journalBase;
+            Anchor journalCurrent;
+            if (!TryAnchor(journalResult.Data, "base", out journalBase) ||
+                !TryAnchor(journalResult.Data, "current", out journalCurrent) ||
                 !AnchorsEqual(current, journalCurrent) ||
                 !journalResult.Data.TryGetValue("entries", out var rawEntries) ||
                 !(rawEntries is IReadOnlyList<object?> entries))
             {
-                return Fallback(
-                    expectedRevision,
-                    expectedHash,
-                    current,
-                    journalBase,
+                return Fallback(expectedRevision, expectedHash, current,
+                    TryAnchor(journalResult.Data, "base", out var fallbackBase) ? fallbackBase : null,
                     WorldConflictRecoveryContract.RequiredHistoryUnavailable);
             }
 
@@ -111,26 +108,18 @@ namespace Arkus.Harness.Runtime
                     entryResult.Revision != entryBase.Revision + 1 ||
                     !TryStringList(entry, "affectedResources", out var affectedResources))
                 {
-                    return Fallback(
-                        expectedRevision,
-                        expectedHash,
-                        current,
-                        journalBase,
+                    return Fallback(expectedRevision, expectedHash, current, journalBase,
                         WorldConflictRecoveryContract.RequiredHistoryUnavailable);
                 }
 
-                parsed.Add(new JournalTransition(entryBase, entryResult, affectedResources));
+                parsed.Add(new JournalTransition(entryResult, affectedResources));
                 previous = entryResult;
                 expectedSequence++;
             }
 
             if (!AnchorsEqual(previous, journalCurrent))
             {
-                return Fallback(
-                    expectedRevision,
-                    expectedHash,
-                    current,
-                    journalBase,
+                return Fallback(expectedRevision, expectedHash, current, journalBase,
                     WorldConflictRecoveryContract.RequiredHistoryUnavailable);
             }
 
@@ -154,21 +143,14 @@ namespace Arkus.Harness.Runtime
 
             if (startIndex < 0)
             {
-                return Fallback(
-                    expectedRevision,
-                    expectedHash,
-                    current,
-                    journalBase,
+                return Fallback(expectedRevision, expectedHash, current, journalBase,
                     WorldConflictRecoveryContract.ExpectedBaseNotInCurrentLineage);
             }
 
             var affected = new SortedSet<string>(StringComparer.Ordinal);
             for (var index = startIndex; index < parsed.Count; index++)
             {
-                for (var resourceIndex = 0; resourceIndex < parsed[index].AffectedResources.Count; resourceIndex++)
-                {
-                    affected.Add(parsed[index].AffectedResources[resourceIndex]);
-                }
+                foreach (var resource in parsed[index].AffectedResources) affected.Add(resource);
             }
 
             var changedResources = new List<object?>();
@@ -176,7 +158,7 @@ namespace Arkus.Harness.Runtime
             foreach (var resource in affected)
             {
                 changedResources.Add(resource);
-                currentResources.Add(CurrentResourceDescriptor(resource, current));
+                currentResources.Add(CurrentResourceDescriptor(resource, current, currentState));
             }
 
             return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -195,7 +177,10 @@ namespace Arkus.Harness.Runtime
             });
         }
 
-        private IReadOnlyDictionary<string, object?> CurrentResourceDescriptor(string resource, Anchor current)
+        private static IReadOnlyDictionary<string, object?> CurrentResourceDescriptor(
+            string resource,
+            Anchor current,
+            WorldState state)
         {
             var descriptor = new Dictionary<string, object?>(StringComparer.Ordinal)
             {
@@ -207,16 +192,12 @@ namespace Arkus.Harness.Runtime
             {
                 var id = resource.Substring(objectPrefix.Length);
                 var present = false;
-                if (_source != null)
+                for (var index = 0; index < state.Objects.Count; index++)
                 {
-                    var state = _source.Current;
-                    for (var index = 0; index < state.Objects.Count; index++)
+                    if (string.Equals(state.Objects[index].Id.Value, id, StringComparison.Ordinal))
                     {
-                        if (string.Equals(state.Objects[index].Id.Value, id, StringComparison.Ordinal))
-                        {
-                            present = true;
-                            break;
-                        }
+                        present = true;
+                        break;
                     }
                 }
 
@@ -243,16 +224,12 @@ namespace Arkus.Harness.Runtime
                 if (TryParseExtensionIdentity(identity, out var owner, out var schemaVersion, out var subjectId))
                 {
                     var present = false;
-                    if (_source != null)
+                    for (var index = 0; index < state.Extensions.Count; index++)
                     {
-                        var state = _source.Current;
-                        for (var index = 0; index < state.Extensions.Count; index++)
+                        if (string.Equals(state.Extensions[index].Identity.ResourceKey, identity, StringComparison.Ordinal))
                         {
-                            if (string.Equals(state.Extensions[index].Identity.ResourceKey, identity, StringComparison.Ordinal))
-                            {
-                                present = true;
-                                break;
-                            }
+                            present = true;
+                            break;
                         }
                     }
 
@@ -281,6 +258,8 @@ namespace Arkus.Harness.Runtime
                 }
             }
 
+            // This should not be emitted by the accepted HK06A material-resource vocabulary. Keep
+            // the resource visible instead of silently dropping it; a client can then fall back.
             descriptor["kind"] = "unknown";
             descriptor["presence"] = "unknown";
             descriptor["inspection"] = null;
@@ -294,7 +273,6 @@ namespace Arkus.Harness.Runtime
             Anchor? journalBase,
             string reason)
         {
-            var empty = new List<object?>().AsReadOnly();
             return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
             {
                 ["schemaId"] = WorldConflictRecoveryContract.SchemaId,
@@ -302,8 +280,8 @@ namespace Arkus.Harness.Runtime
                 ["current"] = current == null ? null : current.ToData(),
                 ["disposition"] = WorldConflictRecoveryContract.BoundedReinspectionRequired,
                 ["historyProof"] = HistoryProofData(reason, journalBase, null, null),
-                ["changedResources"] = empty,
-                ["currentResources"] = empty
+                ["changedResources"] = new List<object?>().AsReadOnly(),
+                ["currentResources"] = new List<object?>().AsReadOnly()
             });
         }
 
@@ -384,7 +362,10 @@ namespace Arkus.Harness.Runtime
             if (parts.Length != 3 || string.IsNullOrEmpty(parts[0]) ||
                 !int.TryParse(parts[1], NumberStyles.None, CultureInfo.InvariantCulture, out schemaVersion) ||
                 schemaVersion <= 0)
+            {
                 return false;
+            }
+
             owner = parts[0];
             if (string.Equals(parts[2], "global", StringComparison.Ordinal)) return true;
             const string objectPrefix = "object:";
@@ -396,7 +377,9 @@ namespace Arkus.Harness.Runtime
         private static bool TryString(IReadOnlyDictionary<string, object?> data, string key, out string value)
         {
             value = string.Empty;
-            return data.TryGetValue(key, out var raw) && raw is string text && ((value = text) != null);
+            if (!data.TryGetValue(key, out var raw) || !(raw is string text)) return false;
+            value = text;
+            return true;
         }
 
         private static bool TryInt(IReadOnlyDictionary<string, object?> data, string key, out int value)
@@ -452,14 +435,12 @@ namespace Arkus.Harness.Runtime
 
         private sealed class JournalTransition
         {
-            public JournalTransition(Anchor @base, Anchor result, IReadOnlyList<string> affectedResources)
+            public JournalTransition(Anchor result, IReadOnlyList<string> affectedResources)
             {
-                Base = @base;
                 Result = result;
                 AffectedResources = affectedResources;
             }
 
-            public Anchor Base { get; }
             public Anchor Result { get; }
             public IReadOnlyList<string> AffectedResources { get; }
         }
