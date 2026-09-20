@@ -4,56 +4,33 @@ using Arkus.Harness.Protocol;
 
 namespace Arkus.Game.Authoring
 {
-    /// <summary>Canonical discoverable contract for the HK06A authored mutation journal.</summary>
+    /// <summary>Canonical discoverable contracts for authored mutation provenance.</summary>
     public static class WorldProvenanceContract
     {
         public const string ReadName = "authoring.journal.read";
+        public const string ContractVersionText = "1.1";
         public const string JournalSchemaId = "arkus.authoring.journal@1";
+        public const string JournalPageSchemaId = "arkus.authoring.journal-page@1";
         public const string EntrySchemaId = "arkus.authoring.journal-entry@1";
+        public const int MaximumPageSize = 100;
+        public const int DefaultPageSize = 50;
 
-        private static readonly ContractVersion Version = new ContractVersion(1, 0);
+        private static readonly ContractVersion Version = ContractVersion.Parse(ContractVersionText);
 
         public static IReadOnlyList<CapabilityDefinition> CreateDefinitions()
         {
             return new List<CapabilityDefinition> { DefineRead() }.AsReadOnly();
         }
 
+        /// <summary>
+        /// Complete persisted journal artifact used by accepted HK06 replay/audit semantics.
+        /// HK08A does not redefine this artifact; the public read capability returns bounded pages
+        /// described separately by <see cref="JournalPageResultSchema"/>.
+        /// </summary>
         public static JsonSchemaDocument JournalResultSchema()
         {
             var anchor = AuthoredAnchorSchema();
-            var capability = SchemaNode.Object(
-                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
-                {
-                    ["name"] = SchemaNode.String(new[] { WorldMutationContract.ApplyName }),
-                    ["version"] = SchemaNode.String(new[] { WorldMutationContract.ContractVersionText })
-                },
-                new[] { "name", "version" });
-            var requestIdentity = SchemaNode.Object(
-                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
-                {
-                    ["idempotencyKey"] = SchemaNode.String(),
-                    ["fingerprint"] = SchemaNode.String()
-                },
-                new[] { "idempotencyKey", "fingerprint" });
-            var entry = SchemaNode.Object(
-                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
-                {
-                    ["schemaId"] = SchemaNode.String(new[] { EntrySchemaId }),
-                    ["entryId"] = SchemaNode.String(),
-                    ["sequence"] = SchemaNode.Integer(),
-                    ["capability"] = capability,
-                    ["requestIdentity"] = requestIdentity,
-                    ["request"] = WorldMutationContract.MutationRequestSchema().Root,
-                    ["base"] = anchor,
-                    ["result"] = anchor,
-                    ["affectedResources"] = SchemaNode.Array(SchemaNode.String())
-                },
-                new[]
-                {
-                    "schemaId", "entryId", "sequence", "capability", "requestIdentity",
-                    "request", "base", "result", "affectedResources"
-                });
-
+            var entry = JournalEntrySchema(anchor);
             return new JsonSchemaDocument(SchemaNode.Object(
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
                 {
@@ -65,6 +42,42 @@ namespace Arkus.Game.Authoring
                     ["entries"] = SchemaNode.Array(entry)
                 },
                 new[] { "schemaId", "entrySchemaId", "base", "current", "entryCount", "entries" }));
+        }
+
+        public static JsonSchemaDocument JournalReadRequestSchema()
+        {
+            return new JsonSchemaDocument(SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["revision"] = SchemaNode.Integer(),
+                    ["hash"] = SchemaNode.String(),
+                    ["limit"] = SchemaNode.Integer(),
+                    ["cursor"] = SchemaNode.String()
+                }));
+        }
+
+        public static JsonSchemaDocument JournalPageResultSchema()
+        {
+            var anchor = AuthoredAnchorSchema();
+            var entry = JournalEntrySchema(anchor);
+            return new JsonSchemaDocument(SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["schemaId"] = SchemaNode.String(new[] { JournalPageSchemaId }),
+                    ["journalSchemaId"] = SchemaNode.String(new[] { JournalSchemaId }),
+                    ["entrySchemaId"] = SchemaNode.String(new[] { EntrySchemaId }),
+                    ["base"] = anchor,
+                    ["current"] = anchor,
+                    ["entryCount"] = SchemaNode.Integer(),
+                    ["pageOffset"] = SchemaNode.Integer(),
+                    ["entries"] = SchemaNode.Array(entry),
+                    ["nextCursor"] = SchemaNode.String()
+                },
+                new[]
+                {
+                    "schemaId", "journalSchemaId", "entrySchemaId", "base", "current",
+                    "entryCount", "pageOffset", "entries"
+                }));
         }
 
         public static JsonSchemaDocument RuntimeObservationStampSchema()
@@ -91,27 +104,68 @@ namespace Arkus.Game.Authoring
                 new[] { "worldId", "stateSchemaVersion", "revision", "hash" });
         }
 
+        private static SchemaNode JournalEntrySchema(SchemaNode anchor)
+        {
+            var capability = SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["name"] = SchemaNode.String(new[] { WorldMutationContract.ApplyName }),
+                    ["version"] = SchemaNode.String(new[] { WorldMutationContract.ContractVersionText })
+                },
+                new[] { "name", "version" });
+            var requestIdentity = SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["idempotencyKey"] = SchemaNode.String(),
+                    ["fingerprint"] = SchemaNode.String()
+                },
+                new[] { "idempotencyKey", "fingerprint" });
+            return SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["schemaId"] = SchemaNode.String(new[] { EntrySchemaId }),
+                    ["entryId"] = SchemaNode.String(),
+                    ["sequence"] = SchemaNode.Integer(),
+                    ["capability"] = capability,
+                    ["requestIdentity"] = requestIdentity,
+                    ["request"] = WorldMutationContract.MutationRequestSchema().Root,
+                    ["base"] = anchor,
+                    ["result"] = anchor,
+                    ["affectedResources"] = SchemaNode.Array(SchemaNode.String())
+                },
+                new[]
+                {
+                    "schemaId", "entryId", "sequence", "capability", "requestIdentity",
+                    "request", "base", "result", "affectedResources"
+                });
+        }
+
         private static CapabilityDefinition DefineRead()
         {
             return new CapabilityDefinition(
                 new CapabilityKey(ReadName, Version),
                 new ProviderMetadata("arkus.base", ProviderKind.Base, "base", "authoring"),
-                CanonicalContractSchemas.EmptyObject(),
-                JournalResultSchema(),
+                JournalReadRequestSchema(),
+                JournalPageResultSchema(),
                 CanonicalContractSchemas.StructuredError(),
                 SideEffectClass.ReadOnly,
                 DeterminismClass.Deterministic,
                 Array.Empty<string>(),
-                new[] { "journal-reflects-only-persisted-authored-mutations", "canonical-authored-state-unchanged" },
+                new[]
+                {
+                    "journal-page-preserves-persisted-sequence-order",
+                    "page-is-bound-to-one-authored-revision-and-hash",
+                    "canonical-authored-state-unchanged"
+                },
                 new ConcurrencySemantics(ConcurrencyClass.ParallelSafe),
                 new IdempotencySemantics(IdempotencyClass.Idempotent),
                 new BatchingSemantics(BatchingClass.Unsupported),
-                new RepairSemantics(false, true),
+                new RepairSemantics(true, true),
                 new PolicySemantics(
                     PrivilegeClass.Authoring,
                     TransactionRequirement.ReadOnlyEnvelope,
                     ProvenanceRequirement.Minimal),
-                new CostSemantics(2, "read deterministic session-local authored mutation provenance"));
+                new CostSemantics(2, "bounded deterministic page over session-local authored mutation provenance"));
         }
     }
 }
