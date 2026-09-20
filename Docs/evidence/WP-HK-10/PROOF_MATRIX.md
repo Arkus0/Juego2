@@ -1,7 +1,7 @@
 # WP-HK-10 proof matrix
 
 WP: `WP-HK-10 — Strict quality closure`
-Boundary: accepted H0 harness semantics through HK09B; closure-only, no new product-semantic capability family.
+Boundary: accepted H0 harness semantics through HK09B, plus the explicitly reopened HK01 dispatcher-failure amendment reviewed on the same exact candidate; HK10 itself remains closure-only and adds no product-semantic capability family.
 
 | Acceptance obligation | Executable/evidence proof | Why the oracle is independent enough |
 |---|---|---|
@@ -11,7 +11,7 @@ Boundary: accepted H0 harness semantics through HK09B; closure-only, no new prod
 | Query determinism/canonical order | Seeded repeated-query property plus `Hk10InspectionOrderingTests.ObjectQueryOrderMatchesIndependentOrdinalIdOracle` | Repeatability is checked separately from canonical order. Expected IDs are independently ordinal-sorted from source state; reversing implementation query order must RED this oracle. |
 | Replay equivalence | `SeededReplayProducesEquivalentFinalStateAndProvenanceIdentity` | Source and fresh target sessions are compared by final canonical hash/revision and journal entry identity. Replay-chain defect must RED HK06C. |
 | Malformed/truncated/unknown-version/unknown-command/schema-invalid robustness | `MalformedTruncatedUnknownVersionUnknownCommandAndSchemaInvalidInputsFailDefined` | Exercises public dispatch plus canonical-world decoder and asserts explicit machine codes and unchanged authoritative anchor. |
-| No undefined public output for thrown handlers/validators | `Hk10ExceptionBoundaryTests` plus `ComposedContract.Dispatch` exception boundary | Uses already accepted `world.summary@1.0` and validation handler routes; internal sentinels must not leak and failure must be structured. |
+| Defined canonical outcome for thrown handlers | HK01 owner proof `Hk01DispatchFailureContractTests` + `Docs/evidence/WP-HK-01/DISPATCH_FAILURE_AMENDMENT.md`; HK10 closure fixtures `Hk10ExceptionBoundaryTests` | HK01 directly owns and tests both pre-publication `contract.handler_failure` and post-publication `contract.handler_failure_after_publication` without adding a synthetic public route. HK10 then injects failures through already accepted inspection/validation routes and only checks that those real paths consume the owner-defined contract without leaking internal sentinel text. |
 | Persistence interruption | Inherited `Hk09BResourcePersistenceTests` plus causal publication-permit mutation | Accepted staged aggregate must remain authoritative when publication is interrupted; disabling the interrupt must RED. |
 | Cancellation | `CancelledMutationFailsBeforePublicationAndKeepsStateAndJournalStable` | Pre-cancelled invocation must return `resource.execution_cancelled` with independently checked revision/hash/journal unchanged. |
 | Restart/recovery | `BoundedLongAuthoringSessionExercisesInspectValidateMutateJournalSnapshotAndRestartRecovery` | Final snapshot from the long session is imported into a fresh session and must reproduce revision/hash. This is explicit process-local recovery, not WAL/power-loss durability. |
@@ -22,15 +22,21 @@ Boundary: accepted H0 harness semantics through HK09B; closure-only, no new prod
 | Protocol v1 compatibility corpus and evolution | `Compatibility/protocol-v1.json`, corpus test and inherited composer compatibility regression | Accepted v1 identities/limits are literals outside runtime constants; same-major breaking evolution remains rejected by the canonical composer. |
 | Reproducible property seeds | Checked-in seed arrays in HK10 tests; negative controls are exact deterministic substitutions | No time/random-device seed participates; material seeded assertions identify their case. |
 | Proof infrastructure fails closed | `hk10-negative-conformance.sh` rejects missing mutation target, compiler/tool failures, false GREENs or dirty mutation worktrees | Run `35524792972` demonstrated this by stopping on an inspection false green; the repaired independent oracle then made the same mutation RED in `35524945085`. |
-| Representative content-shape probe | Explicit rerun of accepted Potes hero slice + `CONTENT_SHAPE_PROBE.md` | Uses approved `VISUAL_BIBLE.md` product shape through current public dispatch without inventing a new content vocabulary. |
+| Representative content-shape probe | Explicit rerun of accepted Potes hero slice + `CONTENT_SHAPE_PROBE.md` | Uses approved `VISUAL_BIBLE.md` product shape through the combined candidate surface without inventing a new content vocabulary. The public dispatcher semantic amendment is owned by HK01, not HK10. |
 | Residual inventory reconciliation | `RESIDUAL_RISK.md` against independently maintained ledger v1.9 | Every ledger ID is classified; `UNCLASSIFIED_RESIDUALS: 0`. |
-| Exact-SHA CI and regression | `hk10-observe-exact-sha.sh` during mutable Worker phase; `hk10-verify-exact-sha.sh` at freeze | Candidate SHA/clean tree are checked before and after canonical commands. |
+| Exact-SHA CI and regression | `hk10-observe-exact-sha.sh` during mutable Worker phase; `hk10-verify-exact-sha.sh` at freeze | Candidate SHA/clean tree are checked before and after canonical commands. The observation runs the HK01 owner proof before HK10 tests, preventing closure from treating its own fault fixture as the source of public semantics. |
 
 ## Causal defect universe
 
 The required foundational layers are attacked by 12 deterministic RED controls in `NEGATIVE_CONFORMANCE_MATRIX.md`: protocol discovery, state/hash, inspection, transaction/idempotency, validation, provenance/replay, host framing, HK08A batching, HK08B stale recovery, HK09A capability containment and two HK09B resource/persistence controls (publication interruption and session-envelope drift).
 
-Exact-SHA run `35524945085` demonstrates all twelve controls RED for the intended reason, then a clean full regression GREEN (`216/216`). This mutation universe is deliberately additive to, not a replacement for, inherited predecessor proofs.
+Historical exact-SHA run `35524945085` demonstrated all twelve controls RED for the intended reason, then a clean full regression GREEN (`216/216`) on the first frozen candidate. Repair cycle 1 does not enlarge that mutation universe merely because ownership was corrected. The repaired exact-SHA observation must rerun all twelve controls plus the new HK01 owner proof before refreeze.
+
+## Reviewer FAIL and causal ownership repair
+
+Independent review #5261225652 did not find a defect in the handler-failure behavior itself; it found that the behavior was owned by the wrong workpack. The first frozen candidate's `ComposedContract.Dispatch` exception boundary was a material public semantic decision and therefore violated HK10's closure-only rule when presented as HK10 hardening.
+
+Repair cycle 1 keeps the useful behavior but relocates its contract ownership to HK01, the owner of canonical dispatch and structured errors. `WP-HK-01.md` now states the pre/post-publication semantics explicitly and `Hk01DispatchFailureContractTests` proves both branches. HK10's exception fixtures remain because HK10 acceptance expressly requires handler/validator fault injection, but their role is now downstream conformance to the HK01 amendment. Fresh independent PASS on the combined exact SHA is required before either the amendment or HK10 closure is accepted.
 
 ## Boundary / non-claims
 
@@ -38,7 +44,9 @@ HK10 does not add or claim automatic merge, per-resource CAS, distributed writer
 
 ## Proof budget
 
-The post-implementation proof growth corresponds to observed in-boundary proof defects: a synthetic public-route fixture, an invalid internal-access fixture and one real causal false green in inspection ordering. The latter was repaired with one small independent ordering oracle rather than a new subsystem. The required content probe reuses an accepted product-shaped slice. No new product semantics were added to satisfy proof machinery. The proof remains larger than the runtime delta because HK10 is explicitly a quality-closure WP, but it has converged on the named acceptance universe.
+The post-implementation proof growth corresponds to observed in-boundary proof defects: a synthetic public-route fixture, an invalid internal-access fixture and one real causal false green in inspection ordering. The latter was repaired with one small independent ordering oracle rather than a new subsystem. The required content probe reuses an accepted product-shaped slice.
+
+Reviewer FAIL #5261225652 exposed one architectural ownership defect, not a reason to grow HK10 semantics or add another subsystem. The repair adds only an HK01 contract amendment, two owner-level branch tests and concise causal evidence; HK10 then consumes that owner contract. The public behavior delta remains intentionally small and is no longer claimed as HK10-owned product semantics. The proof remains larger than the runtime delta because HK10 is explicitly a quality-closure WP, but it has converged on the named acceptance universe.
 
 FOUNDATIONAL_PROOF_VERDICT: READY
 UNRESOLVED_PROOF_OBLIGATIONS: 0
