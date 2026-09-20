@@ -6,6 +6,8 @@ Repository: `Arkus0/Juego2`
 
 Accepted progress: `WP-CITY-00` is **COMPLETE**. It passed independent review on frozen candidate `f5c684461b525841487158d873a9b135008df3ab` (review `#5261672961`) and merged via PR `#65` as `69bbba2603e67cb233a3e1cc36a4173bed41cfc4`.
 
+CITY Programme v2 is **ACCEPTED**. Candidate `87a902584f2c46b2d256f6fef26829e9182e7605` passed independent review `#5261734418` in PR `#70` and merged as `058e2f4f7c5b018d60cce84e9c89bd07249dd36a`. The next executable CITY workpack is `WP-CITY-01`.
+
 ## Purpose
 
 Design one coherent keeper-city pipeline from accepted macro geography to movement, meaningful places, reusable environment grammar, layered interiors/discovery and the first retained playable district.
