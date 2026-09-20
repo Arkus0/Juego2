@@ -24,8 +24,12 @@ The serial gate prevents parallel implementation from baking unreviewed assumpti
 
 ## Non-foundational tracks
 
-`OPS/`, `ART/` and `CITY/` are parallel non-foundational tracks. They are not bound by `FOUNDATIONAL_PROOF_STANDARD.md`, require no exact-SHA evidence or self-attack matrix, do not appear in the H0 DAG, and can neither block nor unblock any `HK-*` workpack.
+`OPS/`, `ART/`, `CITY/` and `SCENE/` are non-foundational product tracks. They are not bound by `FOUNDATIONAL_PROOF_STANDARD.md`, require no H0 exact-SHA evidence or self-attack matrix, do not appear in the H0 DAG, and can neither block nor unblock any `HK-*` workpack.
 
 A non-foundational workpack is never a valid reason to delay, weaken or reinterpret an H0 acceptance criterion.
 
-`CITY/` exists so spatial/product preproduction can be reasoned about before local production begins. `WP-CITY-00` through `WP-CITY-03` are documentation/research/planning only and may run remotely before `WP-HK-GATE`; they do not authorize Unity scene construction, asset import or serious game production. `WP-CITY-04` is the first local blockout/engine-validation workpack and MUST NOT begin before `WP-HK-GATE` has passed and the relevant Unity bridge prerequisites are accepted.
+`CITY/` owns macro spatial/product preproduction: city constitution, mobility, systemic-location programme, retained seed and later macro blockout. `WP-CITY-00` through the remote planning sequence do not authorize Unity production.
+
+`SCENE/` owns micro-spatial product preproduction: streets/parcels, reusable building compositions, interiors/access, selective discovery depth and the exact keeper-scene specification. `WP-SCENE-00` through `WP-SCENE-05` are documentation/research/planning only. `WP-SCENE-06` is LOCAL and cannot begin before `WP-HK-GATE`, accepted relevant Unity-bridge prerequisites, `WP-CITY-04` PASS and `WP-SCENE-05` PASS.
+
+`Docs/workpacks/CITY/CITY_SCENE_BOUNDARY_AMENDMENT_01.md` defines the interleaved CITY↔SCENE dependency chain. It does not modify or rescue the active `WP-CITY-00` candidate; CITY-00 must independently PASS its frozen contract first.
