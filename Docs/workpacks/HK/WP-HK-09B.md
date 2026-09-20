@@ -1,9 +1,22 @@
 # WP-HK-09B — Resource limits + persistence integrity
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: `WP-HK-09A`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+## Completion metadata
+
+- implementation PR: `#56`;
+- baseline SHA: `ada532f99282c96db15813eb17963bc9cb6d08fb`;
+- reviewed frozen candidate: `8ed02586da9a5b6e159e1cdc76a47ae7ca89c763`;
+- independent Reviewer verdict: `PASS` (review `#5261068513`);
+- exact-SHA freeze validation: GREEN, Actions `35522581043`, artifact `10609077150`;
+- implementation merge SHA: `2e7a258fdcec2e26492d308c3cb199ab62201dcd`.
+
+Accepted semantics: H0 now exposes a machine-readable transport-neutral resource envelope while preserving the frozen `arkus.reference.jsonl@1` 1,048,576-byte framing contract and `transport.frame_too_large` behavior. Canonical arguments are bounded to 896 KiB, portable nesting to 32, mutation batches to the accepted 96-operation coherent edit, decoded mutation payload to 512 KiB, query pages to 100 items, canonical world/snapshot state to 640 KiB, world resources to 10,000, session mutation transactions to 10,000, snapshot-import receipts to 1,024 and cooperative execution to 5 s. Materialized Authoring state is independently checked before publication; mutation, snapshot import and replay stage complete process-local aggregates and publish only after the authoritative publication check, so rejected/expired/interrupted work cannot publish partial canonical state or false success evidence. The declared durability level is `process-local-checkpoint` with `powerLossDurabilityClaimed=false`; HK10 owns bounded long-session endurance against these accepted ceilings.
+
+One earlier frozen candidate `dcea0901a4fe78549d81271a7f192bbae77e58b7` failed review `#5261028914` because it widened the already-frozen `arkus.reference.jsonl@1` frame from 1 MiB to 2 MiB, changed the oversized-frame diagnostic in place and moved the inherited HK07A regression oracle with the implementation. The accepted repair restores the predecessor transport implementation/oracle exactly and fits HK09B's neutral envelope underneath the inherited frame instead of redefining it.
 
 ## Objective
 
