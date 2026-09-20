@@ -20,24 +20,23 @@ Juego2 is a clean harness-first restart. `Arkus0/Juego` is reference only. H0 bu
 
 ## Current accepted state
 
-`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B`, `WP-HK-08A`, `WP-HK-08B`, `WP-HK-09A` and `WP-HK-09B` are COMPLETE.
+`WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B`, `WP-HK-08A`, `WP-HK-08B`, `WP-HK-09A`, `WP-HK-09B` and `WP-HK-10` are COMPLETE.
 
-Latest accepted workpack: `WP-HK-09B — Resource limits + persistence integrity`.
+Latest accepted workpack: `WP-HK-10 — Strict quality closure`.
 
-- implementation PR: `#56`;
-- baseline SHA: `ada532f99282c96db15813eb17963bc9cb6d08fb`;
-- reviewed frozen candidate: `8ed02586da9a5b6e159e1cdc76a47ae7ca89c763`;
-- independent Reviewer: `PASS` (PR review `#5261068513`);
-- exact-SHA freeze validation: GREEN, Actions `35522581043`, artifact `10609077150`;
-- implementation merge SHA: `2e7a258fdcec2e26492d308c3cb199ab62201dcd`;
-- accepted resource envelope: `arkus.h0-resource-envelope@1` is discoverable through `system.resource-envelope.describe@1.0`; canonical arguments are bounded to 896 KiB, portable nesting to 32, mutation batches to 96 operations, decoded mutation payload to 512 KiB, query pages to 100 items, canonical world/snapshot state to 640 KiB, world resources to 10,000, mutation transactions to 10,000, snapshot-import receipts to 1,024 and cooperative execution to 5 s;
-- accepted transport compatibility: `arkus.reference.jsonl@1` remains frozen at 1,048,576 bytes with `transport.frame_too_large`; HK09B's neutral envelope is deliberately below that boundary so successfully framed JSONL/MCP requests converge on the same resource semantics rather than redefining the transport contract;
-- accepted publication integrity: materialized Authoring state is independently resource-checked before publication; mutation, snapshot import and replay stage complete aggregates and perform one authoritative publication only after budget/interruption admission, preventing rejected/expired/interrupted work from publishing partial canonical state or false success evidence;
-- accepted durability boundary: `durabilityLevel=process-local-checkpoint`, `publicationBoundary=validate-stage-aggregate-publish`, `powerLossDurabilityClaimed=false`; no WAL/fsync/crash-recovery/distributed persistence guarantee is implied;
-- accepted content/interaction boundary: the representative HK08A 96-operation Potes-shaped coherent edit still commits once, and real JSONL/MCP processes agree on neutral byte/page/depth resource diagnostics;
-- accepted downstream ownership: HK10 owns bounded long-session endurance and broader strict closure against the accepted envelope; arbitrary production-scale streaming, large-world asymptotics, shipping SLOs, multi-process/distributed writers and power-loss durability remain outside HK09B.
+- implementation PR: `#60`;
+- baseline SHA: `8651a7bd55180297c3621336e9e64a2e6a211aef`;
+- reviewed frozen candidate: `813ccf08e33fdd77a34c59da5ed766882840cbee`;
+- independent Reviewer: `PASS` (PR review `#5261301248`);
+- exact-SHA freeze validation: GREEN, Actions `35527218067`;
+- implementation merge SHA: `f893ad51d756090eeecac41b8fc7cb14f8bd359a`;
+- accepted strict closure: twelve deterministic causal negative-conformance controls across the named H0 foundational layers, deterministic property/robustness coverage, Protocol v1 compatibility corpus, cancellation/fault-injection coverage and full regression;
+- accepted endurance: 512 canonical authoring transactions with periodic inspect/validate/journal/snapshot operations and fresh-session snapshot recovery inside the accepted HK09B resource envelope; telemetry is evidence of bounded H0 behaviour, not a shipping SLO;
+- accepted residual reconciliation: `Docs/evidence/WP-HK-10/RESIDUAL_RISK.md` classifies every independently maintained ledger entry with `UNCLASSIFIED_RESIDUALS: 0`; proof evidence records `UNRESOLVED_PROOF_OBLIGATIONS: 0` and `KNOWN_UNDETECTED_DEFECT_CLASSES: 0`;
+- accepted HK01 amendment: canonical handler exceptions now have defined structured pre-publication and post-publication outcomes. This semantic gap was discovered by HK10 but is causally owned by the reopened/amended `WP-HK-01`; the amendment was independently accepted on the same exact candidate;
+- scope remains H0: no claim of WAL/fsync/power-loss durability, arbitrary production scale, shipping latency/throughput SLOs, automatic merge, per-resource CAS, distributed writers, authentication/remote tenancy or H1 gameplay/runtime semantics.
 
-HK09B had one Reviewer repair cycle. Frozen SHA `dcea0901a4fe78549d81271a7f192bbae77e58b7` failed review `#5261028914` because it silently widened the already-frozen `arkus.reference.jsonl@1` frame from 1 MiB to 2 MiB, changed the oversized-frame diagnostic and modified the inherited HK07A regression oracle to follow the new behavior. The repair restored the HK07A implementation/oracle exactly and moved the HK09B neutral ceilings below the inherited frame (896 KiB request, 640 KiB world/snapshot) instead of versionlessly redefining transport semantics. The fresh Reviewer passed the repaired frozen candidate above.
+HK10 had one Reviewer repair cycle. Frozen SHA `dabcbeb9cce071ed6fca29a8fa01030127f2ce98` failed review `#5261225652` because the candidate had introduced the useful canonical dispatcher exception boundary as HK10-owned product semantics, violating HK10's closure-only rule. The repair explicitly reopened/amended HK01 as causal owner, added `Hk01DispatchFailureContractTests` for both pre/post-publication branches, retained HK10's handler/validator fixtures only as downstream closure evidence, refroze, revalidated and then received fresh independent PASS.
 
 ## Current next product target
 
@@ -45,17 +44,15 @@ The original HK06/HK07 and later HK08/HK09 monoliths were split **before impleme
 
 Execution chain:
 
-`HK06A ✅ → HK06B ✅ → HK06C ✅ → HK07A ✅ → HK07B ✅ → HK08A ✅ → HK08B ✅ → HK09A ✅ → HK09B ✅ → HK10 → HK-GATE`
+`HK06A ✅ → HK06B ✅ → HK06C ✅ → HK07A ✅ → HK07B ✅ → HK08A ✅ → HK08B ✅ → HK09A ✅ → HK09B ✅ → HK10 ✅ → HK-GATE`
 
-The next dependency-valid workpack is `WP-HK-10 — Strict quality closure`.
+The next dependency-valid workpack is `WP-HK-GATE — AI authoring readiness gate`.
 
-HK10 is a closure workpack, not an architecture workpack. It consumes the accepted H0 surface and must challenge it broadly with property-based tests, malformed/schema-invalid inputs, seeded validator/provenance/transaction defects, persistence interruption, thrown handler/validator failures, cancellation, deterministic stale/conflicting writers and restart/recovery cases. It must also execute a bounded long-authoring-session endurance flow using the accepted HK08A/HK08B interaction primitives **inside the HK09B resource envelope** and record process/session growth rather than assuming future compaction or scaling work will save the gate.
+Gate is the final H0 product-readiness proof, not another architecture-growth workpack. From a clean checkout, a deterministic reference client and one fresh independent AI-agent trial must use public discovery/client-facing surfaces rather than C# implementation knowledge to create, inspect, validate, repair, mutate, recover from stale state, snapshot/restart/replay, diff and explain a representative micro-world. The flow must exercise the accepted HK08A interaction shape, HK08B conflict recovery, HK09A authority boundary, HK09B resource/publication limits and HK10 bounded-endurance closure, including semantic equivalence through reference JSONL and MCP.
 
-HK10 must preserve the accepted HK09A capability boundary and HK09B resource/persistence semantics rather than inventing replacement subsystems. A material semantic gap discovered during closure reopens or amends the causal owning workpack; it is not buried as a HK10 feature. Its residual-risk audit must reconcile against the independently maintained `Docs/engineering/RESIDUAL_LEDGER.md`, classifying every declared predecessor residual as in-boundary with a causal seeded control, outside the gate boundary and named, or already closed by accepted evidence.
+Read `Docs/workpacks/HK/WP-HK-GATE.md`, the accepted HK10 verdict/proof/residual evidence, and the predecessor gate-facing evidence before implementation. Gate must name the accepted residual boundary rather than silently promoting post-GATE scale/concurrency/durability/security claims into H0 blockers.
 
-Read `Docs/workpacks/HK/WP-HK-10.md`, `Docs/engineering/RESIDUAL_LEDGER.md`, the accepted HK09B verdict/resource/interruption evidence, and the predecessor proof/negative matrices before implementation.
-
-After HK10, `WP-HK-GATE` exercises end-to-end AI-authoring readiness on the representative micro-world using the closed H0 guarantees. Whole-world CAS/hash remains the H0 global consistency anchor but does **not** require clients or AI agents to reload/reconstruct the complete world after each commit. HK08A supplies bounded/compact interaction primitives, HK08B supplies truthful bounded same-lineage stale recovery, HK09A constrains host powers and HK09B supplies finite resource/publication boundaries. Finer concurrent-writer semantics remain post-GATE unless measured evidence promotes them.
+Only after independent `WP-HK-GATE` PASS may detailed H1 Engine Bridge / Unity-first workpacks begin. A Gate PASS still does not authorize gameplay directly; Unity first receives its own downstream bridge/parity work.
 
 After HK-GATE, `Docs/ROADMAP.md` defines a non-blocking-by-default H0S scale/concurrency track that may run in parallel with H1. It measures real object counts, commit cost, collision/stale rate, recovery cost and memory before selecting incremental hashing/indexing, resource-scoped preconditions, coordination/leases, change feeds or finer state partitioning. No Merkle/per-resource-CAS/scope-lock design is preselected, and no transport adapter may become a separate concurrency authority.
 
@@ -73,7 +70,7 @@ FAIL returns to a fresh repair Worker; a Reviewer never repairs a failed candida
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C ✅ → HK-07A ✅ → HK-07B ✅ → HK-08A ✅ → HK-08B ✅ → HK-09A ✅ → HK-09B ✅ → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C ✅ → HK-07A ✅ → HK-07B ✅ → HK-08A ✅ → HK-08B ✅ → HK-09A ✅ → HK-09B ✅ → HK-10 ✅ → HK-GATE`.
 
 ## Process invariants
 
