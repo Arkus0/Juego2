@@ -122,6 +122,7 @@ namespace Arkus.Harness.Tests
             return new Dictionary<string, IReadOnlyDictionary<string, object?>>(StringComparer.Ordinal)
             {
                 ["system.describe"] = Hk01TestFixtures.EmptyRequest(),
+                ["system.resource-envelope.describe"] = Hk01TestFixtures.EmptyRequest(),
                 [WorldInspectionContract.SummaryName] = Hk01TestFixtures.EmptyRequest(),
                 [WorldInspectionContract.ObjectGetName] = objectGet,
                 [WorldInspectionContract.ObjectQueryName] = Hk03InspectionTests.Anchor(state),
