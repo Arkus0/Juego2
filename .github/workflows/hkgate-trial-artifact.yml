@@ -57,6 +57,8 @@ jobs:
             -p:UseAppHost=false \
             -o "${OUT_DIR}/app"
           test -f "${OUT_DIR}/app/Arkus.Harness.Mcp.dll"
+          find "${OUT_DIR}/app" -type f -name '*.pdb' -delete
+          test -z "$(find "${OUT_DIR}/app" -type f -name '*.pdb' -print -quit)"
 
       - name: Bundle the .NET 8 runtime from the pinned SDK environment
         shell: bash
@@ -112,6 +114,7 @@ jobs:
           Candidate restore locked: YES
           Product package lock rewritten: NO
           Product source modified: NO
+          Debug symbols in artifact: NO
           Launch entrypoint: ./run-mcp.sh
           Source workflow commit: ${GITHUB_SHA}
           Source workflow run: ${GITHUB_RUN_ID}
