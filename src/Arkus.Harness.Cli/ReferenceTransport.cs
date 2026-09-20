@@ -403,6 +403,11 @@ namespace Arkus.Harness.Cli
 
     internal static class ReferenceFrameCodec
     {
+        // Framing adds protocol/request/version/arguments containers around portable arguments.
+        // Keep that adapter overhead outside the canonical portable-depth budget so JSONL and MCP
+        // reach the same below-transport rejection boundary.
+        private const int MaximumJsonFrameDepth = H0ResourceEnvelope.MaximumPortableDepth + 16;
+
         internal static bool TryParseRequest(
             string json,
             out NeutralProjectionRequest? request,
@@ -422,7 +427,7 @@ namespace Arkus.Harness.Cli
                 {
                     AllowTrailingCommas = false,
                     CommentHandling = JsonCommentHandling.Disallow,
-                    MaxDepth = H0ResourceEnvelope.MaximumPortableDepth + 4
+                    MaxDepth = MaximumJsonFrameDepth
                 });
             }
             catch (JsonException)
@@ -592,7 +597,7 @@ namespace Arkus.Harness.Cli
                 {
                     AllowTrailingCommas = false,
                     CommentHandling = JsonCommentHandling.Disallow,
-                    MaxDepth = H0ResourceEnvelope.MaximumPortableDepth + 4
+                    MaxDepth = MaximumJsonFrameDepth
                 }));
             try
             {
