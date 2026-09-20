@@ -1,4 +1,4 @@
-# WP-CITY-02 — Systemic locations, interiors + reactive-density programme
+# WP-CITY-02 — Mobility + access topology
 
 Status: **FROZEN PLAN / NOT_STARTED**  
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)  
@@ -8,75 +8,53 @@ Blocks: `WP-CITY-03` only
 
 ## Objective
 
-Define what makes the city worth revisiting. Convert districts from geometry into a programme of meaningful locations, interiors, activities and causal anchors while explicitly limiting decorative scope.
+Turn the accepted CITY-00 constitution into a movement topology that supports daily life, following/searching, schedule pressure, route choice, service access and municipal disruption without turning traversal into empty commute.
 
-The core question is:
-
-> **How many places in each part of the city can participate in life, work, activity, information, governance or consequences, and which spaces are allowed to remain ambient?**
-
-## Location tiers
-
-The Worker must classify candidate spaces rather than pretending every door is equally simulated:
-
-- **Tier A — systemic anchor:** persistent actors/activities/resources/rules can materially use it; likely revisited often.
-- **Tier B — supporting playable location:** narrower systemic role; may host schedules, meetings, activity or temporary consequence.
-- **Tier C — ambient frontage/scenery:** supports believable urban fabric but makes no promise of deep interaction.
-- **Tier D — scenic envelope:** visible identity/scale only; not sold as traversable city fabric.
-
-## Required domain coverage
-
-Programme locations across at least:
-
-- civic/governance;
-- food/drink/social;
-- everyday retail/service;
-- work/workshop/logistics;
-- port/waterfront;
-- residential;
-- leisure/minigames;
-- health/safety/authority where product needs them;
-- rural/river activity;
-- quiet/private/semi-private spaces;
-- arrival/visitor/transit edge.
+CITY-02 owns movement/access logic, not building or interior design.
 
 ## Work
 
-1. Build a location catalogue by district and tier.
-2. For Tier A/B candidates record:
-   - who uses it and when;
-   - capacity/occupancy implications;
-   - activity/work/material role;
-   - information/witness potential;
-   - governance/access/rule hooks;
-   - likely interiors/thresholds;
-   - what can change there due to player/NPC action;
-   - whether it can function while player is absent.
-3. Identify reusable location archetypes versus hero locations.
-4. Define a **reactive-density metric family** for later blockout/playtest, without inventing one magic score.
-5. Protect quiet/ordinary spaces so systemic density does not become permanent spectacle.
-6. Identify location requirements consumed by PA-08 activities, PA-09 player agency, PA-12 governance and future Living World work without pre-accepting their research findings.
+1. Derive the district-to-district route graph from accepted CITY-00 landmasses/crossings.
+2. Define primary, secondary, quiet and service-route families.
+3. Define elevation classes, stairs/ramps/roads and relevant travel restrictions.
+4. Reserve plausible rear/service/vertical access opportunities using CITY-01 vocabulary without laying out interiors.
+5. Produce target walk-time bands between representative anchors.
+6. Test pedestrian, slower pedestrian, bicycle, service/delivery, arrival/bus, following and time-sensitive travel profiles.
+7. Test port ↔ commercial/workshop logistics and rural edge ↔ market/civic travel.
+8. Identify chokepoints governance/events may alter without deadlocking the city.
+
+## Required scenario matrix
+
+At minimum:
+
+- home in upper/residential district → workplace;
+- old quarter → port/work edge without mandatory plaza traversal;
+- port delivery → commercial destination;
+- rural/valley arrival → market/civic core;
+- player follows an NPC across ≥2 district boundaries;
+- closure forces a plausible alternate route;
+- late actor chooses a faster but contextually different route;
+- quiet evening route differs meaningfully from market-day flow;
+- at least one service/back-route opportunity differs from the obvious public route.
 
 ## Deliverables
 
-- `Docs/production/CITY_LOCATION_PROGRAMME.md`
-- district × location-tier matrix;
-- Tier A/B systemic-use profiles;
-- interior priority list;
-- reactive-density measurement proposal;
-- explicit list of ambient-only promises so scope remains honest.
+- `Docs/production/CITY_MOBILITY_TOPOLOGY.md`
+- semantic route/access graph;
+- representative walk-time matrix;
+- mobility-profile assumptions;
+- chokepoint/alternate-route ledger;
+- later local measurements required from CITY-07.
 
 ## Acceptance
 
-- Every core district has a reason to revisit it beyond visual novelty.
-- Port contains ordinary work/logistics/social hooks, not only a cinematic set piece.
-- Old quarter and civic/commercial core do not monopolise all Tier A locations.
-- At least one strong quiet/low-intensity location family is preserved.
-- The plan distinguishes openable/playable interiors from facade-only buildings.
-- Activities/minigames have real spatial homes instead of UI portals.
-- Governance has physical places where rules/access/services can be experienced.
-- Reactive density can be measured later without demanding every prop be interactive.
-- Scope remains feasible by explicitly allowing substantial Tier C/D fabric.
+- Every edge is compatible with CITY-00 connectivity truth.
+- Core movement has meaningful loops and ≥2 nontrivial alternate-route cases.
+- Follow/search gameplay is not just corridor traversal.
+- Service/private access opportunities exist without becoming universal shortcuts.
+- A municipal closure can matter without making the city unusable.
+- Walk-time targets remain hypotheses until local validation.
 
-## Negative gates
+## Forbidden
 
-FAIL if “reactive city” is equated with every door open, every prop usable, every pedestrian persistent or every location generating incidents.
+Redrawing CITY-00 crossings/landmasses; Unity navmesh; final road engineering; live schedules; interior layouts; fast-travel design.

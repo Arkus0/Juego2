@@ -1,72 +1,41 @@
-# WP-CITY-04 — LOCAL retained-seed blockout + traversal validation
+# WP-CITY-04 — Streets, parcels + reusable building families
 
-Status: **FROZEN PLAN / DORMANT UNTIL GATE**  
-Class: PRODUCT / LOCAL SPATIAL VALIDATION (NON-FOUNDATIONAL)  
-Mode: **LOCAL / UNITY**  
-Depends on: `WP-CITY-03` PASS, `WP-HK-GATE` PASS, relevant accepted Unity bridge prerequisites  
-Blocks: later serious town production only
+Status: **FROZEN PLAN / NOT_STARTED**  
+Class: PRODUCT / ENVIRONMENT PREPRODUCTION (NON-FOUNDATIONAL)  
+Mode: **REMOTE**  
+Depends on: `WP-CITY-03` PASS  
+Blocks: `WP-CITY-05` only
 
 ## Objective
 
-Validate the retained product seed at human scale in Unity before art/content production multiplies layout mistakes.
+Define the reusable exterior production grammar that turns CITY-00..03 decisions into streets and buildings an agent can later compose instead of inventing each façade from a blank plane.
 
-This is the first CITY WP permitted to create serious scene geometry.
+## Work
 
-## Scope
-
-Greybox/blockout only unless already-adopted representative assets are explicitly within the accepted H1/H2 boundary at execution time.
-
-Validate:
-
-- walk times;
-- street/bridge/plaza proportions;
-- verticality;
-- sightlines/landmarks;
-- route choice;
-- followability without corridor behaviour;
-- route alternatives under a closure;
-- basic NPC traversal/nav feasibility;
-- interior/exterior transition placement;
-- expansion-seam physical plausibility;
-- perceived city continuation beyond the seed.
-
-## Required human runs
-
-At minimum:
-
-1. cross the seed casually without objective;
-2. follow a proxy actor taking route A;
-3. repeat with route B;
-4. travel bridge ↔ bar ↔ market/plaza;
-5. approach/leave via future port seam;
-6. approach/leave via residential/rural seam;
-7. test one blocked/changing route and alternate path;
-8. stand in quiet and busy areas and judge whether spatial contrast exists.
+1. Define street-segment families: ordinary street, narrow historic lane, steps, riverside/promenade, service edge, plaza/market edge, port/work edge, rural transition and relevant junction types.
+2. Define parcel constraints: frontage, depth/bounds, access edges, party-wall/detached relations, slope/retaining conditions, no-build/view corridors and service/rear relations.
+3. Define a compact set of reusable building families: ordinary house, mixed-use house/shop, bar/social venue, shop/service, workshop, warehouse/port building, civic/municipal, apartment/residential and selected rural/peripheral types.
+4. Define composition ladder:
+   `module -> assembly -> shell -> reusable building -> functional POI -> street segment`.
+5. Define what Arkus must eventually be able to discover for a composition: stable ID, dimensions/bounds, sockets, access anchors, tags/archetype, dependencies, variants, style/material constraints and compatibility/version metadata.
+6. Define promotion rule for a reviewed one-off composition to become a reusable family/variant.
 
 ## Deliverables
 
-- measured walk-time table;
-- screenshots/overhead blockout captures;
-- human traversal notes;
-- route/sightline defects;
-- scale changes with before/after rationale;
-- retained-seed PASS/REVISE verdict.
+- `Docs/production/CITY_ENVIRONMENT_GRAMMAR.md`
+- street/parcel grammar;
+- initial building-family catalogue specification;
+- reusable-composition ladder;
+- machine-readable discovery requirements for later bridge/authoring work.
 
 ## Acceptance
 
-- Measured travel remains inside the product intent or deviations are explicitly accepted.
-- The seed feels like a piece of a larger city rather than an enclosed test level.
-- At least one meaningful route choice is perceptible without a map overlay.
-- Old bridge/river geometry genuinely affects movement.
-- Port and rural/residential seams read as plausible continuations.
-- Quiet/busy spatial contrast is visible.
-- No major retained street/POI placement requires foreseeable demolition to expand.
-- Human reviewer says the area is worth polishing rather than replacing.
+- The grammar can produce varied streets/buildings without one-off design for every parcel.
+- Old quarter, commercial, residential, port/work and rural transition can differ using shared rules rather than unrelated kits.
+- Building families expose meaningful entrances/service relations needed by CITY-02/03.
+- A weaker model could choose among constrained reviewed compositions rather than “make a nice building”.
+- No asset import, prefab implementation, Unity scene, catalogue authority or canonical contract is created.
 
-## Failure response
+## Negative gates
 
-If blockout fails, revise CITY-00..03 assumptions **before** adding art density. A failed greybox is cheap evidence; decorating it is not a repair.
-
-## Forbidden before prerequisites
-
-Do not begin this WP before `WP-HK-GATE` and accepted Unity-bridge prerequisites. Planning documents from CITY-00..03 do not waive that boundary.
+FAIL if the plan depends on unique bespoke buildings everywhere, treats a marketplace asset pack as semantic authority, or promises procedural generation without reviewed constraints.

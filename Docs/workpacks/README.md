@@ -28,4 +28,6 @@ The serial gate prevents parallel implementation from baking unreviewed assumpti
 
 A non-foundational workpack is never a valid reason to delay, weaken or reinterpret an H0 acceptance criterion.
 
-`CITY/` exists so spatial/product preproduction can be reasoned about before local production begins. `WP-CITY-00` through `WP-CITY-03` are documentation/research/planning only and may run remotely before `WP-HK-GATE`; they do not authorize Unity scene construction, asset import or serious game production. `WP-CITY-04` is the first local blockout/engine-validation workpack and MUST NOT begin before `WP-HK-GATE` has passed and the relevant Unity bridge prerequisites are accepted.
+`CITY/` is the single operational product-space track: accepted macro geography → place grammar → mobility/access → systemic locations → streets/parcels/buildings → interiors/discovery → keeper seed → local validation/realization. `WP-CITY-01` through `WP-CITY-06` are documentation/research/planning only and may run remotely before `WP-HK-GATE`. `WP-CITY-07` and `WP-CITY-08` are LOCAL and MUST NOT begin before `WP-HK-GATE` and their stated Unity/bridge prerequisites have passed.
+
+`WP-CITY-00` is COMPLETE. The next CITY workpack is `WP-CITY-01 — Place grammar + spatial depth tiers` once this programme revision is accepted.

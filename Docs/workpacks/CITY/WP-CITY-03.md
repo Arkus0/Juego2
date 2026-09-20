@@ -1,4 +1,4 @@
-# WP-CITY-03 — Retained product seed + expansion seams
+# WP-CITY-03 — Systemic locations + reactive-density programme
 
 Status: **FROZEN PLAN / NOT_STARTED**  
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)  
@@ -8,80 +8,54 @@ Blocks: `WP-CITY-04` only
 
 ## Objective
 
-Choose the exact first city slice to build after GATE so the demo/vertical development area is already part of the shipping city and exposes clean expansion seams toward the rest.
+Decide what makes each district worth revisiting. Convert accepted geography and mobility into a feasible programme of meaningful locations while explicitly limiting how much urban fabric receives deep simulation or playable interiors.
 
-## Seed principles
+## Systemic-importance axis
 
-The seed must be:
+Classify places independently of CITY-01 spatial depth:
 
-- small enough to finish to high quality;
-- large enough to test route choice and ordinary life;
-- unmistakably part of the selected city;
-- connected to future districts without placeholder topology;
-- useful for Harness/Unity authoring tests and later Living World tests;
-- worth keeping visually and spatially even if assets/presentation improve later.
+- `A` — primary systemic anchor;
+- `B` — supporting systemic/playable location;
+- `C` — ambient urban fabric;
+- `D` — scenic context.
 
-The current Production Blueprint seed — plaza side + old bridge + bar + old-quarter/commercial connection + river edge — is a candidate, **not automatic acceptance**. CITY-03 must test it against alternatives after CITY-00..02.
+Every A/B candidate also receives a provisional S0–S4 spatial-depth target. The two axes MUST NOT be collapsed into one score.
+
+## Required domain coverage
+
+Civic/governance; food/drink/social; retail/service; work/workshop/logistics; port/waterfront; residential; leisure/minigames; health/safety/authority where needed; rural/river activity; quiet/private/semi-private spaces; arrival/visitor edge.
 
 ## Work
 
-1. Define ≥3 candidate retained seeds within the accepted city constitution.
-2. Compare them for:
-   - identity in a screenshot;
-   - route loops;
-   - bar/social interior;
-   - river/bridge value;
-   - proximity or visible/functional seam toward port;
-   - residential/work/market representation;
-   - activity/minigame opportunity;
-   - actor schedule usefulness;
-   - expansion without demolition;
-   - asset-kit reuse;
-   - likely local blockout cost.
-3. Select one seed and define hard boundary + soft visual envelope.
-4. Define **expansion seams** toward at least:
-   - additional old/residential fabric;
-   - port/waterfront work district;
-   - commercial/peripheral/arrival edge;
-   - rural/valley route.
-5. Produce scenario list the seed must eventually support.
+For A/B candidates record:
 
-## Minimum future scenario coverage
+- who plausibly uses it and when;
+- activity/work/material role;
+- information/witness potential;
+- governance/access hooks;
+- provisional S-depth;
+- what can change there through player/NPC/world causes;
+- whether it still functions when the player is absent.
 
-The selected seed must plausibly support, once later systems exist:
-
-- quiet ordinary morning;
-- market/commercial flow;
-- NPC home/work/social trip;
-- player follows an NPC through a route choice;
-- bar/social activity;
-- river/bridge traversal;
-- material delivery or work consequence touching the seed;
-- municipal access/routing/service change;
-- low-stakes player perturbation with local consequence;
-- player leaves and returns to a changed local state.
+Also define a family of reactive-density measurements for later blockout/playtest: meaningful destinations per traversal, repeated-use ratio, route-choice density, quiet-space balance and interior/depth distribution. Do not invent one universal magic score.
 
 ## Deliverables
 
-- `Docs/production/CITY_PRODUCT_SEED.md`
-- seed comparison matrix;
-- selected seed semantic map;
-- retained vs temporary presentation declaration;
-- expansion-seam ledger;
-- future scenario/measurement pack for CITY-04.
+- `Docs/production/CITY_LOCATION_PROGRAMME.md`
+- district × importance × provisional-depth matrix;
+- A/B systemic-use profiles;
+- reactive-density measurement proposal;
+- explicit C/D scope declaration.
 
 ## Acceptance
 
-- ≥3 seed candidates compared.
-- Selected seed is not a disconnected tutorial arena.
-- At least one internal route loop exists or is enabled by the first immediate extension.
-- River/bridge is structural, not backdrop.
-- Port has a credible future seam even if the complete port is not in the first blockout.
-- At least two different everyday actor trips can cross the seed without sharing the same exact path.
-- Seed can expand in ≥4 named directions without moving its core streets/bridge/plaza.
-- Temporary art is allowed; temporary urban topology is explicitly minimised.
-- No local implementation starts in this WP.
+- Every core district has reasons to revisit beyond visual novelty.
+- Old quarter/civic centre do not monopolise A locations.
+- Port contains ordinary work/logistics/social hooks.
+- Quiet/low-intensity place families survive the programme.
+- Activities have physical homes rather than UI-only portals.
+- Scope explicitly allows substantial C/D fabric and S0/S1 locations.
 
-## Definition of Done
+## Negative gate
 
-We can hand CITY-04 a bounded map and say: **build this once, measure it honestly, and only then decide whether the paper city survives contact with play.**
+FAIL if “reactive city” becomes every door open, every prop interactive, every pedestrian persistent or every location incident-generating.
