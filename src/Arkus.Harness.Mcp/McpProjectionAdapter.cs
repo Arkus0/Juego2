@@ -140,12 +140,15 @@ namespace Arkus.Harness.Mcp
         private static Tool ToTool(McpProjectedCapability projected)
         {
             var definition = projected.Definition;
+            var inputSchema = definition.RequestSchema == null
+                ? JsonSerializer.SerializeToElement(new Dictionary<string, object?>(StringComparer.Ordinal))
+                : JsonSerializer.SerializeToElement(definition.RequestSchema.ToData());
             return new Tool
             {
                 Name = projected.ToolName,
                 Title = definition.Key.ToString(),
                 Description = "Canonical Arkus capability " + definition.Key + " projected through " + NeutralProjectionVersion + ".",
-                InputSchema = JsonSerializer.SerializeToElement(definition.RequestSchema.ToData()),
+                InputSchema = inputSchema,
                 Meta = new JsonObject
                 {
                     [CanonicalKeyMetaKey] = definition.Key.ToString(),
