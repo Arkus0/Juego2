@@ -1,4 +1,4 @@
-# WP-CITY-00 — Worker pre-review after transfer / repair cycle 4
+# WP-CITY-00 — Worker pre-review / repair cycle 5
 
 WP: `WP-CITY-00 — Keeper City spatial constitution + scale envelope`
 Contract: `Docs/workpacks/CITY/WP-CITY-00.md`
@@ -7,302 +7,200 @@ Active Worker: `ChatGPT GPT-5.6 Sol — transfer Worker`
 Worker history: `Claude Code — session 01KC1S5dCRLuMq6qeht4n34L → ChatGPT GPT-5.6 Sol`
 Transfer SHA: `d2d5f7a7277d8949264d62e6ac2ecbbb171aae9b`
 Governing protocol: `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` v1.7
-fail_cycle: **4**
+fail_cycle: **5**
 
-This is a Worker quality gate, **not** an independent review. Every earlier `CLEAN` is void. The old
-circuit-breaker pre-review is preserved in git history and in `WORKER_TRANSFER.md` as a failed quality
-gate: it declared a physically impossible candidate CLEAN.
+This is a Worker quality gate, not an independent review. All prior CLEAN declarations are superseded
+for the new candidate. CITY is non-foundational; any `PROCESS_ONLY` green receipt is process evidence,
+not semantic proof.
 
-This report is the final branch mutation after the semantic candidate and handoff were prepared. The
-exact frozen SHA is therefore recorded in the PR body after this report commit; this file does not try
-to name its own commit.
-
-CITY is non-foundational. `Mode: PROCESS_ONLY` may generate a synthetic green receipt; that is not
-semantic proof and is not used below.
+The exact frozen SHA is recorded in PR #65 after this report and `HANDOFF.md` are committed.
 
 ---
 
-## 1. Predecessor / authority check
+## 1. Reviewer finding reproduced
 
-Re-run from `WORKER_PLAN.md`:
+Independent review #5261646488 reviewed
+`bc9f1c850b2d9eedc9f3bb4393bb62a11ffcde35` and found one blocking contradiction left after cycle 4:
 
-- **WP-ART-00 seed / setting direction:** consumed as merged direction, not promoted to an H0-style
-  proof. CITY keeps the small working landing inside the inherited valley setting and no longer needs
-  an invented long-distance navigability premise.
-- **Production Blueprint:** non-binding production proposal. v0.3 delegates topology, district
-  families and scale to the constitution; no second topology remains authoritative there.
-- **Living World PA material:** consumed only as non-binding spatial/product input. CITY-00 does not
-  pre-accept a PA guarantee.
-- **CITY-owned outputs:** topology, landmasses/crossings/port structure, scale envelope, playable vs
-  scenic split, spatial invariants, rejected alternatives and downstream questions.
-- **Outside claim:** measured travel/navmesh, CITY-02 programme, CITY-03 exact seed boundary, final
-  geometry, asset feasibility, runtime/H0 contracts.
+- `CONNECTIVITY_MATRIX.md` correctly defines **no Ensanche-bank ↔ Orilla-sur crossing**;
+- the selected semantic graph in `CITY_SPATIAL_CONSTITUTION.md` nevertheless drew a vertical Ensanche
+  branch that terminated in a horizontal line continuing directly to `PUERTO FLUVIAL`;
+- `TOPOLOGY_B_CUNA_CONFLUENCIA.md` contained the same visual implication.
 
-Result: **PASS** — no authority inversion or predecessor proof laundering found.
+Because those drawings are explicitly semantic graphs, the line was an implied edge, not harmless
+cartographic decoration. The FAIL is valid.
 
 ---
 
-## 2. Complete diff / scope check
+## 2. Correction boundary
 
-Baseline→candidate comparison contains **14 changed files**, all Markdown:
+This cycle does **not** reopen Topology B, the planar embedding, the scale envelope, the seven crossing
+IDs, either connectivity state, route counts or expansion seams.
 
-- 12 files under `Docs/evidence/WP-CITY-00/`;
-- `Docs/production/CITY_SPATIAL_CONSTITUTION.md`;
-- `Docs/production/PRODUCTION_BLUEPRINT.md`.
+It changes only the two graph renderings and the evidence/process surfaces needed for a new freeze.
+The correction rule is now explicit in both graphs:
 
-No `src/`, tests, Unity scene, asset, navmesh, tool/script, ROADMAP, H0 workpack, ART source, or
-`RESIDUAL_LEDGER.md` mutation exists in the candidate.
+> Only explicit labeled connectors are graph edges. Whitespace, columns and visual grouping do not
+> imply connectivity.
 
-`PRODUCTION_BLUEPRINT.md` changes only its non-binding topology reconciliation, zone/seed wording and
-scale pointers; it keeps its non-binding status and delegates the selected city to the constitution.
+The graph is partitioned into `[ENSANCHE BANK]`, `[WEDGE]` and `[ORILLA SUR]` so a landmass boundary
+cannot be mistaken for a route.
 
-Result: **PASS**.
-
----
-
-## 3. Repair-cycle-4 causal proof — planarity first
-
-The fourth independent FAIL was not a wording mismatch. It proved the authoritative connectivity
-source itself physically impossible. The repair therefore uses this order:
-
-1. fix landmasses in `PLANAR_EMBEDDING.md`;
-2. enumerate every inter-landmass edge;
-3. regenerate `CONNECTIVITY_MATRIX.md`;
-4. regenerate constitution/dossier/comparison/refutation surfaces from that result.
-
-### Landmass check
-
-| Fact | Result |
-|---|---|
-| Río and Arroyo meet at the south point of the Wedge | PASS |
-| Wedge terminates at that confluence | PASS |
-| Ensanche remains outside Arroyo | PASS |
-| Orilla sur exists outside Río and continues downstream as a joined-river bank | PASS |
-| Puerto + Entrada occupy that real downstream Orilla-sur bank | PASS |
-| no dry edge passes through the confluence and reappears downstream | PASS |
-
-### Crossing check
-
-Every change of landmass is a named crossing:
-
-- Wedge↔Ensanche bank: **X2, X3, X4, X5** over Arroyo;
-- Wedge↔Orilla sur near core: **X1** over Río;
-- Wedge-tip landing head↔upstream Puerto edge: **X6** in State 1 or **X7** in State 2 over joined Río.
-
-X6/X7 lands at the port's **upstream edge** and the district extends downstream from that bridgehead;
-there is no implied 300 m bridge span and no hidden eighth crossing.
-
-### Loop decomposition
-
-- **L1 State 1:** Casco → X1 → camino sur → Puerto → X6 → landing head → Cuesta → Casco.
-- **L1′ State 2:** same with X7.
-
-Every segment is either dry on one named landmass or one named crossing.
-
-Result: **PASS** — the specific geometric impossibility from FAIL 4 is removed rather than paraphrased.
+Result: **PASS — minimal repair boundary respected.**
 
 ---
 
-## 4. Connectivity counts / state audit
+## 3. Authoritative connectivity re-check
 
-Mechanical counts against the owning matrix:
+`CONNECTIVITY_MATRIX.md` remains the connectivity owner and was not changed in cycle 5. Re-read
+against the repair:
 
-| Quantity | Count / state | Check |
+| Inter-landmass relation | Allowed edges | Cycle-5 graph rendering |
 |---|---|---|
-| crossing IDs over full constitution | **7** — X1..X7 | PASS |
-| coexisting crossings in State 1 | **6** — X1..X6 | PASS |
-| coexisting crossings in State 2 | **6** — X1..X5 + X7 | PASS |
-| Arroyo crossing IDs | **4** — X2..X5 | PASS |
-| permanent Arroyo crossings | **2** — X2, X3 | PASS |
-| Río crossings in each state | **2** — X1+X6 or X1+X7 | PASS |
-| State-1 Río availability ladder | **2 → 1 → 0** | PASS |
-| State-2 single-closure floor | **1** | PASS |
-| expansion seams | **6** | PASS |
-| district families | **9** — 7 substantial + 2 edge | PASS |
-| permanent CSI invariants | **12** | PASS |
+| Ensanche bank ↔ Wedge | X2, X3, X4, X5 over Arroyo | explicit `ENSANCHE == X2-X5 / ARROYO == ...` |
+| Wedge ↔ Orilla sur near casco | X1 over Río | explicit `CASCO VIEJO → X1 PUENTE VIEJO → X1 far end` |
+| Wedge tip ↔ Puerto / Orilla sur | X6 State 1 or X7 State 2 over joined Río | explicit `landing head → X6/X7 → upstream PUERTO edge` |
+| Ensanche bank ↔ Orilla sur | **none** | **no line / no connector** |
 
-The old `Puerto ↔ Orilla sur` crossing no longer exists because Puerto **is on Orilla sur**. X6/X7 is
-instead the Wedge-tip↔Puerto crossing, which preserves the per-state count without inventing an edge.
+Any Ensanche→Puerto trip must therefore cross X2–X5 into the Wedge and then cross the Río by X1 or
+X6/X7. This matches matrix §6's representative Ensanche↔Puerto routes.
 
-Result: **PASS**.
+Result: **PASS.**
 
 ---
 
-## 5. Full-graph reachability audit — finding that the old pre-review missed
+## 4. Planar-embedding re-check
 
-The outgoing circuit-breaker pre-review recorded as F15 that high water makes Casco↔Ensanche depend on
-the plaza because X5 is submerged. The transfer notes carried that as a known seasonal condition.
+Cycle 4's physical correction is preserved:
 
-That conclusion also fails a full-graph reachability check.
+- Wedge ends at the confluence;
+- Ensanche is outside the Arroyo;
+- Orilla sur is outside the Río and continues downstream along the joined river;
+- Puerto + Entrada sit on Orilla sur;
+- no dry Wedge→Puerto edge exists;
+- no dry Ensanche-bank→Orilla-sur edge exists;
+- every landmass change shown by the graph is a named crossing.
 
-With X5 unavailable, the already-authored graph still contains this plaza-free path:
+The new graph no longer uses one continuous bottom line across different landmasses. The joined Río is
+rendered as a water boundary between the Wedge and Orilla-sur groups.
 
-`Casco → Cuesta → landing head → paseo → Ribera → east stairs → Barrio Alto → X3 → Ensanche`.
-
-No new street was added to rescue CSI-03; every segment was already used elsewhere in the candidate.
-The old audit had checked the **local direct crossing** rather than graph reachability.
-
-Repair:
-
-- matrix §6 now distinguishes the short low-water X5 bypass from the long high-water X3 detour;
-- constitution §2.6 mirrors it;
-- CSI-03 binds structural plaza independence without promising that the shortest bypass is always
-  available;
-- handoff explicitly records that this inherited audit conclusion was corrected.
-
-Result: **PASS** — remove-plaza connectivity is now a graph claim rather than a local-pair shortcut
-claim.
+Result: **PASS.**
 
 ---
 
-## 6. Port / ordinary-movement audit
+## 5. State/count audit
 
-The port has four route families without double-counting crossings:
+No semantic count changed in cycle 5:
 
-1. Entrada / valley road → Puerto, dry on Orilla sur;
-2. X1 far end / camino sur → Puerto, dry after X1;
-3. Casco / Cuesta → X6/X7 → upstream Puerto edge;
-4. Ribera / paseo → landing head → X6/X7 → upstream Puerto edge.
+| Quantity | Expected | Result |
+|---|---:|---|
+| crossing IDs across constitution life | 7 — X1..X7 | PASS |
+| crossings coexisting per state | 6 | PASS |
+| Arroyo crossing IDs | 4 — X2..X5 | PASS |
+| Río crossings per state | 2 — X1+X6 or X1+X7 | PASS |
+| State-1 Río availability | 2 → 1 → 0 | PASS |
+| expansion seams | 6 | PASS |
+| substantial + edge families | 7 + 2 | PASS |
+| permanent CSI invariants | 12 | PASS |
 
-Routes 3 and 4 share X6/X7 and are explicitly not counted as separate crossing IDs.
-
-The port's reason for existing remains independent of long-distance navigability: high-water timber
-rafting, áridos, ferry/bridge crossing, road break-bulk, fishing and ordinary waterfront work.
-CSI-04 keeps Entrada/bus/road adjacent and requires at least two everyday non-port services there.
-
-State-1 high water is intentionally costly: X6 suspends, leaving X1 + camino sur as the core↔port
-route. That is a declared availability condition, not a hidden loss of connectivity.
-
-Result: **PASS**.
+The repair adds no eighth crossing and removes none.
 
 ---
 
-## 7. Absolute / quantifier audit
+## 6. Route/loop audit
 
-Checked factual candidate absolutes and counts against their owning tables/graphs rather than against
-nearby prose. Main assertions:
+Representative routes remain exactly those owned by the matrix:
 
-- **Wedge ends at confluence** — matches planar embedding;
-- **no dry Wedge→Puerto edge** — matches all corrected route surfaces;
-- **seven IDs / six per state** — matches X1..X7 table;
-- **four Arroyo / two Río per state** — matches crossing table;
-- **no third Río crossing per state** — follows same table;
-- **2→1→0 State-1 ladder** — matches availability rows;
-- **six seams** — six enumerated;
-- **nine families** — nine rows;
-- **twelve invariants** — CSI-01..CSI-12;
-- **at least two expansion directions** — six named;
-- **no Unity/runtime work** — complete diff contains docs only.
+- Ensanche↔Puerto: X2/X3/X4/X5 to Wedge, then X6/X7 when available or X1 + camino sur;
+- L1 State 1: Casco → X1 → camino sur → Puerto → X6 → landing head → Cuesta → Casco;
+- L1′ State 2: same with X7;
+- high-water Casco↔Ensanche still has the long plaza-free X3 detour identified in cycle 4.
 
-One wording overclaim found during this audit — "two independent dry approaches" to Puerto — was
-reduced to the supportable claim "two named dry approach directions" in the matrix and selected-option
-dossier. Graph-disjoint independence is not needed by the WP and was not proven.
+No route uses a direct Ensanche↔Puerto edge because none is drawn or defined.
 
-Result: **PASS**.
+Result: **PASS.**
 
 ---
 
-## 8. Cross-surface reconciliation
+## 7. Cross-surface reconciliation
 
-| Surface | Check | Result |
+| Surface | Cycle-5 check | Result |
 |---|---|---|
-| `PLANAR_EMBEDDING.md` ↔ matrix | same landmasses/endpoints | PASS |
-| matrix ↔ constitution | X1..X7, two states, 2→1→0, port approaches, L1/L1′, seams | PASS |
-| matrix ↔ Topology B dossier | bank choice, bridgehead, counts, no dry continuation | PASS |
-| comparison/refutation ↔ corrected B | selection rationale preserved; bank-dependent reasoning updated | PASS |
-| scale envelope ↔ corrected B | area/density/walk assumptions do not depend on impossible dry edge | PASS |
-| blueprint ↔ constitution | blueprint delegates topology/scale and keeps compatible seed/zone language | PASS |
-| transfer/handoff/process docs | transfer historical; current handoff points at repaired sources | PASS |
+| `PLANAR_EMBEDDING.md` | three relevant landmasses remain physically realizable | PASS |
+| `CONNECTIVITY_MATRIX.md` | remains sole connectivity owner; no Ensanche↔Orilla-sur edge | PASS |
+| `CITY_SPATIAL_CONSTITUTION.md` §2.2 | graph now partitions landmasses and uses labeled crossings only | PASS |
+| `TOPOLOGY_B_CUNA_CONFLUENCIA.md` §2 | same partition and explicit no-edge statement | PASS |
+| crossing table / availability | unchanged X1..X7 and 2→1→0 | PASS |
+| port approaches | unchanged: valley road, X1+camino, X6/X7 direct families | PASS |
+| scale envelope | untouched | PASS |
+| blueprint reconciliation | untouched; no contradictory direct edge introduced | PASS |
 
-The earlier failure mode — surfaces agreeing with one another but all being wrong — is addressed by
-checking them **against the planar embedding first**, not merely against each other.
-
-Result: **PASS**.
-
----
-
-## 9. WP acceptance walkthrough
-
-Against `Docs/workpacks/CITY/WP-CITY-00.md`:
-
-| Acceptance | Evidence / result |
-|---|---|
-| ≥3 genuine topology alternatives | A Dos Orillas, B Cuña de Confluencia, C Ribera Larga; **PASS** |
-| loops; not one hub with spokes | three Wedge levels, four Arroyo crossings, Río loop L1/L1′, remove-plaza graph remains connected; **PASS** |
-| river shapes movement | Río is a territorial boundary with two designed crossings/state; Arroyo is everyday crossing network; **PASS** |
-| port has gameplay/material/social reason + setting scale | work/crossing/road-break-bulk rationale, 120–150 m working frontage hypothesis consumed from ART; **PASS** |
-| spatial characters distinct | casco, civic/commercial, two residential characters, work/port edge, rural edge; **PASS** |
-| ≥2 outward/expansion directions | six seams; **PASS** |
-| actor can be elsewhere in town | longest ordinary route target ≈1.05–1.15 km / 15–17 min; hypothesis clearly marked for CITY-04; **PASS** |
-| size justified by density/travel/content cost | `SCALE_ENVELOPE.md` falsifies 0.8–1.2 km² and adopts 0.30–0.45 km²; **PASS** |
-| retained seed is real part of final constitution | 0.03–0.06 km² Wedge-tip seed, no demolition required; **PASS** |
-| no Unity/asset/runtime contract | docs-only diff; **PASS** |
-
-### Negative gates
-
-- not four streets plus scenery — **clear**;
-- no acreage vanity — **clear**;
-- not every meaningful route through plaza — **clear**, including high-water full-graph detour;
-- river/port are structural movement/work elements — **clear**;
-- retained seed grows by seams without replacement — **clear**;
-- no H1/H2 implementation authority pre-decided — **clear**.
-
-### Definition of Done
-
-CITY-01 can consume named landmasses, crossings, states, route families, loops, seams and a scale
-hypothesis without inventing a different city.
-
-Result: **PASS**.
+The specific failure mode from cycle 5 — a visual edge contradicting the matrix — is removed in both
+surfaces identified by the Reviewer.
 
 ---
 
-## 10. Findings fixed before freeze
+## 8. Scope / diff check
 
-This transfer Worker found and repaired four issues before declaring CLEAN:
+Against the reviewed cycle-4 candidate `bc9f1c850b2d9eedc9f3bb4393bb62a11ffcde35`, the semantic repair
+touches only:
 
-1. **Planarity repair required an explicit port bridgehead.** X6/X7 now lands at the upstream Puerto
-   edge and the district extends downstream, removing an avoidable bridge-span ambiguity.
-2. **The old F15 seasonal-plaza conclusion was false at full-graph scope.** Long X3 bypass now recorded
-   instead of claiming mandatory plaza routing.
-3. **"Independent dry approaches" overclaimed graph-disjointness.** Reduced to named dry approach
-   directions.
-4. **Process surfaces were stale after transfer.** `WORKER_TRANSFER.md` is now historical, and
-   `HANDOFF.md` describes the receiving candidate rather than the failed circuit-breaker candidate.
+1. `Docs/production/CITY_SPATIAL_CONSTITUTION.md`;
+2. `Docs/evidence/WP-CITY-00/TOPOLOGY_B_CUNA_CONFLUENCIA.md`.
 
-None is an additional Reviewer FAIL; `fail_cycle` remains **4**.
+This report and `HANDOFF.md` are process/evidence mutations for the new freeze. No code, tests, Unity
+scene, asset, runtime contract, H0 workpack, ART source or scale calculation is changed.
+
+Result: **PASS.**
 
 ---
 
-## 11. Residual risks / downstream questions
+## 9. WP acceptance / negative-gate regression
 
-Not blockers for CITY-00:
+The cycle-5 repair does not weaken any accepted CITY-00 requirement:
 
-1. 1.15 m/s effective speed and all walk times are planning hypotheses, not measurements.
-2. Verticality/readability/followability can still fail CITY-04 measurement.
-3. ~830 buildings depends on declared coverage/footprint assumptions.
-4. Topology A's rejection is coupled to the small-city scale; above roughly 0.7 km² reopen topology.
-5. State-1 high water removes X6 and makes Puerto a long X1+camino-sur detour.
-6. CITY-02 must place at least two ordinary non-port services at Entrada/Puerto.
-7. CITY-03 owns exact seed boundary.
-8. The timing of X6→X7 / State 1→2 remains unassigned.
-9. Exact route costs, including the long high-water Casco↔Ensanche bypass, belong to CITY-01 and later
-   CITY-04 measurement.
-10. A future Reviewer should attack the **embedding and matrix contents**, not infer correctness from
-    this report or cross-surface agreement.
+- ≥3 genuine topology alternatives remain;
+- selected B still has loops and is not hub-and-spokes;
+- river and Arroyo still shape movement structurally;
+- port reason/scale remain unchanged;
+- district families remain spatially distinct;
+- six expansion seams remain;
+- long-route / retained-seed hypotheses remain unchanged;
+- no Unity/asset/runtime work is introduced.
+
+Negative gates remain clear. Most importantly, CITY-01 no longer receives two incompatible answers to
+whether Ensanche and Puerto have a direct edge.
+
+Result: **PASS.**
 
 ---
 
-## 12. Worker verdict
+## 10. Residual risks / downstream ownership
 
-No known blocking defect remains inside WP-CITY-00's claim.
+Unchanged and not blockers for CITY-00:
+
+1. walk times / 1.15 m/s remain hypotheses for CITY-04 measurement;
+2. verticality/readability/followability remains CITY-01/CITY-04 work;
+3. ~830-building estimate depends on planning assumptions;
+4. Topology A reopens if dense fabric grows beyond roughly 0.7 km²;
+5. State-1 high water removes X6 and forces the long X1+camino-sur port detour;
+6. CITY-02 owns ordinary non-port services at Entrada/Puerto;
+7. CITY-03 owns the exact retained-seed boundary;
+8. State 1→2 timing remains unassigned.
+
+---
+
+## 11. Worker verdict
+
+No known blocking defect remains inside WP-CITY-00's claim after the cycle-5 graph reconciliation.
 
 ```text
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED_THIS_TRANSFER: 4
+WORKER_PRE_REVIEW_FINDINGS_FIXED_THIS_CYCLE: 1
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-CITY-00/WORKER_PRE_REVIEW.md
-fail_cycle: 4
+fail_cycle: 5
 ```
 
-Next protocol step after committing this report: record the resulting exact 40-character HEAD as the
-Frozen candidate SHA in PR #65, set the branch frozen, mark the PR Ready, and hand it to a **fresh
+Next protocol step after the final handoff commit: record exact 40-character HEAD as the new Frozen
+candidate SHA in PR #65, mark the branch frozen, return the PR to Ready, and hand it to a **fresh
 independent Reviewer**. This Worker must not review its own candidate.
