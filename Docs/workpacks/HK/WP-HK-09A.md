@@ -1,9 +1,22 @@
 # WP-HK-09A — Capability containment boundary
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
 Depends on: `WP-HK-08B`  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+
+## Completion metadata
+
+- implementation PR: `#54`;
+- baseline SHA: `b2a666554e88a543013ece8751ab781637f7db55`;
+- reviewed frozen candidate: `acb1ccc341aec5131dc2ef979bd322e40e208b53`;
+- independent Reviewer verdict: `PASS` (review `#5260496498`);
+- exact-SHA freeze validation: GREEN, Actions `35508529666`, artifact `10604463322`;
+- implementation merge SHA: `614ad941881fdefa83fd46a1a8db989cfaba2cbb`.
+
+Accepted semantics: the production H0 host exposes no generic shell/process authority, no protocol-triggered ambient network authority and no caller-selected filesystem path authority; `--file` is rejected before the legacy framing host can open a path. `H0HostCapabilityPolicy` rejects external side effects, elevated/unknown privilege and contradictory canonical mutation/rebase/replay policy metadata. The accepted `arkus.neutral-projection@1` boundary independently enforces H0 admission on every `ComposedContract` before capabilities can be exposed or dispatched, so JSONL, MCP and future conforming transports cannot skip the policy by using generic canonical composition directly. Runtime-type selectors cannot create arbitrary activation authority, adapter-only host powers remain absent, and the approved Juego2 Potes market slice still passes inspect → author → snapshot/import → replay under the containment policy. Numeric resource limits and persistence/interruption integrity remain owned by `WP-HK-09B`.
+
+One earlier frozen candidate `1c85a64a5d3930ad2e39451fb8db2c1fac6ae78b` failed review `#5260422246` because `ContractComposer.Compose(...)` could feed `NeutralProjectionService(ComposedContract)` without crossing `H0HostCapabilityPolicy`. The accepted repair places admission at the neutral-projection constructor while keeping `ContractComposer` generic and adds a causal RED→GREEN fixture that proves rejection before handler invocation.
 
 ## Objective
 
