@@ -1,87 +1,74 @@
-# WP-CITY-03 — Retained product seed + expansion seams
+# WP-CITY-03 — Retained product seed + exact scenario specification
 
 Status: **FROZEN PLAN / NOT_STARTED**  
-Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)  
+Class: PRODUCT / KEEPER-SEED PREPRODUCTION (NON-FOUNDATIONAL)  
 Mode: **REMOTE**  
-Depends on: `WP-CITY-02` PASS  
+Depends on: `WP-CITY-06` PASS  
 Blocks: `WP-CITY-04` only
+
+## Contract continuity
+
+Accepted CITY-00 states that the retained seed remains in the `0.03–0.06 km²` band and that its **exact boundary belongs to CITY-03**. This WP preserves that delegation. It does not move seed ownership to a new identifier.
 
 ## Objective
 
-Choose the exact first city slice to build after GATE so the demo/vertical development area is already part of the shipping city and exposes clean expansion seams toward the rest.
+Choose the exact first slice of the accepted city to build and specify it deeply enough that LOCAL work is execution/validation rather than renewed city design.
+
+The seed must be the first keeper district of the shipping city, not a disconnected tutorial or disposable harness map.
 
 ## Seed principles
 
-The seed must be:
-
-- small enough to finish to high quality;
-- large enough to test route choice and ordinary life;
-- unmistakably part of the selected city;
-- connected to future districts without placeholder topology;
-- useful for Harness/Unity authoring tests and later Living World tests;
-- worth keeping visually and spatially even if assets/presentation improve later.
-
-The current Production Blueprint seed — plaza side + old bridge + bar + old-quarter/commercial connection + river edge — is a candidate, **not automatic acceptance**. CITY-03 must test it against alternatives after CITY-00..02.
+The seed must be small enough to finish, large enough to test route choice and ordinary life, unmistakably part of the accepted city, connected to future districts without placeholder topology and useful for later Arkus/Living World trials without pre-owning their semantics.
 
 ## Work
 
-1. Define ≥3 candidate retained seeds within the accepted city constitution.
-2. Compare them for:
-   - identity in a screenshot;
-   - route loops;
-   - bar/social interior;
-   - river/bridge value;
-   - proximity or visible/functional seam toward port;
-   - residential/work/market representation;
-   - activity/minigame opportunity;
-   - actor schedule usefulness;
-   - expansion without demolition;
-   - asset-kit reuse;
-   - likely local blockout cost.
-3. Select one seed and define hard boundary + soft visual envelope.
-4. Define **expansion seams** toward at least:
-   - additional old/residential fabric;
-   - port/waterfront work district;
-   - commercial/peripheral/arrival edge;
-   - rural/valley route.
-5. Produce scenario list the seed must eventually support.
+1. Define at least three candidate retained seeds inside the accepted CITY-00 constitution.
+2. Compare identity, route loops, actor-trip usefulness, A/B/C/D location mix, S0–S4 depth mix, reusable-building yield, interior/discovery depth, expansion seams and expected blockout cost.
+3. Select one seed and define the exact hard playable boundary + soft visual envelope.
+4. Enumerate required street segments, parcels/building families, locations, depth promises, interiors/access layers and selected discovery opportunities.
+5. Define expansion seams toward additional residential/old fabric, port/waterfront work, commercial/peripheral/arrival and rural/valley routes.
+6. Define the exact scenario and measurement pack consumed by `CITY-04`.
+7. Identify the representative keeper slice later used by `CITY-08` for public Arkus authoring proof.
+8. Distinguish structural keeper decisions from presentation that may be replaced later.
 
 ## Minimum future scenario coverage
-
-The selected seed must plausibly support, once later systems exist:
 
 - quiet ordinary morning;
 - market/commercial flow;
 - NPC home/work/social trip;
-- player follows an NPC through a route choice;
+- follow/search route choice;
 - bar/social activity;
 - river/bridge traversal;
-- material delivery or work consequence touching the seed;
+- material delivery/work consequence;
 - municipal access/routing/service change;
-- low-stakes player perturbation with local consequence;
-- player leaves and returns to a changed local state.
+- low-stakes player perturbation;
+- leave and return to changed local state;
+- at least one discovery with more than one plausible truthful route once later systems exist.
 
 ## Deliverables
 
 - `Docs/production/CITY_PRODUCT_SEED.md`
 - seed comparison matrix;
-- selected seed semantic map;
-- retained vs temporary presentation declaration;
+- exact selected-seed semantic map/spec;
+- retained-vs-temporary declaration;
 - expansion-seam ledger;
-- future scenario/measurement pack for CITY-04.
+- `CITY-04` local validation/measurement pack;
+- later `CITY-08` Arkus authoring trial slice.
 
 ## Acceptance
 
-- ≥3 seed candidates compared.
-- Selected seed is not a disconnected tutorial arena.
-- At least one internal route loop exists or is enabled by the first immediate extension.
-- River/bridge is structural, not backdrop.
-- Port has a credible future seam even if the complete port is not in the first blockout.
-- At least two different everyday actor trips can cross the seed without sharing the same exact path.
-- Seed can expand in ≥4 named directions without moving its core streets/bridge/plaza.
-- Temporary art is allowed; temporary urban topology is explicitly minimised.
-- No local implementation starts in this WP.
+- ≥3 genuine seed alternatives are compared.
+- Exact boundary remains inside the accepted CITY-00 retained-seed band unless a separate explicit predecessor amendment is later approved.
+- Selected seed contains enough route/place/depth variety to test the product, not just a pretty plaza.
+- At least two everyday actor trips differ materially.
+- Expansion in ≥4 named directions does not require moving keeper core streets/bridges/anchors.
+- Production depth is feasible; hero spaces are selective.
+- A LOCAL Worker can build the greybox without inventing new macro layout.
 
 ## Definition of Done
 
-We can hand CITY-04 a bounded map and say: **build this once, measure it honestly, and only then decide whether the paper city survives contact with play.**
+`CITY-04` receives one bounded keeper-seed specification and can answer “build exactly this, measure these hypotheses, and report deviations” without choosing a different city slice.
+
+## Forbidden
+
+Unity construction; asset import; runtime gameplay; changing CITY-00 geography; silently redefining the accepted seed band; moving seed ownership to another WP.

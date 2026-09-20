@@ -1,70 +1,113 @@
-# CITY track — Keeper City spatial programme
+# CITY track — Keeper City production-space programme
 
 Status: **ACTIVE / NON-FOUNDATIONAL**  
-Date: 2026-09-20  
-Repository: `Arkus0/Juego2`  
-Scope: product-space preproduction for the fictional Potes/Liébana keeper city
+Version: 2.1 — 2026-09-20  
+Repository: `Arkus0/Juego2`
 
 Accepted progress: `WP-CITY-00` is **COMPLETE**. It passed independent review on frozen candidate `f5c684461b525841487158d873a9b135008df3ab` (review `#5261672961`) and merged via PR `#65` as `69bbba2603e67cb233a3e1cc36a4173bed41cfc4`.
 
-The downstream CITY programme is being replanned after CITY-00 so macro urbanism, streets, buildings, interiors, discovery depth and keeper-seed production remain one cognitively simple workpack track. Until that replanning is accepted, do **not** start the previously drafted `WP-CITY-01` automatically.
-
 ## Purpose
 
-Design the spatial skeleton and producible places of the shipping city early enough that the first playable/demo district can remain part of the final game.
+Design one coherent keeper-city pipeline from accepted macro geography to movement, meaningful places, reusable environment grammar, layered interiors/discovery and the first retained playable district.
 
-The CITY track does **not** build a disposable test town and does not compete with the Harness Kernel. It converts the current Production Blueprint into independently reviewable spatial decisions before expensive Unity geometry exists.
+CITY intentionally remains **one operational track**. Splitting CITY/SCENE created coordination overhead without a true authority boundary; merging every responsibility into one giant WP would create the opposite problem. The programme therefore keeps causal boundaries while using one explicit spine.
 
 Core rule:
 
-> **The demo must be the first finished piece of the final city, not a temporary map that teaches us what to build later.**
+> **The demo is the first finished piece of the final city, and every CITY workpack reduces uncertainty needed to build that piece once.**
 
-## Product target
+## Accepted predecessor and stable IDs
 
-The desired place is a compact but credible small regional city/town: substantially more than four streets, far smaller than an open-world metropolis, dense enough that most traversed space has social/material/gameplay meaning, and large enough that actors can disappear into another district and continue life outside the player's view.
+`WP-CITY-00` owns the accepted spatial constitution: landmasses, river/arroyos, district relationships, port placement, crossing strategy, scale envelope and expansion logic. Downstream WPs consume `Docs/production/CITY_SPATIAL_CONSTITUTION.md` and its reviewed evidence; they do not silently redraw that city.
 
-Permanent spatial ingredients to test and preserve:
+CITY-00 also already names `CITY-01..04`. Those identifiers are therefore stable contracts, not free numbering slots:
 
-- river as a genuine movement/land-use boundary;
-- old bridge plus later additional crossings where justified;
-- historic old quarter with irregular lanes and verticality;
-- civic/commercial core and town hall;
-- residential areas with more than one social character;
-- workshops/service/peripheral urban edge;
-- **river port / fluvial-port district** with wharf/storage/work/logistics identity;
-- roads and valley routes that connect outward;
-- rural edge, paths, slopes, huertas/green transition;
-- quiet spaces as well as busy spaces;
-- expansion seams that do not require rebuilding the first district.
+- `CITY-01` remains mobility / route graph / walk-time topology;
+- `CITY-02` remains systemic locations + playable/interior/reactive-density programme;
+- `CITY-03` remains exact retained product seed;
+- `CITY-04` remains LOCAL Unity blockout/traversal validation.
 
-The river port is not required to imply a giant shipping harbour. Its scale must fit the fictional valley city. Its value is systemic: arrivals, goods, work, schedules, visitors, storage, fishing/waterfront activity and municipal decisions can intersect there.
+## Execution chain
 
-## Accepted CITY-00 constitution
+The execution order is deliberately not numeric so those accepted IDs keep their meanings:
 
-The accepted spatial constitution lives in `Docs/production/CITY_SPATIAL_CONSTITUTION.md` and its reviewed evidence under `Docs/evidence/WP-CITY-00/`. Downstream work consumes that accepted constitution; it does not silently redraw the river, landmasses, crossings, port placement or district relations.
+```text
+CITY-00 ✅  Spatial constitution + scale envelope
+   ↓
+CITY-01    Mobility, district graph + walk-time topology
+   ↓
+CITY-02    Systemic locations + spatial-depth/interior programme
+   ↓
+CITY-05    Streets, parcels + reusable building families
+   ↓
+CITY-06    Interiors + layered discovery
+   ↓
+CITY-03    Retained product seed + exact scenario specification
+   ↓
+CITY-04    LOCAL Unity greybox + traversal validation
+   ↓
+CITY-07    LOCAL keeper realization
+   ↓
+CITY-08    LOCAL Arkus authoring proof + reuse closure
+```
+
+`CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are REMOTE planning work. `CITY-04`, `CITY-07` and `CITY-08` are gated LOCAL work. Do **not** infer sequence by sorting filenames; the graph above and each WP's dependency fields are authoritative.
+
+## Two orthogonal classifications
+
+CITY uses two separate axes so production scope does not get confused with systemic importance. Both are frozen in `CITY-02`, where locations are programmed, but they remain independent dimensions.
+
+**Spatial production depth:**
+- `S0` scenic envelope / inaccessible context;
+- `S1` authored shell or façade only;
+- `S2` shallow playable space with bounded interaction;
+- `S3` deep playable place with multiple authored spaces/thresholds/anchors;
+- `S4` hero layered place with multiple meaningful access/discovery opportunities.
+
+**Systemic importance:**
+- `A` primary systemic anchor;
+- `B` supporting systemic/playable location;
+- `C` ambient urban fabric;
+- `D` scenic context.
+
+A visually impressive building may be `S1/C`; an ordinary home may be `S3/A` if persistent actors and consequences depend on it.
+
+## Layered-city rule
+
+The city must have more depth than its street plan without pretending every building is a dungeon. Later CITY work may use, selectively:
+
+- public surface;
+- private/semi-private space;
+- service/back-of-house routes;
+- vertical space;
+- social/temporal discovery;
+- institutional/historical discovery;
+- rare extraordinary/cultural strands.
+
+Important discoveries may be authored, systemic or hybrid. Martial arts/kung-fu/Hong Kong or Chinese-cinema material may form a rare identity-bearing strand, but the town must remain coherent if a player never discovers it.
 
 ## Relationship to other programmes
 
-- `WP-ART-00` owns visual/setting direction; CITY consumes it and must not silently restyle the game.
-- `Docs/production/PRODUCTION_BLUEPRINT.md` is the main prior product-seed input; CITY may sharpen or explicitly propose amendments to it.
-- Living World `PA-01..PA-14` define behavioural/system needs; CITY provides spatial affordances and test situations but does not pre-accept PA findings.
-- H0/H1 canonical/bridge architecture remains authoritative for implementation boundaries.
-- The old `Arkus0/Juego` repository is reference only.
+- `WP-ART-00` / ART own visual and setting direction; CITY consumes them and cannot silently restyle the game.
+- `Docs/production/PRODUCTION_BLUEPRINT.md` remains non-binding production input. Its `CITY-02` location/interior and `CITY-03` exact-seed delegations remain compatible with this track.
+- Living World / PA work owns beliefs, schedules, dialogue, decisions and runtime social semantics. CITY supplies spatial affordances and test situations only.
+- H0/H1 and later accepted bridge/catalogue/authoring contracts remain authoritative for implementation surfaces. Unity is a realization/inspection target, not the semantic source of truth.
 
 ## Track-wide invariants
 
-1. **Retained-first:** serious geometry starts only where we expect to keep the urban structure.
-2. **Loops over funnels:** the plaza may be important but must not be the mandatory route for every journey.
-3. **Function before decoration:** each core district exists because people live, work, move, socialise, govern or exchange there.
-4. **Reactive density over acreage:** empty expansion is worse than a smaller city with meaningful locations.
-5. **Quiet is content too:** ordinary residential/rural/river spaces are required so the town does not feel like permanent procedural theatre.
-6. **Macro ↔ micro:** municipal choices must be able to alter routes/access/capacity/services in spaces the player later experiences on foot.
-7. **Player absence matters:** actors need routes and destinations that plausibly continue without the player.
-8. **Expansion without demolition:** the seed must expose clean seams toward port, residential, commercial/peripheral and rural growth.
-9. **No fake scale:** inaccessible backdrop may sell silhouette, but it must not substitute for promised playable districts.
-10. **No pre-GATE production:** planning cannot be used to sneak scene construction or asset adoption past `WP-HK-GATE`.
-11. **One CITY vocabulary:** macro topology and place-production depth may be separate responsibilities, but they stay in one operational workpack track unless evidence later proves a real ownership boundary is needed.
+1. **Retained-first:** serious geometry begins only where the urban structure is expected to survive into the game.
+2. **One accepted geography:** downstream planning cannot contradict CITY-00 landmass/crossing truth.
+3. **Stable accepted IDs:** a workpack identifier referenced by an accepted predecessor is not repurposed casually.
+4. **Reactive density over acreage:** empty expansion is worse than a smaller city with meaningful places.
+5. **Function before decoration:** districts and places exist because people live, work, move, socialise, govern, exchange or discover there.
+6. **Quiet is content:** not every street or place produces incidents.
+7. **Depth is selective:** not every façade opens; not every interior is systemic; not every secret is a hidden room.
+8. **Reuse compounds:** streets/buildings/compositions should become cheaper to author as reviewed families accumulate.
+9. **Player absence matters:** locations/routes must make sense when actors use them off-screen.
+10. **Discovery has truthful causes:** information/access is not granted merely because the player approached a marker.
+11. **No pre-gate production:** REMOTE planning cannot smuggle Unity construction, asset adoption or runtime semantics ahead of accepted gates.
+12. **Bridge neutrality:** CITY consumes accepted Arkus/Unity capabilities; it does not invent bridge semantics to make a scene plan pass.
 
-## Current execution rule
+## Current next workpack
 
-`WP-CITY-00` is complete. The next CITY workpack will be declared by the accepted post-CITY-00 programme revision; the old draft chain `CITY-01 -> CITY-04` must not be executed by inertia.
+`WP-CITY-01 — Mobility, district graph + walk-time topology`.

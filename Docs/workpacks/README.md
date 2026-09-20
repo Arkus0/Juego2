@@ -28,4 +28,23 @@ The serial gate prevents parallel implementation from baking unreviewed assumpti
 
 A non-foundational workpack is never a valid reason to delay, weaken or reinterpret an H0 acceptance criterion.
 
-`CITY/` exists so spatial/product preproduction can be reasoned about before local production begins. `WP-CITY-00` through `WP-CITY-03` are documentation/research/planning only and may run remotely before `WP-HK-GATE`; they do not authorize Unity scene construction, asset import or serious game production. `WP-CITY-04` is the first local blockout/engine-validation workpack and MUST NOT begin before `WP-HK-GATE` has passed and the relevant Unity bridge prerequisites are accepted.
+`CITY/` is the single operational product-space track. Because accepted `WP-CITY-00` already references `CITY-01..04`, those IDs retain their original owners and the accepted post-CITY-00 spine is intentionally non-numeric:
+
+```text
+CITY-00 -> CITY-01 -> CITY-02 -> CITY-05 -> CITY-06 -> CITY-03 -> CITY-04 -> CITY-07 -> CITY-08
+```
+
+Responsibilities:
+
+- `CITY-01`: mobility / route graph / walk-time hypotheses;
+- `CITY-02`: systemic locations + A–D importance + S0–S4 spatial depth + interior programme;
+- `CITY-05`: streets/parcels/reusable building families;
+- `CITY-06`: detailed interiors + layered discovery;
+- `CITY-03`: exact retained seed + scenario specification;
+- `CITY-04`: LOCAL Unity greybox/traversal validation;
+- `CITY-07`: LOCAL keeper realization;
+- `CITY-08`: LOCAL Arkus authoring proof + reuse closure.
+
+`CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are documentation/research/planning only. `CITY-04`, `CITY-07` and `CITY-08` are LOCAL and MUST NOT begin before their stated Unity/bridge/catalogue prerequisites have passed.
+
+`WP-CITY-00` is COMPLETE. The next CITY workpack is `WP-CITY-01 — Mobility, district graph + walk-time topology` once the programme revision is accepted.
