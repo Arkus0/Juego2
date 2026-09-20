@@ -208,8 +208,10 @@ namespace Arkus.Harness.Projection
 
     /// <summary>
     /// Generic projection of one composed canonical runtime. The composed inventory remains the only
-    /// capability/schema authority. The gate bounds cancellation and timeout to admission; once the
-    /// synchronous canonical dispatcher starts, its truthful success/error outcome always wins.
+    /// capability/schema authority. HK09A host-capability admission is enforced here, below every
+    /// transport adapter, before the inventory can be exposed or dispatched. The gate bounds
+    /// cancellation and timeout to admission; once the synchronous canonical dispatcher starts,
+    /// its truthful success/error outcome always wins.
     /// </summary>
     public sealed class NeutralProjectionService : IDisposable
     {
@@ -219,7 +221,8 @@ namespace Arkus.Harness.Projection
 
         public NeutralProjectionService(ComposedContract contract)
         {
-            _contract = contract ?? throw new ArgumentNullException(nameof(contract));
+            _contract = H0HostCapabilityPolicy.Enforce(
+                contract ?? throw new ArgumentNullException(nameof(contract)));
         }
 
         public IReadOnlyList<CapabilityDefinition> Capabilities => _contract.Definitions;

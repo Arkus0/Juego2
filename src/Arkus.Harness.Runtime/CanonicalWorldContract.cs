@@ -71,7 +71,9 @@ namespace Arkus.Harness.Runtime
                 throw new InvalidOperationException("The canonical world contract must compose successfully.");
             }
 
-            return result.Contract;
+            // This is the host-capability boundary consumed by every production projection.
+            // JSONL, MCP and future adapters receive only an H0-policy-admitted canonical inventory.
+            return H0HostCapabilityPolicy.Enforce(result.Contract);
         }
 
         /// <summary>

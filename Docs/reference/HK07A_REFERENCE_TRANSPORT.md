@@ -7,6 +7,8 @@ HK07A exposes the accepted canonical Arkus H0 contract through two deliberately 
 
 The composed canonical inventory remains the only capability and schema authority. The projection and JSONL adapter do not maintain a command registry. Clients start with `system.describe` and select a published canonical version range.
 
+> **HK09A containment note.** HK07A originally proved a `--file PATH` one-shot framing convenience. The H0 production executable no longer exposes that mode: HK09A removes caller-controlled filesystem authority from the production host. Use stdin/stdout (`--stream` or `--once`). The neutral projection and JSONL protocol semantics are unchanged.
+
 ## Build and launch
 
 From a clean checkout with the SDK pinned by `global.json`:
@@ -17,16 +19,15 @@ dotnet build Juego2.sln --configuration Release --no-restore
 dotnet src/Arkus.Harness.Cli/bin/Release/net8.0/Arkus.Harness.Cli.dll --stream
 ```
 
-Supported launch modes are:
+Supported production launch modes are:
 
 | Invocation | Behavior |
 |---|---|
 | no mode option or `--stream` | Read zero or more JSONL request frames until EOF and write one response for every frame. |
 | `--once` | Read exactly one request from stdin, require EOF after it, write one response and exit. |
-| `--file PATH` | Read exactly one request from the explicit file path, write one response and exit. |
-| `--diagnostics` | Add lifecycle diagnostics on stderr only; combinable with any mode. |
+| `--diagnostics` | Add lifecycle diagnostics on stderr only; combinable with a supported mode. |
 
-Unknown, duplicate or incompatible options fail closed before any protocol output. The local host needs no Unity/editor state, network access or interactive prompt. Its initial process-local authored session is explicit and fixed: world ID `world.arkus.session`, revision `0`, and no objects. Ambient `ARKUS_*` or other environment values do not select a world, registry or capability; the .NET host/runtime environment itself remains part of the documented execution substrate.
+`--file` is rejected as an H0 usage error before the framing host can open any caller-provided path. Unknown, duplicate or incompatible options likewise fail closed before any protocol output. The local host needs no Unity/editor state, network access or interactive prompt. Its initial process-local authored session is explicit and fixed: world ID `world.arkus.session`, revision `0`, and no objects. Ambient `ARKUS_*` or other environment values do not select a world, registry or capability; the .NET host/runtime environment itself remains part of the documented execution substrate.
 
 ## Request frame
 
@@ -113,8 +114,8 @@ Cancellation and timeout are deliberately bounded to admission. An already cance
 | Code | Meaning |
 |---:|---|
 | `0` | Stream reached clean EOF, or one-shot request succeeded. Stream request errors are framed outcomes and do not terminate a healthy stream. |
-| `2` | One-shot/file input produced a framed request, projection, canonical or transport error. |
-| `64` | Invalid launch options or an inaccessible explicit input file; no protocol frame is written. |
+| `2` | One-shot input produced a framed request, projection, canonical or transport error. |
+| `64` | Invalid or forbidden launch options (including production `--file`); no protocol frame is written. |
 | `70` | Unexpected host/software failure; diagnostic is written to stderr. |
 
 ## Discovery and completeness
@@ -125,4 +126,4 @@ The runtime kernel has no dependency on the projection executable, stdin/stdout,
 
 ## State and trust boundary
 
-State is process-local. To reproduce authored state in a fresh process, use the accepted snapshot import and/or journal replay capabilities through the public contract. HK07A does not add durable storage, crash recovery, authentication, networking, multi-process coordination, MCP, batching/pagination, or gameplay/runtime-state semantics.
+State is process-local. To reproduce authored state in a fresh process, use the accepted snapshot import and/or journal replay capabilities through the public contract over stdin/stdout. HK07A does not add durable storage, crash recovery, authentication, networking, multi-process coordination, MCP, batching/pagination, or gameplay/runtime-state semantics. HK09A additionally constrains the production H0 host so transports cannot gain generic external/elevated authority and the CLI does not obtain caller-selected filesystem authority.

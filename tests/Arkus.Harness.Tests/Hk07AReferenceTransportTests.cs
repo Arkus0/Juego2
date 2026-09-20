@@ -104,7 +104,7 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void OneShotFileModeUsesTheSameDeterministicProtocolContract()
+        public void FileLaunchModeIsNotExposedByTheH0ProductionHost()
         {
             var path = Path.Combine(Path.GetTempPath(), "arkus-hk07a-" + Guid.NewGuid().ToString("N") + ".jsonl");
             try
@@ -115,12 +115,9 @@ namespace Arkus.Harness.Tests
                     new UTF8Encoding(false));
                 var result = Hk07AProcessHarness.Run(new[] { "--file", path }, Array.Empty<byte>());
 
-                Assert.Equal(0, result.ExitCode);
-                using var document = JsonDocument.Parse(result.StandardOutput);
-                Assert.Equal(
-                    "world.arkus.session",
-                    document.RootElement.GetProperty("response").GetProperty("result")
-                        .GetProperty("world").GetProperty("worldId").GetString());
+                Assert.Equal(64, result.ExitCode);
+                Assert.Equal(string.Empty, result.StandardOutput);
+                Assert.Contains("--file is not exposed", result.StandardError, StringComparison.Ordinal);
             }
             finally
             {
