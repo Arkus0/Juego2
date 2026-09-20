@@ -15,7 +15,7 @@ This revision turns the first draft from a good test-town plan into a **product-
 6. **The player must be able to act on the town, not only read it.** The recovered research designs a town that runs without the player and channels through which the player finds out what it did. It never designs a player verb. A living world the player can only observe is a museum; §6.3 closes that gap, and it is cheap because the machinery already exists on the NPC side.
 7. **Combat is scoped to short, lethal and rare, and gated behind one feel prototype.** Feel cannot be established on paper. §12 records the scope and the single experiment that should settle viability before further research is opened.
 
-Nothing above changes H0. The next dependency-valid H0 work remains `WP-HK-07A`.
+Nothing above changes H0. As of this revision H0 stands at 16 of 19 accepted workpacks, through `WP-HK-09A`; the next dependency-valid H0 work is `WP-HK-09B — Resource limits + persistence integrity`, followed by `WP-HK-10` and then `WP-HK-GATE`.
 
 ---
 
@@ -468,7 +468,7 @@ The first draft correctly identified two gaps, and review since has surfaced a t
 
 ## 6.1 Multi-session authored project persistence
 
-Current H0 semantics provide canonical state identity, snapshots, import/rebase, provenance and replay; they do not claim a production project database or durable WAL.
+Current H0 semantics provide canonical state identity, snapshots, import/rebase, provenance and replay; they do not claim a production project database or durable WAL. The pending `WP-HK-09B` owns import/persistence interruption integrity, which narrows this seam — an interrupted operation must not half-publish — but does not close it: durable multi-session project storage is still nobody's.
 
 For H1/H2, the simplest product architecture should be preferred first:
 
