@@ -1,11 +1,15 @@
 # WP-CITY-00 — Keeper City spatial constitution + scale envelope
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)  
 Mode: **REMOTE**  
 Depends on: `WP-ART-00` seed, `Docs/production/PRODUCTION_BLUEPRINT.md`, current Living World PA roadmap as non-binding product input  
-Blocks: `WP-CITY-01` only  
+Blocks: downstream CITY planning only  
 Does not block: any `HK-*`
+
+Accepted candidate: `f5c684461b525841487158d873a9b135008df3ab`  
+Independent review: **PASS**, review `#5261672961`  
+Merged: PR `#65`, merge commit `69bbba2603e67cb233a3e1cc36a4173bed41cfc4` on 2026-09-20
 
 ## Objective
 
@@ -66,7 +70,7 @@ The selected constitution must explicitly place and relate:
 - alternative-topology comparison matrix;
 - scale/travel-time hypothesis table;
 - list of permanent spatial invariants;
-- list of unresolved questions deferred to CITY-01/02/03/04.
+- list of unresolved questions deferred to later CITY work.
 
 ## Acceptance
 
@@ -94,4 +98,4 @@ FAIL if the selected plan:
 
 ## Definition of Done
 
-The city has a selected, reviewable spatial constitution and scale envelope strong enough for CITY-01 to calculate movement/topology without inventing a different city.
+The city has a selected, reviewable spatial constitution and scale envelope strong enough for downstream CITY work to calculate movement/topology without inventing a different city.
