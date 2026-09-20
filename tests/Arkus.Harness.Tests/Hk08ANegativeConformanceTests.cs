@@ -13,6 +13,8 @@ namespace Arkus.Harness.Tests
     {
         private static readonly ContractVersionRange ExactV1 =
             ContractVersionRange.Exact(new ContractVersion(1, 0));
+        private static readonly ContractVersionRange ExactV2 =
+            ContractVersionRange.Exact(new ContractVersion(2, 0));
 
         [Fact]
         public void BatchIntegrityOracleTurnsRedIfSuccessfulBatchOmitsProvenance()
@@ -69,7 +71,7 @@ namespace Arkus.Harness.Tests
             var anchor = session.Current;
             var first = contract.Dispatch(
                 WorldProvenanceContract.ReadName,
-                ExactV1,
+                ExactV2,
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["revision"] = anchor.Revision,
@@ -82,7 +84,7 @@ namespace Arkus.Harness.Tests
 
             var second = contract.Dispatch(
                 WorldProvenanceContract.ReadName,
-                ExactV1,
+                ExactV2,
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["limit"] = 2,
