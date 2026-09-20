@@ -45,7 +45,9 @@ roles: **the Arroyo shapes daily movement; the Río shapes territorial movement.
 | **Laderas** | scenic green slopes / rock masses beyond roofline |
 
 This landmass statement is binding. If a later drawing shows the Wedge continuing dry past the
-confluence, the drawing is wrong.
+confluence, the drawing is wrong. The Puerto district begins at an upstream bridgehead opposite the
+Wedge-tip landing head and extends downstream; X6/X7 crosses the channel at that bridgehead rather
+than spanning the district's longitudinal extent.
 
 ### 2.2 Selected semantic district graph
 
@@ -76,7 +78,7 @@ Topological schematic, not a metric map:
 ```
 
 `*` is the confluence-tip Wedge vertex. Dry Wedge routes stop there. X6/X7 crosses from the landing
-head to Puerto. X1 reaches Orilla sur separately at the historic bridge.
+head to the upstream Puerto edge. X1 reaches Orilla sur separately at the historic bridge.
 
 All place names are placeholders; identifiers are not frozen.
 
@@ -108,8 +110,8 @@ edges only.
 | **X3** | Pasarela del Lavadero | Arroyo | Barrio Alto ↔ upper Ensanche | permanent; foot only |
 | **X4** | Puente de la Vega | Arroyo | north huertas ↔ north Ensanche | seasonal; flood-closable |
 | **X5** | Pasos / vado | Arroyo | lower casco lanes ↔ Ensanche | low water only |
-| **X6** | La barca | joined Río | confluence-tip landing head ↔ Puerto on Orilla sur | **State 1 only**; hours/fare; high water suspends |
-| **X7** | Puente del Muelle | joined Río | confluence-tip landing head ↔ Puerto / port road | **State 2 only**; permanent, carts |
+| **X6** | La barca | joined Río | confluence-tip landing head ↔ upstream Puerto edge on Orilla sur | **State 1 only**; hours/fare; high water suspends |
+| **X7** | Puente del Muelle | joined Río | confluence-tip landing head ↔ upstream Puerto edge / port road | **State 2 only**; permanent, carts |
 
 Seven crossing IDs exist across the constitution's life; six coexist in each state because X6 and X7
 are mutually exclusive. Four are Arroyo crossings. Two Río crossings are designed in either state:
@@ -143,7 +145,8 @@ The joined reach below the confluence is wider/slower and braids over gravel bar
 **workable** river edge, not as a claim of long-distance navigability.
 
 The landing sits on the Orilla-sur downstream bank because four ordinary uses coincide there with flat
-ground and the valley road:
+ground and the valley road. Its upstream edge is the X6/X7 bridgehead; the working frontage then
+extends downstream from that point.
 
 1. **Madera:** timber arrives by road/cart, is assembled into rafts and leaves only during high-water
    windows; destination beyond the city is outside this document.
@@ -171,8 +174,8 @@ The port is not a dry extension of the Wedge. Its route families are:
 
 1. **Entrada / valley road → Puerto:** dry on Orilla sur.
 2. **X1 far end → camino sur → Puerto:** dry after the historic crossing.
-3. **Casco / Cuesta → X6/X7 → Puerto:** direct core route.
-4. **Ribera / paseo → landing head → X6/X7 → Puerto:** low route to the same named crossing.
+3. **Casco / Cuesta → X6/X7 → upstream Puerto edge:** direct core route.
+4. **Ribera / paseo → landing head → X6/X7 → upstream Puerto edge:** low route to the same named crossing.
 
 The last two share X6/X7 and are not double-counted as crossings.
 
@@ -182,13 +185,14 @@ connected.** Representative route families from `CONNECTIVITY_MATRIX.md` §6:
 | Pair | Route using plaza | Designed plaza-free route | Availability note |
 |---|---|---|---|
 | Barrio Alto ↔ Ribera | stairs → plaza → Calle Mayor → down | callejas altas → east stairs → Ribera | unconditional |
-| Casco ↔ Ensanche | plaza → X2 | lower lanes → X5 | X5 low-water only; longer high-water bypasses remain |
-| Ensanche ↔ Puerto | X2 → terrace/plaza → lower casco → X6/X7 (or X1) | X3 → Barrio Alto → high lanes → casco routes → X6/X7; high-water fallback through X1 | exact cost belongs to CITY-01 |
-| Vega ↔ Puerto | Calle Mayor/plaza → X1 → camino sur | paseo/Ribera → landing head → X6/X7; high-water fallback to X1 without requiring plaza | exact cost belongs to CITY-01 |
+| Casco ↔ Ensanche | plaza → X2 | lower lanes → X5 | **X5 is low-water only; in high water this pair routes through the plaza** |
+| Ensanche ↔ Puerto | X2 → terrace/plaza → lower casco → X6/X7 (or X1) | X3 → Barrio Alto → high lanes → east stairs → Ribera → paseo → X6/X7; high-water fallback continues via lower casco → X1 → camino sur | exact cost belongs to CITY-01 |
+| Vega ↔ Puerto | Calle Mayor/plaza → X1 → camino sur | paseo/Ribera → landing head → X6/X7; high-water fallback follows paseo/lower casco → X1 → camino sur | exact cost belongs to CITY-01 |
 | Barrio Alto ↔ Ensanche | plaza → X2 | X3 | unconditional |
 
-This constitution does **not** promise two plaza-free routes per pair or permanent availability of the
-shortest bypass.
+This constitution does **not** promise two plaza-free routes per pair or permanent availability of a
+bypass. The named Casco ↔ Ensanche high-water state is deliberately plaza-dependent because X5 is its
+direct plaza-free crossing and is then submerged.
 
 ### 2.7 Three longitudinal route families
 
@@ -295,9 +299,10 @@ belongs to `CONNECTIVITY_MATRIX.md`.
 - **CSI-02 — Three longitudinal route families.** Low paseo/sirga, middle Calle Mayor and high
   callejas remain designed end-to-end through the Wedge. The low route reaches Puerto through X6/X7;
   State-1 high-water interruption at X6 is availability, not a design breach.
-- **CSI-03 — Plaza converges, it does not structurally connect.** Every district family has a designed
-  route network that does not require the plaza as the sole connector. The matrix owns representative
-  bypasses and temporary availability.
+- **CSI-03 — Plaza converges, it does not structurally connect.** By design, representative adjacent
+  pairs have a plaza-free route in `CONNECTIVITY_MATRIX.md` §6. Availability may temporarily remove
+  one: **Casco ↔ Ensanche routes through the plaza in high water because X5 is submerged.** What this
+  invariant forbids is making the plaza the only designed connector in the base graph.
 - **CSI-04 — Port sits on ordinary routes.** Entrada/bus/road junction remains adjacent to Puerto and
   at least two everyday non-port services live there.
 - **CSI-05 — Landing keeps valley scale and needs no unauthorized premise.** Working craft only,
