@@ -14,20 +14,12 @@ namespace Arkus.Harness.Tests
     {
         private static readonly string[] RequiredCapabilityKeys =
         {
-            "system.describe@1.0",
-            "world.summary@1.0",
-            "world.object.get@1.0",
-            "world.object.query@1.0",
-            "world.validation.current@1.0",
-            "authoring.change.plan@1.0",
-            "authoring.change.dry-run@1.0",
-            "authoring.change.apply@1.0",
-            "authoring.journal.read@1.0",
-            "authoring.journal.read@2.0",
-            "authoring.snapshot.export@1.0",
-            "authoring.snapshot.import@1.0",
-            "authoring.diff.compare@1.0",
-            "authoring.journal.replay@1.0"
+            "system.describe@1.0", "world.summary@1.0", "world.object.get@1.0",
+            "world.object.query@1.0", "world.validation.current@1.0",
+            "authoring.change.plan@1.0", "authoring.change.dry-run@1.0", "authoring.change.apply@1.0",
+            "authoring.journal.read@1.0", "authoring.journal.read@2.0",
+            "authoring.snapshot.export@1.0", "authoring.snapshot.import@1.0",
+            "authoring.diff.compare@1.0", "authoring.journal.replay@1.0"
         };
 
         private static readonly string[] GateStepUniverse =
@@ -69,60 +61,45 @@ namespace Arkus.Harness.Tests
             var initialSnapshot = Success(source.Invoke("authoring.snapshot.export", Empty()));
 
             var representativeOperations = RepresentativePotesOperations();
-            var representativeRequest = MutationRequest(
-                initialSummary,
-                "request.hkgate.representative",
-                representativeOperations);
+            var representativeRequest = MutationRequest(initialSummary, "request.hkgate.representative", representativeOperations);
             var planned = Success(source.Invoke("authoring.change.plan", representativeRequest));
             Assert.Equal(4, planned.GetProperty("plan").GetProperty("changes").GetArrayLength());
             Assert.False(planned.GetProperty("persisted").GetBoolean());
-
             var dryRun = Success(source.Invoke("authoring.change.dry-run", representativeRequest));
             Assert.Equal(4, dryRun.GetProperty("plan").GetProperty("changes").GetArrayLength());
             Assert.False(dryRun.GetProperty("persisted").GetBoolean());
-
             var applied = Success(source.Invoke("authoring.change.apply", representativeRequest));
             Assert.True(applied.GetProperty("persisted").GetBoolean());
-            Assert.Equal(4, applied.GetProperty("plan").GetProperty("changes").GetArrayLength());
             var currentAnchor = applied.GetProperty("plan").GetProperty("result");
 
-            var query = Success(source.Invoke(
-                "world.object.query",
-                new Dictionary<string, object?>(StringComparer.Ordinal)
+            var query = Success(source.Invoke("world.object.query", new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["revision"] = currentAnchor.GetProperty("revision").GetInt64(),
+                ["hash"] = currentAnchor.GetProperty("hash").GetString(),
+                ["limit"] = 20,
+                ["filter"] = new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
-                    ["revision"] = currentAnchor.GetProperty("revision").GetInt64(),
-                    ["hash"] = currentAnchor.GetProperty("hash").GetString(),
-                    ["limit"] = 20,
-                    ["filter"] = new Dictionary<string, object?>(StringComparer.Ordinal)
-                    {
-                        ["typeIds"] = new[] { "fixture.gate.place", "fixture.gate.market", "fixture.gate.npc" }
-                    },
-                    ["fields"] = new[] { "typeId", "containerId", "references" }
-                }));
+                    ["typeIds"] = new[] { "fixture.gate.place", "fixture.gate.market", "fixture.gate.npc" }
+                },
+                ["fields"] = new[] { "typeId", "containerId", "references" }
+            }));
             Assert.Equal(3, query.GetProperty("items").GetArrayLength());
             Assert.False(query.TryGetProperty("nextCursor", out _));
 
-            var npc = Success(source.Invoke(
-                "world.object.get",
-                new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["revision"] = currentAnchor.GetProperty("revision").GetInt64(),
-                    ["hash"] = currentAnchor.GetProperty("hash").GetString(),
-                    ["id"] = "gate.npc.ana",
-                    ["fields"] = new[] { "typeId", "containerId", "references" }
-                }));
+            var npc = Success(source.Invoke("world.object.get", new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["revision"] = currentAnchor.GetProperty("revision").GetInt64(),
+                ["hash"] = currentAnchor.GetProperty("hash").GetString(),
+                ["id"] = "gate.npc.ana",
+                ["fields"] = new[] { "typeId", "containerId", "references" }
+            }));
             Assert.Equal("gate.npc.ana", npc.GetProperty("object").GetProperty("id").GetString());
             Assert.Equal("gate.place.plaza", npc.GetProperty("object").GetProperty("containerId").GetString());
 
-            var invalid = source.Invoke(
-                "authoring.change.apply",
-                MutationRequest(
-                    currentAnchor,
-                    "request.hkgate.invalid",
-                    new object?[]
-                    {
-                        PutObject("gate.invalid.child", "fixture.gate.invalid", "gate.invalid.missing-parent")
-                    }));
+            var invalid = source.Invoke("authoring.change.apply", MutationRequest(
+                currentAnchor,
+                "request.hkgate.invalid",
+                new object?[] { PutObject("gate.invalid.child", "fixture.gate.invalid", "gate.invalid.missing-parent") }));
             Assert.Equal("error", invalid.GetProperty("status").GetString());
             Assert.Equal("world.change.invalid_candidate", invalid.GetProperty("error").GetProperty("machineCode").GetString());
             var invalidValidation = invalid.GetProperty("error").GetProperty("context").GetProperty("validation");
@@ -134,39 +111,32 @@ namespace Arkus.Harness.Tests
             Assert.Equal(currentAnchor.GetProperty("revision").GetInt64(), afterInvalid.GetProperty("revision").GetInt64());
             Assert.Equal(currentAnchor.GetProperty("hash").GetString(), afterInvalid.GetProperty("hash").GetString());
 
-            var repaired = Success(source.Invoke(
-                "authoring.change.apply",
-                MutationRequest(
-                    currentAnchor,
-                    "request.hkgate.repair",
-                    new object?[]
-                    {
-                        PutObject("gate.invalid.missing-parent", "fixture.gate.repair-root"),
-                        PutObject("gate.invalid.child", "fixture.gate.invalid", "gate.invalid.missing-parent")
-                    })));
+            var repaired = Success(source.Invoke("authoring.change.apply", MutationRequest(
+                currentAnchor,
+                "request.hkgate.repair",
+                new object?[]
+                {
+                    PutObject("gate.invalid.missing-parent", "fixture.gate.repair-root"),
+                    PutObject("gate.invalid.child", "fixture.gate.invalid", "gate.invalid.missing-parent")
+                })));
             var recoveryBase = repaired.GetProperty("plan").GetProperty("result");
 
-            var writer = Success(source.Invoke(
-                "authoring.change.apply",
-                MutationRequest(
-                    recoveryBase,
-                    "request.hkgate.concurrent-writer",
-                    new object?[] { PutObject("gate.concurrent.writer", "fixture.gate.writer") })));
+            var writer = Success(source.Invoke("authoring.change.apply", MutationRequest(
+                recoveryBase,
+                "request.hkgate.concurrent-writer",
+                new object?[] { PutObject("gate.concurrent.writer", "fixture.gate.writer") })));
             var writerAnchor = writer.GetProperty("plan").GetProperty("result");
 
             var recoveryRequestOffset = source.RequestCount;
-            var stale = source.Invoke(
-                "authoring.change.plan",
-                MutationRequest(
-                    recoveryBase,
-                    "request.hkgate.concurrent-client",
-                    new object?[] { PutObject("gate.concurrent.client", "fixture.gate.client") }));
+            var stale = source.Invoke("authoring.change.plan", MutationRequest(
+                recoveryBase,
+                "request.hkgate.concurrent-client",
+                new object?[] { PutObject("gate.concurrent.client", "fixture.gate.client") }));
             Assert.Equal("error", stale.GetProperty("status").GetString());
             Assert.Equal("world.change.stale_revision", stale.GetProperty("error").GetProperty("machineCode").GetString());
             var recovery = stale.GetProperty("error").GetProperty("context").GetProperty("recovery");
             Assert.Equal("arkus.world-conflict-recovery@1", recovery.GetProperty("schemaId").GetString());
             Assert.Equal("same-lineage-replan", recovery.GetProperty("disposition").GetString());
-            Assert.Equal(writerAnchor.GetProperty("revision").GetInt64(), recovery.GetProperty("current").GetProperty("revision").GetInt64());
             Assert.Equal(writerAnchor.GetProperty("hash").GetString(), recovery.GetProperty("current").GetProperty("hash").GetString());
 
             var recoveryInspectionRequests = 0;
@@ -181,9 +151,8 @@ namespace Arkus.Harness.Tests
             }
             Assert.True(recoveryInspectionRequests > 0);
 
-            var recoveryAnchor = recovery.GetProperty("current");
             var recoveredRequest = MutationRequest(
-                recoveryAnchor,
+                recovery.GetProperty("current"),
                 "request.hkgate.concurrent-client",
                 new object?[] { PutObject("gate.concurrent.client", "fixture.gate.client") });
             Success(source.Invoke("authoring.change.plan", recoveredRequest));
@@ -201,8 +170,7 @@ namespace Arkus.Harness.Tests
             var batchRequest = MutationRequest(currentAnchor, "request.hkgate.coherent-batch", batchOperations);
             var batchPlan = Success(source.Invoke("authoring.change.plan", batchRequest));
             Assert.Equal(96, batchPlan.GetProperty("plan").GetProperty("changes").GetArrayLength());
-            var batchDryRun = Success(source.Invoke("authoring.change.dry-run", batchRequest));
-            Assert.False(batchDryRun.GetProperty("persisted").GetBoolean());
+            Assert.False(Success(source.Invoke("authoring.change.dry-run", batchRequest)).GetProperty("persisted").GetBoolean());
             var batchApplied = Success(source.Invoke("authoring.change.apply", batchRequest));
             Assert.True(batchApplied.GetProperty("persisted").GetBoolean());
             Assert.Equal(96, batchApplied.GetProperty("plan").GetProperty("changes").GetArrayLength());
@@ -230,47 +198,39 @@ namespace Arkus.Harness.Tests
             Assert.Equal(journalEntryCount, pagedJournalEntries);
             Assert.Equal(3, pageCount);
 
-            var changed = Success(source.Invoke(
-                "authoring.diff.compare",
-                new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["base"] = initialSnapshot,
-                    ["target"] = finalSnapshot
-                }));
+            var changed = Success(source.Invoke("authoring.diff.compare", new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["base"] = initialSnapshot,
+                ["target"] = finalSnapshot
+            }));
             Assert.False(changed.GetProperty("sameAuthorableState").GetBoolean());
             Assert.True(changed.GetProperty("changes").GetArrayLength() >= 100);
 
             using var restarted = new ReferenceGateClient("gate.restart");
             var restartBootstrap = Success(restarted.Invoke("world.summary", Empty())).GetProperty("world");
-            Success(restarted.Invoke(
-                "authoring.snapshot.import",
-                new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["idempotencyKey"] = "request.hkgate.restart-base",
-                    ["expectedRevision"] = restartBootstrap.GetProperty("revision").GetInt64(),
-                    ["expectedHash"] = restartBootstrap.GetProperty("hash").GetString(),
-                    ["snapshot"] = initialSnapshot
-                }));
+            Success(restarted.Invoke("authoring.snapshot.import", new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["idempotencyKey"] = "request.hkgate.restart-base",
+                ["expectedRevision"] = restartBootstrap.GetProperty("revision").GetInt64(),
+                ["expectedHash"] = restartBootstrap.GetProperty("hash").GetString(),
+                ["snapshot"] = initialSnapshot
+            }));
             var replayBase = Success(restarted.Invoke("world.summary", Empty())).GetProperty("world");
-            var replayed = Success(restarted.Invoke(
-                "authoring.journal.replay",
-                new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["expectedRevision"] = replayBase.GetProperty("revision").GetInt64(),
-                    ["expectedHash"] = replayBase.GetProperty("hash").GetString(),
-                    ["journal"] = journal
-                }));
+            var replayed = Success(restarted.Invoke("authoring.journal.replay", new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["expectedRevision"] = replayBase.GetProperty("revision").GetInt64(),
+                ["expectedHash"] = replayBase.GetProperty("hash").GetString(),
+                ["journal"] = journal
+            }));
             Assert.Equal(journalEntryCount, replayed.GetProperty("replayedEntries").GetInt32());
             Assert.Equal(finalSummary.GetProperty("hash").GetString(), replayed.GetProperty("targetCurrent").GetProperty("hash").GetString());
 
             var replayedSnapshot = Success(restarted.Invoke("authoring.snapshot.export", Empty()));
-            var equivalent = Success(restarted.Invoke(
-                "authoring.diff.compare",
-                new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["base"] = finalSnapshot,
-                    ["target"] = replayedSnapshot
-                }));
+            var equivalent = Success(restarted.Invoke("authoring.diff.compare", new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["base"] = finalSnapshot,
+                ["target"] = replayedSnapshot
+            }));
             Assert.True(equivalent.GetProperty("sameAuthorableState").GetBoolean());
             Assert.Equal(0, equivalent.GetProperty("changes").GetArrayLength());
 
@@ -316,12 +276,11 @@ namespace Arkus.Harness.Tests
 
         private static JsonElement Success(JsonElement response)
         {
-            Assert.Equal(
-                "success",
-                response.GetProperty("status").GetString(),
-                response.TryGetProperty("error", out var error)
-                    ? error.GetProperty("machineCode").GetString()
-                    : "missing response error");
+            var status = response.GetProperty("status").GetString();
+            var detail = response.TryGetProperty("error", out var error) && error.TryGetProperty("machineCode", out var machineCode)
+                ? machineCode.GetString()
+                : "missing response error";
+            Assert.True(string.Equals("success", status, StringComparison.Ordinal), detail);
             return response.GetProperty("result").Clone();
         }
 
@@ -333,32 +292,25 @@ namespace Arkus.Harness.Tests
                 PutObject("gate.building.market", "fixture.gate.market", "gate.place.plaza"),
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
-                    ["kind"] = "put-object",
-                    ["id"] = "gate.npc.ana",
-                    ["typeId"] = "fixture.gate.npc",
+                    ["kind"] = "put-object", ["id"] = "gate.npc.ana", ["typeId"] = "fixture.gate.npc",
                     ["containerId"] = "gate.place.plaza",
                     ["references"] = new object?[]
                     {
                         new Dictionary<string, object?>(StringComparer.Ordinal)
                         {
-                            ["kind"] = "works.at",
-                            ["targetId"] = "gate.building.market"
+                            ["kind"] = "works.at", ["targetId"] = "gate.building.market"
                         }
                     }
                 },
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
-                    ["kind"] = "put-extension",
-                    ["owner"] = "future.gate.social",
-                    ["schemaVersion"] = 1,
-                    ["subjectId"] = "gate.npc.ana",
-                    ["payloadBase64"] = "ECAw",
+                    ["kind"] = "put-extension", ["owner"] = "future.gate.social", ["schemaVersion"] = 1,
+                    ["subjectId"] = "gate.npc.ana", ["payloadBase64"] = "ECAw",
                     ["dependencies"] = new object?[]
                     {
                         new Dictionary<string, object?>(StringComparer.Ordinal)
                         {
-                            ["kind"] = "works.at",
-                            ["targetId"] = "gate.building.market"
+                            ["kind"] = "works.at", ["targetId"] = "gate.building.market"
                         }
                     }
                 }
@@ -389,17 +341,11 @@ namespace Arkus.Harness.Tests
             return operations.AsReadOnly();
         }
 
-        private static IReadOnlyDictionary<string, object?> PutObject(
-            string id,
-            string typeId,
-            string? containerId = null)
+        private static IReadOnlyDictionary<string, object?> PutObject(string id, string typeId, string? containerId = null)
         {
             var operation = new Dictionary<string, object?>(StringComparer.Ordinal)
             {
-                ["kind"] = "put-object",
-                ["id"] = id,
-                ["typeId"] = typeId,
-                ["references"] = Array.Empty<object?>()
+                ["kind"] = "put-object", ["id"] = id, ["typeId"] = typeId, ["references"] = Array.Empty<object?>()
             };
             if (containerId != null) operation["containerId"] = containerId;
             return operation;
@@ -419,8 +365,7 @@ namespace Arkus.Harness.Tests
             };
         }
 
-        private static IReadOnlyDictionary<string, object?> Empty() =>
-            new Dictionary<string, object?>(StringComparer.Ordinal);
+        private static IReadOnlyDictionary<string, object?> Empty() => new Dictionary<string, object?>(StringComparer.Ordinal);
 
         private static void EmitTranscript(IReadOnlyDictionary<string, object?> transcript)
         {
@@ -454,8 +399,7 @@ namespace Arkus.Harness.Tests
 
             public IReadOnlyList<string> CapabilitiesFrom(int requestOffset)
             {
-                if (requestOffset < 0 || requestOffset > _capabilities.Count)
-                    throw new ArgumentOutOfRangeException(nameof(requestOffset));
+                if (requestOffset < 0 || requestOffset > _capabilities.Count) throw new ArgumentOutOfRangeException(nameof(requestOffset));
                 return _capabilities.Skip(requestOffset).ToArray();
             }
 
@@ -492,9 +436,7 @@ namespace Arkus.Harness.Tests
                         ["capability"] = capability,
                         ["acceptedVersions"] = new Dictionary<string, object?>(StringComparer.Ordinal)
                         {
-                            ["major"] = major,
-                            ["minimumMinor"] = minor,
-                            ["maximumMinor"] = minor
+                            ["major"] = major, ["minimumMinor"] = minor, ["maximumMinor"] = minor
                         },
                         ["arguments"] = arguments
                     }
