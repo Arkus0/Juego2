@@ -1,6 +1,6 @@
 # WP-HK-09B Worker plan and implementation record
 
-Status: IMPLEMENTING  
+Status: READY_FOR_FREEZE  
 Branch: `wp/hk-09b-resource-persistence`  
 Baseline SHA: `ada532f99282c96db15813eb17963bc9cb6d08fb`
 
@@ -22,66 +22,71 @@ HK09B consumes, rather than re-proves, these accepted guarantees unless concrete
 1. HK09A: the production H0 host exposes no generic shell/process authority, no protocol-triggered ambient network authority and no caller-selected filesystem path authority.
 2. HK09A/HK07A: every conforming transport crosses `arkus.neutral-projection@1`, whose construction enforces `H0HostCapabilityPolicy` below JSONL/MCP; adapters cannot mint a parallel capability or policy registry.
 3. HK04/HK05/HK06A-C: canonical mutation, validation, provenance, snapshot rebase and replay publish only through their accepted authorities and preserve whole-state atomicity/lineage meaning.
-4. HK08A: the representative coherent 96-operation mixed-resource edit is one accepted transaction, one revision advance and one HK06A entry; query and journal pages are bounded to the accepted deterministic page semantics.
+4. HK08A: the representative coherent 96-operation mixed-resource edit is one accepted transaction, one revision advance and one HK06A entry; query and journal pages are bounded to accepted deterministic semantics.
 5. HK08B: same-lineage recovery remains truthful and bounded; retry is a normal canonical transaction; the five-flow reference client remains within 12 requests, 15,064 serialized response bytes and the coarse 1,480 ms regression guard.
 
-The materially relied-on transitive evidence is the accepted HK08A 96-operation content shape and HK08B public-process benchmark. HK09B may bound their resource cost but may not split the coherent edit, fabricate recovery history, or weaken atomicity/validation/provenance.
+No predecessor reopen condition was observed.
 
-### Guarantees newly owned by HK09B
+## Newly owned HK09B guarantee
 
 HK09B owns only the quantitative/resource and persistence-interruption boundary:
 
-- one explicit transport-neutral H0 envelope for request bytes, portable nesting, batch operation count/payload, page size, authored-state/snapshot size, per-resource reference/dependency count and execution budget;
-- machine-readable discovery of that envelope and stable resource-limit diagnostics;
-- enforcement below transport-specific adapters, with equivalent JSONL/MCP meaning;
-- proof that the accepted HK08A 96-operation edit and HK08B workflow fit without splitting or semantic weakening;
-- snapshot/import format/version and size validation before canonical replacement;
-- one aggregate publication boundary for imported state, import idempotency receipt and truthful rebase evidence;
-- cooperative execution/cancellation checks at canonical mutation/rebase/replay publication, without a second mutation authority; and
-- a bounded H0 session envelope that HK10 can exercise for growth/endurance evidence.
+- one explicit transport-neutral H0 envelope for request bytes, portable depth, batch count/payload, page size, per-resource relations/payload, canonical world/snapshot size, session growth and execution budget;
+- machine-readable discovery through `system.resource-envelope.describe@1.0` and stable resource diagnostics;
+- enforcement below transport-specific adapters with equivalent JSONL/MCP meaning;
+- preservation of the accepted HK08A 96-operation coherent edit without splitting;
+- snapshot/import format/version/resource validation before replacement;
+- aggregate publication of imported state + fresh local lineage + import receipt + truthful rebase evidence;
+- cooperative execution/cancellation checks at existing canonical mutation/rebase/replay publication boundaries; and
+- explicit finite session/world ceilings for later HK10 measurement.
 
-### Guarantees intentionally not re-proved
+## Implemented design
 
-HK09B will rerun the complete regression suite but will not duplicate HK09A shell/network/filesystem/type-activation proof, HK07 transport-inventory completeness, HK04 hidden-writer completeness, HK06 replay truth or HK08 recovery ancestry proof. A desire for defence in depth is not a reopen condition.
+1. `H0ResourceEnvelope` is the single H0 limit vocabulary and machine-readable data source. Canonical metadata references the same constants.
+2. `H0ResourcePolicy` measures canonical portable arguments at neutral projection and rejects bytes/depth/batch/page/snapshot violations before semantic dispatch.
+3. `WorldResourceLimits` independently validates materialized state for world bytes/resources, per-resource relations and extension payload bytes, so adapter estimates are not semantic authority.
+4. Mutation authority enforces bounded session history, stages next state/receipt/journal and performs one publication after `TryBeginPublication("canonical-mutation")`.
+5. Snapshot import was moved from a state-then-wrapper receipt seam to one immutable `PortableSessionState` publication containing imported state, fresh mutation lineage, receipt and rebase evidence.
+6. Replay continues to execute only through staged canonical HK04 mutations; it now checks the resource budget immediately before its one final aggregate publication.
+7. `InvocationResourceBudget` uses a monotonic stopwatch deadline/cancellation and preserves canonical success after a publication has become authoritative.
+8. Reference JSONL framing was aligned so successfully framed requests reach the same neutral resource depth/byte semantics exercised by MCP.
 
-### Concrete predecessor reopen conditions
+The H0 durability claim remains `process-local-checkpoint`; the envelope explicitly advertises `powerLossDurabilityClaimed=false`. No WAL, `fsync`, distributed storage, multi-process writer coordination or crash-recovery architecture was added.
 
-A predecessor is reopened only if HK09B finds concrete evidence that:
+## Frozen numeric envelope
 
-- a valid accepted HK08A/HK08B public flow cannot fit any proportionate bounded envelope without being split or semantically weakened;
-- the accepted neutral-projection path is not shared by an effective JSONL/MCP invocation, making transport-neutral enforcement impossible;
-- a canonical mutation/rebase/replay publication path can change authoritative state outside the accepted aggregate authority; or
-- the accepted HK09A policy boundary itself provides one of the forbidden host powers.
+The final H0 ceilings are documented in `RESOURCE_ENVELOPE.md`. Most importantly, `maximumOperations=96` is derived from the accepted HK08A coherent product-shaped intent rather than the previous provisional 64 cap. The HK09B Potes probe independently repeats 72 objects + 24 extensions as one public transaction and checkpoint/rebase flow.
 
-No predecessor reopen condition was observed before implementation.
+HK08B's accepted 12-request / 15,064-byte / 1,480-ms interaction guards remain separate regression budgets. HK09B's 5-second execution ceiling is an outer fail-closed publication budget, not a relaxation of HK08B performance expectations.
 
-## Initial implementation observations
+## Convergence and regression repair
 
-1. The reference JSONL adapter already has an unadvertised 1 MiB frame cap and parser depth 256, while MCP reaches the same neutral projection after SDK framing; these adapter-local constants are not yet one resource semantic.
-2. Mutation count (96) and query/journal page size (100) already exist as scattered service constants. Extension payload bytes, dependency/reference counts, total authored-state bytes and snapshot bytes remain effectively unbounded.
-3. `NeutralProjectionService` serializes dispatch but only applies caller timeout/cancellation before canonical dispatch. Post-admission execution currently has no H0 budget.
-4. HK04 mutation publication already swaps one immutable aggregate containing state, mutation receipts and journal. Replay stages a complete session and swaps it once. Both are suitable publication boundaries for a budget/interruption checkpoint.
-5. Snapshot import swaps the authored session inside the raw importer, but keyed import receipts and rebase evidence are assembled in a separate wrapper afterward. HK09B must close this real publication seam so interruption cannot separate authoritative state from accepted import evidence.
+The implementation first reached focused HK09B GREEN while full regression exposed four stale inherited assertions introduced by the new legitimate base read capability `system.resource-envelope.describe@1.0`:
 
-## Planned bounded design
+- HK01 base inventory assumed exactly one base definition;
+- HK01 synthetic/scoped discovery assumed the old total counts;
+- HK04 effective non-writer-route self-check had no request vector for the new read route.
 
-1. Define one transport-neutral H0 resource-envelope contract and expose it through canonical discovery rather than through adapter-only documentation.
-2. Enforce portable request byte/depth limits at neutral projection and retain only framing-level early rejection in adapters.
-3. Reconcile existing operation/page limits with the envelope, then add batch payload, per-resource relation, authored-state and snapshot constraints before expensive materialization/publication.
-4. Apply one fixed H0 execution budget below transports. Read-only work may return a resource failure after bounded evaluation; mutation/rebase/replay must check the same budget immediately before their accepted aggregate publication and preserve canonical success once publication is authoritative.
-5. Move snapshot state + import receipt + rebase evidence into one immutable session-root publication. Inject interruption at the real validate/stage/publish boundary and prove the previous state, journal and accepted receipts remain unchanged.
-6. Preserve the accepted process-local checkpoint/snapshot durability claim. Do not add a WAL, `fsync`, distributed storage, multi-process writer coordination or automatic crash recovery.
+Those tests were repaired at their actual invariants: explicit complete capability identities and exact effective non-writer route coverage. No production semantics were weakened.
 
-Numeric values are frozen only after measuring the accepted HK08A/HK08B representative shapes. Existing constants are inputs, not authority.
+Implementation checkpoint `e370606e4278da3e08602a3167c1cb6513bea93d` then passed Actions run `35521120979`: Release build 0 warnings / 0 errors, focused HK09B 9/9, full regression 205/205, candidate clean before and after.
 
-## Proof boundary and budget
+## Proof/evidence record
 
-Trust boundary: repository-owned canonical contract, neutral projection, JSONL/MCP adapters and process-local authored session publication, under the default trusted Git/.NET/OS/runtime base. H0 claims atomic in-process aggregate publication and fail-closed rejected/interrupted staging; it does not claim power-loss durability, WAL recovery, external storage correctness, arbitrary large-world scale or multi-process coordination.
+- `PROOF_MATRIX.md` — complete acceptance mapping and independent/effective universes.
+- `NEGATIVE_CONFORMANCE_MATRIX.md` — required oversize/depth/batch/page/execution/import/interruption/transport controls.
+- `RESOURCE_ENVELOPE.md` — enforced ceilings and HK08A/HK08B justification.
+- `PERSISTENCE_INTERRUPTION.md` — mutation/import/replay stage/publish proof at the claimed durability level.
+- `CONTENT_SHAPE_PROBE.md` — approved `Docs/art/VISUAL_BIBLE.md` Potes slice, 96 operations, checkpoint rebase.
+- `RESIDUAL_RISK.md` — trust boundary, non-claims and concrete reopen conditions.
+- `WORKER_PRE_REVIEW.md` — strict Worker pre-review CLEAN, three material convergence findings fixed.
 
-The proof budget is limited to the nine negative classes named by `WP-HK-09B`, one approved Juego2 content-shape probe, transport equivalence for changed resource errors and the actual mutation/rebase/replay publication seams. No generic resource-governance framework or OS-level crash model will be introduced.
+## Freeze condition
 
-FOUNDATIONAL_PROOF_VERDICT: NOT_READY  
-UNRESOLVED_PROOF_OBLIGATIONS: 9  
-KNOWN_UNDETECTED_DEFECT_CLASSES: 1  
-TRUST_BOUNDARY: this file; final residual audit pending  
+The next/last Worker action is metadata-only freeze: wait for canonical observation to be GREEN on this final evidence-bearing HEAD, record that exact SHA in PR #56 as both Candidate HEAD and Frozen candidate, set `Branch frozen: YES`, and require the exact-SHA freeze job to run `scripts/hk09b-verify-exact-sha.sh <SHA>` GREEN. No Worker commit may follow that freeze; a fresh independent Reviewer must then decide PASS/FAIL.
+
+FOUNDATIONAL_PROOF_VERDICT: READY  
+UNRESOLVED_PROOF_OBLIGATIONS: 0  
+KNOWN_UNDETECTED_DEFECT_CLASSES: 0  
+TRUST_BOUNDARY: Docs/evidence/WP-HK-09B/RESIDUAL_RISK.md  
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
