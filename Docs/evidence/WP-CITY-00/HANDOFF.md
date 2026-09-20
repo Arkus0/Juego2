@@ -1,5 +1,12 @@
 # WP-CITY-00 — Worker handoff
 
+> **SUPERSEDED.** A fourth independent FAIL ([#5261556774](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261556774))
+> landed on `d2d5f7a7277d8949264d62e6ac2ecbbb171aae9b` and the Worker has been transferred. The
+> authoritative statement of current state is **`WORKER_TRANSFER.md`**. In particular, this file's
+> conclusion that the circuit-breaker audit found only documentation defects and that Topology B
+> stands **is falsified**: the audit's own matrix describes an impossible planar embedding around the
+> confluence. Read `WORKER_TRANSFER.md` first.
+
 WP: WP-CITY-00 — Keeper City spatial constitution + scale envelope
 Contract: `Docs/workpacks/CITY/WP-CITY-00.md`
 Baseline SHA: 290f92e9c21f1e454e0d6924b29f4d778b9875f8
