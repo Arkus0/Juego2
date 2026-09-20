@@ -12,12 +12,14 @@ namespace Arkus.Harness.Runtime
             if (service == null) throw new ArgumentNullException(nameof(service));
 
             // The authoritative session still owns the complete HK06A journal artifact. Public HK08A
-            // reads receive the accepted read-only attenuation facade plus a bounded deterministic
-            // paging view. If one bounded page covers the whole journal, the final compatibility view
-            // restores the exact HK06A complete artifact so replay/audit meaning stays unchanged.
+            // reads receive the accepted read-only attenuation facade, a bounded deterministic paging
+            // view and a deterministic integrity envelope over each continuation cursor. If one bounded
+            // page covers the whole journal, the final compatibility view restores the exact HK06A
+            // complete artifact so replay/audit meaning stays unchanged.
             var complete = (IWorldProvenanceService)new WorldMutationPlannerView(service);
             var bounded = (IWorldProvenanceService)new BoundedWorldProvenanceService(complete);
-            var publicRead = (IWorldProvenanceService)new CompleteJournalPreservingProvenanceService(bounded);
+            var integrityBounded = (IWorldProvenanceService)new IntegrityBoundWorldProvenanceService(bounded);
+            var publicRead = (IWorldProvenanceService)new CompleteJournalPreservingProvenanceService(integrityBounded);
             return new List<CapabilityRoute>
             {
                 CapabilityRoute.FromHandler(new WorldProvenanceReadHandler(publicRead))
