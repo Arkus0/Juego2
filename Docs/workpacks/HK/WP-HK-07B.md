@@ -30,7 +30,7 @@ RED→GREEN for: canonical capability missing from MCP projection, MCP changing 
 
 ## Forbidden scope
 
-Changing the accepted HK07A neutral projection contract merely to accommodate MCP, HTTP/cloud service, Unity Editor bridge, GUI, model-vendor-specific orchestration, batching/compact/pagination efficiency work owned by HK08.
+Changing the accepted HK07A neutral projection contract merely to accommodate MCP, HTTP/cloud service, Unity Editor bridge, GUI, model-vendor-specific orchestration, or batching/compact/pagination/recovery efficiency work owned by HK08A/HK08B.
 
 ## DoD
 
