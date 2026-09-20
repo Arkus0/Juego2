@@ -41,17 +41,21 @@ The independent Reviewer specifically checked the staged aggregate publication s
 
 ## Current next product target
 
-The original HK06 and HK07 monoliths were split **before implementation** to reduce coupled foundational freeze/review risk without reducing scope. Their old files remain SUPERSEDED umbrella records and must not be implemented directly.
+The original HK06 and HK07 monoliths were split **before implementation** to reduce coupled foundational freeze/review risk without reducing scope. HK08 and HK09 were later split on the same principle after their planned contracts accumulated two independently reviewable claims each. The old `WP-HK-06.md`, `WP-HK-07.md`, `WP-HK-08.md` and `WP-HK-09.md` are SUPERSEDED umbrella records and must not be implemented directly.
 
 Execution chain:
 
-`HK06A ✅ → HK06B ✅ → HK06C ✅ → HK07A → HK07B → HK08 → HK09 → HK10 → HK-GATE`
+`HK06A ✅ → HK06B ✅ → HK06C ✅ → HK07A → HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`
 
 The next dependency-valid workpack is `WP-HK-07A — Headless host + neutral projection contract + reference transport`.
 
 HK07A must turn the accepted canonical runtime into a production-quality non-interactive process and freeze a transport-neutral projection contract above one deterministic reference transport. The reference transport must project the composed canonical capability inventory generically rather than own a second registry, keep protocol output isolated from diagnostics, define stable framing/failure/cancellation semantics, require no Unity/editor/network/user prompt for the local canonical path, and allow a fresh external client to discover and exercise representative read, validation, mutation, provenance, diff, snapshot and replay capabilities without source-code knowledge. Read `Docs/workpacks/HK/WP-HK-07A.md` plus accepted HK01–HK06C evidence before implementation.
 
-After 07A PASS+merge+DocSync: 07B adds standards-compatible MCP projection and proves cross-transport semantic equivalence. HK08 then owns batching, compact responses, pagination, structured CAS recovery and measured interaction budgets; HK09 owns capability/resource boundaries; HK10 and HK-GATE remain downstream.
+After 07A PASS+merge+DocSync: 07B adds standards-compatible MCP projection and proves cross-transport semantic equivalence. HK08A then owns atomic batching plus compact/bounded reads and pagination; HK08B owns structured stale-CAS recovery, repair ergonomics and measured end-to-end interaction budgets; HK09A owns repository-local host capability containment; HK09B owns explicit resource limits plus import/persistence interruption integrity; HK10 remains the unsplit closure workpack before HK-GATE.
+
+Whole-world CAS/hash remains the H0 global consistency anchor but does **not** require clients or AI agents to reload/reconstruct the complete world after each commit. Bounded revision-anchored inspection, semantic diff and HK08B recovery are the client-side coherence mechanisms. Serialized commit execution alone does not cure a stale plan; a request planned on an old revision still requires rejection/recovery/re-plan.
+
+After HK-GATE, `Docs/ROADMAP.md` defines a non-blocking-by-default H0S scale/concurrency track that may run in parallel with H1. It measures real object counts, commit cost, collision/stale rate, recovery cost and memory before selecting incremental hashing/indexing, resource-scoped preconditions, coordination/leases, change feeds or finer state partitioning. No Merkle/per-resource-CAS/scope-lock design is preselected, and no transport adapter may become a separate concurrency authority.
 
 ## Operating model
 
@@ -69,7 +73,7 @@ Telegram is convenience only. GitHub state and accepted evidence remain authorit
 
 ## H0 order
 
-`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C ✅ → HK-07A → HK-07B → HK-08 → HK-09 → HK-10 → HK-GATE`.
+`HK-00 ✅ → HK-00A ✅ → HK-01 ✅ → HK-02 ✅ → HK-03 ✅ → HK-04 ✅ → HK-02A ✅ → HK-05 ✅ → HK-06A ✅ → HK-06B ✅ → HK-06C ✅ → HK-07A → HK-07B → HK-08A → HK-08B → HK-09A → HK-09B → HK-10 → HK-GATE`.
 
 ## Process invariants
 
