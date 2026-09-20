@@ -11,7 +11,10 @@ namespace Arkus.Game.Authoring
         public const string DryRunName = "authoring.change.dry-run";
         public const string ApplyName = "authoring.change.apply";
         public const string ContractVersionText = "1.0";
-        public const int MaximumOperations = 64;
+        // HK08A product-shape evidence requires one coherent 96-operation micro-block edit to remain
+        // a single HK04 transaction. HK09B may revise this bounded implementation envelope after
+        // resource measurements; it is not a permanent semantic constant or permission to split intent.
+        public const int MaximumOperations = 96;
 
         private static readonly ContractVersion Version = ContractVersion.Parse(ContractVersionText);
 
