@@ -42,6 +42,8 @@ GATE owns the integration/readiness claim that the accepted H0 guarantees compos
 - scenario evidence for representative multi-resource authoring, invalid-request repair, stale recovery, batching, export/restart/replay, semantic diff and provenance;
 - public-path evidence that HK09A authority containment and HK09B limits/persistence remain transport-neutral;
 - reuse/execution of the accepted HK10 bounded endurance and full headless validation surfaces on the exact candidate;
+- exhaustive consumption of the accepted HK10 residual ledger without shrinking, reclassifying or hiding OUT-BOUNDARY classes;
+- causal proof that a mandatory GATE execution stage cannot disappear while its declarative stage label remains present;
 - material H0 dependency/IP inventory and engine-bridge-boundary audit;
 - a fresh independent AI-agent trial using the public discovered contract and an accepted client-facing adapter path for at least the representative authoring flow.
 
@@ -70,6 +72,15 @@ Outside the claim: Unity/gameplay behavior, automatic merge/per-resource locking
 5. Prepare a concise public-only AI trial brief and evidence template. Do not mark the trial complete in Worker evidence unless a genuinely fresh independent agent supplies the transcript.
 6. Perform strict Worker pre-review over the complete baseline→candidate diff, hard blockers, proof universe and evidence before freeze.
 7. After deterministic evidence and Worker pre-review are clean, freeze the exact candidate with the single explicitly external AI-agent trial still recorded as `NOT_READY/1`. The external trial must then bind to that frozen SHA through PR evidence without changing Git history; final exact-SHA verification is what closes the external obligation to effective `READY/0`. Any additional tracked-file change after freeze invalidates the trial binding and requires a new freeze/trial cycle.
+
+## Reviewer repair cycle 1
+
+Independent review of frozen candidate `2c0df70c1ec8245999e4d144e710816d2f7eb335` returned FAIL with two GATE-owned proof blockers and explicitly accepted the product/public-path semantics and prior AI trial itself.
+
+1. **Residual reconciliation:** replace the seven-row summary with explicit consumption of all 53 IDs from accepted `WP-HK-10/RESIDUAL_RISK.md`, preserving every trusted-base, `CLOSED-BY`, `HK10-COVERED`, `DEFERRED` and `OUT-BOUNDARY` classification. Strengthen exact-SHA verification so `COMPLETE / 0` requires the fixed 53-ID universe rather than only two headers.
+2. **G1 causality:** seed omission of the real unfiltered stage-14 `dotnet test` command in `hkgate-observe-exact-sha.sh` while leaving `GateStepUniverse` untouched. The normal-path `hkgate-proof-infrastructure-check.sh` oracle must reject the mutant specifically because executable stage 14 disappeared.
+
+No runtime/product semantic file is repaired in this cycle. The previous independent AI-agent PASS remains evidence for its original SHA, but the tracked proof/evidence repair necessarily creates a new candidate SHA. Under the existing exact-SHA rule, freeze occurs only after deterministic observation is green, and one fresh AI trial is then required against that final SHA.
 
 ## Proof-budget guard
 
