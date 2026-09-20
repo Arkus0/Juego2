@@ -1,9 +1,20 @@
 # WP-HK-10 — Strict quality closure
 
-Status: PLANNED  
+Status: COMPLETE  
 Class: FOUNDATIONAL  
-Depends on: `WP-HK-09B`  
+Depends on: `WP-HK-09B` ✅ COMPLETE  
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
+Baseline SHA: `8651a7bd55180297c3621336e9e64a2e6a211aef`
+Implementation PR: `#60`
+
+Completion:
+- Reviewed candidate SHA: `813ccf08e33fdd77a34c59da5ed766882840cbee`
+- Independent Reviewer verdict: `PASS`
+- Reviewer evidence: PR review `#5261301248`
+- Exact-SHA freeze validation: GREEN (`Arkus Candidate Validation` run `35527218067`)
+- Merge SHA: `f893ad51d756090eeecac41b8fc7cb14f8bd359a`
+- Completed: `2026-09-20`
+- Repair cycles: `1`; prior frozen SHA `dabcbeb9cce071ed6fca29a8fa01030127f2ce98` failed review `#5261225652` because a dispatcher-failure semantic gap discovered by closure was initially owned by HK10 instead of reopening the causal HK01 contract. The accepted repair amends HK01 and makes HK10 consume that owner-defined behavior.
 
 ## Objective
 
@@ -31,6 +42,12 @@ At minimum seed controlled defects in each accepted foundational layer (protocol
 ## Closure-only rule
 
 HK10 is a closure workpack, not a new architecture workpack. It may add the minimum test/proof machinery needed to challenge accepted guarantees, but it must not silently invent new product semantics, new public capability families or replacement subsystems merely to make a seeded test pass. A material product-semantic gap found here reopens or amends the causal owning workpack rather than being buried inside HK10 hardening.
+
+## Accepted closure result
+
+The accepted candidate demonstrates twelve deterministic causal RED controls across the complete named foundational layer set, a frozen Protocol v1 compatibility corpus, bounded 512-transaction endurance with restart/import recovery inside HK09B limits, deterministic stale/conflicting writer recovery, cancellation and thrown-handler/validator fault injection, and an approved Juego2 Potes content-shape probe. `Docs/evidence/WP-HK-10/RESIDUAL_RISK.md` reconciles the independently maintained residual ledger with `UNCLASSIFIED_RESIDUALS: 0`; `PROOF_MATRIX.md` records `UNRESOLVED_PROOF_OBLIGATIONS: 0` and `KNOWN_UNDETECTED_DEFECT_CLASSES: 0`.
+
+The only product-semantic gap discovered by closure was the canonical thrown-handler failure boundary. Consistent with this workpack's closure-only rule, the accepted candidate reopens/amends `WP-HK-01` as causal owner rather than treating the behavior as HK10 architecture. The HK01 amendment and HK10 closure were independently accepted together on the exact frozen SHA above.
 
 ## Forbidden scope
 
