@@ -84,10 +84,10 @@ Causal negative-conformance classes:
 
 Independent/evaluated oracle:
 
-Tests independently walk the public journal dictionaries, assert chain continuity and compare source/replayed snapshots through the accepted HK06B public semantic-diff capability. A controlled replay executor seam permits defect injection for partial failure/result divergence while production execution remains the canonical mutation committer.
+Tests independently walk the public journal dictionaries, assert chain continuity and compare source/replayed snapshots through the accepted HK06B public semantic-diff capability. For the two material late-failure classes, tests independently recompute the accepted HK06A request/entry identity framing to forge evidence that passes replay's integrity parser but then (a) asks the canonical mutation authority to persist a semantically invalid later state or (b) records a false later result hash. Those controls force effective staged execution before failure and prove that neither canonical-validation bypass nor incremental/false-success publication can remain green.
 
 ## Proof/trust boundary
 
-Trusted base remains the accepted foundational standard: pinned .NET/MSBuild/NuGet behavior, Git checkout/object semantics, normal single-process memory/locking and SHA-256 used according to contract. HK06C does not claim durable journal storage/recovery, cross-process concurrent agents, transport framing, gameplay replay/simulation, Unity replay, cloud persistence or history merging across snapshot rebases.
+Trusted base remains the accepted foundational standard: pinned .NET/MSBuild/NuGet behavior, Git checkout/object semantics, normal single-process memory/locking and SHA-256 used according to contract. HK06C does not claim durable journal storage/recovery, cross-process concurrent agents, transport framing, gameplay replay/simulation, Unity replay, cloud persistence, journal authenticity/signatures or history merging across snapshot rebases.
 
-Initial `PROOF_BUDGET_VERDICT`: `WITHIN_BUDGET`. Product machinery should remain one replay parser/compatibility policy plus one staged canonical-execution seam. If proving replay starts duplicating HK06A provenance or HK04/HK05 mutation correctness, stop and consume the accepted predecessor instead.
+Initial `PROOF_BUDGET_VERDICT`: `WITHIN_BUDGET`. Product machinery remains one replay parser/compatibility policy plus one staged canonical-execution path. Proof additions map directly to the WP-required negative classes and the required Potes/Liébana content-shape probe; no predecessor correctness proof is duplicated.
