@@ -24,11 +24,12 @@ namespace Arkus.Harness.Runtime
             // authoritative session. Only apply receives the Authoring-owned commit capability.
             var planner = new WorldMutationPlannerView(service);
             var committer = CanonicalWorldMutationAuthority.Bind(service);
+            var recovery = new WorldConflictRecovery(service);
             return new List<CapabilityRoute>
             {
-                CapabilityRoute.FromHandler(new WorldChangePlanHandler(planner)),
-                CapabilityRoute.FromHandler(new WorldChangeDryRunHandler(planner)),
-                CapabilityRoute.FromHandler(new WorldChangeApplyHandler(committer))
+                CapabilityRoute.FromHandler(new WorldChangePlanHandler(planner, recovery)),
+                CapabilityRoute.FromHandler(new WorldChangeDryRunHandler(planner, recovery)),
+                CapabilityRoute.FromHandler(new WorldChangeApplyHandler(committer, recovery))
             }.AsReadOnly();
         }
     }
@@ -96,12 +97,14 @@ namespace Arkus.Harness.Runtime
 
     internal abstract class WorldMutationHandlerBase : ICanonicalCapabilityHandler
     {
-        protected WorldMutationHandlerBase(IWorldMutationService service)
+        protected WorldMutationHandlerBase(IWorldMutationService service, WorldConflictRecovery recovery)
         {
             Service = service ?? throw new ArgumentNullException(nameof(service));
+            Recovery = recovery ?? throw new ArgumentNullException(nameof(recovery));
         }
 
         protected IWorldMutationService Service { get; }
+        protected WorldConflictRecovery Recovery { get; }
 
         public abstract CapabilityInvocationResult Invoke(
             CapabilityInvocationContext context,
@@ -119,28 +122,30 @@ namespace Arkus.Harness.Runtime
     [PublicCapabilityRoute("arkus.base", WorldMutationContract.PlanName, "1.0")]
     internal sealed class WorldChangePlanHandler : WorldMutationHandlerBase
     {
-        public WorldChangePlanHandler(IWorldMutationService service) : base(service) { }
+        public WorldChangePlanHandler(IWorldMutationService service, WorldConflictRecovery recovery)
+            : base(service, recovery) { }
 
         public override CapabilityInvocationResult Invoke(
             CapabilityInvocationContext context,
             IReadOnlyDictionary<string, object?> request)
         {
             Validate(context, request);
-            return Service.Plan(request);
+            return Recovery.Enrich(Service.Plan(request), request);
         }
     }
 
     [PublicCapabilityRoute("arkus.base", WorldMutationContract.DryRunName, "1.0")]
     internal sealed class WorldChangeDryRunHandler : WorldMutationHandlerBase
     {
-        public WorldChangeDryRunHandler(IWorldMutationService service) : base(service) { }
+        public WorldChangeDryRunHandler(IWorldMutationService service, WorldConflictRecovery recovery)
+            : base(service, recovery) { }
 
         public override CapabilityInvocationResult Invoke(
             CapabilityInvocationContext context,
             IReadOnlyDictionary<string, object?> request)
         {
             Validate(context, request);
-            return Service.DryRun(request);
+            return Recovery.Enrich(Service.DryRun(request), request);
         }
     }
 
@@ -148,10 +153,12 @@ namespace Arkus.Harness.Runtime
     internal sealed class WorldChangeApplyHandler : ITransactionalMutationHandler
     {
         private readonly ICanonicalWorldMutationCommitter _committer;
+        private readonly WorldConflictRecovery _recovery;
 
-        public WorldChangeApplyHandler(ICanonicalWorldMutationCommitter committer)
+        public WorldChangeApplyHandler(ICanonicalWorldMutationCommitter committer, WorldConflictRecovery recovery)
         {
             _committer = committer ?? throw new ArgumentNullException(nameof(committer));
+            _recovery = recovery ?? throw new ArgumentNullException(nameof(recovery));
         }
 
         public CapabilityInvocationResult Invoke(
@@ -160,7 +167,7 @@ namespace Arkus.Harness.Runtime
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (request == null) throw new ArgumentNullException(nameof(request));
-            return _committer.Apply(request);
+            return _recovery.Enrich(_committer.Apply(request), request);
         }
     }
 }
