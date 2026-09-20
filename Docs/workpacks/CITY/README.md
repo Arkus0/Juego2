@@ -52,8 +52,8 @@ CITY uses two separate axes so production scope does not get confused with syste
 - `S0` scenic envelope / inaccessible context;
 - `S1` authored shell or façade only;
 - `S2` shallow playable space with bounded interaction;
-- `S3` systemic place designed for repeated actor/player use;
-- `S4` hero layered place with multiple meaningful spaces/access/discovery opportunities.
+- `S3` deep playable place with multiple authored spaces/thresholds/anchors;
+- `S4` hero layered place with multiple meaningful access/discovery opportunities.
 
 **Systemic importance (CITY-03):**
 - `A` primary systemic anchor;
