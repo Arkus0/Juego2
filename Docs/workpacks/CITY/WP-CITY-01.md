@@ -19,10 +19,10 @@ Freeze a practical production-depth classification:
 - `S0` — scenic envelope / inaccessible context;
 - `S1` — façade or shell only;
 - `S2` — shallow playable space with bounded interaction;
-- `S3` — systemic repeated-use place;
-- `S4` — hero layered place with multiple meaningful spaces/access/discovery opportunities.
+- `S3` — deep playable place with multiple authored spaces/thresholds/anchors;
+- `S4` — hero layered place with multiple meaningful access/discovery opportunities.
 
-Depth is a production promise, not a prestige score. It does not decide how important a place is to the Living World.
+Depth is a production promise, not a prestige or systemic-importance score. CITY-03 owns the separate A–D systemic-importance axis.
 
 ## Work
 
@@ -44,11 +44,12 @@ Depth is a production promise, not a prestige score. It does not decide how impo
 ## Acceptance
 
 - Later WPs can describe a place without inventing competing terms.
-- S0–S4 distinguishes façade-only, shallow, systemic and hero depth without implying every door opens.
+- S0–S4 distinguishes façade-only, shallow, deep-playable and hero-layered depth without implying every door opens.
+- S-depth does not encode systemic importance, NPC behaviour or narrative priority.
 - Access vocabulary supports main entrance, secondary/service access and verticality where justified.
 - The grammar can express an ordinary house, bar, shop, warehouse, civic building, street segment and rural/river place.
 - No building family, interior layout, secret, Unity object or runtime behaviour is implemented.
 
 ## Negative gates
 
-FAIL if the vocabulary becomes an architectural CAD schema, promises ubiquitous interiors, encodes Living World behaviour, or alters accepted CITY-00 geography.
+FAIL if the vocabulary becomes an architectural CAD schema, promises ubiquitous interiors, encodes Living World behaviour, collapses into the A–D importance axis, or alters accepted CITY-00 geography.
