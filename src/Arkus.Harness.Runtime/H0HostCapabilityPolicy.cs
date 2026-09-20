@@ -74,6 +74,13 @@ namespace Arkus.Harness.Runtime
                         definition.Key.ToString(),
                         "H0 exposes no elevated host privilege through its canonical inventory."));
                 }
+                else if (policy.Privilege == PrivilegeClass.Unknown)
+                {
+                    issues.Add(new H0HostCapabilityPolicyIssue(
+                        MetadataMismatchCode,
+                        definition.Key.ToString(),
+                        "An effective H0 capability may not publish unknown privilege semantics."));
+                }
 
                 var expectedTransaction = ExpectedTransaction(definition.SideEffect);
                 if (expectedTransaction == TransactionRequirement.Unknown ||
@@ -84,9 +91,35 @@ namespace Arkus.Harness.Runtime
                         definition.Key.ToString(),
                         "Declared side effects and transaction policy do not describe the same effective authority."));
                 }
+
+                if (IsCanonicalStateChange(definition.SideEffect))
+                {
+                    if (policy.Privilege != PrivilegeClass.Authoring)
+                    {
+                        issues.Add(new H0HostCapabilityPolicyIssue(
+                            MetadataMismatchCode,
+                            definition.Key.ToString(),
+                            "Canonical mutation/rebase/replay authority must be published as authoring privilege in H0."));
+                    }
+
+                    if (policy.ProvenanceRequirement != ProvenanceRequirement.Required)
+                    {
+                        issues.Add(new H0HostCapabilityPolicyIssue(
+                            MetadataMismatchCode,
+                            definition.Key.ToString(),
+                            "Canonical mutation/rebase/replay authority must require provenance in H0."));
+                    }
+                }
             }
 
             return issues.AsReadOnly();
+        }
+
+        private static bool IsCanonicalStateChange(SideEffectClass sideEffect)
+        {
+            return sideEffect == SideEffectClass.CanonicalMutation ||
+                sideEffect == SideEffectClass.CanonicalRebase ||
+                sideEffect == SideEffectClass.CanonicalReplay;
         }
 
         private static TransactionRequirement ExpectedTransaction(SideEffectClass sideEffect)
