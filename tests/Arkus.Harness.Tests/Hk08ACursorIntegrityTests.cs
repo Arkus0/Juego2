@@ -13,6 +13,8 @@ namespace Arkus.Harness.Tests
     {
         private static readonly ContractVersionRange ExactV1 =
             ContractVersionRange.Exact(new ContractVersion(1, 0));
+        private static readonly ContractVersionRange ExactV2 =
+            ContractVersionRange.Exact(new ContractVersion(2, 0));
 
         [Fact]
         public void AlteredCursorOffsetFailsClosedInsteadOfSkippingJournalEntries()
@@ -29,7 +31,7 @@ namespace Arkus.Harness.Tests
             var anchor = session.Current;
             var first = contract.Dispatch(
                 WorldProvenanceContract.ReadName,
-                ExactV1,
+                ExactV2,
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["revision"] = anchor.Revision,
@@ -41,11 +43,11 @@ namespace Arkus.Harness.Tests
 
             // Controlled in-boundary defect reproduction: preserve the public envelope checksum while
             // changing only the inner continuation offset. A merely Base64-encoded cursor would accept
-            // this and skip one persisted journal entry; the HK08A public cursor must fail closed.
+            // this and skip one persisted journal entry; the HK08A public v2 cursor must fail closed.
             var altered = TamperInnerOffsetWithoutUpdatingEnvelopeChecksum(cursor);
             var rejected = contract.Dispatch(
                 WorldProvenanceContract.ReadName,
-                ExactV1,
+                ExactV2,
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["limit"] = 1,
@@ -58,7 +60,7 @@ namespace Arkus.Harness.Tests
             // The unchanged cursor still resumes at exactly the next persisted entry.
             var continued = contract.Dispatch(
                 WorldProvenanceContract.ReadName,
-                ExactV1,
+                ExactV2,
                 new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["limit"] = 1,
