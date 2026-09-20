@@ -81,9 +81,57 @@ namespace Arkus.Harness.Tests
                 ContractVersionRange.Exact(definition.Key.Version),
                 new Dictionary<string, object?>(StringComparer.Ordinal));
             var neutralFields = neutralRequest.ToData().Keys.ToArray();
-            Assert.DoesNotContain("toolName", neutralFields);
-            Assert.DoesNotContain("jsonrpc", neutralFields);
-            Assert.DoesNotContain("_meta", neutralFields);
+            Assert.Empty(McpFramingLeakIssues(neutralFields));
+
+            var deliberatelyAmendedNeutralShape = neutralFields.Concat(new[] { "toolName" }).ToArray();
+            Assert.Contains("mcp-framing-field:toolName", McpFramingLeakIssues(deliberatelyAmendedNeutralShape));
+        }
+
+        [Fact]
+        public void SdkReplacementBoundaryOracleRejectsCanonicalLayerDependencyLeak()
+        {
+            var root = Hk07AProcessHarness.FindRepositoryRoot();
+            var canonicalProjects = new[]
+            {
+                "src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj",
+                "src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj",
+                "src/Arkus.Harness.Projection/Arkus.Harness.Projection.csproj"
+            };
+            var actual = canonicalProjects.Select(relative => new KeyValuePair<string, string>(
+                relative,
+                File.ReadAllText(Path.Combine(root, relative.Replace('/', Path.DirectorySeparatorChar))))).ToArray();
+
+            Assert.Empty(SdkDependencyLeakIssues(actual));
+
+            var injected = actual.Select(pair => pair.Key.EndsWith("Arkus.Harness.Projection.csproj", StringComparison.Ordinal)
+                ? new KeyValuePair<string, string>(pair.Key, pair.Value + "\n<PackageReference Include=\"ModelContextProtocol.Core\" />")
+                : pair).ToArray();
+            Assert.Contains(
+                "mcp-sdk-dependency:src/Arkus.Harness.Projection/Arkus.Harness.Projection.csproj",
+                SdkDependencyLeakIssues(injected));
+        }
+
+        private static IReadOnlyList<string> McpFramingLeakIssues(IEnumerable<string> neutralFields)
+        {
+            var transportOnly = new HashSet<string>(StringComparer.Ordinal)
+            {
+                "toolName", "jsonrpc", "_meta"
+            };
+            return neutralFields
+                .Where(transportOnly.Contains)
+                .Select(value => "mcp-framing-field:" + value)
+                .OrderBy(value => value, StringComparer.Ordinal)
+                .ToArray();
+        }
+
+        private static IReadOnlyList<string> SdkDependencyLeakIssues(
+            IEnumerable<KeyValuePair<string, string>> canonicalProjectTexts)
+        {
+            return canonicalProjectTexts
+                .Where(pair => pair.Value.IndexOf("ModelContextProtocol", StringComparison.Ordinal) >= 0)
+                .Select(pair => "mcp-sdk-dependency:" + pair.Key)
+                .OrderBy(value => value, StringComparer.Ordinal)
+                .ToArray();
         }
 
         private static (Type AdapterType, object Adapter) CreateAdapter(NeutralProjectionService projection)
