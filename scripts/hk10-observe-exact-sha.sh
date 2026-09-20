@@ -13,11 +13,13 @@ if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 
 test -f src/Arkus.Harness.Mcp/packages.lock.json
 test -f tests/Arkus.Harness.Tests/Compatibility/protocol-v1.json
+test -f scripts/hk10-negative-conformance.sh
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
 DOTNET_NOLOGO=1 dotnet build Juego2.sln --configuration Release --no-restore -m:1 --disable-build-servers
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore -m:1 --disable-build-servers \
   --filter 'FullyQualifiedName~Hk10'
+bash scripts/hk10-negative-conformance.sh
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore -m:1 --disable-build-servers
 
@@ -32,7 +34,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/hk10-observe-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: locked-restore=GREEN; release-build=GREEN; hk10-property-robustness=GREEN; hk10-endurance-compatibility=GREEN; regression=GREEN
+Required gates: locked-restore=GREEN; release-build=GREEN; hk10-property-robustness=GREEN; hk10-endurance-compatibility=GREEN; causal-negative-controls=GREEN; regression=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-HK-10
 EOF
