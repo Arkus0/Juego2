@@ -405,7 +405,7 @@ The asymmetry is worth stating plainly rather than averaging away: the NPC work 
 
 ### 6.2 Three layers, three different answers
 
-**Layer 1 — the charters transfer whole.** `LC-01`…`LC-15` and `CC-01`…`CC-20` are game-design decisions, not architecture: the city does not wait for the player; NPCs may be primary causes; actor-to-actor is first-class; no omniscient agents; schedule is baseline, not destiny; agency must be explainable; bounded autonomy beats unlimited emergence. On the combat side: clean hits matter; mobs are flow and masters are openings; responsiveness outranks synchronization; the environment is part of the moveset; combat returns state to the living world; feel requires instrumented play, not document confidence. `AGENTS.md:57` permits reusing process and design lessons that are engine and game independent, and these are exactly that. Cost to carry: close to zero.
+**Layer 1 — the charters transfer whole**, and are restated in full in **Annex A** so they survive independently of the archive. `LC-01`…`LC-15` and `CC-01`…`CC-20` are game-design decisions, not architecture: the city does not wait for the player; NPCs may be primary causes; actor-to-actor is first-class; no omniscient agents; schedule is baseline, not destiny; agency must be explainable; bounded autonomy beats unlimited emergence. On the combat side: clean hits matter; mobs are flow and masters are openings; responsiveness outranks synchronization; the environment is part of the moveset; combat returns state to the living world; feel requires instrumented play, not document confidence. `AGENTS.md:57` permits reusing process and design lessons that are engine and game independent, and these are exactly that. Cost to carry: close to zero.
 
 **Layer 2 — the findings transfer with translation.** Truth is not belief; relationship is not opinion; the receiver owns its own decision; relaying a rumour is a new decision rather than an automatic propagation; engine lineage and actor-accessible provenance are two different authorities. None of that depends on Unity, on the donor engine, or on any particular implementation. It describes what the simulation must be true of.
 
@@ -413,7 +413,7 @@ The asymmetry is worth stating plainly rather than averaging away: the NPC work 
 
 ### 6.3 Why the deltas need rewriting, concretely
 
-1. **`Target` names workpacks that do not exist.** The deltas point at `WP-M9-00`, `M9-02`, `M10-01`, `M10-04`, `Docs/LIVING_WORLD_RUNTIME.md`. Juego2 has no `M*` series and no living-world runtime document. The destination has to be re-derived, not translated.
+1. **`Target` names workpacks that do not exist.** The deltas point at `WP-M9-00`, `M9-02`, `M10-01`, `M10-04`, `Juego/Docs/LIVING_WORLD_RUNTIME.md`. Juego2 has no `M*` series and no living-world runtime document. The destination has to be re-derived, not translated.
 2. **`Remote class` belongs to the archive's execution model.** `REMOTE-DONE` / `REMOTE-PREP` / `LOCAL-UNITY` classify work against the donor project's cloud/local split. Juego2 does not have that split and should not acquire it.
 3. **Every delta assumes a runtime `WorldState`.** They add beliefs, relationships, reservations, goals and clocks to a ticking world state. Arkus's `WorldState` is *authored*; `WP-HK-06A` drew that boundary and it is an accepted guarantee, with `R-06B-04` recording that gameplay and runtime state stay outside canonical state and replay. A delta that says "add `ActorBelief` to `WorldState`" would, applied literally in Juego2, break an accepted guarantee. This is the same seam §5.1 runs along, and it is the single reason the deltas cannot be lifted.
 
@@ -607,3 +607,128 @@ Divergences this document surfaces but does not resolve. Each would be settled b
 - It does not design geometry, write narrative, or select final assets.
 
 Its only claim is that the jump from H0 to production is now sized on paper, so that when `WP-HK-GATE` passes, the next decision is a choice between prepared options rather than an improvisation.
+
+---
+
+## Annex A — Recovered design charters
+
+The two constitutions from the reference archive, restated in full so the prior art survives independently of that repository. `LCRT-00_CONSTITUTION.md` was marked `ACCEPTED DESIGN PRINCIPLES`; `CCRT-00_CONSTITUTION.md` was marked `PROPOSED — REVIEW REQUIRED`. Both were authored in Spanish; the statements below are faithful restatements in this document's language, keeping the original identifiers so a reader can always go back to the source.
+
+Standing is unchanged by restatement: these are **cited design input, not inherited verdicts** (§6.4). Nothing here is binding on Juego2 until someone decides to adopt it.
+
+Both charters carry the same change rule, worth preserving: changing a law requires an explicit decision, and an ADR where it alters architecture. Research may refine mechanisms without reopening a law, absent strong evidence that the law itself produces a systemic failure.
+
+### A.1 Living city — `LC-01` … `LC-15`
+
+**LC-01 — The city does not wait for the player.** The world may change while the player is elsewhere or absent. Absence does not freeze goals, schedules, relationships, knowledge or consequences that sit inside the simulation budget.
+
+**LC-02 — NPCs may be primary causes.** A persistent actor can be the initial cause of a significant event. Not every world event must derive from a quest, a trigger, a cinematic or a player action.
+
+**LC-03 — Actor → Actor is first-class.** The player is not a privileged endpoint of the social model. The same basic abstractions must support `Antonio → confront → Manolo`, `Manolo → ask_favor → Carmen`, `Carmen → tell → Paco`. The player may enter a chain; a chain does not require the player to exist.
+
+**LC-04 — No omniscient agents.** An actor may decide only from information it can actually reach: its own state, perception, belief, relationship, memory, an explicit authored rule, or public information. A world fact is not automatically an actor belief.
+
+**LC-05 — Schedule is baseline, not destiny.** A daily routine defines normal expectations and intentions. Goals, events, obligations and decisions may interrupt or replace it. A schedule is not a total script of an actor's life.
+
+**LC-06 — Agency must be explainable.** Every relevant autonomous decision must be able to answer: what was chosen, why this action, why this target, why now, which alternatives lost, and what information was used. A decision that tooling cannot explain is a defect.
+
+**LC-07 — Meaningful actions create state.** A relevant social or material action does not end in animation. Where applicable it produces structured effects: a world event, a relationship delta, a belief change, a resource or ownership change, a schedule or goal change, a domain outcome, a memory reference.
+
+**LC-08 — Consequences must be perceptible.** Depth is not simulated for technical prestige. A complex system needs channels through which the player can notice, discover or exploit its consequences — behaviour, dialogue, absence or presence, objects, records, rumours, schedule changes, economy, the state of a space.
+
+**LC-09 — Missing an event is allowed; losing causality is not.** The player may fail to witness things. When an event is playably relevant, the world must leave enough traces or testimony for the chain to be reconstructed reasonably.
+
+**LC-10 — Relationships alter decisions.** Affinity, trust, fear, debts, obligations, kinship and authority do not exist only to filter dialogue. They must be able to change target selection, willingness, risk tolerance, help, confrontation, concealment and information transfer.
+
+**LC-11 — Authored story constrains; it does not monopolize causality.** The main story may fix invariants, reserve actors, or force outcomes where necessary. Outside those limits, the simulation may produce events nobody wrote by hand.
+
+**LC-12 — Bounded autonomy beats unlimited emergence.** Total social simulation is not the goal. Agency has budgets, cooldowns, scopes, tiers and guardrails. Ten intelligible chains beat a hundred irrelevant events.
+
+**LC-13 — Different actor tiers get different agency budgets.** A persistent actor may hold identity, beliefs, relationships, goals and selected memory. Ambient population supplies density and cheap feedback but generates no persistent social truth without explicit promotion. Within persistent actors, an agency profile may limit the frequency and kind of initiative without creating a second, incompatible identity model.
+
+**LC-14 — An LLM is never simulation authority.** A model may help author, explain, vary text or propose content offline. It does not decide the canonical runtime state of goals, beliefs, relationships or outcomes. Authority is structured, reproducible and checkable.
+
+**LC-15 — Headless before spectacle.** The causal part of schedules, goals, decisions, social interactions, events and consequences should be simulable without scene objects, animator or navigation mesh. The engine presents and integrates; it must not be the only way to check that the town makes sense.
+
+### A.2 Combat — `CC-01` … `CC-20`
+
+**CC-01 — Martial-arts cinema is the target experience, not decoration.** The reference is not merely "a good brawler". Player decisions should produce legible choreography comparable in intent to Chinese and Hong Kong martial-arts cinema: whole body, use of space, tempo changes, clear cause and effect, audiovisual punctuation. Slow motion added at the end does not satisfy this law.
+
+**CC-02 — The protagonist is already a master.** Progression cannot depend on the protagonist starting unable to perform fundamentals the fiction says he already owns. The player learns to *govern* the master: reading, timing, space, initiative, response selection, expression. Progression may widen vocabulary, context, specialisation or expressiveness; it must not sell basic competence as an unlock.
+
+**CC-03 — Clean hits matter.** An ordinary human should not absorb long chains of clean hits as the routine cost of combat. Difficulty should come from failing to get an opening, from defence, position, multiple threats, timing, and the consequences of mistakes. Hit points may exist internally, but cannot be the main explanation for why an ordinary enemy is still fighting after numerous clean impacts.
+
+**CC-04 — Mobs are flow; masters are openings.** Against ordinary groups the fantasy is continuity: moving from threat to threat and governing space. Against elites and masters the fantasy is earning an opening against someone hard to touch cleanly. Raising health does not substitute for changing the grammar of the encounter.
+
+**CC-05 — Defence preserves or steals initiative.** Defending must not reduce to waiting behind a block. Deflect, parry, avoid, redirect, intercept and counter should be studied as ways to keep, recover or steal initiative.
+
+**CC-06 — Timing and reading beat mashing.** Pressing faster is not playing better. The system may tolerate imperfect input, but the best execution comes from pressing at the useful moment — reading threat, distance, recovery and tempo, and varying the response when the opponent changes pattern.
+
+**CC-07 — Responsiveness outranks synchronization.** No rhythm, animation, camera, music or choreography system may delay a critical input merely to align it with a beat or a pose. Synchronisation adapts presentation and lead-ins where safe; movement, defence and survival actions keep response priority.
+
+**CC-08 — Flow is a consequence of good combat, not a damage combo meter.** Flow may measure continuity, timing, transitions, variety and threat control. Its main reward should be continuity and staging — fewer dead moments, better transitions, richer music, foley, camera and haptics, contextual access to choreography — before raw damage multipliers. A player should not chase Flow while ignoring the martial situation.
+
+**CC-09 — Impact is multisensory and comes from one combat truth.** A relevant impact does not exist only as animation. One gameplay fact — contact quality, location, direction, force, timing — feeds reaction and time shaping, audio, haptics, camera, effects and music accents. Presentation must not invent a hit that gameplay did not resolve, nor may gameplay resolve an important one without enough feedback.
+
+**CC-10 — The environment is part of the moveset.** Walls, furniture, bicycles, bars, doors, kerbs and tables can change options, trajectories and finishers. The environment is neither visual cover nor a catalogue of disconnected contextual prompts; it must affect real spatial decisions.
+
+**CC-11 — Crowd pressure must be active but readable.** Two extremes are rejected: seven enemies waiting theatrically for one to finish, and seven enemies attacking with perfect precision until combat becomes noise. The director must produce overlapping threats, flanking, wind-up, recovery and coordinated action, with enough readability for the player to govern them.
+
+**CC-12 — Target transitions are first-class combat actions.** Moving from A to B must not feel like ending a combo, finding a target and starting another. Spatial continuity, contextual selection, attack locomotion and body transitions should make switching opponents part of the choreography.
+
+**CC-13 — Camera serves bodies, geometry and threat readability.** During complex kung fu, seeing body, feet, opponents and environment usually matters more than pushing in to look intense. Close-ups, reframes, shake and slow motion are punctuation; they cannot hide information the player needs in order to play.
+
+**CC-14 — Slow motion and hit stop are punctuation.** Time shaping marks significant moments rather than becoming permanent noise. Frequent use that trivialises important impacts is a defect.
+
+**CC-15 — Depth must not require a fighting-game command list.** Sophisticated kung fu should come from a relatively compact input vocabulary. Depth emerges from timing, direction, state, position, threat, transition and context. If a basic action requires memorising an arbitrary sequence for the character to look competent, the design must justify it.
+
+**CC-16 — Boss difficulty comes from access, not inflated durability.** A human boss may need few genuinely clean impacts to be beaten. Difficulty should come from guard, footwork, feints, counters, initiative, adaptation, rhythmic patterns and the ability to deny openings. A giant posture bar can become another sponge under a different name.
+
+**CC-17 — Enemy archetypes alter the problem, not merely the stats.** Mob, disruptor or elite, boss and master should pose different questions. More damage, more health and more speed without behavioural change is not an archetype.
+
+**CC-18 — Combat returns state to the living city.** A fight in a living town must not exist in a separate dimension. Where appropriate, its start and its outcome produce observable consequences: witnesses, injuries, fear, reputation, damaged objects, third-party intervention, relationship changes, events. Semantic authority belongs to the living-world side; combat does not duplicate its social systems.
+
+**CC-19 — Feel requires instrumented play, not document confidence.** Headless tests can validate targeting, threat, resolution, determinism and rules. They cannot by themselves show that combat feels good. Claims about responsiveness, readability, camera, hit stop, audio or haptics need an instrumented prototype and a playtest before they become a product PASS.
+
+**CC-20 — Budget choreography; do not brute-force animation count.** The indie / PS2-plus target requires semantic reuse, data-driven transitions and contextual selection. Quality cannot be bought by accumulating hundreds of bespoke animations that serve one enemy, object and angle combination. Every unit of work must weigh authoring cost against a cheaper alternative.
+
+### A.3 Four laws Juego2 already satisfies, harder than the charter asked
+
+These are not adaptations. They are places where the restart independently arrived at the same principle and then went further, which is the strongest available evidence that the charters were pointing the right way.
+
+| Law | What Juego2 already does |
+|---|---|
+| `LC-15` headless before spectacle | H0 is headless by construction, with no engine dependency anywhere in the kernel. `WP-HK-GATE.md:31` requires the full validation and test surface to run headlessly with no manual or editor intervention, and a hidden engine dependency is a listed hard blocker. The charter asked for a tendency; Juego2 made it the gate |
+| `LC-14` no model is the authority | The whole product thesis. An agent authors through discoverable contracts with validation, transactions, provenance and replay; `PRODUCT_ARCHITECTURE.md` keeps semantic authority in the canonical contract and out of any model vendor, transport or engine |
+| `LC-06` agency must be explainable | The authoring-side analogue already exists and is accepted: the `WP-HK-06A` provenance journal answers who changed what, from which revision, with deterministic entry identity. The runtime needs its own decision-level equivalent, but the shape is proven and the vocabulary is there to borrow |
+| `CC-09` presentation must not invent what gameplay did not resolve | Structurally identical to `PRODUCT_ARCHITECTURE.md:74`: if an engine realization fails after a canonical decision, the failure is represented explicitly at the adapter boundary, and the adapter must not silently rewrite canonical meaning to match engine state. Same rule, one layer down |
+
+### A.4 Where the charters need translating
+
+| Law | Why it does not land as written | Translation |
+|---|---|---|
+| `LC-01`, `LC-05`, `LC-07` | All describe a world that ticks. Arkus's `WorldState` is authored and does not tick | Arkus authors what makes the behaviour possible — schedules, goals, POIs, initial edges. The ticking belongs to the runtime layer that `R-06B-04` leaves unowned (§5.1) |
+| `LC-04` truth is not belief | Presumes per-agent derived state | This is exactly `CONTENT_SHAPE_BACKLOG.md` row 13, still `OPEN`. The law is the reason that row matters |
+| `LC-10` relationships alter decisions | Presumes state attached to a pair of objects | Backlog row 8, still `OPEN`. Expressible as a relation object plus two typed references, but that has never been a deliberate decision |
+| `LC-05` schedule blocks | Presumes ordered interval data that wraps past midnight | Backlog row 10, still `OPEN`, and the reason `npc.teresa` exists in §4.3 |
+| `LC-13` actor tiers | Ambient population has no persistent identity | Fits Arkus cleanly: persistent actors get canonical objects and identity; ambient archetypes are authored as archetypes, never as identities. Already reflected in §4.1 |
+| `CC-19` feel needs instrumented play | Directly limits Juego2's proof culture | Honest tension, worth naming rather than smoothing: `FOUNDATIONAL_PROOF_STANDARD.md` is built on headless determinism and exact-SHA evidence, and has no vocabulary for a playtest. A feel claim will need an evidence form that does not exist yet. `CONTINUITY_POLICY.md:70` already anticipates the adjacent case — local editor evidence belongs to the environment that actually produced it, and may never be fabricated |
+| `CC-18` combat returns state | Crosses two layers | This is the `L8 → L9` edge in §5.2. The charter is explicit that social authority stays on the living-world side; combat must not grow its own copy |
+
+Everything not listed above transfers as written. Most of `CC-01` through `CC-17` is product and feel design that the harness has no opinion about, which is the point: they are decisions worth having made in advance, not architecture worth porting.
+
+### A.5 Anti-goals, preserved
+
+The charters' rejection lists are as valuable as the laws, and cheaper to lose. Living city: NPCs that merely walk more; hundreds of invisible needs; numeric relationships that only unlock lines; random events with no legible cause; a model improvising runtime canon; full psychology for every extra; maximising the sheer quantity of off-screen activity; sacrificing authored story, pacing or debuggability to emergence.
+
+Combat: a visible attack queue read as fake choreography; a perfect-AI dogpile passed off as difficulty; ordinary enemies surviving clean hits behind an arbitrary bar; rhythm-game scaffolding bolted onto kung fu; contextual autoplay where the system decides and the player only aims; a QTE for every spectacular moment; a camera that hides threats to look cinematic; constant slow motion; aerial juggling as the central identity; copying a full combat-deck system wholesale; a bespoke animation for every object in town; progression premised on a master forgetting his art; sacrificing control response to fit a song; mistaking more animations for more depth.
+
+### A.6 The two product tests
+
+The charters each end in an acceptance shape rather than a metric, which is the right altitude for something non-binding.
+
+**City in miniature.** The player should be able to learn, and then exploit: where a person usually is at a given hour; who they deal with; which businesses and services they use; who knows something and why; which absence or change of routine is anomalous; that a municipal decision changed real human patterns; that a conflict between two NPCs happened without the player starting it. Knowing these regularities must confer practical advantage in investigation, dialogue, anticipation, governance or side stories.
+
+**Crowd and duel.** A crowd encounter should show one master against several ordinary opponents, with continuous transitions across targets, at least one genuinely overlapping threat, at least one environment-mediated action, no visible long attack queue, no routine sponge, a combat-readable camera, and impact-driven audio and haptics. A duel should show one skilled opponent, few meaningful clean hits, most of the exchange spent on denial, deflection, avoidance, footwork and initiative, at least one feint or tempo disruption, and a win earned by creating openings rather than by draining a durability pool. Exact numbers were deliberately left to prototype; this document does not invent them either.
+
+The first of these is the direct ancestor of §8, and is a stronger statement of it. §8 asks for one causal chain the player can observe. The city-in-miniature test asks for regularities the player can *learn and then use* — which is the difference between a demo and a game. It is the right long-term target and the wrong first milestone, and both should stay written down.
