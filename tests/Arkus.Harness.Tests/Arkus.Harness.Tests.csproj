@@ -8,6 +8,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <!-- Proof-harness load closure only: HK01 independently scans every production assembly under src/.
+         Keeping the MCP runtime dependency private here lets Reflection inspect that assembly without
+         excluding it from the universe or making the test source depend on MCP APIs. -->
+    <PackageReference Include="ModelContextProtocol.Core" PrivateAssets="all" />
     <PackageReference Include="xunit.core" />
     <PackageReference Include="xunit.assert" />
     <PackageReference Include="xunit.runner.visualstudio">

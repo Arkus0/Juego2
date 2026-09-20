@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Arkus.Harness.Mcp</AssemblyName>
+    <RootNamespace>Arkus.Harness.Mcp</RootNamespace>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ModelContextProtocol.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Arkus.Harness.Projection/Arkus.Harness.Projection.csproj" />
+    <ProjectReference Include="../Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
+  </ItemGroup>
+</Project>
