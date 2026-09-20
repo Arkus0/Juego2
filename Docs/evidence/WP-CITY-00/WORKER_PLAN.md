@@ -6,8 +6,17 @@ Baseline SHA: 290f92e9c21f1e454e0d6924b29f4d778b9875f8
 Active Worker: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Worker state: ACTIVE
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)
-fail_cycle: 2
+fail_cycle: 3
 
+> **Repair cycle 3.** Frozen candidate `daefc6a1e4959c1cffacd662f5578a4c13a642d3` received
+> independent FAIL, review
+> [#5261488049](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261488049). A summarising
+> sentence written in the same commit as the table that refutes it claimed the south bank is never
+> left on a single crossing, and miscounted the double-failure case as one crossing instead of zero;
+> CSI-06 carried the claim into the permanent contract. Repaired by restating CSI-06 as a design
+> obligation, giving §2.4.1 an explicit crossing-count ladder, and deleting the dossier's paraphrase.
+> No spatial decision changed.
+>
 > **Repair cycle 2.** Frozen candidate `6091584313488bcfb1840132f22adcc9b1b5de4f` received
 > independent FAIL, review
 > [#5261418045](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261418045). The cycle-1
@@ -73,6 +82,20 @@ one paragraph about the loop it created, and left the crossing table asserting a
 same repair had just made impossible. Both cycles are the same failure in different clothes —
 closing over something without checking what else depended on it — which is why the check now
 belongs in the pre-review rather than in a reviewer's reading.
+
+**From cycle 3 — every absolute claim about this document's own artefacts is audited mechanically
+before freeze, not read carefully.** Three cycles have now failed on one shape: a summarising
+sentence asserting *never / always / only / exactly / a count*, written beside the table that refutes
+it, with the contradiction under twenty lines away. Cycle 3's sentence was written in the same commit
+as its own refutation, immediately after cycle 2 added a cross-check — so "be more careful" has been
+tried and has failed three times. The pre-review therefore greps the deliverable for absolute
+quantifiers and counts, and tabulates each factual one against the table or graph it describes
+(`WORKER_PRE_REVIEW.md` §3). A policy prohibition — "no production phase may…" — is not a factual
+claim and is exempt. This check absorbs and replaces the narrower cycle-2 crossing cross-check.
+
+A corollary, because cycle 3's defect entered through a paraphrase: **an evidence document must not
+restate an invariant in its own words.** It points at the owner. Two copies of a rule are two things
+that can disagree.
 
 ### Dependency 2 — `Docs/production/PRODUCTION_BLUEPRINT.md` v0.2
 

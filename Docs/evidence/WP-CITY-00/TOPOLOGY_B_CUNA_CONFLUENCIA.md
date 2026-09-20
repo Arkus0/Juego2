@@ -19,6 +19,14 @@ Amended in repair cycle 1 after independent FAIL on `b9473f04da72462619e9561c097
 > candidate because the district graph and the crossing strategy had stopped describing the same
 > city. The graph, the crossing table and the closure consequences are now reconciled around the two
 > connectivity states. Again, no spatial structure changed.
+>
+> **Repair cycle 3.** The cycle-2 reconciliation was itself written with a summarising sentence that
+> the table above refutes: it claimed the south bank is never left on a single crossing, when the
+> barca-suspended row is exactly that, and it called the double-failure case one crossing when it is
+> zero. Independent review
+> [#5261488049](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261488049) FAILed the
+> candidate, since CSI-06 carried the same claim into the permanent contract. The sentence is gone
+> and this dossier now points at the owner instead of paraphrasing it.
 
 ## 1. Premise
 
@@ -80,7 +88,7 @@ three ways: towpath, quay road, and the steep Cuesta from the casco.
 | 8 | workshops/service/peripheral edge | Ribera y Talleres between the Calle Mayor terrace and the río |
 | 9 | outward road/bus/valley connections | Entrada, bus and carretera de valle at the SW, adjacent to the port; camino sur over the Puente Viejo |
 | 10 | rural edge: paths, slopes, huertas | Vega NE along the río; huertas N up the arroyo; terraced slopes above the Barrio Alto |
-| 11 | expansion seams | five named directions (§8) |
+| 11 | expansion seams | six named directions (§8) |
 | 12 | intentionally quiet family | the upstream paseo, the arroyo ravine walk with the lavadero, and the upper huerta lanes |
 
 ## 4. Crossing strategy
@@ -95,9 +103,9 @@ three ways: towpath, quay road, and the steep Cuesta from the casco.
 | La barca | río | roped ferry; people, animals and small loads | Puerto ↔ orilla sur | State 1 only; hours, fare, suspended by high water | the south bank depends on the Puente Viejo alone until it runs again |
 | Puente del Muelle | río | freight road bridge | Puerto ↔ south-bank road | State 2 only; it replaces the barca | people still cross at the casco; freight cannot cross at all, since the Puente Viejo takes handcarts and not carts |
 
-Connectivity states and the full closure consequences are owned by `CITY_SPATIAL_CONSTITUTION.md`
-§2.4.1. The south bank is never left on a single crossing except when the Puente Viejo and the barca
-fail together, which one flood can cause.
+Connectivity states, the crossing-count ladder and the full closure consequences are owned by
+`CITY_SPATIAL_CONSTITUTION.md` §2.4.1 and CSI-06. This dossier does not restate them: restating an
+invariant in its own words is how a contradiction got into the candidate in the first place.
 
 The arroyo is crossed casually and often; the río is crossed rarely and deliberately. That asymmetry
 is the topology's core mechanism, and it is cheap: four short spans cost far less geometry than one
@@ -144,7 +152,7 @@ levers — quay concessions and port hours, market siting on the terrace, Ensanc
 provision, flood works, the Cuesta as an access decision — sit above it. Every PA-12 §3 lever family
 has a physical home.
 
-**Expansion.** Five directions, none requiring the core to move.
+**Expansion.** Six directions, none requiring the core to move.
 
 **Production cost.** Medium. The arroyo is cheap geometry with a high value-per-metre. One expensive
 bridge. The port is a real additional district but small and phaseable last, with its seam visible

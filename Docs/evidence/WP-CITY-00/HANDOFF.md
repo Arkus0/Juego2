@@ -7,7 +7,28 @@ Branch: `claude/city-urban-topologies-ehn6qf`
 Active Worker: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Worker history: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Transfer SHA: NONE
-fail_cycle: 2
+fail_cycle: 3
+
+## Repair cycle 3
+
+Frozen candidate `daefc6a1e4959c1cffacd662f5578a4c13a642d3` received independent **FAIL**, review
+[#5261488049](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261488049).
+
+A summarising sentence written directly beneath the crossing table claimed the south bank is never
+left on a single crossing — when the barca-suspended row is exactly that — and counted the
+double-failure case as one crossing when it is zero. CSI-06 carried the claim into the permanent
+contract.
+
+Repaired by restating CSI-06 as a **design obligation** rather than a promise the weather can break,
+giving §2.4.1 an explicit crossing-count ladder (2 → 1 → 0 per state), deleting the dossier's
+paraphrase, and correcting the seam-count drift in four places plus a broken section reference. No
+spatial decision changed.
+
+**Three FAILs, one shape:** a summarising absolute claim written beside the artefact it summarises
+and never checked against it — each time with the contradiction under twenty lines away, and this
+time in the same commit. "Read more carefully" has been tried three times. The pre-review now runs a
+mechanical **absolute-quantifier audit** instead (`WORKER_PRE_REVIEW.md` §3), and `WORKER_PLAN.md`
+adds the corollary that an evidence document must not restate an invariant in its own words.
 
 ## Repair cycle 2
 
@@ -103,12 +124,16 @@ the Worker highlighted.
    whether Topology A's rejection really is coupled to the size decision rather than to preference.
 5. **The blueprint edit.** Whether v0.3 stays inside "sharpen or explicitly propose amendments" and
    changes nothing it should not.
-6. **A third instance of the same error.** Two cycles have failed on the same shape — closing over
-   something without checking what depends on it. Assume a third is likelier than a clean sheet, and
-   hunt for it rather than re-checking the two boundaries already repaired.
-7. **The State 1 → State 2 transition.** It is a real change in the city's connectivity and no
-   workpack yet owns *when* it happens (residual 6). Whether CITY-00 was right to leave that
-   unscheduled, or whether it should have named an owner, is a fair challenge.
+6. **Whether the new audit's scope is right.** Three cycles failed on one shape, and the
+   countermeasure (`WORKER_PRE_REVIEW.md` §3) is unproven on a fresh candidate. A fourth instance
+   would most likely live where the grep pattern does not reach — a claim phrased without an absolute
+   quantifier, or one inside the evidence files rather than the deliverable.
+7. **The State 1 → State 2 transition.** A real change in the city's connectivity that no workpack
+   yet owns the timing of (residual 6). Whether CITY-00 was right to leave it unscheduled is a fair
+   challenge.
+8. **The seasonal single-crossing state.** For part of the year the south bank runs on the Puente
+   Viejo alone (§2.4.1). It is deliberate, but whether the constitution should say more about what
+   may and may not be sited across the river is arguable.
 
 ## What is deliberately left undone
 

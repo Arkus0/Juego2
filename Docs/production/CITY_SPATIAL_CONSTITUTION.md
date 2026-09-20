@@ -123,16 +123,24 @@ refers to it.
 The south bank is therefore reached two ways in both states, and the closure consequences follow from
 the dimensional sketch in §3 rather than from assertion:
 
-| Situation | Effect on the south bank |
-|---|---|
-| normal, State 1 or 2 | casco → ermita/cementerio over the Puente Viejo, ≈80 m |
-| **Puente Viejo closed, State 1** | reachable via casco → Cuesta → landing (≈150 m) → barca → upstream along the camino sur (≈350 m): roughly **500 m plus the ferry wait**, a detour of order 6×, bounded by ferry hours, fare and high water |
-| **Puente Viejo closed, State 2** | a long detour over the Puente del Muelle, with no condition attached |
-| **Puente Viejo and barca both out, State 1** | *this* is the cut-off case, and it is not contrived: one flood can suspend the ferry and threaten the old bridge on the same day |
-| barca suspended alone | the landing loses its crossing; south-bank traffic walks the length of town to the Puente Viejo |
+The ladder below **counts** the crossings serving the south bank in each situation. It is counted
+rather than described because describing effects without counting is how this document previously
+came to call a zero-crossing state a single-crossing one.
 
-The double-failure row is the useful one. It gives flood, repair priority and ferry policy a real
-stake, which a flat "the south side is cut off" never did — and unlike that claim, it is true.
+| Situation | Crossings serving the south bank | Character |
+|---|---|---|
+| State 1, normal | **2** — Puente Viejo + barca | casco → ermita/cementerio over the bridge, ≈80 m |
+| State 1, high water | **1** — Puente Viejo | routine and seasonal; the landing loses its crossing and south-bank traffic walks the length of town |
+| State 1, Puente Viejo closed | **1** — the barca | casco → Cuesta → landing (≈150 m) → ferry → upstream along the camino sur (≈350 m): ≈**500 m plus the wait**, a detour of order 6×, bounded by ferry hours, fare and high water |
+| **State 1, a flood takes both** | **0** — genuinely cut off | rare and bounded, and not contrived: one flood can suspend the ferry and threaten the old bridge on the same day |
+| State 2, normal | **2** — Puente Viejo + Puente del Muelle, both unconditional | |
+| State 2, either one closed | **1** | a long detour, with no condition attached |
+
+Two rows do the work. The **zero** row gives flood, repair priority and ferry policy a real stake,
+which a flat "the south side is cut off" never did. The **State 1 high water** row is the ordinary
+one: for part of the year the south bank runs on a single crossing, and that is content rather than a
+defect — but it is also why CSI-06 promises a designed second crossing and not a guaranteed second
+crossing.
 
 Together the Puente Viejo and the barca close a **loop along the south bank** of roughly 650–750 m of
 walking plus the ferry wait, drawn in the §2.2 graph. It is a detour, not a shortcut: casco to landing
@@ -153,8 +161,8 @@ wide slow reach, workable bars, and the arriving valley road:
    this city and outside this document. The landing owns the yards, the assembly and the season.
 2. **Áridos.** Gravel, sand and lime are worked off the bars under municipal concession and move
    *upstream into the city* by cart. Year-round, undramatic, constant traffic.
-3. **La barca.** Until the Puente del Muelle exists, a roped ferry works the reach. It is the only
-   way to the south bank other than the Puente Viejo at the far end of town, so the landing is a
+3. **La barca.** In State 1 (§2.4.1) a roped ferry works the reach, and it is the south bank's second
+   crossing until the Puente del Muelle takes that role in State 2. Either way the landing is a
    movement node and not only a work node.
 4. **Break-bulk for the road.** The valley road junction is here (CSI-04) because this is where the
    road meets flat ground and water. Freight arriving by road is weighed, stored and broken down at
@@ -340,11 +348,16 @@ These bind `CITY-01..04`. Breaking one is a constitutional change, not a product
   only, quay and working frontage ≈120–150 m, no marina, no sea-going read, and **no dependence on
   the river carrying cargo out of the valley**. This invariant is *consumed from*
   `Docs/art/SETTING.md`: ART owns setting direction and CITY reads it rather than redefining it.
-- **CSI-06 — One historic bridge over the río, and one crossing at the landing.** The core has
-  exactly one río bridge, the Puente Viejo. At the landing the río is crossed by the barca in State 1
-  and by the Puente del Muelle in State 2 (§2.4.1). No other río crossing exists in either state. The
-  transition converts a conditional crossing into a permanent one; it does not change the core's
-  crossing count, and it never leaves the south bank on a single crossing.
+- **CSI-06 — One historic bridge in the core, and a second crossing always designed for the south
+  bank.** The core has exactly one río bridge, the Puente Viejo. The landing always carries a second
+  south-bank crossing: the barca in State 1, the Puente del Muelle in State 2 (§2.4.1). No third río
+  crossing exists in either state. The transition makes the second crossing unconditional; it never
+  removes it.
+
+  This invariant binds the **design**, not the weather. Degrading to one crossing (high water, or a
+  closure) and even to none (a flood taking both) are bounded conditions owned by the §2.4.1 ladder,
+  not breaches of this invariant. What the invariant forbids is a constitution in which the south
+  bank is *structurally* served by a single crossing.
 - **CSI-07 — Arroyo crossings are plural, cheap and differentiated.** At least three, each with a
   distinct character and a distinct consequence when closed.
 - **CSI-08 — Quiet is protected fabric.** The upstream paseo, the arroyo ravine walk with the
@@ -352,8 +365,8 @@ These bind `CITY-01..04`. Breaking one is a constitutional change, not a product
   showcase.
 - **CSI-09 — Five spatial characters stay distinct.** Old quarter, civic/commercial, residential (in
   two characters), work/port edge and rural edge are never merged or substituted for one another.
-- **CSI-10 — Expansion without demolition.** Five named seams exist (§6) and none requires moving the
-  plaza, the Puente Viejo, the Calle Mayor alignment or the quay.
+- **CSI-10 — Expansion without demolition.** Six named seams exist (§5, *Expansion seams*) and none
+  requires moving the plaza, the Puente Viejo, the Calle Mayor alignment or the quay.
 - **CSI-11 — Backdrop is not fabric.** Scenic envelope sells silhouette and is never counted toward
   promised playable districts.
 - **CSI-12 — Every municipal lever has an address.** Each lever family in `PA-12_AMENDMENT_01` §3 —

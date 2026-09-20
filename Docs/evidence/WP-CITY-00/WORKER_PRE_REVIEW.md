@@ -1,159 +1,169 @@
-# WP-CITY-00 — Worker pre-review (repair cycle 2)
+# WP-CITY-00 — Worker pre-review (repair cycle 3)
 
 WP: WP-CITY-00 — Keeper City spatial constitution + scale envelope
 Contract: `Docs/workpacks/CITY/WP-CITY-00.md`
 Baseline SHA: 290f92e9c21f1e454e0d6924b29f4d778b9875f8
 Active Worker: Claude Code — session 01KC1S5dCRLuMq6qeht4n34L
 Governing protocol: `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` v1.7
-fail_cycle: 2
+fail_cycle: 3
 
-This supersedes the cycle-1 pre-review, whose `CLEAN` was invalidated by the FAIL and by the repair
-mutation. It remains a **quality gate, not an independent review**.
+Supersedes the cycle-2 pre-review, whose `CLEAN` was invalidated by the FAIL and by the repair
+mutation. A **quality gate, not an independent review**.
 
 `FOUNDATIONAL_PROOF_STANDARD.md` is not binding: `Docs/workpacks/README.md` places `CITY/` outside
 the H0 DAG and exempts it from the foundational standard and from exact-SHA evidence.
 
-## 1. The FAIL, and why it was right
+## 1. The FAIL, and the pattern behind three of them
 
-Frozen candidate `6091584313488bcfb1840132f22adcc9b1b5de4f` received independent FAIL, review
-[#5261418045](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261418045).
+Frozen candidate `daefc6a1e4959c1cffacd662f5578a4c13a642d3` received independent FAIL, review
+[#5261488049](https://github.com/Arkus0/Juego2/pull/65#pullrequestreview-5261488049).
 
-The cycle-1 repair was confirmed sound. The new blocker was **produced by that repair**: adding the
-barca as a second Puerto ↔ south-bank crossing falsified consequences elsewhere that were never
-reconciled. The crossing tables still asserted that closing the Puente Viejo cut the south side off —
-untrue while the ferry runs, and untrue again once the Puente del Muelle replaces it — and neither
-semantic graph drew the ferry, which is exactly what cycle 1 had said it did not want to leave
-implicit. The selected district graph and the crossing strategy had stopped describing the same city,
-so `WP-CITY-01` would have had to choose one.
+The defect, in one sentence written directly beneath the crossing table it contradicts:
 
-**Accepted in full.** And it is the second instance of one shape of error: closing over something
-without checking what else depended on it. Cycle 1 closed over a setting premise without asking
-whether the landing needed it; cycle 2 added an edge without asking what that edge falsified. That is
-why the repair puts a rule in `WORKER_PLAN.md` and a check in §4 below, rather than only fixing the
-two sentences the Reviewer named.
+> "The south bank is never left on a single crossing except when the Puente Viejo and the barca fail
+> together, which one flood can cause."
+
+Two errors. The barca's own row says that when the ferry is suspended the south bank "depends on the
+Puente Viejo alone" — that **is** a single-crossing state, so `never` is false. And the double-failure
+case leaves **zero** crossings, not one. CSI-06 carried the same claim into the permanent contract
+while §2.4.1 listed the contradicting case explicitly.
+
+**Accepted.** It is blocking for the reason the Reviewer gives: `WP-CITY-01` must consume this
+crossing strategy and reason about closures and alternate routes, and it cannot do that while the
+invariant and the table disagree.
+
+### The pattern
+
+| Cycle | The claim | What refuted it | Distance |
+|---|---|---|---|
+| 1 | the landing needs a navigability premise | the setting already licensed a landing that needs none | same document |
+| 2 | closing the Puente Viejo cuts the south side off | the barca, added in the same repair | same table |
+| 3 | the south bank is never on a single crossing | the row directly above it | 8 lines |
+
+One root: **a summarising absolute claim, written beside the artefact it summarises, never checked
+against it.** Cycle 3 removes the comfortable reading — that sentence was written in the *same commit*
+as the table refuting it, immediately after cycle 2 added a cross-check. "Read more carefully" has now
+been tried three times and has failed three times.
 
 ## 2. The repair
 
-**Two connectivity states, named** (`CITY_SPATIAL_CONSTITUTION.md` §2.4.1). The crossing set changes
-exactly once across production — State 1, the barca era, with a conditional ferry; State 2, the
-Puente del Muelle era, with two unconditional south-bank crossings. Leaving that implicit is how the
-table came to contradict the graph.
+**CSI-06 becomes a design obligation, not a promise the weather can break.** The previous wording was
+refutable by a flood, which is not what an invariant is for. It now states what the document can
+actually guarantee: the core has one río bridge; the landing *always carries a designed second
+south-bank crossing* — barca in State 1, Puente del Muelle in State 2; no third río crossing exists in
+either state; the transition makes the second crossing unconditional and never removes it. Degrading
+to one crossing, or to none, is a bounded condition owned by the §2.4.1 ladder, not a breach. What the
+invariant forbids is a constitution where the south bank is *structurally* served by one crossing.
 
-**Closure consequences derived, not asserted.** From the §3 dimensional sketch: casco to the
-ermita over the Puente Viejo is ≈80 m; with that bridge closed in State 1 the south bank costs
-≈500 m plus the ferry wait, a detour of order 6× bounded by hours, fare and high water. The genuine
-cut-off case is the **double failure**, which one flood can cause — better governance and event
-material than the flat claim it replaces, and unlike that claim, true.
+**§2.4.1 now counts instead of describing.** The situations table became a ladder with an explicit
+crossing count per state, because describing effects without counting is exactly how a zero-crossing
+state got called a single-crossing one. Two rows carry the weight: **0** (a flood taking both) gives
+flood, repair priority and ferry policy a real stake; **1** (State 1 high water) is the ordinary
+seasonal case, and is content rather than a defect.
 
-**Both graphs redrawn** so the barca and the south-bank return are visible, and the loop is seen
-rather than described.
+**The dossier stops paraphrasing.** It points at §2.4.1 and CSI-06 instead of restating them. Two
+copies of a rule are two things that can disagree, and that is how this defect entered.
 
-**Both tables restructured** to separate Availability from closure consequence. Worth recording
-honestly: four of the seven rows had been carrying availability in the closure column since the
-first draft — "seasonal, flood-closable", "disappears when the water rises". The column was broken
-before the barca existed; the barca only made it visible.
+**Seam-count drift corrected** in all four sites, plus CSI-10's wrong section reference (§6 → §5).
+The Reviewer flagged this without basing the FAIL on it.
 
-**Propagated** to CSI-06 (which now spans both states and fixes that the south bank is never left on
-a single crossing), the walk-time hypotheses, expansion seam 6 and Q12.
+**§2.5 qualified.** "The only way to the south bank other than the Puente Viejo" was true in State 1
+and false in State 2. Nobody reported it; the audit below caught it.
 
-## 3. Findings from this pre-review
+## 3. The absolute-quantifier audit
 
-Three, all produced by the new cross-check in §4, all fixed before freeze.
+This replaces "read the candidate carefully" with something that runs. Every `never / always / only /
+no other / exactly / <count>` in the deliverable is listed, and each one that is a **factual claim
+about this document's own artefacts** is verified against the table or graph it describes. Policy
+prohibitions — "no production phase may…", "must never be cited as…" — are not factual claims and are
+exempt.
 
-### F10 — closure consequences did not name the crossing that absorbs the detour
+### Factual claims, each checked
 
-"carts detour ~200 m" is unverifiable: a reader cannot tell which crossing takes them or whether
-200 m is right. Three arroyo rows had this shape. Each now names its detour target — carts upstream
-to the Puente de la Vega, the pasarela to the Puente del Mercado, the huerta route downstream —
-which is what makes the number checkable against the graph rather than trusted.
+| Claim | Location | Checked against | Result |
+|---|---|---|---|
+| "the crossing set changes exactly once across production" | §2.4.1 | the two states | true — State 1 → State 2, one change |
+| "the core has exactly one río bridge" | CSI-06 | §2.4 table | true — the Puente del Muelle is at the landing, not the core |
+| "the landing always carries a second south-bank crossing" | CSI-06 | §2.4.1 ladder | true as a design claim; the ladder owns weather degradation, and CSI-06 now says so |
+| "no third río crossing exists in either state" | CSI-06 | §2.4 table | true — State 1 has 2, State 2 has 2 |
+| "six named seams exist (§5)" | CSI-10 | §5 list | true — six items, and §5 is the right section |
+| "six named directions" ×2 | dossier B §3, §6 | dossier §8 | true — six items |
+| "six directions" | comparison matrix | dossier §8 | true |
+| "four of the nine district families" | §2.8 | §2.3 table | true — nine rows; the seed touches casco, plaza, the Ensanche edge and the river edge |
+| "seven substantial families plus two edge families" | §2.3 | §2.3 table | true — nine rows, two marked low-intensity |
+| "five spatial characters stay distinct" | CSI-09 | its own enumeration | true — old quarter, civic/commercial, residential, work/port, rural |
+| "six zones, no port" (describing blueprint v0.2) | §7 | the superseded blueprint table | true — six rows |
+| "the only option whose charges are answerable by structure" | §6 | `REFUTATION_LOG.md` verdicts | true — A loses on A-1/A-3, C on C-1, neither structurally answerable |
+| "a hub-and-spokes city fails every row; this one fails none" | §2.6 | the five-trip table | true — every trip has a plaza-free route |
 
-### F11 — the Puente del Muelle's closure said what stops, not what continues
+### Mechanical counts
 
-"freight cannot cross at all" is true and incomplete: in State 2 people still cross at the casco. A
-consequence that omits what survives reads as a cut-off, which is precisely the error this cycle
-exists to remove. Corrected in both tables.
+| Declared | Actual | Result |
+|---|---|---|
+| six expansion seams | 6 numbered items, both documents | pass |
+| nine district families | 9 table rows | pass |
+| twelve CSI invariants | 12 defined, 12 cited, no orphan | pass |
+| seven crossings | 7 table rows | pass |
 
-### F12 — the redrawn graph created a tenth district family by accident
+### Section references
 
-Labelling `ORILLA SUR` as a graph node put it alongside the nine district families, while §4
-classifies the camino sur as *transitional* fabric — traversable, deliberately low-intensity, and
-carrying no CITY-02 programming promise. The graph already marks the scenic envelope `[escénico]`, so
-the south bank is now marked `[transitional]` using the graph's own convention. Left unmarked it
-would have handed CITY-02 a district to programme that the constitution never promised.
+Every `§n` citation resolved against actual headings rather than memory. The document's own
+references (§2, §2.2, §2.3, §2.4.1, §2.5, §3, §5, §8) all exist; the §1.2/§1.3/§1.4/§1.5/§12
+citations belong to `PRODUCTION_BLUEPRINT.md` in the §7 reconciliation table and all five exist
+there. CSI-10's §6 was the one broken reference and is fixed.
+
+**Findings produced by this audit:** the §2.5 `only` claim (unreported), and confirmation of CSI-10's
+count *and* its broken section reference. That is the justification for the step existing — it finds
+what rereading does not.
 
 ```text
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 3
-CUMULATIVE_FINDINGS_FIXED_ACROSS_CYCLES: 12
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 2
+CUMULATIVE_FINDINGS_FIXED_ACROSS_CYCLES: 14
 ```
 
-## 4. The cross-check this cycle adds
-
-For **every crossing in every table**, verify its closure consequence against the *complete* crossing
-set in the graph. This is the check that would have caught the cycle-1 defect, and it is now part of
-the pre-review rather than of a reviewer's reading.
-
-| Crossing | Closure consequence | Compatible with the full crossing set? |
-|---|---|---|
-| Puente Viejo | south bank via barca (S1) or Puente del Muelle (S2), ≈500 m + wait | yes — both alternatives exist in the graph |
-| Puente del Mercado | carts upstream to the Puente de la Vega, ~200 m | yes — the Vega bridge is the only other cart-capable arroyo crossing |
-| Pasarela del Lavadero | two minutes to the Puente del Mercado | yes |
-| Puente de la Vega | huerta route downstream to the Puente del Mercado | yes |
-| Pasos / vado | nothing on its own | yes — three other arroyo crossings remain |
-| La barca (S1) | south bank on the Puente Viejo alone | yes — and CSI-06 marks this as the single-crossing state |
-| Puente del Muelle (S2) | people cross at the casco; freight cannot cross | yes — the barca no longer exists in S2, and the Puente Viejo is handcart-only |
-
-No row asserts an isolation the graph contradicts, and no row omits an alternative the graph
-provides.
-
-## 5. Mechanical verification
+## 4. Other mechanical verification
 
 | Check | Result |
 |---|---|
-| no unconditional isolation claim survives (`grep "cut off"`) | pass — three hits, two explicit negations and one quotation of the superseded claim |
-| the barca appears in both graphs and both crossing tables | pass |
+| no absolute claim contradicted by its own table (§3 audit) | pass |
+| crossing counts agree across §2.4.1, CSI-06 and both crossing tables | pass |
 | every Markdown table has consistent column counts | pass |
 | diff contains only `.md` under `Docs/` | pass |
-| twelve CSI defined, twelve cited, no orphan | pass |
 | open questions contiguous and in order | pass |
 | worktree clean before freeze | pass |
 
-## 6. Acceptance criteria
+## 5. Acceptance criteria
 
-Only the rows this repair touches are re-argued.
-
-| # | Criterion | Verdict | Where |
-|---|---|---|---|
-| — | **Definition of Done**: a constitution stable enough for CITY-01 to calculate movement and topology without inventing a different city | **met** — this was the failed criterion | the graph, the crossing table and the closure consequences now describe one city across both connectivity states |
-| 2 | Loops, not a hub with spokes | met, and strengthened | §2.6's remove-the-plaza table is untouched; the south-bank loop is now drawn and costed rather than latent |
-| 3 | River shapes movement rather than scenery | met | two río crossings with genuinely different characters, and closure states that matter |
-| 1, 4–10 | topology alternatives, port, district distinctness, expansion, long-route scale, size justification, retained seed, no engine work | unchanged by this repair | walked in earlier cycles; the review challenged none of them |
+| # | Criterion | Verdict |
+|---|---|---|
+| — | **Definition of Done** — a constitution stable enough for CITY-01 to calculate movement and topology without inventing a different city | **met**: the invariant, the ladder and both crossing tables now agree on how many crossings serve the south bank in every state |
+| 3 | River shapes movement rather than scenery | met — and the ladder makes the río's states usable by CITY-01 rather than merely stated |
+| 1–2, 4–10 | topology alternatives, port, loops, district distinctness, expansion, long-route scale, size justification, retained seed, no engine work | unchanged by this repair; challenged by none of the three reviews |
 
 Negative gates: unchanged.
 
-## 7. Residual risks
+## 6. Residual risks
 
-1. Every walk time and area remains a hypothesis; 1.15 m/s effective is a declared assumption for
-   `WP-CITY-04`.
-2. Verticality remains the selected topology's declared weakness, named for CITY-04.
-3. The coverage ratios behind the ~830-building estimate are planning assumptions.
-4. The rejection of Topology A stays coupled to the size decision, not to its quality.
-5. The landing is seasonal on its river side, so CSI-04 is load-bearing.
-6. **New:** the State 1 → State 2 transition is a real change in the city's connectivity, and no
-   workpack yet owns *when* it happens. CITY-03 chooses the seed and CITY-01 the mobility graph;
-   neither is asked to schedule the Puente del Muelle. Recorded rather than resolved, because
-   deciding it here would be CITY-00 taking a production-sequencing decision it has no basis for.
+1–5 as recorded in cycle 2 (walk times and areas are hypotheses; verticality is a CITY-04 risk;
+building-count ratios are assumptions; Topology A's rejection is coupled to the size decision; the
+landing is seasonal, so CSI-04 is load-bearing).
 
-## 8. Verdict
+6. The State 1 → State 2 transition has no owner for *when* it happens. Unchanged from cycle 2.
+7. **New:** for part of the year the south bank genuinely runs on one crossing (§2.4.1, State 1 high
+   water). That is deliberate content, but CITY-01 should treat it as a recurring seasonal state and
+   not an exception, and CITY-02 should not site something the town cannot do without on the far side.
+
+## 7. Verdict
 
 No known blocking defect remains inside the claim.
 
 ```text
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 3
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 2
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-CITY-00/WORKER_PRE_REVIEW.md
 ```
 
-Two cycles have now failed on the same shape of error, so the fresh independent Reviewer should
-assume a third instance is likelier than a clean sheet: look for anything else this candidate closes
-over without checking what depends on it. This report is not a checklist and its boundary is not the
-only place a defect can live.
+Three cycles have failed on one shape of error, and the countermeasure in §3 is new and unproven on a
+fresh candidate. The independent Reviewer should not treat this report as a checklist, and should
+weight the possibility that the audit's *scope* is wrong — that a fourth instance lives in a claim the
+grep pattern does not match, or in the evidence files rather than the deliverable.
