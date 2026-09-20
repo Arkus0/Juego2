@@ -23,11 +23,17 @@ cd "${WORKTREE}"
 # declarative GateStepUniverse label intact.
 python3 - <<'PY'
 from pathlib import Path
+import re
 
 runner = Path("scripts/hkgate-observe-exact-sha.sh")
 test_source = Path("tests/Arkus.Harness.Tests/HkGateReadinessTests.cs")
 source = test_source.read_text(encoding="utf-8")
-if source.count('"14-headless-full-validation"') != 1:
+universe = re.search(
+    r"private static readonly string\[\] GateStepUniverse\s*=\s*\{(?P<body>.*?)\n\s*\};",
+    source,
+    flags=re.DOTALL,
+)
+if universe is None or universe.group("body").count('"14-headless-full-validation"') != 1:
     raise SystemExit("HK GATE seeded-defect precondition failed: stage-14 universe label missing or ambiguous")
 
 lines = runner.read_text(encoding="utf-8").splitlines(keepends=True)
@@ -73,7 +79,13 @@ del lines[start:end + 1]
 runner.write_text("".join(lines), encoding="utf-8")
 
 # The defect is execution omission only; the declarative list must remain intact.
-if test_source.read_text(encoding="utf-8").count('"14-headless-full-validation"') != 1:
+after_source = test_source.read_text(encoding="utf-8")
+after_universe = re.search(
+    r"private static readonly string\[\] GateStepUniverse\s*=\s*\{(?P<body>.*?)\n\s*\};",
+    after_source,
+    flags=re.DOTALL,
+)
+if after_universe is None or after_universe.group("body").count('"14-headless-full-validation"') != 1:
     raise SystemExit("HK GATE mutant unexpectedly changed GateStepUniverse")
 PY
 
