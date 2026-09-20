@@ -36,6 +36,14 @@ RED→GREEN for:
 - pathological round-trip/response-volume regression beyond the reviewed budget; and
 - reference-transport versus MCP semantic drift for HK08B recovery/repair behaviour.
 
+## Pre-implementation contract check
+
+Before interaction budgets are frozen, the Worker must first make the recovery semantics independently reviewable: exact recovery-context fields/anchors, the proof condition for declaring the expected base recoverable in the current lineage, the required-history condition, and the stable disposition used when either condition is not met.
+
+The recovery truth contract is prior to the benchmark. A request-count, byte or elapsed-time target may not justify weakening ancestry/history proof, omitting a material changed resource, fabricating a delta, or reclassifying an unprovable case as recoverable. Optimize only after the truthful recovery shape is fixed.
+
+For the representative ordinary same-lineage stale case, a full-world reload is a conformance failure, not an acceptable slower fallback. For genuinely unprovable lineage/history cases, bounded reinspection is correct and must be preferred to invented precision.
+
 ## Explicit concurrency boundary
 
 H0 continues to use the accepted whole-world revision/hash CAS. HK08B makes ordinary same-lineage stale conflicts cheap to recover from; it does **not** add per-resource locks, automatic merge of disjoint writers, distributed transactions, multi-process writer coordination or autonomous multi-agent scheduling.
