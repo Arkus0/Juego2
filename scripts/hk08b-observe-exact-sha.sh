@@ -14,9 +14,13 @@ if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 test -f src/Arkus.Harness.Mcp/packages.lock.json
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
 DOTNET_NOLOGO=1 dotnet build Juego2.sln --configuration Release --no-restore -m:1 --disable-build-servers
+mkdir -p artifacts/observed
+ARKUS_HK08B_BENCHMARK_OUTPUT="${ROOT}/artifacts/observed/hk08b-interaction-benchmark.json" \
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore -m:1 --disable-build-servers \
   --filter 'FullyQualifiedName~Hk08B'
+test -f artifacts/observed/hk08b-interaction-benchmark.json
+cat artifacts/observed/hk08b-interaction-benchmark.json
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore -m:1 --disable-build-servers
 
