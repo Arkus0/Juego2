@@ -21,31 +21,34 @@ The runner creates a detached disposable worktree at the exact candidate SHA, pe
 
 ## Exact causal result
 
-Draft exact-SHA observation `35524945085` on `04b77e0c792d21e2372255011c6a7c15daec7b11` produced all twelve required markers in order and ended with:
+Historical Draft exact-SHA observation `35524945085` on `04b77e0c792d21e2372255011c6a7c15daec7b11` produced all twelve required markers in order and ended with:
 
 `HK10_NEGATIVE_CONFORMANCE GREEN red_controls=12`
 
-The same run then passed the full suite: `216` passed, `0` failed, `0` skipped.
+The same run then passed the full suite: `216` passed, `0` failed, `0` skipped. Repair cycle 1 must reproduce the same 12-control result on the new exact candidate before refreeze; no thirteenth mutation control is invented merely to duplicate the reopened HK01 owner's proof.
 
 ## Fault-injection closure not represented as product mutations
 
-The executable HK10 tests additionally inject runtime faults without changing product semantics:
+The executable HK10 tests additionally inject runtime faults without defining their product semantics:
 
-- cancelled mutation request before publication → `resource.execution_cancelled`, revision/hash/journal unchanged;
-- thrown accepted inspection-handler dependency → defined `contract.handler_failure`, no internal sentinel leak;
-- thrown validation service through the accepted validation handler → defined `contract.handler_failure`, no internal sentinel leak;
+- cancelled mutation request before publication → inherited `resource.execution_cancelled`, revision/hash/journal unchanged;
+- thrown accepted inspection-handler dependency → consumes HK01 amendment `contract.handler_failure`, no internal sentinel leak;
+- thrown validation service through the accepted validation handler → consumes HK01 amendment `contract.handler_failure`, no internal sentinel leak;
 - accepted HK09B publication interruption tests → complete previous aggregate remains authoritative;
 - bounded long-session fresh-session recovery → final accepted snapshot imports into a new process-local session with matching revision/hash.
 
-## Proof-infrastructure defects found and fixed
+The generic thrown-handler public semantics are separately owned and proved by `Hk01DispatchFailureContractTests`, including the post-publication branch. HK10 keeps the two accepted-route fault fixtures because its own WP explicitly requires thrown handler/validator fault injection, not because HK10 owns the machine codes or retry semantics.
 
-The Worker history is retained because HK10 explicitly requires distinguishing product defects from fixture/tool failures.
+## Proof-infrastructure and ownership defects found and fixed
+
+The Worker history is retained because HK10 explicitly requires distinguishing product defects, proof/fixture defects and causal ownership defects.
 
 1. At SHA `33573e243342a24cbb38ea656877bd1e4475873b`, then-existing focused HK10 tests passed but full regression rejected a synthetic `[PublicCapabilityRoute]` used only by the thrown-handler fixture as `conformance.extra-public-route:fixture.hk10.throw@1.0`. The repair removed the synthetic public route and exercises accepted `world.summary@1.0` instead. The independent HK01 route-universe oracle was not weakened.
 2. A later validator-throw fixture tried to reference Runtime internals directly and failed compilation. It was rewritten to instantiate the already accepted validation handler by test-side reflection and compose it through the public `ContractComposer`; no production visibility was widened.
 3. Run `35524792972` at SHA `5b1f60dbee29172a89206876f6fcd0f1dfe14719` caught a genuine false-green defect in negative-control #3: reversing query order still passed the selected HK03 fixture because that fixture's reversed input happened to cancel the mutation. The repair added `Hk10InspectionOrderingTests.ObjectQueryOrderMatchesIndependentOrdinalIdOracle`, which derives expected IDs independently using ordinal sort. The next exact-SHA run `35524945085` proved the same inspection mutation RED and all twelve controls GREEN as a runner.
+4. Independent review #5261225652 on frozen SHA `dabcbeb9cce071ed6fca29a8fa01030127f2ce98` found a different class: architectural ownership. The structured thrown-handler behavior was reasonable, but presenting it as HK10 hardening violated HK10's closure-only rule. Repair cycle 1 amends `WP-HK-01`, adds `Hk01DispatchFailureContractTests` for pre/post-publication semantics, records `Docs/evidence/WP-HK-01/DISPATCH_FAILURE_AMENDMENT.md`, and makes HK10 consume that owner-defined behavior. The 12-control HK10 mutation universe is not expanded as defense-in-depth.
 
-These were proof-fixture/oracle defects, not accepted product defects. Each was fixed at the proof boundary rather than changing product behavior to fit the test.
+Items 1–3 were proof-fixture/oracle defects. Item 4 was a causal ownership defect discovered by independent review. None is repaired by weakening an oracle or adding unrelated architecture.
 
 ## Reproduction
 
