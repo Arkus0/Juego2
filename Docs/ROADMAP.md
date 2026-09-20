@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.21 — 2026-09-20
+Version: 1.22 — 2026-09-20
 
 ## North star
 
@@ -42,7 +42,7 @@ The old `Arkus0/Juego` repository is a reference archive, not a migration source
 
 All H0 workpacks are foundational and must pass independent review before the next begins.
 
-Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A` and `WP-HK-07B` are COMPLETE.
+Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-04`, `WP-HK-02A`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B`, `WP-HK-06C`, `WP-HK-07A`, `WP-HK-07B` and `WP-HK-08A` are COMPLETE.
 
 `WP-HK-05` PR `#26` passed independent review on frozen candidate `23a9fd4373a803187cd9391b1459cd48975177f6` (review `#5257350871`), exact-SHA candidate observation Actions `35464742544` GREEN, freeze validation Actions `35464834162` GREEN, and merged as `ed65661680aea2a9be79f892c96aa42bf788a842` on 2026-09-19. Two prior frozen candidates failed in the same aggregate-validation-under-ambiguous-identity class; the circuit breaker triggered a causal architecture re-audit, and the accepted candidate uses dependency-local ambiguity deferral rather than global suppression.
 
@@ -56,11 +56,13 @@ Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, 
 
 `WP-HK-07B` PR `#47` passed independent review on frozen candidate `37ea185f28dd28e41b406f2c9407fdfe6f9b752b` (review `#5259854121`), exact-SHA freeze validation Actions `35495563546` GREEN, and merged as `58b6571b96eac4c73e5c3cf28a42a6630ea13505` on 2026-09-20. MCP over local stdio is now a genuine second projection of the accepted neutral contract: discovery/schemas/dispatch remain mechanically rooted in canonical composition; representative accepted H0 flows are semantically equivalent to JSONL; scoped capabilities project without an MCP registry; the SDK stays isolated behind the adapter; and MCP-specific naming remains framing only. One earlier frozen candidate failed because canonical-valid long capability names could exceed MCP's 128-character tool-name limit; the accepted repair assigns deterministic bounded adapter-local handles while preserving exact canonical identity for metadata and dispatch, with causal two-capability long-name coverage.
 
+`WP-HK-08A` PR `#50` passed independent review on frozen candidate `324102d40fa0b7e36c7320216914f9d3fddadcc8` (review `#5260092080`), exact-SHA freeze validation Actions `35499569973` GREEN, and merged as `eb9d3df58df1114abafaca435da64683fdb1480e` on 2026-09-20. The accepted interaction layer raises the representative single-transaction envelope to 96 mixed operations while preserving HK04/HK05/HK06A authority, reuses compact anchored read projections, keeps `authoring.journal.read@1.0` as the complete HK06A journal contract and exposes bounded deterministic pagination only as explicit breaking `@2.0`, with integrity-bound/stale-failing cursors and JSONL↔MCP equivalence. One earlier frozen candidate failed because pagination had silently changed the accepted v1 public semantics; the repair restored v1 and versioned the new paged contract rather than redefining it in place.
+
 Before implementation, the original HK06 and HK07 workpacks were deliberately split to reduce coupled foundational freeze/review risk while preserving their aggregate objectives. The executable dependency chain is `HK06A → HK06B → HK06C → HK07A → HK07B`. The old `WP-HK-06.md` and `WP-HK-07.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
 Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-Next dependency-valid workpack: `WP-HK-08A — Efficient interaction primitives`.
+Next dependency-valid workpack: `WP-HK-08B — Structured stale-CAS recovery + agent interaction benchmark`.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -77,7 +79,7 @@ Next dependency-valid workpack: `WP-HK-08A — Efficient interaction primitives`
 | 11 | `WP-HK-06C` ✅ COMPLETE | Deterministic journal replay + end-to-end audit consistency |
 | 12 | `WP-HK-07A` ✅ COMPLETE | Production headless host + deterministic JSONL/reference transport |
 | 13 | `WP-HK-07B` ✅ COMPLETE | Standards-compatible MCP projection + cross-transport conformance |
-| 14 | `WP-HK-08A` | Efficient interaction primitives: atomic batching, compact/bounded reads, pagination and discovery cost metadata |
+| 14 | `WP-HK-08A` ✅ COMPLETE | Efficient interaction primitives: atomic batching, compact/bounded reads, pagination and discovery cost metadata |
 | 15 | `WP-HK-08B` | Structured stale-CAS recovery, repair ergonomics and measured agent interaction budgets |
 | 16 | `WP-HK-09A` | Capability containment: filesystem/network/process authority and below-transport policy |
 | 17 | `WP-HK-09B` | Resource/input limits plus import/persistence interruption integrity |
@@ -92,13 +94,13 @@ Whole-world CAS/hash is an **internal consistency boundary**, not a requirement 
 
 Before `WP-HK-GATE`, HK08B must make the existing optimistic-concurrency model **cheap to recover from**: an ordinary same-lineage stale plan must receive bounded machine-readable context anchored to the expected and current world so the agent can preserve intent, re-plan the affected slice and retry through the normal transaction path without ordinarily reconstructing the complete world. When lineage/history is insufficient to establish a trustworthy delta, the harness must say so explicitly rather than inventing one.
 
-Batching is the primary H0 mitigation for whole-world commit cost. HK08A validates a representative coherent multi-resource edit and the accepted request shape/limit must allow that edit to remain one atomic transaction inside the later HK09B resource envelope. The current 64-operation request limit is not a permanent product constant. Do not build logical multi-plan transactions merely because an arbitrary number such as 64 exists; add them only if measured representative work proves one atomic request is insufficient.
+Batching is the primary H0 mitigation for whole-world commit cost. HK08A accepted a representative 96-operation mixed-resource edit as one atomic validated/provenanced transaction. The 96-operation envelope is evidence for the representative H0 shape, not a permanent shipping constant; HK09B still owns measured/enforced resource limits. Do not build logical multi-plan transactions merely because a later measured cap exists; add them only if representative product evidence proves one atomic request is insufficient.
 
 Serializing commit execution can protect the mutation authority from simultaneous publication, but it does **not** make an already planned stale request current. A writer that planned against an older revision still requires HK08B rejection/recovery/re-plan semantics. Likewise, HK06B semantic diff is an on-demand semantic comparison primitive; H0 does not claim a revision subscription/change-feed service unless a later workpack explicitly adds one.
 
 Per-resource concurrency, automatic merge of disjoint writers, multi-process writer coordination and multi-agent scheduling are post-GATE product work unless HK08B/GATE evidence proves they are necessary for the representative single-client authoring contract. A future concurrent-agent requirement is a valid reason to revisit CAS granularity, but not a reason to delay H0 today.
 
-HK08A re-runs reference-transport ↔ MCP conformance for batching/compact/pagination semantics it changes or adds; HK08B does the same for recovery/repair semantics. HK07B proves the initial neutral projection and cannot pre-prove semantics introduced later.
+HK08A has now re-run and passed reference-transport ↔ MCP conformance for its batching/compact/pagination semantics. HK08B must do the same for recovery/repair semantics it introduces; accepted HK07B/HK08A transport parity cannot pre-prove later recovery meaning.
 
 ### H0 exit criteria
 
