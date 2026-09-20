@@ -1,7 +1,7 @@
 # WP-HK-10 Worker pre-review
 
-WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 4
+WORKER_PRE_REVIEW: NOT_READY
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 5
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-10/WORKER_PRE_REVIEW.md
 
 ## Candidate challenged
@@ -9,78 +9,78 @@ WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-HK-10/WORKER_PRE_REVIEW.md
 - WP: `WP-HK-10 — Strict quality closure`.
 - Baseline: `8651a7bd55180297c3621336e9e64a2e6a211aef` (accepted + DocSynced HK09B mainline).
 - Branch: `wp/hk10-strict-quality-closure`.
-- Direct predecessor: accepted `WP-HK-09B`; HK10 newly owns bounded-session endurance/growth closure, while accepted HK09B resource/publication semantics are consumed unless concrete tests contradict them.
-- Latest code/test checkpoint challenged before evidence finalization: `04b77e0c792d21e2372255011c6a7c15daec7b11`.
-- Exact-SHA observation: Actions run `35524945085` GREEN, including 11 focused HK10 tests, all 12 causal RED controls, and full regression `216/216`.
-- This is Worker quality-gate evidence only. A fresh independent Reviewer is still required on the final frozen SHA.
+- Direct accepted predecessor: `WP-HK-09B`.
+- First frozen candidate: `dabcbeb9cce071ed6fca29a8fa01030127f2ce98`.
+- Independent Reviewer verdict on that candidate: FAIL, review `#5261225652`.
+- Repair cycle: `1`; PR returned to Draft + ACTIVE and the previous `WORKER_PRE_REVIEW: CLEAN` is invalidated.
+- Current repair boundary: amend HK01-owned canonical dispatch/error semantics, then make HK10 consume that amendment as closure evidence.
 
-## Scope and predecessor challenge
+This file intentionally remains `NOT_READY` while the repaired exact candidate is still mutable. It may return to `CLEAN` only after the amended HK01 owner proof, HK10 closure tests, 12 causal controls, representative content probe and full regression are GREEN on one exact repair SHA and this pre-review is rerun against that complete diff.
 
-The complete baseline→candidate diff was reviewed against HK10's closure-only rule. The only production behavior change is the canonical dispatcher exception boundary: an unexpected handler/validator exception is converted into a structured public error, with a distinct after-publication code so the runtime does not falsely claim that an authoritative publication did not occur. No new capability family, authoring authority, shell/network/filesystem primitive, persistence subsystem or merge/concurrency model is introduced.
+## Findings 1–4 from the first Worker cycle
 
-HK01–HK09B accepted guarantees remain predecessor evidence. HK10 attacks them only where its contract explicitly requires causal controls or where concrete execution exposed a false-green proof path. Residuals requiring per-resource merge/CAS, distributed writers, WAL/fsync/power-loss, hard resource preemption, remote authentication, shipping SLOs, arbitrary large-world streaming, future-version migration or H1 engine/gameplay semantics remain named outside H0 in `RESIDUAL_RISK.md`.
+### Finding 1 — thrown-handler proof fixture polluted the public route universe
 
-## Finding 1 — thrown-handler proof fixture polluted the public route universe
+The first exception-boundary fixture declared a synthetic `[PublicCapabilityRoute]`. Focused HK10 tests were green, but full regression correctly rejected the extra effective route. The repair removed the synthetic public route and exercises accepted `world.summary@1.0` with a throwing state source. The independent HK01 route-universe oracle was preserved, not weakened.
 
-The first exception-boundary fixture declared a synthetic `[PublicCapabilityRoute]`. Focused HK10 tests were green, but full regression correctly rejected the extra effective route. The repair removed the synthetic public route and exercises accepted `world.summary@1.0` with a throwing state source. The independent route-universe oracle was preserved, not weakened.
+### Finding 2 — validator-throw fixture depended on inaccessible Runtime internals
 
-## Finding 2 — validator-throw fixture depended on inaccessible Runtime internals
+A first validator-failure test attempted direct access to an internal validation handler and internal contract constructor, producing a compile failure. The repair uses test-side reflection to instantiate the already accepted validation handler and composes it through public `ContractComposer`. Production visibility was not widened.
 
-A first validator-failure test attempted direct access to an internal validation handler and internal contract constructor, producing a compile failure. The repair uses test-side reflection to instantiate the already accepted validation handler and composes it through public `ContractComposer`. Production visibility was not widened and the same structured-error oracle remains.
+### Finding 3 — inspection causal control was falsely green
 
-## Finding 3 — inspection causal control was falsely green
+Actions run `35524792972` stopped as `FALSE GREEN` on control #3 because reversing object-query output was accidentally cancelled by the selected fixture's input ordering. `Hk10InspectionOrderingTests.ObjectQueryOrderMatchesIndependentOrdinalIdOracle` now derives expected IDs independently. Run `35524945085` subsequently proved all twelve controls RED for the intended reason and the clean candidate regression GREEN.
 
-Actions run `35524792972` proved the defect-injection runner itself could fail closed: controls #1 and #2 went RED, but control #3 stopped as `FALSE GREEN`. The mutation reversed object-query output while the selected HK03 fixture used reversed input ordering that accidentally cancelled the defect.
+### Finding 4 — freeze evidence needed explicit v1.3 content-probe and verifier closure
 
-The repair added `Hk10InspectionOrderingTests.ObjectQueryOrderMatchesIndependentOrdinalIdOracle`. Its expected IDs are derived independently from source state and ordinal sorting, not from the implementation result. Run `35524945085` then produced `HK10_NEGATIVE_RED inspection` and all twelve causal controls completed RED as intended before the clean candidate passed full regression.
+The first cycle added an explicit rerun of the accepted Potes hero slice from `Docs/art/VISUAL_BIBLE.md` and bound content/proof/residual/endurance evidence into exact-SHA verification. The probe remains required for the repaired combined candidate because that candidate includes a foundational public-contract amendment, but the amendment's semantic owner is now HK01 rather than HK10.
 
-This was a material proof-oracle finding and is now protected by regression.
+## Finding 5 — independent review found closure-only ownership violation
 
-## Finding 4 — freeze evidence needed explicit v1.3 content-probe and verifier closure
+Independent review #5261225652 correctly found that the first frozen candidate introduced a material public semantic decision inside HK10: `ComposedContract.Dispatch` converted escaping handler exceptions into `contract.handler_failure` / `contract.handler_failure_after_publication` with retry/publication/recovery semantics, while HK10's own contract says material product semantics must be reopened or amended at their causal owner.
 
-Strict pre-review re-read `FOUNDATIONAL_PROOF_STANDARD.md` v1.3 and noted that HK10 changes public dispatch failure semantics, so a representative content-shape probe must be explicit even though HK10 does not change authorable-state shape. The repair adds an explicit canonical-observation rerun of the accepted Potes hero slice from `Docs/art/VISUAL_BIBLE.md` and records classification in `CONTENT_SHAPE_PROBE.md` instead of inventing a second content model. The final exact-SHA verifier also binds proof, residual, compatibility, content-probe, endurance and pre-review evidence before declaring GREEN.
+The behavior itself was not rejected. The ownership was wrong.
 
-## Architecture and false-green challenge
+Repair cycle 1 therefore:
 
-The pre-review challenged:
+- amends `Docs/workpacks/HK/WP-HK-01.md`, because HK01 owns canonical dispatch and the structured-error model;
+- records the causal amendment in `Docs/evidence/WP-HK-01/DISPATCH_FAILURE_AMENDMENT.md`;
+- adds owner-level `Hk01DispatchFailureContractTests` covering both before-publication and after-publication exceptions without adding a synthetic public route;
+- runs that HK01 owner proof before all HK10 closure tests in `hk10-observe-exact-sha.sh`;
+- keeps `Hk10ExceptionBoundaryTests` only as required handler/validator fault injection through accepted real routes;
+- does not add a thirteenth HK10 mutation control or another semantic subsystem.
 
-- handler/validator exceptions leaking raw internal output or disappearing from the structured protocol;
-- post-publication failure being mislabeled as a no-effect retry;
-- canonical serialization/hash depending on input order;
-- query repeatability passing while canonical result order is wrong;
-- idempotency receipt lookup silently missing accepted receipts;
-- validator aggregation suppressing owned violations;
-- replay accepting a supplied current anchor not equal to the final chain result;
-- JSONL v1 framing drifting without a version change;
-- HK08A 96-operation shape drifting with its oracle;
-- HK08B recovery expected/current anchors being misreported;
-- HK09A elevated authority being admitted;
-- HK09B publication interruption or session limits drifting undetected;
-- proof controls failing because of build/tool/fixture errors rather than causal product tests;
-- residual classification silently converting post-GATE/H1 product decisions into HK10 blockers.
+The amendment is not treated as historically accepted HK01 evidence. It must receive fresh independent PASS on the same exact repaired candidate before HK10 may consume it as binding semantics.
 
-All twelve material seeded controls now produce actual test RED rather than compiler/tool failure. The disposable mutation worktree returns to the exact candidate after every control.
+## Repair-cycle architecture challenge
 
-## Endurance, compatibility and content reconciliation
+Before declaring this repair clean, pre-review must verify all of the following on the complete baseline→repair diff:
 
-Run `35524945085` exercised 512 canonical transactions and emitted `journalBytes=491028`, `workingSetBefore=91475968`, `workingSetAfter=178704384`, `managedBefore=2240376`, `managedAfter=7114160`. These are observations, not SLOs. The executable case also performs periodic inspect/validate/journal/snapshot operations and fresh-session snapshot recovery while staying below the accepted HK09B session/state ceilings.
+- HK01, not HK10 prose/tests, is the authoritative source for the two handler-failure machine codes and their pre/post-publication retry semantics;
+- the post-publication branch cannot falsely advertise “no effect” and directs the client to inspect the current canonical anchor before retry;
+- raw exception message/stack/internal sentinel text does not leak into public error message/repair guidance;
+- no extra public route/capability/version, mutation authority, transport behavior or persistence subsystem was introduced by the amendment;
+- HK10 fault fixtures consume the HK01 behavior rather than redefining it;
+- the existing 12-control negative-conformance universe remains causal and has not been inflated merely to re-prove HK01;
+- inherited HK04–HK09B guarantees remain consumed unless concrete execution contradicts them;
+- content-shape, endurance, compatibility and residual claims remain unchanged except for the explicit ownership correction;
+- exact-SHA evidence is regenerated after the repair and not reused from frozen SHA `dabcbeb9...`.
 
-The Protocol v1 corpus stores accepted limits and identities as literals independent of runtime constants. Same-major breaking evolution remains governed by the inherited canonical composer. The residual reconciliation classifies every v1.9 ledger entry with `UNCLASSIFIED_RESIDUALS: 0`; only `R-06A-05` is newly closed by HK10 bounded-session evidence.
+## Historical first-cycle validation
 
-Because public failure semantics changed, the explicit Potes content-shape probe is part of final observation. It checks current product-shaped representability across mutation, inspection, snapshot and rebase without promoting gameplay/H1 semantics.
+Before the independent FAIL, run `35524945085` on checkpoint `04b77e0c792d21e2372255011c6a7c15daec7b11` was GREEN with focused HK10 tests, 12/12 causal RED controls and full regression `216/216`; the later first frozen candidate also passed exact-SHA verification. Those runs remain useful historical evidence for the unaffected closure machinery but cannot validate repair-cycle ownership or the new HK01 owner proof.
 
-## Validation reconciliation and handoff condition
+## Handoff condition
 
-Latest pre-finalization executable checkpoint:
+The repair remains mutable and must not be frozen yet. Required sequence:
 
-- SHA `04b77e0c792d21e2372255011c6a7c15daec7b11`;
-- Actions run `35524945085`: GREEN;
-- focused HK10: 11/11 GREEN;
-- causal controls: 12/12 RED as required, runner GREEN;
-- full regression: 216/216 GREEN.
+1. obtain one clean Draft exact-SHA observation of the repaired code/evidence, including `Hk01DispatchFailureContractTests` first;
+2. rerun this strict Worker pre-review against that exact repaired candidate;
+3. if no blocker remains, change this marker to `WORKER_PRE_REVIEW: CLEAN` and bind the resulting evidence-only HEAD;
+4. obtain a clean Draft exact-SHA observation for that evidence-finalized HEAD;
+5. record exact Candidate/Frozen SHA, set `FROZEN_FOR_REVIEW` / `Branch frozen: YES`, mark Ready and require GREEN frozen exact-SHA verification;
+6. stop all Worker writes and hand the new exact SHA to a fresh independent Reviewer.
 
-The evidence/verifier commit produced after this report must itself receive a clean Draft exact-SHA observation including the newly explicit content-shape gate. Only then may its exact HEAD be recorded as Candidate/Frozen SHA, PR metadata switch to `FROZEN_FOR_REVIEW`, and the PR become Ready. The Ready transition must then receive GREEN frozen exact-SHA verification. No Worker implementation/evidence write is permitted after that freeze.
-
-No known in-boundary Worker blocker remains.
+No known additional semantic expansion is justified by the current FAIL. The sole repair target is causal ownership plus proof of the already chosen dispatcher behavior.
 
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
