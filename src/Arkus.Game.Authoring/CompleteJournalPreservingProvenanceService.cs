@@ -52,7 +52,8 @@ namespace Arkus.Game.Authoring
                     ["entrySchemaId"] = entrySchemaId,
                     ["base"] = baseAnchor,
                     ["current"] = currentAnchor,
-                    ["entryCount"] = entryCount,
+                    // Preserve the exact accepted HK06A runtime shape as well as JSON meaning.
+                    ["entryCount"] = (int)entryCount,
                     ["entries"] = entries
                 });
             return CapabilityInvocationResult.Succeeded(complete);
