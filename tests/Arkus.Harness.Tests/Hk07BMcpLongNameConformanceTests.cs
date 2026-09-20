@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
 using Arkus.Harness.Projection;
@@ -15,6 +16,9 @@ namespace Arkus.Harness.Tests
 {
     public sealed class Hk07BMcpLongNameConformanceTests
     {
+        public static int FirstInvocationCount { get; set; }
+        public static int SecondInvocationCount { get; set; }
+
         [Fact]
         public void OverLimitScopedCapabilitiesRemainDiscoverableUniqueAndInvokable()
         {
@@ -32,13 +36,15 @@ namespace Arkus.Harness.Tests
                 new ContractVersion(1, 0),
                 false,
                 "long");
+            var firstHandler = CreateAttributedHandler(Hk07BLongCapabilityNames.First);
+            var secondHandler = CreateAttributedHandler(Hk07BLongCapabilityNames.Second);
             var provider = new CanonicalProviderContribution(
                 new ProviderDescriptor("fixture.long", ProviderKind.Scoped, "long", new[] { "long" }),
                 new[] { firstDefinition, secondDefinition },
                 new[]
                 {
-                    CapabilityRoute.FromHandler(new Hk07BLongCapabilityFirstHandler()),
-                    CapabilityRoute.FromHandler(new Hk07BLongCapabilitySecondHandler())
+                    CapabilityRoute.FromHandler(firstHandler),
+                    CapabilityRoute.FromHandler(secondHandler)
                 });
 
             var composition = ContractComposer.Compose(
@@ -80,8 +86,8 @@ namespace Arkus.Harness.Tests
             Assert.True(firstToolName.StartsWith("arkus-long-", StringComparison.Ordinal));
             Assert.True(secondToolName.StartsWith("arkus-long-", StringComparison.Ordinal));
 
-            Hk07BLongCapabilityFirstHandler.InvocationCount = 0;
-            Hk07BLongCapabilitySecondHandler.InvocationCount = 0;
+            FirstInvocationCount = 0;
+            SecondInvocationCount = 0;
             var invoke = adapterType.GetMethod("InvokeProjectedAsync", BindingFlags.NonPublic | BindingFlags.Instance)!;
             var firstTask = (Task<NeutralProjectionOutcome>)invoke.Invoke(
                 adapter,
@@ -106,8 +112,71 @@ namespace Arkus.Harness.Tests
 
             Assert.True(firstTask.GetAwaiter().GetResult().Success);
             Assert.True(secondTask.GetAwaiter().GetResult().Success);
-            Assert.Equal(1, Hk07BLongCapabilityFirstHandler.InvocationCount);
-            Assert.Equal(1, Hk07BLongCapabilitySecondHandler.InvocationCount);
+            Assert.Equal(1, FirstInvocationCount);
+            Assert.Equal(1, SecondInvocationCount);
+        }
+
+        public static CapabilityInvocationResult InvokeDynamicHandler(
+            CapabilityInvocationContext context,
+            IReadOnlyDictionary<string, object?> request)
+        {
+            if (string.Equals(context.Definition.Key.Name, Hk07BLongCapabilityNames.First, StringComparison.Ordinal))
+            {
+                FirstInvocationCount++;
+            }
+            else if (string.Equals(context.Definition.Key.Name, Hk07BLongCapabilityNames.Second, StringComparison.Ordinal))
+            {
+                SecondInvocationCount++;
+            }
+            else
+            {
+                throw new InvalidOperationException("Unexpected dynamic long-name fixture route: " + context.Definition.Key);
+            }
+
+            return CapabilityInvocationResult.Succeeded(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["value"] = context.Definition.Key.Name
+            });
+        }
+
+        private static ICanonicalCapabilityHandler CreateAttributedHandler(string capabilityName)
+        {
+            var assemblyName = new AssemblyName("Arkus.Harness.Tests.Hk07BLongNameFixture." + Guid.NewGuid().ToString("N"));
+            var assembly = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+            var module = assembly.DefineDynamicModule(assemblyName.Name!);
+            var type = module.DefineType(
+                "LongNameHandler_" + Guid.NewGuid().ToString("N"),
+                TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed);
+            type.AddInterfaceImplementation(typeof(ICanonicalCapabilityHandler));
+
+            var routeConstructor = typeof(PublicCapabilityRouteAttribute).GetConstructor(new[]
+            {
+                typeof(string), typeof(string), typeof(string)
+            })!;
+            type.SetCustomAttribute(new CustomAttributeBuilder(
+                routeConstructor,
+                new object[] { "fixture.long", capabilityName, "1.0" }));
+
+            var invokeContract = typeof(ICanonicalCapabilityHandler).GetMethod(nameof(ICanonicalCapabilityHandler.Invoke))!;
+            var invoke = type.DefineMethod(
+                nameof(ICanonicalCapabilityHandler.Invoke),
+                MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot,
+                typeof(CapabilityInvocationResult),
+                new[]
+                {
+                    typeof(CapabilityInvocationContext),
+                    typeof(IReadOnlyDictionary<string, object>)
+                });
+            var il = invoke.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Ldarg_2);
+            il.Emit(OpCodes.Call, typeof(Hk07BMcpLongNameConformanceTests).GetMethod(
+                nameof(InvokeDynamicHandler),
+                BindingFlags.Public | BindingFlags.Static)!);
+            il.Emit(OpCodes.Ret);
+            type.DefineMethodOverride(invoke, invokeContract);
+
+            return (ICanonicalCapabilityHandler)Activator.CreateInstance(type.CreateType()!)!;
         }
     }
 
@@ -115,39 +184,5 @@ namespace Arkus.Harness.Tests
     {
         internal const string First = "long.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaax";
         internal const string Second = "long.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaay";
-    }
-
-    [PublicCapabilityRoute("fixture.long", Hk07BLongCapabilityNames.First, "1.0")]
-    public sealed class Hk07BLongCapabilityFirstHandler : ICanonicalCapabilityHandler
-    {
-        public static int InvocationCount { get; set; }
-
-        public CapabilityInvocationResult Invoke(
-            CapabilityInvocationContext context,
-            IReadOnlyDictionary<string, object?> request)
-        {
-            InvocationCount++;
-            return CapabilityInvocationResult.Succeeded(new Dictionary<string, object?>(StringComparer.Ordinal)
-            {
-                ["value"] = "first"
-            });
-        }
-    }
-
-    [PublicCapabilityRoute("fixture.long", Hk07BLongCapabilityNames.Second, "1.0")]
-    public sealed class Hk07BLongCapabilitySecondHandler : ICanonicalCapabilityHandler
-    {
-        public static int InvocationCount { get; set; }
-
-        public CapabilityInvocationResult Invoke(
-            CapabilityInvocationContext context,
-            IReadOnlyDictionary<string, object?> request)
-        {
-            InvocationCount++;
-            return CapabilityInvocationResult.Succeeded(new Dictionary<string, object?>(StringComparer.Ordinal)
-            {
-                ["value"] = "second"
-            });
-        }
     }
 }
