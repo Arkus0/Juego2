@@ -525,6 +525,21 @@ Four documents assert player-side causality as a premise — `ADR-013:10` ("el p
 | An unnoticed drift | The governance question lost its subject between the roadmap and the frozen plan | Recover the original question. The frozen plan is a rules-mutation contract that works identically whether the mayor is the player, an NPC or a die roll |
 | A structural gap with no owner | Player-side causality asserted in four documents, specified in none | This is the part that needs new design |
 
+### The decision: the player is a social actor
+
+The fork underneath everything above has never been decided, in either repository. `PA-03` says only that *where* the player is socially modelled it must reuse compatible abstractions and not get "a separate magical friendship subsystem"; it never says whether the player is socially modelled at all. Every verb below depends on the answer.
+
+**The player is a social actor, with a deliberate asymmetry.**
+
+| | |
+|---|---|
+| The player **is** an actor for | sender and receiver in knowledge transfer; holder of directed relationship edges; witness to events; valid target of NPC social actions; debtor or creditor in the obligation lifecycle |
+| The player is **not** an actor for | goal formation, agency profile, budgets, behaviour resolution, schedule. A human supplies the intent that the resolver supplies for an NPC |
+
+The asymmetry is the point. It satisfies `LC-03` — the player is not a privileged endpoint — and `PA-03`'s rejection of a player-only subsystem, while keeping the player out of the autonomy machinery where it has no business being. An actor that never forms a goal needs no budget, no cooldown and no causal-depth cap.
+
+It also retires `LearnPlayer` as a special verb. The player receives through the same transfer contract every NPC uses; what differs is presentation — a notebook — not authority. That is what makes the knowledge pipeline bidirectional without making it omniscient.
+
 ### Adding verbs without breaking the epistemic boundary
 
 The unsafe design is "the player writes a belief". F09-9 is right to forbid it.
@@ -547,12 +562,91 @@ Tier 0 is the striking one: six verbs, and the cost is a design decision rather 
 
 **The player as a node in the knowledge and rumour graph.** In an investigation game this is not one feature among several: it means investigating alters what is being investigated. Ask Carmen about Manolo and Carmen now knows you are asking, and may tell him. Say something false and it propagates with you as its source. It reuses the knowledge and rumour design wholesale, respects every epistemic boundary those tracks established, and converts the strongest asset in the recovered design from scenery into a system the player plays.
 
+### The tier-0 contract
+
+Six verbs. Each reuses a mechanism the NPC side already has, so the row says what is being reused rather than what is being built.
+
+| Verb | Target | Eligibility | Structured outcome | Response |
+|---|---|---|---|---|
+| `ASK(target, topic)` | any actor present and willing to engage | a communication opportunity exists | a query event with witnesses — **the asking is itself information** | receiver-owned: answer, refuse, deflect |
+| `TELL(target, claim)` | any actor present | opportunity exists; the player need not believe the claim | an assertion; on acceptance, a belief whose immediate provenance names the player | receiver-owned adjudication |
+| `CONFRONT(target, grievance)` | an actor the player has a grievance against | the grievance references a real event or belief | a relationship delta on the player→target edge, with the grievance as its source ref | receiver-owned response family |
+| `REPORT(authority, event/actor)` | an actor holding an institutional role | the player holds a belief about the reported matter | an institutional event, plus relationship risk with the reported party and with anyone who learns of it | receiver-owned; the authority decides what to do |
+| `OFFER_HELP(target, problem)` | an actor with a known problem | the player knows of the problem | on acceptance, an obligation with the player as creditor | receiver-owned |
+| `REQUEST(target, need)` | any actor | none beyond opportunity | on acceptance, an obligation with the player as debtor; may discharge an existing one | receiver-owned |
+
+Three properties hold across all six. The response is always the receiver's — `PA-03`'s `A2` and `F10`, and `PA-05`'s `F05-10`, all forbid the initiator deciding it. Every verb produces a structured outcome rather than ending in presentation, per `LC-07`. And every verb is observable: issuing one is an event with witness metadata, which is where reputation comes from without needing a reputation system.
+
+Tiers 1 and 2 are **not** specified here. Occupying or denying a POI, giving or taking an object, governance, economy and violence remain named and undesigned.
+
+### Acceptance scenarios
+
+Written in the archive's own form so they compose with `RECOVERED_RESEARCH.md` §1. These are candidate criteria for a future workpack, not claims that anything passes.
+
+```text
+AP-1 — A truthful assertion may still be disbelieved
+GIVEN the player holds a true belief about X
+AND the player TELLs it to an actor with a communication opportunity
+WHEN the receiver adjudicates the assertion
+THEN the receiver MAY accept or reject it using receiver-owned state
+AND no route makes acceptance automatic because the claim happens to be true
+```
+
+```text
+AP-2 — A lie leaves canonical truth untouched
+GIVEN canonical X is true
+AND the player asserts X=false to an actor
+WHEN the receiver accepts the claim
+THEN the receiver holds a belief X=false
+AND canonical X remains true
+AND the belief's immediate provenance names the player
+AND the receiver's decision code cannot consume a hidden false/stale label
+```
+
+```text
+AP-3 — Asking is observable
+GIVEN the player ASKs actor A about actor B
+AND a third actor C has perceptual access to the exchange
+WHEN the event resolves
+THEN C may acquire a belief that the player asked about B
+AND that belief follows the ordinary acquisition path, with no special player channel
+```
+
+```text
+AP-4 — A relayed claim names the immediate speaker
+GIVEN the player TELLs actor A a claim
+AND A later relays it to actor B by an independent decision
+WHEN B's actor-accessible provenance is inspected
+THEN it names A
+AND it names the player only if A actually reported the player as its source
+AND changing only privileged engine lineage does not change B's epistemic result
+```
+
+```text
+AP-5 — No public route writes a belief directly
+GIVEN any player-issued verb
+WHEN the resulting state change is traced
+THEN no belief was written except through receiver-side acquisition
+AND a notebook, journal or UI surface never mutates an actor belief
+```
+
+```text
+AP-6 — Player edges are directed and independent
+GIVEN a relationship edge player -> A
+WHEN edge A -> player is inspected
+THEN the two are independent values
+AND writing one does not mutate the other
+```
+
+`AP-5` is the negative case that keeps `F09-9` satisfied, and `AP-4` is the player-side restatement of `POST_HOC A05-7`. Both are transcribed and cited in `RECOVERED_RESEARCH.md`.
+
 Planning constraints:
 
 - the player is a peer in the transfer contract, never an exception to it;
 - nothing the player asserts is automatically believed;
 - player actions are themselves events with witnesses;
 - do not build a player-only social subsystem — the archive rejects that in two places, and it is still right;
+- the scenarios and failure modes this section relies on are transcribed in `Docs/production/RECOVERED_RESEARCH.md`, which also carries the counterpart research on the player *perceiving* the town;
 - tier 0 is a design decision, not a research track; do not defer it to one.
 
 
@@ -840,7 +934,7 @@ One prototype that answers the binding question is the opposite of a rabbit hole
 - It does not require combat for the first convincing game slice.
 - It does not claim that any design research PASS from `Arkus0/Juego` transfers to Juego2.
 - It does not authorize the combat feel spike in §12.8, which collides with `AGENTS.md:5` and needs an explicit human decision.
-- It does not specify the player-verb contract; §6.3 argues the gap and its cost, and leaves the design to the owner.
+- It specifies a tier-0 player-verb contract in §6.3 as a proposal for the owner to accept or reject; it does not authorize implementing it, and tiers 1 and 2 remain named but undesigned.
 
 The intended production philosophy is simple:
 
