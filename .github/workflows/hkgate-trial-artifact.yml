@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      TARGET_SHA: 2c0df70c1ec8245999e4d144e710816d2f7eb335
+      TARGET_SHA: 0fa3d4fb039a3d0049cea0f3eed1c83128ec7dcd
       OUT_DIR: artifacts/hkgate-mcp-linux-x64
     steps:
       - name: Checkout frozen candidate exactly
@@ -130,7 +130,7 @@ jobs:
       - name: Upload runtime-bundled trial artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: hkgate-mcp-linux-x64-2c0df70c1ec8245999e4d144e710816d2f7eb335
+          name: hkgate-mcp-linux-x64-0fa3d4fb039a3d0049cea0f3eed1c83128ec7dcd
           path: artifacts/hkgate-mcp-linux-x64
           if-no-files-found: error
           retention-days: 14
