@@ -166,9 +166,36 @@ namespace Arkus.Harness.Runtime
                 return InternalFailure("contract.route_missing", "Accepted canonical capability has no implementation binding.");
             }
 
-            var result = route.Handler.Invoke(
-                new CapabilityInvocationContext(this, selected, resourceBudget),
-                request);
+            CapabilityInvocationResult result;
+            try
+            {
+                result = route.Handler.Invoke(
+                    new CapabilityInvocationContext(this, selected, resourceBudget),
+                    request);
+            }
+            catch (Exception exception)
+            {
+                var publicationCommitted = resourceBudget.PublicationCommitted;
+                return Failure(
+                    publicationCommitted
+                        ? "contract.handler_failure_after_publication"
+                        : "contract.handler_failure",
+                    publicationCommitted
+                        ? "Canonical capability handler failed after reporting an authoritative publication."
+                        : "Canonical capability handler failed before producing a defined result.",
+                    "$",
+                    new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["capability"] = selected.Key.ToString(),
+                        ["exceptionType"] = exception.GetType().FullName ?? exception.GetType().Name,
+                        ["publicationCommitted"] = publicationCommitted
+                    },
+                    publicationCommitted,
+                    publicationCommitted
+                        ? "Inspect the current canonical anchor, then retry only through the capability's idempotency/recovery contract."
+                        : "Repair the handler or validator defect before retrying; no authoritative publication was reported by this request budget.");
+            }
+
             if (!resourceBudget.PublicationCommitted &&
                 !resourceBudget.TryContinue("canonical-dispatch", out var budgetError))
             {
