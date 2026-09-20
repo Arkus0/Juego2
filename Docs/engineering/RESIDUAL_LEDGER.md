@@ -1,6 +1,6 @@
 # Residual Ledger — declared residuals across accepted H0 workpacks
 
-Version: 1.1 — 2026-09-20
+Version: 1.2 — 2026-09-20
 
 Status: **NON-BINDING inventory.** This document creates no acceptance criterion, reopens no accepted guarantee and alters no workpack contract. It records what accepted workpacks already declared.
 
@@ -26,11 +26,11 @@ Risks a workpack recorded as closed inside its own claim do not belong here — 
 - `DEFERRED` — a named workpack or milestone owns it and has not run yet.
 - `UNCLASSIFIED` — not yet classified. **This is the default and carries no judgement.**
 
-Version 1.0 was the initial transcription pass. Version 1.1 records accepted HK06B: it closes only the HK06A residuals that HK06B explicitly owned and transcribes HK06B's own declared residuals without assigning new classifications not present in accepted evidence.
+Version 1.0 was the initial transcription pass. Version 1.1 records accepted HK06B. Version 1.2 records accepted HK06C: it closes only the replay/compatibility residuals that HK06C explicitly owned, folds repeated lifetime/concurrency/runtime/history/scale seams into their existing entries, and transcribes HK06C-specific residuals without assigning new classifications or owners not present in accepted evidence.
 
 ## A. Trusted base
 
-One class, declared by `WP-HK-00`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-05`, `WP-HK-06A` and `WP-HK-06B`, and authorised by the trusted-base rule of `FOUNDATIONAL_PROOF_STANDARD.md`.
+One class, declared by `WP-HK-00`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, `WP-HK-05`, `WP-HK-06A`, `WP-HK-06B` and `WP-HK-06C`, and authorised by the trusted-base rule of `FOUNDATIONAL_PROOF_STANDARD.md`.
 
 | ID | Residual | Status |
 |---|---|---|
@@ -56,11 +56,11 @@ Arkus checks identity, configuration and effective observations at these boundar
 | `R-05-05` | HK-05 | Unity/engine validation: scene serialization, prefab/component rules, editor constraints | H1 | `DEFERRED` |
 | `R-05-06` | HK-05 | Whole-world size and latency budgets are not product guarantees | HK-09 for content-size caps; HK-08 for latency baselines | `DEFERRED` |
 | `R-06A-02` | HK-06A | Whether an imported snapshot starts a new local lineage or retains external evidence | HK-06B | `CLOSED-BY` — HK06B PASS `#5258130916`; snapshot import is an explicit canonical rebase that starts `new-local-lineage` and emits truthful rebase evidence |
-| `R-06A-03` | HK-06A | Replay interpretation, missing/reordered/tampered entry behaviour, journal/snapshot version compatibility | HK-06C | `DEFERRED` |
+| `R-06A-03` | HK-06A | Replay interpretation, missing/reordered/tampered entry behaviour, journal/snapshot version compatibility | HK-06C | `CLOSED-BY` — HK06C PASS `#5259530509`; deterministic replay, fail-closed evidence handling and explicit accepted-version compatibility are now canonical capabilities |
 | `R-06A-04` | HK-06A | Field-level semantic diff; affected-resource identity is journal metadata only | HK-06B | `CLOSED-BY` — HK06B PASS `#5258130916`; deterministic semantic diff covers the complete accepted authored-resource model |
 | `R-06A-05` | HK-06A | Journal growth and pagination; the journal read currently returns the complete session-local journal in one response | HK-08 | `DEFERRED` |
 | `R-06A-07` | HK-06A | Transport/storage framing may not redefine journal meaning | HK-07A, HK-07B | `DEFERRED` |
-| `R-06B-02` | HK-06B | Deterministic journal replay and policy for accepted journal/snapshot version combinations are not implemented by snapshot portability | HK-06C | `DEFERRED` |
+| `R-06B-02` | HK-06B | Deterministic journal replay and policy for accepted journal/snapshot version combinations are not implemented by snapshot portability | HK-06C | `CLOSED-BY` — HK06C PASS `#5259530509`; replay is a distinct canonical authority that consumes HK06A/HK06B artifacts and reports explicit supported/unsupported compatibility |
 | `R-06B-03` | HK-06B | File/JSONL/MCP/network/cloud transport framing and persistence may not redefine snapshot semantics | HK-07A, HK-07B | `DEFERRED` |
 
 A `DEFERRED` entry closes when its owner is accepted. The owner's DocSync should move it to `CLOSED-BY` with the accepted evidence, or restate it.
@@ -84,13 +84,15 @@ These are the entries that decide whether `WP-HK-10` can claim zero, and they ar
 | `R-03-01` | HK-03 | Query evaluation is bounded in output, not in scan cost; no index, sublinear complexity or world-size-independent CPU claim | HK-03 defers this to "future scale work", which does not exist. H0 gates on a micro-world, so this is a candidate for `OUT-BOUNDARY` |
 | `R-03-02` | HK-03 | Cursors are deterministic continuation tokens, not authenticated capabilities, and are not an authorization boundary | candidate to fall inside HK-09's capability boundary |
 | `R-03-03` | HK-03 | No multi-command snapshot lease; a state source may advance between calls | stale anchors fail closed rather than mixing revisions |
-| `R-04-01` | HK-04, HK-06A, HK-06B | Canonical state, mutation idempotency receipts/journal, snapshots and snapshot-rebase receipts/evidence remain process-local; no durable recovery or cross-process persistence claim | HK06B restates the same lifetime seam for snapshot/rebase evidence |
-| `R-04-02` | HK-04 | Multi-process and distributed writers | requires a later authoritative persistence/locking substrate |
+| `R-04-01` | HK-04, HK-06A, HK-06B, HK-06C | Canonical state, mutation idempotency receipts/journal, snapshots, snapshot-rebase receipts/evidence and replay staging remain process-local; no durable WAL/recovery or cross-process persistence claim | HK06C restates the lifetime seam for replay and explicitly excludes process-crash recovery |
+| `R-04-02` | HK-04, HK-06C | Multi-process/distributed writers, cross-process locking and multi-agent merge/coordination | HK06C uses the accepted whole-world CAS + session gate and makes no richer concurrency claim |
 | `R-04-05` | HK-04 | Asymptotic performance for very large worlds | split out of `R-04-04`: HK-04 defers it to "later harness budget/guardrail work", which does not exist. Same candidate as `R-03-01` |
 | `R-05-01` | HK-05 | Secondary diagnostics whose own source or dependency traversal is ambiguous are deferred and not visible in the same validation pass; the contract is iterative for those | HK-05 declares this as claimed semantics, not a gap. Open question for classification: `arkus.world-validation-result/v1` carries no field indicating the report is partial |
-| `R-06B-04` | HK-06B | Gameplay/runtime state such as transforms, clocks, schedules, physics, animation, AI and simulation remains outside canonical authored `WorldState` unless a later reviewed WP promotes it | no specific owner named by HK06B |
-| `R-06B-05` | HK-06B | Snapshot import starts a new local lineage; merging or transferring source/target journal history would require a future explicit contract | no owner named by HK06B |
-| `R-06B-06` | HK-06B | Whole-state snapshot payloads and full semantic comparisons are accepted for H0; streaming/chunking/compact interaction for larger worlds is not claimed | HK06B points generically to later ergonomics/performance work without naming a binding owner |
+| `R-06B-04` | HK-06B, HK-06C | Gameplay/runtime state such as transforms, clocks, schedules, physics, animation, AI and simulation remains outside canonical authored `WorldState`/replay unless a later reviewed WP promotes it | no specific owner named by HK06B/HK06C |
+| `R-06B-05` | HK-06B, HK-06C | Snapshot import/replay uses explicit local lineage roots; merging, rebasing or reconciling independent authored histories would require a future explicit contract | HK06C rejects a replay target with pre-existing local mutation history rather than splicing histories |
+| `R-06B-06` | HK-06B, HK-06C | Whole-state snapshot payloads, full semantic comparisons and staged replay are accepted for H0; streaming/chunking/large-history throughput for larger worlds is not claimed | HK06C restates that arbitrary-long journal performance/endurance is outside its correctness claim |
+| `R-06C-01` | HK-06C | Lost-response replay retry is not durable/idempotent: after successful replay the local journal is non-empty, so an identical blind retry is rejected rather than acknowledged from a durable replay receipt | no owner named by HK06C |
+| `R-06C-02` | HK-06C | Future journal/snapshot versions currently fail as unsupported; no migration capability or cross-version replay path exists until separately reviewed | no owner named by HK06C |
 
 ### Measured cost context for `R-02A-02`
 
@@ -120,20 +122,21 @@ A residual restated by several workpacks is a signal that it sits on a seam rath
 | Theme | Entries | Declared by |
 |---|---|---|
 | Canonical schema vocabulary subset | `R-01-01` | HK-01, HK-03, HK-04 |
-| In-memory lifetime and durability | `R-04-01` | HK-04, HK-06A, HK-06B |
+| In-memory lifetime and durability | `R-04-01` | HK-04, HK-06A, HK-06B, HK-06C |
 | Undeclared identity inside opaque payloads | `R-02A-01` | HK-02A, HK-05 |
 | Size, byte and latency budgets | `R-02A-04`, `R-04-04`, `R-05-06`, `R-06A-05` | HK-02A, HK-04, HK-05, HK-06A |
-| Large-world scaling with no owner | `R-03-01`, `R-04-05`, `R-06B-06` | HK-03, HK-04, HK-06B |
-| Replay/compatibility | `R-06A-03`, `R-06B-02` | HK-06A, HK-06B |
+| Large-world scaling with no owner | `R-03-01`, `R-04-05`, `R-06B-06` | HK-03, HK-04, HK-06B, HK-06C |
+| Replay/compatibility | `R-06A-03`, `R-06B-02`, `R-06C-02` | HK-06A, HK-06B, HK-06C |
 | Transport framing | `R-06A-07`, `R-06B-03` | HK-06A, HK-06B |
+| Cross-process/concurrent writers | `R-04-02`, `R-02A-02` | HK-04, HK-06C, HK-02A |
 
 The budget theme is the densest, and the declaring workpacks use "budget" for two different mechanisms. HK-08 owns **measured baselines**: a benchmark plus regression thresholds. HK-09 owns **enforced caps**: explicit input/batch/page/depth/resource limits that fail closed. Three of the four entries need the second and were re-pointed accordingly; only the journal and latency parts are HK-08 interaction work.
 
-Neither owns large-world scaling. `R-03-01` and `R-04-05` are deferred to a workpack that does not exist, and HK06B likewise only points `R-06B-06` at generic later ergonomics/performance work. H0 benchmarks a micro-world and `WP-HK-GATE` is a micro-world gate, so the likely resolution is `OUT-BOUNDARY` and a named gate residual rather than a new workpack — but that is a classification decision and is deliberately not taken here.
+Neither owns large-world scaling. `R-03-01` and `R-04-05` are deferred to a workpack that does not exist, and HK06B/HK06C likewise only declare larger-world snapshot/diff/replay scaling outside their current correctness claims. H0 benchmarks a micro-world and `WP-HK-GATE` is a micro-world gate, so the likely resolution is `OUT-BOUNDARY` and a named gate residual rather than a new workpack — but that is a classification decision and is deliberately not taken here.
 
 ## E. Deliberate non-goals already stated as such
 
-Recorded so they are not rediscovered as findings: conservative same-major compatibility that prefers false-breaking over false-compatible (HK-01); no semantic denylist guessing at engine allusions in opaque tokens (HK-01); semantic fingerprints as diagnostics rather than correctness authorities (HK-01); forward compatibility as extension-envelope compatibility rather than unknown-structure guessing (HK-02); completeness tied to the current accepted state universe rather than predicted future shapes (HK-03, HK-05, HK-06B); caller ownership of idempotency keys (HK-04); `MutationAuthorityInspector` as defence in depth and explicitly not a completeness argument (HK-04); ordinary argument exceptions for direct CLR misuse outside the dispatcher contract (HK-05); runtime observation content not modelled (HK-06A); snapshot import intentionally starting a new local lineage rather than merging mutation history (HK-06B); prose not mechanically proving every future semantic interpretation, and unusual license terms failing closed to human review (HK-00A).
+Recorded so they are not rediscovered as findings: conservative same-major compatibility that prefers false-breaking over false-compatible (HK-01); no semantic denylist guessing at engine allusions in opaque tokens (HK-01); semantic fingerprints as diagnostics rather than correctness authorities (HK-01); forward compatibility as extension-envelope compatibility rather than unknown-structure guessing (HK-02); completeness tied to the current accepted state universe rather than predicted future shapes (HK-03, HK-05, HK-06B, HK-06C); caller ownership of idempotency keys (HK-04); `MutationAuthorityInspector` as defence in depth and explicitly not a completeness argument (HK-04); ordinary argument exceptions for direct CLR misuse outside the dispatcher contract (HK-05); runtime observation content not modelled (HK-06A); snapshot import intentionally starting a new local lineage rather than merging mutation history (HK-06B); replay intentionally refusing to splice into pre-existing local mutation history (HK-06C); deterministic journal fingerprints/entry IDs are identities and consistency checks, not cryptographic signatures or provenance authentication (HK-06C); prose not mechanically proving every future semantic interpretation, and unusual license terms failing closed to human review (HK-00A).
 
 ## Maintenance
 
