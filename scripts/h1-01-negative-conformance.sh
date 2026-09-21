@@ -64,10 +64,12 @@ expect_red() {
 }
 
 # Structured canonical references must all become HK02A dependency metadata.
+# Use a runtime expression that is true for every real component without making the
+# following code compiler-unreachable: the causal oracle must fail as a test, not as CS0162.
 replace_once \
   src/Arkus.EngineBridge.UnityAuthoring/UnityBindingProducer.cs \
   'if (!string.Equals((string)component["kind"]!, "canonical-link", StringComparison.Ordinal)) continue;' \
-  'if (true) continue; // H1-01 SEEDED DEFECT: canonical structured references are omitted'
+  'if (component.Count >= 0) continue; // H1-01 SEEDED DEFECT: canonical structured references are omitted'
 expect_red omitted-canonical-reference 'FullyQualifiedName~H1UnityAuthoringProducerTests.PotesFacadeProbeDerivesEveryStructuredReferenceExactlyOnceAndRoundTrips'
 
 # Catalogue references are typed provider-owned data; silently changing a material into an asset is semantic corruption.
@@ -78,10 +80,11 @@ replace_once \
 expect_red mistyped-catalogue-reference 'FullyQualifiedName~H1UnityAuthoringProducerTests.PotesFacadeProbeDerivesEveryStructuredReferenceExactlyOnceAndRoundTrips'
 
 # A caller assertion may cross-check derived truth but may never override or omit it.
+# Keep the branch dynamically reachable to avoid converting the seeded semantic defect into compiler RED.
 replace_once \
   src/Arkus.EngineBridge.UnityAuthoring/UnityBindingProducer.cs \
   'if (!EqualCanonical(supplied, derived))' \
-  'if (false && !EqualCanonical(supplied, derived)) // H1-01 SEEDED DEFECT: contradictory caller truth accepted'
+  'if (supplied.Count < 0 && !EqualCanonical(supplied, derived)) // H1-01 SEEDED DEFECT: contradictory caller truth accepted'
 expect_red contradictory-caller-dependency 'FullyQualifiedName~H1UnityAuthoringProducerTests.CallerMaintainedDependencyTruthFailsClosedOnOmissionContradictionAndDuplicates'
 
 # Duplicate caller dependency claims must fail instead of being silently coalesced into derived truth.
