@@ -1,7 +1,7 @@
 # WP-H1-00 Worker pre-review
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 7
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 8
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-H1-00/WORKER_PRE_REVIEW.md
 
 ## Candidate challenged
@@ -10,16 +10,17 @@ WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-H1-00/WORKER_PRE_REVIEW.md
 - Baseline: `a9ff655e5bf2319690d919b88bd57389a32483f3`.
 - Branch: `wp-h1-00-engine-neutral-projection`.
 - Direct accepted predecessor: `WP-HK-GATE` PASS and DocSync.
-- Final substantive/evidence checkpoint challenged before this pre-review record: `f0902e2631801eb1fea6ee172066fb4d11b5f3c2`.
-- Exact-SHA Draft observation: Actions run `35573246626` GREEN.
+- Last fully GREEN evidence-finalized checkpoint before frozen-verifier repair: `a8136b9d7ad8dfdc23ffa87fd23502794886c6a8`.
+- Draft exact-SHA observation on that checkpoint: Actions run `35573945174` GREEN.
 - Checkpoint result: Release build `0 warnings / 0 errors`; focused H1-00 `14/14` GREEN; all six causal defect controls RED for the intended reason; full regression `234/234` GREEN; candidate clean before/after.
+- Attempted Ready/freeze run `35574137765` failed before product verification because `scripts/arkus-verify-exact-sha.sh` had no `WP-H1-00` verifier dispatch. The PR was immediately returned to Draft and the freeze metadata withdrawn before repair.
 - This is Worker quality-gate evidence only. Fresh independent Reviewer PASS is still required on the final frozen SHA.
 
 ## Scope / authority challenge
 
-The complete baseline→checkpoint diff was challenged against `Docs/workpacks/H1/WP-H1-00.md`, the accepted H1 architecture/ADRs and `FOUNDATIONAL_PROOF_STANDARD` v1.4.
+The complete baseline→candidate diff was challenged against `Docs/workpacks/H1/WP-H1-00.md`, the accepted H1 architecture/ADRs and `FOUNDATIONAL_PROOF_STANDARD` v1.4.
 
-The candidate owns only a dependency-free `netstandard2.1` `Arkus.EngineBridge` assembly, its deterministic fileless reference materializer, portable contract records, focused proof/evidence and the canonical observation route required to validate H1-00. It does not add Unity/editor implementation, asset-catalogue authority, gameplay, CITY keeper content, public H0 mutation routes, canonical state ownership, host-to-Editor process lifecycle or transport-specific bridge semantics.
+The candidate owns only a dependency-free `netstandard2.1` `Arkus.EngineBridge` assembly, its deterministic fileless reference materializer, portable contract records, focused proof/evidence and the exact-SHA observation/verification routes required to validate H1-00. It does not add Unity/editor implementation, asset-catalogue authority, gameplay, CITY keeper content, public H0 mutation routes, canonical state ownership, host-to-Editor process lifecycle or transport-specific bridge semantics.
 
 Canonical truth remains H0-owned. The bridge consumes supplied canonical anchor/snapshot bytes defensively and emits derived plan/generation/observation/receipt evidence only. A bridge receipt is not an HK06 mutation entry and materialization failure cannot rewrite or advance canonical truth.
 
@@ -51,7 +52,13 @@ It was not enough to prove that `Arkus.EngineBridge` does not reference Runtime/
 
 ### Finding 7 — the deterministic scenario needed an explicit drift→delete→rebuild closure
 
-A fresh-materializer rebuild was already deterministic, and drift was independently detectable, but the WP scenario explicitly calls for drift followed by deletion/rebuild from the same inputs. The final focused suite now links those steps: changed effective content is observed as `engine-drift`; an empty/fresh generated scope is `absent`; rematerializing the same plan restores the original normalized in-sync observation/generation.
+A fresh-materializer rebuild was already deterministic, and drift was independently detectable, but the WP scenario explicitly calls for drift followed by deletion/rebuild from the same inputs. The focused suite links those steps: changed effective content is observed as `engine-drift`; an empty/fresh generated scope is `absent`; rematerializing the same plan restores the original normalized in-sync observation/generation.
+
+### Finding 8 — Ready/freeze verification had no H1-00 canonical verifier route
+
+Draft observation was complete, but the first Ready transition exposed a separate process omission: `scripts/arkus-verify-exact-sha.sh` could not resolve `WP-H1-00`, so frozen validation run `35574137765` failed with `Unable to resolve workpack for canonical verification` / `No canonical verification entrypoint registered for requested workpack` before running product verification.
+
+The repair adds `scripts/h1-00-verify-exact-sha.sh` and registers it in the canonical verifier router. The verifier reruns the complete H1-00 observer, checks foundational READY/zero-obligation evidence, content/residual closure, Worker pre-review and frozen PR metadata bound to the exact SHA. This is proof/process infrastructure only and introduces no product semantics. The failed freeze was withdrawn before these tracked-file writes.
 
 ## Acceptance / false-green challenge
 
@@ -71,9 +78,10 @@ The pre-review challenged the following material classes:
 - Protocol/Runtime do not acquire an upward EngineBridge dependency;
 - the plaza/market/bar/workshop probe exercises a non-flat hierarchy and two distinct logical asset dependencies without promoting example content into Unity/CITY/gameplay schema;
 - every one of the six workpack-named negative-conformance classes turns RED for the intended test reason;
-- the full accepted H0 regression remains green after H1-00 composition.
+- the full accepted H0 regression remains green after H1-00 composition;
+- Draft observation and Ready/frozen verification are both routable for `WP-H1-00` and bind the same exact candidate SHA.
 
-The six defect controls are: receipt tuple misanchor, caller-order-dependent plan, failed staging publication leak, canonical-byte aliasing, hidden effective drift and engine/editor type leakage. Run `35573246626` proves all six RED causally, then the unmutated candidate passes the full regression.
+The six product defect controls are: receipt tuple misanchor, caller-order-dependent plan, failed staging publication leak, canonical-byte aliasing, hidden effective drift and engine/editor type leakage. The latest completed GREEN Draft checkpoint proves all six RED causally, then the unmutated candidate passes the full regression.
 
 ## Foundational proof / residual reconciliation
 
@@ -89,10 +97,10 @@ No external runtime/package dependency or new IP adoption is introduced by this 
 
 ## Validation reconciliation and handoff condition
 
-Executable checkpoint:
+Last completed evidence-finalized checkpoint before verifier repair:
 
-- SHA `f0902e2631801eb1fea6ee172066fb4d11b5f3c2`;
-- Actions run `35573246626`: GREEN;
+- SHA `a8136b9d7ad8dfdc23ffa87fd23502794886c6a8`;
+- Draft Actions run `35573945174`: GREEN;
 - Release build: `0` warnings / `0` errors;
 - focused H1-00: `14/14` GREEN;
 - causal controls: `6/6` RED as required, runner GREEN;
@@ -100,7 +108,14 @@ Executable checkpoint:
 - exact checkout clean before and after: YES;
 - execution receipt: `Result: GREEN`.
 
-This pre-review evidence commit necessarily changes HEAD after that executable checkpoint. Therefore the evidence-finalized HEAD must receive one final Draft exact-SHA observation. Only after that GREEN may that exact HEAD be recorded as Candidate/Frozen SHA, metadata switch to `FROZEN_FOR_REVIEW`, and the PR become Ready. The Ready transition must then receive GREEN frozen exact-SHA validation. No Worker implementation/evidence write is permitted after freeze.
+Freeze attempt on that SHA:
+
+- Actions run `35574137765`: FAIL before product verification;
+- cause: missing H1-00 dispatch in canonical frozen verifier;
+- classification: Worker/process evidence infrastructure defect;
+- freeze withdrawn and PR returned to Draft before repair.
+
+The verifier repair and this reconciled pre-review change HEAD. Therefore the final repaired HEAD must receive a fresh Draft exact-SHA GREEN. Only after that may the exact HEAD be recorded again as Candidate/Frozen SHA and the PR become Ready. The Ready transition must then receive GREEN frozen exact-SHA verification. No Worker implementation/evidence write is permitted after the successful freeze.
 
 No known in-boundary Worker blocker remains.
 
