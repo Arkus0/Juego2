@@ -1,6 +1,6 @@
 # Keeper City — Mobility topology, access graph and travel-cost hypotheses
 
-Version: 1.2 — 2026-09-21  
+Version: 1.3 — 2026-09-21  
 Workpack: `WP-CITY-01 — Mobility, district graph + walk-time topology`  
 Class: **PRODUCT / SPATIAL PREPRODUCTION — NON-FOUNDATIONAL**
 
@@ -105,7 +105,7 @@ These are planning classes, not final grade percentages:
 - `E1` — ordinary slope or ramped connector;
 - `E2` — steep lane where bicycles must dismount and carts are not assumed unless the edge is separately `AR`;
 - `E3` — stairs/stepped route; pedestrian only for ordinary routing;
-- `EW` — water crossing or ferry service.
+- `EW` — water-crossing traversal or ferry motion. Every inter-landmass `X1..X7` edge is explicitly `EW`; its access class still decides which profiles may traverse it. `EW` is not silently treated as E0/E1 for profile costs: §6 owns the profile-specific crossing rule.
 
 CITY-04 owns measured grade, total level change and actual traversal cost **for geometry present in its bounded seed**; measurements cannot be projected into absent full-city geometry and relabelled as measured fact.
 
@@ -169,19 +169,21 @@ They are not intended to have equal cost. Their value is differentiated route ch
 
 ### 5.3 Crossings — the complete inter-landmass edge set
 
-| Edge | From ↔ To | State/availability | Access | Cost | Binding source |
-|---|---|---|---|---:|---|
-| `X1` | `W.X1 ↔ O.X1` | State 1+2 permanent | AH | 1.0 | Puente Viejo; no cart freight |
-| `X2` | `W.X2 ↔ E.X2` | State 1+2 permanent | AR | 0.7 | Puente del Mercado; road-capable |
-| `X3` | `W.X3 ↔ E.X3` | State 1+2 permanent | AF | 0.5 | Pasarela del Lavadero; foot only |
-| `X4` | `W.X4 ↔ E.X4` | seasonal; flood-closable | AR | 0.9 | Puente de la Vega; cart detour when available |
-| `X5` | `W.X5 ↔ E.X5` | low water only | AF | 0.4 | pasos/vado; never counted as permanent redundancy |
-| `X6` | `W.LANDING ↔ O.PUERTO_UP` | **State 1 only**; hours/fare; high water suspends | AX6 | 1.0 + wait | La barca |
-| `X7` | `W.LANDING ↔ O.PUERTO_UP` | **State 2 only**; permanent | AR | 1.0 | Puente del Muelle; carries carts |
+| Edge | From ↔ To | State/availability | Elev. | Access | Cost | Binding source |
+|---|---|---|---|---|---:|---|
+| `X1` | `W.X1 ↔ O.X1` | State 1+2 permanent | EW | AH | 1.0 | Puente Viejo; no cart freight |
+| `X2` | `W.X2 ↔ E.X2` | State 1+2 permanent | EW | AR | 0.7 | Puente del Mercado; road-capable |
+| `X3` | `W.X3 ↔ E.X3` | State 1+2 permanent | EW | AF | 0.5 | Pasarela del Lavadero; foot only |
+| `X4` | `W.X4 ↔ E.X4` | seasonal; flood-closable | EW | AR | 0.9 | Puente de la Vega; cart detour when available |
+| `X5` | `W.X5 ↔ E.X5` | low water only | EW | AF | 0.4 | pasos/vado; never counted as permanent redundancy |
+| `X6` | `W.LANDING ↔ O.PUERTO_UP` | **State 1 only**; hours/fare; high water suspends | EW | AX6 | 1.0 + wait | La barca |
+| `X7` | `W.LANDING ↔ O.PUERTO_UP` | **State 2 only**; permanent | EW | AR | 1.0 | Puente del Muelle; carries carts |
 
 There is no eighth crossing. `X6` and `X7` are mutually exclusive.
 
 For X6, planning wait is modelled separately as `W_ferry ∈ [0,4] min` during operating hours. That is a **scenario variable only**, not a timetable, live schedule or promise of a four-minute real queue. When high water suspends the ferry, X6 is unavailable rather than assigned an infinite wait.
+
+The `EW` tag closes crossing-profile semantics rather than overriding access. Ordinary-pedestrian crossing motion uses the ledger base cost. Slower-pedestrian crossing motion uses the §6 `EW ×1.35` rule. For X6 the wait term is temporal context, not locomotion: ordinary cost is `1.0 + W_ferry`; slower-pedestrian cost is `1.0 × 1.35 + W_ferry`. The wait is **never multiplied**. Bicycle/service permission remains determined by the access class in this same row.
 
 ### 5.4 Orilla-sur internal edges
 
@@ -226,14 +228,16 @@ These are **spatial routing assumptions**, not runtime AI or vehicle simulation 
 
 | Profile | Spatial rule |
 |---|---|
-| ordinary pedestrian | uses `AR/AP/AF/AH`, X6 when available, and `AS` only when access context explicitly permits it |
-| slower pedestrian | same connectivity; multiply E0/E1 segment costs by **1.35** and E2/E3 segment costs by **1.50**; these are alternatives by class, not cumulative multipliers; CITY-04 measures them where represented |
-| bicycle | rides `AR` and `AP` edges of E0/E1; on `AP` E2/E3 it must dismount and walk; `AF` is bicycle-inaccessible; X1 (`AH`) may be crossed only with the bicycle dismounted/pushed; X6 carriage is **not assumed**; State 2 X7 is rideable `AR` |
+| ordinary pedestrian | uses `AR/AP/AF/AH`, X6 when available, and `AS` only when access context explicitly permits it; `EW` crossing motion uses the ledger base cost, with X6 wait added separately |
+| slower pedestrian | same connectivity; multiply E0/E1 **and EW motion** costs by **1.35**, and E2/E3 segment costs by **1.50**; these are alternatives by class, not cumulative multipliers; for X6 use `1.35 + W_ferry`, so wait is not multiplied; CITY-04 measures these hypotheses where represented |
+| bicycle | rides `AR` and `AP` edges of E0/E1; rides an `EW` crossing only when that crossing is `AR`, therefore X2/X4 and State-2 X7 are rideable; on `AP` E2/E3 it must dismount and walk; `AF` is bicycle-inaccessible, so X3/X5 are unavailable; X1 (`AH`) may be crossed only with the bicycle dismounted/pushed; X6 (`AX6`) carriage is **not assumed**. For CITY-01 route comparison, rideable bicycle segments use the ledger base movement cost; no bicycle speed-up is asserted |
 | service / delivery cart | uses `AR/AS`; may use X2/X4 and State-2 X7; cannot use X1/X3/X5; CITY-01 does not grant cart carriage on X6 |
 | porter / carried delivery | follows ordinary pedestrian topology and may use X6 when available |
 | arrival / bus | bus movement reaches and terminates at `O.ENTRADA`; passengers then switch to pedestrian routing. No bus route through the core is created here |
 | following / search | uses public pedestrian edges; `AS` is excluded unless the followed actor has legitimate access. Route design must expose real junction choices rather than hidden teleports |
 | time-sensitive | selects among currently available routes using expected travel cost, including X6 wait/closure/context. This is a scenario-evaluation profile, not a claim about NPC decision logic |
+
+The crossing rules are intentionally derivable from `Elev. + Access`, not from later prose. In particular, a bicycle from Ensanche toward Calle Mayor can ride permanent X2 (`EW + AR`), cannot use foot-only X3/X5, may ride X4 only while that seasonal `EW + AR` crossing is available, cannot assume X6 carriage, and may ride X7 in State 2. Thus “cyclist prefers road-capable Calle Mayor/X2” follows from the authoritative rules rather than being an unsupported narrative conclusion.
 
 The graph intentionally creates profile disagreement: the shortest pedestrian line may be unusable by a cart; a cyclist prefers road-capable Calle Mayor/X2 over stairs or foot-only X3; a late pedestrian may choose a longer-distance bridge route to avoid ferry wait.
 
@@ -428,7 +432,7 @@ A sum of `CALIBRATED_COMPONENT` values across absent geometry remains a planning
 3. total level change and direction-sensitive time on any represented portion of `W11` Barrio Alto↔Ribera;
 4. whether represented `W06` Cuesta / landing-seam geometry remains readable/followable without making the future Río crossing visually trivial;
 5. actual closure penalty for the Arroyo crossing and alternate selected by CITY-03, without inventing the other crossings if they are outside the seed;
-6. bicycle roll/dismount behaviour on represented `AR/AP/AF/AH` examples;
+6. bicycle roll/dismount behaviour on represented `AR/AP/AF/AH/EW` examples, including the expected `EW + AR` rideability and X1 push-only distinction;
 7. service-cart clearance on every represented `AR/AS` edge used by the seed's delivery/service scenario;
 8. arrival/exit readability at any represented residential/rural/port seam, without pretending the unseen district has been traversed;
 9. followability through the selected seed's branch points and sightline-loss moments;
@@ -498,7 +502,7 @@ The accepted geography now has a reviewable movement model with:
 - one explicit semantic edge ledger plus a non-authoritative district-family projection;
 - no hidden inter-landmass edges;
 - differentiated primary/secondary/quiet/service routes;
-- profile-specific access and verticality, including deterministic bicycle and arrival/bus handling;
+- profile-specific access and verticality, including explicit `EW` semantics and deterministic bicycle/slower-pedestrian crossing handling;
 - preserved inherited walk-time bands as **planning** bands;
 - explicit costs for the CITY-00-deferred Ensanche→Puerto and Vega↔Puerto routes;
 - two nontrivial alternate-route families (Arroyo closure and Río crossing substitution) plus Plaza removal;
