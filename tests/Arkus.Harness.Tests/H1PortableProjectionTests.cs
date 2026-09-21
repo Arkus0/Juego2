@@ -1,13 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Arkus.EngineBridge;
+using Arkus.Harness.Protocol;
+using Arkus.Harness.Runtime;
 using Xunit;
 
 namespace Arkus.Harness.Tests
 {
     public sealed class H1PortableProjectionTests
     {
+        private static readonly string[] Catalogue = { "asset.market-stall", "asset.workshop-kit" };
+
         [Fact]
         public void PortableContractIsVersionedMachineReadableAndReceiptCarriesStructuredAnchorDiagnostics()
         {
@@ -15,7 +20,7 @@ namespace Arkus.Harness.Tests
             var materializer = new ReferenceMaterializer();
             var failed = materializer.Materialize(
                 plan,
-                new[] { "asset.market-stall", "asset.workshop-kit" },
+                Catalogue,
                 ReferenceFailurePoint.BeforePublication);
 
             var data = ProjectionPortableData.Materialization(plan, failed);
@@ -47,11 +52,11 @@ namespace Arkus.Harness.Tests
             var plan = Plan();
             var first = new ReferenceMaterializer().Materialize(
                 plan,
-                new[] { "asset.market-stall", "asset.workshop-kit" },
+                Catalogue,
                 ReferenceFailurePoint.BeforePublication);
             var second = new ReferenceMaterializer().Materialize(
                 plan,
-                new[] { "asset.market-stall", "asset.workshop-kit" },
+                Catalogue,
                 ReferenceFailurePoint.BeforeValidation);
 
             Assert.NotEqual(first.Observation.ObservationDigest, second.Observation.ObservationDigest);
@@ -63,14 +68,50 @@ namespace Arkus.Harness.Tests
         public void PortableReceiptFailsClosedWhenPairedWithDifferentPlan()
         {
             var plan = Plan();
-            var result = new ReferenceMaterializer().Materialize(
-                plan,
-                new[] { "asset.market-stall", "asset.workshop-kit" });
+            var result = new ReferenceMaterializer().Materialize(plan, Catalogue);
             var differentPlan = Plan("catalogue-b");
 
             Assert.NotEqual(plan.Input.InputDigest, differentPlan.Input.InputDigest);
             Assert.Throws<ArgumentException>(() =>
                 ProjectionPortableData.Receipt(differentPlan, result.Receipt, result.Observation));
+        }
+
+        [Fact]
+        public void DriftThenDeletionAndRebuildFromSameInputsRestoresSameNormalizedObservation()
+        {
+            var plan = Plan();
+            var firstMaterializer = new ReferenceMaterializer();
+            var published = firstMaterializer.Materialize(plan, Catalogue);
+            var drifted = EffectiveResources().ToArray();
+            drifted[1] = new ProjectionResource(
+                drifted[1].ResourceId,
+                drifted[1].ParentResourceId,
+                drifted[1].ResourceKind,
+                "bar-manually-edited",
+                drifted[1].LogicalDependencies);
+
+            var drift = firstMaterializer.Observe(plan, drifted, Catalogue);
+            Assert.Equal(ProjectionDriftState.EngineDrift, drift.State);
+
+            var rebuiltMaterializer = new ReferenceMaterializer();
+            Assert.Equal(ProjectionDriftState.Absent, rebuiltMaterializer.Observe(plan, null, Catalogue).State);
+            var rebuilt = rebuiltMaterializer.Materialize(plan, Catalogue);
+
+            Assert.Equal(ProjectionDriftState.InSync, rebuilt.Observation.State);
+            Assert.Equal(published.Receipt.GenerationId, rebuilt.Receipt.GenerationId);
+            Assert.Equal(published.Observation.ObservationDigest, rebuilt.Observation.ObservationDigest);
+        }
+
+        [Fact]
+        public void ProtocolAndRuntimeDoNotAcquireUpwardEngineBridgeDependency()
+        {
+            var protocolReferences = typeof(CapabilityKey).Assembly.GetReferencedAssemblies()
+                .Select(value => value.Name).ToArray();
+            var runtimeReferences = typeof(ComposedContract).Assembly.GetReferencedAssemblies()
+                .Select(value => value.Name).ToArray();
+
+            Assert.DoesNotContain("Arkus.EngineBridge", protocolReferences);
+            Assert.DoesNotContain("Arkus.EngineBridge", runtimeReferences);
         }
 
         private static ProjectionPlan Plan(string catalogue = "catalogue-a")
@@ -82,15 +123,15 @@ namespace Arkus.Harness.Tests
                 new BridgeToolchainProfile("reference", "1.0", "toolchain-a", "portable"),
                 new byte[] { 1, 2, 3, 4 });
 
-            return ProjectionPlanner.Create(
-                input,
-                new[]
-                {
-                    new ProjectionResource("world/plaza", null, "root", "plaza-v1"),
-                    new ProjectionResource("world/plaza/market", "world/plaza", "fixture", "market-v1", new[] { "asset.market-stall" }),
-                    new ProjectionResource("world/plaza/bar", "world/plaza", "fixture", "bar-v1"),
-                    new ProjectionResource("world/plaza/workshop", "world/plaza", "fixture", "workshop-v1", new[] { "asset.workshop-kit" })
-                });
+            return ProjectionPlanner.Create(input, EffectiveResources());
+        }
+
+        private static IEnumerable<ProjectionResource> EffectiveResources()
+        {
+            yield return new ProjectionResource("world/plaza", null, "root", "plaza-v1");
+            yield return new ProjectionResource("world/plaza/bar", "world/plaza", "fixture", "bar-v1");
+            yield return new ProjectionResource("world/plaza/market", "world/plaza", "fixture", "market-v1", new[] { "asset.market-stall" });
+            yield return new ProjectionResource("world/plaza/workshop", "world/plaza", "fixture", "workshop-v1", new[] { "asset.workshop-kit" });
         }
 
         private static void AssertPortable(object? value)
