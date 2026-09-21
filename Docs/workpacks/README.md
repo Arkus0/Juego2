@@ -61,6 +61,6 @@ PA-01 -> PA-02 -> PA-03 -> PA-04 -> PA-05
      -> PA-10 -> PA-11 -> PA-12 -> PA-13 -> PA-14
 ```
 
-`WP-PA-01..05` are `REMOTE_HARVEST`: they adopt/revalidate independently reviewed `Arkus0/Juego` research without importing donor runtime authority. `WP-PA-06..13` are `REMOTE_RESEARCH`. `WP-PA-14` is deliberately deferred until PA-01..13 have passed and the future H2 playable-shell phase has an accepted boundary sufficient to plan H3+ consumers honestly.
+`WP-PA-01..05` are `REMOTE_HARVEST`: they adopt/revalidate independently reviewed `Arkus0/Juego` research without importing donor runtime authority. `WP-PA-06..13` are `REMOTE_RESEARCH`. `WP-PA-14` is deliberately deferred until PA-01..13 have passed **and the future H2 playable-shell phase has reached its accepted closure/gate**; the future H2 plan owns that gate's exact ID/name.
 
 PA research can inform later H2+ design but cannot claim runtime/Unity proof or silently alter H0/H1/CITY contracts. After the PA programme plan itself receives independent PASS + merge + DocSync, its next executable workpack is `WP-PA-01 — Adopt/revalidate NPC Daily Life findings`.
