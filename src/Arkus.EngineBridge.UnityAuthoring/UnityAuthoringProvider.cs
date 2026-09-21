@@ -100,7 +100,7 @@ namespace Arkus.EngineBridge.UnityAuthoring
             return new JsonSchemaDocument(SchemaNode.Object(
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
                 {
-                    ["subjectId"] = SchemaNode.String(format: "world-object-id"),
+                    ["subjectId"] = SchemaNode.String(),
                     ["binding"] = BindingSchema(),
                     ["expectedCanonicalDependencies"] = SchemaNode.Array(CanonicalDependencySchema()),
                     ["expectedCatalogueDependencies"] = SchemaNode.Array(CatalogueDependencySchema())
@@ -113,7 +113,7 @@ namespace Arkus.EngineBridge.UnityAuthoring
             return new JsonSchemaDocument(SchemaNode.Object(
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
                 {
-                    ["payloadBase64"] = SchemaNode.String(format: "base64")
+                    ["payloadBase64"] = SchemaNode.String()
                 },
                 new[] { "payloadBase64" }));
         }
@@ -123,9 +123,9 @@ namespace Arkus.EngineBridge.UnityAuthoring
             return new JsonSchemaDocument(SchemaNode.Object(
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
                 {
-                    ["subjectId"] = SchemaNode.String(format: "world-object-id"),
+                    ["subjectId"] = SchemaNode.String(),
                     ["dependencies"] = SchemaNode.Array(CanonicalDependencySchema()),
-                    ["payloadBase64"] = SchemaNode.String(format: "base64")
+                    ["payloadBase64"] = SchemaNode.String()
                 },
                 new[] { "subjectId", "dependencies", "payloadBase64" }));
         }
@@ -139,7 +139,7 @@ namespace Arkus.EngineBridge.UnityAuthoring
                     ["binding"] = BindingSchema(),
                     ["canonicalDependencies"] = SchemaNode.Array(CanonicalDependencySchema()),
                     ["catalogueDependencies"] = SchemaNode.Array(CatalogueDependencySchema()),
-                    ["payloadBase64"] = SchemaNode.String(format: "base64"),
+                    ["payloadBase64"] = SchemaNode.String(),
                     ["extensionMutation"] = ExtensionMutationSchema()
                 },
                 new[]
@@ -158,7 +158,7 @@ namespace Arkus.EngineBridge.UnityAuthoring
                     ["binding"] = BindingSchema(),
                     ["canonicalDependencies"] = SchemaNode.Array(CanonicalDependencySchema()),
                     ["catalogueDependencies"] = SchemaNode.Array(CatalogueDependencySchema()),
-                    ["payloadBase64"] = SchemaNode.String(format: "base64")
+                    ["payloadBase64"] = SchemaNode.String()
                 },
                 new[] { "schemaId", "binding", "canonicalDependencies", "catalogueDependencies", "payloadBase64" }));
         }
@@ -218,7 +218,7 @@ namespace Arkus.EngineBridge.UnityAuthoring
                 {
                     ["kind"] = SchemaNode.String(new[] { "canonical-link", "renderer", "animator" }),
                     ["relation"] = SchemaNode.String(),
-                    ["targetObjectId"] = SchemaNode.String(format: "world-object-id"),
+                    ["targetObjectId"] = SchemaNode.String(),
                     ["materialId"] = CatalogueIdSchema(),
                     ["clipId"] = CatalogueIdSchema()
                 },
@@ -231,7 +231,7 @@ namespace Arkus.EngineBridge.UnityAuthoring
                 new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
                 {
                     ["kind"] = SchemaNode.String(),
-                    ["targetId"] = SchemaNode.String(format: "world-object-id")
+                    ["targetId"] = SchemaNode.String()
                 },
                 new[] { "kind", "targetId" });
         }
@@ -255,16 +255,18 @@ namespace Arkus.EngineBridge.UnityAuthoring
                     ["kind"] = SchemaNode.String(new[] { "put-extension" }),
                     ["owner"] = SchemaNode.String(new[] { UnityBindingProducer.ExtensionOwner }),
                     ["schemaVersion"] = SchemaNode.Integer(),
-                    ["subjectId"] = SchemaNode.String(format: "world-object-id"),
+                    ["subjectId"] = SchemaNode.String(),
                     ["dependencies"] = SchemaNode.Array(CanonicalDependencySchema()),
-                    ["payloadBase64"] = SchemaNode.String(format: "base64")
+                    ["payloadBase64"] = SchemaNode.String()
                 },
                 new[] { "kind", "owner", "schemaVersion", "subjectId", "dependencies", "payloadBase64" });
         }
 
         private static SchemaNode CatalogueIdSchema()
         {
-            return SchemaNode.String(logicalReferenceNamespace: CatalogueReferenceNamespace);
+            return SchemaNode.String(
+                format: "arkus-logical-reference",
+                logicalReferenceNamespace: CatalogueReferenceNamespace);
         }
 
         private static CapabilityInvocationResult Invoke(
