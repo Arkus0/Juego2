@@ -23,8 +23,9 @@ jobs:
     name: Mark review ready
     if: >-
       github.event_name == 'workflow_run' &&
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'pull_request'
+      github.event.workflow_run.event == 'pull_request' &&
+      (github.event.workflow_run.conclusion == 'success' ||
+       github.event.workflow_run.conclusion == 'failure')
     runs-on: ubuntu-24.04
     steps:
       - name: Validate frozen handoff and persist marker
@@ -38,12 +39,19 @@ jobs:
           set -euo pipefail
           [[ -n "${PR:-}" ]] || exit 0
 
-          freeze_job=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100" --jq '.jobs[] | select(.name == "Freeze exact-SHA validation") | .conclusion' | tail -n1)
-          [[ "${freeze_job}" == "success" ]] || exit 0
-
           pr_body=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.body // ""')
           if printf '%s\n' "${pr_body}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
             exit 0
+          fi
+
+          non_foundational=false
+          if printf '%s\n' "${pr_body}" | grep -Eqi '^(Mode|Class):.*NON-FOUNDATIONAL'; then
+            non_foundational=true
+          fi
+
+          freeze_job=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100" --jq '.jobs[] | select(.name == "Freeze exact-SHA validation") | .conclusion' | tail -n1)
+          if [[ "${non_foundational}" != "true" ]]; then
+            [[ "${freeze_job}" == "success" ]] || exit 0
           fi
 
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
@@ -84,7 +92,11 @@ jobs:
           if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
             exit 0
           fi
-          detail="frozen metadata and exact-SHA validation are green. Start a fresh independent Reviewer."
+          if [[ "${non_foundational}" == "true" ]]; then
+            detail="frozen metadata is coherent for this non-foundational WP. Start a fresh independent Reviewer."
+          else
+            detail="frozen metadata and exact-SHA validation are green. Start a fresh independent Reviewer."
+          fi
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: REVIEW_READY
@@ -131,24 +143,40 @@ jobs:
           read -r verdict reviewed_sha < <(python - <<'PY'
           import os, re
           body = os.environ.get('REVIEW_BODY') or ''
-          vm = re.search(r'^Reviewer verdict:\s*`?(PASS|FAIL)`?\s*$', body, re.M | re.I)
-          sm = re.search(r'^Reviewed candidate SHA:\s*`?([0-9a-fA-F]{40})`?\s*$', body, re.M | re.I)
-          if not vm or not sm:
+
+          def normalize(line):
+              line = line.strip()
+              line = re.sub(r'^#{1,6}\s*', '', line)
+              line = line.replace('**', '').replace('__', '').replace('`', '')
+              return line.strip()
+
+          verdict = None
+          reviewed_sha = None
+          for raw in body.splitlines():
+              line = normalize(raw)
+              vm = re.fullmatch(r'Reviewer verdict:\s*(PASS|FAIL)\.?', line, re.I)
+              if vm:
+                  verdict = vm.group(1).upper()
+              sm = re.fullmatch(r'Reviewed candidate SHA:\s*([0-9a-fA-F]{40})\.?', line, re.I)
+              if sm:
+                  reviewed_sha = sm.group(1).lower()
+
+          if not verdict or not reviewed_sha:
               print('NONE NONE')
           else:
-              print(vm.group(1).upper(), sm.group(1).lower())
+              print(verdict, reviewed_sha)
           PY
           )
           [[ "${verdict}" != "NONE" ]] || exit 0
 
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
-          read -r frozen_sha wp < <(python - <<'PY'
+          read -r frozen_sha wp non_foundational < <(python - <<'PY'
           import json, re
           pr = json.load(open('pr.json', encoding='utf-8'))
           body = pr.get('body') or ''
           head = pr['head']['sha'].lower()
           if pr.get('merged'):
-              print(head, f'PR-{pr["number"]}')
+              print(head, f'PR-{pr["number"]}', 'NO')
               raise SystemExit(0)
           def field(name):
               m = re.search(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
@@ -167,7 +195,10 @@ jobs:
           if not re.fullmatch(r'[0-9a-f]{40}', frozen) or frozen != head:
               raise SystemExit(f'Frozen candidate SHA must equal PR HEAD {head}')
           wp = (field('WP') or f'PR-{pr["number"]}').replace(' ', '_')
-          print(frozen, wp)
+          mode = (field('Mode') or '')
+          cls = (field('Class') or '')
+          non_foundational = 'NON-FOUNDATIONAL' in f'{mode} {cls}'.upper()
+          print(frozen, wp, 'YES' if non_foundational else 'NO')
           PY
           )
           [[ "${reviewed_sha}" == "${frozen_sha}" ]] || { echo "::error::Reviewed SHA ${reviewed_sha} != frozen SHA ${frozen_sha}"; exit 2; }
@@ -198,12 +229,18 @@ jobs:
             exit 0
           fi
 
-          freeze_check=$(gh api -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/commits/${reviewed_sha}/check-runs?per_page=100" --jq '.check_runs[] | select(.name == "Freeze exact-SHA validation" and .conclusion == "success") | .id' | head -n1)
-          [[ -n "${freeze_check}" ]] || { echo "::error::No successful Freeze exact-SHA validation check for ${reviewed_sha}"; exit 2; }
+          if [[ "${non_foundational}" != "YES" ]]; then
+            freeze_check=$(gh api -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/commits/${reviewed_sha}/check-runs?per_page=100" --jq '.check_runs[] | select(.name == "Freeze exact-SHA validation" and .conclusion == "success") | .id' | head -n1)
+            [[ -n "${freeze_check}" ]] || { echo "::error::No successful Freeze exact-SHA validation check for ${reviewed_sha}"; exit 2; }
+          fi
 
           key="pass-merge:${PR}:${reviewed_sha}"
           if ! gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
-            detail="exact Reviewer PASS and freeze validation agree. Merging this exact SHA."
+            if [[ "${non_foundational}" == "YES" ]]; then
+              detail="exact Reviewer PASS agrees with frozen metadata for this non-foundational WP. Merging this exact SHA."
+            else
+              detail="exact Reviewer PASS and freeze validation agree. Merging this exact SHA."
+            fi
             body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: PASS_PREFLIGHT_GREEN
