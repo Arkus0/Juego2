@@ -1,8 +1,8 @@
 # H1 Unity parity gate — deterministic reference scenario
 
-Version: 1.1 — 2026-09-21
+Version: 1.2 — 2026-09-21
 Owner: `WP-H1-GATE`
-Status: ACCEPTED CONTRACT / NOT EXECUTED — adopted by H1 planning PR `#71` at merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; only a later exact-SHA `WP-H1-GATE` PASS can satisfy it.
+Status: ACCEPTED CONTRACT / NOT EXECUTED — adopted by H1 planning PR `#71` at merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; Quaternius source-timing amendment proposed by the later PROCESS_ONLY correction; only a later exact-SHA `WP-H1-GATE` PASS can satisfy it.
 
 ## Representative slice
 
@@ -17,7 +17,7 @@ The gate builds one bounded **non-keeper conformance assembly** shaped by the ac
 - at least one canonical-object reference and several catalogue dependencies;
 - multiple allowlisted components and three-level hierarchy.
 
-Exact third-party pieces come from the accepted H1-11 adoption record. CITY-00 supplies shape pressure only; no exact route graph, seed boundary or keeper geometry is claimed. No player controller, AI, navmesh, physics behavior, schedule or dialogue is required.
+Exact third-party pieces come from the Quaternius Source distribution first adopted at H1-04 and the representative selected-item manifest broadened/verified by H1-11. CITY-00 supplies shape pressure only; no exact route graph, seed boundary or keeper geometry is claimed. No player controller, AI, navmesh, physics behavior, schedule or dialogue is required.
 
 ## Deterministic stages
 
@@ -47,6 +47,7 @@ Gate PASS records and binds:
 canonical world hash + revision
 binding schema/version
 catalogue snapshot fingerprint
+accepted source-content fingerprint
 bridge contract/version
 Unity editor + package fingerprint
 projection plan digest
@@ -54,7 +55,7 @@ active generation ID + receipt
 normalized Unity observation digest
 ```
 
-The plan and observation digests must agree under the accepted normalization. Rebuilding from the same first five inputs must reproduce the same semantic plan/observation. Serialized YAML bytes and screenshot pixels are not the parity authority.
+The plan and observation digests must agree under the accepted normalization. Rebuilding from the same first six inputs must reproduce the same semantic plan/observation. Serialized YAML bytes and screenshot pixels are not the parity authority.
 
 ## Headless versus local evidence
 
@@ -74,7 +75,8 @@ The fresh agent must prove the new public-client claim, not reproduce all determ
 - invalid engine state requires implementation knowledge rather than structured diagnostics;
 - materialize/observe or checkpoint/rebuild is absent from canonical composed discovery or succeeds only through a private Editor/script/adapter path;
 - reference and MCP choose different Editor execution topologies or bypass the H1-03A project profile/lease/lifecycle contract;
-- source assets are overwritten or unapproved assets are required;
+- purchased/adopted upstream source assets are overwritten by bridge materialization or unapproved assets are required;
+- gate silently replaces missing accepted Quaternius inputs with synthetic/substitute production art;
 - full H0 semantics are redefined to accommodate Unity;
 - gate or AI-trial evidence is not bound to the exact candidate/toolchain/content inputs;
-- closure introduces new product semantics.
+- closure introduces new product semantics or finished-art/Cantabrian adaptation claims.
