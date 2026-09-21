@@ -158,6 +158,9 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
+      "arkus.enginebridge": {
+        "type": "Project"
+      },
       "arkus.game.authoring": {
         "type": "Project",
         "dependencies": {
