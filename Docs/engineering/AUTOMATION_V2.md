@@ -1,6 +1,6 @@
 # Automation V2 — minimal GitHub Actions orchestration
 
-Version: 1.4 — 2026-09-19
+Version: 1.5 — 2026-09-21
 
 ## Purpose
 
@@ -29,16 +29,17 @@ Draft Worker PR
   -> Candidate observation on every relevant PR update
   -> Worker fixes/reconciles evidence
   -> Worker pre-review CLEAN
-  -> Worker obtains exact-SHA GREEN receipt
+  -> Worker obtains exact-SHA GREEN receipt where the WP requires one
   -> Worker freezes that exact SHA and marks PR Ready
-  -> Freeze handoff validates/reuses the same exact-SHA GREEN receipt
+  -> Worker handoff lint mechanically validates the canonical Ready handoff
+  -> Freeze handoff validates/reuses the same exact-SHA GREEN receipt where applicable
      (full verifier runs only when no valid reusable receipt exists)
   -> REVIEW_READY marker
   -> human starts a fresh independent Reviewer
   -> Reviewer emits exact-SHA PASS or FAIL
      FAIL -> REPAIR_REQUIRED marker; human starts fresh repair Worker
      PASS -> exact-SHA merge preflight -> automatic merge
-          -> DOCSYNC_REQUIRED after confirmed merge
+          -> DOCSYNC_REQUIRED after confirmed merge for Worker-lifecycle WPs
           -> successful Reviewer/finalizer performs documentation-only DocSync
           -> DOCSYNC_COMPLETE marker with dependency-valid Next WP
           -> human starts the next Worker
@@ -56,10 +57,16 @@ Runs PR code with a **read-only token** plus read-only Actions access for receip
 
 - Draft PR: observation mode.
 - Ready/non-draft PR: frozen-candidate verify/handoff mode.
+- Ready PRs also run the separate `Worker handoff lint` job.
 - Manual `workflow_dispatch`: exact SHA + explicit observation/verify mode.
-- `Mode: PROCESS_ONLY` skips product validation.
+- `Mode: PROCESS_ONLY` skips product validation, but it does **not** skip Worker handoff lint when the PR publishes Worker lifecycle fields.
+- Pure PROCESS_ONLY maintenance/DocSync PRs that never enter the Worker lifecycle are intentionally allowed to omit the Worker handoff block.
 - If a durable exact-SHA GREEN receipt already exists for the same candidate and passes strict identity/content validation, freeze reuses it instead of paying for an identical full rerun.
 - If no valid reusable receipt exists, freeze executes the canonical verifier normally and fails closed on any ambiguity.
+
+`Worker handoff lint` is deliberately mechanical. It checks the canonical PR handoff fields, Ready/frozen state values, exact SHA coherence, pointer existence, the presence of `PREDECESSOR_CONTRACT_CHECK` in repository-local predecessor evidence when supplied, and `WORKER_PRE_REVIEW: CLEAN` in repository-local pre-review evidence. It does **not** judge whether the predecessor reasoning, negative controls, proof arguments or semantic acceptance claims are substantively sufficient; that remains Worker pre-review + independent Reviewer work.
+
+The linter also fails closed when a non-PROCESS_ONLY Ready PR has no canonical Worker handoff at all. For PROCESS_ONLY PRs, publishing any Worker-lifecycle surface opts the PR into the same complete handoff validation, which is how CTX workpacks remain real Worker → Reviewer cycles while pure maintenance PRs stay lightweight.
 
 Receipt reuse is not trust-by-filename. The workflow verifies the source workflow succeeded, source `head_sha` equals the frozen candidate SHA, downloads the receipt artifact, and checks the receipt binds the exact SHA with clean-before/after YES, required gates GREEN and `Result: GREEN` before skipping execution.
 
@@ -82,10 +89,12 @@ Has write permissions but **never checks out or executes PR code**.
 
 It performs only GitHub-state transitions:
 
-- after successful frozen handoff validation (fresh execution or validated receipt reuse), verifies handoff metadata and emits `REVIEW_READY`;
+- after a successful `Worker handoff lint`, verifies handoff metadata and emits `REVIEW_READY`; foundational candidates additionally require their successful frozen exact-SHA validation;
+- non-foundational candidates do not acquire foundational proof/exact-SHA obligations merely because handoff lint exists;
+- PROCESS_ONLY PRs with Worker lifecycle fields participate normally in `REVIEW_READY` / PASS merge / DocSync transitions, while pure PROCESS_ONLY maintenance/DocSync PRs without Worker lifecycle fields remain outside those transitions;
 - on canonical Reviewer `FAIL` for the exact frozen SHA, emits `REPAIR_REQUIRED`;
-- on canonical Reviewer `PASS`, verifies the reviewed SHA equals PR HEAD/Frozen SHA, requires a successful `Freeze exact-SHA validation` check, and merges that exact SHA;
-- after an implementation merge, emits `DOCSYNC_REQUIRED` as durable machine state for recovery/audit.
+- on canonical Reviewer `PASS`, verifies the reviewed SHA equals PR HEAD/Frozen SHA, requires a successful `Worker handoff lint`, additionally requires successful `Freeze exact-SHA validation` where the candidate is not non-foundational, and merges that exact SHA;
+- after a Worker-lifecycle WP merge, emits `DOCSYNC_REQUIRED` as durable machine state for recovery/audit.
 
 `DOCSYNC_REQUIRED` is the first safe point for a Telegram DocSync action because the merge is already confirmed. A successful Reviewer session may continue into finalization, or the human may start a dedicated finalization/DocSync session from the Telegram handoff. Either way, `WORKER_REVIEW_PROTOCOL.md` rules remain binding.
 
@@ -122,7 +131,7 @@ The notifier expects repository secrets named:
 
 If either secret is absent, the job exits successfully after logging that the notification was skipped. Telegram is convenience only; GitHub state remains authoritative.
 
-`Mode: PROCESS_ONLY` merged PRs are excluded from the post-merge DocSync action because process-only changes do not represent a product-WP implementation merge.
+Pure PROCESS_ONLY maintenance/DocSync PRs without Worker lifecycle fields are excluded from the post-merge DocSync action. PROCESS_ONLY workpacks that do publish the canonical Worker lifecycle — including CTX — are not excluded merely because their product/runtime scope is zero.
 
 ## Reviewer handoff contract
 
@@ -141,9 +150,11 @@ A `PASS` cannot merge unless all of these agree:
 - `Candidate HEAD SHA`;
 - `Frozen candidate SHA`;
 - `Reviewed candidate SHA`;
-- successful `Freeze exact-SHA validation` check.
+- successful `Worker handoff lint` check.
 
-That successful freeze check may represent either a fresh canonical execution or strict reuse of an already-durable exact-SHA GREEN receipt for the identical frozen SHA.
+For candidates whose class still requires foundational exact-SHA proof, a successful `Freeze exact-SHA validation` check is additionally required. Non-foundational WPs retain their accepted lighter proof boundary; handoff lint validates process structure and does not silently promote them into the foundational proof regime.
+
+A successful freeze check may represent either a fresh canonical execution or strict reuse of an already-durable exact-SHA GREEN receipt for the identical frozen SHA.
 
 After PASS is persisted and these conditions hold, automation may merge immediately. Finalization then treats the verdict as fixed and may perform only post-merge documentation/finalization actions.
 
@@ -168,7 +179,9 @@ Automation V2 uses only standard GitHub-hosted runners by default. Do not introd
 
 Do not knowingly rerun an expensive exact-SHA proof solely to transition workflow state when a durable GREEN receipt for the identical SHA can be validated without weakening the proof boundary. Reuse is an orchestration optimization, not a semantic shortcut.
 
-If hosted Actions are unavailable, quota/policy changes, or a workflow platform fails, correctness does not disappear: the exact-SHA execution receipt protocol remains a valid manual fallback.
+The handoff lint is intentionally cheap and bounded: it exists to prevent avoidable Reviewer cycles caused by missing or incoherent process metadata, not to grow into a second semantic review engine.
+
+If hosted Actions are unavailable, quota/policy changes, or a workflow platform fails, correctness does not disappear: the exact-SHA execution receipt protocol remains a valid manual fallback where that proof regime applies, and the canonical Worker/Reviewer protocol remains authoritative.
 
 ## Non-goals
 
@@ -180,6 +193,7 @@ Automation V2 does not:
 - create hidden dependency routing;
 - maintain role leases;
 - make Telegram or another notification transport authoritative;
+- decide that a declared control is semantically sufficient merely because a field/path exists;
 - weaken Worker pre-review, trust-boundary, proof-budget or Reviewer independence rules.
 
 Keep this layer small. If automation starts accumulating product semantics, move that logic back into canonical scripts/contracts or delete the automation.
