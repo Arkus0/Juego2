@@ -31,11 +31,13 @@ The local handoff uses four different SHAs. They are deliberately not collapsed 
 
 No committed file is ever required to contain its own commit SHA. `MANIFEST_COMMIT_SHA` and `EVIDENCE_COMMIT_SHA` are durable external anchors, normally structured PR comments (or an equivalent immutable/check surface) created only after the corresponding commit SHA exists.
 
+For canonical `WORKER_REVIEW_PROTOCOL.md` v1.8 purposes, the exact SHA from which delegated execution starts is `MANIFEST_COMMIT_SHA`. The persisted execution contract is the **composite** of the manifest plus its durable external handoff anchor. `EXECUTION_BASE_SHA` separately proves that the manifest-only handoff commit did not silently change the product state being exercised.
+
 The causal chain for a normal mutating round is:
 
 ```text
 EXECUTION_BASE_SHA
-  -> MANIFEST_COMMIT_SHA        # manifest-only handoff commit
+  -> MANIFEST_COMMIT_SHA        # manifest-only handoff commit; exact local start SHA
   -> PRODUCT_RESULT_SHA         # allowlisted local outputs, no result summary
   -> EVIDENCE_COMMIT_SHA        # result-summary-only commit
   -> optional remote closeout/repair commits
@@ -72,13 +74,13 @@ The manifest is the local executor's primary instruction surface and MUST includ
 - exact Unity editor/project/toolchain requirement known at that point;
 - exact commands/actions to run, in order;
 - exact expected outputs/evidence;
-- `ALLOWED_MUTATION_PATHS` for files the local execution may legitimately create/change;
+- `ALLOWED_MUTATION_PATHS` for files the local execution may legitimately create/change, including the declared result-summary destination when it will be committed;
 - `FORBIDDEN_MUTATIONS` and scope boundary;
 - explicit PASS/FAIL/blocked observations to record;
 - stop conditions requiring `REMOTE_DECISION_REQUIRED`;
 - destination result file: `Docs/evidence/<WP-ID>/LOCAL_EXECUTION_RESULT.md` or an explicitly versioned round equivalent.
 
-After committing the manifest, the Worker obtains the actual `MANIFEST_COMMIT_SHA` and writes a durable external handoff anchor containing at minimum `WP-ID`, `LOCAL_ROUND`, `EXECUTION_BASE_SHA`, `MANIFEST_COMMIT_SHA`, manifest path, PR and branch. The Worker then stops branch writes until the delegated executor returns control.
+After committing the manifest, the Worker obtains the actual `MANIFEST_COMMIT_SHA`, pushes it to the canonical branch, verifies the remote branch HEAD equals that SHA, and only then writes a durable external handoff anchor containing at minimum `WP-ID`, `LOCAL_ROUND`, `EXECUTION_BASE_SHA`, `MANIFEST_COMMIT_SHA`, manifest path, PR and branch. The Worker then stops branch writes until the delegated executor returns control.
 
 The manifest must be sufficiently closed that the local executor does not need to reconstruct H0/H1/CITY architecture or make design choices.
 
@@ -102,8 +104,8 @@ The local executor MUST:
 8. record the complete changed-file set and verify it is a subset of the allowlist;
 9. if allowlisted repository outputs/candidate mutations exist, commit all of them **without** the summary result file and record the resulting commit as `PRODUCT_RESULT_SHA`; otherwise set `PRODUCT_RESULT_SHA = MANIFEST_COMMIT_SHA`;
 10. write the declared `LOCAL_EXECUTION_RESULT` including `EXECUTION_BASE_SHA`, `MANIFEST_COMMIT_SHA`, `PRODUCT_RESULT_SHA`, environment fingerprint, commands/actions, outputs/failures, complete changed-file inventory and artifact/evidence paths;
-11. commit the result summary separately so that the commit contains only that result file; after the commit exists, record its actual SHA as `EVIDENCE_COMMIT_SHA` in a durable external result anchor (normally a structured PR comment), together with WP/round and `PRODUCT_RESULT_SHA`;
-12. push only the predeclared allowlisted commits to the canonical branch and STOP, returning control to the remote Worker.
+11. commit the result summary separately so that the commit contains only that result file and record the resulting local commit SHA as `EVIDENCE_COMMIT_SHA`;
+12. push the predeclared allowlisted commits to the canonical branch, verify the remote branch HEAD equals `EVIDENCE_COMMIT_SHA`, then publish the durable external result anchor (normally a structured PR comment) containing WP/round, `PRODUCT_RESULT_SHA` and `EVIDENCE_COMMIT_SHA`; STOP and return control to the remote Worker.
 
 The local executor MUST NOT:
 
@@ -130,9 +132,10 @@ After local execution, the remote Worker MUST reconstruct live GitHub state agai
 - the external handoff anchor names the same `EXECUTION_BASE_SHA` as the manifest and the actual `MANIFEST_COMMIT_SHA`;
 - `MANIFEST_COMMIT_SHA` is a direct child of `EXECUTION_BASE_SHA` and its diff changes only the round manifest;
 - the local run started from the anchored `MANIFEST_COMMIT_SHA`;
-- `PRODUCT_RESULT_SHA` is either exactly `MANIFEST_COMMIT_SHA` (no pre-summary repository outputs) or the allowlisted local-output commit descended directly from it;
+- `PRODUCT_RESULT_SHA` is either exactly `MANIFEST_COMMIT_SHA` (no pre-summary repository outputs) or the single allowlisted local-output commit that is its direct child;
 - every local mutation is inside `ALLOWED_MUTATION_PATHS` and the product/output commit excludes the result summary;
 - `EVIDENCE_COMMIT_SHA` is the direct child of `PRODUCT_RESULT_SHA` and changes only the declared result-summary file;
+- the remote branch actually reached `EVIDENCE_COMMIT_SHA` before the external result anchor was published;
 - the external result anchor, result file and actual branch history agree on WP, round and SHA chain;
 - evidence binds the exact effective editor/package/platform/content inputs required by the WP;
 - PASS/FAIL meaning is supported by effective outputs rather than only declarations.
@@ -176,7 +179,7 @@ It should not reread the whole project history, reconstruct unrelated predecesso
 
 The independent Reviewer remains remote by default. It reviews the complete frozen candidate plus the durable local evidence. A Reviewer only needs its own local Unity execution when the WP or observed evidence specifically requires independent re-execution; ordinary review does not automatically consume another full local Codex Worker session.
 
-Local evidence is not trusted merely because Codex produced it. The Reviewer checks the exact `EXECUTION_BASE_SHA -> MANIFEST_COMMIT_SHA -> PRODUCT_RESULT_SHA -> EVIDENCE_COMMIT_SHA` chain (with the permitted equality case), environment fingerprint, allowlist compliance, causal relevance, later frozen-candidate ancestry and whether the effective outputs actually prove the claimed local seam.
+Local evidence is not trusted merely because Codex produced it. The Reviewer checks the exact `EXECUTION_BASE_SHA -> MANIFEST_COMMIT_SHA -> PRODUCT_RESULT_SHA -> EVIDENCE_COMMIT_SHA` chain (with the permitted equality case), external anchors, environment fingerprint, allowlist compliance, causal relevance, later frozen-candidate ancestry and whether the effective outputs actually prove the claimed local seam.
 
 ## H1 staging matrix
 
@@ -213,9 +216,9 @@ The desired recurring human workflow is:
 
 ```text
 ChatGPT remote Worker -> prepares product state + LOCAL_EXECUTION.md
-ChatGPT remote Worker -> anchors MANIFEST_COMMIT_SHA outside the manifest
+ChatGPT remote Worker -> pushes manifest commit, anchors MANIFEST_COMMIT_SHA outside the manifest
 human opens Codex locally -> "Ejecuta únicamente el LOCAL_EXECUTION de H1-XX"
-Codex pushes product/result commits, anchors EVIDENCE_COMMIT_SHA and stops
+Codex pushes product/result commits, verifies remote HEAD, anchors EVIDENCE_COMMIT_SHA and stops
 ChatGPT remote Worker -> verifies SHA chain, closeout/pre-review/freeze
 fresh ChatGPT Reviewer -> PASS/FAIL
 ```
