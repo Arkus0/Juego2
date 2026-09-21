@@ -6,10 +6,10 @@ Baseline SHA: `0b8f23fbce227bbbc710c8410dff575fcb9fcf12`
 Active Worker: `ChatGPT GPT-5.6 Sol`  
 Worker history: `ChatGPT GPT-5.6 Sol`  
 Transfer SHA: `NONE`  
-fail_cycle: **0**  
+fail_cycle: **1**  
 Governing protocol: `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` v1.7
 
-This is Worker quality-gate evidence, not independent review.
+This is Worker quality-gate evidence, not independent review. Cycle 1 exists because independent review #5265810937 correctly rejected the cycle-0 Q6 capacity oracle.
 
 ---
 
@@ -24,14 +24,7 @@ Direct dependency `WP-CITY-01` is accepted:
 
 The mandatory predecessor split is recorded in `WORKER_PLAN.md`. CITY-00 geography and CITY-01 movement/access are consumed rather than re-proved.
 
-While CITY-02 was active, `main` advanced from the recorded baseline `0b8f23f...` to `d20f7452ac689399b66f0601e8d0d8faa86d01a5`. The baseline→new-main comparison contains only the accepted WP-H1-01 DocSync and H1/index documentation:
-
-- `Docs/evidence/WP-H1-01/DOCSYNC.md`;
-- `Docs/workpacks/H1/README.md`;
-- `Docs/workpacks/H1/WP-H1-01.md`;
-- `Docs/workpacks/README.md`.
-
-No CITY-00/CITY-01 semantic owner, CITY-02 contract, ART input or Production Blueprint surface consumed by this workpack changed. Therefore the predecessor check remains valid and no semantic rebase is required before freeze.
+At cycle-1 repair time PR #81 still reports base `main` as `d20f7452ac689399b66f0601e8d0d8faa86d01a5`; no accepted CITY-00/CITY-01 semantic owner, CITY-02 contract, ART input or Production Blueprint surface consumed by this workpack changed relative to the cycle-0 predecessor check. No semantic rebase is required for this bounded repair.
 
 Result: **PASS.**
 
@@ -39,14 +32,19 @@ Result: **PASS.**
 
 ## 2. Complete baseline→candidate diff / scope challenge
 
-The Worker inspected the complete PR diff rather than only the latest repair. Before this pre-review evidence itself, product/evidence changes are confined to:
+The Worker inspected the complete PR diff and the independent FAIL, not only the latest repair.
 
-- `Docs/production/CITY_LOCATION_PROGRAMME.md` — sole CITY-02 semantic owner;
+Product/evidence changes remain confined to:
+
+- `Docs/production/CITY_LOCATION_PROGRAMME.md` — sole CITY-02 place-programme semantic owner;
 - `Docs/evidence/WP-CITY-02/WORKER_PLAN.md`;
 - `Docs/evidence/WP-CITY-02/PROGRAMME_AUDIT.md`;
-- `Docs/evidence/WP-CITY-02/CAPACITY_SANITY.md`.
+- `Docs/evidence/WP-CITY-02/CAPACITY_SANITY.md`;
+- this pre-review and final handoff evidence.
 
-There is no code, Unity scene, prefab/asset adoption, H0/H1 contract mutation, CITY-00/CITY-01 mutation, CITY-05 shell design, CITY-06 detailed interior/discovery design or Living World runtime implementation.
+Cycle 1 does **not** alter the 37-row place programme, A–D/S0–S4 assignments, CITY-00 geography or CITY-01 movement semantics. It repairs only the evidence/acceptance argument for the CITY-00 Q6 capacity delegation.
+
+There is no code, Unity scene, prefab/asset adoption, H0/H1 contract mutation, CITY-05 parcel/shell design, CITY-06 detailed interior/discovery design or Living World runtime implementation.
 
 Result: **PASS.**
 
@@ -54,7 +52,7 @@ Result: **PASS.**
 
 ## 3. Classification-independence challenge
 
-The candidate contains 37 programmed place/family rows. Derived audit totals are:
+The candidate contains 37 programmed place/family rows. Derived audit totals remain:
 
 - importance: `A=8`, `B=15`, `C=11`, `D=3`;
 - depth: `S0=2`, `S1=17`, `S2=10`, `S3=7`, `S4=1`.
@@ -93,15 +91,13 @@ The interior backlog resolves to exactly one priority for every programme row:
 - I2 DEEP = 6;
 - I3 HERO = 1.
 
-### Finding discovered and repaired during pre-review
+### Finding discovered and repaired during cycle-0 pre-review
 
-The first candidate wrote `loc.ribera.service_yard` as `I0/I1` in the master ledger and A/B profile even though the dedicated interior ledger already assigned I1. That was a material ambiguity because CITY-02's DoD is to give CITY-05/CITY-06 one unambiguous programme rather than forcing them to decide the commitment again.
-
-Commit `e6fe45d94701d4b2cec0cada6f6996287fac3874` repaired the semantic owner so both authoritative references now say **I1**. `PROGRAMME_AUDIT.md` was then reconciled after the repair.
+The first candidate wrote `loc.ribera.service_yard` as `I0/I1` in the master ledger and A/B profile even though the dedicated interior ledger already assigned I1. Commit `e6fe45d94701d4b2cec0cada6f6996287fac3874` repaired both authoritative references to **I1**.
 
 No other slash/range interior assignment remains in the master/profile contract.
 
-Result: **PASS AFTER 1 FINDING FIXED.**
+Result: **PASS AFTER 1 WORKER FINDING FIXED.**
 
 ---
 
@@ -123,9 +119,31 @@ CITY-00 Q6/Q7/Q8 were challenged explicitly rather than assumed closed by prose.
 
 ### Q6 — fit without crowding quiet fabric
 
-`CAPACITY_SANITY.md` consumes the accepted approximate dense-fabric areas without claiming parcel precision. Twenty-one A/B handles fall within the ~0.365 km² dense-fabric subtotal, a crude pressure of about one A/B handle per ~17,380 m²; two further A/B places are in Vega outside that subtotal.
+#### Cycle-0 false green
 
-This is not a parcel-fit oracle. It establishes only that the programme has no obvious area-pressure contradiction before CITY-05. The depth burden is selective: one I3 hero, six I2, seven I1, with ordinary/scenic families and I0 remaining explicit.
+The rejected candidate used `21 dense A/B handles / 0.365 km²` (~17,380 m² per handle), then cited selective `I0..I3` depth as reassurance. Independent review #5265810937 correctly identified that this cannot prove capacity: a handle can be a threshold, square, yard or building, and I-depth does not measure exterior/footprint/frontage demand. Two materially different programmes could therefore receive the same positive result.
+
+That oracle has been removed. Handle count is now descriptive only.
+
+#### Cycle-1 capacity bound
+
+`CAPACITY_SANITY.md` assigns every A/B place a role-based `T/S/M/L` **programme envelope** with a conservative upper spatial-demand ceiling. The envelope includes shell/footprint need plus dedicated yard/open-space/threshold apron where applicable, while excluding shared streets/routes and avoiding parcel boundaries or exact dimensions.
+
+All dense-part calculations charge the **upper** class bound:
+
+- Wedge: 26,100 / 150,000 m² = 17.4%, below 25% A/B cap; 60% hard ordinary/quiet reserve;
+- Ensanche: 5,000 / 90,000 m² = 5.6%, below 15% cap; 70% reserve;
+- Barrio Alto: 7,500 / 60,000 m² = 12.5%, below 20% cap; 65% reserve;
+- Puerto: 13,100 / 45,000 m² = 29.1%, below 35% cap; 50% ordinary/work reserve;
+- Entrada: 5,600 / 20,000 m² = 28.0%, below 30% cap; 55% edge/ordinary reserve.
+
+Each part also holds 15% as uncommitted/circulation margin that CITY-02 cannot spend to make the arithmetic pass. Aggregate dense A/B upper demand is 57,300 m² (15.7%) while hard reserve totals 225,500 m².
+
+The test is falsifiable rather than automatically positive. Entrada has only 400 m² A/B-cap headroom. If `loc.entrada.depot_forecourt` cannot truthfully stay within `M` and requires `L`, Entrada becomes 8,100 m² / 40.5% and **Q6 fails/reopens**. Any class-ceiling breach, new/promoted A/B place, part-cap breach, reserve borrowing or use of named protected quiet fabric as overflow requires recomputation before acceptance.
+
+This closes coarse programme capacity without parcelising CITY-05. CITY-05 still owns actual site/parcel/shell composition and can discover a class-ceiling or shape/access conflict; it may not hide such a conflict by consuming the hard reserve.
+
+Result: **PASS AFTER INDEPENDENT REVIEW BLOCKER REPAIRED.**
 
 ### Q7 — two ordinary non-port services at Entrada/Puerto
 
@@ -187,7 +205,9 @@ A/B profiles deliberately contain demand windows, role families, witness potenti
 - incident-generation logic;
 - off-screen simulation implementation.
 
-The semantic owner repeatedly assigns those to later Living World/runtime owners. Likewise CITY-05 owns parcels/shells, CITY-06 owns detailed interior/discovery design, CITY-03 owns retained-seed choice and CITY-04 owns bounded physical measurement.
+The semantic owner repeatedly assigns those to later Living World/runtime owners. Likewise CITY-05 owns actual parcels/shells, CITY-06 owns detailed interior/discovery design, CITY-03 owns retained-seed choice and CITY-04 owns bounded physical measurement.
+
+The new `T/S/M/L` capacity classes do not alter that ownership. They are conservative acceptance bounds, not site plans.
 
 Result: **PASS.**
 
@@ -204,7 +224,8 @@ The explicit negative gates survive the complete candidate:
 - ordinary Puerto sheds remain C/S1 rather than becoming missions/interiors;
 - no persistent-every-pedestrian contract exists;
 - no “every prop smart” contract exists;
-- no asset/prefab convenience is allowed to silently promote I0 fabric.
+- no asset/prefab convenience is allowed to silently promote I0 fabric;
+- the Q6 capacity oracle cannot pass merely because handle count is low.
 
 Result: **PASS.**
 
@@ -214,7 +235,8 @@ Result: **PASS.**
 
 Still downstream:
 
-- exact parcel/site placement, footprint and frontage dimensions — CITY-05;
+- exact parcel/site placement, exact footprint/frontage dimensions and shell composition — CITY-05;
+- any discovery that a programmed place exceeds its CITY-02 capacity class ceiling — must trigger Q6 recomputation/review rather than quiet-fabric borrowing;
 - exact interior layouts/discovery routes — CITY-06;
 - exact retained seed — CITY-03;
 - realized blockout and traversal/reactive-density measurements inside the accepted seed — CITY-04;
@@ -229,14 +251,23 @@ These are not hidden acceptance claims of CITY-02.
 
 ## 12. Worker verdict
 
-One material in-claim ambiguity was discovered and repaired before freeze. The complete post-repair candidate has been challenged against the WP, inherited CITY-00/CITY-01 guarantees, scope boundary, negative gates, capacity pressure and downstream ownership. No known in-claim blocker remains.
+Cycle 0 contained one Worker-found interior ambiguity and later received one independent-review FAIL on Q6 capacity. Both are now repaired in their causal surfaces:
+
+- `e6fe45d...` — service-yard interior priority made unambiguous;
+- `9661006d7f617dad287c7ea383763748dcb2ab6f` — false-green handle-density capacity check replaced by role-based upper demand classes, per-part caps, hard reserve, margin and explicit fail/reopen rules;
+- `1f4cad98fe105f0f13a9ace591a3bec962909687` — programme audit reconciled to the repaired Q6 proof.
+
+The complete cycle-1 candidate has been challenged against the WP, the exact reviewer blocker, inherited CITY-00/CITY-01 guarantees, scope boundary, negative gates and downstream ownership. No known in-claim blocker remains.
 
 ```text
 WORKER_PRE_REVIEW: CLEAN
+FAIL_CYCLE: 1
 WORKER_PRE_REVIEW_FINDINGS_FIXED: 1
+INDEPENDENT_REVIEW_BLOCKERS_FIXED: 1
+REVIEWER_FAIL_REPAIRED: #5265810937
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-CITY-02/WORKER_PRE_REVIEW.md
 PROGRAMME_AUDIT: Docs/evidence/WP-CITY-02/PROGRAMME_AUDIT.md
 CAPACITY_SANITY: Docs/evidence/WP-CITY-02/CAPACITY_SANITY.md
 ```
 
-Next protocol step: create the final handoff as the last branch mutation, read the exact PR HEAD, record it as Candidate/Frozen SHA in PR #81, mark Ready, and stop Worker writes pending a fresh independent Reviewer.
+Next protocol step: update the final handoff as the last branch mutation, read exact PR HEAD, record it as Candidate/Frozen SHA in PR #81, mark Ready, and stop Worker writes pending fresh independent review.
