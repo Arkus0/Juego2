@@ -13,6 +13,7 @@ if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 
 test -f src/Arkus.EngineBridge/Arkus.EngineBridge.csproj
 test -f src/Arkus.EngineBridge/ProjectionContract.cs
+test -f scripts/h1-00-negative-conformance.sh
 
 test -f src/Arkus.Harness.Mcp/packages.lock.json
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
@@ -20,8 +21,6 @@ DOTNET_NOLOGO=1 dotnet build Juego2.sln --configuration Release --no-restore -m:
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore -m:1 --disable-build-servers \
   --filter 'FullyQualifiedName~H1EngineBridgeReferenceTests'
-DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
-  --configuration Release --no-build --no-restore -m:1 --disable-build-servers
 
 if grep -R -E 'UnityEngine|UnityEditor' src/Arkus.EngineBridge --include='*.cs' --include='*.csproj'; then
   echo "H1-00 neutral assembly contains a Unity implementation type/reference" >&2
@@ -31,6 +30,11 @@ if grep -E 'ProjectReference|PackageReference' src/Arkus.EngineBridge/Arkus.Engi
   echo "H1-00 neutral assembly unexpectedly depends on another product/package project" >&2
   exit 2
 fi
+
+bash scripts/h1-00-negative-conformance.sh
+
+DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+  --configuration Release --no-build --no-restore -m:1 --disable-build-servers
 
 [[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean after H1-00 observation" >&2; exit 2; }
 
@@ -43,7 +47,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/h1-00-observe-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: locked-restore=GREEN; release-build=GREEN; focused-reference-materializer=GREEN; neutral-dependency-boundary=GREEN; regression=GREEN
+Required gates: locked-restore=GREEN; release-build=GREEN; focused-reference-materializer=GREEN; neutral-dependency-boundary=GREEN; causal-negative-controls=GREEN; regression=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-H1-00
 EOF
