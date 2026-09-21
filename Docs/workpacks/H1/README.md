@@ -7,6 +7,7 @@ Binding architecture: `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md`
 Binding decisions: `Docs/architecture/ADR-H1-001-*` through `ADR-H1-004-*`
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` v1.4+
 Architect pre-review: `Docs/evidence/H1-PLAN/ARCHITECTURE_PRE_REVIEW.md`
+Source-art timing correction candidate: `Docs/evidence/H1-PLAN/QUATERNIUS_SOURCE_TIMING_CORRECTION.md`
 Planning acceptance: PR `#71`; reviewed frozen candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b`; independent PASS review `#5263596722`; merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`
 Exact-SHA validation: candidate observation Actions `35567622151` GREEN; freeze validation Actions `35567723539` GREEN
 Plan DocSync: `DOCSYNC_COMPLETE`
@@ -24,6 +25,16 @@ The sequence contains 13 claim-owned implementation workpacks plus `WP-H1-GATE`.
 
 H1 ends only when Arkus can drive a representative Juego2 slice through public contracts into a deterministic, inspectable, repairable and rebuildable Unity projection without making Unity canonical authority.
 
+## Production source-art rule
+
+H1-02 through H1-03A need infrastructure/toolchain state but no production art. **H1-04 is the first workpack that needs game-representative assets and is therefore the initial Quaternius Source adoption gate.** Before H1-04 catalogues production-intent source content, the exact human-approved Quaternius Source distribution/slice must satisfy `DEPENDENCY_IP_POLICY.md`.
+
+From H1-04 onward, when an H1 scenario needs game-representative facade, prefab, material, prop, vegetation, humanoid or animation content, it uses that accepted Quaternius Source baseline. Repository-owned synthetic fixtures remain allowed for harness-only markers, abstract proof objects and deliberate defect injection, but not as throwaway substitute production art.
+
+`WP-H1-11` does **not** wait until the end to introduce real art. It expands the already-used Quaternius baseline to the approximately 10–15 piece representative slice and proves broad end-to-end hierarchy/material/pivot/rig/animation conformance before H1-GATE.
+
+This source-art timing rule does not add a workpack and does not authorize keeper/CITY production inside H1.
+
 ## DAG
 
 ```text
@@ -32,10 +43,11 @@ WP-HK-GATE
    +--> H1-02 Unity project/toolchain -----------------------------------+
                                                                           v
  H1-03 host/workspace policy -> H1-03A public Editor execution/lifecycle
-      -> H1-04 catalogue/identity -> H1-05 managed scenes
+      -> H1-04 catalogue/identity + minimal Quaternius Source adoption
+      -> H1-05 managed scenes
       -> H1-06 assets/prefabs -> H1-07 components -> H1-08 validation
       -> H1-09 reconciliation/import proposals -> H1-10 checkpoint/rebuild
-      -> H1-11 representative real-asset slice -> H1-GATE
+      -> H1-11 representative Quaternius conformance expansion -> H1-GATE
 
  H1-08 -. non-blocking prerequisite .-> CITY-04 (after CITY-03)
  H1-GATE -. keeper authorization .----> CITY-07 (after CITY-04)
@@ -54,14 +66,14 @@ The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox fal
 | 3 | `WP-H1-02` | pinned reproducible Unity project/toolchain/package baseline | `LOCAL_UNITY_REQUIRED` |
 | 4 | `WP-H1-03` | explicit project-scoped Unity host authority below transports | `HYBRID` |
 | 5 | `WP-H1-03A` | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID` |
-| 6 | `WP-H1-04` | effective Unity catalogue and logical/native identity mapping | `LOCAL_UNITY_REQUIRED` |
+| 6 | `WP-H1-04` | effective Unity catalogue/logical identity + minimal approved Quaternius Source baseline | `LOCAL_UNITY_REQUIRED` |
 | 7 | `WP-H1-05` | deterministic managed scene graph and generational publication | `LOCAL_UNITY_REQUIRED` |
 | 8 | `WP-H1-06` | source-asset/prefab resolution plus managed prefab derivatives | `LOCAL_UNITY_REQUIRED` |
 | 9 | `WP-H1-07` | allowlisted component schema, inspection and realization | `LOCAL_UNITY_REQUIRED` |
 | 10 | `WP-H1-08` | Unity-owned validation and stable diagnostics | `HYBRID` |
 | 11 | `WP-H1-09` | deterministic drift plus explicit Unity-to-canonical proposals | `LOCAL_UNITY_REQUIRED` |
-| 12 | `WP-H1-10` | project checkpoint and clean Unity reconstruction preserving H0 | `HYBRID` |
-| 13 | `WP-H1-11` | exact licensed real-asset Juego2-shaped conformance slice | `LOCAL_UNITY_REQUIRED` |
+| 12 | `WP-H1-10` | project checkpoint and clean Unity reconstruction preserving H0/source inputs | `HYBRID` |
+| 13 | `WP-H1-11` | expanded Quaternius representative real-asset conformance slice | `LOCAL_UNITY_REQUIRED` |
 | 14 | `WP-H1-GATE` | composed Unity bridge/parity readiness | `HYBRID` |
 
 ## Split review
@@ -72,17 +84,17 @@ The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox fal
 | H1-01 vs H1-03 | contract composition and dependency derivation do not prove editor/project host authority |
 | H1-02 vs H1-03 | a reproducible project can exist while policy admission is bypassable, and vice versa |
 | H1-03 vs H1-03A | admitting fixed project/editor authority does not prove public process dispatch, main-thread execution or truthful interruption lifecycle |
-| H1-03A vs H1-04 | a correct public Editor execution seam can pass while effective catalogue identity/completeness is false |
-| H1-04 vs H1-05 | read-only inventory/identity can pass while writes/materialization are unsafe |
+| H1-03A vs H1-04 | a correct public Editor execution seam can pass while effective real-source catalogue identity/completeness or the first source-adoption boundary is false |
+| H1-04 vs H1-05 | read-only inventory/identity and source qualification can pass while writes/materialization are unsafe |
 | H1-05 vs H1-06 | deterministic GameObject hierarchy does not prove prefab/asset relationship fidelity |
 | H1-06 vs H1-07 | prefab linkage and arbitrary component-field semantics have different universes/oracles |
 | H1-07 vs H1-08 | realization success does not prove complete/actionable diagnostics |
 | H1-08 vs H1-09 | detecting invalid/drifted state does not authorize a synchronization direction |
 | H1-09 vs H1-10 | correct reconciliation in one session does not prove restart/checkpoint reconstruction |
-| H1-10 vs H1-11 | generic rebuildability does not prove real hierarchy/material/animation asset shapes or license adoption |
-| H1-11 vs GATE | real-asset conformance is an input; gate is closure/composition plus fresh public-client readiness |
+| H1-10 vs H1-11 | rebuilding the already-adopted minimal source slice does not prove broader representative hierarchy/material/pivot/rig/animation conformance |
+| H1-11 vs GATE | broad real-source conformance is an input; gate is closure/composition plus fresh public-client readiness |
 
-No boundary is a single function or administrative checkpoint. Combining any adjacent pair above would give one Reviewer two independently rejectable claims; splitting further would create provisional contracts or duplicate the same authority proof.
+No boundary is a single function or administrative checkpoint. Combining any adjacent pair above would give one Reviewer independently rejectable claims; splitting further would create provisional contracts or duplicate the same authority proof. The small H1-04 source-adoption record is input qualification for the first real catalogue rather than a separate workpack.
 
 ## Track-wide inherited guarantees
 
@@ -93,6 +105,8 @@ H1 consumes H0 canonical identity/hash, complete inspection, plan/dry-run/atomic
 - deterministic proof is the default;
 - each public/authorable semantic change gets a bounded approved Juego2 content-shape probe;
 - Unity-required evidence records exact editor/package/platform fingerprints;
+- from H1-04 onward, game-representative asset content comes from the accepted Quaternius Source baseline; synthetic repository fixtures may test harness mechanics/negative controls but do not satisfy production-art shape claims;
+- required source identity/adoption/import fingerprints are evidence inputs alongside Unity/package/platform fingerprints;
 - missing local Unity evidence cannot be called PASS;
 - no full H0 AI trial or complete H0 replay/transport suite is repeated per WP;
 - every Editor-bound public operation enters canonical composition and consumes the single H1-03A execution seam; private scripts/menus or adapter-only routes are not acceptance evidence;
@@ -101,4 +115,4 @@ H1 consumes H0 canonical identity/hash, complete inspection, plan/dry-run/atomic
 
 ## Pre-mortem result
 
-The complete sequence was challenged for dual claims, inherited-contract re-proof, self-shrinking universes, non-causal controls, predictable downstream reopenings, closure-owned product semantics, premature AI trials, temporary contracts and Unity model leakage. The split above is the result. Workpack-specific reopen conditions and residuals make remaining uncertainty explicit; no WP requires a contract that the plan already intends to break later.
+The complete sequence was challenged for dual claims, inherited-contract re-proof, self-shrinking universes, non-causal controls, predictable downstream reopenings, closure-owned product semantics, premature AI trials, temporary contracts and Unity model leakage. The source-art timing correction removes one additional temporary-contract risk: proving H1-04..10 against disposable fabricated game-art shapes despite a known production source choice. Workpack-specific reopen conditions and residuals make remaining uncertainty explicit; no WP requires a content contract that the plan already intends to replace later.
