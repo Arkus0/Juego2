@@ -1,6 +1,6 @@
 # Keeper City — Mobility topology, access graph and travel-cost hypotheses
 
-Version: 1.1 — 2026-09-21  
+Version: 1.2 — 2026-09-21  
 Workpack: `WP-CITY-01 — Mobility, district graph + walk-time topology`  
 Class: **PRODUCT / SPATIAL PREPRODUCTION — NON-FOUNDATIONAL**
 
@@ -8,7 +8,7 @@ Status: **CITY-01 candidate semantic owner.** This document owns the movement/ac
 
 Accepted predecessor: `Docs/production/CITY_SPATIAL_CONSTITUTION.md` plus `Docs/evidence/WP-CITY-00/CONNECTIVITY_MATRIX.md`. If this document appears to create a dry Wedge→Puerto edge, an Ensanche↔Orilla-sur edge, or any inter-landmass edge other than `X1..X7`, this document is wrong.
 
-All times below are **planning weights / target hypotheses**, not measurements. `CITY-04` must measure them in the Unity greybox.
+All times below are **planning weights / target hypotheses**, not measurements. `CITY-04` later measures the subset physically represented by the exact `CITY-03` retained seed and calibrates the route-cost model from those measurements. A full-city route whose endpoints/geometry are outside that bounded seed remains an **unmeasured full-route hypothesis** until a later explicit owner has geometry to measure it; summing calibrated segment classes is still an estimate, not a measured trip.
 
 ---
 
@@ -42,7 +42,7 @@ The following are consumed from CITY-00:
 6. **Three Wedge longitudinal families:** low paseo/sirga, middle Calle Mayor and high callejas/upper route.
 7. **Plaza independence:** the Plaza may converge routes but cannot be the structural connector.
 8. **Quiet fabric:** upper Vega, upstream paseo and the ravine/lavadero route remain low-intensity.
-9. **Scale hypotheses:** effective pedestrian speed starts at 1.15 m/s; representative long ordinary travel remains targeted at roughly 13–17 min; all such values remain unmeasured until CITY-04.
+9. **Scale hypotheses:** effective pedestrian speed starts at 1.15 m/s; representative long ordinary travel remains targeted at roughly 13–17 min; all such values remain unmeasured until physically validated at the required extent.
 
 This document adds internal same-landmass edges. It adds **zero** new water crossings.
 
@@ -107,11 +107,11 @@ These are planning classes, not final grade percentages:
 - `E3` — stairs/stepped route; pedestrian only for ordinary routing;
 - `EW` — water crossing or ferry service.
 
-CITY-04 owns measured grade, total level change and actual traversal cost.
+CITY-04 owns measured grade, total level change and actual traversal cost **for geometry present in its bounded seed**; measurements cannot be projected into absent full-city geometry and relabelled as measured fact.
 
 ### 4.3 Access class
 
-Access is a planning claim that CITY-04 must physically validate. If an edge marked road-capable cannot provide the required clearance, that `AR` claim reopens rather than silently degrading at implementation time.
+Access is a planning claim that CITY-04 must physically validate where the relevant edge is inside the seed. If an edge marked road-capable is later realized and cannot provide the required clearance, that `AR` claim reopens rather than silently degrading at implementation time.
 
 - `AR` — planned road-capable: pedestrian + slower pedestrian + bicycle + service/delivery cart.
 - `AP` — public pedestrian route; bicycle handling follows the explicit bicycle profile in §6.
@@ -212,7 +212,7 @@ This table is a **projection of §5.1–5.4, not a second edge owner**. It exist
 | Barrio Alto ↔ Ribera/Talleres | `W11` | stepped secondary relation |
 | Ribera/Talleres ↔ landing head | `W08` | public low/service-capable relation |
 | Ribera/Talleres ↔ Calle Mayor shop edge | `W17` | restricted service/back relation |
-| Casco Viejo ↔ Orilla sur | `W12-X1` | historic pedestrian/handcart crossing relation |
+| Casco Viejo ↔ Puerto (south-bank approach) | `W12-X1-O01` to `O.PUERTO_UP` | historic pedestrian/handcart crossing plus camino-sur relation |
 | landing head ↔ Puerto | `X6` State 1 / `X7` State 2 | territorial crossing relation |
 | Puerto ↔ Entrada | `O02-O03` | primary port/valley-road relation |
 
@@ -227,7 +227,7 @@ These are **spatial routing assumptions**, not runtime AI or vehicle simulation 
 | Profile | Spatial rule |
 |---|---|
 | ordinary pedestrian | uses `AR/AP/AF/AH`, X6 when available, and `AS` only when access context explicitly permits it |
-| slower pedestrian | same connectivity; multiply E0/E1 segment costs by **1.35** and E2/E3 segment costs by **1.50**; these are alternatives by class, not cumulative multipliers; CITY-04 measures them |
+| slower pedestrian | same connectivity; multiply E0/E1 segment costs by **1.35** and E2/E3 segment costs by **1.50**; these are alternatives by class, not cumulative multipliers; CITY-04 measures them where represented |
 | bicycle | rides `AR` and `AP` edges of E0/E1; on `AP` E2/E3 it must dismount and walk; `AF` is bicycle-inaccessible; X1 (`AH`) may be crossed only with the bicycle dismounted/pushed; X6 carriage is **not assumed**; State 2 X7 is rideable `AR` |
 | service / delivery cart | uses `AR/AS`; may use X2/X4 and State-2 X7; cannot use X1/X3/X5; CITY-01 does not grant cart carriage on X6 |
 | porter / carried delivery | follows ordinary pedestrian topology and may use X6 when available |
@@ -257,6 +257,8 @@ The graph intentionally creates profile disagreement: the shortest pedestrian li
 
 The State-1 equivalent of an X7 route substitutes X6 at the same base crossing cost and then adds `W_ferry`. Therefore CITY-00's walking bands remain **motion/route targets**; door-to-door State-1 ferry trips may legitimately exceed them while waiting.
 
+The table is a full-city planning matrix. CITY-04 may only mark a row `MEASURED` if its complete realized route lies inside the exact CITY-03 seed. Otherwise the row stays `UNMEASURED_FULL_ROUTE` even if some constituent segment classes have been calibrated locally.
+
 ### 7.2 Costs explicitly resolved by CITY-01
 
 **Ensanche home → Puerto quay** was deferred by CITY-00:
@@ -276,6 +278,8 @@ The State-1 equivalent of an X7 route substitutes X6 at the same base crossing c
 - State 1 direct ferry: the same base costs + `W_ferry`.
 - State 1 X6-suspended route via market/core/X1/camino sur: **≈16.75 min**.
 - plaza-free X1 fallback stays much longer and is not treated as the ordinary default.
+
+These are **CITY-01 planning costs**. The exact-seed limitation in §11 governs which of them CITY-04 can physically measure end to end.
 
 ### 7.3 L1 / L1′ traffic character — CITY-00 Q12 resolved
 
@@ -395,45 +399,77 @@ X4 and X5 are useful variability, not foundations:
 - **Ensanche:** ordinary residential origin with both road and foot crossing choices.
 - **Ribera/Talleres:** secondary work corridor plus the service/back connection to Calle Mayor.
 - **Puerto/Entrada:** ordinary work, freight and arrival movement; not mission-only scenery.
-- **Vega:** quiet rural origin that still has a credible 6–7 min market trip and 15–17 min cross-city trip.
+- **Vega:** quiet rural origin that still has a credible 6–7 min market trip and 15–17 min cross-city planning trip.
 
-This satisfies CITY-00's “elsewhere in town” intention without increasing city acreage: some ordinary trips are short, while the longest representative trips are long enough for an actor to be genuinely elsewhere.
+This satisfies CITY-00's “elsewhere in town” intention without increasing city acreage: some ordinary trips are short, while the longest representative planning trips are long enough for an actor to be genuinely elsewhere.
 
 ---
 
-## 11. CITY-04 measurement handoff
+## 11. CITY-04 measurement/calibration handoff
 
-CITY-04 must measure/falsify, not merely reproduce, the planning graph.
+There is an important scope boundary to preserve:
 
-At minimum record:
+- `CITY-03` owns the **exact retained-seed boundary** and the exact local measurement pack;
+- `CITY-04` is forbidden to build outside that bounded seed;
+- therefore CITY-04 cannot honestly measure a full CITY-01 trip whose complete route is not inside the selected seed.
 
-1. actual route length and traversal time for every §7.1 inherited benchmark;
-2. effective speed on E0/E1 lanes versus E2/E3 steep/stair segments;
-3. total level change and direction-sensitive time on `W11` Barrio Alto↔Ribera;
-4. whether `W06` Cuesta and the landing approach remain readable/followable without making the river crossing visually trivial;
-5. actual X2-closure penalty through X4 and X3;
-6. actual State-2 Vega↔Puerto and Ensanche↔Puerto times;
-7. whether an X1 route can plausibly beat X6 once ferry wait is introduced, without scripting the answer;
-8. bicycle roll/dismount points and whether the Calle Mayor/X2 preference remains meaningful;
-9. service-cart geometry on the State-2 `O02→X7→W08→W17` delivery route;
-10. arrival transition from `O.ENTRADA` into pedestrian movement and the 9.5-min State-2 target to Plaza;
-11. followability over `Ensanche → X3 → Barrio → Ribera → landing → X6/X7 → Puerto`, including branch choices and sightline loss;
-12. the Plaza-node removal test using only public edges, with `W17` excluded;
-13. whether the permanent Vega→landing quiet-paseo option remains near enough in cost to the commercial route to be a plausible contextual choice.
+CITY-01 hands CITY-03/04 a **measurement universe**, not permission to expand the greybox. CITY-03 selects the applicable subset when it defines the seed. CITY-04 must label each requested item one of:
+
+- `MEASURED` — complete route/segment exists inside the built seed and was traversed;
+- `CALIBRATED_COMPONENT` — a represented edge/elevation/access class was measured and can inform later estimates, but the full route was not built;
+- `NOT_IN_SEED` — required full geometry/endpoints are absent, so no measured full-trip claim is allowed.
+
+A sum of `CALIBRATED_COMPONENT` values across absent geometry remains a planning estimate.
+
+### 11.1 Questions CITY-04 can consume whenever the selected seed represents them
+
+1. actual route length and traversal time for each §7.1 benchmark **whose complete route lies inside the CITY-03 seed**;
+2. effective speed on represented E0/E1 lanes versus E2/E3 steep/stair segments;
+3. total level change and direction-sensitive time on any represented portion of `W11` Barrio Alto↔Ribera;
+4. whether represented `W06` Cuesta / landing-seam geometry remains readable/followable without making the future Río crossing visually trivial;
+5. actual closure penalty for the Arroyo crossing and alternate selected by CITY-03, without inventing the other crossings if they are outside the seed;
+6. bicycle roll/dismount behaviour on represented `AR/AP/AF/AH` examples;
+7. service-cart clearance on every represented `AR/AS` edge used by the seed's delivery/service scenario;
+8. arrival/exit readability at any represented residential/rural/port seam, without pretending the unseen district has been traversed;
+9. followability through the selected seed's branch points and sightline-loss moments;
+10. Plaza-node removal / local alternate-path test using only represented public edges, with restricted `AS` edges excluded unless access is part of the explicit scenario;
+11. quiet-versus-busy route contrast where both alternatives are physically present in the seed.
+
+### 11.2 Full-city hypotheses CITY-04 must not fake-measure
+
+Unless CITY-03 unexpectedly selects a seed containing the entire route, the following remain `NOT_IN_SEED` as end-to-end measurements:
+
+- Vega ↔ Puerto;
+- Ensanche ↔ Puerto;
+- Entrada/bus ↔ Plaza if Entrada is outside the seed;
+- complete L1/L1′ if Puerto/X6/X7 are only future seams;
+- any full X2/X4/X3 closure comparison whose alternate crossing is outside the seed.
+
+CITY-04 may calibrate constituent classes and report whether the planning model looks plausible, but it may not label those full trips measured.
+
+### 11.3 Programme residual created by the bounded-seed rule
+
+Full-city end-to-end validation needs a later realization containing the relevant endpoints. The current accepted CITY programme does **not** assign CITY-04 permission to build that larger geometry, and CITY-01 does not expand CITY-04 by implication.
+
+Therefore the post-CITY-01/CITY-03 handoff must preserve this residual:
+
+> **FULL_CITY_ROUTE_MEASUREMENT:** planning costs exist now; CITY-04 measures/calibrates the retained-seed subset only. Any remaining full-city route must stay explicitly unmeasured until a later accepted WP owns sufficient realized geometry or the programme is explicitly amended.
+
+This is a measurement-ownership residual, not a reason to weaken the route model or redraw CITY-00.
 
 ### Material falsification conditions
 
-CITY-04 should reopen the relevant planning boundary rather than rationalise the result if:
+Where CITY-04 has enough geometry to test the claim, it should reopen the relevant planning boundary rather than rationalise the result if:
 
-- the representative ordinary long walk cannot land inside the inherited **13–17 min** envelope without distorting geography;
+- a representative route inside the seed materially violates its intended band;
 - a required alternate route is physically unrealizable at the accepted landmass/crossing layout;
-- X2 closure either becomes nearly costless or functionally disconnects normal pedestrian movement;
-- the Barrio Alto↔Ribera vertical route is so slow/opaque that following/search through it is not credible;
+- the represented X2/selected-crossing closure either becomes nearly costless or functionally disconnects normal pedestrian movement;
+- the represented Barrio Alto/Ribera verticality is so slow/opaque that following/search through it is not credible;
 - service delivery requires turning a foot-only crossing into a road crossing;
 - a claimed public Plaza bypass only works by using `W17` or another restricted service edge;
 - a planned `AR` edge cannot physically carry its claimed service/delivery profile.
 
-Small segment-level differences are expected and should update measured costs in CITY-04 rather than being treated as CITY-01 failure.
+Small segment-level differences are expected and should update calibrated costs rather than being treated as CITY-01 failure. A full-route discrepancy cannot be asserted from geometry that was never built.
 
 ---
 
@@ -441,10 +477,12 @@ Small segment-level differences are expected and should update measured costs in
 
 CITY-01 leaves the following intentionally open:
 
-- exact metres, slope percentages and stair counts — `CITY-04` measurement;
+- exact metres, slope percentages and stair counts — `CITY-04` measures only where represented by the CITY-03 seed;
 - exact location programme / A–D systemic importance / S0–S4 spatial depth — `CITY-02`;
 - final building/service-door placement — later CITY work;
 - exact retained seed and which Arroyo crossing enters it — `CITY-03`;
+- exact CITY-04 measurement subset — `CITY-03`, derived from this graph without changing it;
+- **full-city route measurements outside the retained seed — currently unassigned after CITY-04 and must remain explicitly unmeasured until sufficient realized geometry has an accepted owner**;
 - State 1→State 2 production timing — still unassigned here;
 - live schedule choice, beliefs, route-planning AI and social consequence — Living World/runtime owners;
 - bus service simulation and vehicle handling — outside CITY-01.
@@ -461,12 +499,12 @@ The accepted geography now has a reviewable movement model with:
 - no hidden inter-landmass edges;
 - differentiated primary/secondary/quiet/service routes;
 - profile-specific access and verticality, including deterministic bicycle and arrival/bus handling;
-- preserved inherited walk-time bands;
+- preserved inherited walk-time bands as **planning** bands;
 - explicit costs for the CITY-00-deferred Ensanche→Puerto and Vega↔Puerto routes;
 - two nontrivial alternate-route families (Arroyo closure and Río crossing substitution) plus Plaza removal;
 - a meaningful municipal closure lever;
 - a State-1 ferry wait tradeoff and a State-2 cart-routing consequence;
 - a permanent quiet-route alternative that does not depend on low water;
-- concrete measurement questions for CITY-04.
+- a scope-correct measurement/calibration handoff that does not pretend CITY-04's bounded seed can measure the entire city.
 
-All costs remain hypotheses until measured locally.
+No full-city planning cost becomes a measured fact merely because CITY-04 later calibrates a subset of its segments.
