@@ -54,4 +54,6 @@ Combining all three would make one Reviewer validate context routing, semantic c
 
 The CTX plan itself changes no operating rule. Each WP becomes binding only after its own fresh independent PASS + merge + DocSync.
 
-Human priority is to execute `WP-CTX-01` immediately after this plan is accepted so subsequent remote/local sessions start benefiting before H1 local work.
+If this plan passes, its documentation-only DocSync registers `CTX/` in the root workpack index and names `WP-CTX-01` as the next CTX action; it must not implement any CTX-01 operating rule by implication.
+
+Human priority is to execute `WP-CTX-01` immediately after plan DocSync so subsequent remote/local sessions start benefiting before H1 local work.
