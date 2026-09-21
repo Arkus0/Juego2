@@ -1,12 +1,16 @@
 # H1 — Engine Bridge Foundation: Unity First
 
-Status: PLANNED / NOT_STARTED
+Status: PLAN ACCEPTED / IMPLEMENTATION NOT_STARTED
 Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`
 Reconciled integration base: `7fe44840076eba05f1b67a7633cd33fc67b9023d` (CITY programme v2 PASS, merge and DocSync)
 Binding architecture: `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md`
 Binding decisions: `Docs/architecture/ADR-H1-001-*` through `ADR-H1-004-*`
-Binding proof standard after plan adoption: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` v1.4+
+Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` v1.4+
 Architect pre-review: `Docs/evidence/H1-PLAN/ARCHITECTURE_PRE_REVIEW.md`
+Planning acceptance: PR `#71`; reviewed frozen candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b`; independent PASS review `#5263596722`; merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`
+Exact-SHA validation: candidate observation Actions `35567622151` GREEN; freeze validation Actions `35567723539` GREEN
+DocSync: `DOCSYNC_COMPLETE`
+Next default workpack: `WP-H1-00 — Engine-neutral projection contract + reference materializer` (`REMOTE_OK`), dependency-valid but `NOT_STARTED` until a human starts its Worker
 
 No H1 implementation WP is active or frozen by this plan.
 The sequence contains 13 claim-owned implementation workpacks plus `WP-H1-GATE`.

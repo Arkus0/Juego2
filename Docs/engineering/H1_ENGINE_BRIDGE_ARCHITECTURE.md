@@ -1,7 +1,7 @@
 # H1 Engine Bridge Architecture — Unity first
 
-Version: 1.1-planned — 2026-09-21
-Status: PROPOSED by the H1 `PROCESS_ONLY` planning PR; becomes binding when that PR is accepted and merged.
+Version: 1.1 — 2026-09-21
+Status: ACCEPTED / BINDING — H1 `PROCESS_ONLY` planning PR `#71`; reviewed candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b`; PASS review `#5263596722`; merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`.
 
 ## 1. Definition
 

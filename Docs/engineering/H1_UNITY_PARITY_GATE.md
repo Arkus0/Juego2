@@ -1,7 +1,8 @@
 # H1 Unity parity gate — deterministic reference scenario
 
-Version: 1.1-planned — 2026-09-21
+Version: 1.1 — 2026-09-21
 Owner: `WP-H1-GATE`
+Status: ACCEPTED CONTRACT / NOT EXECUTED — adopted by H1 planning PR `#71` at merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; only a later exact-SHA `WP-H1-GATE` PASS can satisfy it.
 
 ## Representative slice
 

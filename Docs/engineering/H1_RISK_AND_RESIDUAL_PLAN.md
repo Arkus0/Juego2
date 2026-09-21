@@ -1,7 +1,8 @@
 # H1 risk, residual and H0S relationship
 
-Status: H1 planning contract
+Status: ACCEPTED H1 planning contract / IMPLEMENTATION NOT_STARTED
 Date: 2026-09-21
+Planning acceptance: PR `#71`; reviewed candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b`; PASS review `#5263596722`; merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`
 
 ## H0 residuals H1 deliberately owns
 
