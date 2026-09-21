@@ -34,6 +34,19 @@ Automation may run canonical validation, persist handoff markers and merge an ex
 
 If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Juego2`, reconstruct current state, identify the next dependency-valid role, and do not silently cross from Worker to independent Reviewer or from Reviewer FAIL to repair Worker in the same context.
 
+## Shorthand role commands
+
+Treat short role requests as explicit routing instructions, not as abbreviated acceptance criteria:
+
+- `Worker <WP-ID>` (for example `Worker H1-02` or `Worker CITY-04`) means resolve that exact workpack under `Docs/workpacks/**` and execute `.agents/skills/implement-workpack/SKILL.md` for it. Reconstruct current `main`, dependencies and canonical ownership first; if the requested WP is blocked, report the blocker and STOP rather than selecting another WP.
+- `Corrige el FAIL de <WP-ID>` / `Repair <WP-ID>` means start a **fresh repair Worker** for that same WP and execute `.agents/skills/repair-workpack/SKILL.md`. Locate the canonical PR and latest independent FAIL from live GitHub state, preserve the failed candidate/history, repair the causal blocker, rerun required evidence plus the complete Worker pre-review, freeze a new exact SHA, mark Ready and STOP for a fresh independent Reviewer.
+- These Worker/repair shorthand commands never authorize independent review, merge, DocSync, a different WP, or scope beyond the requested WP.
+- For `LOCAL_UNITY_REQUIRED` or `HYBRID` work, use the exact local Unity/toolchain/evidence required by the WP. Missing mandatory local engine evidence is never silently treated as PASS-ready.
+- A local Git checkout is not sufficient to reconstruct PR/review/check state. Local Worker/repair sessions must use authenticated GitHub CLI (`gh`) or an equivalent live GitHub surface. Before GitHub mutations verify the repository is `Arkus0/Juego2` and that canonical WP/PR ownership is unambiguous.
+- Never put GitHub passwords, PATs/tokens, Unity credentials or other secrets in prompts, repository files, committed `.env` files or evidence. Use the OS/authentication store managed by the relevant tool.
+
+Local workstation setup and verification is documented in `Docs/engineering/LOCAL_AGENT_WORKSTATION.md`; `scripts/local-agent-check.ps1` is the read-only readiness check.
+
 ## Sources of truth
 
 1. Code, executable tests and recorded evidence — actual state.
