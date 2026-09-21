@@ -1,10 +1,14 @@
 # WP-CITY-03 — Retained product seed + exact scenario specification
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: PRODUCT / KEEPER-SEED PREPRODUCTION (NON-FOUNDATIONAL)  
 Mode: **REMOTE**  
 Depends on: `WP-CITY-06` PASS  
 Blocks: `WP-CITY-04` only
+
+Accepted candidate: `420999e9a60e7240bcfb514b3239b652f0e09a5f`  
+Independent review: **PASS**, review `#5268853516`  
+Merged: PR `#94`, merge commit `a3abeaf82752bfe9dac2f594c06eb8def3b108e2` on 2026-09-21
 
 ## Contract continuity
 

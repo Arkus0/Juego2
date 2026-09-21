@@ -1,7 +1,7 @@
 # CITY track — Keeper City production-space programme
 
 Status: **ACTIVE / NON-FOUNDATIONAL**  
-Version: 2.6 — 2026-09-21
+Version: 2.7 — 2026-09-21
 Repository: `Arkus0/Juego2`
 
 Accepted progress: `WP-CITY-00` is **COMPLETE**. It passed independent review on frozen candidate `f5c684461b525841487158d873a9b135008df3ab` (review `#5261672961`) and merged via PR `#65` as `69bbba2603e67cb233a3e1cc36a4173bed41cfc4`.
@@ -14,7 +14,9 @@ CITY Programme v2 is **ACCEPTED**. Candidate `87a902584f2c46b2d256f6fef26829e918
 
 `WP-CITY-05` is **COMPLETE**. Candidate `10d1528b0354b16a614fb10a3933a25b32f15f28` passed independent review `#5267776704` in PR `#83` and merged as `47909a72eb6d38332f62e9c01426c8cd40e1863b`.
 
-`WP-CITY-06` is **COMPLETE**. Candidate `c73cbb19f8b152bd4b97ce3154eb18a78deaec3c` passed independent review `#5268249668` in PR `#90` and merged as `acb84ec9ba7aa94e962bf7b35d7e53c0549ba758`. The next executable CITY workpack is `WP-CITY-03`.
+`WP-CITY-06` is **COMPLETE**. Candidate `c73cbb19f8b152bd4b97ce3154eb18a78deaec3c` passed independent review `#5268249668` in PR `#90` and merged as `acb84ec9ba7aa94e962bf7b35d7e53c0549ba758`.
+
+`WP-CITY-03` is **COMPLETE**. Candidate `420999e9a60e7240bcfb514b3239b652f0e09a5f` passed independent review `#5268853516` in PR `#94` and merged as `a3abeaf82752bfe9dac2f594c06eb8def3b108e2`. The next CITY workpack in the spine is `WP-CITY-04`, but it remains blocked until `WP-H1-08` PASS.
 
 ## Purpose
 
@@ -38,6 +40,8 @@ Accepted `WP-CITY-05` now owns the reusable exterior-production grammar in `Docs
 
 Accepted `WP-CITY-06` now owns the reviewed interior/discovery planning grammar in `Docs/production/CITY_INTERIORS_DISCOVERY.md`: bounded I0–I3 interior realization, reusable interior families, inherited access-role preservation, district/location-family second-layer expectations, authored/systemic/hybrid discovery causality, secret-content restraint and the comparison constraints handed to CITY-03. Future PA/H3+ owner names in that grammar are conditional ownership labels, not runtime proof.
 
+Accepted `WP-CITY-03` now owns the retained keeper seed in `Docs/production/CITY_PRODUCT_SEED.md`: selected seed identity, exact hard outer envelope, exact Río/Arroyo planning masks, derived bank/no-build rules, X1/X5 crossing overlays and receiving stubs, bounded F/S site regions, retained-versus-temporary decisions, expansion seams, thirteen spatial validation scenarios and the measurement/failure-routing pack handed to CITY-04. CITY-04 may falsify that planning geometry from measured Unity evidence; it does not choose a different seed or silently redraw first bank limits.
+
 CITY-00 also already names `CITY-01..04`. Those identifiers are therefore stable contracts, not free numbering slots:
 
 - `CITY-01` remains mobility / route graph / walk-time topology;
@@ -60,7 +64,7 @@ CITY-05 ✅  Streets, parcels + reusable building families
    ↓
 CITY-06 ✅  Interiors + layered discovery
    ↓
-CITY-03    Retained product seed + exact scenario specification
+CITY-03 ✅  Retained product seed + exact scenario specification
    ↓
 CITY-04    LOCAL Unity greybox + traversal validation
    ↓
@@ -71,7 +75,7 @@ CITY-08    LOCAL Arkus authoring proof + reuse closure
 
 `CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are REMOTE planning work. `CITY-04`, `CITY-07` and `CITY-08` are gated LOCAL work. Do **not** infer sequence by sorting filenames; the graph above and each WP's dependency fields are authoritative.
 
-H1 supplies engine prerequisites without taking CITY ownership. Under the proposed H1 plan, `CITY-04` may start after its own chain reaches CITY-03 and `WP-H1-08` has accepted managed scenes/assets/components plus Unity diagnostics. It is then a bounded greybox/falsification sidecar, not H2/gameplay authorization and not hidden H1 proof. `CITY-07` remains blocked until `WP-H1-GATE` because keeper realization consumes the accepted bridge and real-asset boundary. `CITY-08` remains a later CITY-owned authoring-efficiency/reuse proof; the H1 Gate's smaller fresh-agent readiness trial does not pre-accept it.
+H1 supplies engine prerequisites without taking CITY ownership. Under the accepted H1 plan, `CITY-04` may start after its own chain reaches CITY-03 and `WP-H1-08` has accepted managed scenes/assets/components plus Unity diagnostics. It is then a bounded greybox/falsification sidecar, not H2/gameplay authorization and not hidden H1 proof. `CITY-07` remains blocked until `WP-H1-GATE` because keeper realization consumes the accepted bridge and real-asset boundary. `CITY-08` remains a later CITY-owned authoring-efficiency/reuse proof; the H1 Gate's smaller fresh-agent readiness trial does not pre-accept it.
 
 ## Two orthogonal classifications
 
@@ -130,4 +134,6 @@ Important discoveries may be authored, systemic or hybrid. Martial arts/kung-fu/
 
 ## Current next workpack
 
-`WP-CITY-03 — Retained product seed + exact scenario specification`.
+`WP-CITY-04 — LOCAL retained-seed greybox + traversal validation`.
+
+CITY-03's dependency is satisfied, but CITY-04 remains **DORMANT/BLOCKED** until `WP-H1-08` PASS.
