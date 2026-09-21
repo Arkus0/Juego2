@@ -20,7 +20,7 @@ A single total ordering would be misleading, because mutable process state and a
 
 For current `main`, open PR/branch ownership, PR HEAD, Draft/Ready state, checks, reviews, merge state and automation markers, **live authenticated GitHub state is authoritative**.
 
-A local checkout, session handoff, README or derived index may navigate to that state but may not override it.
+A local checkout, session handoff, README or derived index may navigate to that state but may not override it. The accepted-state index deliberately does **not** cache open-PR Draft/Ready/HEAD/check/review state, because those can change without a `main` commit and therefore cannot be made fresh by a `generated_from_main_sha` comparison.
 
 ### B. Semantic / proof / acceptance state
 
@@ -28,17 +28,19 @@ For product/process semantics, workpack scope/DoD, inherited guarantees, accepte
 
 A derived index or Worker summary may point to those sources but may not replace them.
 
-### C. Derived navigation state
+### C. Derived accepted-state navigation
 
 `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` and `00_SESSION_HANDOFF_PROMPT.md` are **navigation projections only**.
 
-Mutable hints (`status_hint`, `next_hint`, `blocked_hint`, open/closed assumptions) are usable only when:
+Main-derived accepted-state hints (`accepted_workpacks_hint`, `next_contract_hint`, accepted dependency/block hints) are usable only when:
 
 ```text
 index.generated_from_main_sha == current live main SHA
 ```
 
-The comparison is exact, 40-character SHA equality. If the index is stale, missing, malformed or contradictory, mutable hints are invalid. The role continues from live GitHub + authoritative contracts; it never infers from silence.
+The comparison is exact, 40-character SHA equality. If the index is stale, missing, malformed or contradictory, those hints are invalid. The role continues from live GitHub + authoritative contracts; it never infers from silence.
+
+Even when the index is fresh relative to `main`, transient PR/branch/review/check/ownership state must still be queried live. Freshness against `main` cannot prove facts that mutate outside `main`.
 
 The index may never create product semantics, accepted guarantees, dependency edges or proof obligations. Every hint carries source pointers back to authoritative contracts.
 
@@ -55,7 +57,7 @@ Every role must deepen when any of these triggers fires:
 - a Reviewer/repair finding touches an inherited guarantee that requires original evidence;
 - a semantic/proof conclusion would otherwise rely only on a summary/index;
 - material ambiguity remains after the initial pack;
-- the index is stale/missing/malformed for a decision that would use its mutable hints.
+- the index is stale/missing/malformed for a decision that would use its main-derived hints.
 
 Escalation is monotonic: read more authoritative context until the material question is closed or stop as blocked/not-ready. Never fill a gap by inference from absence.
 
@@ -101,13 +103,13 @@ Post-PASS DocSync must:
 
 1. reconstruct current live `main` and accepted transition state;
 2. update semantic/contract docs only when the accepted candidate requires it;
-3. regenerate `ACCEPTED_STATE_INDEX.json` from authoritative accepted sources;
+3. regenerate `ACCEPTED_STATE_INDEX.json` from authoritative accepted sources on that `main`;
 4. set `generated_from_main_sha` to the exact live main SHA from which that regenerated projection was derived;
-5. keep source pointers for every mutable hint;
+5. keep source pointers for every main-derived hint and keep transient PR/branch/review/check state out of the reusable index;
 6. compact `00_SESSION_HANDOFF_PROMPT.md` as a router, not a duplicate state/history store;
 7. emit normal `DOCSYNC_COMPLETE` only after reconciliation is actually complete.
 
-If main advances after generation, that is normal: the exact SHA mismatch makes mutable hints stale until a later DocSync refresh. Staleness is a routing signal, not permission to rewrite accepted semantics.
+If main advances after generation, that is normal: the exact SHA mismatch makes main-derived index hints stale until a later DocSync refresh. Staleness is a routing signal, not permission to rewrite accepted semantics.
 
 ## 8. Fail-closed decision procedure
 
@@ -117,7 +119,7 @@ For any supported role:
 1. Identify exact role + exact WP/gate/task.
 2. Read its machine profile and minimum starting pack.
 3. Query live GitHub for mutable state required by the role.
-4. If using accepted-state mutable hints, compare generated_from_main_sha to live main exactly.
+4. If using accepted-state main-derived hints, compare generated_from_main_sha to live main exactly.
 5. Read the exact contract(s) in the starting pack.
 6. Evaluate escalation triggers and make the decision observable:
      CONTEXT_CLOSED | ESCALATE:<reason> | BLOCKED:<reason>
