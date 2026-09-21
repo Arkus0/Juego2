@@ -1,8 +1,10 @@
 # PA track — Living World research and adoption programme
 
-Status: **PLAN CANDIDATE / PROCESS_ONLY**  
-Version: 1.0 — 2026-09-21  
+Status: **ACTIVE / PLAN ACCEPTED / PROCESS_ONLY**  
+Version: 1.1 — 2026-09-21  
 Repository: `Arkus0/Juego2`
+
+Programme plan accepted on candidate `95fc0f5935561fd61a20221f993e2532ce513795`, independent review `#5267699844`, PR `#84`, merge `4c1672db639f9d56e7bd6f837ff5e1881d789b16`.
 
 ## Purpose
 
@@ -45,6 +47,8 @@ Supporting evidence may live beside it in a PA-specific evidence directory if ne
 ### `REMOTE_HARVEST`
 
 PA-01..05. The expensive research already exists and was independently reviewed in Juego. These WPs re-read exact donor evidence, remove donor architecture, reconcile current Juego2 product deltas and publish compact Juego2 findings.
+
+These five WPs are **adoption/revalidation gates, not a restart of PA-01..05 research**. Unless the audit finds a concrete conflict, unsupported claim or current-product gap, the Worker should not repeat broad prior-art research or rebuild the donor dossiers from zero.
 
 A harvest WP should be materially smaller than repeating the original study. If it turns into broad new prior-art research without an identified conflict/gap, it has failed its scope discipline.
 
@@ -173,7 +177,7 @@ This means remote PA work can continue while local H1/CITY work is unavailable.
 
 Every PA Reviewer verdict must end with an explicit continuation line.
 
-On `PASS`:
+On `PASS` with another PA workpack remaining:
 
 ```text
 Next PA workpack: WP-PA-XX — <name>
@@ -181,12 +185,22 @@ Execution class: <REMOTE_HARVEST | REMOTE_RESEARCH | DEFERRED_INTEGRATION>
 Prerequisites: satisfied | <exact unsatisfied prerequisite>
 ```
 
+On final `WP-PA-14` PASS when no PA research gap remains:
+
+```text
+Next PA workpack: none — programme complete
+Execution class: none
+Prerequisites: n/a
+```
+
 On `FAIL`, the next workpack remains the same WP; the Reviewer names the causal blocker and does not advance the track.
 
-This avoids making the user reconstruct the canonical sequence from memory.
+This avoids making the user reconstruct the canonical sequence from memory and gives PA-14 a non-circular terminal state.
 
 ## Current next workpack
 
-After this programme plan itself receives independent PASS + merge + DocSync, the first executable workpack is:
+The PA programme plan is accepted and DocSync activates the first executable workpack:
 
 `WP-PA-01 — Adopt/revalidate NPC Daily Life findings`.
+
+This does **not** restart PA-01 research. It is the first cheap Juego→Juego2 adoption/revalidation gate; after PA-01..05 are independently accepted in Juego2, the first genuinely new research workpack is `WP-PA-06 — Memory & Consequences research`.
