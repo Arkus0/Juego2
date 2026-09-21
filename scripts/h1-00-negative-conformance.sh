@@ -77,6 +77,13 @@ replace_once \
   '.ToArray(); // H1-00 SEEDED DEFECT: caller order leaks into plan identity'
 expect_red deterministic-plan 'FullyQualifiedName~H1EngineBridgeReferenceTests.SameFullInputNormalizesPlanAndRetryHasNoSecondSemanticDelta'
 
+# Determinism: ambiguous effective inventory must normalize duplicate groups independently of caller enumeration order.
+replace_once \
+  src/Arkus.EngineBridge/ProjectionContract.cs \
+  '.OrderBy(value => value.ResourceId, StringComparer.Ordinal)\n                .ThenBy(value => value.Normalized, StringComparer.Ordinal)\n                .Select(value => value.Normalized)));' \
+  '.OrderBy(value => value.ResourceId, StringComparer.Ordinal)\n                .Select(value => value.Normalized))); // H1-00 SEEDED DEFECT: duplicate order leaks into observation digest'
+expect_red ambiguous-observation-order 'FullyQualifiedName~H1EngineBridgeReferenceTests.AmbiguousObservationDigestIsIndependentOfDuplicateEnumerationOrder'
+
 # Generational publication: pre-publication failure must not advance the active generation.
 replace_once \
   src/Arkus.EngineBridge/ProjectionContract.cs \
@@ -107,4 +114,4 @@ expect_red engine-type-leak 'FullyQualifiedName~H1EngineBridgeReferenceTests.Neu
 
 restore_candidate
 [[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Disposable H1-00 mutation worktree did not restore cleanly" >&2; exit 2; }
-echo 'H1_00_NEGATIVE_CONFORMANCE GREEN red_controls=6'
+echo 'H1_00_NEGATIVE_CONFORMANCE GREEN red_controls=7'
