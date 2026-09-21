@@ -5,7 +5,7 @@ Execution: `REMOTE_HARVEST`
 Worker: ChatGPT GPT-5.6 Sol  
 Baseline: `main@a57afa3d3fc60b3e1c59d04149fe982f387c2048`  
 Candidate branch: `pa/wp-pa-03-social-graph-harvest`  
-Repair cycle: `fail_cycle: 0`  
+Repair cycle: `fail_cycle: 1`  
 Transfer SHA: `NONE`  
 Freeze anchor: the exact `Frozen candidate SHA` recorded in PR #100 after all Worker evidence is committed. This file intentionally does not self-hash the commit that contains itself.
 
@@ -62,6 +62,17 @@ Accepted prerequisite:
 
 The donor PASS is provenance only. This Juego2 candidate needs fresh independent review.
 
+## Repair-cycle provenance
+
+The first Juego2 candidate `3c93ca888144c7b292ad100bed3679aa93195e4e` received independent `FAIL` in review `#5270307195`.
+
+The sole causal blocker was the anti-inflation proof for adopted `affinity` and `fear`: `CF-02` and `CF-03` previously allowed a material result to remain unchanged because their expectations used “may change / may be chosen”. The repair does not broaden PA-03. It makes those two fixtures falsable in the same way as the accepted donor repair:
+
+- `CF-02`: with exactly one changed relationship input, `affinity(Antonio -> Manolo)` HIGH → LOW must flip the selected social target `Manolo -> Paco`; same material outcome, correlated changes or tie-break dependence fail.
+- `CF-03`: with exactly one changed relationship input, `fear(Antonio -> Paco)` LOW → HIGH must flip `DIRECT_CONFRONT -> SEEK_MEDIATION`; same material outcome, third-response substitution, correlated changes or tie-break dependence fail.
+
+No research expansion, donor runtime architecture, schema choice or additional relationship dimension was introduced.
+
 ## Worker claim
 
 The candidate reduces PA-03 to three conceptual relationship layers:
@@ -74,17 +85,19 @@ The candidate reduces PA-03 to three conceptual relationship layers:
 
 It rejects one universal relationship/opinion score, implicit symmetry, permanent unsourced obligation tags, unbounded biography inside each edge, default global/N-hop graph traversal and a player-exclusive bond subsystem.
 
-Each adopted affect dimension has an isolated behavioural fixture. Structural role can alter eligibility/duty without mutating affect. Obligations must be separately identifiable and capable of leaving the active set.
+Each adopted affect dimension now has an isolated, falsable behavioural fixture with two distinct required A/B outcomes. Structural role can alter eligibility/duty without mutating affect. Obligations must be separately identifiable and capable of leaving the active set.
 
 Relationship semantics are action-specific: PA-03 does not claim that more trust/affinity/fear universally increases or decreases every action.
 
 ## Required acceptance surfaces
 
-### Same-world / different-edge fixture
+### Same-world / different-edge fixtures
 
 `CF-01` keeps actor, external world, goal, candidates, seed and every other relationship/non-relationship input fixed. It changes only `trust(Antonio -> Manolo)` and requires a target flip from Manolo to the fixed Paco alternative with no tie-break dependence and a named relationship reason.
 
-`CF-02` and `CF-03` independently justify `affinity` and `fear` so the candidate does not retain dimensions merely because the donor had them.
+`CF-02` now uses the same strict shape for affinity: RUN A requires Manolo; RUN B changes only `affinity(Antonio -> Manolo)` and requires Paco. A same target/behaviour result, correlated state change or tie-break dependence is an explicit FAIL.
+
+`CF-03` now uses a strict response flip for fear: RUN A at LOW fear requires `DIRECT_CONFRONT`; RUN B changes only `fear(Antonio -> Paco)` to HIGH and requires `SEEK_MEDIATION`. A same response, third-response substitution, correlated state change or tie-break dependence is an explicit FAIL.
 
 ### Required asymmetry control
 
@@ -103,8 +116,8 @@ A material relationship-dependent decision must identify decision owner, semanti
 Please try to falsify especially:
 
 1. **Predecessor composition:** did PA-03 accidentally redefine or weaken PA-02 actor ownership, bounded discovery, authorized information or receiver choice rather than consume them?
-2. **Fake relationship causality:** can the required fixture change behavior for a second correlated input, target ordering or tie-break reason rather than exactly one edge?
-3. **Affect inflation:** are `trust`, `affinity` and `fear` each independently justified, or could one be removed with no behavioural loss?
+2. **Fake relationship causality:** can any required fixture change behavior for a second correlated input, target ordering or tie-break reason rather than exactly one edge?
+3. **Affect inflation / repair regression:** do `CF-01`, `CF-02` and `CF-03` each require distinct material A/B outcomes, or can trust/affinity/fear still be marked `ADOPT` while the corresponding fixture produces no material change?
 4. **Implicit symmetry:** can changing A→B still leak into or substitute for B→A?
 5. **Super-score collapse:** can structural role or obligation semantics still be reduced to an unexplained friendship/opinion scalar?
 6. **Role/affect conflation:** does employment/authority automatically write affection rather than altering role semantics through its own cause?
@@ -136,4 +149,4 @@ On FAIL, remain on `WP-PA-03` and name the causal blocker.
 
 ## Worker state
 
-The PR remains Draft + ACTIVE until the complete candidate receives a strict Worker pre-review. After `WORKER_PRE_REVIEW: CLEAN` is committed, writers stop, PR #100 records the exact final HEAD as both Candidate/Frozen SHA, and the PR is marked Ready. No further Worker writes are permitted unless fresh independent review returns FAIL and a repair cycle is opened.
+The PR remains Draft + ACTIVE until the repaired complete candidate receives a fresh strict Worker pre-review. After `WORKER_PRE_REVIEW: CLEAN` is committed, writers stop, PR #100 records the exact final HEAD as both Candidate/Frozen SHA, and the PR is marked Ready. No further Worker writes are permitted unless fresh independent review returns FAIL and another repair cycle is opened.
