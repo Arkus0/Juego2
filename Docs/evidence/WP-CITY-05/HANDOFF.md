@@ -7,42 +7,119 @@ Baseline SHA: `9a8ff542d0a0ce70f9a6d5fa3baea2f8a5691cbb`
 Active Worker: `ChatGPT GPT-5.6 Sol`  
 Worker history: `ChatGPT GPT-5.6 Sol`  
 Transfer SHA: `NONE`  
-fail_cycle: **0**
+fail_cycle: **1**
 
-This file is the Worker's final branch mutation before freeze. The exact 40-character commit containing this handoff is read from PR #83 immediately afterward and recorded in PR metadata as both `Candidate HEAD SHA` and `Frozen candidate SHA`. PR metadata is the authoritative exact-SHA freeze record.
+This file is the Worker's final branch mutation before the repaired freeze. The exact 40-character commit containing this handoff is read from PR #83 immediately afterward and recorded in PR metadata as both `Candidate HEAD SHA` and `Frozen candidate SHA`. PR metadata is the authoritative exact-SHA freeze record.
 
-## Worker state at handoff
+## Worker state at repaired handoff
 
 ```text
 Predecessor contract check: Docs/evidence/WP-CITY-05/WORKER_PLAN.md
 Worker pre-review: CLEAN
-Worker pre-review findings fixed: 2
+Worker pre-review findings fixed: 3
 Worker pre-review evidence: Docs/evidence/WP-CITY-05/WORKER_PRE_REVIEW.md
 Grammar audit: Docs/evidence/WP-CITY-05/GRAMMAR_AUDIT.md
 Capacity/host fit: Docs/evidence/WP-CITY-05/CAPACITY_FIT_CHECK.md
-Semantic owner: Docs/production/CITY_ENVIRONMENT_GRAMMAR.md v0.1
-Machine-readable requirements projection: Docs/production/CITY_ENVIRONMENT_DISCOVERY_REQUIREMENTS.json
+Access conformance: Docs/evidence/WP-CITY-05/ACCESS_RELATION_CONFORMANCE.md
+Semantic owner: Docs/production/CITY_ENVIRONMENT_GRAMMAR.md v0.2
+Machine-readable requirements projection: Docs/production/CITY_ENVIRONMENT_DISCOVERY_REQUIREMENTS.json v0.2
 Branch frozen after this commit: YES
 Worker verdict: IN_REVIEW after PR metadata freeze
-Reviewer verdict: PENDING fresh review
+Reviewer verdict: PENDING fresh re-review
 ```
+
+## Independent FAIL being repaired
+
+Independent review `#5266587982` reviewed exact candidate:
+
+`6e8179828d14f009239463d732fba63ed8d8e446`
+
+and returned **FAIL** because CITY-05 could weaken access relations already required by CITY-02.
+
+Two concrete counterexamples were accepted as valid:
+
+1. `loc.calle.everyday_shop` — CITY-02 requires `public + service`; CITY-05 had `public + optional service`.
+2. `loc.casco.bar` — CITY-02 requires a semi-private layer; CITY-05 allowed an extra `semi-private/vertical/court candidate`, which could be interpreted as satisfied by a merely vertical/court socket.
+
+The reviewer did **not** reject the capacity witnesses and did **not** use the generic WP-CITY verifier failure as a product blocker.
+
+## Causal repair
+
+CITY-05 now treats functional-POI binding as monotonic/fail-closed.
+
+For every A/B place:
+
+```text
+programme_required_roles = normalize(CITY-02 Default access posture)
+bound_required_roles     = roles required after functional-POI binding
+PASS only if programme_required_roles ⊆ bound_required_roles
+```
+
+Required role vocabulary:
+
+```text
+public
+service
+private
+semi-private
+```
+
+`vertical`, `court`, `rear`, `staff`, `storage`, `records`, `work`, `rooms`, `waiting` and `frontage` are form/use qualifiers. They may describe how a role is realized but cannot substitute for the role.
+
+Generic family optionality remains useful before binding. Binding promotes an anchor to required whenever the accepted CITY-02 row requires that role.
+
+## Repair commits
+
+- `2125a7f286f9b1b01db6b2b0a0cd06a99edb0c0e` — semantic owner: fail-closed functional-POI binding, exact 23-row required-role sets, role-vs-form distinction, downstream validation/negative gates;
+- `f43809e4e61f0421d227368080dd093fc80024c2` — discovery projection: functional POI kind, required-vs-optional anchor status after binding, role provenance and binding invariant;
+- `29755aef0b07e1094f760c548e5f3cbbc11c5b2a` — new 23/23 access-relation conformance evidence + four causal negative controls;
+- `779432e29a37043221125442c5b84da1bd4556ad` — grammar audit reconciled with the independent FAIL and repair;
+- `6de0177ea7d90314632102864c8597b06a00dce6` — strict Worker pre-review re-run after repair.
+
+## 23/23 access-role result
+
+`ACCESS_RELATION_CONFORMANCE.md` checks every accepted A/B programme row.
+
+```text
+A_B_ROWS_CHECKED: 23
+A_B_ROWS_CONFORMANT: 23
+ACCESS_RELATION_CONFORMANCE: PASS
+```
+
+Key rows:
+
+- `loc.calle.everyday_shop` -> required `{public, service}`;
+- `loc.casco.bar` -> required `{public, service, semi-private}`;
+- `loc.puerto.worker_social` -> required `{public, service, semi-private}`;
+- `loc.calle.pharmacy` remains `{public, private}` rather than being incorrectly strengthened to service;
+- `loc.ribera.service_yard` remains `{service}` with public conditional, preserving restricted-service semantics.
+
+## Access negative controls
+
+Fresh Reviewer should reproduce these directly:
+
+1. bind `loc.calle.everyday_shop` as `{public}` -> **FAIL**, inherited `service` missing;
+2. bind `loc.casco.bar` as `{public, service}` plus `{vertical, court}` form tags -> **FAIL**, inherited `semi-private` missing;
+3. normalize pharmacy as requiring service -> **FAIL predecessor fidelity**; CITY-02 requires `{public, private}` only;
+4. make the service yard ordinary public because a family exposes a public socket -> **FAIL**; CITY-02 keeps public conditional and `AS` restricted.
 
 ## What CITY-05 candidate freezes
 
-The candidate gives later CITY work one reviewed exterior-production grammar:
+The repaired candidate gives later CITY work one reviewed exterior-production grammar:
 
 - 8 street-segment families and 7 junction families that realize accepted CITY-01 edges without creating graph connectivity;
 - 9 parcel/open-site families with frontage/depth, coverage, party-wall, setback, slope/retaining, rear/service and no-build/view constraints;
 - 9 reusable building families covering ordinary houses, mixed-use, bar/social, shops/services, workshops, warehouse/port, civic, residential multi and rural/peripheral conditions;
-- the composition ladder `module -> assembly -> shell -> reusable building -> functional POI -> street segment`;
+- composition ladder `module -> assembly -> shell -> reusable building -> functional POI -> street segment`;
 - explicit A–D/S0–S4/I0–I3 exterior/shell obligations without deriving one axis from another;
 - one reviewed exterior composition pattern for every 23/23 CITY-02 A/B place;
+- exact fail-closed public/service/private/semi-private required-role set for every A/B POI after binding;
 - ordinary C/S1 and scenic D/S0 fabric mappings so cheap fabric remains an output rather than empty development reserve;
-- a shared district grammar: old/commercial/residential/work/port/rural identity comes from constrained combinations, not unrelated kits;
+- shared district grammar: old/commercial/residential/work/port/rural identity comes from constrained combinations, not unrelated kits;
 - later machine-readable discovery information requirements, explicitly non-canonical and non-Unity-authoritative;
 - reviewed one-off -> variant/family promotion rules that prevent bespoke-everywhere drift.
 
-## Two Worker-found defects repaired before freeze
+## Existing Worker-found repairs retained
 
 ### 1. `AR` width ambiguity
 
@@ -50,13 +127,15 @@ Initial street families allowed `AR` on some shared width bands whose low end wa
 
 ### 2. Capacity witness could pass predecessor cap but fail its own host
 
-The first fit evidence checked T/S/M/L but did not bind the same composition to CITY-05 parcel dimensions/coverage. That could falsely pass a multi-thousand-square-metre workshop below L while naming a single 18×32 m workshop parcel.
+The first fit evidence checked T/S/M/L but did not bind the same composition to CITY-05 parcel dimensions/coverage. Repairs `e386b35136515ac4ad2490195fa7a58b4adba25b` and `21e063cf0946a3ed8228d20c1f0c39eb7d952688` require every A/B witness to pass its CITY-05 host dimensions, host coverage posture and inherited PE ceiling simultaneously.
 
-Repairs `e386b35136515ac4ad2490195fa7a58b4adba25b` and `21e063cf0946a3ed8228d20c1f0c39eb7d952688` now require every A/B witness to pass its CITY-05 host dimensions, host coverage posture and inherited PE ceiling simultaneously.
+### 3. Access-role weakening
+
+Independent review exposed the first frozen candidate's false-green family. Fail cycle 1 repairs it at the POI-binding boundary rather than by making every generic family globally strict.
 
 ## Capacity / host-fit result
 
-All 23 A/B rows have host-valid witnesses. Dense witness totals:
+All 23 A/B rows retain host-valid witnesses. Dense witness totals remain:
 
 | Part | CITY-05 host-valid witness | Inherited CITY-02 cap |
 |---|---:|---:|
@@ -67,20 +146,20 @@ All 23 A/B rows have host-valid witnesses. Dense witness totals:
 | Entrada | 2,150 m² | 6,000 m² |
 | **Dense total** | **9,980 m²** | — |
 
-These lower witnesses do **not** weaken CITY-02's accepted conservative 57,300 m² charge, T/S/M/L ceilings, caps, hard reserve or 15% circulation/uncommitted margin. They only prove at least one legal CITY-05 grammar composition exists inside those inherited bounds.
+The access repair changes required anchor roles, not shell/support/open/apron accounting or PE classes. These lower witnesses do **not** weaken CITY-02's accepted conservative 57,300 m² charge, T/S/M/L ceilings, caps, hard reserve or 15% circulation/uncommitted margin.
 
-Named ordinary/quiet/scenic reserve is not borrowed.
+If later realized geometry shows that a newly-required role cannot fit inside a current host witness, that is a falsification/reopen condition; the role may not be dropped to save the fit.
 
-## Causal negative controls
+## Existing capacity / topology negative controls
 
-Fresh Reviewer should reproduce at least these failure modes independently:
+Fresh Reviewer should also retain these earlier controls:
 
-1. put a 1,500 m² exclusive workshop on one `pc.workshop_court` -> should FAIL CITY-05 host fit even though L=5,000 passes;
-2. put a 500 m² shell on a 20×40 `pc.rural_edge` -> should FAIL 62.5% coverage against 45% maximum;
-3. force `loc.entrada.depot_forecourt` beyond M -> L reclassification restores CITY-02's 5,000 m² charge and Entrada becomes 8,100 > 6,000 -> REOPEN Q6;
-4. let market occupation consume/double-count the always-clear route -> FAIL;
-5. use W17/AS as ordinary public service-yard access -> FAIL;
-6. borrow W07/W15/upper-residential/ordinary-Puerto reserve -> FAIL.
+1. 1,500 m² exclusive workshop on one `pc.workshop_court` -> FAIL host fit even though L=5,000 passes;
+2. 500 m² shell on a 20×40 `pc.rural_edge` -> FAIL 62.5% coverage against 45% maximum;
+3. `loc.entrada.depot_forecourt` beyond M -> L restores CITY-02's 5,000 m² charge and Entrada becomes 8,100 > 6,000 -> REOPEN Q6;
+4. market occupation consuming/double-counting the always-clear route -> FAIL;
+5. W17/AS used as ordinary public service-yard access -> FAIL;
+6. W07/W15/upper-residential/ordinary-Puerto reserve borrowed by A/B -> FAIL.
 
 ## Mobility / geography boundary
 
@@ -108,15 +187,17 @@ Candidate does **not**:
 
 ## Fresh Reviewer challenge points
 
-1. Reconstruct CITY-02 PASS/Q6 rather than trusting Worker summaries; verify lower CITY-05 witness totals do not silently replace conservative predecessor ceilings/caps/reserves.
-2. Recompute all 23 host witnesses against the actual parcel frontage/depth and coverage bands in the semantic owner.
-3. Challenge open-site witnesses for hidden unboundedness; each claimed fit should name a bounded site.
-4. Cross-check every `AR/AP/AF/AS` street-family compatibility against accepted CITY-01 rather than accepting the Worker's width fix at face value.
-5. Look for implicit connectivity through rear lanes, service courts, landings or X6/X7 compositions.
-6. Verify all A/B shell/access mappings consume the accepted CITY-02 programme without inventing room/discovery/runtime semantics.
-7. Verify shared building families genuinely cover old/commercial/residential/port/rural characters without district-specific kit authority or asset-pack taxonomy.
-8. Verify the JSON is a requirements projection rather than a second canonical catalogue/schema owner.
-9. Inspect the complete baseline→candidate diff independently and challenge the promotion rule for bespoke-everywhere escape hatches.
+1. Reconstruct CITY-02 `Default access posture` directly and independently recompute all 23 normalized required-role sets; do not trust the Worker's ledger.
+2. Verify `programme_required_roles ⊆ bound_required_roles` for every A/B row and try to reproduce both reviewer counterexamples.
+3. Attack role-vs-form ambiguity: a `vertical`, `court`, `rear`, `staff` or `storage` qualifier must not satisfy a missing public/service/private/semi-private role by itself.
+4. Verify the repair does not over-strengthen CITY-02, especially pharmacy and service yard.
+5. Reconstruct CITY-02 PASS/Q6 and confirm lower CITY-05 witness totals still do not replace conservative predecessor ceilings/caps/reserves.
+6. Recompute all 23 host witnesses against the actual parcel frontage/depth and coverage bands.
+7. Challenge open-site witnesses for hidden unboundedness; each claimed fit should name a bounded site.
+8. Cross-check every `AR/AP/AF/AS` street-family compatibility against accepted CITY-01.
+9. Look for implicit connectivity through rear lanes, service courts, landings or X6/X7 compositions.
+10. Verify the JSON remains a non-canonical requirements projection rather than a second catalogue/schema owner.
+11. Inspect the complete baseline→candidate diff independently and challenge the promotion rule for bespoke-everywhere escape hatches.
 
 ## Known residuals
 
@@ -133,4 +214,4 @@ Concrete later evidence that a composition cannot satisfy the reviewed host/acce
 
 ## Worker stop condition
 
-After PR #83 is updated with the exact SHA of this commit and marked Ready, the Worker stops writing. Any independent Reviewer FAIL requires a fresh repair Worker and a new pre-review/freeze cycle.
+After PR #83 is updated with the exact SHA of this commit and marked Ready, the Worker stops writing. Any independent Reviewer FAIL requires a new repair cycle and a new pre-review/freeze.
