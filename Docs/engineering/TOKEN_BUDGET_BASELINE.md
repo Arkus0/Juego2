@@ -121,3 +121,76 @@ The measurable failure mode to watch is the one PR `#99` already names as a
 review target — context minimisation hiding evidence a Worker or Reviewer needs.
 Any adopted change should be paired with the repair-rate metric above, so a
 saving that buys itself extra FAIL cycles is visible rather than invisible.
+
+---
+
+# Trajectory: what this costs by H4
+
+Measured from history with `scripts/token-budget/growth.py`, which tokenizes the
+boot set at every commit that touched `Docs/ROADMAP.md`. The boot set grew from
+**2,385 tokens on day one to 22,497 across 19 accepted workpacks.**
+
+## Two growth terms, measured
+
+1. **Linear, per accepted workpack: +427 tokens of boot set** (of which +244 is
+   the `ROADMAP.md` acceptance paragraph). Predictable and arithmetic.
+2. **Step, per accepted phase: +4,325 to the boot set** — measured across the
+   H1 plan merge, at zero new accepted workpacks — **plus 6,826 of binding
+   architecture** (`H1_ENGINE_BRIDGE_ARCHITECTURE.md` + `ADR-H1-*`) that enters
+   the read set of every foundational session and never leaves it.
+
+Term 2 is the one that compounds. Each phase permanently adds a layer that all
+later phases must read.
+
+## Extrapolation, unchanged process
+
+Mandatory reading before a foundational Worker writes anything. `% useful` is the
+share that is the current workpack and its phase plan, rather than inherited
+context.
+
+| Phase | boot | architecture | Worker | Reviewer | % useful |
+|---|---:|---:|---:|---:|---:|
+| today | 22,497 | 6,826 | 46,785 | 79,753 | 8.1% |
+| end of H1 | 28,475 | 6,826 | 52,763 | 85,731 | 7.1% |
+| H2 | 39,632 | 13,652 | 70,746 | 103,714 | 5.3% |
+| H3 | 50,789 | 20,478 | 88,729 | 121,697 | 4.2% |
+| **H4** | **61,946** | **27,304** | **106,712** | **139,680** | **3.5%** |
+
+## Extrapolation, levers applied
+
+`INHERITED_CONTRACT.md` changes a phase's permanent export from 6,826 to ~496.
+Machine-readable state changes the per-workpack marginal from 244 to ~90.
+
+| Phase | boot | architecture | Worker | Reviewer | % useful |
+|---|---:|---:|---:|---:|---:|
+| today | 14,139 | 6,826 | 26,214 | 59,182 | 14.4% |
+| end of H1 | 17,961 | 6,826 | 30,036 | 63,004 | 12.5% |
+| H2 | 22,629 | 7,322 | 35,200 | 68,168 | 10.7% |
+| H3 | 27,297 | 7,818 | 40,364 | 73,332 | 9.3% |
+| **H4** | **31,965** | **8,314** | **45,528** | **78,496** | **8.3%** |
+
+A Reviewer at H4 with the levers costs less than a Reviewer today without them.
+
+## The binding constraint is not the bill
+
+At ~140k tokens of mandatory intake, an H4 Reviewer does not have a cost problem.
+It has nowhere left to think. It must hold the inherited contracts, the complete
+candidate diff and its own adversarial reasoning at once, and reproduce material
+tests. Context quality degrades well before any hard limit, so the failure mode
+is qualitative: **independent review goes shallow exactly in the phase that needs
+it most.** That is a proof-quality risk, not an efficiency one.
+
+The clearest single indicator is the `% useful` column. Unchanged, the
+signal-to-noise of a Worker's intake **halves between today and H4** (8.1% →
+3.5%). With the levers it stays flat (14.4% → 8.3%). What the changes buy is not
+a discount; it is the removal of the slope.
+
+## Caveats
+
+- Phase sizing for H2–H4 is assumed at 16 workpacks each, matching H1's 15 and
+  H0's 19–21. No H2+ plan exists yet; these are projections, not commitments.
+- The projection assumes each accepted phase keeps exporting binding
+  architecture at H1's measured rate. If a future phase closes into a gate the
+  way H0 did into `WP-HK-GATE`, its step would be smaller.
+- The levers' effect on term 2 is modelled from one measured inherited contract
+  (`WP-HK-GATE`, 496 tokens), not from a phase that has actually adopted it.
