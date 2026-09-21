@@ -1,10 +1,14 @@
 # WP-CITY-02 — Systemic locations + spatial-depth/interior programme
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: PRODUCT / PLACE & INTERIOR PREPRODUCTION (NON-FOUNDATIONAL)  
 Mode: **REMOTE**  
 Depends on: `WP-CITY-01` PASS  
 Blocks: `WP-CITY-05` only
+
+Accepted candidate: `ddcb22d9a2dfcf68054db2b762fc7ff7aed68ae8`  
+Independent review: **PASS**, review `#5266113192`  
+Merged: PR `#81`, merge commit `1bdb7b6e914692493b17a9d2215d881dfe326cb0` on 2026-09-21
 
 ## Contract continuity
 
