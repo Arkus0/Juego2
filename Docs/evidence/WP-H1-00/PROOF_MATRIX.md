@@ -1,0 +1,47 @@
+# WP-H1-00 foundational proof matrix
+
+FOUNDATIONAL_PROOF_VERDICT: READY
+UNRESOLVED_PROOF_OBLIGATIONS: 0
+KNOWN_UNDETECTED_DEFECT_CLASSES: 0
+TRUST_BOUNDARY: pure in-memory/fileless `Arkus.EngineBridge` contract/reference materializer; accepted H0 guarantees; exact Git checkout; pinned .NET/MSBuild/NuGet path; normal documented BCL collection/string/UTF-8/SHA-256 behavior. Unity/editor/native-asset behavior and real project persistence are outside this claim.
+PROOF_BUDGET_VERDICT: WITHIN_BUDGET
+
+## Central claim
+
+For the complete H1-00 input tuple — immutable canonical anchor/snapshot digest, binding version, catalogue fingerprint and bridge/toolchain profile — the neutral contract produces deterministic normalized plans, staged generations, portable observations and bridge receipts. The reference materializer publishes only after successful staged observation, retries idempotently, reports the required drift states from effective managed-resource evidence, and never becomes canonical write authority.
+
+## Independently evaluated universe
+
+H1-00 does not claim completeness over an unknown future Unity object universe. Its finite proof universe is the contract explicitly owned by `WP-H1-00`: tuple members, required drift states, plan resources supplied to one reference projection and the six named causal defect classes.
+
+For drift behavior the oracle does not infer effective state from the plan registry alone: `ReferenceMaterializer.Observe` accepts an effective managed-resource inventory distinct from the expected plan, and tests independently remove, add and alter effective resources. Therefore a plan entry disappearing or a new effective entry appearing cannot make the drift obligation disappear with it. The neutral project graph is evaluated by the built assembly/reference closure plus the explicit no-project/package-dependency invariant, not by a self-declared engine list.
+
+## Matrix
+
+| Proof obligation | Claim / trust-boundary scope | Completeness argument | Positive evidence | Negative control / defect injection | Result | Residual risk |
+|---|---|---|---|---|---|---|
+| Complete tuple anchors projection identity | canonical anchor + snapshot digest + binding + catalogue + bridge/toolchain | each tuple axis is varied independently, including anchor with unchanged snapshot bytes | `EveryFullInputAxisChangesIdentityAndReceiptAnchorsTheTuple` | receipt catalogue anchor is replaced with a false value | GREEN | real Unity input fingerprints owned downstream |
+| Same full input has deterministic plan/generation | fileless plan normalization | caller resource order is deliberately reversed while normalized plan/digests remain equal | `SameFullInputNormalizesPlanAndRetryHasNoSecondSemanticDelta` | remove resource ordering | GREEN | trusted BCL/hash behavior |
+| Retry is idempotent | one active reference generation | second same-input materialization returns same receipt and no semantic delta | same test as above | deterministic-plan control would invalidate identity equality; normal path also asserts `SemanticChange == false` | GREEN | real Editor retry/reconciliation downstream |
+| Rebuild from same inputs is deterministic | fresh fileless materializer | independent new materializer starts absent and reconstructs same generation/plan/observation/receipt | `RebuildFromSameInputsReconstructsSameGenerationAndObservation` | covered by deterministic-plan causal control | GREEN | project checkpoint/rebuild belongs H1-10 |
+| Failed staging cannot publish | reference generation pointer/receipt | active generation/receipt captured before injected pre-publication failure and checked unchanged | `FailedStagingNeverMovesTheActiveGeneration` | inject active-plan advancement before failure return | GREEN | general process/power-loss atomicity not claimed |
+| Required observation states are explicit | H1-00 seven-state finite enum | one executable test constructs each required state | `ObservationDistinguishesAllRequiredStatesFromEffectiveResources` | drift/missing/ambiguous paths additionally challenged by independent effective inventories | GREEN | Unity-specific diagnostics downstream |
+| Extra/missing/changed managed resource is visible | effective resource list versus expected plan | effective list is supplied independently of expected plan and mutated in three ways | `DriftOracleDetectsExtraMissingAndChangedManagedResources` | suppress effective-shape comparison | GREEN | effective Unity inventory acquisition downstream |
+| Missing logical dependency fails visibly | supplied dependency availability set | representative plan owns exactly two logical dependencies; incomplete availability produces `missing-dependency` | observation-state test + content-shape probe | covered by explicit state assertion; catalogue implementation intentionally absent | GREEN | real catalogue completeness H1-01+ |
+| Canonical snapshot bytes remain immutable | defensive byte boundary | caller bytes hashed before/after; returned copy mutated and internal digest/copy rechecked | `BridgePlanningAndMaterializationCannotMutateCanonicalSnapshotBytes` | return internal byte buffer instead of clone | GREEN | H0 canonical mutation correctness consumed, not re-proved |
+| Neutral bridge has no engine/runtime implementation dependency | `Arkus.EngineBridge` assembly/project graph | production project has zero project/package refs; reflection checks referenced assemblies/public type names; canonical observer also scans source for Unity namespaces | `NeutralBridgeAssemblyHasNoRuntimeUnityOrTransportDependency` | inject public `UnityEditorLeak` type | GREEN | trusted compiler/MSBuild effective reference behavior |
+| Contract artifacts have portable machine-readable records | neutral portable data projection | recursive oracle rejects any value outside string/integer/bool/null/dictionary/list; receipt/observation digest pair must agree | `H1PortableProjectionTests` | mismatched receipt/observation pair must throw | GREEN | transport projection/versioning beyond H1-00 not claimed |
+| Receipt records diagnostics and publication status | portable receipt bound to exact normalized observation | failed pre-publication result is serialized and checked for diagnostic, status, catalogue/profile and observation digest | `PortableContractIsEngineNeutralMachineReadableAndReceiptCarriesDiagnostics` | mismatched observation fails closed | GREEN | real Unity receipt evidence downstream |
+| Representative content shape is not toy-flat | bounded plaza/market/bar/workshop hierarchy | one root + three children + two distinct logical asset dependencies exercises hierarchy/dependency granularity | `CONTENT_SHAPE_PROBE.md`; executable content-shape test | plan ordering/dependency/state controls protect the relevant semantics | GREEN | no claim of gameplay/CITY/Unity schema completeness |
+| Foundational causal false-green classes are detected | six classes named by WP | each controlled source defect runs in a disposable worktree; compile/infrastructure failure is rejected as invalid evidence | `scripts/h1-00-negative-conformance.sh` | 6/6 controls must produce causal test RED | GREEN | no arbitrary trusted-toolchain pathology claimed |
+| Existing H0 proof/composition remains intact | inherited regression surface | full accepted test suite executes after H1-00 proof | canonical exact-SHA observer full `Arkus.Harness.Tests` run | inherited HK01 effective production-assembly oracle already caught the initial missing Release solution integration during Worker cycle | GREEN | accepted H0 guarantees consumed compositionally |
+
+## Causal controls
+
+`scripts/h1-00-negative-conformance.sh` exercises exactly the six material defect classes named by the workpack. Each control mutates a disposable detached worktree, requires a test failure for the intended guard, rejects compiler/MSBuild/NuGet failure as non-causal, resets to the candidate and finally requires the worktree to be clean.
+
+The latest fully completed implementation observation before the final evidence-only commits was Actions run `35572476661` on `8ea7e9bdcaac29be2259a2c9d10fa97b57c521af`: Release build GREEN, 9 focused reference tests GREEN, 6/6 causal controls RED for the intended reason, and 229/229 full regression GREEN. The subsequent portable-contract additions are part of the final candidate and are required to pass the same canonical exact-SHA entrypoint before freeze; the workflow result, not this paragraph, is the final exact-SHA authority.
+
+## Proof-budget result
+
+The production change is one dependency-free neutral assembly. Proof support consists of focused tests, one exact-SHA observer route and six defect controls that map one-for-one to explicit workpack defect classes. The Worker cycle also fixed an inherited effective-build integration regression rather than adding speculative guards. No second consecutive proof-only expansion occurred without closing an acceptance gap; `WITHIN_BUDGET` is therefore appropriate.
