@@ -42,13 +42,15 @@ Only measured evidence that the H1 representative scenario cannot operate inside
 | bridge creates a second mutation authority | H1-01/H1-09 | producer emits mutation proposals; only H0 commits |
 | H0 host policy is skipped or weakened for editor effects | H1-03 | separate Unity policy at the below-transport seam |
 | public H0/MCP host cannot truthfully reach Unity or grows a private/parallel route | H1-03A | fixed external-host → batch-worker topology; same composed handler for reference/MCP; structured lifecycle proof |
+| disposable substitute art hides real source/import/catalogue behavior | H1-04 | adopt exact Quaternius Source at first game-art use; positive game-shaped catalogue proof uses accepted source content |
 | materialization partially replaces the active projection | H1-05 | generation staging, publication manifest and interruption controls |
-| source prefab/asset is overwritten | H1-06 | source catalogue read-only; only managed derivatives writable |
+| purchased source prefab/asset is overwritten | H1-06 | adopted upstream source is read-only to bridge materialization; only bridge-managed projection derivatives writable |
 | generic reflection silently broadens component mutation | H1-07 | explicit schema adapters and effective allowlist coverage |
 | engine validation suppresses unrelated diagnostics | H1-08 | dependency-local ambiguity, preserving HK05 lesson |
 | manual Unity edits silently become authored truth | H1-09 | drift plus explicit import proposal; never auto-pull |
-| checkpoint/restoration redefines snapshot/replay lineage | H1-10 | consume HK06B/HK06C; Unity rebuild remains downstream |
-| toy assets hide real hierarchy/material/animation failures | H1-11/GATE | exact reviewed real-asset slice |
+| checkpoint/restoration redefines snapshot/replay lineage or silently substitutes missing source art | H1-10 | consume HK06B/HK06C; Unity rebuild remains downstream and binds accepted source fingerprints |
+| bounded early source slice hides broader real hierarchy/material/rig/animation failures | H1-11/GATE | broaden the already-adopted Quaternius Source baseline into an exact representative selected-item conformance slice |
+| H1 absorbs finished-art/Cantabrian adaptation ownership and blocks the first playable | H1-04..GATE | source-first bridge proof only; later H2/ART/CITY creates Juego2-derived content demand-first |
 | H1 conformance fixture silently takes CITY geography/seed ownership | H1-11/GATE | consume CITY-00 shape only; exact seed and keeper realization stay CITY-03/07-owned |
 | gate invents semantics to close an omission | H1-GATE | closure-only rule and predecessor reopen routing |
 
@@ -65,6 +67,7 @@ Unless separately promoted by evidence, H1 does not claim:
 - shipping-scale catalogue/world throughput or SLOs;
 - addressables/asset-bundle delivery, remote build farm or cloud tenancy;
 - runtime/save-state parity, navigation, physics, lighting quality or gameplay correctness;
+- finished Cantabrian art conversion, complete clothing/wardrobe, all missing props/meshes/variants or all gameplay/demo animations;
 - portability of Unity-specific binding intent to another engine without a reviewed translator.
 
-These residuals are visible H2+/H0S/product decisions, not hidden green claims.
+These residuals are visible H2+/ART/CITY/H0S/product decisions, not hidden green claims.
