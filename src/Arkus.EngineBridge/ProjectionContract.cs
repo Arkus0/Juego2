@@ -427,6 +427,7 @@ namespace Arkus.EngineBridge
         private static string EffectiveDigest(IEnumerable<ProjectionResource> resources) =>
             StableEncoding.Hash(StableEncoding.Sequence(resources
                 .OrderBy(value => value.ResourceId, StringComparer.Ordinal)
+                .ThenBy(value => value.Normalized, StringComparer.Ordinal)
                 .Select(value => value.Normalized)));
     }
 
