@@ -5,6 +5,7 @@
     <RootNamespace>Arkus.Harness.Projection</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../Arkus.EngineBridge.UnityAuthoring/Arkus.EngineBridge.UnityAuthoring.csproj" />
     <ProjectReference Include="../Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
     <ProjectReference Include="../Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
   </ItemGroup>
