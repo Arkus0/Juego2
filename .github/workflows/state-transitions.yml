@@ -40,16 +40,28 @@ jobs:
           [[ -n "${PR:-}" ]] || exit 0
 
           pr_body=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.body // ""')
+          process_only=false
           if printf '%s\n' "${pr_body}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
+            process_only=true
+          fi
+          has_worker_lifecycle=false
+          if printf '%s\n' "${pr_body}" | grep -Eqi '^(WP|Contract|Worker state|Candidate HEAD SHA|Worker pre-review|Frozen candidate SHA|Branch frozen):'; then
+            has_worker_lifecycle=true
+          fi
+          if [[ "${process_only}" == "true" && "${has_worker_lifecycle}" != "true" ]]; then
             exit 0
           fi
 
           non_foundational=false
-          if printf '%s\n' "${pr_body}" | grep -Eqi '^(Mode|Class):.*NON-FOUNDATIONAL'; then
+          if printf '%s\n' "${pr_body}" | grep -Eqi '^(Mode|Class):.*NON-(PRODUCT-)?FOUNDATIONAL'; then
             non_foundational=true
           fi
 
-          freeze_job=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100" --jq '.jobs[] | select(.name == "Freeze exact-SHA validation") | .conclusion' | tail -n1)
+          jobs_api="repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100"
+          handoff_job=$(gh api "${jobs_api}" --jq '.jobs[] | select(.name == "Worker handoff lint") | .conclusion' | tail -n1)
+          [[ "${handoff_job}" == "success" ]] || exit 0
+
+          freeze_job=$(gh api "${jobs_api}" --jq '.jobs[] | select(.name == "Freeze exact-SHA validation") | .conclusion' | tail -n1)
           if [[ "${non_foundational}" != "true" ]]; then
             [[ "${freeze_job}" == "success" ]] || exit 0
           fi
@@ -93,9 +105,9 @@ jobs:
             exit 0
           fi
           if [[ "${non_foundational}" == "true" ]]; then
-            detail="frozen metadata is coherent for this non-foundational WP. Start a fresh independent Reviewer."
+            detail="canonical Worker handoff is mechanically coherent for this non-foundational WP. Start a fresh independent Reviewer."
           else
-            detail="frozen metadata and exact-SHA validation are green. Start a fresh independent Reviewer."
+            detail="canonical Worker handoff and exact-SHA validation are green. Start a fresh independent Reviewer."
           fi
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
@@ -197,7 +209,8 @@ jobs:
           wp = (field('WP') or f'PR-{pr["number"]}').replace(' ', '_')
           mode = (field('Mode') or '')
           cls = (field('Class') or '')
-          non_foundational = 'NON-FOUNDATIONAL' in f'{mode} {cls}'.upper()
+          joined = f'{mode} {cls}'.upper()
+          non_foundational = ('NON-FOUNDATIONAL' in joined or 'NON-PRODUCT-FOUNDATIONAL' in joined)
           print(frozen, wp, 'YES' if non_foundational else 'NO')
           PY
           )
@@ -229,6 +242,9 @@ jobs:
             exit 0
           fi
 
+          handoff_check=$(gh api -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/commits/${reviewed_sha}/check-runs?per_page=100" --jq '.check_runs[] | select(.name == "Worker handoff lint" and .conclusion == "success") | .id' | head -n1)
+          [[ -n "${handoff_check}" ]] || { echo "::error::No successful Worker handoff lint check for ${reviewed_sha}"; exit 2; }
+
           if [[ "${non_foundational}" != "YES" ]]; then
             freeze_check=$(gh api -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/commits/${reviewed_sha}/check-runs?per_page=100" --jq '.check_runs[] | select(.name == "Freeze exact-SHA validation" and .conclusion == "success") | .id' | head -n1)
             [[ -n "${freeze_check}" ]] || { echo "::error::No successful Freeze exact-SHA validation check for ${reviewed_sha}"; exit 2; }
@@ -237,9 +253,9 @@ jobs:
           key="pass-merge:${PR}:${reviewed_sha}"
           if ! gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
             if [[ "${non_foundational}" == "YES" ]]; then
-              detail="exact Reviewer PASS agrees with frozen metadata for this non-foundational WP. Merging this exact SHA."
+              detail="exact Reviewer PASS agrees with a mechanically valid frozen handoff for this non-foundational WP. Merging this exact SHA."
             else
-              detail="exact Reviewer PASS and freeze validation agree. Merging this exact SHA."
+              detail="exact Reviewer PASS, Worker handoff lint and freeze validation agree. Merging this exact SHA."
             fi
             body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
@@ -282,7 +298,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          process_only=false
           if printf '%s\n' "${PR_BODY}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
+            process_only=true
+          fi
+          has_worker_lifecycle=false
+          if printf '%s\n' "${PR_BODY}" | grep -Eqi '^(WP|Contract|Worker state|Candidate HEAD SHA|Worker pre-review|Frozen candidate SHA|Branch frozen):'; then
+            has_worker_lifecycle=true
+          fi
+          if [[ "${process_only}" == "true" && "${has_worker_lifecycle}" != "true" ]]; then
             exit 0
           fi
           key="docsync-required:${PR}:${MERGE_SHA}"
