@@ -2,7 +2,7 @@
 
 Candidate semantic owner: `Docs/production/CITY_LOCATION_PROGRAMME.md`  
 Audit role: bounded Worker evidence; **not** a second semantic owner.  
-Status: **WORKER-AUDITED / CONSISTENCY RECONCILED**.
+Status: **WORKER-AUDITED / CONSISTENCY RECONCILED — REVIEW CYCLE 1**.
 
 ## 1. Contract coverage
 
@@ -150,7 +150,26 @@ Result: **COVERED**.
 
 ### Q6 — A/B programme within accepted scale without crowding quiet fabric
 
-Closed at programme level: 23 A/B place/family commitments are distributed across nine district families while the ledger and §12 explicitly retain substantial C/D and S0/S1 fabric. `Docs/evidence/WP-CITY-02/CAPACITY_SANITY.md` checks the accepted approximate area envelope without pretending exact parcel fit: 21 A/B handles fall in the ~0.365 km² dense-fabric subtotal, or a crude pressure of about one A/B handle per ~17,380 m²; the two Vega A/B places sit outside that dense subtotal. Exact parcel/site fit remains CITY-05.
+Closed at programme level by `Docs/evidence/WP-CITY-02/CAPACITY_SANITY.md` using a falsifiable role-based spatial-demand bound rather than A/B handle density or I-depth.
+
+Every A/B place receives a coarse `T/S/M/L` programme-envelope class. The **upper bound** of that class is charged against the accepted dense part that hosts it. The class envelope bundles the place's shell/footprint demand plus dedicated yard/open-space/threshold apron where applicable, while deliberately avoiding parcel boundaries or exact building dimensions.
+
+Dense-part result under conservative upper bounds:
+
+| Part | Charged A/B envelope | Part area | A/B cap | Hard ordinary/quiet reserve | Result |
+|---|---:|---:|---:|---:|---|
+| Wedge core | 26,100 m² | 150,000 m² | 25% | 60% | PASS |
+| Ensanche | 5,000 m² | 90,000 m² | 15% | 70% | PASS |
+| Barrio Alto | 7,500 m² | 60,000 m² | 20% | 65% | PASS |
+| Puerto | 13,100 m² | 45,000 m² | 35% | 50% | PASS |
+| Entrada | 5,600 m² | 20,000 m² | 30% | 55% | PASS |
+| **Dense total** | **57,300 m²** | **365,000 m²** | — | **225,500 m² aggregate hard reserve** | **PASS** |
+
+A separate 15% per-part uncommitted/circulation margin is not spendable to make the A/B arithmetic pass. Named quiet invariants (`W07`, `W15`, upper residential fabric, ordinary Puerto work frontage) are non-borrowable even if raw area remains.
+
+The test is explicitly falsifiable. Entrada has only 400 m² of A/B-cap headroom: if `loc.entrada.depot_forecourt` proves to require `L` rather than its current `M` ceiling, Entrada rises to 8,100 m² / 40.5% and Q6 **FAILS/reopens**. A class-ceiling breach, a new/promoted A/B place, a part-cap breach or use of hard reserve requires recomputation before acceptance.
+
+Exact parcel/site placement remains CITY-05, but the programme-capacity question itself is no longer deferred to CITY-05.
 
 ### Q7 — two everyday non-port services at Entrada/Puerto
 
@@ -210,6 +229,7 @@ Result: **compatible; zero new semantic movement edges**.
 | minigames are UI-only portals | physical candidate homes are named; mechanics remain unowned |
 | Living World semantics pre-accepted | no schedule/belief/dialogue/decision semantics are frozen |
 | CITY-01 route/access reinterpreted for convenience | no new edge or access-class promotion is declared |
+| Q6 capacity always passes by handle count | rejected; spatial-demand caps and hard reserve can independently fail |
 
 ## 10. Reactive-density audit
 
@@ -227,15 +247,16 @@ Result: **MEASURABLE LATER WITHOUT “EVERYTHING INTERACTIVE”.**
 
 ## 11. Worker challenge results
 
-Before freeze the Worker challenged the planned targets:
+Before cycle-1 refreeze the Worker challenged the planned targets:
 
 1. all 23 A/B rows have exactly one profile and one interior priority — **PASS after the service-yard I1 repair**;
 2. all 37 programme rows have a single A–D and single S-depth assignment — **PASS**;
 3. no mobility anchor implies a new inter-landmass relation or publicises `W17` — **PASS**;
-4. Q6/Q7/Q8 are closed by the semantic owner and bounded evidence rather than this audit alone — **PASS**;
-5. the A/S and C/S independence counterexamples survive — **PASS**;
-6. quiet places retain value without incident-generation claims — **PASS**;
-7. runtime-social wording remains requirement/affordance language rather than implementation semantics — **PASS**;
-8. the baseline→candidate diff is limited to CITY-02 production/evidence scope — **PASS**.
+4. Q6 capacity no longer depends on `area / handle` or I-depth; every dense part passes a conservative spatial-demand cap while preserving a hard reserve, and explicit fail/reopen rules exist — **PASS**;
+5. Q7/Q8 remain closed by physical place commitments — **PASS**;
+6. the A/S and C/S independence counterexamples survive — **PASS**;
+7. quiet places retain value without incident-generation claims — **PASS**;
+8. runtime-social wording remains requirement/affordance language rather than implementation semantics — **PASS**;
+9. the repair remains bounded to CITY-02 evidence/process and does not pre-parcel CITY-05 — **PASS**.
 
 This audit is supporting evidence. `WORKER_PRE_REVIEW.md` records the final Worker quality-gate verdict.
