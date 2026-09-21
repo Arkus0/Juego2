@@ -1,10 +1,14 @@
 # WP-CITY-06 — Interiors + layered discovery
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: PRODUCT / ENVIRONMENT & DISCOVERY PREPRODUCTION (NON-FOUNDATIONAL)  
 Mode: **REMOTE**  
 Depends on: `WP-CITY-05` PASS  
 Blocks: `WP-CITY-03` only
+
+Accepted candidate: `c73cbb19f8b152bd4b97ce3154eb18a78deaec3c`  
+Independent review: **PASS**, review `#5268249668`  
+Merged: PR `#90`, merge commit `acb84ec9ba7aa94e962bf7b35d7e53c0549ba758` on 2026-09-21
 
 ## Objective
 
