@@ -14,7 +14,15 @@ The direct predecessor is the accepted CTX programme plan:
 - plan merge: `f3c8362b3d76fd4f78107d8142e07e476985f973`;
 - post-PASS DocSync: PR #103, merge `609ac464e0b5aed2da0a369b6f2d368f72dd35a3`.
 
-The current baseline also includes the subsequently accepted PROCESS_ONLY Worker-handoff lint / Automation V2 reconciliation through main `02016ba5a3d0a344525835652bbd84c9a2e9cc49`. That maintenance is consumed as current process state; CTX-01 does not redefine its lifecycle semantics.
+The historical CTX-01 baseline remains `02016ba5a3d0a344525835652bbd84c9a2e9cc49`.
+
+## Main drift reconciled during the Worker cycle
+
+Before final pre-review/freeze, current `main` advanced to `3f1247a2289351d32a5d8c1f3bbbcbee32db6983` through PROCESS_ONLY hotfix PR #107. The CTX-01 branch explicitly merged that current main; compare now reports the candidate branch `behind_by: 0` with merge-base `3f1247a2289351d32a5d8c1f3bbbcbee32db6983`.
+
+PR #107 changed Automation V2's PROCESS_ONLY validation behavior only: when no canonical product/runtime command is executed, it no longer synthesizes `EXECUTION_RECEIPT_V1`, `Result: GREEN`, or equivalent execution-proof claims. PROCESS_ONLY still performs applicable cheap mechanical checks such as exact-checkout verification and Worker handoff lint where the Worker lifecycle applies.
+
+CTX-01 consumes that accepted maintenance as current process state. It does **not** redesign Automation V2, add receipt semantics, or treat absence of an execution receipt as failure for this PROCESS_ONLY WP. The bootstrap profiles/router/index concern context selection and authority only.
 
 ## Inherited guarantees relevant to CTX-01
 
@@ -25,6 +33,7 @@ The current baseline also includes the subsequently accepted PROCESS_ONLY Worker
 5. Worker predecessor reconstruction, strict Worker pre-review, exact freeze/review SHA binding and fresh independent Reviewer judgment remain unchanged.
 6. The H1 local executor remains a bounded context-poor mechanical executor under `H1_REMOTE_LOCAL_EXECUTION.md`; CTX-01 may route it but may not broaden its discretion.
 7. The accepted CTX-plan Reviewer explicitly expects CTX-01 dry-run evidence to make the **escalation decision itself observable**, so a false `context closed` decision cannot hide a required ROADMAP/proof read.
+8. Current PROCESS_ONLY lifecycle semantics include the PR #107 rule that no synthetic execution receipt/GREEN claim is produced where no canonical execution occurred.
 
 ## Guarantees newly owned by CTX-01
 
@@ -42,7 +51,8 @@ The current baseline also includes the subsequently accepted PROCESS_ONLY Worker
 - the CTX programme's three-WP causal split and its quality-first priority;
 - the semantic content of the existing Worker/Reviewer protocol;
 - the H1 remote/local SHA-chain and executor-ownership model;
-- the Worker handoff linter's mechanical lifecycle checks;
+- Worker handoff lint's mechanical lifecycle checks;
+- PR #107's PROCESS_ONLY non-receipt behavior;
 - accepted H0/H1/CITY/PA product semantics unrelated to context selection.
 
 CTX-01 may point to those authorities and test correct routing to them. It does not reopen or duplicate their substantive proof.
