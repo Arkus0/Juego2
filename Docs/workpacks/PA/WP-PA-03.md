@@ -1,10 +1,14 @@
 # WP-PA-03 — Adopt/revalidate Social Graph findings
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_HARVEST**  
 Depends on: `WP-PA-02` PASS + merge + DocSync  
 Blocks: `WP-PA-04` only
+
+Accepted candidate: `d216f32f0c82bf57c23a3c7ef0c4433cbcbdc927`  
+Independent review: **PASS**, review `#5270421825`  
+Merged: PR `#100`, merge commit `2f3862b601b0521a6a3d5a57afe54f182d037e97` on 2026-09-21
 
 ## Objective
 
