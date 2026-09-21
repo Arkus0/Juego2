@@ -2,30 +2,35 @@
 
 Semantic owner: `Docs/production/CITY_ENVIRONMENT_GRAMMAR.md`  
 Inherited capacity owner: `Docs/evidence/WP-CITY-02/CAPACITY_SANITY.md`  
-Purpose: test whether the CITY-05 street/parcel/building grammar can realize every accepted CITY-02 A/B place without exceeding its inherited `T/S/M/L` programme-envelope ceiling or consuming the hard ordinary/quiet reserve.
+Purpose: test whether the CITY-05 street/parcel/building grammar can realize every accepted CITY-02 A/B place without exceeding its inherited `T/S/M/L` programme-envelope ceiling, contradicting CITY-05's own parcel/site ranges or consuming the hard ordinary/quiet reserve.
 
-This evidence does **not** redraw the city or establish exact parcel polygons. It constructs one plausible bounded exterior composition per A/B place using CITY-05 families and checks the exclusive-envelope arithmetic. Final realized geometry remains falsifiable downstream.
+This evidence does **not** draw final parcel polygons. It gives one bounded **host/site witness** per A/B place. Each witness must pass two independent tests:
+
+1. the exclusive place composition fits inside a parcel/open-site range allowed by `CITY_ENVIRONMENT_GRAMMAR.md`;
+2. the exclusive place total remains below the inherited CITY-02 `T/S/M/L` ceiling.
+
+Final placement and realized geometry remain falsifiable downstream.
 
 ## 1. Accounting rule
 
-For this check, each A/B place is decomposed into at most three **exclusive** components:
+Each A/B place is decomposed into three exclusive ground-envelope components:
 
 1. `shell/support` — building/support-structure footprint required by that place;
 2. `dedicated open` — place-owned yard/court/garden/market occupation/work apron;
-3. `threshold apron` — immediate place-specific approach/working threshold outside the shared route polygon.
+3. `threshold apron` — immediate place-specific threshold/working apron outside the shared route polygon.
 
 Excluded from every total:
 
 - shared public street/path route polygon;
-- junction clearances that serve the route rather than one place;
+- junction clearances serving the route rather than one place;
 - water;
 - scenic envelope;
 - ordinary neighbouring C fabric;
-- the hard ordinary/quiet reserve.
+- hard ordinary/quiet reserve.
 
-Therefore this check cannot make itself pass by counting the same square metres as both place envelope and circulation/reserve.
+The witness dimensions below are **planning bounding witnesses**, not final rectangles. Irregular final sites may occupy less of the bounding box. A witness is valid only when its width/depth fall within the named CITY-05 parcel family, or when `pc.open_site` explicitly permits a bounded site-specific region.
 
-Inherited class ceilings are unchanged:
+Inherited CITY-02 class ceilings remain unchanged:
 
 | Class | Accepted upper bound |
 |---|---:|
@@ -34,114 +39,105 @@ Inherited class ceilings are unchanged:
 | M | 2,500 m² |
 | L | 5,000 m² |
 
-The figures below are **bounded planning maxima for one legal composition pattern**, not predictions that the final geometry consumes exactly that area.
+## 2. Per-place grammar-fit witnesses
 
-## 2. Per-place fit
+| Part | Place | PE | Host/site witness | Shell | Open | Apron | Exclusive total | PE ceiling | Result |
+|---|---|---:|---|---:|---:|---:|---:|---:|---|
+| Wedge | `loc.casco.bar` | M | `pc.commercial_row`, within 12×24 m host | 180 | 60 | 30 | **270** | 2,500 | PASS |
+| Wedge | `loc.casco.bridgehead` | T | `pc.open_site`, bounded 20×10 m | 0 | 150 | 50 | **200** | 600 | PASS |
+| Wedge | `loc.plaza.ayuntamiento` | M | `pc.civic_frontage`, within 24×30 m host | 450 | 150 | 70 | **670** | 2,500 | PASS |
+| Wedge | `loc.plaza.market` | L | `pc.open_site`, bounded 25×24 m market/terrace order | 50 | 500 | 50 | **600** | 5,000 | PASS |
+| Wedge | `loc.calle.bakery` | M | `pc.commercial_row`, within 12×24 m host | 180 | 60 | 30 | **270** | 2,500 | PASS |
+| Wedge | `loc.calle.pharmacy` | S | `pc.commercial_row`, within 10×20 m host | 140 | 30 | 20 | **190** | 1,200 | PASS |
+| Wedge | `loc.calle.everyday_shop` | S | `pc.commercial_row`, within 10×24 m host | 170 | 40 | 20 | **230** | 1,200 | PASS |
+| Wedge | `loc.ribera.workshop` | L | `pc.workshop_court`, within 18×32 m host | 250 | 250 | 50 | **550** | 5,000 | PASS |
+| Wedge | `loc.ribera.service_yard` | L | `pc.workshop_court`, within 18×32 m host | 100 | 400 | 50 | **550** | 5,000 | PASS |
+| Wedge | `loc.ribera.paseo_edge` | T | `pc.open_site`, bounded 20×10 m | 0 | 150 | 50 | **200** | 600 | PASS |
+| Ensanche | `loc.ensanche.neighbourhood_anchor` | M | `pc.ensanche_garden`, within 15×30 m host | 180 | 220 | 50 | **450** | 2,500 | PASS |
+| Ensanche | `loc.ensanche.shared_garden` | M | `pc.open_site`, bounded 30×15 m | 0 | 400 | 50 | **450** | 2,500 | PASS |
+| Barrio Alto | `loc.barrio.residence_cluster` | L | `pc.slope_residential`, within 10×20 m host; vertical/shared-landing capacity supplies the cluster role | 150 | 30 | 20 | **200** | 5,000 | PASS |
+| Barrio Alto | `loc.barrio.lavadero` | M | `pc.open_site`, bounded 20×15 m | 50 | 200 | 50 | **300** | 2,500 | PASS |
+| Puerto | `loc.puerto.work_hub` | L | `pc.warehouse_yard`, within 20×45 m host | 350 | 450 | 100 | **900** | 5,000 | PASS |
+| Puerto | `loc.puerto.landing` | T | `pc.open_site`, bounded 25×10 m | 0 | 200 | 50 | **250** | 600 | PASS |
+| Puerto | `loc.puerto.worker_social` | M | `pc.workshop_court`, within 15×30 m host | 250 | 150 | 50 | **450** | 2,500 | PASS |
+| Puerto | `loc.puerto.warehouse_yard` | L | `pc.warehouse_yard`, within 25×44 m host | 350 | 650 | 100 | **1,100** | 5,000 | PASS |
+| Entrada | `loc.entrada.arrival` | T | `pc.open_site`, bounded 20×15 m | 50 | 200 | 50 | **300** | 600 | PASS |
+| Entrada | `loc.entrada.fonda` | M | `pc.rural_edge`, within 20×35 m host | 350 | 250 | 50 | **650** | 2,500 | PASS |
+| Entrada | `loc.entrada.depot_forecourt` | M | `pc.warehouse_yard`, within 28×45 m host | 250 | 850 | 100 | **1,200** | 2,500 | PASS |
+| Vega | `loc.vega.supply_node` | L | `pc.rural_edge`, within 20×35 m host | 250 | 400 | 50 | **700** | 5,000 | PASS — outside dense subtotal |
+| Vega | `loc.vega.quiet_paseo` | T | `pc.open_site`, bounded 20×10 m | 0 | 150 | 50 | **200** | 600 | PASS — outside dense subtotal |
 
-| Part | Place | Class | Shell/support | Dedicated open | Threshold apron | CITY-05 bounded total | Class ceiling | Result |
-|---|---|---:|---:|---:|---:|---:|---:|---|
-| Wedge | `loc.casco.bar` | M | 500 | 450 | 250 | **1,200** | 2,500 | PASS |
-| Wedge | `loc.casco.bridgehead` | T | 0 | 200 | 150 | **350** | 600 | PASS |
-| Wedge | `loc.plaza.ayuntamiento` | M | 800 | 350 | 250 | **1,400** | 2,500 | PASS |
-| Wedge | `loc.plaza.market` | L | 300 | 2,200 | 500 | **3,000** | 5,000 | PASS |
-| Wedge | `loc.calle.bakery` | M | 600 | 250 | 150 | **1,000** | 2,500 | PASS |
-| Wedge | `loc.calle.pharmacy` | S | 350 | 100 | 50 | **500** | 1,200 | PASS |
-| Wedge | `loc.calle.everyday_shop` | S | 450 | 100 | 100 | **650** | 1,200 | PASS |
-| Wedge | `loc.ribera.workshop` | L | 1,000 | 1,800 | 400 | **3,200** | 5,000 | PASS |
-| Wedge | `loc.ribera.service_yard` | L | 400 | 2,100 | 300 | **2,800** | 5,000 | PASS |
-| Wedge | `loc.ribera.paseo_edge` | T | 0 | 150 | 150 | **300** | 600 | PASS |
-| Ensanche | `loc.ensanche.neighbourhood_anchor` | M | 500 | 800 | 300 | **1,600** | 2,500 | PASS |
-| Ensanche | `loc.ensanche.shared_garden` | M | 200 | 1,300 | 300 | **1,800** | 2,500 | PASS |
-| Barrio Alto | `loc.barrio.residence_cluster` | L | 1,600 | 1,000 | 400 | **3,000** | 5,000 | PASS |
-| Barrio Alto | `loc.barrio.lavadero` | M | 150 | 850 | 200 | **1,200** | 2,500 | PASS |
-| Puerto | `loc.puerto.work_hub` | L | 1,200 | 1,900 | 400 | **3,500** | 5,000 | PASS |
-| Puerto | `loc.puerto.landing` | T | 0 | 250 | 200 | **450** | 600 | PASS |
-| Puerto | `loc.puerto.worker_social` | M | 600 | 500 | 200 | **1,300** | 2,500 | PASS |
-| Puerto | `loc.puerto.warehouse_yard` | L | 1,500 | 2,300 | 400 | **4,200** | 5,000 | PASS |
-| Entrada | `loc.entrada.arrival` | T | 100 | 300 | 150 | **550** | 600 | PASS |
-| Entrada | `loc.entrada.fonda` | M | 900 | 600 | 200 | **1,700** | 2,500 | PASS |
-| Entrada | `loc.entrada.depot_forecourt` | M | 500 | 1,500 | 300 | **2,300** | 2,500 | PASS — 200 m² class slack |
-| Vega | `loc.vega.supply_node` | L | 800 | 2,000 | 400 | **3,200** | 5,000 | PASS — outside dense subtotal |
-| Vega | `loc.vega.quiet_paseo` | T | 0 | 150 | 150 | **300** | 600 | PASS — outside dense subtotal |
+The witness is intentionally a ground-envelope test. I2/I3 interior depth can use multiple floors/zones without inflating the ground envelope, so interior-room count remains neither a capacity oracle nor an excuse to exceed a parcel/site range.
 
-Every place has a concrete grammar path in `CITY_ENVIRONMENT_GRAMMAR.md` matching the kind of area charged here: shell/yard/open site/threshold. No fit relies on interior-room count or A/B handle count.
+## 3. Cross-check against CITY-05 parcel ranges
 
-## 3. Dense-part reconciliation
+Every non-open witness stays inside the semantic owner's current host range:
 
-CITY-02 accepted per-part caps/reserves remain authoritative. CITY-05's bounded compositions use less than the conservative class-upper charges accepted in CITY-02; **the unused difference is not permission to consume reserve**.
+- `pc.commercial_row` ≤ 12 m frontage × 24 m depth;
+- `pc.civic_frontage` ≤ 24 × 30 m;
+- `pc.workshop_court` ≤ 18 × 32 m;
+- `pc.ensanche_garden` ≤ 16 × 30 m;
+- `pc.slope_residential` ≤ 10 × 20 m;
+- `pc.warehouse_yard` ≤ 28 × 45 m;
+- `pc.rural_edge` ≤ 20 × 40 m.
 
-| Part | Accepted area | CITY-02 A/B cap | Hard ordinary/quiet reserve | 15% circulation/uncommitted | CITY-02 conservative upper charge | CITY-05 bounded composition total | Headroom to cap after CITY-05 bounded total | Result |
-|---|---:|---:|---:|---:|---:|---:|---:|---|
-| Wedge core | 150,000 | 37,500 | 90,000 | 22,500 | 26,100 | **14,400** | 23,100 | PASS |
-| Ensanche | 90,000 | 13,500 | 63,000 | 13,500 | 5,000 | **3,400** | 10,100 | PASS |
-| Barrio Alto | 60,000 | 12,000 | 39,000 | 9,000 | 7,500 | **4,200** | 7,800 | PASS |
-| Puerto | 45,000 | 15,750 | 22,500 | 6,750 | 13,100 | **9,450** | 6,300 | PASS |
-| Entrada | 20,000 | 6,000 | 11,000 | 3,000 | 5,600 | **4,550** | 1,450 | PASS |
-| **Dense total** | **365,000** | **84,750 aggregate** | **225,500** | **54,750** | **57,300** | **36,000** | — | **PASS** |
+`pc.open_site` is site-specific by definition, so each witness states an explicit bounded region instead of relying on an unbounded “open space” category.
 
-The decisive acceptance boundary remains the inherited **class/cap/reserve** contract, not the lower CITY-05 planning totals. A later geometry realization cannot cite the 36,000 m² number to exceed an individual class ceiling.
+This check closes a false-green class: passing the inherited T/S/M/L ceiling is **not sufficient** if the claimed host parcel/site is too small for the same composition.
 
-## 4. Circulation separation
+## 4. Dense-part reconciliation
 
-CITY-05 street families deliberately separate route polygons from place-owned aprons:
+| Part | Accepted area | CITY-02 A/B cap | Hard ordinary/quiet reserve | 15% circulation/uncommitted | CITY-02 conservative upper charge | CITY-05 host-valid witness total | Result |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Wedge core | 150,000 | 37,500 | 90,000 | 22,500 | 26,100 | **3,730** | PASS |
+| Ensanche | 90,000 | 13,500 | 63,000 | 13,500 | 5,000 | **900** | PASS |
+| Barrio Alto | 60,000 | 12,000 | 39,000 | 9,000 | 7,500 | **500** | PASS |
+| Puerto | 45,000 | 15,750 | 22,500 | 6,750 | 13,100 | **2,700** | PASS |
+| Entrada | 20,000 | 6,000 | 11,000 | 3,000 | 5,600 | **2,150** | PASS |
+| **Dense total** | **365,000** | **84,750 aggregate** | **225,500** | **54,750** | **57,300** | **9,980** | **PASS** |
 
-- `st.plaza_market_edge`: always-clear public route band is not part of `loc.plaza.market`'s 3,000 m² exclusive envelope;
-- `st.port_work_edge`: clear public/service route is not part of warehouse/work-hub yards;
-- `st.riverside_promenade`: shared walking route is not part of paseo pause thresholds;
-- `st.service_edge`: the service route itself is shared circulation; loading/work yard behind it is exclusive place area;
-- junction turning/landing clearances remain circulation/uncommitted area unless a bounded waiting/threshold site is explicitly charged to the place.
+The 9,980 m² witness total is **not** a replacement capacity budget. It proves that one legal CITY-05 grammar realization exists below the accepted conservative bounds. CITY-02's larger class-upper charges, per-part caps, hard reserve and circulation margin remain the fail-closed acceptance boundary for any later composition.
 
-If a future site plan requires route/circulation to consume more than the inherited 15% part margin after actual shapes/retaining are known, CITY-05's grammar does not authorize borrowing the hard reserve. That is a downstream fit failure requiring reviewed correction/reopen.
+## 5. Circulation and reserve separation
 
-## 5. Hard-reserve protection checks
+- `st.plaza_market_edge`: always-clear public route is outside market exclusive envelope;
+- `st.port_work_edge`: public/service route is outside warehouse/work-hub yard;
+- `st.riverside_promenade`: shared route is outside pause threshold;
+- `st.service_edge`: service route is shared circulation; parcel-owned loading/work space is exclusive;
+- junction/turning/landing clearances stay circulation unless a bounded place-specific threshold is explicitly charged.
 
-The following are non-borrowable in this fit:
-
-- upstream `W07` / Vega quiet paseo as compensating development land;
-- `W15` ravine/lavadero quiet context;
-- upper Barrio/Ensanche ordinary residential fabric around A/B anchors;
-- ordinary Puerto `C/S1` work sheds/frontage;
-- scenic slopes/roofline.
-
-The bounded compositions above fit without assigning any of those categories as overflow area.
+Non-borrowable categories remain W07/Vega quiet paseo, W15 lavadero/ravine context, upper Barrio/Ensanche ordinary residential fabric, ordinary Puerto C/S1 work frontage and D/S0 scenic mass.
 
 ## 6. Causal negative controls
 
-### NC-1 — Entrada depot exceeds M
+### NC-1 — host-fit false green
 
-Current CITY-05 pattern for `loc.entrada.depot_forecourt` is 2,300 m², leaving only 200 m² before the accepted M ceiling.
+Take `loc.ribera.workshop`. Its accepted CITY-02 L ceiling is 5,000 m², but the selected `pc.workshop_court` host is at most 18×32 = 576 m². A proposal claiming a 1,500 m² exclusive workshop composition on **one** `pc.workshop_court` therefore **FAILS CITY-05 host fit** even though 1,500 < 5,000. Passing the predecessor cap cannot rescue an internally impossible parcel witness.
 
-If actual composition requires **2,600 m²**, CITY-05 may not call it “close enough.” Class truthfulness fails. Reclassifying the place to L invokes CITY-02's accepted conservative upper charge of 5,000 m², so Entrada becomes:
+### NC-2 — Entrada depot exceeds M
+
+The current host-valid depot witness is 1,200 m². If later requirements cannot remain at or below the inherited M ceiling of 2,500 m², CITY-05 may not stretch/relabel M. Reclassifying to L invokes CITY-02's accepted 5,000 m² upper charge, so Entrada becomes:
 
 `600 + 2,500 + 5,000 = 8,100 m²`
 
 against a 6,000 m² A/B cap = **FAIL / REOPEN CITY-02 Q6**.
 
-This is intentionally the same causal negative witness accepted by the CITY-02 Reviewer; CITY-05 preserves it rather than weakening it with lower local estimates.
+### NC-3 — market consumes route band
 
-### NC-2 — market consumes route band
+If market occupation uses the always-clear route and the same area remains counted as circulation, the proposal **FAILS** on shared-route double counting/public-graph obstruction even when below L.
 
-If market stalls/occupation are allowed to use the `st.plaza_market_edge` always-clear route and the same area is still counted as circulation, the fit is **FAIL** for shared-route double counting and public-graph obstruction even if total square metres remain below L.
+### NC-4 — service yard uses W17 as public entrance
 
-### NC-3 — service yard uses `W17` as public entrance
+If `loc.ribera.service_yard` obtains ordinary public access by treating W17/`AS` as public, the proposal **FAILS** inherited CITY-01 access. Extra area cannot cure it.
 
-`loc.ribera.service_yard` may use a service anchor associated with accepted `AS` where appropriate. If its only ordinary public access is achieved by treating `W17` as public, the composition is **FAIL** on CITY-01 access inheritance. Extra area does not cure the access defect.
+### NC-5 — quiet-reserve borrowing
 
-### NC-4 — workshop borrows quiet paseo reserve
-
-If `loc.ribera.workshop` or another L place requires expansion into the protected quiet paseo/ordinary reserve to fit its yard, the composition is **FAIL** even if district raw area could absorb it.
+If workshop/yard expansion needs protected quiet/ordinary reserve, the proposal **FAILS** even when raw district area would otherwise fit.
 
 ## 7. Verdict
 
 **PASS at CITY-05 planning-grammar level.**
 
-The reviewed grammar has at least one bounded exterior composition path for all 23 A/B places within each inherited T/S/M/L ceiling. Dense-part bounded compositions total 36,000 m² and remain under every accepted part cap without using hard ordinary/quiet reserve or double-counting shared circulation.
+All 23 A/B places now have a bounded exterior witness that simultaneously fits its selected CITY-05 parcel/open-site host and its inherited T/S/M/L ceiling. The dense host-valid witness total is 9,980 m², every dense part remains under its inherited cap, shared circulation is separated, and no hard ordinary/quiet reserve is used.
 
-What remains unproved on purpose:
-
-- exact parcel polygons and exact site placement;
-- realized street/turning/retaining geometry;
-- actual Unity footprint/frontage dimensions;
-- any future geometry that exceeds the bounded planning patterns.
-
-Those remain falsifiable. A later breach triggers the explicit reopen rules rather than invalidating the causal separation in this check.
+Exact parcel polygons, final site placement and realized Unity geometry remain downstream and falsifiable. Any later host-range/access/capacity breach triggers the explicit fail/reopen rules rather than being hidden by this planning evidence.
