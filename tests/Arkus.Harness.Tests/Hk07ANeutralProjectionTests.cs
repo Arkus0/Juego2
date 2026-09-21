@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Arkus.EngineBridge.UnityAuthoring;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
 using Arkus.Harness.Projection;
@@ -25,7 +26,8 @@ namespace Arkus.Harness.Tests
             var session = new PortableWorldAuthoringSession(initial);
             var independentlyComposed = CanonicalWorldContract.Compose(
                 new WorldInspectionService(session),
-                session);
+                session,
+                new[] { UnityAuthoringProvider.CreateContribution() });
 
             var issues = NeutralProjectionCompleteness.Compare(
                 independentlyComposed.Definitions,
