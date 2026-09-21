@@ -67,3 +67,5 @@ REMOTE_DECISION_REQUIRED
 ## Context-budget rule
 
 The purpose of this role is to minimize local Codex usage. Prefer the external anchor, manifest and exact executable surfaces over broad project reconstruction. The local session is the Unity/Windows execution arm, not the primary reasoning session.
+
+This context reduction is strictly local-executor-only. It does not authorize reducing the remote Worker's or independent Reviewer's mandatory reads, predecessor reconstruction, proof analysis or review context. If the manifest omits semantic context needed to choose what an action means or how to repair it, do not widen context and infer the answer locally; return `REMOTE_DECISION_REQUIRED` so the Worker can encode an explicit mechanical condition or make the decision remotely.
