@@ -26,7 +26,7 @@ H0 is complete. The H1 plan, DAG and boundary rationale in `Docs/workpacks/H1/RE
 
 ## Non-foundational tracks
 
-`OPS/`, `ART/` and `CITY/` are parallel non-foundational tracks. They are not bound by `FOUNDATIONAL_PROOF_STANDARD.md`, require no exact-SHA evidence or self-attack matrix, do not appear in the H0 DAG, and can neither block nor unblock any `HK-*` workpack.
+`OPS/`, `ART/`, `CITY/` and `PA/` are parallel non-foundational tracks. They are not bound by `FOUNDATIONAL_PROOF_STANDARD.md`, require no exact-SHA evidence or self-attack matrix, do not appear in the H0 DAG, and can neither block nor unblock any `HK-*` workpack.
 
 A non-foundational workpack is never a valid reason to delay, weaken or reinterpret an H0 acceptance criterion.
 
@@ -50,3 +50,17 @@ Responsibilities:
 `CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are documentation/research/planning only. `CITY-04`, `CITY-07` and `CITY-08` are LOCAL and MUST NOT begin before their stated Unity/bridge/catalogue prerequisites have passed. The H1 plan makes that interlock explicit: `H1-08 -> CITY-04` is a non-blocking greybox side edge, while `H1-GATE -> CITY-07` protects keeper realization; CITY-08 remains its own later authoring-efficiency owner.
 
 `WP-CITY-00`, `WP-CITY-01` and `WP-CITY-02` are COMPLETE. CITY Programme v2 is ACCEPTED on candidate `87a902584f2c46b2d256f6fef26829e9182e7605` (review `#5261734418`, PR `#70`, merge `058e2f4f7c5b018d60cce84e9c89bd07249dd36a`). `WP-CITY-01` passed on candidate `3444555a983415645dcc2897b748d6c4f6294f19` (review `#5263809993`, PR `#73`, merge `a9ff655e5bf2319690d919b88bd57389a32483f3`). `WP-CITY-02` passed on candidate `ddcb22d9a2dfcf68054db2b762fc7ff7aed68ae8` (review `#5266113192`, PR `#81`, merge `1bdb7b6e914692493b17a9d2215d881dfe326cb0`). The next CITY workpack is `WP-CITY-05 — Streets, parcels + reusable building families`.
+
+`PA/` is the non-foundational Living World research/adoption track. Canonical research meanings remain in `Docs/research/living-world/PA_ROADMAP.md`; the executable Worker → Reviewer contracts live in `Docs/workpacks/PA/`.
+
+The planned PA spine is:
+
+```text
+PA-01 -> PA-02 -> PA-03 -> PA-04 -> PA-05
+     -> PA-06 -> PA-07 -> PA-08 -> PA-09
+     -> PA-10 -> PA-11 -> PA-12 -> PA-13 -> PA-14
+```
+
+`WP-PA-01..05` are `REMOTE_HARVEST`: they adopt/revalidate independently reviewed `Arkus0/Juego` research without importing donor runtime authority. `WP-PA-06..13` are `REMOTE_RESEARCH`. `WP-PA-14` is deliberately deferred until PA-01..13 have passed and the future H2 playable-shell phase has an accepted boundary sufficient to plan H3+ consumers honestly.
+
+PA research can inform later H2+ design but cannot claim runtime/Unity proof or silently alter H0/H1/CITY contracts. After the PA programme plan itself receives independent PASS + merge + DocSync, its next executable workpack is `WP-PA-01 — Adopt/revalidate NPC Daily Life findings`.
