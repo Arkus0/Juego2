@@ -268,11 +268,12 @@ namespace Arkus.Harness.Tests
                 provider.Descriptor,
                 provider.Definitions.Concat(new[] { drifted }),
                 provider.Routes);
+            var versionSource = new FixedWorldStateSource(new WorldState(
+                new WorldId("world.h1-version"),
+                0,
+                Array.Empty<WorldObject>()));
             var baseContract = CanonicalWorldContract.CreateContribution(
-                new WorldInspectionService(new WorldState(
-                    new WorldId("world.h1-version"),
-                    0,
-                    Array.Empty<WorldObject>())));
+                new WorldInspectionService(versionSource));
             var composition = ContractComposer.Compose(baseContract, new[] { collision });
             Assert.False(composition.Success);
             Assert.Contains(composition.Issues, value => value.Code == "composition.duplicate_capability");
