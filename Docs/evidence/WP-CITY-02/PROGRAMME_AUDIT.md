@@ -2,7 +2,7 @@
 
 Candidate semantic owner: `Docs/production/CITY_LOCATION_PROGRAMME.md`  
 Audit role: bounded Worker evidence; **not** a second semantic owner.  
-Status: DRAFT-ACTIVE audit before Worker pre-review.
+Status: **WORKER-AUDITED / CONSISTENCY RECONCILED**.
 
 ## 1. Contract coverage
 
@@ -11,7 +11,7 @@ Status: DRAFT-ACTIVE audit before Worker pre-review.
 | district × location programme | §4 master ledger | COVERED |
 | provisional A–D + S0–S4 independently | §3 + §4 | COVERED |
 | A/B use profiles | §5 profiles every A/B row | COVERED |
-| interior priority | §2.1 + §6 | COVERED, subject to pre-review consistency check |
+| interior priority | §2.1 + §6 | COVERED; single-value consistency repaired/verified |
 | reactive-density measurements | §8 RD-1..RD-5 | COVERED |
 | quiet/ordinary fabric | §7 + C/D/S0/S1 rows | COVERED |
 | Living World spatial handoff only | §5.1 + §13 | COVERED |
@@ -81,7 +81,7 @@ Result: **A–D is not a synonym or deterministic lookup for S-depth.**
 
 ## 4. Interior-priority census
 
-The intended frozen interior backlog is:
+The frozen interior backlog is:
 
 | Priority | Rows |
 |---|---:|
@@ -92,7 +92,9 @@ The intended frozen interior backlog is:
 
 Only `loc.casco.bar` is I3/HERO. Deep interiors are selective, and most programmed rows promise no enclosed interior.
 
-Pre-review consistency condition: every master-ledger and profile reference must resolve to one unambiguous `I0..I3` value. If any row retains a slash/range instead of one priority, the candidate is NOT_READY until repaired.
+The initial audit challenge found one real inconsistency: `loc.ribera.service_yard` was written as `I0/I1` in both the master ledger and A/B profile while §6 already assigned it to `I1`. That undercut the promised unambiguous downstream backlog. Commit `e6fe45d94701d4b2cec0cada6f6996287fac3874` repaired both authoritative references to **I1**.
+
+Post-repair result: every master-ledger/profile interior reference resolves to one `I0..I3` value; no slash/range remains for the service yard.
 
 ## 5. A/B profile completeness
 
@@ -148,7 +150,7 @@ Result: **COVERED**.
 
 ### Q6 — A/B programme within accepted scale without crowding quiet fabric
 
-Closed at programme level: 23 A/B place/family commitments are distributed across nine district families while the ledger and §12 explicitly retain substantial C/D and S0/S1 fabric. CITY-02 does not claim exact parcel count or density measurement; CITY-05 must test fit during parcel/family grammar without silently promoting ordinary fabric.
+Closed at programme level: 23 A/B place/family commitments are distributed across nine district families while the ledger and §12 explicitly retain substantial C/D and S0/S1 fabric. `Docs/evidence/WP-CITY-02/CAPACITY_SANITY.md` checks the accepted approximate area envelope without pretending exact parcel fit: 21 A/B handles fall in the ~0.365 km² dense-fabric subtotal, or a crude pressure of about one A/B handle per ~17,380 m²; the two Vega A/B places sit outside that dense subtotal. Exact parcel/site fit remains CITY-05.
 
 ### Q7 — two everyday non-port services at Entrada/Puerto
 
@@ -223,15 +225,17 @@ Each has a denominator or explicit reporting basis. Scenic/ambient props do not 
 
 Result: **MEASURABLE LATER WITHOUT “EVERYTHING INTERACTIVE”.**
 
-## 11. Pre-review targets
+## 11. Worker challenge results
 
-Before freeze the Worker must challenge at least:
+Before freeze the Worker challenged the planned targets:
 
-1. all 23 A/B rows have exactly one profile and one interior priority;
-2. all 37 programme rows have a single A–D and single S-depth assignment;
-3. no mobility anchor implies a new inter-landmass relation or publicises `W17`;
-4. Q6/Q7/Q8 above are actually closed by the semantic owner, not only by this audit;
-5. the A/S and C/S counterexamples survive any edits;
-6. quiet places retain value without incident-generation claims;
-7. all runtime-social wording remains requirement/affordance language rather than implementation semantics;
-8. the complete baseline→candidate diff remains limited to CITY-02 production/evidence scope.
+1. all 23 A/B rows have exactly one profile and one interior priority — **PASS after the service-yard I1 repair**;
+2. all 37 programme rows have a single A–D and single S-depth assignment — **PASS**;
+3. no mobility anchor implies a new inter-landmass relation or publicises `W17` — **PASS**;
+4. Q6/Q7/Q8 are closed by the semantic owner and bounded evidence rather than this audit alone — **PASS**;
+5. the A/S and C/S independence counterexamples survive — **PASS**;
+6. quiet places retain value without incident-generation claims — **PASS**;
+7. runtime-social wording remains requirement/affordance language rather than implementation semantics — **PASS**;
+8. the baseline→candidate diff is limited to CITY-02 production/evidence scope — **PASS**.
+
+This audit is supporting evidence. `WORKER_PRE_REVIEW.md` records the final Worker quality-gate verdict.
