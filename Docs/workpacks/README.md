@@ -53,7 +53,7 @@ Responsibilities:
 
 `PA/` is the non-foundational Living World research/adoption track. Canonical research meanings remain in `Docs/research/living-world/PA_ROADMAP.md`; the executable Worker → Reviewer contracts live in `Docs/workpacks/PA/`.
 
-The planned PA spine is:
+The accepted PA spine is:
 
 ```text
 PA-01 -> PA-02 -> PA-03 -> PA-04 -> PA-05
@@ -61,6 +61,8 @@ PA-01 -> PA-02 -> PA-03 -> PA-04 -> PA-05
      -> PA-10 -> PA-11 -> PA-12 -> PA-13 -> PA-14
 ```
 
-`WP-PA-01..05` are `REMOTE_HARVEST`: they adopt/revalidate independently reviewed `Arkus0/Juego` research without importing donor runtime authority. `WP-PA-06..13` are `REMOTE_RESEARCH`. `WP-PA-14` is deliberately deferred until PA-01..13 have passed **and the future H2 playable-shell phase has reached its accepted closure/gate**; the future H2 plan owns that gate's exact ID/name.
+The PA programme plan is **ACCEPTED** on candidate `95fc0f5935561fd61a20221f993e2532ce513795` (independent review `#5267699844`, PR `#84`, merge `4c1672db639f9d56e7bd6f837ff5e1881d789b16`).
 
-PA research can inform later H2+ design but cannot claim runtime/Unity proof or silently alter H0/H1/CITY contracts. After the PA programme plan itself receives independent PASS + merge + DocSync, its next executable workpack is `WP-PA-01 — Adopt/revalidate NPC Daily Life findings`.
+`WP-PA-01..05` are `REMOTE_HARVEST`: they are cheap Juego→Juego2 adoption/revalidation gates for already independently reviewed donor research, **not a restart of PA-01..05 research**. `WP-PA-06..13` are `REMOTE_RESEARCH`. `WP-PA-14` is deliberately deferred until PA-01..13 have passed **and the future H2 playable-shell phase has reached its accepted closure/gate**; the future H2 plan owns that gate's exact ID/name.
+
+PA research can inform later H2+ design but cannot claim runtime/Unity proof or silently alter H0/H1/CITY contracts. The next executable PA workpack is `WP-PA-01 — Adopt/revalidate NPC Daily Life findings`; after PA-01..05 are accepted in Juego2, the first genuinely new research workpack is `WP-PA-06 — Memory & Consequences research`.
