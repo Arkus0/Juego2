@@ -54,7 +54,7 @@ Reglas:
 - no declares DONE con pruebas representativas si el claim exige completitud;
 - garantías ya aceptadas por predecessors se consumen salvo evidencia concreta de que son falsas/inaplicables o el WP actual las reclame explícitamente;
 - respeta trust boundary y proof budget; no expandas el WP para certificar comportamientos arbitrarios de infraestructura confiada ni para duplicar proofs heredados;
-- produce evidencia reproducible y exact-SHA cuando el claim lo requiera;
+- produce evidencia reproducible y exact-SHA;
 - un índice/handoff compacto sólo navega; si está stale/falta/contradice GitHub, escala a las fuentes autoritativas;
 - tras `FROZEN_FOR_REVIEW`, deja de escribir;
 - nunca actúes como Reviewer independiente de tu propio candidato.
