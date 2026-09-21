@@ -6,3 +6,4 @@ artifacts/
 .vs/
 .idea/
 /validation.log
+scripts/token-budget/tokenizer.json

@@ -1,0 +1,178 @@
+{
+ "schema": "arkus.project-state@1",
+ "as_of_main": "a57afa3d3fc60b3e1c59d04149fe982f387c2048",
+ "gates": {
+  "WP-HK-GATE": "PASSED",
+  "WP-H1-GATE": "BLOCKING: gameplay/keeper/DFU/GUI"
+ },
+ "next": {
+  "H1": "WP-H1-02",
+  "CITY": "WP-CITY-04",
+  "PA": "WP-PA-03"
+ },
+ "blocked": {
+  "WP-CITY-04": [
+   "WP-H1-08"
+  ],
+  "WP-CITY-07": [
+   "WP-CITY-04",
+   "WP-H1-GATE"
+  ],
+  "WP-PA-14": [
+   "WP-PA-13",
+   "H2-closure-gate"
+  ],
+  "WP-H1-03": [
+   "WP-H1-02"
+  ]
+ },
+ "accepted": {
+  "WP-HK-05": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "23a9fd4373a803187cd9391b1459cd48975177f6",
+   "review": null,
+   "merge_sha": "ed65661680aea2a9be79f892c96aa42bf788a842"
+  },
+  "WP-HK-06A": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "4ed9a925791ae14b0b5c0d92625161504021542e",
+   "review": null,
+   "merge_sha": "8089a52e8a7bbdde46e97705df6906c0d38d593a"
+  },
+  "WP-HK-06B": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "2b05e982c96e7ece08cca999075c183e75eee2fd",
+   "review": null,
+   "merge_sha": "28e2d0aadf63fe322eac636955e9223dc9249328"
+  },
+  "WP-HK-06C": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "55fecbd8a4a5e17ce247b164cd375d652d066fdf",
+   "review": null,
+   "merge_sha": "e44a5e93bf0912f5b5fb80dd749e294e21a740f2"
+  },
+  "WP-HK-07A": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "f2ef88980b38482a1a635f4eeb0582ee49d735ec",
+   "review": null,
+   "merge_sha": "f70a81b5115cd2a6b0c8b1cb9c5dd657d5f3792b"
+  },
+  "WP-HK-07B": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "37ea185f28dd28e41b406f2c9407fdfe6f9b752b",
+   "review": null,
+   "merge_sha": "58b6571b96eac4c73e5c3cf28a42a6630ea13505"
+  },
+  "WP-HK-08A": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "324102d40fa0b7e36c7320216914f9d3fddadcc8",
+   "review": null,
+   "merge_sha": "eb9d3df58df1114abafaca435da64683fdb1480e"
+  },
+  "WP-HK-08B": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "31370f91b48408b90a587d7ad5178ba1be8d6bfe",
+   "review": null,
+   "merge_sha": "bdf4675c17d842d73ff59637fa36314d14c2707a"
+  },
+  "WP-HK-09A": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "acb1ccc341aec5131dc2ef979bd322e40e208b53",
+   "review": null,
+   "merge_sha": "614ad941881fdefa83fd46a1a8db989cfaba2cbb"
+  },
+  "WP-HK-09B": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "8ed02586da9a5b6e159e1cdc76a47ae7ca89c763",
+   "review": null,
+   "merge_sha": "2e7a258fdcec2e26492d308c3cb199ab62201dcd"
+  },
+  "WP-HK-10": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "813ccf08e33fdd77a34c59da5ed766882840cbee",
+   "review": null,
+   "merge_sha": "f893ad51d756090eeecac41b8fc7cb14f8bd359a"
+  },
+  "WP-HK-GATE": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "0fa3d4fb039a3d0049cea0f3eed1c83128ec7dcd",
+   "review": null,
+   "merge_sha": "048d2e449d5ff81e8bcc35bc15664ea4ceec18ca"
+  },
+  "WP-H1-00": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "3dc513dd963b77116fd45b5af8d800ae8993dd34",
+   "review": null,
+   "merge_sha": "c02cf54c89c13db43edda4a602b0c1620baa3fa2"
+  },
+  "WP-H1-01": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "385ce2466190003d18c849c8d944b881d184e1c7",
+   "review": null,
+   "merge_sha": "0b8f23fbce227bbbc710c8410dff575fcb9fcf12"
+  },
+  "WP-CITY-01": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "3444555a983415645dcc2897b748d6c4f6294f19",
+   "review": null,
+   "merge_sha": "a9ff655e5bf2319690d919b88bd57389a32483f3"
+  },
+  "WP-CITY-02": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "ddcb22d9a2dfcf68054db2b762fc7ff7aed68ae8",
+   "review": null,
+   "merge_sha": "1bdb7b6e914692493b17a9d2215d881dfe326cb0"
+  },
+  "WP-CITY-05": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "10d1528b0354b16a614fb10a3933a25b32f15f28",
+   "review": null,
+   "merge_sha": "47909a72eb6d38332f62e9c01426c8cd40e1863b"
+  },
+  "WP-CITY-06": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "c73cbb19f8b152bd4b97ce3154eb18a78deaec3c",
+   "review": null,
+   "merge_sha": "acb84ec9ba7aa94e962bf7b35d7e53c0549ba758"
+  },
+  "WP-CITY-03": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "420999e9a60e7240bcfb514b3239b652f0e09a5f",
+   "review": null,
+   "merge_sha": "a3abeaf82752bfe9dac2f594c06eb8def3b108e2"
+  },
+  "WP-PA-01": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "87c4cbe81f8195770eb23ba7f2a5d5ca2a237715",
+   "review": null,
+   "merge_sha": "3688b7b9a27355b0fda160c20e57a385e40c6814"
+  },
+  "WP-PA-02": {
+   "status": "COMPLETE",
+   "pr": null,
+   "reviewed_sha": "015bb28ddc9facc46459c2d1dd87a89740b6c9ef",
+   "review": null,
+   "merge_sha": "85d23489a6478da6bc9f33c3f017640e46ab05e9"
+  }
+ }
+}
