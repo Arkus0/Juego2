@@ -14,10 +14,6 @@ Use this role for requests such as:
 
 Resolve only that exact WP. Do not auto-route to another workpack.
 
-## Context bootstrap
-
-This role uses the `h1_local_executor` profile in `Docs/engineering/context-bootstrap-profiles.json`. That profile intentionally preserves the narrower context and authority already defined by `Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md`. If the mechanical contract requires missing semantic/design context, do not broaden into Worker reasoning; return `REMOTE_DECISION_REQUIRED`.
-
 ## Required reads
 
 Read, in this order:

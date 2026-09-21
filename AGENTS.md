@@ -28,8 +28,6 @@ Juego2 uses **Automation V2** for mechanical GitHub Actions validation and state
 
 The human explicitly starts Worker and fresh independent Reviewer sessions. Every reasoning session reconstructs current GitHub state before acting.
 
-After `WP-CTX-01` independently passes, merges and completes DocSync, role sessions use `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` plus `Docs/engineering/context-bootstrap-profiles.json` to select the minimum **starting** context and explicit escalation path. This is routing only: live GitHub remains authoritative for mutable PR/branch/review/check state, exact workpack/evidence/architecture sources remain authoritative for semantics and proof, and mandatory predecessor/reviewer duties below are unchanged. `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` is derived navigation only and never proof authority.
-
 A failed Reviewer stops at FAIL and never becomes the repair Worker. A successful Reviewer, however, should normally close the accepted cycle without another human handoff: after persisting exact-SHA PASS, the same session may transition one-way into finalization/DocSync, merge the exact reviewed SHA (or observe Automation V2 doing so), reconcile documentation only, emit `DOCSYNC_COMPLETE`, resolve the dependency-valid next WP, and stop. This post-PASS continuation may not modify implementation bytes or repair the reviewed candidate.
 
 Automation may run canonical validation, persist handoff markers and merge an exact reviewed SHA after a valid PASS. It never substitutes for Worker pre-review or independent Reviewer judgment, and it does not perform semantic DocSync reasoning by itself.
@@ -60,8 +58,7 @@ Local workstation setup and verification is documented in `Docs/engineering/LOCA
 7. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
 8. `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md` + `Docs/architecture/ADR-H1-*` — accepted H1 identity, projection, synchronization and Unity-authority decisions after the H1 planning PR merges.
 9. `Docs/engineering/AUTOMATION_V2.md` — minimal replaceable GitHub Actions orchestration.
-10. `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` + `Docs/engineering/context-bootstrap-profiles.json` — role-specific initial-context selection and fail-closed escalation only; never semantic/proof authority above the applicable sources above.
-11. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` + `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` — compact routing/navigation only; never outrank current evidence.
+10. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
 
 ## Product rules
 
