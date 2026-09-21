@@ -1,6 +1,6 @@
 # Automation V2 — minimal GitHub Actions orchestration
 
-Version: 1.5 — 2026-09-21
+Version: 1.6 — 2026-09-21
 
 ## Purpose
 
@@ -59,16 +59,20 @@ Runs PR code with a **read-only token** plus read-only Actions access for receip
 - Ready/non-draft PR: frozen-candidate verify/handoff mode.
 - Ready PRs also run the separate `Worker handoff lint` job.
 - Manual `workflow_dispatch`: exact SHA + explicit observation/verify mode.
-- `Mode: PROCESS_ONLY` skips product validation, but it does **not** skip Worker handoff lint when the PR publishes Worker lifecycle fields.
+- `Mode: PROCESS_ONLY` skips product/runtime validation, but it does **not** skip Worker handoff lint when the PR publishes Worker lifecycle fields.
+- A PROCESS_ONLY run still verifies exact checkout identity and clean repository input before classifying product/runtime execution as `NOT_APPLICABLE`.
+- When PROCESS_ONLY has no canonical product/runtime command to execute, Automation V2 emits a `PROCESS_ONLY_VALIDATION_V1` N/A log and **does not emit `EXECUTION_RECEIPT_V1`, `Result: GREEN`, clean-before/after receipt claims or a synthetic gate result**.
 - Pure PROCESS_ONLY maintenance/DocSync PRs that never enter the Worker lifecycle are intentionally allowed to omit the Worker handoff block.
 - If a durable exact-SHA GREEN receipt already exists for the same candidate and passes strict identity/content validation, freeze reuses it instead of paying for an identical full rerun.
-- If no valid reusable receipt exists, freeze executes the canonical verifier normally and fails closed on any ambiguity.
+- If no valid reusable receipt exists where canonical execution is required, freeze executes the canonical verifier normally and fails closed on any ambiguity.
+
+The PROCESS_ONLY N/A path is deliberately not an execution receipt. `EXECUTION_RECEIPT_V1` is reserved for runs that actually execute the canonical command/gates represented by that receipt. Exact checkout cleanliness may still be mechanically verified by the workflow, but it cannot be promoted into evidence that unexecuted proof gates were GREEN.
 
 `Worker handoff lint` is deliberately mechanical. It checks the canonical PR handoff fields, Ready/frozen state values, exact SHA coherence, pointer existence, the presence of `PREDECESSOR_CONTRACT_CHECK` in repository-local predecessor evidence when supplied, and `WORKER_PRE_REVIEW: CLEAN` in repository-local pre-review evidence. It does **not** judge whether the predecessor reasoning, negative controls, proof arguments or semantic acceptance claims are substantively sufficient; that remains Worker pre-review + independent Reviewer work.
 
 The linter also fails closed when a non-PROCESS_ONLY Ready PR has no canonical Worker handoff at all. For PROCESS_ONLY PRs, publishing any Worker-lifecycle surface opts the PR into the same complete handoff validation, which is how CTX workpacks remain real Worker → Reviewer cycles while pure maintenance PRs stay lightweight.
 
-Receipt reuse is not trust-by-filename. The workflow verifies the source workflow succeeded, source `head_sha` equals the frozen candidate SHA, downloads the receipt artifact, and checks the receipt binds the exact SHA with clean-before/after YES, required gates GREEN and `Result: GREEN` before skipping execution.
+Receipt reuse is not trust-by-filename. The workflow verifies the source workflow succeeded, source `head_sha` equals the frozen candidate SHA, downloads the receipt artifact, and checks the receipt binds the exact SHA with clean-before/after YES, required gates GREEN and `Result: GREEN` before skipping execution. PROCESS_ONLY N/A runs do not participate in receipt reuse because they produce no execution receipt.
 
 Canonical entrypoint convention for future WPs:
 
@@ -81,7 +85,7 @@ HK00 compatibility is built in while that WP is active:
 - `scripts/hk00-verify-exact-sha.sh <sha>`
 - reusable receipt artifact: `hk00-receipt-<40-char SHA>`
 
-The workflow uploads logs/receipts/observed artifacts but does not edit the candidate.
+The workflow uploads validation logs and observed artifacts. It uploads an execution receipt only when canonical execution actually produced one; it does not edit the candidate.
 
 ### `.github/workflows/state-transitions.yml`
 
@@ -154,7 +158,7 @@ A `PASS` cannot merge unless all of these agree:
 
 For candidates whose class still requires foundational exact-SHA proof, a successful `Freeze exact-SHA validation` check is additionally required. Non-foundational WPs retain their accepted lighter proof boundary; handoff lint validates process structure and does not silently promote them into the foundational proof regime.
 
-A successful freeze check may represent either a fresh canonical execution or strict reuse of an already-durable exact-SHA GREEN receipt for the identical frozen SHA.
+A successful freeze check may represent either a fresh canonical execution or strict reuse of an already-durable exact-SHA GREEN receipt for the identical frozen SHA. PROCESS_ONLY N/A validation is not such a receipt and cannot satisfy a proof obligation that actually requires canonical execution.
 
 After PASS is persisted and these conditions hold, automation may merge immediately. Finalization then treats the verdict as fixed and may perform only post-merge documentation/finalization actions.
 
@@ -181,6 +185,8 @@ Do not knowingly rerun an expensive exact-SHA proof solely to transition workflo
 
 The handoff lint is intentionally cheap and bounded: it exists to prevent avoidable Reviewer cycles caused by missing or incoherent process metadata, not to grow into a second semantic review engine.
 
+PROCESS_ONLY paths that require no product/runtime execution should also avoid installing toolchains or invoking receipt-reuse machinery merely to manufacture an N/A result. Their cheap mechanical gates remain exact-checkout verification plus handoff lint where the Worker lifecycle applies.
+
 If hosted Actions are unavailable, quota/policy changes, or a workflow platform fails, correctness does not disappear: the exact-SHA execution receipt protocol remains a valid manual fallback where that proof regime applies, and the canonical Worker/Reviewer protocol remains authoritative.
 
 ## Non-goals
@@ -194,6 +200,7 @@ Automation V2 does not:
 - maintain role leases;
 - make Telegram or another notification transport authoritative;
 - decide that a declared control is semantically sufficient merely because a field/path exists;
+- fabricate execution receipts or GREEN gate claims for commands that were not executed;
 - weaken Worker pre-review, trust-boundary, proof-budget or Reviewer independence rules.
 
 Keep this layer small. If automation starts accumulating product semantics, move that logic back into canonical scripts/contracts or delete the automation.
