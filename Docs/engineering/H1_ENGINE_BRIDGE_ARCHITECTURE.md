@@ -1,7 +1,7 @@
 # H1 Engine Bridge Architecture — Unity first
 
-Version: 1.1 — 2026-09-21
-Status: ACCEPTED / BINDING — H1 `PROCESS_ONLY` planning PR `#71`; reviewed candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b`; PASS review `#5263596722`; merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`.
+Version: 1.2 — 2026-09-21
+Status: ACCEPTED / BINDING baseline from H1 `PROCESS_ONLY` planning PR `#71`; reviewed candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b`; PASS review `#5263596722`; merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`. The Quaternius Source timing/content amendment is proposed by the later PROCESS_ONLY correction PR and is not accepted until that PR independently passes and merges.
 
 ## 1. Definition
 
@@ -105,7 +105,9 @@ H1 supports only the following reviewed scope:
 | packages, ProjectSettings and editor preferences | toolchain/bootstrap authority only, not public authoring units |
 | runtime transient state, physics/navmesh/AI/save data | outside H1 |
 
-Creating or modifying a scene, managed prefab, GameObject, Transform or allowlisted component therefore means changing canonical binding intent and rematerializing. Source assets/prefabs are not mutated. Unsupported or unmanaged Unity objects remain observable as unmanaged drift but are not adopted automatically.
+Creating or modifying a scene, managed prefab, GameObject, Transform or allowlisted component therefore means changing canonical binding intent and rematerializing. Source assets/prefabs are not mutated by bridge materialization. Unsupported or unmanaged Unity objects remain observable as unmanaged drift but are not adopted automatically.
+
+The purchased/adopted Quaternius Source baseline is **editable upstream for later art production**, but that is a distinct product-art activity. H1's bridge treats the adopted upstream source identity as external input. A later artist/agent may create a separately identified Juego2-derived asset from that source; the derived asset then enters the catalogue under its own logical identity/provenance. This must not be confused with an H1 bridge-managed prefab derivative, which is only a disposable projection artifact.
 
 ## 6. Synchronization directions
 
@@ -143,6 +145,8 @@ The claimed H1 durability level is project-checkpoint/rebuild for the accepted s
 | Unity binding document schema and dependency derivation | Unity scoped producer |
 | logical catalogue existence/type/version compatibility | Unity catalogue/provider |
 | scene loadability, unique managed markers, prefab/component/reference integrity, finite transforms and allowlisted serialized values | Unity bridge |
+| external source/adoption provenance at first use | H1-04 under HK00A policy |
+| production-art style, Cantabrian adaptation, clothing/wardrobe and missing asset/animation creation | later H2/ART/CITY product owners |
 | gameplay rules, navigation, physics behavior, animation behavior or visual quality | later H2+ owners |
 
 Unity diagnostics use stable machine codes and anchor to canonical resource ID, logical catalogue ID and/or normalized managed resource path. Native paths/locators may be included as evidence but are not the only repair identity.
@@ -167,17 +171,25 @@ Byte-identical Unity YAML across editor versions or platforms is not claimed. Fo
 - A local interactive/editor or graphics-capable run is required only where the representative asset/render/animation evidence cannot be produced truthfully with `-nographics`.
 - Missing required Unity evidence yields `READY_FOR_LOCAL_VALIDATION`, never PASS.
 
-## 11. External dependencies
+## 11. External dependencies and production-art timing
 
 H1 targets the Unity 6.3 LTS family because the planning-date official support window extends through December 2027. `WP-H1-02` must select an exact patch, pin `ProjectVersion.txt`, `Packages/manifest.json` and `packages-lock.json`, record licenses/terms and freeze the render-pipeline/test package set. Editor binaries are never committed.
 
-No third-party Unity MCP becomes bridge authority. Existing MCP remains an outer projection of the canonical composed inventory. Any real asset pack is adopted only in `WP-H1-11` with exact source/version/license and replacement boundaries.
+No third-party Unity MCP becomes bridge authority. Existing MCP remains an outer projection of the canonical composed inventory.
+
+**Quaternius Source is adopted at `WP-H1-04`, the first point where game-representative assets are actually needed by Unity catalogue proof.** The exact human-approved purchased distribution/slice is recorded under `DEPENDENCY_IP_POLICY.md`; H1-05 through H1-GATE reuse that same source baseline rather than manufacturing substitute production art. `WP-H1-11` broadens the already-adopted source into the representative end-to-end real-asset conformance slice; it is not the first adoption point.
+
+This early adoption is deliberately **not** a requirement to finish the art before the bridge works. The product strategy in `Docs/art/VISUAL_BIBLE.md` is source-first: maximize practical Quaternius reuse to get the first playable/demo working, then create separately identified Juego2-derived assets only where the demo/product needs Cantabrian adaptation, clothing, missing objects, variants or missing animations. H1 may use harness-specific synthetic fixtures for bridge mechanics and causal negative controls, but those fixtures do not stand in for game art.
+
+H1 itself does not own the later artistic transformation pipeline. That downstream production must preserve source/derivative provenance and applicable distribution terms while keeping all external art below Arkus semantic authority.
 
 ## 12. Boundary before H2
 
 H2/gameplay and keeper realization remain blocked until `WP-H1-GATE` proves that a fresh public client can create, inspect, modify, validate, materialize and rebuild the representative Juego2 slice with identity, dependencies, diagnostics, canonical provenance and normalized Unity parity intact.
 
-H1 explicitly does not implement player movement, camera/gameplay systems, NPC simulation, navmesh behavior, combat, dialogue, runtime saves or the retained CITY blockout.
+H1 explicitly does not implement player movement, camera/gameplay systems, NPC simulation, navmesh behavior, combat, dialogue, runtime saves, finished character wardrobe, complete Cantabrian art conversion or the retained CITY blockout.
+
+After H1-GATE, the intended first-playable strategy is to use the maximum practical amount of the accepted Quaternius Source baseline directly. H2/ART/CITY product work adds or replaces art incrementally when a concrete demo need exposes a gap or a source asset must be Cantabrianized. A player-facing NPC must not be accepted as demo-ready if its required clothing/outfit is absent merely because the raw source model exists.
 
 ## 13. CITY programme interlock
 
@@ -186,4 +198,5 @@ Accepted CITY-00 remains the sole owner of macro geography; CITY-03 later owns t
 - `CITY-01/02/05/06/03` remain independent REMOTE product planning.
 - `WP-H1-08` is the earliest sufficient bridge prerequisite for `CITY-04`: managed scenes, prefab/component projection and Unity diagnostics are accepted. CITY-04 then remains a bounded CITY-owned greybox/falsification sidecar and is not an H1 proof stage.
 - `WP-H1-GATE` is required before `CITY-07` turns the validated greybox into keeper realization.
+- `CITY-07` may consume accepted upstream Quaternius assets and later Juego2-derived assets, but it does not become the owner of source licensing or bridge identity merely by placing them.
 - `CITY-08` owns the later keeper-slice public authoring/reuse-cost claim. H1-GATE owns only generic bridge readiness on a much smaller non-keeper slice, so neither trial substitutes for the other.
