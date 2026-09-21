@@ -1,10 +1,14 @@
 # WP-CITY-01 — Mobility, district graph + walk-time topology
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: PRODUCT / SPATIAL PREPRODUCTION (NON-FOUNDATIONAL)  
 Mode: **REMOTE**  
 Depends on: `WP-CITY-00` PASS + DocSync  
 Blocks: `WP-CITY-02` only
+
+Accepted candidate: `3444555a983415645dcc2897b748d6c4f6294f19`  
+Independent review: **PASS**, review `#5263809993`  
+Merged: PR `#73`, merge commit `a9ff655e5bf2319690d919b88bd57389a32483f3` on 2026-09-21
 
 ## Contract continuity
 
