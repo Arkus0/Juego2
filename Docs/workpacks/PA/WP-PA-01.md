@@ -1,10 +1,14 @@
 # WP-PA-01 — Adopt/revalidate NPC Daily Life findings
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_HARVEST**  
 Depends on: accepted PA programme plan  
 Blocks: `WP-PA-02` only
+
+Accepted candidate: `87c4cbe81f8195770eb23ba7f2a5d5ca2a237715`  
+Independent review: **PASS**, review `#5268013445`  
+Merged: PR `#89`, merge commit `3688b7b9a27355b0fda160c20e57a385e40c6814` on 2026-09-21
 
 ## Objective
 

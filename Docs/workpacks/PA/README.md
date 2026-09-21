@@ -1,10 +1,12 @@
 # PA track — Living World research and adoption programme
 
 Status: **ACTIVE / PLAN ACCEPTED / PROCESS_ONLY**  
-Version: 1.1 — 2026-09-21  
+Version: 1.2 — 2026-09-21  
 Repository: `Arkus0/Juego2`
 
 Programme plan accepted on candidate `95fc0f5935561fd61a20221f993e2532ce513795`, independent review `#5267699844`, PR `#84`, merge `4c1672db639f9d56e7bd6f837ff5e1881d789b16`.
+
+`WP-PA-01` is **COMPLETE**. Candidate `87c4cbe81f8195770eb23ba7f2a5d5ca2a237715` passed independent review `#5268013445` in PR `#89` and merged as `3688b7b9a27355b0fda160c20e57a385e40c6814`. The next executable PA workpack is `WP-PA-02`.
 
 ## Purpose
 
@@ -72,33 +74,33 @@ The future H2 plan owns its exact IDs/gate names; this PA plan deliberately does
 ## Execution chain
 
 ```text
-WP-PA-01  Daily Life harvest/revalidation              REMOTE_HARVEST
+WP-PA-01 ✅ Daily Life harvest/revalidation              REMOTE_HARVEST
    ↓
-WP-PA-02  NPC Agency harvest/revalidation              REMOTE_HARVEST
+WP-PA-02    NPC Agency harvest/revalidation              REMOTE_HARVEST
    ↓
-WP-PA-03  Social Graph harvest/revalidation            REMOTE_HARVEST
+WP-PA-03    Social Graph harvest/revalidation            REMOTE_HARVEST
    ↓
-WP-PA-04  Knowledge/Beliefs harvest/revalidation       REMOTE_HARVEST
+WP-PA-04    Knowledge/Beliefs harvest/revalidation       REMOTE_HARVEST
    ↓
-WP-PA-05  Rumours harvest/revalidation                 REMOTE_HARVEST
+WP-PA-05    Rumours harvest/revalidation                 REMOTE_HARVEST
    ↓
-WP-PA-06  Memory & Consequences                        REMOTE_RESEARCH
+WP-PA-06    Memory & Consequences                        REMOTE_RESEARCH
    ↓
-WP-PA-07  Work / Material Dependencies                 REMOTE_RESEARCH
+WP-PA-07    Work / Material Dependencies                 REMOTE_RESEARCH
    ↓
-WP-PA-08  Leisure / Activities / Minigames             REMOTE_RESEARCH
+WP-PA-08    Leisure / Activities / Minigames             REMOTE_RESEARCH
    ↓
-WP-PA-09  Player Causal Agency                         REMOTE_RESEARCH
+WP-PA-09    Player Causal Agency                         REMOTE_RESEARCH
    ↓
-WP-PA-10  Autonomous Events / Causal Chains            REMOTE_RESEARCH
+WP-PA-10    Autonomous Events / Causal Chains            REMOTE_RESEARCH
    ↓
-WP-PA-11  Investigation / Legibility                   REMOTE_RESEARCH
+WP-PA-11    Investigation / Legibility                   REMOTE_RESEARCH
    ↓
-WP-PA-12  Governance                                   REMOTE_RESEARCH
+WP-PA-12    Governance                                   REMOTE_RESEARCH
    ↓
-WP-PA-13  Simulation Control / Anti-chaos / Budgets    REMOTE_RESEARCH
+WP-PA-13    Simulation Control / Anti-chaos / Budgets    REMOTE_RESEARCH
    ↓
-WP-PA-14  Integration Review                           DEFERRED_INTEGRATION
+WP-PA-14    Integration Review                           DEFERRED_INTEGRATION
 ```
 
 PA-13 may collect cross-cutting failure/budget observations throughout the programme, but its formal acceptance still comes after PA-12 so it can attack the composed design.
@@ -199,8 +201,6 @@ This avoids making the user reconstruct the canonical sequence from memory and g
 
 ## Current next workpack
 
-The PA programme plan is accepted and DocSync activates the first executable workpack:
+`WP-PA-02 — Adopt/revalidate NPC Agency findings`.
 
-`WP-PA-01 — Adopt/revalidate NPC Daily Life findings`.
-
-This does **not** restart PA-01 research. It is the first cheap Juego→Juego2 adoption/revalidation gate; after PA-01..05 are independently accepted in Juego2, the first genuinely new research workpack is `WP-PA-06 — Memory & Consequences research`.
+PA-01 is accepted in Juego2. PA-02 remains a cheap donor-harvest/revalidation gate, not a restart of the original PA-02 research. After PA-01..05 are independently accepted in Juego2, the first genuinely new research workpack is `WP-PA-06 — Memory & Consequences research`.
