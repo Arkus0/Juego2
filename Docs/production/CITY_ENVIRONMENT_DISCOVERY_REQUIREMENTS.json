@@ -1,6 +1,6 @@
 {
   "documentKind": "city05.environmentDiscoveryRequirements",
-  "version": "0.1",
+  "version": "0.2",
   "status": "NON_CANONICAL_REQUIREMENTS_PROJECTION",
   "semanticOwner": "Docs/production/CITY_ENVIRONMENT_GRAMMAR.md#13-later-arkus-discovery-requirements",
   "authorityNote": "This file is a machine-readable projection of CITY-05 discovery information requirements. It is not an Arkus canonical contract, catalogue authority, Unity schema or WorldState surface.",
@@ -9,6 +9,7 @@
     "assembly",
     "shell",
     "reusable_building",
+    "functional_poi",
     "street_family",
     "parcel_template"
   ],
@@ -36,9 +37,18 @@
       "compatible_link_types"
     ],
     "accessAnchors": [
-      "access_role",
+      "access_role_public_service_private_or_semi_private",
+      "required_or_optional_after_functional_poi_binding",
       "compatible_city_access_classes",
-      "required_clear_approach"
+      "required_clear_approach",
+      "spatial_form_qualifiers"
+    ],
+    "functionalPoiBinding": [
+      "city02_programme_id",
+      "programme_required_access_roles",
+      "bound_required_access_roles",
+      "access_role_provenance",
+      "spatial_form_qualifiers"
     ],
     "archetypeTags": [
       "archetype",
@@ -83,11 +93,14 @@
       "source_or_provider_identity"
     ]
   },
+  "bindingInvariant": "For every CITY-02 A/B functional POI, programme_required_access_roles must be a subset of bound_required_access_roles. Generic-family optionality may be promoted to required by binding but may never remove an inherited role.",
   "forbiddenInterpretations": [
     "Native Unity GUIDs, local file IDs or paths are not CITY family identity.",
     "A discovered prefab or asset category is not semantic authority for a CITY family.",
     "The projection does not define canonical WorldState identity or canonical mutation semantics.",
     "A-D, S0-S4 and I0-I3 must not be derived from one another by this discovery surface.",
-    "Discovery compatibility does not create graph connectivity or publicise restricted service routes."
+    "Discovery compatibility does not create graph connectivity or publicise restricted service routes.",
+    "A vertical, court, rear, staff or storage qualifier does not satisfy a required public, service, private or semi-private role unless the anchor is explicitly tagged with that access role.",
+    "A functional POI may not inherit a weaker required-access set than its accepted CITY-02 programme row."
   ]
 }
