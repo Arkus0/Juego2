@@ -12,11 +12,15 @@ For a local session, reconstruct PR/ownership/check state from live GitHub throu
 
 For `WP-H1-02` through `WP-H1-GATE`, the default orchestration is **remote-first staged execution** under `Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md`: the Worker performs `REMOTE_PREP`, delegates only the exact Unity/Windows-dependent slice through a persisted `LOCAL_EXECUTION.md`, then resumes as the same Worker for `REMOTE_CLOSEOUT`. `LOCAL_UNITY_REQUIRED` and `HYBRID` continue to require real local evidence; they do not require the whole Worker reasoning session to run locally.
 
+## Context bootstrap
+
+Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile is a minimum starting pack, not a context ceiling. For an exact WP, full `Docs/ROADMAP.md` is conditional on unresolved cross-track/order/gate meaning; `FOUNDATIONAL_PROOF_STANDARD.md` is loaded when the exact claim binds it. Direct predecessor reconstruction below is unchanged. If the derived state index is stale/missing/contradictory for a mutable hint, ignore that hint and deepen to live GitHub + authoritative contracts.
+
 ## Preconditions
 
-- Read `AGENTS.md`, `Docs/ROADMAP.md`, the exact WP, `WORKER_REVIEW_PROTOCOL.md`, and `FOUNDATIONAL_PROOF_STANDARD.md` when bound.
+- Read `AGENTS.md`, `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md`, the exact WP and `WORKER_REVIEW_PROTOCOL.md`; load ROADMAP/foundational/architecture surfaces when the worker profile or exact claim triggers them.
 - For `WP-H1-02` through `WP-H1-GATE`, also read `Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md` before planning execution.
-- Reconstruct current `main`, dependency satisfaction, open ownership and write-set conflicts.
+- Reconstruct current `main`, dependency satisfaction, open ownership and write-set conflicts from live GitHub.
 - Before editing, read each direct accepted dependency WP plus its accepted completion/PASS evidence, relevant proof matrix/residual risk, and binding architecture/invariants. Follow transitive predecessors only when those inherited invariants are material to the current WP.
 - Persist a short `PREDECESSOR_CONTRACT_CHECK` in Worker plan/evidence identifying inherited guarantees, current-WP-owned guarantees, guarantees intentionally consumed rather than re-proved, and the concrete trigger that would justify reopening an accepted predecessor boundary.
 - Do not auto-route to another workpack. If the requested WP is blocked, report the blocking prerequisite and STOP so the human can choose the next Worker task.
