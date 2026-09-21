@@ -1,6 +1,6 @@
 # Keeper City — Exterior environment grammar
 
-Version: 0.1 — 2026-09-21  
+Version: 0.2 — 2026-09-21  
 Workpack: `WP-CITY-05 — Streets, parcels + reusable building families`  
 Class: **PRODUCT / ENVIRONMENT PREPRODUCTION — NON-FOUNDATIONAL**
 
@@ -33,6 +33,7 @@ Hard rules:
 7. `I0` does not become enterable because a discovered asset happens to contain rooms. `I1–I3` require shell/access affordances only; detailed interiors remain CITY-06.
 8. All building families inherit the accepted Liébana valley art language. District identity comes from constrained variation of shared families, not independent visual kits.
 9. This is an **authoring-time reviewed grammar**, not a promise of procedural generation.
+10. A functional-POI binding is fail-closed against CITY-02 access posture: every inherited `public`, `service`, `private` and `semi-private` role required by that programme row becomes required on the bound composition. A generic family may expose an anchor as optional, but family optionality can never downgrade a role required by the bound CITY-02 place.
 
 ---
 
@@ -132,9 +133,9 @@ Every reviewed parcel/site proposal must expose:
 Ranges below are bounding bands, not a requirement for rectangles.
 
 | ID | Frontage | Depth / site depth | Typical floors | Edge relation | Compatible character |
-|---|---:|---:|---:|---|---|
+|---|---:|---:|---|---|---|
 | `pc.historic_row` | 5–9 m | 9–18 m | 2–3 | usually 1–2 party walls, flush/threshold setback | Casco / tight old fabric |
-| `pc.commercial_row` | 6–12 m | 12–24 m | 2–3 | party wall optional; public front + optional rear/service | Calle Mayor / Plaza edge / mixed-use frontage |
+| `pc.commercial_row` | 6–12 m | 12–24 m | 2–3 | party wall optional; public front + optional rear/service at generic-family level | Calle Mayor / Plaza edge / mixed-use frontage |
 | `pc.slope_residential` | 5–10 m | 10–20 m | 2–3 | stepped/split-level; retaining relation required where grade demands | Barrio Alto / steep old fabric |
 | `pc.ensanche_garden` | 8–16 m | 16–30 m | 1–3 | detached/semi-detached; 1.5–5 m garden/threshold setback | Ensanche / quieter residential |
 | `pc.workshop_court` | 8–18 m | 15–32 m | 1–2 | public/customer front optional; material/service edge required for work role | Ribera / peripheral service |
@@ -211,17 +212,19 @@ A variant changes bounded shell composition. It does not author character identi
 
 ### 6.2 Catalogue specification
 
+The anchor column below describes what the **generic family** can expose. When that family is bound as a functional POI, §7 and §9 elevate every CITY-02-required access role to required even if the generic family lists that anchor as optional.
+
 | ID | Family | Core shell rule | Required/optional exterior anchors | Compatible parcels | Typical district uses |
 |---|---|---|---|---|---|
 | `bf.house` | ordinary house | compact 1–3-storey residential shell; variants `old_row`, `slope`, `ensanche_detached` | primary residential threshold; optional garden/court/balcony; service anchor only when site requires | historic, slope, ensanche, rural | Casco/Barrio/Ensanche ordinary C fabric |
-| `bf.mixed_use_house` | mixed-use house/shop/lodging shell | street-level public/service bay + private/upper shell without fixing interior rooms | public frontage, private/upper threshold socket, optional rear service | commercial, historic, ensanche, rural | Calle Mayor mixed frontages, corner shop, fonda shell |
-| `bf.bar_social` | bar/social venue | public social frontage plus distinct service/back relation; may support semi-private/upper/court anchor | public entrance **and** service anchor; optional semi-private/vertical/court socket | historic, commercial, work-edge | casco bar; port worker social variant |
-| `bf.shop_service` | shop/service | compact public-facing service shell | public/customer entrance; optional staff/storage/service anchor | commercial, ensanche, rural | pharmacy, everyday shop, neighbourhood shop |
-| `bf.workshop` | workshop/repair | work bay shell with customer threshold and material/service side | customer/public threshold where programme requires; service/material anchor required | workshop court, warehouse yard, rural | Ribera workshop, repair/supply variants |
-| `bf.warehouse_port` | warehouse / port-work building | low robust shell intended to pair with yard/apron; no hero-harbour silhouette | service/material anchor required; bounded public/customer/office threshold optional | warehouse yard, workshop court | Puerto warehouse/work hub, depot support |
-| `bf.civic` | civic/municipal | legible public-facing institutional shell within town material language | public civic entrance; staff/service/private-records access anchor as programme requires | civic frontage, commercial row | Ayuntamiento / municipal office variants |
-| `bf.residential_multi` | apartment / residence cluster | 2–3-storey multi-household shell or small cluster around shared landing/court | primary residential threshold(s), shared landing/court anchor, optional service/private rear | slope, ensanche, commercial | Barrio residence cluster; selected newer residential |
-| `bf.rural_peripheral` | rural/peripheral house/work shell | low-density 1–2-storey house, shed or small work building; irregular wall/garden/field relation | gate/threshold; optional service/work anchor | rural edge, workshop court | Vega supply context, Entrada edge, huerta fabric |
+| `bf.mixed_use_house` | mixed-use house/shop/lodging shell | street-level public/service bay + private/upper shell without fixing interior rooms | public frontage, private/upper threshold socket, optional rear service; bound POIs promote required roles from §9 | commercial, historic, ensanche, rural | Calle Mayor mixed frontages, corner shop, fonda shell |
+| `bf.bar_social` | bar/social venue | public social frontage plus distinct service/back relation; may support semi-private/upper/court anchor | public entrance **and** service anchor; generic semi-private/vertical/court socket optional, but any bound POI requiring `semi-private` must expose a semi-private-tagged anchor | historic, commercial, work-edge | casco bar; port worker social variant |
+| `bf.shop_service` | shop/service | compact public-facing service shell | public/customer entrance; generic staff/storage/service anchor optional, but bound POIs promote `private` and/or `service` exactly as required by §9 | commercial, ensanche, rural | pharmacy, everyday shop, neighbourhood shop |
+| `bf.workshop` | workshop/repair | work bay shell with customer threshold and material/service side | customer/public threshold where programme requires; service/material anchor required; private work anchor promoted when §9 requires it | workshop court, warehouse yard, rural | Ribera workshop, repair/supply variants |
+| `bf.warehouse_port` | warehouse / port-work building | low robust shell intended to pair with yard/apron; no hero-harbour silhouette | service/material anchor required; bounded public/customer/office threshold optional generically and promoted when §9 requires it | warehouse yard, workshop court | Puerto warehouse/work hub, depot support |
+| `bf.civic` | civic/municipal | legible public-facing institutional shell within town material language | public civic entrance; staff/service/private-records access anchors as programme requires | civic frontage, commercial row | Ayuntamiento / municipal office variants |
+| `bf.residential_multi` | apartment / residence cluster | 2–3-storey multi-household shell or small cluster around shared landing/court | primary residential threshold(s), shared landing/court anchor, optional service/private rear; bound POIs promote exact private/semi-private/public roles from §9 | slope, ensanche, commercial | Barrio residence cluster; selected newer residential |
+| `bf.rural_peripheral` | rural/peripheral house/work shell | low-density 1–2-storey house, shed or small work building; irregular wall/garden/field relation | gate/threshold; optional service/work anchor generically, promoted when §9 requires it | rural edge, workshop court | Vega supply context, Entrada edge, huerta fabric |
 
 ### 6.3 Explicit non-families
 
@@ -261,7 +264,7 @@ Exterior volume/site enclosure with stable bounds, frontage orientation, roof/si
 A reviewed shell + family/archetype + declared variants/dependencies/compatibility. It is discoverable and reusable but still has no CITY-02 functional identity by itself.
 
 ### `functional POI`
-A reusable building or exterior open-site composition bound to one CITY-02 programme ID and its A–D/S/I/access obligations. This binding may require extra anchors but may not invent runtime behaviour.
+A reusable building or exterior open-site composition bound to one CITY-02 programme ID and its A–D/S/I/access obligations. Binding is **monotonic and fail-closed**: normalize the programme row to required access roles, then require those roles to be a subset of the selected composition's required anchors. Binding may promote a generic optional anchor to required, but it may never remove or weaken an inherited role. Spatial-form tags such as `vertical`, `court`, `rear`, `staff` or `storage` describe how a role is realized; they do not substitute for the access role itself.
 
 ### `street segment`
 One accepted route edge/portion realized with a street family plus compatible parcel/open-site frontages and junction conditions. It is a composition container, not a new graph owner.
@@ -276,7 +279,7 @@ A–D, S-depth and I-depth remain orthogonal. CITY-05 maps them to **exterior/sh
 
 ### 8.1 Systemic importance
 
-- `A`: explicit functional-POI binding, stable public/service access anchors as required by the programme, and a reviewed place-readable exterior composition. No automatic extra floor, area or interior depth.
+- `A`: explicit functional-POI binding, stable public/service/private/semi-private access anchors exactly as required by the programme, and a reviewed place-readable exterior composition. No automatic extra floor, area or interior depth.
 - `B`: explicit functional-POI binding and the same truthful access relation, but no requirement for landmark treatment or larger shell.
 - `C`: ordinary reusable fabric. Default is family/variant composition without functional-POI binding; promotion requires a later reviewed reason.
 - `D`: scenic/context composition. No playable threshold promise unless another owner explicitly promotes it.
@@ -287,14 +290,14 @@ A–D, S-depth and I-depth remain orthogonal. CITY-05 maps them to **exterior/sh
 - `S1`: authored shell/façade/exterior threshold; may be a meaningful exterior A/B place but does not imply interior depth.
 - `S2`: bounded playable exterior/shallow place; shell/site must expose at least one truthful functional access anchor and enough exterior space for its place role.
 - `S3`: shell/site must support multiple meaningful thresholds/spatial layers (for example public + rear/service, public + shared court, public + vertical relation), while exact interior path/rooms remain CITY-06.
-- `S4`: hero-layer shell must expose multiple truthful access/discovery **opportunities**. CITY-02 permits this only for `loc.casco.bar`; CITY-05 requires public + service plus at least one additional semi-private/vertical/court candidate anchor, without deciding how CITY-06 uses them.
+- `S4`: hero-layer shell must expose multiple truthful access/discovery **opportunities**. CITY-02 permits this only for `loc.casco.bar`; CITY-05 requires `public`, `service` and `semi-private` roles. The semi-private anchor may use a reviewed vertical/court/rear spatial form, but a merely vertical or court-tagged anchor does not satisfy the inherited semi-private role unless it is also tagged `semi-private`.
 
 ### 8.3 Enclosed-interior priority
 
 - `I0`: no enterable enclosed interior promised. Visual doors/windows may exist as façade modules but are tagged non-promised; discovered asset interiors do not override I0.
-- `I1`: shell must reserve one bounded interior-link anchor/volume and any programme-required service relation; room layout remains undefined.
-- `I2`: shell must reserve capacity for multiple interior zones/thresholds and expose the distinct public/private/service exterior relations named by CITY-02 where applicable.
-- `I3`: layered shell support with public, service and additional semi-private/vertical/court access candidates; only the casco bar carries this CITY-02 commitment.
+- `I1`: shell must reserve one bounded interior-link anchor/volume and every programme-required external access role; room layout remains undefined.
+- `I2`: shell must reserve capacity for multiple interior zones/thresholds and expose the distinct public/private/service/semi-private exterior roles named by CITY-02 where applicable.
+- `I3`: layered shell support with `public`, `service` and `semi-private` roles plus multiple access/discovery opportunities; only the casco bar carries this CITY-02 commitment. Vertical/court form may realize the semi-private opportunity but cannot replace the role.
 
 No rule maps `A→S4`, `B→S3` or `I` from systemic importance.
 
@@ -304,33 +307,49 @@ No rule maps `A→S4`, `B→S3` or `I` from systemic importance.
 
 This table constrains family choice without assigning exact parcels or room layouts. `PE` is the inherited CITY-02 programme-envelope class.
 
-| CITY-02 place | PE | Exterior composition pattern | Building/open-site family | Required external relation |
-|---|---|---|---|---|
-| `loc.casco.bar` | M | historic/commercial shell + bounded rear/court relation | `bf.bar_social` on `pc.historic_row`/`pc.commercial_row` | public + service + extra semi-private/vertical/court candidate |
-| `loc.casco.bridgehead` | T | widened historic/open threshold at X1 approach | `pc.open_site` + `jn.bridgehead` | public approach only; no new crossing |
-| `loc.plaza.ayuntamiento` | M | civic frontage on plaza edge | `bf.civic` + `pc.civic_frontage` | public civic + staff/service/private relation |
-| `loc.plaza.market` | L | bounded occupiable apron/stall assemblies outside always-clear route | `pc.open_site` + `st.plaza_market_edge` | public; route remains open |
-| `loc.calle.bakery` | M | mixed commercial/work shell | `bf.mixed_use_house` or `bf.shop_service` on `pc.commercial_row` | public shop + rear/service/work relation |
-| `loc.calle.pharmacy` | S | compact service shell | `bf.shop_service` on `pc.commercial_row` | public + staff/storage relation |
-| `loc.calle.everyday_shop` | S | compact mixed/service shell | `bf.shop_service` / `bf.mixed_use_house` | public + optional service |
-| `loc.barrio.residence_cluster` | L | small stepped residential cluster/shared landing | `bf.residential_multi` on slope parcels | private + semi-private + public threshold; no public shortcut through private court |
-| `loc.barrio.lavadero` | M | open/low-built shared domestic edge | `pc.open_site` + rural/step assemblies | public/semi-private edge; preserve quiet route |
-| `loc.ensanche.neighbourhood_anchor` | M | corner mixed/service shell + small bounded square edge | `bf.mixed_use_house` / `bf.shop_service` + `pc.ensanche_garden`/open site | public + service; square does not erase route |
-| `loc.ensanche.shared_garden` | M | shared garden/court with residential edge | `pc.open_site` + `bf.house`/`bf.residential_multi` edges | semi-private + public edge |
-| `loc.ribera.workshop` | L | work shell + yard/court | `bf.workshop` + `pc.workshop_court` | customer/public + material/service |
-| `loc.ribera.service_yard` | L | yard-first service composition + shallow support shell | `pc.workshop_court` + `bf.warehouse_port`/`bf.workshop` support | service-first; public edge only where CITY-02 allows |
-| `loc.ribera.paseo_edge` | T | open overlook/work observation on riverside route | `pc.open_site` + `st.riverside_promenade` | public, low-intensity, water edge open |
-| `loc.puerto.work_hub` | L | low municipal/work shells + bounded work apron | `bf.warehouse_port` + optional `bf.civic` small office | public work frontage + service/staff relation |
-| `loc.puerto.landing` | T | landing/wait threshold at accepted X6/X7 head | `pc.open_site` + `jn.landing_gate` | public subject to inherited crossing state; no simultaneous X6+X7 assumption |
-| `loc.puerto.worker_social` | M | modest social shell within working frontage | `bf.bar_social` / `bf.mixed_use_house` | public + service + semi-private candidate |
-| `loc.puerto.warehouse_yard` | L | low warehouse shell + dedicated yard/apron | `bf.warehouse_port` + `pc.warehouse_yard` | service/material + bounded public frontage |
-| `loc.entrada.arrival` | T | bus/arrival waiting threshold | `pc.open_site` on ordinary/rural-transition edge | public arrival; BUS does not continue into pedestrian streets |
-| `loc.entrada.fonda` | M | mixed lodging/social shell + private/service rear | `bf.mixed_use_house` with reviewed lodging variant | public common threshold + private/service relation |
-| `loc.entrada.depot_forecourt` | M | forecourt-first service site + small support shell | `pc.open_site`/`pc.warehouse_yard` + `bf.warehouse_port` support | service + public waiting edge; must remain within M ceiling |
-| `loc.vega.supply_node` | L | rural work/supply shell + bounded work apron | `bf.rural_peripheral` / `bf.workshop` + `pc.rural_edge` | public work edge + private/service portion |
-| `loc.vega.quiet_paseo` | T | small pause/rest threshold on quiet rural/river edge | `pc.open_site` + `st.rural_transition`/riverside | public, intentionally low intensity |
+For conformance, CITY-05 normalizes the accepted CITY-02 `Default access posture` into the four access-role tokens `{public, service, private, semi-private}`. Descriptors such as `staff`, `storage`, `records`, `work`, `rooms`, `customer`, `waiting`, `frontage`, `shared landing`, `vertical` and `court` remain spatial/use qualifiers; they do not weaken the normalized role. `conditional public` remains conditional and is therefore not promoted to required. For every row below, `programme_required ⊆ bound_composition_required` is mandatory.
+
+| CITY-02 place | PE | Exterior composition pattern | Building/open-site family | Required access-role set | Additional required constraint / form |
+|---|---|---|---|---|---|
+| `loc.casco.bar` | M | historic/commercial shell + bounded rear/court relation | `bf.bar_social` on `pc.historic_row`/`pc.commercial_row` | `{public, service, semi-private}` | semi-private layer required; vertical/court may be its form but may not replace the role |
+| `loc.casco.bridgehead` | T | widened historic/open threshold at X1 approach | `pc.open_site` + `jn.bridgehead` | `{public}` | no new crossing |
+| `loc.plaza.ayuntamiento` | M | civic frontage on plaza edge | `bf.civic` + `pc.civic_frontage` | `{public, service, private}` | staff/service + private-records distinction remains representable |
+| `loc.plaza.market` | L | bounded occupiable apron/stall assemblies outside always-clear route | `pc.open_site` + `st.plaza_market_edge` | `{public}` | route remains open |
+| `loc.calle.bakery` | M | mixed commercial/work shell | `bf.mixed_use_house` or `bf.shop_service` on `pc.commercial_row` | `{public, service, private}` | rear/service + private work layer required |
+| `loc.calle.pharmacy` | S | compact service shell | `bf.shop_service` on `pc.commercial_row` | `{public, private}` | staff/storage is private; CITY-02 does not require a service role here |
+| `loc.calle.everyday_shop` | S | compact mixed/service shell | `bf.shop_service` / `bf.mixed_use_house` | `{public, service}` | service anchor is required by the POI binding even though generic family service is optional |
+| `loc.barrio.residence_cluster` | L | small stepped residential cluster/shared landing | `bf.residential_multi` on slope parcels | `{public, private, semi-private}` | no public shortcut through private court |
+| `loc.barrio.lavadero` | M | open/low-built shared domestic edge | `pc.open_site` + rural/step assemblies | `{public, semi-private}` | preserve quiet route |
+| `loc.ensanche.neighbourhood_anchor` | M | corner mixed/service shell + small bounded square edge | `bf.mixed_use_house` / `bf.shop_service` + `pc.ensanche_garden`/open site | `{public, service}` | square does not erase route |
+| `loc.ensanche.shared_garden` | M | shared garden/court with residential edge | `pc.open_site` + `bf.house`/`bf.residential_multi` edges | `{public, semi-private}` | semi-private garden/court role remains distinct from public edge |
+| `loc.ribera.workshop` | L | work shell + yard/court | `bf.workshop` + `pc.workshop_court` | `{public, service, private}` | customer/public + material/service + private work layer required |
+| `loc.ribera.service_yard` | L | yard-first service composition + shallow support shell | `pc.workshop_court` + `bf.warehouse_port`/`bf.workshop` support | `{service}` | public edge remains conditional, not promoted to required |
+| `loc.ribera.paseo_edge` | T | open overlook/work observation on riverside route | `pc.open_site` + `st.riverside_promenade` | `{public}` | low-intensity; water edge open |
+| `loc.puerto.work_hub` | L | low municipal/work shells + bounded work apron | `bf.warehouse_port` + optional `bf.civic` small office | `{public, service, private}` | staff relation remains representable separately from service frontage |
+| `loc.puerto.landing` | T | landing/wait threshold at accepted X6/X7 head | `pc.open_site` + `jn.landing_gate` | `{public}` | subject to inherited crossing state; no simultaneous X6+X7 assumption |
+| `loc.puerto.worker_social` | M | modest social shell within working frontage | `bf.bar_social` / `bf.mixed_use_house` | `{public, service, semi-private}` | semi-private role required; not merely an untyped candidate socket |
+| `loc.puerto.warehouse_yard` | L | low warehouse shell + dedicated yard/apron | `bf.warehouse_port` + `pc.warehouse_yard` | `{public, service}` | material/service + bounded public frontage |
+| `loc.entrada.arrival` | T | bus/arrival waiting threshold | `pc.open_site` on ordinary/rural-transition edge | `{public}` | BUS does not continue into pedestrian streets |
+| `loc.entrada.fonda` | M | mixed lodging/social shell + private/service rear | `bf.mixed_use_house` with reviewed lodging variant | `{public, private, service}` | private rooms + service relation remain distinct |
+| `loc.entrada.depot_forecourt` | M | forecourt-first service site + small support shell | `pc.open_site`/`pc.warehouse_yard` + `bf.warehouse_port` support | `{public, service}` | public waiting edge required; must remain within M ceiling |
+| `loc.vega.supply_node` | L | rural work/supply shell + bounded work apron | `bf.rural_peripheral` / `bf.workshop` + `pc.rural_edge` | `{public, private, service}` | private/service portion remains distinct from public work edge |
+| `loc.vega.quiet_paseo` | T | small pause/rest threshold on quiet rural/river edge | `pc.open_site` + `st.rural_transition`/riverside | `{public}` | intentionally low intensity |
 
 If a place requires a family/parcel combination outside this table, the proposal must explain why existing reviewed families cannot represent it before adding a one-off family.
+
+### 9.1 Binding validation rule
+
+For every A/B place:
+
+```text
+programme_required_roles = normalize(CITY-02 Default access posture)
+bound_required_roles     = roles marked required after functional-POI binding
+PASS only if programme_required_roles ⊆ bound_required_roles
+```
+
+Generic-family optionality is evaluated **before** POI binding and therefore cannot justify a missing role after binding. A composition with the right spatial form but the wrong role still fails; e.g. `{public, service, vertical}` fails `loc.casco.bar` because `semi-private` is absent.
+
+The 23/23 conformance proof and negative controls live in `Docs/evidence/WP-CITY-05/ACCESS_RELATION_CONFORMANCE.md`.
 
 ---
 
@@ -412,7 +431,7 @@ Special negative control retained from CITY-02: `loc.entrada.depot_forecourt` mu
 
 CITY-05 requires later bridge/authoring discovery to expose enough structured data that an agent can filter legal/reviewed options before proposing geometry.
 
-For every discoverable environment composition unit (module, assembly, shell, reusable building, street family or parcel template), later discovery must expose where applicable:
+For every discoverable environment composition unit (module, assembly, shell, reusable building, functional POI, street family or parcel template), later discovery must expose where applicable:
 
 | Field group | Required information |
 |---|---|
@@ -420,7 +439,8 @@ For every discoverable environment composition unit (module, assembly, shell, re
 | version | item version/revision, compatibility version, deprecated/superseded marker |
 | bounds | local dimensions/bounds and any min/max parametric band |
 | sockets | socket ID/type, orientation/edge role, clearance requirement, compatible link types |
-| access anchors | public/service/private/semi-private role; compatible CITY access classes; required clear approach |
+| access anchors | public/service/private/semi-private role; compatible CITY access classes; required/optional status after POI binding; required clear approach |
+| functional POI binding | CITY-02 programme ID; normalized programme-required access roles; bound required roles; spatial-form qualifiers; provenance back to CITY-02 row |
 | archetype/tags | building/street/parcel archetype plus district/use/style tags |
 | dependencies | required modules/assemblies/material families/schema adapters or provider-owned dependencies |
 | variants | reviewed variant IDs and allowed parameter ranges |
@@ -455,11 +475,12 @@ A reviewed authoring workflow should be able to execute this order:
 2. choose compatible street/junction family
 3. inspect parcel/open-site constraints and no-build corridors
 4. filter reusable building/shell options by parcel + access + slope + style compatibility
-5. if a CITY-02 place is being realized, apply its A-D/S/I/PE obligations
-6. validate public/service anchors against inherited CITY-01 access
-7. validate exclusive-envelope accounting against T/S/M/L ceiling and district cap/reserve boundary
-8. propose composition
-9. later plan/dry-run/materialize/inspect through the owning Arkus/engine contracts
+5. if a CITY-02 place is being realized, normalize and bind its exact required public/service/private/semi-private role set
+6. promote generic optional anchors to required where the bound programme row requires them; reject if any required role is missing
+7. validate required public/service anchors against inherited CITY-01 access and preserve private/semi-private role distinctions
+8. validate exclusive-envelope accounting against T/S/M/L ceiling and district cap/reserve boundary
+9. propose composition
+10. later plan/dry-run/materialize/inspect through the owning Arkus/engine contracts
 ```
 
 A prompt such as “make a nice Potes house here” is insufficient authoring input. The system must first expose the constrained choice set.
@@ -505,6 +526,8 @@ A CITY-05 proposal is invalid if any of these occur:
 - a street/junction family adds connectivity not present in CITY-01;
 - an `AS` service edge is used as ordinary public routing;
 - a required `AR` relation is squeezed into a lane/stair family that does not support it;
+- a functional POI loses any inherited required `public`, `service`, `private` or `semi-private` role because its generic family marked that anchor optional;
+- `vertical`, `court`, `rear`, `staff`, `storage` or another spatial/use qualifier is treated as a substitute for the required access role it is supposed to realize;
 - a parcel or yard uses protected quiet/ordinary reserve as A/B overflow;
 - an A/B composition exceeds its inherited T/S/M/L ceiling without reopening Q6;
 - a market/plaza/work apron consumes the public route polygon;
@@ -525,7 +548,7 @@ CITY-06 receives, without having to invent exterior production rules anew:
 
 - street/junction family and parcel/site vocabularies;
 - reusable building families and reviewed shell variants;
-- exterior public/service/private/semi-private/vertical/court anchor obligations;
+- exact fail-closed public/service/private/semi-private role set for every A/B functional POI, with vertical/court/rear/staff/storage kept as form/use qualifiers rather than weaker substitutes;
 - exact mapping from every A/B programme place to allowed exterior composition families;
 - `I0..I3` shell-support rules that deliberately stop before room/discovery layout;
 - no-build/view/rear relation vocabulary;
