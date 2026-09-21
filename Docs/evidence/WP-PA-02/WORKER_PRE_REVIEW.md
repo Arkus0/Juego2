@@ -3,23 +3,77 @@
 Workpack: `WP-PA-02`  
 Candidate branch: `pa/wp-pa-02-npc-agency-harvest`  
 Baseline: `main@c6e97600fa68afbe1de7fe46121880ffe8be917b`  
+Repair cycle: `fail_cycle: 1`  
+Transfer SHA: `0ab469b640535d92c73c617e0d944c0b1f45033f`  
+Superseded independent FAIL: review `#5269143202` on `0ab469b640535d92c73c617e0d944c0b1f45033f`  
 Worker verdict: **CLEAN / READY TO FREEZE**  
 Date: 2026-09-21
+
+```text
+WORKER_PRE_REVIEW: CLEAN
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 0
+WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-PA-02/WORKER_PRE_REVIEW.md
+INDEPENDENT_FAIL_BLOCKERS_REPAIRED: 1
+PROOF_BUDGET_VERDICT: N/A — WP-PA-02 is RESEARCH / NON-FOUNDATIONAL
+```
+
+## Repair provenance / exact delta
+
+Independent review `#5269143202` found one blocker: the initial cycle omitted the mandatory v1.7 `PREDECESSOR_CONTRACT_CHECK` and canonical handoff fields. The same review explicitly found the PA-02 research content strong against the contract and required no semantic redesign unless this fresh pre-review discovered a new defect.
+
+Repair actions before this pre-review:
+
+1. persisted the repair-cycle `PREDECESSOR_CONTRACT_CHECK` in `WORKER_PLAN.md`, binding exact accepted PA-01 evidence and the inherited/new/consumed/reopen split;
+2. normalized `HANDOFF.md` with the predecessor evidence, repair history, transfer SHA and `fail_cycle`;
+3. left `Docs/research/living-world/results/PA-02.md` unchanged.
+
+The PA-02 result blob is `1218c3d896fef28b9293075b3ea6f99aed6025e1` both at failed candidate `0ab469b640535d92c73c617e0d944c0b1f45033f` and on the repaired branch before this pre-review evidence commit. Therefore the repair is process/evidence-only, not a semantic rewrite of the harvest.
+
+Current `main` is `55d919ea6cea7784431b628343b1cde46f2e3863`. The only baseline→main drift after branch baseline `c6e97600fa68afbe1de7fe46121880ffe8be917b` remains PR `#95`, the unrelated H1 Quaternius Source timing/ownership documentation correction already recorded in the original handoff. It does not change PA-01, PA-02 workpacks, PA programme inputs or candidate paths.
+
+## PREDECESSOR_CONTRACT_CHECK verification
+
+The fresh pre-review re-read the persisted check against current accepted evidence.
+
+| Check | Result |
+|---|---|
+| Direct dependency identified | PASS — `WP-PA-01` |
+| Accepted candidate exact SHA | PASS — `87c4cbe81f8195770eb23ba7f2a5d5ca2a237715` |
+| Independent PASS bound | PASS — review `#5268013445` |
+| Merge bound | PASS — PR `#89`, merge `3688b7b9a27355b0fda160c20e57a385e40c6814` |
+| DocSync completion bound | PASS — PR `#91`, merge `50bbb95d261ff1964f2e920ce0380868eb2c59fd` |
+| Completion metadata re-read | PASS — `Docs/workpacks/PA/WP-PA-01.md` is `COMPLETE` and names the accepted SHA/review/merge |
+| Accepted result re-read | PASS — `Docs/research/living-world/results/PA-01.md` is `ACCEPTED / REVIEWED` |
+| DocSync re-read | PASS — `Docs/evidence/WP-PA-01/DOCSYNC.md` is `DOCSYNC_COMPLETE` and names PA-02 next |
+| Inherited guarantees stated | PASS |
+| Newly PA-02-owned guarantees stated | PASS |
+| Consumed-not-reproved guarantees stated | PASS |
+| Concrete reopen condition stated | PASS |
+| Timing represented honestly | PASS — check is explicitly repair-cycle evidence performed before repair branch writes; it does not claim to have existed in the failed initial cycle |
+
+Relevant inherited PA-01 guarantees are consumed rather than duplicated: routine is expected semantic intent, routine is not agency, expected != actual, route realization does not rewrite schedule intent, interruption recovery re-evaluates current context, routine is a perturbable shared-world baseline, and PA-08/PA-09 retain their accepted ownership boundaries.
+
+PA-02 owns the new agency seam only: actor-originated choice, bounded discovery, authorized inputs, explainable decisions, optional receiver-choice ownership, commitment/replanning/failure guardrails and player-independent continuation.
+
+No concrete evidence was found that reopens PA-01.
 
 ## Contract / scope
 
 | Check | Result |
 |---|---|
-| Accepted PA-01 prerequisite audited | PASS — accepted result + PA README show PA-01 COMPLETE |
+| Exact `WP-PA-02` acceptance/DoD re-read | PASS |
+| Accepted PA-01 prerequisite audited | PASS — exact reviewed/merge/DocSync evidence above |
 | Exact donor dossier audited | PASS — `dfe8a2b10831774f846274143c58dc41227d6231` |
 | Donor final PASS audited | PASS — PR #36 / review `#5225572191` |
 | Donor failed-review repairs considered | PASS — fake boundedness, receiver ownership, certainty, population-axis, determinism and causal-axis defects preserved as regression targets |
+| Complete baseline→candidate changed-file surface inspected | PASS — only `PA-02.md` + three `Docs/evidence/WP-PA-02/*` files |
 | Broad prior-art re-research avoided | PASS |
 | Donor runtime/milestone architecture stripped | PASS |
 | Frozen plans/amendments untouched | PASS |
 | PA-03+ ownership preserved | PASS |
 | Runtime/Unity/tuning/performance claims deferred | PASS |
 | Universal AI algorithm avoided | PASS |
+| Foundational proof/content-shape probe obligations | N/A — research/non-foundational WP |
 
 ## Required deliverables
 
@@ -57,6 +111,8 @@ actor-accessible state / pressure / opportunity
 P1 instantiates that shape with ordinary coordination between Antonio and Manolo while the player is absent. The goal does not preselect `ASK`; at least two valid initiator alternatives exist. If the chosen social action has a meaningful response choice, Manolo owns it.
 
 NC-01 fails if player/quest presence is required to produce the decision. NC-02 fails if a scoped query enumerates the global persistent-actor collection before filtering. Together they directly attack the two required acceptance dimensions.
+
+The fresh repair pre-review specifically challenged whether the new predecessor check had accidentally weakened the PA-02 seam into “schedule causes action.” It does not: PA-01 schedule is consumed only as context/expected intent and PA-02 still requires an actor-owned problem/goal plus alternatives before the meaningful action is chosen.
 
 ## Bounded-discovery causality
 
@@ -126,7 +182,7 @@ What is frozen at research level is only the observable product semantics: bound
 
 ## PA ownership audit
 
-- PA-01 retains schedule/routine semantics.
+- PA-01 retains schedule/routine semantics and its accepted guarantees are consumed, not re-proved.
 - PA-03 retains relationship dimensions/sign/history.
 - PA-04 retains belief acquisition/truth/ignorance.
 - PA-05 retains information transfer.
@@ -152,19 +208,19 @@ Future consumers should reopen/falsify the relevant finding if implementation ev
 
 These are deferred proof points, not reasons to select an architecture in PA-02.
 
-## Branch surface
+## Branch surface / repair containment
 
-Expected diff is PA-local docs only:
+Complete candidate surface remains PA-local docs only:
 
-- `Docs/research/living-world/results/PA-02.md`;
-- `Docs/evidence/WP-PA-02/WORKER_PLAN.md`;
-- `Docs/evidence/WP-PA-02/WORKER_PRE_REVIEW.md`;
-- `Docs/evidence/WP-PA-02/HANDOFF.md`.
+- `Docs/research/living-world/results/PA-02.md` — unchanged by repair;
+- `Docs/evidence/WP-PA-02/WORKER_PLAN.md` — predecessor check added;
+- `Docs/evidence/WP-PA-02/HANDOFF.md` — repair/predecessor handoff normalized;
+- `Docs/evidence/WP-PA-02/WORKER_PRE_REVIEW.md` — this fresh complete pre-review.
 
-No workpack, amendment, runtime, H0/H1/CITY or implementation file is intentionally modified.
+No workpack, amendment, runtime, H0/H1/CITY or implementation file is modified.
 
 ## Worker conclusion
 
 **CLEAN / READY TO FREEZE.**
 
-The candidate satisfies the PA-02 harvest contract at research level, preserves the donor's difficult-to-fake boundedness/ownership lessons, reconciles them with Juego2's playable causal city, and leaves implementation/algorithm proof with future consumers.
+The independent FAIL's single process blocker is repaired. The exact accepted PA-01 predecessor contract is now reconstructed and persisted; inherited guarantees are consumed rather than defensively re-proved; the complete candidate has been re-challenged; `PA-02.md` remains unchanged; and no new in-claim blocker was found.
