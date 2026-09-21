@@ -7,9 +7,9 @@ using Arkus.Harness.Protocol;
 namespace Arkus.Harness.Runtime
 {
     /// <summary>
-    /// Canonical H0 world composition. Accepted read, validation and mutation capabilities enter one
-    /// HK01 composer and one discovery/dispatcher inventory; unavailable services keep the inventory
-    /// complete even when an embedding runtime has not bound authorable state.
+    /// Canonical world composition. Accepted base read, validation and mutation capabilities enter one
+    /// HK01 composer and one discovery/dispatcher inventory; reviewed scoped providers may join the same
+    /// inventory without creating transport-specific registries or acquiring canonical write authority.
     /// </summary>
     public static class CanonicalWorldContract
     {
@@ -58,21 +58,35 @@ namespace Arkus.Harness.Runtime
 
         public static ComposedContract Compose(IWorldInspectionService inspection)
         {
-            return Compose(inspection, new UnavailableWorldMutationService());
+            return Compose(inspection, new UnavailableWorldMutationService(), null);
         }
 
         public static ComposedContract Compose(
             IWorldInspectionService inspection,
             IWorldMutationService mutation)
         {
-            var result = ContractComposer.Compose(CreateContribution(inspection, mutation));
+            return Compose(inspection, mutation, null);
+        }
+
+        public static ComposedContract Compose(
+            IWorldInspectionService inspection,
+            IWorldMutationService mutation,
+            IEnumerable<CanonicalProviderContribution>? scopedContributions)
+        {
+            var result = ContractComposer.Compose(
+                CreateContribution(inspection, mutation),
+                scopedContributions);
             if (!result.Success || result.Contract == null)
             {
-                throw new InvalidOperationException("The canonical world contract must compose successfully.");
+                var detail = result.Issues.Count == 0
+                    ? string.Empty
+                    : " First issue: " + result.Issues[0].Code + " at " + result.Issues[0].Path + ".";
+                throw new InvalidOperationException("The canonical world contract must compose successfully." + detail);
             }
 
-            // This is the host-capability boundary consumed by every production projection.
-            // JSONL, MCP and future adapters receive only an H0-policy-admitted canonical inventory.
+            // This remains the currently accepted host-capability floor. H1-01 contributes only
+            // deterministic/read-only producer operations, so it fits the H0 admission envelope.
+            // Later Editor-effect WPs own the explicitly versioned H1 policy expansion.
             return H0HostCapabilityPolicy.Enforce(result.Contract);
         }
 
@@ -83,10 +97,17 @@ namespace Arkus.Harness.Runtime
         /// </summary>
         public static ComposedContract ComposeEmptyPortableSession(string worldId)
         {
+            return ComposeEmptyPortableSession(worldId, null);
+        }
+
+        public static ComposedContract ComposeEmptyPortableSession(
+            string worldId,
+            IEnumerable<CanonicalProviderContribution>? scopedContributions)
+        {
             if (worldId == null) throw new ArgumentNullException(nameof(worldId));
             var initial = new WorldState(new WorldId(worldId), 0, Array.Empty<WorldObject>());
             var session = new PortableWorldAuthoringSession(initial);
-            return Compose(new WorldInspectionService(session), session);
+            return Compose(new WorldInspectionService(session), session, scopedContributions);
         }
     }
 }
