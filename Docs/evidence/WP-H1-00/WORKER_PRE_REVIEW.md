@@ -1,7 +1,7 @@
 # WP-H1-00 Worker pre-review
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 8
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 9
 WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-H1-00/WORKER_PRE_REVIEW.md
 
 ## Candidate challenged
@@ -10,11 +10,11 @@ WORKER_PRE_REVIEW_EVIDENCE: Docs/evidence/WP-H1-00/WORKER_PRE_REVIEW.md
 - Baseline: `a9ff655e5bf2319690d919b88bd57389a32483f3`.
 - Branch: `wp-h1-00-engine-neutral-projection`.
 - Direct accepted predecessor: `WP-HK-GATE` PASS and DocSync.
-- Last fully GREEN evidence-finalized checkpoint before frozen-verifier repair: `a8136b9d7ad8dfdc23ffa87fd23502794886c6a8`.
-- Draft exact-SHA observation on that checkpoint: Actions run `35573945174` GREEN.
-- Checkpoint result: Release build `0 warnings / 0 errors`; focused H1-00 `14/14` GREEN; all six causal defect controls RED for the intended reason; full regression `234/234` GREEN; candidate clean before/after.
-- Attempted Ready/freeze run `35574137765` failed before product verification because `scripts/arkus-verify-exact-sha.sh` had no `WP-H1-00` verifier dispatch. The PR was immediately returned to Draft and the freeze metadata withdrawn before repair.
-- This is Worker quality-gate evidence only. Fresh independent Reviewer PASS is still required on the final frozen SHA.
+- Previously frozen candidate: `ed2f0532c4f2107f697728a7fa7774323445a307`.
+- Previously frozen exact-SHA validation: Actions run `35574350759` GREEN.
+- Independent review on that SHA: FAIL, review `#5264468475`, because ambiguous effective inventories with duplicate `ResourceId` values could leak caller enumeration order into `EffectiveDigest` / `ObservationDigest`.
+- The failed freeze was withdrawn and PR #75 returned to Draft before any repair write.
+- This document is Worker quality-gate evidence only. Fresh independent Reviewer PASS is still required on the final repaired frozen SHA.
 
 ## Scope / authority challenge
 
@@ -24,7 +24,7 @@ The candidate owns only a dependency-free `netstandard2.1` `Arkus.EngineBridge` 
 
 Canonical truth remains H0-owned. The bridge consumes supplied canonical anchor/snapshot bytes defensively and emits derived plan/generation/observation/receipt evidence only. A bridge receipt is not an HK06 mutation entry and materialization failure cannot rewrite or advance canonical truth.
 
-## Findings fixed during Worker pre-review
+## Findings fixed during Worker cycle
 
 ### Finding 1 — H1-00 had no canonical exact-SHA observation route
 
@@ -40,7 +40,7 @@ A draft run built the new assembly only incidentally through the test project, l
 
 ### Finding 4 — multiline negative-control seeds were not literal
 
-The first defect-injection helper treated `\\n` as literal text for multiline replacements. The helper now expands those escaped newlines before replacement. The final checkpoint proves all six named defect classes cause actual test RED and explicitly rejects compiler/MSBuild/NuGet failure as invalid causal evidence.
+The first defect-injection helper treated escaped newlines as literal text for multiline replacements. The helper now expands those escaped newlines before replacement and rejects compiler/MSBuild/NuGet failure as invalid causal evidence.
 
 ### Finding 5 — portable receipt/observation semantics were initially too implicit
 
@@ -48,7 +48,7 @@ The first implementation exposed deterministic domain objects and receipt digest
 
 ### Finding 6 — dependency neutrality needed proof in both directions
 
-It was not enough to prove that `Arkus.EngineBridge` does not reference Runtime/transport/Unity. The final proof also inspects the effective Protocol and Runtime assembly references and verifies they do not acquire an upward dependency on `Arkus.EngineBridge`. The neutral bridge therefore remains downstream rather than entering the canonical kernel.
+It was not enough to prove that `Arkus.EngineBridge` does not reference Runtime/transport/Unity. The proof also inspects effective Protocol and Runtime assembly references and verifies they do not acquire an upward dependency on `Arkus.EngineBridge`. The neutral bridge therefore remains downstream rather than entering the canonical kernel.
 
 ### Finding 7 — the deterministic scenario needed an explicit drift→delete→rebuild closure
 
@@ -56,16 +56,29 @@ A fresh-materializer rebuild was already deterministic, and drift was independen
 
 ### Finding 8 — Ready/freeze verification had no H1-00 canonical verifier route
 
-Draft observation was complete, but the first Ready transition exposed a separate process omission: `scripts/arkus-verify-exact-sha.sh` could not resolve `WP-H1-00`, so frozen validation run `35574137765` failed with `Unable to resolve workpack for canonical verification` / `No canonical verification entrypoint registered for requested workpack` before running product verification.
+The first Ready transition exposed a process omission: `scripts/arkus-verify-exact-sha.sh` could not resolve `WP-H1-00`, so frozen validation failed before product verification. The repair added `scripts/h1-00-verify-exact-sha.sh` and registered it in the canonical verifier router. The failed freeze was withdrawn before those tracked-file writes.
 
-The repair adds `scripts/h1-00-verify-exact-sha.sh` and registers it in the canonical verifier router. The verifier reruns the complete H1-00 observer, checks foundational READY/zero-obligation evidence, content/residual closure, Worker pre-review and frozen PR metadata bound to the exact SHA. This is proof/process infrastructure only and introduces no product semantics. The failed freeze was withdrawn before these tracked-file writes.
+### Finding 9 — ambiguous observation normalization was not deterministic inside duplicate-ID groups
+
+Independent review of frozen SHA `ed2f0532c4f2107f697728a7fa7774323445a307` identified a real false green. `ReferenceMaterializer.EffectiveDigest` sorted effective resources only by `ResourceId`. When two resources shared the same ID but differed in normalized content, stable ordering preserved caller enumeration order. `[A,B]` and `[B,A]` therefore produced the same `Ambiguous` state and diagnostics but different `EffectiveDigest` / `ObservationDigest` values.
+
+The repair stays inside the already-owned H1-00 deterministic-observation guarantee:
+
+- `EffectiveDigest` now orders first by `ResourceId` and then by the full normalized resource representation using ordinal comparison;
+- fully identical duplicates remain harmless because their normalized encodings are equal;
+- `AmbiguousObservationDigestIsIndependentOfDuplicateEnumerationOrder` constructs distinct duplicate-ID resources and asserts `[A,B]` ↔ `[B,A]` equality for state, diagnostics, `EffectiveDigest` and `ObservationDigest`;
+- `scripts/h1-00-negative-conformance.sh` adds `ambiguous-observation-order`, removes only the secondary ordering, and requires the new regression test to turn RED for that causal reason;
+- the control count is therefore seven: the six workpack-named classes plus this reviewer-discovered in-boundary determinism defect.
+
+No H0 guarantee, H1 architecture decision, public version or Unity boundary is changed by this repair.
 
 ## Acceptance / false-green challenge
 
-The pre-review challenged the following material classes:
+The repaired pre-review challenges the following material classes:
 
 - each member of the full canonical-anchor/snapshot/binding/catalogue/toolchain tuple independently changes projection identity;
 - caller resource order cannot change normalized plan/generation identity;
+- equivalent ambiguous effective-resource multisets cannot change normalized effective/observation digests when duplicate entries are enumerated in a different order;
 - same full input retries idempotently with no second semantic delta;
 - pre-publication failure cannot move the active generation or receipt;
 - `absent`, `in-sync`, `canonical-ahead`, `engine-drift`, `missing-dependency`, `ambiguous` and `failed` are all observably distinguishable;
@@ -77,45 +90,27 @@ The pre-review challenged the following material classes:
 - EngineBridge has no Unity, Runtime, MCP, Projection, package or other product-project dependency;
 - Protocol/Runtime do not acquire an upward EngineBridge dependency;
 - the plaza/market/bar/workshop probe exercises a non-flat hierarchy and two distinct logical asset dependencies without promoting example content into Unity/CITY/gameplay schema;
-- every one of the six workpack-named negative-conformance classes turns RED for the intended test reason;
+- all seven causal controls turn RED for their intended test reason and the unmutated candidate then returns GREEN;
 - the full accepted H0 regression remains green after H1-00 composition;
 - Draft observation and Ready/frozen verification are both routable for `WP-H1-00` and bind the same exact candidate SHA.
 
-The six product defect controls are: receipt tuple misanchor, caller-order-dependent plan, failed staging publication leak, canonical-byte aliasing, hidden effective drift and engine/editor type leakage. The latest completed GREEN Draft checkpoint proves all six RED causally, then the unmutated candidate passes the full regression.
-
 ## Foundational proof / residual reconciliation
 
-`PROOF_MATRIX.md` reports `FOUNDATIONAL_PROOF_VERDICT: READY`, `UNRESOLVED_PROOF_OBLIGATIONS: 0`, `KNOWN_UNDETECTED_DEFECT_CLASSES: 0` and `PROOF_BUDGET_VERDICT: WITHIN_BUDGET` inside the declared fileless neutral claim.
+`PROOF_MATRIX.md` reports `FOUNDATIONAL_PROOF_VERDICT: READY`, `UNRESOLVED_PROOF_OBLIGATIONS: 0`, `KNOWN_UNDETECTED_DEFECT_CLASSES: 0` and `PROOF_BUDGET_VERDICT: WITHIN_BUDGET` inside the declared fileless neutral claim. It now contains a dedicated row for duplicate-ID ambiguity order invariance and the seventh causal control.
 
-`CONTENT_SHAPE_PROBE.md` is complete and found no H1-00 blocker or H0 reopen condition. `RESIDUAL_RISK.md` classifies real catalogue completeness, Unity serialization/native identity/effective observation, project restart durability, public batch lifecycle, supported Unity→canonical proposals and gameplay/CITY realization to their downstream owners. `UNCLASSIFIED_RESIDUALS: 0`; `PREDECESSOR_REOPEN_TRIGGERED: NO`.
+`CONTENT_SHAPE_PROBE.md` remains complete and found no H1-00 blocker or H0 reopen condition. `RESIDUAL_RISK.md` still classifies real catalogue completeness, Unity serialization/native identity/effective observation, project restart durability, public batch lifecycle, supported Unity→canonical proposals and gameplay/CITY realization to their downstream owners. `UNCLASSIFIED_RESIDUALS: 0`; `PREDECESSOR_REOPEN_TRIGGERED: NO`.
 
 No external runtime/package dependency or new IP adoption is introduced by this WP.
 
 ## Concurrent-main reconciliation
 
-`main` advanced after the Worker baseline only in the CITY-01 DocSync/workpack surfaces visible in the current base comparison. Those files are outside the H1-00 write set and do not alter the accepted H1-00 engine-neutral contract, H0 authority model or build/runtime graph. The PR remains mergeable and no causal rebase is required before review.
+The PR remains mergeable. Concurrent CITY work is outside the H1-00 write set and does not alter the accepted H1-00 engine-neutral contract, H0 authority model or build/runtime graph. No causal rebase is required solely for the reviewer-discovered determinism repair.
 
 ## Validation reconciliation and handoff condition
 
-Last completed evidence-finalized checkpoint before verifier repair:
+The prior frozen candidate `ed2f0532c4f2107f697728a7fa7774323445a307` had exact-SHA GREEN but is invalidated by independent Reviewer FAIL. Its GREEN result is therefore historical evidence only, not authority for the repaired candidate.
 
-- SHA `a8136b9d7ad8dfdc23ffa87fd23502794886c6a8`;
-- Draft Actions run `35573945174`: GREEN;
-- Release build: `0` warnings / `0` errors;
-- focused H1-00: `14/14` GREEN;
-- causal controls: `6/6` RED as required, runner GREEN;
-- full regression: `234/234` GREEN;
-- exact checkout clean before and after: YES;
-- execution receipt: `Result: GREEN`.
-
-Freeze attempt on that SHA:
-
-- Actions run `35574137765`: FAIL before product verification;
-- cause: missing H1-00 dispatch in canonical frozen verifier;
-- classification: Worker/process evidence infrastructure defect;
-- freeze withdrawn and PR returned to Draft before repair.
-
-The verifier repair and this reconciled pre-review change HEAD. Therefore the final repaired HEAD must receive a fresh Draft exact-SHA GREEN. Only after that may the exact HEAD be recorded again as Candidate/Frozen SHA and the PR become Ready. The Ready transition must then receive GREEN frozen exact-SHA verification. No Worker implementation/evidence write is permitted after the successful freeze.
+The repaired implementation/tests/control/evidence change HEAD. The final evidence-finalized Draft HEAD must receive a fresh canonical exact-SHA GREEN. Expected focused delta from the prior candidate is one additional reference regression test and one additional causal mutant (`15` focused H1 tests total if no unrelated test-count change; `7/7` causal RED controls). Only after Draft GREEN may that exact HEAD be recorded as Candidate/Frozen SHA and the PR become Ready. The Ready transition must then receive GREEN frozen exact-SHA verification. No tracked-file write is permitted after the successful freeze.
 
 No known in-boundary Worker blocker remains.
 
