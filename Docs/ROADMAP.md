@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.29 — 2026-09-21
+Version: 1.30 — 2026-09-21
 
 ## North star
 
@@ -75,7 +75,7 @@ Before implementation, HK08 and HK09 were likewise split where each umbrella mix
 No H0 workpack remains. The accepted H0 boundary is the predecessor for the accepted H1 plan below. After planning PR `#71` PASS, merge and DocSync, the first dependency-valid H1 Worker is `WP-H1-00`; it remains `NOT_STARTED` until a human explicitly starts it.
 
 | Order | Workpack | Outcome |
-|---|---|---|
+|---:|---|---|
 | 1 | `WP-HK-00` ✅ COMPLETE | Canonical portable module boundary, pinned toolchain and headless CI |
 | 2 | `WP-HK-00A` ✅ COMPLETE | Product architecture, adoption/IP boundary and anti-lock-in contract |
 | 3 | `WP-HK-01` ✅ COMPLETE | Canonical contract model + machine-readable capability/schema discovery |
@@ -163,10 +163,10 @@ WP-HK-GATE
    +--> H1-02 Unity toolchain/project ---------------------------------+
                                                                         v
  H1-03 host policy -> H1-03A public Editor execution/lifecycle
-      -> H1-04 catalogue/identity -> H1-05 managed scenes
-      -> H1-06 assets/prefabs -> H1-07 components -> H1-08 validation
-      -> H1-09 reconciliation -> H1-10 checkpoint/rebuild
-      -> H1-11 representative real-asset slice -> H1-GATE
+      -> H1-04 catalogue/identity + first Quaternius Source adoption
+      -> H1-05 managed scenes -> H1-06 assets/prefabs -> H1-07 components
+      -> H1-08 validation -> H1-09 reconciliation -> H1-10 checkpoint/rebuild
+      -> H1-11 broad real-source conformance -> H1-GATE
 
  H1-08 -. non-blocking prerequisite .-> CITY-04 (after CITY-03)
  H1-GATE -. keeper authorization .----> CITY-07 (after CITY-04)
@@ -181,17 +181,19 @@ WP-HK-GATE
 | 3 | `WP-H1-02` | exact reproducible Unity project/toolchain/package baseline | `LOCAL_UNITY_REQUIRED` |
 | 4 | `WP-H1-03` | project-scoped Unity host authority below transports | `HYBRID` |
 | 5 | `WP-H1-03A` | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID` |
-| 6 | `WP-H1-04` | effective catalogue + logical/native identity mapping | `LOCAL_UNITY_REQUIRED` |
+| 6 | `WP-H1-04` | effective catalogue + logical/native identity mapping + first Quaternius Source adoption | `LOCAL_UNITY_REQUIRED` |
 | 7 | `WP-H1-05` | managed scene graph + generational publication | `LOCAL_UNITY_REQUIRED` |
 | 8 | `WP-H1-06` | source asset/prefab fidelity + managed derivatives | `LOCAL_UNITY_REQUIRED` |
 | 9 | `WP-H1-07` | finite allowlisted component schema/adapters | `LOCAL_UNITY_REQUIRED` |
 | 10 | `WP-H1-08` | Unity-owned validation + actionable diagnostics | `HYBRID` |
 | 11 | `WP-H1-09` | drift/reconciliation + explicit import proposals | `LOCAL_UNITY_REQUIRED` |
 | 12 | `WP-H1-10` | project checkpoint + clean Unity reconstruction | `HYBRID` |
-| 13 | `WP-H1-11` | exact licensed real-asset Juego2 conformance slice | `LOCAL_UNITY_REQUIRED` |
+| 13 | `WP-H1-11` | broad real hierarchy/material/rig/animation conformance over accepted Quaternius Source | `LOCAL_UNITY_REQUIRED` |
 | 14 | `WP-H1-GATE` | composed Unity parity/readiness + one fresh public AI trial | `HYBRID` |
 
 The split is claim-driven, not quota-driven. Adjacent workpacks remain separate where authority or proof can fail independently; component types and individual assets remain together where further division would create administrative micro-WPs. H0 guarantees are inherited and only delta-checked at changed seams. The sole planned fresh external AI-agent trial is the final Gate.
+
+From `WP-H1-04` onward, positive game-representative art probes use the exact accepted Quaternius Source baseline wherever that source supplies the needed shape. H1 may still use repository-owned synthetic fixtures for bridge internals and causal negative controls. `WP-H1-11` broadens the source-shaped conformance challenge; it does not postpone first real-art use until the end and it does not own finished Cantabrian art production.
 
 H1 consumes accepted CITY-00 geography only as representative shape pressure; it does not own or redraw it. CITY remote planning remains independent. `CITY-04` may use the accepted scene/prefab/component/diagnostic surface after `H1-08` to falsify the CITY-03 greybox, without becoming an H1 acceptance stage. `CITY-07` keeper realization waits for H1-GATE. CITY-08 later owns keeper-slice authoring-efficiency/reuse proof and is not duplicated by the smaller H1 Gate readiness trial.
 
@@ -203,11 +205,15 @@ H1 ends only when `WP-H1-GATE` answers the published reference question affirmat
 
 Only after `WP-H1-GATE` PASS, merge and DocSync:
 
-- expand beyond the exact H1-11 representative asset slice under the documented licensing/content pipeline (`DEPENDENCY_IP_POLICY.md`);
-- rebuild the visual target from the visual bible (`Docs/art/VISUAL_BIBLE.md`, seeded by `WP-ART-00`);
+- build the first playable/demo with **maximum practical direct reuse of the Quaternius Source baseline already adopted at H1-04** rather than waiting for final custom art;
+- use `Docs/art/VISUAL_BIBLE.md` as the visual/adaptation contract and progressively create separately identified Juego2-derived assets only where concrete needs require Cantabrian materials/architecture, clothing/outfits, missing props/meshes, variants or missing/retargeted animations;
+- expand beyond the exact H1-11 representative bridge-conformance slice under the documented licensing/content pipeline (`DEPENDENCY_IP_POLICY.md`), preserving upstream/derivative provenance;
 - setting anchor: **fictional Potes / Liébana** valley market town (`Docs/art/SETTING.md`); optional later river + small inland landing;
 - camera, movement, interaction shell and one representative street/plaza;
+- player-facing characters must be appropriately clothed for their role; a technically valid raw humanoid source does not make a naked/unpresentable NPC demo-ready;
 - no system is accepted unless it is inspectable/modifiable/testable through the harness.
+
+The intended visual progression is therefore **Quaternius Source playable first → demand-driven Cantabrian/Juego2 derivatives → bounded polished demo**, not “finish all art before the first playable” and not “keep source assets immutable forever.”
 
 ---
 
@@ -219,16 +225,16 @@ Gameplay systems follow only after H0/H1 prove the AI can safely evolve the proj
 
 # ART — Visual direction track (parallel, non-gating)
 
-Art **direction** only. Does not block H0. Not bound by `FOUNDATIONAL_PROOF_STANDARD.md`.
+Art **direction** only today. Does not block H0. Not bound by `FOUNDATIONAL_PROOF_STANDARD.md`.
 
 | Order | Workpack | Outcome |
-|---|---|---|
+|---:|---|---|
 | 1 | `WP-ART-00` ✅ SEED MERGED | Visual bible + Quaternius→Liébana rules; setting lock; refs; animation; triage dry-run |
-| 2+ | not yet authored | Only if formal freeze or content pipeline needed before H2 |
+| 2+ | not yet authored | Future production-art WPs only when H2/CITY needs formal ownership for derived assets/content pipeline |
 
 Deliverables: `Docs/art/VISUAL_BIBLE.md`, `Docs/art/SETTING.md`, `Docs/art/Refs/**`, `Docs/workpacks/ART/WP-ART-00.md`, `Docs/evidence/WP-ART-00/TRIAGE_DRY_RUN.md`.
 
-Art *content* (import packs, scenes) is no longer blocked by H0, but remains blocked by the Unity bridge/parity gate and the relevant downstream H1/H2 workpacks.
+Art *content* is no longer globally blocked by the H1 parity gate: `WP-H1-04` may adopt/import the exact Quaternius Source baseline because H1 catalogue/prefab proof needs real game-shaped inputs. What remains blocked until H1-GATE is **H2 gameplay/first-playable production and keeper realization**, not the mere presence of accepted source assets in Unity. Broad Cantabrian adaptation/derived-asset production is demand-driven downstream product work, not an H1 prerequisite.
 
 ---
 
