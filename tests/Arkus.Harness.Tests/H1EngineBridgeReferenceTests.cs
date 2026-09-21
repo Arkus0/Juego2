@@ -38,18 +38,23 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void EveryFullInputAxisChangesIdentityAndReceiptAnchorsTheTuple()
         {
-            var baseline = ProjectionPlanner.Create(Input(new byte[] { 1, 2, 3 }), Resources());
-            var canonical = ProjectionPlanner.Create(Input(new byte[] { 1, 2, 4 }, revision: 8, stateHash: "world-hash-8"), Resources());
-            var binding = ProjectionPlanner.Create(Input(new byte[] { 1, 2, 3 }, binding: "binding@2"), Resources());
-            var catalogue = ProjectionPlanner.Create(Input(new byte[] { 1, 2, 3 }, catalogue: "catalogue-b"), Resources());
-            var toolchain = ProjectionPlanner.Create(Input(new byte[] { 1, 2, 3 }, toolchain: "toolchain-b"), Resources());
+            var snapshot = new byte[] { 1, 2, 3 };
+            var baseline = ProjectionPlanner.Create(Input(snapshot), Resources());
+            var canonical = ProjectionPlanner.Create(Input(snapshot, revision: 8, stateHash: "world-hash-8"), Resources());
+            var snapshotBytes = ProjectionPlanner.Create(Input(new byte[] { 1, 2, 4 }), Resources());
+            var binding = ProjectionPlanner.Create(Input(snapshot, binding: "binding@2"), Resources());
+            var catalogue = ProjectionPlanner.Create(Input(snapshot, catalogue: "catalogue-b"), Resources());
+            var toolchain = ProjectionPlanner.Create(Input(snapshot, toolchain: "toolchain-b"), Resources());
 
-            foreach (var changed in new[] { canonical, binding, catalogue, toolchain })
+            foreach (var changed in new[] { canonical, snapshotBytes, binding, catalogue, toolchain })
             {
                 Assert.NotEqual(baseline.Input.InputDigest, changed.Input.InputDigest);
                 Assert.NotEqual(baseline.PlanDigest, changed.PlanDigest);
                 Assert.NotEqual(baseline.GenerationId, changed.GenerationId);
             }
+
+            Assert.Equal(baseline.Input.CanonicalSnapshotDigest, canonical.Input.CanonicalSnapshotDigest);
+            Assert.NotEqual(baseline.Input.CanonicalAnchor.NormalizedForTest(), canonical.Input.CanonicalAnchor.NormalizedForTest());
 
             var materializer = new ReferenceMaterializer();
             var result = materializer.Materialize(baseline, Catalogue);
@@ -58,6 +63,25 @@ namespace Arkus.Harness.Tests
             Assert.Equal(baseline.Input.BindingVersion, result.Receipt.BindingVersion);
             Assert.Equal(baseline.Input.Profile.Fingerprint, result.Receipt.BridgeProfileFingerprint);
             Assert.Equal(baseline.Input.CanonicalSnapshotDigest, result.Receipt.CanonicalSnapshotDigest);
+        }
+
+        [Fact]
+        public void RebuildFromSameInputsReconstructsSameGenerationAndObservation()
+        {
+            var plan = ProjectionPlanner.Create(Input(new byte[] { 9, 8, 7 }), Resources());
+            var firstMaterializer = new ReferenceMaterializer();
+            var first = firstMaterializer.Materialize(plan, Catalogue);
+
+            var rebuiltMaterializer = new ReferenceMaterializer();
+            Assert.Equal(ProjectionDriftState.Absent, rebuiltMaterializer.Observe(plan, null, Catalogue).State);
+            var rebuilt = rebuiltMaterializer.Materialize(plan, Catalogue);
+
+            Assert.True(first.Receipt.Published);
+            Assert.True(rebuilt.Receipt.Published);
+            Assert.Equal(first.Receipt.GenerationId, rebuilt.Receipt.GenerationId);
+            Assert.Equal(first.Receipt.PlanDigest, rebuilt.Receipt.PlanDigest);
+            Assert.Equal(first.Observation.ObservationDigest, rebuilt.Observation.ObservationDigest);
+            Assert.Equal(first.Receipt.ReceiptDigest, rebuilt.Receipt.ReceiptDigest);
         }
 
         [Fact]
