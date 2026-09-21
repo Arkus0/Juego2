@@ -17,6 +17,20 @@ namespace Arkus.Harness.Tests
             Assert.Equal("arkus.unity-authoring", UnityAuthoringProvider.ProviderId);
             Assert.Equal("unity.binding", UnityAuthoringProvider.CapabilityNamespace);
             Assert.Equal("1.0", UnityAuthoringProvider.ContractVersionText);
+
+            var compile = UnityAuthoringProvider.CreateContribution().Definitions
+                .Single(value => value.Key.Name == UnityAuthoringProvider.CompileName);
+            var binding = compile.RequestSchema!.Root.Properties["binding"];
+            var componentKind = binding.Properties["components"].Items!.Properties["kind"];
+            Assert.Equal(
+                new[] { "animator", "canonical-link", "renderer" },
+                componentKind.AllowedStringValues.OrderBy(value => value, StringComparer.Ordinal).ToArray());
+            Assert.Equal(
+                "arkus-logical-reference",
+                binding.Properties["targetSceneId"].Format);
+            Assert.Equal(
+                UnityAuthoringProvider.CatalogueReferenceNamespace,
+                binding.Properties["targetSceneId"].LogicalReferenceNamespace);
         }
 
         [Fact]
