@@ -114,7 +114,7 @@ Those conditions return control to the remote Worker or make the round invalid; 
 - Reviewer remains independent and remote by default; durable local evidence is reviewed rather than blindly trusted.
 - Context minimization remains explicit: local Codex reads the external anchor, manifest, exact WP, named scripts/files and live GitHub identity/SHA state rather than reconstructing all project history.
 - `WP-H1-02` is explicitly adapted as the first concrete consumer and now includes the SHA-chain failure class in its deterministic evidence/negative-conformance boundary.
-- The implementation skill routes H1-02..H1-GATE Workers through the same exact chain and retains canonical Worker duties.
+- The implementation skill routes H1-02..H1-GATE Workers through the same exact chain and requires remote manifest push verification before handoff anchoring.
 - This PROCESS_ONLY PR itself does not need Unity evidence because it does not make any effective Unity/product claim.
 
 ## Boundary checks
@@ -140,6 +140,10 @@ Current `main` is `a57afa3d3fc60b3e1c59d04149fe982f387c2048` (`Merge PA-02 DocSy
 The process permits more than one execution/commit environment on the same Draft Worker branch: remote Worker plus narrowly delegated executor. That is intentional. Singular **authority** is preserved by the canonical v1.8 contract even though execution surfaces may be plural. The price is additional SHA/allowlist/evidence bookkeeping; the benefit is that expensive local engine sessions remain context-poor and mechanical.
 
 The explicit two-stage local commit (`PRODUCT_RESULT_SHA` then result-summary-only `EVIDENCE_COMMIT_SHA`) adds one mechanical commit per round. This is intentional because it removes the self-referential result-SHA ambiguity and gives remote closeout a causal diff boundary that can be verified from Git history.
+
+## Final cleanliness rerun
+
+After the repair was made coherent across the overlay, local-executor skill, Worker skill and `WP-H1-02`, the final alignment mutations `fc1983b52d3c4a607045fa18c62d1bb7cc6d776b` and `d793413e8927eb339b12a86db058291fa9793a8b` invalidated the previous clean marker. The complete checks above were rerun against the full baseline-to-current diff after those mutations. No new in-claim blocker was found. This file is the fresh post-mutation pre-review evidence.
 
 ## Worker verdict
 
