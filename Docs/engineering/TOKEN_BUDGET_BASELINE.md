@@ -9,6 +9,23 @@ no workpack, and weakens no acceptance criterion. If any statement here appears
 to conflict with `AGENTS.md`, `Docs/ROADMAP.md`, `Docs/workpacks/**` or accepted
 evidence, those win.
 
+## Status of this document
+
+This is a dated measurement artifact pinned to `a57afa3d3fc60b3e1c59d04149fe982f387c2048`,
+not a maintained branch. That SHA is an immutable ancestor of `main`, so the
+"before" side stays reproducible indefinitely.
+
+If `WP-CTX-03` uses this work, adopt the **machinery**, not this frozen report:
+
+- `scripts/token-budget/measure.py` hardcodes the pre-CTX reading sets, which is
+  exactly what the "before" measurement needs — leave those arrays alone;
+- the "after" measurement must read the derived role profiles that `WP-CTX-01`
+  makes authoritative, rather than silently editing those arrays, or the two sides
+  stop being comparable;
+- every figure here is an exact-SHA measurement of documents, not accepted
+  evidence. Nothing in this file has been through independent review, and it must
+  not become evidence by cherry-pick.
+
 ## Method
 
 Reading sets are taken from the rules themselves, not invented: `AGENTS.md`
@@ -52,7 +69,14 @@ merge SHAs appear in up to 13 files.
 Parsed from the acceptance paragraphs in `Docs/ROADMAP.md`:
 
 - foundational (`HK-*`): 12 accepted workpacks, 11 failed candidates → **0.92 repair cycles per workpack**;
-- non-foundational: 0 observed.
+- non-foundational: **do not use the figure this document originally carried.**
+  It read "0 observed" and was wrong: it came from a single ROADMAP narrative
+  (`WP-H1-00`) and was not representative. Primary sources contradict it —
+  `WP-PA-02` (PR #97) and `WP-PA-03` (PR #100) each record `fail_cycle: 1`, and
+  PR #99 took an independent FAIL plus two voluntary reopens. The sample is too
+  small and too mixed in failure class to state a rate; what it does show is that
+  recent non-foundational and process candidates are not failure-free, so any plan
+  that budgets clean single cycles for them has no support in this history.
 
 A foundational workpack therefore costs ~1.92 Worker sessions **and** ~1.92
 Reviewer sessions, i.e. ~256k tokens of mandatory reading before any reasoning.
