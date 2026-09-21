@@ -33,8 +33,9 @@ Do not reconstruct the whole H0/H1/CITY history unless the manifest explicitly s
 - Resolve the externally anchored `MANIFEST_COMMIT_SHA`; verify branch/checkout `HEAD` equals it before executing.
 - Verify the manifest declares the same WP/round/PR/branch and an exact `EXECUTION_BASE_SHA`.
 - Verify `EXECUTION_BASE_SHA` is the direct parent of `MANIFEST_COMMIT_SHA` and their diff changes only the current round's `LOCAL_EXECUTION.md`.
+- Verify the declared result-summary path is inside `ALLOWED_MUTATION_PATHS` when the result is to be committed.
 - Verify the required Unity/editor/toolchain is available as specified by the manifest.
-- If repository identity, PR/branch ownership, SHA chain, manifest-only handoff diff or required environment does not match, STOP and record the mismatch. Do not improvise.
+- If repository identity, PR/branch ownership, SHA chain, manifest-only handoff diff, allowlist contract or required environment does not match, STOP and record the mismatch. Do not improvise.
 
 ## Execution
 
@@ -47,9 +48,9 @@ Do not reconstruct the whole H0/H1/CITY history unless the manifest explicitly s
 7. If the workstation/editor/license/tool state prevents execution, report `ENVIRONMENT_BLOCKED`; do not convert that into a product FAIL/PASS.
 8. If allowlisted repository outputs/candidate mutations exist, commit them without the summary result file and record that exact commit as `PRODUCT_RESULT_SHA`; otherwise set `PRODUCT_RESULT_SHA = MANIFEST_COMMIT_SHA`.
 9. Write the exact result file required by the manifest, including `EXECUTION_BASE_SHA`, `MANIFEST_COMMIT_SHA`, `PRODUCT_RESULT_SHA`, environment fingerprint, commands/actions, exit states, complete changed-file inventory and evidence paths.
-10. Commit the result summary separately so that commit changes only the declared result file. After the commit exists, obtain its SHA as `EVIDENCE_COMMIT_SHA` and publish the required durable external result anchor with WP/round and `PRODUCT_RESULT_SHA`.
-11. Push only the predeclared allowlisted commits to the canonical branch.
-12. STOP and return control to the remote Worker.
+10. Commit the result summary separately so that commit changes only the declared result file and obtain that local commit SHA as `EVIDENCE_COMMIT_SHA`.
+11. Push only the predeclared allowlisted commits to the canonical branch and verify the remote branch HEAD equals `EVIDENCE_COMMIT_SHA`.
+12. Publish the required durable external result anchor with WP/round, `PRODUCT_RESULT_SHA` and `EVIDENCE_COMMIT_SHA`; STOP and return control to the remote Worker.
 
 Never require `LOCAL_EXECUTION.md` to contain `MANIFEST_COMMIT_SHA`, and never require `LOCAL_EXECUTION_RESULT.md` to contain `EVIDENCE_COMMIT_SHA`: both SHAs only exist after their containing commits are created and are anchored externally to avoid self-reference.
 
