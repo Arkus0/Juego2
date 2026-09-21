@@ -1,6 +1,6 @@
 # Keeper City — Mobility topology, access graph and travel-cost hypotheses
 
-Version: 1.0 — 2026-09-21  
+Version: 1.1 — 2026-09-21  
 Workpack: `WP-CITY-01 — Mobility, district graph + walk-time topology`  
 Class: **PRODUCT / SPATIAL PREPRODUCTION — NON-FOUNDATIONAL**
 
@@ -90,10 +90,12 @@ Node IDs are planning anchors, not final object IDs.
 
 ### 4.1 Route character
 
+Route-character tags describe **use and intensity**, not permissions. Multiple tags may coexist. Access restrictions come only from §4.3, so a public `S/V + AR` route remains public while a `V + AS` route is restricted service access.
+
 - `P` — **primary:** ordinary civic/commercial or road movement; busiest default path.
 - `S` — **secondary:** legitimate everyday connector with lower flow or more contextual use.
 - `Q` — **quiet:** protected low-intensity path; ordinary movement is allowed but the route is not designed as an incident funnel.
-- `V` — **service/back:** goods/service route or rear access. It may be traversable when context permits, but it is **excluded from the public-route proofs** unless explicitly stated.
+- `V` — **service-capable/back function:** can carry work or goods movement. `V` alone does **not** make a route private or exclude it from public-route proofs.
 
 ### 4.2 Elevation class
 
@@ -101,7 +103,7 @@ These are planning classes, not final grade percentages:
 
 - `E0` — near-level terrace/road/bridge approach;
 - `E1` — ordinary slope or ramped connector;
-- `E2` — steep lane where bicycles may need to dismount and carts are not assumed;
+- `E2` — steep lane where bicycles must dismount and carts are not assumed unless the edge is separately `AR`;
 - `E3` — stairs/stepped route; pedestrian only for ordinary routing;
 - `EW` — water crossing or ferry service.
 
@@ -109,12 +111,15 @@ CITY-04 owns measured grade, total level change and actual traversal cost.
 
 ### 4.3 Access class
 
-- `AR` — road-capable: pedestrian + slower pedestrian + bicycle + service/cart where route width later validates it.
-- `AP` — public pedestrian route; bicycle may be allowed only where the profile table says it can roll or dismount.
-- `AF` — foot-only public route; no wheeled-service claim.
+Access is a planning claim that CITY-04 must physically validate. If an edge marked road-capable cannot provide the required clearance, that `AR` claim reopens rather than silently degrading at implementation time.
+
+- `AR` — planned road-capable: pedestrian + slower pedestrian + bicycle + service/delivery cart.
+- `AP` — public pedestrian route; bicycle handling follows the explicit bicycle profile in §6.
+- `AF` — foot-only public route; no bicycle or wheeled-service claim.
 - `AH` — pedestrian + handcart/light wheeled use, but **not cart freight**; used by X1 per CITY-00.
-- `AS` — service/back route; authorized service/delivery plus context-permitted pedestrians; excluded from ordinary public shortest-path claims.
+- `AS` — restricted service/back route; planned service/delivery-cart capable plus context-permitted pedestrians. It is excluded from ordinary public shortest-path/connectivity proofs.
 - `AX6` — State-1 ferry: pedestrian/porter/carryable load only in CITY-01. CITY-01 deliberately makes **no** claim that X6 carries carts, handcarts or bicycles.
+- `BUS` — modifier used only on the valley-road approach; it means bus/arrival movement may reach `O.ENTRADA`, not that buses continue into pedestrian streets.
 
 ---
 
@@ -133,7 +138,7 @@ CITY-04 owns measured grade, total level change and actual traversal cost.
 | `W05` | `W.PLAZA ↔ W.CASCO` | middle/south | P/S | E1 | AP | 1.75 | inherited 1.5–2 min plaza↔bar band |
 | `W06` | `W.CASCO ↔ W.LANDING` | Cuesta | S | E2 | AP | 2.25 | ends at Wedge-side landing head |
 | `W07` | `W.VEGA ↔ W.RIBERA` | low | Q | E1 | AP | 8.5 | upstream paseo/sirga; intentionally quiet |
-| `W08` | `W.RIBERA ↔ W.LANDING` | low | S/V | E1 | AR | 2.5 | towpath/work-edge approach |
+| `W08` | `W.RIBERA ↔ W.LANDING` | low | S/V | E1 | AR | 2.5 | public towpath/work-edge approach; service-capable, not restricted |
 | `W09` | `W.VEGA ↔ W.BARRIO` | high | Q | E2 | AP | 5.5 | upper lanes / residential route |
 | `W10` | `W.BARRIO ↔ W.CM_NE` | upper lateral | S/Q | E2 | AP | 2.5 | lets upper routes meet Calle Mayor without Plaza |
 | `W11` | `W.BARRIO ↔ W.RIBERA` | high→low lateral | S | E3 | AF | 6.5 down / 7.5 up | east stairs; inherited Barrio Alto→Ribera target |
@@ -142,7 +147,7 @@ CITY-04 owns measured grade, total level change and actual traversal cost.
 | `W14` | `W.VEGA ↔ W.X4` | rural approach | Q/S | E1 | AR | 2.0 | X4 approach |
 | `W15` | `W.BARRIO ↔ W.X3` | ravine/lavadero | Q | E1 | AF | 0.5 | protected quiet fabric |
 | `W16` | `W.X4 ↔ W.CM_NE` | rural-road connector | S | E1 | AR | 1.0 | road detour when X2 closes |
-| `W17` | `W.RIBERA ↔ W.SHOP` | service/back | V | E1 | AS | 4.0 | rear/service access; **not** used to prove public plaza-independence |
+| `W17` | `W.RIBERA ↔ W.SHOP` | service/back | V | E1 | AS | 4.0 | restricted rear/service access; **not** used to prove public plaza-independence |
 
 The three designed Wedge longitudinal choices therefore remain:
 
@@ -176,17 +181,42 @@ They are not intended to have equal cost. Their value is differentiated route ch
 
 There is no eighth crossing. `X6` and `X7` are mutually exclusive.
 
-For X6, planning wait is modelled separately as `W_ferry ∈ [0,4] min` during operating hours. That is a scenario variable, not a promise of a four-minute real queue. When high water suspends the ferry, X6 is unavailable rather than assigned an infinite wait.
+For X6, planning wait is modelled separately as `W_ferry ∈ [0,4] min` during operating hours. That is a **scenario variable only**, not a timetable, live schedule or promise of a four-minute real queue. When high water suspends the ferry, X6 is unavailable rather than assigned an infinite wait.
 
 ### 5.4 Orilla-sur internal edges
 
 | Edge | From ↔ To | Char | Elev. | Access | Normal-ped cost | Notes |
 |---|---|---|---|---|---:|---|
-| `O01` | `O.X1 ↔ O.PUERTO_UP` | S/V | E0/E1 | AR | 3.0 | camino sur on one landmass |
-| `O02` | `O.PUERTO_UP ↔ O.QUAY` | P/V | E0 | AR | 3.5 | working frontage / port road |
+| `O01` | `O.X1 ↔ O.PUERTO_UP` | S/V | E0/E1 | AR | 3.0 | public camino sur; service-capable on one landmass |
+| `O02` | `O.PUERTO_UP ↔ O.QUAY` | P/V | E0 | AR | 3.5 | public working frontage / port road |
 | `O03` | `O.QUAY ↔ O.ENTRADA` | P | E0 | AR + BUS | 1.0 | valley-road / bus approach |
 
 No water is crossed by `O01..O03`.
+
+### 5.5 Derived district-family adjacency projection
+
+This table is a **projection of §5.1–5.4, not a second edge owner**. It exists so CITY-02 can consume the district-to-district graph directly without reading a drawing as new semantics.
+
+| District-family relation | Realizing edge/chain | Character |
+|---|---|---|
+| Vega ↔ Calle Mayor | `W01` | quiet/secondary rural approach |
+| Vega ↔ Ribera/Talleres | `W07` | quiet low paseo |
+| Vega ↔ Barrio Alto | `W09` | quiet upper route |
+| Vega ↔ Ensanche | `W14-X4` plus Ensanche-bank approach | seasonal road/foot relation |
+| Calle Mayor ↔ Ensanche | `W02/X2` side plus `E01/E05` | primary permanent road relation |
+| Barrio Alto ↔ Ensanche | `W15-X3-E02` | permanent foot relation |
+| Casco Viejo ↔ Ensanche | `W13-X5-E04` | low-water foot shortcut only |
+| Calle Mayor ↔ Plaza | `W03-W04` | primary commercial/civic relation |
+| Plaza ↔ Casco Viejo | `W05` | primary/secondary civic-old-quarter relation |
+| Barrio Alto ↔ Calle Mayor | `W10` | upper lateral secondary/quiet relation |
+| Barrio Alto ↔ Ribera/Talleres | `W11` | stepped secondary relation |
+| Ribera/Talleres ↔ landing head | `W08` | public low/service-capable relation |
+| Ribera/Talleres ↔ Calle Mayor shop edge | `W17` | restricted service/back relation |
+| Casco Viejo ↔ Orilla sur | `W12-X1` | historic pedestrian/handcart crossing relation |
+| landing head ↔ Puerto | `X6` State 1 / `X7` State 2 | territorial crossing relation |
+| Puerto ↔ Entrada | `O02-O03` | primary port/valley-road relation |
+
+No row creates a relation absent from the §5 edge ledger.
 
 ---
 
@@ -197,15 +227,15 @@ These are **spatial routing assumptions**, not runtime AI or vehicle simulation 
 | Profile | Spatial rule |
 |---|---|
 | ordinary pedestrian | uses `AR/AP/AF/AH`, X6 when available, and `AS` only when access context explicitly permits it |
-| slower pedestrian | same connectivity; start with ordinary route cost ×1.35, and ×1.50 on E2/E3 segments; CITY-04 measures whether this is fair |
-| bicycle | rolls on `AR` and selected `AP` E0/E1 edges; E2/E3 and `AF` imply dismount/walk rather than a magical bicycle route; X6 carriage is **not assumed** |
+| slower pedestrian | same connectivity; multiply E0/E1 segment costs by **1.35** and E2/E3 segment costs by **1.50**; these are alternatives by class, not cumulative multipliers; CITY-04 measures them |
+| bicycle | rides `AR` and `AP` edges of E0/E1; on `AP` E2/E3 it must dismount and walk; `AF` is bicycle-inaccessible; X1 (`AH`) may be crossed only with the bicycle dismounted/pushed; X6 carriage is **not assumed**; State 2 X7 is rideable `AR` |
 | service / delivery cart | uses `AR/AS`; may use X2/X4 and State-2 X7; cannot use X1/X3/X5; CITY-01 does not grant cart carriage on X6 |
-| porter / carried delivery | follows pedestrian topology and may use X6 when available |
-| arrival / bus | bus movement terminates at `O.ENTRADA`; onward travel is another profile. No bus route through the core is created here |
+| porter / carried delivery | follows ordinary pedestrian topology and may use X6 when available |
+| arrival / bus | bus movement reaches and terminates at `O.ENTRADA`; passengers then switch to pedestrian routing. No bus route through the core is created here |
 | following / search | uses public pedestrian edges; `AS` is excluded unless the followed actor has legitimate access. Route design must expose real junction choices rather than hidden teleports |
 | time-sensitive | selects among currently available routes using expected travel cost, including X6 wait/closure/context. This is a scenario-evaluation profile, not a claim about NPC decision logic |
 
-The graph intentionally creates profile disagreement: the shortest pedestrian line may be unusable by a cart; a cyclist may prefer Calle Mayor over stairs; a late pedestrian may choose a longer-distance bridge route to avoid ferry wait.
+The graph intentionally creates profile disagreement: the shortest pedestrian line may be unusable by a cart; a cyclist prefers road-capable Calle Mayor/X2 over stairs or foot-only X3; a late pedestrian may choose a longer-distance bridge route to avoid ferry wait.
 
 ---
 
@@ -229,10 +259,11 @@ The State-1 equivalent of an X7 route substitutes X6 at the same base crossing c
 
 ### 7.2 Costs explicitly resolved by CITY-01
 
-**Ensanche home ↔ Puerto quay** was deferred by CITY-00:
+**Ensanche home → Puerto quay** was deferred by CITY-00:
 
 - State 2 ordinary public route via X2 / Calle Mayor / Plaza / landing / X7: **12.5 min**.
 - State 2 permanent plaza-free route via X3 / Barrio Alto / east stairs / Ribera / landing / X7: **16.0 min**.
+- Reverse Puerto quay → Ensanche home on that same plaza-free stair route is **17.0 min** because `W11` is uphill in that direction.
 - Low-water X5 route is an opportunistic shortcut at roughly **10–11 min** and is never counted as permanent redundancy.
 - State 1 direct-ferry versions add `W_ferry`.
 - State 1 high-water fastest ordinary route uses X2 + core + X1 + camino sur: **≈14.25 min**.
@@ -257,6 +288,18 @@ Base motion cost is **≈8.25 min** before any State-1 ferry wait. It is a **sec
 
 CITY-01 does not decide *when* State 1 becomes State 2.
 
+### 7.4 Valley arrival / bus handoff
+
+`O.ENTRADA` is an ordinary arrival anchor, not a dead-end story spawn.
+
+After a bus arrival, passengers switch to pedestrian movement:
+
+- State 2 Entrada → Plaza through Puerto/X7/landing/Casco: **9.5 min**.
+- State 1 direct X6 version: **9.5 min + W_ferry**.
+- State 1 X1/camino-sur fallback: **11.25 min**.
+
+The bus itself still terminates at Entrada; only the passengers continue through the pedestrian graph.
+
 ---
 
 ## 8. Required scenario matrix
@@ -265,15 +308,24 @@ CITY-01 does not decide *when* State 1 becomes State 2.
 |---|---|---|
 | upper/residential home → workplace | `W.BARRIO → W.RIBERA` via `W11` | 6.5 min downhill; different uphill cost preserves slope meaning |
 | old quarter → port/work edge without Plaza | `W.CASCO → W.LANDING → X6/X7 → O.QUAY` | works; no Plaza edge used |
-| port delivery → commercial destination | State 2 cart: `O.QUAY → O.PUERTO_UP → X7 → W.LANDING → W.RIBERA → W17 → W.SHOP` | service path bypasses Plaza/customer lanes; State 1 requires break-bulk to porter/handcart because CITY-01 grants no cart crossing over X6/X1 |
-| rural/valley edge → market/civic core | `W.VEGA → W.CM_NE → W.X2 → W.SHOP → W.PLAZA` | 6.5 min target |
-| follow NPC across ≥2 district boundaries | `E.HOME → X3 → Barrio Alto → Ribera → landing → X7 → Puerto` | crosses Ensanche→Wedge→Orilla sur and exposes multiple decision points |
-| closure forces plausible alternate | close X2: X4 is ordinary-water road detour; X3 is permanent pedestrian fallback | route remains usable; closure matters rather than becoming cosmetic |
-| late actor chooses faster but contextually different route | State 1 Casco→quay: X6 route = **6.75 + W_ferry**; X1/camino = **8.5** | when expected ferry wait exceeds ≈1.75 min, X1 becomes faster despite longer distance |
-| quiet evening route differs from market-day flow | low water: Ensanche→Casco may use X5/lower lanes instead of X2→Plaza | quiet shortcut is conditional and never used as permanent proof; at ordinary water evening route reverts to permanent choices |
-| service/back route differs from obvious public route | `W17` Ribera↔shop rear/service connector | supports deliveries without turning the back route into a universal public shortcut |
+| port delivery → commercial destination | State 2 cart: `O.QUAY → O.PUERTO_UP → X7 → W.LANDING → W.RIBERA → W17 → W.SHOP`; State 1 break-bulk porter: direct X6 route or X1/camino fallback | cart service bypasses customer lanes in State 2; State 1 remains viable at porter/carryable-load scale without inventing cart capacity on X6/X1 |
+| rural/valley arrival → market/civic core | rural: `W.VEGA → W.CM_NE → W.X2 → W.SHOP → W.PLAZA` = 6.5 min; valley bus: `O.ENTRADA → ... → W.PLAZA` = 9.5 min State 2 | both rural edge and formal valley arrival participate in ordinary movement |
+| player follows an NPC across ≥2 district boundaries | `E.HOME → X3 → Barrio Alto → Ribera → landing → X6/X7 → Puerto` | crosses Ensanche→Wedge→Orilla sur and exposes multiple decision points |
+| closure forces a plausible alternate route | close X2: X4 is ordinary-water road detour; X3 is permanent pedestrian fallback | route remains usable; closure matters rather than becoming cosmetic |
+| late actor chooses a faster but contextually different route | State 1 Casco→quay: X6 route = **6.75 + W_ferry**; X1/camino = **8.5** | when expected ferry wait exceeds ≈1.75 min, X1 becomes faster despite longer distance |
+| quiet evening route differs meaningfully from market-day flow | Vega→landing: market/commercial route `W01-W02-W03-W04-W05-W06` = **10.5 min**; quiet paseo `W07-W08` = **11.0 min** | permanent near-parity choice trades bustle/visibility for quiet without relying on seasonal X5 |
+| one service/back route differs from obvious public route | `W17` Ribera↔shop rear/service connector | supports deliveries without turning the back route into a universal public shortcut |
 
-The following/search scenario deliberately spans more than one boundary and more than one route family. It is not a corridor test.
+The following/search scenario deliberately spans more than one boundary and more than one route family. It is not a corridor test: at Barrio, Ribera and landing nodes there are alternative public branches, and State 1/2 changes the final Río crossing context without changing geography.
+
+### State-1 port-delivery detail
+
+After break-bulk at the port, a porter/carryable load can reach `W.SHOP` by:
+
+- direct ferry: `O02-X6-W06-W05-W04` = **9.0 min + W_ferry**;
+- X1 fallback: `O02-O01-X1-W12-W05-W04` = **10.75 min**.
+
+CITY-01 does not claim a State-1 full-cart Río crossing. X1's inherited handcart capacity remains true, but this scenario does not rely on unproven handcart clearance along every downstream lane.
 
 ---
 
@@ -362,11 +414,12 @@ At minimum record:
 5. actual X2-closure penalty through X4 and X3;
 6. actual State-2 Vega↔Puerto and Ensanche↔Puerto times;
 7. whether an X1 route can plausibly beat X6 once ferry wait is introduced, without scripting the answer;
-8. bicycle roll/dismount points and whether the Calle Mayor preference remains meaningful;
+8. bicycle roll/dismount points and whether the Calle Mayor/X2 preference remains meaningful;
 9. service-cart geometry on the State-2 `O02→X7→W08→W17` delivery route;
-10. arrival transition from `O.ENTRADA` into pedestrian movement;
-11. followability over `Ensanche → X3 → Barrio → Ribera → landing → X7 → Puerto`, including decision points and sightline loss;
-12. the Plaza-node removal test using only public edges, with `W17` excluded.
+10. arrival transition from `O.ENTRADA` into pedestrian movement and the 9.5-min State-2 target to Plaza;
+11. followability over `Ensanche → X3 → Barrio → Ribera → landing → X6/X7 → Puerto`, including branch choices and sightline loss;
+12. the Plaza-node removal test using only public edges, with `W17` excluded;
+13. whether the permanent Vega→landing quiet-paseo option remains near enough in cost to the commercial route to be a plausible contextual choice.
 
 ### Material falsification conditions
 
@@ -377,7 +430,8 @@ CITY-04 should reopen the relevant planning boundary rather than rationalise the
 - X2 closure either becomes nearly costless or functionally disconnects normal pedestrian movement;
 - the Barrio Alto↔Ribera vertical route is so slow/opaque that following/search through it is not credible;
 - service delivery requires turning a foot-only crossing into a road crossing;
-- a claimed public Plaza bypass only works by using `W17` or another restricted service edge.
+- a claimed public Plaza bypass only works by using `W17` or another restricted service edge;
+- a planned `AR` edge cannot physically carry its claimed service/delivery profile.
 
 Small segment-level differences are expected and should update measured costs in CITY-04 rather than being treated as CITY-01 failure.
 
@@ -403,15 +457,16 @@ CITY-02 may place locations against these anchors and route families. It may not
 
 The accepted geography now has a reviewable movement model with:
 
-- one explicit semantic edge ledger;
+- one explicit semantic edge ledger plus a non-authoritative district-family projection;
 - no hidden inter-landmass edges;
 - differentiated primary/secondary/quiet/service routes;
-- profile-specific access and verticality;
+- profile-specific access and verticality, including deterministic bicycle and arrival/bus handling;
 - preserved inherited walk-time bands;
-- explicit costs for the CITY-00-deferred Ensanche↔Puerto and Vega↔Puerto routes;
+- explicit costs for the CITY-00-deferred Ensanche→Puerto and Vega↔Puerto routes;
 - two nontrivial alternate-route families (Arroyo closure and Río crossing substitution) plus Plaza removal;
 - a meaningful municipal closure lever;
 - a State-1 ferry wait tradeoff and a State-2 cart-routing consequence;
+- a permanent quiet-route alternative that does not depend on low water;
 - concrete measurement questions for CITY-04.
 
 All costs remain hypotheses until measured locally.
