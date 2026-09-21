@@ -1,6 +1,6 @@
 # H1 — Engine Bridge Foundation: Unity First
 
-Status: ACTIVE / `WP-H1-00` COMPLETE
+Status: ACTIVE / `WP-H1-00` + `WP-H1-01` COMPLETE
 Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`
 Reconciled integration base: `7fe44840076eba05f1b67a7633cd33fc67b9023d` (CITY programme v2 PASS, merge and DocSync)
 Binding architecture: `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md`
@@ -13,9 +13,11 @@ Plan DocSync: `DOCSYNC_COMPLETE`
 
 `WP-H1-00` is **COMPLETE**. Frozen candidate `3dc513dd963b77116fd45b5af8d800ae8993dd34` passed independent review `#5264661860` in PR `#75`, exact-SHA validation run `35579126516` was GREEN, and the accepted candidate merged as `c02cf54c89c13db43edda4a602b0c1620baa3fa2`.
 
-Next default workpack: `WP-H1-01 — Unity scoped authoring producer and automatic dependency derivation` (`REMOTE_OK`), dependency-valid but `NOT_STARTED` until a human starts its Worker.
+`WP-H1-01` is **COMPLETE**. Frozen candidate `385ce2466190003d18c849c8d944b881d184e1c7` passed independent review `#5265525323` in PR `#79`, frozen exact-SHA validation run `35587471700` was GREEN, and the accepted candidate merged as `0b8f23fbce227bbbc710c8410dff575fcb9fcf12`.
 
-H1 now has one accepted implementation WP. No later H1 implementation WP is active or implicitly authorized by this DocSync.
+Next default workpack: `WP-H1-02 — pinned reproducible Unity project/toolchain/package baseline` (`LOCAL_UNITY_REQUIRED`), dependency-valid but `NOT_STARTED` until a human starts its Worker.
+
+H1 now has two accepted implementation WPs. No later H1 implementation WP is active or implicitly authorized by this DocSync. `WP-H1-03` remains blocked until both accepted `WP-H1-01` and future `WP-H1-02` PASS + merge + DocSync are present.
 The sequence contains 13 claim-owned implementation workpacks plus `WP-H1-GATE`.
 
 ## Outcome
@@ -39,7 +41,7 @@ WP-HK-GATE
  H1-GATE -. keeper authorization .----> CITY-07 (after CITY-04)
 ```
 
-`H1-00` is accepted predecessor truth for `H1-01`. `H1-01` remains the next default dependency-valid remote contract work. `H1-02` is an independent bootstrap branch that can be prepared in parallel if a separate Worker is explicitly authorized, but the default human execution sequence remains the numeric order.
+`H1-00` and `H1-01` are accepted predecessor truth. `H1-02` is now the next default dependency-valid workpack and is the remaining direct prerequisite before `H1-03` may begin. No H1-03 work is authorized before `H1-02` PASS, merge and DocSync.
 
 The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox falsification and may consume H1-08; CITY-07 owns keeper realization after the Gate; CITY-08 later owns keeper-slice authoring efficiency/reuse. H1 consumes CITY-00 geography only as representative shape pressure and never selects the CITY-03 seed.
 
@@ -48,7 +50,7 @@ The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox fal
 | Order | Workpack | Central claim | Execution |
 |---:|---|---|---|
 | 1 | `WP-H1-00` ✅ | engine-neutral projection state machine and reference materializer | `REMOTE_OK` |
-| 2 | `WP-H1-01` | Unity scoped authoring producer and automatic dependency derivation | `REMOTE_OK` |
+| 2 | `WP-H1-01` ✅ | Unity scoped authoring producer and automatic dependency derivation | `REMOTE_OK` |
 | 3 | `WP-H1-02` | pinned reproducible Unity project/toolchain/package baseline | `LOCAL_UNITY_REQUIRED` |
 | 4 | `WP-H1-03` | explicit project-scoped Unity host authority below transports | `HYBRID` |
 | 5 | `WP-H1-03A` | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID` |
