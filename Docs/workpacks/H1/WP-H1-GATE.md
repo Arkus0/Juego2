@@ -57,7 +57,7 @@ Gate evidence begins with canonical discovery/authoring and ends with normalized
 
 ## Deterministic proof / evidence
 
-The gate uses a clean checkout, exact local Unity/toolchain fingerprint, remote H0/reference proof and local Unity batchmode plus required graphics/editor evidence. It captures canonical hashes, mutation journal/diff, catalogue fingerprint, plan/generation/observation digests, diagnostics, receipts, checkpoint/rebuild results and interaction transcript.
+The gate uses a clean checkout, exact local Unity/toolchain fingerprint, the accepted Quaternius Source distribution/item/import fingerprints inherited from H1-04/H1-11, remote H0/reference proof and local Unity batchmode plus required graphics/editor evidence. It captures canonical hashes, mutation journal/diff, catalogue/source fingerprints, plan/generation/observation digests, diagnostics, receipts, checkpoint/rebuild results and interaction transcript.
 
 ## Causal negative-conformance classes
 
@@ -75,7 +75,7 @@ Required and identical to the deterministic reference scenario described in the 
 
 ## Dependency / IP implications
 
-Gate reconciles exact Unity/packages and the H1-11 asset adoption record. It adopts nothing new.
+Gate reconciles exact Unity/packages, the H1-04 initial Quaternius Source adoption record and the H1-11 representative source-item/import expansion. It adopts nothing new and may not silently substitute a different production-art source if the accepted Quaternius content is missing.
 
 ## Residual risks
 
