@@ -101,11 +101,11 @@ replace_once \
   'var definitions = _projection.Capabilities\n                .Where(value => value.Key.Name != "unity.binding.compile") // H1-01 SEEDED DEFECT: MCP-only omission\n                .OrderBy(value => value.Key.Name, StringComparer.Ordinal)'
 expect_red mcp-route-omission 'FullyQualifiedName~H1UnityAuthoringTransportTests.UnityScopedCapabilitiesAndPotesCompileAreEquivalentAcrossJsonlAndMcp'
 
-# Public v1 binding identity is pinned; semantic schema evolution cannot masquerade as the same admitted version.
+# Keep capability/schema IDs at v1 while changing the admitted component vocabulary: this is true same-version semantic drift.
 replace_once \
-  src/Arkus.EngineBridge.UnityAuthoring/UnityBindingProducer.cs \
-  'public const string BindingSchemaId = "arkus.unity-binding@1";' \
-  'public const string BindingSchemaId = "arkus.unity-binding@2"; // H1-01 SEEDED DEFECT: semantic drift without reviewed contract bump'
+  src/Arkus.EngineBridge.UnityAuthoring/UnityAuthoringProvider.cs \
+  '["kind"] = SchemaNode.String(new[] { "canonical-link", "renderer", "animator" }),' \
+  '["kind"] = SchemaNode.String(new[] { "canonical-link", "renderer", "animator", "light" }), // H1-01 SEEDED DEFECT: same-version schema semantics widened'
 expect_red same-version-schema-drift 'FullyQualifiedName~H1UnityAuthoringContractPinTests.VersionOnePublicIdentityCannotDriftWithoutExplicitVersionChange'
 
 # The portable provider assembly may not grow public Unity runtime/editor types.
