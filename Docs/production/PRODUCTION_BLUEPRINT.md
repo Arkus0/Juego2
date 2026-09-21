@@ -1,21 +1,21 @@
 # Juego2 Production Blueprint
 
-Version: 0.3 — 2026-09-20  
-Status: **NON-BINDING, owner-reviewed production proposal.** This document creates no H0 acceptance criterion, reopens no accepted H0 guarantee, starts no gameplay work and does not modify the `WP-HK-GATE` precondition. It is planning input for the roadmap author after GATE.
+Version: 0.4 — 2026-09-20
+Status: **NON-BINDING, owner-reviewed production proposal.** This document creates no H0/H1 acceptance criterion, reopens no accepted guarantee and starts no gameplay work. Binding CITY geography lives in `Docs/production/CITY_SPATIAL_CONSTITUTION.md`; binding H1 architecture lives in `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md` and `Docs/workpacks/H1/`.
 
-Revision 0.3 reconciles this document with `Docs/production/CITY_SPATIAL_CONSTITUTION.md`, produced by `WP-CITY-00`. Where the two disagreed about the shape of the town, the constitution now owns the topology, the district families and the scale band, and this document keeps the production reasoning built on top of them. Nothing else in this revision changes, and this remains non-binding planning input.
+Revision 0.4 preserves revision 0.3's reconciliation with accepted `WP-CITY-00` and adds references to the proposed H1 ownership decisions. Where this document disagrees with the city constitution, the constitution owns product geography; where it disagrees with the accepted H1 planning set, that set owns bridge authority. This remains non-binding planning input.
 
 ## 0. Decisions captured by this revision
 
 This revision turns the first draft from a good test-town plan into a **product-seed plan**. Five planning decisions guide everything below:
 
 1. **The demo is the first piece of the game, not a disposable prototype.** The first serious town geometry should be extendable into the shipping town rather than replaced after proving systems.
-2. **H1 should prove the Unity bridge with a small slice of real Quaternius-derived assets, not only primitives.** This deliberately differs from the current `ROADMAP.md`, which places Quaternius content in H2. Because this file is non-binding, it records the desired future H1/H2 boundary; the roadmap must be amended explicitly after GATE before implementation.
+2. **H1 should prove the Unity bridge with a small slice of real Quaternius-derived or named-equivalent assets, not only primitives.** The H1 plan adopts this at `WP-H1-11`; broader keeper content production remains outside H1.
 3. **Living World Core comes before combat.** A social consequence that changes another NPC's later behaviour is a more important early proof of Juego2 than a fight. Directed drama and combat build on the living town, not the reverse.
-4. **Asset and prefab discovery must be machine-readable, but the catalogue is not declared canonical `WorldState` by fiat.** H1 must decide the reviewed catalogue authority and projection boundary. The likely shape is bridge-owned catalogue data projected through Arkus scoped capabilities, with canonical world objects referring to stable catalogue/composition IDs.
+4. **Asset and prefab discovery must be machine-readable, but the catalogue is not canonical `WorldState`.** H1 ADR-001 keeps catalogue data bridge/project-owned and discoverable through Arkus scoped capabilities, with canonical bindings referring to stable logical catalogue IDs.
 5. **Authored project state and live game/save state remain separate authorities.** Multi-session authoring needs durable project checkpoints; gameplay needs its own runtime/save contract. Neither is allowed to smuggle live simulation into the accepted HK06 authored journal/replay semantics.
 
-Nothing above changes H0. The next dependency-valid H0 work remains `WP-HK-07A`.
+Nothing above changes accepted H0 or CITY-00. No H1 workpack becomes active through this non-binding blueprint; after the H1 planning PR is accepted, the first default H1 Worker is `WP-H1-00`.
 
 ---
 
@@ -196,7 +196,7 @@ The Unity bridge should not earn its meaningful parity claim only against cubes 
 - animation clips;
 - engine-side asset identity and missing references.
 
-Therefore the desired future H1 boundary includes a **representative real-asset slice**. This is a planning decision; because the current roadmap still puts Quaternius adoption in H2, the roadmap author must make that boundary change explicitly after GATE.
+The H1 plan therefore includes a **representative real-asset slice** at `WP-H1-11`. It is bridge-conformance pressure, not the exact CITY-03 seed or keeper realization owned by CITY-07.
 
 ## 2.2 Representative H1 slice
 
@@ -318,7 +318,7 @@ The important guarantees are:
 - a canonical world reference to an unavailable asset/composition must fail visibly and diagnostically;
 - composition references understood by a schema-aware producer derive their typed dependency surface mechanically where the accepted contract requires it.
 
-Whether catalogue entries themselves ever become canonical authored objects is therefore a **reviewed H1 decision**, not a premise of this blueprint.
+The H1 architecture resolves this boundary: catalogue entries are bridge/project-owned and discoverable through scoped capabilities, while canonical binding intent refers to stable logical catalogue IDs. Catalogue entries do not become canonical authored objects merely by being discoverable.
 
 ## 3.4 Promote good compositions instead of rebuilding them
 
@@ -528,7 +528,7 @@ These are **planning phases, not authored workpacks**.
 | **H7** | deeper actor-to-actor agency, abstract simulation, ambient population scaling | player absent: actor-originated causal chain continues, remains bounded and explainable |
 | **VS** | integration only; no new foundational systems | full product-seed vertical slice |
 
-H0S scale/concurrency work can run in parallel after GATE exactly as the current roadmap already allows; it should not delay H1 by default.
+H0S scale/concurrency work can run in parallel after the accepted H0 Gate exactly as the current roadmap allows; it should not delay H1 by default.
 
 ---
 
@@ -678,24 +678,24 @@ Nothing in this section carries an old repository PASS into Juego2. It is design
 
 | Item | Current state | Desired future decision |
 |---|---|---|
-| Quaternius timing | current roadmap puts import/select in H2 | explicitly move a tiny representative real-asset slice into H1 when post-GATE roadmap is authored |
+| Quaternius timing | H1-11 owns only an exact tiny representative adoption/conformance slice | keep broad selection/import and CITY-07 keeper realization outside H1 |
 | Quaternius tier | visual bible says free tier | decide free vs Source after exact dependency/license review |
 | town layout | first draft was a radial test hub; revision 0.2 proposed a single-river loop diagram | **resolved** — `CITY_SPATIAL_CONSTITUTION.md` owns the topology, district families and crossings |
 | river port plausibility | **resolved** — the landing is justified by timber rafting, gravel working, a roped ferry and road break-bulk, all inside the small-landing/working-boats direction `Docs/art/SETTING.md` already gives | none required; if ART later wants a larger river role for the valley, that decision would widen the landing rather than validate it |
 | city scale band | 0.8–1.2 km² dense fabric and a 0.10–0.15 km² first seed were working hypotheses | **corrected** to ≈0.30–0.45 km² and ≈0.03–0.06 km² on traversal, density and content-cost grounds; reopen the constitution rather than stretch it if the band ever rises above ~0.7 km² |
-| prefab catalogue authority | first draft proposed canonical `WorldObject` catalogue | review in H1; require discoverability without pre-deciding storage authority |
+| prefab catalogue authority | first draft proposed canonical `WorldObject` catalogue | H1 ADR-001 keeps the catalogue bridge/project-owned and discoverable; bindings use logical IDs |
 | phase order | first draft put cinematics/QTE/combat before social simulation | Living World Core first; drama then combat; deeper agency later |
 | durable authored persistence | H0 has no production project store claim | use canonical snapshot/checkpoint-based project workspace first; escalate only with evidence |
 | runtime/save state | deliberately outside canonical authored journal | define separate runtime/save authority when H3/H4 requires it |
 | mesh budget | approved-draft hero cap may be tighter than keeper seed | preserve cap unless an art review explicitly changes it |
-| camera/render pipeline | not yet frozen | decide before real H1 asset adoption |
+| camera/render pipeline | owned by H1-02 toolchain baseline | freeze the exact retained render-pipeline package before H1-11 adoption |
 
 ---
 
 # 13. What this document deliberately does not do
 
-- It does not modify `ROADMAP.md`, `WP-HK-GATE`, any H0 workpack, accepted proof or accepted guarantee.
-- It does not authorize H1 before GATE.
+- It does not modify `ROADMAP.md`, any workpack, accepted proof or accepted guarantee.
+- It does not activate any H1/CITY workpack or authorize keeper production.
 - It does not freeze final geometry or final character writing.
 - It does not make real Potes the shipping map; the town remains fictional.
 - It does not decree a prefab-catalogue storage model.

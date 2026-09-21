@@ -3,7 +3,7 @@
 Status: **DORMANT / NOT_STARTED**  
 Class: PRODUCT / LOCAL KEEPER REALIZATION (NON-FOUNDATIONAL)  
 Mode: **LOCAL**  
-Depends on: `WP-CITY-04` PASS + accepted relevant asset/Unity bridge/catalogue prerequisites  
+Depends on: `WP-CITY-04` PASS + `WP-H1-GATE` PASS
 Blocks: `WP-CITY-08` only
 
 ## Objective

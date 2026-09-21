@@ -1,6 +1,6 @@
 # Content Shape Backlog — forms of authorable state
 
-Version: 1.1 — 2026-09-20
+Version: 1.2 — 2026-09-20
 
 Status: **NON-BINDING reference.** This document creates no acceptance criterion, reopens no accepted guarantee, alters no workpack contract and commits the roadmap to nothing.
 
@@ -43,14 +43,14 @@ A row moves to `COVERED` on accepted evidence, never on this file's assertion.
 | 6 | Set/tag-valued reference | "any object carrying tag X" | `OPEN` | Typed dependencies resolve to one canonical object; a set-valued target has no declaration form |
 | 7 | State keyed by namespaced string, not by object | world flags, progression stages, counters | `OPEN` | Extension subjects must resolve to a canonical object; a global extension payload loses per-key identity and diff granularity |
 | 8 | State attached to a pair of objects | relationship axes between two NPCs | `OPEN` | Expressible as a relation object plus two references; not yet a deliberate decision |
-| 9 | References embedded in opaque payload | an authored condition naming other state | `OPEN` | Kernel remains deliberately opaque. Roadmap decision: once a schema-aware H1/later scoped producer owns this payload shape, its codec/producer must derive typed dependencies mechanically from structured input rather than relying on the AI to keep payload references and `dependencies` synchronized manually. |
+| 9 | References embedded in opaque payload | an authored condition naming other state | `ASSIGNED` | Kernel remains deliberately opaque. H1-01 owns a schema-aware Unity producer that mechanically derives typed dependencies from structured input; arbitrary raw opaque payloads remain outside that guarantee. |
 | 10 | Ordered interval data with wrap-around | daily schedule blocks crossing midnight | `OPEN` | Payload-opaque today; no kernel time semantics |
 | 11 | Authored versus live/runtime state separation | ticking clock, transient position | `COVERED` | `WP-HK-06A`, accepted with its own content-shape probe |
 | 12 | Provenance and journal of authored change | who changed what, from which revision | `COVERED` | `WP-HK-06A` |
 | 13 | Per-agent derived state | beliefs, current abstract location | `OPEN` | The authored/live boundary is closed by `WP-HK-06A`; representation of the derived state itself is undecided |
-| 14 | Concurrency granularity and world partition | many independent edits in one valley | `OPEN` | H0 deliberately retains whole-world CAS. HK08 must make stale conflicts cheap to recover; per-resource locking/automatic merge/multi-agent coordination remain post-GATE unless measured gate evidence proves they are needed. |
+| 14 | Concurrency granularity and world partition | many independent edits in one valley | `OPEN` | H0 deliberately retains whole-world CAS and accepted HK08B makes same-lineage stale recovery bounded. H0S remains non-blocking unless measured H1 evidence proves otherwise. |
 | 15 | Localization of authored text | one string, several locales | `OPEN` | Not modeled |
-| 16 | Asset and engine binding | prefab, mesh, material | `OUT` | H1 engine bridge |
+| 16 | Asset and engine binding | prefab, mesh, material | `ASSIGNED` | H1-01 owns binding intent/dependency derivation; H1-04..11 own catalogue, materialization and representative Unity proof. It becomes `COVERED` only on accepted evidence. |
 | 17 | Dialogue and narrative runtime content | branching conversation | `OUT` | Later reviewed architecture decision |
 | 18 | Navigation, physics and animation state | paths, colliders, clips | `OUT` | Presentation and runtime |
 

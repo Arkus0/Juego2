@@ -2,7 +2,7 @@
 
 ## Prime directive
 
-Juego2 is harness-first. No serious gameplay, Unity scene production, Quaternius integration, vertical-slice content, DFU integration, or Creator GUI work may begin before `WP-HK-GATE` passes.
+Juego2 is harness-first. `WP-HK-GATE` has passed. No gameplay, keeper realization (`CITY-07+`), vertical-slice content, DFU integration, or Creator GUI work may begin before `WP-H1-GATE` passes. The bounded `CITY-04` greybox may start after its own CITY chain and `WP-H1-08`; that exception validates accepted CITY geometry and authorizes neither H2 nor keeper content. H1 itself may create only the bounded Unity project, fixtures, generated projections and representative real-asset slice explicitly owned by its bridge workpacks; those are proof inputs, not CITY/H2 production.
 
 The harness exists to let an AI agent create, inspect, modify, validate, replay, and test the game world through stable machine-readable contracts without knowing C# implementation details.
 
@@ -43,8 +43,9 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 5. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, Worker pre-review, exact-SHA freeze, independent review and successful finalization.
 6. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` — binding proof rules for foundational WPs.
 7. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
-8. `Docs/engineering/AUTOMATION_V2.md` — minimal replaceable GitHub Actions orchestration.
-9. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
+8. `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md` + `Docs/architecture/ADR-H1-*` — accepted H1 identity, projection, synchronization and Unity-authority decisions after the H1 planning PR merges.
+9. `Docs/engineering/AUTOMATION_V2.md` — minimal replaceable GitHub Actions orchestration.
+10. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` — compact resumption summary only; never outranks current evidence.
 
 ## Product rules
 
@@ -66,6 +67,9 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 - Accepted predecessor guarantees compose forward. A downstream WP consumes binding guarantees already accepted upstream and must not re-prove them merely as defence-in-depth unless the current WP explicitly owns that guarantee or concrete evidence shows the predecessor claim is false/inapplicable.
 - Do not add gameplay semantics merely to make harness tests convenient; use a deliberately tiny micro-world fixture.
 - Before freezing a foundational WP that defines or changes authorable-state or public-contract semantics, run one bounded content-shape probe against the currently approved representative Juego2 target. The probe is an exploratory omission detector, not a completeness oracle and not permission to add gameplay scope. Classify each finding as a current-WP blocker, concrete predecessor reopen condition, named future/residual decision, or out-of-boundary observation.
+- H1 Unity-required evidence must bind the exact editor/package/platform/content inputs named by the workpack. Missing required local Unity evidence is `READY_FOR_LOCAL_VALIDATION`, never PASS.
+- Unity native paths, GUIDs, local file IDs, `GlobalObjectId`, GameObjects and components are bridge locators/projection objects, not canonical game identity or canonical truth.
+- Unity-to-canonical synchronization is always an explicit proposal that re-enters accepted H0 plan/dry-run/apply; no bridge may auto-pull editor state into canonical authored state.
 
 ## Mandatory predecessor contract check
 
