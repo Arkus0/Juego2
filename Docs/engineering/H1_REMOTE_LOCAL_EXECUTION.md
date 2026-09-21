@@ -175,6 +175,10 @@ The local executor is intentionally context-poor. Its required context should no
 
 It should not reread the whole project history, reconstruct unrelated predecessor proofs or duplicate the remote Worker's architectural reasoning.
 
+**This minimization applies only to the delegated local executor.** It does not reduce, replace or reinterpret any required read, repository reconstruction, predecessor-contract check, proof-boundary analysis, strict pre-review duty or independent Reviewer duty imposed on the active Worker/Reviewer by `AGENTS.md`, `WORKER_REVIEW_PROTOCOL.md`, the exact WP or its binding proof rules. The manifest is an execution contract, not a compressed substitute for the evidence/context needed to design, interpret or review the workpack.
+
+If a local action cannot be made mechanical without asking the executor to infer semantics from omitted predecessor/architecture context, the Worker must either encode the already-decided condition as an explicit executable check in the manifest or stop the handoff with `REMOTE_DECISION_REQUIRED`; the executor must not broaden its own context and make the missing decision. Any future project-wide optimization of Worker/Reviewer boot sets, project state, inherited-contract summaries or evidence representation requires its own reviewed process contract and is outside this overlay.
+
 ## Reviewer rule
 
 The independent Reviewer remains remote by default. It reviews the complete frozen candidate plus the durable local evidence. A Reviewer only needs its own local Unity execution when the WP or observed evidence specifically requires independent re-execution; ordinary review does not automatically consume another full local Codex Worker session.
