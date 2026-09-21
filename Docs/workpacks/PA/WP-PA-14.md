@@ -3,23 +3,26 @@
 Status: **FROZEN PLAN / DORMANT UNTIL PREREQUISITES**  
 Class: **RESEARCH INTEGRATION / NON-FOUNDATIONAL**  
 Execution: **DEFERRED_INTEGRATION**  
-Depends on: `WP-PA-13` PASS + merge + DocSync **and** an accepted H2 playable-shell phase boundary/closure sufficient to plan H3+ consumers  
+Depends on: `WP-PA-13` PASS + merge + DocSync **and** accepted closure/gate of the future H2 playable-shell phase  
 Blocks: no current H1/CITY workpack; informs future H3/H4/H7 planning
 
 ## Objective
 
-Integrate only accepted Juego2 PA findings into a coherent product model and concrete future-phase inputs after the project knows what the H2 playable shell actually established.
+Integrate only accepted Juego2 PA findings into a coherent product model and concrete future-phase inputs after H2 is actually closed and the project knows what the playable shell established.
 
 This WP exists to prevent two opposite errors:
 
 1. implementing H3/H4 by rediscovering all Living World product semantics during coding;
 2. freezing H3/H4 runtime contracts now against an H2 architecture that has not been planned/proven yet.
 
+The exact H2 closure/gate ID does not exist yet and MUST be supplied by the future independently reviewed H2 plan; this WP does not invent it.
+
 ## Required inputs
 
 - accepted PA-01..13 Juego2 results only;
 - current cross-cutting amendments;
-- current CITY product seed and accepted H2 boundary at execution time;
+- current CITY product seed;
+- accepted H2 closure/gate and its resulting consumer boundary at execution time;
 - donor `PA-12_PLAN_INTEGRATION_REVIEW.md` only as a checklist source — old M9/M10 routing is obsolete.
 
 ## Work
@@ -54,13 +57,13 @@ No new numeric population target is frozen here merely because the donor PA-12 m
 - only accepted PA findings are integrated;
 - every important state/decision has one clear semantic owner;
 - no circular ownership requires one subsystem to know another's private internals;
-- future workpack deltas target real current phase boundaries, not old M9/M10 or imagined H2 APIs;
+- future workpack deltas target the **accepted post-H2 architecture**, not old M9/M10 or imagined H2 APIs;
 - research findings are clearly separated from implementation proof;
 - the composed product still prioritizes playability, legibility and normal life over simulation complexity for its own sake.
 
 ## Negative gates
 
-FAIL if PA-14 invents a missing mechanism instead of reopening its causal PA, resurrects donor runtime architecture by convenience, or claims a playable/runtime proof from paper scenarios.
+FAIL if PA-14 starts before H2 closure, invents a missing mechanism instead of reopening its causal PA, resurrects donor runtime architecture by convenience, or claims a playable/runtime proof from paper scenarios.
 
 ## Definition of Done
 
