@@ -2,7 +2,8 @@
 
 Semantic owner: `Docs/production/CITY_ENVIRONMENT_GRAMMAR.md`  
 Machine-readable requirements projection: `Docs/production/CITY_ENVIRONMENT_DISCOVERY_REQUIREMENTS.json`  
-Capacity evidence: `Docs/evidence/WP-CITY-05/CAPACITY_FIT_CHECK.md`
+Capacity evidence: `Docs/evidence/WP-CITY-05/CAPACITY_FIT_CHECK.md`  
+Access-conformance evidence: `Docs/evidence/WP-CITY-05/ACCESS_RELATION_CONFORMANCE.md`
 
 Purpose: audit the CITY-05 candidate against the workpack acceptance/DoD and inherited CITY/ART boundaries without turning this evidence file into a second semantic owner.
 
@@ -15,6 +16,7 @@ Purpose: audit the CITY-05 candidate against the workpack acceptance/DoD and inh
 | parcel/open-site families | 9 | historic, commercial, slope, Ensanche garden, workshop court, warehouse yard, civic, rural, open site |
 | reusable building families | 9 | house, mixed-use, bar/social, shop/service, workshop, warehouse/port, civic, residential multi, rural/peripheral |
 | A/B exterior mappings | 23/23 | every accepted CITY-02 A/B programme row |
+| A/B access-role conformance | 23/23 | every inherited required public/service/private/semi-private role preserved after functional-POI binding |
 | ordinary/scenic mappings | 11 named CITY-02 families | C/S1 ordinary fabric + D/S0 scenic fabric remain explicit |
 
 The catalogue is intentionally smaller than a building-by-building inventory. Variation comes from reviewed parcel relation, frontage bands, floor count, party-wall/end condition, roof/silhouette, setback, slope/retaining relation, sockets and ART-compatible material variants.
@@ -41,18 +43,22 @@ No district-specific asset kit becomes semantic authority.
 
 ### A3 — meaningful entrance/service relationships for CITY-02/CITY-06
 
-**PASS.** Every A/B place has an exterior composition mapping. Families expose public/customer, service/material, private/semi-private, vertical/shared-court and staff anchors where required. I-depth stays inherited and exterior-only here:
+**PASS after independent-review repair.** Generic families may expose some anchors as optional, but functional-POI binding is now fail-closed: every `public`, `service`, `private` and `semi-private` role required by the accepted CITY-02 programme row is promoted to required on the bound composition.
 
-- I0: no enterable enclosed interior promised;
-- I1: one bounded interior-link support;
-- I2: shell support for multiple zones/threshold relations;
-- I3: only `loc.casco.bar`, with public + service + an additional semi-private/vertical/court candidate.
+All 23/23 A/B rows pass `programme_required_roles ⊆ bound_required_roles` in `ACCESS_RELATION_CONFORMANCE.md`.
 
-CITY-06 still owns room topology and discovery use.
+The distinction between **role** and **spatial form** is explicit:
+
+- `loc.calle.everyday_shop` requires `{public, service}` even though generic `bf.shop_service` may expose service optionally before binding;
+- `loc.casco.bar` requires `{public, service, semi-private}`; a `vertical` or `court` form can realize the semi-private layer only when the anchor is also role-tagged `semi-private`;
+- `loc.puerto.worker_social` preserves the same semi-private rule;
+- `loc.ribera.service_yard` remains `{service}` with public conditional, so the repair does not publicise service-only access.
+
+I-depth stays inherited and exterior-only here. CITY-06 still owns room topology and discovery use.
 
 ### A4 — weaker model can choose constrained reviewed options
 
-**PASS.** The owner defines a selection order from accepted route/district/site constraints through compatible street, parcel, shell, access and capacity checks before proposal. The JSON projection requires later machine-readable identity, bounds, sockets, access anchors, tags, dependencies, variants, style/material constraints, site compatibility, A-D/S/I compatibility, capacity posture, version and provenance.
+**PASS.** The owner defines a selection order from accepted route/district/site constraints through compatible street, parcel, shell, exact POI access-role binding and capacity checks before proposal. The JSON projection requires later machine-readable identity, bounds, sockets, access anchors with required/optional status after binding, functional-POI provenance, tags, dependencies, variants, style/material constraints, site compatibility, A-D/S/I compatibility, capacity posture, version and provenance.
 
 The JSON is explicitly a **non-canonical requirements projection**. It does not define H1/later capability transport or catalogue authority.
 
@@ -66,7 +72,8 @@ CITY-06 receives reviewed exterior prerequisites rather than a blank slate:
 
 - street/junction and parcel/site vocabularies;
 - reusable building/shell families;
-- public/service/private/semi-private/vertical/court anchor obligations;
+- exact public/service/private/semi-private role obligations for every A/B POI after binding;
+- spatial-form qualifiers such as vertical/court/rear/staff/storage without confusing them with access roles;
 - one valid exterior host path for every A/B place;
 - I0–I3 shell-support rules stopping before room layout;
 - no-build/view/rear relation vocabulary;
@@ -93,7 +100,7 @@ Repair: `b645f26518b29a7bbebad0129f8136f7e0fd0313` encodes access-specific minim
 
 ## 5. Capacity / host-fit audit
 
-All 23 A/B rows have a host/site witness that now passes **three** checks simultaneously:
+All 23 A/B rows have a host/site witness that passes **three** checks simultaneously:
 
 1. exclusive shell + dedicated open + threshold apron fits the named CITY-05 parcel/open-site host;
 2. shell coverage fits the parcel family's reviewed coverage posture where applicable;
@@ -120,7 +127,24 @@ That was a CITY-05 false-green class, not a CITY-02 defect.
 
 Repairs: `e386b35136515ac4ad2490195fa7a58b4adba25b` binds every A/B to a host witness; `21e063cf0946a3ed8228d20c1f0c39eb7d952688` additionally checks the host family's built-coverage posture and fixes the service-yard/fonda witnesses accordingly.
 
-## 6. Ordinary/quiet/scenic protection
+## 6. Independent-review finding repaired — access-role weakening
+
+Independent review `#5266587982` correctly found that the first frozen candidate could weaken a CITY-02 obligation during family/POI binding:
+
+- `loc.calle.everyday_shop`: CITY-02 `public + service` became `public + optional service`;
+- `loc.casco.bar`: CITY-02's semi-private layer could be read as satisfied by an untyped vertical/court candidate.
+
+That contradicted the workpack acceptance requirement that building families expose the entrance/service relations CITY-02 needs.
+
+Repairs:
+
+- `2125a7f286f9b1b01db6b2b0a0cd06a99edb0c0e` makes functional-POI binding monotonic/fail-closed and rewrites all 23 A/B mappings with normalized required-role sets;
+- `f43809e4e61f0421d227368080dd093fc80024c2` projects required-vs-optional status and programme-role provenance into later discovery requirements;
+- `29755aef0b07e1094f760c548e5f3cbbc11c5b2a` adds the 23/23 conformance ledger and causal negative controls.
+
+The repair changes role requirements on existing anchors, not T/S/M/L class or host-envelope arithmetic. Capacity is not redefined.
+
+## 7. Ordinary/quiet/scenic protection
 
 Named non-borrowable fabric remains explicit:
 
@@ -132,7 +156,7 @@ Named non-borrowable fabric remains explicit:
 
 Shared circulation is separately accounted and cannot be counted as both A/B-exclusive area and route margin.
 
-## 7. Causal negative controls
+## 8. Causal negative controls
 
 1. A 1,500 m² `loc.ribera.workshop` on one `pc.workshop_court` **fails CITY-05 host fit** despite being below L=5,000 m².
 2. A 500 m² shell on a 20×40 `pc.rural_edge` **fails CITY-05 coverage posture** (62.5% > 45%) even if its PE class passes.
@@ -141,19 +165,24 @@ Shared circulation is separately accounted and cannot be counted as both A/B-exc
 5. `loc.ribera.service_yard` using W17/AS as ordinary public access -> **FAIL** inherited CITY-01 access.
 6. Workshop/yard borrowing protected quiet/ordinary reserve -> **FAIL** even if raw area fits.
 7. A prefab offering rooms where CITY-02 says I0 does not create an interior promise; treating it as one -> **FAIL** scope/depth inheritance.
+8. `loc.calle.everyday_shop` bound as `{public}` after selecting a generic shop family -> **FAIL** because inherited `service` is missing.
+9. `loc.casco.bar` bound as `{public, service}` plus form tags `{vertical, court}` -> **FAIL** because inherited `semi-private` is missing.
+10. `loc.calle.pharmacy` is not normalized to require `service`; its accepted set stays `{public, private}`, preventing the repair from inventing a stronger CITY-02 obligation.
 
-## 8. Negative-gate audit
+## 9. Negative-gate audit
 
 - unique bespoke buildings everywhere: rejected by compact family catalogue + promotion rule;
 - marketplace asset pack as semantic authority: rejected;
 - procedural generation without reviewed composition constraints: rejected;
 - unrelated district kits: rejected;
+- generic family optionality weakening a bound CITY-02 access role: rejected;
+- spatial-form tags substituting for public/service/private/semi-private role: rejected;
 - service/private shortcut becoming public topology: rejected;
 - port becoming maritime/coastal hero identity: rejected;
 - scenic/quiet fabric becoming capacity overflow: rejected;
 - CITY-06 interior/discovery or Living World runtime semantics authored early: rejected.
 
-## 9. Residuals, not current blockers
+## 10. Residuals, not current blockers
 
 Intentionally downstream:
 
@@ -167,8 +196,8 @@ Intentionally downstream:
 
 Future realized geometry that cannot satisfy this grammar or an inherited access/capacity guarantee is a falsification/reopen signal, not permission to silently relax the reviewed constraints.
 
-## 10. Audit verdict before formal Worker pre-review
+## 11. Audit verdict before formal Worker pre-review
 
-After the two Worker-found repairs above, the candidate covers CITY-05 acceptance and DoD surfaces while preserving predecessor ownership. This file remains evidence only; `CITY_ENVIRONMENT_GRAMMAR.md` is the single semantic owner.
+After three repaired defect classes — Worker-found access-width ambiguity, Worker-found host-fit false green, and independent-review-found access-role weakening — the candidate covers CITY-05 acceptance and DoD surfaces while preserving predecessor ownership. This file remains evidence only; `CITY_ENVIRONMENT_GRAMMAR.md` is the single semantic owner.
 
 Formal `WORKER_PRE_REVIEW` must still inspect the complete baseline→candidate diff and current dependency state before freeze.
