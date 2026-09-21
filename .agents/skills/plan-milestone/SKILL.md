@@ -2,10 +2,6 @@
 
 Plan a Juego2 milestone without implementing it.
 
-## Context bootstrap
-
-Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `planner_gate` profile in `Docs/engineering/context-bootstrap-profiles.json`. For milestone planning, `Docs/ROADMAP.md` remains an initial read because milestone ordering/gates are the claim; use the accepted-state index only as stale-detected navigation and deepen to exact constituent/architecture sources whenever material.
-
 ## Method
 
 1. Read current `Docs/ROADMAP.md`, accepted predecessor contracts and current `main` state.

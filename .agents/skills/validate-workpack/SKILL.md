@@ -4,10 +4,6 @@ Independently review one frozen Juego2 candidate. Do not edit implementation.
 
 Juego2 / Arkus Harness is a game-development and software-verification project. Review is limited to repository-owned game-authoring code, fixtures, tests, CI and documentation. Legacy terms such as `self-attack`, `attack fixture`, `bypass` or `adversarial review` refer only to internal negative/conformance testing; use the neutral terminology defined in `AGENTS.md` for new work.
 
-## Context bootstrap
-
-Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `reviewer` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile is a minimum starting pack, never a review ceiling. Full `Docs/ROADMAP.md` is conditional for an exact-WP review unless cross-track/order/gate meaning is not closed by exact/direct sources. `FOUNDATIONAL_PROOF_STANDARD.md` remains mandatory whenever the exact claim binds it. A stale/missing compact index or Worker summary can only trigger escalation; neither is review proof.
-
 ## Preconditions
 
 - PR is Ready and `Worker state=FROZEN_FOR_REVIEW`.
