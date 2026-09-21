@@ -20,7 +20,9 @@ HK-00 -> HK-00A -> HK-01 -> HK-02 -> HK-03 -> HK-04 -> HK-02A -> HK-05
 
 `HK-00A` freezes the commercial product/adoption boundary before contract implementation. It prevents later WPs from accidentally making MCP, Unity or an external harness the semantic source of truth.
 
-H0 is complete. The H1 plan, DAG and boundary rationale in `Docs/workpacks/H1/README.md` are ACCEPTED after PR `#71` PASS on `58b0d78a57b8c617d167e6bf286a6cbd29b0612b` and merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`. No H1 implementation WP is active merely because the plan is accepted. `WP-H1-00` is the next default dependency-valid workpack and remains `NOT_STARTED` until a human starts its Worker; later WPs still require their own predecessors' PASS + merge + DocSync.
+H0 is complete. The H1 plan, DAG and boundary rationale in `Docs/workpacks/H1/README.md` are ACCEPTED after PR `#71` PASS on `58b0d78a57b8c617d167e6bf286a6cbd29b0612b` and merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`.
+
+`WP-H1-00` is **COMPLETE**. Frozen candidate `3dc513dd963b77116fd45b5af8d800ae8993dd34` passed independent review `#5264661860` in PR `#75`, frozen exact-SHA validation run `35579126516` was GREEN, and merged as `c02cf54c89c13db43edda4a602b0c1620baa3fa2`. `WP-H1-01 — Unity scoped authoring producer and automatic dependency derivation` is now the next default dependency-valid H1 workpack and remains `NOT_STARTED` until a human starts its Worker. Later H1 WPs still require their own stated predecessors' PASS + merge + DocSync; this acceptance does not authorize Unity effects by itself.
 
 ## Non-foundational tracks
 
