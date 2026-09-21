@@ -1,0 +1,93 @@
+{
+  "documentKind": "city05.environmentDiscoveryRequirements",
+  "version": "0.1",
+  "status": "NON_CANONICAL_REQUIREMENTS_PROJECTION",
+  "semanticOwner": "Docs/production/CITY_ENVIRONMENT_GRAMMAR.md#13-later-arkus-discovery-requirements",
+  "authorityNote": "This file is a machine-readable projection of CITY-05 discovery information requirements. It is not an Arkus canonical contract, catalogue authority, Unity schema or WorldState surface.",
+  "appliesToKinds": [
+    "module",
+    "assembly",
+    "shell",
+    "reusable_building",
+    "street_family",
+    "parcel_template"
+  ],
+  "requiredFieldGroups": {
+    "identity": [
+      "stable_logical_id",
+      "kind",
+      "human_label",
+      "review_status"
+    ],
+    "version": [
+      "item_version",
+      "compatibility_version",
+      "deprecated_or_superseded"
+    ],
+    "bounds": [
+      "local_bounds",
+      "parameter_min_max"
+    ],
+    "sockets": [
+      "socket_id",
+      "socket_type",
+      "orientation_or_edge_role",
+      "clearance_requirement",
+      "compatible_link_types"
+    ],
+    "accessAnchors": [
+      "access_role",
+      "compatible_city_access_classes",
+      "required_clear_approach"
+    ],
+    "archetypeTags": [
+      "archetype",
+      "district_tags",
+      "use_tags",
+      "style_tags"
+    ],
+    "dependencies": [
+      "required_modules_or_assemblies",
+      "material_family_dependencies",
+      "provider_owned_dependencies"
+    ],
+    "variants": [
+      "reviewed_variant_ids",
+      "allowed_parameter_ranges"
+    ],
+    "styleMaterial": [
+      "art_family_or_allowlist",
+      "material_constraints",
+      "veto_tags"
+    ],
+    "siteCompatibility": [
+      "compatible_parcel_families",
+      "party_wall_relations",
+      "setback_relations",
+      "slope_relations",
+      "rear_relations",
+      "no_build_or_view_requirements"
+    ],
+    "placeDepthCompatibility": [
+      "systemic_importance_postures",
+      "spatial_depth_postures",
+      "interior_priority_postures"
+    ],
+    "capacity": [
+      "compatible_programme_envelope_classes",
+      "exclusive_envelope_accounting_posture"
+    ],
+    "provenance": [
+      "semantic_owner_reference",
+      "review_reference",
+      "source_or_provider_identity"
+    ]
+  },
+  "forbiddenInterpretations": [
+    "Native Unity GUIDs, local file IDs or paths are not CITY family identity.",
+    "A discovered prefab or asset category is not semantic authority for a CITY family.",
+    "The projection does not define canonical WorldState identity or canonical mutation semantics.",
+    "A-D, S0-S4 and I0-I3 must not be derived from one another by this discovery surface.",
+    "Discovery compatibility does not create graph connectivity or publicise restricted service routes."
+  ]
+}
