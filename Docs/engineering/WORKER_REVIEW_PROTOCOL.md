@@ -1,6 +1,6 @@
 # Worker → Reviewer Protocol
 
-Version: 1.7 — 2026-09-19
+Version: 1.8 — 2026-09-21
 
 ## Purpose
 
@@ -20,7 +20,9 @@ Accepted predecessor guarantees are compositional. A downstream WP is expected t
 
 ## Adoption boundary
 
-Version 1.7 applies to Worker/review cycles that start after the commit containing this version reaches `main`. It does not retroactively bind an already-started cycle and does not bind the `PROCESS_ONLY` PR that adopts it.
+Version 1.8 applies to Worker/review cycles that start after the commit containing this version reaches `main`. It does not retroactively bind an already-started cycle and does not bind the `PROCESS_ONLY` PR that adopts it.
+
+The v1.8 change explicitly permits a single active Worker to delegate a bounded execution slice to a separate executor/session/machine without transferring Worker ownership, provided the Worker predeclares an exact execution contract, retains all design/repair/interpretation authority, verifies the returned evidence, performs the final strict pre-review and freezes the candidate. It does not weaken exact-SHA evidence, Worker/Reviewer independence, or transfer rules.
 
 The v1.7 change adds one documentation-only DocSync step: reconciling the residual ledger. It adds no Worker or Reviewer duty, no acceptance criterion and no proof obligation.
 
@@ -42,12 +44,35 @@ This check is a reasoning aid and auditable handoff, not a new semantic registry
 
 The independent Reviewer reconstructs the same split independently. Before issuing FAIL for an apparent omission, the Reviewer must determine whether the omitted guarantee is already binding from an accepted predecessor. If it is, the finding is a current-WP blocker only when concrete evidence shows that the inherited guarantee does not apply to the effective path or that the predecessor claim itself was false. Demanding duplicate proof of an accepted predecessor claim is overdefense and counts against the proof budget.
 
+## Delegated execution under Worker ownership
+
+A single active Worker may delegate a **bounded execution slice** to a separate executor session, machine or agent when the WP requires an environment the Worker cannot directly exercise, such as an exact local Unity Editor, OS/toolchain state, hardware/GPU state or clean-import/rebuild environment.
+
+Delegation is execution, not Worker transfer, only when all of the following hold:
+
+- the active Worker remains the sole owner of WP interpretation, architecture, product semantics, proof design, repair decisions, strict pre-review and freeze;
+- before execution, the Worker persists an auditable contract that binds the exact input SHA, repository/PR/branch, ordered actions or commands, required environment/fingerprints, expected outputs, allowed mutation paths, forbidden mutations, evidence destination and stop conditions;
+- the executor performs only that contract and does not make discretionary design, scope, package-strategy, threshold, repair, pre-review, freeze, review, merge or DocSync decisions;
+- any repository mutation produced by the executor is predeclared by both producing action and allowed path; the complete changed-file set is recorded and checked against that allowlist;
+- unexpected effective state, a required unplanned mutation or any design/repair choice stops execution and returns control to the Worker rather than being repaired speculatively;
+- returned evidence durably binds the declared input SHA and the effective environment/output, and the Worker reconstructs live GitHub state and verifies that evidence before interpreting it;
+- if a Worker repair can invalidate delegated evidence, the affected execution is rerun from a newly declared input SHA before freeze;
+- after the final evidence-bearing mutation, the active Worker still performs the complete mandatory strict pre-review over the full candidate and only that Worker may record `WORKER_PRE_REVIEW: CLEAN` and freeze the final candidate.
+
+A delegated executor may therefore be context-poor and may operate in another session without becoming a second Worker. This does **not** authorize concurrent discretionary writers: while the executor is running, the Worker must not race it with overlapping mutations to the same candidate surfaces.
+
+If the executor exceeds the declared contract by making an unplanned design/implementation decision, expanding allowed paths, or assuming Worker duties, the bounded delegation is breached. The active Worker must stop and either discard/revert the unauthorized mutation or perform an explicit Worker transfer under the normal transfer rules before relying on it. Unauthorized executor work may not be laundered into a clean candidate merely by later approval.
+
+Workpack-specific execution overlays may narrow these rules further but may not weaken them.
+
 ## State machine
 
 ```text
 DRAFT + ACTIVE
   -> Worker performs PREDECESSOR_CONTRACT_CHECK before implementation
   -> Worker may write
+  -> optional bounded delegated execution may run under a Worker-authored exact contract
+  -> same Worker verifies returned evidence and resumes ownership
   -> Worker must complete strict pre-review before freeze
   -> any in-claim pre-review finding is repaired while still Draft + ACTIVE
   -> out-of-boundary residual risks are recorded, not automatically hardened
@@ -69,18 +94,18 @@ PASS
 
 ## Worker rules
 
-1. One active Worker per WP candidate and one canonical open implementation PR per active WP unless an explicit transfer/repair migration is being completed.
+1. One active Worker per WP candidate and one canonical open implementation PR per active WP unless an explicit transfer/repair migration is being completed. A conforming bounded delegated executor is not a second Worker.
 2. Start from current `main`; record baseline SHA.
 3. Before implementation, complete and persist the mandatory `PREDECESSOR_CONTRACT_CHECK` for direct accepted dependencies and relevant inherited invariants.
 4. Open/keep PR Draft while implementation can change.
 5. Respect exact WP Allowed/Forbidden scope and dependencies.
-6. Produce reproducible evidence before review.
+6. Produce reproducible evidence before review. When delegated execution is used, preserve its exact execution contract and result evidence as part of the candidate evidence surface.
 7. For foundational WPs, satisfy `FOUNDATIONAL_PROOF_STANDARD.md` including explicit trust boundary and proof-budget verdict before freeze.
-8. Before freeze, perform the mandatory Worker pre-review defined below against the complete candidate, contract, inherited guarantees, evidence and proof boundary.
+8. Before freeze, perform the mandatory Worker pre-review defined below against the complete candidate, contract, inherited guarantees, delegated-execution evidence when present, and proof boundary.
 9. If pre-review finds an in-claim defect, remain Draft + ACTIVE, repair the causal defect boundary, rerun affected validation/evidence and repeat pre-review. Do not freeze a knowingly defective candidate.
 10. If pre-review finds only a risk that requires arbitrary out-of-contract behavior of infrastructure explicitly inside the trusted base, duplicate re-proof of an accepted predecessor guarantee, or a non-canonical unsupported path, record it as residual risk unless the WP explicitly owns that guarantee. Do not automatically open another hardening cycle.
-11. A candidate may freeze only with a valid predecessor contract check, `WORKER_PRE_REVIEW: CLEAN`, `PROOF_BUDGET_VERDICT: WITHIN_BUDGET` where applicable, and no known blocking defect.
-12. Before Ready, stop every writer, read the exact 40-char HEAD and record it as `Frozen candidate SHA`.
+11. A candidate may freeze only with a valid predecessor contract check, `WORKER_PRE_REVIEW: CLEAN`, `PROOF_BUDGET_VERDICT: WITHIN_BUDGET` where applicable, required delegated/local evidence verified where applicable, and no known blocking defect.
+12. Before Ready, stop every writer and delegated executor, read the exact 40-char HEAD and record it as `Frozen candidate SHA`.
 13. Mark `Worker state: FROZEN_FOR_REVIEW` and `Branch frozen: YES`.
 14. After Ready, do not modify implementation until Reviewer verdict.
 15. Worker never acts as the independent Reviewer of its own candidate.
@@ -98,6 +123,7 @@ The Worker must temporarily switch from implementation reasoning to independent-
 - identify the explicit claim and trust boundary before inventing negative scenarios;
 - inspect the complete baseline→candidate diff rather than only the last repair;
 - verify tests/CI/evidence actually prove the contract rather than merely exercising representative happy paths;
+- when delegated execution was used, verify the exact input-SHA/environment/action contract, complete mutation allowlist, returned result/evidence, resulting candidate relationship, and whether any later repair invalidated that evidence;
 - for a foundational WP that defines or changes authorable-state or public-contract semantics, inspect the required bounded representative content-shape probe and verify that its findings are explicitly classified without treating the probe as a completeness oracle;
 - inspect negative/error behaviour, boundary conditions, fail-closed behaviour and handoff/freeze requirements;
 - search for missing objects, paths, variants or effective behaviour that could sit outside an asserted completeness/proof universe **inside the declared claim**;
@@ -154,9 +180,13 @@ Evidence: <path/link>
 fail_cycle: <integer>
 ```
 
+When delegated execution is used, its durable contract/result paths belong under `Evidence`; no second `Active Worker` is created for the executor.
+
 ## Transfer
 
 A second Worker may continue the same WP only after the prior Worker stops, the PR is Draft, and a `Transfer SHA` + Worker history update is recorded. Transfer does not reset `fail_cycle` or erase evidence.
+
+A conforming bounded delegated executor is **not** a Worker transfer and does not enter `Worker history`, because it owns no design, repair, pre-review or freeze authority. If those authorities are actually handed over, the delegation has become a Worker transfer and must satisfy this section before further implementation is relied upon.
 
 If repair is migrated to a new PR, the previous PR must be closed/superseded and the new PR must preserve Worker history, transfer SHA, reviewed SHA and `fail_cycle`; migration is not a clean restart.
 
@@ -164,7 +194,7 @@ A transfer invalidates any prior `WORKER_PRE_REVIEW: CLEAN` unless the receiving
 
 If dependency state or accepted predecessor evidence changed after the recorded predecessor check, the receiving Worker must refresh that check before further implementation or freeze.
 
-Concurrent writers on the same WP candidate are not permitted. If exclusive ownership is lost, stop, isolate to one canonical branch/PR and record the transfer rather than allowing branches to race.
+Concurrent discretionary writers on the same WP candidate are not permitted. A bounded executor may mutate only its predeclared paths while the active Worker refrains from overlapping writes. If exclusive authority is otherwise lost, stop, isolate to one canonical branch/PR and record the transfer rather than allowing branches to race.
 
 ## Reviewer rules
 
@@ -175,6 +205,7 @@ Reviewer must:
 - verify PR HEAD == Frozen candidate SHA at review start;
 - for candidates governed by v1.2+ pre-review rules, verify the handoff records `Worker pre-review: CLEAN`, while treating that only as Worker readiness evidence;
 - for candidates governed by v1.5+, independently reconstruct direct accepted predecessor guarantees and verify a predecessor contract check was recorded before implementation;
+- when delegated execution was used, verify that it remained bounded execution rather than an undeclared second Worker/transfer, and verify input-SHA/environment/mutation/result evidence is causally tied to the frozen candidate;
 - inspect complete baseline→candidate diff, tests, CI and evidence;
 - challenge claims rather than trust Worker prose, Worker pre-review conclusions or the Worker's predecessor classification;
 - for foundational WPs, independently search for omission/false-green classes and challenge completeness **inside the WP claim and declared trust boundary**, including risks not highlighted by the Worker;
