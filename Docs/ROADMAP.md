@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.28 — 2026-09-20
+Version: 1.29 — 2026-09-21
 
 ## North star
 
@@ -8,7 +8,7 @@ Build an engine-agnostic, commercially viable AI-native game-authoring platform 
 
 A fresh AI agent, without C# implementation knowledge, must be able to discover available capabilities and safely create, inspect, modify, validate, diff, replay and test a representative world through stable machine-readable contracts.
 
-**H0 / `WP-HK-GATE` has passed. The complete Engine Bridge / Unity-first H1 plan is defined, but no H1 implementation WP is active merely because the planning PR exists. Gameplay and keeper realization remain blocked until `WP-H1-GATE` passes, merges and completes DocSync; the bounded CITY-04 greybox has the narrower H1-08 prerequisite recorded below.**
+**H0 / `WP-HK-GATE` has passed. The Engine Bridge / Unity-first H1 plan is accepted and binding after PR `#71` PASS and merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; no H1 implementation WP is active until a human starts it. Gameplay and keeper realization remain blocked until `WP-H1-GATE` passes, merges and completes DocSync; the bounded CITY-04 greybox has the narrower H1-08 prerequisite recorded below.**
 
 Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Robustness work in H0 is repository-local testing of the harness's own code, fixtures and contracts. New work uses the neutral negative-conformance terminology defined in `AGENTS.md`.
 
@@ -72,7 +72,7 @@ Before implementation, the original HK06 and HK07 workpacks were deliberately sp
 
 Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-No H0 workpack remains. The accepted H0 boundary is the predecessor for the proposed H1 plan below. Once that plan is accepted and merged, the first dependency-valid H1 Worker is `WP-H1-00`; this planning change does not activate or freeze it.
+No H0 workpack remains. The accepted H0 boundary is the predecessor for the accepted H1 plan below. After planning PR `#71` PASS, merge and DocSync, the first dependency-valid H1 Worker is `WP-H1-00`; it remains `NOT_STARTED` until a human explicitly starts it.
 
 | Order | Workpack | Outcome |
 |---|---|---|
@@ -138,7 +138,7 @@ The commercial target is therefore two-layered: H0 provides a simple globally co
 
 # H1 — Engine Bridge Foundation: Unity First
 
-Status: **PLANNED / NOT_STARTED**. Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`; reconciled integration base after CITY programme v2 PASS, merge and DocSync: `7fe44840076eba05f1b67a7633cd33fc67b9023d`.
+Status: **PLAN ACCEPTED / IMPLEMENTATION NOT_STARTED**. Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`; reconciled integration base after CITY programme v2 PASS, merge and DocSync: `7fe44840076eba05f1b67a7633cd33fc67b9023d`. H1 planning PR `#71` passed independent review `#5263596722` on frozen candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b` and merged as `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; DocSync is complete. The next default WP is `WP-H1-00`, still `NOT_STARTED`.
 
 The binding planning set is:
 

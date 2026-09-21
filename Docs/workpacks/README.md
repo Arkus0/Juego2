@@ -20,7 +20,7 @@ HK-00 -> HK-00A -> HK-01 -> HK-02 -> HK-03 -> HK-04 -> HK-02A -> HK-05
 
 `HK-00A` freezes the commercial product/adoption boundary before contract implementation. It prevents later WPs from accidentally making MCP, Unity or an external harness the semantic source of truth.
 
-H0 is complete. The H1 plan, DAG and boundary rationale live in `Docs/workpacks/H1/README.md`. No H1 WP is active merely because its plan exists. Each starts only after the plan is accepted, its dependencies have PASS + merge + DocSync, and the human starts the Worker.
+H0 is complete. The H1 plan, DAG and boundary rationale in `Docs/workpacks/H1/README.md` are ACCEPTED after PR `#71` PASS on `58b0d78a57b8c617d167e6bf286a6cbd29b0612b` and merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`. No H1 implementation WP is active merely because the plan is accepted. `WP-H1-00` is the next default dependency-valid workpack and remains `NOT_STARTED` until a human starts its Worker; later WPs still require their own predecessors' PASS + merge + DocSync.
 
 ## Non-foundational tracks
 

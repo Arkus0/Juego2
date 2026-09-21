@@ -1,6 +1,6 @@
 # ADR-H1-004 — Public host to Unity Editor execution seam
 
-Status: PROPOSED; accepted with the H1 planning PR
+Status: ACCEPTED — H1 planning PR `#71`; reviewed candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b`; PASS review `#5263596722`; merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`
 Date: 2026-09-21
 
 ## Decision
