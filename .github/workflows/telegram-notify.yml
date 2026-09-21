@@ -170,10 +170,6 @@ jobs:
                   parts.append(f'Siguiente WP: {next_wp}')
               if pr_number:
                   parts.append(f'PR #{pr_number}')
-              if pr_url:
-                  parts.extend(['', pr_url])
-
-              message = '\n'.join(parts)
 
               prompt = None
               if state == 'REVIEW_READY' and pr_number and re.fullmatch(r'[0-9a-f]{40}', target_sha):
@@ -207,12 +203,12 @@ jobs:
                   if len(prompt) > 256:
                       print(f'ChatGPT handoff prompt exceeds Telegram copy_text limit: {len(prompt)}', file=sys.stderr)
                       sys.exit(1)
+                  parts.append('Copia el prompt y ábrelo en la app de ChatGPT.')
                   rows.append([{'text': '📋 Copiar siguiente prompt', 'copy_text': {'text': prompt}}])
-                  rows.append([{'text': '🤖 Abrir ChatGPT', 'url': 'https://chatgpt.com/'}])
-              if pr_number and pr_url:
-                  rows.append([{'text': '🔗 Abrir PR', 'url': pr_url}])
               if rows:
                   reply_markup = {'inline_keyboard': rows}
+
+              message = '\n'.join(parts)
 
           delimiter = 'TELEGRAM_MESSAGE_EOF'
           with open(output_path, 'a', encoding='utf-8') as out:
