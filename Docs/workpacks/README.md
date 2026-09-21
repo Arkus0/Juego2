@@ -66,3 +66,15 @@ The PA programme plan is **ACCEPTED** on candidate `95fc0f5935561fd61a20221f993e
 `WP-PA-01..05` are `REMOTE_HARVEST`: they are cheap Juego→Juego2 adoption/revalidation gates for already independently reviewed donor research, **not a restart of PA-01..05 research**. `WP-PA-06..13` are `REMOTE_RESEARCH`. `WP-PA-14` is deliberately deferred until PA-01..13 have passed **and the future H2 playable-shell phase has reached its accepted closure/gate**; the future H2 plan owns that gate's exact ID/name.
 
 PA research can inform later H2+ design but cannot claim runtime/Unity proof or silently alter H0/H1/CITY contracts. The next executable PA workpack is `WP-PA-04 — Adopt/revalidate Knowledge findings`; after PA-01..05 are accepted in Juego2, the first genuinely new research workpack is `WP-PA-06 — Memory & Consequences research`.
+
+## Process-efficiency track
+
+`CTX/` is a **PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL** context-efficiency track. Its accepted programme plan changes no product/runtime semantics and does not itself alter existing Worker/Reviewer bootstrap rules. It exists to improve context precision first, then token/local-agent cost, while preserving all accepted proof, predecessor, exact-SHA and independent-review obligations.
+
+The CTX programme plan is **ACCEPTED** on frozen candidate `c9ff3605048e05fded4d58a1de27450661d9fe0e` (independent review `#5270686380`, PR `#102`, merge `f3c8362b3d76fd4f78107d8142e07e476985f973`). Its reviewed sequence is:
+
+```text
+CTX-01 -> CTX-02 -> CTX-03
+```
+
+`WP-CTX-01 — Role-specific bootstrap + accepted-state navigation` is the next CTX action and remains `NOT_STARTED` until explicitly started. CTX-01 becomes binding only after its own independent PASS + merge + DocSync; until then the pre-existing bootstrap/read rules remain unchanged. CTX does not semantically block H1/CITY/PA, although human priority is to complete CTX-01 before the next expensive local H1 execution so later sessions benefit from its accepted routing model.

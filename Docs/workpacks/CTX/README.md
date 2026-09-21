@@ -1,8 +1,15 @@
 # CTX — Agent context / process efficiency
 
-Status: **PLAN CANDIDATE / PROCESS_ONLY**
+Status: **ACCEPTED / PROCESS_ONLY**
 Execution: **REMOTE_OK**
 Purpose: improve agent reasoning quality first, then reduce context/token/local-execution cost without weakening any accepted product, proof or review obligation.
+
+Accepted plan evidence:
+
+- frozen candidate: `c9ff3605048e05fded4d58a1de27450661d9fe0e`;
+- independent PASS: review `#5270686380` on PR `#102`;
+- plan merge: `f3c8362b3d76fd4f78107d8142e07e476985f973`;
+- post-PASS reconciliation: `Docs/evidence/CTX-PLAN/DOCSYNC.md`.
 
 ## Governing priority
 
@@ -52,8 +59,8 @@ Combining all three would make one Reviewer validate context routing, semantic c
 
 ## Adoption
 
-The CTX plan itself changes no operating rule. Each WP becomes binding only after its own fresh independent PASS + merge + DocSync.
+The CTX programme plan is accepted, but the plan itself changes no operating rule. Each WP becomes binding only after its own fresh independent PASS + merge + DocSync.
 
-If this plan passes, its documentation-only DocSync registers `CTX/` in the root workpack index and names `WP-CTX-01` as the next CTX action; it must not implement any CTX-01 operating rule by implication.
+The next CTX action is `WP-CTX-01 — Role-specific bootstrap + accepted-state navigation`. It remains `NOT_STARTED` until a human explicitly starts its Worker.
 
-Human priority is to execute `WP-CTX-01` immediately after plan DocSync so subsequent remote/local sessions start benefiting before H1 local work.
+Human priority is to execute `WP-CTX-01` immediately so subsequent remote/local sessions start benefiting before H1 local work. Until CTX-01 itself passes, the existing bootstrap/read rules remain binding unchanged.
