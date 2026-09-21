@@ -60,6 +60,14 @@ The final contract now requires:
 
 The same ordering is required for the Worker handoff: push and verify `MANIFEST_COMMIT_SHA` on the remote branch before publishing its external handoff anchor.
 
+### Context-minimization boundary hardened
+
+A later external process critique correctly identified a possible future misreading: because this PR explicitly optimizes token/context use, a downstream session could generalize the local executor's context-poor rule into permission to reduce the remote Worker or independent Reviewer's required reconstruction. That was not the intended model, but intent alone is weaker than a binding boundary.
+
+The H1 overlay and local-executor skill now state explicitly that context minimization is **local-executor-only**. It does not reduce or replace any Worker/Reviewer required read, predecessor-contract reconstruction, proof-boundary analysis, pre-review duty or independent review obligation. `LOCAL_EXECUTION.md` is an execution contract, not a compressed substitute for the evidence/context required to design, interpret or review the WP.
+
+If a local action would require semantic inference from context intentionally omitted from the local session, the Worker must either encode the already-decided condition as an explicit mechanical check in the manifest or the handoff stops with `REMOTE_DECISION_REQUIRED`. Broader optimizations such as machine-readable project state, compact inherited-contract summaries, role-specific Worker/Reviewer boot sets or structured evidence registries are explicitly left to a separate reviewed process change rather than smuggled into this H1-local overlay.
+
 ## Mechanical trace of one valid round
 
 The repaired contract is instantiable without a fixed-point SHA:
@@ -91,7 +99,9 @@ The repaired surfaces now stop rather than improvise when any of these occur:
 - external result anchor is attempted before the remote branch actually reaches `EVIDENCE_COMMIT_SHA`;
 - external anchors, result file and Git ancestry disagree on WP/round/SHA chain;
 - a later remote repair can invalidate the effective Unity evidence without issuing a new local round;
-- local execution needs architecture, package-strategy, threshold, scope or repair discretion.
+- local execution needs architecture, package-strategy, threshold, scope or repair discretion;
+- a local action needs semantic context omitted from the manifest/executable surfaces and the executor would have to infer the missing decision;
+- the local context-budget rule is treated as permission to reduce Worker or Reviewer mandatory reconstruction.
 
 Those conditions return control to the remote Worker or make the round invalid; they are not silently normalized.
 
@@ -112,7 +122,10 @@ Those conditions return control to the remote Worker or make the round invalid; 
 - Any remote repair that can invalidate Unity evidence requires a new numbered local round.
 - The final frozen candidate must descend from accepted local evidence and must not contain a later proof-relevant mutation that escaped rerun.
 - Reviewer remains independent and remote by default; durable local evidence is reviewed rather than blindly trusted.
-- Context minimization remains explicit: local Codex reads the external anchor, manifest, exact WP, named scripts/files and live GitHub identity/SHA state rather than reconstructing all project history.
+- Context minimization is explicitly local-executor-only; it cannot be used to waive Worker/Reviewer mandatory reads, predecessor reconstruction or proof/review duties.
+- The manifest is explicitly not a compressed substitute for the semantic/evidentiary context the Worker and Reviewer need.
+- If omitted context would force local semantic inference, the contract fails closed to the Worker rather than allowing the executor to broaden context and decide.
+- Project-wide token/state/evidence optimizations are explicitly outside this H1 overlay and require a separate reviewed process boundary.
 - `WP-H1-02` is explicitly adapted as the first concrete consumer and now includes the SHA-chain failure class in its deterministic evidence/negative-conformance boundary.
 - The implementation skill routes H1-02..H1-GATE Workers through the same exact chain and requires remote manifest push verification before handoff anchoring.
 - This PROCESS_ONLY PR itself does not need Unity evidence because it does not make any effective Unity/product claim.
@@ -128,6 +141,7 @@ This candidate does not:
 - alter any H0/H1 semantic product contract;
 - weaken exact-SHA evidence or independent review;
 - permit a delegated executor to act as an undeclared second Worker;
+- redefine Worker/Reviewer boot sets or replace project-wide state/evidence representation;
 - authorize H2/CITY keeper/gameplay work;
 - create paid CI/VM infrastructure.
 
@@ -143,18 +157,19 @@ The explicit two-stage local commit (`PRODUCT_RESULT_SHA` then result-summary-on
 
 ## Final cleanliness rerun
 
-After the repair was made coherent across the overlay, local-executor skill, Worker skill and `WP-H1-02`, the final alignment mutations `fc1983b52d3c4a607045fa18c62d1bb7cc6d776b` and `d793413e8927eb339b12a86db058291fa9793a8b` invalidated the previous clean marker. The complete checks above were rerun against the full baseline-to-current diff after those mutations. No new in-claim blocker was found. This file is the fresh post-mutation pre-review evidence.
+The previous clean marker/freeze at `91a93a5c8fe2db69e465c00670fb08c4ee592dba` was explicitly invalidated by reopening the PR to harden the context-minimization boundary. Commits `557f32b0d84e9393822c1e7efa5b3bfb4b356be5` and `2421f3a3642e6427546599cc0cf2d18fc65f8003` make the boundary explicit in the binding overlay and executable local skill. The complete checks above were rerun against the full baseline-to-current diff after those mutations. No new in-claim blocker was found. This file is the fresh post-mutation pre-review evidence.
 
 ## Worker verdict
 
 `WORKER_PRE_REVIEW: CLEAN`
 
-`WORKER_PRE_REVIEW_FINDINGS_FIXED: 3`
+`WORKER_PRE_REVIEW_FINDINGS_FIXED: 4`
 
-Fixed findings across this process candidate:
+Fixed findings/hardenings across this process candidate:
 
 1. missing superior-protocol authorization/boundary for delegated execution;
 2. independent Reviewer #5270237551 self-referential manifest/result SHA contract;
-3. repair pre-review ordering hazard where an external result anchor could otherwise be published before the referenced commit was confirmed on the canonical remote branch.
+3. repair pre-review ordering hazard where an external result anchor could otherwise be published before the referenced commit was confirmed on the canonical remote branch;
+4. ambiguous scope of token/context minimization, now explicitly limited to the delegated local executor without reducing Worker/Reviewer reconstruction or proof duties.
 
 No known in-scope blocker remains after the complete rerun. This evidence file intentionally does not attempt to contain the SHA of the commit that contains itself. The exact final Candidate/Frozen SHA must be recorded externally in the PR handoff after this final evidence mutation is committed.
