@@ -25,8 +25,8 @@ replace_once() {
   python3 - "${file}" "${old}" "${new}" <<'PY'
 import pathlib, sys
 path = pathlib.Path(sys.argv[1])
-old = sys.argv[2]
-new = sys.argv[3]
+old = sys.argv[2].replace("\\n", "\n")
+new = sys.argv[3].replace("\\n", "\n")
 text = path.read_text(encoding="utf-8")
 count = text.count(old)
 if count < 1:
