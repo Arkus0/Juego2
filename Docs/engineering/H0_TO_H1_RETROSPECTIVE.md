@@ -3,7 +3,7 @@
 Status: H1 planning input
 Initial H0 baseline reviewed: `main` at `c87c4c195d63cc9255745014f2b9757d9cd34050`
 Final integration base: `main` at `7fe44840076eba05f1b67a7633cd33fc67b9023d` after CITY programme v2 PASS, merge and DocSync
-Date: 2026-09-20
+Date: 2026-09-21
 
 ## Purpose
 
@@ -46,7 +46,7 @@ H1 consequence: each WP names the exact H0/H1 guarantees it consumes, the delta 
 
 The original HK06/HK07 and HK08/HK09 umbrellas mixed claims with different authorities and proof methods. Splitting journal, snapshot/rebase, replay, reference transport, MCP, interaction primitives, conflict recovery, host authority and resource integrity made failures attributable and acceptance composable.
 
-H1 consequence: toolchain, bridge contract, scoped producer, host authority, catalogue identity, scene materialization, prefab/asset realization, component realization, validation, reconciliation, reconstruction and the final gate are separate only where each has an independently falsifiable claim. Functions and test classes are not workpacks.
+H1 consequence: toolchain, bridge contract, scoped producer, host authority, public host-to-Editor execution lifecycle, catalogue identity, scene materialization, prefab/asset realization, component realization, validation, reconciliation, reconstruction and the final gate are separate only where each has an independently falsifiable claim. Functions and test classes are not workpacks.
 
 ### 4. Contract versioning
 
@@ -64,7 +64,7 @@ H1 consequence: unit fixtures may prove local mechanics, but scene/prefab/asset/
 
 HK09A originally enforced host policy only in the normal production composer. A valid alternate composition-to-projection path skipped the guarantee. The accepted repair enforced policy at the effective neutral-projection seam.
 
-H1 consequence: Unity host authority is checked where every Unity projection crosses from canonical composition into editor/project effects. Tests of a helper class or the preferred entrypoint alone are insufficient.
+H1 consequence: Unity host authority is checked below transports before exposure/dispatch, then the separately owned H1-03A seam proves that every admitted Editor-bound handler crosses the fixed project/process lifecycle. Tests of a helper class, preferred host factory, direct batch script or private Editor entrypoint alone are insufficient.
 
 ### 7. Do not redefine predecessors
 

@@ -1,6 +1,6 @@
 # H1 Engine Bridge Architecture — Unity first
 
-Version: 1.0-planned — 2026-09-20
+Version: 1.1-planned — 2026-09-21
 Status: PROPOSED by the H1 `PROCESS_ONLY` planning PR; becomes binding when that PR is accepted and merged.
 
 ## 1. Definition
@@ -29,6 +29,30 @@ It is not a second world model, a Unity command registry, a serializer for all U
 | normalized engine observation and drift | Unity bridge | evidence about projection, not canonical mutation |
 | importing a supported Unity edit | canonical mutation proposal only | no state change until ordinary H0 apply succeeds |
 | live runtime/save state | later gameplay/runtime owner | excluded from H1 authored projection |
+
+### 2.1 Public host-to-Editor execution topology
+
+`ADR-H1-004` freezes one topology before feature work begins:
+
+```text
+reference JSONL / MCP
+          |
+arkus.neutral-projection@1
+          |
+H1 policy + canonical composed capability handler
+          |
+fixed project-bound invocation envelope
+          |
+short-lived pinned Unity batch worker (Editor main thread)
+```
+
+The external Arkus .NET host owns the process-local canonical authored session, capability composition and transport projection. The Unity worker owns only Editor API execution for one admitted invocation. It has no canonical session, public discovery surface, MCP server or parallel command/schema registry.
+
+Bootstrap binds exact editor/toolchain identity, fixed project identity/root, managed workspace roots, platform and one batch entry point outside request data. One project-operation lease serializes Editor invocations. Reference and MCP build the same H1 composition and call the same handler; cross-transport comparisons use sequential execution or isolated project copies, never concurrent public writers.
+
+Pre-launch cancellation remains H0 admission cancellation. After launch, completion wins when a truthful result exists; otherwise cancellation, timeout, crash or a missing/corrupt result yields structured `unity.execution.*` failure and an indeterminate outcome where publication cannot yet be excluded. The owning feature contract reconciles by invocation/idempotency identity. Exit code, console text or staging output alone never proves success.
+
+`WP-H1-03A` implements and proves this shared lifecycle with public composed read-only project inspection and bounded operation-status recovery. Its separately versioned Unity operation ceilings leave HK09B's H0 canonical-operation envelope unchanged. H1-05 must publish plan/materialize/observe capabilities and send their Editor-bound phases through it; H1-10 must do the same for checkpoint/rebuild. The Gate only consumes those accepted public routes.
 
 ## 3. Identity model
 
@@ -139,7 +163,7 @@ Byte-identical Unity YAML across editor versions or platforms is not claimed. Fo
 
 - Plain .NET contract, codec, dependency-derivation and reference-projection work is `REMOTE_OK`.
 - Any claim involving `AssetDatabase`, `GlobalObjectId`, scene/prefab serialization, Unity component behavior, editor package resolution or import requires the exact installed Unity Editor.
-- Batchmode is the default deterministic Unity proof surface.
+- Batchmode is both the default deterministic Unity proof surface and the sole H1 public host-to-Editor execution topology; an in-Editor Arkus/MCP host, daemon or network IPC is not an implementation option under this plan.
 - A local interactive/editor or graphics-capable run is required only where the representative asset/render/animation evidence cannot be produced truthfully with `-nographics`.
 - Missing required Unity evidence yields `READY_FOR_LOCAL_VALIDATION`, never PASS.
 

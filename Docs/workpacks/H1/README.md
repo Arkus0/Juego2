@@ -4,10 +4,12 @@ Status: PLANNED / NOT_STARTED
 Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`
 Reconciled integration base: `7fe44840076eba05f1b67a7633cd33fc67b9023d` (CITY programme v2 PASS, merge and DocSync)
 Binding architecture: `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md`
+Binding decisions: `Docs/architecture/ADR-H1-001-*` through `ADR-H1-004-*`
 Binding proof standard after plan adoption: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` v1.4+
 Architect pre-review: `Docs/evidence/H1-PLAN/ARCHITECTURE_PRE_REVIEW.md`
 
 No H1 implementation WP is active or frozen by this plan.
+The sequence contains 13 claim-owned implementation workpacks plus `WP-H1-GATE`.
 
 ## Outcome
 
@@ -20,7 +22,8 @@ WP-HK-GATE
    +--> H1-00 neutral bridge contract --> H1-01 Unity scoped producer ----+
    +--> H1-02 Unity project/toolchain -----------------------------------+
                                                                           v
- H1-03 host/workspace policy -> H1-04 catalogue/identity -> H1-05 managed scenes
+ H1-03 host/workspace policy -> H1-03A public Editor execution/lifecycle
+      -> H1-04 catalogue/identity -> H1-05 managed scenes
       -> H1-06 assets/prefabs -> H1-07 components -> H1-08 validation
       -> H1-09 reconciliation/import proposals -> H1-10 checkpoint/rebuild
       -> H1-11 representative real-asset slice -> H1-GATE
@@ -41,15 +44,16 @@ The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox fal
 | 2 | `WP-H1-01` | Unity scoped authoring producer and automatic dependency derivation | `REMOTE_OK` |
 | 3 | `WP-H1-02` | pinned reproducible Unity project/toolchain/package baseline | `LOCAL_UNITY_REQUIRED` |
 | 4 | `WP-H1-03` | explicit project-scoped Unity host authority below transports | `HYBRID` |
-| 5 | `WP-H1-04` | effective Unity catalogue and logical/native identity mapping | `LOCAL_UNITY_REQUIRED` |
-| 6 | `WP-H1-05` | deterministic managed scene graph and generational publication | `LOCAL_UNITY_REQUIRED` |
-| 7 | `WP-H1-06` | source-asset/prefab resolution plus managed prefab derivatives | `LOCAL_UNITY_REQUIRED` |
-| 8 | `WP-H1-07` | allowlisted component schema, inspection and realization | `LOCAL_UNITY_REQUIRED` |
-| 9 | `WP-H1-08` | Unity-owned validation and stable diagnostics | `HYBRID` |
-| 10 | `WP-H1-09` | deterministic drift plus explicit Unity-to-canonical proposals | `LOCAL_UNITY_REQUIRED` |
-| 11 | `WP-H1-10` | project checkpoint and clean Unity reconstruction preserving H0 | `HYBRID` |
-| 12 | `WP-H1-11` | exact licensed real-asset Juego2-shaped conformance slice | `LOCAL_UNITY_REQUIRED` |
-| 13 | `WP-H1-GATE` | composed Unity bridge/parity readiness | `HYBRID` |
+| 5 | `WP-H1-03A` | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID` |
+| 6 | `WP-H1-04` | effective Unity catalogue and logical/native identity mapping | `LOCAL_UNITY_REQUIRED` |
+| 7 | `WP-H1-05` | deterministic managed scene graph and generational publication | `LOCAL_UNITY_REQUIRED` |
+| 8 | `WP-H1-06` | source-asset/prefab resolution plus managed prefab derivatives | `LOCAL_UNITY_REQUIRED` |
+| 9 | `WP-H1-07` | allowlisted component schema, inspection and realization | `LOCAL_UNITY_REQUIRED` |
+| 10 | `WP-H1-08` | Unity-owned validation and stable diagnostics | `HYBRID` |
+| 11 | `WP-H1-09` | deterministic drift plus explicit Unity-to-canonical proposals | `LOCAL_UNITY_REQUIRED` |
+| 12 | `WP-H1-10` | project checkpoint and clean Unity reconstruction preserving H0 | `HYBRID` |
+| 13 | `WP-H1-11` | exact licensed real-asset Juego2-shaped conformance slice | `LOCAL_UNITY_REQUIRED` |
+| 14 | `WP-H1-GATE` | composed Unity bridge/parity readiness | `HYBRID` |
 
 ## Split review
 
@@ -58,6 +62,8 @@ The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox fal
 | H1-00 vs H1-01 | neutral projection truth can be correct while the Unity public producer/dependency semantics are false |
 | H1-01 vs H1-03 | contract composition and dependency derivation do not prove editor/project host authority |
 | H1-02 vs H1-03 | a reproducible project can exist while policy admission is bypassable, and vice versa |
+| H1-03 vs H1-03A | admitting fixed project/editor authority does not prove public process dispatch, main-thread execution or truthful interruption lifecycle |
+| H1-03A vs H1-04 | a correct public Editor execution seam can pass while effective catalogue identity/completeness is false |
 | H1-04 vs H1-05 | read-only inventory/identity can pass while writes/materialization are unsafe |
 | H1-05 vs H1-06 | deterministic GameObject hierarchy does not prove prefab/asset relationship fidelity |
 | H1-06 vs H1-07 | prefab linkage and arbitrary component-field semantics have different universes/oracles |
@@ -80,6 +86,7 @@ H1 consumes H0 canonical identity/hash, complete inspection, plan/dry-run/atomic
 - Unity-required evidence records exact editor/package/platform fingerprints;
 - missing local Unity evidence cannot be called PASS;
 - no full H0 AI trial or complete H0 replay/transport suite is repeated per WP;
+- every Editor-bound public operation enters canonical composition and consumes the single H1-03A execution seam; private scripts/menus or adapter-only routes are not acceptance evidence;
 - delta checks cover only the H0 seam touched by the current claim;
 - the sole planned fresh external AI-agent trial is at `WP-H1-GATE`.
 

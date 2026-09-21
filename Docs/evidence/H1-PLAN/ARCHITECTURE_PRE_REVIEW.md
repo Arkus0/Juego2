@@ -1,13 +1,32 @@
 # H1 architecture pre-review — PROCESS_ONLY
 
-Status: COMPLETE for the planning candidate; not an implementation PASS
+Status: COMPLETE for the repaired planning candidate; not an implementation PASS
 Initial reconstruction baseline: `main` at `c87c4c195d63cc9255745014f2b9757d9cd34050`
 Reconciled integration base: `main` at `7fe44840076eba05f1b67a7633cd33fc67b9023d` after CITY programme v2 PASS, merge and DocSync
-Date: 2026-09-20
+Date: 2026-09-21
+
+WORKER_PRE_REVIEW: CLEAN
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 1
+WORKER_PRE_REVIEW_EVIDENCE: `Docs/evidence/H1-PLAN/ARCHITECTURE_PRE_REVIEW.md`
 
 ## Scope
 
-This is the architect's adversarial review of the complete H1 plan before any workpack is activated. It validates causal ownership, sequencing and proof boundaries. It does not independently review future implementation and cannot grant PASS to any `WP-H1-*`.
+This is the architect's strict review of the complete H1 plan before any workpack is activated. It validates causal ownership, sequencing and proof boundaries. It does not independently review future implementation and cannot grant PASS to any `WP-H1-*`.
+
+## Repair cycle 1 — public H0/MCP to Unity Editor execution seam
+
+Independent review `#5263396125` issued FAIL on candidate `2be5c228d50a3869069ca40cfa70cc73ae3cc450`. The plan assigned Unity project bootstrap to H1-02, authority admission to H1-03 and materialization/reconstruction to H1-05/H1-10, but no owner selected how the accepted external process-local H0 host would execute Editor API work or how that process boundary handled public dispatch, main-thread serialization, cancellation, restart and failures. The Gate therefore assumed public operations that no predecessor was required to publish.
+
+The repair does not reopen HK07A/HK07B: those accepted the process-local neutral host and MCP projection while explicitly excluding Unity. It does not merge the defect into H1-03 because admission and execution lifecycle are independently rejectable. Instead:
+
+- `ADR-H1-004` selects an external Arkus .NET host plus short-lived pinned Unity batch-worker topology;
+- new `WP-H1-03A` owns bootstrap binding, same-handler reference/MCP dispatch, the Editor main-thread/project lease, cancellation/interruption/restart and structured process failures;
+- H1-04 now depends on H1-03A, so no Unity feature can choose a different topology;
+- H1-05 must publish plan/materialize/observe through canonical composition;
+- H1-10 must publish checkpoint/rebuild through canonical composition; and
+- the closure-only Gate must discover and use those routes and fails if a private script/menu/adapter path substitutes for one.
+
+No Unity/runtime/bridge/gameplay implementation is added by this repair.
 
 ## Per-workpack split review
 
@@ -15,8 +34,9 @@ This is the architect's adversarial review of the complete H1 plan before any wo
 |---|---|---|---|---|---|---|
 | H1-00 | contract plus reference materializer are inseparable neutrality claim; Unity excluded | consumes H0; changes no H0 meaning | normalized effective resources independently compared; interruption changes active generation only if defect exists | H1-01 can use final versioned artifacts | no Unity type; larger split would make contract speculative | KEEP |
 | H1-01 | public binding + derivation are one producer-truth claim | HK02A reopens only if canonical reference cannot be expressed | structured tree is independently walked; omitted reference control must RED | vocabulary covers all already-planned H1 units without claiming assets exist | Unity-named portable schema, no Unity CLR model | KEEP |
-| H1-02 | editor, packages and project layering form one reproducibility claim | does not re-prove H0 builds | effective resolved packages/assemblies checked, not manifest alone | H1-03 consumes exact project/profile with no placeholder | Unity-specific by purpose but isolated below canonical graph | KEEP |
-| H1-03 | authority admission is distinct from features | HK09A unchanged; new legitimate effects get a new policy | valid generic composed route attempts the actual bypass | all later editor effects cross this final seam | no feature behavior; sufficient independent value | KEEP |
+| H1-02 | editor, packages and project layering form one reproducibility claim | does not re-prove H0 builds | effective resolved packages/assemblies checked, not manifest alone | H1-03 consumes its policy shape and H1-03A binds its exact launch substrate | Unity-specific by purpose but isolated below canonical graph | KEEP |
+| H1-03 | authority admission is distinct from features | HK09A unchanged; new legitimate effects get a new policy | valid generic composed route attempts the actual bypass | H1-03A consumes this final admission seam before executing | no feature behavior; sufficient independent value | KEEP |
+| H1-03A | public process dispatch/lifecycle is distinct from admission and feature semantics | consumes HK07A/B transport and H1-03 policy; owns only the new Editor seam | real reference/MCP calls cross the same handler; wrong profile, lease, crash, restart/status and cancellation controls exercise the boundary | H1-04 and all later Editor operations consume one final topology | lasting inspection/status capabilities prove the seam without pulling catalogue/materialization forward | ADD |
 | H1-04 | inventory and native/logical mapping share one catalogue truth | no canonical identity rewrite | AssetDatabase/type universe versus mapping; removed manifest row cannot shrink proof | H1-05 receives stable final logical IDs/fingerprint | catalogue remains project state; all asset classes share owner | KEEP |
 | H1-05 | scene graph plus staging/publication are one truthful materialization claim | H0 canonical transaction remains separate | effective managed markers/scene observation; forced pre-publication failure | prefab/component semantics deliberately remain later and require no scene-contract break | only derived GameObjects; correctly sized first write boundary | KEEP |
 | H1-06 | asset and prefab links share Unity asset authority | consumes catalogue/generation without replaying them | effective prefab/source/nested links and protected source hashes | H1-07 can add fields without changing prefab authority | does not promote prefab contents into canonical state | KEEP |
@@ -40,6 +60,7 @@ This is the architect's adversarial review of the complete H1 plan before any wo
 9. **Unity structure promoted to canonical semantics?** No. GameObjects/components/native IDs are derived projection/locators. Only portable Unity binding intent is canonical opaque extension data, and it remains provider-owned.
 10. **Workpack size wrong?** No function/test/package/asset gets its own WP. Conversely, catalogue versus write, scene versus prefab, prefab versus components, validation versus reconciliation and continuity versus real content remain split because each can pass while its neighbor fails.
 11. **CITY v2 ownership displaced?** No. The plan was rebased after CITY v2 acceptance. CITY-00 geography, CITY-03 seed, CITY-04 greybox, CITY-07 keeper realization and CITY-08 reuse-cost proof remain their owners. H1-08 and H1-GATE provide explicit prerequisites only.
+12. **Public host-to-Editor seam deferred?** No. ADR-H1-004 selects the process topology and H1-03A owns its lifecycle before catalogue work. H1-05/H1-10 publish the Gate-required effect/rebuild operations through the same composed surface.
 
 ## Reviewer-failure forecast
 
@@ -50,6 +71,7 @@ This is the architect's adversarial review of the complete H1 plan before any wo
 | adapter/schema universe self-shrink or volatile fields in parity | H1-07 | reflection and registry convenience can create hidden coverage gaps |
 | sync direction or stale anchor error | H1-09 | reverse compilation can accidentally become a second writer authority |
 | hidden generated-state dependency during restart | H1-10 | same-session success can mask false reconstruction |
+| public dispatch, cancellation or crash maps falsely across the Editor process boundary | H1-03A | H0 admission-only cancellation cannot by itself describe an external Editor effect |
 | real package import/licensing/rig assumptions | H1-11 | external content exercises shapes synthetic fixtures omit |
 | stage/residual omission or fresh-client documentation gap | H1-GATE | closure can be green while a real execution or input universe is absent |
 
@@ -57,13 +79,13 @@ The plan therefore expects Reviewer FAIL to be informative at these owners rathe
 
 ## Freeze decision
 
-The planning candidate is internally coherent and may be submitted for human review. No implementation workpack is active. If the planning PR merges unchanged, `WP-H1-00` is the first default Worker; `WP-H1-02` is the only independent parallel branch and still requires explicit authorization.
+The repaired planning candidate is internally coherent and may be resubmitted for independent review. No implementation workpack is active. If the planning PR merges unchanged, `WP-H1-00` is the first default Worker; `WP-H1-02` is the only independent parallel branch and still requires explicit authorization.
 
 ## Mechanical planning validation
 
-- all 13 H1 contract files contain the required boundary, inheritance, proof, negative-conformance, residual, reopen and execution sections;
+- all 14 H1 contract files contain the required boundary, inheritance, proof, negative-conformance, residual, reopen and execution sections;
 - statuses are uniformly `PLANNED / NOT_STARTED`; no H1 Worker is active/frozen;
-- execution classification is 2 `REMOTE_OK`, 7 `LOCAL_UNITY_REQUIRED` and 4 `HYBRID`;
+- execution classification is 2 `REMOTE_OK`, 7 `LOCAL_UNITY_REQUIRED` and 5 `HYBRID`;
 - referenced local planning documents resolve, the staged change is documentation/process-only and `git diff --check` is clean;
 - the legacy `scripts/hk00a-architecture-check.sh` reports the same pre-existing failure on baseline and candidate: its frozen text oracle still requires a phrase in superseded `WP-HK-07.md` that is absent on accepted `main`. This plan does not rewrite historical H0 evidence to make that stale checker green;
 - the planning environment has no `dotnet` executable. No source/project/runtime byte is changed, so product test execution is not presented as planning evidence.

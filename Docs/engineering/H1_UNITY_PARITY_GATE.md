@@ -1,6 +1,6 @@
 # H1 Unity parity gate — deterministic reference scenario
 
-Version: 1.0-planned — 2026-09-20
+Version: 1.1-planned — 2026-09-21
 Owner: `WP-H1-GATE`
 
 ## Representative slice
@@ -22,19 +22,19 @@ Exact third-party pieces come from the accepted H1-11 adoption record. CITY-00 s
 
 1. clean checkout; verify H0 baseline, exact Unity editor, package lock and adopted content hashes;
 2. run remote H0/bridge-neutral delta validation;
-3. open/import the exact Unity project in batchmode and enumerate the effective package/assembly universe;
-4. discover the composed public H1 capability/schema surface through the reference path;
+3. start the reference H1 host with the fixed project launch profile; use its composed project inspection capability to launch the exact short-lived Unity batch worker and enumerate the effective package/assembly universe;
+4. discover the complete composed public H1 capability/schema surface through the reference path, including project inspection/operation status, catalogue, projection plan/materialize/observe, validation/reconciliation and checkpoint/rebuild;
 5. inspect the effective Unity catalogue and resolve every selected logical ID;
 6. use the schema-aware producer to compile binding extensions and derived dependencies;
 7. use ordinary H0 plan/dry-run/apply to create the canonical slice and record canonical hash/provenance;
 8. preflight Unity validation, generate a projection plan and inspect its semantic changes;
-9. materialize a staged generation, publish it and compare normalized observation to plan;
+9. invoke the composed public materialize capability through H1-03A, publish the staged generation and compare the composed normalized observation result to plan;
 10. inspect scene, managed GameObjects, prefab/source relationships, assets, components and diagnostics through public capabilities;
 11. repeat same-input materialization and require no semantic delta;
 12. submit one intentionally invalid/missing asset or component reference, require structured diagnostics and prove no active-generation/receipt false publication; repair through canonical authoring and succeed;
 13. introduce a supported managed Unity edit, observe deterministic drift, compile a canonical proposal, force one stale-base conflict, recover through HK08B, apply through H0 and rematerialize to parity;
-14. save a project checkpoint, close processes, remove generated projection output, restore canonical state through accepted snapshot/replay semantics and rebuild the same normalized Unity digest;
-15. rerun the H1 public semantic delta through MCP and compare normalized results with the reference path;
+14. invoke composed project checkpoint, close processes, remove generated projection output, start a fresh H1 host, restore canonical state through accepted snapshot/replay semantics and invoke composed rebuild to reproduce the normalized Unity digest;
+15. from the same baseline in an isolated project copy, rerun the H1 public semantic delta through MCP; require identical composed capability coverage, the same H1-03A lifecycle/error semantics and equivalent normalized results to the reference path;
 16. produce one supplementary rendered/editor capture and confirm the real asset slice loads with no owned error diagnostics;
 17. run the complete required H1 exact-SHA validation and reconcile dependencies/residuals.
 
@@ -61,7 +61,7 @@ Plain .NET contract/codec/reference proofs run remotely. Unity catalogue, scene/
 
 ## Fresh AI-agent trial scope
 
-The fresh agent must prove the new public-client claim, not reproduce all deterministic stages. Starting only with launch/bootstrap instructions, it must discover H1 capabilities/schemas, catalogue entries and binding shapes; author the bounded slice through H0; materialize/inspect it; consume one structured Unity diagnostic; repair and close with canonical hash/journal plus active generation/observation evidence. It may not read implementation source, infer semantics from binaries, receive Worker-supplied intermediate calls or use private product APIs.
+The fresh agent must prove the new public-client claim, not reproduce all deterministic stages. Starting only with the fixed public H1 host launch-profile instructions, it must discover H1 capabilities/schemas, catalogue entries and binding shapes; author the bounded slice through H0; materialize/inspect it; consume one structured Unity diagnostic; repair; invoke checkpoint/rebuild; and close with canonical hash/journal plus active generation/observation evidence. It may not launch Unity directly, read implementation source, infer semantics from binaries, receive Worker-supplied intermediate calls or use private product APIs.
 
 ## Hard blockers
 
@@ -71,6 +71,8 @@ The fresh agent must prove the new public-client claim, not reproduce all determ
 - partial/failed materialization becomes the active generation or yields success evidence;
 - plan/observation/rebuild digests diverge;
 - invalid engine state requires implementation knowledge rather than structured diagnostics;
+- materialize/observe or checkpoint/rebuild is absent from canonical composed discovery or succeeds only through a private Editor/script/adapter path;
+- reference and MCP choose different Editor execution topologies or bypass the H1-03A project profile/lease/lifecycle contract;
 - source assets are overwritten or unapproved assets are required;
 - full H0 semantics are redefined to accommodate Unity;
 - gate or AI-trial evidence is not bound to the exact candidate/toolchain/content inputs;

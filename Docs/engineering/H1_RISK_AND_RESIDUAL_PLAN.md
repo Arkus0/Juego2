@@ -1,7 +1,7 @@
 # H1 risk, residual and H0S relationship
 
 Status: H1 planning contract
-Date: 2026-09-20
+Date: 2026-09-21
 
 ## H0 residuals H1 deliberately owns
 
@@ -40,6 +40,7 @@ Only measured evidence that the H1 representative scenario cannot operate inside
 | catalogue or component registry proves its own completeness | H1-04/H1-07 | independent AssetDatabase/effective-adapter universe |
 | bridge creates a second mutation authority | H1-01/H1-09 | producer emits mutation proposals; only H0 commits |
 | H0 host policy is skipped or weakened for editor effects | H1-03 | separate Unity policy at the below-transport seam |
+| public H0/MCP host cannot truthfully reach Unity or grows a private/parallel route | H1-03A | fixed external-host → batch-worker topology; same composed handler for reference/MCP; structured lifecycle proof |
 | materialization partially replaces the active projection | H1-05 | generation staging, publication manifest and interruption controls |
 | source prefab/asset is overwritten | H1-06 | source catalogue read-only; only managed derivatives writable |
 | generic reflection silently broadens component mutation | H1-07 | explicit schema adapters and effective allowlist coverage |
@@ -57,6 +58,7 @@ Unless separately promoted by evidence, H1 does not claim:
 - arbitrary Unity asset/component support;
 - byte-identical Unity serialization across versions/platforms;
 - background live synchronization or multi-user editor coordination;
+- low-latency/parallel Editor dispatch, a long-lived Editor daemon or a startup-time SLO beyond the accepted batch-per-operation H1 profile;
 - merge of independent canonical/Unity histories;
 - power-loss durability for editor publication;
 - shipping-scale catalogue/world throughput or SLOs;

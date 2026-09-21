@@ -153,6 +153,8 @@ H1 keeps `WorldState`, H0 mutation/validation/provenance and public composition 
 
 The producer mechanically derives every canonical-object dependency and provider-owned catalogue dependency that it understands. The AI does not normally synchronize structured payload references with duplicate metadata manually. Raw opaque payload authoring remains a low-level primitive; the engine-neutral kernel does not inspect Unity payload meaning.
 
+The public execution topology is also frozen before feature work: the external Arkus .NET host owns the process-local canonical session, composition and reference/MCP projection; admitted Editor-bound handlers launch short-lived pinned Unity batch workers through `WP-H1-03A`, which owns bootstrap binding, project lease, main-thread dispatch, invocation status, cancellation/interruption/restart and structured process failures. Unity never hosts a parallel public registry or canonical session.
+
 ## H1 dependency graph
 
 ```text
@@ -160,7 +162,8 @@ WP-HK-GATE
    +--> H1-00 neutral bridge contract --> H1-01 scoped producer -------+
    +--> H1-02 Unity toolchain/project ---------------------------------+
                                                                         v
- H1-03 host policy -> H1-04 catalogue/identity -> H1-05 managed scenes
+ H1-03 host policy -> H1-03A public Editor execution/lifecycle
+      -> H1-04 catalogue/identity -> H1-05 managed scenes
       -> H1-06 assets/prefabs -> H1-07 components -> H1-08 validation
       -> H1-09 reconciliation -> H1-10 checkpoint/rebuild
       -> H1-11 representative real-asset slice -> H1-GATE
@@ -177,15 +180,16 @@ WP-HK-GATE
 | 2 | `WP-H1-01` | Unity scoped producer + automatic dependency derivation | `REMOTE_OK` |
 | 3 | `WP-H1-02` | exact reproducible Unity project/toolchain/package baseline | `LOCAL_UNITY_REQUIRED` |
 | 4 | `WP-H1-03` | project-scoped Unity host authority below transports | `HYBRID` |
-| 5 | `WP-H1-04` | effective catalogue + logical/native identity mapping | `LOCAL_UNITY_REQUIRED` |
-| 6 | `WP-H1-05` | managed scene graph + generational publication | `LOCAL_UNITY_REQUIRED` |
-| 7 | `WP-H1-06` | source asset/prefab fidelity + managed derivatives | `LOCAL_UNITY_REQUIRED` |
-| 8 | `WP-H1-07` | finite allowlisted component schema/adapters | `LOCAL_UNITY_REQUIRED` |
-| 9 | `WP-H1-08` | Unity-owned validation + actionable diagnostics | `HYBRID` |
-| 10 | `WP-H1-09` | drift/reconciliation + explicit import proposals | `LOCAL_UNITY_REQUIRED` |
-| 11 | `WP-H1-10` | project checkpoint + clean Unity reconstruction | `HYBRID` |
-| 12 | `WP-H1-11` | exact licensed real-asset Juego2 conformance slice | `LOCAL_UNITY_REQUIRED` |
-| 13 | `WP-H1-GATE` | composed Unity parity/readiness + one fresh public AI trial | `HYBRID` |
+| 5 | `WP-H1-03A` | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID` |
+| 6 | `WP-H1-04` | effective catalogue + logical/native identity mapping | `LOCAL_UNITY_REQUIRED` |
+| 7 | `WP-H1-05` | managed scene graph + generational publication | `LOCAL_UNITY_REQUIRED` |
+| 8 | `WP-H1-06` | source asset/prefab fidelity + managed derivatives | `LOCAL_UNITY_REQUIRED` |
+| 9 | `WP-H1-07` | finite allowlisted component schema/adapters | `LOCAL_UNITY_REQUIRED` |
+| 10 | `WP-H1-08` | Unity-owned validation + actionable diagnostics | `HYBRID` |
+| 11 | `WP-H1-09` | drift/reconciliation + explicit import proposals | `LOCAL_UNITY_REQUIRED` |
+| 12 | `WP-H1-10` | project checkpoint + clean Unity reconstruction | `HYBRID` |
+| 13 | `WP-H1-11` | exact licensed real-asset Juego2 conformance slice | `LOCAL_UNITY_REQUIRED` |
+| 14 | `WP-H1-GATE` | composed Unity parity/readiness + one fresh public AI trial | `HYBRID` |
 
 The split is claim-driven, not quota-driven. Adjacent workpacks remain separate where authority or proof can fail independently; component types and individual assets remain together where further division would create administrative micro-WPs. H0 guarantees are inherited and only delta-checked at changed seams. The sole planned fresh external AI-agent trial is the final Gate.
 

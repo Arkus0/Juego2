@@ -44,7 +44,8 @@ Gate evidence begins with canonical discovery/authoring and ends with normalized
 ## Acceptance criteria
 
 - every stage in `Docs/engineering/H1_UNITY_PARITY_GATE.md` executes on the exact candidate;
-- reference and MCP expose equivalent new H1 semantics where both apply;
+- reference and MCP discover from canonical composition and dispatch equivalent H1 project inspection/operation status, catalogue, projection plan/materialize/observe, validation/reconciliation and checkpoint/rebuild semantics through the accepted H1-03A seam;
+- no Gate stage launches Unity through a private script/menu/test helper, adapter-only tool, direct Editor entry point or public route added by the Gate;
 - canonical state/provenance and bridge projection receipts remain truthfully distinct;
 - normalized plan equals effective Unity observation, second apply is idempotent and clean rebuild is equal;
 - invalid/missing asset/component cases give structured diagnostics and never publish a false active generation;
@@ -65,7 +66,8 @@ The gate uses a clean checkout, exact local Unity/toolchain fingerprint, remote 
 - Unity artifact substituted as canonical recovery truth;
 - normalized parity stage skipped while screenshot remains;
 - AI trial artifact/SHA mismatch or hidden/private call;
-- gate-owned proof universe self-shrinks.
+- gate-owned proof universe self-shrinks;
+- a required H1 capability is absent from composed discovery while a private Unity path keeps the scenario green.
 
 ## Content-shape probe
 
@@ -85,7 +87,7 @@ A predecessor reopens only when effective gate evidence proves its accepted guar
 
 ## Fresh independent AI-agent trial
 
-Required once, at this gate. The agent starts from launch/bootstrap instructions, uses MCP discovery and returned schemas, authors and repairs the bounded Unity slice, triggers materialization, inspects normalized Unity state and closes with canonical plus bridge evidence. Deterministic CI/local proof remains authoritative.
+Required once, at this gate. The agent starts the public MCP host from the fixed H1 launch-profile instructions, uses MCP discovery and returned schemas, authors and repairs the bounded Unity slice, triggers composed materialization, inspects normalized Unity state and invokes composed checkpoint/rebuild before closing with canonical plus bridge evidence. It never launches the Editor entry point directly. Deterministic CI/local proof remains authoritative.
 
 ## PASS consequence / next dependency
 
