@@ -1,0 +1,117 @@
+{
+  "schema": "arkus.accepted-state-index@1",
+  "authority": "DERIVED_NAVIGATION_ONLY",
+  "generated_from_main_sha": "02016ba5a3d0a344525835652bbd84c9a2e9cc49",
+  "generated_on": "2026-09-21",
+  "stale_rule": "Mutable hints are usable only when generated_from_main_sha exactly equals the current live main SHA. On mismatch, ignore mutable hints and reconstruct from live GitHub plus authoritative contracts.",
+  "tracks": {
+    "H0": {
+      "status_hint": "COMPLETE",
+      "latest_accepted_hint": "WP-HK-GATE",
+      "next_hint": null,
+      "sources": [
+        "Docs/ROADMAP.md",
+        "Docs/workpacks/README.md",
+        "Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md"
+      ]
+    },
+    "H1": {
+      "status_hint": "ACTIVE_PROGRAMME_NO_ACTIVE_WORKER",
+      "accepted_workpacks_hint": [
+        "WP-H1-00",
+        "WP-H1-01"
+      ],
+      "next_hint": "WP-H1-02",
+      "next_hint_status": "DEPENDENCY_VALID_NOT_STARTED",
+      "sources": [
+        "Docs/workpacks/H1/README.md",
+        "Docs/workpacks/H1/WP-H1-02.md",
+        "Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md"
+      ]
+    },
+    "CITY": {
+      "status_hint": "ACTIVE_PROGRAMME_BLOCKED_AT_NEXT_LOCAL_WP",
+      "accepted_workpacks_hint": [
+        "WP-CITY-00",
+        "WP-CITY-01",
+        "WP-CITY-02",
+        "WP-CITY-05",
+        "WP-CITY-06",
+        "WP-CITY-03"
+      ],
+      "next_hint": "WP-CITY-04",
+      "next_hint_status": "BLOCKED",
+      "blocked_hint": {
+        "missing": [
+          "WP-H1-08 PASS + merge + DocSync"
+        ],
+        "source": "Docs/workpacks/CITY/WP-CITY-04.md"
+      },
+      "sources": [
+        "Docs/workpacks/README.md",
+        "Docs/workpacks/CITY/WP-CITY-04.md"
+      ]
+    },
+    "PA": {
+      "status_hint": "ACTIVE_PROGRAMME_NO_ACTIVE_WORKER",
+      "accepted_workpacks_hint": [
+        "WP-PA-01",
+        "WP-PA-02",
+        "WP-PA-03"
+      ],
+      "next_hint": "WP-PA-04",
+      "next_hint_status": "DEPENDENCY_VALID_NOT_STARTED",
+      "sources": [
+        "Docs/workpacks/README.md",
+        "Docs/workpacks/PA/WP-PA-04.md"
+      ]
+    },
+    "CTX": {
+      "status_hint": "PLAN_ACCEPTED",
+      "accepted_workpacks_hint": [],
+      "next_hint": "WP-CTX-01",
+      "next_hint_status": "ACTIVE_DRAFT_PR_106_AT_GENERATION_TIME",
+      "sources": [
+        "Docs/workpacks/CTX/README.md",
+        "Docs/workpacks/CTX/WP-CTX-01.md",
+        "https://github.com/Arkus0/Juego2/pull/106"
+      ]
+    }
+  },
+  "cross_track_hints": [
+    {
+      "consumer": "WP-CITY-04",
+      "requires": [
+        "WP-CITY-03 PASS + merge + DocSync",
+        "WP-H1-08 PASS + merge + DocSync"
+      ],
+      "status_hint": "BLOCKED_ON_WP-H1-08",
+      "source": "Docs/workpacks/CITY/WP-CITY-04.md"
+    },
+    {
+      "consumer": "WP-CITY-07",
+      "requires": [
+        "WP-CITY-04 PASS",
+        "WP-H1-GATE PASS + merge + DocSync"
+      ],
+      "status_hint": "BLOCKED",
+      "source": "Docs/workpacks/README.md"
+    },
+    {
+      "consumer": "WP-PA-14",
+      "requires": [
+        "WP-PA-13 PASS",
+        "future accepted H2 closure/gate"
+      ],
+      "status_hint": "DEFERRED",
+      "source": "Docs/workpacks/README.md"
+    }
+  ],
+  "open_non_workpack_process_prs_at_generation_hint": [
+    {
+      "pr": 86,
+      "title": "docs: add simple workpack guide site",
+      "authority": "NONE_FOR_CONTRACT_STATE"
+    }
+  ]
+}
