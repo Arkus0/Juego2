@@ -1,7 +1,7 @@
 # H1 Engine Bridge Architecture — Unity first
 
-Version: 1.1 — 2026-09-21
-Status: ACCEPTED / BINDING — H1 `PROCESS_ONLY` planning PR `#71`; reviewed candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b`; PASS review `#5263596722`; merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`.
+Version: 1.2 — 2026-09-21
+Status: PROPOSED AMENDMENT — v1.1 remains the accepted baseline until this `PROCESS_ONLY` correction receives independent PASS, merge and DocSync.
 
 ## 1. Definition
 
@@ -107,6 +107,8 @@ H1 supports only the following reviewed scope:
 
 Creating or modifying a scene, managed prefab, GameObject, Transform or allowlisted component therefore means changing canonical binding intent and rematerializing. Source assets/prefabs are not mutated. Unsupported or unmanaged Unity objects remain observable as unmanaged drift but are not adopted automatically.
 
+From H1-04 onward, **production-intent source art is not replaced by temporary fabricated art fixtures**. H1-04 admits the first minimal human-approved Quaternius Source slice under `DEPENDENCY_IP_POLICY.md`; later WPs consume that same source baseline whenever their scenario needs facade/prefab/material/prop/vegetation/humanoid/animation content. Repository-owned synthetic objects remain legitimate for harness-only markers, abstract graph nodes and causal defect-injection fixtures that are not pretending to be game art.
+
 ## 6. Synchronization directions
 
 ### Canonical -> Unity (normal authority)
@@ -149,7 +151,7 @@ Unity diagnostics use stable machine codes and anchor to canonical resource ID, 
 
 ## 9. Determinism and parity
 
-For the same canonical snapshot hash, binding schema/version, catalogue snapshot fingerprint, bridge version, exact Unity editor/package fingerprint and declared platform, H1 requires:
+For the same canonical snapshot hash, binding schema/version, catalogue snapshot fingerprint, accepted source-content fingerprint, bridge version, exact Unity editor/package fingerprint and declared platform, H1 requires:
 
 - equal normalized projection plans and plan digests;
 - equal managed logical hierarchy, asset/prefab relationships and allowlisted component values after observation;
@@ -167,11 +169,21 @@ Byte-identical Unity YAML across editor versions or platforms is not claimed. Fo
 - A local interactive/editor or graphics-capable run is required only where the representative asset/render/animation evidence cannot be produced truthfully with `-nographics`.
 - Missing required Unity evidence yields `READY_FOR_LOCAL_VALIDATION`, never PASS.
 
-## 11. External dependencies
+## 11. External dependencies and source-art timing
 
 H1 targets the Unity 6.3 LTS family because the planning-date official support window extends through December 2027. `WP-H1-02` must select an exact patch, pin `ProjectVersion.txt`, `Packages/manifest.json` and `packages-lock.json`, record licenses/terms and freeze the render-pipeline/test package set. Editor binaries are never committed.
 
-No third-party Unity MCP becomes bridge authority. Existing MCP remains an outer projection of the canonical composed inventory. Any real asset pack is adopted only in `WP-H1-11` with exact source/version/license and replacement boundaries.
+No third-party Unity MCP becomes bridge authority. Existing MCP remains an outer projection of the canonical composed inventory.
+
+**Source-art timing is intentionally early:**
+
+- H1-02 through H1-03A require no production art and must not create a fake production-content dependency merely to exercise infrastructure.
+- `WP-H1-04` is the first point where game-representative source assets are required. Before those assets enter the reviewed catalogue, H1-04 must adopt a minimal exact human-approved **Quaternius Source** distribution/slice under `DEPENDENCY_IP_POLICY.md`, including source/version or immutable fingerprint, exact commercial/license terms, distribution mode, notices, local import boundary and replacement strategy.
+- H1-05 through H1-10 reuse that accepted Quaternius baseline whenever the scenario needs game-representative facade/prefab/material/prop/vegetation/humanoid/animation content. They do not invent substitute production art simply because their central claim is not art adoption.
+- `WP-H1-11` no longer acts as first adoption. It expands the already-adopted Quaternius Source baseline to the approximately 10–15 piece representative slice and proves broad end-to-end hierarchy/material/pivot/rig/animation conformance before the Gate.
+- If exact source/version/license/distribution terms change, the affected WP must re-run the adoption policy before relying on the changed content. Unknown or ambiguous terms fail closed.
+
+This timing prevents H1 from proving catalogue/materialization/rebuild behavior against disposable art shapes that the project already knows it will replace, while preserving H1-11 as the stronger representative conformance boundary.
 
 ## 12. Boundary before H2
 
