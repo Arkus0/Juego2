@@ -35,7 +35,7 @@ Gate orchestration, deterministic scenario/evidence, causal gate-owned omission 
 
 ## Forbidden scope
 
-New product capabilities/schemas, bridge fixes, gameplay, broader asset content, changing predecessor oracles to fit the gate, or using the AI trial as the deterministic oracle.
+New product capabilities/schemas, bridge fixes, gameplay, broader asset content, Cantabrian art production, changing predecessor oracles to fit the gate, or using the AI trial as the deterministic oracle.
 
 ## Architecture / authority boundary
 
@@ -50,14 +50,14 @@ Gate evidence begins with canonical discovery/authoring and ends with normalized
 - normalized plan equals effective Unity observation, second apply is idempotent and clean rebuild is equal;
 - invalid/missing asset/component cases give structured diagnostics and never publish a false active generation;
 - supported Unity drift becomes a reviewable canonical proposal and only H0 commits it;
-- the representative real-asset slice includes hierarchy, prefab/asset relationships, materials, allowlisted components and humanoid animation references;
+- the representative real-asset slice includes hierarchy, prefab/asset relationships, materials, allowlisted components and humanoid animation references from the Quaternius Source baseline adopted at H1-04 and broadened at H1-11;
 - all H1 residuals/dependencies are reconciled without shrinking the inherited universe;
 - fresh independent AI-agent trial succeeds using public discovery/schemas and no implementation-source/private product call;
 - foundational proof is READY with zero unresolved in-boundary obligations/classes.
 
 ## Deterministic proof / evidence
 
-The gate uses a clean checkout, exact local Unity/toolchain fingerprint, remote H0/reference proof and local Unity batchmode plus required graphics/editor evidence. It captures canonical hashes, mutation journal/diff, catalogue fingerprint, plan/generation/observation digests, diagnostics, receipts, checkpoint/rebuild results and interaction transcript.
+The gate uses a clean checkout, exact local Unity/toolchain fingerprint, remote H0/reference proof and local Unity batchmode plus required graphics/editor evidence. It captures canonical hashes, mutation journal/diff, catalogue fingerprint, accepted source-content fingerprint, plan/generation/observation digests, diagnostics, receipts, checkpoint/rebuild results and interaction transcript.
 
 ## Causal negative-conformance classes
 
@@ -71,15 +71,15 @@ The gate uses a clean checkout, exact local Unity/toolchain fingerprint, remote 
 
 ## Content-shape probe
 
-Required and identical to the deterministic reference scenario described in the gate document. It is representative, not a complete H2 scene or the CITY-03 seed.
+Required and identical to the deterministic reference scenario described in the gate document. It is representative bridge evidence, not a complete H2 playable demo, final Cantabrian art pass or the CITY-03 seed.
 
 ## Dependency / IP implications
 
-Gate reconciles exact Unity/packages and the H1-11 asset adoption record. It adopts nothing new.
+Gate reconciles exact Unity/packages, the H1-04 Quaternius Source adoption record and H1-11 representative selected-asset manifest. It adopts nothing new and does not redistribute or artistically modify the source pack.
 
 ## Residual risks
 
-All declared post-H1 exclusions remain visible: arbitrary components/assets, power-loss durability, collaborative sync, runtime/save parity, shipping SLOs and gameplay behavior.
+All declared post-H1 exclusions remain visible: arbitrary components/assets, power-loss durability, collaborative sync, runtime/save parity, shipping SLOs, gameplay behavior and production-art completion/Cantabrian adaptation.
 
 ## Exact predecessor reopen condition
 
@@ -91,4 +91,4 @@ Required once, at this gate. The agent starts the public MCP host from the fixed
 
 ## PASS consequence / next dependency
 
-PASS authorizes detailed H2/gameplay workpacks and satisfies the H1 prerequisite for `WP-CITY-07`, still subject to CITY-04 PASS and CITY's own start/review process. It does not pre-accept CITY-08's later reuse-cost claim. FAIL routes to the causal H1 owner or gate proof boundary. No H2 or keeper realization starts before post-PASS merge and DocSync.
+PASS authorizes detailed H2/gameplay workpacks and satisfies the H1 prerequisite for `WP-CITY-07`, still subject to CITY-04 PASS and CITY's own start/review process. H2 may then build the first playable with maximum practical direct reuse of the accepted Quaternius Source baseline and introduce Juego2-derived/Cantabrian assets only as concrete demo needs require. This Gate does not pre-accept those later art/product claims or CITY-08's reuse-cost claim. FAIL routes to the causal H1 owner or gate proof boundary. No H2 or keeper realization starts before post-PASS merge and DocSync.
