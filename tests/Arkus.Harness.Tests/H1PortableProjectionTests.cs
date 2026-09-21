@@ -9,7 +9,7 @@ namespace Arkus.Harness.Tests
     public sealed class H1PortableProjectionTests
     {
         [Fact]
-        public void PortableContractIsEngineNeutralMachineReadableAndReceiptCarriesDiagnostics()
+        public void PortableContractIsVersionedMachineReadableAndReceiptCarriesStructuredAnchorDiagnostics()
         {
             var plan = Plan();
             var materializer = new ReferenceMaterializer();
@@ -18,19 +18,27 @@ namespace Arkus.Harness.Tests
                 new[] { "asset.market-stall", "asset.workshop-kit" },
                 ReferenceFailurePoint.BeforePublication);
 
-            var data = ProjectionPortableData.Materialization(failed);
+            var data = ProjectionPortableData.Materialization(plan, failed);
             AssertPortable(data);
 
             var receipt = Assert.IsAssignableFrom<IReadOnlyDictionary<string, object?>>(data["receipt"]);
             var observation = Assert.IsAssignableFrom<IReadOnlyDictionary<string, object?>>(data["observation"]);
+            var anchor = Assert.IsAssignableFrom<IReadOnlyDictionary<string, object?>>(receipt["canonicalAnchor"]);
+            var profile = Assert.IsAssignableFrom<IReadOnlyDictionary<string, object?>>(receipt["bridgeProfile"]);
             var diagnostics = Assert.IsAssignableFrom<IReadOnlyList<object?>>(receipt["diagnostics"]);
 
+            Assert.Equal(ProjectionInput.ContractVersion, data["contractVersion"]);
+            Assert.Equal(ProjectionInput.ContractVersion, receipt["contractVersion"]);
+            Assert.Equal(ProjectionInput.ContractVersion, observation["contractVersion"]);
+            Assert.Equal("world.reference", anchor["worldId"]);
+            Assert.Equal(7L, anchor["revision"]);
+            Assert.Equal("world-hash-7", anchor["stateHash"]);
+            Assert.Equal(plan.Input.Profile.Fingerprint, profile["profileFingerprint"]);
             Assert.Equal("not-published", receipt["publicationStatus"]);
             Assert.Equal("failed", observation["state"]);
             Assert.Contains("reference.failure.before-publication", diagnostics);
             Assert.Equal(failed.Observation.ObservationDigest, receipt["observationDigest"]);
             Assert.Equal(plan.Input.CatalogueFingerprint, receipt["catalogueFingerprint"]);
-            Assert.Equal(plan.Input.Profile.Fingerprint, receipt["bridgeProfileFingerprint"]);
         }
 
         [Fact]
@@ -47,15 +55,30 @@ namespace Arkus.Harness.Tests
                 ReferenceFailurePoint.BeforeValidation);
 
             Assert.NotEqual(first.Observation.ObservationDigest, second.Observation.ObservationDigest);
-            Assert.Throws<ArgumentException>(() => ProjectionPortableData.Receipt(first.Receipt, second.Observation));
+            Assert.Throws<ArgumentException>(() =>
+                ProjectionPortableData.Receipt(plan, first.Receipt, second.Observation));
         }
 
-        private static ProjectionPlan Plan()
+        [Fact]
+        public void PortableReceiptFailsClosedWhenPairedWithDifferentPlan()
+        {
+            var plan = Plan();
+            var result = new ReferenceMaterializer().Materialize(
+                plan,
+                new[] { "asset.market-stall", "asset.workshop-kit" });
+            var differentPlan = Plan("catalogue-b");
+
+            Assert.NotEqual(plan.Input.InputDigest, differentPlan.Input.InputDigest);
+            Assert.Throws<ArgumentException>(() =>
+                ProjectionPortableData.Receipt(differentPlan, result.Receipt, result.Observation));
+        }
+
+        private static ProjectionPlan Plan(string catalogue = "catalogue-a")
         {
             var input = new ProjectionInput(
                 new CanonicalProjectionAnchor("world.reference", 7, "world-hash-7"),
                 "binding@1",
-                "catalogue-a",
+                catalogue,
                 new BridgeToolchainProfile("reference", "1.0", "toolchain-a", "portable"),
                 new byte[] { 1, 2, 3, 4 });
 
