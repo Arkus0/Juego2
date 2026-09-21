@@ -28,6 +28,18 @@ Current Juego2 cross-cutting amendments are binding inputs to every relevant PA 
 
 No PA workpack may reopen H0/H1 semantics, make Unity canonical truth, or silently design an unowned H2+ runtime API.
 
+## Result artefact rule
+
+Frozen plans and amendments are immutable research inputs. Executing a PA MUST NOT overwrite them, including the current PA-08/PA-09 plan files whose historical filenames do not contain `_PLAN_`.
+
+The canonical Juego2 result artefact for each executed workpack is:
+
+```text
+Docs/research/living-world/results/PA-XX.md
+```
+
+Supporting evidence may live beside it in a PA-specific evidence directory if needed. A result file records findings, dispositions, scenarios, provenance, deferred empirical proof and Reviewer status; it does not silently mutate its preregistration plan.
+
 ## Execution classes
 
 ### `REMOTE_HARVEST`
@@ -44,14 +56,14 @@ PA-06..13. These can be researched without Unity/local hardware. Donor frozen pl
 
 ### `DEFERRED_INTEGRATION`
 
-PA-14. Final integration needs all prior PA findings **and** a current target phase boundary. Its conceptual synthesis may be prepared remotely, but it must not freeze exact H3/H4/H7 workpack deltas against an imaginary H2 architecture.
+PA-14. Final integration needs all prior PA findings **and an actually completed H2 playable-shell phase**, so it can target real H3+ consumer boundaries instead of an imagined H2 architecture.
 
 Formal PA-14 execution therefore waits until:
 
 1. PA-01..13 are accepted in Juego2; and
-2. the H2 playable-shell phase has an accepted plan/closure boundary sufficient to know what H3+ is consuming.
+2. H2 has reached its future accepted closure/gate, whatever exact ID/name the later reviewed H2 plan assigns to that closure.
 
-The future H2 plan owns its own exact IDs/gate names; this PA plan deliberately does not invent them early.
+The future H2 plan owns its exact IDs/gate names; this PA plan deliberately does not invent them early.
 
 ## Execution chain
 
