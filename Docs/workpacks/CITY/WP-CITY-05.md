@@ -1,10 +1,14 @@
 # WP-CITY-05 — Streets, parcels + reusable building families
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: PRODUCT / ENVIRONMENT PREPRODUCTION (NON-FOUNDATIONAL)  
 Mode: **REMOTE**  
 Depends on: `WP-CITY-02` PASS  
 Blocks: `WP-CITY-06` only
+
+Accepted candidate: `10d1528b0354b16a614fb10a3933a25b32f15f28`  
+Independent review: **PASS**, review `#5267776704`  
+Merged: PR `#83`, merge commit `47909a72eb6d38332f62e9c01426c8cd40e1863b` on 2026-09-21
 
 ## Objective
 

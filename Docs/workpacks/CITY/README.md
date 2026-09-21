@@ -1,7 +1,7 @@
 # CITY track — Keeper City production-space programme
 
 Status: **ACTIVE / NON-FOUNDATIONAL**  
-Version: 2.4 — 2026-09-21
+Version: 2.5 — 2026-09-21
 Repository: `Arkus0/Juego2`
 
 Accepted progress: `WP-CITY-00` is **COMPLETE**. It passed independent review on frozen candidate `f5c684461b525841487158d873a9b135008df3ab` (review `#5261672961`) and merged via PR `#65` as `69bbba2603e67cb233a3e1cc36a4173bed41cfc4`.
@@ -10,7 +10,9 @@ CITY Programme v2 is **ACCEPTED**. Candidate `87a902584f2c46b2d256f6fef26829e918
 
 `WP-CITY-01` is **COMPLETE**. Candidate `3444555a983415645dcc2897b748d6c4f6294f19` passed independent review `#5263809993` in PR `#73` and merged as `a9ff655e5bf2319690d919b88bd57389a32483f3`.
 
-`WP-CITY-02` is **COMPLETE**. Candidate `ddcb22d9a2dfcf68054db2b762fc7ff7aed68ae8` passed independent review `#5266113192` in PR `#81` and merged as `1bdb7b6e914692493b17a9d2215d881dfe326cb0`. The next executable CITY workpack is `WP-CITY-05`.
+`WP-CITY-02` is **COMPLETE**. Candidate `ddcb22d9a2dfcf68054db2b762fc7ff7aed68ae8` passed independent review `#5266113192` in PR `#81` and merged as `1bdb7b6e914692493b17a9d2215d881dfe326cb0`.
+
+`WP-CITY-05` is **COMPLETE**. Candidate `10d1528b0354b16a614fb10a3933a25b32f15f28` passed independent review `#5267776704` in PR `#83` and merged as `47909a72eb6d38332f62e9c01426c8cd40e1863b`. The next executable CITY workpack is `WP-CITY-06`.
 
 ## Purpose
 
@@ -28,7 +30,9 @@ Core rule:
 
 Accepted `WP-CITY-01` now owns the movement/access topology, route families, planning route costs, mobility-profile assumptions, chokepoints/alternate routes and CITY-04 measurement questions in `Docs/production/CITY_MOBILITY_TOPOLOGY.md`. Downstream CITY work consumes that model; it does not invent routes ad hoc or promote planning weights into measured facts.
 
-Accepted `WP-CITY-02` now owns the reviewed place programme in `Docs/production/CITY_LOCATION_PROGRAMME.md`: A–D systemic importance, S0–S4 spatial depth, A/B use profiles, interior-priority backlog, reactive-density measurement vocabulary and the coarse programme-capacity boundary for CITY-00 Q6. Downstream work must preserve the explicit ordinary/quiet reserve and reopen Q6 if a programmed place exceeds its accepted spatial-demand ceiling; exact parcel, frontage and shell composition remain CITY-05.
+Accepted `WP-CITY-02` now owns the reviewed place programme in `Docs/production/CITY_LOCATION_PROGRAMME.md`: A–D systemic importance, S0–S4 spatial depth, A/B use profiles, interior-priority backlog, reactive-density measurement vocabulary and the coarse programme-capacity boundary for CITY-00 Q6. Downstream work must preserve the explicit ordinary/quiet reserve and reopen Q6 if a programmed place exceeds its accepted spatial-demand ceiling.
+
+Accepted `WP-CITY-05` now owns the reusable exterior-production grammar in `Docs/production/CITY_ENVIRONMENT_GRAMMAR.md`: street/junction families, parcel/site constraints, reusable building families, composition ladder, fail-closed CITY-02 functional-POI access binding, later-discovery information requirements and one-off promotion rules. `Docs/production/CITY_ENVIRONMENT_DISCOVERY_REQUIREMENTS.json` remains a non-canonical requirements projection. CITY-06 consumes those reviewed shells/access roles; it does not weaken them or turn spatial-form qualifiers into substitute access roles.
 
 CITY-00 also already names `CITY-01..04`. Those identifiers are therefore stable contracts, not free numbering slots:
 
@@ -48,7 +52,7 @@ CITY-01 ✅  Mobility, district graph + walk-time topology
    ↓
 CITY-02 ✅  Systemic locations + spatial-depth/interior programme
    ↓
-CITY-05    Streets, parcels + reusable building families
+CITY-05 ✅  Streets, parcels + reusable building families
    ↓
 CITY-06    Interiors + layered discovery
    ↓
@@ -122,4 +126,4 @@ Important discoveries may be authored, systemic or hybrid. Martial arts/kung-fu/
 
 ## Current next workpack
 
-`WP-CITY-05 — Streets, parcels + reusable building families`.
+`WP-CITY-06 — Interiors + layered discovery`.
