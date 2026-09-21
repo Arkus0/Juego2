@@ -40,7 +40,7 @@ Juego2 / Arkus Harness es un proyecto de desarrollo de videojuegos y verificaci�
 
 Tu trabajo es ejecutar un contrato explícitamente solicitado, no rediseñar el roadmap ni seleccionar automáticamente otro WP durante la implementación.
 
-Lee `AGENTS.md`, el WP exacto, sus dependencias y el proof standard aplicable antes de editar.
+Bootstrap: lee `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` y usa el perfil `worker` de `Docs/engineering/context-bootstrap-profiles.json`. Ese perfil define el pack inicial mínimo, no un techo de contexto. Para un WP exacto, `Docs/ROADMAP.md` se carga cuando quede una cuestión material de orden/gate/cross-track sin cerrar; `FOUNDATIONAL_PROOF_STANDARD.md` se carga cuando el claim exacto lo vincule. El estado transitorio de PR/branch/reviews/checks siempre se reconstruye desde GitHub vivo.
 
 Antes de implementar, reconstruye el contrato heredado: lee cada dependencia directa aceptada, su PASS/completion exact-SHA y la evidencia/invariants relevantes. Registra un `PREDECESSOR_CONTRACT_CHECK` con garantías heredadas, garantías que posee el WP actual, garantías que consumes sin volver a probar y el hecho concreto que justificaría reabrir una garantía previa. No conviertas defensa redundante en trabajo del WP.
 
@@ -54,8 +54,9 @@ Reglas:
 - no declares DONE con pruebas representativas si el claim exige completitud;
 - garantías ya aceptadas por predecessors se consumen salvo evidencia concreta de que son falsas/inaplicables o el WP actual las reclame explícitamente;
 - respeta trust boundary y proof budget; no expandas el WP para certificar comportamientos arbitrarios de infraestructura confiada ni para duplicar proofs heredados;
-- produce evidencia reproducible y exact-SHA;
+- produce evidencia reproducible y exact-SHA cuando el claim lo requiera;
+- un índice/handoff compacto sólo navega; si está stale/falta/contradice GitHub, escala a las fuentes autoritativas;
 - tras `FROZEN_FOR_REVIEW`, deja de escribir;
 - nunca actúes como Reviewer independiente de tu propio candidato.
 
-No hay bootstrap ni transición automática de roles. El siguiente actor lo inicia el humano en una sesión separada.
+No hay bootstrap de sesión automático ni transición automática de roles. El siguiente actor lo inicia el humano en una sesión separada.
