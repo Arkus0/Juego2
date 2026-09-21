@@ -7,20 +7,29 @@ Baseline SHA: `1b503cfabeca340c42055aaf31df90d72ca28e68`
 Active Worker: `ChatGPT GPT-5.6 Sol`  
 Worker history: `ChatGPT GPT-5.6 Sol`  
 Transfer SHA: `NONE`  
-fail_cycle: **0**
+fail_cycle: **1**
 
-This file is the Worker's **final tracked branch mutation before freeze**. The exact 40-character commit containing this handoff is read from PR #94 immediately afterward and recorded in PR metadata as both `Candidate HEAD SHA` and `Frozen candidate SHA`. PR metadata is the authoritative exact-SHA freeze record.
+This file is the Worker's **final tracked branch mutation before the new freeze**. The exact 40-character commit containing this handoff is read from PR #94 immediately afterward and recorded in PR metadata as both `Candidate HEAD SHA` and `Frozen candidate SHA`.
 
-## Worker state at handoff
+## Prior independent FAIL
+
+Failed frozen candidate: `68dafdc555be0732f31200aa95d8533c4fad2142`.  
+Formal review: **#5268624526**.
+
+Single blocker: CITY-03 claimed an exact hard playable boundary while `mask.rio` / `mask.arroyo` remained semantic-only and bank geometry was deferred to CITY-04. That forced the LOCAL worker to choose where land ended, how X1/X5 cut the banks and how receiving stubs/sites related to water/no-build.
+
+The PR was returned to Draft before repair; the old freeze is retired.
+
+## Worker state at repaired handoff
 
 ```text
 Predecessor contract check: Docs/evidence/WP-CITY-03/WORKER_PLAN.md
 Worker pre-review: CLEAN
-Worker pre-review findings fixed: 3
+Pre-review semantic candidate SHA: f2485725d480b3d51be2428e4aaa97d14f528e48
 Worker pre-review evidence: Docs/evidence/WP-CITY-03/WORKER_PRE_REVIEW.md
 Seed comparison: Docs/evidence/WP-CITY-03/SEED_COMPARISON.md
 Boundary/handoff audit: Docs/evidence/WP-CITY-03/BOUNDARY_AND_HANDOFF_AUDIT.md
-Semantic owner: Docs/production/CITY_PRODUCT_SEED.md v0.2
+Semantic owner: Docs/production/CITY_PRODUCT_SEED.md v0.3
 Branch frozen after this commit: YES
 Worker verdict: IN_REVIEW after PR metadata freeze
 Reviewer verdict: PENDING fresh independent review
@@ -28,20 +37,20 @@ Reviewer verdict: PENDING fresh independent review
 
 ## Direct predecessor reconstructed
 
-Accepted `WP-CITY-06`:
+Accepted `WP-CITY-06` remains unchanged:
 
 - candidate `c73cbb19f8b152bd4b97ce3154eb18a78deaec3c`;
 - independent PASS review `#5268249668`;
 - implementation merge PR #90 / `acb84ec9ba7aa94e962bf7b35d7e53c0549ba758`;
 - DocSync PR #93 / Worker baseline `1b503cfabeca340c42055aaf31df90d72ca28e68`.
 
-CITY-03 consumes CITY-06's reviewed interior/depth/discovery constraints and the transitive CITY-00/01/02/05 guarantees. It does not reopen or re-prove them absent concrete contradiction.
+No predecessor was amended or re-proved during the repair.
 
-## Selected seed
+## Selected seed retained
 
-Selected candidate: `seed.confluence_civic_commercial`.
+Selected candidate remains `seed.confluence_civic_commercial`.
 
-Hard planning envelope:
+Hard outer envelope remains:
 
 ```text
 B01 (-20,-60)
@@ -55,102 +64,142 @@ B08 (-20,55)
 AREA = 44,817.5 m² = 0.0448175 km²
 ```
 
-The area is inside the inherited `0.03–0.06 km²` band. The candidate deliberately uses this hard-envelope metric and does not invent an unsupported net-land oracle.
+This remains inside the inherited `0.03–0.06 km²` band.
 
-Selected accepted anchors inside: W.LANDING, W.X1, O.X1, W.CASCO, W.X5, E.X5, W.PLAZA, W.SHOP.
+## Exact hard playable-boundary repair
 
-Selected playable CITY-01 edges/crossings:
+CITY-03 now freezes exact seed-local water/site geometry before Unity:
 
-- W04, W05, W06, W12, W13;
-- X1 permanent Río crossing with inherited AH semantics;
-- X5 Arroyo foot crossing with inherited low-water-only availability.
-
-No X6/X7 geometry is built. W.LANDING is only the future socket. No dry Wedge→Puerto or Ensanche→Orilla-sur path exists.
-
-## Exact place/site handoff
-
-Selected depth set:
-
-- `loc.casco.bar` — A/S4/I3, `if.social_house + hero.bar_layered`, roles `{public,service,semi-private}`;
-- `loc.plaza.ayuntamiento` — A/S3/I2, `if.civic_office`, roles `{public,service,private}`;
-- `loc.calle.everyday_shop` — B/S2/I1, `if.retail_shallow`, roles `{public,service}`;
-- market, bridgehead and shared court as I0 exterior-led content;
-- ordinary C/S1 closed frontages.
-
-F01–F08 and S01–S03 have exact bounded seed-local placement regions. The boundary audit verifies all 11 regions are inside the hard polygon and F01–F08 respect their accepted CITY-05 parcel planning bands.
-
-Hard playable classification coverage is A/B/C, S1–S4 and I0–I3. D/S0 remains soft scenic context, not playable inflation.
-
-## Route-choice boundary
-
-`casco.micro.A/B` form one node-local public split/rejoin inside `W.CASCO` for CITY-04 follow/search tests. They are not new CITY-01 edges, do not prove city-level redundancy and may never route through the semi-private shared court.
-
-## CITY-04 handoff
-
-The candidate gives CITY-04:
-
-- exact hard polygon and target anchors;
-- selected accepted route/crossing set;
-- bounded frontage/open-site regions;
-- retained versus temporary declaration;
-- five expansion seams;
-- soft-envelope restrictions;
-- thirteen spatial validation scenarios covering quiet morning, market flow, home/work/social trip, a materially different bridge/civic trip, follow/search A/B, bar thresholds, bridge traversal, delivery/material change, municipal access/service change, player perturbation, leave/return, multi-route-ready discovery and blocked route/alternate;
-- measurement targets for W04/W05/W06/W12/W13/X1/X5;
-- physical/access/sightline checks;
-- causal owner routing for deviations.
-
-Planning sums recomputed:
+### Río
 
 ```text
-X1 + W12 + W05 = 3.75 min
-W04 + W05 + W06 = 4.50 min
-W13 + X5 = 1.40 min when X5 is available
+(-20,-8),(0,-10),(20,-24),(40,-42),(60,-46),(95,-45),(140,-42),(185,-40),(205,-38),
+(205,-48),(185,-52),(140,-57),(95,-61),(60,-62),(40,-58),(20,-43),(0,-30),(-20,-24)
 ```
 
-No absent full-city route may be relabelled as measured.
+Area: `3,505.0 m²`.
 
-## Expansion seams
+### Arroyo
 
-Five named seams:
+```text
+(-20,-8),(0,10),(20,28),(40,48),(60,68),(78,90),(88,111),(108,132),(120,140.125),
+(100,136.875),(99,130),(90,118),(82,106),(70,86),(50,60),(30,40),(8,20),(-20,4)
+```
 
-1. commercial/Vega from W.SHOP;
-2. Ensanche from E.X5 while preserving X5 conditionality;
-3. direct Puerto future X6/X7 socket at W.LANDING;
-4. Orilla-sur→Puerto/Entrada from O.X1 via future O01;
-5. upper/Barrio future continuity only through accepted graph.
+Area: `713.6875 m²`.
 
-None requires moving the keeper core.
+The masks meet at `(-20,-8)` on the confluence cut; Arroyo reaches the hard upper boundary. Dry subtraction produces exactly three components:
 
-## CITY-08 reserved slice
+- Wedge `31,704.125 m²`;
+- Orilla-sur `3,200.0 m²`;
+- Ensanche receiving component `5,694.6875 m²`.
 
-`trial.city08.civic_commercial_corner` = bounded W04/plaza edge + F03 everyday shop + F07 ordinary closed mixed frontage + S01 market edge.
+### Bank/no-build
 
-This is a non-hero reusable authoring slice; CITY-08 still owns the actual Arkus public authoring/reuse proof.
+```text
+nb.rio_bank = ((buffer(mask.rio, 3.0 m) ∩ hard_outer) - mask.rio) - named X1 crossing/stubs
+nb.arroyo_bank = ((buffer(mask.arroyo, 2.0 m) ∩ hard_outer) - mask.arroyo) - named X5 crossing/stubs
+```
 
-## Worker pre-review repairs
+These bands prohibit unowned shells/crossings but do not invent public graph edges.
 
-Three material pre-freeze findings were repaired:
+### X1
 
-1. removed unsupported approximate net-area precision;
-2. added bounded exact site regions so CITY-04 does not reselect layout;
-3. made the required home/work/social spatial scenario explicit without inventing runtime schedules/jobs/interiors.
+```text
+x1.crossing = (53,-33),(45,-65),(39,-63),(47,-31)
+stub.x1.wedge  = (42,-40),(58,-40),(58,-22),(42,-22)  # S02
+stub.x1.orilla = (34,-69),(50,-72),(52,-62),(37,-60)
+```
+
+Permanent; Wedge↔Orilla-sur only; AH/no-cart semantics preserved.
+
+### X5
+
+```text
+x5.crossing = (90.5,107.8),(88.5,121.8),(91.5,122.2),(93.5,108.2)
+stub.x5.wedge    = (84,99),(99,99),(96,108),(87,108)
+stub.x5.ensanche = (86,119),(93,124),(94,130),(84,128)
+```
+
+Low-water-only; when unavailable its water intersection remains non-traversable.
+
+Playable-set rule:
+
+```text
+dry_land = hard_outer - (mask.rio ∪ mask.arroyo)
+permanent_playable = dry_land ∪ x1.crossing
+low_water_playable = permanent_playable ∪ x5.crossing
+```
+
+CITY-04 may falsify measured widths/grades/bends/bank treatment, but no longer chooses first bank limits or landmass cuts.
+
+## Containment and negative controls
+
+The repaired audit reports:
+
+- 8/8 selected anchors inside the correct land component;
+- 11/11 F01–F08/S01–S03 inside hard outer;
+- 11/11 site regions outside water;
+- 11/11 outside effective bank no-build after named crossing exemptions only;
+- Wedge/Orilla/Ensanche dry components preserved;
+- X1 reconnects only Wedge↔Orilla;
+- X5 reconnects Ensanche only when available;
+- no dry Wedge→Puerto or Ensanche→Orilla-sur route;
+- no extra water crossing or upstream mask-skirt seam.
+
+Negative controls now include removing/shifting either water mask, separating them at confluence, or adding an unnamed bank-clearance exemption; each fails for the intended causal reason.
+
+## Unchanged accepted parts of the prior candidate
+
+The repair does **not** change:
+
+- three genuine seed alternatives or selected seed identity;
+- W04/W05/W06/W12/W13;
+- X1/X5 inherited access semantics;
+- F01–F08 / S01–S03 identities and frontage-family bindings;
+- bar I3, ayuntamiento I2, shop I1, ordinary I0 fabric;
+- CITY-05 access-role sets;
+- CITY-06 authored-vs-future discovery boundary;
+- `casco.micro.A/B` node-local split/rejoin;
+- five expansion seams;
+- 13 CITY-04 spatial scenarios;
+- CITY-08 reserved authoring-proof slice.
+
+SCN-07 and SCN-13 are only sharpened to reference the new exact water/crossing geometry.
+
+## CITY-04 handoff now complete
+
+The LOCAL worker receives:
+
+- exact outer polygon;
+- exact water polygons;
+- exact bank/no-build derivation;
+- exact X1/X5 overlays and receiving stubs;
+- target anchors in their correct landmasses;
+- bounded site regions;
+- selected route/place/depth/access obligations;
+- scenarios, measurement duties and owner-tagged failure routing.
+
+It can therefore **build exactly this and falsify it** without doing first-pass macro-layout/bank design.
+
+## Worker pre-review
+
+The full pre-review was rerun after the semantic repair, tied to semantic candidate `f2485725d480b3d51be2428e4aaa97d14f528e48`.
 
 `WORKER_PRE_REVIEW: CLEAN`  
 `KNOWN_IN_CLAIM_BLOCKERS: 0`
 
 ## Reviewer challenge targets
 
-The independent Reviewer should especially challenge:
+Fresh Reviewer should especially challenge:
 
-- whether the three alternatives are genuinely different and comparison preceded selection;
-- whether the hard boundary/anchors/sites are coherent enough for local execution without renewed city design;
-- whether X1/X5 and water masks preserve CITY-00/01 topology with no accidental crossing;
-- whether node-local Casco branching remains detail rather than a hidden graph rewrite;
-- whether A/S/I/access/interior/discovery obligations survive selection exactly;
-- whether scenario proxies stay spatial/readiness-only and do not smuggle PA/runtime claims;
-- whether seams genuinely extend the city without foreseeable demolition of core anchors;
-- whether temporary Unity presentation is prevented from becoming semantic authority.
+- reproducibility and containment of the exact Río/Arroyo polygons;
+- whether the masks truly produce the three intended landmasses;
+- X1/X5 crossing/stub cuts and conditional X5 semantics;
+- whether the 3 m / 2 m no-build rules accidentally consume any selected F/S region;
+- whether confluence and upper Arroyo termination leave any dry unintended bypass;
+- whether CITY-04 still has enough falsification authority without being asked to redesign the site;
+- whether the repair touched anything beyond the failed boundary family.
 
 ## Freeze rule
 
@@ -160,4 +209,4 @@ After this handoff commit:
 - exact PR HEAD is recorded in PR body as Candidate HEAD + Frozen candidate SHA;
 - PR is marked Ready for review;
 - next actor is a **fresh independent Reviewer**;
-- any Reviewer FAIL returns CITY-03 to Draft for a fresh repair Worker and a new pre-review/freeze cycle.
+- any further Reviewer FAIL returns CITY-03 to Draft for another repair cycle.
