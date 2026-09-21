@@ -27,6 +27,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  handoff-lint:
+    name: Worker handoff lint
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_BODY: ${{ github.event.pull_request.body || '' }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify linter self-tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/validate-worker-handoff.py --self-test
+
+      - name: Validate canonical Worker handoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/validate-worker-handoff.py --head-sha "${TARGET_SHA}"
+
   observation:
     name: Candidate observation
     if: >-
