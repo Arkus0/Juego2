@@ -130,6 +130,33 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void AmbiguousObservationDigestIsIndependentOfDuplicateEnumerationOrder()
+        {
+            var expected = ProjectionPlanner.Create(Input(new byte[] { 1 }), Resources());
+            var materializer = new ReferenceMaterializer();
+            var baselineRoot = Resources().First();
+            var conflictingRoot = new ProjectionResource(
+                baselineRoot.ResourceId,
+                baselineRoot.ParentResourceId,
+                baselineRoot.ResourceKind,
+                "plaza-conflicting-content",
+                baselineRoot.LogicalDependencies);
+            var remaining = Resources().Where(value => value.ResourceId != baselineRoot.ResourceId).ToArray();
+
+            var forward = new[] { baselineRoot, conflictingRoot }.Concat(remaining).ToArray();
+            var reversed = new[] { conflictingRoot, baselineRoot }.Concat(remaining).ToArray();
+
+            var first = materializer.Observe(expected, forward, Catalogue);
+            var second = materializer.Observe(expected, reversed, Catalogue);
+
+            Assert.Equal(ProjectionDriftState.Ambiguous, first.State);
+            Assert.Equal(ProjectionDriftState.Ambiguous, second.State);
+            Assert.Equal(first.Diagnostics, second.Diagnostics);
+            Assert.Equal(first.EffectiveDigest, second.EffectiveDigest);
+            Assert.Equal(first.ObservationDigest, second.ObservationDigest);
+        }
+
+        [Fact]
         public void DriftOracleDetectsExtraMissingAndChangedManagedResources()
         {
             var plan = ProjectionPlanner.Create(Input(new byte[] { 1 }), Resources());
