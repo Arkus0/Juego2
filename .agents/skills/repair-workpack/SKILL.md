@@ -1,0 +1,54 @@
+# repair-workpack
+
+Repair exactly one explicitly identified Juego2 workpack after an independent Reviewer FAIL.
+
+This is a **fresh Worker role**, never a continuation of the Reviewer session that emitted FAIL.
+
+## Trigger
+
+Use this skill for requests such as:
+
+- `Corrige el FAIL de H1-02`
+- `Repair WP-H1-02`
+- `Fresh repair Worker CITY-04`
+
+Resolve the exact WP ID and canonical PR from live GitHub state. Do not infer a different WP.
+
+## Preconditions
+
+- Read `AGENTS.md`, `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`, the exact WP, the original Worker evidence, and the latest independent Reviewer FAIL bound to an exact reviewed candidate SHA.
+- Reconstruct current `main`, the canonical implementation PR/branch, current PR HEAD, frozen/reviewed SHA fields, `fail_cycle`, dependency state and any later accepted predecessor changes.
+- Use live GitHub state (`gh` in a local session, or an equivalent authenticated GitHub surface). A local Git checkout alone is not sufficient to reconstruct review state.
+- Verify there is exactly one canonical open implementation PR for the WP. If ownership is ambiguous, STOP rather than guessing.
+- Verify the latest independent verdict is actually FAIL/`REPAIR_REQUIRED` for this WP. If the PR is still legitimately frozen for review or already PASS/merged, do not mutate it.
+
+## Workflow
+
+1. Identify the violated criterion, evidence, exact reviewed candidate SHA and minimal causal correction boundary from the independent FAIL.
+2. Confirm whether the finding belongs to the current WP or concretely reopens an accepted predecessor. Do not silently repair a different ownership boundary.
+3. Return the canonical PR to the repair state required by `WORKER_REVIEW_PROTOCOL.md` (normally Draft + ACTIVE) and preserve Worker history, prior reviewed SHA, `fail_cycle` and existing evidence.
+4. Check out/update the canonical repair branch. Do not create a competing implementation PR unless the protocol explicitly requires a migration; if migrated, mark the old PR superseded and preserve history.
+5. Refresh `PREDECESSOR_CONTRACT_CHECK` if dependency/accepted predecessor state changed since the failed candidate.
+6. Reproduce or otherwise validate the Reviewer's blocker before changing the candidate when feasible.
+7. Repair the **causal defect boundary**, not merely the reported example. Stay inside Allowed scope and do not opportunistically advance later WPs.
+8. Run affected positive tests, causal negative-conformance/defect-injection controls, exact local Unity evidence when required, and any canonical validation needed by the WP.
+9. Update evidence truthfully. Preserve superseded/failing evidence where the protocol requires history; never rewrite history to make the prior candidate appear green.
+10. Rerun the complete mandatory Worker pre-review against the full repaired baseline→candidate diff. Any implementation/evidence mutation invalidates prior `WORKER_PRE_REVIEW: CLEAN`.
+11. Record the new clean pre-review only when no known in-claim blocker remains.
+12. Commit and push the repaired candidate to the canonical branch.
+13. Stop all writers, read the exact 40-char HEAD, update Candidate/Frozen SHA fields, set `FROZEN_FOR_REVIEW` / `Branch frozen: YES`, and mark the PR Ready.
+14. STOP for a **fresh independent Reviewer**. Never self-review, merge, DocSync or start the next WP from this repair context.
+
+## Local Unity rule
+
+For `LOCAL_UNITY_REQUIRED` or `HYBRID` WPs, required effective Unity evidence must be rerun on the repaired candidate when the fix can affect that evidence. Remote-only repair may end as `READY_FOR_LOCAL_VALIDATION`, never a false PASS-ready handoff.
+
+## GitHub CLI rule for local sessions
+
+When running locally, prefer authenticated `gh` for PR/review/check state and `git` for repository bytes/history. Before any mutation, verify:
+
+```text
+gh repo view --json nameWithOwner
+```
+
+resolves to `Arkus0/Juego2`, then identify the canonical PR and branch from live GitHub state. Never paste or store GitHub passwords/tokens in repository files or prompts.

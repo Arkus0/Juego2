@@ -4,6 +4,12 @@ Implement exactly one explicitly authorized Juego2 workpack.
 
 Juego2 / Arkus Harness is a game-development and software-verification project. Work is limited to repository-owned game-authoring code, fixtures, tests, CI and documentation. Legacy terms such as `self-attack`, `attack fixture`, `bypass` or `adversarial review` refer only to internal negative/conformance testing; use the neutral terminology defined in `AGENTS.md` for new work.
 
+## Trigger
+
+Requests such as `Worker H1-02`, `Worker WP-H1-02`, `Worker CITY-04` or equivalent are explicit authorization to resolve that exact WP and execute this skill. The short command does not weaken any dependency, ownership, evidence, local-engine, freeze or review rule.
+
+For a local session, reconstruct PR/ownership/check state from live GitHub through authenticated `gh` (or an equivalent live GitHub surface) rather than inferring it from the local Git checkout alone. Before GitHub mutations verify `gh repo view --json nameWithOwner` resolves to `Arkus0/Juego2` and that exactly one canonical implementation PR/branch owns the requested WP.
+
 ## Preconditions
 
 - Read `AGENTS.md`, `Docs/ROADMAP.md`, the exact WP, `WORKER_REVIEW_PROTOCOL.md`, and `FOUNDATIONAL_PROOF_STANDARD.md` when bound.
