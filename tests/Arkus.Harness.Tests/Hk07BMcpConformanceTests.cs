@@ -38,7 +38,8 @@ namespace Arkus.Harness.Tests
             var session = new PortableWorldAuthoringSession(initial);
             var independentlyComposed = CanonicalWorldContract.Compose(
                 new WorldInspectionService(session),
-                session);
+                session,
+                new[] { Arkus.EngineBridge.UnityAuthoring.UnityAuthoringProvider.CreateContribution() });
 
             Assert.Equal(independentlyComposed.Definitions.Count, byCanonicalKey.Count);
             foreach (var definition in independentlyComposed.Definitions)

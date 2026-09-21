@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+using Arkus.EngineBridge.UnityAuthoring;
 using Arkus.Harness.Protocol;
 using Arkus.Harness.Runtime;
 
@@ -386,14 +387,16 @@ namespace Arkus.Harness.Projection
         }
     }
 
-    /// <summary>The single production local host composition used by the executable adapter.</summary>
+    /// <summary>The single production local host composition used by every executable adapter.</summary>
     public static class ProductionHarnessHost
     {
         public const string InitialWorldId = "world.arkus.session";
 
         public static NeutralProjectionService Create()
         {
-            var contract = CanonicalWorldContract.ComposeEmptyPortableSession(InitialWorldId);
+            var contract = CanonicalWorldContract.ComposeEmptyPortableSession(
+                InitialWorldId,
+                new[] { UnityAuthoringProvider.CreateContribution() });
             return new NeutralProjectionService(contract);
         }
     }

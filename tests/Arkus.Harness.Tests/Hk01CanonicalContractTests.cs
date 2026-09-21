@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
+using Arkus.EngineBridge.UnityAuthoring;
 using Arkus.Game.Authoring;
 using Arkus.Harness.Protocol;
 using Arkus.Harness.Runtime;
@@ -181,24 +182,39 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void IndependentRouteUniverseMatchesDispatcherDiscoveryAndSchemas()
         {
-            var baseContract = CanonicalWorldContract.Compose(new UnavailableWorldInspectionService());
+            var composition = ContractComposer.Compose(
+                CanonicalWorldContract.CreateContribution(new UnavailableWorldInspectionService()),
+                new[] { UnityAuthoringProvider.CreateContribution() });
+            Assert.True(composition.Success);
+            Assert.NotNull(composition.Contract);
+            var productionContract = composition.Contract!;
             var productionAssemblies = LoadProductionAssemblies();
             var routeUniverse = RouteUniverse.Enumerate(productionAssemblies);
 
-            var report = CanonicalContractConformance.Evaluate(baseContract, routeUniverse);
+            var report = CanonicalContractConformance.Evaluate(productionContract, routeUniverse);
 
             Assert.True(report.IsConformant, FormatIssues(report.Issues));
             Assert.Empty(routeUniverse.Issues);
-            Assert.Equal(baseContract.Definitions.Count, routeUniverse.Routes.Count);
+            Assert.Equal(productionContract.Definitions.Count, routeUniverse.Routes.Count);
             Assert.Contains(routeUniverse.Routes, route =>
                 route.Key.Name == WorldProvenanceContract.ReadName &&
                 route.Key.Version.Equals(new ContractVersion(1, 0)));
             Assert.Contains(routeUniverse.Routes, route =>
                 route.Key.Name == WorldProvenanceContract.ReadName &&
                 route.Key.Version.Equals(new ContractVersion(2, 0)));
+            Assert.Contains(routeUniverse.Routes, route =>
+                route.Key.Name == UnityAuthoringProvider.CompileName &&
+                route.ProviderId == UnityAuthoringProvider.ProviderId);
             foreach (var route in routeUniverse.Routes)
             {
-                Assert.Equal("arkus.base", route.ProviderId);
+                if (route.Key.Name.StartsWith(UnityAuthoringProvider.CapabilityNamespace + ".", StringComparison.Ordinal))
+                {
+                    Assert.Equal(UnityAuthoringProvider.ProviderId, route.ProviderId);
+                }
+                else
+                {
+                    Assert.Equal("arkus.base", route.ProviderId);
+                }
             }
         }
 
