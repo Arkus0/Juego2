@@ -1,12 +1,14 @@
 # PA track — Living World research and adoption programme
 
 Status: **ACTIVE / PLAN ACCEPTED / PROCESS_ONLY**  
-Version: 1.2 — 2026-09-21  
+Version: 1.3 — 2026-09-21  
 Repository: `Arkus0/Juego2`
 
 Programme plan accepted on candidate `95fc0f5935561fd61a20221f993e2532ce513795`, independent review `#5267699844`, PR `#84`, merge `4c1672db639f9d56e7bd6f837ff5e1881d789b16`.
 
-`WP-PA-01` is **COMPLETE**. Candidate `87c4cbe81f8195770eb23ba7f2a5d5ca2a237715` passed independent review `#5268013445` in PR `#89` and merged as `3688b7b9a27355b0fda160c20e57a385e40c6814`. The next executable PA workpack is `WP-PA-02`.
+`WP-PA-01` is **COMPLETE**. Candidate `87c4cbe81f8195770eb23ba7f2a5d5ca2a237715` passed independent review `#5268013445` in PR `#89` and merged as `3688b7b9a27355b0fda160c20e57a385e40c6814`.
+
+`WP-PA-02` is **COMPLETE**. Candidate `015bb28ddc9facc46459c2d1dd87a89740b6c9ef` passed independent review `#5270038879` in PR `#97` and merged as `85d23489a6478da6bc9f33c3f017640e46ab05e9`. The next executable PA workpack is `WP-PA-03`.
 
 ## Purpose
 
@@ -76,7 +78,7 @@ The future H2 plan owns its exact IDs/gate names; this PA plan deliberately does
 ```text
 WP-PA-01 ✅ Daily Life harvest/revalidation              REMOTE_HARVEST
    ↓
-WP-PA-02    NPC Agency harvest/revalidation              REMOTE_HARVEST
+WP-PA-02 ✅ NPC Agency harvest/revalidation              REMOTE_HARVEST
    ↓
 WP-PA-03    Social Graph harvest/revalidation            REMOTE_HARVEST
    ↓
@@ -201,6 +203,6 @@ This avoids making the user reconstruct the canonical sequence from memory and g
 
 ## Current next workpack
 
-`WP-PA-02 — Adopt/revalidate NPC Agency findings`.
+`WP-PA-03 — Adopt/revalidate Social Graph findings`.
 
-PA-01 is accepted in Juego2. PA-02 remains a cheap donor-harvest/revalidation gate, not a restart of the original PA-02 research. After PA-01..05 are independently accepted in Juego2, the first genuinely new research workpack is `WP-PA-06 — Memory & Consequences research`.
+PA-01 and PA-02 are accepted in Juego2. PA-03 remains a cheap donor-harvest/revalidation gate, not a restart of the original PA-03 research. After PA-01..05 are independently accepted in Juego2, the first genuinely new research workpack is `WP-PA-06 — Memory & Consequences research`.

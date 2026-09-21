@@ -1,10 +1,14 @@
 # WP-PA-02 — Adopt/revalidate NPC Agency findings
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_HARVEST**  
 Depends on: `WP-PA-01` PASS + merge + DocSync  
 Blocks: `WP-PA-03` only
+
+Accepted candidate: `015bb28ddc9facc46459c2d1dd87a89740b6c9ef`  
+Independent review: **PASS**, review `#5270038879`  
+Merged: PR `#97`, merge commit `85d23489a6478da6bc9f33c3f017640e46ab05e9` on 2026-09-21
 
 ## Objective
 
