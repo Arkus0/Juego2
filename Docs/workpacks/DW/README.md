@@ -41,7 +41,7 @@ WP-HK-GATE
     |                             |
     | requires CTX-03 accepted    |
     v                             |
- DW-04 structured-context quality/token trial
+ DW-04 paired structured-context agent quality/token trial
     |
     v
  DW-05 second-domain/generalization stress + residual closure
@@ -64,8 +64,8 @@ The PA and CTX prerequisites are cross-track evidence prerequisites only. DW doe
 | 2 | `WP-DW-01` | a bounded accepted CITY slice can produce causal mechanical FAILs without CITY semantics entering H0 | `REMOTE_OK` |
 | 3 | `WP-DW-02` | the CITY projection is useful for real deterministic queries/content-shape measurements with complete provenance | `REMOTE_OK` |
 | 4 | `WP-DW-03` | accepted PA findings/evidence/dispositions/fixtures can be projected and queried without lossy composition | `REMOTE_OK` |
-| 5 | `WP-DW-04` | structured retrieval can reduce context on fixed tasks without losing required facts/verdict correctness | `REMOTE_OK` |
-| 6 | `WP-DW-05` | the combined CITY+PA evidence supports a truthful generic-boundary assessment and closes/routs residuals without hidden H0 changes | `REMOTE_OK` |
+| 5 | `WP-DW-04` | structured retrieval can reduce context on a pre-tuning frozen task universe while paired same-config agents preserve required task/review facts, blockers and verdicts under deterministic scoring | `REMOTE_OK` |
+| 6 | `WP-DW-05` | the combined CITY+PA evidence supports a truthful generic-boundary assessment and closes/routes residuals without hidden H0 changes | `REMOTE_OK` |
 | 7 | `WP-DW-GATE` | composed second-consumer readiness and explicit H2 planning consequence | `REMOTE_OK` |
 
 All seven are foundational because a false PASS could cause H2 to freeze a public boundary around an overfit or lossy abstraction. Exact-SHA review, causal negative controls and independently justified completeness universes therefore apply.
@@ -77,7 +77,7 @@ All seven are foundational because a false PASS could cause H2 to freeze a publi
 | DW-00 vs DW-01 | a sound authority/projection contract can pass while the first real domain cannot express or validate its rules through it |
 | DW-01 vs DW-02 | one causal CITY invariant can pass while the projection remains incomplete or useless for production queries/budgets |
 | DW-02 vs DW-03 | CITY spatial/programme data and PA research/evidence composition stress different semantics and failure modes |
-| DW-03 vs DW-04 | a faithful typed corpus can pass while context selection over it omits facts or degrades review quality |
+| DW-03 vs DW-04 | a faithful typed corpus can pass while context selection over it omits facts or preserves a context package that an actual Worker/Reviewer still fails to use correctly |
 | DW-04 vs DW-05 | a successful measured retrieval trial does not itself prove the generic API stayed domain-neutral or that all discovered residuals were correctly routed |
 | DW-05 vs GATE | generalization/residual analysis is an input; the gate owns only final composition, completeness and H2 consequence |
 
@@ -96,12 +96,14 @@ Splitting any invariant, entity family or query into its own WP would create mic
 
 ## Track-wide proof rules
 
-- deterministic proof is authoritative; model-generated prose is never the oracle;
+- deterministic expected manifests/scorers are authoritative; model-generated prose is never allowed to judge itself;
+- DW-04 additionally requires actual paired agent executions for every selected task, under the same declared model/configuration, because context-package completeness alone cannot prove preserved Worker/Reviewer quality;
+- DW-04's eligible task universe/selection rule or exact reviewed manifest, task prompts, expected facts/blockers/verdicts and scoring rules are frozen before route-specific tuning/results so the trial cannot choose its own success universe;
 - each completeness-sensitive proof uses an independent/effective universe rather than a registry proving itself;
 - every material guarantee has at least one causal negative control that changes the effective claimed thing and must turn proof RED;
 - projection rebuild from identical authority anchors and schema/rule version must produce equal normalized facts/relations/results;
 - source provenance must be inspectable from compact records and remain sufficient to open the accepted authority when semantic depth is required;
-- token/context efficiency is measured only after correctness; any demonstrated lost required fact/blocker/verdict fails DW-04 regardless of savings;
+- token/context efficiency is measured only after correctness; any demonstrated lost required fact/blocker/verdict in structural or paired-agent scoring fails DW-04 regardless of savings;
 - no universal token-saving percentage is claimed from a bounded trial;
 - no full H0 suite is repeated per WP: delta proof covers the public seam used by the current claim.
 
@@ -123,11 +125,11 @@ DW consumes accepted CITY facts only. It cannot redefine the retained seed, grey
 
 ### CTX
 
-CTX remains owner of role/context process policy. `WP-DW-04` waits for CTX-03 so its baseline route is the accepted context-efficient process rather than an obsolete strawman. DW then tests whether structured retrieval can improve on that baseline without quality loss.
+CTX remains owner of role/context process policy. `WP-DW-04` waits for CTX-03 so its baseline route is the accepted context-efficient process rather than an obsolete strawman. DW then tests whether structured retrieval can improve on that baseline without structural or actual paired-agent quality loss.
 
 ### H2
 
-DW does not authorize H2 implementation. If this plan is accepted, final H2 public/external-boundary acceptance must explicitly consume or disposition DW-GATE evidence. This protects against freezing a product/API boundary immediately before a known second-consumer test.
+DW does not authorize H2 implementation. `Docs/ROADMAP.md` is the top-level milestone/gate authority and now records the same conditional interlock as this track: if this plan is accepted, final H2 public/external-boundary acceptance must explicitly consume accepted DW-GATE evidence or review and disposition the DW interlock. H1-GATE remains the Unity/gameplay prerequisite and DW does not replace it.
 
 ## Planned downstream opportunities — not active scope
 
@@ -152,10 +154,12 @@ The plan is designed against the following predictable false-success modes:
 4. **non-causal controls** — tests prove a row was deleted but never require validation/retrieval to fail;
 5. **lossy PA compression** — dispositions, negative findings, fixtures or exceptions disappear from compact context;
 6. **token vanity metric** — smaller input is called success despite a missed blocker/fact;
-7. **LLM-as-oracle** — subjective model output substitutes for deterministic conformance;
-8. **process circularity** — Arkus becomes load-bearing for the protocol that validates Arkus;
-9. **H2 premature freeze** — the external/public boundary is fixed before second-consumer evidence can influence it; and
-10. **scope explosion** — attractive Unity/QA/art/legal/enterprise ideas are pulled into the validation track before the core claim passes.
+7. **semantic substitution** — a complete context package is called preserved agent quality without requiring paired actual Worker/Reviewer-like executions;
+8. **friendly-task self-selection** — the trial chooses or edits its success universe after seeing/tuning DW results;
+9. **LLM-as-oracle** — subjective model output substitutes for a deterministic external scorer;
+10. **process circularity** — Arkus becomes load-bearing for the protocol that validates Arkus;
+11. **H2 premature freeze** — the external/public boundary is fixed before second-consumer evidence can influence it; and
+12. **scope explosion** — attractive Unity/QA/art/legal/enterprise ideas are pulled into the validation track before the core claim passes.
 
 Every workpack below owns a subset of these risks explicitly.
 
