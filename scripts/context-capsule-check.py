@@ -449,20 +449,38 @@ def validate_pa_chain(repo_root: Path, index: dict, capsules: dict[str, dict]) -
     rule = index.get("coverage_rules", {}).get("pa_accepted_result_chain")
     if not isinstance(rule, dict):
         raise CapsuleError("index missing pa_accepted_result_chain coverage rule")
-    result_glob = rule.get("result_glob")
-    wp_template = rule.get("workpack_template")
-    if not isinstance(result_glob, str) or not isinstance(wp_template, str):
+    workpack_glob = rule.get("workpack_glob")
+    result_template = rule.get("result_template")
+    if (
+        not isinstance(workpack_glob, str)
+        or not isinstance(result_template, str)
+        or "{NN}" not in result_template
+    ):
         raise CapsuleError("invalid PA chain discovery rule")
+
+    # The completion side defines the universe. A result/capsule pair may not
+    # disappear together and thereby remove itself from the inventory being proved.
     accepted_results: list[tuple[str, str]] = []
-    for result_path_str in sorted(glob.glob(str(repo_root / result_glob))):
-        result_path = Path(result_path_str)
-        match = re.fullmatch(r"PA-(\d\d)\.md", result_path.name)
-        if not match:
+    missing_results: list[str] = []
+    for wp_path_str in sorted(glob.glob(str(repo_root / workpack_glob))):
+        wp_path = Path(wp_path_str)
+        match = re.fullmatch(r"WP-PA-(\d\d)\.md", wp_path.name)
+        if not match or not workpack_is_complete(wp_path):
             continue
         num = match.group(1)
-        wp_path = repo_root / wp_template.replace("{NN}", num)
-        if workpack_is_complete(wp_path):
-            accepted_results.append((num, result_path.relative_to(repo_root).as_posix()))
+        result_path = result_template.replace("{NN}", num)
+        if not (repo_root / result_path).is_file():
+            missing_results.append(f"WP-PA-{num} -> {result_path}")
+            continue
+        accepted_results.append((num, result_path))
+
+    if missing_results:
+        raise CapsuleError(
+            "accepted PA canonical result missing for COMPLETE workpack(s): "
+            + ", ".join(missing_results)
+            + "; completion state defines the chain universe and missing result/capsule cannot disappear silently"
+        )
+
     missing: list[str] = []
     for num, result_path in accepted_results:
         cid = f"WP-PA-{num}"
@@ -758,12 +776,24 @@ def run_self_test() -> None:
         index = {
             "coverage_rules": {
                 "pa_accepted_result_chain": {
-                    "result_glob": "Docs/research/living-world/results/PA-[0-9][0-9].md",
-                    "workpack_template": "Docs/workpacks/PA/WP-PA-{NN}.md",
+                    "workpack_glob": "Docs/workpacks/PA/WP-PA-[0-9][0-9].md",
+                    "result_template": "Docs/research/living-world/results/PA-{NN}.md",
                 }
             }
         }
         validate_pa_chain(repo, index, {"WP-PA-03": capsule})
+
+        # Regression for Reviewer #5274389905 B2: a COMPLETE workpack remains
+        # authoritative inventory even when both its canonical result and capsule
+        # are omitted. Discovery must therefore RED before coverage can be COMPLETE.
+        wp04 = repo / "Docs/workpacks/PA/WP-PA-04.md"
+        wp04.write_text(wp_text.replace("WP-PA-03", "WP-PA-04"), encoding="utf-8")
+        expect_failure(
+            lambda: validate_pa_chain(repo, index, {"WP-PA-03": capsule}),
+            "accepted PA canonical result missing for COMPLETE workpack(s): WP-PA-04",
+        )
+        wp04.unlink()
+
         rebound = copy.deepcopy(capsule)
         rebound["disposition_source"]["path"] = "Docs/research/living-world/results/OTHER.md"
         expect_failure(
