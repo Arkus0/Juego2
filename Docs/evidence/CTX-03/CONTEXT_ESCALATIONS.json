@@ -1,0 +1,60 @@
+{
+  "schema": "arkus.context-escalations@1",
+  "wp": "WP-CTX-03",
+  "profile": "worker",
+  "baseline_main_sha": "107694d3850a478849bffd9510dc030910fc8aa3",
+  "authority": "AUDIT_NAVIGATION_ONLY",
+  "evaluations": [
+    {
+      "predicate": "direct dependency meaning or eligibility is not closed by exact/direct sources",
+      "triggered": true,
+      "authoritative_sources_opened": [
+        "Docs/workpacks/CTX/WP-CTX-02.md",
+        "Docs/evidence/CTX-02/DOCSYNC.md"
+      ],
+      "detail": "CTX-03 eligibility was confirmed from the accepted CTX-02 contract, exact PASS/merge live GitHub state and DocSync completion rather than from a derived hint."
+    },
+    {
+      "predicate": "a capsule is missing/stale/lossy, its source fingerprint or accepted identity mismatches, or live state contradicts it",
+      "triggered": true,
+      "authoritative_sources_opened": [
+        "Docs/workpacks/CTX/WP-CTX-02.md",
+        "Docs/evidence/CTX-02/DOCSYNC.md",
+        "Docs/engineering/CONTEXT_CAPSULE_V1.md"
+      ],
+      "detail": "There is no accepted WP-CTX-02 capsule in the canonical capsule index. Missing capsule therefore forced ordinary authoritative predecessor reconstruction; no guarantee was inferred from absence."
+    },
+    {
+      "predicate": "the exact consumer needs a material detail marked noncompressible or absent from the capsule",
+      "triggered": false,
+      "authoritative_sources_opened": [],
+      "non_material_reason": "CTX-03 consumes CTX-02 process guarantees and no selected CTX-02 capsule exists; the boundary was reconstructed directly instead of relying on compressed content."
+    },
+    {
+      "predicate": "cross-track dependency or gate is material",
+      "triggered": false,
+      "authoritative_sources_opened": [],
+      "non_material_reason": "WP-CTX-03 depends only on accepted WP-CTX-02. DW-04 consumes CTX-03 later, but that downstream interlock does not alter CTX-03 eligibility or acceptance."
+    },
+    {
+      "predicate": "state index is stale/missing/contradictory for a mutable hint being used",
+      "triggered": false,
+      "authoritative_sources_opened": [],
+      "non_material_reason": "No mutable PR/branch/check/review fact was taken from ACCEPTED_STATE_INDEX.json; live GitHub was used directly. Later main movement therefore cannot silently override the Worker decision."
+    },
+    {
+      "predicate": "the current claim binds an architecture/proof source outside the initial pack",
+      "triggered": true,
+      "authoritative_sources_opened": [
+        "Docs/engineering/CONTEXT_CAPSULE_V1.md"
+      ],
+      "detail": "CTX-03 measures and quality-controls capsule-based routing, so the accepted capsule authority/escalation boundary is directly material."
+    },
+    {
+      "predicate": "material ambiguity remains",
+      "triggered": false,
+      "authoritative_sources_opened": [],
+      "non_material_reason": "After authoritative predecessor reconstruction and live-state confirmation, no unresolved material eligibility or inherited-guarantee ambiguity remained before implementation."
+    }
+  ]
+}
