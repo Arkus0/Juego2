@@ -1,10 +1,14 @@
 # WP-PA-05 — Adopt/revalidate Rumours & Information Flow findings
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_HARVEST**  
 Depends on: `WP-PA-04` PASS + merge + DocSync  
 Blocks: `WP-PA-06` only
+
+Accepted candidate: `99890f1af10691ef7e38f8722830dd0f66529665`  
+Independent review: **PASS**, review `#5281462911`  
+Merged: PR `#132`, merge commit `31f8258cf2873e9080d9dacad2cfe956f0e2fa2e` on 2026-09-22
 
 ## Objective
 
