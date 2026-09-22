@@ -9,6 +9,7 @@ on:
       - '.agents/skills/validate-workpack/SKILL.md'
       - '.agents/skills/update-handoff/SKILL.md'
       - 'Docs/engineering/WORKER_REVIEW_PROTOCOL.md'
+      - 'Docs/engineering/CONTEXT_BOOTSTRAP_V1.md'
       - 'Docs/engineering/CONTEXT_CAPSULE_V1.md'
       - 'Docs/engineering/context-bootstrap-profiles.json'
       - 'Docs/engineering/context-capsule-schema.json'
