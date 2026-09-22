@@ -26,6 +26,7 @@ Status: **CANDIDATE EVIDENCE / PROCESS_ONLY**
 | historical FAIL corpus re-derived/classified | live GitHub review/comment evidence + accepted repo evidence | `HISTORICAL_CLASSIFICATION.json` | each family has mechanical/semantic/mixed + ADOPT/DEFER/REJECT |
 | no semantic-gate substitution | independent Reviewer authority | classification explicitly rejects generic semantic-equivalence automation | semantic review remains mandatory |
 | exact pre-review does not mutate candidate | final committed HEAD + complete Worker pre-review + durable GitHub issue comment | `derive-worker-review-metadata.py --pre-review-evidence <comment URL>` | repository-local final CLEAN pointer rejected; metadata points to post-byte exact-SHA record |
+| external CLEAN pointer cannot self-confirm by metadata | canonical PR + durable GitHub issue comment + live candidate SHA | `validate-worker-handoff.py --self-test` and Ready handoff lint resolve the exact comment | nonexistent, other-PR or wrong-SHA comment -> RED; semantic adequacy remains Reviewer-owned |
 | unregistered red verifier cannot count WP FAIL | reviewed verifier registry | `mechanical-verifier-classifier.py` self-test | overall INFRA_ERROR, `wp_failed_mechanically=false`, review blocked |
 | causal registered failure distinguishable | registered structured outcome + registry validation | classifier self-test | registered causal FAIL -> WP mechanical FAIL; unstructured FAIL-capable registry invalid |
 | infra crash not mistaken for WP defect | structured-result requirement | classifier self-test | missing/unclassified result -> INFRA_ERROR |
@@ -49,6 +50,7 @@ python3 scripts/context-envelope-check.py --self-test
 python3 scripts/mechanical-verifier-classifier.py --self-test
 python3 scripts/review-ready-closure.py --self-test
 python3 scripts/derive-worker-review-metadata.py --self-test
+python3 scripts/validate-worker-handoff.py --self-test
 python3 scripts/ctx03-quality-replay.py --self-test
 python3 scripts/ctx03-process-controls.py --self-test
 python3 scripts/ctx03-docsync-history-check.py --self-test
