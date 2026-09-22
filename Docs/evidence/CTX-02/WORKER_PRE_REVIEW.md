@@ -1,139 +1,135 @@
 # CTX-02 Worker Pre-Review
 
-WP: `WP-CTX-02`
-Baseline SHA: `f7b4f1e8247dfc927203dca6754b71aaa53938f3`
-Original pre-review subject before report persistence: `12c4bfaa01b74c11668a930e4cc06c30813fa02e`
-First frozen handoff candidate: `975249f242650b47b96e2af0fbf57a1d30cef23a`
-First independently reviewed candidate: `8db17036ad65ca03540f14e71711d806179c3e1c`
-Independent FAIL evidence: PR review `5274094804`
-Repair-cycle pre-review subject before this report persistence: `d520768ff37189ed847d23259ce45aa0a77d893e`
+WP: `WP-CTX-02`  
+Baseline SHA: `f7b4f1e8247dfc927203dca6754b71aaa53938f3`  
 Class: `PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL`
+
+Original pre-review subject before first report persistence: `12c4bfaa01b74c11668a930e4cc06c30813fa02e`  
+First frozen handoff candidate: `975249f242650b47b96e2af0fbf57a1d30cef23a`  
+First independently reviewed candidate: `8db17036ad65ca03540f14e71711d806179c3e1c`  
+First independent FAIL: review `5274094804`  
+Repair-cycle-1 pre-review subject before report persistence: `d520768ff37189ed847d23259ce45aa0a77d893e`  
+Second independently reviewed candidate: `504b4ff25f67720be9adb6b948dff859413419f3`  
+Second independent FAIL: review `5274163927`  
+Repair-cycle-2 pre-report subject: `18d8200f689cfb5db2db4956c4bdea89f74bf4f4`
 
 `WORKER_PRE_REVIEW: CLEAN`
 
-`WORKER_PRE_REVIEW_FINDINGS_FIXED: 10`
+`WORKER_PRE_REVIEW_FINDINGS_FIXED: 14`
 
-This report records the complete strict Worker pre-review for CTX-02, including the fresh rerun performed after independent Reviewer FAIL on candidate `8db17036ad65ca03540f14e71711d806179c3e1c`. The PR returned to Draft + ACTIVE before repair. The prior clean pre-review/freeze was treated as stale, the causal false-green was reproduced, the complete baseline-to-repaired-candidate surface was re-challenged, and the affected validation/control set was rerun. Persisting this updated report is the final planned repository-byte mutation; the resulting SHA must receive the same complete no-write validation and a green Worker handoff/freeze check before it can be handed back to an independent Reviewer.
+This report records the complete strict Worker pre-review after the second independent CTX-02 FAIL. PR #113 was returned to Draft + ACTIVE before repair, the prior frozen candidate was treated as historical FAIL evidence, the causal blocker was reproduced, the complete baseline-to-current-candidate surface was re-inspected, nearby false-green paths in the same declared-schema boundary were challenged, and the affected plus canonical validation surfaces were rerun. Persisting this report is the final planned repository-byte mutation before a new exact-SHA freeze.
 
 ## Contract and inherited boundary
 
-Re-read and challenged:
+Re-read/challenged for this repair:
 
-- `Docs/workpacks/CTX/WP-CTX-02.md` complete Work/Forbidden/Required controls/Acceptance/DoD;
-- accepted CTX-01 completion and PASS lineage;
+- `Docs/workpacks/CTX/WP-CTX-02.md` objective, Work, Forbidden, Required controls, Acceptance and DoD;
+- accepted CTX-01 completion/PASS lineage and predecessor contract check;
 - `AGENTS.md`;
 - `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md`;
-- `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` including its explicit rule that CTX-02 itself remains governed by the pre-adoption predecessor-read mechanics;
-- representative H1/CITY/PA consumer/predecessor contracts and canonical PA result documents;
-- independent FAIL review `5274094804` and its exact reviewed candidate `8db17036ad65ca03540f14e71711d806179c3e1c`.
+- `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`, including the explicit rule that CTX-02 itself remains governed by the pre-adoption predecessor-read mechanics;
+- `Docs/engineering/CONTEXT_CAPSULE_V1.md` and `Docs/engineering/context-capsule-schema.json`;
+- representative H1/CITY/PA accepted sources and capsule fixtures;
+- independent FAIL reviews `5274094804` and `5274163927` on their exact reviewed candidates.
 
-The predecessor check remains valid. The Reviewer FAIL is wholly inside CTX-02's newly owned capsule validation boundary and does not reopen CTX-01 or any accepted PA semantic result. CTX-01's authority ordering, fail-closed escalation, Worker pre-review, Reviewer independence and H1 local-executor boundary are consumed rather than re-proved. CTX-02 newly owns only accepted-contract capsule navigation/compression and its validation/adoption mechanics.
+Neither FAIL reopens CTX-01 or an accepted product/PA semantic result. Both findings are wholly inside CTX-02's newly owned capsule validation/control boundary. CTX-01's authority ordering, fail-closed escalation, Worker pre-review, Reviewer independence and H1 local-executor boundary remain consumed rather than re-proved.
 
-While CTX-02 was active, live `main` advanced from the recorded Worker baseline through plan-only PR #114 and a later accidental empty root-file add that was immediately reverted. Current `main` is `a2929bdf488e4fd9ffc9d59cf36886c92ef95b51`; the non-causal history advance does not alter CTX-01, CTX-02, the accepted PA source results, or PR #113's repair boundary. It therefore does not invalidate the predecessor check or require importing future CTX-03 planning bytes into this candidate.
+Live `main` is `c5a9a0d6fdd8057622068dadb5aa3f491d69964d`. Since the prior repair review, the relevant advance from `a2929bdf488e4fd9ffc9d59cf36886c92ef95b51` changes only the future `Docs/workpacks/CTX/WP-CTX-03.md` plan via PR #115. It does not alter CTX-01, CTX-02, the accepted H1/CITY/PA source identities, this PR's write set or dependency validity. The persisted predecessor check therefore remains valid.
 
 ## Complete diff / scope verdict
 
-The complete baseline→candidate diff was re-inspected after the FAIL, not only the latest repair. Changed surfaces remain limited to:
+The complete baseline→candidate diff was re-inspected, not only the latest patch. CTX-02 remains limited to:
 
-- context/process authority and role-routing docs;
+- context/process authority and role-routing documentation;
 - capsule protocol/schema/index and representative capsule data;
-- capsule validation/control scripts and CI orchestration;
-- CTX-02 Worker evidence.
+- capsule validator/control scripts and CI orchestration;
+- CTX-02 evidence.
 
-The independent-F​​AIL repair delta from `8db17036ad65ca03540f14e71711d806179c3e1c` to pre-report subject `d520768ff37189ed847d23259ce45aa0a77d893e` is deliberately narrow in final bytes: 8 added lines in `scripts/context-capsule-check.py` and 55 added lines in `scripts/context-capsule-controls.py`. An intermediate formatting-heavy edit was fully normalized away before pre-review; the effective repair diff contains no unrelated reformatting.
+No product/runtime contract, canonical harness implementation, gameplay, Unity project, CITY production geometry/result or accepted PA source result is changed.
 
-No product/runtime contract, canonical harness implementation, gameplay, Unity project, CITY production geometry/result, or accepted PA source result is mutated. CITY's exact product seed remains authoritative and non-compressible; the candidate adds only a boundary capsule that points to it.
+The second-FAIL repair delta from reviewed candidate `504b4ff25f67720be9adb6b948dff859413419f3` to pre-report subject `18d8200f689cfb5db2db4956c4bdea89f74bf4f4` changes only:
 
-Scope verdict: **WITHIN WP-CTX-02**.
+- `scripts/context-capsule-check.py`;
+- `scripts/context-capsule-controls.py`;
+- `Docs/evidence/CTX-02/CONTROL_MATRIX.md`;
+- `Docs/evidence/CTX-02/DRY_RUNS.md`.
+
+The checker/control changes close the reported schema/identity false-green class; the two evidence edits synchronize durable evidence with the real controls and correct one stale H1 proof pointer found during the full pre-review. Scope verdict: **WITHIN WP-CTX-02**.
 
 ## Acceptance challenge
 
 ### H1
 
-`WP-HK-GATE` capsule binds exact accepted reviewed/merge identity and points directly to accepted gate verdict, proof matrix and residual risk. It compresses the inherited H0/H1 ownership boundary without bulk-migrating H0 or replacing proof. `WP-H1-02` remains responsible for Unity/toolchain guarantees and its local execution protocol.
+`WP-HK-GATE` remains a boundary/navigation capsule bound to accepted reviewed/merge identity and canonical `VERDICT.md`, `PROOF_MATRIX.md` and `RESIDUAL_RISK.md`. The full-pre-review inspection found that `DRY_RUNS.md` still named the already-repaired nonexistent `FINAL_VERDICT.md`; it is now corrected to `VERDICT.md`. H1-02 continues to own Unity/toolchain guarantees and its local execution protocol.
 
 ### CITY
 
-`WP-CITY-03` capsule is deliberately boundary-only. `CITY_PRODUCT_SEED.md` is mechanically required as `noncompressible=true`; removing that exact read is a validation failure. CITY-04 eligibility still depends on H1-08 and cannot be granted by a capsule.
+`WP-CITY-03` remains boundary-only. `CITY_PRODUCT_SEED.md` remains mechanically mandatory and `noncompressible=true`; actual geometry/construction questions still require the exact seed. The generalized shape validation now also verifies every declared mandatory read has a valid bound source, `noncompressible=true` and a non-empty reason; CITY still additionally requires a non-empty mandatory-read set.
 
 ### PA
 
-The accepted cumulative PA chain is explicit. PA-01/02/03 each have one capsule bound to exact accepted identity and canonical result bytes. Future PA chain coverage is discovered from canonical `PA-NN.md` results whose matching workpack is `COMPLETE`, rather than trusting the capsule index to define its own universe.
+PA-01/02/03 remain one accepted structured-disposition capsule each. Accepted PA-chain coverage is discovered from canonical `PA-NN.md` + matching COMPLETE workpack state, not from the capsule index's own inventory. Every accepted PA capsule must remain `track=PA`, `content_mode=structured_disposition`, carry `disposition_source`, and carry a non-empty `dispositions` list whose exact key→status map matches the canonical result table. The prior whole-surface omission regression remains protected through the production `--audit-index` path.
 
-For every accepted PA result discovered by that chain audit, the capsule is now required to declare `track=PA`, `content_mode=structured_disposition`, a structured `disposition_source`, and a non-empty `dispositions` list. The ordinary capsule validator still permits non-disposition capsule shapes needed by other tracks; the stronger requirement is applied exactly where the accepted PA chain claims structured disposition preservation.
+Compound/deferred/exclusion states remain exact, including `ADOPT ... / LATER ...`, `LATER / non-authoritative`, `REJECT`, `REJECT as authority` and `REJECT baseline`. PA-03's inherited `default global/N-hop social traversal to discover targets = REJECT` and distinct A→B/B→A trust/affinity/fear semantics remain protected.
 
-The PA source disposition table is parsed mechanically and compared as an exact key→status map. Compound/deferred/exclusion states such as `ADOPT ... / LATER ...`, `LATER / non-authoritative`, `REJECT`, `REJECT as authority` and `REJECT baseline` cannot silently collapse to binary summary state. The new whole-surface negative control additionally proves that removing both structured disposition fields cannot bypass the row-level oracle: baseline `--audit-index` passes, the mutated accepted-PA capsule deletes both fields, and the same CLI exits non-zero before PA chain coverage can be called COMPLETE.
+## Findings found and repaired across CTX-02 Worker pre-review / review cycles
 
-PA-03 explicitly protects the inherited PA-02 exclusion `default global/N-hop social traversal to discover targets = REJECT`, plus distinct forward/reverse trust/affinity/fear semantics.
+1. **Final-evidence rerun gap.** CI now triggers on `Docs/evidence/CTX-02/**`.
+2. **Positive-loss false proof.** One-of-many material export omission is detected by an independent test-only oracle while structural validation remains otherwise valid.
+3. **Exclusion-loss symmetry.** One-of-many material exclusion omission is independently detected.
+4. **H1 proof navigation error.** HK-GATE capsule was rebound to canonical `VERDICT.md`, `PROOF_MATRIX.md`, `RESIDUAL_RISK.md` with exact fingerprints.
+5. **Optimization not binding at authority layer.** Post-adoption role/protocol wiring permits capsule-start navigation without moving semantic/proof authority.
+6. **Protocol self-adoption ambiguity.** v1.9 adoption is deferred until CTX-02 independent PASS + merge + DocSync; CTX-02 itself stays under v1.8 predecessor mechanics.
+7. **Residual unconditional Worker profile read.** Bootstrap profile now expresses capsule-or-authoritative-source reconstruction with fail-closed escalation.
+8. **Discoverability regression path.** Bootstrap/Worker/Repair/Reviewer/DocSync capsule protocol wiring is independently guarded.
+9. **Ready handoff predecessor marker missing.** Durable predecessor evidence gained the canonical literal marker and the full pre-review was rerun before the first reviewed repair candidate.
+10. **Accepted-PA whole structured surface false green** — Reviewer `5274094804`. Accepted PA-chain capsules now require structured mode + `disposition_source` + non-empty `dispositions`; independent exact-CLI control deletes the whole pair and requires `--audit-index` RED.
+11. **Malformed reopen/escalation list-item false green** — Reviewer `5274163927`. `reopen_conditions` and `escalate_if` now require each element to be a non-empty useful string; independent production-path controls inject `null`, empty and whitespace-only values across both fields and require RED.
+12. **Review-id without explicit PASS weakness** — Reviewer `5274163927`. Completion parsing now requires an explicit independent PASS verdict as well as the matching review id. The control mutates PASS→FAIL while recomputing the bound source fingerprint, proving the identity parser itself causes RED.
+13. **Nearby published-schema shape gaps found during cycle-2 full pre-review.** Because CI intentionally does not run a separate JSON-Schema engine, the production checker now also fail-closes required `content_mode`, exact accepted-identity fields, required `mandatory_source_reads`, malformed mandatory-read objects, consumer-hint types, statement source-pointer types and malformed directional structures. Self-tests delete/malform representative fields so the reported element-type bug is not repaired as a one-off special case.
+14. **Stale dry-run H1 pointer found during full pre-review.** `DRY_RUNS.md` still named `FINAL_VERDICT.md` after the capsule itself had been correctly repaired to `VERDICT.md`; durable evidence now matches the real canonical path.
 
-Current PA-01..03 canonical result files total 73,039 bytes versus 14,011 bytes for their capsule JSON files: 59,028 fewer bytes, about 80.8% less repeated accepted-result payload before tokenizer effects. This is a byte measurement only, not a model-token claim.
+## Causal negative controls on the repaired candidate
 
-## Findings found and repaired before independent review / during FAIL repair
-
-1. **Final-evidence rerun gap.** Capsule CI originally did not trigger on CTX-02 evidence changes. Repaired by adding `Docs/evidence/CTX-02/**` so the final evidence-bearing SHA reruns the capsule audit.
-2. **Positive-loss false proof.** The first positive omission control could RED merely because all exports were removed and schema shape failed. Repaired with a separate independent oracle that removes one of two material positive guarantees while another remains; structural capsule validation still passes and the independent oracle must detect the loss.
-3. **Exclusion-loss symmetry.** Added the corresponding one-of-many exclusion omission control so a predecessor-carrying REJECT cannot disappear while the capsule remains structurally valid.
-4. **H1 proof navigation incomplete/incorrect.** HK-GATE initially lacked direct proof/residual navigation and a first repair guessed a nonexistent `FINAL_VERDICT.md` path. Real CI RED exposed the error. Rebound to canonical `VERDICT.md`, `PROOF_MATRIX.md`, and `RESIDUAL_RISK.md` with recomputed blob fingerprints; rerun GREEN.
-5. **Optimization not binding at authority layer.** Profiles alone could not save context because accepted `AGENTS.md` / `WORKER_REVIEW_PROTOCOL.md` still mandated full predecessor narratives unconditionally. Repaired the post-adoption rules and role skills so a valid capsule may satisfy initial reconstruction while all material/reopen/non-compressible cases still deepen to authority.
-6. **Protocol self-adoption ambiguity.** Directly changing predecessor-read mechanics could have retroactively changed CTX-02's own process. Repaired with `WORKER_REVIEW_PROTOCOL` v1.9 adoption deferred until CTX-02 independent PASS + merge + DocSync; CTX-02 itself remains governed by v1.8 and used full predecessor reconstruction.
-7. **Residual unconditional Worker profile read.** `context-bootstrap-profiles.json` still phrased direct dependencies as an exact dependency-WP read even when a capsule was valid. Repaired to an explicit capsule-or-authoritative-source path with fail-closed escalation.
-8. **Discoverability regression path.** Bootstrap/skills could later stop naming the capsule mechanism while capsule data remained green. Repaired `CONTEXT_BOOTSTRAP_V1`, explicit skill protocol paths and an independent wiring control that REDs if Worker/Repair/Reviewer/DocSync no longer discover the capsule protocol.
-9. **Ready handoff predecessor marker missing.** The first Ready transition on frozen candidate `975249f242650b47b96e2af0fbf57a1d30cef23a` had a GREEN exact-SHA freeze verifier but Worker handoff lint RED because `PREDECESSOR_CONTRACT_CHECK.md` did not contain the literal marker `PREDECESSOR_CONTRACT_CHECK`. The file itself had been persisted before implementation and already contained all required reasoning, so the defect was durable handoff syntax rather than missing predecessor work. PR returned to Draft + ACTIVE, the canonical marker was added to that evidence file, and the full pre-review was rerun before candidate `8db17036ad65ca03540f14e71711d806179c3e1c` froze.
-10. **Accepted-PA whole-disposition-surface false green.** Independent Reviewer review `5274094804` proved that deleting both `disposition_source` and `dispositions` from an accepted PA capsule bypassed `validate_dispositions()` and still let `validate_pa_chain()` call the chain COMPLETE. The PR returned to Draft + ACTIVE. The repair keeps generic non-PA disposition optionality intact but makes accepted PA chain discovery require `track=PA`, `content_mode=structured_disposition`, `disposition_source` and non-empty `dispositions`. An independent CLI defect-injection control now writes a valid accepted PA chain fixture, proves baseline `--audit-index` GREEN, deletes the entire field pair, and requires the same `--audit-index` invocation to fail. This closes the reported class rather than only the previously tested one-row omission example.
-
-## Causal negative controls
-
-The repaired candidate validation surface exercises:
+The validation surface now exercises at least:
 
 - reviewed-candidate SHA mismatch -> FAIL closed;
 - source blob fingerprint mismatch -> FAIL closed;
+- missing/invalid `content_mode` or required minimum list shape -> FAIL closed;
+- `reopen_conditions` containing `null` / blank / whitespace-only -> production `--audit-index` FAIL;
+- `escalate_if` containing `null` / blank / whitespace-only -> production `--audit-index` FAIL;
+- completion metadata changed from independent PASS to FAIL while fingerprint stays valid -> production `--audit-index` FAIL;
 - external accepted state `REOPENED` -> FAIL closed;
 - external accepted exact-SHA mismatch -> FAIL closed;
 - one material positive export omitted while another remains -> independent control RED;
 - one material exclusion omitted while another remains -> independent control RED;
 - authoritative PA disposition row omitted -> FAIL;
 - `LATER` reclassified -> FAIL;
-- entire accepted-PA `disposition_source` + `dispositions` surface removed -> `--audit-index` FAIL;
-- accepted PA capsule with wrong/non-structured content mode -> chain audit FAIL;
-- A→B/B→A collapse -> FAIL;
-- CITY non-compressible seed read removed -> FAIL;
+- whole accepted-PA `disposition_source` + `dispositions` surface removed -> production `--audit-index` FAIL;
+- accepted PA capsule wrong/non-structured content mode -> chain audit FAIL;
+- malformed/non-string directional semantics or A→B/B→A collapse -> FAIL;
+- CITY non-compressible seed read missing/malformed -> FAIL;
 - accepted PA result with matching COMPLETE WP omitted from capsule index -> coverage FAIL;
 - capsule bootstrap/role wiring removed -> independent control FAIL.
 
-The production capsule/index does not define the complete universe used to prove itself: accepted identity comes from independent completion metadata/live state, source integrity from repository bytes, PA row coverage from canonical result tables, PA chain coverage from canonical result+WP discovery, and material-loss tests from a separate test-only oracle. The Reviewer-reported wholesale-field mutation is now protected at the PA chain boundary even though a generic non-PA capsule may legitimately omit disposition fields.
+The production capsule/index still does not define the universe used to prove itself: accepted identity comes from completion metadata/live state, source integrity from repository bytes, PA row coverage from canonical result tables, PA chain coverage from canonical result+WP discovery, and material-loss tests from a separate test-only oracle.
 
 ## Validation history
 
-On exact pre-report SHA `12c4bfaa01b74c11668a930e4cc06c30813fa02e`:
+Historical accepted pre-review/freeze runs and independent FAILs remain preserved in PR history. The material repair-cycle checkpoints are:
 
-- `Context Capsule Validation` run `35685529557` / #24: **SUCCESS**;
-- `Arkus Candidate Validation` run `35685529565` / #919: **SUCCESS**.
-
-On first frozen candidate `975249f242650b47b96e2af0fbf57a1d30cef23a` before the handoff-marker repair:
-
-- `Context Capsule Validation` run `35685630382` / #25: **SUCCESS**;
-- `Arkus Candidate Validation` run `35685630373` / #920: **SUCCESS** while Draft;
-- Ready run `35685757106` / #921: `Freeze exact-SHA validation` **SUCCESS**, `Worker handoff lint` **FAIL** solely on missing literal predecessor evidence marker.
-
-On independently reviewed candidate `8db17036ad65ca03540f14e71711d806179c3e1c`:
-
-- prior Worker pre-review/freeze/handoff checks were GREEN;
-- independent review `5274094804`: **FAIL** on the accepted-PA whole-disposition-surface false green described above.
-
-On repaired pre-report SHA `d520768ff37189ed847d23259ce45aa0a77d893e` while PR #113 remained Draft + ACTIVE:
-
-- `Context Capsule Validation` run `35686845977` / #30: **SUCCESS**;
-- `Arkus Candidate Validation` run `35686845959` / #932: **SUCCESS**;
-- final effective repair diff versus the reviewed FAIL candidate is limited to the validator's accepted-PA chain requirements plus the independent exact-CLI regression control.
-
-Other useful RED→GREEN evidence remains preserved in Actions: run `35684684410` RED exposed bad H1 evidence navigation; repaired run `35684803654` GREEN. Run `35685443916` RED exposed missing deterministic capsule discovery in repair skill; the later adoption-wiring run GREEN after repair.
+- reviewed candidate `8db17036ad65ca03540f14e71711d806179c3e1c` -> independent review `5274094804`: **FAIL** on whole accepted-PA structured-surface omission;
+- reviewed candidate `504b4ff25f67720be9adb6b948dff859413419f3` -> independent review `5274163927`: **FAIL** on malformed reopen/escalation element shape plus missing explicit PASS-verdict validation;
+- first cycle-2 code repair `1f675928d9efa2ae1cb5f94a5747e99d28a53cbb`: Context Capsule Validation `35687826271` / #33 **SUCCESS** and Arkus Candidate Validation `35687826259` / #940 **SUCCESS**;
+- schema-boundary hardening code `2fc02325c7ddb46b7bcb48ccea31e33d1cd5fc80`: Context Capsule Validation `35688242638` / #36 **SUCCESS** and Arkus Candidate Validation `35688242691` / #943 **SUCCESS**;
+- exact pre-report subject `18d8200f689cfb5db2db4956c4bdea89f74bf4f4`: Context Capsule Validation `35688268326` / #37 **SUCCESS** (self-test, independent controls and accepted-chain audit all SUCCESS) and Arkus Candidate Validation `35688268337` / #944 **SUCCESS**.
 
 ## Residual boundary
 
-No product/runtime semantics are claimed. Capsules remain navigation only. Token counts vary by tokenizer; only the byte reduction above is asserted here. Exact non-compressible production/proof material can still be large when the current question genuinely needs it; CTX-02 optimizes repeated inherited reconstruction, not necessary source depth.
+No product/runtime semantics are claimed. Capsules remain non-authoritative navigation. Token counts vary by tokenizer; CTX-02 claims reduced repeated accepted-result payload/navigation, not a guaranteed token count. Exact non-compressible production/proof material remains mandatory whenever the current question requires it.
 
-No residual risk was found that weakens the Reviewer repair. Requiring structured dispositions only for accepted PA results discovered by the chain preserves legitimate non-PA capsule shapes while making the PA chain claim fail closed on both partial-row and wholesale-surface loss.
+No known residual weakens the two Reviewer repairs. The cycle-2 hardening deliberately stays inside the already-published capsule schema/validator boundary instead of adding new capsule semantics.
 
-## Current verdict before final rerun
+## Current verdict before final no-write rerun
 
-No known semantic/in-claim blocker remains. `WORKER_PRE_REVIEW: CLEAN` is a Worker readiness statement only, not independent acceptance. Persisting this report is the final planned repository-byte mutation for repair cycle 1. The resulting exact SHA must now pass the complete capsule audit, Candidate Validation, Worker handoff lint and Freeze exact-SHA validation before it is recorded as the new frozen candidate and returned to an independent Reviewer.
+No known semantic, process or in-claim blocker remains. `WORKER_PRE_REVIEW: CLEAN` is Worker readiness evidence only, not independent acceptance. This report is the final planned repository-byte mutation. The resulting exact SHA must now receive the complete no-write Context Capsule Validation + Arkus Candidate Validation and then a coherent Ready/frozen handoff before a fresh independent Reviewer may judge it. No merge or DocSync is authorized by this Worker.
