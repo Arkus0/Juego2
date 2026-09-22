@@ -53,23 +53,13 @@ jobs:
           output_path = os.environ['GITHUB_OUTPUT']
           repo = os.environ['GITHUB_REPOSITORY']
 
-          # Default to a clean no-op. Recognized actionable/informational events
-          # overwrite this at the end after producing complete outputs.
           with open(output_path, 'a', encoding='utf-8') as out:
               out.write('send=false\n')
-
           with open(event_path, 'r', encoding='utf-8') as fh:
               event = json.load(fh)
 
-          state = ''
-          detail = ''
-          next_wp = ''
-          milestone = ''
-          wp = ''
-          target_sha = ''
+          state = detail = next_wp = milestone = wp = target_sha = title = ''
           pr_number = None
-          pr_url = f"https://github.com/{repo}"
-          title = ''
           reply_markup = None
 
           if event_name == 'workflow_dispatch':
@@ -84,8 +74,6 @@ jobs:
                   wp = str(payload.get('wp', '')).strip()[:120]
                   target_sha = str(payload.get('target_sha', '')).strip().lower()
                   pr_number = payload.get('pr')
-                  pr_url = f"https://github.com/{repo}/pull/{pr_number}" if pr_number else f"https://github.com/{repo}"
-                  title = ''
               elif event_name == 'pull_request':
                   pr = event.get('pull_request', {})
                   if not pr.get('merged'):
@@ -97,35 +85,33 @@ jobs:
                   detail = 'Merge confirmado. Ejecuta DocSync antes de seleccionar el siguiente WP.'
                   target_sha = str(pr.get('merge_commit_sha') or '').strip().lower()
                   pr_number = pr.get('number')
-                  pr_url = pr.get('html_url') or f"https://github.com/{repo}/pull/{pr_number}"
                   title = pr.get('title') or ''
                   wp_match = re.search(r'^WP:\s*`?([^`\r\n]+?)`?\s*$', pr_body, re.M | re.I)
                   wp = (wp_match.group(1).strip() if wp_match else '').strip()[:120]
               else:
                   body = event.get('comment', {}).get('body', '')
-                  if 'ARKUS_AUTOMATION_V2' not in body:
-                      sys.exit(0)
-
                   fields = {}
                   for raw in body.splitlines():
                       line = raw.strip()
-                      if ':' not in line:
-                          continue
-                      key, value = line.split(':', 1)
-                      fields[key.strip()] = value.strip()
+                      if ':' in line:
+                          key, value = line.split(':', 1)
+                          fields[key.strip()] = value.strip()
+                  marker_state = fields.get('State', '').upper()
 
-                  state = fields.get('State', '').upper()
+                  # Raw REVIEW_READY is an intermediate marker consumed by the
+                  # closure workflow. It no longer launches a Reviewer. Only the
+                  # idempotent REVIEW_READY_CLOSED marker is user-actionable.
+                  if marker_state == 'REVIEW_READY':
+                      sys.exit(0)
+                  state = 'REVIEW_READY' if marker_state == 'REVIEW_READY_CLOSED' else marker_state
                   detail = fields.get('Detail', '').strip()[:420]
                   next_wp = fields.get('Next WP', '').strip()[:120]
                   milestone = fields.get('Milestone', '').strip()[:120]
                   target_sha = fields.get('Target SHA', '').strip().lower()
-
                   issue = event.get('issue', {})
                   pr_number = issue.get('number')
-                  pr_url = issue.get('html_url') or event.get('comment', {}).get('html_url') or f"https://github.com/{repo}"
                   pr_body = issue.get('body') or ''
                   title = issue.get('title') or ''
-
                   wp_match = re.search(r'^WP:\s*`?([^`\r\n]+?)`?\s*$', pr_body, re.M | re.I)
                   wp = (fields.get('WP') or (wp_match.group(1).strip() if wp_match else '')).strip()[:120]
 
@@ -139,12 +125,10 @@ jobs:
                   'BLOCKED': '🛑 Bloqueado',
                   'HUMAN_ACTION_REQUIRED': '⚠️ Atención requerida',
               }
-
               if state not in labels:
                   sys.exit(0)
 
               subject = wp or milestone or title[:120] or (f'PR #{pr_number}' if pr_number else 'Juego2')
-
               if state == 'DOCSYNC_COMPLETE' and not next_wp:
                   print('DOCSYNC_COMPLETE requires a non-empty Next WP field', file=sys.stderr)
                   sys.exit(1)
@@ -152,10 +136,8 @@ jobs:
                   print('MILESTONE_COMPLETE requires a non-empty Milestone field', file=sys.stderr)
                   sys.exit(1)
 
-              parts = [f"{labels[state]} — {subject}"]
-
               defaults = {
-                  'REVIEW_READY': 'Candidato congelado y validado; listo para Reviewer independiente.',
+                  'REVIEW_READY': 'Candidato cerrado sobre SHA/contexto actuales; listo para un único Reviewer independiente.',
                   'PASS_PREFLIGHT_GREEN': 'PASS exacto validado; merge automático en curso. No hace falta actuar hasta la confirmación del merge.',
                   'REPAIR_REQUIRED': 'El WP vuelve a Worker sobre el mismo candidato/contrato.',
                   'DOCSYNC_REQUIRED': 'Merge confirmado. Ejecuta DocSync antes de seleccionar el siguiente WP.',
@@ -164,8 +146,7 @@ jobs:
                   'BLOCKED': 'La ejecución necesita desbloqueo antes de continuar.',
                   'HUMAN_ACTION_REQUIRED': 'Se necesita intervención humana antes de continuar.',
               }
-              parts.append(detail or defaults[state])
-
+              parts = [f"{labels[state]} — {subject}", detail or defaults[state]]
               if next_wp:
                   parts.append(f'Siguiente WP: {next_wp}')
               if pr_number:
@@ -207,7 +188,6 @@ jobs:
                   rows.append([{'text': '📋 Copiar siguiente prompt', 'copy_text': {'text': prompt}}])
               if rows:
                   reply_markup = {'inline_keyboard': rows}
-
               message = '\n'.join(parts)
 
           delimiter = 'TELEGRAM_MESSAGE_EOF'
@@ -244,23 +224,19 @@ jobs:
           set -euo pipefail
           BOT_TOKEN="$(printf '%s' "$TELEGRAM_BOT_TOKEN" | tr -d '\r\n')"
           CHAT_ID="$(printf '%s' "$TELEGRAM_CHAT_ID" | tr -d '[:space:]')"
-
           payload="$(jq -n \
             --arg chat_id "$CHAT_ID" \
             --arg text "$MESSAGE" \
             --argjson reply_markup "$REPLY_MARKUP" \
             '{chat_id: $chat_id, text: $text, disable_web_page_preview: true} + (if $reply_markup == null then {} else {reply_markup: $reply_markup} end)')"
-
           response="$(curl --silent --show-error \
             --request POST \
             --header 'Content-Type: application/json' \
             --data "$payload" \
             --write-out '\n%{http_code}' \
             "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage")"
-
           status="$(printf '%s\n' "$response" | tail -n 1)"
           body="$(printf '%s\n' "$response" | sed '$d')"
-
           if [[ "$status" -lt 200 || "$status" -ge 300 ]]; then
             description="$(printf '%s' "$body" | jq -r '.description // "Telegram API request failed"' 2>/dev/null || true)"
             echo "Telegram API error (${status}): ${description:-Telegram API request failed}" >&2

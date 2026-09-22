@@ -1,0 +1,61 @@
+name: Mechanical Routing Shadow
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/arkus-*-exact-sha.sh'
+      - 'scripts/*-verify-exact-sha.sh'
+      - 'scripts/*-observe-exact-sha.sh'
+      - 'scripts/workpack-verifier.py'
+      - 'scripts/docsync.py'
+      - 'scripts/reuse-context.py'
+      - 'scripts/context-capsule-check.py'
+      - 'scripts/pa-disposition-selector-controls.py'
+      - '.github/workflows/receipt-freeze-reuse.yml'
+      - 'Docs/engineering/workpack-verifiers.json'
+      - 'Docs/engineering/PA_DISPOSITION_TABLE_V1.md'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/arkus-*-exact-sha.sh'
+      - 'scripts/*-verify-exact-sha.sh'
+      - 'scripts/*-observe-exact-sha.sh'
+      - 'scripts/workpack-verifier.py'
+      - 'scripts/docsync.py'
+      - 'scripts/reuse-context.py'
+      - 'scripts/context-capsule-check.py'
+      - 'scripts/pa-disposition-selector-controls.py'
+      - '.github/workflows/receipt-freeze-reuse.yml'
+      - 'Docs/engineering/workpack-verifiers.json'
+      - 'Docs/engineering/PA_DISPOSITION_TABLE_V1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shadow:
+    name: Registry equals legacy routing
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+        with:
+          python-version: '3.12'
+      - name: Python syntax
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 -m py_compile \
+            scripts/workpack-verifier.py \
+            scripts/docsync.py \
+            scripts/reuse-context.py \
+            scripts/context-capsule-check.py \
+            scripts/pa-disposition-selector-controls.py
+      - name: Exact routing equivalence
+        run: PYTHONDONTWRITEBYTECODE=1 python3 scripts/workpack-verifier.py self-test
+      - name: Same-SHA reuse context causal self-test
+        run: PYTHONDONTWRITEBYTECODE=1 python3 scripts/reuse-context.py self-test
+      - name: Capsule checker causal self-test
+        run: PYTHONDONTWRITEBYTECODE=1 python3 scripts/context-capsule-check.py --self-test
+      - name: PA standard-selector controls
+        run: PYTHONDONTWRITEBYTECODE=1 python3 scripts/pa-disposition-selector-controls.py

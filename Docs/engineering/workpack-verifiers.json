@@ -1,0 +1,31 @@
+{
+  "schema": "arkus.workpack-verifiers@1",
+  "authority": "CHECKER_OWNED_ROUTING_ONLY",
+  "principle": "This registry selects existing exact-SHA verifier entrypoints. It does not define semantic acceptance, proof completeness, or Reviewer verdicts.",
+  "entries": {
+    "WP-DW-02": {"verify": "scripts/dw02-verify-exact-sha.sh", "observe": "scripts/dw02-observe-exact-sha.sh"},
+    "WP-DW-01": {"verify": "scripts/dw01-verify-exact-sha.sh", "observe": "scripts/dw01-observe-exact-sha.sh"},
+    "WP-DW-00": {"verify": "scripts/dw00-verify-exact-sha.sh", "observe": "scripts/dw00-observe-exact-sha.sh"},
+    "WP-H1-01": {"verify": "scripts/h1-01-verify-exact-sha.sh", "observe": "scripts/h1-01-observe-exact-sha.sh"},
+    "WP-H1-00": {"verify": "scripts/h1-00-verify-exact-sha.sh", "observe": "scripts/h1-00-observe-exact-sha.sh"},
+    "WP-HK-GATE": {"verify": "scripts/hkgate-verify-exact-sha.sh", "observe": "scripts/hkgate-observe-exact-sha.sh"},
+    "WP-HK-10": {"verify": "scripts/hk10-verify-exact-sha.sh", "observe": "scripts/hk10-observe-exact-sha.sh"},
+    "WP-HK-09B": {"verify": "scripts/hk09b-verify-exact-sha.sh", "observe": "scripts/hk09b-observe-exact-sha.sh"},
+    "WP-HK-09A": {"verify": "scripts/hk09a-verify-exact-sha.sh", "observe": "scripts/hk09a-observe-exact-sha.sh"},
+    "WP-HK-08B": {"verify": "scripts/hk08b-verify-exact-sha.sh", "observe": "scripts/hk08b-observe-exact-sha.sh"},
+    "WP-HK-08A": {"verify": "scripts/hk08a-verify-exact-sha.sh", "observe": "scripts/hk08a-observe-exact-sha.sh"},
+    "WP-HK-07B": {"verify": "scripts/hk07b-verify-exact-sha.sh", "observe": "scripts/hk07b-observe-exact-sha.sh"},
+    "WP-HK-07A": {"verify": "scripts/hk07a-verify-exact-sha.sh", "observe": "scripts/hk07a-observe-exact-sha.sh"},
+    "WP-HK-06C": {"verify": "scripts/hk06c-verify-exact-sha.sh", "observe": "scripts/hk06c-observe-exact-sha.sh"},
+    "WP-HK-06B": {"verify": "scripts/hk06b-verify-exact-sha.sh", "observe": "scripts/hk06b-observe-exact-sha.sh"},
+    "WP-HK-06A": {"verify": "scripts/hk06a-verify-exact-sha.sh", "observe": "scripts/hk06a-observe-exact-sha.sh"},
+    "WP-HK-05": {"verify": "scripts/hk05-verify-exact-sha.sh", "observe": "scripts/hk05-observe-exact-sha.sh"},
+    "WP-HK-02A": {"verify": "scripts/hk02a-verify-exact-sha.sh", "observe": "scripts/hk02a-observe-exact-sha.sh"},
+    "WP-HK-04": {"verify": "scripts/hk04-verify-exact-sha.sh", "observe": "scripts/hk04-observe-exact-sha.sh"},
+    "WP-HK-03": {"verify": "scripts/hk03-verify-exact-sha.sh", "observe": "scripts/hk03-observe-exact-sha.sh"},
+    "WP-HK-02": {"verify": "scripts/hk02-verify-exact-sha.sh", "observe": "scripts/hk02-observe-exact-sha.sh"},
+    "WP-HK-01": {"verify": "scripts/hk01-verify-exact-sha.sh", "observe": "scripts/hk01-observe-exact-sha.sh"},
+    "WP-HK-00A": {"verify": "scripts/hk00a-verify-exact-sha.sh", "observe": "scripts/hk00a-observe-exact-sha.sh"},
+    "WP-HK-00": {"verify": "scripts/hk00-verify-exact-sha.sh", "observe": "scripts/hk00-observe-exact-sha.sh"}
+  }
+}
