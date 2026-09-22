@@ -1,0 +1,34 @@
+{
+  "schema": "arkus.accepted-contract-capsule@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "capsule_id": "WP-PA-02",
+  "track": "PA",
+  "content_mode": "structured_disposition",
+  "accepted_identity": {"reviewed_candidate_sha": "015bb28ddc9facc46459c2d1dd87a89740b6c9ef", "merge_sha": "85d23489a6478da6bc9f33c3f017640e46ab05e9", "review_id": "5270038879"},
+  "identity_source": {"path": "Docs/workpacks/PA/WP-PA-02.md", "git_blob_sha": "83af089b5fc587b7c6240da2c307f8d1867960d6"},
+  "authoritative_sources": [{"path": "Docs/research/living-world/results/PA-02.md", "git_blob_sha": "ce05c64f8bb0cf1f2a0090d35fa1f32757fdd33d", "kind": "canonical_research_result"}],
+  "consumer_hints": ["WP-PA-03", "WP-PA-04", "WP-PA-05", "WP-PA-06", "WP-PA-07", "WP-PA-08", "WP-PA-09", "WP-PA-10", "WP-PA-11", "WP-PA-12", "WP-PA-13"],
+  "exported_guarantees": [
+    {"id": "actor-originated-agency", "statement": "Autonomous proof requires actor-owned pressure/problem/opportunity; quest/director/timetable cannot preselect the meaningful action.", "source_pointer": "PA-02 / AG-01"},
+    {"id": "bounded-discovery", "statement": "Target/action discovery is scoped before scoring; unrelated global population growth cannot become the discovery mechanism.", "source_pointer": "PA-02 / Bounded discovery requirements"},
+    {"id": "receiver-owns-response", "statement": "Where a receiver has a meaningful choice, the receiver owns its response decision.", "source_pointer": "PA-02 / Social action ownership"},
+    {"id": "explainable-deterministic-trace", "statement": "Important decisions expose explainable deterministic/seedable semantic reasons and alternatives.", "source_pointer": "PA-02 / AG-04"},
+    {"id": "bounded-replanning", "statement": "Commitment/inertia/cooldowns and explicit failure prevent global tick-by-tick thrashing.", "source_pointer": "PA-02 / AG-06"}
+  ],
+  "exclusions_nonclaims": [
+    {"id": "no-universal-chooser", "statement": "PA-02 rejects one universal Utility AI/GOAP/rules/planner architecture as a conclusion.", "source_pointer": "PA-02 / AG-12"},
+    {"id": "no-deep-psych-prerequisite", "statement": "Deep psychology is rejected as a prerequisite without material behavioral value.", "source_pointer": "PA-02 / AG-13"},
+    {"id": "no-llm-state-authority", "statement": "LLM output cannot be the hidden source of canonical decision/state authority.", "source_pointer": "PA-02 / AG-14"},
+    {"id": "no-global-scan-fallback", "statement": "Failure to find a bounded candidate cannot fall back to accidental world-wide discovery.", "source_pointer": "PA-02 / Bounded discovery requirement 6"}
+  ],
+  "reopen_conditions": ["Concrete accepted evidence falsifies the PA-02 bounded/explainable agency boundary or proves it inapplicable to the effective consumer path."],
+  "escalate_if": ["The exact provider/scope semantics of a decision matter.", "A later consumer appears to require a global scan or universal decision authority.", "Live accepted identity/source bytes contradict the capsule."],
+  "disposition_source": {"path": "Docs/research/living-world/results/PA-02.md", "git_blob_sha": "ce05c64f8bb0cf1f2a0090d35fa1f32757fdd33d", "section": "## 3. Donor → Juego2 mechanism disposition", "key_column": 0, "status_column": 2},
+  "dispositions": [
+    {"source_key": "AG-01", "status": "ADOPT"}, {"source_key": "AG-02", "status": "ADOPT"}, {"source_key": "AG-03", "status": "ADOPT requirement / LATER algorithm"}, {"source_key": "AG-04", "status": "ADOPT"},
+    {"source_key": "AG-05", "status": "ADOPT"}, {"source_key": "AG-06", "status": "ADOPT"}, {"source_key": "AG-07", "status": "ADAPT"}, {"source_key": "AG-08", "status": "ADAPT / LATER"},
+    {"source_key": "AG-09", "status": "LATER"}, {"source_key": "AG-10", "status": "ADOPT concept / LATER profiles"}, {"source_key": "AG-11", "status": "ADAPT as stress fixture"},
+    {"source_key": "AG-12", "status": "REJECT as PA-02 conclusion"}, {"source_key": "AG-13", "status": "REJECT"}, {"source_key": "AG-14", "status": "REJECT"}, {"source_key": "AG-15", "status": "LATER"}
+  ],
+  "mandatory_source_reads": []
+}
