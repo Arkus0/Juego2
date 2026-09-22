@@ -6,6 +6,8 @@ Date: 2026-09-22
 
 WORKER_PRE_REVIEW: CLEAN
 WORKER_PRE_REVIEW_FINDINGS_FIXED: 6
+WORKER_PRE_REVIEW_RERUN_AFTER_REVIEW_FAIL: YES
+WORKER_PRE_REVIEW_RERUN_SCOPE: foundational standard v1.5 + architecture v0.2 + revised DW-00 representative Juego2 probe + unchanged DW-01..GATE boundaries
 WORKER_PRE_REVIEW_EVIDENCE: `Docs/evidence/DW-PLAN/ARCHITECTURE_PRE_REVIEW.md`
 
 ## Scope
@@ -101,6 +103,7 @@ The plan expects Reviewer FAIL at these owners to be informative and bounded rat
 - `Docs/workpacks/DW/README.md` defines one serial seven-step DAG with explicit PA/CTX side prerequisites and H1 independence;
 - `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` v1.5 explicitly adopts the accepted DW foundational track only after this planning commit reaches `main`, excludes the PROCESS_ONLY adopter and preserves accepted H0/H1 evidence;
 - `WP-DW-00` keeps an independent neutral mechanics/completeness fixture **and** separately requires the bounded approved-Juego2 representative content-shape probe demanded by the foundational standard, without moving CITY semantic invariant ownership out of DW-01;
+- architecture v0.2 explicitly distinguishes that DW-00 representative shape probe from DW-01 as the first CITY **semantic** consumer, removing the apparent ownership contradiction;
 - global workpack index explicitly states that CTX remains valid and that DW-04 consumes accepted CTX-03 as its comparison baseline;
 - future H2 planning signal records the conditional DW-GATE evidence interlock without pre-accepting DW;
 - all seven DW contract files contain central claim, boundary rationale, inherited/new guarantees, excluded re-proof, allowed/forbidden scope, authority boundary, acceptance, deterministic proof, causal negative classes, residuals, reopen condition and PASS consequence;
@@ -111,4 +114,4 @@ The plan expects Reviewer FAIL at these owners to be informative and bounded rat
 
 ## Freeze decision
 
-The repaired planning design is internally coherent after the six repairs above and is suitable for independent review. No DW implementation workpack is active. A Reviewer should challenge the plan itself, especially whether DW-00's representative real-content probe is narrow enough to avoid stealing CITY semantic ownership while still satisfying the foundational standard, whether DW-04's quality/efficiency oracle is fair, whether the H2 interlock is causally justified, and whether DW-00 can truly consume accepted H0 rather than introducing a disguised second canonical store.
+The repaired planning design is internally coherent after the six repairs above and is suitable for independent review. This pre-review was rerun after the foundational standard, DW-00 contract and architecture reconciliation were all updated. No DW implementation workpack is active. A Reviewer should challenge the plan itself, especially whether DW-00's representative real-content probe is narrow enough to avoid stealing CITY semantic ownership while still satisfying the foundational standard, whether DW-04's quality/efficiency oracle is fair, whether the H2 interlock is causally justified, and whether DW-00 can truly consume accepted H0 rather than introducing a disguised second canonical store.
