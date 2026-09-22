@@ -94,7 +94,7 @@ A theoretical implementation possibility, future schema uncertainty or desire fo
 - donor dossier: `Docs/living-city-research/PA-04_KNOWLEDGE.md`;
 - exact donor candidate: `672dcfa46dc1212d43f5302b4937ddd345bf249a`;
 - donor PR: `#41`;
-- donor final independent PASS: review `PRR_kwDOUbWpX88AAAABN8W97A` on candidate `672dcfa46dc1212d43f5302b4937ddd345bf249a`.
+- donor final independent PASS: review `#5230673388` on candidate `672dcfa46dc1212d43f5302b4937ddd345bf249a`.
 
 The donor PASS is provenance only. Juego2 requires its own independent review.
 
