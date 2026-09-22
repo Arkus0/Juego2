@@ -1,0 +1,155 @@
+{
+  "schema": "arkus.accepted-contract-capsule@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "capsule_id": "WP-PA-05",
+  "track": "PA",
+  "content_mode": "structured_disposition",
+  "accepted_identity": {
+    "reviewed_candidate_sha": "99890f1af10691ef7e38f8722830dd0f66529665",
+    "merge_sha": "31f8258cf2873e9080d9dacad2cfe956f0e2fa2e",
+    "review_id": "5281462911"
+  },
+  "identity_source": {
+    "path": "Docs/workpacks/PA/WP-PA-05.md",
+    "git_blob_sha": "eb610966cc762cf0da2ccf0afde5dd6bf26d7e22"
+  },
+  "authoritative_sources": [
+    {
+      "path": "Docs/research/living-world/results/PA-05.md",
+      "git_blob_sha": "e5d2f60cd9826570de00def41c38162a866b70fb",
+      "kind": "canonical_research_result"
+    }
+  ],
+  "consumer_hints": [
+    "WP-PA-06",
+    "WP-PA-07",
+    "WP-PA-08",
+    "WP-PA-09",
+    "WP-PA-10",
+    "WP-PA-11",
+    "WP-PA-12",
+    "WP-PA-13",
+    "WP-DW-03",
+    "H4",
+    "H7"
+  ],
+  "exported_guarantees": [
+    {
+      "id": "explicit-opportunity-bound-transfer",
+      "statement": "Actor-to-actor information moves through an explicit sender-to-receiver asserted-claim transfer after a sender-owned decision and a valid communication opportunity or channel.",
+      "source_pointer": "PA-05 / Minimal information-flow contract"
+    },
+    {
+      "id": "receiver-owned-interpretation",
+      "statement": "The receiver owns epistemic interpretation through PA-04 and may consume only actor-accessible inputs; transport does not decide acceptance for the receiver.",
+      "source_pointer": "PA-05 / PA-05-H03"
+    },
+    {
+      "id": "no-automatic-retell",
+      "statement": "Receiving information does not authorize retransmission; any later retell is a new actor-owned decision with its own target and opportunity.",
+      "source_pointer": "PA-05 / PA-05-H04"
+    },
+    {
+      "id": "lineage-provenance-authority-split",
+      "statement": "Privileged engine causal lineage and actor-accessible or reported provenance are distinct authorities; engine-known lineage is not actor knowledge by default.",
+      "source_pointer": "PA-05 / PA-05-H05"
+    },
+    {
+      "id": "hidden-lineage-epistemic-invariance",
+      "statement": "With all actor-visible inputs fixed, changing only privileged engine lineage must not change receiver belief, confidence, corroboration, dialogue or action output.",
+      "source_pointer": "PA-05 / PA-05-H05"
+    },
+    {
+      "id": "assertion-does-not-mutate-truth",
+      "statement": "False or partial assertions may propagate and revise receiver belief without repetition or transport mutating canonical world truth.",
+      "source_pointer": "PA-05 / PA-05-H06"
+    },
+    {
+      "id": "bounded-guards-not-policy",
+      "statement": "Technical loop, repeat, time and budget guards may bound operations but do not replace sender motive, opportunity or receiver ownership with a propagation manager.",
+      "source_pointer": "PA-05 / PA-05-H07"
+    },
+    {
+      "id": "acquisition-causes-remain-distinct",
+      "statement": "PA-04 perception and public acquisition remain distinct from PA-05 actor-to-actor communication transfer; existence of a source does not broadcast knowledge.",
+      "source_pointer": "PA-05 / PA-05-H08"
+    },
+    {
+      "id": "player-shares-causal-flow",
+      "statement": "Player-originated information uses the same communication and receiver-acquisition owners as NPC information rather than a privileged quest-only rumour channel.",
+      "source_pointer": "PA-05 / Juego2 player-causality reconciliation"
+    }
+  ],
+  "exclusions_nonclaims": [
+    {
+      "id": "no-global-diffusion-manager",
+      "statement": "Automatic graph diffusion and a global RumourManager choosing targets or acceptance are rejected as baseline authority.",
+      "source_pointer": "PA-05 / Mechanism dispositions"
+    },
+    {
+      "id": "no-rumour-truth-authority",
+      "statement": "Repetition of an assertion does not change canonical truth.",
+      "source_pointer": "PA-05 / Mechanism dispositions"
+    },
+    {
+      "id": "no-sender-owned-acceptance",
+      "statement": "The sender or transport cannot own the receiver's epistemic result.",
+      "source_pointer": "PA-05 / Failure modes"
+    },
+    {
+      "id": "no-hidden-lineage-epistemic-leak",
+      "statement": "Hidden root, parent, lineage, lie or truth diagnostics cannot enter actor-facing epistemic reasoning unless legitimately acquired.",
+      "source_pointer": "PA-05 / Failure modes"
+    },
+    {
+      "id": "no-duplicate-rumour-authority",
+      "statement": "Dialogue or quest rumour flags may not become a mutable authority parallel to PA-04 belief state.",
+      "source_pointer": "PA-05 / PA-05-H09"
+    },
+    {
+      "id": "no-autobiographical-memory-ownership",
+      "statement": "PA-05 transfer history is not permanent actor biography; PA-06 owns lasting autobiographical memory, salience, forgetting and compaction.",
+      "source_pointer": "PA-05 / PA-05-H10"
+    },
+    {
+      "id": "no-final-runtime-design",
+      "statement": "PA-05 does not select final runtime event transport, schema, storage, APIs, numeric formulas, persistence strategy or population-scale implementation.",
+      "source_pointer": "PA-05 / Deferred proof"
+    }
+  ],
+  "reopen_conditions": [
+    "Concrete accepted evidence shows that explicit opportunity-bound transfer and receiver-owned interpretation cannot preserve the required selective information-flow semantics.",
+    "A later accepted consumer requires privileged hidden lineage to alter actor epistemic output rather than an actor-accessible provenance path.",
+    "Accepted composition with PA-06 or PA-09 falsifies the separation between transfer, autobiographical memory and generic player-action ownership."
+  ],
+  "escalate_if": [
+    "A consumer needs exact PA-05 semantics beyond the exported guarantees and complete mechanism disposition table.",
+    "A disposition would be reclassified, especially any REJECT or LATER/conditional row.",
+    "A proposed consumer introduces global broadcast, automatic retell, hidden-lineage epistemic use, duplicate rumour state or a player-only information authority.",
+    "Live accepted identity or canonical PA-05 source bytes contradict this capsule."
+  ],
+  "disposition_source": {
+    "path": "Docs/research/living-world/results/PA-05.md",
+    "git_blob_sha": "e5d2f60cd9826570de00def41c38162a866b70fb",
+    "section": "## 6. Mechanism dispositions",
+    "key_column": 0,
+    "status_column": 1
+  },
+  "dispositions": [
+    {"source_key": "Explicit sender→receiver assertion transfer", "status": "ADOPT"},
+    {"source_key": "Receiver-owned PA-04 acquisition/revision", "status": "ADOPT"},
+    {"source_key": "Explicit communication opportunity/channel", "status": "ADOPT"},
+    {"source_key": "Actor-accessible/reported provenance", "status": "ADOPT"},
+    {"source_key": "Privileged causal/debug lineage", "status": "ADAPT"},
+    {"source_key": "Technical repeat/loop guards", "status": "ADOPT"},
+    {"source_key": "Configurable propagation budgets", "status": "ADAPT / LATER tuning"},
+    {"source_key": "Automatic graph diffusion as baseline", "status": "REJECT"},
+    {"source_key": "Global RumourManager choosing targets/acceptance", "status": "REJECT"},
+    {"source_key": "Recursive hidden lineage embedded in ActorBelief", "status": "REJECT"},
+    {"source_key": "Repetition changes canonical truth", "status": "REJECT"},
+    {"source_key": "Dialogue/quest rumour flags duplicating PA-04 state", "status": "REJECT"},
+    {"source_key": "Generic stochastic distortion engine", "status": "LATER"},
+    {"source_key": "Universal confidence/corroboration formula", "status": "LATER / owner-dependent"}
+  ],
+  "mandatory_source_reads": []
+}
