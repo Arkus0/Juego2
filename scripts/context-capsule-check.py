@@ -43,6 +43,8 @@ def read_bound_source(repo_root: Path, source: dict, *, label: str) -> bytes:
         raise CapsuleError(f"{label}.path must be non-empty")
     if not isinstance(expected, str) or not SHA_RE.fullmatch(expected):
         raise CapsuleError(f"{label}.git_blob_sha must be exact 40-char git blob SHA")
+    if "kind" in source and not isinstance(source["kind"], str):
+        raise CapsuleError(f"{label}.kind must be a string when present")
     full = repo_root / path
     try:
         data = full.read_bytes()
@@ -158,15 +160,26 @@ def validate_basic_shape(capsule: dict) -> None:
         raise CapsuleError("capsule_id required")
     if capsule.get("track") not in {"H0", "H1", "CITY", "PA", "CTX"}:
         raise CapsuleError(f"{cid}: unsupported track")
+    if capsule.get("content_mode") not in {"boundary_summary", "structured_disposition"}:
+        raise CapsuleError(f"{cid}: content_mode must be boundary_summary or structured_disposition")
     identity = capsule.get("accepted_identity")
     if not isinstance(identity, dict):
         raise CapsuleError(f"{cid}: accepted_identity required")
+    required_identity = {"reviewed_candidate_sha", "merge_sha", "review_id"}
+    if set(identity) != required_identity:
+        raise CapsuleError(f"{cid}: accepted_identity must contain exactly reviewed_candidate_sha, merge_sha, review_id")
     for key in ("reviewed_candidate_sha", "merge_sha"):
         value = identity.get(key)
         if not isinstance(value, str) or not SHA_RE.fullmatch(value):
             raise CapsuleError(f"{cid}: accepted_identity.{key} must be exact SHA")
     if not isinstance(identity.get("review_id"), str) or not identity["review_id"].isdigit():
         raise CapsuleError(f"{cid}: accepted_identity.review_id must be numeric string")
+    if not isinstance(capsule.get("mandatory_source_reads"), list):
+        raise CapsuleError(f"{cid}: mandatory_source_reads must be a list")
+    if "consumer_hints" in capsule:
+        hints = capsule["consumer_hints"]
+        if not isinstance(hints, list) or any(not isinstance(item, str) or not item.strip() for item in hints):
+            raise CapsuleError(f"{cid}: consumer_hints must contain only non-empty strings")
     for field in ("exported_guarantees", "exclusions_nonclaims", "reopen_conditions", "escalate_if"):
         value = capsule.get(field)
         if not isinstance(value, list) or not value:
@@ -185,6 +198,14 @@ def validate_basic_shape(capsule: dict) -> None:
             ids.add(entry["id"])
             if not isinstance(entry.get("statement"), str) or not entry["statement"].strip():
                 raise CapsuleError(f"{cid}: {field} entry {entry['id']} needs statement")
+            if "source_pointer" in entry and not isinstance(entry["source_pointer"], str):
+                raise CapsuleError(f"{cid}: {field} entry {entry['id']} source_pointer must be a string")
+    if "disposition_source" in capsule and not isinstance(capsule["disposition_source"], dict):
+        raise CapsuleError(f"{cid}: disposition_source must be an object when present")
+    if "dispositions" in capsule and not isinstance(capsule["dispositions"], list):
+        raise CapsuleError(f"{cid}: dispositions must be a list when present")
+    if "directional_semantics" in capsule and not isinstance(capsule["directional_semantics"], list):
+        raise CapsuleError(f"{cid}: directional_semantics must be a list when present")
 
 def validate_identity(repo_root: Path, capsule: dict, live_state: dict | None) -> dict:
     cid = capsule["capsule_id"]
@@ -223,6 +244,19 @@ def validate_sources(repo_root: Path, capsule: dict) -> None:
             raise CapsuleError(f"{cid}: duplicate authoritative source {path}")
         seen.add(path)
 
+def validate_mandatory_reads(repo_root: Path, capsule: dict) -> None:
+    cid = capsule["capsule_id"]
+    for i, source in enumerate(capsule["mandatory_source_reads"]):
+        label = f"{cid}.mandatory_source_reads[{i}]"
+        if not isinstance(source, dict):
+            raise CapsuleError(f"{label} must be an object")
+        if source.get("noncompressible") is not True:
+            raise CapsuleError(f"{label}.noncompressible must be true")
+        reason = source.get("reason")
+        if not isinstance(reason, str) or not reason.strip():
+            raise CapsuleError(f"{label}.reason must be a non-empty string")
+        read_bound_source(repo_root, source, label=label)
+
 def validate_dispositions(repo_root: Path, capsule: dict) -> None:
     cid = capsule["capsule_id"]
     spec = capsule.get("disposition_source")
@@ -239,8 +273,8 @@ def validate_dispositions(repo_root: Path, capsule: dict) -> None:
             raise CapsuleError(f"{cid}: disposition row must be object")
         key = row.get("source_key")
         status = row.get("status")
-        if not isinstance(key, str) or not key or not isinstance(status, str) or not status:
-            raise CapsuleError(f"{cid}: disposition row requires source_key/status")
+        if not isinstance(key, str) or not key.strip() or not isinstance(status, str) or not status.strip():
+            raise CapsuleError(f"{cid}: disposition row requires non-empty source_key/status")
         if key in capsule_rows:
             raise CapsuleError(f"{cid}: duplicate capsule disposition key {key}")
         capsule_rows[key] = strip_md(status)
@@ -259,11 +293,21 @@ def validate_dispositions(repo_root: Path, capsule: dict) -> None:
 
 def validate_directionality(capsule: dict) -> None:
     cid = capsule["capsule_id"]
-    for item in capsule.get("directional_semantics", []):
-        if not isinstance(item, dict) or item.get("must_remain_distinct") is not True:
+    items = capsule.get("directional_semantics", [])
+    for i, item in enumerate(items):
+        if not isinstance(item, dict):
+            raise CapsuleError(f"{cid}: directional_semantics[{i}] must be an object")
+        if item.get("must_remain_distinct") is not True:
             raise CapsuleError(f"{cid}: directional semantic must declare must_remain_distinct=true")
-        forward = strip_md(str(item.get("forward", "")))
-        reverse = strip_md(str(item.get("reverse", "")))
+        semantic_id = item.get("id")
+        forward_raw = item.get("forward")
+        reverse_raw = item.get("reverse")
+        if not isinstance(semantic_id, str):
+            raise CapsuleError(f"{cid}: directional semantic id must be a string")
+        if not isinstance(forward_raw, str) or not isinstance(reverse_raw, str):
+            raise CapsuleError(f"{cid}: directional semantic forward/reverse must be strings")
+        forward = strip_md(forward_raw)
+        reverse = strip_md(reverse_raw)
         if not forward or not reverse or forward == reverse:
             raise CapsuleError(f"{cid}: asymmetric semantics collapsed: {forward!r} vs {reverse!r}")
 
@@ -272,18 +316,15 @@ def validate_city_noncompressible(repo_root: Path, capsule: dict) -> None:
         return
     if capsule.get("content_mode") != "boundary_summary":
         raise CapsuleError(f"{capsule['capsule_id']}: CITY capsule must be boundary_summary")
-    reads = capsule.get("mandatory_source_reads")
-    if not isinstance(reads, list) or not reads:
+    reads = capsule["mandatory_source_reads"]
+    if not reads:
         raise CapsuleError(f"{capsule['capsule_id']}: CITY boundary capsule must preserve mandatory non-compressible source reads")
-    for i, source in enumerate(reads):
-        if not isinstance(source, dict) or not source.get("noncompressible"):
-            raise CapsuleError(f"{capsule['capsule_id']}: CITY mandatory source {i} must be noncompressible")
-        read_bound_source(repo_root, source, label=f"{capsule['capsule_id']}.mandatory_source_reads[{i}]")
 
 def validate_capsule(repo_root: Path, capsule: dict, live_state: dict | None = None) -> dict:
     validate_basic_shape(capsule)
     identity_result = validate_identity(repo_root, capsule, live_state)
     validate_sources(repo_root, capsule)
+    validate_mandatory_reads(repo_root, capsule)
     validate_dispositions(repo_root, capsule)
     validate_directionality(capsule)
     validate_city_noncompressible(repo_root, capsule)
@@ -426,12 +467,21 @@ def run_self_test() -> None:
         missing_positive = copy.deepcopy(capsule)
         missing_positive["exported_guarantees"] = []
         expect_failure(lambda: validate_capsule(repo, missing_positive), "exported_guarantees")
+        missing_mode = copy.deepcopy(capsule)
+        missing_mode.pop("content_mode")
+        expect_failure(lambda: validate_capsule(repo, missing_mode), "content_mode")
+        missing_reads = copy.deepcopy(capsule)
+        missing_reads.pop("mandatory_source_reads")
+        expect_failure(lambda: validate_capsule(repo, missing_reads), "mandatory_source_reads")
         malformed_reopen = copy.deepcopy(capsule)
         malformed_reopen["reopen_conditions"] = [None]
         expect_failure(lambda: validate_capsule(repo, malformed_reopen), "reopen_conditions[0] must be a non-empty string")
         blank_escalation = copy.deepcopy(capsule)
         blank_escalation["escalate_if"] = ["   "]
         expect_failure(lambda: validate_capsule(repo, blank_escalation), "escalate_if[0] must be a non-empty string")
+        bad_direction = copy.deepcopy(capsule)
+        bad_direction["directional_semantics"][0]["forward"] = None
+        expect_failure(lambda: validate_capsule(repo, bad_direction), "forward/reverse must be strings")
         fail_review_text = wp_text.replace("**PASS**", "**FAIL**")
         wp.write_text(fail_review_text, encoding="utf-8")
         fail_review = copy.deepcopy(capsule)
@@ -465,6 +515,9 @@ def run_self_test() -> None:
         expect_failure(lambda: validate_capsule(repo, city), "mandatory non-compressible source reads")
         city["mandatory_source_reads"] = [{"path": "Docs/production/CITY_PRODUCT_SEED.md", "git_blob_sha": git_blob_sha(city_spec.read_bytes()), "noncompressible": True, "reason": "execution specification"}]
         validate_capsule(repo, city)
+        bad_reason = copy.deepcopy(city)
+        bad_reason["mandatory_source_reads"][0]["reason"] = ""
+        expect_failure(lambda: validate_capsule(repo, bad_reason), "reason must be a non-empty string")
     print("context-capsule self-test: PASS")
 
 def main() -> int:
