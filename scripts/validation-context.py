@@ -2,9 +2,11 @@
 """Canonical validation-context identity for Automation V2.
 
 GitHub Actions is orchestration only. This script owns the fail-closed mapping
-from one concrete PR + exact SHA to the effective workpack/process class, the
-stable digest for that identity, and the matching rules used before durable
-validation evidence can be reused by REVIEW_READY or PASS preflight.
+from one concrete PR + exact SHA to every mutable PR-body fact that changes the
+mechanical validation policy: effective WP, PROCESS_ONLY classification and the
+accepted non-foundational proof class. It also owns the stable digest and the
+matching rules used before durable evidence can be reused by REVIEW_READY or
+PASS preflight.
 """
 from __future__ import annotations
 
@@ -17,13 +19,13 @@ import sys
 from typing import Any
 
 SCHEMA = "ARKUS_VALIDATION_CONTEXT_V1"
-CHECK_NAME = "Validation context identity"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$", re.I)
 DIGEST_RE = re.compile(r"^[0-9a-f]{64}$", re.I)
 WP_RE = re.compile(r"^WP-[A-Z0-9]+(?:-[A-Z0-9]+)+$")
 AUTHORITY_RE = re.compile(
-    r"^(WP|Mode|WORKFLOW_MODE):\s*`?([^`\r\n]+?)`?\s*$", re.I | re.M
+    r"^(WP|Mode|WORKFLOW_MODE|Class):\s*`?([^`\r\n]+?)`?\s*$", re.I | re.M
 )
+NON_FOUNDATIONAL_RE = re.compile(r"NON-(?:PRODUCT-)?FOUNDATIONAL", re.I)
 SUMMARY_FIELD_RE = re.compile(r"^([^:\r\n]+):\s*(.*?)\s*$", re.M)
 
 
@@ -46,6 +48,7 @@ def _context_payload(values: dict[str, str]) -> dict[str, str]:
         "head_sha": values["head_sha"].lower(),
         "wp": values["wp"],
         "process_only": values["process_only"],
+        "non_foundational": values["non_foundational"],
     }
 
 
@@ -74,6 +77,7 @@ def resolve_context(pr: dict[str, Any], target_sha: str) -> dict[str, str]:
     body = str(pr.get("body") or "")
     wp = _single_authority(body, {"WP"}, "WP")
     mode = _single_authority(body, {"MODE", "WORKFLOW_MODE"}, "process-mode")
+    class_value = _single_authority(body, {"CLASS"}, "Class")
 
     if wp is not None:
         wp = wp.strip()
@@ -81,6 +85,10 @@ def resolve_context(pr: dict[str, Any], target_sha: str) -> dict[str, str]:
             raise ValueError(f"WP field is invalid: {wp!r}")
 
     process_only = bool(mode and mode.strip().upper() == "PROCESS_ONLY")
+    non_foundational = bool(
+        (mode and NON_FOUNDATIONAL_RE.search(mode))
+        or (class_value and NON_FOUNDATIONAL_RE.search(class_value))
+    )
     if wp is None and not process_only:
         raise ValueError("non-PROCESS_ONLY validation requires an explicit WP field")
 
@@ -89,6 +97,7 @@ def resolve_context(pr: dict[str, Any], target_sha: str) -> dict[str, str]:
         "head_sha": head,
         "wp": wp or "NONE",
         "process_only": "true" if process_only else "false",
+        "non_foundational": "true" if non_foundational else "false",
     }
     values["context_digest"] = context_digest(values)
     return values
@@ -104,7 +113,15 @@ def load_record(path: Path) -> dict[str, str]:
     raw = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError("validation context record must be a JSON object")
-    required = {"schema", "pr_number", "head_sha", "wp", "process_only", "context_digest"}
+    required = {
+        "schema",
+        "pr_number",
+        "head_sha",
+        "wp",
+        "process_only",
+        "non_foundational",
+        "context_digest",
+    }
     if set(raw) != required:
         raise ValueError(
             f"validation context record keys differ from canonical schema: {sorted(raw)}"
@@ -116,8 +133,9 @@ def load_record(path: Path) -> dict[str, str]:
         raise ValueError("validation context record has invalid head_sha")
     if values["wp"] != "NONE" and not WP_RE.fullmatch(values["wp"]):
         raise ValueError("validation context record has invalid wp")
-    if values["process_only"] not in {"true", "false"}:
-        raise ValueError("validation context record has invalid process_only")
+    for key in ("process_only", "non_foundational"):
+        if values[key] not in {"true", "false"}:
+            raise ValueError(f"validation context record has invalid {key}")
     if not DIGEST_RE.fullmatch(values["context_digest"]):
         raise ValueError("validation context record has invalid context_digest")
     expected = context_digest(values)
@@ -131,7 +149,14 @@ def load_record(path: Path) -> dict[str, str]:
 
 
 def require_record_match(record: dict[str, str], current: dict[str, str]) -> None:
-    for key in ("pr_number", "head_sha", "wp", "process_only", "context_digest"):
+    for key in (
+        "pr_number",
+        "head_sha",
+        "wp",
+        "process_only",
+        "non_foundational",
+        "context_digest",
+    ):
         if record[key] != current[key]:
             raise ValueError(
                 f"validation context mismatch for {key}: recorded {record[key]!r} != current {current[key]!r}"
@@ -151,6 +176,7 @@ def make_check_summary(record: dict[str, str], run_id: str, workflow: str) -> st
             f"Candidate SHA: {record['head_sha']}",
             f"Effective WP: {record['wp']}",
             f"Process Only: {record['process_only']}",
+            f"Non Foundational: {record['non_foundational']}",
             f"Context Digest: {record['context_digest']}",
             f"Validation Run ID: {run_id}",
             f"Validation Workflow: {workflow}",
@@ -170,18 +196,25 @@ def parse_check_summary(summary: str) -> dict[str, str]:
         "Candidate SHA",
         "Effective WP",
         "Process Only",
+        "Non Foundational",
         "Context Digest",
         "Validation Run ID",
         "Validation Workflow",
     }
     if set(fields) != required:
-        raise ValueError(f"validation-context check summary fields differ from canonical set: {sorted(fields)}")
+        raise ValueError(
+            f"validation-context check summary fields differ from canonical set: {sorted(fields)}"
+        )
     duplicates = sorted(key for key, values in fields.items() if len(values) != 1)
     if duplicates:
         raise ValueError(f"validation-context check summary has duplicate fields: {duplicates}")
     out = {key: values[0] for key, values in fields.items()}
     if not SHA_RE.fullmatch(out["Candidate SHA"]):
         raise ValueError("validation-context check summary has invalid Candidate SHA")
+    if out["Process Only"] not in {"true", "false"}:
+        raise ValueError("validation-context check summary has invalid Process Only")
+    if out["Non Foundational"] not in {"true", "false"}:
+        raise ValueError("validation-context check summary has invalid Non Foundational")
     if not DIGEST_RE.fullmatch(out["Context Digest"]):
         raise ValueError("validation-context check summary has invalid Context Digest")
     if not out["Validation Run ID"].isdigit() or int(out["Validation Run ID"]) <= 0:
@@ -202,6 +235,7 @@ def require_check_summary_match(
         "Candidate SHA": current["head_sha"],
         "Effective WP": current["wp"],
         "Process Only": current["process_only"],
+        "Non Foundational": current["non_foundational"],
         "Context Digest": current["context_digest"],
     }
     for key, value in expected.items():
@@ -266,21 +300,41 @@ def run_self_test() -> None:
     sha = "a" * 40
     base = {"number": 77, "head": {"sha": sha}}
 
-    product = dict(base, body="WP: WP-H1-02\n")
+    product = dict(base, body="WP: WP-H1-02\nMode: WORKPACK\n")
     product_ctx = resolve_context(product, sha)
     assert product_ctx["wp"] == "WP-H1-02"
     assert product_ctx["process_only"] == "false"
+    assert product_ctx["non_foundational"] == "false"
     assert DIGEST_RE.fullmatch(product_ctx["context_digest"])
 
-    process = dict(base, body="WORKFLOW_MODE: PROCESS_ONLY\nWP: WP-CTX-03\n")
+    city = dict(
+        base,
+        body="WP: WP-CITY-02\nMode: REMOTE / PRODUCT PREPRODUCTION / NON-FOUNDATIONAL\n",
+    )
+    city_ctx = resolve_context(city, sha)
+    assert city_ctx["process_only"] == "false"
+    assert city_ctx["non_foundational"] == "true"
+    assert city_ctx["context_digest"] != product_ctx["context_digest"]
+
+    process = dict(
+        base,
+        body=(
+            "WORKFLOW_MODE: PROCESS_ONLY\n"
+            "Class: PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL\n"
+            "WP: WP-CTX-03\n"
+        ),
+    )
     process_ctx = resolve_context(process, sha)
     assert process_ctx["wp"] == "WP-CTX-03"
     assert process_ctx["process_only"] == "true"
+    assert process_ctx["non_foundational"] == "true"
     assert process_ctx["context_digest"] != product_ctx["context_digest"]
 
     maintenance = dict(base, body="WORKFLOW_MODE: PROCESS_ONLY\n")
     got = resolve_context(maintenance, sha)
-    assert got["wp"] == "NONE" and got["process_only"] == "true"
+    assert got["wp"] == "NONE"
+    assert got["process_only"] == "true"
+    assert got["non_foundational"] == "false"
 
     _must_fail(
         lambda: resolve_context(product, "b" * 40),
@@ -316,6 +370,13 @@ def run_self_test() -> None:
         "ambiguous process-mode authority",
         "conflicting mode",
     )
+    _must_fail(
+        lambda: resolve_context(
+            dict(base, body="WP: WP-H1-02\nClass: FOUNDATIONAL\nClass: FOUNDATIONAL\n"), sha
+        ),
+        "ambiguous Class authority",
+        "duplicate class",
+    )
 
     record = _context_payload(process_ctx)
     record["context_digest"] = process_ctx["context_digest"]
@@ -324,6 +385,14 @@ def run_self_test() -> None:
         lambda: require_record_match(record, product_ctx),
         "validation context mismatch",
         "same-SHA process-to-product mutation",
+    )
+
+    product_record = _context_payload(product_ctx)
+    product_record["context_digest"] = product_ctx["context_digest"]
+    _must_fail(
+        lambda: require_record_match(product_record, city_ctx),
+        "validation context mismatch",
+        "same-SHA foundational-to-non-foundational mutation",
     )
 
     summary = make_check_summary(process_ctx, "123", "Arkus Candidate Validation")
@@ -362,7 +431,14 @@ def run_self_test() -> None:
 
 def write_outputs(path: Path, values: dict[str, str]) -> None:
     with path.open("a", encoding="utf-8") as handle:
-        for key in ("pr_number", "head_sha", "wp", "process_only", "context_digest"):
+        for key in (
+            "pr_number",
+            "head_sha",
+            "wp",
+            "process_only",
+            "non_foundational",
+            "context_digest",
+        ):
             handle.write(f"{key}={values[key]}\n")
 
 
