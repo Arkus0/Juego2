@@ -1,0 +1,153 @@
+{
+  "schema": "arkus.accepted-contract-capsule@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "capsule_id": "WP-PA-04",
+  "track": "PA",
+  "content_mode": "structured_disposition",
+  "accepted_identity": {
+    "reviewed_candidate_sha": "5d38ea38b983cd5227f57afa1d880d24746f9249",
+    "merge_sha": "d6041b719292f24c4481dea28727e2cfd5f7ed5b",
+    "review_id": "5280879115"
+  },
+  "identity_source": {
+    "path": "Docs/workpacks/PA/WP-PA-04.md",
+    "git_blob_sha": "16d277bc931c29d4114a8f20d5b70c90d224cdcc"
+  },
+  "authoritative_sources": [
+    {
+      "path": "Docs/research/living-world/results/PA-04.md",
+      "git_blob_sha": "d065241d5dd4ed663dd686fa288e6d8a43e1dc46",
+      "kind": "canonical_research_result"
+    }
+  ],
+  "consumer_hints": [
+    "WP-PA-05",
+    "WP-PA-06",
+    "WP-PA-07",
+    "WP-PA-08",
+    "WP-PA-09",
+    "WP-PA-10",
+    "WP-PA-11",
+    "WP-PA-12",
+    "WP-PA-13",
+    "H4"
+  ],
+  "exported_guarantees": [
+    {
+      "id": "truth-belief-authority-split",
+      "statement": "Canonical world truth and actor belief are distinct authorities; actors do not gain truth merely because the engine has it.",
+      "source_pointer": "PA-04 / Core semantic model"
+    },
+    {
+      "id": "unknown-fails-closed",
+      "statement": "Missing actor knowledge remains UNKNOWN and must not fall back to canonical truth.",
+      "source_pointer": "PA-04 / Actor-safe knowledge query"
+    },
+    {
+      "id": "legitimate-acquisition-causes",
+      "statement": "Perception, communication, accessed public sources and explicit bounded authored or inference seams are legitimate acquisition causes; ambient truth is not.",
+      "source_pointer": "PA-04 / Acquisition semantics"
+    },
+    {
+      "id": "false-stale-partial-belief",
+      "statement": "Actor belief may be false, stale or partial until an explicit epistemic cause revises it; canonical truth mutation alone does not synchronize beliefs.",
+      "source_pointer": "PA-04 / Revision semantics"
+    },
+    {
+      "id": "privileged-debug-segregation",
+      "statement": "Truth comparison and stale/false diagnostics are privileged tooling outputs and cannot enter ordinary actor decision or dialogue inputs.",
+      "source_pointer": "PA-04 / Privileged truth comparison"
+    },
+    {
+      "id": "bounded-immediate-provenance",
+      "statement": "Immediate acquisition provenance and revision time are retained for explanation without turning PA-04 into unbounded transfer or autobiographical history.",
+      "source_pointer": "PA-04 / Juego2 disposition table"
+    },
+    {
+      "id": "same-world-different-belief-causal",
+      "statement": "With non-epistemic inputs fixed, two actors in the same canonical world may hold different justified beliefs and therefore make different explainable decisions.",
+      "source_pointer": "PA-04 / Required causal fixtures"
+    },
+    {
+      "id": "bounded-knowledge-lookup",
+      "statement": "Normal actor knowledge lookup must not depend on a global actor/fact scan.",
+      "source_pointer": "PA-04 / Juego2 disposition table"
+    }
+  ],
+  "exclusions_nonclaims": [
+    {
+      "id": "no-actor-visible-truth-labels",
+      "statement": "Actor-visible isTrue/isFalse/isStale or equivalent privileged canonical comparison is rejected.",
+      "source_pointer": "PA-04 / Juego2 disposition table"
+    },
+    {
+      "id": "no-truth-belief-sync",
+      "statement": "Automatic canonical truth to actor-belief synchronization is rejected.",
+      "source_pointer": "PA-04 / Juego2 disposition table"
+    },
+    {
+      "id": "no-dialogue-knowledge-authority",
+      "statement": "Duplicated dialogue or quest knows_X state is rejected as a parallel epistemic authority.",
+      "source_pointer": "PA-04 / Juego2 disposition table"
+    },
+    {
+      "id": "no-recursive-theory-of-mind-baseline",
+      "statement": "General recursive Theory of Mind is rejected as a baseline requirement.",
+      "source_pointer": "PA-04 / Juego2 disposition table"
+    },
+    {
+      "id": "no-llm-belief-authority",
+      "statement": "An LLM or general reasoner is rejected as canonical belief authority.",
+      "source_pointer": "PA-04 / Juego2 disposition table"
+    },
+    {
+      "id": "no-unbounded-provenance",
+      "statement": "Unbounded provenance chains inside each belief are rejected; PA-05 and PA-06 retain their own boundaries.",
+      "source_pointer": "PA-04 / Juego2 disposition table"
+    },
+    {
+      "id": "no-final-runtime-schema",
+      "statement": "PA-04 does not select the final runtime database, persistence model, API, numerical confidence formula, dialogue integration or perception implementation.",
+      "source_pointer": "WP-PA-04 / Deferred proof"
+    }
+  ],
+  "reopen_conditions": [
+    "Concrete contradictory evidence shows an effective actor decision path cannot preserve canonical truth and ActorBelief as separate authorities.",
+    "A later accepted consumer requires actor-visible privileged truth comparison rather than an explicit acquisition path.",
+    "A later accepted composition with PA-05 or PA-06 reveals that bounded immediate provenance cannot remain separate from transfer or autobiographical history."
+  ],
+  "escalate_if": [
+    "A consumer needs exact PA-04 semantics beyond the exported guarantees and complete disposition table.",
+    "A disposition would be reclassified, especially any REJECT or LATER/conditional row.",
+    "A proposed consumer introduces automatic truth synchronization, actor-visible truth diagnostics, duplicated knowledge authority or global lookup.",
+    "Live accepted identity or canonical PA-04 source bytes contradict this capsule."
+  ],
+  "disposition_source": {
+    "path": "Docs/research/living-world/results/PA-04.md",
+    "git_blob_sha": "d065241d5dd4ed663dd686fa288e6d8a43e1dc46",
+    "section": "## 11. Juego2 disposition table",
+    "key_column": 0,
+    "status_column": 1
+  },
+  "dispositions": [
+    {"source_key": "canonical truth separate from actor belief", "status": "ADOPT"},
+    {"source_key": "UNKNOWN for missing actor knowledge", "status": "ADOPT"},
+    {"source_key": "actor-local belief/access keyed by actor + proposition/facet", "status": "ADOPT concept"},
+    {"source_key": "perception as acquisition cause", "status": "ADOPT concept"},
+    {"source_key": "accessed public source as acquisition cause", "status": "ADOPT concept"},
+    {"source_key": "communication as acquisition cause", "status": "ADOPT boundary"},
+    {"source_key": "authored initial/grant knowledge with traceable rule", "status": "ADAPT"},
+    {"source_key": "bounded named inference from accessible inputs", "status": "LATER / conditional"},
+    {"source_key": "immediate provenance + acquisition/revision time", "status": "ADOPT"},
+    {"source_key": "bounded certainty/strength", "status": "ADAPT / conditional"},
+    {"source_key": "actor-visible isTrue/isFalse/isStale", "status": "REJECT"},
+    {"source_key": "automatic truth→belief synchronization", "status": "REJECT"},
+    {"source_key": "duplicated dialogue/quest knows_X authority", "status": "REJECT baseline"},
+    {"source_key": "general recursive Theory of Mind", "status": "REJECT baseline"},
+    {"source_key": "LLM/general reasoner as belief authority", "status": "REJECT baseline"},
+    {"source_key": "unbounded provenance chain inside each belief", "status": "REJECT"},
+    {"source_key": "global actor/fact scan for normal knowledge lookup", "status": "REJECT"},
+    {"source_key": "privileged debug truth comparison", "status": "ADOPT for tooling/test only"}
+  ],
+  "mandatory_source_reads": []
+}
