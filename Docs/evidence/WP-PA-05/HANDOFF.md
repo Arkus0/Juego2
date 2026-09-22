@@ -92,7 +92,7 @@ Manolo  -> Carmen only after a separate later decision/opportunity
 Paco    -> UNKNOWN throughout because no acquisition path exists
 ```
 
-The result is mandatory, not merely allowed. Receiving T1 cannot auto-create T2.
+The result is mandatory, not merely allowed. Receiving T1 cannot auto-create T2, Carmen receiving T2 cannot auto-create T3, and the fixture ends with no later sender-owned retell decision plus no valid further opportunity: the chain therefore terminates for explicit causal reasons.
 
 ### NC-01 — NO_GLOBAL_TRUTH_SYNC
 
@@ -104,7 +104,7 @@ Required: zero ActorBelief deltas and zero transfer records caused solely by the
 
 Canonical truth remains true while Antonio explicitly asserts false to Manolo through a valid transfer and the declared receiver fixture accepts/revises.
 
-Required: Manolo may hold the false PA-04 belief; WorldFact remains true; no hidden `isLie/isFalse` leaks into actor-safe state.
+Required: `WorldFact(Z)=true` remains unchanged and `Manolo ActorBelief(Z)=false via COMMUNICATION/T1`. No hidden `isLie/isFalse` may leak into actor-safe state.
 
 ### NC-02 — HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE
 
@@ -147,7 +147,7 @@ Required: finite transfer count + explicit engine stop reason; no automatic rela
 
 Player -> Carmen uses the normal communication transfer/acquisition path. After the player leaves, Carmen may independently choose a later Carmen -> Manolo relay. Paco remains UNKNOWN without an acquisition path.
 
-No quest-only `playerRevealed_X` / `heardRumour_X` authority or town-wide broadcast is permitted.
+No quest-only `playerRevealed_X` / `heardRumour_X` authority or town-wide broadcast is permitted. Player conceal/expose remain normal source/opportunity operations, and investigation may surface only legitimately player-accessible evidence/provenance through its future owner — never privileged engine root/parent/hop/lineage or canonical debug truth merely because tooling knows it.
 
 ## Ownership guards
 
@@ -164,21 +164,23 @@ No quest-only `playerRevealed_X` / `heardRumour_X` authority or town-wide broadc
 Try especially to show that:
 
 1. CF-01 only permits rather than requires the selective chain;
-2. Paco can learn without a valid acquisition path;
-3. receive still auto-relays under another name;
-4. truth mutation syncs beliefs;
-5. hidden lineage changes receiver epistemic output;
-6. NC-02 accidentally changes delivery count or another actor-visible variable;
-7. technical dedup is being confused with corroboration;
-8. reported source is inferred from engine lineage rather than communicated;
-9. receiver acceptance is sender/global-manager owned;
-10. ABSTRACT opportunity is unexplained teleportation;
-11. capped graph diffusion is being called bounded agency;
-12. false assertion mutates truth or leaks a privileged lie/truth label;
-13. player origin broadcasts or uses parallel quest knowledge state;
-14. transfer history steals PA-06 memory ownership;
-15. dialogue state can diverge from PA-04 ActorBelief;
-16. bounded delivery hides global population/social-graph enumeration;
-17. runtime/persistence/performance claims exceed the research evidence.
+2. CF-01 can continue after Carmen without a new retell decision/opportunity;
+3. Paco can learn without a valid acquisition path;
+4. receive still auto-relays under another name;
+5. truth mutation syncs beliefs;
+6. hidden lineage changes receiver epistemic output;
+7. NC-02 accidentally changes delivery count or another actor-visible variable;
+8. technical dedup is being confused with corroboration;
+9. reported source is inferred from engine lineage rather than communicated;
+10. receiver acceptance is sender/global-manager owned;
+11. ABSTRACT opportunity is unexplained teleportation;
+12. capped graph diffusion is being called bounded agency;
+13. false assertion mutates truth or leaks a privileged lie/truth label;
+14. player origin broadcasts or uses parallel quest knowledge state;
+15. player investigation reads privileged debug lineage rather than a legitimate player-facing evidence/source path;
+16. transfer history steals PA-06 memory ownership;
+17. dialogue state can diverge from PA-04 ActorBelief;
+18. bounded delivery hides global population/social-graph enumeration;
+19. runtime/persistence/performance claims exceed the research evidence.
 
 A fresh independent Reviewer must bind any verdict to the exact frozen SHA published on PR #132 after the Worker stops writers and completes exact-HEAD pre-review.
