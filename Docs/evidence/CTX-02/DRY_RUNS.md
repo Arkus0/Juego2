@@ -23,7 +23,7 @@ Inherited split recovered from capsule:
 Escalation behavior:
 
 - ordinary ownership reconstruction does not require replaying all H0 narrative;
-- any material question about completeness, residual risk or the exact gate proof follows the capsule pointers to `FINAL_VERDICT.md`, `PROOF_MATRIX.md`, `RESIDUAL_RISK.md` and any authoritative transitive source they invoke;
+- any material question about completeness, residual risk or the exact gate proof follows the capsule pointers to `VERDICT.md`, `PROOF_MATRIX.md`, `RESIDUAL_RISK.md` and any authoritative transitive source they invoke;
 - exact local Unity duties remain governed by H1's own workpack/execution protocol and are not compressed into the capsule.
 
 Verdict: `CONTEXT_CLOSED` for the inherited/current ownership split; `ESCALATE` for exact H0 proof questions.
@@ -68,10 +68,13 @@ Verdict: materially smaller cumulative predecessor start while preserving exact 
 Cases exercised mechanically:
 
 - completion metadata reviewed-candidate SHA differs from capsule -> invalid;
+- completion metadata carries a review id but the independent verdict is not `PASS` -> invalid;
 - bound source bytes differ from recorded Git blob SHA -> invalid;
 - independent accepted-state input says `REOPENED` -> invalid;
 - independent accepted-state exact SHA differs -> invalid;
+- `reopen_conditions` or `escalate_if` contains null, empty or whitespace-only entries -> invalid;
 - material disposition row missing or reclassified -> invalid;
+- the entire accepted-PA `disposition_source` + `dispositions` surface is removed -> invalid;
 - A->B / B->A directional expressions collapse -> invalid.
 
 Result in every case: capsule cannot be used as inherited truth; reconstruct from authoritative sources and decide the predecessor/reopen question there.
