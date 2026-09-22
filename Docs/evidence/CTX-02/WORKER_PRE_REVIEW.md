@@ -1,130 +1,105 @@
-# CTX-02 Worker Pre-Review
+# CTX-02 Worker Pre-Review — Final Circuit-Breaker
 
 WP: `WP-CTX-02`  
+PR: `#113`  
 Baseline SHA: `f7b4f1e8247dfc927203dca6754b71aaa53938f3`  
 Class: `PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL`  
-`fail_cycle: 4`
-
-Historical independently reviewed candidates and FAILs:
-
-- `8db17036ad65ca03540f14e71711d806179c3e1c` -> review `#5274094804`: **FAIL** — accepted-PA structured-disposition whole-surface omission;
-- `504b4ff25f67720be9adb6b948dff859413419f3` -> review `#5274163927`: **FAIL** — malformed reopen/escalation items plus accepted identity not requiring explicit PASS;
-- `66ccbeccf699f98c591809c739a3118f1b376e9c` -> review `#5274257119`: **FAIL** — representative semantic-content false-green with IDs/source pointers/fingerprints preserved while guarantee/exclusion statement text is inverted or invented;
-- `1afc4135e4eda8cfab8e85325dcafcf123978915` -> review `#5274389905`: **FAIL** — one-of-many omission control proved only that a row was deleted, not a real semantic RED; PA-chain universe was seeded from result files, allowing future COMPLETE result+capsule whole-item omission to disappear from coverage.
-
-Circuit-breaker trust-boundary re-audit remains durable at `Docs/evidence/CTX-02/TRUST_BOUNDARY_REAUDIT.md`.
+`fail_cycle: 5`
 
 `WORKER_PRE_REVIEW: CLEAN`
 
-`WORKER_PRE_REVIEW_FINDINGS_FIXED: 24`
+`UNSAFE: 0`
 
 `PROOF_BUDGET: WITHIN_BUDGET`
 
-This report is the complete strict Worker pre-review for cycle 4. PR #113 was returned to Draft before every repair mutation. The full baseline→candidate surface, all four Reviewer FAIL classes, the exact-SHA CI feedback produced during this cycle, adoption wiring, live-main movement, representative consumer boundaries and proof proportionality were re-reviewed. Persisting this report is the final planned repository-byte mutation before a new exact-SHA no-write validation and freeze.
+This is the complete Worker pre-review rebuilt from zero after review `#5274609459`. It is not a patch-only receipt. The Worker re-audited the complete CTX-02 trust boundary, all five historical Reviewer FAIL classes, the complete validation/oracle surface, adoption wiring, current live-main movement, scope and a 15-attack hostile Reviewer pre-mortem before declaring CLEAN.
 
-## 1. Cycle-4 blocker B1 — omission control now proves a real RED
+Durable final-audit authority: `Docs/evidence/CTX-02/FINAL_CIRCUIT_BREAKER_AUDIT.md`.  
+Claim→source→oracle→mutation matrix: `Docs/evidence/CTX-02/CONTROL_MATRIX.md`.  
+Representative/integration runs: `Docs/evidence/CTX-02/DRY_RUNS.md`.  
+Proof proportionality: `Docs/evidence/CTX-02/PROOF_BUDGET.md`.
 
-The old synthetic regression was insufficient: it kept production validation GREEN and merely asserted that an expected ID had been removed.
+## 1. Historical Reviewer FAIL lineage — all preserved
 
-The repair adds `scripts/context-capsule-omission-controls.py`, wired into the required Context Capsule Validation workflow. It uses the actual indexed `WP-HK-GATE` capsule and the same independent representative semantic oracle used by CTX-02's bounded semantic controls.
+1. `8db17036ad65ca03540f14e71711d806179c3e1c`, review `#5274094804`: whole accepted-PA `disposition_source` + `dispositions` omission. **Preserved RED**.
+2. `504b4ff25f67720be9adb6b948dff859413419f3`, review `#5274163927`: malformed reopen/escalation plus review ID without explicit PASS. **Preserved RED**.
+3. `66ccbeccf699f98c591809c739a3118f1b376e9c`, review `#5274257119`: same-ID/source-pointer/fingerprint semantic substitution. **Preserved RED** through independent bounded semantic oracles.
+4. `1afc4135e4eda8cfab8e85325dcafcf123978915`, review `#5274389905`: one-of-many omission control did not exercise the semantic oracle; PA universe was result-first. **Preserved repair**: actual representative-oracle RED + COMPLETE-workpack-side discovery.
+5. `210d42cc41199716e46d38c23ed7a550b8038a1c`, review `#5274609459`: PA `workpack_glob`/`result_template` still index-controlled; DocSync full-surface list omitted omission controls. **Closed at class boundary**, not only examples.
 
-Positive omission sequence:
+## 2. Final circuit-breaker defect class closure
 
-1. validate the actual representative baseline under production validation and the independent oracle;
-2. remove exactly one of several exports, `unity-work-authorized`;
-3. require production shape/source validation to remain GREEN, proving the mutation is structurally valid rather than incidentally malformed;
-4. require the representative oracle to RED on `exported_guarantees material content mismatch`.
+The final audit asked whether audited data/configuration, coordinated absence, source rebinding or semantic substitution could change what the checker believed it had to prove and still produce GREEN.
 
-Symmetric exclusion sequence removes only `no-new-concurrency-claim` while another exclusion remains, requires production validation to stay GREEN, and requires the same oracle to RED on `exclusions_nonclaims material content mismatch`.
+The repair makes all mechanically consequential selectors checker-owned or exact-bound:
 
-The older synthetic one-of-many mutations remain only mutation-sanity checks and are explicitly labelled as such. They are no longer presented as the semantic RED evidence.
+- canonical index and protocol paths;
+- canonical capsule path from capsule ID;
+- canonical workpack path, track and content mode from capsule ID;
+- PA COMPLETE-workpack discovery glob;
+- PA canonical result template/path;
+- current PA-01/02/03 disposition section/key/status-column selectors.
 
-Verdict: **B1 CLOSED**.
+The audited index/capsule may repeat those values only as assertions. It cannot select a different universe/oracle.
 
-## 2. Cycle-4 blocker B2 — COMPLETE workpacks define the PA universe
+Additional same-class false-greens found and repaired in cycle 5:
 
-`validate_pa_chain()` no longer discovers existing `PA-NN.md` result files first.
+1. CITY `track` could suppress the CITY-specific oracle when changed together with mandatory-read deletion;
+2. `content_mode` remained subject-controlled;
+3. PA table section/key/status columns selected their own completeness oracle;
+4. index entry could redirect an ID to an alternate valid-looking capsule JSON;
+5. `--audit-index` could audit an alternate index file;
+6. accepted identity could rebind to a same-name workpack under another root;
+7. representative authoritative-source inventory could be silently narrowed while remaining fingerprints stayed valid;
+8. DocSync validation-surface drift omitted `context-capsule-omission-controls.py`.
 
-The canonical chain rule is now:
+All eight are now either `RED_AUTOMATIC` or `RED_SEMANTIC_ORACLE`. No `UNSAFE` remains.
 
-- `workpack_glob = Docs/workpacks/PA/WP-PA-[0-9][0-9].md`;
-- `result_template = Docs/research/living-world/results/PA-{NN}.md`.
+## 3. Trust/oracle boundary re-review
 
-The checker first discovers every canonical `WP-PA-NN.md` whose status is `COMPLETE`. Each COMPLETE workpack independently enters the accepted PA inventory. From that inventory the checker derives and requires the canonical `PA-NN.md` result, then requires the matching indexed capsule and structured-disposition binding.
+Final oracle classes remain deliberately separated:
 
-The self-test retains a synthetic `WP-PA-04.md` as COMPLETE while jointly omitting `PA-04.md` and its capsule/index entry. `validate_pa_chain()` must RED with `accepted PA canonical result missing for COMPLETE workpack(s): WP-PA-04`.
+- **A / deterministic production:** canonical roots/selectors, exact accepted identity/PASS, external-source boundary, recomputed blob fingerprints, COMPLETE PA inventory, canonical result existence, checker-owned disposition selector, exact key/status equality, exact CITY seed, structural asymmetry;
+- **B / bounded independent semantic tests:** material HK/CITY/PA representative exports, exclusions, reopen/escalation values, PA direction values, representative capsule/source inventories and structurally valid one-of-many omissions;
+- **C / explicit human escalation:** arbitrary future prose completeness/equivalence, contested interpretation, coordinated rewrite of both capsule and test-only semantic fixture, and authenticity/provenance of an externally supplied live-state assertion.
 
-Result, capsule and index entry therefore cannot disappear together and erase the item from the universe whose completeness is being claimed.
+Class C is never converted to automatic PASS. The required outcome is `ESCALATE_HUMAN / RECONSTRUCT_FROM_AUTHORITATIVE_SOURCES`.
 
-Verdict: **B2 CLOSED**.
+The production checker does not import an approved-prose registry and no product semantic source of truth moved into CTX-02.
 
-## 3. Exact-SHA CI feedback during repair
+## 4. Hostile Reviewer pre-mortem — 15 attacks investigated
 
-After the first cycle-4 pre-review report, candidate `fb9d7265b19d4eebcc0b92b3a091785c5f9f2ef7` was marked Ready solely to trigger exact-candidate CI.
+1. Narrow PA workpack selector after deleting future accepted item → **RED_AUTOMATIC**, exact checker glob.
+2. Redirect PA result template to shadow tree → **RED_AUTOMATIC**.
+3. Supply alternate index to `--audit-index` → **RED_AUTOMATIC**.
+4. Redirect same index ID to alternate valid capsule file → **RED_AUTOMATIC**.
+5. CITY→H1 plus delete `CITY_PRODUCT_SEED.md` mandatory read → **RED_AUTOMATIC**.
+6. Switch `content_mode` to disable structural validator → **RED_AUTOMATIC**.
+7. Choose another valid-looking PA table/columns in same result → **RED_AUTOMATIC**.
+8. Use same-name workpack under another directory as identity authority → **RED_AUTOMATIC**.
+9. Delete HK proof source while keeping guarantees and remaining hashes valid → **RED_SEMANTIC_ORACLE**.
+10. Delete representative capsule + index entry together → PA **RED_AUTOMATIC** from COMPLETE universe; bounded H1/CITY **RED_SEMANTIC_ORACLE** from independent representative inventory.
+11. Spoof acceptance with review ID but FAIL verdict → **RED_AUTOMATIC**.
+12. Replace reopen/escalation with opposite but non-empty prose → representative **RED_SEMANTIC_ORACLE**; arbitrary future prose **ESCALATE_HUMAN**, never implicit GREEN.
+13. Change PA direction to another still-asymmetric expression → representative **RED_SEMANTIC_ORACLE**; structural collapse separately automatic RED.
+14. Make a defect test prove only mutation occurrence/helper failure → closed by subprocess real `--audit-index` integration controls and by the actual representative semantic oracle for omission controls.
+15. Add future COMPLETE PA capsule without reviewed checker-owned disposition selector → **fail closed / RECONSTRUCT**, capsule-chain coverage cannot become COMPLETE.
 
-- Arkus Candidate Validation run `35691792743` / #1013: **SUCCESS**.
-- Context Capsule Validation run `35691792781` / #63: **FAILURE**.
+Result: `PRE_MORTEM_UNSAFE: 0`.
 
-The failure was not either Reviewer blocker. `context-capsule-check.py --self-test` passed. The failure occurred inside the pre-existing synthetic regression harness because its temporary index still used the superseded result-first fields `result_glob` / `workpack_template`; the repaired production checker correctly rejected that fixture as `invalid PA chain discovery rule`.
+## 5. Mutation matrix verdict
 
-The PR was immediately returned to Draft. Finding 24 repaired only that stale synthetic fixture:
+The durable `CONTROL_MATRIX.md` records every material automatic claim as:
 
-- use the same completion-side `workpack_glob` / `result_template` contract as production;
-- clarify that the synthetic one-of-many blocks are mutation sanity only;
-- keep the actual semantic omission RED in `context-capsule-omission-controls.py`.
+`claim -> authoritative universe/source -> independent oracle -> mutation -> required result -> current result`.
 
-No product semantics, representative semantic oracle or production trust boundary changed in this CI-driven repair.
+Covered classes include delete, paired delete, rename/rebind, canonical-path change, narrow/broad/no-match selector, alternate result template, same-ID semantic substitution, blank/null surfaces, whole structured-surface removal, PASS spoofing, directional mutation, live-state mismatch, index inventory mutation and configuration-assisted hiding.
 
-## 4. Prior FAIL regressions preserved
+Final matrix result: `UNSAFE: 0`.
 
-The candidate still protects all prior reviewed defect classes:
+## 6. Full validation surface — preliminary repaired-head execution
 
-- accepted PA capsule cannot omit the complete `disposition_source` + `dispositions` surface;
-- disposition rows preserve exact source-derived key/status coverage;
-- malformed/blank reopen and escalation elements RED;
-- accepted identity requires explicit independent PASS plus review id;
-- same-ID/pointer/fingerprint guarantee/exclusion statement inversion REDs through bounded representative semantic oracles;
-- representative reopen/escalation substitutions and changed-but-still-distinct PA directional values RED;
-- identity/authority sources cannot self-confirm from capsule/CTX-02-generated evidence;
-- PA `disposition_source` must be the canonical result derived from the independent COMPLETE-workpack inventory;
-- `WP-CITY-03` requires the exact non-compressible `CITY_PRODUCT_SEED.md` mandatory read;
-- PA-01/02/03 remain the bounded cumulative PA semantic representative surface.
-
-No earlier causal repair was removed to close cycle 4.
-
-## 5. Scope and predecessor review
-
-Re-reviewed against the exact WP and predecessor boundary:
-
-- `Docs/workpacks/CTX/WP-CTX-02.md` objective, Work, Forbidden, Required controls, Acceptance and DoD;
-- accepted CTX-01 predecessor evidence;
-- `AGENTS.md`, Context Bootstrap, Worker Review Protocol and role skills;
-- Context Capsule protocol/schema/index and all five indexed representative capsules;
-- HK-GATE, CITY-03 and PA-01/02/03 accepted source bindings;
-- all four independent Reviewer FAILs on their exact candidate SHAs;
-- complete baseline→candidate diff and cycle-4 failed-candidate→candidate diff.
-
-The write set remains CTX-02 process/context machinery and evidence only. No product/runtime implementation, Unity project, CITY geometry/result, canonical PA accepted result, accepted predecessor workpack or architecture/product semantic source is modified.
-
-Live `main` remains `13332b738626b43ace6047a9c141a840406bfed7` during this cycle. Its relevant movement concerns CTX-03 and PA-13 scalability surfaces and does not overlap the immutable accepted HK-GATE/CITY-03/PA-01/02/03 source bindings used here.
-
-Scope verdict: **WITHIN WP-CTX-02**. No predecessor reopen or rebase is required.
-
-## 6. Oracle / authority boundary
-
-The repair preserves the durable A/B/C split:
-
-- **A / production:** deterministic accepted identity, source fingerprints, exact mandatory-read identity, COMPLETE-workpack PA inventory, canonical result existence, structured disposition equality and shape invariants;
-- **B / bounded representative tests:** exact material semantics for the five selected current consumer capsules, including real one-of-many omission defects;
-- **C / human escalation:** arbitrary future prose equivalence/completeness and disputed interpretation.
-
-The PA completeness rule does not auto-enroll future PA prose into semantic fixtures. The omission control reuses the existing test-only representative oracle. No production semantic registry, fuzzy/NLP equivalence engine, bulk historical migration or generalized semantic theorem proving was added.
-
-Durable verdict: `Docs/evidence/CTX-02/PROOF_BUDGET.md` → `PROOF_BUDGET: WITHIN_BUDGET`.
-
-## 7. Required final exact-candidate validation
-
-After this report commit, no repository bytes may change before freeze unless a required check finds another defect. The exact final candidate must execute:
+On repaired pre-report SHA `00979c2c9c9589e0b686fabbfe0928b7cc6a20e9`, Context Capsule Validation run `35695822987` / #73 checked out that exact SHA and executed:
 
 ```bash
 python3 scripts/context-capsule-check.py --self-test
@@ -134,12 +109,67 @@ python3 scripts/context-capsule-pa-semantic-controls.py
 python3 scripts/context-capsule-check.py --audit-index --repo-root .
 ```
 
-These commands run in `.github/workflows/context-capsule-validation.yml` against the exact PR candidate checkout. Arkus Candidate Validation must also be GREEN on the same SHA.
+Observed results from the workflow log:
 
-## 8. Worker verdict
+- `context-capsule self-test: PASS`;
+- `context-capsule independent controls: PASS`;
+- `context-capsule representative omission controls: PASS (defect injections RED)`;
+- `context-capsule PA-01/02 semantic controls: PASS`;
+- real index audit: `result: PASS`, `semantic_authority_granted: false`, PA chain discovered exactly `WP-PA-01`, `WP-PA-02`, `WP-PA-03`, coverage `COMPLETE`.
+
+Arkus Candidate Validation run `35695822985` / #1050 on the same SHA was also **SUCCESS**.
+
+These runs prove the repaired surface before this durable pre-review report. Because this report itself changes repository bytes, **they are not the final freeze runs**. After this commit, both workflows must be GREEN again on the exact new HEAD before freeze/Ready.
+
+## 7. Adoption and command-surface review
+
+Canonical full CTX-02 validation commands are the five commands above. `context-capsule-controls.py` independently requires the complete set in:
+
+- `Docs/engineering/CONTEXT_CAPSULE_V1.md`;
+- `.agents/skills/update-handoff/SKILL.md`;
+- `.github/workflows/context-capsule-validation.yml`;
+- any other skill that explicitly claims the “full CTX-02 validation surface”.
+
+The latest Reviewer's minor blocker is therefore closed and future same-phrase workflow drift is a control failure.
+
+Reviewer independence is unchanged: capsules/test fixtures do not limit review, and concrete contradictory evidence routes to original authoritative sources.
+
+## 8. Scope / current-main review
+
+Current live `main` at this pre-review is `b831050e9df8b61b76744e0c5f544bd7ec2d79b5`, advanced by merge of planning PR #117 / DW second-consumer plan.
+
+That main movement is outside the CTX-02 write set: it adds/changes DW/ROADMAP planning surfaces and does not modify the immutable accepted HK-GATE, CITY-03 or PA-01/02/03 source bindings consumed by CTX-02. It does not reopen CTX-01 or alter CTX-02 ownership. PR #113 remains open/mergeable.
+
+The PR write set remains process/context machinery only: role/bootstrap protocol, capsule schema/index/capsules, CTX-02 evidence, checker/control scripts and the dedicated validation workflow. No runtime/product implementation, Unity project, CITY product seed/result, canonical accepted PA result, accepted predecessor workpack or product semantic architecture is modified.
+
+Scope verdict: **WITHIN WP-CTX-02 / PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL**. No bulk migration and no product contract reduction occurred.
+
+## 9. Proof-budget review
+
+`PROOF_BUDGET: WITHIN_BUDGET`.
+
+The additional authority is mechanical: fixed repository roots, naming conventions and structural selectors that otherwise let the subject choose its own oracle. Natural-language semantics remain bounded test evidence + human escalation. No fuzzy/NLP equivalence, general semantic theorem prover or capsule-as-authority architecture was introduced.
+
+## 10. Final no-write exit gate
+
+After this report commit, repository bytes must remain unchanged unless an exact-candidate check exposes another defect. Freeze is authorized only if all of these hold simultaneously on one HEAD:
+
+- Context Capsule Validation: GREEN;
+- Arkus Candidate Validation: GREEN;
+- baseline real `--audit-index`: GREEN;
+- all historical defect controls: RED as intended;
+- all cycle-5 class-level controls: RED as intended;
+- `UNSAFE: 0`;
+- PR HEAD equals declared Frozen candidate SHA;
+- PR Ready only after exact-SHA GREEN;
+- durable `REVIEW_READY` names the exact same SHA.
+
+## Worker verdict
 
 `WORKER_PRE_REVIEW: CLEAN`
 
 `PROOF_BUDGET: WITHIN_BUDGET`
 
-The branch may be marked Ready only to run/reconfirm the exact-candidate gates. Once both required workflows are GREEN on the same immutable SHA, that SHA may be declared the frozen candidate for a fresh independent Reviewer. Worker CLEAN is readiness evidence only; no merge or DocSync is authorized without Reviewer PASS.
+`UNSAFE: 0`
+
+This CLEAN verdict authorizes exact-SHA validation/freeze/handoff only. It does **not** authorize merge or DocSync without a fresh independent Reviewer PASS.
