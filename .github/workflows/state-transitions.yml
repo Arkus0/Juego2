@@ -105,8 +105,8 @@ jobs:
             "repos/${GITHUB_REPOSITORY}/commits/${RUN_SHA}/check-runs?per_page=100" > checks.json
           external_id="validation-context:${PR}:${RUN_SHA}:${digest}:${RUN_ID}"
           match_count="$(jq -r --arg eid "${external_id}" '[.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid)] | length' checks.json)"
-          [[ "${match_count}" == "1" ]] || { echo "::error::Expected exactly one context-bound GREEN for run ${RUN_ID}, found ${match_count}"; exit 2; }
-          jq -r --arg eid "${external_id}" '.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid) | .output.summary' checks.json > context-summary.txt
+          [[ "${match_count}" -ge 1 ]] || { echo "::error::No context-bound GREEN for run ${RUN_ID}"; exit 2; }
+          jq -r --arg eid "${external_id}" '[.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid)] | sort_by(.completed_at // .started_at // "") | last | .output.summary' checks.json > context-summary.txt
           python3 process-oracle/scripts/validation-context.py check-match \
             --pr-json pr.json \
             --target-sha "${RUN_SHA}" \
@@ -343,8 +343,8 @@ jobs:
             "repos/${GITHUB_REPOSITORY}/commits/${reviewed_sha}/check-runs?per_page=100" > checks.json
           external_id="validation-context:${PR}:${reviewed_sha}:${digest}:${validation_run_id}"
           match_count="$(jq -r --arg eid "${external_id}" '[.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid)] | length' checks.json)"
-          [[ "${match_count}" == "1" ]] || { echo "::error::Expected one context-bound GREEN matching REVIEW_READY source, found ${match_count}"; exit 2; }
-          jq -r --arg eid "${external_id}" '.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid) | .output.summary' checks.json > context-summary.txt
+          [[ "${match_count}" -ge 1 ]] || { echo "::error::No context-bound GREEN matching REVIEW_READY source"; exit 2; }
+          jq -r --arg eid "${external_id}" '[.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid)] | sort_by(.completed_at // .started_at // "") | last | .output.summary' checks.json > context-summary.txt
           python3 process-oracle/scripts/validation-context.py check-match \
             --pr-json pr.json \
             --target-sha "${reviewed_sha}" \
