@@ -19,14 +19,16 @@ generated_from_main_sha == first_parent(current live main)
 After an accepted implementation transition:
 
 1. reconstruct current live `main` as `SOURCE_MAIN_SHA`, accepted merge/review and dependency-valid next action;
-2. regenerate the accepted-state index from authoritative sources;
+2. regenerate the accepted-state index **once** from authoritative sources; do not maintain a second compact current-state registry for the same transition;
 3. set `projection_phase=DOCSYNC_PERSISTED` and `generated_from_main_sha=SOURCE_MAIN_SHA`;
-4. after CTX-02 adoption, if the accepted transition creates/changes a canonical accepted PA result, create/update its one accepted-contract capsule from the exact accepted identity/result and update `Docs/engineering/context-capsules/index.json`; preserve every disposition key/status and never infer missing rows; any new PA capsule also requires a reviewed checker-owned canonical disposition selector before capsule-chain coverage can be declared complete;
-5. after CTX-02 adoption, whenever capsule/index state is affected run the full CTX-02 validation surface: `python3 scripts/context-capsule-check.py --self-test`, `python3 scripts/context-capsule-controls.py`, `python3 scripts/context-capsule-omission-controls.py`, `python3 scripts/context-capsule-pa-semantic-controls.py`, and `python3 scripts/context-capsule-check.py --audit-index --repo-root .`; a missing/invalid accepted PA capsule, missing checker-owned selector, or failed independent semantic control means capsule-chain/navigation coverage is incomplete, not that the authoritative PA result is invalid;
-6. persist DocSync in a direct child/merge whose first parent is exactly `SOURCE_MAIN_SHA`;
-7. if main moved before persistence, stop and regenerate from the new source;
-8. query the resulting live main SHA and first parent and run `python3 scripts/context-bootstrap-check.py --current-main-sha <DOCSYNC_MAIN_SHA> --current-main-parent-sha <SOURCE_MAIN_SHA> --require-fresh`;
-9. only after that check passes emit exactly one `ARKUS_AUTOMATION_V2` comment on the merged implementation PR with `State: DOCSYNC_COMPLETE`, `Key: docsync-complete:<PR>:<reconciled-main-sha>`, `WP: <WP-ID>`, `Next WP: <dependency-valid next WP, or NONE>`, and a short `Detail:`.
+4. reconcile only authoritative/current-state docs whose effective accepted meaning actually changed. Do not copy the same accepted transition into ROADMAP, handoff, track README and evidence merely to preserve chronology; long closure chronology belongs under exact evidence or `Docs/history/` with stable pointers back to the accepted PR/review/SHA;
+5. after CTX-02 adoption, if the accepted transition creates/changes a canonical accepted PA result, create/update its one accepted-contract capsule from the exact accepted identity/result and update `Docs/engineering/context-capsules/index.json`; preserve every disposition key/status and never infer missing rows; any new PA capsule also requires a reviewed checker-owned canonical disposition selector before capsule-chain coverage can be declared complete;
+6. after CTX-02 adoption, whenever capsule/index state is affected run the full CTX-02 validation surface: `python3 scripts/context-capsule-check.py --self-test`, `python3 scripts/context-capsule-controls.py`, `python3 scripts/context-capsule-omission-controls.py`, `python3 scripts/context-capsule-pa-semantic-controls.py`, and `python3 scripts/context-capsule-check.py --audit-index --repo-root .`; a missing/invalid accepted PA capsule, missing checker-owned selector, or failed independent semantic control means capsule-chain/navigation coverage is incomplete, not that the authoritative PA result is invalid;
+7. after CTX-03 adoption, keep `Docs/history/**` out of normal role bootstrap. Historical material is read only when a current claim, contradiction or audit needs it. Preserve accepted evidence; never delete it for context savings;
+8. persist DocSync in a direct child/merge whose first parent is exactly `SOURCE_MAIN_SHA`;
+9. if main moved before persistence, stop and regenerate from the new source;
+10. query the resulting live main SHA and first parent and run `python3 scripts/context-bootstrap-check.py --current-main-sha <DOCSYNC_MAIN_SHA> --current-main-parent-sha <SOURCE_MAIN_SHA> --require-fresh`;
+11. only after that check passes emit exactly one `ARKUS_AUTOMATION_V2` comment on the merged implementation PR with `State: DOCSYNC_COMPLETE`, `Key: docsync-complete:<PR>:<reconciled-main-sha>`, `WP: <WP-ID>`, `Next WP: <dependency-valid next WP, or NONE>`, and a short `Detail:`.
 
 The marker is notification/handoff metadata, not authority. Never emit it before DocSync is actually complete.
 

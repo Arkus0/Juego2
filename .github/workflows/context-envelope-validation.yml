@@ -1,0 +1,168 @@
+name: CTX Process Envelope
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  envelope:
+    name: CTX process envelope
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Self-test deterministic CTX-03 process controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          python3 scripts/context-envelope-check.py --self-test
+          python3 scripts/ctx03-dynamic-context-check.py --self-test
+          python3 scripts/ctx03-dynamic-slot-controls.py --self-test
+          python3 scripts/ctx03-effective-read-set-controls.py --self-test
+          python3 scripts/mechanical-verifier-classifier.py --self-test
+          python3 scripts/review-ready-closure.py --self-test
+          python3 scripts/derive-worker-review-metadata.py --self-test
+          python3 scripts/validate-worker-handoff.py --self-test
+          python3 scripts/ctx03-quality-replay.py --self-test
+          python3 scripts/ctx03-process-controls.py --self-test
+          python3 scripts/ctx03-docsync-history-check.py --self-test
+
+      - name: Run registered causal CTX-03 suite
+        id: audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(
+            --audit
+            --escalations Docs/evidence/CTX-03/CONTEXT_ESCALATIONS.json
+            --output ctx-envelope-report.json
+          )
+          dynamic_args=(--audit-policy)
+          if [[ -n "${BASE_SHA}" ]]; then
+            args+=(--base-ref "${BASE_SHA}")
+            dynamic_args+=(--base-ref "${BASE_SHA}")
+          fi
+
+          set +e
+          python3 scripts/context-envelope-check.py "${args[@]}" > ctx-envelope.log 2>&1
+          envelope_status=$?
+          python3 scripts/ctx03-dynamic-context-check.py "${dynamic_args[@]}" > ctx-dynamic-context.log 2>&1
+          dynamic_status=$?
+          python3 scripts/ctx03-dynamic-slot-controls.py > ctx-dynamic-slot-controls.log 2>&1
+          dynamic_slot_status=$?
+          python3 scripts/ctx03-effective-read-set-controls.py > ctx-effective-read-set-controls.log 2>&1
+          effective_read_status=$?
+          python3 scripts/ctx03-quality-replay.py \
+            --negative-controls \
+            --output ctx-quality-replay.json \
+            > ctx-quality-replay.log 2>&1
+          replay_status=$?
+          python3 scripts/ctx03-process-controls.py > ctx-process-controls.log 2>&1
+          controls_status=$?
+          python3 scripts/ctx03-docsync-history-check.py > ctx-docsync-history.log 2>&1
+          docsync_status=$?
+          python3 scripts/ctx03-final-circuit-breaker.py > ctx-final-circuit-breaker.log 2>&1
+          circuit_status=$?
+          set -e
+
+          cat ctx-envelope.log
+          cat ctx-dynamic-context.log
+          cat ctx-dynamic-slot-controls.log
+          cat ctx-effective-read-set-controls.log
+          cat ctx-quality-replay.log
+          cat ctx-process-controls.log
+          cat ctx-docsync-history.log
+          cat ctx-final-circuit-breaker.log
+
+          outcome=PASS
+          for status in "${envelope_status}" "${dynamic_status}" "${dynamic_slot_status}" "${effective_read_status}" "${replay_status}" "${controls_status}" "${docsync_status}" "${circuit_status}"; do
+            case "${status}" in
+              0) ;;
+              20) outcome=FAIL ;;
+              21)
+                [[ "${outcome}" == FAIL ]] || outcome=REVIEW_BLOCKED
+                ;;
+              22) ;;
+              23)
+                [[ "${outcome}" == FAIL || "${outcome}" == REVIEW_BLOCKED ]] || outcome=INFRA_ERROR
+                ;;
+              *)
+                [[ "${outcome}" == FAIL || "${outcome}" == REVIEW_BLOCKED ]] || outcome=INFRA_ERROR
+                ;;
+            esac
+          done
+
+          echo "reported_outcome=${outcome}" >> "${GITHUB_OUTPUT}"
+          echo "envelope_status=${envelope_status}" >> "${GITHUB_OUTPUT}"
+          echo "dynamic_status=${dynamic_status}" >> "${GITHUB_OUTPUT}"
+          echo "dynamic_slot_status=${dynamic_slot_status}" >> "${GITHUB_OUTPUT}"
+          echo "effective_read_status=${effective_read_status}" >> "${GITHUB_OUTPUT}"
+          echo "replay_status=${replay_status}" >> "${GITHUB_OUTPUT}"
+          echo "controls_status=${controls_status}" >> "${GITHUB_OUTPUT}"
+          echo "docsync_status=${docsync_status}" >> "${GITHUB_OUTPUT}"
+          echo "circuit_status=${circuit_status}" >> "${GITHUB_OUTPUT}"
+
+      - name: Classify verifier outcome without false-red promotion
+        shell: bash
+        env:
+          REPORTED_OUTCOME: ${{ steps.audit.outputs.reported_outcome }}
+        run: |
+          set -euo pipefail
+          conclusion=success
+          case "${REPORTED_OUTCOME}" in
+            FAIL|REVIEW_BLOCKED|INFRA_ERROR) conclusion=failure ;;
+          esac
+          cat > mechanical-state.json <<EOF
+          {
+            "checks": [
+              {
+                "name": "CTX process envelope",
+                "conclusion": "${conclusion}",
+                "reported_outcome": "${REPORTED_OUTCOME}"
+              }
+            ],
+            "required_registered_verifiers": ["ctx-process-envelope"]
+          }
+          EOF
+          set +e
+          python3 scripts/mechanical-verifier-classifier.py \
+            --state mechanical-state.json \
+            --output mechanical-decision.json
+          classified=$?
+          set -e
+          cat mechanical-decision.json
+          exit "${classified}"
+
+      - name: Upload CTX process evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ctx-process-envelope-${{ env.TARGET_SHA }}
+          path: |
+            ctx-envelope.log
+            ctx-envelope-report.json
+            ctx-dynamic-context.log
+            ctx-dynamic-slot-controls.log
+            ctx-effective-read-set-controls.log
+            ctx-quality-replay.log
+            ctx-quality-replay.json
+            ctx-process-controls.log
+            ctx-docsync-history.log
+            ctx-final-circuit-breaker.log
+            mechanical-state.json
+            mechanical-decision.json
+          if-no-files-found: warn
+          retention-days: 30

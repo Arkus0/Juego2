@@ -1,0 +1,107 @@
+{
+  "schema": "arkus.ctx03-historical-classification@1",
+  "authority": "AUDIT_HISTORY_ONLY",
+  "derived_from": "live GitHub PR/review/comment state plus accepted repository evidence; not chat memory",
+  "derived_on": "2026-09-22",
+  "policy": {
+    "mechanical": "repository-owned deterministic check can decide the defect without semantic Reviewer judgment",
+    "semantic": "independent Reviewer reasoning is the intended detector; do not gate by superficial pattern",
+    "mixed": "a deterministic precondition/control can move left, but semantic judgment remains necessary",
+    "decisions": ["ADOPT", "DEFER", "REJECT"]
+  },
+  "cases": [
+    {
+      "id": "ctx01-freshness-self-reference",
+      "pr": 106,
+      "review_id": 5271197524,
+      "reviewed_sha": "d972db98eca5527e7c30596ea069866dd878069b",
+      "classification": "semantic",
+      "decision": "DEFER",
+      "reason": "The impossible self-referential freshness rule required causal interpretation. The accepted CTX-01 repair now carries its own first-parent positive/negative controls; CTX-03 does not invent a generic prose-pattern gate."
+    },
+    {
+      "id": "ctx01-ready-metadata-missing",
+      "pr": 110,
+      "review_id": 5273364796,
+      "reviewed_sha": "ea92e4eab36566ab3d0367fef64fefc0b2b0ff39",
+      "classification": "mechanical",
+      "decision": "ADOPT",
+      "reason": "Ready PR body omitted canonical handoff/process-mode metadata while handoff/freeze checks were red. CTX-03 moves this left with derivable metadata plus REVIEW_BLOCKED classification; this should not consume a semantic Reviewer FAIL round."
+    },
+    {
+      "id": "ctx02-pa-whole-structured-surface-omission",
+      "pr": 113,
+      "review_id": 5274094804,
+      "reviewed_sha": "8db17036ad65ca03540f14e71711d806179c3e1c",
+      "classification": "semantic",
+      "decision": "DEFER",
+      "reason": "Reviewer found the causal completeness false-green. Accepted CTX-02 now owns the exact whole-surface omission control; CTX-03 consumes that checker instead of duplicating a new gate."
+    },
+    {
+      "id": "ctx02-malformed-reopen-escalation",
+      "pr": 113,
+      "review_id": 5274163927,
+      "reviewed_sha": "504b4ff25f67720be9adb6b948dff859413419f3",
+      "classification": "mixed",
+      "decision": "DEFER",
+      "reason": "The semantic importance of reopen/escalation required review, while the accepted CTX-02 checker now deterministically enforces non-empty usable elements. Existing capsule validation remains the causal owner."
+    },
+    {
+      "id": "ctx02-same-id-semantic-substitution",
+      "pr": 113,
+      "review_id": 5274257119,
+      "reviewed_sha": "66ccbeccf699f98c591809c739a3118f1b376e9c",
+      "classification": "semantic",
+      "decision": "REJECT",
+      "reason": "Generic natural-language equivalence is intentionally not automated. Accepted representative semantic oracles cover bounded known cases; arbitrary semantics remain Reviewer/source escalation."
+    },
+    {
+      "id": "ctx02-noncausal-omission-control-and-pa-universe",
+      "pr": 113,
+      "review_id": 5274389905,
+      "reviewed_sha": "1afc4135e4eda8cfab8e85325dcafcf123978915",
+      "classification": "mixed",
+      "decision": "DEFER",
+      "reason": "The Reviewer identified both a non-causal control and a self-defined completeness universe. CTX-02 repaired them with real audit-path defect injection and completion-side discovery; CTX-03 preserves those controls rather than creating a second universe."
+    },
+    {
+      "id": "ctx02-self-authored-pa-selectors",
+      "pr": 113,
+      "review_id": 5274609459,
+      "reviewed_sha": "210d42cc41199716e46d38c23ed7a550b8038a1c",
+      "classification": "mixed",
+      "decision": "DEFER",
+      "reason": "Checker-owned selectors are now an accepted CTX-02 invariant. CTX-03 quality replay independently requires selected authoritative sources to remain reachable but does not redefine CTX-02 selector authority."
+    },
+    {
+      "id": "ctx02-pre-ready-handoff-lint-family",
+      "pr": 113,
+      "review_id": null,
+      "reviewed_sha": null,
+      "classification": "mechanical",
+      "decision": "ADOPT",
+      "reason": "Incomplete canonical predecessor/handoff metadata is a deterministic lifecycle defect. It belongs to REVIEW_BLOCKED before semantic review, covered by the existing handoff lint, the metadata generator and terminal closure oracle."
+    },
+    {
+      "id": "transition-loss-missing-review-ready-marker",
+      "pr": null,
+      "review_id": null,
+      "reviewed_sha": null,
+      "classification": "mechanical",
+      "decision": "ADOPT",
+      "reason": "All prerequisite gates may be green while the durable Automation V2 REVIEW_READY marker is absent/wrong-SHA. CTX-03 closure keeps the candidate REVIEW_BLOCKED until the real marker exists and a post-marker live HEAD read still matches."
+    }
+  ],
+  "summary": {
+    "independent_fail_cases": 7,
+    "mechanical_or_handoff_incidents_without_new_semantic_authority": 2,
+    "adopted_mechanical_families": [
+      "derivable Ready metadata / canonical handoff coherence",
+      "durable REVIEW_READY plus post-marker live-HEAD closure"
+    ],
+    "explicitly_not_adopted_as_generic_gates": [
+      "natural-language semantic equivalence",
+      "Reviewer causal reasoning about novel completeness universes"
+    ]
+  }
+}
