@@ -60,6 +60,21 @@ namespace Arkus.DesignWorld
         public const string ManifestId = "dw02-city-production-manifest-v1";
         public const string ProgrammeHeading = "## 4. District × location programme";
 
+        private static readonly IReadOnlyList<string> ProgrammeHeaderColumns =
+            new List<string>
+            {
+                "Programme ID",
+                "District/family",
+                "Place / family",
+                "Mobility anchor",
+                "Domain",
+                "A–D",
+                "S",
+                "Interior",
+                "Default access posture",
+                "Non-visual revisit reason"
+            }.AsReadOnly();
+
         private static readonly IReadOnlyList<CityProjectionManifestField> ManifestFields =
             new List<CityProjectionManifestField>
             {
@@ -72,6 +87,7 @@ namespace Arkus.DesignWorld
                 new CityProjectionManifestField(ProgrammeHeading, "Default access posture", "source-owned required access-role query and demand counts")
             }.AsReadOnly();
 
+        public static IReadOnlyList<string> ProgrammeHeaders => ProgrammeHeaderColumns;
         public static IReadOnlyList<CityProjectionManifestField> Fields => ManifestFields;
     }
 
@@ -602,8 +618,7 @@ namespace Arkus.DesignWorld
             var table = ParseTable(
                 source,
                 CityProductionProjectionManifest.ProgrammeHeading,
-                "Programme ID",
-                10);
+                CityProductionProjectionManifest.ProgrammeHeaders);
             var rows = new SortedDictionary<string, ProgrammeRow>(StringComparer.Ordinal);
             foreach (var row in table)
             {
@@ -666,9 +681,11 @@ namespace Arkus.DesignWorld
         private static IReadOnlyList<TableRow> ParseTable(
             string source,
             string heading,
-            string firstHeader,
-            int columns)
+            IReadOnlyList<string> expectedHeaders)
         {
+            if (expectedHeaders == null) throw new ArgumentNullException(nameof(expectedHeaders));
+            if (expectedHeaders.Count == 0) throw Shape(string.Empty, "Reviewed programme header schema is empty.");
+
             var lines = source.Replace("\r\n", "\n").Replace('\r', '\n').Split('\n');
             var headingIndex = Array.FindIndex(lines, line => line.Trim() == heading);
             if (headingIndex < 0)
@@ -683,7 +700,7 @@ namespace Arkus.DesignWorld
                 if (line.StartsWith("## ", StringComparison.Ordinal)) break;
                 if (!line.StartsWith("|", StringComparison.Ordinal)) continue;
                 var cells = SplitRow(line);
-                if (cells.Count > 0 && Clean(cells[0]) == firstHeader)
+                if (cells.Count > 0 && Clean(cells[0]) == expectedHeaders[0])
                 {
                     headerIndex = index;
                     break;
@@ -694,8 +711,19 @@ namespace Arkus.DesignWorld
             {
                 throw Shape(string.Empty, "Required programme table is absent.");
             }
-            if (SplitRow(lines[headerIndex].Trim()).Count != columns ||
-                lines[headerIndex + 1].IndexOf("---", StringComparison.Ordinal) < 0)
+
+            var actualHeaders = SplitRow(lines[headerIndex].Trim())
+                .Select(Clean)
+                .ToList();
+            if (!actualHeaders.SequenceEqual(expectedHeaders, StringComparer.Ordinal))
+            {
+                throw Shape(
+                    string.Empty,
+                    "Required programme header schema changed. Expected: " +
+                    string.Join(" | ", expectedHeaders) + 
+                    ". Actual: " + string.Join(" | ", actualHeaders) + ".");
+            }
+            if (lines[headerIndex + 1].IndexOf("---", StringComparison.Ordinal) < 0)
             {
                 throw Shape(string.Empty, "Required programme table changed shape.");
             }
@@ -706,7 +734,7 @@ namespace Arkus.DesignWorld
                 var line = lines[index].Trim();
                 if (!line.StartsWith("|", StringComparison.Ordinal)) break;
                 var cells = SplitRow(line);
-                if (cells.Count != columns)
+                if (cells.Count != expectedHeaders.Count)
                 {
                     throw Shape(string.Empty, "A programme row changed column count.");
                 }
