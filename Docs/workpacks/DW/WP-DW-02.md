@@ -1,10 +1,12 @@
 # WP-DW-02 — CITY production queries and content-shape projection
 
-Status: PLANNED / NOT_STARTED
+Status: COMPLETE / ACCEPTED
 Class: FOUNDATIONAL
 EXECUTION_REQUIREMENT: REMOTE_OK
 Depends on: `WP-DW-01` PASS + merge + DocSync
 Blocks: `WP-DW-03`
+
+Acceptance: frozen candidate `65cfc1fcc4cce4df368e966297db52b3b5d06093`; independent PASS review `#5283919380`; PR `#139`; merge `1fe0b178668a7698e22de57f49f8100eaae0455a`; final fully GREEN exact-SHA validation Actions `35785494959`; post-PASS DocSync `Docs/evidence/WP-DW-02/DOCSYNC.md`.
 
 ## Objective and central claim
 
