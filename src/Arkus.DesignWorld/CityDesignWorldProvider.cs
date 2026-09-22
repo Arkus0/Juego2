@@ -86,6 +86,7 @@ namespace Arkus.DesignWorld
             ValidateFresh(programme);
             ValidateFresh(bindings);
             ValidateFresh(interiors);
+            new CityInteriorRelationOracle().Validate(interiors.Projection, model.InteriorIds);
             ValidateAccess(programme.Projection, bindings.Projection, model.AccessIds);
             ValidateDepth(programme.Projection, interiors.Projection, model.InteriorIds);
             return new CityDesignWorldSlice(
