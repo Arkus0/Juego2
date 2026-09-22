@@ -52,7 +52,21 @@ EOF
   exit 10
 fi
 
-actual_sdk="$(dotnet --version)"
+actual_sdk=""
+dotnet_probe=""
+if ! dotnet_probe="$(dotnet --version 2>&1)"; then
+  cat >&2 <<EOF
+Worker environment has a dotnet host, but it cannot resolve the exact SDK selected by global.json.
+Required SDK: ${required_sdk}
+Dotnet probe: ${dotnet_probe}
+Candidate SHA: ${candidate_sha}
+WORKER_PREFLIGHT_DELEGATION_REQUIRED
+Use a GREEN 'Worker Candidate Preflight' pull_request run whose durable receipt names the canonical PR and this exact SHA. Do not treat this local SDK-resolution failure as NOT_READY by itself.
+EOF
+  exit 10
+fi
+actual_sdk="${dotnet_probe}"
+
 if [[ "${actual_sdk}" != "${required_sdk}" ]]; then
   cat >&2 <<EOF
 Worker environment cannot execute the local preflight with the exact SDK selected by global.json.
