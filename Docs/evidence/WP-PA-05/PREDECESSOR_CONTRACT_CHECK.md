@@ -7,21 +7,37 @@ Worker: ChatGPT GPT-5.6 Sol
 
 `PREDECESSOR_CONTRACT_CHECK: COMPLETE`
 
+## Chronology and final accepted predecessor state
+
+The initial first-write check consumed the then-current PA-04 research + DocSync state at `main@58e417f357caac387f84333766f61c2fb4d9f461`. PA-05 exact-HEAD validation later exposed that this was not yet sufficient under the accepted CTX-02 fail-closed capsule contract: `WP-PA-04` was COMPLETE but missing from the accepted PA capsule chain.
+
+That predecessor defect was repaired independently in PR `#133` before PA-05 freeze. The final predecessor check therefore binds to the repaired accepted state, not merely to the initial chronology record.
+
 ## Accepted direct predecessor / exact evidence
 
-`WP-PA-04 — Knowledge, Belief, Ignorance & Deception` is accepted, merged and DocSync-complete:
+`WP-PA-04 — Knowledge, Belief, Ignorance & Deception` is accepted, merged and DocSync-complete after the corrective capsule repair:
 
-- accepted candidate: `5d38ea38b983cd5227f57afa1d880d24746f9249`;
-- independent PASS review: `#5280879115`;
+- accepted research candidate: `5d38ea38b983cd5227f57afa1d880d24746f9249`;
+- independent research PASS review: `#5280879115`;
 - research PR: `#129`;
 - research merge: `d6041b719292f24c4481dea28727e2cfd5f7ed5b`;
-- DocSync PR: `#131`;
-- DocSync candidate: `b9a884c9c8f0dfc6afae59ef33fa58c3a8997904`;
-- DocSync merge: `58e417f357caac387f84333766f61c2fb4d9f461`;
+- original DocSync PR: `#131`;
+- original DocSync candidate: `b9a884c9c8f0dfc6afae59ef33fa58c3a8997904`;
+- original DocSync merge: `58e417f357caac387f84333766f61c2fb4d9f461`;
+- PA-05-discovered capsule defect: accepted-chain coverage gap for `WP-PA-04`;
+- corrective capsule DocSync PR: `#133`;
+- corrective candidate: `ef665c48d43e93dc294fdeb9f9b2443197872480`;
+- corrective independent FAIL: `#5281292455` — lifecycle/handoff metadata only; no PA-04 semantic blocker;
+- corrective independent PASS: `#5281331377` on the same exact repository candidate after canonical handoff repair;
+- corrective merge / final PA-05 predecessor baseline: `cd8440938f98dcf51c0a56204bb14e8634a31926`;
 - canonical accepted finding: `Docs/research/living-world/results/PA-04.md`;
-- completion evidence: `Docs/evidence/WP-PA-04/DOCSYNC.md` ends `DOCSYNC_COMPLETE` and names PA-05 next.
+- original completion evidence: `Docs/evidence/WP-PA-04/DOCSYNC.md`;
+- corrective completion evidence: `Docs/evidence/WP-PA-04/CAPSULE_DOCSYNC_REPAIR.md`;
+- accepted navigation capsule: `Docs/engineering/context-capsules/WP-PA-04.json`.
 
-The Worker directly consumed the accepted PA-04 result and DocSync because PA-05 terminates its transfer boundary at PA-04 receiver-owned communication acquisition/revision. A compact state projection is navigation only, not semantic authority for this seam.
+The corrective candidate preserved the accepted PA-04 semantics and added the missing exact-bound navigation capsule, canonical index entry and checker-owned disposition selector. The accepted chain audit discovers `WP-PA-01` through `WP-PA-04` with `coverage: COMPLETE` and `semantic_authority_granted: false`.
+
+The Worker directly consumed the accepted PA-04 result because PA-05 terminates its transfer boundary at PA-04 receiver-owned communication acquisition/revision. The compact capsule is navigation only, not semantic authority for this seam.
 
 ## Inherited guarantees consumed by PA-05
 
@@ -64,6 +80,8 @@ Future implementation uncertainty or convenience is not a reopen trigger.
 
 ## Result
 
-No concrete contradiction was found. PA-05 may consume accepted PA-04 without reopening it while adding only the transport/provenance/termination guarantees named above.
+The initial predecessor interpretation was correctly reopened when fail-closed validation exposed missing accepted-chain coverage. PR #133 repaired that process/evidence defect, obtained independent PASS, and merged before the final PA-05 freeze. No concrete semantic contradiction remains.
+
+PA-05 may consume accepted PA-04 from final baseline `cd8440938f98dcf51c0a56204bb14e8634a31926` while adding only the transport/provenance/termination guarantees named above.
 
 `PREDECESSOR_CONTRACT_CHECK: PASS`
