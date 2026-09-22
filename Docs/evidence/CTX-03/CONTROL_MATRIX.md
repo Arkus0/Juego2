@@ -5,21 +5,24 @@ Status: **CANDIDATE EVIDENCE / PROCESS_ONLY**
 | CTX-03 acceptance/control | Source of truth / universe | Control / evidence | Result boundary |
 |---|---|---|---|
 | same-snapshot pre/post measurement | checker-owned representative routes + checker-owned pre-CTX direct-predecessor inventories + exact candidate bytes | `context-envelope-check.py --audit` | reproducible file-level pre/min/escalated estimates; config/capsules cannot self-shrink baseline |
-| canonical profile/calibration universe | checker-owned `Docs/engineering/context-bootstrap-profiles.json` + checker-owned calibration substitutions | `profile_universe_errors` + `ctx03-process-controls.py` redirection mutations | alternate profile source, dropped profile or redirected placeholder -> RED |
+| canonical profile/calibration universe | checker-owned `Docs/engineering/context-bootstrap-profiles.json` + checker-owned calibration substitutions | `profile_universe_errors` + redirection mutations | alternate profile source, dropped profile or redirected placeholder -> RED |
+| fixed conditional universe cannot self-shrink | checker-owned `CANONICAL_FIXED_CONDITIONAL_SOURCES` + independently extracted explicit fixed `Docs/...` paths from canonical `conditional_reads` | `conditional_profile_universe_errors` + new-fixed-source mutation | dropped budget or newly introduced unreviewed fixed conditional source -> RED; deleting profile prose does not delete checker-owned source |
+| all fixed conditional profile growth bounded | every accepted role profile + checker-owned fixed conditional superset | `conditional_profile_budgets` + loop over every fixed source in `ctx03-process-controls.py` | growth of any fixed Worker/repair/Reviewer/planner/DocSync conditional over ceiling -> RED |
+| concrete route-effective context bounded | checker-owned H1/CITY/PA routes + checker-owned effective required-source oracle | route minimum+escalated budgets | route-forced capsule/non-compressible/escalated source growth over ceiling -> RED |
 | claimed material saving exceeds uncertainty | estimator rule in config/protocol | route report | only PA minimum route is labelled material; H1/CITY are not overstated |
 | cumulative PA composition | accepted CTX-02 PA capsule family + checker-owned canonical PA baseline | measurement + `ctx03-quality-replay.py` | keep CTX-02 chain; no second PA registry |
-| mandatory escalation completeness | canonical profile-owned `must_escalate_if` | `CONTEXT_ESCALATIONS.json` + `ctx03-process-controls.py` omission mutation | omitted required predicate -> RED |
+| mandatory escalation completeness | canonical profile-owned `must_escalate_if` | `CONTEXT_ESCALATIONS.json` + omission mutation | omitted required predicate -> RED |
 | stale/compact source cannot override authority | CTX-01/02 accepted authority rules | profile escalation + exact source reconstruction | compact contradiction deepens/fails closed |
 | PA material reference cannot disappear silently | real capsule source selectors + canonical PA-03 result | quality replay integration mutation | source removal -> RED |
 | CITY non-compressible detail remains reachable | `WP-CITY-03` capsule mandatory read | quality replay integration mutation | seed removal -> RED |
 | base process-envelope derived, not duplicated | canonical accepted role profiles | checker derives `initial_reads` | config cannot narrow file/profile universe |
-| effective mandatory context bounded | checker-owned H1/CITY/PA routes + checker-owned effective required-source oracle | route minimum+escalated budgets in `context-envelope.json` | route-forced conditional/capsule/escalated source growth over ceiling -> RED |
-| H1 foundational conditional cannot escape budget | `H1-worker` checker-owned route | grow real `FOUNDATIONAL_PROOF_STANDARD.md` across route ceiling | RED |
-| H1 local conditional cannot escape budget | `H1-reviewer` checker-owned route | grow real `H1_REMOTE_LOCAL_EXECUTION.md` across route ceiling | RED |
-| CITY cross-track conditional cannot escape budget | CITY checker-owned routes | grow real `Docs/ROADMAP.md` across route ceiling | RED |
+| H1 foundational/local conditional cannot escape budget | Worker/repair/Reviewer conditional supersets + concrete H1 routes | grow real Foundation/H1-local sources across applicable ceilings | RED |
+| CITY/ROADMAP conditional cannot escape budget | Worker/repair/Reviewer/DocSync conditional supersets + CITY routes | grow real `Docs/ROADMAP.md` | RED |
+| planner foundational conditional cannot escape budget | planner conditional superset | grow real `FOUNDATIONAL_PROOF_STANDARD.md` | RED |
+| DocSync capsule conditional cannot escape budget | DocSync conditional superset | grow real capsule protocol/index | RED |
 | materially escalated PA source cannot escape budget | cumulative PA checker-owned routes | grow real `PA-03.md` across escalated route ceiling | RED |
 | unrelated repository growth does not false-red | base derived profile set | add unrelated 100KB fixture | remains GREEN |
-| ceiling growth explicit | base-ref previous config | checker + control fixture | profile or route increase requires revision + justification |
+| ceiling growth explicit | base-ref previous config | checker + control fixture | base, conditional-profile or route increase requires revision + justification |
 | historical FAIL corpus re-derived/classified | live GitHub review/comment evidence + accepted repo evidence | `HISTORICAL_CLASSIFICATION.json` | each family has mechanical/semantic/mixed + ADOPT/DEFER/REJECT |
 | no semantic-gate substitution | independent Reviewer authority | classification explicitly rejects generic semantic-equivalence automation | semantic review remains mandatory |
 | exact pre-review does not mutate candidate | final committed HEAD + complete Worker pre-review + durable GitHub issue comment | `derive-worker-review-metadata.py --pre-review-evidence <comment URL>` | repository-local final CLEAN pointer rejected; metadata points to post-byte exact-SHA record |
