@@ -13,6 +13,7 @@ on:
       - 'Docs/production/CITY_PRODUCT_SEED.md'
       - 'Docs/evidence/CTX-02/**'
       - 'scripts/context-capsule-check.py'
+      - 'scripts/context-capsule-controls.py'
       - '.github/workflows/context-capsule-validation.yml'
   workflow_dispatch:
 
@@ -31,11 +32,17 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
-      - name: Self-test negative controls
+      - name: Self-test fail-closed validator
         shell: bash
         run: |
           set -euo pipefail
           python3 scripts/context-capsule-check.py --self-test
+
+      - name: Independent material-loss controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/context-capsule-controls.py
 
       - name: Audit representative capsules and accepted PA chain
         shell: bash
