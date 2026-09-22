@@ -1,10 +1,14 @@
 # WP-PA-04 — Adopt/revalidate Knowledge & Belief findings
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_HARVEST**  
 Depends on: `WP-PA-03` PASS + merge + DocSync  
 Blocks: `WP-PA-05` only
+
+Accepted candidate: `5d38ea38b983cd5227f57afa1d880d24746f9249`  
+Independent review: **PASS**, review `#5280879115`  
+Merged: PR `#129`, merge commit `d6041b719292f24c4481dea28727e2cfd5f7ed5b` on 2026-09-22
 
 ## Objective
 
