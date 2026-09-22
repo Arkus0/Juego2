@@ -33,7 +33,7 @@ jobs:
           path: process-oracle
           fetch-depth: 1
 
-      - name: Validate frozen metadata, context and exact-SHA GREEN receipt
+      - name: Validate live handoff, reuse context and exact-SHA GREEN receipt
         id: validate
         shell: bash
         run: |
@@ -49,31 +49,27 @@ jobs:
           wp="$(jq -r '.wp' VALIDATION_CONTEXT.json)"
           process_only="$(jq -r '.process_only' VALIDATION_CONTEXT.json)"
           non_foundational="$(jq -r '.non_foundational' VALIDATION_CONTEXT.json)"
-          digest="$(jq -r '.context_digest' VALIDATION_CONTEXT.json)"
+          context_digest="$(jq -r '.context_digest' VALIDATION_CONTEXT.json)"
 
           [[ "${process_only}" == "false" ]] || { echo "::error::HK-00 receipt reuse is not valid for PROCESS_ONLY"; exit 2; }
           [[ "${non_foundational}" == "false" ]] || { echo "::error::HK-00 receipt reuse requires foundational proof class"; exit 2; }
           [[ "${wp}" == "WP-HK-00" ]] || { echo "::error::HK-00 receipt cannot satisfy requested workpack ${wp}"; exit 2; }
 
-          python3 - <<'PY'
-          import json, re
-          pr = json.load(open('pr.json', encoding='utf-8'))
-          body = pr.get('body') or ''
-          def field(name):
-              matches = re.findall(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
-              if len(matches) != 1:
-                  raise SystemExit(f'{name} must occur exactly once, found {len(matches)}')
-              return matches[0].strip()
-          for key, expected in {
-              'Worker state':'FROZEN_FOR_REVIEW','Branch frozen':'YES',
-              'Worker verdict':'IN_REVIEW','Worker pre-review':'CLEAN','Reviewer verdict':'PENDING'
-          }.items():
-              if field(key).upper() != expected:
-                  raise SystemExit(f'{key} mismatch')
-          head = pr['head']['sha'].lower()
-          if field('Frozen candidate SHA').lower() != head or field('Candidate HEAD SHA').lower() != head:
-              raise SystemExit('Frozen/Candidate SHA must equal PR HEAD')
-          PY
+          # The expensive execution receipt may be reused, but readiness is always
+          # recomputed from the current mutable handoff surface. This is strictly
+          # stronger than checking a subset of frozen fields in this workflow.
+          export PR_BODY="$(jq -r '.body // ""' pr.json)"
+          export TARGET_SHA="${sha}"
+          export CURRENT_PR_NUMBER="${PR}"
+          python3 process-oracle/scripts/validate-worker-handoff.py --self-test
+          python3 process-oracle/scripts/validate-worker-handoff.py \
+            --head-sha "${sha}" --repo-root process-oracle
+
+          python3 process-oracle/scripts/reuse-context.py self-test
+          python3 process-oracle/scripts/reuse-context.py resolve \
+            --pr-json pr.json --target-sha "${sha}" --record REUSE_CONTEXT.json >/dev/null
+          reuse_digest="$(jq -r '.reuse_context_digest' REUSE_CONTEXT.json)"
+          [[ "${reuse_digest}" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::Invalid reuse context digest"; exit 2; }
 
           artifact_name="hk00-receipt-${sha}"
           artifact_json="$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?name=${artifact_name}&per_page=100")"
@@ -102,7 +98,8 @@ jobs:
           echo "wp=${wp}" >> "${GITHUB_OUTPUT}"
           echo "process_only=${process_only}" >> "${GITHUB_OUTPUT}"
           echo "non_foundational=${non_foundational}" >> "${GITHUB_OUTPUT}"
-          echo "context_digest=${digest}" >> "${GITHUB_OUTPUT}"
+          echo "context_digest=${context_digest}" >> "${GITHUB_OUTPUT}"
+          echo "reuse_context_digest=${reuse_digest}" >> "${GITHUB_OUTPUT}"
           echo "source_run_id=${source_run_id}" >> "${GITHUB_OUTPUT}"
           echo "artifact_id=${artifact_id}" >> "${GITHUB_OUTPUT}"
 
@@ -112,14 +109,15 @@ jobs:
           SOURCE_RUN_ID: ${{ steps.validate.outputs.source_run_id }}
           ARTIFACT_ID: ${{ steps.validate.outputs.artifact_id }}
           CONTEXT_DIGEST: ${{ steps.validate.outputs.context_digest }}
+          REUSE_CONTEXT_DIGEST: ${{ steps.validate.outputs.reuse_context_digest }}
         shell: bash
         run: |
           set -euo pipefail
-          summary="Validated and reused durable exact-SHA GREEN receipt from workflow run ${SOURCE_RUN_ID}, artifact ${ARTIFACT_ID}, under validation context ${CONTEXT_DIGEST}."
+          summary="Reused exact-SHA GREEN receipt from workflow run ${SOURCE_RUN_ID}, artifact ${ARTIFACT_ID}. Live handoff revalidated. Routing context ${CONTEXT_DIGEST}; complete mutable reuse context ${REUSE_CONTEXT_DIGEST}."
           jq -n \
             --arg name "Freeze exact-SHA validation" --arg head_sha "${SHA}" \
-            --arg external_id "receipt-freeze:${PR}:${SHA}:${CONTEXT_DIGEST}:${GITHUB_RUN_ID}" \
-            --arg title "Exact-SHA GREEN receipt reused" --arg summary "${summary}" \
+            --arg external_id "receipt-freeze:${PR}:${SHA}:${REUSE_CONTEXT_DIGEST}:${GITHUB_RUN_ID}" \
+            --arg title "Exact-SHA GREEN receipt safely reused" --arg summary "${summary}" \
             '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"success",output:{title:$title,summary:$summary}}' \
             | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
 
@@ -127,12 +125,14 @@ jobs:
         env:
           SHA: ${{ steps.validate.outputs.sha }}
           CONTEXT_DIGEST: ${{ steps.validate.outputs.context_digest }}
+          REUSE_CONTEXT_DIGEST: ${{ steps.validate.outputs.reuse_context_digest }}
         shell: bash
         run: |
           set -euo pipefail
-          summary="$(python3 process-oracle/scripts/validation-context.py check-summary \
+          base_summary="$(python3 process-oracle/scripts/validation-context.py check-summary \
             --record VALIDATION_CONTEXT.json --run-id "${GITHUB_RUN_ID}" --workflow "Arkus Receipt Freeze Reuse")"
-          external_id="validation-context:${PR}:${SHA}:${CONTEXT_DIGEST}:${GITHUB_RUN_ID}"
+          summary="${base_summary}"$'\n'"Reuse Context Digest: ${REUSE_CONTEXT_DIGEST}"
+          external_id="validation-context:${PR}:${SHA}:${REUSE_CONTEXT_DIGEST}:${GITHUB_RUN_ID}"
           jq -n \
             --arg name "Validation context identity" --arg head_sha "${SHA}" --arg external_id "${external_id}" \
             --arg title "Context-bound receipt reuse GREEN" --arg summary "${summary}" \
@@ -146,13 +146,14 @@ jobs:
           PROCESS_ONLY: ${{ steps.validate.outputs.process_only }}
           NON_FOUNDATIONAL: ${{ steps.validate.outputs.non_foundational }}
           CONTEXT_DIGEST: ${{ steps.validate.outputs.context_digest }}
+          REUSE_CONTEXT_DIGEST: ${{ steps.validate.outputs.reuse_context_digest }}
           SOURCE_RUN_ID: ${{ steps.validate.outputs.source_run_id }}
         shell: bash
         run: |
           set -euo pipefail
-          key="review-ready:${PR}:${SHA}:${CONTEXT_DIGEST}"
+          key="review-ready:${PR}:${SHA}:${REUSE_CONTEXT_DIGEST}"
           if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then exit 0; fi
-          detail="frozen metadata and durable HK-00 exact-SHA receipt are verified under the current validation context (receipt source run ${SOURCE_RUN_ID}). Start a fresh independent Reviewer."
+          detail="frozen metadata and durable HK-00 exact-SHA receipt are verified against the complete current mutable handoff context (receipt source run ${SOURCE_RUN_ID}). Start a fresh independent Reviewer."
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: REVIEW_READY
@@ -162,6 +163,7 @@ jobs:
           Process Only: ${PROCESS_ONLY}
           Non Foundational: ${NON_FOUNDATIONAL}
           Validation Context Digest: ${CONTEXT_DIGEST}
+          Reuse Context Digest: ${REUSE_CONTEXT_DIGEST}
           Validation Run ID: ${GITHUB_RUN_ID}
           Validation Workflow: Arkus Receipt Freeze Reuse
           Receipt Source Run ID: ${SOURCE_RUN_ID}
@@ -171,6 +173,6 @@ jobs:
           gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
           jq -n \
             --arg state "REVIEW_READY" --arg key "${key}" --arg wp "${WP}" --arg detail "${detail}" \
-            --arg target_sha "${SHA}" --arg context_digest "${CONTEXT_DIGEST}" --argjson pr "${PR}" \
-            '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,context_digest:$context_digest,pr:$pr}}' \
+            --arg target_sha "${SHA}" --arg context_digest "${CONTEXT_DIGEST}" --arg reuse_context_digest "${REUSE_CONTEXT_DIGEST}" --argjson pr "${PR}" \
+            '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,context_digest:$context_digest,reuse_context_digest:$reuse_context_digest,pr:$pr}}' \
             | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null

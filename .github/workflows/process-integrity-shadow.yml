@@ -1,47 +1,21 @@
-name: Process Integrity Shadow
+name: Arkus Process Gate
 
 on:
   pull_request:
-    paths:
-      - 'Docs/engineering/workpack-verifiers.json'
-      - 'Docs/engineering/PA_CANONICAL_DISPOSITION_TABLE.md'
-      - 'Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json'
-      - 'Docs/evidence/**/DOCSYNC.md'
-      - 'Docs/workpacks/**'
-      - 'scripts/arkus-verify-exact-sha.sh'
-      - 'scripts/arkus-observe-exact-sha.sh'
-      - 'scripts/*verify-exact-sha.sh'
-      - 'scripts/*observe-exact-sha.sh'
-      - 'scripts/workpack-verifier.py'
-      - 'scripts/docsync.py'
-      - 'scripts/context-capsule-check.py'
-      - 'scripts/pa-selector-policy-controls.py'
-      - '.github/workflows/process-integrity-shadow.yml'
   push:
     branches: [main]
-    paths:
-      - 'Docs/engineering/workpack-verifiers.json'
-      - 'Docs/engineering/PA_CANONICAL_DISPOSITION_TABLE.md'
-      - 'Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json'
-      - 'Docs/evidence/**/DOCSYNC.md'
-      - 'Docs/workpacks/**'
-      - 'scripts/arkus-verify-exact-sha.sh'
-      - 'scripts/arkus-observe-exact-sha.sh'
-      - 'scripts/*verify-exact-sha.sh'
-      - 'scripts/*observe-exact-sha.sh'
-      - 'scripts/workpack-verifier.py'
-      - 'scripts/docsync.py'
-      - 'scripts/context-capsule-check.py'
-      - 'scripts/pa-selector-policy-controls.py'
-      - '.github/workflows/process-integrity-shadow.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: arkus-process-gate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  shadow-integrity:
-    name: Shadow process integrity
+  stable-process-merge-gate:
+    name: Stable process merge gate
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -55,13 +29,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/workpack-verifier.py self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/workpack-verifier.py self-test
 
-      - name: Self-test mechanical DocSync tooling
+      - name: Audit mechanical DocSync and navigation contracts
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/docsync.py self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/docsync.py self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/accepted-state-audit.py self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/accepted-state-audit.py audit
 
       - name: Check changed DocSync identities
         if: github.event_name == 'pull_request'
@@ -71,11 +47,17 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
-          python3 scripts/docsync.py check-changed --base "$BASE_SHA" --head "$HEAD_SHA"
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/docsync.py check-changed --base "$BASE_SHA" --head "$HEAD_SHA"
+
+      - name: Prove complete mutable-input identity for receipt reuse
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/reuse-context.py self-test
 
       - name: Prove PA-06+ selector convention stays checker-owned
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/context-capsule-check.py --self-test
-          python3 scripts/pa-selector-policy-controls.py
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/context-capsule-check.py --self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/pa-selector-policy-controls.py
