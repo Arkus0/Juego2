@@ -14,7 +14,29 @@ def load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def validate_registry(registry: dict) -> None:
+    registered = registry.get("registered_verifiers")
+    if not isinstance(registered, dict) or not registered:
+        raise ValueError("registered_verifiers must be a non-empty object")
+    names = set()
+    for verifier_id, contract in registered.items():
+        if not isinstance(contract, dict):
+            raise ValueError(f"{verifier_id}: verifier contract must be an object")
+        name = str(contract.get("github_check_name") or "").strip()
+        if not name or name in names:
+            raise ValueError(f"{verifier_id}: github_check_name must be non-empty and unique")
+        names.add(name)
+        failure = str(contract.get("failure_outcome") or "").upper()
+        if failure not in {"FAIL", "REVIEW_BLOCKED"}:
+            raise ValueError(f"{verifier_id}: failure_outcome must be FAIL or REVIEW_BLOCKED")
+        if contract.get("semantic_authority") is not False:
+            raise ValueError(f"{verifier_id}: mechanical registry cannot claim semantic authority")
+        if failure == "FAIL" and not bool(contract.get("requires_structured_outcome", False)):
+            raise ValueError(f"{verifier_id}: any verifier capable of WP FAIL must require a structured outcome")
+
+
 def classify(registry: dict, state: dict) -> dict:
+    validate_registry(registry)
     by_name = {
         row["github_check_name"]: (key, row)
         for key, row in registry["registered_verifiers"].items()
@@ -126,10 +148,11 @@ def classify(registry: dict, state: dict) -> dict:
 def self_test() -> None:
     reg = {
         "registered_verifiers": {
-            "handoff": {"github_check_name": "Worker handoff lint", "failure_outcome": "REVIEW_BLOCKED"},
-            "causal": {"github_check_name": "CTX process envelope", "failure_outcome": "FAIL", "requires_structured_outcome": True},
+            "handoff": {"github_check_name": "Worker handoff lint", "failure_outcome": "REVIEW_BLOCKED", "requires_structured_outcome": False, "semantic_authority": False},
+            "causal": {"github_check_name": "CTX process envelope", "failure_outcome": "FAIL", "requires_structured_outcome": True, "semantic_authority": False},
         }
     }
+    validate_registry(reg)
     s = {"checks": [
         {"name": "Worker handoff lint", "conclusion": "failure"},
         {"name": "CTX process envelope", "conclusion": "success", "reported_outcome": "PASS"},
@@ -140,27 +163,37 @@ def self_test() -> None:
     s["checks"][1] = {"name": "CTX process envelope", "conclusion": "failure", "reported_outcome": "FAIL"}
     assert classify(reg, s)["overall"] == "FAIL"
 
-    # A red verifier that is not registered cannot become a WP failure, but it
-    # also cannot be silently ignored to authorize review: it is an operational
-    # INFRA_ERROR until triaged or explicitly registered.
     s = {"checks": [{"name": "Experimental verifier", "conclusion": "failure"}]}
     out = classify(reg, s)
     assert out["overall"] == "INFRA_ERROR" and not out["wp_failed_mechanically"]
     assert not out["independent_review_authorized"]
     assert out["verifiers"][0]["outcome"] == "INFRA_ERROR"
 
-    # A registered causal verifier that crashes without its structured result is infra, not FAIL.
     s = {"checks": [{"name": "CTX process envelope", "conclusion": "failure"}], "required_registered_verifiers": ["causal"]}
     assert classify(reg, s)["overall"] == "INFRA_ERROR"
 
-    # An unregistered required ID is a registry/infrastructure error, never a WP defect.
     s = {"checks": [], "required_registered_verifiers": ["not-registered"]}
     out = classify(reg, s)
     assert out["overall"] == "INFRA_ERROR" and not out["wp_failed_mechanically"]
 
-    # N/A is neutral, never synthetic proof.
     s = {"checks": [{"name": "CTX process envelope", "conclusion": "skipped", "reported_outcome": "NOT_APPLICABLE"}], "required_registered_verifiers": ["causal"]}
     assert classify(reg, s)["overall"] == "NOT_APPLICABLE"
+
+    # A registry cannot manufacture semantic authority or a crash=>FAIL path.
+    broken = json.loads(json.dumps(reg))
+    broken["registered_verifiers"]["causal"]["requires_structured_outcome"] = False
+    try:
+        validate_registry(broken)
+        raise AssertionError("unstructured FAIL-capable verifier unexpectedly accepted")
+    except ValueError:
+        pass
+    broken = json.loads(json.dumps(reg))
+    broken["registered_verifiers"]["handoff"]["semantic_authority"] = True
+    try:
+        validate_registry(broken)
+        raise AssertionError("semantic-authority mechanical verifier unexpectedly accepted")
+    except ValueError:
+        pass
 
     print("mechanical-verifier-classifier self-test: PASS")
 
