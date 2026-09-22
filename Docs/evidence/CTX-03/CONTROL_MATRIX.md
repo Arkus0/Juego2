@@ -4,22 +4,23 @@ Status: **CANDIDATE EVIDENCE / PROCESS_ONLY**
 
 | CTX-03 acceptance/control | Source of truth / universe | Control / evidence | Result boundary |
 |---|---|---|---|
-| same-snapshot pre/post measurement | `context-envelope.json` routes + files from exact candidate snapshot | `context-envelope-check.py --audit` | reproducible file-level pre/min/escalated estimates; no cross-SHA comparison |
+| same-snapshot pre/post measurement | checker-owned representative routes + checker-owned pre-CTX direct-predecessor inventories + exact candidate bytes | `context-envelope-check.py --audit` | reproducible file-level pre/min/escalated estimates; config/capsules cannot self-shrink baseline |
+| canonical profile/calibration universe | checker-owned `Docs/engineering/context-bootstrap-profiles.json` + checker-owned calibration substitutions | `profile_universe_errors` + `ctx03-process-controls.py` redirection mutations | alternate profile source, dropped profile or redirected placeholder -> RED |
 | claimed material saving exceeds uncertainty | estimator rule in config/protocol | route report | only PA minimum route is labelled material; H1/CITY are not overstated |
-| cumulative PA composition | accepted CTX-02 PA capsule family + canonical PA results | measurement + `ctx03-quality-replay.py` | keep CTX-02 chain; no second PA registry |
-| mandatory escalation completeness | profile-owned `must_escalate_if` | `CONTEXT_ESCALATIONS.json` + `ctx03-process-controls.py` omission mutation | omitted required predicate -> RED |
+| cumulative PA composition | accepted CTX-02 PA capsule family + checker-owned canonical PA baseline | measurement + `ctx03-quality-replay.py` | keep CTX-02 chain; no second PA registry |
+| mandatory escalation completeness | canonical profile-owned `must_escalate_if` | `CONTEXT_ESCALATIONS.json` + `ctx03-process-controls.py` omission mutation | omitted required predicate -> RED |
 | stale/compact source cannot override authority | CTX-01/02 accepted authority rules | profile escalation + exact source reconstruction | compact contradiction deepens/fails closed |
 | PA material reference cannot disappear silently | real capsule source selectors + canonical PA-03 result | quality replay integration mutation | source removal -> RED |
 | CITY non-compressible detail remains reachable | `WP-CITY-03` capsule mandatory read | quality replay integration mutation | seed removal -> RED |
-| process-envelope derived, not duplicated | accepted `context-bootstrap-profiles.json` | checker derives `initial_reads` | config cannot narrow file universe |
+| process-envelope derived, not duplicated | canonical accepted role profiles | checker derives `initial_reads` | config cannot narrow file/profile universe |
 | required-context growth bounded | derived profile set + calibrated baseline/ceiling | `ctx03-process-controls.py` | real required-source growth over ceiling -> RED |
 | unrelated repository growth does not false-red | same derived profile set | add unrelated 100KB fixture | remains GREEN |
 | ceiling growth explicit | base-ref previous config | checker + control fixture | increase requires revision + justification |
 | historical FAIL corpus re-derived/classified | live GitHub review/comment evidence + accepted repo evidence | `HISTORICAL_CLASSIFICATION.json` | each family has mechanical/semantic/mixed + ADOPT/DEFER/REJECT |
 | no semantic-gate substitution | independent Reviewer authority | classification explicitly rejects generic semantic-equivalence automation | semantic review remains mandatory |
-| derivable metadata before Reviewer | final HEAD + predecessor check + CLEAN evidence | `derive-worker-review-metadata.py` + existing handoff lint | missing prerequisites -> REVIEW_BLOCKED; generator cannot mint CLEAN/PASS |
+| derivable metadata before Reviewer | final HEAD + predecessor check + CLEAN evidence + existing handoff lineage | `derive-worker-review-metadata.py` + existing handoff lint | missing prerequisites -> REVIEW_BLOCKED; generator cannot mint CLEAN/PASS/reset lineage |
 | unregistered red verifier cannot count WP FAIL | reviewed verifier registry | `mechanical-verifier-classifier.py` self-test | overall INFRA_ERROR, `wp_failed_mechanically=false`, review blocked |
-| causal registered failure distinguishable | verifier structured outcome | classifier self-test | registered causal FAIL -> WP mechanical FAIL |
+| causal registered failure distinguishable | registered structured outcome + registry validation | classifier self-test | registered causal FAIL -> WP mechanical FAIL; unstructured FAIL-capable registry invalid |
 | infra crash not mistaken for WP defect | structured-result requirement | classifier self-test | missing/unclassified result -> INFRA_ERROR |
 | N/A not synthetic green proof | registry/outcome vocabulary | classifier self-test | NOT_APPLICABLE neutral |
 | CLEAN alone cannot mean review-ready | terminal state contract | `review-ready-closure.py` | Draft/ACTIVE or missing gates -> REVIEW_BLOCKED |
@@ -30,7 +31,7 @@ Status: **CANDIDATE EVIDENCE / PROCESS_ONLY**
 | CTX-02 handoff family reproduced | PR #113 durable handoff/marker history | closure handoff-check fixture | missing real predecessor/handoff condition -> RED |
 | DocSync compact current state updated once | `ACCEPTED_STATE_INDEX.json` derived CTX row | `ctx03-docsync-history-check.py` | exactly one CTX current-state row, next CTX-03 agreement |
 | no contradictory normal bootstrap history | role profiles + CTX/root index/DocSync | DocSync/history checker | history in normal `initial_reads` or contradictory next action -> RED |
-| historical closure reconstructible | `Docs/history/CTX_PROCESS_HISTORY.md` + exact accepted evidence | DocSync/history checker pointers | accepted PR/review/SHA pointers retained |
+| historical closure reconstructible after ROADMAP trim | `Docs/history/CTX_PROCESS_HISTORY.md`, `Docs/history/ROADMAP_ACCEPTED_CLOSURES.md` + exact accepted evidence | DocSync/history checker pointers | representative accepted PR/review/SHA pointers retained; verbose closure not duplicated in current ROADMAP |
 | future consumer reusable primitives | repository-generic scripts/config contracts | protocol boundary | no H2/H3 ownership decision in CTX-03 |
 
 ## Exact canonical validation surface for final candidate
