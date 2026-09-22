@@ -29,6 +29,7 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
           python3 scripts/context-envelope-check.py --self-test
+          python3 scripts/ctx03-dynamic-context-check.py --self-test
           python3 scripts/mechanical-verifier-classifier.py --self-test
           python3 scripts/review-ready-closure.py --self-test
           python3 scripts/derive-worker-review-metadata.py --self-test
@@ -47,13 +48,17 @@ jobs:
             --escalations Docs/evidence/CTX-03/CONTEXT_ESCALATIONS.json
             --output ctx-envelope-report.json
           )
+          dynamic_args=(--audit-policy)
           if [[ -n "${BASE_SHA}" ]]; then
             args+=(--base-ref "${BASE_SHA}")
+            dynamic_args+=(--base-ref "${BASE_SHA}")
           fi
 
           set +e
           python3 scripts/context-envelope-check.py "${args[@]}" > ctx-envelope.log 2>&1
           envelope_status=$?
+          python3 scripts/ctx03-dynamic-context-check.py "${dynamic_args[@]}" > ctx-dynamic-context.log 2>&1
+          dynamic_status=$?
           python3 scripts/ctx03-quality-replay.py \
             --negative-controls \
             --output ctx-quality-replay.json \
@@ -63,15 +68,19 @@ jobs:
           controls_status=$?
           python3 scripts/ctx03-docsync-history-check.py > ctx-docsync-history.log 2>&1
           docsync_status=$?
+          python3 scripts/ctx03-final-circuit-breaker.py > ctx-final-circuit-breaker.log 2>&1
+          circuit_status=$?
           set -e
 
           cat ctx-envelope.log
+          cat ctx-dynamic-context.log
           cat ctx-quality-replay.log
           cat ctx-process-controls.log
           cat ctx-docsync-history.log
+          cat ctx-final-circuit-breaker.log
 
           outcome=PASS
-          for status in "${envelope_status}" "${replay_status}" "${controls_status}" "${docsync_status}"; do
+          for status in "${envelope_status}" "${dynamic_status}" "${replay_status}" "${controls_status}" "${docsync_status}" "${circuit_status}"; do
             case "${status}" in
               0) ;;
               20) outcome=FAIL ;;
@@ -90,9 +99,11 @@ jobs:
 
           echo "reported_outcome=${outcome}" >> "${GITHUB_OUTPUT}"
           echo "envelope_status=${envelope_status}" >> "${GITHUB_OUTPUT}"
+          echo "dynamic_status=${dynamic_status}" >> "${GITHUB_OUTPUT}"
           echo "replay_status=${replay_status}" >> "${GITHUB_OUTPUT}"
           echo "controls_status=${controls_status}" >> "${GITHUB_OUTPUT}"
           echo "docsync_status=${docsync_status}" >> "${GITHUB_OUTPUT}"
+          echo "circuit_status=${circuit_status}" >> "${GITHUB_OUTPUT}"
 
       - name: Classify verifier outcome without false-red promotion
         shell: bash
@@ -133,10 +144,12 @@ jobs:
           path: |
             ctx-envelope.log
             ctx-envelope-report.json
+            ctx-dynamic-context.log
             ctx-quality-replay.log
             ctx-quality-replay.json
             ctx-process-controls.log
             ctx-docsync-history.log
+            ctx-final-circuit-breaker.log
             mechanical-state.json
             mechanical-decision.json
           if-no-files-found: warn
