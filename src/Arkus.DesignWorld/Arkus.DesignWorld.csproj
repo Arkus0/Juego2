@@ -5,7 +5,6 @@
     <RootNamespace>Arkus.DesignWorld</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Arkus.Harness.Tests" />
     <ProjectReference Include="../Arkus.Game.World/Arkus.Game.World.csproj" />
   </ItemGroup>
 </Project>
