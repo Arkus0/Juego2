@@ -12,9 +12,9 @@
   "identity_source": {"path": "Docs/workpacks/HK/WP-HK-GATE.md", "git_blob_sha": "36d0ae3985074026fcf06772baac9c07ecac518c"},
   "authoritative_sources": [
     {"path": "Docs/workpacks/HK/WP-HK-GATE.md", "git_blob_sha": "36d0ae3985074026fcf06772baac9c07ecac518c", "kind": "accepted_gate_contract"},
-    {"path": "Docs/evidence/WP-HK-GATE/FINAL_VERDICT.md", "git_blob_sha": "e6c197d8cbc6c35ef531a2f098c64d5bbaa9d60e", "kind": "accepted_final_verdict"},
-    {"path": "Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md", "git_blob_sha": "3d24417fa1abc81d3bedef561ade1d65a76c5abc", "kind": "accepted_proof_matrix"},
-    {"path": "Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md", "git_blob_sha": "678bfb2121d322bf22b5f4740ea5c2d9540b7d2c", "kind": "accepted_residual_risk"}
+    {"path": "Docs/evidence/WP-HK-GATE/VERDICT.md", "git_blob_sha": "9126a8b5d5eed8e1a225a6ddd684b50dae898ff1", "kind": "accepted_verdict"},
+    {"path": "Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md", "git_blob_sha": "a805522341be586bea5e0bdb2067f7b91650fa13", "kind": "accepted_proof_matrix"},
+    {"path": "Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md", "git_blob_sha": "7eaafcab77e11c0583f13d78e818add2f90934bc", "kind": "accepted_residual_risk"}
   ],
   "consumer_hints": ["WP-H1-02"],
   "exported_guarantees": [
