@@ -5,6 +5,12 @@ The index is never acceptance authority. This checker only proves that its hints
 do not contradict repository contracts they point at. It intentionally does not
 infer acceptance from Status lines and does not require the index freshness SHA
 to equal the current branch while unrelated PROCESS_ONLY work is in flight.
+
+Historical accepted contracts use several Status renderings (`COMPLETE`,
+`**COMPLETE**`, and newer `COMPLETE / ACCEPTED`). Because the index is the
+starting derived hint, this audit asks only whether a hinted accepted contract
+is at least COMPLETE; it never promotes an unhinted COMPLETE contract into the
+accepted set.
 """
 from __future__ import annotations
 
@@ -32,8 +38,11 @@ def status(path: Path) -> str:
     return matches[0].strip().upper()
 
 
-def accepted_status(value: str) -> bool:
-    return "COMPLETE" in value and "ACCEPTED" in value
+def complete_status(value: str) -> bool:
+    # Formatting is deliberately ignored so frozen historical contracts are not
+    # rewritten merely to satisfy a new navigation checker.
+    normalized = value.replace("*", "").replace("`", "").strip().upper()
+    return "COMPLETE" in normalized
 
 
 def audit() -> None:
@@ -65,8 +74,8 @@ def audit() -> None:
             try:
                 path = locate_wp(wp)
                 got = status(path)
-                if not accepted_status(got):
-                    errors.append(f"{track}: derived accepted hint {wp} contradicts contract Status {got!r}")
+                if not complete_status(got):
+                    errors.append(f"{track}: derived accepted hint {wp} contradicts non-COMPLETE contract Status {got!r}")
             except (ValueError, OSError) as exc:
                 errors.append(f"{track}: {exc}")
 
@@ -79,8 +88,8 @@ def audit() -> None:
                     errors.append(f"{track}: next_contract_hint {next_wp} is already in accepted hints")
                 try:
                     next_path = locate_wp(next_wp)
-                    if accepted_status(status(next_path)):
-                        errors.append(f"{track}: next_contract_hint {next_wp} already has COMPLETE / ACCEPTED status")
+                    if complete_status(status(next_path)):
+                        errors.append(f"{track}: next_contract_hint {next_wp} is already COMPLETE; navigation needs reconciliation")
                 except (ValueError, OSError) as exc:
                     errors.append(f"{track}: next contract: {exc}")
 
@@ -117,10 +126,11 @@ def audit() -> None:
 
 
 def self_test() -> None:
-    if not accepted_status("COMPLETE / ACCEPTED"):
-        raise AssertionError("canonical accepted status was rejected")
-    if accepted_status("PLANNED / NOT_STARTED"):
-        raise AssertionError("planned status was accepted")
+    for sample in ("COMPLETE", "**COMPLETE**", "COMPLETE / ACCEPTED"):
+        if not complete_status(sample):
+            raise AssertionError(f"historical complete status was rejected: {sample}")
+    if complete_status("PLANNED / NOT_STARTED"):
+        raise AssertionError("planned status was treated as complete")
     print("ACCEPTED_STATE_AUDIT_SELF_TEST_GREEN")
 
 
