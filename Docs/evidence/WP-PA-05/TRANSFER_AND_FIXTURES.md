@@ -329,7 +329,7 @@ No global confidence formula is canonized.
 
 ### Required result
 
-A material fixture-local provenance/corroboration result MAY/MUST be the declared different result because the tested input is now legitimately actor-accessible common-source information.
+The fixture-local provenance/corroboration result MUST be the declared different result because the tested input is now legitimately actor-accessible common-source information.
 
 For this frozen fixture, require the concrete labels:
 
@@ -440,13 +440,13 @@ Requirements:
 - if the player lies, truth remains owned elsewhere exactly as in CF-02;
 - any reported provenance visible to Manolo is only what Carmen actually communicates.
 
-### Conceal/expose corollaries
+### Conceal / expose / investigate corollaries
 
 The player can **conceal** by not communicating or, where another owner permits it, by affecting a normal source/opportunity. Concealment is not `erase all beliefs`.
 
 The player can **expose** through normal communication or an authorized public-source owner. Exposure is not `set knows=true on all actors`; every actor still needs a legitimate PA-04 acquisition path.
 
-Investigation/trace presentation remains future PA-11/integration ownership.
+The player can **investigate** only through an authorized player-facing evidence/source/witness path owned by the later investigation/integration layer. A successful investigation may give the player actor-accessible evidence or reported provenance that can then be used or communicated through the same normal PA-04/PA-05 paths. It MUST NOT expose `lineageId`, hidden root/parent/hop, canonical truth comparison or another privileged engine field merely because the debugger has it. PA-11/integration owns the concrete investigation verbs/UI/trace presentation; PA-05 owns only this no-privileged-shortcut information-flow seam.
 
 ## 10. Deferred consumer proof
 
@@ -479,4 +479,5 @@ Try to produce a counterexample for each:
 9. CF-04 terminates only because a global manager caps automatic diffusion.
 10. CF-04 exposes hidden loop identity as actor-facing evidence.
 11. CF-05 player origin updates non-recipients or uses a parallel quest rumour store.
-12. any fixture requires global population/social-graph enumeration before producing its bounded recipients.
+12. CF-05 investigation reads privileged engine/debug lineage instead of a legitimate player-facing evidence/source path.
+13. any fixture requires global population/social-graph enumeration before producing its bounded recipients.
