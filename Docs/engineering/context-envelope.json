@@ -1,0 +1,77 @@
+{
+  "schema": "arkus.context-envelope@1",
+  "authority": "PROCESS_BUDGET_AND_MEASUREMENT_ONLY",
+  "protocol": "Docs/engineering/CONTEXT_ENVELOPE_V1.md",
+  "profile_source": "Docs/engineering/context-bootstrap-profiles.json",
+  "estimator": {
+    "name": "utf8-byte4-v1",
+    "definition": "ceil(UTF-8 bytes / 4) per unique repository source, summed after de-duplication",
+    "provider_token_uncertainty_fraction": 0.20,
+    "material_saving_rule": "pre_estimate - post_estimate must exceed pre_uncertainty + post_uncertainty"
+  },
+  "process_envelope": {
+    "scope": "Repository-owned mandatory initial_reads selected by the accepted profile. Live GitHub state, PR diff bytes and other per-candidate dynamic sources remain mandatory but are held outside this corpus budget because CTX does not control their size.",
+    "headroom_fraction": 0.20,
+    "profiles": {
+      "worker": {
+        "substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
+        "baseline_estimate": null,
+        "ceiling_estimate": null,
+        "ceiling_revision": 1,
+        "rationale": "Calibrate from the exact CTX-03 candidate snapshot, then allow 20% bounded protocol-growth headroom."
+      },
+      "repair_worker": {
+        "substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
+        "baseline_estimate": null,
+        "ceiling_estimate": null,
+        "ceiling_revision": 1,
+        "rationale": "Calibrate repository-owned initial reads only; exact FAIL/PR/evidence are dynamic mandatory inputs and are reported separately."
+      },
+      "reviewer": {
+        "substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
+        "baseline_estimate": null,
+        "ceiling_estimate": null,
+        "ceiling_revision": 1,
+        "rationale": "Calibrate repository-owned initial reads only; candidate diff/live PR are dynamic mandatory inputs and remain outside the static corpus budget."
+      },
+      "planner_gate": {
+        "substitutions": {
+          "<EXACT_MILESTONE_OR_GATE_CONTRACT>": "Docs/workpacks/CTX/WP-CTX-03.md",
+          "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>": "Docs/workpacks/CTX/README.md"
+        },
+        "baseline_estimate": null,
+        "ceiling_estimate": null,
+        "ceiling_revision": 1,
+        "rationale": "Calibrate the accepted planner starting pack and retain 20% bounded headroom."
+      },
+      "docsync": {
+        "substitutions": {
+          "<EXACT_ACCEPTED_WP>": "Docs/workpacks/CTX/WP-CTX-02.md"
+        },
+        "baseline_estimate": null,
+        "ceiling_estimate": null,
+        "ceiling_revision": 1,
+        "rationale": "Calibrate repository-owned DocSync starting sources; live accepted PR/review/merge data remains dynamic and mandatory."
+      },
+      "h1_local_executor": {
+        "substitutions": {"<EXACT_H1_WP>": "Docs/workpacks/H1/WP-H1-02.md"},
+        "baseline_estimate": null,
+        "ceiling_estimate": null,
+        "ceiling_revision": 1,
+        "rationale": "Keep the deliberately narrow local-executor repository corpus bounded without assigning semantic Worker authority."
+      }
+    }
+  },
+  "same_snapshot_measurement": {
+    "snapshot_contract": "All pre/post file bytes are read from the same checked-out candidate snapshot. Pre-CTX routing is reconstructed from the pre-CTX Worker/Reviewer rule family: AGENTS + ROADMAP + exact WP + Worker Review Protocol + full direct accepted predecessor evidence. Post-CTX routing is the accepted role profile plus validated capsule navigation; dynamic live GitHub/diff inputs are held constant and excluded from the delta.",
+    "legacy_rule_source_sha": "e388f6e3c9d42e89418bd8877ed36fcbcf6d2aaa",
+    "routes": [
+      {"id": "H1-worker", "profile": "worker", "exact_wp": "Docs/workpacks/H1/WP-H1-02.md", "capsules": ["WP-HK-GATE"]},
+      {"id": "H1-reviewer", "profile": "reviewer", "exact_wp": "Docs/workpacks/H1/WP-H1-02.md", "capsules": ["WP-HK-GATE"]},
+      {"id": "CITY-worker", "profile": "worker", "exact_wp": "Docs/workpacks/CITY/WP-CITY-04.md", "capsules": ["WP-CITY-03"]},
+      {"id": "CITY-reviewer", "profile": "reviewer", "exact_wp": "Docs/workpacks/CITY/WP-CITY-04.md", "capsules": ["WP-CITY-03"]},
+      {"id": "PA-worker", "profile": "worker", "exact_wp": "Docs/workpacks/PA/WP-PA-04.md", "capsules": ["WP-PA-01", "WP-PA-02", "WP-PA-03"]},
+      {"id": "PA-reviewer", "profile": "reviewer", "exact_wp": "Docs/workpacks/PA/WP-PA-04.md", "capsules": ["WP-PA-01", "WP-PA-02", "WP-PA-03"]}
+    ]
+  }
+}
