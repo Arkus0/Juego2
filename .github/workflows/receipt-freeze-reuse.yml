@@ -45,18 +45,15 @@ jobs:
 
           python3 process-oracle/scripts/validation-context.py self-test
           python3 process-oracle/scripts/validation-context.py resolve \
-            --pr-json pr.json \
-            --target-sha "${sha}" \
-            --record VALIDATION_CONTEXT.json >/dev/null
+            --pr-json pr.json --target-sha "${sha}" --record VALIDATION_CONTEXT.json >/dev/null
           wp="$(jq -r '.wp' VALIDATION_CONTEXT.json)"
           process_only="$(jq -r '.process_only' VALIDATION_CONTEXT.json)"
+          non_foundational="$(jq -r '.non_foundational' VALIDATION_CONTEXT.json)"
           digest="$(jq -r '.context_digest' VALIDATION_CONTEXT.json)"
 
           [[ "${process_only}" == "false" ]] || { echo "::error::HK-00 receipt reuse is not valid for PROCESS_ONLY"; exit 2; }
-          [[ "${wp}" == "WP-HK-00" ]] || {
-            echo "::error::HK-00 receipt cannot satisfy requested workpack ${wp}"
-            exit 2
-          }
+          [[ "${non_foundational}" == "false" ]] || { echo "::error::HK-00 receipt reuse requires foundational proof class"; exit 2; }
+          [[ "${wp}" == "WP-HK-00" ]] || { echo "::error::HK-00 receipt cannot satisfy requested workpack ${wp}"; exit 2; }
 
           python3 - <<'PY'
           import json, re
@@ -67,24 +64,15 @@ jobs:
               if len(matches) != 1:
                   raise SystemExit(f'{name} must occur exactly once, found {len(matches)}')
               return matches[0].strip()
-          expected = {
-              'Worker state': 'FROZEN_FOR_REVIEW',
-              'Branch frozen': 'YES',
-              'Worker verdict': 'IN_REVIEW',
-              'Worker pre-review': 'CLEAN',
-              'Reviewer verdict': 'PENDING',
-          }
-          for key, value in expected.items():
-              got = field(key)
-              if got.upper() != value:
-                  raise SystemExit(f'{key} must be {value}, got {got!r}')
+          for key, expected in {
+              'Worker state':'FROZEN_FOR_REVIEW','Branch frozen':'YES',
+              'Worker verdict':'IN_REVIEW','Worker pre-review':'CLEAN','Reviewer verdict':'PENDING'
+          }.items():
+              if field(key).upper() != expected:
+                  raise SystemExit(f'{key} mismatch')
           head = pr['head']['sha'].lower()
-          frozen = field('Frozen candidate SHA').lower()
-          candidate = field('Candidate HEAD SHA').lower()
-          if not re.fullmatch(r'[0-9a-f]{40}', frozen):
-              raise SystemExit('Frozen candidate SHA is missing/invalid')
-          if frozen != head or candidate != head:
-              raise SystemExit(f'Frozen/Candidate SHA must equal PR HEAD {head}')
+          if field('Frozen candidate SHA').lower() != head or field('Candidate HEAD SHA').lower() != head:
+              raise SystemExit('Frozen/Candidate SHA must equal PR HEAD')
           PY
 
           artifact_name="hk00-receipt-${sha}"
@@ -102,11 +90,8 @@ jobs:
           gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip" > "${tmp}/receipt.zip"
           unzip -p "${tmp}/receipt.zip" EXECUTION_RECEIPT.txt > "${tmp}/EXECUTION_RECEIPT.txt"
           receipt="${tmp}/EXECUTION_RECEIPT.txt"
-
           python3 process-oracle/scripts/validation-context.py receipt-match \
-            --receipt "${receipt}" \
-            --requested-wp "${wp}" \
-            --target-sha "${sha}"
+            --receipt "${receipt}" --requested-wp "${wp}" --target-sha "${sha}"
           grep -Fxq 'EXECUTION_RECEIPT_V1' "${receipt}"
           grep -Fxq 'Candidate clean before: YES' "${receipt}"
           grep -Fxq 'Candidate clean after: YES' "${receipt}"
@@ -116,6 +101,7 @@ jobs:
           echo "sha=${sha}" >> "${GITHUB_OUTPUT}"
           echo "wp=${wp}" >> "${GITHUB_OUTPUT}"
           echo "process_only=${process_only}" >> "${GITHUB_OUTPUT}"
+          echo "non_foundational=${non_foundational}" >> "${GITHUB_OUTPUT}"
           echo "context_digest=${digest}" >> "${GITHUB_OUTPUT}"
           echo "source_run_id=${source_run_id}" >> "${GITHUB_OUTPUT}"
           echo "artifact_id=${artifact_id}" >> "${GITHUB_OUTPUT}"
@@ -131,11 +117,9 @@ jobs:
           set -euo pipefail
           summary="Validated and reused durable exact-SHA GREEN receipt from workflow run ${SOURCE_RUN_ID}, artifact ${ARTIFACT_ID}, under validation context ${CONTEXT_DIGEST}."
           jq -n \
-            --arg name "Freeze exact-SHA validation" \
-            --arg head_sha "${SHA}" \
+            --arg name "Freeze exact-SHA validation" --arg head_sha "${SHA}" \
             --arg external_id "receipt-freeze:${PR}:${SHA}:${CONTEXT_DIGEST}:${GITHUB_RUN_ID}" \
-            --arg title "Exact-SHA GREEN receipt reused" \
-            --arg summary "${summary}" \
+            --arg title "Exact-SHA GREEN receipt reused" --arg summary "${summary}" \
             '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"success",output:{title:$title,summary:$summary}}' \
             | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
 
@@ -147,34 +131,27 @@ jobs:
         run: |
           set -euo pipefail
           summary="$(python3 process-oracle/scripts/validation-context.py check-summary \
-            --record VALIDATION_CONTEXT.json \
-            --run-id "${GITHUB_RUN_ID}" \
-            --workflow "Arkus Receipt Freeze Reuse")"
+            --record VALIDATION_CONTEXT.json --run-id "${GITHUB_RUN_ID}" --workflow "Arkus Receipt Freeze Reuse")"
           external_id="validation-context:${PR}:${SHA}:${CONTEXT_DIGEST}:${GITHUB_RUN_ID}"
           jq -n \
-            --arg name "Validation context identity" \
-            --arg head_sha "${SHA}" \
-            --arg external_id "${external_id}" \
-            --arg title "Context-bound receipt reuse GREEN" \
-            --arg summary "${summary}" \
+            --arg name "Validation context identity" --arg head_sha "${SHA}" --arg external_id "${external_id}" \
+            --arg title "Context-bound receipt reuse GREEN" --arg summary "${summary}" \
             '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"success",output:{title:$title,summary:$summary}}' \
-            | gh api --method POST -H 'Accept: application/vnd.github+json' \
-                "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
+            | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
 
       - name: Persist REVIEW_READY marker
         env:
           SHA: ${{ steps.validate.outputs.sha }}
           WP: ${{ steps.validate.outputs.wp }}
           PROCESS_ONLY: ${{ steps.validate.outputs.process_only }}
+          NON_FOUNDATIONAL: ${{ steps.validate.outputs.non_foundational }}
           CONTEXT_DIGEST: ${{ steps.validate.outputs.context_digest }}
           SOURCE_RUN_ID: ${{ steps.validate.outputs.source_run_id }}
         shell: bash
         run: |
           set -euo pipefail
           key="review-ready:${PR}:${SHA}:${CONTEXT_DIGEST}"
-          if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
-            exit 0
-          fi
+          if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then exit 0; fi
           detail="frozen metadata and durable HK-00 exact-SHA receipt are verified under the current validation context (receipt source run ${SOURCE_RUN_ID}). Start a fresh independent Reviewer."
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
@@ -183,6 +160,7 @@ jobs:
           Target SHA: ${SHA}
           Effective WP: ${WP}
           Process Only: ${PROCESS_ONLY}
+          Non Foundational: ${NON_FOUNDATIONAL}
           Validation Context Digest: ${CONTEXT_DIGEST}
           Validation Run ID: ${GITHUB_RUN_ID}
           Validation Workflow: Arkus Receipt Freeze Reuse
@@ -191,14 +169,8 @@ jobs:
           EOF
           )
           gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
-
           jq -n \
-            --arg state "REVIEW_READY" \
-            --arg key "${key}" \
-            --arg wp "${WP}" \
-            --arg detail "${detail}" \
-            --arg target_sha "${SHA}" \
-            --arg context_digest "${CONTEXT_DIGEST}" \
-            --argjson pr "${PR}" \
+            --arg state "REVIEW_READY" --arg key "${key}" --arg wp "${WP}" --arg detail "${detail}" \
+            --arg target_sha "${SHA}" --arg context_digest "${CONTEXT_DIGEST}" --argjson pr "${PR}" \
             '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,context_digest:$context_digest,pr:$pr}}' \
             | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
