@@ -6,9 +6,22 @@ import argparse, json, math, subprocess, sys
 from pathlib import Path
 
 DEFAULT_CONFIG = Path("Docs/engineering/context-envelope.json")
+CANONICAL_PROFILE_SOURCE = "Docs/engineering/context-bootstrap-profiles.json"
 CAPSULE_DIR = Path("Docs/engineering/context-capsules")
 CAPSULE_INDEX = CAPSULE_DIR / "index.json"
 CAPSULE_PROTOCOL = Path("Docs/engineering/CONTEXT_CAPSULE_V1.md")
+
+CANONICAL_PROFILE_SUBSTITUTIONS = {
+    "worker": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
+    "repair_worker": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
+    "reviewer": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
+    "planner_gate": {
+        "<EXACT_MILESTONE_OR_GATE_CONTRACT>": "Docs/workpacks/CTX/WP-CTX-03.md",
+        "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>": "Docs/workpacks/CTX/README.md",
+    },
+    "docsync": {"<EXACT_ACCEPTED_WP>": "Docs/workpacks/CTX/WP-CTX-02.md"},
+    "h1_local_executor": {"<EXACT_H1_WP>": "Docs/workpacks/H1/WP-H1-02.md"},
+}
 
 # The representative measurement universe is checker-owned. The config repeats
 # these values as reviewed assertions/documentation; it cannot choose a friendlier
@@ -84,7 +97,7 @@ def estimate_paths(root: Path, paths: set[str]):
 
 
 def accepted_profile_sources(root: Path, cfg: dict, profile_name: str):
-    profile_doc = load(root / cfg["profile_source"])
+    profile_doc = load(root / CANONICAL_PROFILE_SOURCE)
     profile = profile_doc["profiles"][profile_name]
     pcfg = cfg["process_envelope"]["profiles"][profile_name]
     subs = pcfg.get("substitutions") or {}
@@ -128,7 +141,7 @@ def capsule_sources(root: Path, capsule_id: str):
 
 
 def route_profile_sources(root: Path, cfg: dict, route: dict):
-    profile = load(root / cfg["profile_source"])["profiles"][route["profile"]]
+    profile = load(root / CANONICAL_PROFILE_SOURCE)["profiles"][route["profile"]]
     concrete, dynamic = set(), []
     for item in profile.get("initial_reads") or []:
         if item in {"<EXACT_WP>", "<EXACT_H1_WP>"}:
@@ -160,13 +173,20 @@ def canonical_route_errors(cfg: dict) -> list[str]:
 
 
 def profile_universe_errors(root: Path, cfg: dict) -> list[str]:
-    profiles = load(root / cfg["profile_source"]).get("profiles", {})
+    errors = []
+    if cfg.get("profile_source") != CANONICAL_PROFILE_SOURCE:
+        errors.append(f"profile_source must equal checker-owned {CANONICAL_PROFILE_SOURCE}")
+    profiles = load(root / CANONICAL_PROFILE_SOURCE).get("profiles", {})
     configured = cfg.get("process_envelope", {}).get("profiles", {})
     if set(profiles) != set(configured):
         missing = sorted(set(profiles) - set(configured))
         extra = sorted(set(configured) - set(profiles))
-        return [f"process-envelope profile universe mismatch; missing={missing}, extra={extra}"]
-    return []
+        errors.append(f"process-envelope profile universe mismatch; missing={missing}, extra={extra}")
+    for name, expected in CANONICAL_PROFILE_SUBSTITUTIONS.items():
+        actual = (configured.get(name) or {}).get("substitutions") or {}
+        if actual != expected:
+            errors.append(f"{name}: substitutions must equal checker-owned calibration assertions")
+    return errors
 
 
 def measure_route(root: Path, cfg: dict, route: dict):
@@ -260,7 +280,7 @@ def ceiling_change_errors(old: dict | None, new: dict):
 
 def validate_escalations(root: Path, cfg: dict, path: Path):
     data = load(path)
-    profiles = load(root / cfg["profile_source"])["profiles"]
+    profiles = load(root / CANONICAL_PROFILE_SOURCE)["profiles"]
     profile_name = data.get("profile")
     if profile_name not in profiles:
         return [f"unknown profile {profile_name!r}"]
@@ -301,7 +321,7 @@ def audit(root: Path, cfg: dict, allow_uncalibrated: bool, base_ref: str | None,
     errors += route_errors + universe_errors
 
     headroom = float(cfg["process_envelope"]["headroom_fraction"])
-    profile_doc = load(root / cfg["profile_source"])["profiles"]
+    profile_doc = load(root / CANONICAL_PROFILE_SOURCE)["profiles"]
     for name in profile_doc:  # accepted profile owns the universe, not config
         pcfg = cfg["process_envelope"]["profiles"].get(name)
         if pcfg is None:
