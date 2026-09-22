@@ -5,8 +5,11 @@ WP: `WP-CTX-02`
 | Control | Oracle / mechanism | Expected defect result |
 |---|---|---|
 | accepted identity consistency | parse independent `COMPLETE` WP metadata; compare reviewed candidate, merge SHA and PASS review | exact mismatch -> FAIL closed |
+| independent PASS verdict | mutate completion metadata from PASS to FAIL while rebinding the source fingerprint; run production `--audit-index` | review id alone cannot certify acceptance; non-PASS verdict -> FAIL closed |
+| reopen/escalation element shape | inject `null`, empty and whitespace-only values into `reopen_conditions` / `escalate_if`; run production `--audit-index` | malformed mandatory condition/trigger -> FAIL closed |
 | source consistency | recompute Git blob SHA from repository bytes | changed/missing source -> FAIL closed |
 | accepted PA-chain completeness | discover canonical `PA-NN.md` results whose matching WP is `COMPLETE`, independent of capsule index | accepted result without capsule -> coverage FAIL |
+| accepted PA structured surface | delete the complete `disposition_source` + `dispositions` pair from an otherwise valid accepted PA capsule; run production `--audit-index` | whole structured surface omission -> FAIL before chain can report COMPLETE |
 | PA disposition completeness | parse authoritative Markdown disposition table and compare exact key->status map | missing/extra/reclassified row -> FAIL |
 | one material positive guarantee omitted | independent defect-control oracle expects two material export IDs; remove one while one remains | structural capsule remains valid, independent control REDs on missing export |
 | one material exclusion omitted | independent defect-control oracle expects two material exclusion IDs; remove inherited exclusion while one remains | structural capsule remains valid, independent control REDs on missing exclusion |
@@ -23,10 +26,12 @@ WP: `WP-CTX-02`
 The capsule/index does not define the universe used to prove all its own completeness claims:
 
 - accepted identity comes from completion metadata and can additionally be checked against external live accepted state;
+- the completion parser requires an explicit independent `PASS`, not merely a review id;
 - source integrity is recomputed from repository bytes;
 - PA row coverage is parsed from canonical result tables;
 - accepted PA chain coverage is discovered from result/workpack state outside the capsule index;
-- the positive/exclusion omission controls use a deliberately separate test oracle.
+- the positive/exclusion omission controls use a deliberately separate test oracle;
+- malformed mandatory reopen/escalation fields and whole structured-surface omission are injected through the same production `--audit-index` path used by CI.
 
 The independent test oracle is only defect-injection evidence. It is **not** a production semantic registry and does not make its expected IDs authoritative outside the test.
 
