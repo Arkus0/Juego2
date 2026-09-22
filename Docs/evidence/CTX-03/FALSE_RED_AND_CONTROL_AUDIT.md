@@ -6,7 +6,7 @@ Status: **CANDIDATE EVIDENCE / PROCESS_ONLY**
 
 Move deterministic protocol defects left **without reducing false-green detection power or semantic Reviewer authority**. A red check must not be promoted to “the WP is wrong” unless a reviewed deterministic verifier causally owns that claim, but unknown/infra red state also must not be silently ignored to start review.
 
-Repair cycle 1 circuit-breaks the three classes raised by independent review `#5275757245`: exact-candidate pre-review ordering, effective mandatory-context growth, and retry-safe same-SHA terminal closure. The Worker's own pre-review then widened the context-growth repair once more after discovering that repair/planner/DocSync fixed conditionals were not yet inside the six H1/CITY/PA route budgets.
+Repair cycle 1 circuit-breaks the three classes raised by independent review `#5275757245`: exact-candidate pre-review ordering, effective mandatory-context growth, and retry-safe same-SHA terminal closure. The Worker's own pre-review then widened the context-growth repair once more after discovering that repair/planner/DocSync fixed conditionals were not yet inside the six H1/CITY/PA route budgets, and widened exact-pre-review closure once more after finding that an opaque external URL could otherwise self-confirm CLEAN metadata.
 
 ## Mechanical outcome contract
 
@@ -33,7 +33,8 @@ Repair cycle 1 removes that self-invalidating pattern:
 3. the complete Worker pre-review inspects that exact HEAD and full baseline→candidate diff;
 4. only if clean, a durable GitHub PR issue comment records the clean marker, exact Candidate SHA, findings count and evidence pointers;
 5. `derive-worker-review-metadata.py` accepts that durable issue-comment URL and rejects a repository-local final-clean pointer;
-6. Ready/freeze metadata may then change without changing candidate bytes.
+6. `validate-worker-handoff.py` resolves that pointer and proves the comment exists on the same repository/PR and binds CLEAN to the exact live candidate SHA;
+7. Ready/freeze metadata may then change without changing candidate bytes.
 
 Any later repository/evidence mutation changes HEAD and invalidates the clean result.
 
@@ -86,6 +87,7 @@ After repair, `.github/workflows/review-ready-closure.yml` wakes from either the
 | PA material-source reachability | production route + real capsule selectors | remove canonical PA-03 result selector | quality replay RED |
 | CITY non-compressible source | production route + real CITY capsule mandatory read | remove `CITY_PRODUCT_SEED.md` | quality replay RED |
 | exact pre-review ordering | final Git HEAD vs external clean record | repository-local final-clean pointer rejected | parent review cannot false-bind child bytes |
+| exact external CLEAN identity | live PR/SHA + fetched issue comment | nonexistent/other-PR/wrong-SHA external comment | handoff lint RED |
 | terminal REVIEW_READY transaction | live-state-shaped closure oracle | remove marker / move HEAD / break gate | `REVIEW_BLOCKED` |
 | same-SHA retry | existing marker + later Candidate Validation completion | freeze RED -> same-SHA freeze GREEN | blocked -> PASS |
 
@@ -106,6 +108,7 @@ python3 scripts/context-envelope-check.py --self-test
 python3 scripts/mechanical-verifier-classifier.py --self-test
 python3 scripts/review-ready-closure.py --self-test
 python3 scripts/derive-worker-review-metadata.py --self-test
+python3 scripts/validate-worker-handoff.py --self-test
 python3 scripts/ctx03-quality-replay.py --self-test
 python3 scripts/ctx03-process-controls.py --self-test
 python3 scripts/ctx03-docsync-history-check.py --self-test
