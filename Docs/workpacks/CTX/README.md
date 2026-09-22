@@ -59,8 +59,6 @@ Combining all three would make one Reviewer validate context routing, semantic c
 
 ## Adoption
 
-The CTX programme plan is accepted, but the plan itself changes no operating rule. Each WP becomes binding only after its own fresh independent PASS + merge + DocSync.
+The CTX programme plan is accepted. `WP-CTX-01 — Role-specific bootstrap + accepted-state navigation` is now **COMPLETE** on repaired frozen candidate `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39` (independent PASS review `#5273801466`, PR `#110`, implementation merge `fbd3e5526e760efc89f54e7c12a274af10d4765f`). The accepted repair replaces the impossible self-referential freshness predicate with `docsync-first-parent-v1`; Context Bootstrap v1 becomes binding only after this DocSync persists a fresh accepted-state projection.
 
-The next CTX action is `WP-CTX-01 — Role-specific bootstrap + accepted-state navigation`. It remains `NOT_STARTED` until a human explicitly starts its Worker.
-
-Human priority is to execute `WP-CTX-01` immediately so subsequent remote/local sessions start benefiting before H1 local work. Until CTX-01 itself passes, the existing bootstrap/read rules remain binding unchanged.
+The next CTX action is `WP-CTX-02 — Accepted-contract capsules + predecessor inheritance compression`. It becomes dependency-valid after successful CTX-01 DocSync and still requires an explicit human-started Worker. CTX does not semantically block H1/CITY/PA.
