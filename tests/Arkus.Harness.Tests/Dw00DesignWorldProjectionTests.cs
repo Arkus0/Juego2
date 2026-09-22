@@ -19,13 +19,17 @@ namespace Arkus.Harness.Tests
             var source = NeutralSource();
             var universe = NeutralUniverse();
             var reader = NeutralReader(source);
+            var sourceDigestBefore = reader.SourceDigest;
             var projector = new DesignWorldProjector();
 
             var first = projector.Build(universe, reader, VersionOne);
-            var second = projector.Build(universe, reader, VersionOne);
+            var rebuiltReader = NeutralReader(source);
+            var second = projector.Build(universe, rebuiltReader, VersionOne);
+            var sourceDigestAfter = rebuiltReader.SourceDigest;
             var validation = new DesignWorldProjectionValidator().Validate(first, universe, reader, VersionOne);
 
             Assert.True(validation.IsValid, string.Join("; ", validation.Issues.Select(issue => issue.MachineCode)));
+            Assert.Equal(sourceDigestBefore, sourceDigestAfter);
             Assert.Equal(first.Digest, second.Digest);
             Assert.Equal(first.NormalizedRepresentation, second.NormalizedRepresentation);
             Assert.Equal(
@@ -46,6 +50,14 @@ namespace Arkus.Harness.Tests
             Assert.NotNull(query.Data);
             var items = Assert.IsAssignableFrom<IReadOnlyList<object?>>(query.Data!["items"]);
             Assert.Equal(3, items.Count);
+
+            var references = inspection.QueryReferences(AnchoredRequest(first.WorldState));
+            Assert.True(references.Success);
+            Assert.NotNull(references.Data);
+            var referenceItems = Assert.IsAssignableFrom<IReadOnlyList<object?>>(references.Data!["items"]);
+            Assert.Equal(2, referenceItems.Count);
+            AssertReference(referenceItems[0], "root", "contains", "item-a");
+            AssertReference(referenceItems[1], "root", "contains", "item-b");
         }
 
         [Fact]
@@ -253,6 +265,14 @@ namespace Arkus.Harness.Tests
                 new DesignWorldProjector().Build(universe, reader, VersionOne));
 
             Assert.Equal("dw.provenance_ambiguous", error.MachineCode);
+        }
+
+        private static void AssertReference(object? raw, string sourceId, string kind, string targetId)
+        {
+            var row = Assert.IsAssignableFrom<IReadOnlyDictionary<string, object?>>(raw);
+            Assert.Equal(sourceId, Assert.IsType<string>(row["sourceId"]));
+            Assert.Equal(kind, Assert.IsType<string>(row["kind"]));
+            Assert.Equal(targetId, Assert.IsType<string>(row["targetId"]));
         }
 
         private static IReadOnlyDictionary<string, object?> AnchoredRequest(WorldState state)
