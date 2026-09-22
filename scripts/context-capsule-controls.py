@@ -13,6 +13,8 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -96,6 +98,23 @@ def validate_adoption_wiring(repo_root: Path) -> None:
         require_text(repo_root / relative, ["CONTEXT_CAPSULE_V1.md"])
 
 
+def run_audit_cli(repo: Path) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [
+            sys.executable,
+            str(CHECKER_PATH),
+            "--audit-index",
+            "--repo-root",
+            str(repo),
+            "--index",
+            "Docs/engineering/context-capsules/index.json",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+
 def run() -> None:
     validate_adoption_wiring(ROOT)
 
@@ -103,6 +122,7 @@ def run() -> None:
         repo = Path(td)
         (repo / "Docs/workpacks/PA").mkdir(parents=True)
         (repo / "Docs/research/living-world/results").mkdir(parents=True)
+        (repo / "Docs/engineering/context-capsules").mkdir(parents=True)
 
         wp = repo / "Docs/workpacks/PA/WP-PA-03.md"
         result = repo / "Docs/research/living-world/results/PA-03.md"
@@ -194,6 +214,41 @@ def run() -> None:
             lambda: assert_required_statement_ids(one_exclusion_missing, exports=expected_exports, exclusions=expected_exclusions),
             "missing required exclusion",
         )
+
+        # Reviewer FAIL regression: an accepted PA result-chain capsule must not
+        # become GREEN by deleting the structured disposition surface wholesale.
+        capsule_path = repo / "Docs/engineering/context-capsules/WP-PA-03.json"
+        index_path = repo / "Docs/engineering/context-capsules/index.json"
+        index = {
+            "schema": checker.INDEX_SCHEMA,
+            "authority": checker.AUTHORITY,
+            "entries": [
+                {
+                    "capsule_id": "WP-PA-03",
+                    "path": "Docs/engineering/context-capsules/WP-PA-03.json",
+                }
+            ],
+            "coverage_rules": {
+                "pa_accepted_result_chain": {
+                    "result_glob": "Docs/research/living-world/results/PA-*.md",
+                    "workpack_template": "Docs/workpacks/PA/WP-PA-{NN}.md",
+                }
+            },
+        }
+        capsule_path.write_text(json.dumps(capsule), encoding="utf-8")
+        index_path.write_text(json.dumps(index), encoding="utf-8")
+        baseline_cli = run_audit_cli(repo)
+        if baseline_cli.returncode != 0:
+            raise AssertionError(f"baseline --audit-index unexpectedly failed: {baseline_cli.stderr}")
+        missing_surface = copy.deepcopy(capsule)
+        missing_surface.pop("disposition_source", None)
+        missing_surface.pop("dispositions", None)
+        capsule_path.write_text(json.dumps(missing_surface), encoding="utf-8")
+        mutated_cli = run_audit_cli(repo)
+        if mutated_cli.returncode == 0:
+            raise AssertionError("expected --audit-index to fail when accepted PA disposition surface is removed")
+        if "accepted PA chain capsule requires disposition_source" not in mutated_cli.stderr:
+            raise AssertionError(f"unexpected --audit-index failure: {mutated_cli.stderr}")
 
     print("context-capsule independent controls: PASS")
 
