@@ -30,6 +30,8 @@ The human explicitly starts Worker and fresh independent Reviewer sessions. Ever
 
 After `WP-CTX-01` independently passes, merges and completes DocSync, role sessions use `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` plus `Docs/engineering/context-bootstrap-profiles.json` to select the minimum **starting** context and explicit escalation path. This is routing only: live GitHub remains authoritative for mutable PR/branch/review/check state, exact workpack/evidence/architecture sources remain authoritative for semantics and proof, and mandatory predecessor/reviewer duties below are unchanged. `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` is derived navigation only and never proof authority.
 
+After `WP-CTX-02` independently passes, merges and completes DocSync, `Docs/engineering/CONTEXT_CAPSULE_V1.md` adds a second non-authoritative navigation layer for accepted predecessor contracts. A mechanically valid capsule may satisfy the **initial reconstruction** of an accepted predecessor boundary without loading every historical predecessor narrative, but it never becomes semantic/proof authority. Missing, stale, lossy or contradictory capsules fail closed to the authoritative sources; material non-compressible details, concrete contradiction/reopen questions and Reviewer verdicts that depend on an inherited guarantee still deepen to the exact sources named by the capsule/protocol.
+
 A failed Reviewer stops at FAIL and never becomes the repair Worker. A successful Reviewer, however, should normally close the accepted cycle without another human handoff: after persisting exact-SHA PASS, the same session may transition one-way into finalization/DocSync, merge the exact reviewed SHA (or observe Automation V2 doing so), reconcile documentation only, emit `DOCSYNC_COMPLETE`, resolve the dependency-valid next WP, and stop. This post-PASS continuation may not modify implementation bytes or repair the reviewed candidate.
 
 Automation may run canonical validation, persist handoff markers and merge an exact reviewed SHA after a valid PASS. It never substitutes for Worker pre-review or independent Reviewer judgment, and it does not perform semantic DocSync reasoning by itself.
@@ -61,7 +63,8 @@ Local workstation setup and verification is documented in `Docs/engineering/LOCA
 8. `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md` + `Docs/architecture/ADR-H1-*` — accepted H1 identity, projection, synchronization and Unity-authority decisions after the H1 planning PR merges.
 9. `Docs/engineering/AUTOMATION_V2.md` — minimal replaceable GitHub Actions orchestration.
 10. `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` + `Docs/engineering/context-bootstrap-profiles.json` — role-specific initial-context selection and fail-closed escalation only; never semantic/proof authority above the applicable sources above.
-11. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` + `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` — compact routing/navigation only; never outrank current evidence.
+11. After CTX-02 adoption, `Docs/engineering/CONTEXT_CAPSULE_V1.md` + `Docs/engineering/context-capsules/index.json` — accepted-predecessor navigation/compression only; exact accepted sources remain authority and any validation/escalation failure returns to them.
+12. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` + `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` — compact routing/navigation only; never outrank current evidence.
 
 ## Product rules
 
@@ -91,19 +94,22 @@ Local workstation setup and verification is documented in `Docs/engineering/LOCA
 
 Before editing a WP, the Worker must reconstruct the accepted contract it inherits rather than reading only the current WP.
 
-At minimum, for each direct accepted dependency it must read the dependency WP, its completion metadata/exact reviewed SHA, independent PASS evidence, relevant proof matrix/residual-risk evidence when present, and any binding architecture/invariant documents that dependency made authoritative. Follow transitive predecessors only where the direct dependency or current WP relies on their invariants; do not reread the entire project history mechanically.
+Before CTX-02 adoption, or whenever no valid capsule covers a direct accepted dependency, the minimum reconstruction remains: dependency WP, completion metadata/exact reviewed SHA, independent PASS evidence, relevant proof matrix/residual-risk evidence when present, and binding architecture/invariant documents made authoritative by that dependency. Follow transitive predecessors only where the direct dependency or current WP relies on their invariants; do not reread the entire project history mechanically.
+
+After CTX-02 adoption, a direct accepted dependency with a mechanically valid accepted-contract capsule may instead begin from: the validated capsule, independently confirmed accepted identity/live state, and the exact current consumer WP. The Worker does **not** have to load the predecessor's full WP/PASS/proof/residual narratives merely to repeat guarantees already exported by the valid capsule. It must immediately deepen to the exact authoritative source(s) when a capsule validation/escalation condition fires, the current claim needs a detail not safely carried by the capsule, a source is marked non-compressible, an architecture/proof contract is directly binding, or concrete evidence could reopen the predecessor. Missing capsule content is never permission or negative evidence.
 
 The Worker must persist a short `PREDECESSOR_CONTRACT_CHECK` in its Worker plan/evidence before implementation begins. It must state:
 
 - accepted predecessor/dependency and reviewed/merge SHA(s);
+- capsule(s) used when applicable and any authoritative escalations performed;
 - inherited guarantees relevant to the current WP;
 - guarantees newly owned by the current WP;
 - predecessor guarantees intentionally consumed rather than re-proved;
 - the concrete condition that would justify reopening an inherited guarantee (for example, evidence that the accepted guarantee does not cover the effective path or that the predecessor claim itself was false).
 
-The independent Reviewer performs the mirror check. Before issuing FAIL for an apparent omission, it must determine whether that omission is already covered by a binding predecessor guarantee. If so, it is not a current-WP blocker unless the Reviewer can show with concrete evidence that the inherited guarantee is inapplicable or false. Requiring duplicate proof of an accepted predecessor claim is overdefense, not additional quality.
+The independent Reviewer performs the mirror check. A validated capsule may reduce navigation/repeated history, but never limits independent judgment. Before issuing FAIL for an apparent omission, the Reviewer must determine whether that omission is already covered by a binding predecessor guarantee; if the verdict materially depends on that inherited guarantee, the capsule is lossy/suspect, or concrete contradiction may reopen it, the Reviewer opens the exact authoritative source/evidence. If the guarantee is already binding and applicable, it is not a current-WP blocker unless the Reviewer can show with concrete evidence that it is inapplicable or false. Requiring duplicate proof of an accepted predecessor claim is overdefense, not additional quality.
 
-This rule does not make predecessor prose unquestionable. Concrete contradictory evidence may reopen the relevant causal boundary under the normal circuit-breaker rules; mere theoretical possibility or a desire for redundant proof may not.
+This rule does not make predecessor prose or capsules unquestionable. Concrete contradictory evidence may reopen the relevant causal boundary under the normal circuit-breaker rules; mere theoretical possibility, capsule acceptance, or a desire for redundant proof may not decide the question by itself.
 
 ## Worker → Reviewer → finalization flow
 

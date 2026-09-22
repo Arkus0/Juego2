@@ -1,0 +1,42 @@
+{
+  "schema": "arkus.accepted-contract-capsule@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "capsule_id": "WP-CITY-03",
+  "track": "CITY",
+  "content_mode": "boundary_summary",
+  "accepted_identity": {
+    "reviewed_candidate_sha": "420999e9a60e7240bcfb514b3239b652f0e09a5f",
+    "merge_sha": "a3abeaf82752bfe9dac2f594c06eb8def3b108e2",
+    "review_id": "5268853516"
+  },
+  "identity_source": {"path": "Docs/workpacks/CITY/WP-CITY-03.md", "git_blob_sha": "8492ff0adfea46c1b76baf0a92b005ec912c26b3"},
+  "authoritative_sources": [
+    {"path": "Docs/workpacks/CITY/WP-CITY-03.md", "git_blob_sha": "8492ff0adfea46c1b76baf0a92b005ec912c26b3", "kind": "accepted_boundary_contract"}
+  ],
+  "consumer_hints": ["WP-CITY-04"],
+  "exported_guarantees": [
+    {"id": "selected-retained-seed", "statement": "CITY-03 accepted one exact retained keeper seed and owns its hard playable boundary.", "source_pointer": "WP-CITY-03 / Objective + Work"},
+    {"id": "city04-executes-not-redesigns", "statement": "CITY-04 receives a bounded seed specification and must build/measure that seed rather than choose a different city slice.", "source_pointer": "WP-CITY-03 / Definition of Done"}
+  ],
+  "exclusions_nonclaims": [
+    {"id": "not-spatial-spec", "statement": "This capsule does not encode, summarize or replace the seed geometry, streets, parcels, scenarios, expansion seams or measurement pack.", "source_pointer": "Docs/production/CITY_PRODUCT_SEED.md"},
+    {"id": "no-unity-authority", "statement": "Unity realization cannot become the source of CITY semantics.", "source_pointer": "WP-CITY-04 / Scope"}
+  ],
+  "reopen_conditions": [
+    "Measured CITY-04 evidence falsifies a downstream CITY-03-owned hypothesis and routes revision to CITY-03.",
+    "Concrete evidence appears to contradict an accepted CITY-00 fact; CITY-04 must stop and raise an explicit predecessor amendment."
+  ],
+  "escalate_if": [
+    "Any geometry, route, site, scenario, measurement or expansion-seam detail is needed.",
+    "The consumer would otherwise construct from capsule prose instead of the exact product seed.",
+    "Live accepted identity or source fingerprints do not match."
+  ],
+  "mandatory_source_reads": [
+    {
+      "path": "Docs/production/CITY_PRODUCT_SEED.md",
+      "git_blob_sha": "3186b80d173cd20f961f33d5a28bf447b2c6971d",
+      "noncompressible": true,
+      "reason": "CITY-04 construction/measurement specification; capsule may navigate to it but may not replace it."
+    }
+  ]
+}

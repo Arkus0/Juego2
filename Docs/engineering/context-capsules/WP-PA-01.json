@@ -1,0 +1,33 @@
+{
+  "schema": "arkus.accepted-contract-capsule@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "capsule_id": "WP-PA-01",
+  "track": "PA",
+  "content_mode": "structured_disposition",
+  "accepted_identity": {"reviewed_candidate_sha": "87c4cbe81f8195770eb23ba7f2a5d5ca2a237715", "merge_sha": "3688b7b9a27355b0fda160c20e57a385e40c6814", "review_id": "5268013445"},
+  "identity_source": {"path": "Docs/workpacks/PA/WP-PA-01.md", "git_blob_sha": "6bf99c6e326277ccf751d4d96ff1239fea0fa4c7"},
+  "authoritative_sources": [{"path": "Docs/research/living-world/results/PA-01.md", "git_blob_sha": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae", "kind": "canonical_research_result"}],
+  "consumer_hints": ["WP-PA-02", "WP-PA-03", "WP-PA-04", "WP-PA-05", "WP-PA-06", "WP-PA-07", "WP-PA-08", "WP-PA-09", "WP-PA-10", "WP-PA-11", "WP-PA-12", "WP-PA-13"],
+  "exported_guarantees": [
+    {"id": "schedule-is-intent", "statement": "Schedule owns normal semantic intent and is distinct from route/animation/concrete realization.", "source_pointer": "PA-01 / Required semantic invariants 1-2"},
+    {"id": "re-evaluate-after-interruption", "statement": "After interruption/release the actor re-evaluates current time/context rather than blindly resuming stale execution.", "source_pointer": "PA-01 / Required semantic invariant 3"},
+    {"id": "expected-vs-actual", "statement": "Expected routine and actual state remain distinct; deviations do not rewrite authored normal intent.", "source_pointer": "PA-01 / Required semantic invariant 5"},
+    {"id": "routine-not-agency", "statement": "Routine does not prove autonomous initiative; PA-02 owns actor-originated choice.", "source_pointer": "PA-01 / Required semantic invariant 6"},
+    {"id": "offscreen-causal-continuity", "statement": "Off-screen fidelity may be cheaper but cannot discard causal meaning required for coherent re-entry.", "source_pointer": "PA-01 / Required semantic invariant 8"}
+  ],
+  "exclusions_nonclaims": [
+    {"id": "no-exact-hidden-route-requirement", "statement": "Exact physical off-screen path simulation is rejected as a PA-01 requirement.", "source_pointer": "PA-01 / DL-11"},
+    {"id": "no-unique-day-screenplay", "statement": "A unique executable 24h script per visible citizen is rejected.", "source_pointer": "PA-01 / DL-12"},
+    {"id": "no-donor-runtime-authority", "statement": "Donor M9/M10/WorldState/schema/API ownership is rejected as authority.", "source_pointer": "PA-01 / DL-14"}
+  ],
+  "reopen_conditions": ["Concrete accepted evidence falsifies a PA-01 semantic invariant or shows it inapplicable to the effective consumer path."],
+  "escalate_if": ["The consumer needs the exact meaning/recommendation behind a disposition row.", "A later accepted result or live state contradicts this capsule.", "A material PA-01 detail is absent from exported guarantees."],
+  "disposition_source": {"path": "Docs/research/living-world/results/PA-01.md", "git_blob_sha": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae", "section": "## 3. Donor → Juego2 disposition", "key_column": 0, "status_column": 2},
+  "dispositions": [
+    {"source_key": "DL-01", "status": "ADOPT"}, {"source_key": "DL-02", "status": "ADOPT"}, {"source_key": "DL-03", "status": "ADOPT"}, {"source_key": "DL-04", "status": "ADAPT"},
+    {"source_key": "DL-05", "status": "ADOPT problem / LATER exact validator"}, {"source_key": "DL-06", "status": "ADOPT"}, {"source_key": "DL-07", "status": "ADAPT"}, {"source_key": "DL-08", "status": "ADAPT"},
+    {"source_key": "DL-09", "status": "ADOPT"}, {"source_key": "DL-10", "status": "ADAPT"}, {"source_key": "DL-11", "status": "REJECT as requirement"}, {"source_key": "DL-12", "status": "REJECT"},
+    {"source_key": "DL-13", "status": "LATER"}, {"source_key": "DL-14", "status": "REJECT as authority"}
+  ],
+  "mandatory_source_reads": []
+}

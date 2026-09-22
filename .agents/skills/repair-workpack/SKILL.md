@@ -16,7 +16,7 @@ Resolve the exact WP ID and canonical PR from live GitHub state. Do not infer a 
 
 ## Context bootstrap
 
-Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `repair_worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile narrows only the initial pack. Full ROADMAP/proof/architecture context is loaded when the FAIL, exact WP, direct predecessor state or cross-track gate makes it material. Stale/missing compact context always escalates; it never supplies a repair assumption.
+Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `repair_worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile narrows only the initial pack. Full ROADMAP/proof/architecture context is loaded when the FAIL, exact WP, direct predecessor state or cross-track gate makes it material. After CTX-02 adoption, `Docs/engineering/CONTEXT_CAPSULE_V1.md` governs validated accepted-contract capsules that may navigate unchanged accepted predecessor guarantees, but any capsule mismatch or FAIL that may reopen/touch that predecessor escalates to the exact authoritative sources. Stale/missing compact context always escalates; it never supplies a repair assumption.
 
 ## Preconditions
 
@@ -29,10 +29,10 @@ Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `repair_worker` pr
 ## Workflow
 
 1. Identify the violated criterion, evidence, exact reviewed candidate SHA and minimal causal correction boundary from the independent FAIL.
-2. Confirm whether the finding belongs to the current WP or concretely reopens an accepted predecessor. Do not silently repair a different ownership boundary.
+2. Confirm whether the finding belongs to the current WP or concretely reopens an accepted predecessor. Do not silently repair a different ownership boundary; a capsule cannot settle a concrete reopen question by itself.
 3. Return the canonical PR to the repair state required by `WORKER_REVIEW_PROTOCOL.md` (normally Draft + ACTIVE) and preserve Worker history, prior reviewed SHA, `fail_cycle` and existing evidence.
 4. Check out/update the canonical repair branch. Do not create a competing implementation PR unless the protocol explicitly requires a migration; if migrated, mark the old PR superseded and preserve history.
-5. Refresh `PREDECESSOR_CONTRACT_CHECK` if dependency/accepted predecessor state changed since the failed candidate.
+5. Refresh `PREDECESSOR_CONTRACT_CHECK` if dependency/accepted predecessor state changed since the failed candidate. After CTX-02 adoption, unchanged accepted boundaries may start from valid capsules; any predecessor-related FAIL or contradiction requires authoritative escalation.
 6. Reproduce or otherwise validate the Reviewer's blocker before changing the candidate when feasible.
 7. Repair the **causal defect boundary**, not merely the reported example. Stay inside Allowed scope and do not opportunistically advance later WPs.
 8. Run affected positive tests, causal negative-conformance/defect-injection controls, exact local Unity evidence when required, and any canonical validation needed by the WP.
