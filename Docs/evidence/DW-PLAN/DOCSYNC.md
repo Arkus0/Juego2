@@ -10,7 +10,8 @@ DATE: 2026-09-22
 - Independent Reviewer verdict: **PASS**
 - Review: `#5274794434`
 - Planning PR: `#117`
-- Candidate merge / DocSync source main: `b831050e9df8b61b76744e0c5f544bd7ec2d79b5`
+- Candidate merge: `b831050e9df8b61b76744e0c5f544bd7ec2d79b5`
+- Final DocSync source main: `af63528b63ba9b3ddf2e612c0ad8dff96a57a6c2`
 - Canonical architecture: `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`
 - Canonical track plan: `Docs/workpacks/DW/README.md`
 - Workpacks: `WP-DW-00 -> WP-DW-01 -> WP-DW-02 -> WP-DW-03 -> WP-DW-04 -> WP-DW-05 -> WP-DW-GATE`
@@ -28,8 +29,10 @@ Every DW implementation/gate workpack is governed by `Docs/engineering/FOUNDATIO
 3. Reconciled `Docs/workpacks/README.md` so `DW/` is an accepted foundational validation track and `WP-DW-00` is the sole default DW start.
 4. Reconciled `Docs/ROADMAP.md` so the DW sequence and final-H2 public/external-boundary interlock are accepted rather than merely proposed.
 5. Reconciled `Docs/workpacks/H2/FUTURE_PLANNING_SIGNAL.md` so the H2 note acknowledges the accepted DW interlock while remaining non-binding for concrete H2 implementation scope.
-6. Regenerated `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` from source main `b831050e9df8b61b76744e0c5f544bd7ec2d79b5` under `docsync-first-parent-v1`, adding DW navigation and cross-track prerequisite hints.
+6. Regenerated `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` from final source main `af63528b63ba9b3ddf2e612c0ad8dff96a57a6c2` under `docsync-first-parent-v1`, adding DW navigation and cross-track prerequisite hints.
 7. Reconciled the residual-ledger boundary: this is a PROCESS_ONLY plan adoption, not an implementation workpack PASS, so it accepts/closes no implementation residual. DW downstream non-claims remain in the accepted architecture/workpack contracts and will enter the ledger when a concrete accepted implementation WP declares or closes a residual.
+
+`main` advanced after the DW planning merge because accepted CTX-02 implementation PR `#113` merged as `af63528b63ba9b3ddf2e612c0ad8dff96a57a6c2`. This DW DocSync therefore re-anchors to that live source before persistence rather than forcing the stale earlier anchor. It does **not** perform or claim CTX-02's own post-PASS DocSync.
 
 ## Freshness / persistence condition
 
@@ -37,14 +40,14 @@ The accepted-state projection is persisted with:
 
 ```text
 projection_phase = DOCSYNC_PERSISTED
-generated_from_main_sha = b831050e9df8b61b76744e0c5f544bd7ec2d79b5
+generated_from_main_sha = af63528b63ba9b3ddf2e612c0ad8dff96a57a6c2
 ```
 
-This DocSync must merge only while live `main` remains exactly that source SHA, so the resulting merge commit's first parent is `b831050e9df8b61b76744e0c5f544bd7ec2d79b5`. If `main` advances before merge, regenerate the projection rather than force-merge a stale DocSync.
+This DocSync must merge only while live `main` remains exactly that source SHA, so the resulting merge commit's first parent is `af63528b63ba9b3ddf2e612c0ad8dff96a57a6c2`. If `main` advances before merge, regenerate the projection rather than force-merge a stale DocSync.
 
 ## Boundary
 
-This DocSync is documentation/state-navigation reconciliation only. It changes no reviewed DW implementation bytes because no DW implementation exists yet, changes no H0/H1/CITY/PA product semantics, and does not start `WP-DW-00` automatically.
+This DocSync is documentation/state-navigation reconciliation only. It changes no reviewed DW implementation bytes because no DW implementation exists yet, changes no H0/H1/CITY/PA product semantics, does not finalize CTX-02, and does not start `WP-DW-00` automatically.
 
 ## Next action
 
