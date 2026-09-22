@@ -1,0 +1,25 @@
+{
+  "schema": "arkus.accepted-contract-capsule-index@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "protocol": "Docs/engineering/CONTEXT_CAPSULE_V1.md",
+  "adoption_boundary": "Binding only after WP-CTX-02 independent PASS + merge + successful DocSync.",
+  "coverage_policy": {
+    "H1": "Capsule the accepted boundary actually consumed by near-term H1; do not bulk-migrate H0 history.",
+    "CITY": "Boundary/navigation only. Product/spatial construction specifications remain mandatory exact reads and may not be compressed into capsule prose.",
+    "PA": "One capsule per accepted canonical PA result. Future PA DocSync adds the newly accepted result capsule before capsule-chain coverage can be declared complete. Missing capsule means read the authoritative result; never infer from silence."
+  },
+  "coverage_rules": {
+    "pa_accepted_result_chain": {
+      "result_glob": "Docs/research/living-world/results/PA-[0-9][0-9].md",
+      "workpack_template": "Docs/workpacks/PA/WP-PA-{NN}.md",
+      "rule": "Every discovered canonical PA result whose matching workpack Status is COMPLETE must have one indexed accepted capsule pointing to that result."
+    }
+  },
+  "entries": [
+    {"capsule_id": "WP-HK-GATE", "path": "Docs/engineering/context-capsules/WP-HK-GATE.json", "near_term_consumers": ["WP-H1-02"]},
+    {"capsule_id": "WP-CITY-03", "path": "Docs/engineering/context-capsules/WP-CITY-03.json", "near_term_consumers": ["WP-CITY-04"], "content_boundary": "NONCOMPRESSIBLE_PRODUCT_SPEC_REQUIRED"},
+    {"capsule_id": "WP-PA-01", "path": "Docs/engineering/context-capsules/WP-PA-01.json", "near_term_consumers": ["WP-PA-04+"]},
+    {"capsule_id": "WP-PA-02", "path": "Docs/engineering/context-capsules/WP-PA-02.json", "near_term_consumers": ["WP-PA-04+"]},
+    {"capsule_id": "WP-PA-03", "path": "Docs/engineering/context-capsules/WP-PA-03.json", "near_term_consumers": ["WP-PA-04+"]}
+  ]
+}
