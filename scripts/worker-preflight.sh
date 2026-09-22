@@ -23,6 +23,12 @@ fi
 
 echo "[preflight] candidate ${candidate_sha}"
 
+if [[ -f scripts/validate-main-safety-trigger.py ]]; then
+  echo "[preflight] Main Safety PR coverage guard"
+  PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py --self-test
+  PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py
+fi
+
 required_sdk="$(python3 - <<'PY'
 import json
 from pathlib import Path
