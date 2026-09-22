@@ -85,7 +85,7 @@ def validate(state: State) -> list[str]:
     elif marker != frozen:
         errors.append("REVIEW_READY marker targets a different SHA")
 
-    # final_head_sha must be obtained by a live read performed *after* the marker
+    # final_head_sha must be obtained by a live read performed after the marker
     # that supplied marker_sha. The caller/workflow owns that temporal ordering.
     if SHA_RE.fullmatch(final_head) and SHA_RE.fullmatch(frozen) and final_head != frozen:
         errors.append("live PR HEAD moved after REVIEW_READY marker observation")
@@ -156,6 +156,18 @@ def self_test() -> None:
 
     no_freeze = State(**{**good.__dict__, "freeze_check": "SKIPPED"})
     assert any("Freeze exact-SHA validation" in e for e in validate(no_freeze))
+
+    # Exact Reviewer blocker reproduction: the durable marker already exists for
+    # one exact SHA, but the first closure attempt sees freeze RED. A later same-SHA
+    # gate/metadata repair reuses that exact marker. The oracle must transition from
+    # REVIEW_BLOCKED to PASS without requiring a second marker or a new candidate.
+    retry_before = State(**{**good.__dict__, "freeze_check": "FAILURE"})
+    retry_errors = validate(retry_before)
+    assert any("Freeze exact-SHA validation" in e for e in retry_errors)
+    retry_after = State(**{**retry_before.__dict__, "freeze_check": "SUCCESS"})
+    assert retry_after.marker_sha == retry_before.marker_sha
+    assert retry_after.pr_head_sha == retry_before.pr_head_sha
+    assert validate(retry_after) == []
 
     print("review-ready-closure self-test: PASS")
 
