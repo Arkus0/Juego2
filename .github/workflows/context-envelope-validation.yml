@@ -32,6 +32,7 @@ jobs:
           python3 scripts/mechanical-verifier-classifier.py --self-test
           python3 scripts/review-ready-closure.py --self-test
           python3 scripts/derive-worker-review-metadata.py --self-test
+          python3 scripts/validate-worker-handoff.py --self-test
           python3 scripts/ctx03-quality-replay.py --self-test
           python3 scripts/ctx03-process-controls.py --self-test
           python3 scripts/ctx03-docsync-history-check.py --self-test
