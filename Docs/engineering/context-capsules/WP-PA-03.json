@@ -1,0 +1,54 @@
+{
+  "schema": "arkus.accepted-contract-capsule@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "capsule_id": "WP-PA-03",
+  "track": "PA",
+  "content_mode": "structured_disposition",
+  "accepted_identity": {"reviewed_candidate_sha": "d216f32f0c82bf57c23a3c7ef0c4433cbcbdc927", "merge_sha": "2f3862b601b0521a6a3d5a57afe54f182d037e97", "review_id": "5270421825"},
+  "identity_source": {"path": "Docs/workpacks/PA/WP-PA-03.md", "git_blob_sha": "f78453a482940677098cd7a9e8595a3d3acd436b"},
+  "authoritative_sources": [{"path": "Docs/research/living-world/results/PA-03.md", "git_blob_sha": "f2c553e01fb00a4ef2da88e9bc76f644436f0dfe", "kind": "canonical_research_result"}],
+  "consumer_hints": ["WP-PA-04", "WP-PA-05", "WP-PA-06", "WP-PA-07", "WP-PA-08", "WP-PA-09", "WP-PA-10", "WP-PA-11", "WP-PA-12", "WP-PA-13"],
+  "exported_guarantees": [
+    {"id": "directed-affect", "statement": "Trust, affinity and fear are directed stances; changing A→B does not mirror or mutate B→A.", "source_pointer": "PA-03 / Directionality and reciprocity"},
+    {"id": "relationships-change-behavior", "statement": "Material relationship differences can change an explainable action, target or opportunity choice rather than only dialogue flavour.", "source_pointer": "WP-PA-03 / Acceptance"},
+    {"id": "action-specific-consumers", "statement": "Relationship consumers are action-specific; there is no universal sign/formula across all actions.", "source_pointer": "PA-03 / Relationship semantics are action-specific"},
+    {"id": "current-state-not-biography", "statement": "PA-03 owns current causal relationship state and bounded provenance, not unbounded relationship biography.", "source_pointer": "PA-03 / Current relationship state vs biography"},
+    {"id": "bounded-social-discovery-inherited", "statement": "PA-03 preserves PA-02 bounded discovery by rejecting default global/N-hop social traversal for target discovery.", "source_pointer": "PA-03 / Minimal relationship vocabulary recommendation"}
+  ],
+  "exclusions_nonclaims": [
+    {"id": "no-universal-friendship-score", "statement": "A universal friendship/opinion scalar as canonical social state is rejected.", "source_pointer": "PA-03 / vocabulary table"},
+    {"id": "no-implicit-symmetry", "statement": "Implicit symmetry for actor stance is rejected.", "source_pointer": "PA-03 / vocabulary table"},
+    {"id": "no-unbounded-edge-biography", "statement": "Unbounded relationship biography inside every edge is rejected.", "source_pointer": "PA-03 / vocabulary table"},
+    {"id": "no-global-n-hop", "statement": "Default global/N-hop social traversal is rejected because it violates inherited PA-02 bounded-discovery intent.", "source_pointer": "PA-03 / vocabulary table"},
+    {"id": "additional-affect-is-later", "statement": "Respect, loyalty, attraction, jealousy and other dimensions remain LATER until a concrete behavior needs them.", "source_pointer": "PA-03 / vocabulary table + anti-inflation rule"}
+  ],
+  "reopen_conditions": [
+    "Concrete counterexample shows the accepted directed/action-specific semantics are false or inapplicable.",
+    "A later accepted behavior cannot be expressed cleanly by adopted dimensions/roles/obligations and therefore justifies reopening a LATER dimension."
+  ],
+  "escalate_if": [
+    "A consumer needs exact relationship semantics beyond the exported invariants/status table.",
+    "A relationship disposition would be reclassified, especially LATER/REJECT.",
+    "A consumer proposes mirrored stance, global/N-hop target discovery, or another contradiction with inherited PA-02.",
+    "Live accepted identity/source bytes contradict the capsule."
+  ],
+  "disposition_source": {"path": "Docs/research/living-world/results/PA-03.md", "git_blob_sha": "f2c553e01fb00a4ef2da88e9bc76f644436f0dfe", "section": "## 4. Minimal relationship vocabulary recommendation", "key_column": 0, "status_column": 1},
+  "dispositions": [
+    {"source_key": "directed trust", "status": "ADOPT"}, {"source_key": "directed affinity", "status": "ADOPT"}, {"source_key": "directed fear", "status": "ADOPT"},
+    {"source_key": "household / family structural tie", "status": "ADOPT concept"}, {"source_key": "employment structural tie", "status": "ADOPT concept / ADAPT representation"},
+    {"source_key": "authority / status-bearing structural role", "status": "ADOPT concept / ADAPT representation"}, {"source_key": "identifiable favour/debt/obligation with lifecycle", "status": "ADOPT"},
+    {"source_key": "rivalry / friendship qualitative label", "status": "ADAPT"}, {"source_key": "action-specific relationship consumers", "status": "ADOPT"},
+    {"source_key": "thresholds for real semantic gates/transitions", "status": "ADAPT"}, {"source_key": "continuous/banded influences within an eligible set", "status": "ADAPT"},
+    {"source_key": "sourced active reason references for current relationship state", "status": "ADOPT"}, {"source_key": "synthetic display/debug opinion", "status": "LATER / non-authoritative"},
+    {"source_key": "respect, loyalty, attraction, jealousy or additional affect dimensions", "status": "LATER"}, {"source_key": "universal friendship/opinion scalar as canonical social state", "status": "REJECT"},
+    {"source_key": "implicit symmetry for actor stance", "status": "REJECT"}, {"source_key": "permanent favour/debt tags with no identity/lifecycle", "status": "REJECT"},
+    {"source_key": "unbounded relationship biography stored inside every edge", "status": "REJECT"}, {"source_key": "default global/N-hop social traversal to discover targets", "status": "REJECT"},
+    {"source_key": "player-exclusive bond architecture", "status": "REJECT baseline"}
+  ],
+  "directional_semantics": [
+    {"id": "trust", "forward": "trust(A -> B)", "reverse": "trust(B -> A)", "must_remain_distinct": true},
+    {"id": "affinity", "forward": "affinity(A -> B)", "reverse": "affinity(B -> A)", "must_remain_distinct": true},
+    {"id": "fear", "forward": "fear(A -> B)", "reverse": "fear(B -> A)", "must_remain_distinct": true}
+  ],
+  "mandatory_source_reads": []
+}
