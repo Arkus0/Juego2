@@ -12,7 +12,7 @@
     "material_saving_rule": "pre_estimate - post_estimate must exceed pre_uncertainty + post_uncertainty"
   },
   "process_envelope": {
-    "scope": "Two-layer static budget. Base profile budgets cover repository-owned initial_reads. Route-effective budgets additionally cover checker-owned mandatory conditional/capsule/escalation sources for concrete representative routes. Live GitHub state, PR diff bytes and other per-candidate dynamic payloads remain mandatory but are held outside this corpus budget because CTX does not control their size.",
+    "scope": "Three-layer static budget. Base profile budgets cover repository-owned initial_reads. Conditional-profile budgets cover the checker-owned superset of every fixed repository source named or required by canonical conditional_reads for that profile. Route-effective budgets cover concrete H1/CITY/PA mandatory capsule/non-compressible/escalation sets. Live GitHub state, PR diff bytes and candidate-specific exact dependency/evidence payloads remain mandatory but are held outside this static corpus budget because CTX does not control their identity or size.",
     "headroom_fraction": 0.20,
     "profiles": {
       "worker": {
@@ -20,7 +20,7 @@
         "baseline_estimate": 19028,
         "ceiling_estimate": 22834,
         "ceiling_revision": 1,
-        "rationale": "Exact final-shape CTX-03 base-profile calibration on workflow run 35703773432; ceiling is ceil(19028 * 1.20). Route-forced conditionals are budgeted separately below."
+        "rationale": "Exact final-shape CTX-03 base-profile calibration on workflow run 35703773432; ceiling is ceil(19028 * 1.20). Fixed conditional sources are budgeted separately below."
       },
       "repair_worker": {
         "substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
@@ -34,7 +34,7 @@
         "baseline_estimate": 19028,
         "ceiling_estimate": 22834,
         "ceiling_revision": 1,
-        "rationale": "Repository-owned base initial reads calibrate to 19028; candidate diff/live PR remain dynamic mandatory inputs outside the static corpus budget. Route-forced conditionals are budgeted separately below."
+        "rationale": "Repository-owned base initial reads calibrate to 19028; candidate diff/live PR remain dynamic mandatory inputs outside the static corpus budget."
       },
       "planner_gate": {
         "substitutions": {
@@ -60,6 +60,14 @@
         "ceiling_revision": 1,
         "rationale": "The narrow local-executor repository corpus calibrates to 6311; external anchor/manifest/named-file inputs remain dynamic and mandatory."
       }
+    },
+    "conditional_profile_budgets": {
+      "worker": {"baseline_estimate": 39134, "ceiling_estimate": 46961, "ceiling_revision": 1, "rationale": "Base Worker pack plus checker-owned fixed conditional superset: foundational proof, H1 remote/local protocol, ROADMAP, capsule protocol and capsule index."},
+      "repair_worker": {"baseline_estimate": 39134, "ceiling_estimate": 46961, "ceiling_revision": 1, "rationale": "Base repair pack plus the fixed conditional sources that can become mandatory while repairing H1/cross-track/capsule-backed work."},
+      "reviewer": {"baseline_estimate": 39134, "ceiling_estimate": 46961, "ceiling_revision": 1, "rationale": "Base Reviewer pack plus the fixed conditional sources that can become mandatory for foundational, H1-local, cross-track or capsule-backed review."},
+      "planner_gate": {"baseline_estimate": 24003, "ceiling_estimate": 28804, "ceiling_revision": 1, "rationale": "Planner base already contains ROADMAP; fixed conditional superset additionally contains FOUNDATIONAL_PROOF_STANDARD.md."},
+      "docsync": {"baseline_estimate": 20295, "ceiling_estimate": 24354, "ceiling_revision": 1, "rationale": "DocSync base plus fixed conditional ROADMAP and accepted-PA capsule protocol/index sources."},
+      "h1_local_executor": {"baseline_estimate": 6311, "ceiling_estimate": 7574, "ceiling_revision": 1, "rationale": "Local executor declares no fixed conditional_reads; its conditional-profile set therefore equals its base pack."}
     },
     "effective_route_budgets": {
       "H1-worker": {
@@ -89,7 +97,7 @@
     }
   },
   "same_snapshot_measurement": {
-    "snapshot_contract": "All pre/post file bytes are read from the same checked-out candidate snapshot. Pre-CTX routing is reconstructed from checker-owned canonical representative direct-predecessor sources, not from the compact artifacts being measured. Post-CTX routing is the accepted canonical role profile plus validated capsule navigation and checker-owned route-forced mandatory conditionals. Sources that remain binding in both designs are held constant. Dynamic live GitHub/diff inputs are mandatory but excluded from the delta.",
+    "snapshot_contract": "All pre/post file bytes are read from the same checked-out candidate snapshot. Pre-CTX routing is reconstructed from checker-owned canonical representative direct-predecessor sources, not from the compact artifacts being measured. Post-CTX routing is the accepted canonical role profile plus validated capsule navigation and checker-owned route-forced mandatory conditionals. Fixed conditional profile coverage is independently bounded even when a fixed conditional is not activated by one of the six representative measurement routes. Sources that remain binding in both designs are held constant. Dynamic live GitHub/diff/candidate-specific exact dependency inputs are mandatory but excluded from the static delta.",
     "legacy_rule_source_sha": "e388f6e3c9d42e89418bd8877ed36fcbcf6d2aaa",
     "routes": [
       {"id":"H1-worker","profile":"worker","exact_wp":"Docs/workpacks/H1/WP-H1-02.md","capsules":["WP-HK-GATE"],"held_constant_sources":["Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md","Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md"]},
