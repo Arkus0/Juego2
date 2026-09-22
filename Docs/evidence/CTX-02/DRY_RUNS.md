@@ -61,7 +61,7 @@ Inherited split recovered compactly:
 
 Status preservation matters: `LATER`, compound `ADOPT ... / LATER ...`, `REJECT`, and `REJECT baseline` are preserved as source states rather than normalized to binary keep/drop.
 
-The PA row oracle is now source-identity-safe: chain coverage independently discovers canonical `PA-NN.md`, and a capsule cannot rebind `disposition_source` to another internally coherent table and still claim that accepted result.
+The PA row oracle is now source-identity-safe: chain coverage independently discovers COMPLETE `WP-PA-NN` workpacks, derives each required canonical `PA-NN.md`, and a capsule cannot rebind `disposition_source` to another internally coherent table and still claim that accepted result.
 
 The accepted canonical PA-01..03 result files occupy 73,039 repository bytes; their three current capsule JSON files occupy 14,011 bytes. That is 59,028 fewer bytes, or about **80.8% less repeated accepted-result payload** before tokenizer effects. This is a byte comparison, not a claimed model-token count.
 
@@ -109,7 +109,49 @@ The re-audit identified the same false-green class inside fields CTX-02 explicit
 
 This is intentionally a test-only representative oracle, not a production semantic registry.
 
-## 5. Self-confirmation controls
+## 5. Cycle-4 omission control — actual representative oracle
+
+Reviewer `#5274389905` correctly identified that the older synthetic one-of-many fixture only proved a row had been deleted; it did not prove CTX-02 detected the loss.
+
+The required control now runs against the actual indexed `WP-HK-GATE` representative capsule through `scripts/context-capsule-omission-controls.py`.
+
+### One-of-many positive omission
+
+Mutation:
+
+- preserve the actual accepted identity, authoritative source bindings, fingerprints and all remaining guarantees;
+- remove only `unity-work-authorized` while other exported guarantees remain;
+- run the production capsule validator first: it stays **GREEN**, because the mutation is intentionally structurally valid;
+- run the same independent representative semantic oracle used by CTX-02's semantic controls: **RED** with `exported_guarantees material content mismatch`.
+
+This is the required causal proof that the validation/control process detects silent narrowing rather than merely noticing that the mutation code removed an ID.
+
+### Symmetric exclusion omission
+
+Mutation:
+
+- preserve all source/identity bindings;
+- remove only `no-new-concurrency-claim` while another exclusion remains;
+- production validation remains structurally **GREEN**;
+- the representative oracle is **RED** with `exclusions_nonclaims material content mismatch`.
+
+## 6. Cycle-4 future PA whole-item omission
+
+Reviewer `#5274389905` also identified that result-first discovery could erase a future accepted PA item from the universe by jointly omitting its result, capsule and index entry.
+
+The production checker now discovers `Docs/workpacks/PA/WP-PA-NN.md` first and selects those whose status is `COMPLETE`. For each selected workpack it derives the required canonical `Docs/research/living-world/results/PA-NN.md` and only then checks the indexed capsule.
+
+Negative self-test:
+
+- retain synthetic `WP-PA-04.md` with `Status: **COMPLETE**`;
+- omit `PA-04.md` entirely;
+- omit the `WP-PA-04` capsule/index entry;
+- run `validate_pa_chain()`;
+- result: **RED** with `accepted PA canonical result missing for COMPLETE workpack(s): WP-PA-04`.
+
+The thing being proved no longer defines its own complete inventory.
+
+## 7. Self-confirmation controls
 
 The re-audit also tested whether a capsule could choose its own oracle and then pass fingerprints against itself.
 
@@ -120,7 +162,7 @@ The re-audit also tested whether a capsule could choose its own oracle and then 
 
 These checks reduce self-confirmation without trying to parse general semantics.
 
-## 6. Prior Reviewer FAIL regressions remain active
+## 8. Prior Reviewer FAIL regressions remain active
 
 Cases still exercised mechanically:
 
@@ -136,7 +178,7 @@ Cases still exercised mechanically:
 
 Result in every production-invariant case: capsule cannot be used as inherited truth; reconstruct from authoritative sources and decide the predecessor/reopen question there.
 
-## 7. Concrete contradictory evidence despite ACCEPTED capsule
+## 9. Concrete contradictory evidence despite ACCEPTED capsule
 
 A capsule's `ACCEPTED` identity is historical navigation, not immunity from contradiction. If a Reviewer has concrete evidence that the accepted guarantee is false or inapplicable to the effective path, the role escalates to original evidence and normal predecessor-reopen rules. The external accepted-state control also demonstrates that once the predecessor state is explicitly `REOPENED`, the capsule fails closed even if its own JSON still carries the prior accepted identity.
 
@@ -144,4 +186,4 @@ A representative semantic GREEN likewise does not prove all source nuance. Mater
 
 ## Conclusion
 
-Representative H1, CITY and PA consumers recover the inherited/current ownership split from less repeated prose. The circuit-breaker repair now detects both **loss** and **same-structure semantic substitution** on the actual selected boundaries, closes source self-confirmation routes, keeps PA deterministic dispositions source-derived, and deliberately leaves arbitrary natural-language proof to escalation + independent Reviewer judgment.
+Representative H1, CITY and PA consumers recover the inherited/current ownership split from less repeated prose. The circuit-breaker repair now proves real REDs for one-of-many material omission and same-structure semantic substitution on the actual selected boundaries, seeds future PA completeness from independent COMPLETE workpacks, closes source self-confirmation routes, keeps PA deterministic dispositions source-derived, and deliberately leaves arbitrary natural-language proof to escalation + independent Reviewer judgment.
