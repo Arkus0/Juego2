@@ -10,6 +10,61 @@ CAPSULE_DIR = Path("Docs/engineering/context-capsules")
 CAPSULE_INDEX = CAPSULE_DIR / "index.json"
 CAPSULE_PROTOCOL = Path("Docs/engineering/CONTEXT_CAPSULE_V1.md")
 
+# The representative measurement universe is checker-owned. The config repeats
+# these values as reviewed assertions/documentation; it cannot choose a friendlier
+# task/source universe after seeing the result.
+CANONICAL_ROUTE_CONFIGS = [
+    {"id": "H1-worker", "profile": "worker", "exact_wp": "Docs/workpacks/H1/WP-H1-02.md", "capsules": ["WP-HK-GATE"], "held_constant_sources": ["Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md", "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md"]},
+    {"id": "H1-reviewer", "profile": "reviewer", "exact_wp": "Docs/workpacks/H1/WP-H1-02.md", "capsules": ["WP-HK-GATE"], "held_constant_sources": ["Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md", "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md"]},
+    {"id": "CITY-worker", "profile": "worker", "exact_wp": "Docs/workpacks/CITY/WP-CITY-04.md", "capsules": ["WP-CITY-03"], "post_required_additions": ["Docs/ROADMAP.md"]},
+    {"id": "CITY-reviewer", "profile": "reviewer", "exact_wp": "Docs/workpacks/CITY/WP-CITY-04.md", "capsules": ["WP-CITY-03"], "post_required_additions": ["Docs/ROADMAP.md"]},
+    {"id": "PA-worker", "profile": "worker", "exact_wp": "Docs/workpacks/PA/WP-PA-04.md", "capsules": ["WP-PA-01", "WP-PA-02", "WP-PA-03"]},
+    {"id": "PA-reviewer", "profile": "reviewer", "exact_wp": "Docs/workpacks/PA/WP-PA-04.md", "capsules": ["WP-PA-01", "WP-PA-02", "WP-PA-03"]},
+]
+
+# Pre-CTX direct-predecessor reconstruction is also checker-owned. Crucially it
+# is NOT derived from the compact capsule being measured; otherwise deleting a
+# compact source could shrink both baseline and post route and manufacture a
+# false saving.
+PRE_CTX_DEPENDENCY_SOURCES = {
+    "H1-worker": {
+        "Docs/workpacks/HK/WP-HK-GATE.md",
+        "Docs/evidence/WP-HK-GATE/VERDICT.md",
+        "Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md",
+        "Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md",
+    },
+    "H1-reviewer": {
+        "Docs/workpacks/HK/WP-HK-GATE.md",
+        "Docs/evidence/WP-HK-GATE/VERDICT.md",
+        "Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md",
+        "Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md",
+    },
+    "CITY-worker": {
+        "Docs/workpacks/CITY/WP-CITY-03.md",
+        "Docs/production/CITY_PRODUCT_SEED.md",
+    },
+    "CITY-reviewer": {
+        "Docs/workpacks/CITY/WP-CITY-03.md",
+        "Docs/production/CITY_PRODUCT_SEED.md",
+    },
+    "PA-worker": {
+        "Docs/workpacks/PA/WP-PA-01.md",
+        "Docs/research/living-world/results/PA-01.md",
+        "Docs/workpacks/PA/WP-PA-02.md",
+        "Docs/research/living-world/results/PA-02.md",
+        "Docs/workpacks/PA/WP-PA-03.md",
+        "Docs/research/living-world/results/PA-03.md",
+    },
+    "PA-reviewer": {
+        "Docs/workpacks/PA/WP-PA-01.md",
+        "Docs/research/living-world/results/PA-01.md",
+        "Docs/workpacks/PA/WP-PA-02.md",
+        "Docs/research/living-world/results/PA-02.md",
+        "Docs/workpacks/PA/WP-PA-03.md",
+        "Docs/research/living-world/results/PA-03.md",
+    },
+}
+
 
 def load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
@@ -97,7 +152,28 @@ def material(pre: int, post: int, fraction: float):
     }
 
 
+def canonical_route_errors(cfg: dict) -> list[str]:
+    actual = cfg.get("same_snapshot_measurement", {}).get("routes")
+    if actual != CANONICAL_ROUTE_CONFIGS:
+        return ["same_snapshot_measurement.routes must exactly equal checker-owned representative route universe"]
+    return []
+
+
+def profile_universe_errors(root: Path, cfg: dict) -> list[str]:
+    profiles = load(root / cfg["profile_source"]).get("profiles", {})
+    configured = cfg.get("process_envelope", {}).get("profiles", {})
+    if set(profiles) != set(configured):
+        missing = sorted(set(profiles) - set(configured))
+        extra = sorted(set(configured) - set(profiles))
+        return [f"process-envelope profile universe mismatch; missing={missing}, extra={extra}"]
+    return []
+
+
 def measure_route(root: Path, cfg: dict, route: dict):
+    route_id = route["id"]
+    if route_id not in PRE_CTX_DEPENDENCY_SOURCES:
+        raise ValueError(f"route {route_id!r} has no checker-owned pre-CTX dependency universe")
+
     post, dynamic = route_profile_sources(root, cfg, route)
     auth, mandatory = set(), set()
     capsules = route.get("capsules") or []
@@ -119,7 +195,7 @@ def measure_route(root: Path, cfg: dict, route: dict):
         route["exact_wp"],
         "Docs/engineering/WORKER_REVIEW_PROTOCOL.md",
     }
-    pre |= auth | mandatory | held | set(route.get("pre_required_additions") or [])
+    pre |= set(PRE_CTX_DEPENDENCY_SOURCES[route_id]) | held
 
     pre_est, pre_rows = estimate_paths(root, pre)
     post_est, post_rows = estimate_paths(root, post)
@@ -127,10 +203,11 @@ def measure_route(root: Path, cfg: dict, route: dict):
     esc_est, esc_rows = estimate_paths(root, escalated)
     frac = float(cfg["estimator"]["provider_token_uncertainty_fraction"])
     return {
-        "id": route["id"],
+        "id": route_id,
         "profile": route["profile"],
         "exact_wp": route["exact_wp"],
         "capsules": capsules,
+        "pre_universe_owner": "checker-owned-v1",
         "dynamic_mandatory_sources_held_outside_delta": dynamic,
         "pre_ctx": {"estimate": pre_est, "files": pre_rows},
         "post_ctx_min": {"estimate": post_est, "files": post_rows, **material(pre_est, post_est, frac)},
@@ -219,8 +296,16 @@ def validate_escalations(root: Path, cfg: dict, path: Path):
 
 def audit(root: Path, cfg: dict, allow_uncalibrated: bool, base_ref: str | None, escalation: Path | None):
     errors, profiles = [], []
+    route_errors = canonical_route_errors(cfg)
+    universe_errors = profile_universe_errors(root, cfg)
+    errors += route_errors + universe_errors
+
     headroom = float(cfg["process_envelope"]["headroom_fraction"])
-    for name, pcfg in cfg["process_envelope"]["profiles"].items():
+    profile_doc = load(root / cfg["profile_source"])["profiles"]
+    for name in profile_doc:  # accepted profile owns the universe, not config
+        pcfg = cfg["process_envelope"]["profiles"].get(name)
+        if pcfg is None:
+            continue
         paths, dynamic = accepted_profile_sources(root, cfg, name)
         est, rows = estimate_paths(root, paths)
         perr = ceiling_errors(est, pcfg, headroom, allow_uncalibrated)
@@ -237,13 +322,15 @@ def audit(root: Path, cfg: dict, allow_uncalibrated: bool, base_ref: str | None,
     old = git_json_at(base_ref, str(DEFAULT_CONFIG)) if base_ref else None
     cerr = ceiling_change_errors(old, cfg)
     errors += cerr
-    routes = [measure_route(root, cfg, r) for r in cfg["same_snapshot_measurement"]["routes"]]
+    routes = [measure_route(root, cfg, r) for r in CANONICAL_ROUTE_CONFIGS]
     eerr = validate_escalations(root, cfg, escalation) if escalation else []
     errors += [f"CONTEXT_ESCALATIONS: {e}" for e in eerr]
     return {
         "schema": "arkus.context-envelope-report@1",
         "profiles": profiles,
         "routes": routes,
+        "route_universe_errors": route_errors,
+        "profile_universe_errors": universe_errors,
         "ceiling_change_errors": cerr,
         "escalation_errors": eerr,
         "errors": errors,
@@ -258,6 +345,11 @@ def self_test():
     old = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 100, "ceiling_revision": 1}}}}
     new = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 101, "ceiling_revision": 1}}}}
     assert len(ceiling_change_errors(old, new)) == 2
+    cfg = {"same_snapshot_measurement": {"routes": CANONICAL_ROUTE_CONFIGS}}
+    assert canonical_route_errors(cfg) == []
+    cfg["same_snapshot_measurement"]["routes"] = CANONICAL_ROUTE_CONFIGS[:-1]
+    assert canonical_route_errors(cfg)
+    assert set(PRE_CTX_DEPENDENCY_SOURCES) == {r["id"] for r in CANONICAL_ROUTE_CONFIGS}
     print("context-envelope self-test: PASS")
 
 
