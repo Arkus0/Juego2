@@ -5,11 +5,16 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EXPECTED_SHA="${1:-${CANDIDATE_SHA:-}}"
 cd "${ROOT}"
 
+candidate_dirty_status() {
+  git status --porcelain --untracked-files=all | \
+    grep -Ev '^\?\? (VALIDATION_CONTEXT\.json|validation\.log|EXECUTION_RECEIPT\.txt|artifacts/observed/.*)$' || true
+}
+
 actual="$(git rev-parse HEAD)"
 if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 [[ "${EXPECTED_SHA}" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "Invalid expected SHA: ${EXPECTED_SHA}" >&2; exit 2; }
 [[ "${actual}" == "${EXPECTED_SHA}" ]] || { echo "SHA mismatch: expected ${EXPECTED_SHA}, observed ${actual}" >&2; exit 2; }
-[[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean before DW-01 verification" >&2; exit 2; }
+[[ -z "$(candidate_dirty_status)" ]] || { echo "Candidate is not clean before DW-01 verification" >&2; candidate_dirty_status >&2; exit 2; }
 
 bash scripts/dw01-observe-exact-sha.sh "${actual}"
 
@@ -29,7 +34,7 @@ if [[ -n "${PR_BODY:-}" ]]; then
   printf '%s\n' "${PR_BODY}" | grep -Eq '^Branch frozen:[[:space:]]*YES[[:space:]]*$'
 fi
 
-[[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean after DW-01 verification" >&2; exit 2; }
+[[ -z "$(candidate_dirty_status)" ]] || { echo "Candidate is not clean after DW-01 verification" >&2; candidate_dirty_status >&2; exit 2; }
 
 cat <<EOF
 EXECUTION_RECEIPT_V1
