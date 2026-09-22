@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
-"""Generate the derivable part of the canonical Worker -> Reviewer handoff.
+"""Generate only the derivable part of the canonical Worker -> Reviewer handoff.
 
-This tool does not decide CLEAN, PASS/FAIL, ownership or semantic readiness.  It
-only removes error-prone transcription for values already fixed by repository
-state and the Worker lifecycle.
+Non-derivable lineage fields are preserved from the existing canonical PR body;
+the tool cannot reset fail_cycle, Worker history, transfer history or baseline.
+It does not decide CLEAN, PASS/FAIL, ownership or semantic readiness.
 """
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 from pathlib import Path
 
 SHA_RE = re.compile(r"^[0-9a-f]{40}$", re.I)
+
+
+def field(body: str, name: str) -> str:
+    m = re.search(rf"^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$", body, re.M | re.I)
+    if not m:
+        raise ValueError(f"existing canonical handoff field missing: {name}")
+    return m.group(1).strip()
 
 
 def evidence_root(root: Path, wp: str) -> str:
@@ -40,12 +48,35 @@ def require_sha(name: str, value: str) -> str:
     return value
 
 
-def derive(root: Path, wp: str, baseline: str, head: str, worker: str, history: str,
-           fail_cycle: int, transfer: str, reviewed: str) -> str:
-    baseline = require_sha("baseline", baseline)
+def preserve_lineage(existing_body: str) -> dict:
+    baseline = require_sha("existing Baseline SHA", field(existing_body, "Baseline SHA"))
+    worker = field(existing_body, "Active Worker")
+    history = field(existing_body, "Worker history")
+    transfer_raw = field(existing_body, "Transfer SHA")
+    transfer = transfer_raw.upper() if transfer_raw.upper() == "NONE" else require_sha("existing Transfer SHA", transfer_raw)
+    reviewed_raw = field(existing_body, "Reviewed candidate SHA")
+    reviewed = reviewed_raw.upper() if reviewed_raw.upper() == "NONE" else require_sha("existing Reviewed candidate SHA", reviewed_raw)
+    try:
+        fail_cycle = int(field(existing_body, "fail_cycle"))
+    except ValueError as exc:
+        raise ValueError("existing fail_cycle must be an integer") from exc
+    if fail_cycle < 0:
+        raise ValueError("existing fail_cycle must be non-negative")
+    if not worker or not history:
+        raise ValueError("existing Worker identity/history must be non-empty")
+    return {
+        "baseline": baseline,
+        "worker": worker,
+        "history": history,
+        "transfer": transfer,
+        "reviewed": reviewed,
+        "fail_cycle": fail_cycle,
+    }
+
+
+def derive(root: Path, wp: str, head: str, existing_body: str) -> str:
     head = require_sha("head", head)
-    transfer = transfer.upper() if transfer.upper() == "NONE" else require_sha("transfer", transfer)
-    reviewed = reviewed.upper() if reviewed.upper() == "NONE" else require_sha("reviewed", reviewed)
+    lineage = preserve_lineage(existing_body)
     contract = contract_path(root, wp)
     evidence = evidence_root(root, wp)
     predecessor = f"{evidence}/PREDECESSOR_CONTRACT_CHECK.md"
@@ -60,11 +91,11 @@ def derive(root: Path, wp: str, baseline: str, head: str, worker: str, history: 
     return "\n".join([
         f"WP: {wp}",
         f"Contract: {contract}",
-        f"Baseline SHA: {baseline}",
-        f"Active Worker: {worker}",
+        f"Baseline SHA: {lineage['baseline']}",
+        f"Active Worker: {lineage['worker']}",
         "Worker state: FROZEN_FOR_REVIEW",
-        f"Worker history: {history}",
-        f"Transfer SHA: {transfer}",
+        f"Worker history: {lineage['history']}",
+        f"Transfer SHA: {lineage['transfer']}",
         f"Predecessor contract check: {predecessor}",
         f"Candidate HEAD SHA: {head}",
         "Worker pre-review: CLEAN",
@@ -73,10 +104,22 @@ def derive(root: Path, wp: str, baseline: str, head: str, worker: str, history: 
         "Branch frozen: YES",
         "Worker verdict: IN_REVIEW",
         "Reviewer verdict: PENDING",
-        f"Reviewed candidate SHA: {reviewed}",
+        f"Reviewed candidate SHA: {lineage['reviewed']}",
         f"Evidence: {evidence}/",
-        f"fail_cycle: {fail_cycle}",
+        f"fail_cycle: {lineage['fail_cycle']}",
     ]) + "\n"
+
+
+def example_body(sha: str, fail_cycle: int = 3) -> str:
+    return "\n".join([
+        "WP: WP-CTX-03",
+        f"Baseline SHA: {sha}",
+        "Active Worker: Worker A",
+        "Worker history: Worker A -> Worker B",
+        "Transfer SHA: NONE",
+        "Reviewed candidate SHA: NONE",
+        f"fail_cycle: {fail_cycle}",
+    ])
 
 
 def self_test():
@@ -89,11 +132,16 @@ def self_test():
         (root / "Docs/evidence/CTX-03").mkdir(parents=True)
         (root / "Docs/evidence/CTX-03/PREDECESSOR_CONTRACT_CHECK.md").write_text("PREDECESSOR_CONTRACT_CHECK\n", encoding="utf-8")
         (root / "Docs/evidence/CTX-03/WORKER_PRE_REVIEW.md").write_text("WORKER_PRE_REVIEW: CLEAN\n", encoding="utf-8")
-        out = derive(root, "WP-CTX-03", sha, sha, "worker", "worker", 0, "NONE", "NONE")
+        out = derive(root, "WP-CTX-03", sha, example_body(sha, 3))
         assert f"Candidate HEAD SHA: {sha}" in out and "Worker state: FROZEN_FOR_REVIEW" in out
+        assert "fail_cycle: 3" in out and "Worker history: Worker A -> Worker B" in out
+
+        # Caller cannot reset preserved lineage by supplying alternate flags:
+        # there are no such CLI inputs; changing existing body is an auditable
+        # PR metadata mutation and the canonical lint still validates it.
         (root / "Docs/evidence/CTX-03/WORKER_PRE_REVIEW.md").write_text("WORKER_PRE_REVIEW: NOT_READY\n", encoding="utf-8")
         try:
-            derive(root, "WP-CTX-03", sha, sha, "worker", "worker", 0, "NONE", "NONE")
+            derive(root, "WP-CTX-03", sha, example_body(sha))
             raise AssertionError("NOT_READY unexpectedly generated review metadata")
         except ValueError:
             pass
@@ -104,24 +152,23 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--repo-root", type=Path, default=Path("."))
     p.add_argument("--wp")
-    p.add_argument("--baseline-sha")
     p.add_argument("--head-sha")
-    p.add_argument("--worker", default="ChatGPT remote Worker")
-    p.add_argument("--worker-history", default="ChatGPT remote Worker")
-    p.add_argument("--fail-cycle", type=int, default=0)
-    p.add_argument("--transfer-sha", default="NONE")
-    p.add_argument("--reviewed-candidate-sha", default="NONE")
+    p.add_argument("--existing-body-file", type=Path)
     p.add_argument("--self-test", action="store_true")
     args = p.parse_args()
     if args.self_test:
         self_test(); return 0
-    if not args.wp or not args.baseline_sha or not args.head_sha:
-        p.error("--wp, --baseline-sha and --head-sha are required")
+    if not args.wp or not args.head_sha:
+        p.error("--wp and --head-sha are required")
     try:
-        print(derive(args.repo_root.resolve(), args.wp, args.baseline_sha, args.head_sha,
-                     args.worker, args.worker_history, args.fail_cycle,
-                     args.transfer_sha, args.reviewed_candidate_sha), end="")
-    except ValueError as exc:
+        if args.existing_body_file:
+            existing = args.existing_body_file.read_text(encoding="utf-8")
+        else:
+            existing = os.environ.get("PR_BODY", "")
+        if not existing.strip():
+            raise ValueError("existing PR body is required via --existing-body-file or PR_BODY")
+        print(derive(args.repo_root.resolve(), args.wp, args.head_sha, existing), end="")
+    except (OSError, ValueError) as exc:
         print(f"REVIEW_BLOCKED: {exc}", file=sys.stderr)
         return 21
     return 0
