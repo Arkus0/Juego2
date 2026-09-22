@@ -33,6 +33,8 @@ jobs:
           python3 scripts/review-ready-closure.py --self-test
           python3 scripts/derive-worker-review-metadata.py --self-test
           python3 scripts/ctx03-quality-replay.py --self-test
+          python3 scripts/ctx03-process-controls.py --self-test
+          python3 scripts/ctx03-docsync-history-check.py --self-test
 
       - name: Run registered causal CTX-03 suite
         id: audit
@@ -56,13 +58,19 @@ jobs:
             --output ctx-quality-replay.json \
             > ctx-quality-replay.log 2>&1
           replay_status=$?
+          python3 scripts/ctx03-process-controls.py > ctx-process-controls.log 2>&1
+          controls_status=$?
+          python3 scripts/ctx03-docsync-history-check.py > ctx-docsync-history.log 2>&1
+          docsync_status=$?
           set -e
 
           cat ctx-envelope.log
           cat ctx-quality-replay.log
+          cat ctx-process-controls.log
+          cat ctx-docsync-history.log
 
           outcome=PASS
-          for status in "${envelope_status}" "${replay_status}"; do
+          for status in "${envelope_status}" "${replay_status}" "${controls_status}" "${docsync_status}"; do
             case "${status}" in
               0) ;;
               20) outcome=FAIL ;;
@@ -82,6 +90,8 @@ jobs:
           echo "reported_outcome=${outcome}" >> "${GITHUB_OUTPUT}"
           echo "envelope_status=${envelope_status}" >> "${GITHUB_OUTPUT}"
           echo "replay_status=${replay_status}" >> "${GITHUB_OUTPUT}"
+          echo "controls_status=${controls_status}" >> "${GITHUB_OUTPUT}"
+          echo "docsync_status=${docsync_status}" >> "${GITHUB_OUTPUT}"
 
       - name: Classify verifier outcome without false-red promotion
         shell: bash
@@ -124,6 +134,8 @@ jobs:
             ctx-envelope-report.json
             ctx-quality-replay.log
             ctx-quality-replay.json
+            ctx-process-controls.log
+            ctx-docsync-history.log
             mechanical-state.json
             mechanical-decision.json
           if-no-files-found: warn
