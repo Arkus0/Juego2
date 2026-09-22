@@ -21,7 +21,9 @@ test -f src/Arkus.DesignWorld/DesignWorldContracts.cs
 test -f src/Arkus.DesignWorld/DesignWorldProjection.cs
 test -f src/Arkus.DesignWorld/CityDesignWorldProvider.cs
 test -f src/Arkus.DesignWorld/CityProductionQueries.cs
+test -f src/Arkus.DesignWorld/CityProductionMachineOutput.cs
 test -f tests/Arkus.Harness.Tests/Dw02CityProductionQueryTests.cs
+test -f tests/Arkus.Harness.Tests/Dw02MachineOutputTests.cs
 test -f Docs/evidence/WP-DW-02/WORKER_PLAN.md
 test -f Docs/evidence/WP-DW-02/QUERY_SUITE_V1.md
 
