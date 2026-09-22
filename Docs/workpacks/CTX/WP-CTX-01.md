@@ -1,10 +1,18 @@
 # WP-CTX-01 — Role-specific bootstrap + accepted-state navigation
 
-Status: **FROZEN PLAN / REPAIR AMENDMENT AFTER FAIL #5271197524**
+Status: **COMPLETE**
 Class: **PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL**
 Execution: **REMOTE_OK**
 Depends on: accepted CTX plan
 Blocks: `WP-CTX-02` only
+
+Accepted completion:
+
+- repaired frozen candidate: `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39`;
+- independent PASS: review `#5273801466` on PR `#110`;
+- implementation merge: `fbd3e5526e760efc89f54e7c12a274af10d4765f`;
+- repair lineage: failed candidate `d972db98eca5527e7c30596ea069866dd878069b`, corrected FAIL `#5271197524`, revert PR `#109`;
+- post-PASS reconciliation: `Docs/evidence/CTX-01/DOCSYNC.md`.
 
 ## Objective
 
