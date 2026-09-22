@@ -21,6 +21,7 @@ def classify(registry: dict, state: dict) -> dict:
     }
     rows = []
     affecting = []
+    operational = []
 
     for check in state.get("checks", []):
         name = str(check.get("name") or "")
@@ -36,8 +37,10 @@ def classify(registry: dict, state: dict) -> dict:
                 "outcome": outcome,
                 "affects_wp_decision": False,
                 "counts_as_wp_fail": False,
-                "detail": "unregistered verifier/check is diagnostic only until an explicit reviewed registry amendment"
+                "detail": "unregistered verifier/check cannot establish a WP defect; a red unknown check blocks review operationally until triaged or explicitly registered"
             })
+            if outcome == "INFRA_ERROR":
+                operational.append(outcome)
             continue
 
         verifier_id, contract = registered
@@ -86,6 +89,7 @@ def classify(registry: dict, state: dict) -> dict:
                 "counts_as_wp_fail": False,
                 "detail": "required verifier id is not registered; registry/contract error"
             })
+            operational.append("INFRA_ERROR")
             continue
         if verifier_id not in observed_ids:
             rows.append({
@@ -102,7 +106,7 @@ def classify(registry: dict, state: dict) -> dict:
         overall = "FAIL"
     elif "REVIEW_BLOCKED" in affecting:
         overall = "REVIEW_BLOCKED"
-    elif "INFRA_ERROR" in affecting:
+    elif "INFRA_ERROR" in affecting or operational:
         overall = "INFRA_ERROR"
     elif affecting and all(x == "NOT_APPLICABLE" for x in affecting):
         overall = "NOT_APPLICABLE"
@@ -112,7 +116,7 @@ def classify(registry: dict, state: dict) -> dict:
     return {
         "schema": "arkus.mechanical-verifier-decision@1",
         "overall": overall,
-        "wp_failed_mechanically": overall == "FAIL",
+        "wp_failed_mechanically": "FAIL" in affecting,
         "independent_review_authorized": overall in {"PASS", "NOT_APPLICABLE"},
         "semantic_review_still_required": True,
         "verifiers": rows,
@@ -136,15 +140,23 @@ def self_test() -> None:
     s["checks"][1] = {"name": "CTX process envelope", "conclusion": "failure", "reported_outcome": "FAIL"}
     assert classify(reg, s)["overall"] == "FAIL"
 
-    # A red verifier that is not registered must not become a WP failure.
+    # A red verifier that is not registered cannot become a WP failure, but it
+    # also cannot be silently ignored to authorize review: it is an operational
+    # INFRA_ERROR until triaged or explicitly registered.
     s = {"checks": [{"name": "Experimental verifier", "conclusion": "failure"}]}
     out = classify(reg, s)
-    assert out["overall"] == "PASS" and not out["wp_failed_mechanically"]
+    assert out["overall"] == "INFRA_ERROR" and not out["wp_failed_mechanically"]
+    assert not out["independent_review_authorized"]
     assert out["verifiers"][0]["outcome"] == "INFRA_ERROR"
 
     # A registered causal verifier that crashes without its structured result is infra, not FAIL.
     s = {"checks": [{"name": "CTX process envelope", "conclusion": "failure"}], "required_registered_verifiers": ["causal"]}
     assert classify(reg, s)["overall"] == "INFRA_ERROR"
+
+    # An unregistered required ID is a registry/infrastructure error, never a WP defect.
+    s = {"checks": [], "required_registered_verifiers": ["not-registered"]}
+    out = classify(reg, s)
+    assert out["overall"] == "INFRA_ERROR" and not out["wp_failed_mechanically"]
 
     # N/A is neutral, never synthetic proof.
     s = {"checks": [{"name": "CTX process envelope", "conclusion": "skipped", "reported_outcome": "NOT_APPLICABLE"}], "required_registered_verifiers": ["causal"]}
