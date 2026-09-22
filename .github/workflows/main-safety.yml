@@ -33,8 +33,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Restore locked dependencies
-        run: dotnet restore Juego2.sln --locked-mode
+      - name: Restore dependencies
+        run: dotnet restore Juego2.sln
 
       - name: Build release
         run: dotnet build Juego2.sln --no-restore -c Release
@@ -46,8 +46,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          export PYTHONDONTWRITEBYTECODE=1
-          python3 - <<'PY'
+          PYTHONDONTWRITEBYTECODE=1 python3 - <<'PY'
           from pathlib import Path
           for path in sorted(Path('scripts').glob('*.py')):
               compile(path.read_text(encoding='utf-8'), str(path), 'exec')

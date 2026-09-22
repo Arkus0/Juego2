@@ -12,7 +12,7 @@ fi
 required_sdk="$(python3 - <<'PY'
 import json
 from pathlib import Path
-print(json.loads(Path('global.json').read_text())['sdk']['version'])
+print(json.loads(Path('global.json').read_text(encoding='utf-8'))['sdk']['version'])
 PY
 )"
 
@@ -21,6 +21,7 @@ if ! command -v dotnet >/dev/null 2>&1; then
 error: dotnet is not available.
 Required SDK: ${required_sdk}
 Install/allow the SDK declared by global.json in this Worker environment before handing off a candidate.
+This preflight is executor-neutral: remote/chat Workers and local phases use the same command when the environment can execute .NET.
 EOF
   exit 3
 fi
@@ -37,8 +38,11 @@ EOF
 fi
 
 echo "[preflight] SDK ${actual_sdk}"
-echo "[preflight] restore --locked-mode"
-dotnet restore Juego2.sln --locked-mode
+# This repository does not currently commit packages.lock.json files, so --locked-mode
+# would fail rather than make restore more deterministic. Adopt locked restore only together
+# with reviewed lockfiles for the full solution.
+echo "[preflight] restore"
+dotnet restore Juego2.sln
 
 echo "[preflight] build Release --no-restore"
 dotnet build Juego2.sln -c Release --no-restore
@@ -47,7 +51,7 @@ echo "[preflight] test Release --no-build --no-restore"
 dotnet test Juego2.sln -c Release --no-build --no-restore --logger "console;verbosity=minimal"
 
 echo "[preflight] Python syntax checks (no bytecode writes)"
-python3 - <<'PY'
+PYTHONDONTWRITEBYTECODE=1 python3 - <<'PY'
 from pathlib import Path
 for path in sorted(Path('scripts').glob('*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
