@@ -1,6 +1,6 @@
 # Worker → Reviewer Protocol
 
-Version: 1.8 — 2026-09-21
+Version: 1.9 — 2026-09-22
 
 ## Purpose
 
@@ -20,7 +20,9 @@ Accepted predecessor guarantees are compositional. A downstream WP is expected t
 
 ## Adoption boundary
 
-Version 1.8 applies to Worker/review cycles that start after the commit containing this version reaches `main`. It does not retroactively bind an already-started cycle and does not bind the `PROCESS_ONLY` PR that adopts it.
+Version 1.9 becomes binding only after `WP-CTX-02` receives independent PASS, merges and completes successful DocSync. The `PROCESS_ONLY` CTX-02 candidate that introduces v1.9 remains governed by v1.8 predecessor-read mechanics and must complete its own full predecessor reconstruction under those pre-CTX-02 rules.
+
+The v1.9 change adds the accepted-contract capsule start path defined by `Docs/engineering/CONTEXT_CAPSULE_V1.md`. After adoption, a mechanically valid non-authoritative capsule plus independently confirmed accepted identity may satisfy the **initial reconstruction** of an accepted predecessor boundary instead of mechanically loading its full WP/PASS/proof/residual narrative. Any capsule validation/escalation failure, non-compressible source, material detail absent from the capsule, directly binding proof/architecture contract, or concrete predecessor-reopen question immediately returns the role to exact authoritative sources. This changes context selection only; it does not weaken semantic/proof authority, predecessor composition, Worker pre-review, Reviewer independence, exact-SHA evidence, freeze, FAIL repair or finalization.
 
 The v1.8 change explicitly permits a single active Worker to delegate a bounded execution slice to a separate executor/session/machine without transferring Worker ownership, provided the Worker predeclares an exact execution contract, retains all design/repair/interpretation authority, verifies the returned evidence, performs the final strict pre-review and freezes the candidate. It does not weaken exact-SHA evidence, Worker/Reviewer independence, or transfer rules.
 
@@ -30,11 +32,16 @@ The v1.6 change added the bounded representative content-shape probe to the pre-
 
 ## Predecessor contract inheritance
 
-Before implementation begins, the Worker must reconstruct the accepted contract inherited from each direct dependency. At minimum it reads the dependency WP, completion metadata/exact reviewed SHA, independent PASS evidence, relevant proof matrix/residual-risk evidence when present, and binding architecture/invariant documents made authoritative by that dependency. Transitive predecessors are followed only when their invariants are materially relied on by the direct dependency or current WP; this is not a requirement to reread the entire project history.
+Before implementation begins, the Worker must reconstruct the accepted contract inherited from each direct dependency.
+
+For cycles governed by v1.8 or earlier, or whenever no valid accepted-contract capsule covers the dependency, the minimum reconstruction remains: dependency WP, completion metadata/exact reviewed SHA, independent PASS evidence, relevant proof matrix/residual-risk evidence when present, and binding architecture/invariant documents made authoritative by that dependency. Transitive predecessors are followed only when their invariants are materially relied on by the direct dependency or current WP; this is not a requirement to reread the entire project history.
+
+For cycles governed by v1.9+, a direct accepted dependency with a mechanically valid capsule under `CONTEXT_CAPSULE_V1.md` may instead begin from the validated capsule, independently confirmed accepted identity/live state and the exact current consumer WP. The Worker does not have to load the predecessor's full WP/PASS/proof/residual narratives merely to repeat guarantees already exported by that valid capsule. It must deepen to exact authoritative source(s) when a capsule validation or escalation condition fires, the current claim needs a detail not safely carried by the capsule, a source is marked non-compressible, a proof/architecture contract directly binds the current claim, or concrete evidence could reopen the predecessor. Missing capsule content is never permission or negative evidence.
 
 The Worker records a concise `PREDECESSOR_CONTRACT_CHECK` in Worker plan/evidence containing:
 
 - accepted predecessor/dependency and reviewed/merge SHA(s);
+- capsule(s) used when applicable and any authoritative escalations performed;
 - inherited guarantees relevant to the current WP;
 - guarantees newly owned by the current WP;
 - inherited guarantees intentionally consumed rather than re-proved;
@@ -42,7 +49,7 @@ The Worker records a concise `PREDECESSOR_CONTRACT_CHECK` in Worker plan/evidenc
 
 This check is a reasoning aid and auditable handoff, not a new semantic registry. Upstream accepted evidence remains authoritative.
 
-The independent Reviewer reconstructs the same split independently. Before issuing FAIL for an apparent omission, the Reviewer must determine whether the omitted guarantee is already binding from an accepted predecessor. If it is, the finding is a current-WP blocker only when concrete evidence shows that the inherited guarantee does not apply to the effective path or that the predecessor claim itself was false. Demanding duplicate proof of an accepted predecessor claim is overdefense and counts against the proof budget.
+The independent Reviewer reconstructs the same split independently. For v1.9+ it may use a validated capsule for navigation, but capsule content is never review proof or a ceiling on independent judgment. If a verdict materially depends on an inherited guarantee, a capsule is lossy/suspect, a source is non-compressible, or concrete contradictory evidence could reopen the predecessor, the Reviewer opens the exact authoritative source/evidence. Before issuing FAIL for an apparent omission, the Reviewer must determine whether the omitted guarantee is already binding from an accepted predecessor. If it is, the finding is a current-WP blocker only when concrete evidence shows that the inherited guarantee does not apply to the effective path or that the predecessor claim itself was false. Demanding duplicate proof of an accepted predecessor claim is overdefense and counts against the proof budget.
 
 ## Delegated execution under Worker ownership
 
@@ -204,10 +211,10 @@ Reviewer must:
 - reconstruct contract and repository state from GitHub;
 - verify PR HEAD == Frozen candidate SHA at review start;
 - for candidates governed by v1.2+ pre-review rules, verify the handoff records `Worker pre-review: CLEAN`, while treating that only as Worker readiness evidence;
-- for candidates governed by v1.5+, independently reconstruct direct accepted predecessor guarantees and verify a predecessor contract check was recorded before implementation;
+- for candidates governed by v1.5+, independently reconstruct direct accepted predecessor guarantees and verify a predecessor contract check was recorded before implementation; for v1.9+ a validated capsule may navigate that reconstruction, but any material inherited guarantee, lossiness suspicion, non-compressible source or concrete reopen question escalates to exact authoritative evidence;
 - when delegated execution was used, verify that it remained bounded execution rather than an undeclared second Worker/transfer, and verify input-SHA/environment/mutation/result evidence is causally tied to the frozen candidate;
 - inspect complete baseline→candidate diff, tests, CI and evidence;
-- challenge claims rather than trust Worker prose, Worker pre-review conclusions or the Worker's predecessor classification;
+- challenge claims rather than trust Worker prose, Worker pre-review conclusions, capsule summaries or the Worker's predecessor classification;
 - for foundational WPs, independently search for omission/false-green classes and challenge completeness **inside the WP claim and declared trust boundary**, including risks not highlighted by the Worker;
 - before issuing FAIL for an apparent missing proof/coverage surface, check whether an accepted predecessor already owns that guarantee; if so, require concrete evidence of inapplicability or predecessor falsehood rather than duplicate proof;
 - distinguish an in-claim material defect from a risk that requires arbitrary out-of-contract behavior of the declared trusted base, re-proving an accepted upstream claim, or using an unsupported path;
