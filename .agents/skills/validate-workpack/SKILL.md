@@ -6,7 +6,7 @@ Juego2 / Arkus Harness is a game-development and software-verification project. 
 
 ## Context bootstrap
 
-Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `reviewer` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile is a minimum starting pack, never a review ceiling. Full `Docs/ROADMAP.md` is conditional for an exact-WP review unless cross-track/order/gate meaning is not closed by exact/direct sources. `FOUNDATIONAL_PROOF_STANDARD.md` remains mandatory whenever the exact claim binds it. After CTX-02 adoption, a validated accepted-contract capsule may navigate an accepted predecessor boundary, but it is never review proof and never limits independent search. A stale/missing/lossy capsule, stale compact index or Worker summary can only trigger escalation; none is semantic authority.
+Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `reviewer` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile is a minimum starting pack, never a review ceiling. Full `Docs/ROADMAP.md` is conditional for an exact-WP review unless cross-track/order/gate meaning is not closed by exact/direct sources. `FOUNDATIONAL_PROOF_STANDARD.md` remains mandatory whenever the exact claim binds it. After CTX-02 adoption, `Docs/engineering/CONTEXT_CAPSULE_V1.md` governs validated accepted-contract capsules that may navigate an accepted predecessor boundary, but a capsule is never review proof and never limits independent search. A stale/missing/lossy capsule, stale compact index or Worker summary can only trigger escalation; none is semantic authority.
 
 ## Preconditions
 
