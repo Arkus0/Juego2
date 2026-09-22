@@ -15,13 +15,14 @@ test -f src/Arkus.DesignWorld/Arkus.DesignWorld.csproj
 test -f src/Arkus.DesignWorld/DesignWorldContracts.cs
 test -f src/Arkus.DesignWorld/DesignWorldProjection.cs
 test -f tests/Arkus.Harness.Tests/Dw00DesignWorldProjectionTests.cs
+test -f tests/Arkus.Harness.Tests/Dw00RepresentativeProbeBoundaryTests.cs
 
 test -f src/Arkus.Harness.Mcp/packages.lock.json
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
 DOTNET_NOLOGO=1 dotnet build Juego2.sln --configuration Release --no-restore -m:1 --disable-build-servers
 DOTNET_NOLOGO=1 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
   --configuration Release --no-build --no-restore -m:1 --disable-build-servers \
-  --filter 'FullyQualifiedName~Dw00DesignWorldProjectionTests'
+  --filter 'FullyQualifiedName~Dw00'
 
 if grep -R -E 'Arkus\.DesignWorld' src/Arkus.Game.Core src/Arkus.Game.World src/Arkus.Game.Authoring src/Arkus.Game.Validation src/Arkus.Harness.Protocol src/Arkus.Harness.Runtime --include='*.cs' --include='*.csproj'; then
   echo "DW-00 introduced a reverse H0 dependency on the Design World consumer" >&2
