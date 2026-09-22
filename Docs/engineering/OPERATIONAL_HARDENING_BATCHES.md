@@ -21,7 +21,7 @@ Owner branch: `process/operational-hardening-a`
 - Executor-neutral Worker preflight that runs in a capable remote or local checkout, enforces the exact `global.json` SDK, runs the repository's current normal restore plus Release build/tests and process self-tests, and binds the GREEN result to the exact clean candidate SHA before handoff. Locked restore is intentionally deferred until reviewed `packages.lock.json` files exist for the complete solution.
 - Canonical Worker/repair/protocol adoption of that preflight for post-adoption cycles, with already-active/frozen cycles grandfathered rather than retroactively reopened.
 - Repository-pinned Stryker.NET runner for targeted, advisory mutation testing. Mutation score is not a WP PASS criterion; surviving mutants in the touched semantic surface are Worker pre-review evidence.
-- `Arkus Main Safety` build/test/process safety workflow on pushes to `main`, with a pull-request trigger over its own/toolchain/build surfaces so workflow changes are executable before merge rather than first exercised post-merge.
+- `Arkus Main Safety` build/test/process safety workflow on pushes to `main` and on every pull request. Pull-request path filtering is deliberately forbidden because repository build/restore behavior can be changed by central or imported MSBuild/NuGet inputs that an allow-list can omit; a regression guard is executed by both Main Safety and Worker preflight.
 - Python bytecode/cache hygiene.
 - Claude Code skill adapters that delegate to `.agents/skills` rather than duplicating process authority.
 - Clarify that GitHub Actions can enforce CI/protocol/state transitions while never impersonating an independent role session.
