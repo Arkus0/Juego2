@@ -4,7 +4,8 @@ Workpack: `WP-PA-05 — Adopt/revalidate Rumours & Information Flow findings`
 Execution: `REMOTE_HARVEST`  
 Canonical PR: `#132`  
 Branch: `pa/wp-pa-05-rumours-harvest`  
-Recorded baseline: `58e417f357caac387f84333766f61c2fb4d9f461`  
+Original baseline: `58e417f357caac387f84333766f61c2fb4d9f461`  
+Final reconciled baseline: `cd8440938f98dcf51c0a56204bb14e8634a31926`  
 Worker: ChatGPT GPT-5.6 Sol  
 Date: 2026-09-22  
 Fail cycle: `0`
@@ -44,24 +45,30 @@ Only:
 - `Docs/evidence/WP-PA-05/HANDOFF.md`;
 - `Docs/research/living-world/results/PA-05.md`.
 
-No runtime/code/Unity/H0/H1/CITY/DW/frozen-PA-plan/amendment file is intentionally changed.
+No runtime/code/Unity/H0/H1/CITY/DW/frozen-PA-plan/amendment file is intentionally changed by PA-05. The branch also contains the merge reconciliation with accepted `main@cd8440938f98dcf51c0a56204bb14e8634a31926`; those predecessor repair bytes are already in main and therefore are not PA-05 diff scope.
 
 ## Exact predecessor closure
 
-`WP-PA-04` is accepted and DocSync-complete:
+`WP-PA-04` is accepted and DocSync-complete after the corrective capsule repair:
 
-- candidate `5d38ea38b983cd5227f57afa1d880d24746f9249`;
-- independent PASS `#5280879115`;
+- research candidate `5d38ea38b983cd5227f57afa1d880d24746f9249`;
+- independent research PASS `#5280879115`;
 - research PR #129 merge `d6041b719292f24c4481dea28727e2cfd5f7ed5b`;
-- DocSync PR #131 candidate `b9a884c9c8f0dfc6afae59ef33fa58c3a8997904`;
-- DocSync merge / PA-05 baseline `58e417f357caac387f84333766f61c2fb4d9f461`;
-- `Docs/evidence/WP-PA-04/DOCSYNC.md` ends `DOCSYNC_COMPLETE` and names PA-05 next.
+- original DocSync PR #131 candidate `b9a884c9c8f0dfc6afae59ef33fa58c3a8997904`;
+- original DocSync merge `58e417f357caac387f84333766f61c2fb4d9f461`;
+- PA-05 exact-HEAD validation then exposed the missing accepted PA capsule-chain coverage for COMPLETE `WP-PA-04`;
+- corrective PR #133 candidate `ef665c48d43e93dc294fdeb9f9b2443197872480`;
+- corrective independent FAIL `#5281292455` found only handoff/lifecycle metadata defects, not a PA-04 semantic defect;
+- corrective independent PASS `#5281331377` bound to the same exact repository candidate after metadata repair;
+- corrective merge / final PA-05 baseline `cd8440938f98dcf51c0a56204bb14e8634a31926`;
+- `Docs/engineering/context-capsules/WP-PA-04.json` now participates in the fail-closed accepted PA chain;
+- accepted-chain coverage is COMPLETE for PA-01..04 and grants no semantic authority to the capsule.
 
 Canonical machine-consumable evidence:
 
 `Docs/evidence/WP-PA-05/PREDECESSOR_CONTRACT_CHECK.md`
 
-`WORKER_PLAN.md#predecessor_contract_check` remains the chronology-preserving first-write record.
+`WORKER_PLAN.md#predecessor_contract_check` remains the chronology-preserving first-write record; the standalone predecessor check records the later reopen and final closure.
 
 ## Exact donor regression lineage
 
