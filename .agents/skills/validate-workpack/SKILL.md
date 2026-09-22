@@ -6,7 +6,7 @@ Juego2 / Arkus Harness is a game-development and software-verification project. 
 
 ## Context bootstrap
 
-Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `reviewer` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile is a minimum starting pack, never a review ceiling. Full `Docs/ROADMAP.md` is conditional for an exact-WP review unless cross-track/order/gate meaning is not closed by exact/direct sources. `FOUNDATIONAL_PROOF_STANDARD.md` remains mandatory whenever the exact claim binds it. A stale/missing compact index or Worker summary can only trigger escalation; neither is review proof.
+Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `reviewer` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile is a minimum starting pack, never a review ceiling. Full `Docs/ROADMAP.md` is conditional for an exact-WP review unless cross-track/order/gate meaning is not closed by exact/direct sources. `FOUNDATIONAL_PROOF_STANDARD.md` remains mandatory whenever the exact claim binds it. After CTX-02 adoption, a validated accepted-contract capsule may navigate an accepted predecessor boundary, but it is never review proof and never limits independent search. A stale/missing/lossy capsule, stale compact index or Worker summary can only trigger escalation; none is semantic authority.
 
 ## Preconditions
 
@@ -17,16 +17,16 @@ Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `reviewer` profile
 
 ## Review
 
-1. Reconstruct current contract and dependencies from repository sources.
-2. Read the current WP's direct accepted dependency contract(s), accepted PASS/completion evidence and relevant proof/invariant material independently of the Worker summary.
-3. Inspect the Worker's `PREDECESSOR_CONTRACT_CHECK`; verify it is factually consistent, but do not trust it as an authority.
+1. Reconstruct current contract and dependencies from repository sources and live state.
+2. Before CTX-02 adoption, or when a direct dependency has no valid capsule, independently read its accepted contract/PASS/completion evidence and relevant proof/invariant material. After CTX-02 adoption, a validated capsule + independently confirmed accepted identity may start navigation; open the authoritative source whenever the verdict materially depends on an inherited guarantee, a capsule is lossy/suspect, a source is marked non-compressible, or concrete contradiction could reopen the predecessor.
+3. Inspect the Worker's `PREDECESSOR_CONTRACT_CHECK`; verify it is factually consistent, but do not trust it or a Worker-chosen capsule as an authority.
 4. Build the inherited/current ownership split: which guarantees are already binding upstream, which guarantees this WP actually owns, and what concrete evidence would be required to reopen an upstream claim.
 5. Inspect baseline→Frozen candidate complete diff.
 6. Inspect exact-SHA validation/evidence but do not trust Worker conclusions.
 7. Reproduce material tests/checks independently where possible.
 8. Verify Allowed/Forbidden scope.
 9. For foundational WPs, challenge completeness and false-green paths **inside the WP claim and declared trust boundary**. Search independently for omissions not highlighted by the Worker, but do not invent out-of-boundary pathological scenarios merely to force a finding.
-10. Before treating an apparent omission as a blocker, check whether a predecessor already owns and has accepted that guarantee. Do not require duplicate proof unless concrete evidence shows the inherited guarantee is inapplicable or false.
+10. Before treating an apparent omission as a blocker, check whether a predecessor already owns and has accepted that guarantee. Do not require duplicate proof unless concrete evidence shows the inherited guarantee is inapplicable or false. Capsule acceptance alone never defeats concrete contradictory evidence.
 11. Check negative controls are causal rather than incidental compile failures.
 12. Check exact-SHA binding of evidence.
 13. Search for hidden dual behavior, duplicated truths, unowned in-claim surfaces and undeclared/alternate effective runtime paths.
