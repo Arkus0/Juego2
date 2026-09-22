@@ -4,107 +4,84 @@ Status: **CANDIDATE EVIDENCE / PROCESS_ONLY**
 
 ## Goal
 
-Move deterministic protocol defects left **without reducing false-green detection power or semantic Reviewer authority**. A red check must not be promoted to “the WP is wrong” unless a reviewed deterministic verifier causally owns that claim, but unknown/infra red state also must not be silently ignored to start review.
-
-Repair cycle 1 circuit-breaks the three classes raised by independent review `#5275757245`: exact-candidate pre-review ordering, effective mandatory-context growth, and retry-safe same-SHA terminal closure. The Worker's own pre-review then widened the context-growth repair once more after discovering that repair/planner/DocSync fixed conditionals were not yet inside the six H1/CITY/PA route budgets, and widened exact-pre-review closure once more after finding that an opaque external URL could otherwise self-confirm CLEAN metadata.
+Move deterministic protocol defects left without reducing false-green detection power or semantic Reviewer authority. Mechanical PASS never substitutes for source reconstruction or independent review; unknown/infra red also cannot be silently ignored.
 
 ## Mechanical outcome contract
 
-| Outcome | Meaning | WP defective? | May independent semantic review start? |
-|---|---|---:|---:|
-| `PASS` | registered deterministic condition satisfied | no | yes, subject to other terminal predicates |
-| `FAIL` | registered deterministic verifier causally proves its owned candidate condition false | **yes, mechanically** | no; Worker repairs first |
-| `REVIEW_BLOCKED` | lifecycle/handoff/freeze metadata is incomplete, pending, stale or incoherent | no semantic defect asserted | no |
-| `NOT_APPLICABLE` | verifier does not apply to this candidate/mode | no | neutral |
-| `INFRA_ERROR` | runner/API/tool/unregistered-red/unclassified failure gives no causal candidate defect proof | **no** | no until triaged/rerun |
+| Outcome | Meaning | Reviewer may start? |
+|---|---|---:|
+| `PASS` | registered deterministic condition satisfied | yes, if all other terminal predicates close |
+| `FAIL` | registered deterministic verifier causally proves its owned repository condition false | no; Worker repairs first |
+| `REVIEW_BLOCKED` | lifecycle/handoff/freeze state incomplete or incoherent | no |
+| `NOT_APPLICABLE` | verifier is neutral for this candidate/mode | neutral |
+| `INFRA_ERROR` | runner/API/tool/unregistered result cannot prove a candidate defect | no; triage/rerun |
 
-## Registry boundary
+`mechanical-verifier-registry.json` is process classification only. It cannot claim semantic authority.
 
-`Docs/engineering/mechanical-verifier-registry.json` is the reviewed mapping from GitHub check names to deterministic ownership/failure class. An unregistered red cannot count as WP FAIL; it remains operationally blocking as `INFRA_ERROR`. A registered FAIL-capable verifier must emit a structured outcome and cannot claim semantic Reviewer authority.
+## Exact-candidate pre-review ordering
 
-## Exact-candidate Worker pre-review ordering
+The final sequence is non-self-referential:
 
-The failed candidate `1421f1690f1bd20b578ba8f70ee8ee5deb90b67a` exposed a sequencing defect: the complete Worker pre-review covered parent `460f997c8e70720356f285583977530cc2175c76`, then a repository evidence file claiming final cleanliness was committed afterward. Exact-SHA CI on the child did not retroactively make the complete Worker pre-review cover the child's bytes.
+1. finish and push every repository/evidence byte while Draft + ACTIVE;
+2. stop writers and read exact HEAD;
+3. run the complete Worker pre-review on that HEAD and the complete baseline→candidate diff;
+4. only if clean, persist `WORKER_PRE_REVIEW: CLEAN` as a durable GitHub PR issue comment bound to that exact SHA;
+5. derive/freeze metadata without mutating repository bytes.
 
-Repair cycle 1 removes that self-invalidating pattern:
+`derive-worker-review-metadata.py` rejects repository-local final CLEAN pointers. `validate-worker-handoff.py` resolves the external comment and proves same repository, same PR and exact candidate SHA. Any later repository/evidence mutation invalidates CLEAN.
 
-1. all implementation and repository/evidence bytes are finalized and pushed while Draft + ACTIVE;
-2. writers stop and the exact resulting HEAD is read;
-3. the complete Worker pre-review inspects that exact HEAD and full baseline→candidate diff;
-4. only if clean, a durable GitHub PR issue comment records the clean marker, exact Candidate SHA, findings count and evidence pointers;
-5. `derive-worker-review-metadata.py` accepts that durable issue-comment URL and rejects a repository-local final-clean pointer;
-6. `validate-worker-handoff.py` resolves that pointer and proves the comment exists on the same repository/PR and binds CLEAN to the exact live candidate SHA;
-7. Ready/freeze metadata may then change without changing candidate bytes.
+## Four-layer mandatory-context envelope
 
-Any later repository/evidence mutation changes HEAD and invalidates the clean result.
+CTX-03 now uses four non-substitutable layers:
 
-## Effective mandatory-context envelope
+1. **base profile** — fixed canonical `initial_reads`;
+2. **fixed conditional profile** — base plus checker-owned fixed repository conditionals for every canonical profile;
+3. **representative route-effective** — H1/CITY/PA minimum/escalated quality/calibration routes;
+4. **dynamic repository envelope** — exact route-dependent repository context for arbitrary current/future WPs and roles.
 
-The original candidate bounded only `initial_reads`. The first repair added concrete H1/CITY/PA route-effective budgets. Circuit-breaker pre-review then found a broader variant: canonical `repair_worker`, `planner_gate` and `docsync` also contain fixed conditional reads that can become mandatory but were not necessarily activated by those six routes.
+The fourth layer closes B2. `ctx03-dynamic-context-check.py` owns reviewed dynamic slot classification, independently discovers all workpack contracts, counts exact contracts/direct dependencies/contract-mandatory repository inputs, handles repository-vs-external repair evidence, and derives manifest-named local-executor files. Every resolved repository source is bounded by a per-source ceiling and every resolved dynamic route by an aggregate ceiling. New placeholder classes fail closed pending explicit review; policy ceiling increases require revision + justification.
 
-The final repair therefore uses **three layers**:
+Genuinely external live GitHub/API/diff payloads may remain outside repository corpus budgets. Repository-backed inputs do not escape merely because their identity is dynamic.
 
-- **base profile** — canonical `initial_reads`;
-- **conditional profile** — base plus checker-owned fixed conditional superset for every canonical profile;
-- **route-effective** — concrete H1/CITY/PA minimum and escalated sets, including capsule payloads, non-compressible material and authoritative predecessor/result escalation.
+`ctx03-dynamic-slot-controls.py` independently scans both `initial_reads` and `conditional_reads`, so a future placeholder cannot hide in a conditional surface that the current profiles did not previously use.
 
-`CANONICAL_FIXED_CONDITIONAL_SOURCES` is independent of the profile/config under audit. The checker additionally extracts explicit fixed `Docs/...md|json` paths from canonical `conditional_reads`: a newly introduced fixed path not present in the checker-owned set turns RED pending intentional oracle/calibration review. Removing/narrowing profile prose does not shrink the checker-owned set.
-
-The fixed conditional universe covers:
-
-- Worker / repair Worker / Reviewer: foundational proof, H1 remote/local protocol, ROADMAP, capsule protocol + index;
-- planner/gate: foundational proof (ROADMAP already base);
-- DocSync: ROADMAP, capsule protocol + index;
-- H1 local executor: no additional fixed conditional reads.
-
-Candidate-specific exact dependency/evidence sources remain mandatory dynamic inputs outside the static corpus budget; that exclusion does not apply to any known fixed protocol/global-state source.
-
-`ctx03-process-controls.py` grows **every checker-owned fixed conditional source for every applicable profile** across the corresponding conditional-profile ceiling. It also retains the concrete H1 foundational/local, CITY/ROADMAP and cumulative PA escalation route controls. Unrelated 100KB growth remains GREEN. Ceiling increases in base, conditional-profile or route layers require revision increment plus explicit justification.
-
-This closes the defect class rather than the three named examples.
-
-## Retry-safe REVIEW_READY_CLOSED
-
-The failed workflow woke only on creation of a new Automation V2 `REVIEW_READY` comment. Because Automation V2 deduplicates that marker by PR+SHA, a first closure attempt blocked by red/pending freeze state could become permanently unreachable after a same-SHA metadata/gate correction.
-
-After repair, `.github/workflows/review-ready-closure.yml` wakes from either the original bot `issue_comment` or completion of `Arkus Candidate Validation`. The workflow-run path resolves the exact PR/candidate SHA, finds an already-existing durable `REVIEW_READY` marker for that same SHA, and reruns the canonical handoff/freeze/final-live-HEAD closure. Persistence remains idempotent by `review-ready-closed:<PR>:<SHA>`.
-
-`scripts/review-ready-closure.py --self-test` reproduces the exact negative→repair→GREEN case with the same head and same marker. No semantic authority is added; CLOSED is lifecycle evidence only.
+The global resolver deliberately does **not** promote every repository path mentioned in prose into mandatory context. An intermediate implementation false-red on future output paths, donor-only references and historical evidence mentions. Mandatory context is derived from routing/contract semantics; incidental/output/history prose does not acquire semantic authority.
 
 ## Causal controls
 
-| Claim | Independent/derived universe | Causal negative control | Required result |
-|---|---|---|---|
-| base role context ceiling | canonical `initial_reads` | grow real unconditional source | `FAIL` |
-| fixed conditional completeness | checker-owned fixed set + extracted explicit fixed profile paths | add new explicit fixed path absent from checker set / drop conditional budget | `FAIL` |
-| all fixed conditional growth bounded | every canonical profile fixed superset | grow every real fixed source across its applicable ceiling | `FAIL` |
-| concrete H1 foundational/local | checker-owned H1 routes | grow Foundation/H1-local source | `FAIL` |
-| concrete CITY cross-track | checker-owned CITY routes | grow ROADMAP | `FAIL` |
-| effective PA escalation | checker-owned cumulative PA routes | grow canonical PA-03 result | `FAIL` |
-| unrelated repo growth should not false-red | derived base set | add 100KB unrelated file | GREEN |
-| ceiling increase reviewability | prior config from base ref | increase any layer without revision + justification | `FAIL` |
-| escalation completeness | canonical profile `must_escalate_if` | delete one required predicate | `FAIL` |
-| PA material-source reachability | production route + real capsule selectors | remove canonical PA-03 result selector | quality replay RED |
-| CITY non-compressible source | production route + real CITY capsule mandatory read | remove `CITY_PRODUCT_SEED.md` | quality replay RED |
-| exact pre-review ordering | final Git HEAD vs external clean record | repository-local final-clean pointer rejected | parent review cannot false-bind child bytes |
-| exact external CLEAN identity | live PR/SHA + fetched issue comment | nonexistent/other-PR/wrong-SHA external comment | handoff lint RED |
-| terminal REVIEW_READY transaction | live-state-shaped closure oracle | remove marker / move HEAD / break gate | `REVIEW_BLOCKED` |
-| same-SHA retry | existing marker + later Candidate Validation completion | freeze RED -> same-SHA freeze GREEN | blocked -> PASS |
+| Claim | Negative challenge | Expected |
+|---|---|---|
+| base ceiling | grow real unconditional source | RED |
+| fixed conditional completeness | add new fixed repository path outside checker-owned set | RED |
+| fixed conditional growth | grow every checker-owned fixed source for every profile | RED |
+| representative routes | grow H1/CITY/PA route-forced source | RED |
+| future arbitrary WP | invent non-H1/CITY/PA exact WP | automatically counted |
+| future exact WP growth | grow invented WP past per-source ceiling | RED |
+| new mandatory repo evidence | add contract-required source | automatically counted |
+| caller omission | omit source from binding while contract still requires it | still counted |
+| manifest-named repo input | omit caller-maintained named-file list | manifest still supplies source |
+| future role | reuse reviewed exact-WP slot under new role | same dynamic resolver applies |
+| new dynamic slot | add unknown placeholder in initial/conditional read surface | RED pending oracle review |
+| unrelated repository growth | grow non-mandatory file | GREEN |
+| structured escalation omission | remove field / `[]` / `{}` | RED |
+| current-state projection omission | remove/empty derived CTX index row | RED while authoritative discovery remains intact |
+| PA/CITY source reachability | remove material capsule selector/read | quality replay RED |
+| external CLEAN identity | nonexistent/wrong PR/wrong SHA comment | handoff RED |
+| same-SHA lifecycle retry | marker exists + gate RED → same SHA gate repaired | blocked → closure reachable |
+| post-marker HEAD move | mutate HEAD after marker | blocked |
 
-The quality replay proves routing/discoverability, not model semantic competence. Independent Reviewer reasoning remains mandatory.
+## Retry-safe REVIEW_READY closure
 
-## Historical corpus classification
+`.github/workflows/review-ready-closure.yml` wakes both from the original bot `REVIEW_READY` comment and from a later `Arkus Candidate Validation` completion. Therefore an existing durable marker can be reused after same-SHA metadata/gate repair. Closure is idempotent by PR+SHA and remains lifecycle evidence only.
 
-`HISTORICAL_CLASSIFICATION.json` remains a classification of durable historical handoff/failure families. Generic natural-language semantic equivalence is explicitly rejected as a deterministic gate. The current independent FAIL is not reclassified as infrastructure noise: all three reviewed blockers are real current-WP defects repaired at their causal boundary.
+## Exact final validation surface
 
-## Validation rule for the repaired candidate
-
-Earlier GREEN runs are calibration/history only. After the **last repository/evidence mutation**, the Worker must rerun the exact canonical CTX-03 surface and then perform the complete Worker pre-review against that same HEAD before creating the external clean record.
-
-Required surface:
+After the **last repository/evidence mutation**, rerun on the exact HEAD:
 
 ```text
 python3 scripts/context-envelope-check.py --self-test
+python3 scripts/ctx03-dynamic-context-check.py --self-test
+python3 scripts/ctx03-dynamic-slot-controls.py --self-test
 python3 scripts/mechanical-verifier-classifier.py --self-test
 python3 scripts/review-ready-closure.py --self-test
 python3 scripts/derive-worker-review-metadata.py --self-test
@@ -113,9 +90,12 @@ python3 scripts/ctx03-quality-replay.py --self-test
 python3 scripts/ctx03-process-controls.py --self-test
 python3 scripts/ctx03-docsync-history-check.py --self-test
 python3 scripts/context-envelope-check.py --audit --base-ref <BASE_SHA> --escalations Docs/evidence/CTX-03/CONTEXT_ESCALATIONS.json
+python3 scripts/ctx03-dynamic-context-check.py --audit-policy --base-ref <BASE_SHA>
+python3 scripts/ctx03-dynamic-slot-controls.py
 python3 scripts/ctx03-quality-replay.py --negative-controls
 python3 scripts/ctx03-process-controls.py
 python3 scripts/ctx03-docsync-history-check.py
+python3 scripts/ctx03-final-circuit-breaker.py
 ```
 
-No historical green in this document substitutes for the final exact-SHA rerun or fresh independent semantic review.
+Accepted CTX-02 capsule validation remains separately binding. No historical GREEN substitutes for the final exact-SHA rerun or fresh independent semantic review.
