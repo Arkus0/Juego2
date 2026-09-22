@@ -3,7 +3,7 @@
   "authority": "DERIVED_NAVIGATION_ONLY",
   "freshness_contract": "docsync-first-parent-v1",
   "projection_phase": "DOCSYNC_PERSISTED",
-  "generated_from_main_sha": "d2cf7145b4ec83c3935286f2d9faeabbcd032148",
+  "generated_from_main_sha": "cc30e83f81179d8a3f62ff5cf60e92f5a281ce8b",
   "generated_on": "2026-09-22",
   "stale_rule": "Mutable main-derived hints are live-usable only when projection_phase is DOCSYNC_PERSISTED and generated_from_main_sha exactly equals the first parent of current live main. A CANDIDATE projection is always stale for live use. Any later main commit makes a persisted projection stale.",
   "tracks": {
