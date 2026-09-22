@@ -16,7 +16,7 @@ Resolve the exact WP ID and canonical PR from live GitHub state. Do not infer a 
 
 ## Context bootstrap
 
-Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `repair_worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile narrows only the initial pack. Full ROADMAP/proof/architecture context is loaded when the FAIL, exact WP, direct predecessor state or cross-track gate makes it material. After CTX-02 adoption, validated accepted-contract capsules may navigate unchanged accepted predecessor guarantees, but any capsule mismatch or FAIL that may reopen/touch that predecessor escalates to the exact authoritative sources. Stale/missing compact context always escalates; it never supplies a repair assumption.
+Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `repair_worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile narrows only the initial pack. Full ROADMAP/proof/architecture context is loaded when the FAIL, exact WP, direct predecessor state or cross-track gate makes it material. After CTX-02 adoption, `Docs/engineering/CONTEXT_CAPSULE_V1.md` governs validated accepted-contract capsules that may navigate unchanged accepted predecessor guarantees, but any capsule mismatch or FAIL that may reopen/touch that predecessor escalates to the exact authoritative sources. Stale/missing compact context always escalates; it never supplies a repair assumption.
 
 ## Preconditions
 
