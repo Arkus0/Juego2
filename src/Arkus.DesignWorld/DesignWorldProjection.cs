@@ -407,7 +407,8 @@ namespace Arkus.DesignWorld
             }
 
             var issues = new List<DesignWorldValidationIssue>();
-            if (!projection.Version.Equals(expectedVersion))
+            var versionIsCurrent = projection.Version.Equals(expectedVersion);
+            if (!versionIsCurrent)
             {
                 issues.Add(new DesignWorldValidationIssue(
                     "dw.projection_version_stale",
@@ -439,12 +440,14 @@ namespace Arkus.DesignWorld
                 }
             }
 
+            var provenanceIsCurrent = true;
             for (var index = 0; index < projection.Facts.Count; index++)
             {
                 var fact = projection.Facts[index];
                 var status = reader.Resolve(fact.Provenance);
                 if (status != DesignAuthorityResolutionStatus.Found)
                 {
+                    provenanceIsCurrent = false;
                     issues.Add(new DesignWorldValidationIssue(
                         MachineCode(status),
                         fact.FactId,
@@ -461,6 +464,29 @@ namespace Arkus.DesignWorld
                     "dw.normalization_mismatch",
                     string.Empty,
                     "The stored normalized projection/digest does not match the projected facts."));
+            }
+
+            if (versionIsCurrent && provenanceIsCurrent)
+            {
+                try
+                {
+                    var rebuilt = new DesignWorldProjector().Build(universe, reader, expectedVersion);
+                    if (!StringComparer.Ordinal.Equals(rebuilt.NormalizedRepresentation, projection.NormalizedRepresentation) ||
+                        !StringComparer.Ordinal.Equals(rebuilt.Digest, projection.Digest))
+                    {
+                        issues.Add(new DesignWorldValidationIssue(
+                            "dw.projection_rules_stale",
+                            string.Empty,
+                            "Cached derived state does not match a fresh rebuild using the current effective projection rules."));
+                    }
+                }
+                catch (DesignWorldProjectionException error)
+                {
+                    issues.Add(new DesignWorldValidationIssue(
+                        error.MachineCode,
+                        string.Empty,
+                        "A fresh rebuild using the current effective projection rules failed: " + error.Message));
+                }
             }
 
             ValidateWorldSurface(projection, issues);
