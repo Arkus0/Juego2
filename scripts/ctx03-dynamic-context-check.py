@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Fail-closed envelope for repository-backed dynamic mandatory context.
+"""Canonical CTX-03 effective mandatory-read discovery and repository envelope.
 
-The dynamic envelope deliberately distinguishes a repository path merely mentioned
-by a contract from a repository source that the route makes mandatory. Exact
-contracts, direct dependency contracts, explicit required-input/binding sources,
-concrete repository evidence bindings, and manifest-named local-executor inputs
-are budgeted. Historical/output/example paths are not promoted to mandatory reads
-just because their spelling appears in prose.
+There is one production discovery path: discover_effective_mandatory_read_set().
+It scans every reviewed profile read surface, resolves reviewed dynamic slot classes,
+and independently derives repository-backed route context from repository authority.
+Callers may identify a route, but cannot make the repository universe smaller by
+omitting derived bindings. Genuinely external live/API/diff inputs are classified
+explicitly and remain outside the repository corpus budget.
 """
 from __future__ import annotations
 
@@ -21,6 +21,10 @@ from pathlib import Path
 
 CONFIG = Path("Docs/engineering/context-envelope.json")
 PROFILES = Path("Docs/engineering/context-bootstrap-profiles.json")
+CAPSULE_DIR = Path("Docs/engineering/context-capsules")
+CAPSULE_INDEX = CAPSULE_DIR / "index.json"
+CAPSULE_PROTOCOL = Path("Docs/engineering/CONTEXT_CAPSULE_V1.md")
+
 PLACEHOLDER_RE = re.compile(r"<([A-Z0-9_]+)>")
 REPO_PATH_RE = re.compile(r"(?<![A-Za-z0-9_./-])((?:Docs|scripts|Assets|Packages|ProjectSettings|\.github)/[A-Za-z0-9_./+@-]+\.[A-Za-z0-9_-]+)")
 DEPENDENCY_LINE_RE = re.compile(r"^Depends on:\s*(.+)$", re.MULTILINE | re.IGNORECASE)
@@ -33,8 +37,6 @@ REPOSITORY_OR_EXTERNAL = "repository_or_external"
 DERIVED_DEPENDENCY_SET = "derived_dependency_set"
 DERIVED_MANIFEST_SET = "derived_manifest_set"
 
-# Checker-owned. A profile under audit cannot relabel a placeholder to escape a
-# repository budget. Any new placeholder class fails closed pending review.
 DYNAMIC_SLOT_CLASSIFICATION = {
     "<EXACT_WP>": REPOSITORY,
     "<CANONICAL_PR_LATEST_FAIL>": EXTERNAL,
@@ -50,13 +52,38 @@ DYNAMIC_SLOT_CLASSIFICATION = {
     "<EXACT_H1_WP>": REPOSITORY,
     "<MANIFEST_NAMED_FILES_AND_SCRIPTS>": DERIVED_MANIFEST_SET,
 }
+
 EXACT_CONTRACT_SLOTS = (
     "<EXACT_WP>",
     "<EXACT_H1_WP>",
     "<EXACT_ACCEPTED_WP>",
     "<EXACT_MILESTONE_OR_GATE_CONTRACT>",
 )
-MANIFEST_NAME_MARKERS = ("manifest", "local_execution", "local-execution")
+
+READ_SURFACE_CLASSIFICATION = {
+    "initial_reads": "repository_or_dynamic",
+    "conditional_reads": "repository_or_dynamic_conditional",
+    "live_state": "external_descriptor_only",
+}
+
+CONDITIONAL_READ_CLASSIFICATION = {
+    "foundational_claim": {"fixed"},
+    "h1_02_through_gate": {"fixed"},
+    "cross_track_or_unclosed_order_gate": {"fixed"},
+    "accepted_contract_capsules": {"fixed", "dependency_navigation"},
+    "direct_dependencies": {"dependency_navigation"},
+    "predecessor_touched_or_changed": {"dependency_navigation"},
+    "h1_local_evidence": {"fixed", "route_evidence"},
+    "claimed_inherited_guarantee": {"dependency_navigation"},
+    "foundational_plan_or_gate": {"fixed"},
+    "architecture_binding": {"contract_bindings"},
+    "constituent_proof": {"dependency_navigation"},
+    "next_wp_or_cross_track_not_closed": {"fixed", "dependency_navigation"},
+    "affected_track": {"track_context"},
+    "protocol_changed": {"contract_bindings"},
+    "accepted_pa_result_after_ctx02": {"fixed", "route_evidence"},
+}
+
 MANDATORY_SECTION_MARKERS = ("required input", "required source", "binding input")
 MANDATORY_LINE_MARKERS = (
     "mandatory repository source",
@@ -66,15 +93,14 @@ MANDATORY_LINE_MARKERS = (
     "execution overlay",
 )
 EXTERNAL_CONTEXT_MARKERS = (
-    "donor ",
-    "donor`",
-    "external repo",
-    "external repository",
-    "upstream repo",
-    "upstream repository",
-    "arkus0/juego`",
-    "arkus0/juego ",
+    "donor ", "donor`", "external repo", "external repository",
+    "upstream repo", "upstream repository", "arkus0/juego`", "arkus0/juego ",
 )
+ACCEPTED_EVIDENCE_NAME_MARKERS = (
+    "verdict", "pass", "proof", "result", "residual", "invariant",
+    "completion", "accepted", "docsync",
+)
+MANIFEST_NAME_MARKERS = ("manifest", "local_execution", "local-execution")
 
 
 def load(path: Path):
@@ -85,34 +111,8 @@ def estimate_file(path: Path) -> int:
     return math.ceil(len(path.read_bytes()) / 4)
 
 
-def profile_placeholders(profile: dict) -> set[str]:
-    found: set[str] = set()
-    reads = profile.get("initial_reads")
-    if not isinstance(reads, list):
-        return found
-    for item in reads:
-        if isinstance(item, str):
-            found.update(f"<{name}>" for name in PLACEHOLDER_RE.findall(item))
-    return found
-
-
-def slot_universe_errors(root: Path) -> list[str]:
-    profiles = load(root / PROFILES).get("profiles", {})
-    if not isinstance(profiles, dict) or not profiles:
-        return ["canonical profile universe is missing/empty"]
-    observed: set[str] = set()
-    for profile in profiles.values():
-        if isinstance(profile, dict):
-            observed |= profile_placeholders(profile)
-    known = set(DYNAMIC_SLOT_CLASSIFICATION)
-    errors: list[str] = []
-    unknown = sorted(observed - known)
-    stale = sorted(known - observed)
-    if unknown:
-        errors.append(f"unreviewed dynamic placeholders require oracle classification: {unknown}")
-    if stale:
-        errors.append(f"checker-owned dynamic slot classification no longer exists in canonical profiles: {stale}")
-    return errors
+def _is_external_binding(value) -> bool:
+    return isinstance(value, str) and value.startswith("external:") and len(value) > len("external:")
 
 
 def _as_paths(value) -> list[str]:
@@ -121,10 +121,6 @@ def _as_paths(value) -> list[str]:
     if isinstance(value, list) and value and all(isinstance(v, str) for v in value):
         return list(value)
     raise ValueError("repository dynamic binding must be a non-empty path string/list")
-
-
-def _is_external_binding(value) -> bool:
-    return isinstance(value, str) and value.startswith("external:") and len(value) > len("external:")
 
 
 def extract_repo_paths(text: str) -> set[str]:
@@ -137,14 +133,6 @@ def _line_is_external_context(line: str) -> bool:
 
 
 def mandatory_contract_paths(text: str) -> set[str]:
-    """Derive repository-shaped mandatory inputs from contract semantics.
-
-    This intentionally does not return every Docs/... spelling. The independent
-    contract grammar owns which locations are input/binding surfaces; the WP can
-    name concrete members, but cannot change this grammar or the slot classes.
-    Missing repository-shaped required inputs remain in the set and fail closed
-    later unless the same line explicitly identifies an external/donor source.
-    """
     sources: set[str] = set()
     current_section = ""
     for raw_line in text.splitlines():
@@ -158,25 +146,9 @@ def mandatory_contract_paths(text: str) -> set[str]:
         lower = line.lower()
         section_mandatory = any(marker in current_section for marker in MANDATORY_SECTION_MARKERS)
         line_mandatory = any(marker in lower for marker in MANDATORY_LINE_MARKERS)
-        if not (section_mandatory or line_mandatory):
-            continue
-        if _line_is_external_context(line):
-            continue
-        sources.update(extract_repo_paths(line))
+        if (section_mandatory or line_mandatory) and not _line_is_external_context(line):
+            sources.update(extract_repo_paths(line))
     return sources
-
-
-def find_exact_contract_binding(profile_name: str, bindings: dict) -> str | None:
-    """Resolve by slot semantics, never by a closed list of role names."""
-    candidates: list[str] = []
-    for slot in EXACT_CONTRACT_SLOTS:
-        value = bindings.get(slot)
-        if isinstance(value, str) and not _is_external_binding(value):
-            candidates.append(value)
-    unique = sorted(set(candidates))
-    if len(unique) > 1:
-        raise ValueError(f"{profile_name}: ambiguous exact-contract bindings: {unique}")
-    return unique[0] if unique else None
 
 
 def resolve_wp_contract(root: Path, wp_id: str) -> str:
@@ -194,37 +166,348 @@ def direct_dependency_contracts(root: Path, text: str) -> set[str]:
     return result
 
 
-def resolve_dependency_sources(root: Path, exact_contract: str | None, binding_value=None) -> set[str]:
-    if not exact_contract:
-        raise ValueError("dependency-derived slot has no exact contract binding")
-    path = root / exact_contract
-    if not path.is_file():
-        raise FileNotFoundError(f"exact contract missing: {exact_contract}")
-    text = path.read_text(encoding="utf-8")
-    sources = direct_dependency_contracts(root, text)
-    sources |= mandatory_contract_paths(text)
-    if binding_value is not None:
-        if _is_external_binding(binding_value):
-            pass
-        else:
-            sources.update(_as_paths(binding_value))
+def source_path(row):
+    if isinstance(row, str):
+        return row
+    if isinstance(row, dict) and isinstance(row.get("path"), str):
+        return row["path"]
+    return None
+
+
+def _wp_id_from_contract(rel: str) -> str | None:
+    name = Path(rel).name
+    return name[:-3] if name.startswith("WP-") and name.endswith(".md") else None
+
+
+def _evidence_dirs(root: Path, wp_id: str) -> list[Path]:
+    candidates = [root / "Docs/evidence" / wp_id]
+    if wp_id.startswith("WP-"):
+        candidates.append(root / "Docs/evidence" / wp_id[3:])
+    return [p for p in candidates if p.is_dir()]
+
+
+def accepted_evidence_sources(root: Path, wp_id: str) -> set[str]:
+    sources: set[str] = set()
+    for directory in _evidence_dirs(root, wp_id):
+        for path in directory.rglob("*"):
+            if not path.is_file():
+                continue
+            lower = path.name.lower()
+            if any(marker in lower for marker in ACCEPTED_EVIDENCE_NAME_MARKERS):
+                sources.add(path.relative_to(root).as_posix())
     return sources
 
 
-def resolve_manifest_sources(root: Path, bindings: dict) -> set[str]:
+def capsule_navigation_sources(root: Path, wp_id: str) -> set[str]:
+    if not (root / CAPSULE_INDEX).is_file():
+        return set()
+    index = load(root / CAPSULE_INDEX)
+    entries = index.get("entries") or []
+    for entry in entries:
+        if isinstance(entry, dict) and entry.get("capsule_id") == wp_id and isinstance(entry.get("path"), str):
+            cap_rel = entry["path"]
+            cap_path = root / cap_rel
+            if not cap_path.is_file():
+                raise FileNotFoundError(f"indexed capsule missing for {wp_id}: {cap_rel}")
+            sources = {str(CAPSULE_PROTOCOL), str(CAPSULE_INDEX), cap_rel}
+            cap = load(cap_path)
+            for key in ("identity_source", "disposition_source"):
+                p = source_path(cap.get(key))
+                if p:
+                    sources.add(p)
+            for key in ("authoritative_sources", "mandatory_source_reads"):
+                for row in cap.get(key) or []:
+                    p = source_path(row)
+                    if p:
+                        sources.add(p)
+            return sources
+    return set()
+
+
+def dependency_navigation_sources(root: Path, exact_contract: str | None) -> tuple[set[str], list[str]]:
+    if not exact_contract:
+        return set(), ["dependency navigation has no exact route contract"]
+    exact_path = root / exact_contract
+    if not exact_path.is_file():
+        return set(), [f"exact route contract missing: {exact_contract}"]
+    errors: list[str] = []
+    result: set[str] = set()
+    exact_text = exact_path.read_text(encoding="utf-8")
+    for dep_rel in sorted(direct_dependency_contracts(root, exact_text)):
+        result.add(dep_rel)
+        dep_path = root / dep_rel
+        dep_text = dep_path.read_text(encoding="utf-8")
+        result |= mandatory_contract_paths(dep_text)
+        wp_id = _wp_id_from_contract(dep_rel)
+        if not wp_id:
+            errors.append(f"cannot derive dependency identity from {dep_rel}")
+            continue
+        try:
+            capsule = capsule_navigation_sources(root, wp_id)
+        except Exception as exc:
+            errors.append(str(exc))
+            capsule = set()
+        if capsule:
+            result |= capsule
+        else:
+            evidence = accepted_evidence_sources(root, wp_id)
+            if evidence:
+                result |= evidence
+            else:
+                errors.append(f"direct dependency {wp_id} has neither validated capsule navigation nor repository accepted-evidence surface")
+    return result, errors
+
+
+def route_evidence_sources(root: Path, exact_contract: str | None) -> set[str]:
+    if not exact_contract:
+        return set()
+    wp_id = _wp_id_from_contract(exact_contract)
+    if not wp_id:
+        return set()
+    sources = accepted_evidence_sources(root, wp_id)
+    try:
+        sources |= capsule_navigation_sources(root, wp_id)
+    except Exception:
+        pass
+    return sources
+
+
+def track_context_sources(root: Path, exact_contract: str | None) -> set[str]:
+    if not exact_contract:
+        return set()
+    p = Path(exact_contract)
+    candidate = p.parent / "README.md"
+    return {candidate.as_posix()} if (root / candidate).is_file() else set()
+
+
+def resolve_manifest_sources(root: Path, bindings: dict) -> tuple[set[str], list[str]]:
     raw = bindings.get("<ANCHORED_LOCAL_EXECUTION_MANIFEST>")
     if not isinstance(raw, str) or _is_external_binding(raw):
-        raise ValueError("manifest-derived slot requires repository <ANCHORED_LOCAL_EXECUTION_MANIFEST>")
+        return set(), ["manifest-derived slot requires repository <ANCHORED_LOCAL_EXECUTION_MANIFEST>"]
     path = root / raw
     if not path.is_file():
-        raise FileNotFoundError(f"anchored local manifest missing: {raw}")
-    # A concrete local manifest is itself independent route authority for the
-    # manifest-named file/script set. Missing named repository files fail closed.
+        return set(), [f"anchored local manifest missing: {raw}"]
     sources = extract_repo_paths(path.read_text(encoding="utf-8"))
     sources.discard(raw)
     if not sources:
-        raise ValueError("local execution manifest names no repository files/scripts")
-    return sources
+        return set(), ["local execution manifest names no repository files/scripts"]
+    return sources, []
+
+
+def _profile_read_strings(profile: dict):
+    for item in profile.get("initial_reads") or []:
+        if isinstance(item, str):
+            yield "initial_reads", None, item
+    conditionals = profile.get("conditional_reads") or {}
+    if isinstance(conditionals, dict):
+        for key, value in conditionals.items():
+            if isinstance(value, str):
+                yield "conditional_reads", str(key), value
+    for item in profile.get("live_state") or []:
+        if isinstance(item, str):
+            yield "live_state", None, item
+
+
+def profile_read_surface_errors(profile_name: str, profile: dict) -> list[str]:
+    errors: list[str] = []
+    for key in profile:
+        readish = key.endswith("_reads") or key.startswith("read_") or key in {"live_state"}
+        if readish and key not in READ_SURFACE_CLASSIFICATION:
+            errors.append(f"{profile_name}: unreviewed read surface {key!r}; classify before use")
+    if not isinstance(profile.get("initial_reads", []), list):
+        errors.append(f"{profile_name}: initial_reads must be a list")
+    if not isinstance(profile.get("conditional_reads", {}), dict):
+        errors.append(f"{profile_name}: conditional_reads must be an object")
+    if not isinstance(profile.get("live_state", []), list):
+        errors.append(f"{profile_name}: live_state must be a list")
+    for surface, _key, text in _profile_read_strings(profile):
+        if surface == "live_state" and (PLACEHOLDER_RE.search(text) or extract_repo_paths(text)):
+            errors.append(f"{profile_name}: live_state contains repository/dynamic read semantics pending surface classification: {text}")
+    for key in (profile.get("conditional_reads") or {}):
+        if key not in CONDITIONAL_READ_CLASSIFICATION:
+            errors.append(f"{profile_name}: unreviewed conditional read class {key!r}")
+    return errors
+
+
+def profile_placeholders(profile: dict) -> set[str]:
+    found: set[str] = set()
+    for _surface, _key, text in _profile_read_strings(profile):
+        found.update(f"<{name}>" for name in PLACEHOLDER_RE.findall(text))
+    return found
+
+
+def slot_universe_errors(root: Path) -> list[str]:
+    profiles = load(root / PROFILES).get("profiles", {})
+    if not isinstance(profiles, dict) or not profiles:
+        return ["canonical profile universe is missing/empty"]
+    observed: set[str] = set()
+    errors: list[str] = []
+    for name, profile in profiles.items():
+        if not isinstance(profile, dict):
+            errors.append(f"{name}: profile must be an object")
+            continue
+        errors += profile_read_surface_errors(name, profile)
+        observed |= profile_placeholders(profile)
+    known = set(DYNAMIC_SLOT_CLASSIFICATION)
+    unknown = sorted(observed - known)
+    stale = sorted(known - observed)
+    if unknown:
+        errors.append(f"unreviewed dynamic placeholders require oracle classification: {unknown}")
+    if stale:
+        errors.append(f"checker-owned dynamic slot classification no longer exists in canonical profiles: {stale}")
+    return errors
+
+
+def find_exact_contract_binding(profile_name: str, bindings: dict) -> str | None:
+    candidates: list[str] = []
+    for slot in EXACT_CONTRACT_SLOTS:
+        value = bindings.get(slot)
+        if isinstance(value, str) and not _is_external_binding(value):
+            candidates.append(value)
+    unique = sorted(set(candidates))
+    if len(unique) > 1:
+        raise ValueError(f"{profile_name}: ambiguous exact-contract bindings: {unique}")
+    return unique[0] if unique else None
+
+
+def _add_bound_repository_value(sources: set[str], errors: list[str], label: str, value) -> None:
+    try:
+        sources.update(_as_paths(value))
+    except ValueError as exc:
+        errors.append(f"{label}: {exc}")
+
+
+def discover_effective_mandatory_read_set(root: Path, profile_name: str, bindings: dict) -> tuple[set[str], list[str], set[str]]:
+    profiles = load(root / PROFILES).get("profiles", {})
+    if profile_name not in profiles:
+        raise ValueError(f"unknown profile {profile_name!r}")
+    profile = profiles[profile_name]
+    if not isinstance(profile, dict):
+        raise ValueError(f"profile {profile_name!r} is not an object")
+
+    errors = profile_read_surface_errors(profile_name, profile)
+    sources: set[str] = set()
+    external_slots: set[str] = set()
+    try:
+        exact = find_exact_contract_binding(profile_name, bindings)
+    except Exception as exc:
+        exact = None
+        errors.append(str(exc))
+
+    for surface, condition, text in _profile_read_strings(profile):
+        if surface == "live_state":
+            continue
+        sources |= extract_repo_paths(text)
+        if surface == "initial_reads" and not PLACEHOLDER_RE.search(text):
+            candidate = root / text
+            if candidate.is_file():
+                sources.add(text)
+        if surface == "conditional_reads" and condition in CONDITIONAL_READ_CLASSIFICATION:
+            semantics = CONDITIONAL_READ_CLASSIFICATION[condition]
+            if "dependency_navigation" in semantics:
+                derived, derr = dependency_navigation_sources(root, exact)
+                sources |= derived
+                errors += [f"{profile_name}/{condition}: {e}" for e in derr]
+            if "route_evidence" in semantics:
+                sources |= route_evidence_sources(root, exact)
+            if "contract_bindings" in semantics and exact and (root / exact).is_file():
+                sources |= mandatory_contract_paths((root / exact).read_text(encoding="utf-8"))
+            if "track_context" in semantics:
+                sources |= track_context_sources(root, exact)
+
+    placeholders = profile_placeholders(profile)
+    for slot in sorted(placeholders):
+        kind = DYNAMIC_SLOT_CLASSIFICATION.get(slot)
+        if kind is None:
+            errors.append(f"{profile_name}: unreviewed dynamic slot {slot}")
+            continue
+        value = bindings.get(slot)
+        if kind == EXTERNAL:
+            external_slots.add(slot)
+            if not _is_external_binding(value):
+                errors.append(f"{profile_name}: external dynamic slot {slot} lacks explicit external binding")
+        elif kind == REPOSITORY:
+            if slot in EXACT_CONTRACT_SLOTS:
+                if not exact:
+                    errors.append(f"{profile_name}: route identity slot {slot} is unresolved")
+                else:
+                    sources.add(exact)
+            elif slot == "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>":
+                derived = track_context_sources(root, exact)
+                dep, derr = dependency_navigation_sources(root, exact)
+                sources |= derived | dep
+                errors += [f"{profile_name}/{slot}: {e}" for e in derr]
+                if value is not None and not _is_external_binding(value):
+                    _add_bound_repository_value(sources, errors, f"{profile_name}: {slot}", value)
+                if not derived and value is None:
+                    errors.append(f"{profile_name}: {slot} cannot be derived from route authority")
+            elif slot == "<ANCHORED_LOCAL_EXECUTION_MANIFEST>":
+                if value is None:
+                    errors.append(f"{profile_name}: repository dynamic slot {slot} is unresolved")
+                elif _is_external_binding(value):
+                    errors.append(f"{profile_name}: repository dynamic slot {slot} cannot be external")
+                else:
+                    _add_bound_repository_value(sources, errors, f"{profile_name}: {slot}", value)
+            else:
+                if value is None:
+                    errors.append(f"{profile_name}: repository dynamic slot {slot} is unresolved")
+                elif _is_external_binding(value):
+                    errors.append(f"{profile_name}: repository dynamic slot {slot} cannot be external")
+                else:
+                    _add_bound_repository_value(sources, errors, f"{profile_name}: {slot}", value)
+        elif kind == REPOSITORY_OR_EXTERNAL:
+            if value is None:
+                derived = route_evidence_sources(root, exact)
+                if derived:
+                    sources |= derived
+                else:
+                    errors.append(f"{profile_name}: hybrid dynamic slot {slot} is unresolved and no repository evidence can be derived")
+            elif _is_external_binding(value):
+                external_slots.add(slot)
+            else:
+                _add_bound_repository_value(sources, errors, f"{profile_name}: {slot}", value)
+                sources |= route_evidence_sources(root, exact)
+        elif kind == DERIVED_DEPENDENCY_SET:
+            derived, derr = dependency_navigation_sources(root, exact)
+            sources |= derived
+            errors += [f"{profile_name}: dependency-derived slot failed closed: {e}" for e in derr]
+            if value is not None and not _is_external_binding(value):
+                _add_bound_repository_value(sources, errors, f"{profile_name}: {slot}", value)
+        elif kind == DERIVED_MANIFEST_SET:
+            derived, derr = resolve_manifest_sources(root, bindings)
+            sources |= derived
+            errors += [f"{profile_name}: manifest-derived slot failed closed: {e}" for e in derr]
+
+    if exact:
+        p = root / exact
+        if p.is_file():
+            text = p.read_text(encoding="utf-8")
+            sources.add(exact)
+            sources |= mandatory_contract_paths(text)
+            sources |= direct_dependency_contracts(root, text)
+        else:
+            errors.append(f"{profile_name}: exact route contract missing: {exact}")
+
+    manifest = bindings.get("<ANCHORED_LOCAL_EXECUTION_MANIFEST>")
+    if isinstance(manifest, str) and not _is_external_binding(manifest):
+        sources.add(manifest)
+
+    clean = _validate_repo_paths(root, profile_name, sources, errors)
+    return clean, errors, external_slots
+
+
+def _validate_repo_paths(root: Path, label: str, sources: set[str], errors: list[str]) -> set[str]:
+    clean: set[str] = set()
+    for raw in sorted(sources):
+        if raw.startswith("/") or ".." in Path(raw).parts:
+            errors.append(f"{label}: invalid repository source path {raw!r}")
+            continue
+        path = root / raw
+        if not path.is_file():
+            errors.append(f"{label}: mandatory repository source missing: {raw}")
+        else:
+            clean.add(raw)
+    return clean
 
 
 def dynamic_policy(cfg: dict) -> dict:
@@ -243,85 +526,6 @@ def dynamic_policy(cfg: dict) -> dict:
     if not str(policy.get("rationale") or "").strip():
         raise ValueError("dynamic repository envelope rationale missing")
     return policy
-
-
-def _validate_repo_paths(root: Path, label: str, sources: set[str], errors: list[str]) -> set[str]:
-    clean: set[str] = set()
-    for raw in sources:
-        if raw.startswith("/") or ".." in Path(raw).parts:
-            errors.append(f"{label}: invalid repository source path {raw!r}")
-            continue
-        path = root / raw
-        if not path.is_file():
-            errors.append(f"{label}: mandatory repository source missing: {raw}")
-        else:
-            clean.add(raw)
-    return clean
-
-
-def resolve_route(root: Path, profile_name: str, bindings: dict) -> tuple[set[str], list[str]]:
-    profiles = load(root / PROFILES).get("profiles", {})
-    if profile_name not in profiles:
-        raise ValueError(f"unknown profile {profile_name!r}")
-    placeholders = profile_placeholders(profiles[profile_name])
-    errors: list[str] = []
-    sources: set[str] = set()
-    try:
-        exact = find_exact_contract_binding(profile_name, bindings)
-    except Exception as exc:
-        exact = None
-        errors.append(str(exc))
-
-    for slot in sorted(placeholders):
-        kind = DYNAMIC_SLOT_CLASSIFICATION.get(slot)
-        if kind is None:
-            errors.append(f"{profile_name}: unreviewed dynamic slot {slot}")
-        elif kind == EXTERNAL:
-            if not _is_external_binding(bindings.get(slot)):
-                errors.append(f"{profile_name}: external dynamic slot {slot} lacks explicit external binding")
-        elif kind == REPOSITORY:
-            if slot not in bindings:
-                errors.append(f"{profile_name}: repository dynamic slot {slot} is unresolved")
-            else:
-                try:
-                    sources.update(_as_paths(bindings[slot]))
-                except ValueError as exc:
-                    errors.append(f"{profile_name}: {slot}: {exc}")
-        elif kind == REPOSITORY_OR_EXTERNAL:
-            value = bindings.get(slot)
-            if value is None:
-                errors.append(f"{profile_name}: hybrid dynamic slot {slot} is unresolved")
-            elif not _is_external_binding(value):
-                try:
-                    sources.update(_as_paths(value))
-                except ValueError as exc:
-                    errors.append(f"{profile_name}: {slot}: {exc}")
-        elif kind == DERIVED_DEPENDENCY_SET:
-            try:
-                sources.update(resolve_dependency_sources(root, exact, bindings.get(slot)))
-            except Exception as exc:
-                errors.append(f"{profile_name}: dependency-derived slot failed closed: {exc}")
-        elif kind == DERIVED_MANIFEST_SET:
-            try:
-                sources.update(resolve_manifest_sources(root, bindings))
-            except Exception as exc:
-                errors.append(f"{profile_name}: manifest-derived slot failed closed: {exc}")
-
-    # Independent reconstruction from the exact contract prevents a caller from
-    # hiding a required-input path by omitting it from its binding payload.
-    if exact:
-        p = root / exact
-        if p.is_file():
-            text = p.read_text(encoding="utf-8")
-            sources.add(exact)
-            sources |= mandatory_contract_paths(text)
-            sources |= direct_dependency_contracts(root, text)
-        else:
-            errors.append(f"{profile_name}: exact route contract missing: {exact}")
-    manifest = bindings.get("<ANCHORED_LOCAL_EXECUTION_MANIFEST>")
-    if isinstance(manifest, str) and not _is_external_binding(manifest):
-        sources.add(manifest)
-    return _validate_repo_paths(root, profile_name, sources, errors), errors
 
 
 def budget_sources(root: Path, policy: dict, label: str, sources: set[str]) -> tuple[list[dict], list[str]]:
@@ -343,12 +547,13 @@ def budget_sources(root: Path, policy: dict, label: str, sources: set[str]) -> t
 
 def audit_resolved_route(root: Path, cfg: dict, profile_name: str, bindings: dict) -> dict:
     policy = dynamic_policy(cfg)
-    sources, errors = resolve_route(root, profile_name, bindings)
+    sources, errors, external = discover_effective_mandatory_read_set(root, profile_name, bindings)
     rows, budget_errors = budget_sources(root, policy, profile_name, sources)
     errors.extend(budget_errors)
     return {
         "profile": profile_name,
         "sources": rows,
+        "external_slots": sorted(external),
         "aggregate_estimate": sum(r["estimate"] for r in rows),
         "per_source_ceiling_estimate": policy["per_source_ceiling_estimate"],
         "aggregate_route_ceiling_estimate": policy["aggregate_route_ceiling_estimate"],
@@ -357,16 +562,24 @@ def audit_resolved_route(root: Path, cfg: dict, profile_name: str, bindings: dic
 
 
 def discover_workpack_routes(root: Path) -> list[tuple[str, set[str]]]:
-    """Discover every current/future WP without a representative-route allowlist."""
     routes: list[tuple[str, set[str]]] = []
     for path in sorted((root / "Docs/workpacks").glob("**/WP-*.md")):
         if not path.is_file():
             continue
         rel = path.relative_to(root).as_posix()
         text = path.read_text(encoding="utf-8")
-        sources = {rel}
-        sources |= mandatory_contract_paths(text)
-        sources |= direct_dependency_contracts(root, text)
+        sources = {rel} | mandatory_contract_paths(text)
+        for dep_rel in sorted(direct_dependency_contracts(root, text)):
+            sources.add(dep_rel)
+            dep_text = (root / dep_rel).read_text(encoding="utf-8")
+            sources |= mandatory_contract_paths(dep_text)
+            wp_id = _wp_id_from_contract(dep_rel)
+            if wp_id:
+                try:
+                    capsule = capsule_navigation_sources(root, wp_id)
+                except Exception:
+                    capsule = set()
+                sources |= capsule or accepted_evidence_sources(root, wp_id)
         routes.append((rel, sources))
     return routes
 
@@ -379,18 +592,16 @@ def discover_manifest_routes(root: Path) -> list[tuple[str, set[str]]]:
     for path in evidence_root.rglob("*"):
         if not path.is_file() or path.suffix.lower() not in {".json", ".md", ".txt", ".yml", ".yaml"}:
             continue
-        lower = path.name.lower()
-        if not any(marker in lower for marker in MANIFEST_NAME_MARKERS):
+        if not any(marker in path.name.lower() for marker in MANIFEST_NAME_MARKERS):
             continue
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
         named = extract_repo_paths(text)
-        if not named:
-            continue
-        rel = path.relative_to(root).as_posix()
-        routes.append((f"manifest:{rel}", {rel} | named))
+        if named:
+            rel = path.relative_to(root).as_posix()
+            routes.append((f"manifest:{rel}", {rel} | named))
     return routes
 
 
@@ -402,8 +613,8 @@ def audit_repository_dynamic_universe(root: Path, cfg: dict) -> list[str]:
         return ["dynamic repository discovery found no workpack/manifest routes"]
     for label, sources in routes:
         clean = _validate_repo_paths(root, label, sources, errors)
-        _rows, budget_errors = budget_sources(root, policy, label, clean)
-        errors.extend(budget_errors)
+        _rows, berr = budget_sources(root, policy, label, clean)
+        errors.extend(berr)
     return errors
 
 
@@ -455,12 +666,16 @@ def _write(root: Path, rel: str, text: str) -> None:
 
 def _profiles_fixture() -> dict:
     return {"profiles": {
-        "worker": {"initial_reads": ["<EXACT_WP>"]},
-        "repair_worker": {"initial_reads": ["<EXACT_WP>", "<CANONICAL_PR_LATEST_FAIL>", "<ORIGINAL_WORKER_EVIDENCE>"]},
-        "reviewer": {"initial_reads": ["<EXACT_WP>", "<LIVE_CANONICAL_PR_AND_COMPLETE_DIFF>", "<DIRECT_PREDECESSOR_ACCEPTED_EVIDENCE_OR_VALIDATED_CAPSULE_NAVIGATION>"]},
-        "planner_gate": {"initial_reads": ["<EXACT_MILESTONE_OR_GATE_CONTRACT>", "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>"]},
-        "docsync": {"initial_reads": ["<ACCEPTED_PR_REVIEW_MERGE>", "<EXACT_ACCEPTED_WP>"]},
-        "h1_local_executor": {"initial_reads": ["<DURABLE_EXTERNAL_HANDOFF_ANCHOR>", "<ANCHORED_LOCAL_EXECUTION_MANIFEST>", "<EXACT_H1_WP>", "<MANIFEST_NAMED_FILES_AND_SCRIPTS>"]},
+        "worker": {
+            "initial_reads": ["AGENTS.md", "<EXACT_WP>"],
+            "live_state": ["current main SHA"],
+            "conditional_reads": {"direct_dependencies": "accepted predecessor sources"},
+        },
+        "repair_worker": {"initial_reads": ["<EXACT_WP>", "<CANONICAL_PR_LATEST_FAIL>", "<ORIGINAL_WORKER_EVIDENCE>"], "conditional_reads": {}, "live_state": []},
+        "reviewer": {"initial_reads": ["<EXACT_WP>", "<LIVE_CANONICAL_PR_AND_COMPLETE_DIFF>", "<DIRECT_PREDECESSOR_ACCEPTED_EVIDENCE_OR_VALIDATED_CAPSULE_NAVIGATION>"], "conditional_reads": {}, "live_state": []},
+        "planner_gate": {"initial_reads": ["<EXACT_MILESTONE_OR_GATE_CONTRACT>", "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>"], "conditional_reads": {}, "live_state": []},
+        "docsync": {"initial_reads": ["<ACCEPTED_PR_REVIEW_MERGE>", "<EXACT_ACCEPTED_WP>"], "conditional_reads": {}, "live_state": []},
+        "h1_local_executor": {"initial_reads": ["<DURABLE_EXTERNAL_HANDOFF_ANCHOR>", "<ANCHORED_LOCAL_EXECUTION_MANIFEST>", "<EXACT_H1_WP>", "<MANIFEST_NAMED_FILES_AND_SCRIPTS>"], "conditional_reads": {}, "live_state": []},
     }}
 
 
@@ -474,20 +689,22 @@ def self_test() -> None:
             "policy_revision": 1,
             "rationale": "synthetic reviewed policy",
         }}}
-        assert slot_universe_errors(root) == []
-        future_wp = "Docs/workpacks/FUTURE/WP-FUTURE-77.md"
+        _write(root, "AGENTS.md", "agents\n")
+        dep = "Docs/workpacks/FUTURE/WP-FUTURE-01.md"
+        wp = "Docs/workpacks/FUTURE/WP-FUTURE-77.md"
         proof = "Docs/evidence/FUTURE-77/proof.md"
-        output = "Docs/evidence/FUTURE-77/future-output.md"
+        _write(root, dep, "# dep\n")
+        _write(root, "Docs/evidence/FUTURE-01/VERDICT.md", "PASS\n")
         _write(root, proof, "proof\n")
-        _write(root, future_wp, f"# future\nMandatory repository source: {proof}\nOutput later: {output}\n")
-        route = audit_resolved_route(root, cfg, "worker", {"<EXACT_WP>": future_wp})
+        _write(root, wp, f"# future\nDepends on: WP-FUTURE-01\nMandatory repository source: {proof}\n")
+        route = audit_resolved_route(root, cfg, "worker", {"<EXACT_WP>": wp})
         paths = {r["path"] for r in route["sources"]}
-        assert route["errors"] == [] and future_wp in paths and proof in paths and output not in paths
+        assert route["errors"] == [] and {wp, dep, proof, "Docs/evidence/FUTURE-01/VERDICT.md"} <= paths
         data = _profiles_fixture()
-        data["profiles"]["future_role"] = {"initial_reads": ["<EXACT_WP>"]}
+        data["profiles"]["future_role"] = {"initial_reads": ["AGENTS.md"], "conditional_reads": {"direct_dependencies": "<EXACT_WP>"}, "live_state": []}
         _write(root, str(PROFILES), json.dumps(data))
-        route = audit_resolved_route(root, cfg, "future_role", {"<EXACT_WP>": future_wp})
-        assert route["errors"] == [] and proof in {r["path"] for r in route["sources"]}
+        route = audit_resolved_route(root, cfg, "future_role", {"<EXACT_WP>": wp})
+        assert route["errors"] == [] and wp in {r["path"] for r in route["sources"]}
     print("ctx03-dynamic-context self-test: PASS")
 
 
