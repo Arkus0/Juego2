@@ -11,9 +11,9 @@ This file preserves CTX programme review/repair lineage that is useful for audit
 
 ## CTX-01
 
-The first CTX-01 candidate was later corrected because its persisted freshness rule was self-referential. The accepted repair is PR `#110`, candidate `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39`, independent PASS review `#5273801466`, merge `fbd3e5526e760efc89f54e7c12a274af10d4765f`.
+The first CTX-01 candidate `d972db98eca5527e7c30596ea069866dd878069b` received corrected independent FAIL review `#5271197524` because its persisted freshness rule was self-referential. The accepted repair is PR `#110`, candidate `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39`, independent PASS review `#5273801466`, merge `fbd3e5526e760efc89f54e7c12a274af10d4765f`.
 
-A separate mechanical handoff incident on the same frozen bytes produced review `#5273364796`: canonical Ready metadata/process mode were missing and Ready-state checks were red. Repository bytes did not need to change; the metadata was repaired and gates rerun. CTX-03 classifies this family as `REVIEW_BLOCKED`, not as a semantic WP defect, so future Reviewer rounds are not spent discovering derivable lifecycle metadata.
+A separate mechanical handoff incident on the repaired frozen bytes produced review `#5273364796`: canonical Ready metadata/process mode were missing and Ready-state checks were red. Repository bytes did not need to change; the metadata was repaired and gates rerun. CTX-03 classifies this family as `REVIEW_BLOCKED`, not as a semantic WP defect, so future Reviewer rounds are not spent discovering derivable lifecycle metadata.
 
 ## CTX-02 circuit-breaker lineage
 
