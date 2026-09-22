@@ -1,0 +1,36 @@
+{
+  "schema": "arkus.accepted-contract-capsule@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "capsule_id": "WP-HK-GATE",
+  "track": "H0",
+  "content_mode": "boundary_summary",
+  "accepted_identity": {
+    "reviewed_candidate_sha": "0fa3d4fb039a3d0049cea0f3eed1c83128ec7dcd",
+    "merge_sha": "048d2e449d5ff81e8bcc35bc15664ea4ceec18ca",
+    "review_id": "5261636151"
+  },
+  "identity_source": {"path": "Docs/workpacks/HK/WP-HK-GATE.md", "git_blob_sha": "36d0ae3985074026fcf06772baac9c07ecac518c"},
+  "authoritative_sources": [
+    {"path": "Docs/workpacks/HK/WP-HK-GATE.md", "git_blob_sha": "36d0ae3985074026fcf06772baac9c07ecac518c", "kind": "accepted_gate_contract"}
+  ],
+  "consumer_hints": ["WP-H1-02"],
+  "exported_guarantees": [
+    {"id": "h0-authoring-readiness", "statement": "H0 passed the accepted AI-authoring readiness gate and may be consumed as the engine-neutral authoring foundation.", "source_pointer": "WP-HK-GATE / Accepted gate result"},
+    {"id": "engine-neutral-boundary", "statement": "Canonical H0 semantics remain engine-neutral; Unity is downstream of the accepted bridge boundary.", "source_pointer": "WP-HK-GATE / Product-boundary proof"},
+    {"id": "unity-work-authorized", "statement": "Independent HK-GATE PASS authorizes the downstream Unity bridge track, not direct gameplay implementation.", "source_pointer": "WP-HK-GATE / PASS consequence"}
+  ],
+  "exclusions_nonclaims": [
+    {"id": "no-gameplay-authorization", "statement": "HK-GATE PASS does not authorize gameplay implementation directly.", "source_pointer": "WP-HK-GATE / PASS consequence"},
+    {"id": "no-new-concurrency-claim", "statement": "Per-resource concurrency, automatic disjoint-write merge and multi-process coordination remain post-GATE unless later evidence changes ownership.", "source_pointer": "WP-HK-GATE / PASS consequence"}
+  ],
+  "reopen_conditions": [
+    "Concrete evidence shows the accepted gate claim is false or does not cover the effective downstream path.",
+    "A downstream Unity integration requires changing an accepted H0 engine-neutral boundary rather than adding a conforming adapter."
+  ],
+  "escalate_if": [
+    "The consumer needs an exact H0 semantic/proof detail not carried by this boundary capsule.",
+    "Live GitHub or accepted completion metadata contradicts this accepted identity.",
+    "A material question could change whether HK-GATE actually covers the downstream claim."
+  ],
+  "mandatory_source_reads": []
+}
