@@ -18,15 +18,16 @@ DW-02 and other active work continue under the contract/cycle they started with.
 
 Owner branch: `process/operational-hardening-a`
 
-- Executor-neutral Worker preflight that runs in a capable remote or local checkout, enforces the exact `global.json` SDK, runs the repository's current normal restore plus Release build/tests and process self-tests, and binds the GREEN result to the exact clean candidate SHA before handoff. Locked restore is intentionally deferred until reviewed `packages.lock.json` files exist for the complete solution.
-- Canonical Worker/repair/protocol adoption of that preflight for post-adoption cycles, with already-active/frozen cycles grandfathered rather than retroactively reopened.
+- Worker preflight with two equivalent execution paths for post-adoption cycles. Prefer `scripts/worker-preflight.sh` on the clean exact candidate HEAD when the Worker environment can execute the exact SDK from `global.json`. If that environment lacks the exact SDK, use the repository-owned `Worker Candidate Preflight` GitHub Actions run for the canonical PR and exact candidate SHA. The delegated run checks out `pull_request.head.sha`, installs the exact SDK, runs normal restore + Release build/tests + process self-tests, rechecks the live PR head before emitting a durable `PR + SHA + run_id` GREEN receipt, and is cancelled/replaced when the PR advances. A local capability miss is therefore not `NOT_READY` by itself; a missing/mismatched/stale delegated receipt is.
+- Canonical Worker/repair/protocol adoption of that preflight for post-adoption cycles, with already-active/frozen cycles grandfathered rather than retroactively reopened. Any candidate mutation invalidates the prior local result and any prior delegated receipt because both are exact-SHA evidence.
 - Repository-pinned Stryker.NET runner for targeted, advisory mutation testing. Mutation score is not a WP PASS criterion; surviving mutants in the touched semantic surface are Worker pre-review evidence.
-- `Arkus Main Safety` build/test/process safety workflow on pushes to `main` and on every pull request. Pull-request path filtering is deliberately forbidden because repository build/restore behavior can be changed by central or imported MSBuild/NuGet inputs that an allow-list can omit; a regression guard is executed by both Main Safety and Worker preflight.
+- `Arkus Main Safety` build/test/process safety workflow on pushes to `main` and on pull requests that can affect build/restore/process execution. Its path allow-list explicitly covers current central inputs (`Directory.Build.props`, `Directory.Packages.props`, `NuGet.config`) plus future `Directory.*.props`, `Directory.*.targets`, arbitrary `.props/.targets`, project/solution and NuGet lock/config inputs. `scripts/validate-main-safety-trigger.py` contains positive/negative regression tests and is executed by CI/preflight so this coverage cannot silently shrink.
+- `scripts/validate-worker-preflight-context.py` contains negative controls for stale candidate, missing PR identity and cross-repository reuse. The delegated workflow runs those controls before execution and rejects a PR whose live head no longer equals the candidate before issuing GREEN.
 - Python bytecode/cache hygiene.
 - Claude Code skill adapters that delegate to `.agents/skills` rather than duplicating process authority.
-- Clarify that GitHub Actions can enforce CI/protocol/state transitions while never impersonating an independent role session.
+- Clarify that GitHub Actions can enforce CI/protocol/state transitions and may execute the bounded Worker preflight contract, while never impersonating an independent reasoning role session.
 
-External follow-up after merge: cloud Worker environments must be allowed to acquire/use the exact SDK declared by `global.json`; this is not a reason to move normal work to a human workstation. Branch protection is enabled only after Batch B supplies the stable merge-gate check.
+No persistent workstation dependency is introduced. Workers that already have the exact SDK use the cheaper local path; chat/cloud Workers without it consume the exact-context delegated run instead. Locked restore remains deferred until reviewed `packages.lock.json` files exist for the complete solution. Branch protection is enabled only after Batch B supplies the stable merge-gate check.
 
 ## Batch B — deterministic process automation
 
@@ -57,7 +58,7 @@ Exit criterion: no live automation depends on the retired paths, reviewer duplic
 
 | Audit improvement | Owner |
 | --- | --- |
-| Worker-environment .NET build/test instead of CI-as-compiler | A |
+| Pre-review .NET build/test with local-preferred exact-SHA Actions fallback | A |
 | Mutation testing for causal test strength | A |
 | Mechanical DocSync automation | B |
 | Required/stable merge safety + post-merge safety | A + B |
@@ -78,9 +79,9 @@ No item in this table is silently dropped. An item may be superseded only by an 
 
 1. Add before delete. Replacement automation coexists with the frozen/legacy path until equivalence is demonstrated.
 2. No self-defined completeness. Registry/schema required fields and DocSync acceptance identity are checker-owned.
-3. Exact-SHA identity remains mandatory wherever a result claims to validate a candidate.
-4. A body-only edit may reuse computation only when the complete consumed-input digest is unchanged.
+3. Exact-SHA identity remains mandatory wherever a result claims to validate a candidate. Delegated Worker-preflight evidence additionally binds canonical PR identity and workflow run ID.
+4. A body-only edit may reuse computation only when the complete consumed-input digest is unchanged; candidate-SHA changes always invalidate Worker-preflight evidence.
 5. Mutation testing is diagnostic until a separate reviewed decision establishes a stable causal gate; no arbitrary mutation-score threshold is introduced here.
 6. Active product WPs are not reopened merely because process tooling improved after their current cycle began; new post-adoption cycles use the new tooling prospectively.
-7. Remote/chat execution is first-class. Local evidence is required only where the applicable contract explicitly requires local/editor/toolchain truth.
+7. Remote/chat execution is first-class. Lack of a local .NET SDK selects delegated exact-SHA preflight rather than making the Worker intrinsically unready. Local evidence remains required where the applicable product contract explicitly requires local/editor/toolchain truth.
 8. Read-only audit agents do not gain repository mutation authority through authorship of recommendations.
