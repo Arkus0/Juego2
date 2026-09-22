@@ -1,6 +1,6 @@
 # DW — Design World Second-Consumer Validation
 
-Status: ACCEPTED / NOT_STARTED — planning PR `#117` independently PASSed, merged and completed DocSync
+Status: ACTIVE / `WP-DW-00` COMPLETE
 Class: FOUNDATIONAL VALIDATION TRACK
 Binding architecture: `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
@@ -12,7 +12,11 @@ Accepted plan evidence:
 - plan merge: `b831050e9df8b61b76744e0c5f544bd7ec2d79b5`;
 - post-PASS reconciliation: `Docs/evidence/DW-PLAN/DOCSYNC.md`.
 
-No `WP-DW-*` implementation Worker is active merely because the plan is accepted. `WP-DW-00` is the sole default DW start and remains `NOT_STARTED` until a human explicitly starts its Worker.
+`WP-DW-00` is **COMPLETE**. Frozen candidate `333013b80ba1422b5dfd0b4b5c590cd9b314e007` passed independent review `#5280464264` in PR `#126`, final frozen exact-SHA validation run `35749413198` was GREEN, and the accepted candidate merged as `2da4b6fd4a6eb7bac166c77ba8fe05796874cbbf`. Post-PASS reconciliation is `Docs/evidence/WP-DW-00/DOCSYNC.md`.
+
+Next default workpack: `WP-DW-01 — first CITY semantic/invariant consumer with causal omission detection` (`REMOTE_OK`), dependency-valid after DW-00 DocSync but `NOT_STARTED` until a human explicitly starts its Worker.
+
+No later `WP-DW-*` implementation Worker is active or implicitly authorized by this DocSync.
 
 ## Outcome
 
@@ -67,7 +71,7 @@ The PA and CTX prerequisites are cross-track evidence prerequisites only. DW doe
 
 | Order | Workpack | Central claim | Execution |
 |---:|---|---|---|
-| 1 | `WP-DW-00` | authority-preserving, rebuildable typed Design World projection over public Arkus surfaces | `REMOTE_OK` |
+| 1 | `WP-DW-00` ✅ | authority-preserving, rebuildable typed Design World projection over public Arkus surfaces | `REMOTE_OK` |
 | 2 | `WP-DW-01` | a bounded accepted CITY slice can produce causal mechanical FAILs without CITY semantics entering H0 | `REMOTE_OK` |
 | 3 | `WP-DW-02` | the CITY projection is useful for real deterministic queries/content-shape measurements with complete provenance | `REMOTE_OK` |
 | 4 | `WP-DW-03` | accepted PA findings/evidence/dispositions/fixtures can be projected and queried without lossy composition | `REMOTE_OK` |
@@ -172,4 +176,4 @@ Every workpack below owns a subset of these risks explicitly.
 
 ## Start rule
 
-The DW programme plan is accepted after PR `#117` PASS + merge + DocSync. `WP-DW-00 — Authority-preserving Design World projection contract` is the sole default DW start and remains `NOT_STARTED` until a human explicitly starts its Worker. No later DW workpack is implicitly authorized. H1, PA and CTX continue under their own accepted DAGs.
+The DW programme plan is accepted after PR `#117` PASS + merge + DocSync, and `WP-DW-00` is accepted after PR `#126` PASS + merge + DocSync. `WP-DW-01 — first CITY semantic/invariant consumer with causal omission detection` is the sole default next DW workpack and remains `NOT_STARTED` until a human explicitly starts its Worker. No later DW workpack is implicitly authorized. H1, PA and CTX continue under their own accepted DAGs.
