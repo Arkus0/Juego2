@@ -12,15 +12,16 @@ The operating model is **remote/chat-first**. Worker, repair, Reviewer and final
 
 Opus, when used for this audit stream, is a **read-only analyst**. It may inspect, compare, challenge and propose improvements, but it does not mutate repository state and does not become the implementation Worker merely because an idea originated in its analysis. Repository mutations remain owned by the explicitly invoked Worker/repair/finalization role under the normal independence rules.
 
-DW-02 and other active work continue under the contract they started with. A process batch must not retroactively change the acceptance bar of an already frozen candidate.
+DW-02 and other active work continue under the contract/cycle they started with. Batch A's Worker preflight becomes mandatory only for implementation or repair cycles that first enter `DRAFT + ACTIVE` after Batch A has merged to `main`. A candidate or cycle already active, frozen or in review before that adoption point is not reopened merely to satisfy the new preflight. A later fresh repair cycle begun after adoption is governed by it.
 
 ## Batch A — runtime hardening and early defect detection
 
-Owner branch: `process/opus-hardening-a`
+Owner branch: `process/operational-hardening-a`
 
-- Executor-neutral Worker preflight that runs in a capable remote or local checkout, enforces the exact `global.json` SDK, and runs locked restore, Release build and tests before handoff.
+- Executor-neutral Worker preflight that runs in a capable remote or local checkout, enforces the exact `global.json` SDK, runs the repository's current normal restore plus Release build/tests and process self-tests, and binds the GREEN result to the exact clean candidate SHA before handoff. Locked restore is intentionally deferred until reviewed `packages.lock.json` files exist for the complete solution.
+- Canonical Worker/repair/protocol adoption of that preflight for post-adoption cycles, with already-active/frozen cycles grandfathered rather than retroactively reopened.
 - Repository-pinned Stryker.NET runner for targeted, advisory mutation testing. Mutation score is not a WP PASS criterion; surviving mutants in the touched semantic surface are Worker pre-review evidence.
-- Post-merge `main` build/test safety workflow.
+- `Arkus Main Safety` build/test/process safety workflow on pushes to `main`, with a pull-request trigger over its own/toolchain/build surfaces so workflow changes are executable before merge rather than first exercised post-merge.
 - Python bytecode/cache hygiene.
 - Claude Code skill adapters that delegate to `.agents/skills` rather than duplicating process authority.
 - Clarify that GitHub Actions can enforce CI/protocol/state transitions while never impersonating an independent role session.
@@ -80,6 +81,6 @@ No item in this table is silently dropped. An item may be superseded only by an 
 3. Exact-SHA identity remains mandatory wherever a result claims to validate a candidate.
 4. A body-only edit may reuse computation only when the complete consumed-input digest is unchanged.
 5. Mutation testing is diagnostic until a separate reviewed decision establishes a stable causal gate; no arbitrary mutation-score threshold is introduced here.
-6. Active product WPs are not reopened merely because process tooling improved after their freeze.
+6. Active product WPs are not reopened merely because process tooling improved after their current cycle began; new post-adoption cycles use the new tooling prospectively.
 7. Remote/chat execution is first-class. Local evidence is required only where the applicable contract explicitly requires local/editor/toolchain truth.
 8. Read-only audit agents do not gain repository mutation authority through authorship of recommendations.

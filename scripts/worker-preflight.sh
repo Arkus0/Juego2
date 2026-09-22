@@ -9,6 +9,20 @@ if [[ ! -f global.json ]]; then
   exit 2
 fi
 
+candidate_sha="$(git rev-parse HEAD)"
+if [[ ! "${candidate_sha}" =~ ^[0-9a-fA-F]{40}$ ]]; then
+  echo "error: current HEAD is not an exact 40-character commit SHA" >&2
+  exit 3
+fi
+
+if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
+  git status --short
+  echo "error: Worker preflight must start from a clean exact candidate HEAD" >&2
+  exit 4
+fi
+
+echo "[preflight] candidate ${candidate_sha}"
+
 required_sdk="$(python3 - <<'PY'
 import json
 from pathlib import Path
@@ -23,7 +37,7 @@ Required SDK: ${required_sdk}
 Install/allow the SDK declared by global.json in this Worker environment before handing off a candidate.
 This preflight is executor-neutral: remote/chat Workers and local phases use the same command when the environment can execute .NET.
 EOF
-  exit 3
+  exit 5
 fi
 
 actual_sdk="$(dotnet --version)"
@@ -34,7 +48,7 @@ Required: ${required_sdk}
 Actual:   ${actual_sdk}
 global.json uses rollForward=disable; install the exact SDK in this Worker environment.
 EOF
-  exit 4
+  exit 6
 fi
 
 echo "[preflight] SDK ${actual_sdk}"
@@ -71,7 +85,13 @@ echo "[preflight] clean-tree check"
 if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
   git status --short
   echo "error: preflight left or found an unclean working tree" >&2
-  exit 5
+  exit 7
 fi
 
+if [[ "$(git rev-parse HEAD)" != "${candidate_sha}" ]]; then
+  echo "error: candidate HEAD changed during preflight" >&2
+  exit 8
+fi
+
+printf 'Candidate SHA: %s\n' "${candidate_sha}"
 echo "WORKER_PREFLIGHT_GREEN"
