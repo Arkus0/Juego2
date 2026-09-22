@@ -16,6 +16,8 @@ For `WP-H1-02` through `WP-H1-GATE`, the default orchestration is **remote-first
 
 Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile is a minimum starting pack, not a context ceiling. For an exact WP, full `Docs/ROADMAP.md` is conditional on unresolved cross-track/order/gate meaning; `FOUNDATIONAL_PROOF_STANDARD.md` is loaded when the exact claim binds it. After CTX-02 adoption, a validated accepted-contract capsule may be the starting representation of an accepted predecessor under `Docs/engineering/CONTEXT_CAPSULE_V1.md`; it never replaces an authoritative read when a capsule escalation trigger, non-compressible source, direct proof/architecture binding or concrete reopen question is material. If any compact state is stale/missing/contradictory for a hint being used, ignore that hint and deepen to live GitHub + authoritative contracts.
 
+After CTX-03 adoption, `Docs/engineering/CONTEXT_ENVELOPE_V1.md` is the narrow terminal-closure and mechanical-outcome amendment. It does not add a normal bootstrap read: the deterministic closure epilogue below is sufficient unless a classification dispute or envelope failure makes the full protocol material.
+
 ## Preconditions
 
 - Read `AGENTS.md`, `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md`, the exact WP and `WORKER_REVIEW_PROTOCOL.md`; load ROADMAP/foundational/architecture surfaces when the worker profile or exact claim triggers them.
@@ -49,9 +51,12 @@ Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `worker` profile i
 13. If pre-review finds an in-claim blocker, keep Draft + ACTIVE, repair the causal defect boundary, rerun affected validation/evidence, and repeat the required local round when the repair can affect local evidence before repeating step 12.
 14. Record `WORKER_PRE_REVIEW: CLEAN`, findings fixed count and evidence path only when no known in-claim blocker remains. `CLEAN` is Worker readiness evidence, never independent `PASS`.
 15. Stop all writers.
-16. Freeze exact 40-char candidate SHA; set `FROZEN_FOR_REVIEW`; mark Ready.
-17. STOP. Never act as the independent Reviewer or start the next WP.
+16. Freeze the exact 40-char candidate SHA. After CTX-03 adoption, generate the derivable Ready metadata with `scripts/derive-worker-review-metadata.py` instead of hand-transcribing SHA/state/path fields, then validate the canonical PR body with the existing handoff lint.
+17. Set `FROZEN_FOR_REVIEW`, `Branch frozen: YES` and mark the PR Ready. No repository/evidence byte may change after this point.
+18. Classify mechanical results under `mechanical-verifier-registry.json`: a registered causal `FAIL` returns to Worker repair; `REVIEW_BLOCKED` means repair/derive lifecycle metadata and rerun before Reviewer; `INFRA_ERROR` means diagnose/rerun infrastructure without calling the WP defective; `NOT_APPLICABLE` is neutral. An unregistered verifier cannot by itself count as WP FAIL. None of these outcomes substitutes for semantic Reviewer judgment.
+19. Do **not** report “ready for Reviewer” merely because CI is green. Observe a durable Automation V2 `State: REVIEW_READY` marker targeting the exact frozen SHA. After CTX-03 adoption, wait for the automatic `State: REVIEW_READY_CLOSED` marker for the same SHA; it is emitted only after a post-marker live HEAD check and requires no extra human action. If the closure workflow is not yet adopted for the current transition, perform the equivalent final live HEAD read after observing `REVIEW_READY` and record it outside repository bytes.
+20. Only when the terminal invariant is closed may the Worker tell the human to start a fresh independent Reviewer. Then STOP. Never act as that Reviewer or start the next WP.
 
-Any implementation/evidence mutation after a clean pre-review invalidates that cleanliness and requires the pre-review to be rerun before freeze.
+Any implementation/evidence mutation after a clean pre-review invalidates that cleanliness and requires the complete pre-review/freeze sequence to be rerun on a new exact SHA.
 
-Missing required evidence, skipped mandatory tests, unavailable proof tooling or unresolved material doubt are FAIL/NOT_READY, never green by omission.
+Missing required evidence, skipped mandatory tests, unavailable proof tooling or unresolved material doubt are FAIL/NOT_READY, never green by omission. Mechanical protocol/infra failures are classified before independent review; they are never promoted into a semantic Reviewer FAIL merely because a check is red.
