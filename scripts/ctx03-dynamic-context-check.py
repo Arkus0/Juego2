@@ -314,18 +314,36 @@ def profile_read_surface_errors(profile_name: str, profile: dict) -> list[str]:
         readish = key.endswith("_reads") or key.startswith("read_") or key in {"live_state"}
         if readish and key not in READ_SURFACE_CLASSIFICATION:
             errors.append(f"{profile_name}: unreviewed read surface {key!r}; classify before use")
-    if not isinstance(profile.get("initial_reads", []), list):
+
+    initial = profile.get("initial_reads", [])
+    if not isinstance(initial, list):
         errors.append(f"{profile_name}: initial_reads must be a list")
-    if not isinstance(profile.get("conditional_reads", {}), dict):
+    else:
+        for index, item in enumerate(initial):
+            if not isinstance(item, str):
+                errors.append(f"{profile_name}: initial_reads[{index}] uses an unreviewed entry shape {type(item).__name__}; read entries must be strings until explicitly classified")
+
+    conditionals = profile.get("conditional_reads", {})
+    if not isinstance(conditionals, dict):
         errors.append(f"{profile_name}: conditional_reads must be an object")
-    if not isinstance(profile.get("live_state", []), list):
+    else:
+        for key, value in conditionals.items():
+            if not isinstance(value, str):
+                errors.append(f"{profile_name}: conditional_reads[{key!r}] uses an unreviewed entry shape {type(value).__name__}; conditional read entries must be strings until explicitly classified")
+            if key not in CONDITIONAL_READ_CLASSIFICATION:
+                errors.append(f"{profile_name}: unreviewed conditional read class {key!r}")
+
+    live_state = profile.get("live_state", [])
+    if not isinstance(live_state, list):
         errors.append(f"{profile_name}: live_state must be a list")
+    else:
+        for index, item in enumerate(live_state):
+            if not isinstance(item, str):
+                errors.append(f"{profile_name}: live_state[{index}] uses an unreviewed entry shape {type(item).__name__}; live_state entries must be strings until explicitly classified")
+
     for surface, _key, text in _profile_read_strings(profile):
         if surface == "live_state" and (PLACEHOLDER_RE.search(text) or extract_repo_paths(text)):
             errors.append(f"{profile_name}: live_state contains repository/dynamic read semantics pending surface classification: {text}")
-    for key in (profile.get("conditional_reads") or {}):
-        if key not in CONDITIONAL_READ_CLASSIFICATION:
-            errors.append(f"{profile_name}: unreviewed conditional read class {key!r}")
     return errors
 
 
@@ -705,6 +723,19 @@ def self_test() -> None:
         _write(root, str(PROFILES), json.dumps(data))
         route = audit_resolved_route(root, cfg, "future_role", {"<EXACT_WP>": wp})
         assert route["errors"] == [] and wp in {r["path"] for r in route["sources"]}
+
+        malformed = _profiles_fixture()
+        malformed["worker"]["initial_reads"] if False else None
+        malformed["profiles"]["worker"]["initial_reads"].append({"path": wp})
+        _write(root, str(PROFILES), json.dumps(malformed))
+        route = audit_resolved_route(root, cfg, "worker", {"<EXACT_WP>": wp})
+        assert any("unreviewed entry shape" in e for e in route["errors"])
+
+        malformed = _profiles_fixture()
+        malformed["profiles"]["worker"]["conditional_reads"]["direct_dependencies"] = ["<EXACT_WP>"]
+        _write(root, str(PROFILES), json.dumps(malformed))
+        route = audit_resolved_route(root, cfg, "worker", {"<EXACT_WP>": wp})
+        assert any("unreviewed entry shape" in e for e in route["errors"])
     print("ctx03-dynamic-context self-test: PASS")
 
 
