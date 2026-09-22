@@ -1,10 +1,12 @@
 # WP-DW-00 — Authority-preserving Design World projection contract
 
-Status: PLANNED / NOT_STARTED
+Status: COMPLETE / ACCEPTED
 Class: FOUNDATIONAL
 EXECUTION_REQUIREMENT: REMOTE_OK
 Depends on: `WP-HK-GATE` PASS + accepted DW planning PR merge/DocSync
 Blocks: `WP-DW-01`
+
+Acceptance: frozen candidate `333013b80ba1422b5dfd0b4b5c590cd9b314e007`; independent PASS review `#5280464264`; PR `#126`; merge `2da4b6fd4a6eb7bac166c77ba8fe05796874cbbf`; final frozen exact-SHA validation Actions `35749413198` GREEN; post-PASS DocSync `Docs/evidence/WP-DW-00/DOCSYNC.md`.
 
 ## Objective and central claim
 
