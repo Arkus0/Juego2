@@ -9,7 +9,7 @@ Reduce repeated predecessor prose without moving semantic or proof authority. A 
 Machine schema: `Docs/engineering/context-capsule-schema.json`  
 Discoverability index: `Docs/engineering/context-capsules/index.json`  
 Mechanical checker: `scripts/context-capsule-check.py`  
-Independent representative controls: `scripts/context-capsule-controls.py`
+Independent representative controls: `scripts/context-capsule-controls.py` + `scripts/context-capsule-pa-semantic-controls.py`
 
 This protocol becomes binding only after `WP-CTX-02` receives independent PASS, merges and completes DocSync. At that adoption boundary it is a **narrow amendment to the predecessor-read mechanics** in `AGENTS.md` and `WORKER_REVIEW_PROTOCOL.md` v1.8: a validated capsule may satisfy initial accepted-predecessor reconstruction until an escalation trigger fires. It does not amend ownership, proof thresholds, exact-SHA freeze/review, Reviewer independence, reopen rules or finalization.
 
@@ -83,6 +83,8 @@ PA disposition compression is **status-preserving**, not a prose summary. The ch
 
 The disposition oracle is valid only because the PA-chain checker independently discovers the canonical accepted `PA-NN.md` result and requires `disposition_source.path` and fingerprint to be that same result binding. A different internally coherent table may not certify the accepted PA result.
 
+The representative PA consumer starts from the accepted PA-01 + PA-02 + PA-03 family, so the test-only semantic controls cover material exports/exclusions/reopen/escalation content across **all three current PA capsules**. PA-03 additionally carries the directional-value oracle. This remains bounded representative evidence, not a production registry for arbitrary future PA prose.
+
 Exclusions are first-class contract material. In particular, PA-03's rejection of default global/N-hop social target discovery carries the inherited PA-02 bounded-discovery guarantee and is protected exactly like a positive adoption.
 
 If a later consumer needs the exact recommendation, rationale, scenario or nuance behind a row, it follows the exact source pointer. The capsule reduces initial reconstruction; it does not claim to contain the full research dossier.
@@ -151,16 +153,16 @@ After a later PA result independently passes and merges, DocSync:
 3. binds reviewed SHA, merge SHA, PASS review and source blob SHA;
 4. preserves the full disposition key/status set where present;
 5. updates the capsule index;
-6. runs `python3 scripts/context-capsule-check.py --self-test`, `python3 scripts/context-capsule-controls.py`, and `python3 scripts/context-capsule-check.py --audit-index --repo-root .` when capsule mechanics/coverage are affected;
+6. runs `python3 scripts/context-capsule-check.py --self-test`, `python3 scripts/context-capsule-controls.py`, `python3 scripts/context-capsule-pa-semantic-controls.py`, and `python3 scripts/context-capsule-check.py --audit-index --repo-root .` when capsule mechanics/coverage are affected;
 7. only then may it claim accepted PA capsule-chain coverage complete.
 
-If capsule production fails, DocSync may still reconstruct truth from authoritative sources but must not claim capsule coverage complete or silently omit the accepted result.
+If capsule production or any required independent control fails, DocSync may still reconstruct truth from authoritative sources but must not claim capsule coverage complete or silently omit the accepted result.
 
 Future capsules whose natural-language semantics are not covered by the representative test oracle remain usable only under the class-3 rule: any material uncertainty/escalation requires authoritative reconstruction and independent judgment. CTX-02 does not require extending a production semantic registry.
 
 ## 11. Fail-closed controls
 
-The checker self-test and independent CTX-02 control harness exercise at least:
+The checker self-test and independent CTX-02 control harnesses exercise at least:
 
 - stale reviewed-candidate SHA mismatch;
 - completion identity source redirected away from the canonical external workpack;
@@ -171,6 +173,7 @@ The checker self-test and independent CTX-02 control harness exercise at least:
 - representative guarantee statement inverted/invented while ID, source pointer and source fingerprints remain unchanged;
 - symmetric representative exclusion/non-claim statement inversion/invention;
 - representative reopen-condition and escalation-trigger substitution with structurally valid but materially opposite/invented text;
+- PA-01/PA-02/PA-03 actual semantic fixtures across the representative cumulative PA start surface;
 - omitted material `REJECT` disposition;
 - `LATER` reclassified as adopted/rejected;
 - PA disposition source rebound to a different internally coherent result table;
@@ -182,7 +185,7 @@ The checker self-test and independent CTX-02 control harness exercise at least:
 
 The repository audit additionally checks every indexed representative capsule and discovers the accepted PA result-chain universe from repository state rather than trusting the capsule index to define its own completeness.
 
-The independent representative semantic oracle is test-only evidence for the selected H1/CITY/PA boundaries. It validates actual material content rather than only IDs, but it is **not** imported by the production checker, does not become semantic authority, and does not claim generic natural-language proof. Production audit + independent controls together form CTX-02's mechanical validation surface; unresolved semantics stay with escalation + independent Reviewer judgment.
+The independent representative semantic oracles are test-only evidence for the selected H1/CITY boundaries and the current PA-01/02/03 cumulative representative chain. They validate actual material content rather than only IDs, but they are **not** imported by the production checker, do not become semantic authority, and do not claim generic natural-language proof. Production audit + independent controls together form CTX-02's mechanical validation surface; unresolved semantics stay with escalation + independent Reviewer judgment.
 
 The circuit-breaker trust analysis that defines this split is durable at `Docs/evidence/CTX-02/TRUST_BOUNDARY_REAUDIT.md`.
 
