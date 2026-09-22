@@ -20,6 +20,7 @@
     {"capsule_id": "WP-CITY-03", "path": "Docs/engineering/context-capsules/WP-CITY-03.json", "near_term_consumers": ["WP-CITY-04"], "content_boundary": "NONCOMPRESSIBLE_PRODUCT_SPEC_REQUIRED"},
     {"capsule_id": "WP-PA-01", "path": "Docs/engineering/context-capsules/WP-PA-01.json", "near_term_consumers": ["WP-PA-04+"]},
     {"capsule_id": "WP-PA-02", "path": "Docs/engineering/context-capsules/WP-PA-02.json", "near_term_consumers": ["WP-PA-04+"]},
-    {"capsule_id": "WP-PA-03", "path": "Docs/engineering/context-capsules/WP-PA-03.json", "near_term_consumers": ["WP-PA-04+"]}
+    {"capsule_id": "WP-PA-03", "path": "Docs/engineering/context-capsules/WP-PA-03.json", "near_term_consumers": ["WP-PA-04+"]},
+    {"capsule_id": "WP-PA-04", "path": "Docs/engineering/context-capsules/WP-PA-04.json", "near_term_consumers": ["WP-PA-05+"]}
   ]
 }

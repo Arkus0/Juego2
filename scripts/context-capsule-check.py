@@ -50,6 +50,11 @@ CANONICAL_PA_DISPOSITION_SELECTORS = {
         "key_column": 0,
         "status_column": 1,
     },
+    "WP-PA-04": {
+        "section": "## 11. Juego2 disposition table",
+        "key_column": 0,
+        "status_column": 1,
+    },
 }
 
 
