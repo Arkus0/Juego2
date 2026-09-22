@@ -166,8 +166,18 @@ namespace Arkus.Harness.Tests
 
         private static DesignWorldProjection BuildSyntheticProjection(
             string mutatedSubject,
+            IEnumerable<DesignRelation> mutatedRelations)
+        {
+            return BuildSyntheticProjection(
+                mutatedSubject,
+                mutatedRelations,
+                Array.Empty<string>());
+        }
+
+        private static DesignWorldProjection BuildSyntheticProjection(
+            string mutatedSubject,
             IEnumerable<DesignRelation> mutatedRelations,
-            IEnumerable<string> omittedFactIds = null)
+            IEnumerable<string> omittedFactIds)
         {
             const string source =
                 "depth-alpha-anchor\n" +
@@ -175,9 +185,7 @@ namespace Arkus.Harness.Tests
                 "depth-beta-anchor\n" +
                 "allocation-beta-anchor\n";
 
-            var omitted = new HashSet<string>(
-                omittedFactIds ?? Array.Empty<string>(),
-                StringComparer.Ordinal);
+            var omitted = new HashSet<string>(omittedFactIds, StringComparer.Ordinal);
             var definitions = new List<AnchoredFactDefinition>();
             var universeIds = new List<string>();
             foreach (var id in SyntheticExpectedInteriorIds)
