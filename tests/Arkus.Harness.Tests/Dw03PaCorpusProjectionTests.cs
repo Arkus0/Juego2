@@ -261,14 +261,18 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void ExtraDuplicateRelationCardinalityIsSemanticRed()
+        public void ExtraRelationCardinalityWithValidSecondTargetIsSemanticRed()
         {
             var fixture = BuildFixture();
-            var target = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-finding");
+            var target = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-finding" && Field(fact, "pa-id") == "pa01");
+            var secondDisposition = fixture.Dataset.Projection.Facts.First(fact =>
+                fact.FactType == "pa-disposition" && !fact.FactId.StartsWith(target.FactId, StringComparison.Ordinal));
             var mutated = MutateOneRelation(fixture.Dataset, target.FactId, relations =>
             {
-                var result = new List<DesignRelation>(relations);
-                result.Add(relations.First(relation => relation.RelationType == "has-disposition"));
+                var result = new List<DesignRelation>(relations)
+                {
+                    new DesignRelation("has-disposition", secondDisposition.FactId)
+                };
                 return result;
             });
             AssertGenericGreen(mutated);
