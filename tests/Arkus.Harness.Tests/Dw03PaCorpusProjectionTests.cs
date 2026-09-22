@@ -34,8 +34,9 @@ namespace Arkus.Harness.Tests
                     .ThenBy(value => value, StringComparer.Ordinal)
                     .ToArray());
 
-            var pa04Negative = dataset.Queries.Fixture("pa04", "NC-02");
-            Assert.Contains("Privileged/debug metadata is causally non-authoritative", pa04Negative.MaterialText);
+            Assert.Contains(
+                "Privileged/debug metadata is causally non-authoritative",
+                dataset.Queries.Fixture("pa04", "NC-02").MaterialText);
 
             var pa05Negative = dataset.Queries.Fixture("pa05", "NC-02");
             Assert.Contains("HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE", pa05Negative.MaterialText);
@@ -43,12 +44,13 @@ namespace Arkus.Harness.Tests
                 Enumerable.Range(1, 10).Select(index => "PA-05-H" + index.ToString("00")).ToArray(),
                 dataset.Queries.FindingsLinkedToFixture("pa05", "NC-02").Select(record => record.SourceKey).ToArray());
 
-            var pa01Rejected = dataset.Queries.FindingsByDispositionFlag("reject")
-                .Where(record => record.PaId == "pa01")
-                .Select(record => record.SourceKey)
-                .OrderBy(value => value, StringComparer.Ordinal)
-                .ToArray();
-            Assert.Equal(new[] { "DL-11", "DL-12", "DL-14" }, pa01Rejected);
+            Assert.Equal(
+                new[] { "DL-11", "DL-12", "DL-14" },
+                dataset.Queries.FindingsByDispositionFlag("reject")
+                    .Where(record => record.PaId == "pa01")
+                    .Select(record => record.SourceKey)
+                    .OrderBy(value => value, StringComparer.Ordinal)
+                    .ToArray());
             Assert.Contains(dataset.Queries.FindingsByDispositionFlag("later"), record => record.PaId == "pa01" && record.SourceKey == "DL-13");
             Assert.Contains(dataset.Queries.FindingsByDispositionFlag("later"), record => record.PaId == "pa02" && record.SourceKey == "AG-09");
 
@@ -104,9 +106,9 @@ namespace Arkus.Harness.Tests
             var pa01 = Read(PaProjectionManifest.Pa01Path);
             var mutated = pa01.Replace("| DL-01 |", "| DL-X1 |", StringComparison.Ordinal);
             Assert.NotEqual(pa01, mutated);
-            var sources = SourcesWith(pa01: mutated);
 
-            var error = Assert.Throws<PaCorpusProjectionException>(() => new PaDesignWorldProvider().BuildAndValidate(sources));
+            var error = Assert.Throws<PaCorpusProjectionException>(() =>
+                new PaDesignWorldProvider().BuildAndValidate(SourcesWith(pa01: mutated)));
             Assert.Equal("pa.accepted_source_blob_mismatch", error.MachineCode);
         }
 
@@ -150,25 +152,17 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void OmittedFindingIsRedEvenWhenGenericProjectionSelfConfirms()
         {
-            var fixture = BuildFixture();
-            var target = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-finding" && Field(fact, "pa-id") == "pa01");
-            var mutated = Mutate(fixture.Dataset, facts =>
-                facts.Where(fact => fact.FactId != target.FactId)
-                    .Select(fact => RemoveRelationsTo(fact, target.FactId)).ToList());
-            AssertGenericGreen(mutated);
-            AssertOracleRed(fixture.Sources, mutated.Projection, "pa.semantic_fact_missing");
+            AssertOmissionRed(
+                fact => fact.FactType == "pa-finding" && Field(fact, "pa-id") == "pa01",
+                "pa.semantic_fact_missing");
         }
 
         [Fact]
         public void OmittedEvidenceItemIsRedEvenWhenGenericProjectionSelfConfirms()
         {
-            var fixture = BuildFixture();
-            var target = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-evidence" && Field(fact, "pa-id") == "pa02");
-            var mutated = Mutate(fixture.Dataset, facts =>
-                facts.Where(fact => fact.FactId != target.FactId)
-                    .Select(fact => RemoveRelationsTo(fact, target.FactId)).ToList());
-            AssertGenericGreen(mutated);
-            AssertOracleRed(fixture.Sources, mutated.Projection, "pa.semantic_fact_missing");
+            AssertOmissionRed(
+                fact => fact.FactType == "pa-evidence" && Field(fact, "pa-id") == "pa02",
+                "pa.semantic_fact_missing");
         }
 
         [Fact]
@@ -214,25 +208,17 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void LostNegativeFailureModeIsRedWhileOtherCorpusRemainsConsistent()
         {
-            var fixture = BuildFixture();
-            var target = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-failure-mode" && Field(fact, "pa-id") == "pa05");
-            var mutated = Mutate(fixture.Dataset, facts =>
-                facts.Where(fact => fact.FactId != target.FactId)
-                    .Select(fact => RemoveRelationsTo(fact, target.FactId)).ToList());
-            AssertGenericGreen(mutated);
-            AssertOracleRed(fixture.Sources, mutated.Projection, "pa.semantic_fact_missing");
+            AssertOmissionRed(
+                fact => fact.FactType == "pa-failure-mode" && Field(fact, "pa-id") == "pa05",
+                "pa.semantic_fact_missing");
         }
 
         [Fact]
         public void OmittedFixtureIsRedWhileFindingAndOtherFixturesRemain()
         {
-            var fixture = BuildFixture();
-            var target = fixture.Dataset.Projection.Facts.Single(fact => fact.FactType == "pa-fixture" && Field(fact, "pa-id") == "pa05" && Field(fact, "source-key") == "NC-02");
-            var mutated = Mutate(fixture.Dataset, facts =>
-                facts.Where(fact => fact.FactId != target.FactId)
-                    .Select(fact => RemoveRelationsTo(fact, target.FactId)).ToList());
-            AssertGenericGreen(mutated);
-            AssertOracleRed(fixture.Sources, mutated.Projection, "pa.semantic_fact_missing");
+            AssertOmissionRed(
+                fact => fact.FactType == "pa-fixture" && Field(fact, "pa-id") == "pa05" && Field(fact, "source-key") == "NC-02",
+                "pa.semantic_fact_missing");
         }
 
         [Fact]
@@ -252,7 +238,9 @@ namespace Arkus.Harness.Tests
             var fixture = BuildFixture();
             var target = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-finding");
             var mutated = MutateOneRelation(fixture.Dataset, target.FactId, relations => relations.Select(relation =>
-                relation.RelationType == "has-disposition" ? new DesignRelation("has-disposition-renamed", relation.TargetFactId) : relation).ToList());
+                relation.RelationType == "has-disposition"
+                    ? new DesignRelation("has-disposition-renamed", relation.TargetFactId)
+                    : relation).ToList());
             AssertGenericGreen(mutated);
             AssertOracleRed(fixture.Sources, mutated.Projection, "pa.semantic_relation_mismatch");
         }
@@ -262,9 +250,12 @@ namespace Arkus.Harness.Tests
         {
             var fixture = BuildFixture();
             var target = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-finding" && Field(fact, "pa-id") == "pa05");
-            var wrongDisposition = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-disposition" && !fact.FactId.StartsWith(target.FactId, StringComparison.Ordinal));
+            var wrongDisposition = fixture.Dataset.Projection.Facts.First(fact =>
+                fact.FactType == "pa-disposition" && !fact.FactId.StartsWith(target.FactId, StringComparison.Ordinal));
             var mutated = MutateOneRelation(fixture.Dataset, target.FactId, relations => relations.Select(relation =>
-                relation.RelationType == "has-disposition" ? new DesignRelation("has-disposition", wrongDisposition.FactId) : relation).ToList());
+                relation.RelationType == "has-disposition"
+                    ? new DesignRelation("has-disposition", wrongDisposition.FactId)
+                    : relation).ToList());
             AssertGenericGreen(mutated);
             AssertOracleRed(fixture.Sources, mutated.Projection, "pa.semantic_relation_mismatch");
         }
@@ -337,6 +328,17 @@ namespace Arkus.Harness.Tests
             AssertOracleRed(fixture.Sources, mutated.Projection, "pa.semantic_fact_missing");
         }
 
+        private static void AssertOmissionRed(Func<DesignFact, bool> selector, string code)
+        {
+            var fixture = BuildFixture();
+            var target = fixture.Dataset.Projection.Facts.First(selector);
+            var mutated = Mutate(fixture.Dataset, facts => facts
+                .Where(fact => fact.FactId != target.FactId)
+                .Select(fact => RemoveRelationsTo(fact, target.FactId)).ToList());
+            AssertGenericGreen(mutated);
+            AssertOracleRed(fixture.Sources, mutated.Projection, code);
+        }
+
         private static CorpusFixture BuildFixture()
         {
             var sources = ReadSources();
@@ -352,7 +354,10 @@ namespace Arkus.Harness.Tests
             return new MutatedProjection(projection, universe, reader);
         }
 
-        private static MutatedProjection MutateOneRelation(PaCorpusDataset dataset, string factId, Func<IReadOnlyList<DesignRelation>, IReadOnlyList<DesignRelation>> mutate)
+        private static MutatedProjection MutateOneRelation(
+            PaCorpusDataset dataset,
+            string factId,
+            Func<IReadOnlyList<DesignRelation>, IReadOnlyList<DesignRelation>> mutate)
         {
             return Mutate(dataset, facts => facts.Select(fact =>
                 fact.FactId == factId ? CopyFact(fact, relations: mutate(fact.Relations)) : fact).ToList());
@@ -393,7 +398,7 @@ namespace Arkus.Harness.Tests
 
         private static DesignFact CopyFact(
             DesignFact fact,
-            IDictionary<string, DesignValue>? fields = null,
+            IReadOnlyDictionary<string, DesignValue>? fields = null,
             IEnumerable<DesignRelation>? relations = null,
             DesignAuthorityAnchor? provenance = null)
         {
@@ -454,7 +459,8 @@ namespace Arkus.Harness.Tests
                 WasCalled = true;
                 return new PaCorpusSemanticReport(new[]
                 {
-                    new PaCorpusSemanticIssue("pa.semantic_sentinel", "sentinel", "wiring", "semantic oracle sentinel", Array.Empty<string>())
+                    new PaCorpusSemanticIssue(
+                        "pa.semantic_sentinel", "sentinel", "wiring", "semantic oracle sentinel", Array.Empty<string>())
                 });
             }
         }
