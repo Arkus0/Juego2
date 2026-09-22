@@ -14,15 +14,15 @@ For `WP-H1-02` through `WP-H1-GATE`, the default orchestration is **remote-first
 
 ## Context bootstrap
 
-Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile is a minimum starting pack, not a context ceiling. For an exact WP, full `Docs/ROADMAP.md` is conditional on unresolved cross-track/order/gate meaning; `FOUNDATIONAL_PROOF_STANDARD.md` is loaded when the exact claim binds it. Direct predecessor reconstruction below is unchanged. If the derived state index is stale/missing/contradictory for a mutable hint, ignore that hint and deepen to live GitHub + authoritative contracts.
+Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile is a minimum starting pack, not a context ceiling. For an exact WP, full `Docs/ROADMAP.md` is conditional on unresolved cross-track/order/gate meaning; `FOUNDATIONAL_PROOF_STANDARD.md` is loaded when the exact claim binds it. After CTX-02 adoption, a validated accepted-contract capsule may be the starting representation of an accepted predecessor under `Docs/engineering/CONTEXT_CAPSULE_V1.md`; it never replaces an authoritative read when a capsule escalation trigger, non-compressible source, direct proof/architecture binding or concrete reopen question is material. If any compact state is stale/missing/contradictory for a hint being used, ignore that hint and deepen to live GitHub + authoritative contracts.
 
 ## Preconditions
 
 - Read `AGENTS.md`, `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md`, the exact WP and `WORKER_REVIEW_PROTOCOL.md`; load ROADMAP/foundational/architecture surfaces when the worker profile or exact claim triggers them.
 - For `WP-H1-02` through `WP-H1-GATE`, also read `Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md` before planning execution.
 - Reconstruct current `main`, dependency satisfaction, open ownership and write-set conflicts from live GitHub.
-- Before editing, read each direct accepted dependency WP plus its accepted completion/PASS evidence, relevant proof matrix/residual risk, and binding architecture/invariants. Follow transitive predecessors only when those inherited invariants are material to the current WP.
-- Persist a short `PREDECESSOR_CONTRACT_CHECK` in Worker plan/evidence identifying inherited guarantees, current-WP-owned guarantees, guarantees intentionally consumed rather than re-proved, and the concrete trigger that would justify reopening an accepted predecessor boundary.
+- Before CTX-02 adoption, or for a direct dependency without a valid capsule, read the direct accepted dependency WP plus accepted completion/PASS evidence, relevant proof matrix/residual risk and binding architecture/invariants. After CTX-02 adoption, a mechanically valid capsule + independently confirmed accepted identity may instead start that reconstruction; follow its exact source pointers whenever the current claim needs a material detail, the capsule is lossy/suspect, a source is non-compressible, or concrete evidence could reopen the inherited guarantee. Follow transitive predecessors only when their invariants are material to the current WP.
+- Persist a short `PREDECESSOR_CONTRACT_CHECK` in Worker plan/evidence identifying capsule(s) used when applicable, any source escalations, inherited guarantees, current-WP-owned guarantees, guarantees intentionally consumed rather than re-proved, and the concrete trigger that would justify reopening an accepted predecessor boundary.
 - Do not auto-route to another workpack. If the requested WP is blocked, report the blocking prerequisite and STOP so the human can choose the next Worker task.
 
 ## Workflow
