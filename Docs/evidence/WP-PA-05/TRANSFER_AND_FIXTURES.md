@@ -71,7 +71,7 @@ A control FAILS if:
 
 ### Purpose
 
-Prove a claim reaches some actors and not others through two explicit opportunities separated in time, without broadcast or automatic receive→relay.
+Prove a claim reaches some actors and not others through two explicit opportunities separated in time, without broadcast or automatic receive→relay, and terminates for explicit actor/opportunity reasons.
 
 ### Fixed fixture
 
@@ -117,6 +117,10 @@ Injected PA-02-owned sender decisions/opportunities for this semantic fixture:
   decision D2: Manolo chooses TELL(target=Carmen, claim=X=true)
   opportunity O2: valid direct communication Manolo <-> Carmen
 
+After Carmen receives T2 through fixture end:
+  no later Carmen retell decision for X is supplied
+  no further valid communication opportunity for X is supplied
+
 Paco:
   no perception/public acquisition for X
   no valid communication opportunity with Antonio/Manolo/Carmen during fixture window
@@ -136,12 +140,16 @@ T2 exists at/after 18:05: Manolo -> Carmen, asserted X=true
 Carmen -> HELD(true) through PA-04 COMMUNICATION acquisition caused by T2
 
 Paco -> UNKNOWN for entire fixture window
+
+chain terminates at Carmen through fixture end:
+  no sender-owned retell decision + no valid further opportunity
 ```
 
 Additional requirements:
 
 - T2 cannot exist before Manolo's acquisition + the separate D2/O2 inputs.
 - Manolo receiving T1 alone cannot auto-create T2.
+- Carmen receiving T2 alone cannot auto-create a third transfer.
 - no relationship adjacency or canonical truth mutation may synthesize a delivery.
 - engine/debug trace may connect T1/T2 through privileged lineage if causally appropriate.
 - Carmen's actor-facing provenance contains only information actually communicated/acquired; hidden root/parent/hop fields are not implicitly actor-visible.
@@ -151,8 +159,9 @@ Additional requirements:
 - Paco learns X despite no valid acquisition cause;
 - Carmen learns before O2;
 - T2 is emitted automatically by T1/Manolo belief change;
+- any T3 is emitted without a new sender-owned decision plus valid opportunity;
 - one graph/broadcast operation updates Manolo/Carmen/Paco and later filtering hides the extra writes;
-- the fixture only says the chain *may* happen rather than requiring T1/T2 and the exact final epistemic states above.
+- the fixture only says the chain *may* happen rather than requiring T1/T2, explicit termination and the exact final epistemic states above.
 
 ## 4. NC-01 — NO_GLOBAL_TRUTH_SYNC
 
@@ -470,14 +479,15 @@ Try to produce a counterexample for each:
 
 1. CF-01 reaches Paco or reaches Carmen before O2.
 2. CF-01 T2 exists without a separate Manolo decision.
-3. NC-01 truth mutation creates any belief/transfer delta.
-4. CF-02 mutates truth or only changes presentation.
-5. NC-02 changes a second actor-visible variable together with lineage.
-6. NC-02 lets a technical dedup guard remove one delivered report.
-7. NC-02 compares a toy result rather than the effective receiver epistemic surface.
-8. CF-03 discovers Antonio from hidden lineage rather than explicit reported provenance.
-9. CF-04 terminates only because a global manager caps automatic diffusion.
-10. CF-04 exposes hidden loop identity as actor-facing evidence.
-11. CF-05 player origin updates non-recipients or uses a parallel quest rumour store.
-12. CF-05 investigation reads privileged engine/debug lineage instead of a legitimate player-facing evidence/source path.
-13. any fixture requires global population/social-graph enumeration before producing its bounded recipients.
+3. CF-01 produces a third transfer despite no later retell decision/opportunity.
+4. NC-01 truth mutation creates any belief/transfer delta.
+5. CF-02 mutates truth or only changes presentation.
+6. NC-02 changes a second actor-visible variable together with lineage.
+7. NC-02 lets a technical dedup guard remove one delivered report.
+8. NC-02 compares a toy result rather than the effective receiver epistemic surface.
+9. CF-03 discovers Antonio from hidden lineage rather than explicit reported provenance.
+10. CF-04 terminates only because a global manager caps automatic diffusion.
+11. CF-04 exposes hidden loop identity as actor-facing evidence.
+12. CF-05 player origin updates non-recipients or uses a parallel quest rumour store.
+13. CF-05 investigation reads privileged engine/debug lineage instead of a legitimate player-facing evidence/source path.
+14. any fixture requires global population/social-graph enumeration before producing its bounded recipients.
