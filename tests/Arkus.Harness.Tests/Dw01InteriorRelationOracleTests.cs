@@ -24,43 +24,60 @@ namespace Arkus.Harness.Tests
             var slice = new CityDesignWorldProvider().BuildAndValidate(programme, bindings, interiors);
 
             Assert.Equal(14, expectedInteriorIds.Count);
-            Assert.Empty(ValidateRelationShape(slice.InteriorProjection, expectedInteriorIds));
+            new CityInteriorRelationOracle().Validate(slice.InteriorProjection, expectedInteriorIds);
         }
 
         [Fact]
-        public void MissingAllocatesDepthRelationIsRedEvenWhenGenericValidatorSelfConfirms()
+        public void MissingAllocatesDepthRelationMakesCityOracleRedWhileGenericValidatorSelfConfirms()
         {
             var projection = BuildSyntheticProjection(
                 "loc.alpha",
                 Array.Empty<DesignRelation>());
 
-            var errors = ValidateRelationShape(projection, new[] { "loc.alpha", "loc.beta" });
+            var error = Assert.Throws<CityInvariantException>(() =>
+                new CityInteriorRelationOracle().Validate(
+                    projection,
+                    new[] { "loc.alpha", "loc.beta" }));
 
-            Assert.Contains("relation-missing:loc.alpha", errors);
+            Assert.Equal("city.interior_allocation_relation_missing", error.MachineCode);
+            Assert.Equal("loc.alpha", error.SubjectId);
+            Assert.Contains("allocation.loc.alpha", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("depth.loc.alpha", error.Detail, StringComparison.Ordinal);
+            Assert.Contains(CityDesignWorldProvider.InteriorsSourcePath, error.SourcePaths);
         }
 
         [Fact]
-        public void RenamedAllocatesDepthRelationIsRedEvenWhenGenericValidatorSelfConfirms()
+        public void RenamedAllocatesDepthRelationMakesCityOracleRedWhileGenericValidatorSelfConfirms()
         {
             var projection = BuildSyntheticProjection(
                 "loc.alpha",
                 new[] { new DesignRelation("allocates-interior", "depth.loc.alpha") });
 
-            var errors = ValidateRelationShape(projection, new[] { "loc.alpha", "loc.beta" });
+            var error = Assert.Throws<CityInvariantException>(() =>
+                new CityInteriorRelationOracle().Validate(
+                    projection,
+                    new[] { "loc.alpha", "loc.beta" }));
 
-            Assert.Contains("relation-missing:loc.alpha", errors);
+            Assert.Equal("city.interior_allocation_relation_missing", error.MachineCode);
+            Assert.Equal("loc.alpha", error.SubjectId);
         }
 
         [Fact]
-        public void WrongAllocatesDepthTargetIsRedEvenWhenGenericValidatorSelfConfirms()
+        public void WrongAllocatesDepthTargetMakesCityOracleRedWhileGenericValidatorSelfConfirms()
         {
             var projection = BuildSyntheticProjection(
                 "loc.alpha",
                 new[] { new DesignRelation("allocates-depth", "depth.loc.beta") });
 
-            var errors = ValidateRelationShape(projection, new[] { "loc.alpha", "loc.beta" });
+            var error = Assert.Throws<CityInvariantException>(() =>
+                new CityInteriorRelationOracle().Validate(
+                    projection,
+                    new[] { "loc.alpha", "loc.beta" }));
 
-            Assert.Contains("relation-target:loc.alpha", errors);
+            Assert.Equal("city.interior_allocation_relation_target_invalid", error.MachineCode);
+            Assert.Equal("loc.alpha", error.SubjectId);
+            Assert.Contains("depth.loc.beta", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("depth.loc.alpha", error.Detail, StringComparison.Ordinal);
         }
 
         private static DesignWorldProjection BuildSyntheticProjection(
@@ -121,53 +138,6 @@ namespace Arkus.Harness.Tests
                 "The causal control must preserve the generic self-confirming path so only the independent CITY oracle detects the defect.");
 
             return projection;
-        }
-
-        private static IReadOnlyList<string> ValidateRelationShape(
-            DesignWorldProjection interiors,
-            IEnumerable<string> expectedInteriorIds)
-        {
-            var errors = new List<string>();
-            var facts = interiors.Facts.ToDictionary(fact => fact.FactId, StringComparer.Ordinal);
-
-            foreach (var id in expectedInteriorIds.OrderBy(value => value, StringComparer.Ordinal))
-            {
-                var allocationId = "allocation." + id;
-                var depthId = "depth." + id;
-                if (!facts.TryGetValue(allocationId, out var allocation))
-                {
-                    errors.Add("allocation-missing:" + id);
-                    continue;
-                }
-
-                if (!facts.ContainsKey(depthId))
-                {
-                    errors.Add("depth-missing:" + id);
-                    continue;
-                }
-
-                var canonicalRelations = allocation.Relations
-                    .Where(relation => StringComparer.Ordinal.Equals(relation.RelationType, "allocates-depth"))
-                    .ToList();
-                if (canonicalRelations.Count == 0)
-                {
-                    errors.Add("relation-missing:" + id);
-                    continue;
-                }
-
-                if (canonicalRelations.Count != 1)
-                {
-                    errors.Add("relation-cardinality:" + id);
-                    continue;
-                }
-
-                if (!StringComparer.Ordinal.Equals(canonicalRelations[0].TargetFactId, depthId))
-                {
-                    errors.Add("relation-target:" + id);
-                }
-            }
-
-            return errors.AsReadOnly();
         }
 
         private static IReadOnlyList<string> ParseCity02InteriorIds(string programmeSource)
