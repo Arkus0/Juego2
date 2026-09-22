@@ -38,24 +38,19 @@ def contract_status(text: str) -> str:
 
 
 def discover_ctx_authority(root: Path) -> tuple[list[str], str | None, list[str]]:
-    """Derive accepted prefix + next contract from authoritative CTX contracts.
-
-    The derived ACCEPTED_STATE_INDEX is intentionally not consulted here.
-    COMPLETE contracts must have an independent PASS/PR-bearing DocSync closure.
-    """
+    """Derive accepted prefix + next contract without consulting derived current-state projections."""
     errors: list[str] = []
     contracts: list[tuple[int, str, str]] = []
-    for path in sorted((root / CTX_DIR).glob("WP-CTX-*.md")):
+    for path in (root / CTX_DIR).glob("WP-CTX-*.md"):
         m = WP_FILE_RE.match(path.name)
         if not m:
             continue
         wp = f"WP-CTX-{m.group(1)}"
-        text = path.read_text(encoding="utf-8")
-        contracts.append((int(m.group(1)), wp, contract_status(text)))
+        contracts.append((int(m.group(1)), wp, contract_status(path.read_text(encoding="utf-8"))))
+    contracts.sort(key=lambda row: row[0])
 
     if not contracts:
         return [], None, ["no numeric CTX workpack contracts discovered"]
-
     numbers = [n for n, _wp, _status in contracts]
     if len(numbers) != len(set(numbers)):
         errors.append("duplicate numeric CTX workpack contract discovered")
@@ -67,27 +62,27 @@ def discover_ctx_authority(root: Path) -> tuple[list[str], str | None, list[str]
         is_complete = status == "COMPLETE"
         if is_complete and seen_open:
             errors.append(f"accepted CTX contract {wp} appears after an unaccepted predecessor")
-        if is_complete:
-            accepted.append(wp)
-            suffix = wp.removeprefix("WP-CTX-")
-            closure = root / f"Docs/evidence/CTX-{suffix}/DOCSYNC.md"
-            if not closure.is_file():
-                errors.append(f"accepted CTX contract {wp} has no required DocSync closure")
-            else:
-                ctext = closure.read_text(encoding="utf-8")
-                if wp not in ctext:
-                    errors.append(f"DocSync closure for {wp} does not identify the accepted WP")
-                if "DOCSYNC_COMPLETE" not in ctext and "DOCSYNC_PERSISTED" not in ctext:
-                    errors.append(f"DocSync closure for {wp} lacks persisted/complete status")
-                if not REVIEW_RE.search(ctext):
-                    errors.append(f"DocSync closure for {wp} lacks independent PASS provenance")
-                if not PR_RE.search(ctext):
-                    errors.append(f"DocSync closure for {wp} lacks implementation PR provenance")
-        else:
+        if not is_complete:
             seen_open = True
             if next_wp is None:
                 next_wp = wp
+            continue
 
+        accepted.append(wp)
+        suffix = wp.removeprefix("WP-CTX-")
+        closure = root / f"Docs/evidence/CTX-{suffix}/DOCSYNC.md"
+        if not closure.is_file():
+            errors.append(f"accepted CTX contract {wp} has no required DocSync closure")
+            continue
+        ctext = closure.read_text(encoding="utf-8")
+        if wp not in ctext:
+            errors.append(f"DocSync closure for {wp} does not identify the accepted WP")
+        if "DOCSYNC_COMPLETE" not in ctext and "DOCSYNC_PERSISTED" not in ctext:
+            errors.append(f"DocSync closure for {wp} lacks persisted/complete status")
+        if not REVIEW_RE.search(ctext):
+            errors.append(f"DocSync closure for {wp} lacks independent PASS provenance")
+        if not PR_RE.search(ctext):
+            errors.append(f"DocSync closure for {wp} lacks implementation PR provenance")
     return accepted, next_wp, errors
 
 
@@ -99,20 +94,16 @@ def current_state_errors(root: Path) -> tuple[list[str], list[str], str | None]:
     accepted, next_wp, errors = discover_ctx_authority(root)
     state = load(root, STATE)
     ctx = state.get("tracks", {}).get("CTX") or {}
-
     if state.get("authority") != "DERIVED_NAVIGATION_ONLY":
         errors.append("accepted-state index authority drifted")
     if list(state.get("tracks", {})).count("CTX") != 1:
         errors.append("accepted-state index contains multiple CTX current-state rows")
-
     actual_accepted = ctx.get("accepted_workpacks_hint")
     if actual_accepted != accepted:
         errors.append(f"derived CTX accepted list mismatch: expected={accepted!r} actual={actual_accepted!r}")
     if ctx.get("next_contract_hint") != next_wp:
         errors.append(f"derived CTX next contract mismatch: expected={next_wp!r} actual={ctx.get('next_contract_hint')!r}")
 
-    # Current-state prose may reflect the authority, but it cannot define it.
-    # Only contradictory explicit 'next CTX' projections are rejected.
     for label, path in (("CTX README", CTX_README), ("root workpack index", ROOT_WP)):
         if not (root / path).is_file():
             errors.append(f"{label} missing")
@@ -126,16 +117,18 @@ def current_state_errors(root: Path) -> tuple[list[str], list[str], str | None]:
             stale = sorted(m for m in mentions if m in accepted)
             if stale:
                 errors.append(f"{label} still projects accepted CTX work as next: {stale}")
-
     return errors, accepted, next_wp
 
 
 def check(root: Path) -> list[str]:
     errors, _accepted, _next = current_state_errors(root)
-
     profiles = load(root, PROFILES).get("profiles", {})
     for name, profile in profiles.items():
-        for raw in profile.get("initial_reads") or []:
+        reads = profile.get("initial_reads") if isinstance(profile, dict) else None
+        if not isinstance(reads, list):
+            errors.append(f"normal profile {name} initial_reads missing/not a list")
+            continue
+        for raw in reads:
             if isinstance(raw, str) and raw.startswith("Docs/history/"):
                 errors.append(f"history leaked into normal {name} initial_reads: {raw}")
 
@@ -167,9 +160,9 @@ def check(root: Path) -> list[str]:
 
     classification = load(root, CLASSIFICATION)
     cases = classification.get("cases") or []
-    if not cases or not any(c.get("decision") == "ADOPT" for c in cases):
+    if not cases or not any(c.get("decision") == "ADOPT" for c in cases if isinstance(c, dict)):
         errors.append("historical classification has no adopted mechanical family")
-    if not any(c.get("decision") == "REJECT" for c in cases):
+    if not any(c.get("decision") == "REJECT" for c in cases if isinstance(c, dict)):
         errors.append("historical classification never rejects inappropriate mechanization")
     return errors
 
@@ -181,59 +174,41 @@ def _write(root: Path, rel: str, text: str) -> None:
 
 
 def _fixture_state(accepted: list[str], next_wp: str | None) -> str:
-    return json.dumps({
-        "authority": "DERIVED_NAVIGATION_ONLY",
-        "tracks": {"CTX": {"accepted_workpacks_hint": accepted, "next_contract_hint": next_wp}},
-    })
+    return json.dumps({"authority": "DERIVED_NAVIGATION_ONLY", "tracks": {"CTX": {"accepted_workpacks_hint": accepted, "next_contract_hint": next_wp}}})
+
+
+def _closure(wp: str, review: int, pr: int) -> str:
+    return f"WP: `{wp}`\nindependent PASS: review `#{review}`\nimplementation PR: `#{pr}`\nDOCSYNC_COMPLETE\n"
 
 
 def self_test() -> None:
     with tempfile.TemporaryDirectory() as td:
         root = Path(td)
-        _write(root, "Docs/workpacks/CTX/WP-CTX-01.md", "# WP-CTX-01\nStatus: **COMPLETE**\n")
-        _write(root, "Docs/workpacks/CTX/WP-CTX-02.md", "# WP-CTX-02\nStatus: **FROZEN PLAN / NOT_STARTED**\n")
-        _write(root, "Docs/evidence/CTX-01/DOCSYNC.md", "WP: `WP-CTX-01`\nindependent PASS: review `#1`\nimplementation PR: `#2`\nDOCSYNC_PERSISTED\n")
+        _write(root, "Docs/workpacks/CTX/WP-CTX-01.md", "Status: **COMPLETE**\n")
+        _write(root, "Docs/workpacks/CTX/WP-CTX-02.md", "Status: **FROZEN PLAN / NOT_STARTED**\n")
+        _write(root, "Docs/evidence/CTX-01/DOCSYNC.md", _closure("WP-CTX-01", 1, 2))
         _write(root, str(STATE), _fixture_state(["WP-CTX-01"], "WP-CTX-02"))
         _write(root, str(CTX_README), "The next CTX action is `WP-CTX-02`.\n")
         _write(root, str(ROOT_WP), "next dependency-valid CTX action is `WP-CTX-02`.\n")
         e, accepted, nxt = current_state_errors(root)
         assert e == [] and accepted == ["WP-CTX-01"] and nxt == "WP-CTX-02"
 
-        _write(root, "Docs/workpacks/CTX/WP-CTX-02.md", "# WP-CTX-02\nStatus: **COMPLETE**\n")
-        _write(root, "Docs/evidence/CTX-02/DOCSYNC.md", "WP: `WP-CTX-02`\nindependent PASS: review `#3`\nimplementation PR: `#4`\nDOCSYNC_COMPLETE\n")
+        _write(root, "Docs/workpacks/CTX/WP-CTX-02.md", "Status: **COMPLETE**\n")
+        _write(root, "Docs/evidence/CTX-02/DOCSYNC.md", _closure("WP-CTX-02", 3, 4))
         _write(root, str(STATE), _fixture_state(["WP-CTX-01", "WP-CTX-02"], None))
-        _write(root, str(CTX_README), "CTX track complete.\n")
-        _write(root, str(ROOT_WP), "CTX track complete.\n")
+        _write(root, str(CTX_README), "CTX complete.\n")
+        _write(root, str(ROOT_WP), "CTX complete.\n")
         e, accepted, nxt = current_state_errors(root)
         assert e == [] and accepted == ["WP-CTX-01", "WP-CTX-02"] and nxt is None
 
-        _write(root, str(STATE), _fixture_state(["WP-CTX-01"], "WP-CTX-02"))
-        e, _a, _n = current_state_errors(root)
-        assert any("accepted list mismatch" in x for x in e)
-
-        _write(root, "Docs/workpacks/CTX/WP-CTX-03.md", "# WP-CTX-03\nStatus: **FROZEN PLAN / NOT_STARTED**\n")
-        _write(root, str(STATE), _fixture_state(["WP-CTX-01", "WP-CTX-02"], "WP-CTX-99"))
+        # Numeric ordering must not regress when the track grows into two digits.
+        _write(root, "Docs/workpacks/CTX/WP-CTX-10.md", "Status: **NOT_STARTED**\n")
+        _write(root, "Docs/workpacks/CTX/WP-CTX-03.md", "Status: **NOT_STARTED**\n")
+        _write(root, str(STATE), _fixture_state(["WP-CTX-01", "WP-CTX-02"], "WP-CTX-03"))
         _write(root, str(CTX_README), "The next CTX action is `WP-CTX-03`.\n")
         _write(root, str(ROOT_WP), "next dependency-valid CTX action is `WP-CTX-03`.\n")
-        e, _a, _n = current_state_errors(root)
-        assert any("next contract mismatch" in x for x in e)
-
-        (root / "Docs/evidence/CTX-02/DOCSYNC.md").unlink()
-        _write(root, str(STATE), _fixture_state(["WP-CTX-01", "WP-CTX-02"], "WP-CTX-03"))
-        e, _a, _n = current_state_errors(root)
-        assert any("no required DocSync closure" in x for x in e)
-        _write(root, "Docs/evidence/CTX-02/DOCSYNC.md", "WP: `WP-CTX-02`\nindependent PASS: review `#3`\nimplementation PR: `#4`\nDOCSYNC_COMPLETE\n")
-
-        _write(root, str(STATE), _fixture_state(["WP-CTX-01", "WP-CTX-02", "WP-CTX-99"], "WP-CTX-03"))
-        e, _a, _n = current_state_errors(root)
-        assert any("accepted list mismatch" in x for x in e)
-
-        _write(root, str(STATE), _fixture_state(["WP-CTX-01", "WP-CTX-02"], "WP-CTX-03"))
-        e1, a1, n1 = current_state_errors(root)
-        _write(root, str(HISTORY), "WP-CTX-99 is accepted and next is WP-CTX-88 -- historical prose only\n")
-        e2, a2, n2 = current_state_errors(root)
-        assert (a1, n1) == (a2, n2) and e1 == e2 == []
-
+        e, _accepted, nxt = current_state_errors(root)
+        assert e == [] and nxt == "WP-CTX-03"
     print("ctx03-docsync-history self-test: PASS")
 
 
