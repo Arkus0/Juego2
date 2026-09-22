@@ -2,14 +2,15 @@
 
 WP: `WP-CTX-02`
 Baseline SHA: `f7b4f1e8247dfc927203dca6754b71aaa53938f3`
-Pre-review subject before report persistence: `12c4bfaa01b74c11668a930e4cc06c30813fa02e`
+Original pre-review subject before report persistence: `12c4bfaa01b74c11668a930e4cc06c30813fa02e`
+First frozen handoff candidate: `975249f242650b47b96e2af0fbf57a1d30cef23a`
 Class: `PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL`
 
 `WORKER_PRE_REVIEW: CLEAN`
 
-`WORKER_PRE_REVIEW_FINDINGS_FIXED: 8`
+`WORKER_PRE_REVIEW_FINDINGS_FIXED: 9`
 
-This report records the complete strict Worker pre-review performed while PR #113 remained Draft + ACTIVE. Persisting this report is intentionally the final planned repository-byte mutation. Per protocol, that mutation invalidates the cleanliness of the pre-report SHA until the same complete checks are rerun on the resulting final candidate; the exact final no-write rerun is therefore bound on the durable PR handoff before freeze.
+This report records the complete strict Worker pre-review performed while PR #113 remained Draft + ACTIVE, plus the mechanical Ready-handoff defect found before any independent Reviewer began. The first Ready transition was returned to Draft + ACTIVE before repository repair. Persisting this updated report is the final planned repository-byte mutation; the resulting SHA must receive the same complete no-write rerun and a green Worker handoff lint before it can freeze.
 
 ## Contract and inherited boundary
 
@@ -24,7 +25,7 @@ Re-read and challenged:
 
 The predecessor check remains valid. CTX-01's authority ordering, fail-closed escalation, Worker pre-review, Reviewer independence and H1 local-executor boundary are consumed rather than re-proved. CTX-02 newly owns only accepted-contract capsule navigation/compression and its validation/adoption mechanics.
 
-While CTX-02 was active, live `main` advanced from the recorded Worker baseline to `ac56ff2138945557a4a795f7b5abd2005094433e` through plan-only PR #114. That PR changes only `Docs/workpacks/CTX/WP-CTX-03.md`, explicitly keeps CTX-03 blocked on CTX-02 and does not touch CTX-01, CTX-02 or PR #113's write set. This non-causal main advance does not invalidate the CTX-02 predecessor check or require importing future CTX-03 planning bytes into this candidate.
+While CTX-02 was active, live `main` first advanced from the recorded Worker baseline through plan-only PR #114. That PR changed only `Docs/workpacks/CTX/WP-CTX-03.md`, explicitly kept CTX-03 blocked on CTX-02 and did not touch CTX-01, CTX-02 or PR #113's write set. A later accidental empty root-file add on `main` was immediately reverted; comparison of the resulting current-main tree against the post-#114 tree reports zero file differences. These non-causal history advances do not invalidate the CTX-02 predecessor check or require importing future CTX-03 planning bytes into this candidate.
 
 ## Complete diff / scope verdict
 
@@ -59,7 +60,7 @@ PA-03 explicitly protects the inherited PA-02 exclusion `default global/N-hop so
 
 Current PA-01..03 canonical result files total 73,039 bytes versus 14,011 bytes for their capsule JSON files: 59,028 fewer bytes, about 80.8% less repeated accepted-result payload before tokenizer effects. This is a byte measurement only, not a model-token claim.
 
-## Findings found and repaired before handoff
+## Findings found and repaired before independent review
 
 1. **Final-evidence rerun gap.** Capsule CI originally did not trigger on CTX-02 evidence changes. Repaired by adding `Docs/evidence/CTX-02/**` so the final evidence-bearing SHA reruns the capsule audit.
 2. **Positive-loss false proof.** The first positive omission control could RED merely because all exports were removed and schema shape failed. Repaired with a separate independent oracle that removes one of two material positive guarantees while another remains; structural capsule validation still passes and the independent oracle must detect the loss.
@@ -69,6 +70,7 @@ Current PA-01..03 canonical result files total 73,039 bytes versus 14,011 bytes 
 6. **Protocol self-adoption ambiguity.** Directly changing predecessor-read mechanics could have retroactively changed CTX-02's own process. Repaired with `WORKER_REVIEW_PROTOCOL` v1.9 adoption deferred until CTX-02 independent PASS + merge + DocSync; CTX-02 itself remains governed by v1.8 and used full predecessor reconstruction.
 7. **Residual unconditional Worker profile read.** `context-bootstrap-profiles.json` still phrased direct dependencies as an exact dependency-WP read even when a capsule was valid. Repaired to an explicit capsule-or-authoritative-source path with fail-closed escalation.
 8. **Discoverability regression path.** Bootstrap/skills could later stop naming the capsule mechanism while capsule data remained green. Repaired `CONTEXT_BOOTSTRAP_V1`, explicit skill protocol paths and an independent wiring control that REDs if Worker/Repair/Reviewer/DocSync no longer discover the capsule protocol.
+9. **Ready handoff predecessor marker missing.** The first Ready transition on frozen candidate `975249f242650b47b96e2af0fbf57a1d30cef23a` had a GREEN exact-SHA freeze verifier but Worker handoff lint RED because `PREDECESSOR_CONTRACT_CHECK.md` did not contain the literal marker `PREDECESSOR_CONTRACT_CHECK`. The file itself had been persisted before implementation and already contained all required reasoning, so the defect was durable handoff syntax rather than missing predecessor work. PR returned to Draft + ACTIVE, the canonical marker was added to that evidence file, and this full pre-review was rerun before a new freeze.
 
 ## Causal negative controls
 
@@ -89,22 +91,25 @@ The exact candidate validation surface exercises:
 
 The production capsule/index does not define the complete universe used to prove itself: accepted identity comes from independent completion metadata/live state, source integrity from repository bytes, PA row coverage from canonical result tables, PA chain coverage from canonical result+WP discovery, and one-of-many material-loss tests from a separate test-only oracle.
 
-## Validation before report persistence
+## Validation history
 
 On exact pre-report SHA `12c4bfaa01b74c11668a930e4cc06c30813fa02e`:
 
 - `Context Capsule Validation` run `35685529557` / #24: **SUCCESS**;
-  - self-test fail-closed validator: SUCCESS;
-  - independent material-loss + adoption-wiring controls: SUCCESS;
-  - representative capsules + accepted PA-chain audit: SUCCESS;
 - `Arkus Candidate Validation` run `35685529565` / #919: **SUCCESS**.
 
-Historical useful RED→GREEN evidence is preserved in Actions: run `35684684410` RED exposed bad H1 evidence navigation; repaired run `35684803654` GREEN. Later run `35685443916` RED exposed missing deterministic capsule discovery in repair skill; the final wiring repair is covered by the successful pre-report run above.
+On first frozen candidate `975249f242650b47b96e2af0fbf57a1d30cef23a` before the handoff-marker repair:
+
+- `Context Capsule Validation` run `35685630382` / #25: **SUCCESS**;
+- `Arkus Candidate Validation` run `35685630373` / #920: **SUCCESS** while Draft;
+- Ready run `35685757106` / #921: `Freeze exact-SHA validation` **SUCCESS**, `Worker handoff lint` **FAIL** solely on missing literal predecessor evidence marker.
+
+Other useful RED→GREEN evidence is preserved in Actions: run `35684684410` RED exposed bad H1 evidence navigation; repaired run `35684803654` GREEN. Run `35685443916` RED exposed missing deterministic capsule discovery in repair skill; the later adoption-wiring run GREEN after repair.
 
 ## Residual boundary
 
 No product/runtime semantics are claimed. Capsules remain navigation only. Token counts vary by tokenizer; only the byte reduction above is asserted here. Exact non-compressible production/proof material can still be large when the current question genuinely needs it; CTX-02 optimizes repeated inherited reconstruction, not necessary source depth.
 
-## Pre-report verdict
+## Current verdict before final rerun
 
-No known in-claim blocker remains on the reviewed implementation/process bytes. The report persistence commit must now receive the same complete no-write rerun, after which the resulting exact SHA may be recorded as the frozen candidate and handed to a fresh independent Reviewer.
+No known semantic/in-claim blocker remains. The final evidence mutation consists only of the canonical predecessor marker and this truthful pre-review update. The resulting exact SHA must now pass the complete capsule audit, Candidate Validation, Worker handoff lint and Freeze exact-SHA validation before it is recorded as the new frozen candidate.
