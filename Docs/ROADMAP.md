@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.30 — 2026-09-21
+Version: 1.31 — 2026-09-22
 
 ## North star
 
@@ -8,7 +8,7 @@ Build an engine-agnostic, commercially viable AI-native game-authoring platform 
 
 A fresh AI agent, without C# implementation knowledge, must be able to discover available capabilities and safely create, inspect, modify, validate, diff, replay and test a representative world through stable machine-readable contracts.
 
-**H0 / `WP-HK-GATE` has passed. The Engine Bridge / Unity-first H1 plan is accepted and binding after PR `#71` PASS and merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; no H1 implementation WP is active until a human starts it. Gameplay and keeper realization remain blocked until `WP-H1-GATE` passes, merges and completes DocSync; the bounded CITY-04 greybox has the narrower H1-08 prerequisite recorded below.**
+**H0 / `WP-HK-GATE` has passed. The Engine Bridge / Unity-first H1 plan is accepted and binding after PR `#71` PASS and merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; no H1 implementation WP is active until a human starts it. Gameplay and keeper realization remain blocked until `WP-H1-GATE` passes, merges and completes DocSync; the bounded CITY-04 greybox has the narrower H1-08 prerequisite recorded below. The proposed DW second-consumer validation track remains non-binding until PR `#117` independently passes, merges and completes DocSync; if accepted, it runs in parallel with H1 and conditionally interlocks only the final H2 public/external-boundary acceptance as recorded below.**
 
 Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Robustness work in H0 is repository-local testing of the harness's own code, fixtures and contracts. New work uses the neutral negative-conformance terminology defined in `AGENTS.md`.
 
@@ -201,9 +201,48 @@ H1 ends only when `WP-H1-GATE` answers the published reference question affirmat
 
 ---
 
-# H2 — Vertical Slice Foundation (blocked by Unity parity gate)
+# DW — Design World second-consumer validation (parallel with H1; conditional H2 boundary gate)
 
-Only after `WP-H1-GATE` PASS, merge and DocSync:
+Status: **PLAN PROPOSED / NOT BINDING** until planning PR `#117` independently PASSes, merges and completes DocSync. If accepted, all seven implementation/gate workpacks are foundational and run through the normal exact-SHA Worker → independent Reviewer protocol.
+
+DW pressure-tests accepted Arkus/H0 with two materially different non-runtime consumers while preserving source authority and generic kernel semantics. It consumes accepted CITY design facts and accepted PA research/evidence as authorities, then measures whether structured retrieval can reduce context without degrading actual agent task/review correctness. CTX remains the accepted process-context baseline rather than being invalidated by DW.
+
+## DW dependency graph
+
+```text
+WP-HK-GATE
+    |
+    v
+ DW-00 -> DW-01 -> DW-02 -> DW-03 -> DW-04 -> DW-05 -> DW-GATE
+                            ^          ^
+                            |          |
+                    PA-01..05 accepted CTX-03 accepted
+
+H1 proceeds independently in parallel.
+DW-GATE ---- conditional planning interlock ----> final H2 public/external-boundary acceptance
+```
+
+| Order | Workpack | Owned outcome | Execution |
+|---:|---|---|---|
+| 1 | `WP-DW-00` | generic authority-preserving/rebuildable Design World projection contract | `REMOTE_OK` |
+| 2 | `WP-DW-01` | first CITY semantic/invariant consumer with causal omission detection | `REMOTE_OK` |
+| 3 | `WP-DW-02` | useful CITY deterministic queries/content-shape projection | `REMOTE_OK` |
+| 4 | `WP-DW-03` | lossless PA findings/evidence/dispositions/fixtures projection | `REMOTE_OK` |
+| 5 | `WP-DW-04` | frozen paired CTX-vs-DW agent trial: deterministic scoring of actual task/review correctness plus context cost | `REMOTE_OK` |
+| 6 | `WP-DW-05` | generic-boundary stress, limitation routing and H2 impact classification | `REMOTE_OK` |
+| 7 | `WP-DW-GATE` | composed second-consumer readiness and explicit H2 planning consequence | `REMOTE_OK` |
+
+Cross-track prerequisites do not transfer ownership: PA remains authority for PA research, CTX remains authority for process/context policy, CITY remains authority for CITY design, and H1 keeps Unity bridge ownership. DW does not block H1 implementation and does not itself authorize H2 gameplay/first-playable work.
+
+If this DW plan is accepted, **final H2 public/external-boundary acceptance must consume accepted `DW-GATE` evidence or explicitly review and disposition the DW interlock before that boundary is frozen**. The preferred sequence is `DW-GATE` PASS + merge + DocSync before final H2 boundary acceptance. Earlier H2 exploration/planning remains possible under its existing H1 prerequisites, but it may not silently freeze a boundary that makes the authorized second-consumer proof irrelevant or impossible to incorporate.
+
+The binding DW architecture/workpack contracts, if the plan is accepted, are `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md` and `Docs/workpacks/DW/**`. The track does not claim arbitrary-domain universality, external-repository packaging readiness or permission to replace accepted Markdown/source authorities wholesale.
+
+---
+
+# H2 — Vertical Slice Foundation (blocked by Unity parity gate; final boundary conditionally interlocked with accepted DW)
+
+Only after `WP-H1-GATE` PASS, merge and DocSync may H2 gameplay/first-playable production proceed under this roadmap. If DW planning PR `#117` is independently accepted, the final H2 public/external-boundary acceptance additionally requires accepted `WP-DW-GATE` evidence **or** an explicit reviewed H2 disposition of the DW evidence/interlock; this condition does not predefine H2 implementation scope or make DW a substitute for H1-GATE.
 
 - build the first playable/demo with **maximum practical direct reuse of the Quaternius Source baseline already adopted at H1-04** rather than waiting for final custom art;
 - use `Docs/art/VISUAL_BIBLE.md` as the visual/adaptation contract and progressively create separately identified Juego2-derived assets only where concrete needs require Cantabrian materials/architecture, clothing/outfits, missing props/meshes, variants or missing/retargeted animations;

@@ -1,8 +1,8 @@
 # Foundational Proof Standard
 
-Version: 1.4 — 2026-09-20
+Version: 1.5 — 2026-09-22
 
-This standard binds every `HK-*` workpack through `WP-HK-GATE` and every workpack marked `FOUNDATIONAL` in the accepted H1 Engine Bridge plan, including `WP-H1-GATE`.
+This standard binds every `HK-*` workpack through `WP-HK-GATE`, every workpack marked `FOUNDATIONAL` in the accepted H1 Engine Bridge plan (including `WP-H1-GATE`), and every workpack marked `FOUNDATIONAL` in the accepted DW Design World plan (including `WP-DW-GATE`). The `PROCESS_ONLY` planning PRs that adopt H1 or DW are not themselves foundational merely because they amend this standard.
 
 Green CI is necessary but insufficient. A foundational candidate must show why its central architectural claim is complete enough to trust downstream work **inside an explicit, finite trust boundary**. Foundational proof is not a mandate to prove arbitrary pathological behavior of the language toolchain, operating system, package manager, CI runner or other declared trusted infrastructure.
 
@@ -14,11 +14,13 @@ Historical evidence may use terms such as `self-attack`, `attack fixture`, `bypa
 
 ## Adoption boundary
 
-Version 1.4 applies to every H1 foundational Worker/review cycle that starts after the H1 planning commit containing this version reaches `main`. It does not retroactively alter accepted H0 evidence and it does not bind the `PROCESS_ONLY` PR that adopts the H1 plan.
+Version 1.5 applies to every DW foundational Worker/review cycle that starts after the accepted DW planning commit containing this version reaches `main`. It does not retroactively alter accepted H0 or H1 evidence, it does not reopen an already accepted H0/H1 candidate, and it does not bind the `PROCESS_ONLY` PR that adopts the DW plan.
 
-A workpack registered or resequenced by that same adoption commit may start only after the commit is on `main`; its later implementation candidate is therefore governed by v1.4. A candidate already validly frozen remains reviewable under the proof standard that governed its freeze. This process change does not itself create an implementation defect; it defines the evidence required of later cycles.
+The H1 adoption boundary remains the one established by v1.4: every H1 foundational Worker/review cycle that starts after the H1 planning commit containing v1.4 reaches `main` is governed by the foundational proof obligations and engine-backed evidence rule introduced there. Version 1.5 adds DW applicability only; it does not change the proof meaning of already accepted H1 evidence.
 
-Version 1.3 remains the accepted standard under which the final H0 candidates were reviewed. Version 1.4 adds H1 applicability and the engine-backed evidence rule below; it does not reopen H0.
+A DW workpack registered or resequenced by the DW adoption commit may start only after that commit is on `main`; its later implementation candidate is therefore governed by v1.5. A candidate already validly frozen remains reviewable under the proof standard that governed its freeze. This process change does not itself create an implementation defect; it defines the evidence required of later cycles.
+
+Version 1.3 remains the accepted standard under which the final H0 candidates were reviewed. Version 1.4 added H1 applicability and the engine-backed evidence rule below. Version 1.5 adds DW applicability without reopening H0 or H1.
 
 ## Engine-backed evidence rule
 
