@@ -469,7 +469,7 @@ def run_representative_controls() -> None:
 
 
 def run_synthetic_regressions() -> None:
-    """Keep the prior two Reviewer FAIL families and one-of-many omission controls."""
+    """Keep prior production-invariant regressions and synthetic mutation sanity checks."""
     with tempfile.TemporaryDirectory() as td:
         repo = Path(td)
         (repo / "Docs/workpacks/PA").mkdir(parents=True)
@@ -556,6 +556,9 @@ def run_synthetic_regressions() -> None:
 
         checker.validate_capsule(repo, capsule)
 
+        # Mutation sanity only. The required semantic RED for one-of-many loss is
+        # exercised on an actual indexed representative capsule by
+        # context-capsule-omission-controls.py using the independent oracle.
         expected_exports = {"directed-affect", "behavioral-effect"}
         actual_exports = {row["id"] for row in capsule["exported_guarantees"]}
         if actual_exports != expected_exports:
@@ -586,8 +589,8 @@ def run_synthetic_regressions() -> None:
             ],
             "coverage_rules": {
                 "pa_accepted_result_chain": {
-                    "result_glob": "Docs/research/living-world/results/PA-*.md",
-                    "workpack_template": "Docs/workpacks/PA/WP-PA-{NN}.md",
+                    "workpack_glob": "Docs/workpacks/PA/WP-PA-[0-9][0-9].md",
+                    "result_template": "Docs/research/living-world/results/PA-{NN}.md",
                 }
             },
         }
