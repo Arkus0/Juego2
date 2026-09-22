@@ -72,11 +72,29 @@ def parse_completion(text: str) -> dict:
         r"(?mi)^\s*-\s*Merge SHA:\s*`?([0-9a-f]{40})`?",
         r"(?mi)^Merge SHA:\s*`?([0-9a-f]{40})`?",
     ]
-    review_patterns = [
-        r"(?mi)^Independent review:.*?review\s*`?#?(\d+)`?",
-        r"(?mi)^\s*-\s*Reviewer evidence:\s*PR review\s*`?#?(\d+)`?",
-        r"(?mi)^Reviewer evidence:\s*PR review\s*`?#?(\d+)`?",
-    ]
+    inline_pass_review = re.search(
+        r"(?mi)^Independent review:\s*(?:\*\*)?PASS(?:\*\*)?\s*,?.*?review\s*`?#?(\d+)`?",
+        text,
+    )
+    review_id = inline_pass_review.group(1).lower() if inline_pass_review else None
+    if review_id is None:
+        has_pass_verdict = re.search(
+            r"(?mi)^\s*(?:-\s*)?(?:Independent\s+)?Reviewer verdict:\s*`?(?:\*\*)?PASS(?:\*\*)?`?\s*$",
+            text,
+        )
+        if not has_pass_verdict:
+            raise CapsuleError("identity source missing independent PASS review verdict")
+        review_patterns = [
+            r"(?mi)^\s*-\s*Reviewer evidence:\s*PR review\s*`?#?(\d+)`?",
+            r"(?mi)^Reviewer evidence:\s*PR review\s*`?#?(\d+)`?",
+        ]
+        for pattern in review_patterns:
+            match = re.search(pattern, text)
+            if match:
+                review_id = match.group(1).lower()
+                break
+        if review_id is None:
+            raise CapsuleError("identity source missing independent PASS review id")
     def first(patterns, name):
         for pattern in patterns:
             match = re.search(pattern, text)
@@ -87,7 +105,7 @@ def parse_completion(text: str) -> dict:
         "state": "ACCEPTED",
         "reviewed_candidate_sha": first(candidate_patterns, "reviewed/accepted candidate SHA"),
         "merge_sha": first(merge_patterns, "merge SHA"),
-        "review_id": first(review_patterns, "independent PASS review id"),
+        "review_id": review_id,
     }
 
 def parse_disposition_table(text: str, spec: dict) -> dict[str, str]:
@@ -153,6 +171,10 @@ def validate_basic_shape(capsule: dict) -> None:
         value = capsule.get(field)
         if not isinstance(value, list) or not value:
             raise CapsuleError(f"{cid}: {field} must be a non-empty list")
+    for field in ("reopen_conditions", "escalate_if"):
+        for i, entry in enumerate(capsule[field]):
+            if not isinstance(entry, str) or not entry.strip():
+                raise CapsuleError(f"{cid}: {field}[{i}] must be a non-empty string")
     for field in ("exported_guarantees", "exclusions_nonclaims"):
         ids = set()
         for entry in capsule[field]:
@@ -404,6 +426,18 @@ def run_self_test() -> None:
         missing_positive = copy.deepcopy(capsule)
         missing_positive["exported_guarantees"] = []
         expect_failure(lambda: validate_capsule(repo, missing_positive), "exported_guarantees")
+        malformed_reopen = copy.deepcopy(capsule)
+        malformed_reopen["reopen_conditions"] = [None]
+        expect_failure(lambda: validate_capsule(repo, malformed_reopen), "reopen_conditions[0] must be a non-empty string")
+        blank_escalation = copy.deepcopy(capsule)
+        blank_escalation["escalate_if"] = ["   "]
+        expect_failure(lambda: validate_capsule(repo, blank_escalation), "escalate_if[0] must be a non-empty string")
+        fail_review_text = wp_text.replace("**PASS**", "**FAIL**")
+        wp.write_text(fail_review_text, encoding="utf-8")
+        fail_review = copy.deepcopy(capsule)
+        fail_review["identity_source"]["git_blob_sha"] = git_blob_sha(wp.read_bytes())
+        expect_failure(lambda: validate_capsule(repo, fail_review), "independent PASS review verdict")
+        wp.write_text(wp_text, encoding="utf-8")
         missing_reject = copy.deepcopy(capsule)
         missing_reject["dispositions"] = missing_reject["dispositions"][:-1]
         expect_failure(lambda: validate_capsule(repo, missing_reject), "structured disposition coverage is lossy")
