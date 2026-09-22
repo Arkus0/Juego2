@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Independent defect-injection and adoption-wiring controls for Context Capsule v1.
 
-The representative expectations in this file are deliberately test-only. They
-are an independent oracle for the actual H1/CITY/PA boundaries selected by
-WP-CTX-02; they are not imported by the production checker and are not a
-production semantic registry. Generic natural-language equivalence remains a
-Reviewer/escalation responsibility.
+Representative semantic expectations are deliberately test-only. They are
+independent of the audited capsule/index and are not imported by the production
+checker. Generic natural-language equivalence remains a Reviewer/escalation
+responsibility.
 """
 from __future__ import annotations
 
@@ -26,12 +25,27 @@ if spec is None or spec.loader is None:
 checker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(checker)
 
+FULL_VALIDATION_COMMANDS = [
+    "python3 scripts/context-capsule-check.py --self-test",
+    "python3 scripts/context-capsule-controls.py",
+    "python3 scripts/context-capsule-omission-controls.py",
+    "python3 scripts/context-capsule-pa-semantic-controls.py",
+    "python3 scripts/context-capsule-check.py --audit-index --repo-root .",
+]
 
 # Test-only oracle for the actual representative boundaries selected by CTX-02.
-# Exact prose belongs here precisely so production validation does not acquire a
-# semantic registry. A change to these expectations is visible review evidence.
+# Exact prose/path expectations live here so production validation does not grow
+# a general semantic registry. Changing these fixtures is review-visible and must
+# be justified against the external authoritative sources.
 REPRESENTATIVE_ORACLE = {
     "WP-HK-GATE": {
+        "authority_paths": {
+            "Docs/workpacks/HK/WP-HK-GATE.md",
+            "Docs/evidence/WP-HK-GATE/VERDICT.md",
+            "Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md",
+            "Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md",
+        },
+        "mandatory_reads": set(),
         "exports": {
             "h0-authoring-readiness": (
                 "H0 passed the accepted AI-authoring readiness gate and may be consumed as the engine-neutral authoring foundation.",
@@ -68,6 +82,8 @@ REPRESENTATIVE_ORACLE = {
         "directional": {},
     },
     "WP-CITY-03": {
+        "authority_paths": {"Docs/workpacks/CITY/WP-CITY-03.md"},
+        "mandatory_reads": {checker.CITY_PRODUCT_SEED},
         "exports": {
             "selected-retained-seed": (
                 "CITY-03 accepted one exact retained keeper seed and owns its hard playable boundary.",
@@ -100,6 +116,8 @@ REPRESENTATIVE_ORACLE = {
         "directional": {},
     },
     "WP-PA-03": {
+        "authority_paths": {"Docs/research/living-world/results/PA-03.md"},
+        "mandatory_reads": set(),
         "exports": {
             "directed-affect": (
                 "Trust, affinity and fear are directed stances; changing A→B does not mirror or mutate B→A.",
@@ -199,19 +217,40 @@ def directional_map(capsule: dict) -> dict[str, tuple[str, str]]:
     return result
 
 
+def source_paths(capsule: dict, field: str) -> set[str]:
+    return {
+        row.get("path")
+        for row in capsule.get(field, [])
+        if isinstance(row, dict) and isinstance(row.get("path"), str)
+    }
+
+
+def assert_representative_inventory(capsules: dict[str, dict]) -> None:
+    missing = sorted(set(REPRESENTATIVE_ORACLE) - set(capsules))
+    if missing:
+        raise checker.CapsuleError(
+            f"independent representative oracle: indexed representative capsule(s) missing: {missing}"
+        )
+
+
 def assert_representative_semantics(capsule: dict) -> None:
     cid = capsule.get("capsule_id")
     expected = REPRESENTATIVE_ORACLE.get(cid)
     if expected is None:
         raise checker.CapsuleError(f"independent representative oracle has no fixture for {cid}")
-
-    actual_exports = statement_map(capsule, "exported_guarantees")
-    if actual_exports != expected["exports"]:
+    if source_paths(capsule, "authoritative_sources") != expected["authority_paths"]:
+        raise checker.CapsuleError(
+            f"independent representative oracle: {cid} authoritative source inventory mismatch"
+        )
+    if source_paths(capsule, "mandatory_source_reads") != expected["mandatory_reads"]:
+        raise checker.CapsuleError(
+            f"independent representative oracle: {cid} mandatory source-read inventory mismatch"
+        )
+    if statement_map(capsule, "exported_guarantees") != expected["exports"]:
         raise checker.CapsuleError(
             f"independent representative oracle: {cid} exported_guarantees material content mismatch"
         )
-    actual_exclusions = statement_map(capsule, "exclusions_nonclaims")
-    if actual_exclusions != expected["exclusions"]:
+    if statement_map(capsule, "exclusions_nonclaims") != expected["exclusions"]:
         raise checker.CapsuleError(
             f"independent representative oracle: {cid} exclusions_nonclaims material content mismatch"
         )
@@ -230,7 +269,7 @@ def assert_representative_semantics(capsule: dict) -> None:
 
 
 def load_indexed_capsules(repo_root: Path) -> tuple[dict, dict[str, dict]]:
-    index = checker.load_json(repo_root / "Docs/engineering/context-capsules/index.json")
+    index = checker.load_json(repo_root / checker.CANONICAL_INDEX_PATH)
     capsules: dict[str, dict] = {}
     for entry in index.get("entries", []):
         if not isinstance(entry, dict):
@@ -254,13 +293,17 @@ def require_text(path: Path, needles: list[str]) -> None:
             )
 
 
+def require_full_surface(path: Path) -> None:
+    require_text(path, FULL_VALIDATION_COMMANDS)
+
+
 def validate_adoption_wiring(repo_root: Path) -> None:
     profile_path = repo_root / "Docs/engineering/context-bootstrap-profiles.json"
     try:
         profiles = json.loads(profile_path.read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError) as exc:
         raise checker.CapsuleError("adoption wiring cannot read context-bootstrap-profiles.json") from exc
-    if profiles.get("capsule_protocol") != "Docs/engineering/CONTEXT_CAPSULE_V1.md":
+    if profiles.get("capsule_protocol") != checker.CANONICAL_PROTOCOL_PATH:
         raise checker.CapsuleError("bootstrap profile root must discover CONTEXT_CAPSULE_V1.md")
     role_map = profiles.get("profiles")
     if not isinstance(role_map, dict):
@@ -279,7 +322,7 @@ def validate_adoption_wiring(repo_root: Path) -> None:
 
     require_text(
         repo_root / "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md",
-        ["Docs/engineering/CONTEXT_CAPSULE_V1.md", "WP-CTX-02"],
+        [checker.CANONICAL_PROTOCOL_PATH, "WP-CTX-02"],
     )
     require_text(
         repo_root / "Docs/engineering/WORKER_REVIEW_PROTOCOL.md",
@@ -294,8 +337,22 @@ def validate_adoption_wiring(repo_root: Path) -> None:
     ):
         require_text(repo_root / relative, ["CONTEXT_CAPSULE_V1.md"])
 
+    # The protocol, DocSync skill and CI workflow all claim/define the canonical
+    # validation surface. They must name the same complete command set.
+    require_full_surface(repo_root / checker.CANONICAL_PROTOCOL_PATH)
+    require_full_surface(repo_root / ".agents/skills/update-handoff/SKILL.md")
+    workflow = repo_root / ".github/workflows/context-capsule-validation.yml"
+    require_full_surface(workflow)
 
-def run_audit_cli(repo: Path) -> subprocess.CompletedProcess[str]:
+    # Any other role guide that explicitly calls a command list the full CTX-02
+    # validation surface inherits the same exact command-set obligation.
+    for skill in sorted((repo_root / ".agents/skills").glob("*/SKILL.md")):
+        text = skill.read_text(encoding="utf-8")
+        if "full CTX-02 validation surface" in text:
+            require_full_surface(skill)
+
+
+def run_audit_cli(repo: Path, index: str = checker.CANONICAL_INDEX_PATH) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [
             sys.executable,
@@ -304,7 +361,7 @@ def run_audit_cli(repo: Path) -> subprocess.CompletedProcess[str]:
             "--repo-root",
             str(repo),
             "--index",
-            "Docs/engineering/context-capsules/index.json",
+            index,
         ],
         check=False,
         capture_output=True,
@@ -312,33 +369,37 @@ def run_audit_cli(repo: Path) -> subprocess.CompletedProcess[str]:
     )
 
 
-def assert_audit_red(capsule_path: Path, mutated_capsule: dict, needle: str) -> None:
-    capsule_path.write_text(json.dumps(mutated_capsule), encoding="utf-8")
-    result = run_audit_cli(capsule_path.parents[3])
+def assert_cli_red(repo: Path, needle: str, *, index: str = checker.CANONICAL_INDEX_PATH) -> None:
+    result = run_audit_cli(repo, index=index)
     if result.returncode == 0:
         raise AssertionError(f"expected --audit-index to fail for {needle}")
     if needle not in result.stderr:
         raise AssertionError(f"unexpected --audit-index failure for {needle!r}: {result.stderr}")
 
 
+def assert_audit_red(capsule_path: Path, mutated_capsule: dict, needle: str) -> None:
+    capsule_path.write_text(json.dumps(mutated_capsule), encoding="utf-8")
+    assert_cli_red(capsule_path.parents[3], needle)
+
+
 def run_representative_controls() -> None:
     index, capsules = load_indexed_capsules(ROOT)
-    required = set(REPRESENTATIVE_ORACLE)
-    missing = sorted(required - set(capsules))
-    if missing:
-        raise checker.CapsuleError(
-            f"independent representative oracle: indexed representative capsule(s) missing: {missing}"
-        )
+    assert_representative_inventory(capsules)
 
-    # Positive controls use the actual indexed capsules, not a synthetic inventory.
-    for cid in sorted(required):
+    # A coordinated index omission of a representative boundary must not redefine
+    # the independent test oracle's expected inventory.
+    missing_inventory = dict(capsules)
+    missing_inventory.pop("WP-CITY-03")
+    expect_failure(
+        lambda: assert_representative_inventory(missing_inventory),
+        "indexed representative capsule(s) missing",
+    )
+
+    for cid in sorted(REPRESENTATIVE_ORACLE):
         capsule = capsules[cid]
         checker.validate_capsule(ROOT, capsule)
         assert_representative_semantics(capsule)
 
-    # Cycle-3 causal blocker: preserve ID + source pointer + all bound fingerprints,
-    # change only the material statement. Production validation intentionally does
-    # not pretend to prove prose equivalence; the external representative oracle REDs.
     guarantee_inversion = copy.deepcopy(capsules["WP-HK-GATE"])
     guarantee_row = next(
         row
@@ -354,8 +415,6 @@ def run_representative_controls() -> None:
         "exported_guarantees material content mismatch",
     )
 
-    # Symmetric negative/non-claim control: same IDs/pointers/fingerprints, invented
-    # opposite statement must be caught by the independent representative oracle.
     exclusion_inversion = copy.deepcopy(capsules["WP-CITY-03"])
     exclusion_row = next(
         row
@@ -373,9 +432,6 @@ def run_representative_controls() -> None:
         "exclusions_nonclaims material content mismatch",
     )
 
-    # Same substitution class exists inside CTX-02's semantic claim for reopen,
-    # escalation and directional values. Non-empty/internally-distinct inventions
-    # remain structurally valid but must RED against representative source review.
     reopen_inversion = copy.deepcopy(capsules["WP-HK-GATE"])
     reopen_inversion["reopen_conditions"][0] = (
         "Never reopen HK-GATE even when concrete evidence contradicts its accepted claim."
@@ -407,8 +463,20 @@ def run_representative_controls() -> None:
         "directional_semantics material content mismatch",
     )
 
-    # Self-confirmation closure: fingerprints only matter after authority paths are
-    # independently constrained away from the capsule/CTX-02 generated layer.
+    # Whole-source inventory omission can otherwise preserve valid fingerprints for
+    # the remaining sources while silently narrowing Reviewer reconstruction.
+    source_omission = copy.deepcopy(capsules["WP-HK-GATE"])
+    source_omission["authoritative_sources"] = [
+        row
+        for row in source_omission["authoritative_sources"]
+        if row["path"] != "Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md"
+    ]
+    checker.validate_capsule(ROOT, source_omission)
+    expect_failure(
+        lambda: assert_representative_semantics(source_omission),
+        "authoritative source inventory mismatch",
+    )
+
     identity_self_confirmation = copy.deepcopy(capsules["WP-HK-GATE"])
     reaudit_path = ROOT / "Docs/evidence/CTX-02/TRUST_BOUNDARY_REAUDIT.md"
     identity_self_confirmation["identity_source"] = {
@@ -417,7 +485,7 @@ def run_representative_controls() -> None:
     }
     expect_failure(
         lambda: checker.validate_capsule(ROOT, identity_self_confirmation),
-        "canonical external workpack",
+        "checker-owned canonical workpack",
     )
 
     authority_self_confirmation = copy.deepcopy(capsules["WP-HK-GATE"])
@@ -434,8 +502,6 @@ def run_representative_controls() -> None:
         "self-confirmation is forbidden",
     )
 
-    # CITY's representative non-compressible contract names one exact source. A
-    # different valid/fingerprinted external file cannot satisfy that obligation.
     wrong_city_read = copy.deepcopy(capsules["WP-CITY-03"])
     city_wp_path = ROOT / "Docs/workpacks/CITY/WP-CITY-03.md"
     wrong_city_read["mandatory_source_reads"] = [
@@ -451,30 +517,27 @@ def run_representative_controls() -> None:
         checker.CITY_PRODUCT_SEED,
     )
 
-    # PA disposition equality is source-derived only if the source itself is the
-    # independently discovered canonical result. Rebind PA-03 to a complete PA-02
-    # disposition surface: the individual table can be internally coherent, while
-    # chain validation must still RED on canonical-source identity.
+    # Rebinding the PA selector/source is now rejected by production validation
+    # itself before an internally coherent alternate table can become its own oracle.
     pa_rebound = copy.deepcopy(capsules["WP-PA-03"])
     pa02 = capsules["WP-PA-02"]
     pa_rebound["disposition_source"] = copy.deepcopy(pa02["disposition_source"])
     pa_rebound["dispositions"] = copy.deepcopy(pa02["dispositions"])
-    checker.validate_capsule(ROOT, pa_rebound)
-    rebound_capsules = dict(capsules)
-    rebound_capsules["WP-PA-03"] = pa_rebound
     expect_failure(
-        lambda: checker.validate_pa_chain(ROOT, index, rebound_capsules),
-        "disposition_source must be canonical accepted PA result",
+        lambda: checker.validate_capsule(ROOT, pa_rebound),
+        "checker-owned canonical PA result",
     )
 
 
 def run_synthetic_regressions() -> None:
-    """Keep prior production-invariant regressions and synthetic mutation sanity checks."""
+    """Exercise the production CLI against class-level defect injections."""
     with tempfile.TemporaryDirectory() as td:
         repo = Path(td)
         (repo / "Docs/workpacks/PA").mkdir(parents=True)
+        (repo / "Docs/workpacks/CITY").mkdir(parents=True)
         (repo / "Docs/research/living-world/results").mkdir(parents=True)
         (repo / "Docs/engineering/context-capsules").mkdir(parents=True)
+        (repo / "Docs/production").mkdir(parents=True)
 
         wp = repo / "Docs/workpacks/PA/WP-PA-03.md"
         result = repo / "Docs/research/living-world/results/PA-03.md"
@@ -484,16 +547,21 @@ def run_synthetic_regressions() -> None:
             "Independent review: **PASS**, review `12345`\n"
             "Merged: PR `#1`, merge commit `2222222222222222222222222222222222222222`\n"
         )
-        wp.write_text(wp_text, encoding="utf-8")
         result.write_text(
             "# PA-03\n\n## 4. Minimal relationship vocabulary recommendation\n\n"
             "| Relationship/mechanism | Status | Juego2 recommendation |\n"
             "|---|---|---|\n"
             "| directed trust | **ADOPT** | material decision input |\n"
             "| default global/N-hop social traversal to discover targets | **REJECT** | inherited PA-02 bounded-discovery intent |\n"
+            "\n## 4B. Alternate valid-looking table\n\n"
+            "| Relationship/mechanism | Status | Juego2 recommendation |\n"
+            "|---|---|---|\n"
+            "| directed trust | **ADOPT** | alternate table |\n"
+            "| default global/N-hop social traversal to discover targets | **REJECT** | alternate table |\n"
             "\n## 5. Next\n",
             encoding="utf-8",
         )
+        wp.write_text(wp_text, encoding="utf-8")
         source = {
             "path": "Docs/research/living-world/results/PA-03.md",
             "git_blob_sha": blob_sha(result.read_bytes()),
@@ -516,32 +584,21 @@ def run_synthetic_regressions() -> None:
             "authoritative_sources": [source],
             "exported_guarantees": [
                 {"id": "directed-affect", "statement": "A->B is independent from B->A."},
-                {
-                    "id": "behavioral-effect",
-                    "statement": "Relationship state can change action or target choice.",
-                },
+                {"id": "behavioral-effect", "statement": "Relationship state can change action or target choice."},
             ],
             "exclusions_nonclaims": [
-                {
-                    "id": "no-global-n-hop",
-                    "statement": "Default global/N-hop target discovery is rejected.",
-                },
+                {"id": "no-global-n-hop", "statement": "Default global/N-hop target discovery is rejected."},
                 {"id": "no-implicit-symmetry", "statement": "Actor stance is not implicitly symmetric."},
             ],
             "reopen_conditions": ["concrete contradictory evidence"],
             "escalate_if": ["material exact source semantics are needed"],
             "disposition_source": {
                 **source,
-                "section": "## 4. Minimal relationship vocabulary recommendation",
-                "key_column": 0,
-                "status_column": 1,
+                **checker.CANONICAL_PA_DISPOSITION_SELECTORS["WP-PA-03"],
             },
             "dispositions": [
                 {"source_key": "directed trust", "status": "ADOPT"},
-                {
-                    "source_key": "default global/N-hop social traversal to discover targets",
-                    "status": "REJECT",
-                },
+                {"source_key": "default global/N-hop social traversal to discover targets", "status": "REJECT"},
             ],
             "directional_semantics": [
                 {
@@ -554,83 +611,81 @@ def run_synthetic_regressions() -> None:
             "mandatory_source_reads": [],
         }
 
-        checker.validate_capsule(repo, capsule)
+        city_wp_text = wp_text.replace("WP-PA-03", "WP-CITY-03")
+        city_wp = repo / "Docs/workpacks/CITY/WP-CITY-03.md"
+        city_wp.write_text(city_wp_text, encoding="utf-8")
+        seed = repo / checker.CITY_PRODUCT_SEED
+        seed.write_text("exact spatial spec", encoding="utf-8")
+        city_capsule = {
+            "schema": checker.SCHEMA,
+            "authority": checker.AUTHORITY,
+            "capsule_id": "WP-CITY-03",
+            "track": "CITY",
+            "content_mode": "boundary_summary",
+            "accepted_identity": {
+                "reviewed_candidate_sha": "1" * 40,
+                "merge_sha": "2" * 40,
+                "review_id": "12345",
+            },
+            "identity_source": {
+                "path": "Docs/workpacks/CITY/WP-CITY-03.md",
+                "git_blob_sha": blob_sha(city_wp.read_bytes()),
+            },
+            "authoritative_sources": [
+                {
+                    "path": "Docs/workpacks/CITY/WP-CITY-03.md",
+                    "git_blob_sha": blob_sha(city_wp.read_bytes()),
+                }
+            ],
+            "exported_guarantees": [{"id": "city", "statement": "bounded seed"}],
+            "exclusions_nonclaims": [{"id": "not-seed", "statement": "capsule is not geometry"}],
+            "reopen_conditions": ["measured contradiction"],
+            "escalate_if": ["geometry needed"],
+            "mandatory_source_reads": [
+                {
+                    "path": checker.CITY_PRODUCT_SEED,
+                    "git_blob_sha": blob_sha(seed.read_bytes()),
+                    "noncompressible": True,
+                    "reason": "construction specification",
+                }
+            ],
+        }
 
-        # Mutation sanity only. The required semantic RED for one-of-many loss is
-        # exercised on an actual indexed representative capsule by
-        # context-capsule-omission-controls.py using the independent oracle.
-        expected_exports = {"directed-affect", "behavioral-effect"}
-        actual_exports = {row["id"] for row in capsule["exported_guarantees"]}
-        if actual_exports != expected_exports:
-            raise AssertionError("synthetic baseline export oracle malformed")
-        one_positive_missing = copy.deepcopy(capsule)
-        one_positive_missing["exported_guarantees"] = [one_positive_missing["exported_guarantees"][0]]
-        checker.validate_capsule(repo, one_positive_missing)
-        if {row["id"] for row in one_positive_missing["exported_guarantees"]} == expected_exports:
-            raise AssertionError("synthetic one-positive omission did not remove a material id")
-
-        expected_exclusions = {"no-global-n-hop", "no-implicit-symmetry"}
-        one_exclusion_missing = copy.deepcopy(capsule)
-        one_exclusion_missing["exclusions_nonclaims"] = [one_exclusion_missing["exclusions_nonclaims"][1]]
-        checker.validate_capsule(repo, one_exclusion_missing)
-        if {row["id"] for row in one_exclusion_missing["exclusions_nonclaims"]} == expected_exclusions:
-            raise AssertionError("synthetic one-exclusion omission did not remove a material id")
-
-        capsule_path = repo / "Docs/engineering/context-capsules/WP-PA-03.json"
-        index_path = repo / "Docs/engineering/context-capsules/index.json"
+        capsule_path = repo / checker.canonical_capsule_path("WP-PA-03")
+        city_path = repo / checker.canonical_capsule_path("WP-CITY-03")
+        index_path = repo / checker.CANONICAL_INDEX_PATH
         index = {
             "schema": checker.INDEX_SCHEMA,
             "authority": checker.AUTHORITY,
+            "protocol": checker.CANONICAL_PROTOCOL_PATH,
             "entries": [
-                {
-                    "capsule_id": "WP-PA-03",
-                    "path": "Docs/engineering/context-capsules/WP-PA-03.json",
-                }
+                {"capsule_id": "WP-PA-03", "path": checker.canonical_capsule_path("WP-PA-03")},
+                {"capsule_id": "WP-CITY-03", "path": checker.canonical_capsule_path("WP-CITY-03")},
             ],
             "coverage_rules": {
                 "pa_accepted_result_chain": {
-                    "workpack_glob": "Docs/workpacks/PA/WP-PA-[0-9][0-9].md",
-                    "result_template": "Docs/research/living-world/results/PA-{NN}.md",
+                    "workpack_glob": checker.PA_WORKPACK_GLOB,
+                    "result_template": checker.PA_RESULT_TEMPLATE,
                 }
             },
         }
         capsule_path.write_text(json.dumps(capsule), encoding="utf-8")
+        city_path.write_text(json.dumps(city_capsule), encoding="utf-8")
         index_path.write_text(json.dumps(index), encoding="utf-8")
+
         baseline_cli = run_audit_cli(repo)
         if baseline_cli.returncode != 0:
             raise AssertionError(f"baseline --audit-index unexpectedly failed: {baseline_cli.stderr}")
 
         malformed_reopen = copy.deepcopy(capsule)
         malformed_reopen["reopen_conditions"] = [None]
-        assert_audit_red(
-            capsule_path,
-            malformed_reopen,
-            "reopen_conditions[0] must be a non-empty string",
-        )
-
-        blank_reopen = copy.deepcopy(capsule)
-        blank_reopen["reopen_conditions"] = ["   "]
-        assert_audit_red(
-            capsule_path,
-            blank_reopen,
-            "reopen_conditions[0] must be a non-empty string",
-        )
-
-        malformed_escalation = copy.deepcopy(capsule)
-        malformed_escalation["escalate_if"] = [None]
-        assert_audit_red(
-            capsule_path,
-            malformed_escalation,
-            "escalate_if[0] must be a non-empty string",
-        )
+        assert_audit_red(capsule_path, malformed_reopen, "reopen_conditions[0] must be a non-empty string")
+        capsule_path.write_text(json.dumps(capsule), encoding="utf-8")
 
         blank_escalation = copy.deepcopy(capsule)
         blank_escalation["escalate_if"] = [""]
-        assert_audit_red(
-            capsule_path,
-            blank_escalation,
-            "escalate_if[0] must be a non-empty string",
-        )
+        assert_audit_red(capsule_path, blank_escalation, "escalate_if[0] must be a non-empty string")
+        capsule_path.write_text(json.dumps(capsule), encoding="utf-8")
 
         fail_wp_text = wp_text.replace("**PASS**", "**FAIL**")
         wp.write_text(fail_wp_text, encoding="utf-8")
@@ -638,15 +693,112 @@ def run_synthetic_regressions() -> None:
         fail_review["identity_source"]["git_blob_sha"] = blob_sha(wp.read_bytes())
         assert_audit_red(capsule_path, fail_review, "independent PASS review verdict")
         wp.write_text(wp_text, encoding="utf-8")
+        capsule_path.write_text(json.dumps(capsule), encoding="utf-8")
 
         missing_surface = copy.deepcopy(capsule)
         missing_surface.pop("disposition_source", None)
         missing_surface.pop("dispositions", None)
-        assert_audit_red(
-            capsule_path,
-            missing_surface,
-            "accepted PA chain capsule requires disposition_source",
+        assert_audit_red(capsule_path, missing_surface, "accepted PA capsule requires disposition_source")
+        capsule_path.write_text(json.dumps(capsule), encoding="utf-8")
+
+        # Current Reviewer blocker: retain COMPLETE WP-PA-04, omit its result,
+        # capsule and index entry, then try to hide it by changing workpack_glob.
+        wp04 = repo / "Docs/workpacks/PA/WP-PA-04.md"
+        wp04.write_text(wp_text.replace("WP-PA-03", "WP-PA-04"), encoding="utf-8")
+        narrow = copy.deepcopy(index)
+        narrow["coverage_rules"]["pa_accepted_result_chain"]["workpack_glob"] = (
+            "Docs/workpacks/PA/WP-PA-0[1-3].md"
         )
+        index_path.write_text(json.dumps(narrow), encoding="utf-8")
+        assert_cli_red(repo, "checker-owned canonical selector")
+
+        none_selector = copy.deepcopy(index)
+        none_selector["coverage_rules"]["pa_accepted_result_chain"]["workpack_glob"] = (
+            "Docs/workpacks/PA/NO-MATCH-*.md"
+        )
+        index_path.write_text(json.dumps(none_selector), encoding="utf-8")
+        assert_cli_red(repo, "checker-owned canonical selector")
+
+        broad = copy.deepcopy(index)
+        broad["coverage_rules"]["pa_accepted_result_chain"]["workpack_glob"] = "Docs/workpacks/PA/*.md"
+        index_path.write_text(json.dumps(broad), encoding="utf-8")
+        assert_cli_red(repo, "checker-owned canonical selector")
+
+        index_path.write_text(json.dumps(index), encoding="utf-8")
+        assert_cli_red(repo, "accepted PA canonical result missing for COMPLETE workpack(s): WP-PA-04")
+        wp04.unlink()
+
+        redirected_template = copy.deepcopy(index)
+        redirected_template["coverage_rules"]["pa_accepted_result_chain"]["result_template"] = (
+            "Docs/research/living-world/alternate/PA-{NN}.md"
+        )
+        index_path.write_text(json.dumps(redirected_template), encoding="utf-8")
+        assert_cli_red(repo, "checker-owned canonical template")
+        index_path.write_text(json.dumps(index), encoding="utf-8")
+
+        redirected_protocol = copy.deepcopy(index)
+        redirected_protocol["protocol"] = "Docs/engineering/ALTERNATE_PROTOCOL.md"
+        index_path.write_text(json.dumps(redirected_protocol), encoding="utf-8")
+        assert_cli_red(repo, "checker-owned canonical path")
+        index_path.write_text(json.dumps(index), encoding="utf-8")
+
+        # Index entries cannot point at alternate valid-looking objects.
+        alt_capsule_rel = "Docs/engineering/context-capsules/alternate-WP-PA-03.json"
+        alt_capsule = repo / alt_capsule_rel
+        alt_capsule.write_text(json.dumps(capsule), encoding="utf-8")
+        redirected_entry = copy.deepcopy(index)
+        redirected_entry["entries"][0]["path"] = alt_capsule_rel
+        index_path.write_text(json.dumps(redirected_entry), encoding="utf-8")
+        assert_cli_red(repo, "checker-owned canonical capsule path")
+        index_path.write_text(json.dumps(index), encoding="utf-8")
+
+        # A different index file cannot replace the audit oracle input.
+        alt_index_rel = "Docs/engineering/context-capsules/alternate-index.json"
+        (repo / alt_index_rel).write_text(json.dumps(index), encoding="utf-8")
+        assert_cli_red(repo, "checker-owned canonical index", index=alt_index_rel)
+
+        # External same-name workpack rebinding is rejected; basename matching is
+        # insufficient because the canonical root is checker-owned.
+        (repo / "Docs/workpacks/ALT").mkdir(parents=True)
+        alt_wp = repo / "Docs/workpacks/ALT/WP-PA-03.md"
+        alt_wp.write_text(wp_text, encoding="utf-8")
+        rebound_identity = copy.deepcopy(capsule)
+        rebound_identity["identity_source"] = {
+            "path": "Docs/workpacks/ALT/WP-PA-03.md",
+            "git_blob_sha": blob_sha(alt_wp.read_bytes()),
+        }
+        assert_audit_red(capsule_path, rebound_identity, "checker-owned canonical workpack")
+        capsule_path.write_text(json.dumps(capsule), encoding="utf-8")
+
+        # CITY-specific oracle cannot be hidden by mutating the subject's track and
+        # deleting the mandatory read in the same defect.
+        hidden_city = copy.deepcopy(city_capsule)
+        hidden_city["track"] = "H1"
+        hidden_city["mandatory_source_reads"] = []
+        assert_audit_red(city_path, hidden_city, "checker-owned canonical track")
+        city_path.write_text(json.dumps(city_capsule), encoding="utf-8")
+
+        wrong_mode = copy.deepcopy(city_capsule)
+        wrong_mode["content_mode"] = "structured_disposition"
+        assert_audit_red(city_path, wrong_mode, "checker-owned canonical mode")
+        city_path.write_text(json.dumps(city_capsule), encoding="utf-8")
+
+        # PA table/column selector is also checker-owned. The source intentionally
+        # contains a second valid-looking table with identical keys/statuses, so an
+        # old self-selected selector would have passed source equality.
+        alternate_table = copy.deepcopy(capsule)
+        alternate_table["disposition_source"]["section"] = "## 4B. Alternate valid-looking table"
+        assert_audit_red(capsule_path, alternate_table, "checker-owned canonical selector")
+        capsule_path.write_text(json.dumps(capsule), encoding="utf-8")
+
+        alternate_column = copy.deepcopy(capsule)
+        alternate_column["disposition_source"]["status_column"] = 2
+        assert_audit_red(capsule_path, alternate_column, "checker-owned canonical selector")
+        capsule_path.write_text(json.dumps(capsule), encoding="utf-8")
+
+        final_cli = run_audit_cli(repo)
+        if final_cli.returncode != 0:
+            raise AssertionError(f"restored baseline --audit-index unexpectedly failed: {final_cli.stderr}")
 
 
 def run() -> None:
