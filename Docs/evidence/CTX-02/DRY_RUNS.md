@@ -2,188 +2,145 @@
 
 WP: `WP-CTX-02`  
 Baseline: `f7b4f1e8247dfc927203dca6754b71aaa53938f3`  
-Purpose: demonstrate H1/CITY/PA predecessor reconstruction from compact capsules without promoting them to authority.  
-Circuit-breaker audit: `Docs/evidence/CTX-02/TRUST_BOUNDARY_REAUDIT.md`
+Circuit-breaker lineage: `fail_cycle: 5`  
+Final audit: `Docs/evidence/CTX-02/FINAL_CIRCUIT_BREAKER_AUDIT.md`
 
-## 1. H1 consumer — Worker H1-02
+Purpose: demonstrate representative H1/CITY/PA predecessor reconstruction from compact capsules, then defect-inject the trust boundary so configuration, omission or semantic substitution cannot silently narrow what CTX-02 checks.
 
-Start surface after CTX-02 adoption:
+## 1. Representative consumer runs
 
-- exact `WP-H1-02` contract;
-- validated `WP-HK-GATE` boundary capsule;
-- live accepted identity/state;
-- normal Worker protocol.
+### H1 — Worker H1-02
 
-Inherited split recovered from capsule:
+Start surface: exact H1-02 contract + validated `WP-HK-GATE` capsule + independently confirmed accepted identity + normal Worker protocol.
 
-- H0 passed the accepted AI-authoring readiness gate;
-- H0 canonical semantics remain engine-neutral;
-- Unity bridge work is authorized but direct gameplay is not;
-- new H1-02 ownership is exact Unity editor/package/project/toolchain reproducibility, project layering, Force Text/meta policy and batch launch substrate.
+Recovered compactly: H0 authoring-readiness passed; H0 semantics remain engine-neutral; Unity bridge work is authorized but direct gameplay implementation is not; H1-02 owns the Unity editor/package/project/toolchain boundary.
 
-Escalation behavior:
+Escalation remains mandatory for exact H0 proof/residual questions. The independent representative oracle pins the HK workpack, verdict, proof matrix and residual-risk source inventory, so deleting one of those navigation authorities cannot silently keep the representative surface GREEN.
 
-- ordinary ownership reconstruction does not require replaying all H0 narrative;
-- any material question about completeness, residual risk or the exact gate proof follows the capsule pointers to `VERDICT.md`, `PROOF_MATRIX.md`, `RESIDUAL_RISK.md` and any authoritative transitive source they invoke;
-- exact local Unity duties remain governed by H1's own workpack/execution protocol and are not compressed into the capsule.
+Verdict: `CONTEXT_CLOSED` for initial ownership; exact proof questions `ESCALATE_HUMAN`.
 
-Verdict: `CONTEXT_CLOSED` for the inherited/current ownership split; `ESCALATE` for exact H0 proof questions.
+### CITY — Worker CITY-04
 
-## 2. CITY consumer — Worker CITY-04
+The capsule remains boundary-only. It recovers that CITY-03 owns one accepted keeper seed and CITY-04 executes/measures rather than redesigning it.
 
-The CTX-02 capsule is intentionally boundary-only.
+`Docs/production/CITY_PRODUCT_SEED.md` remains exact and non-compressible. The checker derives `track=CITY` and `content_mode=boundary_summary` from `WP-CITY-03`; changing the capsule to `track=H1` while deleting the mandatory seed read is now a real `--audit-index` RED rather than a way to disable the CITY oracle.
 
-Recovered from capsule:
+Verdict: compact ownership navigation; geometry/construction stays on the exact product source.
 
-- CITY-03 accepted one exact retained keeper seed;
-- CITY-04 may build/measure that accepted seed but may not choose a different city slice or redesign its macro layout.
+### PA — Worker PA-04
 
-Mandatory escalation:
+The starting accepted-result family is PA-01 + PA-02 + PA-03. Structured dispositions preserve exact source statuses; PA-03 directionality remains asymmetric; PA-02 bounded discovery and PA-03 rejection of default global/N-hop discovery survive compression.
 
-- `Docs/production/CITY_PRODUCT_SEED.md` is `noncompressible=true` and must be opened for actual geometry, streets, parcels, scenarios, expansion seams and measurement details;
-- the production checker requires that **exact** mandatory-read identity for representative `WP-CITY-03`; substituting a different valid/fingerprinted external file is RED;
-- the capsule cannot replace the spatial specification.
+PA completeness is now joined through a fully checker-owned mechanical chain:
 
-Eligibility remains external/live: CITY-04 still depends on accepted CITY-03 **and H1-08**. The capsule cannot turn a blocked CITY-04 into an authorized Worker.
+```text
+COMPLETE canonical WP-PA-NN
+  -> checker-derived canonical PA-NN.md
+  -> canonical WP-PA-NN capsule path
+  -> checker-owned disposition table selector
+  -> exact source key/status equality
+```
 
-Verdict: capsule safely compresses only inherited ownership; construction stays on the exact product specification.
+The index may document the glob/template but cannot choose them.
 
-## 3. PA consumer — Worker PA-04
+Verdict: materially smaller cumulative predecessor start, with any semantic uncertainty escalating to original accepted results.
 
-PA is cumulative by workpack contract, so the starting accepted-result set is the validated PA-01 + PA-02 + PA-03 capsule family.
+## 2. Full validation surface
 
-Inherited split recovered compactly:
+The canonical command surface is:
 
-- PA-01: routine is semantic intent rather than concrete realization; expected and actual state remain distinct; interruption causes re-evaluation; routine is not autonomous agency;
-- PA-02: agency must be actor-originated, explainable and bounded; target/action discovery is scoped before scoring; no accidental global-scan fallback;
-- PA-03: social stance is directed/asymmetric; relationships can change action/target/opportunity choice; default global/N-hop social target discovery remains REJECT because it violates inherited PA-02 bounded-discovery intent;
-- PA-04 newly owns epistemic truth-vs-belief, legitimate acquisition/provenance, stale/false belief and hidden-truth leakage constraints.
+```bash
+python3 scripts/context-capsule-check.py --self-test
+python3 scripts/context-capsule-controls.py
+python3 scripts/context-capsule-omission-controls.py
+python3 scripts/context-capsule-pa-semantic-controls.py
+python3 scripts/context-capsule-check.py --audit-index --repo-root .
+```
 
-Status preservation matters: `LATER`, compound `ADOPT ... / LATER ...`, `REJECT`, and `REJECT baseline` are preserved as source states rather than normalized to binary keep/drop.
+The protocol, DocSync skill and CI workflow must all contain the same complete set. `context-capsule-controls.py` verifies that wiring and checks any other skill that explicitly claims the “full CTX-02 validation surface”.
 
-The PA row oracle is now source-identity-safe: chain coverage independently discovers COMPLETE `WP-PA-NN` workpacks, derives each required canonical `PA-NN.md`, and a capsule cannot rebind `disposition_source` to another internally coherent table and still claim that accepted result.
+## 3. Historical defect controls retained
 
-The accepted canonical PA-01..03 result files occupy 73,039 repository bytes; their three current capsule JSON files occupy 14,011 bytes. That is 59,028 fewer bytes, or about **80.8% less repeated accepted-result payload** before tokenizer effects. This is a byte comparison, not a claimed model-token count.
+The current surface still requires RED for:
 
-Verdict: materially smaller cumulative predecessor start while preserving exact source pointers and escalation.
+- accepted-PA whole `disposition_source` + `dispositions` omission;
+- malformed/blank reopen or escalation elements;
+- review id with independent verdict changed PASS→FAIL;
+- same-ID/pointer/fingerprint guarantee and exclusion inversion;
+- representative reopen/escalation inversion;
+- one-of-many material guarantee/exclusion omission via the real independent semantic oracle;
+- COMPLETE future PA workpack with result+capsule+index jointly absent;
+- omitted/reclassified PA disposition;
+- A→B/B→A collapse and changed-but-still-distinct representative direction;
+- source bytes/fingerprints mismatch;
+- predecessor live state `REOPENED` or exact-SHA mismatch;
+- CITY seed substitution.
 
-## 4. Circuit-breaker semantic-content controls
+## 4. Cycle-5 selector/configuration defect injection
 
-The third Reviewer FAIL exposed a class, not one bad statement: structure/IDs/source fingerprints can remain valid while a material semantic value is inverted or invented.
+The independent control harness builds a temporary repository and invokes the production subprocess path:
 
-The independent harness now loads the **actual indexed representative capsules** and validates material content externally to the production checker.
+```text
+python3 scripts/context-capsule-check.py --audit-index --repo-root <temp-repo> --index Docs/engineering/context-capsules/index.json
+```
 
-### Guarantee inversion
+Baseline temp repository: **GREEN**.
 
-Starting capsule: actual `WP-HK-GATE`.
+Then each material mutation is injected independently:
 
-Mutation:
+| Mutation | Actual outcome |
+|---|---|
+| keep COMPLETE `WP-PA-04`, omit result/capsule/index and narrow glob to exclude 04 | `RED_AUTOMATIC` — non-canonical selector |
+| same paired omission with canonical glob restored | `RED_AUTOMATIC` — missing canonical PA-04 result |
+| PA selector matches nothing | `RED_AUTOMATIC` |
+| PA selector broadened to `*.md` | `RED_AUTOMATIC` |
+| PA result template redirected to alternate tree | `RED_AUTOMATIC` |
+| index protocol redirected | `RED_AUTOMATIC` |
+| index entry points to alternate valid-looking capsule file | `RED_AUTOMATIC` |
+| CLI points to alternate index file | `RED_AUTOMATIC` |
+| identity source points to same-name workpack under alternate root | `RED_AUTOMATIC` |
+| CITY capsule relabelled `H1` + mandatory seed deleted | `RED_AUTOMATIC` |
+| CITY content mode changed | `RED_AUTOMATIC` |
+| PA disposition selector points to second valid-looking table in same canonical result | `RED_AUTOMATIC` |
+| PA disposition status column changed | `RED_AUTOMATIC` |
 
-- keep `id = h0-authoring-readiness`;
-- keep the same `source_pointer`;
-- keep `identity_source`, `authoritative_sources` and every Git blob fingerprint unchanged;
-- change only the statement to the opposite/invented claim that HK-GATE authorizes direct gameplay implementation without the downstream bridge boundary.
+After restoring every mutation, baseline `--audit-index`: **GREEN**.
 
-Production source/shape validation remains structurally valid by design; the independent representative oracle is **RED** on material content mismatch.
+These are integration controls, not direct helper assertions: the real CLI decides the RED.
 
-### Symmetric exclusion/non-claim inversion
+## 5. Semantic substitution / omission controls
 
-Starting capsule: actual `WP-CITY-03`.
+Some materially wrong prose is intentionally structurally valid. It is therefore tested against independent bounded semantic oracles rather than pretending the production checker can understand arbitrary natural language.
 
-Mutation:
+- actual HK guarantee: same ID/pointer/fingerprints, inverted statement -> production shape/source GREEN, representative oracle `RED_SEMANTIC_ORACLE`;
+- actual CITY exclusion: same ID/pointer/fingerprints, inverted statement -> `RED_SEMANTIC_ORACLE`;
+- actual HK reopen condition changed to opposite non-empty rule -> `RED_SEMANTIC_ORACLE`;
+- actual CITY escalation changed to opposite non-empty rule -> `RED_SEMANTIC_ORACLE`;
+- actual PA-03 direction changed but still syntactically distinct -> `RED_SEMANTIC_ORACLE`;
+- one HK material export removed while others remain -> production GREEN, omission oracle RED;
+- one HK material exclusion removed while another remains -> production GREEN, omission oracle RED;
+- HK proof-matrix source removed while remaining sources/fingerprints stay valid -> production GREEN, representative source-inventory oracle RED.
 
-- keep `id = not-spatial-spec`;
-- keep pointer `Docs/production/CITY_PRODUCT_SEED.md`;
-- keep all bound source fingerprints unchanged;
-- change only the statement to claim the capsule fully replaces the product seed for geometry/construction.
+Future arbitrary prose equivalence or a coordinated capsule+test-fixture semantic rewrite is explicitly `ESCALATE_HUMAN / RECONSTRUCT_FROM_AUTHORITATIVE_SOURCES`; it is not represented as automatic GREEN.
 
-Independent representative oracle: **RED**.
+## 6. Future PA fail-closed run
 
-### Same substitution class in other semantic fields
+A future `WP-PA-NN` may be COMPLETE and authoritative even before CTX-02 knows which result table should be used as a deterministic disposition oracle. In that state:
 
-The re-audit identified the same false-green class inside fields CTX-02 explicitly claims to preserve:
+```text
+canonical result remains authoritative
+capsule navigation coverage = NOT COMPLETE
+result = RECONSTRUCT_FROM_AUTHORITATIVE_SOURCES
+```
 
-- HK reopen condition changed to a non-empty “never reopen despite contradiction” rule -> production shape remains valid, representative oracle **RED**;
-- CITY escalation changed to a non-empty “do not open product seed when geometry is needed” rule -> representative oracle **RED**;
-- PA-03 `trust.forward` changed to `trust(A -> C)` while still distinct from reverse -> structural asymmetry alone remains valid, representative oracle **RED**.
+A DocSync repair must add a reviewed checker-owned section/key/status selector before claiming capsule-chain completeness. The capsule cannot nominate its own selector.
 
-This is intentionally a test-only representative oracle, not a production semantic registry.
+## 7. Reviewer reopening remains independent
 
-## 5. Cycle-4 omission control — actual representative oracle
+A capsule's historical accepted identity cannot prevent reopening. External accepted state `REOPENED` or exact-SHA mismatch fails closed when supplied; concrete contradictory evidence always routes the Reviewer to original accepted sources and normal predecessor-reopen rules.
 
-Reviewer `#5274389905` correctly identified that the older synthetic one-of-many fixture only proved a row had been deleted; it did not prove CTX-02 detected the loss.
-
-The required control now runs against the actual indexed `WP-HK-GATE` representative capsule through `scripts/context-capsule-omission-controls.py`.
-
-### One-of-many positive omission
-
-Mutation:
-
-- preserve the actual accepted identity, authoritative source bindings, fingerprints and all remaining guarantees;
-- remove only `unity-work-authorized` while other exported guarantees remain;
-- run the production capsule validator first: it stays **GREEN**, because the mutation is intentionally structurally valid;
-- run the same independent representative semantic oracle used by CTX-02's semantic controls: **RED** with `exported_guarantees material content mismatch`.
-
-This is the required causal proof that the validation/control process detects silent narrowing rather than merely noticing that the mutation code removed an ID.
-
-### Symmetric exclusion omission
-
-Mutation:
-
-- preserve all source/identity bindings;
-- remove only `no-new-concurrency-claim` while another exclusion remains;
-- production validation remains structurally **GREEN**;
-- the representative oracle is **RED** with `exclusions_nonclaims material content mismatch`.
-
-## 6. Cycle-4 future PA whole-item omission
-
-Reviewer `#5274389905` also identified that result-first discovery could erase a future accepted PA item from the universe by jointly omitting its result, capsule and index entry.
-
-The production checker now discovers `Docs/workpacks/PA/WP-PA-NN.md` first and selects those whose status is `COMPLETE`. For each selected workpack it derives the required canonical `Docs/research/living-world/results/PA-NN.md` and only then checks the indexed capsule.
-
-Negative self-test:
-
-- retain synthetic `WP-PA-04.md` with `Status: **COMPLETE**`;
-- omit `PA-04.md` entirely;
-- omit the `WP-PA-04` capsule/index entry;
-- run `validate_pa_chain()`;
-- result: **RED** with `accepted PA canonical result missing for COMPLETE workpack(s): WP-PA-04`.
-
-The thing being proved no longer defines its own complete inventory.
-
-## 7. Self-confirmation controls
-
-The re-audit also tested whether a capsule could choose its own oracle and then pass fingerprints against itself.
-
-- `identity_source` redirected to a valid fingerprinted CTX-02 evidence file -> **RED** because accepted identity must come from matching external canonical workpack;
-- `authoritative_sources` redirected to the capsule's own JSON with a valid fingerprint -> **RED** because capsule/CTX-02 generated authority is forbidden;
-- CITY mandatory read replaced with a different valid/fingerprinted external workpack -> **RED** because representative CITY requires exact `CITY_PRODUCT_SEED.md`;
-- PA-03 disposition source + rows rebound coherently to PA-02 -> individual structured table can be internally coherent, but accepted PA-chain validation is **RED** because the source is not canonical PA-03.
-
-These checks reduce self-confirmation without trying to parse general semantics.
-
-## 8. Prior Reviewer FAIL regressions remain active
-
-Cases still exercised mechanically:
-
-- completion metadata reviewed-candidate SHA differs from capsule -> invalid;
-- completion metadata carries a review id but the independent verdict is not `PASS` -> invalid;
-- bound source bytes differ from recorded Git blob SHA -> invalid;
-- independent accepted-state input says `REOPENED` -> invalid;
-- independent accepted-state exact SHA differs -> invalid;
-- `reopen_conditions` or `escalate_if` contains null, empty or whitespace-only entries -> invalid;
-- material disposition row missing or reclassified -> invalid;
-- the entire accepted-PA `disposition_source` + `dispositions` surface is removed -> invalid;
-- A→B / B→A directional expressions collapse -> invalid.
-
-Result in every production-invariant case: capsule cannot be used as inherited truth; reconstruct from authoritative sources and decide the predecessor/reopen question there.
-
-## 9. Concrete contradictory evidence despite ACCEPTED capsule
-
-A capsule's `ACCEPTED` identity is historical navigation, not immunity from contradiction. If a Reviewer has concrete evidence that the accepted guarantee is false or inapplicable to the effective path, the role escalates to original evidence and normal predecessor-reopen rules. The external accepted-state control also demonstrates that once the predecessor state is explicitly `REOPENED`, the capsule fails closed even if its own JSON still carries the prior accepted identity.
-
-A representative semantic GREEN likewise does not prove all source nuance. Material ambiguity, contradiction or disputed interpretation remains a human/Reviewer escalation to authoritative sources.
+A representative semantic GREEN proves only the bounded test fixture survived the tested defect classes. It never converts the capsule or CTX-02 test oracle into semantic authority.
 
 ## Conclusion
 
-Representative H1, CITY and PA consumers recover the inherited/current ownership split from less repeated prose. The circuit-breaker repair now proves real REDs for one-of-many material omission and same-structure semantic substitution on the actual selected boundaries, seeds future PA completeness from independent COMPLETE workpacks, closes source self-confirmation routes, keeps PA deterministic dispositions source-derived, and deliberately leaves arbitrary natural-language proof to escalation + independent Reviewer judgment.
+The class-level dry runs cover the complete current false-green family: self-defined universes, self-selected oracles, coordinated omission, alternate-source/path rebinding, shape-valid semantic substitution, PASS spoofing, track/mode-assisted hiding and workflow drift. The durable final matrix records `UNSAFE: 0`; unresolved natural-language proof remains explicit human escalation rather than silent success.
