@@ -11,7 +11,8 @@ Machine/evidence surfaces:
 - role source: `Docs/engineering/context-bootstrap-profiles.json`;
 - envelope/measurement config: `Docs/engineering/context-envelope.json`;
 - static/representative checker: `scripts/context-envelope-check.py`;
-- dynamic repository checker: `scripts/ctx03-dynamic-context-check.py`;
+- canonical effective mandatory-read discovery + dynamic repository checker: `scripts/ctx03-dynamic-context-check.py`;
+- independent effective-read-set class controls: `scripts/ctx03-effective-read-set-controls.py`;
 - independent process controls: `scripts/ctx03-process-controls.py`;
 - final B1/B2 circuit breaker: `scripts/ctx03-final-circuit-breaker.py`;
 - quality-preservation replay: `scripts/ctx03-quality-replay.py`;
@@ -92,25 +93,45 @@ This layer covers Worker / repair Worker / Reviewer foundational/H1/ROADMAP/caps
 
 Concrete checker-owned H1/CITY/PA minimum and escalated routes include capsule payloads, non-compressible sources and authoritative predecessor/result escalation. They are quality-preservation and calibration cases; they do not enumerate every future WP.
 
-### 5.4 Dynamic repository envelope
+### 5.4 Dynamic repository envelope and canonical effective read set
 
-`scripts/ctx03-dynamic-context-check.py` owns the classification of every dynamic placeholder appearing in canonical role `initial_reads`.
+`scripts/ctx03-dynamic-context-check.py` contains the **single production discovery oracle**, `discover_effective_mandatory_read_set()`. No caller, representative-route table or control script is allowed to define a smaller competing mandatory-read universe.
 
-Each slot is classified as one of:
+The oracle inspects every reviewed profile read surface, not only `initial_reads`. In v1 the recognized read surfaces are:
+
+- `initial_reads` — fixed or dynamic repository/external starting reads;
+- `conditional_reads` — fixed or dynamic reads whose condition can make them mandatory;
+- `live_state` — external-state descriptors only; repository paths or dynamic placeholders here are RED until the surface is deliberately reclassified.
+
+A newly introduced read-like surface (for example another `*_reads` field) is RED until its discovery semantics are explicitly classified. Likewise every `conditional_reads` class is reviewed: unknown conditional classes fail closed instead of being silently skipped.
+
+Every dynamic placeholder found on the reviewed read surfaces is classified as one of:
 
 - genuinely external;
 - repository-backed exact source;
-- repository-or-external, requiring an explicit concrete classification at resolution time;
+- repository-or-external, requiring a concrete resolution or independently derivable repository source;
 - dependency-derived repository set;
 - manifest-derived repository set.
 
 The audited profile/config cannot relabel a repository slot as external. A new placeholder not known to the checker turns RED until its ownership class is explicitly reviewed. A removed placeholder also turns RED until the checker oracle is deliberately reconciled, preventing stale hidden registries.
 
-For a concrete route, every resolved repository-backed source is subject to:
+For a concrete route the oracle derives repository context from repository authority independently of optional caller enumeration:
+
+- the exact route contract is included and its mandatory/binding repository paths are rediscovered;
+- direct `Depends on:` contracts are rediscovered from the exact contract;
+- dependency navigation derives accepted capsule navigation when indexed: capsule protocol + index + capsule + identity/authoritative/mandatory sources;
+- if no accepted capsule exists, the repository accepted-evidence surface for that dependency is derived instead;
+- route evidence, track context and contract-bound sources are derived for the conditional classes that require them;
+- `h1_local_executor` manifest-named repository files are derived from the anchored repository manifest;
+- an optional caller binding can add concrete repository context, but omission of that binding cannot remove sources still required by repository authority.
+
+Thus Reviewer `<DIRECT_PREDECESSOR_ACCEPTED_EVIDENCE_OR_VALIDATED_CAPSULE_NAVIGATION>` cannot collapse to only the dependency contract when the route requires capsule/evidence navigation. The route identity still has to be supplied where no repository authority can infer which exact workpack is being executed; the caller does **not** enumerate the mandatory context hanging from that identity.
+
+Every resulting repository-backed source is subject to:
 
 ```text
 per-source estimate <= reviewed per_source_ceiling_estimate
-sum(unique dynamic repository source estimates) <= reviewed aggregate_route_ceiling_estimate
+sum(unique effective repository source estimates) <= reviewed aggregate_route_ceiling_estimate
 ```
 
 Initial reviewed dynamic policy:
@@ -121,7 +142,7 @@ Initial reviewed dynamic policy:
 
 These are conservative policy bounds rather than a claim that one representative route calibrated all future WPs. Any future increase requires an explicit `policy_revision` increment and non-empty `ceiling_increase_justification`; the base-ref comparison rejects silent ceiling expansion.
 
-The resolver independently re-discovers repository paths named by the exact route contract. For Reviewer dependency navigation it also reconstructs exact dependency contracts/evidence from the exact contract's `Depends on:` authority. For `h1_local_executor`, manifest-named repository files are derived from the anchored repository manifest rather than from a caller-maintained list. Thus deleting a source from a route binding cannot stop it being counted while another routing authority still requires it.
+Repository-wide policy discovery also walks workpack contracts and manifest routes so future mandatory repository growth is bounded even when the WP is not one of the representative H1/CITY/PA calibration cases.
 
 A totally unrelated repository file that is not mandatory for the resolved route remains outside that route's dynamic estimate.
 
@@ -133,7 +154,7 @@ If the same logical input is persisted as a repository file and used as mandator
 
 ### 5.6 Future extension rule
 
-A new role profile using existing reviewed dynamic slot classes is automatically covered. A new fixed conditional source is automatically discovered or fails closed under the fixed-conditional oracle. A new dynamic placeholder class fails closed pending explicit oracle review. A new future WP, including one outside H1/CITY/PA, is covered by the dynamic per-source + aggregate envelope when its route is resolved.
+A new role profile using existing reviewed read surfaces and slot/conditional classes automatically inherits the canonical resolver. A new fixed conditional source is automatically discovered or fails closed under the fixed-conditional oracle. A new dynamic placeholder class fails closed pending explicit oracle review. A new read-like surface or conditional class fails closed pending explicit discovery semantics. A new future WP, including one outside H1/CITY/PA, is covered by the dynamic per-source + aggregate envelope when its route is resolved.
 
 ## 6. Mechanical false-red audit
 
@@ -214,9 +235,21 @@ This is the adoption circuit breaker that prevents the checker from being frozen
 
 ## 11. Final circuit-breaker audit
 
-`scripts/ctx03-final-circuit-breaker.py` is independent of the two target checkers and drives their real oracles against synthetic mutations. It covers the B1 post-adoption transition and B2 future-route class, including a future invented track outside H1/CITY/PA, exact-WP growth, newly mandatory repository evidence, caller omission, non-mandatory growth, `repair_worker`, `h1_local_executor` manifest-named files and new dynamic placeholder fail-closed behavior.
+`scripts/ctx03-final-circuit-breaker.py` remains the broad independent B1/B2 mutation driver. `scripts/ctx03-effective-read-set-controls.py` is the focused final B2 class challenge and calls the **real production oracle** rather than reimplementing discovery.
 
-The existing CTX-02 capsule controls, CTX-03 quality replay, process controls and lifecycle closure controls remain binding. The new final circuit breaker supplements them; it does not replace them.
+The effective-read-set controls prove, parametrically by role/surface/authority class:
+
+- mandatory placeholder in `initial_reads` is counted;
+- the same known placeholder in another reviewed read surface is counted;
+- direct dependency derives its contract plus repository-backed accepted context;
+- Reviewer predecessor navigation derives capsule/evidence and cannot stop at contract-only context;
+- omitting an optional caller binding cannot reduce the independently derived universe;
+- a new role using reviewed classes inherits the resolver;
+- a new slot class or new read surface is RED pending classification;
+- growth of a derived mandatory source above its ceiling is RED;
+- growth of a non-mandatory repository file remains GREEN.
+
+The existing CTX-02 capsule controls, CTX-03 quality replay, process controls and lifecycle closure controls remain binding. These controls supplement them; they do not create a second source of truth for mandatory-read discovery.
 
 Whole structured surfaces are challenged as collections and fields, not only row-by-row. A negative control is valid only when RED comes from the missing real condition rather than from a test-specific “field was deleted” assertion.
 
