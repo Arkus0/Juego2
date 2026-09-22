@@ -1,29 +1,23 @@
 {
   "schema": "arkus.context-bootstrap-profiles@1",
   "protocol": "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md",
+  "capsule_protocol": "Docs/engineering/CONTEXT_CAPSULE_V1.md",
   "profiles": {
     "worker": {
       "purpose": "Implement one exact authorized workpack.",
-      "initial_reads": [
-        "AGENTS.md",
-        "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md",
-        "<EXACT_WP>",
-        "Docs/engineering/WORKER_REVIEW_PROTOCOL.md"
-      ],
-      "live_state": [
-        "current main SHA",
-        "canonical PR/branch ownership",
-        "dependency acceptance state",
-        "write-set conflicts"
-      ],
+      "initial_reads": ["AGENTS.md", "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md", "<EXACT_WP>", "Docs/engineering/WORKER_REVIEW_PROTOCOL.md"],
+      "live_state": ["current main SHA", "canonical PR/branch ownership", "dependency acceptance state", "write-set conflicts"],
       "conditional_reads": {
         "foundational_claim": "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md",
         "h1_02_through_gate": "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md",
         "cross_track_or_unclosed_order_gate": "Docs/ROADMAP.md",
-        "direct_dependencies": "direct dependency WP + accepted PASS/completion evidence + relevant proof/residual/invariants"
+        "accepted_contract_capsules": "After CTX-02 adoption: Docs/engineering/CONTEXT_CAPSULE_V1.md + Docs/engineering/context-capsules/index.json; validated capsules may start accepted-predecessor reconstruction but never replace material authoritative reads",
+        "direct_dependencies": "exact direct dependency WP + accepted completion/PASS identity; use validated capsule(s) to start inherited-guarantee reconstruction when available, then escalate to original proof/result/residual/invariant sources when material"
       },
       "must_escalate_if": [
         "direct dependency meaning or eligibility is not closed by exact/direct sources",
+        "a capsule is missing/stale/lossy, its source fingerprint or accepted identity mismatches, or live state contradicts it",
+        "the exact consumer needs a material detail marked noncompressible or absent from the capsule",
         "cross-track dependency or gate is material",
         "state index is stale/missing/contradictory for a mutable hint being used",
         "the current claim binds an architecture/proof source outside the initial pack",
@@ -32,138 +26,55 @@
     },
     "repair_worker": {
       "purpose": "Repair the same exact workpack after independent FAIL.",
-      "initial_reads": [
-        "AGENTS.md",
-        "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md",
-        "Docs/engineering/WORKER_REVIEW_PROTOCOL.md",
-        "<EXACT_WP>",
-        "<CANONICAL_PR_LATEST_FAIL>",
-        "<ORIGINAL_WORKER_EVIDENCE>"
-      ],
-      "live_state": [
-        "current main SHA",
-        "canonical implementation PR/branch and HEAD",
-        "latest exact reviewed FAIL",
-        "dependency state changes since failed candidate"
-      ],
+      "initial_reads": ["AGENTS.md", "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md", "Docs/engineering/WORKER_REVIEW_PROTOCOL.md", "<EXACT_WP>", "<CANONICAL_PR_LATEST_FAIL>", "<ORIGINAL_WORKER_EVIDENCE>"],
+      "live_state": ["current main SHA", "canonical implementation PR/branch and HEAD", "latest exact reviewed FAIL", "dependency state changes since failed candidate"],
       "conditional_reads": {
         "foundational_claim": "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md",
         "h1_02_through_gate": "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md",
         "cross_track_or_unclosed_order_gate": "Docs/ROADMAP.md",
-        "predecessor_touched_or_changed": "authoritative predecessor WP/PASS/proof/invariant sources"
+        "accepted_contract_capsules": "After CTX-02 adoption: validated capsule(s) may navigate unchanged accepted predecessor guarantees; any predecessor-touched FAIL escalates to authoritative sources",
+        "predecessor_touched_or_changed": "authoritative predecessor WP/PASS/proof/result/invariant sources"
       },
-      "must_escalate_if": [
-        "FAIL appears predecessor-owned",
-        "accepted predecessor state changed",
-        "cross-track ownership/gate is ambiguous",
-        "compact state conflicts with live GitHub",
-        "material ambiguity remains"
-      ]
+      "must_escalate_if": ["FAIL appears predecessor-owned", "accepted predecessor state changed", "capsule identity/source/status disagrees with live or authoritative state", "cross-track ownership/gate is ambiguous", "compact state conflicts with live GitHub", "material ambiguity remains"]
     },
     "reviewer": {
       "purpose": "Independently review one exact frozen candidate.",
-      "initial_reads": [
-        "AGENTS.md",
-        "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md",
-        "Docs/engineering/WORKER_REVIEW_PROTOCOL.md",
-        "<EXACT_WP>",
-        "<LIVE_CANONICAL_PR_AND_COMPLETE_DIFF>",
-        "<DIRECT_PREDECESSOR_ACCEPTED_EVIDENCE>"
-      ],
-      "live_state": [
-        "current main SHA",
-        "Ready/FROZEN_FOR_REVIEW state",
-        "PR HEAD == Frozen candidate SHA",
-        "checks and review history"
-      ],
+      "initial_reads": ["AGENTS.md", "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md", "Docs/engineering/WORKER_REVIEW_PROTOCOL.md", "<EXACT_WP>", "<LIVE_CANONICAL_PR_AND_COMPLETE_DIFF>", "<DIRECT_PREDECESSOR_ACCEPTED_EVIDENCE_OR_VALIDATED_CAPSULE_NAVIGATION>"],
+      "live_state": ["current main SHA", "Ready/FROZEN_FOR_REVIEW state", "PR HEAD == Frozen candidate SHA", "checks and review history"],
       "conditional_reads": {
         "foundational_claim": "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md",
         "h1_local_evidence": "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md + exact durable local evidence",
         "cross_track_or_unclosed_order_gate": "Docs/ROADMAP.md",
-        "claimed_inherited_guarantee": "original predecessor WP/PASS/proof/invariant evidence"
+        "accepted_contract_capsules": "After CTX-02 adoption: capsule may navigate the inherited boundary only after independent identity/source validation; it is never review proof",
+        "claimed_inherited_guarantee": "original predecessor WP/PASS/proof/result/invariant evidence whenever material to verdict, lossy-summary suspicion or reopen"
       },
-      "must_escalate_if": [
-        "Worker summary/index would otherwise be used as proof",
-        "apparent blocker may be predecessor-owned",
-        "cross-track gate/order affects the verdict",
-        "state projection is stale or contradicts GitHub",
-        "material ambiguity remains"
-      ]
+      "must_escalate_if": ["Worker summary/index/capsule would otherwise be used as proof", "capsule is stale/lossy/mismatched or a material inherited guarantee requires challenge", "apparent blocker may be predecessor-owned", "concrete evidence may reopen a predecessor despite capsule acceptance", "cross-track gate/order affects the verdict", "state projection is stale or contradicts GitHub", "material ambiguity remains"]
     },
     "planner_gate": {
       "purpose": "Plan a milestone or validate an exact milestone/gate composition.",
-      "initial_reads": [
-        "AGENTS.md",
-        "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md",
-        "Docs/ROADMAP.md",
-        "<EXACT_MILESTONE_OR_GATE_CONTRACT>",
-        "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>"
-      ],
-      "live_state": [
-        "current main SHA",
-        "accepted constituent/track state",
-        "open ownership that can affect the plan/gate"
-      ],
-      "conditional_reads": {
-        "foundational_plan_or_gate": "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md",
-        "architecture_binding": "exact architecture/ADR sources invoked by the milestone/gate",
-        "constituent_proof": "accepted constituent evidence needed for composition"
-      },
-      "must_escalate_if": [
-        "constituent acceptance or ordering is unclear",
-        "cross-track edge is material",
-        "gate composition depends on proof not in the initial pack",
-        "material ambiguity remains"
-      ]
+      "initial_reads": ["AGENTS.md", "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md", "Docs/ROADMAP.md", "<EXACT_MILESTONE_OR_GATE_CONTRACT>", "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>"],
+      "live_state": ["current main SHA", "accepted constituent/track state", "open ownership that can affect the plan/gate"],
+      "conditional_reads": {"foundational_plan_or_gate": "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md", "architecture_binding": "exact architecture/ADR sources invoked by the milestone/gate", "constituent_proof": "accepted constituent evidence needed for composition"},
+      "must_escalate_if": ["constituent acceptance or ordering is unclear", "cross-track edge is material", "gate composition depends on proof not in the initial pack", "material ambiguity remains"]
     },
     "docsync": {
       "purpose": "Reconcile documentation after an accepted exact-SHA transition.",
-      "initial_reads": [
-        "AGENTS.md",
-        "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md",
-        "<ACCEPTED_PR_REVIEW_MERGE>",
-        "<EXACT_ACCEPTED_WP>",
-        "Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json"
-      ],
-      "live_state": [
-        "current main SHA",
-        "merged accepted SHA and review",
-        "open ownership/dependencies relevant to Next WP"
-      ],
+      "initial_reads": ["AGENTS.md", "Docs/engineering/CONTEXT_BOOTSTRAP_V1.md", "<ACCEPTED_PR_REVIEW_MERGE>", "<EXACT_ACCEPTED_WP>", "Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json"],
+      "live_state": ["current main SHA", "merged accepted SHA and review", "open ownership/dependencies relevant to Next WP"],
       "conditional_reads": {
         "next_wp_or_cross_track_not_closed": "Docs/ROADMAP.md + exact dependency contracts",
         "affected_track": "track README/state surface",
-        "protocol_changed": "affected engineering/process protocol"
+        "protocol_changed": "affected engineering/process protocol",
+        "accepted_pa_result_after_ctx02": "Docs/engineering/CONTEXT_CAPSULE_V1.md + capsule index; create/update the newly accepted PA result capsule and audit accepted PA chain before claiming capsule coverage complete"
       },
-      "must_escalate_if": [
-        "derived index is stale",
-        "next dependency-valid WP cannot be resolved from exact accepted/direct sources",
-        "cross-track dependency is material",
-        "accepted transition changes a binding state surface",
-        "material ambiguity remains"
-      ]
+      "must_escalate_if": ["derived index is stale", "accepted PA result has no valid capsule after CTX-02 adoption", "next dependency-valid WP cannot be resolved from exact accepted/direct sources", "cross-track dependency is material", "accepted transition changes a binding state surface", "material ambiguity remains"]
     },
     "h1_local_executor": {
       "purpose": "Execute only the predeclared H1 local Unity contract without Worker authority.",
-      "initial_reads": [
-        "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md",
-        "<DURABLE_EXTERNAL_HANDOFF_ANCHOR>",
-        "<ANCHORED_LOCAL_EXECUTION_MANIFEST>",
-        "<EXACT_H1_WP>",
-        "<MANIFEST_NAMED_FILES_AND_SCRIPTS>"
-      ],
-      "live_state": [
-        "repository identity",
-        "canonical PR/branch",
-        "remote HEAD == anchored MANIFEST_COMMIT_SHA"
-      ],
+      "initial_reads": ["Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md", "<DURABLE_EXTERNAL_HANDOFF_ANCHOR>", "<ANCHORED_LOCAL_EXECUTION_MANIFEST>", "<EXACT_H1_WP>", "<MANIFEST_NAMED_FILES_AND_SCRIPTS>"],
+      "live_state": ["repository identity", "canonical PR/branch", "remote HEAD == anchored MANIFEST_COMMIT_SHA"],
       "conditional_reads": {},
-      "must_escalate_if": [
-        "any semantic/design/repair decision is required",
-        "manifest/anchor/SHA chain does not match",
-        "unexpected mutation or environment state appears",
-        "an action would require context beyond the mechanical contract"
-      ],
+      "must_escalate_if": ["any semantic/design/repair decision is required", "manifest/anchor/SHA chain does not match", "unexpected mutation or environment state appears", "an action would require context beyond the mechanical contract"],
       "escalation_result": "REMOTE_DECISION_REQUIRED"
     }
   }
