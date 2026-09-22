@@ -157,6 +157,22 @@ def run_controls(target) -> list[str]:
         if not any("unreviewed read surface" in e for e in r["errors"]):
             errors.append("new read surface did not fail closed")
 
+        # 7c. A new structured entry shape on a known surface is also a new read class.
+        # Production must fail closed instead of silently skipping the non-string item.
+        p = base_profiles()
+        p["profiles"]["worker"]["initial_reads"].append({"path": exact_required})
+        write(root, str(target.PROFILES), json.dumps(p))
+        r = target.audit_resolved_route(root, policy(), "worker", {"<EXACT_WP>": exact})
+        if not any("unreviewed entry shape" in e for e in r["errors"]):
+            errors.append("new structured initial-read entry shape did not fail closed")
+
+        p = base_profiles()
+        p["profiles"]["worker"]["conditional_reads"]["direct_dependencies"] = ["<EXACT_WP>"]
+        write(root, str(target.PROFILES), json.dumps(p))
+        r = target.audit_resolved_route(root, policy(), "worker", {"<EXACT_WP>": exact})
+        if not any("unreviewed entry shape" in e for e in r["errors"]):
+            errors.append("new structured conditional-read entry shape did not fail closed")
+
         # 8. Growth of any derived mandatory source beyond the per-source ceiling is RED.
         write(root, str(target.PROFILES), json.dumps(base_profiles()))
         r = target.audit_resolved_route(root, policy(per_source=60, aggregate=1000), "worker", {"<EXACT_WP>": exact})
