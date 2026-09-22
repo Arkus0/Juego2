@@ -30,45 +30,68 @@ Repair lineage before review `#5276314835` had already closed:
 14. non-representative fixed conditionals outside route budgets;
 15. external CLEAN pointer self-confirmation.
 
-These remain binding.
+Review `#5276314835` and repair cycle 2 then closed:
 
-## Independent review #5276314835
+16. B1 DocSync/current-state checker hardcoded the pre-CTX-03 snapshot;
+17. B2 route-dependent repository-backed mandatory context outside every ceiling;
+18. numeric CTX ordering;
+19. future-role coupling;
+20. global path-overreach false-red;
+21. duplicate dynamic oracle;
+22. dangling duplicate-oracle workflow reference;
+23. conditional dynamic-slot blind spot.
 
-The exact failed candidate `9e71a220b79de79e3fbfe7bedd505256932a26f0` left two classes:
+These remain binding and must not regress.
 
-16. **B1** — DocSync/current-state checker hardcoded the pre-CTX-03 snapshot.
-17. **B2** — route-dependent repository-backed mandatory context could remain outside every ceiling.
+## Repair cycle 3 — final B2 causal class
 
-### B1 closure
+The final circuit-breaker instruction against candidate `bb5304c12d6d170cee3c6b5c1746ef159b75c0b2` identified one remaining causal class:
 
-CTX current state is independently derived from numeric CTX contracts plus required PASS/PR-bearing DocSync closures. `ACCEPTED_STATE_INDEX` is audited only after deriving that authority. Post-CTX-03 adoption is synthetically GREEN with unchanged checker code; stale/empty/fictitious projection, wrong next state and missing closure are RED. History prose cannot redefine state.
+24. **effective mandatory-read discovery was not a single exhaustive production derivation.** The production dynamic resolver could still discover placeholders from a narrower surface than the profile actually used and Reviewer predecessor navigation could derive only dependency contracts without proving that capsule/evidence repository context required by the route was automatically included. A caller could still participate too heavily in defining the concrete mandatory set.
 
-### B2 closure
+### Finding 24 closure
 
-The envelope now has four layers: base, fixed conditional, representative route-effective, and general dynamic repository. The dynamic layer provides checker-owned slot classification, repository/external separation, per-source + aggregate ceilings, repository-wide future-WP discovery, direct-dependency/required-input reconstruction, repository repair-evidence handling and manifest-derived local input discovery. New slot classes or ceiling growth fail closed pending explicit reviewed evolution.
+`scripts/ctx03-dynamic-context-check.py::discover_effective_mandatory_read_set()` is now the single production discovery oracle. It:
 
-## Additional circuit-breaker variants repaired before CLEAN
+- scans every reviewed profile read surface (`initial_reads`, `conditional_reads`, and external-descriptor-only `live_state`);
+- fails closed on a new read-like surface, unknown conditional-read class, or unknown dynamic slot class;
+- derives exact contract, mandatory contract bindings, direct dependencies, accepted capsule navigation or repository accepted-evidence fallback, route evidence/track context where the conditional class requires it, anchored manifests and manifest-named repository files;
+- treats caller bindings as additive only, so omission cannot subtract repository sources independently required by route authority;
+- explicitly classifies genuinely external slots outside repository corpus budgets;
+- validates and subjects all resulting repository-backed sources to the dynamic per-source + aggregate-route ceilings.
 
-18. **numeric CTX ordering** — CTX-10 vs CTX-04 no longer depends on filename lexicographic order;
-19. **future-role coupling** — exact contract resolution is slot-semantic rather than current-role-name based;
-20. **global path-overreach false-red** — incidental/output/donor/history path mentions no longer acquire mandatory-context authority;
-21. **duplicate dynamic oracle** — the intermediate second dynamic checker was removed;
-22. **dangling duplicate-oracle workflow reference** — the full baseline diff exposed CI still invoking the removed checker; workflow now gates the single production dynamic oracle directly;
-23. **conditional dynamic-slot blind spot** — an unknown future placeholder appearing only in `conditional_reads` could have escaped the production initial-read scan. An independent all-profile-read-surface control now fails CI closed on that extension.
+`Reviewer` predecessor navigation specifically derives capsule protocol + capsule index + capsule + its identity/authoritative/mandatory sources when an indexed accepted capsule exists; it no longer permits a contract-only false-green merely because the caller omitted the predecessor binding.
 
-No known variant is deferred to the Reviewer.
+The production resolver remains route-generic. A new role using known surfaces/classes inherits it; a new class/surface is RED rather than silently ignored.
+
+## Repair-cycle 3 class controls
+
+`Docs/evidence/CTX-03/FINAL_EFFECTIVE_READ_SET_AUDIT.md` records the focused circuit breaker. `scripts/ctx03-effective-read-set-controls.py` challenges the real production oracle for:
+
+- `initial_reads` placeholder counting;
+- placeholder counting on another reviewed surface;
+- direct dependency contract + repository context derivation;
+- Reviewer predecessor capsule/evidence navigation;
+- caller binding omission non-shrinkage;
+- new role inheritance;
+- new slot class RED;
+- new read surface RED;
+- derived source ceiling growth RED;
+- unrelated non-mandatory growth GREEN.
+
+Intermediate real-repository SHA `e31081698de1d7dabc600712517d39053e00bfaa` passed CTX Process Envelope run `35721489225`, Context Capsule Validation `35721489243`, and Arkus Candidate Validation `35721489256`; the uploaded process artifact reported `CTX03_DYNAMIC_CONTEXT: PASS`, `CTX03_EFFECTIVE_READ_SET_CONTROLS: PASS`, `CTX03_FINAL_CIRCUIT_BREAKER: PASS`, and mechanical `overall=PASS` with semantic review still required. Later documentation/evidence commits intentionally invalidate that SHA as terminal evidence.
 
 ## Final exact-HEAD rule
 
-After this commit:
+After this file and all other repository/evidence changes are committed:
 
 1. stop repository/evidence writers;
-2. read exact branch HEAD;
-3. require the full CTX-03 causal CI + accepted CTX-02 capsule validation on that exact HEAD;
-4. inspect the complete baseline→HEAD diff;
-5. re-challenge B1 post-adoption/current-state authority, B2 future arbitrary WP/role/slot growth, whole structured-surface omission, semantic substitution and lifecycle retry;
-6. if any blocker appears, resume Draft repair and invalidate this phase;
-7. only with no known blocker create external `WORKER_PRE_REVIEW: CLEAN` for the exact HEAD with findings-fixed count `23` and evidence pointers;
+2. read the exact branch HEAD;
+3. require the full CTX-03 causal CI + Context Capsule Validation + Arkus Candidate Validation on that exact SHA;
+4. inspect the complete `107694d3850a478849bffd9510dc030910fc8aa3 -> <HEAD>` diff, not only repair cycle 3;
+5. re-challenge finding 24 through the production oracle and focused class controls while preserving all 1–23 repairs;
+6. if any in-claim blocker appears, resume Draft repair and invalidate this phase;
+7. only with no known blocker create external `WORKER_PRE_REVIEW: CLEAN` for the exact immutable HEAD with findings-fixed count `24` and evidence pointers;
 8. derive Ready/freeze metadata only, require exact-SHA gates and durable terminal marker/live-HEAD closure, then STOP for a fresh independent Reviewer.
 
 Until that sequence completes, CTX-03 is **NOT READY** for independent review.
