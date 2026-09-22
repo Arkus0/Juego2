@@ -3,13 +3,14 @@
 FOUNDATIONAL_PROOF_VERDICT: READY
 UNRESOLVED_PROOF_OBLIGATIONS: 0
 KNOWN_UNDETECTED_DEFECT_CLASSES: 0
-TRUST_BOUNDARY: DW-02 owns deterministic production queries and content-shape report v1 over the complete accepted CITY-02 §4 programme ledger, including an explicit reviewed field manifest, independent source-side completeness checks, exact-row provenance, rebuild determinism, classification movement, a standalone machine-readable report artifact with per-subject provenance and explicit unmodeled-cost handling. CITY design quality, CITY-05/06 semantics beyond inherited DW-01 guarantees, realized geometry, Unity state, art coverage and production-cost modelling are outside the claim.
+TRUST_BOUNDARY: DW-02 owns deterministic production queries and content-shape report v1 over the complete accepted CITY-02 §4 programme ledger, including an explicit reviewed field manifest mechanically bound to the accepted table header schema, independent source-side completeness checks, exact-row provenance, rebuild determinism, classification movement, a standalone machine-readable report artifact with per-subject provenance and explicit unmodeled-cost handling. CITY design quality, CITY-05/06 semantics beyond inherited DW-01 guarantees, realized geometry, Unity state, art coverage and production-cost modelling are outside the claim.
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
 `READY` describes repository-backed proof obligations. Final exact-HEAD execution, Worker pre-review/freeze and independent Reviewer acceptance remain lifecycle gates and do not redefine the semantic proof boundary.
 
 ## Independent universe/oracles
 
+- **Source schema:** `CityProductionProjectionManifest.ProgrammeHeaders` pins the complete ordered 10-column CITY-02 §4 table header; production refuses to parse if any header is renamed or reordered, so positional reads cannot silently reinterpret changed source bytes.
 - **Subject universe:** every data row under accepted CITY-02 §4 `District × location programme`; production code enumerates all rows before projection, while `Dw02CityProductionQueryTests` separately parses source bytes without consuming the production parser/manifest/queries and compares exact subject identities/tuples.
 - **POI universe:** independent source-side identity prefix `loc.*` over that complete table, with expected `(district,id)` set compared to Q1.
 - **Access-role universe:** independent source-side narrow normalization over every table row, with exact IDs compared per role.
@@ -23,7 +24,7 @@ PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
 | Proof obligation | Claim/trust-boundary scope | Completeness argument | Positive evidence | Negative control / defect injection | Result | Residual risk |
 |---|---|---|---|---|---|---|
-| Reviewed manifest covers every source field consumed by frozen suite | DW-02 projection boundary | manifest names literal source heading/columns; test pins ordered manifest columns | `ManifestDeclaresExactReviewedSourceColumnsForFrozenSuite` | unsupported/shape-changed programme rows fail closed in parser | GREEN by repository proof; exact-SHA execution required | New desired fields require reviewed manifest/query version. |
+| Reviewed manifest covers every source field consumed by frozen suite and is bound to accepted schema | DW-02 projection boundary | manifest pins the seven adopted fields and the complete ordered 10-column source header; parser validates exact ordinal equality before reading positional cells | `ManifestDeclaresExactReviewedSourceColumnsForFrozenSuite`; `ManifestPinsCompleteAcceptedProgrammeHeaderSequence` | `RenamingConsumedReviewedHeaderFailsClosedBeforeProjection`; `ReorderingConsumedReviewedHeadersFailsClosedBeforeProjection` → `city.query_source_shape_invalid` | GREEN by repository proof; exact-SHA execution required | Intentional source schema changes require reviewed manifest/parser update rather than heuristic recovery. |
 | Every accepted CITY-02 programme row is projected | query/report completeness | expected identities derive from all source rows independently of projected facts | independent oracle equals `AllSubjects` exact IDs | omit one `loc.*` projected fact while full expected IDs remain → `city.query_subject_missing` | GREEN by causal test | Git/filesystem source read is trusted base. |
 | Ordinary/scenic families cannot disappear from report denominator | content-shape completeness | complete universe includes both `loc.*` and `fam.*` | current source proof includes both kinds | drop entire `fam.*` projected class → deterministic missing-subject RED | GREEN by causal test | A future new identity family intentionally fails closed pending manifest review. |
 | Q1 returns all declared POIs by district | production query | independent `(district,id)` set selected directly from source IDs | full accepted-source comparison | generic subject omission control invalidates query service before smaller Q1 can be accepted | GREEN | Parcel/site placement is not claimed. |
@@ -36,6 +37,10 @@ PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 | Missing cost inputs are not converted into estimates | non-invention | report schema has only explicit `UNMODELED` cost state and source-derived counts | normalized output asserts marker | test rejects numeric-zero/default cost keys | GREEN | Future cost model needs separate reviewed authority/model. |
 | H0 remains generic/downstream | architecture boundary | code exists only in `Arkus.DesignWorld`; exact-SHA observer scans H0 and project refs | generic `dw.fact` WorldState asserted | reverse dependency/query vocabulary in H0 makes observer RED | IMPLEMENTED; final exact-SHA execution required | Generic H0 correctness outside seam is inherited. |
 | Canonical exact-SHA route exists | lifecycle evidence | dedicated observer/verifier registered in canonical dispatch | scripts require focused tests + full regression + evidence/freeze metadata | missing dispatch/evidence/dirty SHA/frozen metadata returns nonzero | IMPLEMENTED; final exact-SHA execution required | CI runner is trusted base. |
+
+## Review repair
+
+Independent review `#5283775986` identified the original false-green where production and the source-side oracle both consumed positional columns while only `Programme ID` plus width were checked. The repair makes the complete accepted header schema executable production authority and adds explicit rename/reorder REDs; DW-01/DW-00 guarantees are unchanged.
 
 ## Freeze gate
 
