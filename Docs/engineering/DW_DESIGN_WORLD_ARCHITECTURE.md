@@ -1,6 +1,6 @@
 # DW Design World Architecture — second consumer before H2
 
-Version: 0.1 — planning candidate
+Version: 0.2 — planning candidate
 Status: PROPOSED / NON-BINDING until DW planning PR independently passes, merges and DocSync completes
 
 ## 1. Definition
@@ -61,6 +61,8 @@ Every DW projected record that may affect a verdict or retrieval result carries 
 
 The exact encoding is owned by `WP-DW-00`; this architecture does not prescribe a new H0 canonical type if accepted extensibility already suffices.
 
+Because `WP-DW-00` defines the generic projection/public surface and is foundational, its neutral reference fixture is not sufficient by itself. Before freeze it must also pass one bounded slice of the currently approved Juego2 target through that same surface as the representative content-shape probe required by `FOUNDATIONAL_PROOF_STANDARD.md`. That probe checks only representability, identity/granularity, provenance and DW-00-owned public boundaries; it does not transfer CITY semantic/invariant ownership out of `WP-DW-01`.
+
 ### 4.1 Fail-closed provenance
 
 A fact cannot be used as proof merely because it exists in a DW index. Missing, ambiguous, stale or contradictory provenance must be visible and must not silently produce a valid result.
@@ -109,7 +111,7 @@ The invariant executor proves conformance to an accepted rule, not the wisdom of
 
 ## 7. CITY consumer boundary
 
-The first consumer is a bounded accepted CITY slice because it contains typed relations and measurable programme constraints while remaining independent of Unity execution.
+The first **semantic** consumer is a bounded accepted CITY slice because it contains typed relations and measurable programme constraints while remaining independent of Unity execution. The required DW-00 Juego2 content-shape probe may carry an accepted CITY-shaped record through the generic surface, but it is representability evidence only and cannot claim CITY rule truth.
 
 `WP-DW-01` proves a minimal vertical slice, but every invariant claimed complete uses the **complete accepted source universe relevant to that invariant** — for the initial access-role proof, the full accepted CITY-02 A/B functional-POI universe — plus causal negative controls. `WP-DW-02` then expands only the useful production-facing subset required for real queries/content-shape measurements.
 
