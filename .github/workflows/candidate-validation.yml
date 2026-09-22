@@ -2,7 +2,7 @@ name: Arkus Candidate Validation
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft, edited]
   workflow_dispatch:
     inputs:
       pr_number:
@@ -25,6 +25,7 @@ on:
 permissions:
   contents: read
   actions: read
+  checks: write
   pull-requests: read
 
 concurrency:
@@ -102,7 +103,8 @@ jobs:
           python3 scripts/validation-context.py resolve \
             --pr-json "${RUNNER_TEMP}/validation-pr.json" \
             --target-sha "${TARGET_SHA}" \
-            --github-output "${GITHUB_OUTPUT}"
+            --github-output "${GITHUB_OUTPUT}" \
+            --record VALIDATION_CONTEXT.json
 
       - name: Install pinned .NET SDK from global.json
         if: ${{ steps.context.outputs.process_only != 'true' && hashFiles('global.json') != '' }}
@@ -156,6 +158,7 @@ jobs:
         with:
           name: candidate-observation-${{ env.TARGET_SHA }}
           path: |
+            VALIDATION_CONTEXT.json
             validation.log
             EXECUTION_RECEIPT.txt
             artifacts/observed
@@ -206,7 +209,8 @@ jobs:
           python3 scripts/validation-context.py resolve \
             --pr-json "${RUNNER_TEMP}/validation-pr.json" \
             --target-sha "${TARGET_SHA}" \
-            --github-output "${GITHUB_OUTPUT}"
+            --github-output "${GITHUB_OUTPUT}" \
+            --record VALIDATION_CONTEXT.json
 
       - name: Reuse prior exact-SHA GREEN receipt when available
         id: reuse
@@ -330,12 +334,36 @@ jobs:
           fi
           exit "${status}"
 
+      - name: Persist validation context identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          CONTEXT_DIGEST: ${{ steps.context.outputs.context_digest }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          summary="$(python3 scripts/validation-context.py check-summary \
+            --record VALIDATION_CONTEXT.json \
+            --run-id "${GITHUB_RUN_ID}" \
+            --workflow "Arkus Candidate Validation")"
+          external_id="validation-context:${PR_NUMBER}:${TARGET_SHA}:${CONTEXT_DIGEST}:${GITHUB_RUN_ID}"
+          jq -n \
+            --arg name "Validation context identity" \
+            --arg head_sha "${TARGET_SHA}" \
+            --arg external_id "${external_id}" \
+            --arg title "Context-bound validation GREEN" \
+            --arg summary "${summary}" \
+            '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"success",output:{title:$title,summary:$summary}}' \
+            | gh api --method POST -H 'Accept: application/vnd.github+json' \
+                "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
+
       - name: Upload frozen-candidate evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: freeze-validation-${{ env.TARGET_SHA }}
           path: |
+            VALIDATION_CONTEXT.json
             validation.log
             EXECUTION_RECEIPT.txt
             REUSED_RECEIPT_SOURCE.txt
