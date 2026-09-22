@@ -1,7 +1,7 @@
 # PA track — Living World research and adoption programme
 
 Status: **ACTIVE / PLAN ACCEPTED / PROCESS_ONLY**  
-Version: 1.4 — 2026-09-21  
+Version: 1.5 — 2026-09-22  
 Repository: `Arkus0/Juego2`
 
 Programme plan accepted on candidate `95fc0f5935561fd61a20221f993e2532ce513795`, independent review `#5267699844`, PR `#84`, merge `4c1672db639f9d56e7bd6f837ff5e1881d789b16`.
@@ -10,7 +10,9 @@ Programme plan accepted on candidate `95fc0f5935561fd61a20221f993e2532ce513795`,
 
 `WP-PA-02` is **COMPLETE**. Candidate `015bb28ddc9facc46459c2d1dd87a89740b6c9ef` passed independent review `#5270038879` in PR `#97` and merged as `85d23489a6478da6bc9f33c3f017640e46ab05e9`.
 
-`WP-PA-03` is **COMPLETE**. Candidate `d216f32f0c82bf57c23a3c7ef0c4433cbcbdc927` passed independent review `#5270421825` in PR `#100` and merged as `2f3862b601b0521a6a3d5a57afe54f182d037e97`. The next executable PA workpack is `WP-PA-04`.
+`WP-PA-03` is **COMPLETE**. Candidate `d216f32f0c82bf57c23a3c7ef0c4433cbcbdc927` passed independent review `#5270421825` in PR `#100` and merged as `2f3862b601b0521a6a3d5a57afe54f182d037e97`.
+
+`WP-PA-04` is **COMPLETE**. Candidate `5d38ea38b983cd5227f57afa1d880d24746f9249` passed independent review `#5280879115` in PR `#129` and merged as `d6041b719292f24c4481dea28727e2cfd5f7ed5b`. The next executable PA workpack is `WP-PA-05`.
 
 ## Purpose
 
@@ -84,7 +86,7 @@ WP-PA-02 ✅ NPC Agency harvest/revalidation              REMOTE_HARVEST
    ↓
 WP-PA-03 ✅ Social Graph harvest/revalidation            REMOTE_HARVEST
    ↓
-WP-PA-04    Knowledge/Beliefs harvest/revalidation       REMOTE_HARVEST
+WP-PA-04 ✅ Knowledge/Beliefs harvest/revalidation       REMOTE_HARVEST
    ↓
 WP-PA-05    Rumours harvest/revalidation                 REMOTE_HARVEST
    ↓
@@ -205,6 +207,6 @@ This avoids making the user reconstruct the canonical sequence from memory and g
 
 ## Current next workpack
 
-`WP-PA-04 — Adopt/revalidate Knowledge findings`.
+`WP-PA-05 — Adopt/revalidate Rumours findings`.
 
-PA-01, PA-02 and PA-03 are accepted in Juego2. PA-04 remains a cheap donor-harvest/revalidation gate, not a restart of the original PA-04 research. After PA-01..05 are independently accepted in Juego2, the first genuinely new research workpack is `WP-PA-06 — Memory & Consequences research`.
+PA-01, PA-02, PA-03 and PA-04 are accepted in Juego2. PA-05 remains the final cheap donor-harvest/revalidation gate, not a restart of the original PA-05 research. After PA-05 is independently accepted in Juego2, the first genuinely new research workpack is `WP-PA-06 — Memory & Consequences research`.
