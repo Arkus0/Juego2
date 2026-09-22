@@ -7,7 +7,7 @@ import copy
 import glob
 import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import sys
 import tempfile
@@ -16,9 +16,19 @@ SCHEMA = "arkus.accepted-contract-capsule@1"
 INDEX_SCHEMA = "arkus.accepted-contract-capsule-index@1"
 AUTHORITY = "NON_AUTHORITATIVE_NAVIGATION_ONLY"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$", re.I)
+CAPSULE_ROOT = "Docs/engineering/context-capsules/"
+CTX02_EVIDENCE_ROOT = "Docs/evidence/CTX-02/"
+CITY_PRODUCT_SEED = "Docs/production/CITY_PRODUCT_SEED.md"
+CTX02_GENERATED_AUTHORITY_PATHS = {
+    "Docs/engineering/CONTEXT_CAPSULE_V1.md",
+    "Docs/engineering/context-capsule-schema.json",
+    "Docs/engineering/context-capsules/index.json",
+}
+
 
 class CapsuleError(ValueError):
     pass
+
 
 def load_json(path: Path) -> dict:
     try:
@@ -31,16 +41,34 @@ def load_json(path: Path) -> dict:
         raise CapsuleError(f"expected object root: {path}")
     return data
 
+
 def git_blob_sha(data: bytes) -> str:
     return hashlib.sha1(f"blob {len(data)}\0".encode("utf-8") + data).hexdigest()
+
+
+def normalized_repo_path(value: object, *, label: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise CapsuleError(f"{label}.path must be non-empty")
+    if "\\" in value:
+        raise CapsuleError(f"{label}.path must use repository POSIX separators")
+    pure = PurePosixPath(value)
+    if pure.is_absolute() or ".." in pure.parts:
+        raise CapsuleError(f"{label}.path must stay inside the repository")
+    return pure.as_posix()
+
+
+def require_external_authority_path(path: str, *, label: str) -> None:
+    if path.startswith(CAPSULE_ROOT):
+        raise CapsuleError(f"{label} must not point into the capsule layer; self-confirmation is forbidden")
+    if path.startswith(CTX02_EVIDENCE_ROOT) or path in CTX02_GENERATED_AUTHORITY_PATHS:
+        raise CapsuleError(f"{label} must not use CTX-02 generated evidence/protocol as predecessor authority")
+
 
 def read_bound_source(repo_root: Path, source: dict, *, label: str) -> bytes:
     if not isinstance(source, dict):
         raise CapsuleError(f"{label} must be an object")
-    path = source.get("path")
+    path = normalized_repo_path(source.get("path"), label=label)
     expected = source.get("git_blob_sha")
-    if not isinstance(path, str) or not path:
-        raise CapsuleError(f"{label}.path must be non-empty")
     if not isinstance(expected, str) or not SHA_RE.fullmatch(expected):
         raise CapsuleError(f"{label}.git_blob_sha must be exact 40-char git blob SHA")
     if "kind" in source and not isinstance(source["kind"], str):
@@ -58,8 +86,10 @@ def read_bound_source(repo_root: Path, source: dict, *, label: str) -> bytes:
         )
     return data
 
+
 def strip_md(value: str) -> str:
     return " ".join(value.replace("**", "").replace("`", "").split()).strip()
+
 
 def parse_completion(text: str) -> dict:
     if not re.search(r"(?mi)^Status:\s*\**COMPLETE\**\s*$", text):
@@ -97,18 +127,21 @@ def parse_completion(text: str) -> dict:
                 break
         if review_id is None:
             raise CapsuleError("identity source missing independent PASS review id")
-    def first(patterns, name):
+
+    def first(patterns: list[str], name: str) -> str:
         for pattern in patterns:
             match = re.search(pattern, text)
             if match:
                 return match.group(1).lower()
         raise CapsuleError(f"identity source missing {name}")
+
     return {
         "state": "ACCEPTED",
         "reviewed_candidate_sha": first(candidate_patterns, "reviewed/accepted candidate SHA"),
         "merge_sha": first(merge_patterns, "merge SHA"),
         "review_id": review_id,
     }
+
 
 def parse_disposition_table(text: str, spec: dict) -> dict[str, str]:
     section = spec.get("section")
@@ -124,16 +157,16 @@ def parse_disposition_table(text: str, spec: dict) -> dict[str, str]:
     except StopIteration as exc:
         raise CapsuleError(f"structured source section not found: {section}") from exc
     rows: dict[str, str] = {}
-    for line in lines[start + 1:]:
+    for line in lines[start + 1 :]:
         if line.startswith("## "):
             break
-        s = line.strip()
-        if not (s.startswith("|") and s.endswith("|")):
+        stripped = line.strip()
+        if not (stripped.startswith("|") and stripped.endswith("|")):
             continue
-        cells = [c.strip() for c in s[1:-1].split("|")]
+        cells = [cell.strip() for cell in stripped[1:-1].split("|")]
         if not cells:
             continue
-        if all(re.fullmatch(r":?-{3,}:?", c.replace(" ", "")) for c in cells):
+        if all(re.fullmatch(r":?-{3,}:?", cell.replace(" ", "")) for cell in cells):
             continue
         if max(key_column, status_column) >= len(cells):
             continue
@@ -149,6 +182,7 @@ def parse_disposition_table(text: str, spec: dict) -> dict[str, str]:
     if not rows:
         raise CapsuleError(f"no disposition rows parsed from {section}")
     return rows
+
 
 def validate_basic_shape(capsule: dict) -> None:
     if capsule.get("schema") != SCHEMA:
@@ -167,7 +201,9 @@ def validate_basic_shape(capsule: dict) -> None:
         raise CapsuleError(f"{cid}: accepted_identity required")
     required_identity = {"reviewed_candidate_sha", "merge_sha", "review_id"}
     if set(identity) != required_identity:
-        raise CapsuleError(f"{cid}: accepted_identity must contain exactly reviewed_candidate_sha, merge_sha, review_id")
+        raise CapsuleError(
+            f"{cid}: accepted_identity must contain exactly reviewed_candidate_sha, merge_sha, review_id"
+        )
     for key in ("reviewed_candidate_sha", "merge_sha"):
         value = identity.get(key)
         if not isinstance(value, str) or not SHA_RE.fullmatch(value):
@@ -178,7 +214,9 @@ def validate_basic_shape(capsule: dict) -> None:
         raise CapsuleError(f"{cid}: mandatory_source_reads must be a list")
     if "consumer_hints" in capsule:
         hints = capsule["consumer_hints"]
-        if not isinstance(hints, list) or any(not isinstance(item, str) or not item.strip() for item in hints):
+        if not isinstance(hints, list) or any(
+            not isinstance(item, str) or not item.strip() for item in hints
+        ):
             raise CapsuleError(f"{cid}: consumer_hints must contain only non-empty strings")
     for field in ("exported_guarantees", "exclusions_nonclaims", "reopen_conditions", "escalate_if"):
         value = capsule.get(field)
@@ -189,7 +227,7 @@ def validate_basic_shape(capsule: dict) -> None:
             if not isinstance(entry, str) or not entry.strip():
                 raise CapsuleError(f"{cid}: {field}[{i}] must be a non-empty string")
     for field in ("exported_guarantees", "exclusions_nonclaims"):
-        ids = set()
+        ids: set[str] = set()
         for entry in capsule[field]:
             if not isinstance(entry, dict) or not isinstance(entry.get("id"), str) or not entry["id"]:
                 raise CapsuleError(f"{cid}: {field} entries need id")
@@ -199,7 +237,9 @@ def validate_basic_shape(capsule: dict) -> None:
             if not isinstance(entry.get("statement"), str) or not entry["statement"].strip():
                 raise CapsuleError(f"{cid}: {field} entry {entry['id']} needs statement")
             if "source_pointer" in entry and not isinstance(entry["source_pointer"], str):
-                raise CapsuleError(f"{cid}: {field} entry {entry['id']} source_pointer must be a string")
+                raise CapsuleError(
+                    f"{cid}: {field} entry {entry['id']} source_pointer must be a string"
+                )
     if "disposition_source" in capsule and not isinstance(capsule["disposition_source"], dict):
         raise CapsuleError(f"{cid}: disposition_source must be an object when present")
     if "dispositions" in capsule and not isinstance(capsule["dispositions"], list):
@@ -207,14 +247,27 @@ def validate_basic_shape(capsule: dict) -> None:
     if "directional_semantics" in capsule and not isinstance(capsule["directional_semantics"], list):
         raise CapsuleError(f"{cid}: directional_semantics must be a list when present")
 
+
 def validate_identity(repo_root: Path, capsule: dict, live_state: dict | None) -> dict:
     cid = capsule["capsule_id"]
-    data = read_bound_source(repo_root, capsule.get("identity_source"), label=f"{cid}.identity_source")
+    identity_source = capsule.get("identity_source")
+    if not isinstance(identity_source, dict):
+        raise CapsuleError(f"{cid}: identity_source required")
+    identity_path = normalized_repo_path(identity_source.get("path"), label=f"{cid}.identity_source")
+    expected_name = f"{cid}.md"
+    if not identity_path.startswith("Docs/workpacks/") or PurePosixPath(identity_path).name != expected_name:
+        raise CapsuleError(
+            f"{cid}: identity_source must be canonical external workpack Docs/workpacks/**/{expected_name}"
+        )
+    require_external_authority_path(identity_path, label=f"{cid}.identity_source")
+    data = read_bound_source(repo_root, identity_source, label=f"{cid}.identity_source")
     parsed = parse_completion(data.decode("utf-8"))
     expected = capsule["accepted_identity"]
     for key in ("reviewed_candidate_sha", "merge_sha", "review_id"):
         if parsed[key].lower() != str(expected[key]).lower():
-            raise CapsuleError(f"{cid}: accepted identity mismatch for {key}: capsule={expected[key]} completion={parsed[key]}")
+            raise CapsuleError(
+                f"{cid}: accepted identity mismatch for {key}: capsule={expected[key]} completion={parsed[key]}"
+            )
     live_checked = False
     if live_state is not None:
         entries = live_state.get("capsules")
@@ -224,25 +277,36 @@ def validate_identity(repo_root: Path, capsule: dict, live_state: dict | None) -
         if not isinstance(live, dict):
             raise CapsuleError(f"{cid}: live accepted-state entry malformed")
         if live.get("state") != "ACCEPTED":
-            raise CapsuleError(f"{cid}: live accepted state is {live.get('state')!r}, not ACCEPTED; capsule unusable and predecessor must be reconstructed/reopened")
+            raise CapsuleError(
+                f"{cid}: live accepted state is {live.get('state')!r}, not ACCEPTED; "
+                "capsule unusable and predecessor must be reconstructed/reopened"
+            )
         for key in ("reviewed_candidate_sha", "merge_sha"):
             if str(live.get(key, "")).lower() != expected[key].lower():
-                raise CapsuleError(f"{cid}: live exact-SHA mismatch for {key}; capsule unusable and authoritative reconstruction required")
+                raise CapsuleError(
+                    f"{cid}: live exact-SHA mismatch for {key}; capsule unusable and authoritative reconstruction required"
+                )
         live_checked = True
     return {"completion_identity_checked": True, "live_state_checked": live_checked}
+
 
 def validate_sources(repo_root: Path, capsule: dict) -> None:
     cid = capsule["capsule_id"]
     sources = capsule.get("authoritative_sources")
     if not isinstance(sources, list) or not sources:
         raise CapsuleError(f"{cid}: authoritative_sources must be non-empty")
-    seen = set()
+    seen: set[str] = set()
     for i, source in enumerate(sources):
-        read_bound_source(repo_root, source, label=f"{cid}.authoritative_sources[{i}]")
-        path = source["path"]
+        label = f"{cid}.authoritative_sources[{i}]"
+        if not isinstance(source, dict):
+            raise CapsuleError(f"{label} must be an object")
+        path = normalized_repo_path(source.get("path"), label=label)
+        require_external_authority_path(path, label=label)
+        read_bound_source(repo_root, source, label=label)
         if path in seen:
             raise CapsuleError(f"{cid}: duplicate authoritative source {path}")
         seen.add(path)
+
 
 def validate_mandatory_reads(repo_root: Path, capsule: dict) -> None:
     cid = capsule["capsule_id"]
@@ -250,12 +314,15 @@ def validate_mandatory_reads(repo_root: Path, capsule: dict) -> None:
         label = f"{cid}.mandatory_source_reads[{i}]"
         if not isinstance(source, dict):
             raise CapsuleError(f"{label} must be an object")
+        path = normalized_repo_path(source.get("path"), label=label)
+        require_external_authority_path(path, label=label)
         if source.get("noncompressible") is not True:
             raise CapsuleError(f"{label}.noncompressible must be true")
         reason = source.get("reason")
         if not isinstance(reason, str) or not reason.strip():
             raise CapsuleError(f"{label}.reason must be a non-empty string")
         read_bound_source(repo_root, source, label=label)
+
 
 def validate_dispositions(repo_root: Path, capsule: dict) -> None:
     cid = capsule["capsule_id"]
@@ -265,6 +332,8 @@ def validate_dispositions(repo_root: Path, capsule: dict) -> None:
         return
     if not isinstance(spec, dict) or not isinstance(dispositions, list):
         raise CapsuleError(f"{cid}: disposition_source and dispositions must appear together")
+    disposition_path = normalized_repo_path(spec.get("path"), label=f"{cid}.disposition_source")
+    require_external_authority_path(disposition_path, label=f"{cid}.disposition_source")
     data = read_bound_source(repo_root, spec, label=f"{cid}.disposition_source")
     source_rows = parse_disposition_table(data.decode("utf-8"), spec)
     capsule_rows: dict[str, str] = {}
@@ -281,19 +350,33 @@ def validate_dispositions(repo_root: Path, capsule: dict) -> None:
     if capsule_rows != source_rows:
         missing = sorted(set(source_rows) - set(capsule_rows))
         extra = sorted(set(capsule_rows) - set(source_rows))
-        changed = sorted(key for key in set(source_rows) & set(capsule_rows) if source_rows[key] != capsule_rows[key])
-        detail = []
+        changed = sorted(
+            key
+            for key in set(source_rows) & set(capsule_rows)
+            if source_rows[key] != capsule_rows[key]
+        )
+        detail: list[str] = []
         if missing:
             detail.append("missing=" + repr(missing))
         if extra:
             detail.append("extra=" + repr(extra))
         if changed:
-            detail.append("changed=" + repr({key: {"source": source_rows[key], "capsule": capsule_rows[key]} for key in changed}))
+            detail.append(
+                "changed="
+                + repr(
+                    {
+                        key: {"source": source_rows[key], "capsule": capsule_rows[key]}
+                        for key in changed
+                    }
+                )
+            )
         raise CapsuleError(f"{cid}: structured disposition coverage is lossy: " + "; ".join(detail))
+
 
 def validate_directionality(capsule: dict) -> None:
     cid = capsule["capsule_id"]
     items = capsule.get("directional_semantics", [])
+    ids: set[str] = set()
     for i, item in enumerate(items):
         if not isinstance(item, dict):
             raise CapsuleError(f"{cid}: directional_semantics[{i}] must be an object")
@@ -302,8 +385,11 @@ def validate_directionality(capsule: dict) -> None:
         semantic_id = item.get("id")
         forward_raw = item.get("forward")
         reverse_raw = item.get("reverse")
-        if not isinstance(semantic_id, str):
-            raise CapsuleError(f"{cid}: directional semantic id must be a string")
+        if not isinstance(semantic_id, str) or not semantic_id.strip():
+            raise CapsuleError(f"{cid}: directional semantic id must be a non-empty string")
+        if semantic_id in ids:
+            raise CapsuleError(f"{cid}: duplicate directional semantic id {semantic_id}")
+        ids.add(semantic_id)
         if not isinstance(forward_raw, str) or not isinstance(reverse_raw, str):
             raise CapsuleError(f"{cid}: directional semantic forward/reverse must be strings")
         forward = strip_md(forward_raw)
@@ -311,14 +397,27 @@ def validate_directionality(capsule: dict) -> None:
         if not forward or not reverse or forward == reverse:
             raise CapsuleError(f"{cid}: asymmetric semantics collapsed: {forward!r} vs {reverse!r}")
 
-def validate_city_noncompressible(repo_root: Path, capsule: dict) -> None:
+
+def validate_city_noncompressible(capsule: dict) -> None:
     if capsule["track"] != "CITY":
         return
+    cid = capsule["capsule_id"]
     if capsule.get("content_mode") != "boundary_summary":
-        raise CapsuleError(f"{capsule['capsule_id']}: CITY capsule must be boundary_summary")
+        raise CapsuleError(f"{cid}: CITY capsule must be boundary_summary")
     reads = capsule["mandatory_source_reads"]
     if not reads:
-        raise CapsuleError(f"{capsule['capsule_id']}: CITY boundary capsule must preserve mandatory non-compressible source reads")
+        raise CapsuleError(f"{cid}: CITY boundary capsule must preserve mandatory non-compressible source reads")
+    if cid == "WP-CITY-03":
+        paths = {
+            normalized_repo_path(read.get("path"), label=f"{cid}.mandatory_source_reads")
+            for read in reads
+            if isinstance(read, dict)
+        }
+        if CITY_PRODUCT_SEED not in paths:
+            raise CapsuleError(
+                f"{cid}: representative CITY boundary must preserve exact mandatory read {CITY_PRODUCT_SEED}"
+            )
+
 
 def validate_capsule(repo_root: Path, capsule: dict, live_state: dict | None = None) -> dict:
     validate_basic_shape(capsule)
@@ -327,7 +426,7 @@ def validate_capsule(repo_root: Path, capsule: dict, live_state: dict | None = N
     validate_mandatory_reads(repo_root, capsule)
     validate_dispositions(repo_root, capsule)
     validate_directionality(capsule)
-    validate_city_noncompressible(repo_root, capsule)
+    validate_city_noncompressible(capsule)
     return {
         "capsule_id": capsule["capsule_id"],
         "result": "VALID_NAVIGATION_ONLY",
@@ -337,12 +436,14 @@ def validate_capsule(repo_root: Path, capsule: dict, live_state: dict | None = N
         "on_any_mismatch": "RECONSTRUCT_FROM_AUTHORITATIVE_SOURCES",
     }
 
+
 def workpack_is_complete(path: Path) -> bool:
     try:
         text = path.read_text(encoding="utf-8")
     except FileNotFoundError:
         return False
     return bool(re.search(r"(?mi)^Status:\s*\**COMPLETE\**\s*$", text))
+
 
 def validate_pa_chain(repo_root: Path, index: dict, capsules: dict[str, dict]) -> dict:
     rule = index.get("coverage_rules", {}).get("pa_accepted_result_chain")
@@ -352,7 +453,7 @@ def validate_pa_chain(repo_root: Path, index: dict, capsules: dict[str, dict]) -
     wp_template = rule.get("workpack_template")
     if not isinstance(result_glob, str) or not isinstance(wp_template, str):
         raise CapsuleError("invalid PA chain discovery rule")
-    accepted_results = []
+    accepted_results: list[tuple[str, str]] = []
     for result_path_str in sorted(glob.glob(str(repo_root / result_glob))):
         result_path = Path(result_path_str)
         match = re.fullmatch(r"PA-(\d\d)\.md", result_path.name)
@@ -362,7 +463,7 @@ def validate_pa_chain(repo_root: Path, index: dict, capsules: dict[str, dict]) -
         wp_path = repo_root / wp_template.replace("{NN}", num)
         if workpack_is_complete(wp_path):
             accepted_results.append((num, result_path.relative_to(repo_root).as_posix()))
-    missing = []
+    missing: list[str] = []
     for num, result_path in accepted_results:
         cid = f"WP-PA-{num}"
         capsule = capsules.get(cid)
@@ -373,16 +474,44 @@ def validate_pa_chain(repo_root: Path, index: dict, capsules: dict[str, dict]) -
             raise CapsuleError(f"{cid}: accepted PA chain capsule must declare track=PA")
         if capsule.get("content_mode") != "structured_disposition":
             raise CapsuleError(f"{cid}: accepted PA chain capsule must use content_mode=structured_disposition")
-        if not isinstance(capsule.get("disposition_source"), dict):
+        disposition_source = capsule.get("disposition_source")
+        if not isinstance(disposition_source, dict):
             raise CapsuleError(f"{cid}: accepted PA chain capsule requires disposition_source")
         if not isinstance(capsule.get("dispositions"), list) or not capsule["dispositions"]:
             raise CapsuleError(f"{cid}: accepted PA chain capsule requires non-empty dispositions")
-        paths = {s.get("path") for s in capsule.get("authoritative_sources", []) if isinstance(s, dict)}
-        if result_path not in paths:
+        source_by_path = {
+            source.get("path"): source
+            for source in capsule.get("authoritative_sources", [])
+            if isinstance(source, dict)
+        }
+        canonical_source = source_by_path.get(result_path)
+        if canonical_source is None:
             raise CapsuleError(f"{cid}: capsule does not point to accepted PA result {result_path}")
+        disposition_path = normalized_repo_path(
+            disposition_source.get("path"), label=f"{cid}.disposition_source"
+        )
+        if disposition_path != result_path:
+            raise CapsuleError(
+                f"{cid}: disposition_source must be canonical accepted PA result {result_path}; "
+                f"got {disposition_path}"
+            )
+        if str(disposition_source.get("git_blob_sha", "")).lower() != str(
+            canonical_source.get("git_blob_sha", "")
+        ).lower():
+            raise CapsuleError(
+                f"{cid}: disposition_source fingerprint must equal canonical accepted PA result binding"
+            )
     if missing:
-        raise CapsuleError("accepted PA result-chain coverage gap: " + ", ".join(missing) + "; missing capsule forces authoritative source reconstruction and DocSync cannot claim capsule coverage complete")
-    return {"accepted_pa_results_discovered": [f"WP-PA-{num}" for num, _ in accepted_results], "coverage": "COMPLETE"}
+        raise CapsuleError(
+            "accepted PA result-chain coverage gap: "
+            + ", ".join(missing)
+            + "; missing capsule forces authoritative source reconstruction and DocSync cannot claim capsule coverage complete"
+        )
+    return {
+        "accepted_pa_results_discovered": [f"WP-PA-{num}" for num, _ in accepted_results],
+        "coverage": "COMPLETE",
+    }
+
 
 def audit_index(repo_root: Path, index_path: Path, live_state: dict | None = None) -> dict:
     index = load_json(index_path)
@@ -393,15 +522,18 @@ def audit_index(repo_root: Path, index_path: Path, live_state: dict | None = Non
     entries = index.get("entries")
     if not isinstance(entries, list) or not entries:
         raise CapsuleError("capsule index entries must be non-empty")
-    capsules = {}
-    results = []
+    capsules: dict[str, dict] = {}
+    results: list[dict] = []
     for entry in entries:
         if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
             raise CapsuleError("capsule index entry requires path")
-        capsule = load_json(repo_root / entry["path"])
+        entry_path = normalized_repo_path(entry["path"], label="capsule index entry")
+        if not entry_path.startswith(CAPSULE_ROOT) or entry_path == "Docs/engineering/context-capsules/index.json":
+            raise CapsuleError(f"capsule index entry must point to a capsule file: {entry_path}")
+        capsule = load_json(repo_root / entry_path)
         cid = capsule.get("capsule_id")
         if entry.get("capsule_id") != cid:
-            raise CapsuleError(f"index/capsule id mismatch for {entry['path']}")
+            raise CapsuleError(f"index/capsule id mismatch for {entry_path}")
         if cid in capsules:
             raise CapsuleError(f"duplicate capsule id in index: {cid}")
         capsules[cid] = capsule
@@ -414,6 +546,7 @@ def audit_index(repo_root: Path, index_path: Path, live_state: dict | None = Non
         "semantic_authority_granted": False,
     }
 
+
 def expect_failure(fn, needle: str) -> None:
     try:
         fn()
@@ -423,102 +556,223 @@ def expect_failure(fn, needle: str) -> None:
     else:
         raise AssertionError(f"expected failure containing {needle!r}")
 
+
 def run_self_test() -> None:
     with tempfile.TemporaryDirectory() as td:
         repo = Path(td)
         (repo / "Docs/workpacks/PA").mkdir(parents=True)
+        (repo / "Docs/workpacks/CITY").mkdir(parents=True)
         (repo / "Docs/research/living-world/results").mkdir(parents=True)
         (repo / "Docs/production").mkdir(parents=True)
-        wp_text = """# WP-PA-03\n\nStatus: **COMPLETE**\nAccepted candidate: `1111111111111111111111111111111111111111`\nIndependent review: **PASS**, review `12345`\nMerged: PR `#1`, merge commit `2222222222222222222222222222222222222222`\n"""
-        result_text = """# PA-03\n\n## 4. Minimal relationship vocabulary recommendation\n\n| Relationship/mechanism | Status | Juego2 recommendation |\n|---|---|---|\n| directed trust | **ADOPT** | material decision input |\n| synthetic opinion | **LATER / non-authoritative** | readability only |\n| default global/N-hop social traversal to discover targets | **REJECT** | inherited bounded-discovery guarantee |\n\n## 5. Next\n"""
+        wp_text = (
+            "# WP-PA-03\n\nStatus: **COMPLETE**\n"
+            "Accepted candidate: `1111111111111111111111111111111111111111`\n"
+            "Independent review: **PASS**, review `12345`\n"
+            "Merged: PR `#1`, merge commit `2222222222222222222222222222222222222222`\n"
+        )
+        result_text = (
+            "# PA-03\n\n## 4. Minimal relationship vocabulary recommendation\n\n"
+            "| Relationship/mechanism | Status | Juego2 recommendation |\n"
+            "|---|---|---|\n"
+            "| directed trust | **ADOPT** | material decision input |\n"
+            "| synthetic opinion | **LATER / non-authoritative** | readability only |\n"
+            "| default global/N-hop social traversal to discover targets | **REJECT** | inherited bounded-discovery guarantee |\n\n"
+            "## 5. Next\n"
+        )
         wp = repo / "Docs/workpacks/PA/WP-PA-03.md"
         result = repo / "Docs/research/living-world/results/PA-03.md"
-        city_spec = repo / "Docs/production/CITY_PRODUCT_SEED.md"
+        city_spec = repo / CITY_PRODUCT_SEED
         wp.write_text(wp_text, encoding="utf-8")
         result.write_text(result_text, encoding="utf-8")
         city_spec.write_text("exact spatial spec", encoding="utf-8")
-        source = {"path": "Docs/research/living-world/results/PA-03.md", "git_blob_sha": git_blob_sha(result.read_bytes())}
+        source = {
+            "path": "Docs/research/living-world/results/PA-03.md",
+            "git_blob_sha": git_blob_sha(result.read_bytes()),
+        }
         capsule = {
             "schema": SCHEMA,
             "authority": AUTHORITY,
             "capsule_id": "WP-PA-03",
             "track": "PA",
             "content_mode": "structured_disposition",
-            "accepted_identity": {"reviewed_candidate_sha": "1"*40, "merge_sha": "2"*40, "review_id": "12345"},
-            "identity_source": {"path": "Docs/workpacks/PA/WP-PA-03.md", "git_blob_sha": git_blob_sha(wp.read_bytes())},
+            "accepted_identity": {
+                "reviewed_candidate_sha": "1" * 40,
+                "merge_sha": "2" * 40,
+                "review_id": "12345",
+            },
+            "identity_source": {
+                "path": "Docs/workpacks/PA/WP-PA-03.md",
+                "git_blob_sha": git_blob_sha(wp.read_bytes()),
+            },
             "authoritative_sources": [source],
             "exported_guarantees": [{"id": "g1", "statement": "directed relationship matters"}],
             "exclusions_nonclaims": [{"id": "x1", "statement": "no global discovery"}],
             "reopen_conditions": ["concrete contradictory evidence"],
             "escalate_if": ["material exact semantics needed"],
-            "disposition_source": {**source, "section": "## 4. Minimal relationship vocabulary recommendation", "key_column": 0, "status_column": 1},
+            "disposition_source": {
+                **source,
+                "section": "## 4. Minimal relationship vocabulary recommendation",
+                "key_column": 0,
+                "status_column": 1,
+            },
             "dispositions": [
                 {"source_key": "directed trust", "status": "ADOPT"},
                 {"source_key": "synthetic opinion", "status": "LATER / non-authoritative"},
-                {"source_key": "default global/N-hop social traversal to discover targets", "status": "REJECT"},
+                {
+                    "source_key": "default global/N-hop social traversal to discover targets",
+                    "status": "REJECT",
+                },
             ],
-            "directional_semantics": [{"id": "pair", "forward": "A -> B", "reverse": "B -> A", "must_remain_distinct": True}],
+            "directional_semantics": [
+                {
+                    "id": "pair",
+                    "forward": "A -> B",
+                    "reverse": "B -> A",
+                    "must_remain_distinct": True,
+                }
+            ],
             "mandatory_source_reads": [],
         }
         validate_capsule(repo, capsule)
+
         stale = copy.deepcopy(capsule)
-        stale["accepted_identity"]["reviewed_candidate_sha"] = "3"*40
+        stale["accepted_identity"]["reviewed_candidate_sha"] = "3" * 40
         expect_failure(lambda: validate_capsule(repo, stale), "accepted identity mismatch")
-        missing_positive = copy.deepcopy(capsule)
-        missing_positive["exported_guarantees"] = []
-        expect_failure(lambda: validate_capsule(repo, missing_positive), "exported_guarantees")
-        missing_mode = copy.deepcopy(capsule)
-        missing_mode.pop("content_mode")
-        expect_failure(lambda: validate_capsule(repo, missing_mode), "content_mode")
-        missing_reads = copy.deepcopy(capsule)
-        missing_reads.pop("mandatory_source_reads")
-        expect_failure(lambda: validate_capsule(repo, missing_reads), "mandatory_source_reads")
+
+        bad_identity_source = copy.deepcopy(capsule)
+        bad_identity_source["identity_source"] = {
+            "path": "Docs/evidence/CTX-02/SELF.md",
+            "git_blob_sha": "0" * 40,
+        }
+        expect_failure(lambda: validate_capsule(repo, bad_identity_source), "canonical external workpack")
+
+        self_source = copy.deepcopy(capsule)
+        self_source["authoritative_sources"] = [
+            {"path": "Docs/engineering/context-capsules/WP-PA-03.json", "git_blob_sha": "0" * 40}
+        ]
+        expect_failure(lambda: validate_capsule(repo, self_source), "self-confirmation is forbidden")
+
         malformed_reopen = copy.deepcopy(capsule)
         malformed_reopen["reopen_conditions"] = [None]
-        expect_failure(lambda: validate_capsule(repo, malformed_reopen), "reopen_conditions[0] must be a non-empty string")
+        expect_failure(
+            lambda: validate_capsule(repo, malformed_reopen),
+            "reopen_conditions[0] must be a non-empty string",
+        )
         blank_escalation = copy.deepcopy(capsule)
         blank_escalation["escalate_if"] = ["   "]
-        expect_failure(lambda: validate_capsule(repo, blank_escalation), "escalate_if[0] must be a non-empty string")
-        bad_direction = copy.deepcopy(capsule)
-        bad_direction["directional_semantics"][0]["forward"] = None
-        expect_failure(lambda: validate_capsule(repo, bad_direction), "forward/reverse must be strings")
+        expect_failure(
+            lambda: validate_capsule(repo, blank_escalation),
+            "escalate_if[0] must be a non-empty string",
+        )
         fail_review_text = wp_text.replace("**PASS**", "**FAIL**")
         wp.write_text(fail_review_text, encoding="utf-8")
         fail_review = copy.deepcopy(capsule)
         fail_review["identity_source"]["git_blob_sha"] = git_blob_sha(wp.read_bytes())
         expect_failure(lambda: validate_capsule(repo, fail_review), "independent PASS review verdict")
         wp.write_text(wp_text, encoding="utf-8")
+
         missing_reject = copy.deepcopy(capsule)
         missing_reject["dispositions"] = missing_reject["dispositions"][:-1]
-        expect_failure(lambda: validate_capsule(repo, missing_reject), "structured disposition coverage is lossy")
+        expect_failure(
+            lambda: validate_capsule(repo, missing_reject),
+            "structured disposition coverage is lossy",
+        )
         later_collapsed = copy.deepcopy(capsule)
         later_collapsed["dispositions"][1]["status"] = "ADOPT"
-        expect_failure(lambda: validate_capsule(repo, later_collapsed), "structured disposition coverage is lossy")
+        expect_failure(
+            lambda: validate_capsule(repo, later_collapsed),
+            "structured disposition coverage is lossy",
+        )
         collapsed_direction = copy.deepcopy(capsule)
         collapsed_direction["directional_semantics"][0]["reverse"] = "A -> B"
-        expect_failure(lambda: validate_capsule(repo, collapsed_direction), "asymmetric semantics collapsed")
-        live_reopen = {"capsules": {"WP-PA-03": {"state": "REOPENED", "reviewed_candidate_sha": "1"*40, "merge_sha": "2"*40}}}
+        expect_failure(
+            lambda: validate_capsule(repo, collapsed_direction),
+            "asymmetric semantics collapsed",
+        )
+
+        live_reopen = {
+            "capsules": {
+                "WP-PA-03": {
+                    "state": "REOPENED",
+                    "reviewed_candidate_sha": "1" * 40,
+                    "merge_sha": "2" * 40,
+                }
+            }
+        }
         expect_failure(lambda: validate_capsule(repo, capsule, live_reopen), "not ACCEPTED")
-        live_stale = {"capsules": {"WP-PA-03": {"state": "ACCEPTED", "reviewed_candidate_sha": "4"*40, "merge_sha": "2"*40}}}
+        live_stale = {
+            "capsules": {
+                "WP-PA-03": {
+                    "state": "ACCEPTED",
+                    "reviewed_candidate_sha": "4" * 40,
+                    "merge_sha": "2" * 40,
+                }
+            }
+        }
         expect_failure(lambda: validate_capsule(repo, capsule, live_stale), "live exact-SHA mismatch")
+
         result.write_text(result_text + "\nchanged", encoding="utf-8")
         expect_failure(lambda: validate_capsule(repo, capsule), "source fingerprint mismatch")
         result.write_text(result_text, encoding="utf-8")
+
+        city_wp = repo / "Docs/workpacks/CITY/WP-CITY-03.md"
+        city_wp.write_text(wp_text.replace("WP-PA-03", "WP-CITY-03"), encoding="utf-8")
         city = copy.deepcopy(capsule)
         city["capsule_id"] = "WP-CITY-03"
         city["track"] = "CITY"
         city["content_mode"] = "boundary_summary"
+        city["identity_source"] = {
+            "path": "Docs/workpacks/CITY/WP-CITY-03.md",
+            "git_blob_sha": git_blob_sha(city_wp.read_bytes()),
+        }
         city.pop("disposition_source", None)
         city.pop("dispositions", None)
         city.pop("directional_semantics", None)
         city["mandatory_source_reads"] = []
-        expect_failure(lambda: validate_capsule(repo, city), "mandatory non-compressible source reads")
-        city["mandatory_source_reads"] = [{"path": "Docs/production/CITY_PRODUCT_SEED.md", "git_blob_sha": git_blob_sha(city_spec.read_bytes()), "noncompressible": True, "reason": "execution specification"}]
+        expect_failure(
+            lambda: validate_capsule(repo, city),
+            "mandatory non-compressible source reads",
+        )
+        city["mandatory_source_reads"] = [
+            {
+                "path": CITY_PRODUCT_SEED,
+                "git_blob_sha": git_blob_sha(city_spec.read_bytes()),
+                "noncompressible": True,
+                "reason": "execution specification",
+            }
+        ]
         validate_capsule(repo, city)
-        bad_reason = copy.deepcopy(city)
-        bad_reason["mandatory_source_reads"][0]["reason"] = ""
-        expect_failure(lambda: validate_capsule(repo, bad_reason), "reason must be a non-empty string")
+        other_spec = repo / "Docs/production/OTHER.md"
+        other_spec.write_text("not the seed", encoding="utf-8")
+        wrong_city_read = copy.deepcopy(city)
+        wrong_city_read["mandatory_source_reads"] = [
+            {
+                "path": "Docs/production/OTHER.md",
+                "git_blob_sha": git_blob_sha(other_spec.read_bytes()),
+                "noncompressible": True,
+                "reason": "looks valid but is the wrong source",
+            }
+        ]
+        expect_failure(lambda: validate_capsule(repo, wrong_city_read), CITY_PRODUCT_SEED)
+
+        index = {
+            "coverage_rules": {
+                "pa_accepted_result_chain": {
+                    "result_glob": "Docs/research/living-world/results/PA-[0-9][0-9].md",
+                    "workpack_template": "Docs/workpacks/PA/WP-PA-{NN}.md",
+                }
+            }
+        }
+        validate_pa_chain(repo, index, {"WP-PA-03": capsule})
+        rebound = copy.deepcopy(capsule)
+        rebound["disposition_source"]["path"] = "Docs/research/living-world/results/OTHER.md"
+        expect_failure(
+            lambda: validate_pa_chain(repo, index, {"WP-PA-03": rebound}),
+            "disposition_source must be canonical accepted PA result",
+        )
+
     print("context-capsule self-test: PASS")
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -553,6 +807,7 @@ def main() -> int:
     except CapsuleError as exc:
         print(f"context-capsule: FAIL: {exc}", file=sys.stderr)
         return 2
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
