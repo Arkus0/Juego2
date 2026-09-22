@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fail-closed mechanical validator for Worker -> Reviewer terminal closure.
 
-The script deliberately proves lifecycle facts only.  It never interprets the
+The script deliberately proves lifecycle facts only. It never interprets the
 candidate or substitutes for independent Reviewer judgment.
 """
 from __future__ import annotations
@@ -76,7 +76,7 @@ def validate(state: State) -> list[str]:
         if frozen != head:
             errors.append("Frozen candidate SHA does not equal live PR HEAD")
 
-    # This is intentionally mandatory even when every prerequisite check is green.
+    # This is intentionally mandatory even when every prerequisite gate is green.
     # A planned/pending state transition is not durable lifecycle evidence.
     if not marker:
         errors.append("matching durable Automation V2 REVIEW_READY marker is absent")
@@ -86,7 +86,7 @@ def validate(state: State) -> list[str]:
         errors.append("REVIEW_READY marker targets a different SHA")
 
     # final_head_sha must be obtained by a live read performed *after* the marker
-    # that supplied marker_sha.  The caller/workflow owns that temporal ordering.
+    # that supplied marker_sha. The caller/workflow owns that temporal ordering.
     if SHA_RE.fullmatch(final_head) and SHA_RE.fullmatch(frozen) and final_head != frozen:
         errors.append("live PR HEAD moved after REVIEW_READY marker observation")
 
@@ -135,34 +135,25 @@ def self_test() -> None:
     good = good_state()
     assert validate(good) == []
 
-    # CTX-03 required transition-loss control: every prerequisite gate is green,
-    # but no durable marker exists.  This MUST remain not ready.
     missing_marker = State(**{**good.__dict__, "marker_sha": None})
     assert any("marker is absent" in e for e in validate(missing_marker))
 
     wrong_marker = State(**{**good.__dict__, "marker_sha": "b" * 40})
     assert any("different SHA" in e for e in validate(wrong_marker))
 
-    # A byte mutation / new HEAD after CLEAN+freeze invalidates the closure.
     moved = State(**{**good.__dict__, "pr_head_sha": "c" * 40, "final_head_sha": "c" * 40})
     moved_errors = validate(moved)
     assert any("Candidate HEAD SHA" in e for e in moved_errors)
     assert any("Frozen candidate SHA" in e for e in moved_errors)
     assert any("moved after REVIEW_READY" in e for e in moved_errors)
 
-    # Historical CTX-01 handoff class: substantive bytes frozen, but canonical
-    # Ready metadata/check is missing.  CLEAN alone cannot close the transition.
     ctx01_incomplete = State(**{**good.__dict__, "handoff_check": "FAILURE"})
     assert any("Worker handoff lint" in e for e in validate(ctx01_incomplete))
 
-    # Historical CTX-02 predecessor-marker class is represented at the causal
-    # boundary that actually rejected it: the handoff lint remains RED until the
-    # real predecessor marker/path is restored.  We do not special-case prose.
     ctx02_missing_pred = State(**{**good.__dict__, "handoff_check": "FAILURE"})
     assert validate(ctx02_missing_pred)
     assert validate(good) == []
 
-    # Freeze validation is a terminal predicate even for PROCESS_ONLY workpacks.
     no_freeze = State(**{**good.__dict__, "freeze_check": "SKIPPED"})
     assert any("Freeze exact-SHA validation" in e for e in validate(no_freeze))
 
@@ -185,16 +176,16 @@ def main() -> int:
         state = from_json(args.state_json)
         errors = validate(state)
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
-        print(f"review-ready closure: FAIL\n- malformed state input: {exc}", file=sys.stderr)
-        return 2
+        print(f"REVIEW_READY_CLOSURE_OUTCOME: INFRA_ERROR\n- malformed state input: {exc}", file=sys.stderr)
+        return 23
 
     if errors:
-        print("review-ready closure: NOT_READY", file=sys.stderr)
+        print("REVIEW_READY_CLOSURE_OUTCOME: REVIEW_BLOCKED", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
-        return 2
+        return 21
 
-    print("review-ready closure: GREEN")
+    print("REVIEW_READY_CLOSURE_OUTCOME: PASS")
     return 0
 
 
