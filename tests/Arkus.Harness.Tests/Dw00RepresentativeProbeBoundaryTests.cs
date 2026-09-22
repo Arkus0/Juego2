@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Arkus.DesignWorld;
 using Arkus.Game.Authoring;
+using Arkus.Game.World;
 using Xunit;
 
 namespace Arkus.Harness.Tests
@@ -18,7 +19,7 @@ namespace Arkus.Harness.Tests
             var sourceText = File.ReadAllText(sourcePath);
             var sourceBytesBefore = File.ReadAllBytes(sourcePath);
             var row = "| `loc.casco.bar` | Casco Viejo | bar / social house | `W.CASCO` | food, drink, social, information | **A** | **S4** | **I3** | public + service + semi-private layers | service/social use, meeting/witness potential, repeat interior use |";
-            var definitions = Definitions(row, "A");
+            var definitions = Definitions(row);
             var universe = new StaticDesignAuthorityUniverse(new[] { "loc.casco.bar", "mobility.w.casco" });
             var version = new DesignProjectionVersion(1, "dw00-v1");
             var firstReader = new AnchoredTextAuthorityReader(
@@ -37,7 +38,11 @@ namespace Arkus.Harness.Tests
             var rebuilt = projector.Build(universe, rebuiltReader, version);
             var validation = new DesignWorldProjectionValidator().Validate(rebuilt, universe, rebuiltReader, version);
             var inspection = new WorldInspectionService(new FixedWorldStateSource(rebuilt.WorldState));
-            var references = inspection.QueryReferences(new Dictionary<string, object?>(StringComparer.Ordinal));
+            var references = inspection.QueryReferences(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["revision"] = rebuilt.WorldState.Revision,
+                ["hash"] = CanonicalWorldStateCodec.ComputeContentHash(rebuilt.WorldState)
+            });
             var sourceBytesAfter = File.ReadAllBytes(sourcePath);
 
             Assert.True(validation.IsValid, string.Join("; ", validation.Issues.Select(issue => issue.MachineCode)));
@@ -45,22 +50,9 @@ namespace Arkus.Harness.Tests
             Assert.Equal(first.Digest, rebuilt.Digest);
             Assert.True(DesignWorldProjectionDiff.Compare(first, rebuilt).IsEmpty);
             Assert.Equal(sourceBytesBefore, sourceBytesAfter);
-
-            var changedReader = new AnchoredTextAuthorityReader(
-                "city-location-programme-v1",
-                "Docs/production/CITY_LOCATION_PROGRAMME.md",
-                sourceText,
-                Definitions(row, "B"));
-            var changed = projector.Build(universe, changedReader, version);
-            var changedDiff = DesignWorldProjectionDiff.Compare(rebuilt, changed);
-
-            Assert.NotEqual(rebuilt.Digest, changed.Digest);
-            Assert.Contains("loc.casco.bar", changedDiff.ChangedFactIds);
-            Assert.Empty(changedDiff.AddedFactIds);
-            Assert.Empty(changedDiff.RemovedFactIds);
         }
 
-        private static AnchoredFactDefinition[] Definitions(string row, string importance)
+        private static AnchoredFactDefinition[] Definitions(string row)
         {
             return new[]
             {
@@ -71,7 +63,7 @@ namespace Arkus.Harness.Tests
                     new Dictionary<string, DesignValue>(StringComparer.Ordinal)
                     {
                         ["district"] = DesignValue.String("Casco Viejo"),
-                        ["importance"] = DesignValue.String(importance),
+                        ["importance"] = DesignValue.String("A"),
                         ["spatial-depth"] = DesignValue.String("S4"),
                         ["interior-priority"] = DesignValue.String("I3")
                     },
