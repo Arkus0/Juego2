@@ -4,17 +4,19 @@ Status: **CTX-03 CANDIDATE / PROCESS_ONLY**
 
 ## Purpose
 
-Close the CTX programme by measuring context savings and bounding future mandatory-context growth **without reducing semantic/proof quality**. This protocol adds derived process measurements, auditable escalation, deterministic lifecycle closure and mechanical false-red classification. It does not move product/proof authority into compact context or automation.
+Close the CTX programme by measuring context savings and bounding future mandatory-context growth **without reducing semantic/proof quality**. This protocol adds derived process measurements, auditable escalation, deterministic lifecycle closure, fail-closed dynamic repository budgets and mechanical false-red classification. It does not move product/proof authority into compact context or automation.
 
 Machine/evidence surfaces:
 
 - role source: `Docs/engineering/context-bootstrap-profiles.json`;
 - envelope/measurement config: `Docs/engineering/context-envelope.json`;
-- verifier registry: `Docs/engineering/mechanical-verifier-registry.json`;
-- context checker: `scripts/context-envelope-check.py`;
-- independent envelope negative controls: `scripts/ctx03-process-controls.py`;
+- static/representative checker: `scripts/context-envelope-check.py`;
+- dynamic repository checker: `scripts/ctx03-dynamic-context-check.py`;
+- independent process controls: `scripts/ctx03-process-controls.py`;
+- final B1/B2 circuit breaker: `scripts/ctx03-final-circuit-breaker.py`;
 - quality-preservation replay: `scripts/ctx03-quality-replay.py`;
-- DocSync/history consistency control: `scripts/ctx03-docsync-history-check.py`;
+- DocSync/history/current-state checker: `scripts/ctx03-docsync-history-check.py`;
+- verifier registry: `Docs/engineering/mechanical-verifier-registry.json`;
 - mechanical outcome classifier: `scripts/mechanical-verifier-classifier.py`;
 - review metadata generator: `scripts/derive-worker-review-metadata.py`;
 - post-marker closure oracle: `scripts/review-ready-closure.py`;
@@ -23,7 +25,7 @@ Machine/evidence surfaces:
 - CI: `.github/workflows/context-envelope-validation.yml`;
 - automatic post-marker closure after adoption: `.github/workflows/review-ready-closure.yml`.
 
-All are process/navigation evidence only. Exact workpacks, authoritative sources, code/tests, live GitHub and independent Reviewer judgment keep their existing authority.
+All compact/config/index/control surfaces are process/navigation evidence only. Exact workpacks, authoritative architecture/proof/result sources, code/tests, live GitHub and independent Reviewer judgment keep their existing authority.
 
 ## 1. Quality invariant
 
@@ -33,7 +35,8 @@ CTX-03 is successful only when a compact route preserves the same ability to dis
 - converting a derived table/capsule/index into semantic or proof authority;
 - suppressing a mandatory escalation;
 - replacing independent semantic review with a mechanical PASS;
-- weakening accepted CTX-02 omission/substitution/source-consistency controls.
+- weakening accepted CTX-02 omission/substitution/source-consistency controls;
+- letting a compact artifact define the universe that the same checker declares complete.
 
 Historical-blocker replay therefore tests **routing and causal reachability**, not whether a particular model happens to notice every semantic problem.
 
@@ -51,17 +54,15 @@ Pre/post bytes are always read from the **same checked-out candidate snapshot**.
 
 The representative route universe, canonical profile source, calibration substitutions and pre-CTX direct-predecessor source universe are checker-owned. `context-envelope.json` repeats them only as reviewed assertions. The artifact being measured therefore cannot narrow its own baseline or choose a friendlier route after seeing the result.
 
-Dynamic mandatory inputs whose identity/size CTX does not control — live GitHub state, exact PR diff, current Reviewer FAIL, exact dependency/evidence sources and local-execution manifest-named files — remain mandatory but are held outside the static corpus delta. They may not be silently omitted to improve the number.
+The six H1/CITY/PA routes are calibration/quality-replay cases, **not** the complete universe of future mandatory repository context. A separate dynamic repository envelope covers route-dependent repository sources for arbitrary future WPs and roles.
 
-H1 sources that remain binding because the WP is foundational/local are held constant in both routes. CITY-04's unresolved cross-track gate forces ROADMAP into the post route. The cumulative PA route includes all currently accepted PA capsules.
-
-The exact candidate measurement is persisted in Worker evidence. The result is intentionally non-uniform: PA has a demonstrated material minimum-route reduction; H1's reduction does not clear the conservative uncertainty threshold; CITY is larger because its exact non-compressible seed and unresolved gate remain mandatory. CTX-03 records those facts rather than tuning the universe until every route appears cheaper.
+Genuinely external payloads may remain outside repository corpus estimates: live GitHub metadata, API response bytes and a generated complete PR diff are examples. A payload is not external merely because its identity is selected at runtime. Exact WPs, repository dependency/evidence files, anchored repository manifests and manifest-named repository files are repository-backed and are budgeted by section 5.
 
 ## 3. Auditable context escalation
 
 A `CONTEXT_ESCALATIONS` record evaluates every `must_escalate_if` predicate of the effective role profile. A triggered predicate must name at least one existing authoritative source opened because of it. A non-triggered predicate must record why it is non-material.
 
-The checker independently obtains the required predicate universe from the canonical accepted role profile. The escalation record therefore cannot define its own completeness by deleting a predicate from itself.
+The checker independently obtains the required predicate universe from the canonical accepted role profile. The escalation record therefore cannot define its own completeness by deleting one predicate, replacing the collection with `[]`, removing the collection field, or supplying a syntactically valid semantically empty equivalent.
 
 `CONTEXT_ESCALATIONS` is navigation/audit evidence only. It may not prove a semantic claim or prevent a later Worker/Reviewer from deepening further.
 
@@ -69,113 +70,158 @@ The checker independently obtains the required predicate universe from the canon
 
 CTX-03 measures PA as a cumulative consumer rather than a direct-predecessor happy path. Accepted CTX-02 already provides one capsule per accepted PA result, completion-side discovery, exact disposition status preservation and fail-closed source reconstruction.
 
-The hardened same-snapshot measurement shows the PA worker/reviewer minimum route falling from `38389` to `22855`, a saving of `15534` / `40.4647%`, which clears the deliberately conservative combined uncertainty threshold. When material escalation opens the authoritative PA-01..03 results, the route becomes `43067`, intentionally larger than pre-CTX. That is correct: escalation buys source fidelity, not token savings.
+The hardened same-snapshot measurement showed a material minimum-route reduction for the cumulative PA case while authoritative escalation can intentionally become larger than pre-CTX. That is correct: escalation buys source fidelity, not token savings.
 
-Decision: **KEEP CTX-02 CAPSULE CHAIN / DO NOT ADD A SECOND PA COMPACT REGISTRY IN CTX-03**. CTX-02 materially closes the dominant cumulative starting-cost problem, and the CTX-03 quality replay proves the authoritative PA-03 result remains reachable on material escalation. Adding another registry would duplicate compact authority without demonstrated need.
+Decision: **KEEP CTX-02 CAPSULE CHAIN / DO NOT ADD A SECOND PA COMPACT REGISTRY IN CTX-03**. CTX-02 closes the dominant cumulative starting-cost problem and CTX-03 keeps the canonical PA result reachable on material escalation. Another compact registry would duplicate navigation state without demonstrated need.
 
-## 5. CI-only process envelope
+## 5. CI process envelope — four layers
 
-The process envelope has **three** separate layers so no fixed conditional context can hide outside a ceiling:
+The process envelope has **four** distinct layers. They solve different completeness problems and none may be treated as a substitute for another.
 
-1. **base profile budget** — canonical repository-owned `initial_reads` for every accepted role profile;
-2. **conditional-profile budget** — base pack plus a checker-owned superset of every fixed repository source that canonical `conditional_reads` can make mandatory for that profile;
-3. **route-effective budget** — concrete checker-owned H1/CITY/PA minimum and escalated routes, including capsule payloads, non-compressible sources and authoritative predecessor/result escalation.
+### 5.1 Base profile budget
 
-The checker owns `CANONICAL_FIXED_CONDITIONAL_SOURCES`; the profile/config under audit cannot shrink it. Separately, the checker extracts explicit `Docs/...md|json` paths from current canonical `conditional_reads`. If the profile introduces a new fixed repository source that is absent from the checker-owned universe, validation turns RED until the oracle and calibration are intentionally reviewed. Deleting/narrowing profile prose does not shrink the checker-owned set.
+Canonical repository-owned `initial_reads` that are fixed for an accepted role profile. Profile universe and calibration substitutions are independently checker-owned.
 
-This closes all currently fixed conditional classes, not only the six representative measurement routes:
+### 5.2 Fixed conditional-profile budget
 
-- Worker / repair Worker / Reviewer: `FOUNDATIONAL_PROOF_STANDARD.md`, `H1_REMOTE_LOCAL_EXECUTION.md`, `ROADMAP.md`, capsule protocol and capsule index;
-- planner/gate: foundational proof in addition to its base ROADMAP;
-- DocSync: ROADMAP plus accepted-PA capsule protocol/index;
-- H1 local executor: no additional fixed conditional reads, so its conditional set equals its base pack.
+Base pack plus a checker-owned superset of every fixed repository source that canonical `conditional_reads` can make mandatory for that profile. `CANONICAL_FIXED_CONDITIONAL_SOURCES` cannot be shrunk by editing the profile being audited. If the accepted profile adds a new explicit fixed `Docs/...` source absent from the checker oracle, CI is RED pending explicit reviewed oracle/budget evolution.
 
-Candidate-specific exact dependency/evidence paths remain mandatory dynamic inputs outside the static corpus budget because their identity/size is selected by the concrete candidate rather than CTX. That exclusion cannot be used to omit a known fixed repository protocol or global state source.
+This layer covers Worker / repair Worker / Reviewer foundational/H1/ROADMAP/capsule conditionals, planner foundational proof, DocSync ROADMAP/capsule conditionals, and the local executor's empty fixed-conditional set.
 
-For every base profile, every conditional-profile superset, and every route-effective minimum/escalated mode:
+### 5.3 Representative route-effective budget
+
+Concrete checker-owned H1/CITY/PA minimum and escalated routes include capsule payloads, non-compressible sources and authoritative predecessor/result escalation. They are quality-preservation and calibration cases; they do not enumerate every future WP.
+
+### 5.4 Dynamic repository envelope
+
+`scripts/ctx03-dynamic-context-check.py` owns the classification of every dynamic placeholder appearing in canonical role `initial_reads`.
+
+Each slot is classified as one of:
+
+- genuinely external;
+- repository-backed exact source;
+- repository-or-external, requiring an explicit concrete classification at resolution time;
+- dependency-derived repository set;
+- manifest-derived repository set.
+
+The audited profile/config cannot relabel a repository slot as external. A new placeholder not known to the checker turns RED until its ownership class is explicitly reviewed. A removed placeholder also turns RED until the checker oracle is deliberately reconciled, preventing stale hidden registries.
+
+For a concrete route, every resolved repository-backed source is subject to:
 
 ```text
-reviewed ceiling = ceil(calibrated post-CTX baseline * (1 + reviewed headroom))
+per-source estimate <= reviewed per_source_ceiling_estimate
+sum(unique dynamic repository source estimates) <= reviewed aggregate_route_ceiling_estimate
 ```
 
-Initial headroom is 20%. The budget file is CI-only and is not a normal Worker/Reviewer read.
+Initial reviewed dynamic policy:
 
-Unrelated repository growth outside a derived effective set does not affect that set's estimate. Growth of **any checker-owned fixed conditional source** is tested against every applicable conditional-profile ceiling; concrete H1/CITY/PA route growth is additionally tested against its route ceiling. Future ceiling increases in any layer require an explicit diff with both incremented `ceiling_revision` and non-empty `ceiling_increase_justification`.
+- per resolved repository source ceiling: `32768` estimate units;
+- aggregate dynamic route ceiling: `131072` estimate units;
+- policy revision: `1`.
 
-Independent controls challenge route/profile/budget removal, profile-source or substitution redirection, introduction of a new unreviewed fixed conditional source, unconditional required-source growth, every checker-owned fixed conditional source for every profile, H1/CITY concrete routes, PA authoritative escalation and mandatory-escalation omission. The measured artifact cannot choose its own completeness universe.
+These are conservative policy bounds rather than a claim that one representative route calibrated all future WPs. Any future increase requires an explicit `policy_revision` increment and non-empty `ceiling_increase_justification`; the base-ref comparison rejects silent ceiling expansion.
+
+The resolver independently re-discovers repository paths named by the exact route contract. For Reviewer dependency navigation it also reconstructs exact dependency contracts/evidence from the exact contract's `Depends on:` authority. For `h1_local_executor`, manifest-named repository files are derived from the anchored repository manifest rather than from a caller-maintained list. Thus deleting a source from a route binding cannot stop it being counted while another routing authority still requires it.
+
+A totally unrelated repository file that is not mandatory for the resolved route remains outside that route's dynamic estimate.
+
+### 5.5 External boundary
+
+The following can remain outside repository corpus ceilings when they are genuinely external at route resolution: live GitHub metadata, an API response, a current Reviewer FAIL stored only as a GitHub review/comment, a generated complete PR diff, or an external handoff anchor.
+
+If the same logical input is persisted as a repository file and used as mandatory context, it becomes repository-backed for that route and is budgeted. “Dynamic” is not an exemption.
+
+### 5.6 Future extension rule
+
+A new role profile using existing reviewed dynamic slot classes is automatically covered. A new fixed conditional source is automatically discovered or fails closed under the fixed-conditional oracle. A new dynamic placeholder class fails closed pending explicit oracle review. A new future WP, including one outside H1/CITY/PA, is covered by the dynamic per-source + aggregate envelope when its route is resolved.
 
 ## 6. Mechanical false-red audit
 
-CTX-03 explicitly separates mechanical outcomes so protocol/runner noise does not consume independent Reviewer rounds.
+CTX-03 separates mechanical outcomes so protocol/runner noise does not consume independent Reviewer rounds.
 
 - `FAIL` — a **registered deterministic verifier** causally proved a repository-owned condition required by this WP is false. Worker repair before review; never an automated semantic Reviewer verdict.
-- `REVIEW_BLOCKED` — handoff/freeze/metadata/lifecycle state is incomplete, pending, stale or incoherent. Fix/derive it and rerun before Reviewer.
+- `REVIEW_BLOCKED` — handoff/freeze/metadata/lifecycle state is incomplete, pending, stale or incoherent.
 - `NOT_APPLICABLE` — verifier does not apply. Neutral; never synthetic GREEN proof and never FAIL.
-- `INFRA_ERROR` — runner/tool/API/checkout or unknown/unclassified verifier failed without causal candidate-defect evidence. Fail closed operationally, but do not label the WP defective.
+- `INFRA_ERROR` — runner/tool/API/checkout or unknown/unclassified verifier failed without causal candidate-defect evidence.
 - `PASS` — registered deterministic condition satisfied. Semantic independent review remains mandatory.
 
-The canonical registry is `mechanical-verifier-registry.json`. A red check not registered there cannot count as WP FAIL; it becomes operational `INFRA_ERROR` until triaged or explicitly registered. Any registered verifier capable of emitting WP `FAIL` must require a structured outcome and may not claim semantic authority. A crash therefore cannot become a candidate FAIL merely because GitHub paints a check red.
+A crash or unregistered red check cannot be promoted to “the WP is wrong” merely because GitHub paints a check red.
 
 ## 7. Derivable review metadata and exact pre-review durability
 
 The terminal sequence is intentionally non-self-referential:
 
-1. while Draft + ACTIVE, finish and commit/push every repository/evidence byte that belongs to the candidate;
+1. while Draft + ACTIVE, finish and commit/push every repository/evidence byte belonging to the candidate;
 2. stop writers and read the exact resulting HEAD;
 3. perform the complete Worker pre-review against that exact HEAD and complete baseline→candidate diff;
 4. if clean, create a durable GitHub PR issue comment containing `WORKER_PRE_REVIEW: CLEAN`, `Candidate SHA: <exact HEAD>`, findings-fixed count and evidence pointers;
 5. do not mutate repository/evidence bytes after that review; derive/freeze only metadata for the same SHA.
 
-A repository file written **after** the pre-review cannot serve as the final CLEAN record for the candidate whose parent was reviewed, because writing that file creates different candidate bytes. Repository pre-review notes/checklists may exist as inputs, but the final exact-SHA CLEAN record lives on the durable GitHub handoff surface after the last candidate-byte mutation.
+A repository file written **after** the pre-review cannot serve as the final CLEAN record. Repository pre-review notes/checklists may exist as inputs, but the final exact-SHA CLEAN record lives on durable GitHub metadata after the last candidate-byte mutation.
 
-`derive-worker-review-metadata.py` derives only fields mechanically fixed once final bytes are externally recorded CLEAN and HEAD is known. It preserves non-derivable lineage (`Baseline SHA`, Worker identity/history, Transfer SHA, prior reviewed SHA, `fail_cycle`) from the existing canonical handoff instead of accepting caller-selected replacements. It requires a durable GitHub PR issue-comment URL as `--pre-review-evidence`; it never creates or interprets the CLEAN judgment itself.
-
-`validate-worker-handoff.py` remains a mechanical structural oracle but now also resolves any external pre-review pointer and verifies that the GitHub issue comment exists on the same repository/PR and contains `WORKER_PRE_REVIEW: CLEAN`, the exact live candidate SHA, a findings-fixed count and an evidence pointer. This prevents metadata-only self-confirmation through an invented or wrong-SHA URL. The validator still does **not** decide whether the Worker's semantic challenge was adequate; that judgment remains non-authoritative Worker readiness evidence and the fresh independent Reviewer remains mandatory.
+`derive-worker-review-metadata.py` preserves non-derivable lineage. `validate-worker-handoff.py` resolves the external clean pointer and verifies same repository/PR, exact live candidate SHA, findings count and evidence pointer. Neither decides semantic adequacy.
 
 ## 8. Transactional REVIEW_READY closure
 
-A Worker may tell the human to start a Reviewer only after:
+A Worker may tell the human to start a Reviewer only after final repository/evidence bytes, exact-SHA complete Worker pre-review, durable external CLEAN evidence, coherent Ready/freeze metadata, required exact-SHA gates, a durable `REVIEW_READY` marker for the same SHA, and a post-marker live HEAD read that still equals that SHA.
 
-1. final repository/evidence byte mutation precedes final complete Worker pre-review;
-2. durable GitHub evidence records `WORKER_PRE_REVIEW: CLEAN` for the exact resulting candidate SHA without changing candidate bytes;
-3. Candidate HEAD and Frozen candidate SHA equal live Ready PR HEAD;
-4. canonical Ready metadata is coherent;
-5. registered `Worker handoff lint` is PASS;
-6. registered `Freeze exact-SHA validation` is PASS;
-7. durable Automation V2 `State: REVIEW_READY` targets the same frozen SHA;
-8. **after observing that marker**, a final live PR HEAD read still equals that SHA.
+After CTX-03 adoption, `.github/workflows/review-ready-closure.yml` wakes from either the original bot `issue_comment` or completion of `Arkus Candidate Validation`. The workflow-run path reuses an already-existing durable REVIEW_READY marker for the same SHA. Therefore a first closure attempt can correctly block while a gate is red, then a same-SHA metadata/gate repair can rerun Candidate Validation and reach `REVIEW_READY_CLOSED` without requiring a duplicate marker.
 
-After CTX-03 adoption, `.github/workflows/review-ready-closure.yml` can wake on either the original bot `issue_comment` that persists `REVIEW_READY` **or** completion of `Arkus Candidate Validation`. The workflow-run path resolves the exact PR/SHA and reuses an already-existing durable REVIEW_READY marker for that same SHA. Therefore a first closure attempt may correctly block while freeze/handoff is RED, and a later same-SHA metadata/gate repair can rerun Candidate Validation and reach `REVIEW_READY_CLOSED` without requiring Automation V2 to emit a duplicate deduplicated marker.
+Closure remains idempotent by PR+SHA and adds no semantic Reviewer authority.
 
-Closure remains idempotent by `review-ready-closed:<PR>:<SHA>`. CLOSED is only durable evidence that the already-required terminal invariant was observed. It adds **no human action** and never substitutes for independent semantic review.
+## 9. Lifecycle controls
 
-For the CTX-03 adoption candidate itself, the new default-branch workflow cannot bootstrap its own event. This candidate satisfies the same invariant directly: existing Automation V2 must persist `REVIEW_READY`, then the Worker performs/records the final live HEAD read without mutating repository bytes.
+The canonical causal suite reproduces:
 
-## 9. Historical handoff controls
+- CLEAN exact-SHA;
+- repository mutation after CLEAN invalidates readiness;
+- wrong-PR and wrong-SHA CLEAN pointers are RED;
+- missing Ready marker blocks;
+- existing marker + red gate blocks;
+- same-SHA gate repair closes by reusing the durable marker;
+- HEAD movement after marker blocks.
 
-The closure oracle reproduces:
+These controls exercise the real closure/handoff oracles rather than checking only that a fixture field was removed.
 
-- CTX-01 frozen bytes with incomplete canonical Ready metadata/check state;
-- CTX-02 handoff-lint/predecessor-check incompleteness;
-- every prerequisite check GREEN but no matching durable `REVIEW_READY`;
-- wrong-SHA marker;
-- post-marker HEAD movement;
-- a same-SHA sequence where REVIEW_READY already exists, the first closure is blocked by a red freeze gate, and a later successful gate rerun reuses that marker and closes without a new candidate or duplicate marker.
+## 10. Derived current state, DocSync and history
 
-In each case CLEAN alone is insufficient. `HISTORICAL_CLASSIFICATION.json` separately classifies reconstructed FAIL/handoff families as mechanical, semantic or mixed and records `ADOPT / DEFER / REJECT`. Generic natural-language semantic equivalence is explicitly rejected as a deterministic gate.
+`ACCEPTED_STATE_INDEX.json` is a **derived navigation projection**. It cannot tell the checker which current state should be expected.
 
-## 10. Structured evidence, DocSync and history
+`scripts/ctx03-docsync-history-check.py` independently discovers CTX current-state authority from numeric CTX workpack contracts under `Docs/workpacks/CTX/`:
 
-CTX-03 uses machine-readable rows for naturally tabular process facts and keeps causal reasoning as prose where the reasoning itself is evidence.
+- a contract is accepted only when its authoritative `Status` is `COMPLETE`;
+- every accepted contract must have its required `Docs/evidence/CTX-XX/DOCSYNC.md` closure;
+- the closure must identify the same WP, carry persisted/complete DocSync status, independent PASS provenance and implementation-PR provenance;
+- accepted contracts must form a prefix; a later COMPLETE contract after an unaccepted predecessor is RED;
+- the next contract is the first discovered numeric CTX contract not yet COMPLETE, or `null` when the track has no remaining contract.
 
-After adoption, DocSync regenerates the one compact `ACCEPTED_STATE_INDEX.json` projection from authoritative sources, then updates only current-state docs whose effective accepted meaning changed. It does not copy the same transition into several current-state narratives merely to preserve chronology. Accepted closure chronology lives under exact evidence or `Docs/history/**`, deliberately outside normal role bootstrap.
+Only after deriving that authority does the checker compare `ACCEPTED_STATE_INDEX` accepted/next hints. The index therefore cannot hide an accepted closure by removing its own row, invent a fictitious accepted WP, or redefine next state.
 
-ROADMAP v1.33 demonstrates the separation: verbose H0 accepted closure narrative moved to `Docs/history/ROADMAP_ACCEPTED_CLOSURES.md`, while current H0 state, ordering, architecture consequences and gates remain in ROADMAP. `ctx03-docsync-history-check.py` protects both sides: normal bootstrap must not pull history back in, and representative exact historical reconstruction pointers must remain present.
+Current-state prose in CTX/root workpack indexes may reflect this authority, but it cannot define it. Explicit contradictory “next CTX” prose is rejected. Historical prose under `Docs/history/**` is deliberately not consulted to determine current state.
 
-A derived current-state row cannot override live GitHub or an exact accepted source. Contradiction triggers reconstruction.
+### 10.1 Required post-adoption simulation
 
-## 11. Adoption and future consumer
+Before CTX-03 freezes, the final circuit breaker must synthesize:
+
+1. current pre-CTX-03 accepted state;
+2. CTX-03 contract changed to COMPLETE plus a valid PASS/PR-bearing CTX-03 DocSync closure;
+3. accepted-state projection updated to include CTX-03 and next derived correctly;
+4. no checker/oracle code change.
+
+That post-CTX-03 state must be GREEN. The same control must prove RED for a stale pre-CTX-03 projection, wrong next hint, removed accepted closure and fictitious accepted index-only WP. Editing history prose alone must not alter expected current state.
+
+This is the adoption circuit breaker that prevents the checker from being frozen to the candidate's own pre-acceptance snapshot.
+
+## 11. Final circuit-breaker audit
+
+`scripts/ctx03-final-circuit-breaker.py` is independent of the two target checkers and drives their real oracles against synthetic mutations. It covers the B1 post-adoption transition and B2 future-route class, including a future invented track outside H1/CITY/PA, exact-WP growth, newly mandatory repository evidence, caller omission, non-mandatory growth, `repair_worker`, `h1_local_executor` manifest-named files and new dynamic placeholder fail-closed behavior.
+
+The existing CTX-02 capsule controls, CTX-03 quality replay, process controls and lifecycle closure controls remain binding. The new final circuit breaker supplements them; it does not replace them.
+
+Whole structured surfaces are challenged as collections and fields, not only row-by-row. A negative control is valid only when RED comes from the missing real condition rather than from a test-specific “field was deleted” assertion.
+
+## 12. Adoption and future consumer
 
 This protocol becomes binding only after `WP-CTX-03` receives independent PASS, merges and completes DocSync. It does not retroactively reinterpret accepted CTX-01/02 evidence.
 
-The process-envelope and closure primitives are intentionally repository-generic enough for a future clean consumer repository to adopt before historical context accumulates. CTX-03 does not decide the H2/H3 repository split or move product ownership.
+The process-envelope and closure primitives are intentionally repository-generic enough for future consumers. CTX-03 does not decide the H2/H3 repository split or move product ownership.
