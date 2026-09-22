@@ -55,10 +55,20 @@ namespace Arkus.DesignWorld
         private static readonly DesignProjectionVersion Version = new DesignProjectionVersion(1, "dw01-city-v1");
         private static readonly string[] AllowedRoles = { "private", "public", "semi-private", "service" };
         private readonly bool _reverseEnumeration;
+        private readonly Func<string, IReadOnlyList<DesignRelation>, IEnumerable<DesignRelation>> _interiorRelationTransform;
 
         public CityDesignWorldProvider(bool reverseEnumeration = false)
+            : this(reverseEnumeration, PreserveInteriorRelations)
+        {
+        }
+
+        internal CityDesignWorldProvider(
+            bool reverseEnumeration,
+            Func<string, IReadOnlyList<DesignRelation>, IEnumerable<DesignRelation>> interiorRelationTransform)
         {
             _reverseEnumeration = reverseEnumeration;
+            _interiorRelationTransform = interiorRelationTransform ??
+                throw new ArgumentNullException(nameof(interiorRelationTransform));
         }
 
         public CityDesignWorldSlice BuildAndValidate(string programmeSource, string bindingSource, string interiorsSource)
@@ -167,13 +177,23 @@ namespace Arkus.DesignWorld
 
             foreach (var row in model.Allocations.Values)
             {
+                var canonicalRelations = new[]
+                {
+                    new DesignRelation("allocates-depth", DepthId(row.Id))
+                };
+                var relations = _interiorRelationTransform(row.Id, canonicalRelations);
+                if (relations == null)
+                {
+                    throw new InvalidOperationException("Interior relation transform returned null.");
+                }
+
                 definitions.Add(new AnchoredFactDefinition(
                     AllocationId(row.Id), "city-interior-allocation", row.Anchor,
                     new Dictionary<string, DesignValue>(StringComparer.Ordinal)
                     {
                         ["allocated"] = DesignValue.Boolean(true)
                     },
-                    new[] { new DesignRelation("allocates-depth", DepthId(row.Id)) }));
+                    relations));
             }
 
             var ids = new List<string>();
@@ -524,6 +544,10 @@ namespace Arkus.DesignWorld
                 "city.source_shape_invalid", string.Empty,
                 "bounded accepted CITY Markdown shape must remain mechanically parseable",
                 detail, path);
+
+        private static IEnumerable<DesignRelation> PreserveInteriorRelations(
+            string subjectId,
+            IReadOnlyList<DesignRelation> relations) => relations;
 
         private static string DepthId(string id) => "depth." + id;
         private static string AllocationId(string id) => "allocation." + id;
