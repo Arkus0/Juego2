@@ -130,7 +130,7 @@ A repository file written **after** the pre-review cannot serve as the final CLE
 
 `derive-worker-review-metadata.py` derives only fields mechanically fixed once final bytes are externally recorded CLEAN and HEAD is known. It preserves non-derivable lineage (`Baseline SHA`, Worker identity/history, Transfer SHA, prior reviewed SHA, `fail_cycle`) from the existing canonical handoff instead of accepting caller-selected replacements. It requires a durable GitHub PR issue-comment URL as `--pre-review-evidence`; it never creates or interprets the CLEAN judgment itself.
 
-The existing independent `validate-worker-handoff.py` remains the structural Ready oracle. Independent Reviewer reconstruction remains responsible for checking that the durable pre-review record actually targets the exact frozen candidate; the Worker record is never semantic PASS authority.
+`validate-worker-handoff.py` remains a mechanical structural oracle but now also resolves any external pre-review pointer and verifies that the GitHub issue comment exists on the same repository/PR and contains `WORKER_PRE_REVIEW: CLEAN`, the exact live candidate SHA, a findings-fixed count and an evidence pointer. This prevents metadata-only self-confirmation through an invented or wrong-SHA URL. The validator still does **not** decide whether the Worker's semantic challenge was adequate; that judgment remains non-authoritative Worker readiness evidence and the fresh independent Reviewer remains mandatory.
 
 ## 8. Transactional REVIEW_READY closure
 
