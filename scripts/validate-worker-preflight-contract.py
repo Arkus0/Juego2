@@ -54,6 +54,8 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
         "dotnet restore Juego2.sln",
         "dotnet build Juego2.sln --no-restore -c Release",
         "dotnet test Juego2.sln --no-build --no-restore -c Release",
+        "Simulate chat Worker without resolvable exact SDK",
+        "SIMULATED_CHAT_WORKER_DELEGATION_GREEN",
         "gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\"",
         "WORKER_PREFLIGHT_DELEGATED_GREEN",
         "Workflow run ID:",
@@ -97,7 +99,7 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
 def self_test() -> None:
     base = {
         "local": "WORKER_PREFLIGHT_DELEGATION_REQUIRED WORKER_PREFLIGHT_GREEN dotnet restore Juego2.sln dotnet build Juego2.sln dotnet test Juego2.sln validate-worker-preflight-context.py --self-test",
-        "workflow": "pull_request: worker-preflight-pr-${{ github.event.pull_request.number }} ref: ${{ github.event.pull_request.head.sha }} global-json-file: global.json validate-worker-preflight-context.py dotnet restore Juego2.sln dotnet build Juego2.sln --no-restore -c Release dotnet test Juego2.sln --no-build --no-restore -c Release gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\" WORKER_PREFLIGHT_DELEGATED_GREEN Workflow run ID:",
+        "workflow": "pull_request: worker-preflight-pr-${{ github.event.pull_request.number }} ref: ${{ github.event.pull_request.head.sha }} global-json-file: global.json validate-worker-preflight-context.py dotnet restore Juego2.sln dotnet build Juego2.sln --no-restore -c Release dotnet test Juego2.sln --no-build --no-restore -c Release Simulate chat Worker without resolvable exact SDK SIMULATED_CHAT_WORKER_DELEGATION_GREEN gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\" WORKER_PREFLIGHT_DELEGATED_GREEN Workflow run ID:",
         "implement": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
         "repair": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
         "protocol": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
@@ -108,6 +110,7 @@ def self_test() -> None:
     mutations = [
         ("local", "WORKER_PREFLIGHT_DELEGATION_REQUIRED", ""),
         ("workflow", "ref: ${{ github.event.pull_request.head.sha }}", "ref: main"),
+        ("workflow", "SIMULATED_CHAT_WORKER_DELEGATION_GREEN", ""),
         ("workflow", "gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\"", ""),
         ("protocol", "WORKER_PREFLIGHT_DELEGATED_GREEN", ""),
         ("implement", "grandfathered", ""),
