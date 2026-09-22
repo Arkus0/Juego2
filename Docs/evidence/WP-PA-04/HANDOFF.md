@@ -30,6 +30,7 @@ Two actors in the same canonical world can therefore make different explainable 
 
 Only:
 
+- `Docs/evidence/WP-PA-04/PREDECESSOR_CONTRACT_CHECK.md`;
 - `Docs/evidence/WP-PA-04/WORKER_PLAN.md`;
 - `Docs/evidence/WP-PA-04/HANDOFF.md`;
 - `Docs/evidence/WP-PA-04/PLAYABLE_CAUSAL_CITY_PROOF.md`;
@@ -38,6 +39,10 @@ Only:
 No runtime/code/Unity/H0/H1/CITY/frozen-PA-plan/amendment file is intentionally changed.
 
 ## Exact predecessor closure
+
+Canonical predecessor evidence is now the standalone file required by the post-CTX-03 handoff generator:
+
+`Docs/evidence/WP-PA-04/PREDECESSOR_CONTRACT_CHECK.md`
 
 `WP-PA-03` is accepted and DocSync-complete:
 
@@ -50,7 +55,7 @@ No runtime/code/Unity/H0/H1/CITY/frozen-PA-plan/amendment file is intentionally 
 
 The Worker opened the authoritative PA-03 result and DocSync directly rather than using a capsule as semantic authority because PA-04 materially consumes PA-03's rule that private third-party relationship truth is not ambient actor knowledge.
 
-Full inherited/new/consumed/reopen classification is in `WORKER_PLAN.md#predecessor_contract_check`.
+`WORKER_PLAN.md#predecessor_contract_check` retains the original first-write planning record; the standalone file is the canonical machine-consumable handoff evidence.
 
 ## Exact donor provenance
 
@@ -176,11 +181,12 @@ The candidate does not claim or authorize:
 
 ## Worker pre-review repairs before freeze
 
-The Worker challenge found and repaired three in-candidate quality issues before final cleanliness:
+The Worker challenge found and repaired four in-candidate quality/process issues before final cleanliness:
 
-1. donor PASS provenance in the first Worker-plan draft used a GitHub GraphQL node identifier instead of the stable numeric review `#5230673388`; the evidence was corrected;
+1. donor PASS provenance in the first Worker-plan draft used a GitHub GraphQL node identifier instead of stable numeric review `#5230673388`; the evidence was corrected;
 2. the central counterfactual/negative fixtures were tightened so actor identity cannot explain CF-01 and a pure privileged-diagnostic defect injection cannot be conflated with CF-02's real truth change;
-3. the mandatory Playable Causal City PA-04 witness/non-witness/later-source proof was only described conceptually, not frozen as a falsable acceptance fixture; `PLAYABLE_CAUSAL_CITY_PROOF.md` now closes that surface.
+3. the mandatory Playable Causal City PA-04 witness/non-witness/later-source proof was only described conceptually, not frozen as a falsable acceptance fixture; `PLAYABLE_CAUSAL_CITY_PROOF.md` now closes that surface;
+4. the first planning record embedded `PREDECESSOR_CONTRACT_CHECK` in `WORKER_PLAN.md`, but the accepted post-CTX-03 metadata generator requires the canonical standalone `Docs/evidence/WP-PA-04/PREDECESSOR_CONTRACT_CHECK.md`; that machine-consumable evidence now exists without erasing the original first-write plan record.
 
 These repairs are part of the final candidate bytes and must be included in the exact-HEAD pre-review rerun.
 
@@ -203,6 +209,7 @@ Try especially to show that:
 13. certainty is mandatory despite no behavioural/revision consumer;
 14. donor runtime/M9/M10 architecture has become Juego2 authority;
 15. a research-level finding is presented as runtime/performance/persistence proof;
-16. player-caused information uses a privileged quest-only knowledge copy.
+16. player-caused information uses a privileged quest-only knowledge copy;
+17. canonical handoff metadata points anywhere other than the standalone predecessor check required by the generator.
 
 A fresh independent Reviewer must bind its verdict to the exact frozen SHA published in PR #129 after terminal handoff closure.
