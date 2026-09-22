@@ -9,13 +9,13 @@ Worker: ChatGPT GPT-5.6 Sol
 Date: 2026-09-22  
 Fail cycle: `0`
 
-This file is repository-resident review navigation only. The exact final `Candidate HEAD SHA`, final external `WORKER_PRE_REVIEW: CLEAN` record, freeze state and Automation V2 terminal markers are authoritative on the live PR handoff surface after the Worker stops writers. This file deliberately does not attempt to contain its own final commit SHA.
+This file is repository-resident review navigation only. The exact final `Candidate HEAD SHA`, external `WORKER_PRE_REVIEW: CLEAN` record, freeze state and Automation V2 terminal markers are authoritative on the live PR handoff surface after the Worker stops writers. This file deliberately does not attempt to contain its own final commit SHA.
 
 ## Candidate claim
 
 PA-04 harvests/revalidates the independently reviewed donor Knowledge/Belief findings into a compact Juego2 product-semantic epistemic contract while stripping donor runtime/M9/M10/schema authority.
 
-Central authority boundary:
+Central boundary:
 
 ```text
 canonical world truth != actor-accessible belief
@@ -67,7 +67,7 @@ The donor PASS is provenance only. This Juego2 candidate still requires fresh in
 The candidate keeps donor findings only where they fit current Juego2 authority:
 
 - player/NPC information asymmetry belongs to the same playable causal city;
-- sustained player action may change information distribution and source availability rather than triggering automatic truth synchronization;
+- sustained player action may change information distribution/source availability rather than trigger automatic truth synchronization;
 - no quest/player-only `knows_X` universe substitutes for shared epistemic state;
 - PA-03 canonical relationship truth remains separate from an actor's belief about a relationship;
 - PA-05 retains communication motive, retransmission, distortion and corroboration;
@@ -79,7 +79,9 @@ The candidate keeps donor findings only where they fit current Juego2 authority:
 
 ### CF-01 — same world, different belief
 
-All non-epistemic inputs are fixed. Antonio legitimately holds `meeting_location=town_hall`; Manolo is `UNKNOWN`.
+Antonio and Manolo use a paired fixture profile: every non-epistemic semantic input is cloned/equal. Their distinct actor IDs exist only as ownership keys; identity-specific authored rules, bonuses/penalties and identity-based tie breaking are forbidden in the fixture.
+
+Antonio legitimately holds `meeting_location=town_hall`; Manolo is `UNKNOWN`.
 
 Required material outcomes:
 
@@ -88,9 +90,9 @@ Antonio -> TRAVEL_TO_TOWN_HALL
 Manolo  -> SEEK_MEETING_INFORMATION
 ```
 
-Same material outcome, correlated input differences, canonical fallback or tie-break dependence is a FAIL.
+Same material outcome, correlated input differences, actor-ID-specific behaviour, canonical fallback or tie-break dependence is a FAIL.
 
-### CF-02 — stale belief survives hidden truth change
+### CF-02 — stale belief survives real hidden truth change
 
 Carmen's actor-safe belief remains `shop_open=true@T1` in both runs while only canonical truth changes from true to false without an acquisition/revision event.
 
@@ -105,17 +107,19 @@ Required result: Paco holds `alibi_valid=true` with immediate `COMMUNICATION` pr
 ## Required negative controls
 
 - `NC-01`: missing belief/access cannot fall back to canonical `WorldFact`.
-- `NC-02`: changing only inaccessible privileged/debug truth metadata cannot alter actor-safe input/decision.
+- `NC-02`: with canonical truth, actor belief and every actor-visible input fixed, defect-inject only a privileged diagnostic projection/metadata value; actor-safe input and material decision must remain unchanged.
 - `NC-03`: a public source is not automatically known before access/distribution.
 - `NC-04`: private canonical PA-03 relationship truth remains `UNKNOWN` to an unrelated actor absent acquisition.
 - `NC-05`: knowing one facet cannot reveal the hidden complete object.
 - `NC-06`: a future knowledge-backed source must preserve accepted bounded discovery rather than hide global actor/fact enumeration.
 
+`NC-02` is intentionally distinct from `CF-02`: `CF-02` changes real canonical truth to test stale belief; `NC-02` changes only forbidden debug/test metadata to prove that privileged diagnostics are causally non-authoritative.
+
 ## Main drift observed during Worker execution
 
 The Worker branch started from `main@2da4b6fd4a6eb7bac166c77ba8fe05796874cbbf`.
 
-During execution, main advanced to `0523b34a021d7c0a263b661ad5380a372fa2d61b` through DW-00 DocSync. The complete `2da4b6fd... -> 0523b34a...` changed-file set is limited to:
+During execution, main advanced to `0523b34a021d7c0a263b661ad5380a372fa2d61b` through DW-00 DocSync. The complete `2da4b6fd... -> 0523b34a...` changed-file set was limited to:
 
 - `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json`;
 - `Docs/evidence/WP-DW-00/DOCSYNC.md`;
@@ -151,17 +155,18 @@ Try especially to show that:
 
 1. `UNKNOWN` can still read canonical truth;
 2. actor-facing truth/staleness labels leak privileged state;
-3. CF-01 does not actually require a material A/B outcome or changes another input;
-4. hidden truth mutation repairs or changes stale belief without acquisition;
-5. public availability has become ambient knowledge;
-6. deception remains text-only;
-7. PA-05 or PA-06 ownership has leaked into PA-04;
-8. private PA-03 relationship truth becomes ambient;
-9. partial knowledge exposes a complete hidden object;
-10. normal lookup can hide a global scan;
-11. certainty is mandatory despite no behavioral/revision consumer;
-12. donor runtime/M9/M10 architecture has become Juego2 authority;
-13. a research-level finding is presented as runtime/performance/persistence proof;
-14. player-caused information uses a privileged quest-only knowledge copy.
+3. CF-01 does not require a material A/B outcome, changes another semantic input, uses actor identity, or relies on tie break;
+4. real hidden truth mutation repairs stale belief without acquisition;
+5. pure privileged/debug metadata can alter actor-safe input/decision;
+6. public availability has become ambient knowledge;
+7. deception remains text-only;
+8. PA-05 or PA-06 ownership has leaked into PA-04;
+9. private PA-03 relationship truth becomes ambient;
+10. partial knowledge exposes a complete hidden object;
+11. normal lookup can hide a global scan;
+12. certainty is mandatory despite no behavioural/revision consumer;
+13. donor runtime/M9/M10 architecture has become Juego2 authority;
+14. a research-level finding is presented as runtime/performance/persistence proof;
+15. player-caused information uses a privileged quest-only knowledge copy.
 
 A fresh independent Reviewer must bind its verdict to the exact frozen SHA published in PR #129 after terminal handoff closure.
