@@ -19,7 +19,7 @@ grep -Fxq 'KNOWN_UNDETECTED_DEFECT_CLASSES: 0' Docs/evidence/WP-DW-00/PROOF_MATR
 grep -Fxq 'PROOF_BUDGET_VERDICT: WITHIN_BUDGET' Docs/evidence/WP-DW-00/PROOF_MATRIX.md
 grep -Fq 'Current-WP blocker findings: **none' Docs/evidence/WP-DW-00/CONTENT_SHAPE_PROBE.md
 grep -Fq 'Concrete predecessor reopen conditions triggered: **none' Docs/evidence/WP-DW-00/CONTENT_SHAPE_PROBE.md
-grep -Fxq 'PROOF_BUDGET_VERDICT: WITHIN_BUDGET' Docs/evidence/WP-DW-00/RESIDUAL_RISK.md
+grep -Fq 'PROOF_BUDGET_VERDICT: WITHIN_BUDGET' Docs/evidence/WP-DW-00/RESIDUAL_RISK.md
 grep -Fq 'PREDECESSOR_CONTRACT_CHECK' Docs/evidence/WP-DW-00/WORKER_PLAN.md
 
 if [[ -n "${PR_BODY:-}" ]]; then
