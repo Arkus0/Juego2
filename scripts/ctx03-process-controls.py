@@ -38,7 +38,7 @@ def run_controls(root: Path) -> list[str]:
     cfg = m.load(root / CONFIG)
     errors: list[str] = []
 
-    # The audited config cannot shrink the representative measurement universe.
+    # The audited config cannot shrink or redirect its own measurement universe.
     narrowed_routes = copy.deepcopy(cfg)
     narrowed_routes["same_snapshot_measurement"]["routes"] = narrowed_routes["same_snapshot_measurement"]["routes"][:-1]
     if not m.canonical_route_errors(narrowed_routes):
@@ -48,6 +48,16 @@ def run_controls(root: Path) -> list[str]:
     narrowed_profiles["process_envelope"]["profiles"].pop("reviewer", None)
     if not m.profile_universe_errors(root, narrowed_profiles):
         errors.append("removing an accepted role profile from audited config did not turn RED")
+
+    redirected_source = copy.deepcopy(cfg)
+    redirected_source["profile_source"] = "Docs/engineering/context-envelope.json"
+    if not m.profile_universe_errors(root, redirected_source):
+        errors.append("redirecting profile_source away from canonical role profiles did not turn RED")
+
+    redirected_sub = copy.deepcopy(cfg)
+    redirected_sub["process_envelope"]["profiles"]["worker"]["substitutions"]["<EXACT_WP>"] = "Docs/workpacks/CTX/README.md"
+    if not m.profile_universe_errors(root, redirected_sub):
+        errors.append("redirecting a calibration placeholder to a friendlier source did not turn RED")
 
     # Pre-CTX baseline is checker-owned rather than capsule-derived. Mutating a
     # compact capsule may change the post route, but it cannot erase the canonical
@@ -97,7 +107,7 @@ def run_controls(root: Path) -> list[str]:
     # Escalation completeness universe comes from the role profile, not the
     # record under audit. Removing a real required predicate must be detected.
     real = json.loads((root / ESCALATIONS).read_text(encoding="utf-8"))
-    required = list(m.load(root / cfg["profile_source"])["profiles"][real["profile"]].get("must_escalate_if") or [])
+    required = list(m.load(root / m.CANONICAL_PROFILE_SOURCE)["profiles"][real["profile"]].get("must_escalate_if") or [])
     if not required:
         errors.append("worker profile unexpectedly has no mandatory escalation predicates")
     else:
