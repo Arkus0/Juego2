@@ -2,7 +2,7 @@
 """CTX-03 context measurement, process-envelope and escalation validator."""
 from __future__ import annotations
 
-import argparse, json, math, subprocess, sys
+import argparse, json, math, re, subprocess, sys
 from pathlib import Path
 
 DEFAULT_CONFIG = Path("Docs/engineering/context-envelope.json")
@@ -10,6 +10,7 @@ CANONICAL_PROFILE_SOURCE = "Docs/engineering/context-bootstrap-profiles.json"
 CAPSULE_DIR = Path("Docs/engineering/context-capsules")
 CAPSULE_INDEX = CAPSULE_DIR / "index.json"
 CAPSULE_PROTOCOL = Path("Docs/engineering/CONTEXT_CAPSULE_V1.md")
+FIXED_PATH_RE = re.compile(r"Docs/[A-Za-z0-9_./-]+\.(?:md|json)")
 
 CANONICAL_PROFILE_SUBSTITUTIONS = {
     "worker": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
@@ -36,8 +37,7 @@ CANONICAL_ROUTE_CONFIGS = [
 ]
 
 # Independent coverage oracle for route-forced repository context. These are
-# conditions made mandatory by the concrete route, not optional examples. Route
-# budgets must therefore include them even though they are not base initial_reads.
+# conditions made mandatory by the concrete route, not optional examples.
 CANONICAL_EFFECTIVE_REQUIREMENTS = {
     "H1-worker": {"Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md", "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md"},
     "H1-reviewer": {"Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md", "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md"},
@@ -47,10 +47,41 @@ CANONICAL_EFFECTIVE_REQUIREMENTS = {
     "PA-reviewer": {str(CAPSULE_PROTOCOL), str(CAPSULE_INDEX)},
 }
 
+# Checker-owned fixed conditional universe. This deliberately survives deletion
+# or narrowing of conditional_reads in the profile under audit. Conversely, if a
+# profile adds a new explicit fixed Docs/... source, extraction below turns RED
+# until this reviewed oracle is intentionally expanded and recalibrated.
+# Candidate-specific dependency/evidence paths remain mandatory dynamic inputs
+# and are intentionally outside this static repository corpus budget.
+CANONICAL_FIXED_CONDITIONAL_SOURCES = {
+    "worker": {
+        "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md",
+        "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md",
+        "Docs/ROADMAP.md",
+        str(CAPSULE_PROTOCOL),
+        str(CAPSULE_INDEX),
+    },
+    "repair_worker": {
+        "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md",
+        "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md",
+        "Docs/ROADMAP.md",
+        str(CAPSULE_PROTOCOL),
+        str(CAPSULE_INDEX),
+    },
+    "reviewer": {
+        "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md",
+        "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md",
+        "Docs/ROADMAP.md",
+        str(CAPSULE_PROTOCOL),
+        str(CAPSULE_INDEX),
+    },
+    "planner_gate": {"Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md"},
+    "docsync": {"Docs/ROADMAP.md", str(CAPSULE_PROTOCOL), str(CAPSULE_INDEX)},
+    "h1_local_executor": set(),
+}
+
 # Pre-CTX direct-predecessor reconstruction is also checker-owned. Crucially it
-# is NOT derived from the compact capsule being measured; otherwise deleting a
-# compact source could shrink both baseline and post route and manufacture a
-# false saving.
+# is NOT derived from the compact capsule being measured.
 PRE_CTX_DEPENDENCY_SOURCES = {
     "H1-worker": {
         "Docs/workpacks/HK/WP-HK-GATE.md",
@@ -64,29 +95,17 @@ PRE_CTX_DEPENDENCY_SOURCES = {
         "Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md",
         "Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md",
     },
-    "CITY-worker": {
-        "Docs/workpacks/CITY/WP-CITY-03.md",
-        "Docs/production/CITY_PRODUCT_SEED.md",
-    },
-    "CITY-reviewer": {
-        "Docs/workpacks/CITY/WP-CITY-03.md",
-        "Docs/production/CITY_PRODUCT_SEED.md",
-    },
+    "CITY-worker": {"Docs/workpacks/CITY/WP-CITY-03.md", "Docs/production/CITY_PRODUCT_SEED.md"},
+    "CITY-reviewer": {"Docs/workpacks/CITY/WP-CITY-03.md", "Docs/production/CITY_PRODUCT_SEED.md"},
     "PA-worker": {
-        "Docs/workpacks/PA/WP-PA-01.md",
-        "Docs/research/living-world/results/PA-01.md",
-        "Docs/workpacks/PA/WP-PA-02.md",
-        "Docs/research/living-world/results/PA-02.md",
-        "Docs/workpacks/PA/WP-PA-03.md",
-        "Docs/research/living-world/results/PA-03.md",
+        "Docs/workpacks/PA/WP-PA-01.md", "Docs/research/living-world/results/PA-01.md",
+        "Docs/workpacks/PA/WP-PA-02.md", "Docs/research/living-world/results/PA-02.md",
+        "Docs/workpacks/PA/WP-PA-03.md", "Docs/research/living-world/results/PA-03.md",
     },
     "PA-reviewer": {
-        "Docs/workpacks/PA/WP-PA-01.md",
-        "Docs/research/living-world/results/PA-01.md",
-        "Docs/workpacks/PA/WP-PA-02.md",
-        "Docs/research/living-world/results/PA-02.md",
-        "Docs/workpacks/PA/WP-PA-03.md",
-        "Docs/research/living-world/results/PA-03.md",
+        "Docs/workpacks/PA/WP-PA-01.md", "Docs/research/living-world/results/PA-01.md",
+        "Docs/workpacks/PA/WP-PA-02.md", "Docs/research/living-world/results/PA-02.md",
+        "Docs/workpacks/PA/WP-PA-03.md", "Docs/research/living-world/results/PA-03.md",
     },
 }
 
@@ -121,6 +140,39 @@ def accepted_profile_sources(root: Path, cfg: dict, profile_name: str):
         else:
             concrete.add(str(resolved))
     return concrete, dynamic
+
+
+def extracted_fixed_conditional_sources(profile: dict) -> set[str]:
+    found: set[str] = set()
+    for value in (profile.get("conditional_reads") or {}).values():
+        if isinstance(value, str):
+            found.update(FIXED_PATH_RE.findall(value))
+    return found
+
+
+def conditional_profile_sources(root: Path, cfg: dict, profile_name: str):
+    base, dynamic = accepted_profile_sources(root, cfg, profile_name)
+    return base | set(CANONICAL_FIXED_CONDITIONAL_SOURCES[profile_name]), dynamic
+
+
+def conditional_profile_universe_errors(root: Path, cfg: dict) -> list[str]:
+    profiles = load(root / CANONICAL_PROFILE_SOURCE).get("profiles", {})
+    budgets = cfg.get("process_envelope", {}).get("conditional_profile_budgets", {})
+    errors: list[str] = []
+    if set(CANONICAL_FIXED_CONDITIONAL_SOURCES) != set(profiles):
+        errors.append("checker-owned fixed-conditional profile universe differs from canonical profile universe")
+    if set(budgets) != set(profiles):
+        errors.append(f"conditional profile budget universe mismatch; missing={sorted(set(profiles)-set(budgets))}, extra={sorted(set(budgets)-set(profiles))}")
+    for name, profile in profiles.items():
+        observed = extracted_fixed_conditional_sources(profile)
+        canonical = set(CANONICAL_FIXED_CONDITIONAL_SOURCES.get(name, set()))
+        missing = sorted(observed - canonical)
+        if missing:
+            errors.append(f"{name}: canonical conditional_reads names fixed repository sources not covered by checker-owned conditional universe: {missing}")
+        for raw in canonical:
+            if not (root / raw).is_file():
+                errors.append(f"{name}: checker-owned fixed conditional source missing: {raw}")
+    return errors
 
 
 def source_path(row):
@@ -191,9 +243,7 @@ def profile_universe_errors(root: Path, cfg: dict) -> list[str]:
     profiles = load(root / CANONICAL_PROFILE_SOURCE).get("profiles", {})
     configured = cfg.get("process_envelope", {}).get("profiles", {})
     if set(profiles) != set(configured):
-        missing = sorted(set(profiles) - set(configured))
-        extra = sorted(set(configured) - set(profiles))
-        errors.append(f"process-envelope profile universe mismatch; missing={missing}, extra={extra}")
+        errors.append(f"process-envelope profile universe mismatch; missing={sorted(set(profiles)-set(configured))}, extra={sorted(set(configured)-set(profiles))}")
     for name, expected in CANONICAL_PROFILE_SUBSTITUTIONS.items():
         actual = (configured.get(name) or {}).get("substitutions") or {}
         if actual != expected:
@@ -217,7 +267,6 @@ def measure_route(root: Path, cfg: dict, route: dict):
     route_id = route["id"]
     if route_id not in PRE_CTX_DEPENDENCY_SOURCES:
         raise ValueError(f"route {route_id!r} has no checker-owned pre-CTX dependency universe")
-
     post, dynamic = route_profile_sources(root, cfg, route)
     auth, mandatory = set(), set()
     capsules = route.get("capsules") or []
@@ -233,12 +282,7 @@ def measure_route(root: Path, cfg: dict, route: dict):
     post |= held
     post |= set(route.get("post_required_additions") or [])
 
-    pre = {
-        "AGENTS.md",
-        "Docs/ROADMAP.md",
-        route["exact_wp"],
-        "Docs/engineering/WORKER_REVIEW_PROTOCOL.md",
-    }
+    pre = {"AGENTS.md", "Docs/ROADMAP.md", route["exact_wp"], "Docs/engineering/WORKER_REVIEW_PROTOCOL.md"}
     pre |= set(PRE_CTX_DEPENDENCY_SOURCES[route_id]) | held
 
     pre_est, pre_rows = estimate_paths(root, pre)
@@ -306,17 +350,19 @@ def ceiling_change_errors(old: dict | None, new: dict):
     if old is None:
         return []
     errors = []
-    op = old.get("process_envelope", {}).get("profiles", {})
-    np = new.get("process_envelope", {}).get("profiles", {})
-    for name, n in np.items():
-        if name in op:
-            errors += _budget_increase_errors(name, op[name], n)
-    orb = old.get("process_envelope", {}).get("effective_route_budgets", {})
-    nrb = new.get("process_envelope", {}).get("effective_route_budgets", {})
-    for route_id, modes in nrb.items():
+    old_env = old.get("process_envelope", {})
+    new_env = new.get("process_envelope", {})
+    for name, n in new_env.get("profiles", {}).items():
+        if name in old_env.get("profiles", {}):
+            errors += _budget_increase_errors(name, old_env["profiles"][name], n)
+    for name, n in new_env.get("conditional_profile_budgets", {}).items():
+        if name in old_env.get("conditional_profile_budgets", {}):
+            errors += _budget_increase_errors(f"conditional/{name}", old_env["conditional_profile_budgets"][name], n)
+    old_routes = old_env.get("effective_route_budgets", {})
+    for route_id, modes in new_env.get("effective_route_budgets", {}).items():
         for mode, budget in modes.items():
-            if route_id in orb and mode in orb[route_id]:
-                errors += _budget_increase_errors(f"{route_id}/{mode}", orb[route_id][mode], budget)
+            if route_id in old_routes and mode in old_routes[route_id]:
+                errors += _budget_increase_errors(f"{route_id}/{mode}", old_routes[route_id][mode], budget)
     return errors
 
 
@@ -357,39 +403,38 @@ def validate_escalations(root: Path, cfg: dict, path: Path):
 
 
 def audit(root: Path, cfg: dict, allow_uncalibrated: bool, base_ref: str | None, escalation: Path | None):
-    errors, profiles = [], []
+    errors, profiles, conditional_profiles = [], [], []
     route_errors = canonical_route_errors(cfg)
     universe_errors = profile_universe_errors(root, cfg)
+    conditional_universe_errors = conditional_profile_universe_errors(root, cfg)
     route_budget_errors = route_budget_universe_errors(cfg)
-    errors += route_errors + universe_errors + route_budget_errors
+    errors += route_errors + universe_errors + conditional_universe_errors + route_budget_errors
 
     headroom = float(cfg["process_envelope"]["headroom_fraction"])
     profile_doc = load(root / CANONICAL_PROFILE_SOURCE)["profiles"]
-    for name in profile_doc:  # accepted profile owns the universe, not config
+    for name in profile_doc:
         pcfg = cfg["process_envelope"]["profiles"].get(name)
-        if pcfg is None:
-            continue
-        paths, dynamic = accepted_profile_sources(root, cfg, name)
-        est, rows = estimate_paths(root, paths)
-        perr = ceiling_errors(est, pcfg, headroom, allow_uncalibrated)
-        errors += [f"{name}: {e}" for e in perr]
-        profiles.append({
-            "profile": name,
-            "estimate": est,
-            "files": rows,
-            "dynamic_mandatory_sources_excluded_from_static_budget": dynamic,
-            "baseline_estimate": pcfg.get("baseline_estimate"),
-            "ceiling_estimate": pcfg.get("ceiling_estimate"),
-            "errors": perr,
-        })
+        if pcfg is not None:
+            paths, dynamic = accepted_profile_sources(root, cfg, name)
+            est, rows = estimate_paths(root, paths)
+            perr = ceiling_errors(est, pcfg, headroom, allow_uncalibrated)
+            errors += [f"{name}: {e}" for e in perr]
+            profiles.append({"profile": name, "estimate": est, "files": rows, "dynamic_mandatory_sources_excluded_from_static_budget": dynamic, "baseline_estimate": pcfg.get("baseline_estimate"), "ceiling_estimate": pcfg.get("ceiling_estimate"), "errors": perr})
+
+        cpcfg = cfg["process_envelope"].get("conditional_profile_budgets", {}).get(name)
+        if cpcfg is not None:
+            cpaths, dynamic = conditional_profile_sources(root, cfg, name)
+            cest, crows = estimate_paths(root, cpaths)
+            cerrs = ceiling_errors(cest, cpcfg, headroom, allow_uncalibrated)
+            errors += [f"conditional/{name}: {e}" for e in cerrs]
+            conditional_profiles.append({"profile": name, "estimate": cest, "files": crows, "checker_owned_fixed_conditionals": sorted(CANONICAL_FIXED_CONDITIONAL_SOURCES[name]), "dynamic_candidate_specific_sources_excluded_from_static_budget": dynamic, "baseline_estimate": cpcfg.get("baseline_estimate"), "ceiling_estimate": cpcfg.get("ceiling_estimate"), "errors": cerrs})
 
     old = git_json_at(base_ref, str(DEFAULT_CONFIG)) if base_ref else None
-    cerr = ceiling_change_errors(old, cfg)
-    errors += cerr
+    change_errors = ceiling_change_errors(old, cfg)
+    errors += change_errors
 
     routes = [measure_route(root, cfg, r) for r in CANONICAL_ROUTE_CONFIGS]
-    effective_errors = []
-    route_budget_report = []
+    effective_errors, route_budget_report = [], []
     budgets = cfg.get("process_envelope", {}).get("effective_route_budgets", {})
     for route in routes:
         rerr = effective_requirement_errors(route)
@@ -412,13 +457,15 @@ def audit(root: Path, cfg: dict, allow_uncalibrated: bool, base_ref: str | None,
     return {
         "schema": "arkus.context-envelope-report@1",
         "profiles": profiles,
+        "conditional_profiles": conditional_profiles,
         "routes": routes,
         "effective_route_budgets": route_budget_report,
         "route_universe_errors": route_errors,
         "profile_universe_errors": universe_errors,
+        "conditional_profile_universe_errors": conditional_universe_errors,
         "route_budget_universe_errors": route_budget_errors,
         "effective_requirement_errors": effective_errors,
-        "ceiling_change_errors": cerr,
+        "ceiling_change_errors": change_errors,
         "escalation_errors": eerr,
         "errors": errors,
     }
@@ -429,15 +476,18 @@ def self_test():
     assert material(1000, 700, .2)["material"] is False
     assert ceiling_errors(120, {"baseline_estimate": 100, "ceiling_estimate": 120, "rationale": "x"}, .2, False) == []
     assert ceiling_errors(121, {"baseline_estimate": 100, "ceiling_estimate": 120, "rationale": "x"}, .2, False)
-    old = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 100, "ceiling_revision": 1}}, "effective_route_budgets": {"r": {"minimum": {"ceiling_estimate": 100, "ceiling_revision": 1}}}}}
-    new = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 101, "ceiling_revision": 1}}, "effective_route_budgets": {"r": {"minimum": {"ceiling_estimate": 101, "ceiling_revision": 1}}}}}
-    assert len(ceiling_change_errors(old, new)) == 4
+    old = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 100, "ceiling_revision": 1}}, "conditional_profile_budgets": {"x": {"ceiling_estimate": 100, "ceiling_revision": 1}}, "effective_route_budgets": {"r": {"minimum": {"ceiling_estimate": 100, "ceiling_revision": 1}}}}}
+    new = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 101, "ceiling_revision": 1}}, "conditional_profile_budgets": {"x": {"ceiling_estimate": 101, "ceiling_revision": 1}}, "effective_route_budgets": {"r": {"minimum": {"ceiling_estimate": 101, "ceiling_revision": 1}}}}}
+    assert len(ceiling_change_errors(old, new)) == 6
     cfg = {"same_snapshot_measurement": {"routes": CANONICAL_ROUTE_CONFIGS}}
     assert canonical_route_errors(cfg) == []
     cfg["same_snapshot_measurement"]["routes"] = CANONICAL_ROUTE_CONFIGS[:-1]
     assert canonical_route_errors(cfg)
     assert set(PRE_CTX_DEPENDENCY_SOURCES) == {r["id"] for r in CANONICAL_ROUTE_CONFIGS}
     assert set(CANONICAL_EFFECTIVE_REQUIREMENTS) == {r["id"] for r in CANONICAL_ROUTE_CONFIGS}
+    assert set(CANONICAL_FIXED_CONDITIONAL_SOURCES) == set(CANONICAL_PROFILE_SUBSTITUTIONS)
+    assert "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md" in CANONICAL_FIXED_CONDITIONAL_SOURCES["planner_gate"]
+    assert "Docs/ROADMAP.md" in CANONICAL_FIXED_CONDITIONAL_SOURCES["docsync"]
     print("context-envelope self-test: PASS")
 
 
@@ -453,8 +503,7 @@ def main():
     p.add_argument("--self-test", action="store_true")
     a = p.parse_args()
     if a.self_test:
-        self_test()
-        return 0
+        self_test(); return 0
     try:
         root = a.repo_root.resolve()
         cfg = load(root / a.config)
