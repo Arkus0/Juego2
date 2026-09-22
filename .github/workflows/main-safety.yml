@@ -4,14 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    paths:
-      - '.github/workflows/main-safety.yml'
-      - 'global.json'
-      - 'Juego2.sln'
-      - '**/*.csproj'
-      - 'src/**'
-      - 'tests/**'
-      - 'scripts/**'
   workflow_dispatch:
 
 permissions:
@@ -41,6 +33,13 @@ jobs:
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
         with:
           python-version: '3.12'
+
+      - name: Validate Main Safety PR coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py --self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py
 
       - name: Verify exact SDK selection
         shell: bash
