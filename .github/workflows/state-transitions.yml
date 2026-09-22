@@ -299,10 +299,33 @@ jobs:
             [[ "${reuse_job}" == "success" ]] || { echo "::error::Receipt reuse job is not GREEN"; exit 2; }
           fi
 
+          candidate_root="${RUNNER_TEMP}/pass-preflight-candidate"
+          rm -rf "${candidate_root}"
+          mkdir -p "${candidate_root}"
+          git -C process-oracle fetch --no-tags --depth=1 origin "${reviewed_sha}"
+          [[ "$(git -C process-oracle rev-parse FETCH_HEAD)" == "${reviewed_sha}" ]] || { echo "::error::Could not fetch exact reviewed candidate"; exit 2; }
+          git -C process-oracle archive "${reviewed_sha}" | tar -x -C "${candidate_root}"
+
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr-final.json
           python3 process-oracle/scripts/validation-context.py record-match \
             --pr-json pr-final.json --target-sha "${reviewed_sha}" --record current-context.json >/dev/null
           [[ "$(jq -r '.draft' pr-final.json)" == "false" ]] || { echo "::error::PR became Draft during PASS preflight"; exit 2; }
+          python3 process-oracle/scripts/pass-preflight-handoff.py --self-test
+          python3 process-oracle/scripts/pass-preflight-handoff.py \
+            --pr-json pr-final.json --target-sha "${reviewed_sha}" --repo-root "${candidate_root}"
+
+          # Re-read once more after the live oracle so a handoff-only edit that
+          # races the first final read cannot inherit historical GREEN.
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr-merge.json
+          python3 process-oracle/scripts/validation-context.py record-match \
+            --pr-json pr-merge.json --target-sha "${reviewed_sha}" --record current-context.json >/dev/null
+          [[ "$(jq -r '.draft' pr-merge.json)" == "false" ]] || { echo "::error::PR became Draft immediately before merge"; exit 2; }
+          python3 process-oracle/scripts/pass-preflight-handoff.py \
+            --pr-json pr-merge.json --target-sha "${reviewed_sha}" --repo-root "${candidate_root}"
+
+          gh api --method PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/merge" \
+            -f sha="${reviewed_sha}" -f merge_method=merge > merge.json
+          [[ "$(jq -r '.merged // false' merge.json)" == "true" ]] || { echo "::error::Exact-SHA merge was rejected"; cat merge.json; exit 2; }
 
           key="pass-merge:${PR}:${reviewed_sha}:${digest}"
           if ! gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
@@ -313,12 +336,11 @@ jobs:
           Target SHA: ${reviewed_sha}
           Validation Context Digest: ${digest}
           Validation Run ID: ${validation_run_id}
-          Detail: Reviewer PASS, REVIEW_READY and current validation context agree on exact PR+SHA+WP+process/proof class. Merging this exact SHA/context.
+          Detail: Reviewer PASS, REVIEW_READY, current validation context, and the live canonical Worker handoff oracle all agree on the exact reviewed candidate. Exact-SHA merge completed.
           EOF
             )
             gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
           fi
-          gh api --method PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/merge" -f sha="${reviewed_sha}" -f merge_method=merge >/dev/null
 
   docsync-marker:
     name: Mark DocSync required
