@@ -40,13 +40,15 @@ Review `#5275757245` added three causal classes:
 12. **Effective mandatory-context growth** — the process envelope must bound route/profile-forced conditional/capsule/escalated repository sources, not only `initial_reads`.
 13. **Same-SHA terminal retry** — `REVIEW_READY_CLOSED` must remain reachable when an existing deduplicated REVIEW_READY marker precedes a red gate and a later metadata/gate rerun turns GREEN on the same SHA.
 
-## Repair-cycle circuit-breaker finding
+## Repair-cycle circuit-breaker findings
 
-Before refreezing, the Worker deliberately attempted to find the next variant of blocker 12 and found one:
+Before refreezing, the Worker deliberately attempted to find the next variants of the Reviewer classes and found two:
 
 14. **Non-representative fixed conditionals outside concrete route budgets** — the first repair covered the six checker-owned H1/CITY/PA routes, but fixed `conditional_reads` in `repair_worker`, `planner_gate` and `docsync` could still grow outside those concrete route ceilings. The repair was widened to a three-layer envelope with a checker-owned fixed conditional superset for **every canonical profile**, explicit-path discovery that turns RED when a new fixed conditional is introduced without oracle review, and negative controls that grow every fixed conditional source across its applicable ceiling.
 
-Finding 14 was repaired before final freeze. It is recorded here specifically to demonstrate the requested circuit-breaker audit happened before another Reviewer round rather than leaving this variant for the Reviewer to discover.
+15. **External CLEAN pointer could self-confirm by metadata** — after moving the final CLEAN record to a post-review GitHub issue comment, the metadata generator required a syntactically valid comment URL but the canonical handoff lint still treated any URL as opaque. A manual metadata edit could therefore point at a nonexistent/wrong-SHA comment while leaving the structural handoff green. `validate-worker-handoff.py` now resolves an external pre-review issue-comment pointer and requires the same repository/PR plus `WORKER_PRE_REVIEW: CLEAN`, the exact live candidate SHA, a findings-fixed count and an evidence pointer. It does not interpret semantic adequacy; it closes only the deterministic existence/identity false-green.
+
+Findings 14 and 15 were repaired before final freeze. They are recorded here specifically to demonstrate the requested circuit-breaker audit happened before another Reviewer round rather than leaving the natural next variants for the Reviewer to discover.
 
 ## Final repair-cycle pre-review rule
 
@@ -57,8 +59,9 @@ After this file and all other repository/evidence changes are committed and push
 3. inspect the full `107694d3850a478849bffd9510dc030910fc8aa3 -> <exact HEAD>` candidate diff and rerun the canonical CTX-03 validation surface;
 4. challenge all three envelope layers: base reads, every checker-owned fixed conditional profile source, and concrete H1/CITY/PA minimum/escalated route sources;
 5. reproduce the REVIEW_READY same-SHA negative→repair→GREEN class;
-6. verify no repository-local final-clean write is needed after the review;
-7. only if no known in-claim blocker remains, create the durable GitHub issue-comment clean record targeting the exact HEAD;
-8. derive/freeze Ready metadata for that same SHA without changing repository bytes.
+6. verify the final external CLEAN pointer cannot be replaced with a nonexistent, wrong-PR or wrong-SHA comment while handoff lint stays green;
+7. verify no repository-local final-clean write is needed after the review;
+8. only if no known in-claim blocker remains, create the durable GitHub issue-comment clean record targeting the exact HEAD;
+9. derive/freeze Ready metadata for that same SHA without changing repository bytes.
 
 Until that sequence completes, CTX-03 remains **NOT READY** for a fresh independent Reviewer.
