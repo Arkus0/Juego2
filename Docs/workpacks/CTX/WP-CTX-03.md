@@ -1,10 +1,18 @@
 # WP-CTX-03 — Structured evidence, quality-preserving context envelope, DocSync and history separation
 
-Status: **FROZEN PLAN / NOT_STARTED**
+Status: **COMPLETE**
 Class: **PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL**
 Execution: **REMOTE_OK**
 Depends on: `WP-CTX-02` PASS + merge + DocSync
 Blocks: none
+
+Accepted completion:
+
+- final frozen candidate: `8851f3a295c848be5724d5d9b796e00d2037d6e8`;
+- independent PASS: review `#5277502546` on PR `#121`;
+- implementation merge: `d2cf7145b4ec83c3935286f2d9faeabbcd032148`;
+- final B2 circuit-breaker closed the effective mandatory-read-set class without reducing independent Reviewer authority;
+- post-PASS reconciliation: `Docs/evidence/CTX-03/DOCSYNC.md`.
 
 ## Objective
 
