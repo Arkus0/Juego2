@@ -7,7 +7,7 @@ Trust-boundary design: `Docs/evidence/CTX-02/TRUST_BOUNDARY_REAUDIT.md`
 CTX-02 intentionally uses three oracle classes:
 
 - **A — production/source-derived invariant:** deterministic facts the production checker can prove from canonical repository structure/bytes;
-- **B — representative semantic control:** a small independent **test-only** oracle over the actual indexed H1/CITY/PA representative capsules;
+- **B — representative semantic control:** small independent **test-only** oracles over the actual indexed H1/CITY boundaries and cumulative PA-01/02/03 representative chain;
 - **C — human/escalation-only:** arbitrary natural-language completeness/equivalence or contested interpretation; open authoritative sources and require independent judgment.
 
 `VALID_NAVIGATION_ONLY` requires the production audit plus the independent controls. Neither component grants semantic authority.
@@ -20,12 +20,12 @@ CTX-02 intentionally uses three oracle classes:
 | minimum declared capsule shape | A | production checker enforces required mode/identity/mandatory-read list and material field types | missing/malformed required shape -> FAIL |
 | reopen/escalation element shape | A | inject `null`, empty and whitespace-only elements through production `--audit-index` | unusable trigger/condition -> FAIL |
 | authoritative source consistency | A | external-authority path constraint + recomputed Git blob SHA | self-authored authority, missing bytes or changed bytes -> FAIL |
-| representative guarantee material content | B | exact actual representative `id -> (statement, source_pointer)` oracle for HK/CITY/PA | omission, reclassification or invented substitution -> independent RED |
-| same-ID guarantee inversion | B | mutate HK `h0-authoring-readiness.statement` only; preserve ID, pointer and all fingerprints | production shape/source audit stays structurally valid; representative oracle REDs |
-| representative exclusion/non-claim material content | B | exact actual representative `id -> (statement, source_pointer)` oracle | omission or semantic substitution -> independent RED |
-| same-ID exclusion inversion | B | mutate CITY `not-spatial-spec.statement` only; preserve ID, pointer and fingerprints | representative oracle REDs symmetrically |
-| representative reopen semantics | B | exact actual representative condition list | non-empty opposite/invented condition -> representative RED |
-| representative escalation semantics | B | exact actual representative escalation list | non-empty opposite/invented trigger -> representative RED |
+| representative guarantee material content | B | exact actual `id -> (statement, source_pointer)` oracle for HK, CITY and PA-01/02/03 | omission, reclassification or invented substitution -> independent RED |
+| same-ID guarantee inversion | B | mutate HK and PA-01 guarantees while preserving ID, pointer and all fingerprints | production source/shape remains valid; representative oracle REDs |
+| representative exclusion/non-claim material content | B | exact actual `id -> (statement, source_pointer)` oracle across selected boundaries | omission or semantic substitution -> independent RED |
+| same-ID exclusion inversion | B | mutate CITY and PA-02 exclusions while preserving ID, pointer and fingerprints | representative oracle REDs symmetrically |
+| representative reopen semantics | B | exact actual representative condition lists, including PA-01/02 | non-empty opposite/invented condition -> representative RED |
+| representative escalation semantics | B | exact actual representative escalation lists, including PA-01/02 | non-empty opposite/invented trigger -> representative RED |
 | arbitrary future prose equivalence/completeness | C | no generic semantic proof; Reviewer/source escalation on material ambiguity/contradiction | cannot be certified from capsule; reconstruct sources |
 | accepted PA-chain completeness | A | discover canonical `PA-NN.md` results whose matching WP is `COMPLETE`, independent of capsule index | accepted result without capsule -> coverage FAIL |
 | accepted PA structured surface | A | every independently discovered accepted PA result must have structured disposition mode/source/non-empty rows | whole surface omission -> FAIL before chain COMPLETE |
@@ -41,6 +41,7 @@ CTX-02 intentionally uses three oracle classes:
 | mandatory-read reason semantics | A+C | production requires non-empty reason; adequacy is review judgment | malformed reason -> FAIL; questionable reason -> source/review escalation |
 | capsule authority promotion | A | exact `NON_AUTHORITATIVE_NAVIGATION_ONLY`; output keeps `semantic_authority_granted=false` | other authority marker -> FAIL |
 | adoption wiring | A | bootstrap profiles/protocol/skills independently checked | lost discoverability -> FAIL |
+| DocSync validation wiring | A | future capsule/index changes must run checker self-test, main independent controls, PA-01/02 semantic controls and index audit | omitted semantic harness -> process-control FAIL |
 
 ## Three Reviewer FAIL regressions preserved
 
@@ -58,20 +59,21 @@ The capsule/index does not define the universe used to prove its own material cl
 - source integrity is recomputed from repository bytes only after sources are constrained outside capsule/CTX-02-generated authority;
 - accepted PA-chain coverage is discovered from canonical result/workpack state outside the capsule index;
 - PA row coverage is parsed from the independently discovered canonical PA result, and the disposition source must be that exact result;
-- the representative semantic oracle is code in the independent control harness, not data read from the capsule/index;
+- representative semantic expectations live in independent test code, not data read from the capsule/index;
 - `WP-CITY-03` names one exact mandatory non-compressible product seed, rather than accepting any self-selected mandatory read.
 
 ## Semantic-control boundary
 
-The representative oracle pins material content for the **selected actual CTX-02 examples**: `WP-HK-GATE`, `WP-CITY-03`, and complex `WP-PA-03`. It covers exports, exclusions, reopen conditions, escalation triggers and PA-03 directional expressions.
+The representative semantic surface is intentionally bounded to the actual CTX-02 consumer examples: `WP-HK-GATE`, `WP-CITY-03`, and the cumulative `WP-PA-01` + `WP-PA-02` + `WP-PA-03` start surface consumed by PA-04. `WP-PA-03` additionally exercises directional semantics.
 
-It is intentionally test-only. It is not imported by `context-capsule-check.py`, is not an accepted semantic source, and is not a requirement to create one prose registry entry for every future capsule. Future material semantic uncertainty remains class C: open authoritative sources and use independent Reviewer judgment.
+The expectations are test-only (`context-capsule-controls.py` and `context-capsule-pa-semantic-controls.py`). They are not imported by the production checker, are not accepted semantic sources, and do not require a prose registry entry for every future capsule. Future material semantic uncertainty remains class C: open authoritative sources and use independent Reviewer judgment.
 
 ## Required commands
 
 ```bash
 python3 scripts/context-capsule-check.py --self-test
 python3 scripts/context-capsule-controls.py
+python3 scripts/context-capsule-pa-semantic-controls.py
 python3 scripts/context-capsule-check.py --audit-index --repo-root .
 ```
 
