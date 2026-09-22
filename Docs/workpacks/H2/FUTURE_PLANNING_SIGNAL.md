@@ -25,6 +25,12 @@ The future H2 plan should decide, rather than assume, what evidence is required 
 
 The intended architectural direction is that a future game repository should consume Arkus as a product boundary, not carry the full H0/H1/H2 proving-ground history merely to use it. The future H2 planner must validate or reject that direction using the accepted state that exists at planning time.
 
+## Proposed DW evidence interlock
+
+The separate DW planning PR proposes a bounded second-consumer validation track using CITY and PA data through generic Arkus surfaces. If that DW plan is independently accepted and `WP-DW-GATE` later PASSes, final H2 public/external-boundary acceptance must explicitly consume or disposition the DW-GATE evidence rather than freezing the product boundary as if the second-consumer trial did not exist.
+
+This does **not** make CTX obsolete or turn DW into an H2 implementation prerequisite. CTX remains the process-context baseline; H1 remains the Unity-readiness owner; DW, if accepted, supplies additional evidence about non-runtime consumers and structured retrieval. H2 planning may begin earlier, but any final boundary claim must reconcile the accepted evidence available at that time.
+
 ## Explicit non-claims
 
 This note does **not** assert that:
@@ -33,6 +39,8 @@ This note does **not** assert that:
 - H2 must end at any particular WP or gate name;
 - specific packages, registries, installers or release channels are already chosen;
 - Juego2 history may be discarded before the required H1/H2/CITY/PA proof is complete;
+- the proposed DW track is accepted merely because this planning signal mentions it;
+- DW proves fresh-repository packaging/versioning/distribution;
 - current CTX, H1, CITY or PA scope changes because this note exists.
 
 It is a durable planning signal only. Any binding adoption requires its own reviewed H2 plan/workpack.
