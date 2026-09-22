@@ -1,0 +1,61 @@
+name: Arkus Main Safety
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arkus-main-safety-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    name: Main build and test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout main commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 8.0.419
+        uses: actions/setup-dotnet@d6c7b61a9540c3b9e98fc04e7cbe08e61783c5b5
+        with:
+          dotnet-version: 8.0.419
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+        with:
+          python-version: '3.12'
+
+      - name: Restore locked dependencies
+        run: dotnet restore Juego2.sln --locked-mode
+
+      - name: Build release
+        run: dotnet build Juego2.sln --no-restore -c Release
+
+      - name: Run tests
+        run: dotnet test Juego2.sln --no-build --no-restore -c Release --logger "console;verbosity=minimal"
+
+      - name: Compile Python process checkers
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONDONTWRITEBYTECODE=1
+          python3 - <<'PY'
+          from pathlib import Path
+          for path in sorted(Path('scripts').glob('*.py')):
+              compile(path.read_text(encoding='utf-8'), str(path), 'exec')
+          PY
+
+      - name: Run process self-tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-handoff.py --self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/validation-context.py self-test
