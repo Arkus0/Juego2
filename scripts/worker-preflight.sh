@@ -29,6 +29,11 @@ if [[ -f scripts/validate-main-safety-trigger.py ]]; then
   PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py
 fi
 
+if [[ -f scripts/validate-worker-preflight-context.py ]]; then
+  echo "[preflight] delegated-context negative controls"
+  PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-context.py --self-test
+fi
+
 required_sdk="$(python3 - <<'PY'
 import json
 from pathlib import Path
@@ -38,23 +43,26 @@ PY
 
 if ! command -v dotnet >/dev/null 2>&1; then
   cat >&2 <<EOF
-error: dotnet is not available.
+Worker environment cannot execute the local preflight because dotnet is unavailable.
 Required SDK: ${required_sdk}
-Install/allow the SDK declared by global.json in this Worker environment before handing off a candidate.
-This preflight is executor-neutral: remote/chat Workers and local phases use the same command when the environment can execute .NET.
+Candidate SHA: ${candidate_sha}
+WORKER_PREFLIGHT_DELEGATION_REQUIRED
+Use a GREEN 'Worker Candidate Preflight' pull_request run whose durable receipt names the canonical PR and this exact SHA. Do not treat this local capability miss as NOT_READY by itself.
 EOF
-  exit 5
+  exit 10
 fi
 
 actual_sdk="$(dotnet --version)"
 if [[ "${actual_sdk}" != "${required_sdk}" ]]; then
   cat >&2 <<EOF
-error: wrong .NET SDK.
-Required: ${required_sdk}
-Actual:   ${actual_sdk}
-global.json uses rollForward=disable; install the exact SDK in this Worker environment.
+Worker environment cannot execute the local preflight with the exact SDK selected by global.json.
+Required SDK: ${required_sdk}
+Actual SDK:   ${actual_sdk}
+Candidate SHA: ${candidate_sha}
+WORKER_PREFLIGHT_DELEGATION_REQUIRED
+Use a GREEN 'Worker Candidate Preflight' pull_request run whose durable receipt names the canonical PR and this exact SHA. Do not reuse a run from another PR or candidate.
 EOF
-  exit 6
+  exit 10
 fi
 
 echo "[preflight] SDK ${actual_sdk}"
