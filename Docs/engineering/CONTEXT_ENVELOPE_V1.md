@@ -6,15 +6,20 @@ Status: **CTX-03 CANDIDATE / PROCESS_ONLY**
 
 Close the CTX programme by measuring context savings and bounding future mandatory-context growth **without reducing semantic/proof quality**. This protocol adds derived process measurements, auditable escalation, deterministic lifecycle closure and mechanical false-red classification. It does not move product/proof authority into compact context or automation.
 
-Machine surfaces:
+Machine/evidence surfaces:
 
 - role source: `Docs/engineering/context-bootstrap-profiles.json`;
 - envelope/measurement config: `Docs/engineering/context-envelope.json`;
 - verifier registry: `Docs/engineering/mechanical-verifier-registry.json`;
 - context checker: `scripts/context-envelope-check.py`;
+- independent envelope negative controls: `scripts/ctx03-process-controls.py`;
+- quality-preservation replay: `scripts/ctx03-quality-replay.py`;
+- DocSync/history consistency control: `scripts/ctx03-docsync-history-check.py`;
 - mechanical outcome classifier: `scripts/mechanical-verifier-classifier.py`;
 - review metadata generator: `scripts/derive-worker-review-metadata.py`;
 - post-marker closure oracle: `scripts/review-ready-closure.py`;
+- historical classification: `Docs/evidence/CTX-03/HISTORICAL_CLASSIFICATION.json`;
+- non-bootstrap history: `Docs/history/CTX_PROCESS_HISTORY.md`;
 - CI: `.github/workflows/context-envelope-validation.yml`;
 - automatic post-marker closure after adoption: `.github/workflows/review-ready-closure.yml`.
 
@@ -56,6 +61,8 @@ For each representative route the report records:
 
 H1 sources that remain binding because the WP is foundational/local are held constant in both routes. CITY-04's unresolved cross-track gate forces ROADMAP into the post route instead of pretending the blocked route is closed. The cumulative PA route includes all currently accepted PA capsules.
 
+The exact candidate measurement is persisted in Worker evidence. The important result is intentionally non-uniform: PA has a demonstrated material minimum-route reduction; H1's measured minimum reduction does not clear the conservative uncertainty threshold; CITY is larger because its exact non-compressible seed and unresolved gate remain mandatory. CTX-03 records those facts rather than tuning the universe until every route appears cheaper.
+
 ## 3. Auditable context escalation
 
 A `CONTEXT_ESCALATIONS` record evaluates every `must_escalate_if` predicate of the effective role profile. A triggered predicate must name at least one existing authoritative source opened because of it. A non-triggered predicate must record why it is non-material.
@@ -68,7 +75,9 @@ The checker independently obtains the required predicate universe from the accep
 
 CTX-03 measures PA as a cumulative consumer rather than a direct-predecessor happy path. Accepted CTX-02 already provides one capsule per accepted PA result, completion-side discovery, exact disposition status preservation and fail-closed source reconstruction.
 
-CTX-03 will introduce no second PA result registry unless measurement shows a material unresolved cumulative cost that CTX-02 does not close. Avoiding duplicate compact authority is part of acceptance, not a missing feature.
+The accepted-candidate measurement shows the PA worker/reviewer minimum route falling from an estimate of `41066` to `22855`, a saving of `18211` / `44.3457%`, which clears the deliberately conservative combined uncertainty threshold. When the material-source escalation opens all PA-01..03 authoritative results, the route becomes `43067`, i.e. intentionally not cheaper than pre-CTX. That is correct: escalation buys source fidelity, not token savings.
+
+Decision: **KEEP CTX-02 CAPSULE CHAIN / DO NOT ADD A SECOND PA COMPACT REGISTRY IN CTX-03**. CTX-02 materially closes the dominant cumulative starting-cost problem, and the CTX-03 quality replay proves the authoritative PA-03 result remains reachable on material escalation. Adding another registry would duplicate compact authority without demonstrated need.
 
 ## 5. CI-only process envelope
 
@@ -87,7 +96,7 @@ Unrelated repository growth outside the derived read set does not affect the est
 - incremented `ceiling_revision`;
 - non-empty `ceiling_increase_justification`.
 
-A silent increase caused only by editing another protocol/configuration is rejected.
+A silent increase caused only by editing another protocol/configuration is rejected. Independent negative controls mutate a real derived required source across the ceiling and separately add unrelated repository growth; only the former is allowed to turn the envelope RED.
 
 ## 6. Mechanical false-red audit
 
@@ -98,14 +107,14 @@ The only outcome vocabulary is:
 - `FAIL` — a **registered deterministic verifier** causally proved a repository-owned condition required by this WP is false. This means Worker repair before review. It is not an automated semantic Reviewer verdict.
 - `REVIEW_BLOCKED` — handoff/freeze/metadata/lifecycle state is incomplete, pending, stale or incoherent. Fix or derive the process state and rerun before starting a Reviewer.
 - `NOT_APPLICABLE` — the verifier does not apply to the candidate/mode. Neutral; never synthetic GREEN proof and never FAIL.
-- `INFRA_ERROR` — runner/tool/API/checkout failed without causal evidence that the candidate condition is false. Operationally fail closed, but do not label the WP defective from that alone.
+- `INFRA_ERROR` — runner/tool/API/checkout or an unclassified/unknown verifier failed without causal evidence that the candidate condition is false. Operationally fail closed, but do not label the WP defective from that alone.
 - `PASS` — the registered deterministic condition is satisfied. Semantic independent review remains mandatory.
 
-The canonical registry is `mechanical-verifier-registry.json`. A red verifier/check not registered there is diagnostic only: it **cannot count as WP FAIL** until a reviewed registry amendment defines its exact deterministic claim and failure class.
+The canonical registry is `mechanical-verifier-registry.json`. A red verifier/check not registered there **cannot count as WP FAIL** until a reviewed registry amendment defines its exact deterministic claim and failure class. It is not silently ignored either: an unregistered red is `INFRA_ERROR`, keeps `wp_failed_mechanically=false` and blocks independent review until triaged or registered.
 
 A registered verifier that is allowed to emit candidate `FAIL` must provide a structured outcome. If it merely crashes or returns an unclassified red check, the classifier yields `INFRA_ERROR`, not `FAIL`.
 
-This classification does not soften any semantic/causal gate. It moves obvious mechanical defects left and preserves the exact independent Reviewer boundary.
+This classification does not soften any semantic/causal gate. It moves obvious mechanical defects left, keeps unknown red state fail-closed without blaming candidate semantics, and preserves the exact independent Reviewer boundary.
 
 ## 7. Derivable review metadata
 
@@ -113,7 +122,7 @@ This classification does not soften any semantic/causal gate. It moves obvious m
 
 The generator refuses to operate unless the repository-local predecessor check and `WORKER_PRE_REVIEW: CLEAN` evidence exist. It cannot generate CLEAN, choose ownership, alter `fail_cycle`, or produce a Reviewer PASS/FAIL.
 
-The generated block is then validated by the existing independent `validate-worker-handoff.py`. Generation reduces transcription mistakes; validation remains fail closed.
+The generated block is then validated by the existing independent `validate-worker-handoff.py`. Generation reduces transcription mistakes; validation remains fail closed. A metadata defect is `REVIEW_BLOCKED`; it does not need a semantic Reviewer FAIL to be discovered.
 
 ## 8. Transactional REVIEW_READY closure
 
@@ -151,11 +160,15 @@ The closure oracle reproduces the causal state of:
 
 In each case CLEAN alone is insufficient. Restoring the real terminal condition, not editing a declaration consumed only by the test, is what turns the control green.
 
+`Docs/evidence/CTX-03/HISTORICAL_CLASSIFICATION.json` separately classifies the reconstructed FAIL/handoff families as mechanical, semantic or mixed and records `ADOPT / DEFER / REJECT`. Generic natural-language semantic equivalence is explicitly rejected as a deterministic gate.
+
 ## 10. Structured evidence, DocSync and history
 
-CTX-03 may use small machine-readable rows for naturally tabular process facts and accepted-state navigation. Causal reasoning remains prose when the reasoning itself is evidence.
+CTX-03 uses small machine-readable rows for naturally tabular process facts and accepted-state navigation. Causal reasoning remains prose when the reasoning itself is evidence.
 
-DocSync should update the compact derived accepted-state surface once plus only authoritative docs affected by the accepted transition. Long accepted closure narrative belongs under history/evidence rather than normal bootstrap surfaces when it is no longer current-state material. Historical pointers needed to reconstruct accepted gates/reviews are never deleted.
+After adoption, DocSync regenerates the one compact `ACCEPTED_STATE_INDEX.json` projection from authoritative sources, then updates only authoritative/current-state docs whose effective accepted meaning changed. It does not copy the same transition into several current-state narratives merely to preserve chronology. Long accepted closure narrative belongs under exact evidence or `Docs/history/CTX_PROCESS_HISTORY.md`, which is deliberately absent from normal role bootstrap. Historical pointers needed to reconstruct accepted gates/reviews are never deleted.
+
+`ctx03-docsync-history-check.py` proves the representative accepted CTX-02→CTX-03 transition is represented once in the compact CTX row, agrees on the next CTX contract across normal current-state surfaces, preserves reconstruction pointers, and does not leak history into profile `initial_reads`.
 
 A derived current-state row cannot override live GitHub or an exact accepted source. Contradiction triggers reconstruction.
 
