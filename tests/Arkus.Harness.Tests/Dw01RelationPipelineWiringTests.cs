@@ -30,7 +30,7 @@ namespace Arkus.Harness.Tests
 
                     injected = true;
                     var relation = Assert.Single(canonicalRelations);
-                    Assert.Equal("allocates-depth", relation.RelationId);
+                    Assert.Equal("allocates-depth", relation.RelationType);
                     Assert.Equal("depth." + targetSubject, relation.TargetFactId);
                     return Array.Empty<DesignRelation>();
                 });
