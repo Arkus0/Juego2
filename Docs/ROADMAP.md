@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.31 — 2026-09-22
+Version: 1.32 — 2026-09-22
 
 ## North star
 
@@ -8,7 +8,7 @@ Build an engine-agnostic, commercially viable AI-native game-authoring platform 
 
 A fresh AI agent, without C# implementation knowledge, must be able to discover available capabilities and safely create, inspect, modify, validate, diff, replay and test a representative world through stable machine-readable contracts.
 
-**H0 / `WP-HK-GATE` has passed. The Engine Bridge / Unity-first H1 plan is accepted and binding after PR `#71` PASS and merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; no H1 implementation WP is active until a human starts it. Gameplay and keeper realization remain blocked until `WP-H1-GATE` passes, merges and completes DocSync; the bounded CITY-04 greybox has the narrower H1-08 prerequisite recorded below. The proposed DW second-consumer validation track remains non-binding until PR `#117` independently passes, merges and completes DocSync; if accepted, it runs in parallel with H1 and conditionally interlocks only the final H2 public/external-boundary acceptance as recorded below.**
+**H0 / `WP-HK-GATE` has passed. The Engine Bridge / Unity-first H1 plan is accepted and binding after PR `#71` PASS and merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; `WP-H1-00` and `WP-H1-01` are complete and `WP-H1-02` is the next default dependency-valid H1 workpack. Gameplay and keeper realization remain blocked until `WP-H1-GATE` passes, merges and completes DocSync; the bounded CITY-04 greybox has the narrower H1-08 prerequisite recorded below. The DW second-consumer validation plan is accepted after PR `#117` PASS review `#5274794434`, merge `b831050e9df8b61b76744e0c5f544bd7ec2d79b5` and DocSync; it runs in parallel with H1 and interlocks only the final H2 public/external-boundary acceptance as recorded below.**
 
 Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Robustness work in H0 is repository-local testing of the harness's own code, fixtures and contracts. New work uses the neutral negative-conformance terminology defined in `AGENTS.md`.
 
@@ -60,7 +60,7 @@ Accepted progress: `WP-HK-00`, `WP-HK-00A`, `WP-HK-01`, `WP-HK-02`, `WP-HK-03`, 
 
 `WP-HK-08B` PR `#52` passed independent review on frozen candidate `31370f91b48408b90a587d7ad5178ba1be8d6bfe` (review `#5260337340`), exact-SHA freeze validation Actions `35503766435` GREEN, and merged as `bdf4675c17d842d73ff59637fa36314d14c2707a` on 2026-09-20. The accepted recovery contract emits a precise changed-resource delta only when the exact expected revision+hash is proven inside complete contiguous current local HK06A history; unavailable/gapped history or a non-ancestor/rebase lineage fails closed as `bounded-reinspection-required`. Ordinary same-lineage recovery inspects only affected resources, retries through normal plan/dry-run/apply, preserves validation/provenance authority and remains semantically equivalent through JSONL/MCP. The representative public-client benchmark covers five authoring/repair flows in 12 requests without recovery full-world reload, with executable byte/time regression guards. One earlier frozen candidate failed solely because the binding v1.3 content-shape probe was missing; the accepted repair added an executable approved Juego2 market/plaza/bar/workshop probe and exact-SHA gate linkage without changing production recovery semantics.
 
-`WP-HK-09A` PR `#54` passed independent review on frozen candidate `acb1ccc341aec5131dc2ef979bd322e40e208b53` (review `#5260496498`), exact-SHA freeze validation Actions `35508529666` GREEN, and merged as `614ad941881fdefa83fd46a1a8db989cfaba2cbb` on 2026-09-20. The accepted H0 authority boundary exposes no generic shell/process power, no protocol-triggered ambient network authority and no caller-selected filesystem path authority; production `--file` is rejected before the legacy framing host can open a path. `H0HostCapabilityPolicy` rejects external/elevated/unknown authority and contradictory canonical state-change metadata, while `NeutralProjectionService` independently enforces H0 admission on every composed contract before transport-visible exposure/dispatch. One earlier frozen candidate failed because public generic composition could reach neutral projection without crossing the policy; the accepted repair closes that causal seam below JSONL/MCP/future conforming transports while keeping `ContractComposer` generic, with an executable direct-composition→projection rejection fixture and an approved Juego2 content-shape probe.
+`WP-HK-09A` PR `#54` passed independent review on frozen candidate `acb1ccc341aec5131dc2ef979bd322e40e208b53` (review `#5260496498`), exact-SHA freeze validation Actions `35508529666` GREEN, and merged as `614ad941881fdefa83fd46a1a8db989cfaba2cbb` on 2026-09-20. The accepted H0 authority boundary exposes no generic shell/process power, no protocol-triggered ambient network authority and no caller-selected filesystem path authority; production `--file` is rejected before the legacy framing host can open any caller-selected path. `H0HostCapabilityPolicy` rejects external/elevated/unknown authority and contradictory canonical state-change metadata, while `NeutralProjectionService` independently enforces H0 admission on every composed contract before transport-visible exposure/dispatch. One earlier frozen candidate failed because public generic composition could reach neutral projection without crossing the policy; the accepted repair closes that causal seam below JSONL/MCP/future conforming transports while keeping `ContractComposer` generic, with an executable direct-composition→projection rejection fixture and an approved Juego2 content-shape probe.
 
 `WP-HK-09B` PR `#56` passed independent review on frozen candidate `8ed02586da9a5b6e159e1cdc76a47ae7ca89c763` (review `#5261068513`), exact-SHA freeze validation Actions `35522581043` GREEN, and merged as `2e7a258fdcec2e26492d308c3cb199ab62201dcd` on 2026-09-20. The accepted `arkus.h0-resource-envelope@1` bounds canonical arguments to 896 KiB, portable depth to 32, coherent mutation batches to 96 operations, decoded mutation payload to 512 KiB, query pages to 100 items, canonical world/snapshot state to 640 KiB, world resources to 10,000, local mutation transactions to 10,000, snapshot-import receipts to 1,024 and cooperative execution to 5 s. Materialized Authoring state is rechecked before publication; mutation/import/replay publish one staged process-local aggregate only after the authoritative budget/interruption seam, preventing rejected/expired/interrupted work from producing partial state or false evidence. `arkus.reference.jsonl@1` remains frozen at 1 MiB + `transport.frame_too_large`; one earlier candidate failed because it changed that predecessor contract in place, and the accepted repair instead fits the neutral envelope beneath it. Power-loss/WAL/fsync durability, arbitrary production scale and shipping SLOs are not claimed.
 
@@ -138,7 +138,7 @@ The commercial target is therefore two-layered: H0 provides a simple globally co
 
 # H1 — Engine Bridge Foundation: Unity First
 
-Status: **PLAN ACCEPTED / IMPLEMENTATION NOT_STARTED**. Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`; reconciled integration base after CITY programme v2 PASS, merge and DocSync: `7fe44840076eba05f1b67a7633cd33fc67b9023d`. H1 planning PR `#71` passed independent review `#5263596722` on frozen candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b` and merged as `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; DocSync is complete. The next default WP is `WP-H1-00`, still `NOT_STARTED`.
+Status: **PLAN ACCEPTED / WP-H1-00_AND_WP-H1-01 COMPLETE**. Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`; reconciled integration base after CITY programme v2 PASS, merge and DocSync: `7fe44840076eba05f1b67a7633cd33fc67b9023d`. H1 planning PR `#71` passed independent review `#5263596722` on frozen candidate `58b0d78a57b8c617d167e6bf286a6cbd29b0612b` and merged as `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; DocSync is complete. The next default dependency-valid H1 workpack is `WP-H1-02`, still `NOT_STARTED` until a human explicitly starts its Worker.
 
 The binding planning set is:
 
@@ -201,9 +201,9 @@ H1 ends only when `WP-H1-GATE` answers the published reference question affirmat
 
 ---
 
-# DW — Design World second-consumer validation (parallel with H1; conditional H2 boundary gate)
+# DW — Design World second-consumer validation (parallel with H1; accepted H2 boundary interlock)
 
-Status: **PLAN PROPOSED / NOT BINDING** until planning PR `#117` independently PASSes, merges and completes DocSync. If accepted, all seven implementation/gate workpacks are foundational and run through the normal exact-SHA Worker → independent Reviewer protocol.
+Status: **PLAN ACCEPTED / IMPLEMENTATION NOT_STARTED**. Planning PR `#117` passed independent review `#5274794434` on frozen candidate `cbb0114bb9ee1248739c093109a9b71e26751444`, merged as `b831050e9df8b61b76744e0c5f544bd7ec2d79b5`, and completed documentation-only DocSync. All seven implementation/gate workpacks are foundational and run through the normal exact-SHA Worker → independent Reviewer protocol.
 
 DW pressure-tests accepted Arkus/H0 with two materially different non-runtime consumers while preserving source authority and generic kernel semantics. It consumes accepted CITY design facts and accepted PA research/evidence as authorities, then measures whether structured retrieval can reduce context without degrading actual agent task/review correctness. CTX remains the accepted process-context baseline rather than being invalidated by DW.
 
@@ -219,7 +219,7 @@ WP-HK-GATE
                     PA-01..05 accepted CTX-03 accepted
 
 H1 proceeds independently in parallel.
-DW-GATE ---- conditional planning interlock ----> final H2 public/external-boundary acceptance
+DW-GATE ---- accepted planning interlock ----> final H2 public/external-boundary acceptance
 ```
 
 | Order | Workpack | Owned outcome | Execution |
@@ -234,15 +234,15 @@ DW-GATE ---- conditional planning interlock ----> final H2 public/external-bound
 
 Cross-track prerequisites do not transfer ownership: PA remains authority for PA research, CTX remains authority for process/context policy, CITY remains authority for CITY design, and H1 keeps Unity bridge ownership. DW does not block H1 implementation and does not itself authorize H2 gameplay/first-playable work.
 
-If this DW plan is accepted, **final H2 public/external-boundary acceptance must consume accepted `DW-GATE` evidence or explicitly review and disposition the DW interlock before that boundary is frozen**. The preferred sequence is `DW-GATE` PASS + merge + DocSync before final H2 boundary acceptance. Earlier H2 exploration/planning remains possible under its existing H1 prerequisites, but it may not silently freeze a boundary that makes the authorized second-consumer proof irrelevant or impossible to incorporate.
+Because the DW plan is accepted, **final H2 public/external-boundary acceptance must consume accepted `DW-GATE` evidence or explicitly review and disposition the DW interlock before that boundary is frozen**. The preferred sequence is `DW-GATE` PASS + merge + DocSync before final H2 boundary acceptance. Earlier H2 exploration/planning remains possible under its existing H1 prerequisites, but it may not silently freeze a boundary that makes the authorized second-consumer proof irrelevant or impossible to incorporate.
 
-The binding DW architecture/workpack contracts, if the plan is accepted, are `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md` and `Docs/workpacks/DW/**`. The track does not claim arbitrary-domain universality, external-repository packaging readiness or permission to replace accepted Markdown/source authorities wholesale.
+The binding DW architecture/workpack contracts are `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md` and `Docs/workpacks/DW/**`. The track does not claim arbitrary-domain universality, external-repository packaging readiness or permission to replace accepted Markdown/source authorities wholesale.
 
 ---
 
-# H2 — Vertical Slice Foundation (blocked by Unity parity gate; final boundary conditionally interlocked with accepted DW)
+# H2 — Vertical Slice Foundation (blocked by Unity parity gate; final boundary interlocked with accepted DW)
 
-Only after `WP-H1-GATE` PASS, merge and DocSync may H2 gameplay/first-playable production proceed under this roadmap. If DW planning PR `#117` is independently accepted, the final H2 public/external-boundary acceptance additionally requires accepted `WP-DW-GATE` evidence **or** an explicit reviewed H2 disposition of the DW evidence/interlock; this condition does not predefine H2 implementation scope or make DW a substitute for H1-GATE.
+Only after `WP-H1-GATE` PASS, merge and DocSync may H2 gameplay/first-playable production proceed under this roadmap. Because DW planning PR `#117` is accepted, the final H2 public/external-boundary acceptance additionally requires accepted `WP-DW-GATE` evidence **or** an explicit reviewed H2 disposition of the DW evidence/interlock; this condition does not predefine H2 implementation scope or make DW a substitute for H1-GATE.
 
 - build the first playable/demo with **maximum practical direct reuse of the Quaternius Source baseline already adopted at H1-04** rather than waiting for final custom art;
 - use `Docs/art/VISUAL_BIBLE.md` as the visual/adaptation contract and progressively create separately identified Juego2-derived assets only where concrete needs require Cantabrian materials/architecture, clothing/outfits, missing props/meshes, variants or missing/retargeted animations;
