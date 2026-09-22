@@ -15,7 +15,7 @@ Compose the failure findings accumulated across PA-01..12 into explicit anti-cha
 - all accepted PA-01..12 findings;
 - donor `PA-11_PLAN_SIMULATION_CONTROL.md` remapped to canonical PA-13;
 - both Juego2 cross-cutting amendments, especially intentional transformation;
-- the structural scalability evidence and invariants from `Docs/workpacks/H0S/WP-H0S-00.md` once available; PA-13 may define semantic requirements before H0S-00 runs, but may not present synthetic H0S measurements as shipping-runtime budgets.
+- provisional structural scalability evidence in `Docs/evidence/PA-13/SCALABILITY_VIABILITY_SPIKE.md`; this evidence may motivate falsifiable requirements but may not be presented as a shipping-runtime benchmark or final numeric budget.
 
 ## Failure classes to attack
 
@@ -37,7 +37,7 @@ Compose the failure findings accumulated across PA-01..12 into explicit anti-cha
 
 ## Structural scalability invariants
 
-PA-13 must preserve two explicit viability invariants. They are architectural requirements, not final numeric tuning constants.
+PA-13 must preserve two explicit viability invariants. They are architectural requirements, not final numeric tuning constants and do not create a separate active workpack.
 
 ### SV-1 — Irrelevant-population independence / bounded local work
 
