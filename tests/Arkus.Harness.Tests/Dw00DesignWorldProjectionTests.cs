@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using Arkus.DesignWorld;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
@@ -42,7 +41,7 @@ namespace Arkus.Harness.Tests
             Assert.Equal(2, Assert.IsType<int>(summary.Data["referenceCount"]));
             Assert.Equal(3, Assert.IsType<int>(summary.Data["extensionCount"]));
 
-            var query = inspection.QueryObjects(new Dictionary<string, object?>(StringComparer.Ordinal));
+            var query = inspection.QueryObjects(AnchoredRequest(first.WorldState));
             Assert.True(query.Success);
             Assert.NotNull(query.Data);
             var items = Assert.IsAssignableFrom<IReadOnlyList<object?>>(query.Data!["items"]);
@@ -218,7 +217,7 @@ namespace Arkus.Harness.Tests
             var projection = new DesignWorldProjector().Build(universe, reader, VersionOne);
             var validation = new DesignWorldProjectionValidator().Validate(projection, universe, reader, VersionOne);
             var inspection = new WorldInspectionService(new FixedWorldStateSource(projection.WorldState));
-            var references = inspection.QueryReferences(new Dictionary<string, object?>(StringComparer.Ordinal));
+            var references = inspection.QueryReferences(AnchoredRequest(projection.WorldState));
             var afterBytes = File.ReadAllBytes(sourcePath);
 
             Assert.True(validation.IsValid, string.Join("; ", validation.Issues.Select(issue => issue.MachineCode)));
@@ -254,6 +253,15 @@ namespace Arkus.Harness.Tests
                 new DesignWorldProjector().Build(universe, reader, VersionOne));
 
             Assert.Equal("dw.provenance_ambiguous", error.MachineCode);
+        }
+
+        private static IReadOnlyDictionary<string, object?> AnchoredRequest(WorldState state)
+        {
+            return new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["revision"] = state.Revision,
+                ["hash"] = CanonicalWorldStateCodec.ComputeContentHash(state)
+            };
         }
 
         private static StaticDesignAuthorityUniverse NeutralUniverse()
