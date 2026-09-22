@@ -27,6 +27,6 @@ No evidence currently shows an accepted H0 guarantee is false or inapplicable. T
 
 ## Proof-budget audit
 
-Product surface is intentionally small: one consumer assembly, one reference adapter, deterministic projector/validator/diff and focused tests. Proof machinery maps directly to the WP's named false-green classes (self-shrinking completeness, stale/missing/ambiguous provenance, hidden derived truth, version-stale cache and domain leakage). No guard is added solely for hypothetical trusted-infrastructure pathology.
+Product surface is intentionally small: one consumer assembly, one reference adapter, deterministic projector/validator/diff and focused tests. Proof machinery maps directly to the WP's named false-green classes (self-shrinking completeness, stale/missing/ambiguous provenance, hidden derived truth, explicit version staleness, forgotten-version effective-rule drift and domain leakage). The validator now rebuilds from the current reader/rules when version and provenance still appear current, so stale cached state cannot self-confirm merely because a manual rule-version string was left unchanged. No guard is added solely for hypothetical trusted-infrastructure pathology.
 
 `PROOF_BUDGET_VERDICT: WITHIN_BUDGET`
