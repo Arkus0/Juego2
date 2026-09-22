@@ -15,6 +15,7 @@
       "github_check_name": "Worker handoff lint",
       "claim": "canonical Worker handoff metadata and repository-local evidence pointers are coherent for the exact Ready HEAD",
       "failure_outcome": "REVIEW_BLOCKED",
+      "requires_structured_outcome": false,
       "not_applicable": "pure PROCESS_ONLY maintenance/DocSync PR with no Worker lifecycle fields",
       "semantic_authority": false
     },
@@ -22,6 +23,7 @@
       "github_check_name": "Freeze exact-SHA validation",
       "claim": "exact Ready HEAD is the frozen candidate and the candidate-mode verifier completed according to its declared scope",
       "failure_outcome": "REVIEW_BLOCKED",
+      "requires_structured_outcome": false,
       "not_applicable": "product/runtime execution may be NOT_APPLICABLE for PROCESS_ONLY, but exact checkout/freeze coherence remains applicable",
       "semantic_authority": false
     },
@@ -29,6 +31,7 @@
       "github_check_name": "CTX process envelope",
       "claim": "CTX routing/envelope/closure deterministic invariants and their causal negative controls pass",
       "failure_outcome": "FAIL",
+      "requires_structured_outcome": true,
       "not_applicable": "candidates outside adopted CTX process-envelope scope unless another contract opts in",
       "semantic_authority": false
     },
@@ -36,6 +39,7 @@
       "github_check_name": "Review-ready terminal closure",
       "claim": "durable REVIEW_READY exists for the frozen SHA, registered lifecycle prerequisites are PASS, and a live post-marker HEAD read still equals that SHA",
       "failure_outcome": "REVIEW_BLOCKED",
+      "requires_structured_outcome": false,
       "not_applicable": "before CTX-03 adoption the workflow itself is not yet on main; the active CTX-03 candidate closes the same invariant by durable REVIEW_READY plus a direct final live HEAD read",
       "semantic_authority": false
     }
