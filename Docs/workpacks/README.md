@@ -2,11 +2,11 @@
 
 Each workpack is one independently reviewable contract. Work only inside its allowed scope and stop when its Definition of Done is met.
 
-For all `HK-*` workpacks through `WP-HK-GATE`, and all H1 workpacks marked `FOUNDATIONAL`:
+For all `HK-*` workpacks through `WP-HK-GATE`, all H1 workpacks marked `FOUNDATIONAL`, and all DW workpacks if the DW planning PR is accepted:
 
 - `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` is binding;
 - exact-SHA evidence is required;
-- self-attacks must be causal and reverted before freeze;
+- negative-conformance controls must be causal and reverted before freeze;
 - completeness universes must be independently/effectively justified and must not self-shrink;
 - a fresh independent Reviewer must PASS before the dependent WP begins.
 
@@ -26,7 +26,7 @@ H0 is complete. The H1 plan, DAG and boundary rationale in `Docs/workpacks/H1/RE
 
 ## Non-foundational tracks
 
-`OPS/`, `ART/`, `CITY/` and `PA/` are parallel non-foundational tracks. They are not bound by `FOUNDATIONAL_PROOF_STANDARD.md`, require no exact-SHA evidence or self-attack matrix, do not appear in the H0 DAG, and can neither block nor unblock any `HK-*` workpack.
+`OPS/`, `ART/`, `CITY/` and `PA/` are parallel non-foundational tracks. They are not bound by `FOUNDATIONAL_PROOF_STANDARD.md`, require no exact-SHA evidence or negative-conformance matrix, do not appear in the H0 DAG, and can neither block nor unblock any `HK-*` workpack.
 
 A non-foundational workpack is never a valid reason to delay, weaken or reinterpret an H0 acceptance criterion.
 
@@ -78,3 +78,23 @@ CTX-01 -> CTX-02 -> CTX-03
 ```
 
 `WP-CTX-01 — Role-specific bootstrap + accepted-state navigation` is **COMPLETE** on repaired frozen candidate `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39` (independent PASS review `#5273801466`, PR `#110`, implementation merge `fbd3e5526e760efc89f54e7c12a274af10d4765f`). The repaired accepted contract uses `docsync-first-parent-v1` so the derived navigation index can be persisted without self-reference while remaining stale-detected and non-authoritative. After successful DocSync, `WP-CTX-02 — Accepted-contract capsules + predecessor inheritance compression` is the next dependency-valid CTX action. CTX does not semantically block H1/CITY/PA.
+
+## Proposed foundational second-consumer track
+
+`DW/` is a proposed **FOUNDATIONAL VALIDATION** track whose planning artifacts live in `Docs/workpacks/DW/` and `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`. It becomes binding only if its PROCESS_ONLY planning PR independently PASSes, merges and completes DocSync. Until then no `WP-DW-*` implementation is authorized.
+
+DW does **not** invalidate CTX. CTX remains the owner of process-context/bootstrap/capsule policy and its full accepted sequence remains useful independently. DW adds a different layer: a typed, provenance-preserving Design World projection over accepted CITY/PA facts. The measured structured-context comparison deliberately waits for accepted `CTX-03` so DW must beat the best accepted baseline rather than an obsolete one.
+
+Proposed DW sequence:
+
+```text
+DW-00 -> DW-01 -> DW-02 -> DW-03 -> DW-04 -> DW-05 -> DW-GATE
+                               ^        ^
+                               |        |
+                         PA-01..05   CTX-03
+                          accepted   accepted
+```
+
+H1 continues independently in parallel. `DW-00..03` do not depend on CTX completion; `DW-04` does. If accepted, final H2 external/public-boundary acceptance must explicitly consume or disposition `DW-GATE` evidence, while H1-GATE remains the independent Unity-readiness owner.
+
+The track is intentionally limited to two real consumers (CITY and PA), one structured-context trial and one generic-boundary stress/closure step. Design↔Unity drift, generated art briefs, source-catalogue coverage, replay QA, narrative knowledge validation and non-game product experiments remain downstream candidates, not current DW implementation scope.
