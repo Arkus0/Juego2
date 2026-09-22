@@ -31,6 +31,7 @@ jobs:
           python3 scripts/context-envelope-check.py --self-test
           python3 scripts/ctx03-dynamic-context-check.py --self-test
           python3 scripts/ctx03-dynamic-slot-controls.py --self-test
+          python3 scripts/ctx03-effective-read-set-controls.py --self-test
           python3 scripts/mechanical-verifier-classifier.py --self-test
           python3 scripts/review-ready-closure.py --self-test
           python3 scripts/derive-worker-review-metadata.py --self-test
@@ -62,6 +63,8 @@ jobs:
           dynamic_status=$?
           python3 scripts/ctx03-dynamic-slot-controls.py > ctx-dynamic-slot-controls.log 2>&1
           dynamic_slot_status=$?
+          python3 scripts/ctx03-effective-read-set-controls.py > ctx-effective-read-set-controls.log 2>&1
+          effective_read_status=$?
           python3 scripts/ctx03-quality-replay.py \
             --negative-controls \
             --output ctx-quality-replay.json \
@@ -78,13 +81,14 @@ jobs:
           cat ctx-envelope.log
           cat ctx-dynamic-context.log
           cat ctx-dynamic-slot-controls.log
+          cat ctx-effective-read-set-controls.log
           cat ctx-quality-replay.log
           cat ctx-process-controls.log
           cat ctx-docsync-history.log
           cat ctx-final-circuit-breaker.log
 
           outcome=PASS
-          for status in "${envelope_status}" "${dynamic_status}" "${dynamic_slot_status}" "${replay_status}" "${controls_status}" "${docsync_status}" "${circuit_status}"; do
+          for status in "${envelope_status}" "${dynamic_status}" "${dynamic_slot_status}" "${effective_read_status}" "${replay_status}" "${controls_status}" "${docsync_status}" "${circuit_status}"; do
             case "${status}" in
               0) ;;
               20) outcome=FAIL ;;
@@ -105,6 +109,7 @@ jobs:
           echo "envelope_status=${envelope_status}" >> "${GITHUB_OUTPUT}"
           echo "dynamic_status=${dynamic_status}" >> "${GITHUB_OUTPUT}"
           echo "dynamic_slot_status=${dynamic_slot_status}" >> "${GITHUB_OUTPUT}"
+          echo "effective_read_status=${effective_read_status}" >> "${GITHUB_OUTPUT}"
           echo "replay_status=${replay_status}" >> "${GITHUB_OUTPUT}"
           echo "controls_status=${controls_status}" >> "${GITHUB_OUTPUT}"
           echo "docsync_status=${docsync_status}" >> "${GITHUB_OUTPUT}"
@@ -151,6 +156,7 @@ jobs:
             ctx-envelope-report.json
             ctx-dynamic-context.log
             ctx-dynamic-slot-controls.log
+            ctx-effective-read-set-controls.log
             ctx-quality-replay.log
             ctx-quality-replay.json
             ctx-process-controls.log
