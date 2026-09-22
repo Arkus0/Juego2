@@ -2,142 +2,127 @@
 
 Status: **CANDIDATE EVIDENCE / NOT FINAL CLEAN RECORD**  
 Trigger: independent FAIL review `#5276314835` on candidate `9e71a220b79de79e3fbfe7bedd505256932a26f0`  
-Scope: B1/B2 defect classes plus requested future-extension, omission, lifecycle and semantic-authority challenge.
+Scope: B1/B2 defect classes plus future-extension, omission, lifecycle and semantic-authority challenge.
 
-This record is repository evidence produced **before** the final exact-SHA Worker pre-review. It is intentionally not `WORKER_PRE_REVIEW: CLEAN`; that terminal record must be external GitHub evidence created only after every repository/evidence byte is final.
+This repository record is produced before the terminal exact-SHA Worker pre-review. It is intentionally not `WORKER_PRE_REVIEW: CLEAN`; final CLEAN must be durable external GitHub evidence created after every repository/evidence byte is final.
 
-## Defect classes closed
+## B1 — current state cannot define its own oracle
 
-### B1 — derived current state cannot define its own oracle
+The failed checker hardcoded the pre-adoption snapshot. The repair derives CTX authority independently from numeric `Docs/workpacks/CTX/WP-CTX-*.md` contracts plus required PASS/PR-bearing DocSync closures, then audits `ACCEPTED_STATE_INDEX.json` and current-state prose only as projections.
 
-The failed checker hardcoded the pre-adoption snapshot (`CTX-01/02 accepted`, `CTX-03 next`). The repair now derives CTX authority independently from numeric `Docs/workpacks/CTX/WP-CTX-*.md` contracts plus required PASS/PR-bearing DocSync closures. Only after deriving that authority does it compare `ACCEPTED_STATE_INDEX.json` and current-state prose.
+Properties:
 
-Properties challenged:
+- the derived index cannot select the accepted universe;
+- history prose cannot redefine expected state;
+- accepted CTX contracts form a numeric COMPLETE prefix;
+- every COMPLETE contract requires a matching persisted/complete DocSync closure with independent PASS + implementation-PR provenance;
+- next is the first numeric non-COMPLETE contract, or `null` when none remains;
+- numeric ordering handles future two-digit CTX ids.
 
-- `ACCEPTED_STATE_INDEX` cannot select the accepted universe being checked;
-- history prose cannot redefine expected current state;
-- accepted CTX contracts must form a prefix;
-- every COMPLETE CTX contract requires a matching persisted/complete DocSync closure with independent PASS and implementation-PR provenance;
-- next CTX contract is derived from the first numeric non-COMPLETE contract, or `null` when none remains;
-- numeric ordering is explicit, so a future `WP-CTX-10` cannot sort before `WP-CTX-04` merely by filename ordering.
+### B1 causal controls
 
-### B2 — every repository-backed dynamic mandatory source is bounded
+The production oracle is driven against synthetic states:
 
-The failed design bounded base/fixed-conditional/representative-route context but exempted route-dependent repository inputs. The repair separates external payloads from repository-backed dynamic context and adds:
+1. current pre-CTX-03 state -> GREEN;
+2. CTX-03 COMPLETE + valid CTX-03 DocSync + updated projection -> GREEN **without checker/oracle edits**;
+3. authority accepted while projection stays pre-CTX-03 -> RED;
+4. wrong next hint -> RED;
+5. remove entire accepted closure -> RED;
+6. fictitious accepted WP only in projection -> RED;
+7. history-only mutation -> expected state unchanged;
+8. remove/empty entire CTX projection -> RED while authoritative accepted discovery remains intact;
+9. add CTX-04 and CTX-10 -> next remains numerically correct.
 
-- checker-owned classification of every dynamic placeholder in canonical role profiles;
-- fail-closed behavior for a new unreviewed placeholder class;
-- per-resolved-repository-source ceiling plus aggregate dynamic-route ceiling;
-- concrete resolver for exact WP/contract, repository-vs-external Worker evidence, dependency evidence and manifest-named repository files;
-- repository-wide CI discovery of all present/future `Docs/workpacks/**/WP-*.md` contracts without using `CANONICAL_ROUTE_CONFIGS`;
-- dependency/required-input discovery where the workpack contract makes those sources mandatory;
-- anchored local manifest discovery with named repository files included automatically;
-- explicit ceiling-evolution contract requiring policy revision + justification.
+## B2 — dynamic repository context cannot escape ceilings
 
-The global discovery oracle does **not** treat every path mentioned anywhere in prose as mandatory. That first attempt produced causal false-reds on future output paths, donor-only references and historical evidence mentions. The final design distinguishes mandatory routing authority from incidental/output mentions while retaining fail-closed concrete-route resolution.
+The failed design bounded base/fixed-conditional/representative routes but exempted route-dependent repository inputs. The final design adds a fourth dynamic repository layer:
+
+- checker-owned classification of reviewed dynamic slot classes;
+- fail-closed behavior for an unknown placeholder class;
+- repository/external separation;
+- per-source + aggregate dynamic-route ceilings;
+- exact contract, direct dependency, contract-mandatory repository input and concrete repository evidence reconstruction;
+- anchored manifest + manifest-named repository input reconstruction;
+- repository-wide discovery of present/future `Docs/workpacks/**/WP-*.md`, independent of `CANONICAL_ROUTE_CONFIGS`;
+- explicit policy-revision + justification requirement for ceiling increases.
+
+The global resolver intentionally does not turn every path mentioned in prose into context authority. Output paths, donor-only references and historical mentions remain non-mandatory unless an independent routing/contract rule makes them required.
+
+### B2 causal controls
+
+A synthetic FUTURE track outside H1/CITY/PA proves:
+
+1. exact WP automatically enters a budget;
+2. exact WP growth past ceiling -> RED;
+3. newly contract-required repository evidence enters automatically;
+4. growth of that evidence past ceiling -> RED;
+5. caller omission cannot hide a source still required by exact contract authority;
+6. removing the whole dynamic binding surface -> RED;
+7. wholly non-mandatory repository growth -> GREEN;
+8. `repair_worker` repository evidence is counted while a genuinely external GitHub FAIL remains explicitly external;
+9. `h1_local_executor` counts anchored manifest + manifest-named repository file without caller-maintained file enumeration;
+10. a future role using an existing reviewed exact-contract slot inherits the resolver;
+11. a new dynamic slot class fails closed pending review.
+
+`scripts/ctx03-dynamic-slot-controls.py` independently scans both `initial_reads` and `conditional_reads`, closing the future variant where an unknown dynamic placeholder appears only in a conditional surface.
 
 ## Additional variants found by the Worker before CLEAN
 
-The requested circuit-breaker found and repaired variants beyond the two Reviewer examples:
+The circuit-breaker found and repaired variants beyond the two Reviewer examples:
 
-1. **B1 future numeric ordering** — discovery originally accumulated lexicographically sorted filenames. A two-digit CTX extension could eventually make ordering depend on naming rather than numeric sequence. Contracts are now explicitly sorted by numeric CTX id.
-2. **B2 future-role coupling** — exact-contract re-discovery initially selected the contract slot from a closed mapping of current role names. A new role using an already-reviewed `<EXACT_WP>` slot could count the WP itself but miss contract-named mandatory repository sources. Resolution is now slot-semantic and role-name agnostic.
-3. **B2 global-discovery false-red** — the first repository-wide audit treated every path mention in every WP as mandatory. That incorrectly classified future output paths, donor-repository inputs and historical references as current repository context requirements. The CI oracle was split so exact WPs always count, dependencies/required-source surfaces count by contract, manifest authority remains strict, and incidental prose does not acquire semantic authority.
-4. **B2 duplicate-oracle drift** — an intermediate `ctx03-dynamic-universe-check.py` remained beside the production dynamic checker with slightly different discovery semantics. Even though it was not the CI gate, retaining two mutable completeness implementations would create a future self-confirmation/drift surface. The duplicate was removed; `ctx03-dynamic-context-check.py` is the single dynamic-universe/budget oracle exercised by CI and the final circuit-breaker.
+1. **B1 numeric-order drift** — lexicographic CTX discovery could mishandle CTX-10 vs CTX-04; ordering is numeric.
+2. **B2 future-role coupling** — exact-contract rediscovery depended on current role names; it is now slot-semantic.
+3. **B2 path-overreach false-red** — an early repository-wide audit promoted every path mention to mandatory context; final grammar follows mandatory routing/contract semantics instead.
+4. **B2 duplicate-oracle drift** — an intermediate second dynamic-universe checker had different discovery semantics; it was removed so the dynamic context checker is the sole budget/completeness authority.
+5. **Dangling duplicate-oracle CI reference** — after removing that checker, the full baseline diff exposed stale workflow calls to the deleted script. CI now calls only `ctx03-dynamic-context-check.py --audit-policy` and its independent controls.
+6. **Conditional dynamic-slot blind spot** — the production slot discovery was centered on current `initial_reads`; a future placeholder could have been introduced only in `conditional_reads`. An independent all-read-surface control is now mandatory in CI and fails closed on any unreviewed placeholder there.
 
-No variant above was deferred to the Reviewer.
-
-## B1 causal controls
-
-`scripts/ctx03-final-circuit-breaker.py` drives the production current-state oracle against synthetic repository states:
-
-1. pre-CTX-03 accepted state -> GREEN;
-2. CTX-03 changed to COMPLETE + valid PASS/PR-bearing CTX-03 DocSync + derived index updated -> GREEN **without changing checker/oracle code**;
-3. authority says CTX-03 accepted while index remains pre-CTX-03 -> RED;
-4. wrong `next_contract_hint` -> RED;
-5. remove the entire accepted CTX-03 DocSync closure -> RED;
-6. add fictitious accepted WP only to derived index -> RED;
-7. modify history prose only -> derived current state unchanged;
-8. remove the whole CTX projection surface / replace accepted list by `[]` -> RED while authoritative discovery remains intact;
-9. introduce future CTX-04 and CTX-10 -> next state remains numerically derived.
-
-The defect cannot self-heal by editing the same index that is under audit.
-
-## B2 causal controls
-
-The dynamic controls exercise a synthetic future track not belonging to H1/CITY/PA:
-
-1. future exact WP automatically enters the budget;
-2. growing that WP past its ceiling -> RED;
-3. add a new repository evidence source made mandatory by the exact route contract -> automatically counted;
-4. grow the new source past the limit -> RED;
-5. omit that source from caller-supplied route bindings while route authority still requires it -> still counted;
-6. remove the entire dynamic binding surface -> RED;
-7. grow a wholly non-mandatory repository file -> unchanged/GREEN;
-8. `repair_worker`: repository-backed original Worker evidence is counted while a live Reviewer FAIL may remain explicitly external;
-9. `h1_local_executor`: anchored repository manifest and manifest-named repository file are counted without a caller-maintained named-file list;
-10. future role profile using an existing reviewed exact-WP slot inherits the resolver;
-11. new dynamic slot class -> RED pending explicit oracle review.
-
-The six H1/CITY/PA routes remain calibration/quality cases only; they no longer define the future dynamic universe.
+No known variant above is deferred to the Reviewer.
 
 ## Whole structured-surface omission
 
-The final circuit-breaker additionally drives production oracles with:
+The final circuit-breaker exercises real oracles with:
 
-- `CONTEXT_ESCALATIONS.evaluations` field removed;
+- `CONTEXT_ESCALATIONS.evaluations` removed;
 - `evaluations = []`;
 - `evaluations = {}`;
-- representative `routes = []`;
-- representative `routes` field removed;
-- entire conditional-profile budget collection emptied;
-- entire CTX current-state projection removed/emptied.
+- representative route collection removed/empty;
+- conditional budget collection emptied;
+- CTX current-state projection removed/emptied.
 
-Each case must RED because the real required universe is independently reconstructed, not because the fixture asserts that it deleted a field.
+RED must arise because the independently reconstructed required condition is absent, not merely because the fixture announces that it deleted a field.
 
-The accepted CTX-02 Context Capsule Validation remains binding and is rerun on the exact candidate. Its independent omission/semantic controls continue covering whole-surface/capsule/PA disposition and authoritative-source reconstruction classes; CTX-03 does not replace those accepted oracles.
+Accepted CTX-02 whole-surface/capsule/PA semantic controls remain separately binding and are rerun on the exact candidate.
 
 ## Semantic substitution challenge
 
-No new compact surface gains semantic authority:
+No compact/mechanical surface gains semantic authority:
 
-- current-state index remains `DERIVED_NAVIGATION_ONLY`;
-- history is reconstruction/provenance only;
-- context envelope/budgets are process gates only;
+- accepted-state index is navigation projection only;
+- history is provenance/reconstruction only;
+- envelope/budget/config surfaces are process gates only;
 - capsules remain navigation only under accepted CTX-02 rules;
-- mechanical PASS cannot substitute for exact authoritative sources, predecessor reopen or fresh independent Reviewer reasoning;
-- quality replay proves authoritative H1/CITY/PA sources remain reachable when escalation is material.
+- mechanical PASS cannot replace exact authoritative sources, predecessor reopen or independent Reviewer reasoning;
+- quality replay proves source reachability, not model semantic competence.
 
-## Future-extension challenge
+## Future extension challenge
 
-Synthetic additions cover:
-
-- a new CTX accepted transition;
-- a new role profile;
-- the existing process-control case for a new fixed conditional source;
-- a new dynamic mandatory repository slot;
-- a future non-H1/CITY/PA workpack and repository evidence source.
-
-Each extension either joins an independently discovered universe automatically or fails closed pending explicit reviewed oracle/budget evolution.
+Synthetic extension covers a new CTX transition, new role profile, new fixed conditional repository path, new dynamic placeholder class, conditional-only dynamic placeholder and future non-H1/CITY/PA workpack/source. Each is either incorporated automatically into the correct independently discovered universe or turns RED pending explicit reviewed oracle/budget evolution.
 
 ## Lifecycle/retry boundary retained
 
-The repair does not alter the already-repaired exact-SHA lifecycle. The canonical exact candidate validation must continue to prove:
+The earlier repairs remain closed:
 
-- external CLEAN pointer belongs to exact PR/exact SHA;
-- post-CLEAN repository mutation invalidates readiness;
-- wrong PR / wrong SHA CLEAN pointers are RED;
-- missing Ready marker blocks;
-- existing marker + red gate blocks;
-- same-SHA gate repair can close by reusing the durable marker;
-- HEAD movement after marker blocks.
+- external CLEAN pointer must be exact PR/exact SHA;
+- repository mutation after CLEAN invalidates readiness;
+- wrong PR/wrong SHA CLEAN pointer -> RED;
+- missing Ready marker -> blocked;
+- existing marker + red gate -> blocked;
+- same-SHA gate repair can reuse the durable marker and close;
+- HEAD movement after marker -> blocked.
 
-Final terminal sequencing remains: finish repository bytes -> exact HEAD -> full validation + baseline diff + Worker challenge -> external durable CLEAN -> metadata only -> Ready/freeze -> exact-SHA gates/terminal closure -> STOP for fresh Reviewer.
+Terminal sequence remains: finish bytes -> exact HEAD -> full validation + complete baseline diff + Worker challenge -> durable external CLEAN -> metadata only -> Ready/freeze -> exact-SHA gates + terminal closure -> STOP for fresh Reviewer.
 
-## Adoption simulation requirement
+## Conclusion before terminal pre-review
 
-The final candidate is not ready unless the post-adoption synthetic state described above is GREEN with unchanged checker/oracle code. That simulation is part of the mandatory CTX Process Envelope CI via `scripts/ctx03-final-circuit-breaker.py`.
-
-## Current conclusion
-
-The class-level repair is implemented, but this document itself is still a repository-byte mutation. Therefore all prior CLEAN/freeze evidence is invalid and no Reviewer should start from this intermediate state. A new exact-SHA complete Worker pre-review is required after the remaining evidence/protocol bytes are finalized.
+The class-level repair and the additional circuit-breaker variants are represented in repository evidence. Because this file is itself a repository byte, every earlier CLEAN/freeze remains invalid. The next phase is the final exact-HEAD validation/pre-review with writers stopped. Any new blocker found there must be repaired before CLEAN.
