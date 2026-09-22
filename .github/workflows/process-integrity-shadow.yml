@@ -1,0 +1,81 @@
+name: Process Integrity Shadow
+
+on:
+  pull_request:
+    paths:
+      - 'Docs/engineering/workpack-verifiers.json'
+      - 'Docs/engineering/PA_CANONICAL_DISPOSITION_TABLE.md'
+      - 'Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json'
+      - 'Docs/evidence/**/DOCSYNC.md'
+      - 'Docs/workpacks/**'
+      - 'scripts/arkus-verify-exact-sha.sh'
+      - 'scripts/arkus-observe-exact-sha.sh'
+      - 'scripts/*verify-exact-sha.sh'
+      - 'scripts/*observe-exact-sha.sh'
+      - 'scripts/workpack-verifier.py'
+      - 'scripts/docsync.py'
+      - 'scripts/context-capsule-check.py'
+      - 'scripts/pa-selector-policy-controls.py'
+      - '.github/workflows/process-integrity-shadow.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'Docs/engineering/workpack-verifiers.json'
+      - 'Docs/engineering/PA_CANONICAL_DISPOSITION_TABLE.md'
+      - 'Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json'
+      - 'Docs/evidence/**/DOCSYNC.md'
+      - 'Docs/workpacks/**'
+      - 'scripts/arkus-verify-exact-sha.sh'
+      - 'scripts/arkus-observe-exact-sha.sh'
+      - 'scripts/*verify-exact-sha.sh'
+      - 'scripts/*observe-exact-sha.sh'
+      - 'scripts/workpack-verifier.py'
+      - 'scripts/docsync.py'
+      - 'scripts/context-capsule-check.py'
+      - 'scripts/pa-selector-policy-controls.py'
+      - '.github/workflows/process-integrity-shadow.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shadow-integrity:
+    name: Shadow process integrity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Prove generic router equals frozen legacy dispatchers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/workpack-verifier.py self-test
+
+      - name: Self-test mechanical DocSync tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/docsync.py self-test
+
+      - name: Check changed DocSync identities
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/docsync.py check-changed --base "$BASE_SHA" --head "$HEAD_SHA"
+
+      - name: Prove PA-06+ selector convention stays checker-owned
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/context-capsule-check.py --self-test
+          python3 scripts/pa-selector-policy-controls.py
