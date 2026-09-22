@@ -4,7 +4,7 @@ Status: **CANDIDATE EVIDENCE / PROCESS_ONLY**
 
 ## Exact measurement anchor
 
-The hardened same-snapshot causal suite ran on exact candidate:
+The hardened same-snapshot causal suite originally calibrated on exact candidate:
 
 ```text
 64437ca5fcbc124660c8c47328ef281dd0fd8aa0
@@ -16,7 +16,7 @@ GitHub Actions:
 - `Arkus Candidate Validation` run `35703773486`: **SUCCESS**;
 - `Context Capsule Validation` run `35703773518`: **SUCCESS**.
 
-The envelope job persisted the file-level report, quality replay, independent process controls, DocSync/history control and mechanical classification as artifact `10683043030`. Later candidate commits only reconcile/calibrate evidence and protocol text; the final Worker pre-review must still rerun the same causal suite on the ultimate evidence-bearing SHA before freeze.
+The envelope job persisted the file-level report, quality replay, independent process controls, DocSync/history control and mechanical classification as artifact `10683043030`. Repair cycle 1 preserves the measured route source sets but strengthens the budget from base `initial_reads` alone to both base-profile and route-effective minimum/escalated sets. The ultimate candidate must rerun the same causal suite on its exact final SHA before freeze.
 
 ## Measurement method
 
@@ -40,9 +40,9 @@ Dynamic mandatory inputs such as live GitHub state and exact PR diff are held ou
 
 No route is called materially improved merely because its raw estimate is lower.
 
-## Profile process-envelope calibration
+## Base profile process-envelope calibration
 
-The final-shape candidate config records 20% headroom above the exact effective role/profile baseline:
+The base-profile layer retains 20% headroom above the exact post-CTX `initial_reads` calibration:
 
 | Profile | Baseline | Ceiling |
 |---|---:|---:|
@@ -53,9 +53,21 @@ The final-shape candidate config records 20% headroom above the exact effective 
 | docsync | 8,594 | 10,313 |
 | h1_local_executor | 6,311 | 7,574 |
 
-The planner baseline fell from its earlier calibration because ROADMAP v1.33 moved verbose accepted H0 closure chronology to non-bootstrap history while retaining live state/order/gates. That is a real structural context reduction rather than an enlarged budget.
+This layer is no longer described as the complete mandatory-context envelope. It bounds only the unconditional base pack.
 
-The required read sets are derived from the checker-bound canonical `context-bootstrap-profiles.json`; `context-envelope.json` cannot redirect the profile source, drop a profile, remove a representative route or retarget calibration placeholders. `ctx03-process-controls.py` proves unrelated repository growth is neutral while growth of a real required source across its ceiling turns RED. Future ceiling increases require a revision increment plus explicit justification.
+## Route-effective mandatory-context calibration
+
+Repair cycle 1 adds a second budget layer over the already checker-owned concrete routes. It budgets both the minimum effective mandatory set and the authoritative escalated set, so repository-owned conditionals cannot grow outside the envelope simply because they are absent from `initial_reads`.
+
+| Route family | Minimum baseline | Minimum ceiling | Escalated baseline | Escalated ceiling | Route-forced examples |
+|---|---:|---:|---:|---:|---|
+| H1 Worker/Reviewer | 29,896 | 35,876 | 37,028 | 44,434 | `FOUNDATIONAL_PROOF_STANDARD.md`, `H1_REMOTE_LOCAL_EXECUTION.md`, accepted predecessor capsule/navigation and authoritative predecessor sources on escalation |
+| CITY Worker/Reviewer | 35,241 | 42,290 | 36,228 | 43,474 | `Docs/ROADMAP.md`, non-compressible CITY seed/capsule path and authoritative predecessor source on escalation |
+| PA Worker/Reviewer | 22,855 | 27,426 | 43,067 | 51,681 | cumulative PA capsules/mandatory reads and PA authoritative result sources on material escalation |
+
+The formula remains `ceil(baseline * 1.20)`. The checker owns the route universe and an independent effective-required-source oracle. `ctx03-process-controls.py` grows real conditional sources across the applicable route ceilings: H1 foundational, H1 local, CITY/ROADMAP and PA authoritative escalation. Those mutations must turn RED. Unrelated repository growth remains neutral to the derived base set.
+
+Future ceiling increases in either base-profile or route-effective layers require a revision increment plus explicit justification.
 
 ## Cumulative PA decision
 
@@ -79,4 +91,4 @@ The minimum H1 route is smaller by `14.8359%`, but does not exceed the deliberat
 
 ## Result
 
-CTX-03 demonstrates a material saving where it claims one (cumulative PA), preserves required high-cost context where the claim needs it (CITY), and refuses to overstate an uncertainty-bounded reduction (H1). The pre/post universe is checker-owned, so neither the compact capsules nor the measured config can self-shrink the baseline to manufacture that result.
+CTX-03 demonstrates a material saving where it claims one (cumulative PA), preserves required high-cost context where the claim needs it (CITY), refuses to overstate an uncertainty-bounded reduction (H1), and now bounds growth of both the unconditional base pack and checker-owned route-effective mandatory context. The pre/post and effective budget universes are checker-owned, so neither compact capsules nor measured config can self-shrink the proof boundary.
