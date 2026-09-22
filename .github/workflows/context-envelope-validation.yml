@@ -30,6 +30,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
           python3 scripts/context-envelope-check.py --self-test
           python3 scripts/ctx03-dynamic-context-check.py --self-test
+          python3 scripts/ctx03-dynamic-universe-check.py --self-test
           python3 scripts/mechanical-verifier-classifier.py --self-test
           python3 scripts/review-ready-closure.py --self-test
           python3 scripts/derive-worker-review-metadata.py --self-test
@@ -48,7 +49,7 @@ jobs:
             --escalations Docs/evidence/CTX-03/CONTEXT_ESCALATIONS.json
             --output ctx-envelope-report.json
           )
-          dynamic_args=(--audit-policy)
+          dynamic_args=()
           if [[ -n "${BASE_SHA}" ]]; then
             args+=(--base-ref "${BASE_SHA}")
             dynamic_args+=(--base-ref "${BASE_SHA}")
@@ -57,7 +58,7 @@ jobs:
           set +e
           python3 scripts/context-envelope-check.py "${args[@]}" > ctx-envelope.log 2>&1
           envelope_status=$?
-          python3 scripts/ctx03-dynamic-context-check.py "${dynamic_args[@]}" > ctx-dynamic-context.log 2>&1
+          python3 scripts/ctx03-dynamic-universe-check.py "${dynamic_args[@]}" > ctx-dynamic-universe.log 2>&1
           dynamic_status=$?
           python3 scripts/ctx03-quality-replay.py \
             --negative-controls \
@@ -73,7 +74,7 @@ jobs:
           set -e
 
           cat ctx-envelope.log
-          cat ctx-dynamic-context.log
+          cat ctx-dynamic-universe.log
           cat ctx-quality-replay.log
           cat ctx-process-controls.log
           cat ctx-docsync-history.log
@@ -144,7 +145,7 @@ jobs:
           path: |
             ctx-envelope.log
             ctx-envelope-report.json
-            ctx-dynamic-context.log
+            ctx-dynamic-universe.log
             ctx-quality-replay.log
             ctx-quality-replay.json
             ctx-process-controls.log
