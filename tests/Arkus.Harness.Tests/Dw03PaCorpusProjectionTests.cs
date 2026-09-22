@@ -12,8 +12,7 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void AcceptedPaCorpusAnswersFrozenCrossPaQuerySuite()
         {
-            var sources = ReadSources();
-            var dataset = new PaDesignWorldProvider().BuildAndValidate(sources);
+            var dataset = new PaDesignWorldProvider().BuildAndValidate(ReadSources());
 
             Assert.Equal("dw03-pa-corpus-manifest-v1", dataset.ManifestId);
             Assert.Equal("dw03-pa-query-suite-v1", dataset.QuerySuiteId);
@@ -28,8 +27,12 @@ namespace Arkus.Harness.Tests
             });
 
             Assert.Equal(
-                new[] { "P1","NC-01","NC-02","NC-03","NC-04","NC-05","NC-06","NC-07" },
-                dataset.Queries.ByPa("pa02", "fixture").Select(record => record.SourceKey).OrderBy(value => FixtureOrder(value)).ThenBy(value => value, StringComparer.Ordinal).ToArray());
+                new[] { "P1", "NC-01", "NC-02", "NC-03", "NC-04", "NC-05", "NC-06", "NC-07" },
+                dataset.Queries.ByPa("pa02", "fixture")
+                    .Select(record => record.SourceKey)
+                    .OrderBy(FixtureOrder)
+                    .ThenBy(value => value, StringComparer.Ordinal)
+                    .ToArray());
 
             var pa04Negative = dataset.Queries.Fixture("pa04", "NC-02");
             Assert.Contains("Privileged/debug metadata is causally non-authoritative", pa04Negative.MaterialText);
@@ -37,19 +40,34 @@ namespace Arkus.Harness.Tests
             var pa05Negative = dataset.Queries.Fixture("pa05", "NC-02");
             Assert.Contains("HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE", pa05Negative.MaterialText);
             Assert.Equal(
-                Enumerable.Range(1,10).Select(index => "PA-05-H" + index.ToString("00")).ToArray(),
+                Enumerable.Range(1, 10).Select(index => "PA-05-H" + index.ToString("00")).ToArray(),
                 dataset.Queries.FindingsLinkedToFixture("pa05", "NC-02").Select(record => record.SourceKey).ToArray());
 
-            var reject = dataset.Queries.FindingsByDispositionFlag("reject");
-            var later = dataset.Queries.FindingsByDispositionFlag("later");
-            Assert.Contains(reject, record => record.PaId == "pa01" && record.SourceKey == "DL-11");
-            Assert.Contains(reject, record => record.PaId == "pa04" && record.DispositionText.Contains("REJECT", StringComparison.Ordinal));
-            Assert.Contains(later, record => record.PaId == "pa02" && record.SourceKey == "AG-09");
-            Assert.All(reject, record => Assert.Contains("REJECT", record.DispositionText, StringComparison.OrdinalIgnoreCase));
+            var pa01Rejected = dataset.Queries.FindingsByDispositionFlag("reject")
+                .Where(record => record.PaId == "pa01")
+                .Select(record => record.SourceKey)
+                .OrderBy(value => value, StringComparer.Ordinal)
+                .ToArray();
+            Assert.Equal(new[] { "DL-11", "DL-12", "DL-14" }, pa01Rejected);
+            Assert.Contains(dataset.Queries.FindingsByDispositionFlag("later"), record => record.PaId == "pa01" && record.SourceKey == "DL-13");
+            Assert.Contains(dataset.Queries.FindingsByDispositionFlag("later"), record => record.PaId == "pa02" && record.SourceKey == "AG-09");
+
+            foreach (var flag in new[] { "adopt", "adapt", "later", "reject" })
+            {
+                Assert.Contains(dataset.Queries.FindingsByDispositionFlag(flag), record => record.PaId == "pa03");
+            }
+
+            var pa01Evidence = dataset.Queries.ByPa("pa01", "evidence").Single(record => record.SourceKey == "Donor dossier");
+            Assert.Contains("PA-01_NPC_DAILY_LIFE.md", pa01Evidence.MaterialText);
+            Assert.Equal(
+                dataset.Queries.ByPa("pa01", "finding").Select(record => record.FactId).ToArray(),
+                dataset.Queries.FindingsLinkedToEvidenceKey("pa01", "Donor dossier").Select(record => record.FactId).ToArray());
 
             foreach (var family in new[] { "daily-life", "npc-agency", "social-graph", "knowledge-belief", "rumour-flow" })
             {
-                Assert.NotEmpty(dataset.Queries.ByFailureFamily(family));
+                var records = dataset.Queries.ByFailureFamily(family);
+                Assert.Contains(records, record => record.RecordKind == "finding");
+                Assert.Contains(records, record => record.RecordKind == "fixture");
             }
 
             Assert.Contains("record=pa05.finding.pa-05-h05", dataset.Queries.BuildCompactIndex());
@@ -81,22 +99,29 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void MutatingAcceptedAuthorityBytesCannotShrinkOrRedefineUniverse()
+        public void MutatingAcceptedAuthorityCannotShrinkOrRedefineUniverse()
         {
-            var original = ReadSources();
             var pa01 = Read(PaProjectionManifest.Pa01Path);
             var mutated = pa01.Replace("| DL-01 |", "| DL-X1 |", StringComparison.Ordinal);
             Assert.NotEqual(pa01, mutated);
-            var sources = new PaAcceptedCorpusSources(
-                mutated,
-                Read(PaProjectionManifest.Pa02Path),
-                Read(PaProjectionManifest.Pa03Path),
-                Read(PaProjectionManifest.Pa04Path),
-                Read(PaProjectionManifest.Pa05Path),
-                Read(PaProjectionManifest.Pa05FixturesPath));
+            var sources = SourcesWith(pa01: mutated);
 
             var error = Assert.Throws<PaCorpusProjectionException>(() => new PaDesignWorldProvider().BuildAndValidate(sources));
             Assert.Equal("pa.accepted_source_blob_mismatch", error.MachineCode);
+        }
+
+        [Theory]
+        [InlineData("| Input | Exact provenance | Juego2 use |", "| Input renamed | Exact provenance | Juego2 use |")]
+        [InlineData("| Input | Exact provenance | Juego2 use |", "| Exact provenance | Input | Juego2 use |")]
+        public void ProductionParserFailsClosedOnReviewedSchemaRenameOrReorder(string before, string after)
+        {
+            var pa01 = Read(PaProjectionManifest.Pa01Path);
+            var mutated = pa01.Replace(before, after, StringComparison.Ordinal);
+            Assert.NotEqual(pa01, mutated);
+
+            var error = Assert.Throws<PaCorpusProjectionException>(() =>
+                new PaProductionCorpusParser().Parse(SourcesWith(pa01: mutated)));
+            Assert.Equal("pa.source_shape_invalid", error.MachineCode);
         }
 
         [Fact]
@@ -147,17 +172,39 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void EntireDispositionSurfaceCannotDisappearAndSelfConfirm()
+        {
+            var fixture = BuildFixture();
+            var dispositionIds = fixture.Dataset.Projection.Facts
+                .Where(fact => fact.FactType == "pa-disposition" && Field(fact, "pa-id") == "pa03")
+                .Select(fact => fact.FactId)
+                .ToHashSet(StringComparer.Ordinal);
+            Assert.NotEmpty(dispositionIds);
+
+            var mutated = Mutate(fixture.Dataset, facts => facts
+                .Where(fact => !dispositionIds.Contains(fact.FactId))
+                .Select(fact => RemoveRelationsToAny(fact, dispositionIds))
+                .ToList());
+            AssertGenericGreen(mutated);
+            AssertOracleRed(fixture.Sources, mutated.Projection, "pa.semantic_fact_missing");
+        }
+
+        [Fact]
         public void MaterialDispositionWeakeningIsRedWithFindingIdentityPreserved()
         {
             var fixture = BuildFixture();
-            var target = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-disposition" && Bool(target: fact, "contains-reject"));
+            var target = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-disposition" && Bool(fact, "contains-reject"));
             var mutated = Mutate(fixture.Dataset, facts => facts.Select(fact =>
             {
                 if (fact.FactId != target.FactId) return fact;
                 var fields = CopyFields(fact);
+                fields["material-text"] = DesignValue.String("ADOPT");
                 fields["disposition-text"] = DesignValue.String("ADOPT");
                 fields["contains-adopt"] = DesignValue.Boolean(true);
+                fields["contains-adapt"] = DesignValue.Boolean(false);
+                fields["contains-later"] = DesignValue.Boolean(false);
                 fields["contains-reject"] = DesignValue.Boolean(false);
+                fields["contains-baseline"] = DesignValue.Boolean(false);
                 return CopyFact(fact, fields: fields);
             }).ToList());
             AssertGenericGreen(mutated);
@@ -255,6 +302,26 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void UnreviewedFutureRecordCannotBecomeAuthoritativeByAppearingInProjection()
+        {
+            var fixture = BuildFixture();
+            var template = fixture.Dataset.Projection.Facts.First(fact => fact.FactType == "pa-finding");
+            var future = new DesignFact(
+                "pa06.finding.unreviewed",
+                template.FactType,
+                CopyFields(template),
+                template.Relations,
+                template.Provenance);
+            var mutated = Mutate(fixture.Dataset, facts =>
+            {
+                facts.Add(future);
+                return facts;
+            });
+            AssertGenericGreen(mutated);
+            AssertOracleRed(fixture.Sources, mutated.Projection, "pa.semantic_fact_unexpected");
+        }
+
+        [Fact]
         public void SmallerCompressionThatOmitsMaterialFactCannotRemainGreen()
         {
             var fixture = BuildFixture();
@@ -311,25 +378,35 @@ namespace Arkus.Harness.Tests
             return relations.Count == fact.Relations.Count ? fact : CopyFact(fact, relations: relations);
         }
 
-        private static SortedDictionary<string, DesignValue> CopyFields(DesignFact fact) =>
-            new SortedDictionary<string, DesignValue>(fact.Fields, StringComparer.Ordinal);
+        private static DesignFact RemoveRelationsToAny(DesignFact fact, ISet<string> targetIds)
+        {
+            var relations = fact.Relations.Where(relation => !targetIds.Contains(relation.TargetFactId)).ToList();
+            return relations.Count == fact.Relations.Count ? fact : CopyFact(fact, relations: relations);
+        }
+
+        private static SortedDictionary<string, DesignValue> CopyFields(DesignFact fact)
+        {
+            var copy = new SortedDictionary<string, DesignValue>(StringComparer.Ordinal);
+            foreach (var pair in fact.Fields) copy.Add(pair.Key, pair.Value);
+            return copy;
+        }
 
         private static DesignFact CopyFact(
             DesignFact fact,
-            IDictionary<string, DesignValue> fields = null,
-            IEnumerable<DesignRelation> relations = null,
-            DesignAuthorityAnchor provenance = null)
+            IDictionary<string, DesignValue>? fields = null,
+            IEnumerable<DesignRelation>? relations = null,
+            DesignAuthorityAnchor? provenance = null)
         {
             return new DesignFact(
                 fact.FactId,
                 fact.FactType,
-                fields ?? new SortedDictionary<string, DesignValue>(fact.Fields, StringComparer.Ordinal),
+                fields ?? CopyFields(fact),
                 relations ?? fact.Relations,
                 provenance ?? fact.Provenance);
         }
 
         private static string Field(DesignFact fact, string name) => fact.Fields[name].CanonicalValue;
-        private static bool Bool(DesignFact target, string name) => target.Fields[name].CanonicalValue == "true";
+        private static bool Bool(DesignFact fact, string name) => fact.Fields[name].CanonicalValue == "true";
 
         private static int FixtureOrder(string key)
         {
@@ -338,13 +415,18 @@ namespace Arkus.Harness.Tests
             return 100;
         }
 
-        private static PaAcceptedCorpusSources ReadSources() => new PaAcceptedCorpusSources(
-            Read(PaProjectionManifest.Pa01Path),
-            Read(PaProjectionManifest.Pa02Path),
-            Read(PaProjectionManifest.Pa03Path),
-            Read(PaProjectionManifest.Pa04Path),
-            Read(PaProjectionManifest.Pa05Path),
-            Read(PaProjectionManifest.Pa05FixturesPath));
+        private static PaAcceptedCorpusSources SourcesWith(string? pa01 = null)
+        {
+            return new PaAcceptedCorpusSources(
+                pa01 ?? Read(PaProjectionManifest.Pa01Path),
+                Read(PaProjectionManifest.Pa02Path),
+                Read(PaProjectionManifest.Pa03Path),
+                Read(PaProjectionManifest.Pa04Path),
+                Read(PaProjectionManifest.Pa05Path),
+                Read(PaProjectionManifest.Pa05FixturesPath));
+        }
+
+        private static PaAcceptedCorpusSources ReadSources() => SourcesWith();
 
         private static string Read(string relativePath)
         {
@@ -366,6 +448,7 @@ namespace Arkus.Harness.Tests
         private sealed class SentinelOracle : IPaCorpusSemanticOracle
         {
             public bool WasCalled { get; private set; }
+
             public PaCorpusSemanticReport Validate(DesignWorldProjection projection, PaAcceptedCorpusSources sources)
             {
                 WasCalled = true;
@@ -379,20 +462,28 @@ namespace Arkus.Harness.Tests
         private sealed class SelfConfirmingReader : IDesignAuthorityReader
         {
             private readonly IReadOnlyDictionary<string, DesignFact> _facts;
+
             public SelfConfirmingReader(IEnumerable<DesignFact> facts)
             {
                 _facts = facts.ToDictionary(fact => fact.FactId, StringComparer.Ordinal);
             }
+
             public DesignAuthorityReadResult Read(string factId) =>
                 _facts.TryGetValue(factId, out var fact)
                     ? DesignAuthorityReadResult.Found(fact)
                     : DesignAuthorityReadResult.Failure(DesignAuthorityResolutionStatus.Missing, "missing");
+
             public DesignAuthorityResolutionStatus Resolve(DesignAuthorityAnchor anchor) => DesignAuthorityResolutionStatus.Found;
         }
 
         private sealed class CorpusFixture
         {
-            public CorpusFixture(PaAcceptedCorpusSources sources, PaCorpusDataset dataset) { Sources = sources; Dataset = dataset; }
+            public CorpusFixture(PaAcceptedCorpusSources sources, PaCorpusDataset dataset)
+            {
+                Sources = sources;
+                Dataset = dataset;
+            }
+
             public PaAcceptedCorpusSources Sources { get; }
             public PaCorpusDataset Dataset { get; }
         }
@@ -400,7 +491,12 @@ namespace Arkus.Harness.Tests
         private sealed class MutatedProjection
         {
             public MutatedProjection(DesignWorldProjection projection, IDesignAuthorityUniverse universe, IDesignAuthorityReader reader)
-            { Projection=projection; Universe=universe; Reader=reader; }
+            {
+                Projection = projection;
+                Universe = universe;
+                Reader = reader;
+            }
+
             public DesignWorldProjection Projection { get; }
             public IDesignAuthorityUniverse Universe { get; }
             public IDesignAuthorityReader Reader { get; }
