@@ -10,9 +10,11 @@ from pathlib import Path
 STATE = Path("Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json")
 CTX_README = Path("Docs/workpacks/CTX/README.md")
 ROOT_WP = Path("Docs/workpacks/README.md")
+ROADMAP = Path("Docs/ROADMAP.md")
 DOCSYNC = Path("Docs/evidence/CTX-02/DOCSYNC.md")
 PROFILES = Path("Docs/engineering/context-bootstrap-profiles.json")
 HISTORY = Path("Docs/history/CTX_PROCESS_HISTORY.md")
+ROADMAP_HISTORY = Path("Docs/history/ROADMAP_ACCEPTED_CLOSURES.md")
 CLASSIFICATION = Path("Docs/evidence/CTX-03/HISTORICAL_CLASSIFICATION.json")
 
 
@@ -34,6 +36,7 @@ def check(root: Path) -> list[str]:
 
     ct = (root / CTX_README).read_text(encoding="utf-8")
     rw = (root / ROOT_WP).read_text(encoding="utf-8")
+    road = (root / ROADMAP).read_text(encoding="utf-8")
     ds = (root / DOCSYNC).read_text(encoding="utf-8")
     if "next CTX action is `WP-CTX-03" not in ct:
         errors.append("CTX README does not agree on WP-CTX-03 as next action")
@@ -55,7 +58,31 @@ def check(root: Path) -> list[str]:
         history = (root / HISTORY).read_text(encoding="utf-8")
         for pointer in ("#5273364796", "#5274094804", "#5274937744", "107694d3850a478849bffd9510dc030910fc8aa3"):
             if pointer not in history:
-                errors.append(f"history reconstruction pointer missing: {pointer}")
+                errors.append(f"CTX history reconstruction pointer missing: {pointer}")
+
+    if "Docs/history/ROADMAP_ACCEPTED_CLOSURES.md" not in road:
+        errors.append("current ROADMAP does not point to separated accepted closure history")
+    if not (root / ROADMAP_HISTORY).is_file():
+        errors.append("ROADMAP accepted-closure history file missing")
+    else:
+        history = (root / ROADMAP_HISTORY).read_text(encoding="utf-8")
+        # Representative exact pointers from the moved H0 chronology. The
+        # current ROADMAP no longer needs them in normal bootstrap, but history
+        # must remain sufficient to reconstruct the accepted closure lineage.
+        for pointer in (
+            "#5257350871",
+            "#5260337340",
+            "#5261636151",
+            "23a9fd4373a803187cd9391b1459cd48975177f6",
+            "0fa3d4fb039a3d0049cea0f3eed1c83128ec7dcd",
+            "048d2e449d5ff81e8bcc35bc15664ea4ceec18ca",
+        ):
+            if pointer not in history:
+                errors.append(f"ROADMAP history reconstruction pointer missing: {pointer}")
+        # Closure chronology moved out of normal ROADMAP rather than being
+        # duplicated in both places.
+        if "review `#5257350871`" in road or "review `#5261636151`" in road:
+            errors.append("verbose accepted H0 closure chronology still duplicated in current ROADMAP")
 
     classification = load(root, CLASSIFICATION)
     cases = classification.get("cases") or []
@@ -73,8 +100,6 @@ def check(root: Path) -> list[str]:
 
 
 def self_test() -> None:
-    # Shape-level guard: a contradictory next contract is a real red, not a
-    # warning. Full integration uses repository sources above.
     fake = {"tracks": {"CTX": {"next_contract_hint": "WP-CTX-99"}}}
     assert fake["tracks"]["CTX"]["next_contract_hint"] != "WP-CTX-03"
     print("ctx03-docsync-history self-test: PASS")
