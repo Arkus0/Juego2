@@ -75,9 +75,14 @@ Decision: **KEEP CTX-02 CAPSULE CHAIN / DO NOT ADD A SECOND PA COMPACT REGISTRY 
 
 ## 5. CI-only process envelope
 
-The process envelope is derived from the accepted `initial_reads` of the canonical role-profile source; the config supplies checker-bound placeholder assertions used for calibration. It does **not** choose or duplicate the source universe.
+The process envelope has two deliberately separate layers:
 
-For every profile:
+1. a **base profile budget** derived from accepted `initial_reads`; and
+2. a **route-effective mandatory budget** derived from the checker-owned concrete H1/CITY/PA routes, including repository sources that the route itself makes mandatory through conditional reads, capsule navigation, non-compressible material or authoritative escalation.
+
+The second layer is normative for the Reviewer's growth concern: `FOUNDATIONAL_PROOF_STANDARD.md`, `H1_REMOTE_LOCAL_EXECUTION.md`, CITY `ROADMAP.md`, capsule surfaces and representative authoritative predecessor/result sources are all counted in the applicable route budget even though they are not unconditional base reads. The config does not get to decide whether those sources participate: route membership and the minimum required source oracle are checker-owned.
+
+For every base profile and every route-effective minimum/escalated mode:
 
 ```text
 reviewed ceiling = ceil(calibrated post-CTX baseline * (1 + reviewed headroom))
@@ -85,9 +90,9 @@ reviewed ceiling = ceil(calibrated post-CTX baseline * (1 + reviewed headroom))
 
 The initial headroom is 20%. The budget file is CI-only and is not a normal Worker/Reviewer read.
 
-Unrelated repository growth outside the derived read set does not affect the estimate. Growth of a required source does. A future ceiling increase must be an explicit diff with both an incremented `ceiling_revision` and non-empty `ceiling_increase_justification`.
+Unrelated repository growth outside the derived effective set does not affect the estimate. Growth of a source that is mandatory for a concrete effective route does. A future ceiling increase in either layer must be an explicit diff with both an incremented `ceiling_revision` and non-empty `ceiling_increase_justification`.
 
-Independent controls attack route removal, profile removal, profile-source redirection, calibration-placeholder redirection, real required-source growth and mandatory-escalation omission. The measured artifact cannot choose its own completeness universe.
+Independent controls challenge route removal, profile removal, route-budget removal, profile-source redirection, calibration-placeholder redirection, unconditional required-source growth, H1 foundational/local conditional growth, CITY/ROADMAP conditional growth, PA authoritative escalation growth and mandatory-escalation omission. The measured artifact cannot choose its own completeness universe.
 
 ## 6. Mechanical false-red audit
 
@@ -101,18 +106,28 @@ CTX-03 explicitly separates mechanical outcomes so protocol/runner noise does no
 
 The canonical registry is `mechanical-verifier-registry.json`. A red check not registered there cannot count as WP FAIL; it becomes operational `INFRA_ERROR` until triaged or explicitly registered. Any registered verifier capable of emitting WP `FAIL` must require a structured outcome and may not claim semantic authority. A crash therefore cannot become a candidate FAIL merely because GitHub paints a check red.
 
-## 7. Derivable review metadata
+## 7. Derivable review metadata and exact pre-review durability
 
-`derive-worker-review-metadata.py` derives only fields mechanically fixed once final bytes are CLEAN and HEAD is known. It preserves non-derivable lineage (`Baseline SHA`, Worker identity/history, Transfer SHA, prior reviewed SHA, `fail_cycle`) from the existing canonical handoff instead of accepting caller-selected replacements.
+The terminal sequence is intentionally non-self-referential:
 
-The generator refuses to operate unless the repository-local predecessor check and `WORKER_PRE_REVIEW: CLEAN` evidence exist. It cannot generate CLEAN, choose ownership, reset repair history or produce a Reviewer verdict. The existing independent `validate-worker-handoff.py` remains the oracle.
+1. while Draft + ACTIVE, finish and commit/push every repository/evidence byte that belongs to the candidate;
+2. stop writers and read the exact resulting HEAD;
+3. perform the complete Worker pre-review against that exact HEAD and complete baseline→candidate diff;
+4. if clean, create a durable GitHub PR issue comment containing `WORKER_PRE_REVIEW: CLEAN`, `Candidate SHA: <exact HEAD>`, findings-fixed count and evidence pointers;
+5. do not mutate repository/evidence bytes after that review; derive/freeze only metadata for the same SHA.
+
+A repository file written **after** the pre-review cannot serve as the final CLEAN record for the candidate whose parent was reviewed, because writing that file creates different candidate bytes. Repository pre-review notes/checklists may exist as inputs, but the final exact-SHA CLEAN record lives on the durable GitHub handoff surface after the last candidate-byte mutation.
+
+`derive-worker-review-metadata.py` derives only fields mechanically fixed once final bytes are externally recorded CLEAN and HEAD is known. It preserves non-derivable lineage (`Baseline SHA`, Worker identity/history, Transfer SHA, prior reviewed SHA, `fail_cycle`) from the existing canonical handoff instead of accepting caller-selected replacements. It requires a durable GitHub PR issue-comment URL as `--pre-review-evidence`; it never creates or interprets the CLEAN judgment itself.
+
+The existing independent `validate-worker-handoff.py` remains the structural Ready oracle. Independent Reviewer reconstruction remains responsible for checking that the durable pre-review record actually targets the exact frozen candidate; the Worker record is never semantic PASS authority.
 
 ## 8. Transactional REVIEW_READY closure
 
 A Worker may tell the human to start a Reviewer only after:
 
 1. final repository/evidence byte mutation precedes final complete Worker pre-review;
-2. exact evidence says `WORKER_PRE_REVIEW: CLEAN`;
+2. durable GitHub evidence records `WORKER_PRE_REVIEW: CLEAN` for the exact resulting candidate SHA without changing candidate bytes;
 3. Candidate HEAD and Frozen candidate SHA equal live Ready PR HEAD;
 4. canonical Ready metadata is coherent;
 5. registered `Worker handoff lint` is PASS;
@@ -120,9 +135,11 @@ A Worker may tell the human to start a Reviewer only after:
 7. durable Automation V2 `State: REVIEW_READY` targets the same frozen SHA;
 8. **after observing that marker**, a final live PR HEAD read still equals that SHA.
 
-After CTX-03 adoption, the `issue_comment` workflow performs steps 7→8 automatically and persists `State: REVIEW_READY_CLOSED` for the same SHA. CLOSED is only durable evidence that the already-required terminal invariant was observed. It adds **no human action**: no second comment, button, metadata entry or semantic approval.
+After CTX-03 adoption, `.github/workflows/review-ready-closure.yml` can wake on either the original bot `issue_comment` that persists `REVIEW_READY` **or** completion of `Arkus Candidate Validation`. The workflow-run path resolves the exact PR/SHA and reuses an already-existing durable REVIEW_READY marker for that same SHA. Therefore a first closure attempt may correctly block while freeze/handoff is RED, and a later same-SHA metadata/gate repair can rerun Candidate Validation and reach `REVIEW_READY_CLOSED` without requiring Automation V2 to emit a duplicate deduplicated marker.
 
-For the CTX-03 adoption candidate itself, that new workflow is not yet on default `main`, so it cannot bootstrap its own event. This candidate satisfies the same invariant directly: existing Automation V2 must persist `REVIEW_READY`, then the Worker performs/records the final live HEAD read without mutating repository bytes.
+Closure remains idempotent by `review-ready-closed:<PR>:<SHA>`. CLOSED is only durable evidence that the already-required terminal invariant was observed. It adds **no human action** and never substitutes for independent semantic review.
+
+For the CTX-03 adoption candidate itself, the new default-branch workflow cannot bootstrap its own event. This candidate satisfies the same invariant directly: existing Automation V2 must persist `REVIEW_READY`, then the Worker performs/records the final live HEAD read without mutating repository bytes.
 
 ## 9. Historical handoff controls
 
@@ -132,7 +149,8 @@ The closure oracle reproduces:
 - CTX-02 handoff-lint/predecessor-check incompleteness;
 - every prerequisite check GREEN but no matching durable `REVIEW_READY`;
 - wrong-SHA marker;
-- post-marker HEAD movement.
+- post-marker HEAD movement;
+- a same-SHA sequence where REVIEW_READY already exists, the first closure is blocked by a red freeze gate, and a later successful gate rerun reuses that marker and closes without a new candidate or duplicate marker.
 
 In each case CLEAN alone is insufficient. `HISTORICAL_CLASSIFICATION.json` separately classifies reconstructed FAIL/handoff families as mechanical, semantic or mixed and records `ADOPT / DEFER / REJECT`. Generic natural-language semantic equivalence is explicitly rejected as a deterministic gate.
 
