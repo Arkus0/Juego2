@@ -11,8 +11,8 @@
         "foundational_claim": "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md",
         "h1_02_through_gate": "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md",
         "cross_track_or_unclosed_order_gate": "Docs/ROADMAP.md",
-        "accepted_contract_capsules": "After CTX-02 adoption: Docs/engineering/CONTEXT_CAPSULE_V1.md + Docs/engineering/context-capsules/index.json; validated capsules may start accepted-predecessor reconstruction but never replace material authoritative reads",
-        "direct_dependencies": "exact direct dependency WP + accepted completion/PASS identity; use validated capsule(s) to start inherited-guarantee reconstruction when available, then escalate to original proof/result/residual/invariant sources when material"
+        "accepted_contract_capsules": "After CTX-02 adoption: Docs/engineering/CONTEXT_CAPSULE_V1.md + Docs/engineering/context-capsules/index.json; a mechanically valid capsule plus independently confirmed accepted identity may start predecessor reconstruction",
+        "direct_dependencies": "After CTX-02 adoption use a valid accepted-contract capsule + independently confirmed accepted identity when available; otherwise read the exact dependency WP + accepted PASS/completion/proof/residual/invariant sources. Always escalate from a capsule to original sources when material, noncompressible, contradictory, or required by a directly binding proof/architecture contract."
       },
       "must_escalate_if": [
         "direct dependency meaning or eligibility is not closed by exact/direct sources",
