@@ -1,11 +1,18 @@
 # DW — Design World Second-Consumer Validation
 
-Status: PLANNED / NOT_STARTED — becomes binding only after this PROCESS_ONLY planning PR independently passes, merges and DocSync completes
+Status: ACCEPTED / NOT_STARTED — planning PR `#117` independently PASSed, merged and completed DocSync
 Class: FOUNDATIONAL VALIDATION TRACK
-Binding architecture when accepted: `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`
+Binding architecture: `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 
-No `WP-DW-*` implementation Worker is active or authorized by the planning branch itself.
+Accepted plan evidence:
+
+- frozen candidate: `cbb0114bb9ee1248739c093109a9b71e26751444`;
+- independent PASS: review `#5274794434` on PR `#117`;
+- plan merge: `b831050e9df8b61b76744e0c5f544bd7ec2d79b5`;
+- post-PASS reconciliation: `Docs/evidence/DW-PLAN/DOCSYNC.md`.
+
+No `WP-DW-*` implementation Worker is active merely because the plan is accepted. `WP-DW-00` is the sole default DW start and remains `NOT_STARTED` until a human explicitly starts its Worker.
 
 ## Outcome
 
@@ -129,11 +136,11 @@ CTX remains owner of role/context process policy. `WP-DW-04` waits for CTX-03 so
 
 ### H2
 
-DW does not authorize H2 implementation. `Docs/ROADMAP.md` is the top-level milestone/gate authority and now records the same conditional interlock as this track: if this plan is accepted, final H2 public/external-boundary acceptance must explicitly consume accepted DW-GATE evidence or review and disposition the DW interlock. H1-GATE remains the Unity/gameplay prerequisite and DW does not replace it.
+DW does not authorize H2 implementation. `Docs/ROADMAP.md` is the top-level milestone/gate authority and records the accepted conditional interlock: final H2 public/external-boundary acceptance must explicitly consume accepted DW-GATE evidence or review and disposition the DW interlock. H1-GATE remains the Unity/gameplay prerequisite and DW does not replace it.
 
 ## Planned downstream opportunities — not active scope
 
-A PASS may justify later work for:
+A DW-GATE PASS may justify later work for:
 
 - design ↔ Unity semantic drift checks;
 - generated art/content briefs;
@@ -142,7 +149,7 @@ A PASS may justify later work for:
 - narrative knowledge-boundary validation; and
 - external non-game product experiments.
 
-The plan intentionally gives none of these an implementation WP now. Their correct owners depend on accepted H1/H2 capabilities and evidence at that future point.
+The accepted plan intentionally gives none of these an implementation WP now. Their correct owners depend on accepted H1/H2 capabilities and evidence at that future point.
 
 ## Pre-mortem result
 
@@ -165,4 +172,4 @@ Every workpack below owns a subset of these risks explicitly.
 
 ## Start rule
 
-After this planning PR independently PASSes, merges and DocSync completes, `WP-DW-00` is the sole default DW start. No later DW workpack is implicitly authorized. H1, PA and CTX continue under their own accepted DAGs.
+The DW programme plan is accepted after PR `#117` PASS + merge + DocSync. `WP-DW-00 — Authority-preserving Design World projection contract` is the sole default DW start and remains `NOT_STARTED` until a human explicitly starts its Worker. No later DW workpack is implicitly authorized. H1, PA and CTX continue under their own accepted DAGs.

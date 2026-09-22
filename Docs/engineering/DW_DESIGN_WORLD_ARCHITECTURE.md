@@ -1,7 +1,7 @@
 # DW Design World Architecture — second consumer before H2
 
-Version: 0.3 — planning candidate
-Status: PROPOSED / NON-BINDING until DW planning PR independently passes, merges and DocSync completes
+Version: 0.4 — accepted plan
+Status: ACCEPTED after PR `#117` independent PASS `#5274794434`, merge `b831050e9df8b61b76744e0c5f544bd7ec2d79b5` and post-PASS DocSync
 
 ## 1. Definition
 
@@ -168,7 +168,7 @@ DW-GATE is planning evidence for H2, not a replacement for H1-GATE. H2 planning 
 - H1-GATE answers whether Arkus can drive the accepted Unity projection boundary;
 - DW-GATE answers whether Arkus survives a materially different non-runtime consumer and whether structured design retrieval is useful/correct.
 
-If H2 planning begins before DW-GATE, it must not freeze an external/public boundary whose design would make the still-authorized DW second-consumer proof impossible to incorporate without explicit review. The preferred sequence is to complete DW-GATE before final H2 boundary acceptance. The repository top-level milestone/gate authority, `Docs/ROADMAP.md`, records this conditional interlock: DW does not block H1 or by itself authorize H2 implementation, but once the DW plan is accepted, final H2 public/external-boundary acceptance must consume accepted DW-GATE evidence or explicitly review and disposition the interlock.
+If H2 planning begins before DW-GATE, it must not freeze an external/public boundary whose design would make the still-authorized DW second-consumer proof impossible to incorporate without explicit review. The preferred sequence is to complete DW-GATE before final H2 boundary acceptance. The repository top-level milestone/gate authority, `Docs/ROADMAP.md`, records this interlock: DW does not block H1 or by itself authorize H2 implementation, but final H2 public/external-boundary acceptance must consume accepted DW-GATE evidence or explicitly review and disposition the interlock.
 
 DW itself does **not** prove package/version distribution to a fresh external repository; that remains the existing H2 planning question.
 

@@ -2,7 +2,7 @@
 
 Each workpack is one independently reviewable contract. Work only inside its allowed scope and stop when its Definition of Done is met.
 
-For all `HK-*` workpacks through `WP-HK-GATE`, all H1 workpacks marked `FOUNDATIONAL`, and all DW workpacks if the DW planning PR is accepted:
+For all `HK-*` workpacks through `WP-HK-GATE`, all H1 workpacks marked `FOUNDATIONAL`, and all DW workpacks:
 
 - `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` is binding;
 - exact-SHA evidence is required;
@@ -69,7 +69,7 @@ PA research can inform later H2+ design but cannot claim runtime/Unity proof or 
 
 ## Process-efficiency track
 
-`CTX/` is a **PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL** context-efficiency track. Its accepted programme plan changes no product/runtime semantics and does not itself alter existing Worker/Reviewer bootstrap rules. It exists to improve context precision first, then token/local-agent cost, while preserving all accepted proof, predecessor, exact-SHA and independent-review obligations.
+`CTX/` is a **PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL** context-efficiency track. Its accepted programme plan changes no product/runtime semantics and exists to improve context precision first, then token/local-agent cost, while preserving all accepted proof, predecessor, exact-SHA and independent-review obligations.
 
 The CTX programme plan is **ACCEPTED** on frozen candidate `c9ff3605048e05fded4d58a1de27450661d9fe0e` (independent review `#5270686380`, PR `#102`, merge `f3c8362b3d76fd4f78107d8142e07e476985f973`). Its reviewed sequence is:
 
@@ -77,15 +77,15 @@ The CTX programme plan is **ACCEPTED** on frozen candidate `c9ff3605048e05fded4d
 CTX-01 -> CTX-02 -> CTX-03
 ```
 
-`WP-CTX-01 — Role-specific bootstrap + accepted-state navigation` is **COMPLETE** on repaired frozen candidate `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39` (independent PASS review `#5273801466`, PR `#110`, implementation merge `fbd3e5526e760efc89f54e7c12a274af10d4765f`). The repaired accepted contract uses `docsync-first-parent-v1` so the derived navigation index can be persisted without self-reference while remaining stale-detected and non-authoritative. After successful DocSync, `WP-CTX-02 — Accepted-contract capsules + predecessor inheritance compression` is the next dependency-valid CTX action. CTX does not semantically block H1/CITY/PA.
+`WP-CTX-01 — Role-specific bootstrap + accepted-state navigation` is **COMPLETE** on repaired frozen candidate `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39` (independent PASS review `#5273801466`, PR `#110`, implementation merge `fbd3e5526e760efc89f54e7c12a274af10d4765f`). `WP-CTX-02 — Accepted-contract capsules + predecessor inheritance compression` is **COMPLETE** on final circuit-breaker candidate `e5053b778e050cff83e2443fef888c64883c88ca` (independent PASS review `#5274937744`, PR `#113`, implementation merge `af63528b63ba9b3ddf2e612c0ad8dff96a57a6c2`). The accepted capsule layer remains non-authoritative navigation and fails closed toward authoritative reconstruction when its bounded guarantees cannot be trusted.
 
-## Proposed foundational second-consumer track
+`WP-CTX-03 — Structured evidence, quality-preserving context envelope, DocSync and history separation` is now the next dependency-valid CTX action after this DocSync and remains `NOT_STARTED` until a human explicitly starts its Worker. CTX does not semantically block H1/CITY/PA; `WP-DW-04` separately waits for accepted CTX-03 so its CTX-vs-DW comparison uses the best accepted baseline.
 
-`DW/` is a proposed **FOUNDATIONAL VALIDATION** track whose planning artifacts live in `Docs/workpacks/DW/` and `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`. It becomes binding only if its PROCESS_ONLY planning PR independently PASSes, merges and completes DocSync. Until then no `WP-DW-*` implementation is authorized.
+## Foundational second-consumer track
 
-DW does **not** invalidate CTX. CTX remains the owner of process-context/bootstrap/capsule policy and its full accepted sequence remains useful independently. DW adds a different layer: a typed, provenance-preserving Design World projection over accepted CITY/PA facts. The measured structured-context comparison deliberately waits for accepted `CTX-03` so DW must beat the best accepted baseline rather than an obsolete one.
+`DW/` is an **ACCEPTED FOUNDATIONAL VALIDATION** track. Its architecture is `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`; all seven DW implementation/gate workpacks are governed by `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` v1.5 or later accepted successor.
 
-Proposed DW sequence:
+The DW programme plan is **ACCEPTED** on frozen candidate `cbb0114bb9ee1248739c093109a9b71e26751444` (independent PASS review `#5274794434`, PR `#117`, merge `b831050e9df8b61b76744e0c5f544bd7ec2d79b5`). Its reviewed sequence is:
 
 ```text
 DW-00 -> DW-01 -> DW-02 -> DW-03 -> DW-04 -> DW-05 -> DW-GATE
@@ -95,6 +95,8 @@ DW-00 -> DW-01 -> DW-02 -> DW-03 -> DW-04 -> DW-05 -> DW-GATE
                           accepted   accepted
 ```
 
-H1 continues independently in parallel. `DW-00..03` do not depend on CTX completion; `DW-04` does. If accepted, final H2 external/public-boundary acceptance must explicitly consume or disposition `DW-GATE` evidence, while H1-GATE remains the independent Unity-readiness owner.
+DW does **not** invalidate CTX. CTX remains the owner of process-context/bootstrap/capsule policy and its full accepted sequence remains useful independently. DW adds a typed, provenance-preserving Design World projection over accepted CITY/PA facts. The measured structured-context comparison waits for accepted `CTX-03` so DW must beat the best accepted baseline rather than an obsolete one.
+
+`WP-DW-00 — Authority-preserving Design World projection contract` is the sole default DW start and is dependency-valid after this plan DocSync; it remains `NOT_STARTED` until a human explicitly starts its Worker. Later DW workpacks require their stated serial/cross-track predecessors. H1 continues independently in parallel. Final H2 external/public-boundary acceptance must explicitly consume accepted `DW-GATE` evidence or review/disposition the accepted DW interlock, while H1-GATE remains the independent Unity/gameplay-readiness owner.
 
 The track is intentionally limited to two real consumers (CITY and PA), one structured-context trial and one generic-boundary stress/closure step. Design↔Unity drift, generated art briefs, source-catalogue coverage, replay QA, narrative knowledge validation and non-game product experiments remain downstream candidates, not current DW implementation scope.

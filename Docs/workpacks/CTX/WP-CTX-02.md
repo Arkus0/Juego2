@@ -1,10 +1,18 @@
 # WP-CTX-02 — Accepted-contract capsules + predecessor inheritance compression
 
-Status: **FROZEN PLAN / NOT_STARTED**
+Status: **COMPLETE**
 Class: **PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL**
 Execution: **REMOTE_OK**
 Depends on: `WP-CTX-01` PASS + merge + DocSync
 Blocks: `WP-CTX-03` only
+
+Accepted completion:
+
+- final frozen candidate: `e5053b778e050cff83e2443fef888c64883c88ca`;
+- independent PASS: review `#5274937744` on PR `#113`;
+- implementation merge: `af63528b63ba9b3ddf2e612c0ad8dff96a57a6c2`;
+- historical false-green repair lineage: reviews `#5274094804`, `#5274163927`, `#5274257119`, `#5274389905`, `#5274609459`;
+- post-PASS reconciliation: `Docs/evidence/CTX-02/DOCSYNC.md`.
 
 ## Objective
 
