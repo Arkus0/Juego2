@@ -2,90 +2,95 @@
 
 WP: `WP-CTX-02`  
 Baseline: `f7b4f1e8247dfc927203dca6754b71aaa53938f3`  
-Circuit-breaker lineage: `fail_cycle: 4`  
-Trust-boundary authority: `Docs/evidence/CTX-02/TRUST_BOUNDARY_REAUDIT.md`
+Circuit-breaker lineage: `fail_cycle: 5`  
+Final trust-boundary authority: `Docs/evidence/CTX-02/FINAL_CIRCUIT_BREAKER_AUDIT.md`
 
 `PROOF_BUDGET: WITHIN_BUDGET`
 
 ## Question
 
-Did the cycle-4 repair close the two remaining causal false-greens without turning a context-compression mechanism into disproportionate semantic proof machinery?
+Did the final circuit-breaker close self-defined completeness universes, self-selected mechanical oracles, paired omissions and semantic substitutions without turning context compression into a product semantic registry or general theorem prover?
 
-## Production proof added
+## Production proof boundary
 
-Production validation remains limited to deterministic source/structure invariants with independent repository oracles:
+Production validation remains deterministic. It now owns or derives only configuration whose manipulation could change what the checker believes it must inspect:
 
-- canonical external matching workpack for accepted identity;
-- external-source path constraints preventing capsule/CTX-02 self-confirmation;
-- recomputed source fingerprints;
-- COMPLETE `WP-PA-NN.md` workpacks define the accepted PA-chain inventory;
-- each COMPLETE workpack requires its canonical `PA-NN.md` result before capsule coverage can be COMPLETE;
-- exact canonical accepted PA result binding for `disposition_source`;
-- exact representative CITY `CITY_PRODUCT_SEED.md` mandatory-read identity;
-- small structural checks such as unique/non-empty directional IDs.
+- canonical index/protocol/capsule paths;
+- exact canonical workpack path from capsule ID;
+- canonical track and content mode;
+- PA COMPLETE-workpack discovery glob;
+- PA canonical accepted-result template;
+- PA canonical disposition result path;
+- current PA disposition table section/key/status columns;
+- exact accepted identity and explicit PASS parsed from the canonical external workpack;
+- external-authority constraints and recomputed source fingerprints;
+- exact source-derived PA key/status equality;
+- exact representative CITY mandatory-read identity;
+- shape and asymmetry invariants.
 
-The cycle-4 PA repair is one inventory-direction change plus a defect test. It does not add semantic interpretation to production code.
+The audited index/capsule may repeat these values as descriptive assertions but cannot choose them. A mismatch is RED before the selected oracle can be used.
 
-No production code maps semantic statement IDs to approved prose. No fuzzy/NLP equivalence engine was added. No production parser attempts to prove arbitrary natural-language source meaning.
+For future PA results, lack of a reviewed checker-owned disposition selector is deliberately fail-closed: the accepted result remains authoritative, but capsule-chain coverage is not declared complete until the selector is added and reviewed.
 
-## Representative semantic proof added
+## Representative semantic proof boundary
 
-The semantic false-green exposed by review `#5274257119` remains closed by **bounded test-only fixtures**, external to the production checker:
+Natural-language truth is still **not** promoted into production code. Bounded test-only fixtures cover the actual selected current consumer boundaries:
 
-- `WP-HK-GATE` actual representative H1 boundary;
-- `WP-CITY-03` actual representative CITY boundary;
-- `WP-PA-01`, `WP-PA-02`, `WP-PA-03`, the complete current cumulative PA surface used by the representative PA-04 consumer.
+- `WP-HK-GATE` for H1;
+- `WP-CITY-03` for CITY;
+- `WP-PA-01`, `WP-PA-02`, `WP-PA-03` for the cumulative PA start surface.
 
-Review `#5274389905` exposed that the mandatory one-of-many omission mutation was not actually wired to that oracle. Cycle 4 adds one small independent omission harness over the already-selected actual `WP-HK-GATE` fixture. It deliberately proves two layers:
+They pin material guarantee/exclusion/reopen/escalation semantics, PA-03 directional values, the representative required capsule inventory, and material authoritative-source inventory where CTX-02 claims those pointers can safely navigate a downstream role.
 
-1. removing one of many exports/exclusions remains structurally valid under the production checker;
-2. the existing representative semantic oracle REDs on the missing material content.
+The omission harness proves the intended two-layer property: structurally valid semantic narrowing can remain production GREEN, while the independent representative semantic oracle must RED.
 
-That is causal closure of the claimed control, not expansion into a new semantic registry.
+## Why the cycle-5 additions are proportional
 
-The PA-01/02 extension remains bounded to the already selected representative PA consumer. Future COMPLETE PA workpacks enter structural completeness automatically, but their arbitrary prose is not auto-enrolled into semantic fixtures.
+The latest Reviewer exposed that reversing PA discovery was insufficient while the index still selected the glob/template. The final audit found adjacent instances of the same class: track/mode selecting validators, identity/capsule/index path rebinding, and PA table section/column selection.
+
+The repair is proportional because it does not add another semantic model. It replaces free subject-controlled selectors with a small set of deterministic repository conventions already implied by the accepted file layout and current PA contracts. These constants are mechanical trust-boundary definitions, not product semantics.
+
+The independent source-inventory fixture is similarly bounded to the selected representative boundaries; it does not auto-enroll all historical evidence.
 
 ## What deliberately remains unproved mechanically
 
-The solution does not claim to prove:
+CTX-02 does not claim to prove:
 
 - arbitrary future natural-language paraphrase equivalence;
-- semantic exhaustiveness of every future exclusion/reopen/escalation list;
-- contested source-pointer interpretation;
-- whether later contradictory evidence causally reopens a predecessor;
+- semantic exhaustiveness of every future guarantee/exclusion/reopen/escalation list;
+- contested interpretation of a source passage;
+- whether contradictory evidence causally reopens a predecessor;
+- coordinated semantic rewrites of both capsule prose and the test-only semantic fixture;
 - every possible historical accepted boundary.
 
-These remain fail-safe process questions: open authoritative sources and require independent Reviewer judgment when material.
+These are explicitly `ESCALATE_HUMAN / RECONSTRUCT_FROM_AUTHORITATIVE_SOURCES`. CI does not turn a CTX-02-derived test fixture into semantic authority.
 
-## Machinery proportionality
+## False-green class closure
 
-The added proof machinery is proportional because:
+The final surface closes:
 
-1. the PA universe repair reverses discovery to the independent completion side instead of adding a second registry;
-2. the omission harness reuses the existing representative oracle rather than creating another semantic model;
-3. semantic fixtures remain test-only and limited to the five actual current consumer capsules;
-4. structured PA dispositions continue to use one generic source-derived table comparison rather than duplicating prose fixtures for statuses;
-5. no product/runtime semantics changed;
-6. no bulk capsule migration or generalized semantic registry was introduced;
-7. arbitrary future semantics explicitly remain escalation/human territory.
+- whole accepted-PA structured-surface omission;
+- malformed trigger elements and review-id-without-PASS identity;
+- same-ID semantic substitution;
+- one-of-many guarantee/exclusion omission with a real semantic RED;
+- future accepted PA whole-item paired omission;
+- index-controlled narrow/broad/empty PA workpack selectors;
+- redirected PA result template;
+- alternate index/capsule/workpack rebinding;
+- track/content-mode mutation used to suppress an oracle;
+- self-selected PA table/column oracle;
+- source self-confirmation;
+- representative material authoritative-source omission;
+- role/workflow validation-surface drift.
 
-## False-green reduction
-
-The final control surface closes the four observed families and nearby same-class paths:
-
-- whole structured PA disposition surface omission;
-- malformed/non-useful trigger elements and review-id-without-PASS identity;
-- same-structure semantic substitution in exports/exclusions, with causal extension to reopen/escalation/directional values and to the full representative PA-01/02/03 chain;
-- source self-confirmation through identity/authority/disposition/mandatory-read selection;
-- one-of-many guarantee/exclusion omission now proves a real representative-oracle RED rather than only proving the mutation occurred;
-- future accepted PA whole-item omission is fail-closed because COMPLETE workpacks, not result files, define the chain universe.
+The durable mutation matrix records `UNSAFE: 0`.
 
 ## Stop condition
 
-If a future repair requires either a production semantic registry, general language-equivalence machinery, automatic enrollment of every historical/future capsule into prose fixtures, or semantic theorem proving from narrative sources, CTX-02 has exceeded this proof budget and must stop/re-scope rather than add that machinery.
+If a future repair requires a production semantic registry, fuzzy/NLP equivalence, automatic enrollment of arbitrary historical/future prose fixtures, or semantic theorem proving from narrative sources, CTX-02 has exceeded this proof budget and must stop/re-scope instead of adding that machinery.
 
 ## Verdict
 
 `PROOF_BUDGET: WITHIN_BUDGET`
 
-CTX-02 now has stronger causal protection against compression false-greens while preserving its intended architecture: deterministic production invariants + bounded representative test semantics + independent human escalation for everything else.
+The final design is still the intended architecture: checker-owned deterministic mechanics + bounded independent representative semantic controls + explicit human escalation for semantic questions that cannot safely be automated.
