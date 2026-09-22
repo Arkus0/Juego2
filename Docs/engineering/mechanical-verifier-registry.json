@@ -1,0 +1,45 @@
+{
+  "schema": "arkus.mechanical-verifier-registry@1",
+  "authority": "PROCESS_CLASSIFICATION_ONLY",
+  "protocol": "Docs/engineering/CONTEXT_ENVELOPE_V1.md",
+  "principle": "Only registered deterministic verifiers may classify a mechanical candidate defect. Semantic/causal Reviewer authority is never delegated to this registry.",
+  "outcomes": {
+    "FAIL": "A registered verifier causally proved a repository-owned deterministic condition required by the current WP is false. This is a real Worker defect to repair before review, not a semantic Reviewer verdict.",
+    "REVIEW_BLOCKED": "The candidate cannot enter independent review because lifecycle/metadata/freeze prerequisites are incomplete, stale or incoherent. Repair/derive the process state and rerun; do not spend a Reviewer round.",
+    "NOT_APPLICABLE": "The registered verifier does not apply to this candidate/mode. This is neutral and must not be converted into GREEN proof or FAIL.",
+    "INFRA_ERROR": "The verifier could not establish its result because the runner/tool/API/checkout failed outside the candidate condition it is meant to test. Fail closed operationally, but do not label the WP defective without causal evidence.",
+    "PASS": "The registered deterministic condition is satisfied. This never substitutes for semantic independent review."
+  },
+  "registered_verifiers": {
+    "worker-handoff-lint": {
+      "github_check_name": "Worker handoff lint",
+      "claim": "canonical Worker handoff metadata and repository-local evidence pointers are coherent for the exact Ready HEAD",
+      "failure_outcome": "REVIEW_BLOCKED",
+      "not_applicable": "pure PROCESS_ONLY maintenance/DocSync PR with no Worker lifecycle fields",
+      "semantic_authority": false
+    },
+    "freeze-exact-sha": {
+      "github_check_name": "Freeze exact-SHA validation",
+      "claim": "exact Ready HEAD is the frozen candidate and the candidate-mode verifier completed according to its declared scope",
+      "failure_outcome": "REVIEW_BLOCKED",
+      "not_applicable": "product/runtime execution may be NOT_APPLICABLE for PROCESS_ONLY, but exact checkout/freeze coherence remains applicable",
+      "semantic_authority": false
+    },
+    "ctx-process-envelope": {
+      "github_check_name": "CTX process envelope",
+      "claim": "CTX routing/envelope/closure deterministic invariants and their causal negative controls pass",
+      "failure_outcome": "FAIL",
+      "not_applicable": "candidates outside adopted CTX process-envelope scope unless another contract opts in",
+      "semantic_authority": false
+    },
+    "ctx-review-ready-closure": {
+      "github_check_name": "Review-ready terminal closure",
+      "claim": "durable REVIEW_READY exists for the frozen SHA, registered lifecycle prerequisites are PASS, and a live post-marker HEAD read still equals that SHA",
+      "failure_outcome": "REVIEW_BLOCKED",
+      "not_applicable": "before CTX-03 adoption the workflow itself is not yet on main; the active CTX-03 candidate closes the same invariant by durable REVIEW_READY plus a direct final live HEAD read",
+      "semantic_authority": false
+    }
+  },
+  "unregistered_policy": "A check/verifier not present in registered_verifiers may provide diagnostics, but its red/failed status alone is never evidence that the WP failed. Classify it as INFRA_ERROR, informational, or require an explicit reviewed registry amendment before it can become a candidate-defect gate.",
+  "reviewer_boundary": "Independent Reviewer FAIL/PASS remains a separate semantic judgment bound to the exact frozen SHA. Mechanical FAIL above means Worker repair before Reviewer, never an automated independent verdict."
+}
