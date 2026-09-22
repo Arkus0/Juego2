@@ -30,11 +30,11 @@ The failed design bounded base/fixed-conditional/representative-route context bu
 - per-resolved-repository-source ceiling plus aggregate dynamic-route ceiling;
 - concrete resolver for exact WP/contract, repository-vs-external Worker evidence, dependency evidence and manifest-named repository files;
 - repository-wide CI discovery of all present/future `Docs/workpacks/**/WP-*.md` contracts without using `CANONICAL_ROUTE_CONFIGS`;
-- dependency/proof/residual/result closure discovery where the workpack contract makes those sources mandatory;
+- dependency/required-input discovery where the workpack contract makes those sources mandatory;
 - anchored local manifest discovery with named repository files included automatically;
 - explicit ceiling-evolution contract requiring policy revision + justification.
 
-The global discovery oracle does **not** treat every path mentioned anywhere in prose as mandatory. That first attempt produced a causal false-red on future output paths and historical references. The final design distinguishes mandatory routing authority from incidental/output mentions while retaining fail-closed concrete-route resolution.
+The global discovery oracle does **not** treat every path mentioned anywhere in prose as mandatory. That first attempt produced causal false-reds on future output paths, donor-only references and historical evidence mentions. The final design distinguishes mandatory routing authority from incidental/output mentions while retaining fail-closed concrete-route resolution.
 
 ## Additional variants found by the Worker before CLEAN
 
@@ -42,7 +42,8 @@ The requested circuit-breaker found and repaired variants beyond the two Reviewe
 
 1. **B1 future numeric ordering** — discovery originally accumulated lexicographically sorted filenames. A two-digit CTX extension could eventually make ordering depend on naming rather than numeric sequence. Contracts are now explicitly sorted by numeric CTX id.
 2. **B2 future-role coupling** — exact-contract re-discovery initially selected the contract slot from a closed mapping of current role names. A new role using an already-reviewed `<EXACT_WP>` slot could count the WP itself but miss contract-named mandatory repository sources. Resolution is now slot-semantic and role-name agnostic.
-3. **B2 global-discovery false-red** — the first repository-wide audit treated every path mention in every WP as mandatory. That incorrectly classified future output paths and historical references as context requirements. The CI oracle was split so exact WPs always count, dependencies/required-source surfaces count by contract, manifest authority remains strict, and incidental prose does not acquire semantic authority.
+3. **B2 global-discovery false-red** — the first repository-wide audit treated every path mention in every WP as mandatory. That incorrectly classified future output paths, donor-repository inputs and historical references as current repository context requirements. The CI oracle was split so exact WPs always count, dependencies/required-source surfaces count by contract, manifest authority remains strict, and incidental prose does not acquire semantic authority.
+4. **B2 duplicate-oracle drift** — an intermediate `ctx03-dynamic-universe-check.py` remained beside the production dynamic checker with slightly different discovery semantics. Even though it was not the CI gate, retaining two mutable completeness implementations would create a future self-confirmation/drift surface. The duplicate was removed; `ctx03-dynamic-context-check.py` is the single dynamic-universe/budget oracle exercised by CI and the final circuit-breaker.
 
 No variant above was deferred to the Reviewer.
 
