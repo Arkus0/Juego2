@@ -11,7 +11,10 @@
   },
   "identity_source": {"path": "Docs/workpacks/HK/WP-HK-GATE.md", "git_blob_sha": "36d0ae3985074026fcf06772baac9c07ecac518c"},
   "authoritative_sources": [
-    {"path": "Docs/workpacks/HK/WP-HK-GATE.md", "git_blob_sha": "36d0ae3985074026fcf06772baac9c07ecac518c", "kind": "accepted_gate_contract"}
+    {"path": "Docs/workpacks/HK/WP-HK-GATE.md", "git_blob_sha": "36d0ae3985074026fcf06772baac9c07ecac518c", "kind": "accepted_gate_contract"},
+    {"path": "Docs/evidence/WP-HK-GATE/FINAL_VERDICT.md", "git_blob_sha": "e6c197d8cbc6c35ef531a2f098c64d5bbaa9d60e", "kind": "accepted_final_verdict"},
+    {"path": "Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md", "git_blob_sha": "3d24417fa1abc81d3bedef561ade1d65a76c5abc", "kind": "accepted_proof_matrix"},
+    {"path": "Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md", "git_blob_sha": "678bfb2121d322bf22b5f4740ea5c2d9540b7d2c", "kind": "accepted_residual_risk"}
   ],
   "consumer_hints": ["WP-H1-02"],
   "exported_guarantees": [
@@ -28,7 +31,7 @@
     "A downstream Unity integration requires changing an accepted H0 engine-neutral boundary rather than adding a conforming adapter."
   ],
   "escalate_if": [
-    "The consumer needs an exact H0 semantic/proof detail not carried by this boundary capsule.",
+    "The consumer needs an exact H0 semantic/proof detail not carried by this boundary capsule; open the bound proof matrix/residual/verdict and any transitive source they invoke.",
     "Live GitHub or accepted completion metadata contradicts this accepted identity.",
     "A material question could change whether HK-GATE actually covers the downstream claim."
   ],
