@@ -5,8 +5,12 @@ on:
     types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
   workflow_dispatch:
     inputs:
+      pr_number:
+        description: Canonical pull request number owning this candidate
+        required: true
+        type: string
       candidate_sha:
-        description: Exact 40-character candidate SHA
+        description: Exact 40-character candidate SHA; must equal the PR HEAD
         required: true
         type: string
       mode:
@@ -21,9 +25,10 @@ on:
 permissions:
   contents: read
   actions: read
+  pull-requests: read
 
 concurrency:
-  group: arkus-candidate-${{ github.event.pull_request.number || inputs.candidate_sha || github.ref }}
+  group: arkus-candidate-${{ github.event.pull_request.number || inputs.pr_number || inputs.candidate_sha || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -63,7 +68,6 @@ jobs:
     timeout-minutes: 45
     env:
       TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.candidate_sha }}
-      PR_BODY: ${{ github.event.pull_request.body || '' }}
       ARKUS_EXECUTION_SUBSTRATE: github-actions-ubuntu-24.04
     steps:
       - name: Checkout exact candidate
@@ -80,28 +84,39 @@ jobs:
           test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
           test -z "$(git status --porcelain --untracked-files=all)"
 
-      - name: Classify validation scope
-        id: scope
+      - name: Resolve effective validation context
+        id: context
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
         shell: bash
         run: |
           set -euo pipefail
-          if printf '%s\n' "${PR_BODY}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
-            echo "process_only=true" >> "${GITHUB_OUTPUT}"
+          python3 scripts/validation-context.py self-test
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            jq '.pull_request' "${GITHUB_EVENT_PATH}" > "${RUNNER_TEMP}/validation-pr.json"
           else
-            echo "process_only=false" >> "${GITHUB_OUTPUT}"
+            [[ "${PR_NUMBER}" =~ ^[1-9][0-9]*$ ]] || { echo "::error::pr_number must be a positive integer"; exit 2; }
+            gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > "${RUNNER_TEMP}/validation-pr.json"
           fi
+          python3 scripts/validation-context.py resolve \
+            --pr-json "${RUNNER_TEMP}/validation-pr.json" \
+            --target-sha "${TARGET_SHA}" \
+            --github-output "${GITHUB_OUTPUT}"
 
       - name: Install pinned .NET SDK from global.json
-        if: ${{ steps.scope.outputs.process_only != 'true' && hashFiles('global.json') != '' }}
+        if: ${{ steps.context.outputs.process_only != 'true' && hashFiles('global.json') != '' }}
         uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         with:
           global-json-file: global.json
 
       - name: Run canonical observation
+        env:
+          ARKUS_WP: ${{ steps.context.outputs.wp }}
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.scope.outputs.process_only }}" == "true" ]]; then
+          if [[ "${{ steps.context.outputs.process_only }}" == "true" ]]; then
             rm -f EXECUTION_RECEIPT.txt
             cat > validation.log <<EOF
           PROCESS_ONLY_VALIDATION_V1
@@ -156,7 +171,6 @@ jobs:
     timeout-minutes: 60
     env:
       TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.candidate_sha }}
-      PR_BODY: ${{ github.event.pull_request.body || '' }}
       ARKUS_EXECUTOR_ROLE: WORKER
       ARKUS_EXECUTION_SUBSTRATE: github-actions-ubuntu-24.04
     steps:
@@ -174,29 +188,40 @@ jobs:
           test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
           test -z "$(git status --porcelain --untracked-files=all)"
 
-      - name: Classify validation scope
-        id: scope
+      - name: Resolve effective validation context
+        id: context
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
         shell: bash
         run: |
           set -euo pipefail
-          if printf '%s\n' "${PR_BODY}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
-            echo "process_only=true" >> "${GITHUB_OUTPUT}"
+          python3 scripts/validation-context.py self-test
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            jq '.pull_request' "${GITHUB_EVENT_PATH}" > "${RUNNER_TEMP}/validation-pr.json"
           else
-            echo "process_only=false" >> "${GITHUB_OUTPUT}"
+            [[ "${PR_NUMBER}" =~ ^[1-9][0-9]*$ ]] || { echo "::error::pr_number must be a positive integer"; exit 2; }
+            gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > "${RUNNER_TEMP}/validation-pr.json"
           fi
+          python3 scripts/validation-context.py resolve \
+            --pr-json "${RUNNER_TEMP}/validation-pr.json" \
+            --target-sha "${TARGET_SHA}" \
+            --github-output "${GITHUB_OUTPUT}"
 
       - name: Reuse prior exact-SHA GREEN receipt when available
         id: reuse
-        if: ${{ steps.scope.outputs.process_only != 'true' }}
+        if: ${{ steps.context.outputs.process_only != 'true' && steps.context.outputs.wp == 'WP-HK-00' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          ARKUS_WP: ${{ steps.context.outputs.wp }}
         shell: bash
         run: |
           set -euo pipefail
           echo "reused=false" >> "${GITHUB_OUTPUT}"
 
-          # HK00 compatibility fast-path. The receipt itself remains the semantic
-          # authority; this workflow only validates and projects that durable fact.
+          # Compatibility is intentionally exact-WP. An HK-00 receipt can only
+          # discharge an HK-00 request; same bytes do not imply same WP gates.
+          [[ "${ARKUS_WP}" == "WP-HK-00" ]] || { echo "::error::HK-00 receipt reuse requested for ${ARKUS_WP}"; exit 2; }
           [[ -f scripts/hk00-verify-exact-sha.sh ]] || exit 0
 
           artifact_name="hk00-receipt-${TARGET_SHA}"
@@ -229,9 +254,11 @@ jobs:
           unzip -p "${tmp}/receipt.zip" EXECUTION_RECEIPT.txt > "${tmp}/EXECUTION_RECEIPT.txt"
 
           receipt="${tmp}/EXECUTION_RECEIPT.txt"
+          python3 scripts/validation-context.py receipt-match \
+            --receipt "${receipt}" \
+            --requested-wp "${ARKUS_WP}" \
+            --target-sha "${TARGET_SHA}"
           grep -Fxq 'EXECUTION_RECEIPT_V1' "${receipt}"
-          grep -Fxq "WP: WP-HK-00" "${receipt}"
-          grep -Fxq "Candidate SHA: ${TARGET_SHA}" "${receipt}"
           grep -Fxq 'Candidate clean before: YES' "${receipt}"
           grep -Fxq 'Candidate clean after: YES' "${receipt}"
           grep -Eq '^Required gates: .*foundational-proof=success; .*causal-negative-controls=success; .*evidence-reconciliation=GREEN$' "${receipt}"
@@ -240,11 +267,13 @@ jobs:
           cp "${receipt}" EXECUTION_RECEIPT.txt
           {
             echo "Reused prior exact-SHA GREEN receipt."
+            echo "Requested WP: ${ARKUS_WP}"
             echo "Source workflow run: ${source_run_id}"
             echo "Source artifact: ${artifact_name} (${artifact_id})"
             cat EXECUTION_RECEIPT.txt
           } > validation.log
           cat > REUSED_RECEIPT_SOURCE.txt <<EOF
+          Requested WP: ${ARKUS_WP}
           Candidate SHA: ${TARGET_SHA}
           Source workflow run: ${source_run_id}
           Source artifact: ${artifact_name}
@@ -255,17 +284,19 @@ jobs:
           echo "source_run_id=${source_run_id}" >> "${GITHUB_OUTPUT}"
 
       - name: Install pinned .NET SDK from global.json
-        if: ${{ steps.scope.outputs.process_only != 'true' && steps.reuse.outputs.reused != 'true' && hashFiles('global.json') != '' }}
+        if: ${{ steps.context.outputs.process_only != 'true' && steps.reuse.outputs.reused != 'true' && hashFiles('global.json') != '' }}
         uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         with:
           global-json-file: global.json
 
       - name: Run canonical frozen-candidate verifier
         if: ${{ steps.reuse.outputs.reused != 'true' }}
+        env:
+          ARKUS_WP: ${{ steps.context.outputs.wp }}
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.scope.outputs.process_only }}" == "true" ]]; then
+          if [[ "${{ steps.context.outputs.process_only }}" == "true" ]]; then
             rm -f EXECUTION_RECEIPT.txt REUSED_RECEIPT_SOURCE.txt
             cat > validation.log <<EOF
           PROCESS_ONLY_VALIDATION_V1
