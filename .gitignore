@@ -6,3 +6,6 @@ artifacts/
 .vs/
 .idea/
 /validation.log
+
+# Vendored Claude tokenizer for non-contractual token-budget measurement (fetch per script docstring)
+scripts/token-budget/tokenizer.json
