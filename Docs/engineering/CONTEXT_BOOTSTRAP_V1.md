@@ -1,6 +1,6 @@
 # Context Bootstrap v1
 
-Status: **CTX-01 REPAIR CANDIDATE / PROCESS_ONLY**
+Status: **CTX-01 ACCEPTED / CTX-02 CAPSULE AMENDMENT CANDIDATE**
 
 ## Purpose
 
@@ -10,7 +10,8 @@ This protocol changes initial selection/navigation only. It does not change prod
 
 Machine-readable boot profiles: `Docs/engineering/context-bootstrap-profiles.json`  
 Derived navigation index: `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json`  
-Mechanical freshness/profile check: `scripts/context-bootstrap-check.py`
+Mechanical freshness/profile check: `scripts/context-bootstrap-check.py`  
+Post-CTX-02 accepted-predecessor navigation: `Docs/engineering/CONTEXT_CAPSULE_V1.md`
 
 ## 1. Authority is question-specific
 
@@ -23,6 +24,8 @@ A local checkout, session handoff or derived index may navigate to that state bu
 ### B. Semantic / proof / acceptance state
 
 For product/process semantics, scope/DoD, inherited guarantees, accepted proof and architecture, the authoritative sources are the exact repository contracts, code/tests and accepted evidence named by `AGENTS.md` and the applicable workpack/protocol.
+
+Accepted-contract capsules, once CTX-02 is accepted, remain navigation only. They may reduce the initial predecessor read but never replace an authoritative source when the exact material detail, proof, contradiction or reopen question requires it.
 
 ### C. Derived accepted-state navigation
 
@@ -44,7 +47,7 @@ This avoids the impossible self-reference `file contains SHA of commit that cont
 
 ## 2. Minimum profile means start here, not stop here
 
-The role profile selects an initial pack, not a maximum-read rule. Deepen whenever exact dependency/order/gate meaning is unresolved, the current claim binds proof/architecture outside the pack, live GitHub contradicts compact state, a repair touches inherited guarantees, semantic/proof conclusions would rely only on a summary/index, or material ambiguity remains.
+The role profile selects an initial pack, not a maximum-read rule. Deepen whenever exact dependency/order/gate meaning is unresolved, the current claim binds proof/architecture outside the pack, live GitHub contradicts compact state, a repair touches inherited guarantees, semantic/proof conclusions would rely only on a summary/index/capsule, a capsule escalation trigger fires, or material ambiguity remains.
 
 Escalation is monotonic: read authoritative context until the material question is closed or stop blocked/not-ready.
 
@@ -58,13 +61,17 @@ Planner/milestone roles normally start with ROADMAP because milestone ordering/g
 
 ## 4. Mandatory predecessor/reviewer behavior remains intact
 
-Workers still perform the complete `PREDECESSOR_CONTRACT_CHECK` required by `AGENTS.md` / `WORKER_REVIEW_PROTOCOL.md`. CTX-02, not CTX-01, owns any future capsule mechanism.
+Workers still perform the complete `PREDECESSOR_CONTRACT_CHECK` required by `AGENTS.md` / `WORKER_REVIEW_PROTOCOL.md`.
 
-Independent Reviewers may use the index to navigate but must independently open authoritative predecessor evidence and the complete frozen candidate material. Worker prose/index hints are never review proof.
+Before CTX-02 adoption, predecessor reconstruction uses the pre-capsule authoritative read path. After CTX-02 independently passes, merges and completes DocSync, `CONTEXT_CAPSULE_V1.md` may supply a mechanically validated accepted-predecessor starting representation plus exact provenance. This changes repeated initial reads, not the inherited guarantee or its authority. Missing/stale/lossy/mismatched capsules, non-compressible source requirements, material details outside the capsule, directly binding proof/architecture and concrete reopen questions all force authoritative deepening.
+
+Independent Reviewers may use the state index and, after CTX-02 adoption, validated capsules to navigate. They must still independently reconstruct the inherited/current ownership split and open authoritative predecessor evidence whenever the verdict materially depends on the inherited guarantee or a contradiction/reopen question. Worker prose/index/capsule hints are never review proof.
 
 ## 5. H1 local executor remains narrower
 
 The `h1_local_executor` profile preserves `H1_REMOTE_LOCAL_EXECUTION.md`: external anchor -> anchored manifest -> exact WP -> manifest-named executable surfaces. It returns `REMOTE_DECISION_REQUIRED` rather than widening context to make semantic/design decisions.
+
+Accepted-contract capsules do not broaden local executor discretion.
 
 ## 6. Candidate/source validation
 
@@ -85,6 +92,8 @@ python3 scripts/context-bootstrap-check.py \
 
 `source_anchor_valid=true` proves only that the candidate was reconstructed from the declared source. It does not authorize mutable hints on live `main`.
 
+Capsules have a different freshness model because they bind immutable accepted contract identities. Their validation is defined by `CONTEXT_CAPSULE_V1.md`; an unrelated later `main` commit does not by itself stale an accepted capsule.
+
 ## 7. DocSync persistence rule
 
 After independent PASS and implementation merge:
@@ -96,8 +105,9 @@ After independent PASS and implementation merge:
 5. persist the DocSync bytes in a direct child/merge whose **first parent is `SOURCE_MAIN_SHA`**;
 6. if `main` moved before persistence, stop, reconstruct again and use the new source; do not force a stale projection;
 7. after persistence, verify live freshness with both the current main SHA and its first parent;
-8. keep transient PR/branch/review/check state out of the reusable index;
-9. emit `DOCSYNC_COMPLETE` only after reconciliation and the live freshness check pass.
+8. keep transient PR/branch/review/check state out of the reusable index and accepted-contract capsules;
+9. after CTX-02 adoption, maintain accepted PA result capsule coverage as defined by `CONTEXT_CAPSULE_V1.md` without rewriting unchanged capsules solely because `main` advanced;
+10. emit `DOCSYNC_COMPLETE` only after reconciliation and required live/capsule checks pass.
 
 Mechanical live check:
 
@@ -117,18 +127,19 @@ The index is fresh only for that persistence commit. Any later main advance inte
 2. Read its machine profile and minimum starting pack.
 3. Query live GitHub for mutable state required by the role.
 4. If using main-derived accepted-state hints, run the live first-parent freshness check.
-5. Read the exact authoritative contract(s).
-6. Decide: CONTEXT_CLOSED | ESCALATE:<reason> | BLOCKED:<reason>.
-7. If ESCALATE, open the named authoritative source(s) and repeat.
-8. Never treat missing/stale compact context as negative evidence or permission.
+5. After CTX-02 adoption, if using an accepted-contract capsule, validate its accepted identity/source/coverage and apply its escalation/non-compressible rules.
+6. Read the exact authoritative contract(s) still required by the current material question.
+7. Decide: CONTEXT_CLOSED | ESCALATE:<reason> | BLOCKED:<reason>.
+8. If ESCALATE, open the named authoritative source(s) and repeat.
+9. Never treat missing/stale compact context as negative evidence or permission.
 ```
 
 ## 9. Repair lineage and adoption boundary
 
-Independent review of candidate `d972db98eca5527e7c30596ea069866dd878069b` exposed the self-referential old equality rule. Review FAIL `#5271197524` and revert PR `#109` returned `main` to accepted state `a85954539e0ef397009e87af322eb735d58ccc0d`.
+Independent review of the original CTX-01 candidate `d972db98eca5527e7c30596ea069866dd878069b` exposed the self-referential old equality rule. Review FAIL `#5271197524` and revert PR `#109` returned `main` to accepted state `a85954539e0ef397009e87af322eb735d58ccc0d`.
 
-The old rule `generated_from_main_sha == current live main SHA` is superseded for CTX-01 by the first-parent contract above. No product or predecessor semantics change.
+The repaired CTX-01 candidate `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39` independently passed review `#5273801466`, merged as `fbd3e5526e760efc89f54e7c12a274af10d4765f`, and completed DocSync on live main `f7b4f1e8247dfc927203dca6754b71aaa53938f3`. Context Bootstrap v1 is therefore binding.
 
-Context Bootstrap v1 becomes binding only after this repaired `WP-CTX-01` receives fresh independent PASS, merges, and completes DocSync. Until then, pre-CTX bootstrap rules on `main` remain authoritative.
+The old rule `generated_from_main_sha == current live main SHA` remains superseded by the first-parent contract above. No product or predecessor semantics changed in CTX-01.
 
-CTX-02 may later add accepted-contract capsules but may not weaken this authority/escalation model. CTX-03 may later restructure repeated evidence/state/history representation but may not promote derived navigation to semantic authority.
+The capsule amendments in this candidate become binding only after `WP-CTX-02` receives independent PASS, merges and completes successful DocSync. Until then, the accepted CTX-01 predecessor-read behavior on `main` remains authoritative and this candidate's capsules are evidence only. CTX-03 may later restructure repeated evidence/state/history representation but may not promote derived navigation to semantic authority.
