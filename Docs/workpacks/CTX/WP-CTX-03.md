@@ -34,6 +34,7 @@ The full authoritative source remains available whenever escalation is required.
 - representative H1/CITY/PA Worker and Reviewer session measurements;
 - the accepted PA result chain and transverse PA amendments actually required by live PA contracts;
 - live GitHub history of independent FAILs/repaired candidates used for the pre-freeze-gate classification;
+- live GitHub history of incomplete or invalid Worker→Reviewer handoffs, including the CTX-01 family and the CTX-02 handoff-lint/freeze-repair cycle, re-derived from exact repository/PR state rather than chat memory;
 - current role/bootstrap profiles and all documents that every normal role must read.
 
 Any external/token-budget analysis is **input only**. Re-derive figures from the exact accepted repository state before using them as CTX-03 evidence; do not inherit historical counts, repair rates or projected token values as facts without remeasurement.
@@ -85,6 +86,32 @@ Requirements:
 - ensure a fresh Reviewer can still locate the complete candidate evidence, exact diff and authoritative sources from the compact handoff alone plus live GitHub;
 - no generated/derived registry may define its own proof universe without an independent discovery/check path.
 
+### 4a. Transactional Worker review-ready closure
+
+Treat Worker→Reviewer closure as a first-class state transition, not as prose appended after implementation. `WORKER_PRE_REVIEW: CLEAN` is permission to begin closure; it is **not** completion and must never by itself justify telling the user or Reviewer that the WP is ready.
+
+A Worker may claim `REVIEW_READY` / “pass to Reviewer” only after one exact candidate satisfies the complete terminal invariant:
+
+- the final repository/evidence byte mutation happened before the final complete Worker pre-review;
+- that pre-review is `WORKER_PRE_REVIEW: CLEAN` for the exact resulting candidate bytes;
+- one exact 40-character HEAD is recorded consistently as `Candidate HEAD SHA` and `Frozen candidate SHA`;
+- `Worker state: FROZEN_FOR_REVIEW`, `Branch frozen: YES`, `Worker verdict: IN_REVIEW` and `Reviewer verdict: PENDING` are present in the canonical handoff;
+- the PR is Ready rather than Draft and remains mergeable;
+- the Ready-state Worker handoff lint is GREEN on that same exact SHA;
+- the Ready-state freeze exact-SHA validation is GREEN on that same exact SHA;
+- a final live-state read confirms PR HEAD still equals the frozen SHA after those gates complete.
+
+The Worker role/repair instructions must end with this small deterministic closure epilogue. They must not report “done”, “ready for Reviewer” or equivalent while any terminal predicate is false, pending or stale.
+
+If a Ready-state gate discovers a defect that requires any repository/evidence byte mutation, the prior clean/freeze is invalid: return to Draft + ACTIVE, repair, rerun the **complete** Worker pre-review after the last mutation, freeze the new exact SHA and repeat Ready-state gates. A metadata-only correction that leaves repository bytes and exact HEAD unchanged does not invent a new candidate, but the affected Ready-state gates must still be rerun and observed GREEN before handoff completion.
+
+Reproduce representative historical premature/incomplete handoffs from live GitHub, including at minimum:
+
+- the CTX-02 class where implementation and pre-Ready validations were GREEN but Ready-state handoff lint rejected a missing canonical predecessor-check marker; and
+- at least one independently reconstructed CTX-01 or other pre-CTX-03 handoff case where substantive work was complete but canonical Worker→Reviewer closure state was incomplete/stale.
+
+The reproduction must prove the terminal invariant prevents handoff until the real missing condition is restored. Do not encode chat-specific incident text as authority; derive the fixture from durable GitHub/repository evidence.
+
 ### 5. ROADMAP/history separation and DocSync
 
 - separate current ROADMAP/gate planning from long accepted closure narrative while preserving exact history/provenance under `Docs/history/` or equivalent;
@@ -118,7 +145,9 @@ Classify each relevant FAIL as:
 - **semantic/reasoning** — independent Reviewer judgment is the intended detector;
 - **mixed** — a deterministic precondition is checkable but semantic judgment remains necessary.
 
-Only deterministic portions may be moved into a pre-freeze gate. Do not build a gate merely to lower the observed Reviewer FAIL rate.
+Classify incomplete Worker→Reviewer closure incidents alongside the FAIL corpus even when no independent Reviewer verdict was emitted, because a deterministic handoff defect that correctly prevents review is still a process defect worth moving left.
+
+Only deterministic portions may be moved into a pre-freeze/closure gate. Do not build a gate merely to lower the observed Reviewer FAIL rate.
 
 For each adopted mechanical check, include a negative conformance/reproduction fixture that removes or corrupts the **real required condition**, not just the declaration consumed by the gate. The fixture must turn red for the causal defect and green after the actual condition is restored.
 
@@ -152,6 +181,7 @@ Leave the process-envelope/checker reusable by a future clean consumer repositor
 - no budget whose normal operation requires every Worker/Reviewer to read the budget file;
 - no success claim based solely on average tokens, lower Reviewer FAIL rate, fewer Reviewer source reads or a single un-escalated happy path;
 - no deterministic gate for a semantic judgment that cannot be checked causally;
+- no Worker completion claim based solely on `WORKER_PRE_REVIEW: CLEAN`, pre-Ready CI, local validation or intended metadata; live Ready-state terminal predicates must actually be GREEN;
 - no weakening of independent Reviewer authority, exact-source access, predecessor reopen rules or exact-SHA review;
 - no product/runtime change;
 - no CTX-03 implementation before CTX-02 has PASSed, merged and completed DocSync.
@@ -166,6 +196,10 @@ Leave the process-envelope/checker reusable by a future clean consumer repositor
 - the process-envelope goes red when a required-context fixture crosses a reviewed role ceiling and remains green for unrelated repository growth outside the role read set;
 - increasing a ceiling cannot happen as an unreviewed side effect of editing another protocol/source;
 - a pre-freeze gate fixture removes/corrupts the real required condition and turns red, rather than merely deleting the declaration the gate parses;
+- the Worker review-ready closure fails closed when `WORKER_PRE_REVIEW: CLEAN` exists but the PR is still Draft/ACTIVE, the frozen SHA is absent/stale, Ready-state handoff lint is RED/pending, freeze exact-SHA is RED/pending, or live HEAD moved;
+- a repository/evidence byte mutation after CLEAN/freeze invalidates review-ready state until the complete pre-review and freeze sequence is rerun on the new exact SHA;
+- the CTX-02 missing-predecessor-marker handoff reproduction turns RED before the real marker is restored and GREEN only after the complete closure sequence succeeds;
+- at least one CTX-01 or other independently reconstructed historical incomplete-handoff case is likewise prevented from reaching review-ready state until its causal terminal condition is restored;
 - ROADMAP-history separation preserves every accepted milestone/gate pointer needed to reconstruct past closure;
 - compact PR handoff still lets a fresh Reviewer locate complete candidate evidence and full diff without private chat context;
 - DocSync on a representative accepted transition updates compact state once and does not leave contradictory next-WP state in normal bootstrap surfaces;
@@ -180,8 +214,9 @@ On an exact accepted post-CTX-02 repository state:
 3. every selected historical quality-preservation case remains causally reachable from compact context through direct read, deterministic escalation or fail-closed reconstruction;
 4. independent Reviewer behavior and exact authoritative-source access are unchanged; no PASS/FAIL claim may use compact material as proof authority;
 5. the role/profile process-envelope fails closed on reviewed ceiling overage and turns future mandatory-context growth into an explicit reviewed decision;
-6. historical FAIL classification is re-derived and any adopted pre-freeze gate is limited to deterministic causal checks with negative conformance fixtures;
-7. representative DocSync/history/handoff transitions remain reconstructible and free of contradictory compact state.
+6. historical FAIL/incomplete-handoff classification is re-derived and any adopted pre-freeze/closure gate is limited to deterministic causal checks with negative conformance fixtures;
+7. representative DocSync/history/handoff transitions remain reconstructible and free of contradictory compact state;
+8. a Worker cannot reach or report review-ready state until the exact terminal invariant is satisfied on live GitHub, including Ready state, exact frozen HEAD, final post-mutation CLEAN, GREEN handoff lint and GREEN freeze exact-SHA validation; the CTX-02 handoff defect and at least one CTX-01/other historical incomplete-handoff family are reproduced as fail-closed controls.
 
 If token usage falls but any quality-preservation control fails, CTX-03 is **FAIL**. If review quality is preserved but a claimed token saving does not exceed measurement uncertainty, record that route as **no demonstrated material saving** rather than overstating the result.
 
@@ -189,6 +224,6 @@ Any remaining duplication must be classified as intentional authority, causal na
 
 ## Definition of Done
 
-The three-WP CTX programme has independently reviewed role routing, safe predecessor compression, structured evidence/state/history handling, auditable escalations, cumulative-PA handling, a bounded context-growth envelope and measured quality-preserving closure.
+The three-WP CTX programme has independently reviewed role routing, safe predecessor compression, structured evidence/state/history handling, auditable escalations, cumulative-PA handling, a bounded context-growth envelope, transactional Worker review-ready closure and measured quality-preserving closure.
 
-No additional CTX gate is required unless CTX-03 evidence itself reveals an unresolved process-quality defect. A future clean consumer repository can reuse the process-envelope primitive without inheriting Juego2 historical corpus, but CTX-03 does not itself decide the H2/H3 repository split.
+No additional CTX gate is required unless CTX-03 evidence itself reveals an unresolved process-quality defect. A future clean consumer repository can reuse the process-envelope and review-ready closure primitives without inheriting Juego2 historical corpus, but CTX-03 does not itself decide the H2/H3 repository split.
