@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Fail-closed envelope for repository-backed dynamic mandatory context."""
+"""Fail-closed envelope for repository-backed dynamic mandatory context.
+
+The dynamic envelope deliberately distinguishes a repository path merely mentioned
+by a contract from a repository source that the route makes mandatory. Exact
+contracts, direct dependency contracts, explicit required-input/binding sources,
+concrete repository evidence bindings, and manifest-named local-executor inputs
+are budgeted. Historical/output/example paths are not promoted to mandatory reads
+just because their spelling appears in prose.
+"""
 from __future__ import annotations
 
 import argparse
@@ -17,6 +25,7 @@ PLACEHOLDER_RE = re.compile(r"<([A-Z0-9_]+)>")
 REPO_PATH_RE = re.compile(r"(?<![A-Za-z0-9_./-])((?:Docs|scripts|Assets|Packages|ProjectSettings|\.github)/[A-Za-z0-9_./+@-]+\.[A-Za-z0-9_-]+)")
 DEPENDENCY_LINE_RE = re.compile(r"^Depends on:\s*(.+)$", re.MULTILINE | re.IGNORECASE)
 WP_ID_RE = re.compile(r"\b(WP-[A-Z0-9]+(?:-[A-Z0-9]+)+)\b")
+SECTION_RE = re.compile(r"^##\s+(.+?)\s*$")
 
 EXTERNAL = "external"
 REPOSITORY = "repository"
@@ -24,7 +33,8 @@ REPOSITORY_OR_EXTERNAL = "repository_or_external"
 DERIVED_DEPENDENCY_SET = "derived_dependency_set"
 DERIVED_MANIFEST_SET = "derived_manifest_set"
 
-# Checker-owned. The profile being audited cannot relabel its own placeholders.
+# Checker-owned. A profile under audit cannot relabel a placeholder to escape a
+# repository budget. Any new placeholder class fails closed pending review.
 DYNAMIC_SLOT_CLASSIFICATION = {
     "<EXACT_WP>": REPOSITORY,
     "<CANONICAL_PR_LATEST_FAIL>": EXTERNAL,
@@ -41,10 +51,30 @@ DYNAMIC_SLOT_CLASSIFICATION = {
     "<MANIFEST_NAMED_FILES_AND_SCRIPTS>": DERIVED_MANIFEST_SET,
 }
 EXACT_CONTRACT_SLOTS = (
-    "<EXACT_WP>", "<EXACT_H1_WP>", "<EXACT_ACCEPTED_WP>",
+    "<EXACT_WP>",
+    "<EXACT_H1_WP>",
+    "<EXACT_ACCEPTED_WP>",
     "<EXACT_MILESTONE_OR_GATE_CONTRACT>",
 )
 MANIFEST_NAME_MARKERS = ("manifest", "local_execution", "local-execution")
+MANDATORY_SECTION_MARKERS = ("required input", "required source", "binding input")
+MANDATORY_LINE_MARKERS = (
+    "mandatory repository source",
+    "required repository source",
+    "dependency evidence",
+    "binding proof standard",
+    "execution overlay",
+)
+EXTERNAL_CONTEXT_MARKERS = (
+    "donor ",
+    "donor`",
+    "external repo",
+    "external repository",
+    "upstream repo",
+    "upstream repository",
+    "arkus0/juego`",
+    "arkus0/juego ",
+)
 
 
 def load(path: Path):
@@ -101,6 +131,41 @@ def extract_repo_paths(text: str) -> set[str]:
     return set(REPO_PATH_RE.findall(text))
 
 
+def _line_is_external_context(line: str) -> bool:
+    lower = line.lower()
+    return any(marker in lower for marker in EXTERNAL_CONTEXT_MARKERS)
+
+
+def mandatory_contract_paths(text: str) -> set[str]:
+    """Derive repository-shaped mandatory inputs from contract semantics.
+
+    This intentionally does not return every Docs/... spelling. The independent
+    contract grammar owns which locations are input/binding surfaces; the WP can
+    name concrete members, but cannot change this grammar or the slot classes.
+    Missing repository-shaped required inputs remain in the set and fail closed
+    later unless the same line explicitly identifies an external/donor source.
+    """
+    sources: set[str] = set()
+    current_section = ""
+    for raw_line in text.splitlines():
+        match = SECTION_RE.match(raw_line.strip())
+        if match:
+            current_section = match.group(1).strip().lower()
+            continue
+        line = raw_line.strip()
+        if not line:
+            continue
+        lower = line.lower()
+        section_mandatory = any(marker in current_section for marker in MANDATORY_SECTION_MARKERS)
+        line_mandatory = any(marker in lower for marker in MANDATORY_LINE_MARKERS)
+        if not (section_mandatory or line_mandatory):
+            continue
+        if _line_is_external_context(line):
+            continue
+        sources.update(extract_repo_paths(line))
+    return sources
+
+
 def find_exact_contract_binding(profile_name: str, bindings: dict) -> str | None:
     """Resolve by slot semantics, never by a closed list of role names."""
     candidates: list[str] = []
@@ -121,25 +186,28 @@ def resolve_wp_contract(root: Path, wp_id: str) -> str:
     return matches[0].relative_to(root).as_posix()
 
 
-def resolve_dependency_sources(root: Path, exact_contract: str | None) -> set[str]:
+def direct_dependency_contracts(root: Path, text: str) -> set[str]:
+    result: set[str] = set()
+    for line in DEPENDENCY_LINE_RE.findall(text):
+        for dep in WP_ID_RE.findall(line):
+            result.add(resolve_wp_contract(root, dep))
+    return result
+
+
+def resolve_dependency_sources(root: Path, exact_contract: str | None, binding_value=None) -> set[str]:
     if not exact_contract:
         raise ValueError("dependency-derived slot has no exact contract binding")
     path = root / exact_contract
     if not path.is_file():
         raise FileNotFoundError(f"exact contract missing: {exact_contract}")
     text = path.read_text(encoding="utf-8")
-    sources = extract_repo_paths(text)
-    dependency_ids: set[str] = set()
-    for line in DEPENDENCY_LINE_RE.findall(text):
-        dependency_ids |= set(WP_ID_RE.findall(line))
-    for dep in dependency_ids:
-        dep_contract = resolve_wp_contract(root, dep)
-        sources.add(dep_contract)
-        for evidence_root in (root / "Docs/evidence" / dep, root / "Docs/evidence" / dep.removeprefix("WP-")):
-            if evidence_root.is_dir():
-                for p in evidence_root.rglob("*"):
-                    if p.is_file():
-                        sources.add(p.relative_to(root).as_posix())
+    sources = direct_dependency_contracts(root, text)
+    sources |= mandatory_contract_paths(text)
+    if binding_value is not None:
+        if _is_external_binding(binding_value):
+            pass
+        else:
+            sources.update(_as_paths(binding_value))
     return sources
 
 
@@ -150,6 +218,8 @@ def resolve_manifest_sources(root: Path, bindings: dict) -> set[str]:
     path = root / raw
     if not path.is_file():
         raise FileNotFoundError(f"anchored local manifest missing: {raw}")
+    # A concrete local manifest is itself independent route authority for the
+    # manifest-named file/script set. Missing named repository files fail closed.
     sources = extract_repo_paths(path.read_text(encoding="utf-8"))
     sources.discard(raw)
     if not sources:
@@ -175,15 +245,15 @@ def dynamic_policy(cfg: dict) -> dict:
     return policy
 
 
-def _validate_repo_paths(root: Path, profile_name: str, sources: set[str], errors: list[str]) -> set[str]:
+def _validate_repo_paths(root: Path, label: str, sources: set[str], errors: list[str]) -> set[str]:
     clean: set[str] = set()
     for raw in sources:
         if raw.startswith("/") or ".." in Path(raw).parts:
-            errors.append(f"{profile_name}: invalid repository source path {raw!r}")
+            errors.append(f"{label}: invalid repository source path {raw!r}")
             continue
         path = root / raw
         if not path.is_file():
-            errors.append(f"{profile_name}: mandatory repository source missing: {raw}")
+            errors.append(f"{label}: mandatory repository source missing: {raw}")
         else:
             clean.add(raw)
     return clean
@@ -228,7 +298,7 @@ def resolve_route(root: Path, profile_name: str, bindings: dict) -> tuple[set[st
                     errors.append(f"{profile_name}: {slot}: {exc}")
         elif kind == DERIVED_DEPENDENCY_SET:
             try:
-                sources.update(resolve_dependency_sources(root, exact))
+                sources.update(resolve_dependency_sources(root, exact, bindings.get(slot)))
             except Exception as exc:
                 errors.append(f"{profile_name}: dependency-derived slot failed closed: {exc}")
         elif kind == DERIVED_MANIFEST_SET:
@@ -237,13 +307,15 @@ def resolve_route(root: Path, profile_name: str, bindings: dict) -> tuple[set[st
             except Exception as exc:
                 errors.append(f"{profile_name}: manifest-derived slot failed closed: {exc}")
 
-    # Exact route contract itself plus repository paths named by it are independently
-    # re-discovered. A caller cannot hide a required path by omitting a binding.
+    # Independent reconstruction from the exact contract prevents a caller from
+    # hiding a required-input path by omitting it from its binding payload.
     if exact:
         p = root / exact
         if p.is_file():
+            text = p.read_text(encoding="utf-8")
             sources.add(exact)
-            sources.update(extract_repo_paths(p.read_text(encoding="utf-8")))
+            sources |= mandatory_contract_paths(text)
+            sources |= direct_dependency_contracts(root, text)
         else:
             errors.append(f"{profile_name}: exact route contract missing: {exact}")
     manifest = bindings.get("<ANCHORED_LOCAL_EXECUTION_MANIFEST>")
@@ -285,25 +357,16 @@ def audit_resolved_route(root: Path, cfg: dict, profile_name: str, bindings: dic
 
 
 def discover_workpack_routes(root: Path) -> list[tuple[str, set[str]]]:
-    """Independent future-WP discovery; no CANONICAL_ROUTE_CONFIGS list involved."""
+    """Discover every current/future WP without a representative-route allowlist."""
     routes: list[tuple[str, set[str]]] = []
     for path in sorted((root / "Docs/workpacks").glob("**/WP-*.md")):
         if not path.is_file():
             continue
         rel = path.relative_to(root).as_posix()
         text = path.read_text(encoding="utf-8")
-        sources = {rel} | extract_repo_paths(text)
-        dependency_ids: set[str] = set()
-        for line in DEPENDENCY_LINE_RE.findall(text):
-            dependency_ids |= set(WP_ID_RE.findall(line))
-        for dep in dependency_ids:
-            dep_contract = resolve_wp_contract(root, dep)
-            sources.add(dep_contract)
-            for evidence_root in (root / "Docs/evidence" / dep, root / "Docs/evidence" / dep.removeprefix("WP-")):
-                if evidence_root.is_dir():
-                    for evidence in evidence_root.rglob("*"):
-                        if evidence.is_file():
-                            sources.add(evidence.relative_to(root).as_posix())
+        sources = {rel}
+        sources |= mandatory_contract_paths(text)
+        sources |= direct_dependency_contracts(root, text)
         routes.append((rel, sources))
     return routes
 
@@ -414,12 +477,12 @@ def self_test() -> None:
         assert slot_universe_errors(root) == []
         future_wp = "Docs/workpacks/FUTURE/WP-FUTURE-77.md"
         proof = "Docs/evidence/FUTURE-77/proof.md"
-        _write(root, future_wp, f"# future\nMandatory repository source: {proof}\n")
+        output = "Docs/evidence/FUTURE-77/future-output.md"
         _write(root, proof, "proof\n")
+        _write(root, future_wp, f"# future\nMandatory repository source: {proof}\nOutput later: {output}\n")
         route = audit_resolved_route(root, cfg, "worker", {"<EXACT_WP>": future_wp})
         paths = {r["path"] for r in route["sources"]}
-        assert route["errors"] == [] and future_wp in paths and proof in paths
-        # A new role using an already-reviewed slot class inherits exact-contract discovery.
+        assert route["errors"] == [] and future_wp in paths and proof in paths and output not in paths
         data = _profiles_fixture()
         data["profiles"]["future_role"] = {"initial_reads": ["<EXACT_WP>"]}
         _write(root, str(PROFILES), json.dumps(data))
@@ -439,7 +502,8 @@ def main() -> int:
     p.add_argument("--self-test", action="store_true")
     args = p.parse_args()
     if args.self_test:
-        self_test(); return 0
+        self_test()
+        return 0
     root = args.repo_root.resolve()
     try:
         cfg = load(root / args.config)
