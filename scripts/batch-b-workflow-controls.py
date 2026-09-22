@@ -15,7 +15,7 @@ def validate_reuse(text: str) -> list[str]:
         "exact candidate checkout": "ref: ${{ steps.identity.outputs.sha }}\n          path: candidate",
         "canonical live handoff lint": "validate-worker-handoff.py \\\n            --head-sha \"${sha}\" --repo-root candidate",
         "complete reuse identity": "reuse-context.py resolve",
-        "reuse digest read": "reuse_context_digest=\"$(jq -r '.reuse_context_digest' REUSE_CONTEXT.json)\"",
+        "reuse digest read": "reuse_digest=\"$(jq -r '.reuse_context_digest' REUSE_CONTEXT.json)\"",
         "review-ready key bound to reuse digest": 'key="review-ready:${PR}:${SHA}:${REUSE_CONTEXT_DIGEST}"',
     }
     return [label for label, needle in required.items() if needle not in text]
