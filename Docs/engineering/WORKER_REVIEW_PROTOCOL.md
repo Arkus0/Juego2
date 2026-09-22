@@ -1,6 +1,6 @@
 # Worker → Reviewer Protocol
 
-Version: 1.10 — 2026-09-22
+Version: 1.9 — 2026-09-22
 
 ## Purpose
 
@@ -20,11 +20,11 @@ Accepted predecessor guarantees are compositional. A downstream WP is expected t
 
 ## Adoption boundary
 
-Version 1.10 adds the Batch A Worker-environment preflight amendment. It becomes binding only after the operational-hardening Batch A PR has merged to `main`, and only for an implementation or repair cycle that first enters `DRAFT + ACTIVE` after that merge. A candidate or cycle already active, frozen or in review before adoption is grandfathered and is not reopened merely to satisfy the new preflight. If a later fresh repair cycle begins after adoption, that new repair cycle is governed by v1.10. This prospective boundary explicitly prevents Batch A from retroactively changing DW-02 or any other already-running/frozen product cycle.
+The Batch A amendment adds the Worker-environment preflight to Version 1.9 without replacing the CTX-02 capsule contract. It becomes binding only after the operational-hardening Batch A PR has merged to `main`, and only for an implementation or repair cycle that first enters `DRAFT + ACTIVE` after that merge. A candidate or cycle already active, frozen or in review before adoption is grandfathered and is not reopened merely to satisfy the new preflight. If a later fresh repair cycle begins after adoption, that new repair cycle is Batch A-governed. This prospective boundary explicitly prevents Batch A from retroactively changing DW-02 or any other already-running/frozen product cycle.
 
 Version 1.9 becomes binding only after `WP-CTX-02` receives independent PASS, merges and completes successful DocSync. The `PROCESS_ONLY` CTX-02 candidate that introduces v1.9 remains governed by v1.8 predecessor-read mechanics and must complete its own full predecessor reconstruction under those pre-CTX-02 rules.
 
-The v1.10 change adds no product acceptance criterion and does not make CI an independent role. For governed cycles, after all repository/evidence bytes are finished and writers stop, the Worker must read the exact 40-character candidate HEAD, verify the checkout is clean, run `scripts/worker-preflight.sh` on that exact HEAD, and obtain both `Candidate SHA: <that exact HEAD>` and `WORKER_PREFLIGHT_GREEN` before beginning the final strict Worker pre-review. The command/output must be preserved in the Worker pre-review evidence. Any later repository/evidence mutation invalidates both the clean pre-review and the preflight result and requires the preflight to be rerun on the new exact HEAD. If the Worker environment cannot execute the exact SDK/tooling required by `global.json`, the candidate is `NOT_READY`; a GitHub Actions run is not a substitute for this Worker-environment gate.
+The Batch A amendment adds no product acceptance criterion and does not make CI an independent role. For governed cycles, after all repository/evidence bytes are finished and writers stop, the Worker must read the exact 40-character candidate HEAD, verify the checkout is clean, run `scripts/worker-preflight.sh` on that exact HEAD, and obtain both `Candidate SHA: <that exact HEAD>` and `WORKER_PREFLIGHT_GREEN` before beginning the final strict Worker pre-review. The command/output must be preserved in the Worker pre-review evidence. Any later repository/evidence mutation invalidates both the clean pre-review and the preflight result and requires the preflight to be rerun on the new exact HEAD. If the Worker environment cannot execute the exact SDK/tooling required by `global.json`, the candidate is `NOT_READY`; a GitHub Actions run is not a substitute for this Worker-environment gate.
 
 The v1.9 change adds the accepted-contract capsule start path defined by `Docs/engineering/CONTEXT_CAPSULE_V1.md`. After adoption, a mechanically valid non-authoritative capsule plus independently confirmed accepted identity may satisfy the **initial reconstruction** of an accepted predecessor boundary instead of mechanically loading its full WP/PASS/proof/residual narrative. Any capsule validation/escalation failure, non-compressible source, material detail absent from the capsule, directly binding proof/architecture contract, or concrete predecessor-reopen question immediately returns the role to exact authoritative sources. This changes context selection only; it does not weaken semantic/proof authority, predecessor composition, Worker pre-review, Reviewer independence, exact-SHA evidence, freeze, FAIL repair or finalization.
 
@@ -84,7 +84,7 @@ DRAFT + ACTIVE
   -> Worker may write
   -> optional bounded delegated execution may run under a Worker-authored exact contract
   -> same Worker verifies returned evidence and resumes ownership
-  -> v1.10-governed cycles run exact-SHA Worker preflight and obtain WORKER_PREFLIGHT_GREEN
+  -> Batch A-governed cycles run exact-SHA Worker preflight and obtain WORKER_PREFLIGHT_GREEN
   -> Worker must complete strict pre-review before freeze
   -> any in-claim pre-review finding is repaired while still Draft + ACTIVE
   -> out-of-boundary residual risks are recorded, not automatically hardened
@@ -113,10 +113,10 @@ PASS
 5. Respect exact WP Allowed/Forbidden scope and dependencies.
 6. Produce reproducible evidence before review. When delegated execution is used, preserve its exact execution contract and result evidence as part of the candidate evidence surface.
 7. For foundational WPs, satisfy `FOUNDATIONAL_PROOF_STANDARD.md` including explicit trust boundary and proof-budget verdict before freeze.
-8. Before freeze, perform the mandatory Worker pre-review defined below against the complete candidate, contract, inherited guarantees, delegated-execution evidence when present, and proof boundary. For v1.10-governed cycles, the exact-SHA Worker preflight is a mandatory predecessor to this final pre-review and its GREEN output belongs in the pre-review evidence.
-9. If pre-review finds an in-claim defect, remain Draft + ACTIVE, repair the causal defect boundary, rerun affected validation/evidence and repeat pre-review. Do not freeze a knowingly defective candidate. For v1.10-governed cycles, rerun Worker preflight on the new exact HEAD before repeating the final pre-review.
+8. Before freeze, perform the mandatory Worker pre-review defined below against the complete candidate, contract, inherited guarantees, delegated-execution evidence when present, and proof boundary. For Batch A-governed cycles, the exact-SHA Worker preflight is a mandatory predecessor to this final pre-review and its GREEN output belongs in the pre-review evidence.
+9. If pre-review finds an in-claim defect, remain Draft + ACTIVE, repair the causal defect boundary, rerun affected validation/evidence and repeat pre-review. Do not freeze a knowingly defective candidate. For Batch A-governed cycles, rerun Worker preflight on the new exact HEAD before repeating the final pre-review.
 10. If pre-review finds only a risk that requires arbitrary out-of-contract behavior of infrastructure explicitly inside the trusted base, duplicate re-proof of an accepted predecessor guarantee, or a non-canonical unsupported path, record it as residual risk unless the WP explicitly owns that guarantee. Do not automatically open another hardening cycle.
-11. A candidate may freeze only with a valid predecessor contract check, `WORKER_PRE_REVIEW: CLEAN`, `PROOF_BUDGET_VERDICT: WITHIN_BUDGET` where applicable, required delegated/local evidence verified where applicable, required v1.10 Worker-preflight evidence where applicable, and no known blocking defect.
+11. A candidate may freeze only with a valid predecessor contract check, `WORKER_PRE_REVIEW: CLEAN`, `PROOF_BUDGET_VERDICT: WITHIN_BUDGET` where applicable, required delegated/local evidence verified where applicable, required Batch A Worker-preflight evidence where applicable, and no known blocking defect.
 12. Before Ready, stop every writer and delegated executor, read the exact 40-char HEAD and record it as `Frozen candidate SHA`.
 13. Mark `Worker state: FROZEN_FOR_REVIEW` and `Branch frozen: YES`.
 14. After Ready, do not modify implementation until Reviewer verdict.
@@ -130,7 +130,7 @@ The pre-review is a strict quality gate performed by the Worker while the PR is 
 
 The Worker must temporarily switch from implementation reasoning to independent-challenge reasoning and inspect the candidate as if trying to issue a Reviewer FAIL. At minimum it must:
 
-- for v1.10-governed cycles, verify the immediately preceding `scripts/worker-preflight.sh` evidence names this exact candidate SHA and ends `WORKER_PREFLIGHT_GREEN`; a prior-SHA result or CI-only result is not valid;
+- for Batch A-governed cycles, verify the immediately preceding `scripts/worker-preflight.sh` evidence names this exact candidate SHA and ends `WORKER_PREFLIGHT_GREEN`; a prior-SHA result or CI-only result is not valid;
 - re-read the exact WP acceptance criteria, DoD, allowed/forbidden scope and every binding engineering/proof document;
 - verify the `PREDECESSOR_CONTRACT_CHECK` still matches current accepted dependency evidence and distinguish inherited guarantees from guarantees actually owned by this WP;
 - identify the explicit claim and trust boundary before inventing negative scenarios;
@@ -203,7 +203,7 @@ A conforming bounded delegated executor is **not** a Worker transfer and does no
 
 If repair is migrated to a new PR, the previous PR must be closed/superseded and the new PR must preserve Worker history, transfer SHA, reviewed SHA and `fail_cycle`; migration is not a clean restart.
 
-A transfer invalidates any prior `WORKER_PRE_REVIEW: CLEAN` unless the receiving Worker proves that the candidate bytes, evidence and proof claims are unchanged. Any implementation/evidence mutation after a clean pre-review requires the pre-review to be rerun before freeze. For v1.10-governed cycles, a mutation also invalidates the prior Worker-preflight result and requires it to be rerun on the new exact HEAD.
+A transfer invalidates any prior `WORKER_PRE_REVIEW: CLEAN` unless the receiving Worker proves that the candidate bytes, evidence and proof claims are unchanged. Any implementation/evidence mutation after a clean pre-review requires the pre-review to be rerun before freeze. For Batch A-governed cycles, a mutation also invalidates the prior Worker-preflight result and requires it to be rerun on the new exact HEAD.
 
 If dependency state or accepted predecessor evidence changed after the recorded predecessor check, the receiving Worker must refresh that check before further implementation or freeze.
 
@@ -217,7 +217,7 @@ Reviewer must:
 - reconstruct contract and repository state from GitHub;
 - verify PR HEAD == Frozen candidate SHA at review start;
 - for candidates governed by v1.2+ pre-review rules, verify the handoff records `Worker pre-review: CLEAN`, while treating that only as Worker readiness evidence;
-- for v1.10-governed cycles, verify the Worker pre-review evidence contains a GREEN Worker preflight bound to the same exact candidate SHA; this is readiness evidence, not independent PASS;
+- for Batch A-governed cycles, verify the Worker pre-review evidence contains a GREEN Worker preflight bound to the same exact candidate SHA; this is readiness evidence, not independent PASS;
 - for candidates governed by v1.5+, independently reconstruct direct accepted predecessor guarantees and verify a predecessor contract check was recorded before implementation; for v1.9+ a validated capsule may navigate that reconstruction, but any material inherited guarantee, lossiness suspicion, non-compressible source or concrete reopen question escalates to exact authoritative evidence;
 - when delegated execution was used, verify that it remained bounded execution rather than an undeclared second Worker/transfer, and verify input-SHA/environment/mutation/result evidence is causally tied to the frozen candidate;
 - inspect complete baseline→candidate diff, tests, CI and evidence;
@@ -250,7 +250,7 @@ Merge is valid only when:
 
 - the predecessor contract check required by the governing protocol exists and matches accepted dependency state;
 - the frozen handoff recorded `Worker pre-review: CLEAN` when required by the governing protocol;
-- v1.10-governed cycles have Worker-preflight GREEN evidence bound to the exact frozen/reviewed candidate SHA;
+- Batch A-governed cycles have Worker-preflight GREEN evidence bound to the exact frozen/reviewed candidate SHA;
 - independent PASS names the exact Frozen candidate SHA;
 - required CI/evidence for that SHA is green/complete;
 - foundational proof budget is within budget when applicable;
