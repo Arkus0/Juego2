@@ -1,15 +1,10 @@
 # CTX-03 — Worker pre-review history / repair-cycle input
 
-Status: **SUPERSEDED BY INDEPENDENT FAIL #5275757245 / NOT FINAL CLEAN EVIDENCE**  
-Failed candidate: `1421f1690f1bd20b578ba8f70ee8ee5deb90b67a`  
+Status: **SUPERSEDED HISTORY / NOT FINAL CLEAN EVIDENCE**  
 Baseline: `107694d3850a478849bffd9510dc030910fc8aa3`  
 Scope: **PROCESS_ONLY / NON-PRODUCT-FOUNDATIONAL**
 
-This file preserves prior Worker pre-review history. It is intentionally **not** the final clean record for repair cycle 1.
-
-The failed cycle reviewed the complete implementation diff only through parent `460f997c8e70720356f285583977530cc2175c76`, then committed this evidence file as child `1421f1690f1bd20b578ba8f70ee8ee5deb90b67a`. Exact-SHA GREEN CI on that child did not make the complete Worker pre-review retroactively cover the child's bytes. Review `#5275757245` correctly rejected that ordering.
-
-Repair cycle 1 changes the durability rule: all repository/evidence bytes — including this historical record and every repair artifact — are finalized first. The Worker then stops writers, reads the exact resulting HEAD, performs the complete pre-review against that exact HEAD and full baseline→candidate diff, and if clean persists the final clean result as a durable GitHub PR issue comment tied to the exact SHA. That external record does not mutate candidate bytes. Any later repository/evidence mutation invalidates it and requires another complete pre-review.
+This file preserves Worker pre-review and repair history. It is intentionally **not** the final `WORKER_PRE_REVIEW: CLEAN` record. The terminal CLEAN record must be a durable GitHub PR issue comment created only after every repository/evidence byte is final and the complete pre-review has been performed against the exact resulting HEAD.
 
 ## Accepted predecessor boundary retained
 
@@ -17,9 +12,9 @@ Repair cycle 1 changes the durability rule: all repository/evidence bytes — in
 - `Docs/evidence/CTX-03/PREDECESSOR_CONTRACT_CHECK.md` remains the repository predecessor-check evidence.
 - CTX-03 consumes rather than re-proves CTX-02 capsule semantics, checker-owned PA completeness/selectors, accepted semantic controls and Reviewer/source escalation authority.
 
-## Prior Worker findings preserved as history
+## Earlier failed-cycle findings retained
 
-The failed cycle had already repaired ten Worker-discovered classes:
+The first failed implementation cycle and independent review `#5275757245` closed the following classes before the second independent review:
 
 1. invalid post-marker checkout design;
 2. uncalibrated/obsolete base envelope;
@@ -30,38 +25,64 @@ The failed cycle had already repaired ten Worker-discovered classes:
 7. metadata generator able to reset lineage;
 8. self-shrinking measurement baseline;
 9. config-selected measurement universe;
-10. unstructured FAIL-capable verifier registry entry.
+10. unstructured FAIL-capable verifier registry entry;
+11. exact-candidate pre-review ordering;
+12. effective fixed/route mandatory-context growth;
+13. same-SHA terminal retry;
+14. non-representative fixed conditionals outside concrete route budgets;
+15. external CLEAN pointer self-confirmation by opaque metadata.
 
-## Independent Reviewer blocker classes
+Those repairs remain binding and must not regress.
 
-Review `#5275757245` added three causal classes:
+## Independent review #5276314835 — repair cycle 2
 
-11. **Exact-candidate pre-review ordering** — final clean evidence must be created after the complete pre-review without creating new repository/evidence bytes afterward.
-12. **Effective mandatory-context growth** — the process envelope must bound route/profile-forced conditional/capsule/escalated repository sources, not only `initial_reads`.
-13. **Same-SHA terminal retry** — `REVIEW_READY_CLOSED` must remain reachable when an existing deduplicated REVIEW_READY marker precedes a red gate and a later metadata/gate rerun turns GREEN on the same SHA.
+Review `#5276314835` failed exact candidate `9e71a220b79de79e3fbfe7bedd505256932a26f0` on two remaining classes:
 
-## Repair-cycle circuit-breaker findings
+16. **B1 — DocSync/current-state oracle frozen to the pre-CTX-03 snapshot.** `ctx03-docsync-history-check.py` hardcoded CTX-01/02 accepted and CTX-03 next, so real CTX-03 adoption could only turn the checker permanently RED or require editing the oracle alongside the projection it audits.
+17. **B2 — route-dependent repository-backed mandatory context outside every ceiling.** Exact WPs, exact dependency/evidence sources, repository Worker evidence and manifest-named files could grow without entering the base/fixed-conditional/six representative route budgets.
 
-Before refreezing, the Worker deliberately attempted to find the next variants of the Reviewer classes and found two:
+Repair cycle 2 closes these as extensible classes rather than current examples.
 
-14. **Non-representative fixed conditionals outside concrete route budgets** — the first repair covered the six checker-owned H1/CITY/PA routes, but fixed `conditional_reads` in `repair_worker`, `planner_gate` and `docsync` could still grow outside those concrete route ceilings. The repair was widened to a three-layer envelope with a checker-owned fixed conditional superset for **every canonical profile**, explicit-path discovery that turns RED when a new fixed conditional is introduced without oracle review, and negative controls that grow every fixed conditional source across its applicable ceiling.
+### B1 closure
 
-15. **External CLEAN pointer could self-confirm by metadata** — after moving the final CLEAN record to a post-review GitHub issue comment, the metadata generator required a syntactically valid comment URL but the canonical handoff lint still treated any URL as opaque. A manual metadata edit could therefore point at a nonexistent/wrong-SHA comment while leaving the structural handoff green. `validate-worker-handoff.py` now resolves an external pre-review issue-comment pointer and requires the same repository/PR plus `WORKER_PRE_REVIEW: CLEAN`, the exact live candidate SHA, a findings-fixed count and an evidence pointer. It does not interpret semantic adequacy; it closes only the deterministic existence/identity false-green.
+Current CTX state is now derived independently from numeric `Docs/workpacks/CTX/WP-CTX-*.md` contracts plus required PASS/PR-bearing DocSync closures. Only after deriving that authority does the checker compare `ACCEPTED_STATE_INDEX.json` and current-state prose. The mandatory post-adoption simulation changes CTX-03 to COMPLETE, adds a valid CTX-03 DocSync closure and updates the derived projection; it remains GREEN without modifying checker/oracle code.
 
-Findings 14 and 15 were repaired before final freeze. They are recorded here specifically to demonstrate the requested circuit-breaker audit happened before another Reviewer round rather than leaving the natural next variants for the Reviewer to discover.
+Negative controls cover stale pre-CTX-03 index, wrong next hint, removed closure, index-only fictitious accepted WP, history-prose mutation, whole projection omission/empty collection, future CTX transition and numeric ordering including CTX-10.
+
+### B2 closure
+
+The process envelope now has four layers: base profile, checker-owned fixed conditional profile, representative route-effective measurement, and a general dynamic repository envelope. The dynamic layer has checker-owned placeholder classification, per-source and aggregate-route ceilings, repository/external separation, exact-contract reconstruction, direct-dependency/required-input reconstruction, repository-vs-external repair evidence handling and manifest-derived local file discovery.
+
+Repository-wide discovery walks all workpack contracts rather than `CANONICAL_ROUTE_CONFIGS`. A future non-H1/CITY/PA WP automatically budgets its exact WP and contract-mandatory repository inputs/dependencies. A new placeholder class fails closed pending explicit reviewed classification. Ceiling increases require policy revision plus justification.
+
+The resolver intentionally does not promote every path mentioned in prose to mandatory context. An intermediate implementation did so and causally false-red on a future H1 evidence output, a donor-only PA source and historical compiler-args evidence. The final grammar counts exact contracts, direct dependencies, explicit required-input/binding surfaces, concrete repository evidence bindings and manifest-named inputs while leaving incidental/output/historical mentions outside the mandatory route.
+
+## Additional variants found before final CLEAN
+
+The repair-cycle circuit-breaker found and fixed four variants beyond B1/B2 themselves:
+
+18. **numeric CTX ordering** — lexicographic discovery would eventually mishandle CTX-10 vs CTX-04; numeric ordering is explicit;
+19. **future-role coupling** — exact-contract rediscovery depended on current role names; it is now slot-semantic and new roles using reviewed slot classes inherit the resolver;
+20. **global path-overreach false-red** — repository-wide discovery initially treated every path mention as mandatory; it now follows independently defined mandatory-routing grammar instead;
+21. **duplicate dynamic oracle** — an intermediate second dynamic-universe checker had slightly different discovery semantics. It was removed so there is one production dynamic completeness/budget oracle, exercised by CI and the final circuit-breaker.
+
+No known variant is deferred to the Reviewer.
 
 ## Final repair-cycle pre-review rule
 
 After this file and all other repository/evidence changes are committed and pushed:
 
-1. no writer may change repository/evidence bytes;
+1. stop all repository/evidence writers;
 2. read the exact branch HEAD;
-3. inspect the full `107694d3850a478849bffd9510dc030910fc8aa3 -> <exact HEAD>` candidate diff and rerun the canonical CTX-03 validation surface;
-4. challenge all three envelope layers: base reads, every checker-owned fixed conditional profile source, and concrete H1/CITY/PA minimum/escalated route sources;
-5. reproduce the REVIEW_READY same-SHA negative→repair→GREEN class;
-6. verify the final external CLEAN pointer cannot be replaced with a nonexistent, wrong-PR or wrong-SHA comment while handoff lint stays green;
-7. verify no repository-local final-clean write is needed after the review;
-8. only if no known in-claim blocker remains, create the durable GitHub issue-comment clean record targeting the exact HEAD;
-9. derive/freeze Ready metadata for that same SHA without changing repository bytes.
+3. rerun the complete canonical CTX-03 validation surface on that exact HEAD;
+4. inspect the full `107694d3850a478849bffd9510dc030910fc8aa3 -> <exact HEAD>` candidate diff, not only repair cycle 2;
+5. challenge all four context-envelope layers, including future non-H1/CITY/PA dynamic resolution and post-CTX-03 DocSync simulation;
+6. repeat whole-structured-surface omission and semantic-substitution challenges;
+7. repeat external CLEAN exact-PR/exact-SHA and REVIEW_READY same-SHA retry lifecycle controls;
+8. attempt at least one additional B1 and B2 variant;
+9. if any blocker is found, repair before CLEAN and restart this sequence;
+10. only if no known in-claim blocker remains, create the durable GitHub issue-comment `WORKER_PRE_REVIEW: CLEAN` targeting the exact HEAD;
+11. derive/freeze Ready metadata for that same SHA without changing repository bytes;
+12. require exact-SHA gates and terminal closure, then STOP for a fresh independent Reviewer.
 
-Until that sequence completes, CTX-03 remains **NOT READY** for a fresh independent Reviewer.
+Until that sequence completes, CTX-03 remains **NOT READY** for independent review.
