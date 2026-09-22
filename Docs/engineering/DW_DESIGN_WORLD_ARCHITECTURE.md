@@ -1,6 +1,6 @@
 # DW Design World Architecture — second consumer before H2
 
-Version: 0.2 — planning candidate
+Version: 0.3 — planning candidate
 Status: PROPOSED / NON-BINDING until DW planning PR independently passes, merges and DocSync completes
 
 ## 1. Definition
@@ -134,19 +134,30 @@ PA projection is not permission to infer new research truth from the graph. New 
 
 CTX therefore remains valid and independently useful. DW does not replace or invalidate CTX-01..03; it tests an additional structured retrieval layer against the best accepted CTX baseline rather than against an obsolete, deliberately bloated workflow.
 
+The comparison universe cannot be selected after DW has been tuned. Before route-specific tuning or result observation, DW-04 must durably freeze either the complete eligible historical-task universe plus a deterministic selection/stratification rule, or the exact independently reviewed task manifest. The same pre-tuning freeze also fixes task prompts, accepted authority anchors, expected facts/blockers/verdicts, deterministic scoring rules and matched-run policy. Any later change invalidates prior tuning/results and restarts the trial from a new pre-tuning freeze.
+
+The trial has two jointly necessary proof layers:
+
+1. **structural context proof** — deterministic route assembly/fallback must recover the complete pre-frozen expected material and provenance path; and
+2. **actual agent-quality proof** — every selected task must receive paired CTX-vs-DW agent executions under the same declared model/version, system/task prompt, decoding settings, tool permissions, execution budget and run-count policy, with outputs scored deterministically against the pre-frozen expected facts/blockers/verdicts.
+
+Model prose is therefore not the oracle, but model execution is not optional evidence either. A context pack that contains the right fact while the paired DW agent misses the required blocker or returns the wrong required verdict fails the claimed quality-preservation result.
+
 The trial records at minimum:
 
+- pre-tuning task-universe/selection-freeze anchor and chronology;
+- exact model/configuration and matched-run policy used for each pair;
 - input/context volume using a reproducible byte/token-count method defined before measurement;
 - sources opened;
-- required facts/blockers recovered;
-- omissions;
-- false findings;
+- deterministic context-package expected facts/blockers recovered;
+- scored agent-recovered required facts/blockers/verdicts;
+- omissions and false findings;
 - provenance/source fallback behavior; and
-- whether structured retrieval changed the final verdict.
+- whether structured retrieval changed the final scored verdict.
 
-A smaller prompt with a missed blocker is a FAIL. A quality regression cannot be traded for token savings. Because model runs are stochastic, token/context measurements may be descriptive efficiency evidence, while correctness must be grounded in deterministic expected-fact/expected-verdict fixtures wherever possible.
+A smaller prompt with a missed blocker is a FAIL. A quality regression cannot be traded for token savings. Because model runs are stochastic, the quality claim is bounded to the exact frozen task universe, model/configuration and run policy actually executed; deterministic expected/scoring manifests remain the oracle, while paired model runs provide the mandatory execution evidence for the agent-quality claim.
 
-DW does not claim a universal percentage reduction from one trial. `WP-DW-GATE` may report measured results only for the declared fixture universe.
+DW does not claim a universal percentage reduction from one trial. `WP-DW-GATE` may report measured results only for the declared fixture universe/configuration.
 
 ## 10. H1/H2 interlock
 
@@ -157,7 +168,7 @@ DW-GATE is planning evidence for H2, not a replacement for H1-GATE. H2 planning 
 - H1-GATE answers whether Arkus can drive the accepted Unity projection boundary;
 - DW-GATE answers whether Arkus survives a materially different non-runtime consumer and whether structured design retrieval is useful/correct.
 
-If H2 planning begins before DW-GATE, it must not freeze an external/public boundary whose design would make the still-authorized DW second-consumer proof impossible to incorporate without explicit review. The preferred sequence is to complete DW-GATE before final H2 boundary acceptance.
+If H2 planning begins before DW-GATE, it must not freeze an external/public boundary whose design would make the still-authorized DW second-consumer proof impossible to incorporate without explicit review. The preferred sequence is to complete DW-GATE before final H2 boundary acceptance. The repository top-level milestone/gate authority, `Docs/ROADMAP.md`, records this conditional interlock: DW does not block H1 or by itself authorize H2 implementation, but once the DW plan is accepted, final H2 public/external-boundary acceptance must consume accepted DW-GATE evidence or explicitly review and disposition the interlock.
 
 DW itself does **not** prove package/version distribution to a fresh external repository; that remains the existing H2 planning question.
 
@@ -184,7 +195,7 @@ CTX may consume measured DW results later, but CTX remains the owner of process-
 
 For the same accepted authority anchors, DW schema/projection version and declared consumer configuration, a rebuild must yield equal normalized projected facts/relations and deterministic validation/query results.
 
-Completeness-sensitive claims require an independently/effectively justified universe. A registry cannot prove its own completeness. Removing a material source record, required relation, projection rule execution or expected fixture must turn the relevant proof RED rather than merely proving that a row was deleted.
+Completeness-sensitive claims require an independently/effectively justified universe. A registry cannot prove its own completeness. Removing a material source record, required relation, projection rule execution or expected fixture must turn the relevant proof RED rather than merely proving that a row was deleted. For DW-04, the task-selection universe/rule and correctness scorer are likewise external to the result being judged and must be frozen before treatment-specific tuning.
 
 ## 14. Security / privacy / external-domain non-claims
 
@@ -198,7 +209,7 @@ DW ends only when its gate can answer, with exact evidence:
 2. are projected facts provenance-preserving, rebuildable and fail-closed;
 3. did at least one useful CITY mechanical invariant catch a causal omission/change;
 4. did the PA projection preserve the accepted finding/disposition/fixture universe under causal omission controls;
-5. did structured retrieval preserve required review/task correctness while measuring context cost honestly against accepted CTX;
+5. did structured retrieval preserve actual paired-agent review/task correctness under the pre-tuning frozen suite/model/configuration while measuring context cost honestly against accepted CTX;
 6. what generic Arkus limitations were discovered and how were they routed; and
 7. which consequences, if any, should become binding H2 planning input.
 
