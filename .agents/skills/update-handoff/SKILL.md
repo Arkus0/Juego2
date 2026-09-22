@@ -2,24 +2,34 @@
 
 Keep `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` compact and reconstructible.
 
-Update only from accepted GitHub evidence. Include:
+## Context bootstrap
 
-- current `main` SHA;
-- active milestone and next contractual target;
-- open WP/PR ownership and state;
-- frozen/reviewed candidate SHA when applicable;
-- last accepted merges/gates;
-- durable blocks/human decisions;
-- exact files a fresh session must read first.
+Use `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `docsync` profile in `Docs/engineering/context-bootstrap-profiles.json`. Reconstruct live GitHub state first.
 
-When this skill is used for post-merge DocSync/finalization, reconstruct current `main`, open ownership and dependencies first. After reconciliation is complete, persist exactly one `ARKUS_AUTOMATION_V2` comment on the merged implementation PR with:
+`Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` is derived navigation only. Its live freshness contract is non-self-referential:
 
-- `State: DOCSYNC_COMPLETE`;
-- an idempotent `Key: docsync-complete:<PR>:<reconciled-main-sha>`;
-- `WP: <WP-ID>`;
-- `Next WP: <dependency-valid next WP, or NONE>`;
-- a short `Detail:` describing the reconciliation result.
+```text
+projection_phase == DOCSYNC_PERSISTED
+AND
+generated_from_main_sha == first_parent(current live main)
+```
+
+`generated_from_main_sha` names the source `main` reconstructed before the DocSync persistence commit/merge. Never attempt to store the SHA of the commit that contains the index.
+
+After an accepted implementation transition:
+
+1. reconstruct current live `main` as `SOURCE_MAIN_SHA`, accepted merge/review and dependency-valid next action;
+2. regenerate the accepted-state index from authoritative sources;
+3. set `projection_phase=DOCSYNC_PERSISTED` and `generated_from_main_sha=SOURCE_MAIN_SHA`;
+4. persist DocSync in a direct child/merge whose first parent is exactly `SOURCE_MAIN_SHA`;
+5. if main moved before persistence, stop and regenerate from the new source;
+6. query the resulting live main SHA and first parent and run `python3 scripts/context-bootstrap-check.py --current-main-sha <DOCSYNC_MAIN_SHA> --current-main-parent-sha <SOURCE_MAIN_SHA> --require-fresh`;
+7. only after that check passes emit exactly one `ARKUS_AUTOMATION_V2` comment on the merged implementation PR with `State: DOCSYNC_COMPLETE`, `Key: docsync-complete:<PR>:<reconciled-main-sha>`, `WP: <WP-ID>`, `Next WP: <dependency-valid next WP, or NONE>`, and a short `Detail:`.
 
 The marker is notification/handoff metadata, not authority. Never emit it before DocSync is actually complete.
 
-Do not copy private reasoning, transient chat history, long logs or stale implementation details. Handoff summarizes; it never outranks ROADMAP, WP contracts, code or evidence.
+Reconcile affected accepted milestone/track state, open WP/PR ownership relevant to next action, frozen/reviewed/merged exact SHA, durable blocks/human decisions, and role-routing changes only when the accepted contract changed them.
+
+Read full `Docs/ROADMAP.md` when the next-action decision contains a cross-track/order/gate question not closed by exact accepted/direct dependency contracts. Missing/stale compact context causes escalation, never inference from silence.
+
+Do not copy private reasoning, transient chat history, long logs or stale implementation details. Handoff/index summarize and navigate; they never outrank live GitHub, ROADMAP when materially required, exact WP contracts, code or accepted evidence.

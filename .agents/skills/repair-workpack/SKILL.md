@@ -14,9 +14,13 @@ Use this skill for requests such as:
 
 Resolve the exact WP ID and canonical PR from live GitHub state. Do not infer a different WP.
 
+## Context bootstrap
+
+Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `repair_worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile narrows only the initial pack. Full ROADMAP/proof/architecture context is loaded when the FAIL, exact WP, direct predecessor state or cross-track gate makes it material. Stale/missing compact context always escalates; it never supplies a repair assumption.
+
 ## Preconditions
 
-- Read `AGENTS.md`, `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`, the exact WP, the original Worker evidence, and the latest independent Reviewer FAIL bound to an exact reviewed candidate SHA.
+- Read `AGENTS.md`, `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`, the exact WP, the original Worker evidence, and the latest independent Reviewer FAIL bound to an exact reviewed candidate SHA, as required by the repair profile.
 - Reconstruct current `main`, the canonical implementation PR/branch, current PR HEAD, frozen/reviewed SHA fields, `fail_cycle`, dependency state and any later accepted predecessor changes.
 - Use live GitHub state (`gh` in a local session, or an equivalent authenticated GitHub surface). A local Git checkout alone is not sufficient to reconstruct review state.
 - Verify there is exactly one canonical open implementation PR for the WP. If ownership is ambiguous, STOP rather than guessing.
