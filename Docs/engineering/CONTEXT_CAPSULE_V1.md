@@ -9,7 +9,7 @@ Reduce repeated predecessor prose without moving semantic or proof authority. A 
 Machine schema: `Docs/engineering/context-capsule-schema.json`  
 Discoverability index: `Docs/engineering/context-capsules/index.json`  
 Mechanical checker: `scripts/context-capsule-check.py`  
-Independent representative controls: `scripts/context-capsule-controls.py` + `scripts/context-capsule-pa-semantic-controls.py`
+Independent representative controls: `scripts/context-capsule-controls.py` + `scripts/context-capsule-omission-controls.py` + `scripts/context-capsule-pa-semantic-controls.py`
 
 This protocol becomes binding only after `WP-CTX-02` receives independent PASS, merges and completes DocSync. At that adoption boundary it is a **narrow amendment to the predecessor-read mechanics** in `AGENTS.md` and `WORKER_REVIEW_PROTOCOL.md` v1.8: a validated capsule may satisfy initial accepted-predecessor reconstruction until an escalation trigger fires. It does not amend ownership, proof thresholds, exact-SHA freeze/review, Reviewer independence, reopen rules or finalization.
 
@@ -77,11 +77,11 @@ The accepted identity source must be the matching external canonical workpack un
 
 The PA track is cumulative by contract: later PA WPs require all earlier accepted findings. CTX-02 therefore explicitly treats the canonical PA result chain as a capsule family.
 
-For each accepted `Docs/research/living-world/results/PA-NN.md` whose matching `WP-PA-NN` is `COMPLETE`, the capsule index must contain one `WP-PA-NN` capsule pointing to that result. Future PA DocSync adds the newly accepted capsule before capsule-chain coverage may be declared complete.
+The **completion side defines the chain universe**. Every canonical `Docs/workpacks/PA/WP-PA-NN.md` whose `Status` is `COMPLETE` independently enters the accepted PA inventory. For each such workpack, the canonical `Docs/research/living-world/results/PA-NN.md` must exist and the capsule index must contain one `WP-PA-NN` capsule pointing to that result. A result file, capsule and index entry may not disappear together and thereby remove the COMPLETE workpack from the universe being proved. Future PA DocSync adds the newly accepted result capsule before capsule-chain coverage may be declared complete.
 
 PA disposition compression is **status-preserving**, not a prose summary. The checker extracts the authoritative disposition table and requires exact key/status coverage. Mixed states such as `ADOPT ... / LATER ...`, `LATER / non-authoritative`, `REJECT as authority` and `REJECT baseline` are preserved as distinct source statuses; they may not be flattened to a binary keep/drop decision.
 
-The disposition oracle is valid only because the PA-chain checker independently discovers the canonical accepted `PA-NN.md` result and requires `disposition_source.path` and fingerprint to be that same result binding. A different internally coherent table may not certify the accepted PA result.
+The disposition oracle is valid only because the PA-chain checker independently discovers COMPLETE `WP-PA-NN` workpacks first, derives the required canonical `PA-NN.md` result from that completion-side inventory, and requires `disposition_source.path` and fingerprint to be that same result binding. A different internally coherent table may not certify the accepted PA result.
 
 The representative PA consumer starts from the accepted PA-01 + PA-02 + PA-03 family, so the test-only semantic controls cover material exports/exclusions/reopen/escalation content across **all three current PA capsules**. PA-03 additionally carries the directional-value oracle. This remains bounded representative evidence, not a production registry for arbitrary future PA prose.
 
@@ -153,7 +153,7 @@ After a later PA result independently passes and merges, DocSync:
 3. binds reviewed SHA, merge SHA, PASS review and source blob SHA;
 4. preserves the full disposition key/status set where present;
 5. updates the capsule index;
-6. runs `python3 scripts/context-capsule-check.py --self-test`, `python3 scripts/context-capsule-controls.py`, `python3 scripts/context-capsule-pa-semantic-controls.py`, and `python3 scripts/context-capsule-check.py --audit-index --repo-root .` when capsule mechanics/coverage are affected;
+6. runs `python3 scripts/context-capsule-check.py --self-test`, `python3 scripts/context-capsule-controls.py`, `python3 scripts/context-capsule-omission-controls.py`, `python3 scripts/context-capsule-pa-semantic-controls.py`, and `python3 scripts/context-capsule-check.py --audit-index --repo-root .` when capsule mechanics/coverage are affected;
 7. only then may it claim accepted PA capsule-chain coverage complete.
 
 If capsule production or any required independent control fails, DocSync may still reconstruct truth from authoritative sources but must not claim capsule coverage complete or silently omit the accepted result.
@@ -168,12 +168,13 @@ The checker self-test and independent CTX-02 control harnesses exercise at least
 - completion identity source redirected away from the canonical external workpack;
 - authoritative source redirected back into capsule/CTX-02 generated evidence;
 - changed source bytes / blob fingerprint mismatch;
-- one material positive exported guarantee omitted while another remains;
-- one material exclusion omitted while another remains;
+- one material positive exported guarantee omitted while another remains, with production shape/source validation GREEN and the real representative semantic oracle RED;
+- one material exclusion omitted while another remains, with the same representative semantic oracle RED;
 - representative guarantee statement inverted/invented while ID, source pointer and source fingerprints remain unchanged;
 - symmetric representative exclusion/non-claim statement inversion/invention;
 - representative reopen-condition and escalation-trigger substitution with structurally valid but materially opposite/invented text;
 - PA-01/PA-02/PA-03 actual semantic fixtures across the representative cumulative PA start surface;
+- a COMPLETE `WP-PA-04` retained while its canonical result and capsule are jointly absent, which must RED from the completion-side PA universe;
 - omitted material `REJECT` disposition;
 - `LATER` reclassified as adopted/rejected;
 - PA disposition source rebound to a different internally coherent result table;
@@ -183,7 +184,7 @@ The checker self-test and independent CTX-02 control harnesses exercise at least
 - live accepted exact-SHA mismatch;
 - CITY boundary capsule without the exact mandatory non-compressible `CITY_PRODUCT_SEED.md` source.
 
-The repository audit additionally checks every indexed representative capsule and discovers the accepted PA result-chain universe from repository state rather than trusting the capsule index to define its own completeness.
+The repository audit additionally checks every indexed representative capsule and discovers the accepted PA result-chain universe from COMPLETE canonical PA workpacks rather than trusting either result files or the capsule index to define their own completeness.
 
 The independent representative semantic oracles are test-only evidence for the selected H1/CITY boundaries and the current PA-01/02/03 cumulative representative chain. They validate actual material content rather than only IDs, but they are **not** imported by the production checker, do not become semantic authority, and do not claim generic natural-language proof. Production audit + independent controls together form CTX-02's mechanical validation surface; unresolved semantics stay with escalation + independent Reviewer judgment.
 
