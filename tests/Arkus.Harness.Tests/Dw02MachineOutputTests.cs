@@ -39,6 +39,26 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void ContentShapeArtifactRejectsMissingContributorProvenance()
+        {
+            var source = ReadProgramme();
+            var dataset = new CityProductionQueryProvider().BuildAndValidate(source);
+            var report = dataset.Queries.BuildContentShapeReport();
+            var incompleteProvenance = dataset.Projection.Facts
+                .Skip(1)
+                .Select(fact => new CityContentShapeSubjectProvenance(fact))
+                .ToList();
+
+            var error = Assert.Throws<CityProductionQueryException>(() =>
+                new CityContentShapeArtifact(report, incompleteProvenance));
+
+            Assert.Equal("city.report_provenance_universe_mismatch", error.MachineCode);
+            Assert.Contains(CityProductionQueryProvider.ProgrammeSourcePath, error.SourcePaths);
+            Assert.Contains(report.TotalSubjects.ToString(), error.Detail, StringComparison.Ordinal);
+            Assert.Contains(incompleteProvenance.Count.ToString(), error.Detail, StringComparison.Ordinal);
+        }
+
+        [Fact]
         public void CanonicalMachineOutputIsStableAcrossCleanAndReverseEnumerationRebuilds()
         {
             var source = ReadProgramme();
