@@ -9,6 +9,10 @@ resolve_wp() {
     printf '%s\n' "${ARKUS_WP}"
     return
   fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-DW-01`?[[:space:]]*$'; then
+    printf '%s\n' 'WP-DW-01'
+    return
+  fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-DW-00`?[[:space:]]*$'; then
     printf '%s\n' 'WP-DW-00'
     return
@@ -102,6 +106,9 @@ resolve_wp() {
 }
 
 case "$(resolve_wp)" in
+  WP-DW-01)
+    exec bash scripts/dw01-observe-exact-sha.sh "$@"
+    ;;
   WP-DW-00)
     exec bash scripts/dw00-observe-exact-sha.sh "$@"
     ;;
