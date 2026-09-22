@@ -51,6 +51,19 @@ The role profile selects an initial pack, not a maximum-read rule. Deepen whenev
 
 Escalation is monotonic: read authoritative context until the material question is closed or stop blocked/not-ready.
 
+## 2A. Bounded inspection reduces output, not verification
+
+When locating repository facts, default to the smallest **sufficient** inspection surface rather than emitting large files, logs or API payloads before they are needed. Prefer targeted search (`rg -n` when available, otherwise an equivalent such as `grep -n`), ranged reads around relevant matches, path-scoped `git diff`, and PR/SHA/file/job-scoped GitHub queries. After an edit, prefer the complete relevant diff plus targeted rereads over mechanically dumping the whole file when the unchanged remainder is not material.
+
+This is tool-output/context hygiene only. It MUST NOT:
+
+- narrow the effective mandatory read set selected by the role profile, exact WP, route, predecessor contract, proof standard or authoritative-escalation rules;
+- replace a required complete WP/DoD read, complete baseline→candidate diff, strict pre-review, independent causal review, canonical test/gate execution or exact-SHA evidence check;
+- treat a search hit, summary, capsule, truncated result or absence from a bounded query as proof that a material fact/path does not exist;
+- stop at a bounded result when it is ambiguous, contradictory, truncated, incomplete for a completeness claim, or otherwise insufficient to close the material question.
+
+If a bounded inspection is insufficient, widen monotonically until the authoritative question is closed or stop blocked/not-ready. The operating rule is: **minimize incidental output; never minimize required verification**.
+
 ## 3. ROADMAP and foundational proof are conditional for exact-WP sessions
 
 For exact Worker, repair Worker and exact-WP Reviewer sessions, full `Docs/ROADMAP.md` is not mechanically required at initial bootstrap when the exact WP/direct accepted dependencies close eligibility, ownership and ordering. Read it whenever cross-track/order/gate meaning remains material.
