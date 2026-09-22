@@ -24,11 +24,17 @@ jobs:
     if: >-
       github.event_name == 'workflow_run' &&
       github.event.workflow_run.event == 'pull_request' &&
-      (github.event.workflow_run.conclusion == 'success' ||
-       github.event.workflow_run.conclusion == 'failure')
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     steps:
-      - name: Validate frozen handoff and persist marker
+      - name: Checkout process oracle
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: process-oracle
+          fetch-depth: 1
+
+      - name: Validate frozen handoff, context identity and persist marker
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ github.event.workflow_run.id }}
@@ -39,44 +45,35 @@ jobs:
           set -euo pipefail
           [[ -n "${PR:-}" ]] || exit 0
 
-          pr_body=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.body // ""')
-          process_only=false
-          if printf '%s\n' "${pr_body}" | grep -Eqi '^(Mode|WORKFLOW_MODE):[[:space:]]*`?PROCESS_ONLY`?[[:space:]]*$'; then
-            process_only=true
-          fi
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
+          pr_body="$(jq -r '.body // ""' pr.json)"
           has_worker_lifecycle=false
           if printf '%s\n' "${pr_body}" | grep -Eqi '^(WP|Contract|Worker state|Candidate HEAD SHA|Worker pre-review|Frozen candidate SHA|Branch frozen):'; then
             has_worker_lifecycle=true
           fi
-          if [[ "${process_only}" == "true" && "${has_worker_lifecycle}" != "true" ]]; then
-            exit 0
-          fi
+          [[ "${has_worker_lifecycle}" == "true" ]] || exit 0
 
-          non_foundational=false
-          if printf '%s\n' "${pr_body}" | grep -Eqi '^(Mode|Class):.*NON-(PRODUCT-)?FOUNDATIONAL'; then
-            non_foundational=true
-          fi
+          test "$(jq -r '.head.sha' pr.json)" = "${RUN_SHA}"
+          test "$(jq -r '.draft' pr.json)" = "false"
 
-          jobs_api="repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100"
-          handoff_job=$(gh api "${jobs_api}" --jq '.jobs[] | select(.name == "Worker handoff lint") | .conclusion' | tail -n1)
-          [[ "${handoff_job}" == "success" ]] || exit 0
+          python3 process-oracle/scripts/validation-context.py self-test
+          python3 process-oracle/scripts/validation-context.py resolve \
+            --pr-json pr.json \
+            --target-sha "${RUN_SHA}" \
+            --record current-context.json >/dev/null
+          wp="$(jq -r '.wp' current-context.json)"
+          process_only="$(jq -r '.process_only' current-context.json)"
+          digest="$(jq -r '.context_digest' current-context.json)"
 
-          freeze_job=$(gh api "${jobs_api}" --jq '.jobs[] | select(.name == "Freeze exact-SHA validation") | .conclusion' | tail -n1)
-          if [[ "${non_foundational}" != "true" ]]; then
-            [[ "${freeze_job}" == "success" ]] || exit 0
-          fi
-
-          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
-          read -r sha wp < <(python - <<'PY'
+          python3 - <<'PY'
           import json, re
           pr = json.load(open('pr.json', encoding='utf-8'))
           body = pr.get('body') or ''
-          head = pr['head']['sha'].lower()
-          if pr.get('draft'):
-              raise SystemExit('PR is still Draft')
           def field(name):
-              m = re.search(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
-              return m.group(1).strip() if m else None
+              matches = re.findall(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
+              if len(matches) != 1:
+                  raise SystemExit(f'{name} must occur exactly once, found {len(matches)}')
+              return matches[0].strip()
           expected = {
               'Worker state': 'FROZEN_FOR_REVIEW',
               'Branch frozen': 'YES',
@@ -84,36 +81,63 @@ jobs:
               'Worker pre-review': 'CLEAN',
               'Reviewer verdict': 'PENDING',
           }
-          for k, v in expected.items():
-              got = field(k)
-              if not got or got.upper() != v:
-                  raise SystemExit(f'{k} must be {v}, got {got!r}')
-          frozen = (field('Frozen candidate SHA') or '').lower()
-          candidate = (field('Candidate HEAD SHA') or '').lower()
+          for key, value in expected.items():
+              got = field(key)
+              if got.upper() != value:
+                  raise SystemExit(f'{key} must be {value}, got {got!r}')
+          head = pr['head']['sha'].lower()
+          candidate = field('Candidate HEAD SHA').lower()
+          frozen = field('Frozen candidate SHA').lower()
           if not re.fullmatch(r'[0-9a-f]{40}', frozen):
               raise SystemExit('Frozen candidate SHA is missing/invalid')
-          if frozen != head or candidate != head:
-              raise SystemExit(f'Frozen/Candidate SHA must equal PR HEAD {head}')
-          wp = (field('WP') or f'PR-{pr["number"]}').replace(' ', '_')
-          print(head, wp)
+          if candidate != head or frozen != head:
+              raise SystemExit(f'Candidate/Frozen SHA must equal PR HEAD {head}')
           PY
-          )
-          [[ "${sha}" == "${RUN_SHA}" ]] || { echo "::error::Workflow SHA ${RUN_SHA} != frozen PR SHA ${sha}"; exit 2; }
 
-          key="review-ready:${PR}:${sha}"
+          jobs_api="repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs?per_page=100"
+          gh api "${jobs_api}" > run-jobs.json
+          handoff_job="$(jq -r '[.jobs[] | select(.name == "Worker handoff lint")] | last | .conclusion // "missing"' run-jobs.json)"
+          freeze_job="$(jq -r '[.jobs[] | select(.name == "Freeze exact-SHA validation")] | last | .conclusion // "missing"' run-jobs.json)"
+          [[ "${handoff_job}" == "success" ]] || exit 0
+          [[ "${freeze_job}" == "success" ]] || exit 0
+
+          gh api -H 'Accept: application/vnd.github+json' \
+            "repos/${GITHUB_REPOSITORY}/commits/${RUN_SHA}/check-runs?per_page=100" > checks.json
+          external_id="validation-context:${PR}:${RUN_SHA}:${digest}:${RUN_ID}"
+          match_count="$(jq -r --arg eid "${external_id}" '[.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid)] | length' checks.json)"
+          [[ "${match_count}" == "1" ]] || { echo "::error::Expected exactly one context-bound GREEN for run ${RUN_ID}, found ${match_count}"; exit 2; }
+          jq -r --arg eid "${external_id}" '.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid) | .output.summary' checks.json > context-summary.txt
+          python3 process-oracle/scripts/validation-context.py check-match \
+            --pr-json pr.json \
+            --target-sha "${RUN_SHA}" \
+            --summary context-summary.txt \
+            --run-id "${RUN_ID}" \
+            --workflow "Arkus Candidate Validation" >/dev/null
+
+          non_foundational=false
+          if printf '%s\n' "${pr_body}" | grep -Eqi '^Class:.*NON-(PRODUCT-)?FOUNDATIONAL'; then
+            non_foundational=true
+          fi
+
+          key="review-ready:${PR}:${RUN_SHA}:${digest}"
           if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
             exit 0
           fi
           if [[ "${non_foundational}" == "true" ]]; then
-            detail="canonical Worker handoff is mechanically coherent for this non-foundational WP. Start a fresh independent Reviewer."
+            detail="context-bound Worker handoff is mechanically coherent for this non-foundational WP. Start a fresh independent Reviewer."
           else
-            detail="canonical Worker handoff and exact-SHA validation are green. Start a fresh independent Reviewer."
+            detail="context-bound Worker handoff and exact validation are green. Start a fresh independent Reviewer."
           fi
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: REVIEW_READY
           Key: ${key}
-          Target SHA: ${sha}
+          Target SHA: ${RUN_SHA}
+          Effective WP: ${wp}
+          Process Only: ${process_only}
+          Validation Context Digest: ${digest}
+          Validation Run ID: ${RUN_ID}
+          Validation Workflow: Arkus Candidate Validation
           Detail: ${detail}
           EOF
           )
@@ -124,9 +148,10 @@ jobs:
             --arg key "${key}" \
             --arg wp "${wp}" \
             --arg detail "${detail}" \
-            --arg target_sha "${sha}" \
+            --arg target_sha "${RUN_SHA}" \
+            --arg context_digest "${digest}" \
             --argjson pr "${PR}" \
-            '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,pr:$pr}}' \
+            '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,context_digest:$context_digest,pr:$pr}}' \
             | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
 
   review-transition:
@@ -143,81 +168,100 @@ jobs:
         github.event.comment.author_association == 'COLLABORATOR'))
     runs-on: ubuntu-24.04
     steps:
+      - name: Checkout process oracle
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: process-oracle
+          fetch-depth: 1
+
       - name: Validate exact verdict and transition
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number || github.event.issue.number }}
           REVIEW_BODY: ${{ github.event.review.body || github.event.comment.body }}
+          REVIEW_AT: ${{ github.event.review.submitted_at || github.event.comment.created_at }}
         shell: bash
         run: |
           set -euo pipefail
 
-          read -r verdict reviewed_sha < <(python - <<'PY'
+          read -r verdict reviewed_sha < <(python3 - <<'PY'
           import os, re
           body = os.environ.get('REVIEW_BODY') or ''
-
           def normalize(line):
               line = line.strip()
               line = re.sub(r'^#{1,6}\s*', '', line)
               line = line.replace('**', '').replace('__', '').replace('`', '')
               return line.strip()
-
-          verdict = None
-          reviewed_sha = None
+          verdicts = []
+          shas = []
           for raw in body.splitlines():
               line = normalize(raw)
               vm = re.fullmatch(r'Reviewer verdict:\s*(PASS|FAIL)\.?', line, re.I)
               if vm:
-                  verdict = vm.group(1).upper()
+                  verdicts.append(vm.group(1).upper())
               sm = re.fullmatch(r'Reviewed candidate SHA:\s*([0-9a-fA-F]{40})\.?', line, re.I)
               if sm:
-                  reviewed_sha = sm.group(1).lower()
-
-          if not verdict or not reviewed_sha:
+                  shas.append(sm.group(1).lower())
+          if len(verdicts) != 1 or len(shas) != 1:
               print('NONE NONE')
           else:
-              print(verdict, reviewed_sha)
+              print(verdicts[0], shas[0])
           PY
           )
           [[ "${verdict}" != "NONE" ]] || exit 0
+          [[ -n "${REVIEW_AT:-}" ]] || { echo "::error::Reviewer verdict timestamp unavailable"; exit 2; }
 
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
-          read -r frozen_sha wp non_foundational < <(python - <<'PY'
+          read -r frozen_sha non_foundational < <(python3 - <<'PY'
           import json, re
           pr = json.load(open('pr.json', encoding='utf-8'))
           body = pr.get('body') or ''
-          head = pr['head']['sha'].lower()
           if pr.get('merged'):
-              print(head, f'PR-{pr["number"]}', 'NO')
-              raise SystemExit(0)
+              raise SystemExit('PR is already merged')
+          if pr.get('draft'):
+              raise SystemExit('PR is Draft')
           def field(name):
-              m = re.search(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
-              return m.group(1).strip() if m else None
+              matches = re.findall(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
+              if len(matches) != 1:
+                  raise SystemExit(f'{name} must occur exactly once, found {len(matches)}')
+              return matches[0].strip()
           expected = {
               'Worker state': 'FROZEN_FOR_REVIEW',
               'Branch frozen': 'YES',
               'Worker verdict': 'IN_REVIEW',
               'Worker pre-review': 'CLEAN',
           }
-          for k, v in expected.items():
-              got = field(k)
-              if not got or got.upper() != v:
-                  raise SystemExit(f'{k} must be {v}, got {got!r}')
-          frozen = (field('Frozen candidate SHA') or '').lower()
+          for key, value in expected.items():
+              got = field(key)
+              if got.upper() != value:
+                  raise SystemExit(f'{key} must be {value}, got {got!r}')
+          head = pr['head']['sha'].lower()
+          frozen = field('Frozen candidate SHA').lower()
           if not re.fullmatch(r'[0-9a-f]{40}', frozen) or frozen != head:
               raise SystemExit(f'Frozen candidate SHA must equal PR HEAD {head}')
-          wp = (field('WP') or f'PR-{pr["number"]}').replace(' ', '_')
-          mode = (field('Mode') or '')
-          cls = (field('Class') or '')
-          joined = f'{mode} {cls}'.upper()
-          non_foundational = ('NON-FOUNDATIONAL' in joined or 'NON-PRODUCT-FOUNDATIONAL' in joined)
-          print(frozen, wp, 'YES' if non_foundational else 'NO')
+          class_matches = re.findall(r'^Class:\s*(.*?)\s*$', body, re.M | re.I)
+          if len(class_matches) > 1:
+              raise SystemExit('Class must not be duplicated')
+          cls = class_matches[0] if class_matches else ''
+          upper = cls.upper()
+          non_foundational = 'NON-FOUNDATIONAL' in upper or 'NON-PRODUCT-FOUNDATIONAL' in upper
+          print(frozen, 'YES' if non_foundational else 'NO')
           PY
           )
           [[ "${reviewed_sha}" == "${frozen_sha}" ]] || { echo "::error::Reviewed SHA ${reviewed_sha} != frozen SHA ${frozen_sha}"; exit 2; }
 
+          python3 process-oracle/scripts/validation-context.py self-test
+          python3 process-oracle/scripts/validation-context.py resolve \
+            --pr-json pr.json \
+            --target-sha "${reviewed_sha}" \
+            --record current-context.json >/dev/null
+          wp="$(jq -r '.wp' current-context.json)"
+          process_only="$(jq -r '.process_only' current-context.json)"
+          digest="$(jq -r '.context_digest' current-context.json)"
+
           if [[ "${verdict}" == "FAIL" ]]; then
-            key="repair-required:${PR}:${reviewed_sha}"
+            key="repair-required:${PR}:${reviewed_sha}:${digest}"
             if ! gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
               detail="independent Reviewer FAIL. Start a fresh repair Worker on the same WP; do not advance downstream."
               body=$(cat <<EOF
@@ -225,6 +269,7 @@ jobs:
           State: REPAIR_REQUIRED
           Key: ${key}
           Target SHA: ${reviewed_sha}
+          Validation Context Digest: ${digest}
           Detail: ${detail}
           EOF
               )
@@ -235,33 +280,116 @@ jobs:
                 --arg wp "${wp}" \
                 --arg detail "${detail}" \
                 --arg target_sha "${reviewed_sha}" \
+                --arg context_digest "${digest}" \
                 --argjson pr "${PR}" \
-                '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,pr:$pr}}' \
+                '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,context_digest:$context_digest,pr:$pr}}' \
                 | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
             fi
             exit 0
           fi
 
-          handoff_check=$(gh api -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/commits/${reviewed_sha}/check-runs?per_page=100" --jq '.check_runs[] | select(.name == "Worker handoff lint" and .conclusion == "success") | .id' | head -n1)
-          [[ -n "${handoff_check}" ]] || { echo "::error::No successful Worker handoff lint check for ${reviewed_sha}"; exit 2; }
+          marker_key="review-ready:${PR}:${reviewed_sha}:${digest}"
+          gh api --paginate --slurp \
+            "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" \
+            | jq '[.[][]]' > comments.json
+          jq -c \
+            --arg key "${marker_key}" \
+            --arg before "${REVIEW_AT}" '
+              [.[]
+                | select(.user.login == "github-actions[bot]")
+                | select(.created_at <= $before)
+                | select((.body | split("\n") | index("ARKUS_AUTOMATION_V2")) != null)
+                | select((.body | split("\n") | index("State: REVIEW_READY")) != null)
+                | select((.body | split("\n") | index("Key: " + $key)) != null)]
+              | sort_by(.created_at)
+              | last // empty
+            ' comments.json > marker.json
+          [[ -s marker.json ]] || { echo "::error::No context-matching REVIEW_READY marker predating Reviewer verdict"; exit 2; }
 
-          if [[ "${non_foundational}" != "YES" ]]; then
-            freeze_check=$(gh api -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/commits/${reviewed_sha}/check-runs?per_page=100" --jq '.check_runs[] | select(.name == "Freeze exact-SHA validation" and .conclusion == "success") | .id' | head -n1)
-            [[ -n "${freeze_check}" ]] || { echo "::error::No successful Freeze exact-SHA validation check for ${reviewed_sha}"; exit 2; }
+          mapfile -t marker_fields < <(python3 - <<'PY'
+          import json, re
+          marker = json.load(open('marker.json', encoding='utf-8'))
+          body = marker.get('body') or ''
+          def field(name):
+              matches = re.findall(rf'^{re.escape(name)}:\s*(.*?)\s*$', body, re.M)
+              if len(matches) != 1:
+                  raise SystemExit(f'marker {name} must occur exactly once, found {len(matches)}')
+              return matches[0].strip()
+          print(field('Target SHA'))
+          print(field('Effective WP'))
+          print(field('Process Only'))
+          print(field('Validation Context Digest'))
+          print(field('Validation Run ID'))
+          print(field('Validation Workflow'))
+          PY
+          )
+          marker_sha="${marker_fields[0]}"
+          marker_wp="${marker_fields[1]}"
+          marker_process="${marker_fields[2]}"
+          marker_digest="${marker_fields[3]}"
+          validation_run_id="${marker_fields[4]}"
+          validation_workflow="${marker_fields[5]}"
+          [[ "${marker_sha}" == "${reviewed_sha}" ]] || { echo "::error::REVIEW_READY marker SHA mismatch"; exit 2; }
+          [[ "${marker_wp}" == "${wp}" ]] || { echo "::error::REVIEW_READY marker WP mismatch"; exit 2; }
+          [[ "${marker_process}" == "${process_only}" ]] || { echo "::error::REVIEW_READY marker process class mismatch"; exit 2; }
+          [[ "${marker_digest}" == "${digest}" ]] || { echo "::error::REVIEW_READY marker context digest mismatch"; exit 2; }
+          [[ "${validation_run_id}" =~ ^[1-9][0-9]*$ ]] || { echo "::error::REVIEW_READY marker validation run id invalid"; exit 2; }
+          case "${validation_workflow}" in
+            "Arkus Candidate Validation"|"Arkus Receipt Freeze Reuse") ;;
+            *) echo "::error::Unsupported validation workflow ${validation_workflow}"; exit 2 ;;
+          esac
+
+          gh api -H 'Accept: application/vnd.github+json' \
+            "repos/${GITHUB_REPOSITORY}/commits/${reviewed_sha}/check-runs?per_page=100" > checks.json
+          external_id="validation-context:${PR}:${reviewed_sha}:${digest}:${validation_run_id}"
+          match_count="$(jq -r --arg eid "${external_id}" '[.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid)] | length' checks.json)"
+          [[ "${match_count}" == "1" ]] || { echo "::error::Expected one context-bound GREEN matching REVIEW_READY source, found ${match_count}"; exit 2; }
+          jq -r --arg eid "${external_id}" '.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid) | .output.summary' checks.json > context-summary.txt
+          python3 process-oracle/scripts/validation-context.py check-match \
+            --pr-json pr.json \
+            --target-sha "${reviewed_sha}" \
+            --summary context-summary.txt \
+            --run-id "${validation_run_id}" \
+            --workflow "${validation_workflow}" >/dev/null
+
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${validation_run_id}" > validation-run.json
+          [[ "$(jq -r '.conclusion // empty' validation-run.json)" == "success" ]] || { echo "::error::Validation source run is not successful"; exit 2; }
+          [[ "$(jq -r '.name // empty' validation-run.json)" == "${validation_workflow}" ]] || { echo "::error::Validation source workflow identity mismatch"; exit 2; }
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${validation_run_id}/jobs?per_page=100" > validation-jobs.json
+
+          if [[ "${validation_workflow}" == "Arkus Candidate Validation" ]]; then
+            [[ "$(jq -r '.head_sha // empty' validation-run.json)" == "${reviewed_sha}" ]] || { echo "::error::Candidate Validation run SHA mismatch"; exit 2; }
+            [[ "$(jq -r --argjson pr "${PR}" '[.pull_requests[].number] | index($pr) != null' validation-run.json)" == "true" ]] || { echo "::error::Candidate Validation run PR mismatch"; exit 2; }
+            handoff_job="$(jq -r '[.jobs[] | select(.name == "Worker handoff lint")] | last | .conclusion // "missing"' validation-jobs.json)"
+            freeze_job="$(jq -r '[.jobs[] | select(.name == "Freeze exact-SHA validation")] | last | .conclusion // "missing"' validation-jobs.json)"
+            [[ "${handoff_job}" == "success" ]] || { echo "::error::Context-bound handoff job is not GREEN"; exit 2; }
+            [[ "${freeze_job}" == "success" ]] || { echo "::error::Context-bound freeze job is not GREEN"; exit 2; }
+          else
+            reuse_job="$(jq -r '[.jobs[] | select(.name == "Reuse exact-SHA receipt for freeze")] | last | .conclusion // "missing"' validation-jobs.json)"
+            [[ "${reuse_job}" == "success" ]] || { echo "::error::Context-bound receipt reuse job is not GREEN"; exit 2; }
           fi
 
-          key="pass-merge:${PR}:${reviewed_sha}"
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr-final.json
+          python3 process-oracle/scripts/validation-context.py record-match \
+            --pr-json pr-final.json \
+            --target-sha "${reviewed_sha}" \
+            --record current-context.json >/dev/null
+          [[ "$(jq -r '.draft' pr-final.json)" == "false" ]] || { echo "::error::PR became Draft during PASS preflight"; exit 2; }
+
+          key="pass-merge:${PR}:${reviewed_sha}:${digest}"
           if ! gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
             if [[ "${non_foundational}" == "YES" ]]; then
-              detail="exact Reviewer PASS agrees with a mechanically valid frozen handoff for this non-foundational WP. Merging this exact SHA."
+              detail="Reviewer PASS agrees with a context-bound validation source for this non-foundational WP. Merging this exact SHA/context."
             else
-              detail="exact Reviewer PASS, Worker handoff lint and freeze validation agree. Merging this exact SHA."
+              detail="Reviewer PASS, REVIEW_READY and context-bound validation source agree on exact PR+SHA+WP+process identity. Merging this exact SHA/context."
             fi
             body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: PASS_PREFLIGHT_GREEN
           Key: ${key}
           Target SHA: ${reviewed_sha}
+          Validation Context Digest: ${digest}
+          Validation Run ID: ${validation_run_id}
           Detail: ${detail}
           EOF
             )
@@ -272,8 +400,9 @@ jobs:
               --arg wp "${wp}" \
               --arg detail "${detail}" \
               --arg target_sha "${reviewed_sha}" \
+              --arg context_digest "${digest}" \
               --argjson pr "${PR}" \
-              '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,pr:$pr}}' \
+              '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,context_digest:$context_digest,pr:$pr}}' \
               | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
           fi
 
