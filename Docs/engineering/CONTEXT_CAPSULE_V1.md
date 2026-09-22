@@ -10,7 +10,7 @@ Machine schema: `Docs/engineering/context-capsule-schema.json`
 Discoverability index: `Docs/engineering/context-capsules/index.json`  
 Mechanical checker: `scripts/context-capsule-check.py`
 
-This protocol becomes binding only after `WP-CTX-02` receives independent PASS, merges and completes DocSync.
+This protocol becomes binding only after `WP-CTX-02` receives independent PASS, merges and completes DocSync. At that adoption boundary it is a **narrow amendment to the predecessor-read mechanics** in `AGENTS.md` and `WORKER_REVIEW_PROTOCOL.md` v1.8: a validated capsule may satisfy initial accepted-predecessor reconstruction until an escalation trigger fires. It does not amend ownership, proof thresholds, exact-SHA freeze/review, Reviewer independence, reopen rules or finalization.
 
 ## 1. Authority and usability
 
@@ -99,11 +99,11 @@ A CITY capsule must fail validation if it omits its non-compressible source. No 
 
 Near-term H1 uses a capsule for the accepted HK-GATE boundary actually consumed by H1-02. CTX-02 does not bulk-migrate H0 history.
 
-The capsule is sufficient to navigate the inherited/current ownership split; exact H0 proof is opened only when the current H1 claim, a contradiction or a reopen question makes it material.
+The capsule is sufficient to navigate the inherited/current ownership split; exact H0 proof is opened only when the current H1 claim, a contradiction or a reopen question makes it material. Its navigation pointers include the accepted gate verdict, proof matrix and residual-risk evidence so deepening does not require rediscovery.
 
 ## 8. Worker predecessor reconstruction
 
-After adoption, a Worker may begin predecessor reconstruction from validated capsules plus the exact current WP/direct dependency completion metadata instead of mechanically rereading every historical narrative.
+After adoption, a Worker may begin predecessor reconstruction from validated capsules plus the exact current WP and independently confirmed accepted dependency identity instead of mechanically rereading every historical narrative.
 
 The Worker still records the normal `PREDECESSOR_CONTRACT_CHECK`. It must name:
 
@@ -114,7 +114,7 @@ The Worker still records the normal `PREDECESSOR_CONTRACT_CHECK`. It must name:
 - escalations to original sources that were required;
 - concrete reopen conditions.
 
-A capsule never weakens mandatory direct-dependency, proof, local-execution or architecture reads when the exact claim makes them material.
+A capsule never weakens mandatory proof, local-execution or architecture reads when the exact claim makes them material. A source explicitly marked `noncompressible=true` is always read by the consumer that needs that material detail.
 
 ## 9. Reviewer independence
 
@@ -133,18 +133,19 @@ After a later PA result independently passes and merges, DocSync:
 3. binds reviewed SHA, merge SHA, PASS review and source blob SHA;
 4. preserves the full disposition key/status set where present;
 5. updates the capsule index;
-6. runs `python3 scripts/context-capsule-check.py --self-test` and `python3 scripts/context-capsule-check.py --audit-index --repo-root .`;
+6. runs `python3 scripts/context-capsule-check.py --self-test`, `python3 scripts/context-capsule-controls.py`, and `python3 scripts/context-capsule-check.py --audit-index --repo-root .` when capsule mechanics/coverage are affected;
 7. only then may it claim accepted PA capsule-chain coverage complete.
 
 If capsule production fails, DocSync may still reconstruct truth from authoritative sources but must not claim capsule coverage complete or silently omit the accepted result.
 
 ## 11. Fail-closed controls
 
-The checker self-test and CTX-02 evidence exercise at least:
+The checker self-test and independent CTX-02 control harness exercise at least:
 
 - stale reviewed-candidate SHA mismatch;
 - changed source bytes / blob fingerprint mismatch;
-- missing positive exported guarantee;
+- one material positive exported guarantee omitted while another remains;
+- one material exclusion omitted while another remains;
 - omitted material `REJECT` disposition;
 - `LATER` reclassified as adopted/rejected;
 - A→B/B→A collapse;
@@ -152,10 +153,10 @@ The checker self-test and CTX-02 evidence exercise at least:
 - live accepted exact-SHA mismatch;
 - CITY boundary capsule without mandatory non-compressible seed source.
 
-The repository audit additionally checks every indexed representative capsule and discovers the accepted PA result-chain universe from repository state rather than trusting the capsule index to define its own completeness.
+The repository audit additionally checks every indexed representative capsule and discovers the accepted PA result-chain universe from repository state rather than trusting the capsule index to define its own completeness. The independent omission oracle is test-only evidence and is not promoted to a production semantic registry.
 
 ## 12. Adoption boundary
 
-Before CTX-02 independent PASS + merge + successful DocSync, existing CTX-01/Worker/Reviewer rules remain authoritative and capsules in the candidate are evidence only.
+Before CTX-02 independent PASS + merge + successful DocSync, existing CTX-01/Worker/Reviewer predecessor-read rules remain authoritative and capsules in this candidate are evidence only. CTX-02 itself therefore used the pre-CTX-02 full predecessor reconstruction path.
 
-After adoption, capsules reduce initial context but do not change product/runtime semantics, proof thresholds, Reviewer independence, exact-SHA review, predecessor reopen rules or the H1 local-executor boundary.
+After adoption, the capsule start path described here supersedes only the unconditional **initial-read list** in older Worker/Reviewer instructions. Capsules reduce initial context but do not change product/runtime semantics, proof thresholds, Reviewer independence, exact-SHA review, predecessor reopen rules or the H1 local-executor boundary. Any ambiguity about whether compression is safe resolves toward the authoritative source, never toward the capsule.
