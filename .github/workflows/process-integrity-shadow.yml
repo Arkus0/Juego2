@@ -54,6 +54,7 @@ jobs:
         run: |
           set -euo pipefail
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/reuse-context.py self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/batch-b-workflow-controls.py
 
       - name: Prove PA-06+ selector convention stays checker-owned
         shell: bash
