@@ -86,7 +86,7 @@ namespace Arkus.DesignWorld
             return ToRecord(fact);
         }
 
-        public IReadOnlyList<PaCorpusQueryRecord> ByPa(string paId, string recordKind = null)
+        public IReadOnlyList<PaCorpusQueryRecord> ByPa(string paId, string? recordKind = null)
         {
             if (paId == null) throw new ArgumentNullException(nameof(paId));
             return _facts.Values
