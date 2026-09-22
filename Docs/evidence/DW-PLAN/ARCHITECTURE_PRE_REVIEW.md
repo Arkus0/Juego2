@@ -5,12 +5,12 @@ Planning base: `main` at `13332b738626b43ace6047a9c141a840406bfed7`
 Date: 2026-09-22
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 5
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 6
 WORKER_PRE_REVIEW_EVIDENCE: `Docs/evidence/DW-PLAN/ARCHITECTURE_PRE_REVIEW.md`
 
 ## Scope
 
-This is the architect/Worker's strict pre-review of the complete DW plan before any `WP-DW-*` is activated. It checks authority, workpack ownership, causal proof, cross-track sequencing, context-quality measurement and H2 interlock. It is not an independent Reviewer PASS and cannot authorize implementation by itself.
+This is the architect/Worker's strict pre-review of the complete DW plan before any `WP-DW-*` is activated. It checks authority, workpack ownership, causal proof, foundational-proof adoption, representative product probing, cross-track sequencing, context-quality measurement and H2 interlock. It is not an independent Reviewer PASS and cannot authorize implementation by itself.
 
 ## Findings fixed during planning
 
@@ -44,11 +44,17 @@ The architecture initially described `DW-01` as using a "small independently sel
 
 **Repair:** architecture now requires the complete accepted source universe relevant to every invariant; for the initial access-role proof that means the full accepted CITY-02 A/B functional-POI universe. The same repair also makes explicit that DW-04 compares against accepted CTX-03 and therefore does not invalidate CTX.
 
+### F6 — foundational-proof adoption and DW-00 product probe were inconsistent
+
+Independent review found that the DW plan marked all seven workpacks `FOUNDATIONAL` and named `FOUNDATIONAL_PROOF_STANDARD.md` as binding, while accepted v1.4 normatively adopted only H1. Merely adding DW metadata would still leave `WP-DW-00` contradictory because its content-shape probe was explicitly domain-neutral, whereas the foundational standard requires a bounded slice of the approved Juego2 target whenever a foundational WP defines/changes authorable-state or public-contract semantics.
+
+**Repair:** `FOUNDATIONAL_PROOF_STANDARD.md` is advanced to v1.5 with an explicit DW adoption boundary. It applies to DW foundational cycles only after the accepted DW planning commit reaches `main`, does not bind this `PROCESS_ONLY` planning PR, and does not retroactively alter accepted H0/H1 evidence. `WP-DW-00` now keeps its neutral independently enumerable fixture for mechanics/completeness/negative controls **and separately** requires one bounded approved-Juego2 content-shape probe through the same candidate surface. The real-content probe tests only representability, identity/granularity, provenance and DW-00-owned public boundaries; CITY semantic correctness/invariants remain exclusively DW-01's first-real-consumer claim.
+
 ## Per-workpack split review
 
 | WP | Dual-claim challenge | Authority / predecessor challenge | Universe + causal-control challenge | Immediate-next / temporary-contract challenge | Scope/leakage challenge | Result |
 |---|---|---|---|---|---|---|
-| DW-00 | generic envelope + neutral reference are inseparable non-speculative contract claim | H0 consumed unchanged; source docs remain authority | independent neutral source universe; omission/stale provenance/rebuild controls must RED | DW-01 consumes final generic envelope | no CITY/PA/process vocabulary permitted in H0 | KEEP |
+| DW-00 | generic envelope + neutral mechanics fixture + representative Juego2 shape are one non-speculative public-surface contract claim, with the real probe explicitly non-semantic | H0 consumed unchanged; source docs remain authority; v1.5 applies only after planning merge | independent neutral source universe owns omission/stale provenance/rebuild RED controls; real Juego2 probe cannot substitute for that universe | DW-01 consumes final generic envelope and remains first CITY semantic/invariant owner | approved product content may traverse the probe, but no CITY/PA/process vocabulary may enter H0/public generic semantics | KEEP |
 | DW-01 | CITY mapping + two real invariants form one first-real-consumer claim | accepted CITY truth encoded, not redesigned | complete relevant source universe independent of projection; entire-surface and role omission must RED through semantic oracle | DW-02 can expand data without changing authority model | no Unity/full CITY conversion | KEEP |
 | DW-02 | production query completeness + content-shape report share one useful-CITY-projection claim | source universes stay CITY-owned | independent expected sets/counts; omitted source record must RED | PA receives stable generic boundary, not CITY contract | no invented hours/euros or final art tooling | KEEP |
 | DW-03 | PA typed corpus + lossless query are one composition claim | only accepted PA-01..05 become initial authority inputs | source manifest independent of index; finding/disposition/fixture omission controls must RED | extension rule handles later accepted PA without pre-accepting it | no new research or destructive summaries | KEEP |
@@ -72,12 +78,14 @@ The architecture initially described `DW-01` as using a "small independently sel
 12. **Does a tiny third probe justify 'universal Arkus'?** No. DW-GATE explicitly claims only bounded second-consumer evidence; arbitrary-domain universality and external packaging remain non-claims.
 13. **Can H2 ignore the experiment after the public boundary is frozen?** If this plan passes, final H2 external/public-boundary acceptance must explicitly incorporate or disposition DW-GATE evidence. H2 exploration may occur earlier, but the boundary is not silently frozen around an untested assumption.
 14. **Are WPs too small/large?** No. Entity/invariant/query families are not split into micro-WPs, while generic contract, first consumer, useful CITY projection, PA losslessness, context efficiency, generalization assessment and closure remain independently rejectable.
+15. **Is the foundational proof contract actually adopted for DW without creating a circular planning requirement?** Yes. v1.5 explicitly adopts later DW foundational Worker/review cycles only after this planning commit reaches `main`, excludes this PROCESS_ONLY planning PR, preserves H0/H1 historical evidence, and DW-00 now contains both the neutral causal fixture and the separate required Juego2 representative probe.
 
 ## Reviewer-failure forecast
 
 | Risk | WP(s) | Why independent review is likely to find real defects there |
 |---|---|---|
 | source authority/provenance accidentally becomes cached-index authority | DW-00 | rebuild/index convenience can hide stale authority |
+| representative Juego2 shape forces hidden domain assumptions into generic envelope | DW-00 | a neutral fixture can be internally coherent while real approved content exposes wrong identity/granularity |
 | source universe self-shrinks when a CITY row/role disappears | DW-01/02 | projection-backed enumeration is the easiest false green |
 | content-shape report smuggles estimates/defaults not present in source | DW-02 | planning usefulness can tempt invented precision |
 | PA disposition/negative finding/fixture lost by compact schema | DW-03 | semantic compression is exactly where absence can look plausible |
@@ -91,6 +99,8 @@ The plan expects Reviewer FAIL at these owners to be informative and bounded rat
 
 - architecture defines authority, projection, H0 reopen classification, invariant boundary, CITY/PA consumers, context trial, H1/H2 interlock, process exclusion, determinism and exit boundary;
 - `Docs/workpacks/DW/README.md` defines one serial seven-step DAG with explicit PA/CTX side prerequisites and H1 independence;
+- `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` v1.5 explicitly adopts the accepted DW foundational track only after this planning commit reaches `main`, excludes the PROCESS_ONLY adopter and preserves accepted H0/H1 evidence;
+- `WP-DW-00` keeps an independent neutral mechanics/completeness fixture **and** separately requires the bounded approved-Juego2 representative content-shape probe demanded by the foundational standard, without moving CITY semantic invariant ownership out of DW-01;
 - global workpack index explicitly states that CTX remains valid and that DW-04 consumes accepted CTX-03 as its comparison baseline;
 - future H2 planning signal records the conditional DW-GATE evidence interlock without pre-accepting DW;
 - all seven DW contract files contain central claim, boundary rationale, inherited/new guarantees, excluded re-proof, allowed/forbidden scope, authority boundary, acceptance, deterministic proof, causal negative classes, residuals, reopen condition and PASS consequence;
@@ -101,4 +111,4 @@ The plan expects Reviewer FAIL at these owners to be informative and bounded rat
 
 ## Freeze decision
 
-The repaired planning design is internally coherent after the five repairs above and is suitable for independent review. No DW implementation workpack is active. A Reviewer should challenge the plan itself, especially whether DW-04's quality/efficiency oracle is fair, whether the H2 interlock is causally justified, and whether DW-00 can truly consume accepted H0 rather than introducing a disguised second canonical store.
+The repaired planning design is internally coherent after the six repairs above and is suitable for independent review. No DW implementation workpack is active. A Reviewer should challenge the plan itself, especially whether DW-00's representative real-content probe is narrow enough to avoid stealing CITY semantic ownership while still satisfying the foundational standard, whether DW-04's quality/efficiency oracle is fair, whether the H2 interlock is causally justified, and whether DW-00 can truly consume accepted H0 rather than introducing a disguised second canonical store.
