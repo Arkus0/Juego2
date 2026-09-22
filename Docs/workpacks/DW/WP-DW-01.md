@@ -1,10 +1,12 @@
 # WP-DW-01 — CITY invariant vertical slice
 
-Status: PLANNED / NOT_STARTED
+Status: COMPLETE / ACCEPTED
 Class: FOUNDATIONAL
 EXECUTION_REQUIREMENT: REMOTE_OK
 Depends on: `WP-DW-00` PASS + merge + DocSync
 Blocks: `WP-DW-02`
+
+Acceptance: frozen candidate `07c91f076f0349d0dada0c96bd84bbb87f659dad`; independent PASS review `#5283348628`; PR `#136`; merge `878b54e76ded832c43e2123a03fa2e957ed31e5a`; final frozen exact-SHA validation Actions `35779488362` GREEN; post-PASS DocSync `Docs/evidence/WP-DW-01/DOCSYNC.md`.
 
 ## Objective and central claim
 
