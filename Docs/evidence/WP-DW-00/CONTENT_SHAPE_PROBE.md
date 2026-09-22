@@ -13,7 +13,7 @@ This probe is deliberately **not** a CITY semantic oracle. It asks only whether 
 - `loc.casco.bar` is represented as one projected fact at the granularity already named by the accepted programme row.
 - `W.CASCO` is carried as a separate projected target identity (`mobility.w.casco`) so a typed relation can exercise the generic relationship shape without claiming CITY topology truth.
 - Both facts bind provenance to the exact accepted row and the source-document digest. The fact that two projected records may share one source anchor is permitted; ambiguity concerns multiple matching source locations for one anchor, not multiple facts intentionally sourced from one unique location.
-- Adapter definitions are reviewed projection rules, not source authority. The representative probe deliberately does not manufacture a contradictory field value merely to make diff turn red; material authority-change and rule/version-change causality are proven separately by the neutral fixture/version control.
+- Adapter definitions are reviewed projection rules, not source authority. The representative probe deliberately does not manufacture a contradictory field value merely to make diff turn red; material authority-change causality, explicit version staleness and forgotten-version effective-rule drift are proven separately by neutral controls.
 
 ## Owned boundaries exercised
 
@@ -34,7 +34,7 @@ This probe is deliberately **not** a CITY semantic oracle. It asks only whether 
 - public revision/hash-bound inspection/query on rebuilt state; and
 - source-byte equality across both builds and queries.
 
-Causal non-empty diff is proven by `MaterialAuthorityChangeChangesNormalizedProjectionAndDiff`, where both the neutral source bytes and their projected typed value change consistently. Projection rule/version staleness is independently proven by `ReusingDerivedStateAcrossProjectionRuleVersionIsCausallyRed`.
+Causal non-empty diff is proven by `MaterialAuthorityChangeChangesNormalizedProjectionAndDiff`, where both the neutral source bytes and their projected typed value change consistently. Explicit version staleness is proven by `ReusingDerivedStateAcrossProjectionRuleVersionIsCausallyRed`. Forgotten-version rule drift is independently exercised by `Dw00ProjectionRuleBindingTests`, which changes a field rule and a relation rule separately while keeping source bytes, authority universe and `dw00-v1` invariant; validation must rebuild with the current reader and reject the cached projection as `dw.projection_rules_stale`.
 
 The neutral fixture remains the independent-universe/completeness proof; this real probe supplements it and is not used to claim full CITY coverage.
 
@@ -50,5 +50,5 @@ The neutral fixture remains the independent-universe/completeness proof; this re
 | Full CITY programme-universe extraction/parsing is not required to represent this bounded slice. | out of DW-00 completeness boundary | No claim of full CITY parser or programme completeness. |
 | No accepted H0 public-surface contradiction was found. | predecessor reopen assessment | `WP-HK-GATE` remains consumed; reopen condition did not fire. |
 
-Current-WP blocker findings: **none after the probe/query-anchor repair above**.
+Current-WP blocker findings: **none after the probe/query-anchor and effective-rule-binding repairs above**.
 Concrete predecessor reopen conditions triggered: **none**.
