@@ -1,11 +1,11 @@
 # DW architecture pre-review — PROCESS_ONLY
 
-Status: COMPLETE for the planning candidate; not an implementation PASS
+Status: COMPLETE for the repaired planning candidate; not an implementation PASS
 Planning base: `main` at `13332b738626b43ace6047a9c141a840406bfed7`
 Date: 2026-09-22
 
 WORKER_PRE_REVIEW: CLEAN
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 4
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 5
 WORKER_PRE_REVIEW_EVIDENCE: `Docs/evidence/DW-PLAN/ARCHITECTURE_PRE_REVIEW.md`
 
 ## Scope
@@ -34,16 +34,22 @@ A vague 'uses fewer tokens' claim could compare against an obsolete bloated prom
 
 ### F4 — PA projection risked repeating the current false-green class
 
-A typed PA index could appear complete while silently dropping an entire disposition/fixture surface, recreating the exact family of omission problem that current PA/CTX work is trying to eliminate.
+A typed PA index could appear complete while silently dropping an entire disposition/fixture surface, recreating the same omission family the repository is actively repairing elsewhere.
 
 **Repair:** `DW-03` makes the PA source universe independent of projected rows and explicitly requires semantic RED controls for whole-surface disposition omission, finding omission and fixture/evidence-edge omission. It begins only after PA-01..05 are accepted locally.
+
+### F5 — CITY architecture wording allowed a cherry-picked proof universe
+
+The architecture initially described `DW-01` as using a "small independently selected POI universe" while the workpack correctly required the complete accepted universe relevant to each invariant. The looser architecture wording could let a later implementation prove the access invariant on a friendly subset.
+
+**Repair:** architecture now requires the complete accepted source universe relevant to every invariant; for the initial access-role proof that means the full accepted CITY-02 A/B functional-POI universe. The same repair also makes explicit that DW-04 compares against accepted CTX-03 and therefore does not invalidate CTX.
 
 ## Per-workpack split review
 
 | WP | Dual-claim challenge | Authority / predecessor challenge | Universe + causal-control challenge | Immediate-next / temporary-contract challenge | Scope/leakage challenge | Result |
 |---|---|---|---|---|---|---|
 | DW-00 | generic envelope + neutral reference are inseparable non-speculative contract claim | H0 consumed unchanged; source docs remain authority | independent neutral source universe; omission/stale provenance/rebuild controls must RED | DW-01 consumes final generic envelope | no CITY/PA/process vocabulary permitted in H0 | KEEP |
-| DW-01 | CITY mapping + two real invariants form one first-real-consumer claim | accepted CITY truth encoded, not redesigned | A/B access universe independent of projection; entire-surface and role omission must RED through semantic oracle | DW-02 can expand data without changing authority model | no Unity/full CITY conversion | KEEP |
+| DW-01 | CITY mapping + two real invariants form one first-real-consumer claim | accepted CITY truth encoded, not redesigned | complete relevant source universe independent of projection; entire-surface and role omission must RED through semantic oracle | DW-02 can expand data without changing authority model | no Unity/full CITY conversion | KEEP |
 | DW-02 | production query completeness + content-shape report share one useful-CITY-projection claim | source universes stay CITY-owned | independent expected sets/counts; omitted source record must RED | PA receives stable generic boundary, not CITY contract | no invented hours/euros or final art tooling | KEEP |
 | DW-03 | PA typed corpus + lossless query are one composition claim | only accepted PA-01..05 become initial authority inputs | source manifest independent of index; finding/disposition/fixture omission controls must RED | extension rule handles later accepted PA without pre-accepting it | no new research or destructive summaries | KEEP |
 | DW-04 | quality preservation + context reduction are jointly necessary efficiency claim | accepted CTX-03 is baseline owner | frozen expected facts/verdicts; lost fact fails regardless of savings; all fallback counted | DW-05 receives measured evidence, not a universal token promise | no process state imported into DW | KEEP |
@@ -59,7 +65,7 @@ A typed PA index could appear complete while silently dropping an entire disposi
 5. **Does the plan reopen H0 speculatively?** No. H0 is consumed as accepted. Convenience and domain needs are explicitly insufficient reopen evidence.
 6. **Does PA compression lose dispositions/negative findings/fixtures?** The initial source universe is independent of the index and whole-surface omission is a required RED control.
 7. **Can token savings trade away quality?** No. 100% required fact/blocker/verdict preservation is a hard condition; 30% median byte reduction is additional, not substitutive.
-8. **Is CTX compared unfairly?** No. DW-04 waits for CTX-03 and uses the accepted context-efficient baseline.
+8. **Is CTX invalidated or compared unfairly?** No. CTX remains independently valid; DW-04 waits for CTX-03 and uses the accepted context-efficient baseline.
 9. **Does DW become circular process infrastructure?** No. Worker/Reviewer/freeze/DocSync/residual process state is excluded from DW v1.
 10. **Does the track delay H1/local Unity?** No. H1 proceeds independently. DW is `REMOTE_OK` and only the future H2 boundary freeze consumes DW-GATE evidence.
 11. **Are design↔Unity/art/QA/narrative opportunities lost?** No. They are durably preserved as downstream candidates with explicit prerequisite ownership, but not pre-authorized.
@@ -84,7 +90,9 @@ The plan expects Reviewer FAIL at these owners to be informative and bounded rat
 ## Mechanical planning validation
 
 - architecture defines authority, projection, H0 reopen classification, invariant boundary, CITY/PA consumers, context trial, H1/H2 interlock, process exclusion, determinism and exit boundary;
-- `README.md` defines one serial seven-step DAG with explicit PA/CTX side prerequisites and H1 independence;
+- `Docs/workpacks/DW/README.md` defines one serial seven-step DAG with explicit PA/CTX side prerequisites and H1 independence;
+- global workpack index explicitly states that CTX remains valid and that DW-04 consumes accepted CTX-03 as its comparison baseline;
+- future H2 planning signal records the conditional DW-GATE evidence interlock without pre-accepting DW;
 - all seven DW contract files contain central claim, boundary rationale, inherited/new guarantees, excluded re-proof, allowed/forbidden scope, authority boundary, acceptance, deterministic proof, causal negative classes, residuals, reopen condition and PASS consequence;
 - all planned implementation WPs are `REMOTE_OK`; no Unity evidence is falsely claimed;
 - no planned WP authorizes full Markdown replacement, process-state modeling, H0 silent modification or arbitrary-domain product claims;
@@ -93,4 +101,4 @@ The plan expects Reviewer FAIL at these owners to be informative and bounded rat
 
 ## Freeze decision
 
-The planning design is internally coherent after the four repairs above and is suitable for independent review. No DW implementation workpack is active. A Reviewer should challenge the plan itself, especially whether DW-04's quality/efficiency oracle is fair and whether the H2 interlock is causally justified rather than assuming the desired architecture.
+The repaired planning design is internally coherent after the five repairs above and is suitable for independent review. No DW implementation workpack is active. A Reviewer should challenge the plan itself, especially whether DW-04's quality/efficiency oracle is fair, whether the H2 interlock is causally justified, and whether DW-00 can truly consume accepted H0 rather than introducing a disguised second canonical store.
