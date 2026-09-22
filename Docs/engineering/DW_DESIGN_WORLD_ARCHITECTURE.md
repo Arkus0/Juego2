@@ -111,7 +111,7 @@ The invariant executor proves conformance to an accepted rule, not the wisdom of
 
 The first consumer is a bounded accepted CITY slice because it contains typed relations and measurable programme constraints while remaining independent of Unity execution.
 
-`WP-DW-01` proves a minimal vertical slice with a small independently selected POI universe and causal negative controls. `WP-DW-02` then expands only the useful production-facing subset required for real queries/content-shape measurements.
+`WP-DW-01` proves a minimal vertical slice, but every invariant claimed complete uses the **complete accepted source universe relevant to that invariant** — for the initial access-role proof, the full accepted CITY-02 A/B functional-POI universe — plus causal negative controls. `WP-DW-02` then expands only the useful production-facing subset required for real queries/content-shape measurements.
 
 Expected initial families include POI, district, access role, interior/spatial-depth profile, spatial-demand class and required anchor/relationship facts. Exact families remain owned by the workpacks; the architecture does not pre-authorize full CITY conversion.
 
@@ -127,8 +127,10 @@ PA projection is not permission to infer new research truth from the graph. New 
 
 `WP-DW-04` compares two routes over representative already-resolved tasks:
 
-- baseline repository/document context under accepted CTX rules; and
+- baseline repository/document context under **accepted CTX-03 rules**; and
 - DW structured retrieval plus source-open-on-demand under the same task/oracle.
+
+CTX therefore remains valid and independently useful. DW does not replace or invalidate CTX-01..03; it tests an additional structured retrieval layer against the best accepted CTX baseline rather than against an obsolete, deliberately bloated workflow.
 
 The trial records at minimum:
 
@@ -194,7 +196,7 @@ DW ends only when its gate can answer, with exact evidence:
 2. are projected facts provenance-preserving, rebuildable and fail-closed;
 3. did at least one useful CITY mechanical invariant catch a causal omission/change;
 4. did the PA projection preserve the accepted finding/disposition/fixture universe under causal omission controls;
-5. did structured retrieval preserve required review/task correctness while measuring context cost honestly;
+5. did structured retrieval preserve required review/task correctness while measuring context cost honestly against accepted CTX;
 6. what generic Arkus limitations were discovered and how were they routed; and
 7. which consequences, if any, should become binding H2 planning input.
 
