@@ -6,6 +6,8 @@ Status: **CANDIDATE EVIDENCE / PROCESS_ONLY**
 
 Move deterministic protocol defects left **without reducing false-green detection power or semantic Reviewer authority**. A red check must not be promoted to “the WP is wrong” unless a reviewed deterministic verifier causally owns that claim, but unknown/infra red state also must not be silently ignored to start review.
 
+Repair cycle 1 additionally circuit-breaks the three classes raised by independent review `#5275757245`: exact-candidate pre-review ordering, effective mandatory-context growth, and retry-safe same-SHA terminal closure.
+
 ## Mechanical outcome contract
 
 | Outcome | Meaning | WP defective? | May independent semantic review start? |
@@ -27,97 +29,103 @@ This explicitly closes the false-red failure mode where a missing handoff field,
 - `CTX process envelope` -> structured causal result, allowed to emit mechanical `FAIL` for its exact process claim;
 - `Review-ready terminal closure` -> `REVIEW_BLOCKED`.
 
-An unregistered red check has `affects_wp_decision=false` and `counts_as_wp_fail=false`, but the classifier returns overall `INFRA_ERROR` so review remains fail-closed while the unknown red is triaged. This is deliberately stricter than either extreme: it neither blames the WP nor ignores unexplained red state.
+An unregistered red check has `affects_wp_decision=false` and `counts_as_wp_fail=false`, but the classifier returns overall `INFRA_ERROR` so review remains fail-closed while the unknown red is triaged. A structured causal verifier that crashes or disagrees with its GitHub conclusion also becomes `INFRA_ERROR`, never a fabricated `FAIL`.
 
-A structured causal verifier that crashes or disagrees with its GitHub conclusion also becomes `INFRA_ERROR`, never a fabricated `FAIL`.
+## Exact-candidate Worker pre-review ordering
 
-## Derivable metadata moved before Reviewer
+The failed candidate `1421f1690f1bd20b578ba8f70ee8ee5deb90b67a` exposed a sequencing defect: the complete Worker pre-review covered parent `460f997c8e70720356f285583977530cc2175c76`, then a repository evidence file claiming final cleanliness was committed afterward. Exact-SHA CI on the child did not retroactively make the complete pre-review cover the child's bytes.
 
-`scripts/derive-worker-review-metadata.py` can generate only fields already determined after final bytes are CLEAN and HEAD is known: contract/evidence pointers, Candidate/Frozen SHA equality, frozen/Ready Worker state, pending Reviewer fields and unchanged fail cycle.
+Repair cycle 1 removes that self-invalidating pattern:
 
-It refuses to generate a handoff unless:
+1. all implementation and repository/evidence bytes are finalized and pushed while Draft + ACTIVE;
+2. writers stop and the exact resulting HEAD is read;
+3. the complete Worker pre-review inspects that exact HEAD and the full baseline→candidate diff;
+4. only if clean, a durable GitHub PR issue comment is created containing the clean marker, exact Candidate SHA, findings count and evidence pointers;
+5. `derive-worker-review-metadata.py` accepts that durable issue-comment URL as the final pre-review evidence pointer and rejects a repository-local final-clean pointer;
+6. Ready/freeze metadata may then change without changing candidate bytes.
 
-- `PREDECESSOR_CONTRACT_CHECK` exists;
-- exact Worker pre-review evidence contains `WORKER_PRE_REVIEW: CLEAN`;
-- exact 40-char HEAD is supplied.
+The final clean record is therefore durable but external to the Git tree. Any subsequent repository/evidence mutation changes HEAD and invalidates the clean result; the complete pre-review must be repeated before another freeze.
 
-It cannot invent CLEAN, choose Worker ownership, reset `fail_cycle` or generate a Reviewer verdict. The existing independent handoff lint still validates the result. This moves transcription errors left without creating a self-certifying handoff.
+## Effective mandatory-context envelope
 
-Historical motivation: review `#5273364796` on CTX-01 found frozen candidate bytes unchanged but canonical Ready metadata/process mode missing and Ready gates red. Under CTX-03 this family is `REVIEW_BLOCKED`; metadata can be derived/fixed and gates rerun without spending a semantic FAIL round.
+The original CTX-03 envelope bounded only `initial_reads`. That was insufficient because concrete routes can make repository-owned conditional sources mandatory. Repair cycle 1 separates two budget layers:
 
-## REVIEW_READY_CLOSED removes a race; it adds no ceremony
+- **base profile** — canonical `initial_reads`;
+- **route-effective** — checker-owned H1/CITY/PA minimum and escalated source sets, including route-forced conditional/capsule/non-compressible/authoritative sources.
 
-The pre-CTX-03 lifecycle could observe GREEN Ready checks and still lose the actual Automation V2 transition or race a later HEAD movement. CTX-03 preserves the required durable `REVIEW_READY` marker and adds an automatic **post-marker observation**:
+The route universe and a minimum effective-required-source oracle live in `scripts/context-envelope-check.py`, not in the budget config under test. `context-envelope.json` supplies the reviewed numeric baseline/ceiling for every checker-owned route and both minimum/escalated modes; it cannot remove a route without `route_budget_universe_errors` turning red.
 
-1. existing Automation V2 posts `State: REVIEW_READY` for exact frozen SHA;
-2. repository-owned `issue_comment` workflow receives that marker automatically;
-3. workflow re-reads canonical PR/handoff and prerequisite checks;
-4. it performs a live HEAD read after marker observation;
-5. immediately before persistence it performs one more race check;
-6. only then it posts `State: REVIEW_READY_CLOSED` for the same SHA.
+The circuit-breaker controls deliberately grow real repository sources across their applicable effective-route ceilings:
 
-No Worker/human posts a second marker, clicks a second Ready action, re-enters metadata or waits for a new semantic approval. `REVIEW_READY_CLOSED` is durable evidence that the already-required terminal ordering was observed, not a new semantic gate.
+- H1 Worker: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`;
+- H1 Reviewer: `Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md`;
+- CITY Worker + Reviewer: `Docs/ROADMAP.md`;
+- cumulative PA Worker + Reviewer escalation: `Docs/research/living-world/results/PA-03.md`.
 
-For the CTX-03 adoption candidate itself the new workflow is not yet on default `main`, so this one candidate uses the exact equivalent already required by its frozen plan: observe the existing real `REVIEW_READY` marker, then perform a final live PR HEAD read without changing repository bytes. Future candidates use the automatic CLOSED projection.
+Each must turn the route-effective envelope RED. The existing unrelated-100KB control remains GREEN because unrelated bytes are outside the derived effective set. Ceiling increases in either the base or route layer require an incremented revision plus explicit justification.
 
-Negative closure controls in `scripts/review-ready-closure.py` prove:
+This is a class repair: conditionally mandatory H1/CITY/PA context can no longer grow outside every reviewed ceiling merely because it is absent from `initial_reads`.
 
-- CLEAN while PR is Draft remains blocked;
-- missing/stale Frozen SHA remains blocked;
-- handoff lint RED/pending remains blocked;
-- freeze validation RED/pending remains blocked;
-- every prerequisite gate GREEN but no durable matching `REVIEW_READY` remains blocked;
-- wrong-SHA marker remains blocked;
-- post-marker HEAD movement remains blocked;
-- representative CTX-01 incomplete handoff remains blocked;
-- representative CTX-02 missing-predecessor/handoff-lint family remains blocked.
+## Retry-safe REVIEW_READY_CLOSED
 
-Malformed closure input returns `INFRA_ERROR`; a well-formed but incomplete terminal state returns `REVIEW_BLOCKED`.
+The failed workflow woke only on creation of a new Automation V2 `REVIEW_READY` comment. Automation V2 deduplicates that marker by PR+SHA, so a first closure attempt blocked by a red/pending freeze gate could become permanently unreachable after a same-SHA metadata/gate correction.
+
+After repair, `.github/workflows/review-ready-closure.yml` can wake from either:
+
+1. the original bot `issue_comment` containing the durable `REVIEW_READY` marker; or
+2. completion of `Arkus Candidate Validation`.
+
+The workflow-run path resolves the exact PR and candidate SHA, searches the canonical PR comments for an **already-existing** Automation V2 `REVIEW_READY` marker targeting that same SHA, and then reruns the normal handoff/freeze/final-live-HEAD closure. Persistence remains idempotent by `review-ready-closed:<PR>:<SHA>`.
+
+`scripts/review-ready-closure.py --self-test` reproduces the exact Reviewer case: same HEAD + same marker + freeze failure is blocked, then changing only the gate observation to SUCCESS on the same SHA turns GREEN without a second marker. `ctx03-process-controls.py` separately requires both workflow triggers and the idempotent CLOSED key to remain present.
+
+No semantic authority is added. `REVIEW_READY_CLOSED` is lifecycle evidence only.
 
 ## Causal false-green controls preserved or strengthened
 
 | Claim | Independent/derived universe | Causal negative control | Required result |
 |---|---|---|---|
-| role context ceiling | effective `initial_reads` from accepted role profile | grow a real required source across ceiling | `FAIL` |
-| unrelated repo growth should not false-red | same derived read set | add 100KB unrelated file | remains GREEN |
-| ceiling increase reviewability | prior config from base ref | increase ceiling without revision + justification | `FAIL` |
+| base role context ceiling | effective `initial_reads` from accepted role profile | grow a real unconditional required source across base ceiling | `FAIL` |
+| effective H1 foundational/local ceiling | checker-owned H1 routes + effective-required-source oracle | grow real foundational/local source across route ceiling | `FAIL` |
+| effective CITY cross-track ceiling | checker-owned CITY routes | grow real `Docs/ROADMAP.md` across route ceiling | `FAIL` |
+| effective PA escalated ceiling | checker-owned cumulative PA routes | grow canonical PA-03 result across escalated route ceiling | `FAIL` |
+| unrelated repo growth should not false-red | derived base read set | add 100KB unrelated file | remains GREEN |
+| ceiling increase reviewability | prior config from base ref | increase profile/route ceiling without revision + justification | `FAIL` |
 | escalation completeness | accepted profile `must_escalate_if` | delete one real predicate from escalation record | `FAIL` |
 | PA material-source reachability | production route generator + real PA capsule source selectors | remove canonical PA-03 result from compact route selectors | quality replay RED |
 | CITY non-compressible source | production route generator + real CITY capsule mandatory read | remove `CITY_PRODUCT_SEED.md` mandatory read | quality replay RED |
 | DocSync current-state consistency | accepted-state index + normal current-state docs | representative accepted CTX-02→CTX-03 reconciliation | contradictory/missing next state RED |
 | history separation | accepted profile initial reads | any `Docs/history/**` normal initial read | RED |
+| exact pre-review ordering | final Git HEAD vs durable external clean record | repository-local final-clean pointer rejected; any later byte mutation changes SHA | cannot false-bind parent review to child bytes |
 | terminal REVIEW_READY transaction | live-state-shaped closure oracle | remove actual marker / move HEAD / break gate | `REVIEW_BLOCKED` |
+| same-SHA terminal retry | existing marker + later Candidate Validation completion | freeze RED -> same-SHA freeze GREEN with same marker | blocked -> PASS |
 
 The quality replay checks routing/discoverability only. It does **not** claim that a model will notice a semantic blocker once the source is open. Independent Reviewer reasoning remains mandatory.
 
 ## Historical corpus classification
 
-`HISTORICAL_CLASSIFICATION.json` was re-derived from durable GitHub/repository evidence. The adopted mechanical families are limited to:
+`HISTORICAL_CLASSIFICATION.json` was re-derived from durable GitHub/repository evidence. The adopted mechanical families remain limited to deterministic causal conditions. Generic natural-language semantic equivalence is explicitly `REJECT` as a new mechanical gate.
 
-- canonical/derivable Ready metadata and handoff coherence;
-- durable `REVIEW_READY` plus post-marker live-HEAD closure.
+The repair does not reinterpret the independent FAIL as infrastructure noise: all three reviewed blockers are treated as real current-WP process defects and repaired at their causal boundaries.
 
-Known semantic/mixed CTX-02 failure families remain owned by accepted CTX-02 causal controls or independent review. Generic natural-language semantic equivalence is explicitly `REJECT` as a new mechanical gate.
+## Validation rule for the repaired candidate
 
-## Exact observed run
+Earlier GREEN runs belong to earlier candidate SHAs and remain historical evidence only. After **the last repository/evidence mutation**, the Worker must rerun the complete canonical CTX-03 surface on the exact resulting HEAD and then perform the complete Worker pre-review against that same HEAD before creating the external clean record.
 
-On candidate `0be2a5cdf97047e11561d71944919c9d27850bc3`, run `35701788029` produced:
+Required surface:
 
 ```text
-context-envelope self-test: PASS
-mechanical-verifier-classifier self-test: PASS
-review-ready-closure self-test: PASS
-derive-worker-review-metadata self-test: PASS
-ctx03-quality-replay self-test: PASS
-ctx03-process-controls self-test: PASS
-ctx03-docsync-history self-test: PASS
-CTX_PROCESS_ENVELOPE_OUTCOME: PASS
-CTX03_QUALITY_REPLAY: PASS
-CTX03_PROCESS_CONTROLS: PASS
-CTX03_DOCSYNC_HISTORY: PASS
-mechanical decision: PASS
-semantic_review_still_required: true
-wp_failed_mechanically: false
+python3 scripts/context-envelope-check.py --self-test
+python3 scripts/mechanical-verifier-classifier.py --self-test
+python3 scripts/review-ready-closure.py --self-test
+python3 scripts/derive-worker-review-metadata.py --self-test
+python3 scripts/ctx03-quality-replay.py --self-test
+python3 scripts/ctx03-process-controls.py --self-test
+python3 scripts/ctx03-docsync-history-check.py --self-test
+python3 scripts/context-envelope-check.py --audit --base-ref <BASE_SHA> --escalations Docs/evidence/CTX-03/CONTEXT_ESCALATIONS.json
+python3 scripts/ctx03-quality-replay.py --negative-controls
+python3 scripts/ctx03-process-controls.py
+python3 scripts/ctx03-docsync-history-check.py
 ```
 
-Subsequent Worker pre-review must repeat this suite on the final evidence-bearing SHA. No green in this document is a substitute for that final exact-SHA rerun or independent semantic review.
+No historical green in this document is a substitute for that final exact-SHA rerun or fresh independent semantic review.
