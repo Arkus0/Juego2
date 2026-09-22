@@ -33,8 +33,8 @@ jobs:
           path: process-oracle
           fetch-depth: 1
 
-      - name: Validate live handoff, reuse context and exact-SHA GREEN receipt
-        id: validate
+      - name: Resolve live PR identity
+        id: identity
         shell: bash
         run: |
           set -euo pipefail
@@ -42,6 +42,23 @@ jobs:
           sha="$(jq -r '.head.sha // empty' pr.json | tr '[:upper:]' '[:lower:]')"
           [[ "${sha}" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::PR HEAD is not an exact SHA"; exit 2; }
           [[ "$(jq -r '.draft' pr.json)" == "false" ]] || { echo "::error::PR is still Draft"; exit 2; }
+          echo "sha=${sha}" >> "${GITHUB_OUTPUT}"
+
+      - name: Checkout exact candidate tree
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.identity.outputs.sha }}
+          path: candidate
+          fetch-depth: 1
+
+      - name: Validate live handoff, reuse context and exact-SHA GREEN receipt
+        id: validate
+        env:
+          SHA: ${{ steps.identity.outputs.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha="${SHA}"
 
           python3 process-oracle/scripts/validation-context.py self-test
           python3 process-oracle/scripts/validation-context.py resolve \
@@ -55,15 +72,14 @@ jobs:
           [[ "${non_foundational}" == "false" ]] || { echo "::error::HK-00 receipt reuse requires foundational proof class"; exit 2; }
           [[ "${wp}" == "WP-HK-00" ]] || { echo "::error::HK-00 receipt cannot satisfy requested workpack ${wp}"; exit 2; }
 
-          # The expensive execution receipt may be reused, but readiness is always
-          # recomputed from the current mutable handoff surface. This is strictly
-          # stronger than checking a subset of frozen fields in this workflow.
+          # Expensive exact-SHA execution may be reused. Current readiness may not.
+          # Run the canonical handoff oracle against the exact historical candidate
+          # tree, while feeding it the current mutable PR body/external evidence.
           export PR_BODY="$(jq -r '.body // ""' pr.json)"
           export TARGET_SHA="${sha}"
-          export CURRENT_PR_NUMBER="${PR}"
           python3 process-oracle/scripts/validate-worker-handoff.py --self-test
           python3 process-oracle/scripts/validate-worker-handoff.py \
-            --head-sha "${sha}" --repo-root process-oracle
+            --head-sha "${sha}" --repo-root candidate
 
           python3 process-oracle/scripts/reuse-context.py self-test
           python3 process-oracle/scripts/reuse-context.py resolve \
@@ -113,7 +129,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          summary="Reused exact-SHA GREEN receipt from workflow run ${SOURCE_RUN_ID}, artifact ${ARTIFACT_ID}. Live handoff revalidated. Routing context ${CONTEXT_DIGEST}; complete mutable reuse context ${REUSE_CONTEXT_DIGEST}."
+          summary="Reused exact-SHA GREEN receipt from workflow run ${SOURCE_RUN_ID}, artifact ${ARTIFACT_ID}. Live handoff revalidated against exact candidate tree. Routing context ${CONTEXT_DIGEST}; complete mutable reuse context ${REUSE_CONTEXT_DIGEST}."
           jq -n \
             --arg name "Freeze exact-SHA validation" --arg head_sha "${SHA}" \
             --arg external_id "receipt-freeze:${PR}:${SHA}:${REUSE_CONTEXT_DIGEST}:${GITHUB_RUN_ID}" \
@@ -124,7 +140,6 @@ jobs:
       - name: Persist validation context identity
         env:
           SHA: ${{ steps.validate.outputs.sha }}
-          CONTEXT_DIGEST: ${{ steps.validate.outputs.context_digest }}
           REUSE_CONTEXT_DIGEST: ${{ steps.validate.outputs.reuse_context_digest }}
         shell: bash
         run: |
@@ -153,7 +168,7 @@ jobs:
           set -euo pipefail
           key="review-ready:${PR}:${SHA}:${REUSE_CONTEXT_DIGEST}"
           if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then exit 0; fi
-          detail="frozen metadata and durable HK-00 exact-SHA receipt are verified against the complete current mutable handoff context (receipt source run ${SOURCE_RUN_ID}). Start a fresh independent Reviewer."
+          detail="frozen metadata and durable HK-00 exact-SHA receipt are verified against the complete current mutable handoff context and exact candidate tree (receipt source run ${SOURCE_RUN_ID}). Start a fresh independent Reviewer."
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: REVIEW_READY
