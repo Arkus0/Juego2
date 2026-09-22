@@ -35,6 +35,18 @@ CANONICAL_ROUTE_CONFIGS = [
     {"id": "PA-reviewer", "profile": "reviewer", "exact_wp": "Docs/workpacks/PA/WP-PA-04.md", "capsules": ["WP-PA-01", "WP-PA-02", "WP-PA-03"]},
 ]
 
+# Independent coverage oracle for route-forced repository context. These are
+# conditions made mandatory by the concrete route, not optional examples. Route
+# budgets must therefore include them even though they are not base initial_reads.
+CANONICAL_EFFECTIVE_REQUIREMENTS = {
+    "H1-worker": {"Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md", "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md"},
+    "H1-reviewer": {"Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md", "Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md"},
+    "CITY-worker": {"Docs/ROADMAP.md"},
+    "CITY-reviewer": {"Docs/ROADMAP.md"},
+    "PA-worker": {str(CAPSULE_PROTOCOL), str(CAPSULE_INDEX)},
+    "PA-reviewer": {str(CAPSULE_PROTOCOL), str(CAPSULE_INDEX)},
+}
+
 # Pre-CTX direct-predecessor reconstruction is also checker-owned. Crucially it
 # is NOT derived from the compact capsule being measured; otherwise deleting a
 # compact source could shrink both baseline and post route and manufacture a
@@ -189,6 +201,18 @@ def profile_universe_errors(root: Path, cfg: dict) -> list[str]:
     return errors
 
 
+def route_budget_universe_errors(cfg: dict) -> list[str]:
+    budgets = cfg.get("process_envelope", {}).get("effective_route_budgets", {})
+    expected = {r["id"] for r in CANONICAL_ROUTE_CONFIGS}
+    errors = []
+    if set(budgets) != expected:
+        errors.append(f"effective route budget universe mismatch; missing={sorted(expected-set(budgets))}, extra={sorted(set(budgets)-expected)}")
+    for route_id in expected & set(budgets):
+        if set(budgets[route_id]) != {"minimum", "escalated"}:
+            errors.append(f"{route_id}: route budget must contain exactly minimum+escalated")
+    return errors
+
+
 def measure_route(root: Path, cfg: dict, route: dict):
     route_id = route["id"]
     if route_id not in PRE_CTX_DEPENDENCY_SOURCES:
@@ -235,6 +259,14 @@ def measure_route(root: Path, cfg: dict, route: dict):
     }
 
 
+def effective_requirement_errors(route_report: dict) -> list[str]:
+    route_id = route_report["id"]
+    expected = CANONICAL_EFFECTIVE_REQUIREMENTS.get(route_id, set())
+    actual = {row["path"] for row in route_report["post_ctx_min"]["files"]}
+    missing = sorted(expected - actual)
+    return [f"{route_id}: checker-owned effective mandatory sources missing from minimum route: {missing}"] if missing else []
+
+
 def ceiling_errors(current: int, pcfg: dict, headroom: float, allow_uncalibrated: bool):
     baseline, ceiling = pcfg.get("baseline_estimate"), pcfg.get("ceiling_estimate")
     if baseline is None or ceiling is None:
@@ -259,6 +291,17 @@ def git_json_at(ref: str, path: str):
     return json.loads(p.stdout)
 
 
+def _budget_increase_errors(label: str, old: dict, new: dict) -> list[str]:
+    errors = []
+    oc, nc = old.get("ceiling_estimate"), new.get("ceiling_estimate")
+    if isinstance(oc, int) and isinstance(nc, int) and nc > oc:
+        if not isinstance(new.get("ceiling_revision"), int) or new["ceiling_revision"] <= int(old.get("ceiling_revision", 0)):
+            errors.append(f"{label}: ceiling increase requires ceiling_revision increment")
+        if not str(new.get("ceiling_increase_justification") or "").strip():
+            errors.append(f"{label}: ceiling increase requires explicit justification")
+    return errors
+
+
 def ceiling_change_errors(old: dict | None, new: dict):
     if old is None:
         return []
@@ -266,15 +309,14 @@ def ceiling_change_errors(old: dict | None, new: dict):
     op = old.get("process_envelope", {}).get("profiles", {})
     np = new.get("process_envelope", {}).get("profiles", {})
     for name, n in np.items():
-        o = op.get(name)
-        if not o:
-            continue
-        oc, nc = o.get("ceiling_estimate"), n.get("ceiling_estimate")
-        if isinstance(oc, int) and isinstance(nc, int) and nc > oc:
-            if not isinstance(n.get("ceiling_revision"), int) or n["ceiling_revision"] <= int(o.get("ceiling_revision", 0)):
-                errors.append(f"{name}: ceiling increase requires ceiling_revision increment")
-            if not str(n.get("ceiling_increase_justification") or "").strip():
-                errors.append(f"{name}: ceiling increase requires explicit justification")
+        if name in op:
+            errors += _budget_increase_errors(name, op[name], n)
+    orb = old.get("process_envelope", {}).get("effective_route_budgets", {})
+    nrb = new.get("process_envelope", {}).get("effective_route_budgets", {})
+    for route_id, modes in nrb.items():
+        for mode, budget in modes.items():
+            if route_id in orb and mode in orb[route_id]:
+                errors += _budget_increase_errors(f"{route_id}/{mode}", orb[route_id][mode], budget)
     return errors
 
 
@@ -318,7 +360,8 @@ def audit(root: Path, cfg: dict, allow_uncalibrated: bool, base_ref: str | None,
     errors, profiles = [], []
     route_errors = canonical_route_errors(cfg)
     universe_errors = profile_universe_errors(root, cfg)
-    errors += route_errors + universe_errors
+    route_budget_errors = route_budget_universe_errors(cfg)
+    errors += route_errors + universe_errors + route_budget_errors
 
     headroom = float(cfg["process_envelope"]["headroom_fraction"])
     profile_doc = load(root / CANONICAL_PROFILE_SOURCE)["profiles"]
@@ -339,18 +382,42 @@ def audit(root: Path, cfg: dict, allow_uncalibrated: bool, base_ref: str | None,
             "ceiling_estimate": pcfg.get("ceiling_estimate"),
             "errors": perr,
         })
+
     old = git_json_at(base_ref, str(DEFAULT_CONFIG)) if base_ref else None
     cerr = ceiling_change_errors(old, cfg)
     errors += cerr
+
     routes = [measure_route(root, cfg, r) for r in CANONICAL_ROUTE_CONFIGS]
+    effective_errors = []
+    route_budget_report = []
+    budgets = cfg.get("process_envelope", {}).get("effective_route_budgets", {})
+    for route in routes:
+        rerr = effective_requirement_errors(route)
+        effective_errors += rerr
+        errors += rerr
+        rb = budgets.get(route["id"], {})
+        mode_rows = []
+        for mode, report_key in (("minimum", "post_ctx_min"), ("escalated", "post_ctx_escalated")):
+            budget = rb.get(mode)
+            if budget is None:
+                continue
+            est = int(route[report_key]["estimate"])
+            berr = ceiling_errors(est, budget, headroom, allow_uncalibrated)
+            errors += [f"{route['id']}/{mode}: {e}" for e in berr]
+            mode_rows.append({"mode": mode, "estimate": est, "baseline_estimate": budget.get("baseline_estimate"), "ceiling_estimate": budget.get("ceiling_estimate"), "errors": berr})
+        route_budget_report.append({"route": route["id"], "modes": mode_rows})
+
     eerr = validate_escalations(root, cfg, escalation) if escalation else []
     errors += [f"CONTEXT_ESCALATIONS: {e}" for e in eerr]
     return {
         "schema": "arkus.context-envelope-report@1",
         "profiles": profiles,
         "routes": routes,
+        "effective_route_budgets": route_budget_report,
         "route_universe_errors": route_errors,
         "profile_universe_errors": universe_errors,
+        "route_budget_universe_errors": route_budget_errors,
+        "effective_requirement_errors": effective_errors,
         "ceiling_change_errors": cerr,
         "escalation_errors": eerr,
         "errors": errors,
@@ -362,14 +429,15 @@ def self_test():
     assert material(1000, 700, .2)["material"] is False
     assert ceiling_errors(120, {"baseline_estimate": 100, "ceiling_estimate": 120, "rationale": "x"}, .2, False) == []
     assert ceiling_errors(121, {"baseline_estimate": 100, "ceiling_estimate": 120, "rationale": "x"}, .2, False)
-    old = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 100, "ceiling_revision": 1}}}}
-    new = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 101, "ceiling_revision": 1}}}}
-    assert len(ceiling_change_errors(old, new)) == 2
+    old = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 100, "ceiling_revision": 1}}, "effective_route_budgets": {"r": {"minimum": {"ceiling_estimate": 100, "ceiling_revision": 1}}}}}
+    new = {"process_envelope": {"profiles": {"x": {"ceiling_estimate": 101, "ceiling_revision": 1}}, "effective_route_budgets": {"r": {"minimum": {"ceiling_estimate": 101, "ceiling_revision": 1}}}}}
+    assert len(ceiling_change_errors(old, new)) == 4
     cfg = {"same_snapshot_measurement": {"routes": CANONICAL_ROUTE_CONFIGS}}
     assert canonical_route_errors(cfg) == []
     cfg["same_snapshot_measurement"]["routes"] = CANONICAL_ROUTE_CONFIGS[:-1]
     assert canonical_route_errors(cfg)
     assert set(PRE_CTX_DEPENDENCY_SOURCES) == {r["id"] for r in CANONICAL_ROUTE_CONFIGS}
+    assert set(CANONICAL_EFFECTIVE_REQUIREMENTS) == {r["id"] for r in CANONICAL_ROUTE_CONFIGS}
     print("context-envelope self-test: PASS")
 
 
