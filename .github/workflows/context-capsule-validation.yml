@@ -22,6 +22,7 @@ on:
       - 'Docs/evidence/CTX-02/**'
       - 'scripts/context-capsule-check.py'
       - 'scripts/context-capsule-controls.py'
+      - 'scripts/context-capsule-omission-controls.py'
       - 'scripts/context-capsule-pa-semantic-controls.py'
       - '.github/workflows/context-capsule-validation.yml'
   workflow_dispatch:
@@ -52,6 +53,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/context-capsule-controls.py
+          python3 scripts/context-capsule-omission-controls.py
           python3 scripts/context-capsule-pa-semantic-controls.py
 
       - name: Audit representative capsules and accepted PA chain
