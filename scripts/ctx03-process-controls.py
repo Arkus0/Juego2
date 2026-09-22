@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import importlib.util
 import json
 import math
@@ -36,6 +37,26 @@ def run_controls(root: Path) -> list[str]:
     m = module(root)
     cfg = m.load(root / CONFIG)
     errors: list[str] = []
+
+    # The audited config cannot shrink the representative measurement universe.
+    narrowed_routes = copy.deepcopy(cfg)
+    narrowed_routes["same_snapshot_measurement"]["routes"] = narrowed_routes["same_snapshot_measurement"]["routes"][:-1]
+    if not m.canonical_route_errors(narrowed_routes):
+        errors.append("removing a representative route from audited config did not turn RED")
+
+    narrowed_profiles = copy.deepcopy(cfg)
+    narrowed_profiles["process_envelope"]["profiles"].pop("reviewer", None)
+    if not m.profile_universe_errors(root, narrowed_profiles):
+        errors.append("removing an accepted role profile from audited config did not turn RED")
+
+    # Pre-CTX baseline is checker-owned rather than capsule-derived. Mutating a
+    # compact capsule may change the post route, but it cannot erase the canonical
+    # source from PRE_CTX_DEPENDENCY_SOURCES and self-shrink the baseline.
+    pa_source = "Docs/research/living-world/results/PA-03.md"
+    if pa_source not in m.PRE_CTX_DEPENDENCY_SOURCES["PA-worker"]:
+        errors.append("checker-owned PA baseline omits canonical PA-03 result")
+    if set(m.PRE_CTX_DEPENDENCY_SOURCES) != {r["id"] for r in m.CANONICAL_ROUTE_CONFIGS}:
+        errors.append("checker-owned pre-CTX universe and representative route universe diverge")
 
     # Real profile-derived set: unrelated growth must not change the measured
     # required corpus; growth of a real required source must cross the ceiling.
@@ -97,7 +118,6 @@ def run_controls(root: Path) -> list[str]:
 
 
 def self_test() -> None:
-    # Formula sanity only; integration controls above use the real profile set.
     assert math.ceil(100 * 1.2) == 120
     print("ctx03-process-controls self-test: PASS")
 
