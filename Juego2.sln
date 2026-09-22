@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.EngineBridge", "src\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.EngineBridge.UnityAuthoring", "src\Arkus.EngineBridge.UnityAuthoring\Arkus.EngineBridge.UnityAuthoring.csproj", "{A0000014-0000-4000-8000-000000000014}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arkus.DesignWorld", "src\Arkus.DesignWorld\Arkus.DesignWorld.csproj", "{A0000015-0000-4000-8000-000000000015}"
+EndProject
 Global
   GlobalSection(SolutionConfigurationPlatforms) = preSolution
     Debug|Any CPU = Debug|Any CPU
@@ -92,5 +94,9 @@ Global
     {A0000014-0000-4000-8000-000000000014}.Debug|Any CPU.Build.0 = Debug|Any CPU
     {A0000014-0000-4000-8000-000000000014}.Release|Any CPU.ActiveCfg = Release|Any CPU
     {A0000014-0000-4000-8000-000000000014}.Release|Any CPU.Build.0 = Release|Any CPU
+    {A0000015-0000-4000-8000-000000000015}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {A0000015-0000-4000-8000-000000000015}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {A0000015-0000-4000-8000-000000000015}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {A0000015-0000-4000-8000-000000000015}.Release|Any CPU.Build.0 = Release|Any CPU
   EndGlobalSection
 EndGlobal
