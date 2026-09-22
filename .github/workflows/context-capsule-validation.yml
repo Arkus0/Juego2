@@ -11,6 +11,7 @@ on:
       - 'Docs/workpacks/HK/WP-HK-GATE.md'
       - 'Docs/workpacks/CITY/WP-CITY-03.md'
       - 'Docs/production/CITY_PRODUCT_SEED.md'
+      - 'Docs/evidence/CTX-02/**'
       - 'scripts/context-capsule-check.py'
       - '.github/workflows/context-capsule-validation.yml'
   workflow_dispatch:
