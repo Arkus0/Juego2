@@ -6,6 +6,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/main-safety.yml'
+      - '.github/workflows/**'
       - 'global.json'
       - 'Juego2.sln'
       - '**/*.sln'
@@ -106,3 +107,5 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validation-context.py self-test
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-context.py --self-test
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py --self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-contract.py --self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-contract.py
