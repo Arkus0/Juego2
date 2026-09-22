@@ -11,6 +11,7 @@ namespace Arkus.Harness.Tests
     {
         private static readonly DesignProjectionVersion SyntheticVersion =
             new DesignProjectionVersion(1, "dw01-relation-oracle-v1");
+        private static readonly string[] SyntheticExpectedInteriorIds = { "loc.alpha", "loc.beta" };
 
         [Fact]
         public void AcceptedCityProjectionHasExactlyOneCanonicalAllocationRelationPerCity02InteriorSubject()
@@ -23,7 +24,8 @@ namespace Arkus.Harness.Tests
             var expectedInteriorIds = ParseCity02InteriorIds(programme);
             var slice = new CityDesignWorldProvider().BuildAndValidate(programme, bindings, interiors);
 
-            Assert.Equal(14, expectedInteriorIds.Count);
+            Assert.Equal(expectedInteriorIds.Count, slice.InteriorPlaceCount);
+            Assert.NotEmpty(expectedInteriorIds);
             new CityInteriorRelationOracle().Validate(slice.InteriorProjection, expectedInteriorIds);
         }
 
@@ -34,16 +36,13 @@ namespace Arkus.Harness.Tests
                 "loc.alpha",
                 Array.Empty<DesignRelation>());
 
-            var error = Assert.Throws<CityInvariantException>(() =>
-                new CityInteriorRelationOracle().Validate(
-                    projection,
-                    new[] { "loc.alpha", "loc.beta" }));
+            var error = AssertRelationOracleRed(
+                projection,
+                "city.interior_allocation_relation_missing",
+                "loc.alpha");
 
-            Assert.Equal("city.interior_allocation_relation_missing", error.MachineCode);
-            Assert.Equal("loc.alpha", error.SubjectId);
-            Assert.Contains("allocation.loc.alpha", error.Detail, StringComparison.Ordinal);
-            Assert.Contains("depth.loc.alpha", error.Detail, StringComparison.Ordinal);
-            Assert.Contains(CityDesignWorldProvider.InteriorsSourcePath, error.SourcePaths);
+            Assert.Contains("'allocates-depth' -> 'depth.loc.alpha'", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("observed relations: <none>", error.Detail, StringComparison.Ordinal);
         }
 
         [Fact]
@@ -53,13 +52,13 @@ namespace Arkus.Harness.Tests
                 "loc.alpha",
                 new[] { new DesignRelation("allocates-interior", "depth.loc.alpha") });
 
-            var error = Assert.Throws<CityInvariantException>(() =>
-                new CityInteriorRelationOracle().Validate(
-                    projection,
-                    new[] { "loc.alpha", "loc.beta" }));
+            var error = AssertRelationOracleRed(
+                projection,
+                "city.interior_allocation_relation_missing",
+                "loc.alpha");
 
-            Assert.Equal("city.interior_allocation_relation_missing", error.MachineCode);
-            Assert.Equal("loc.alpha", error.SubjectId);
+            Assert.Contains("'allocates-depth' -> 'depth.loc.alpha'", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("'allocates-interior' -> 'depth.loc.alpha'", error.Detail, StringComparison.Ordinal);
         }
 
         [Fact]
@@ -69,20 +68,106 @@ namespace Arkus.Harness.Tests
                 "loc.alpha",
                 new[] { new DesignRelation("allocates-depth", "depth.loc.beta") });
 
-            var error = Assert.Throws<CityInvariantException>(() =>
-                new CityInteriorRelationOracle().Validate(
-                    projection,
-                    new[] { "loc.alpha", "loc.beta" }));
+            var error = AssertRelationOracleRed(
+                projection,
+                "city.interior_allocation_relation_target_invalid",
+                "loc.alpha");
 
-            Assert.Equal("city.interior_allocation_relation_target_invalid", error.MachineCode);
+            Assert.Contains("Expected 'allocates-depth' -> 'depth.loc.alpha'", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("observed 'allocates-depth' -> 'depth.loc.beta'", error.Detail, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void TwoCanonicalRelationsIncludingOneCorrectAndOneWrongAreCardinalityRed()
+        {
+            var projection = BuildSyntheticProjection(
+                "loc.alpha",
+                new[]
+                {
+                    new DesignRelation("allocates-depth", "depth.loc.alpha"),
+                    new DesignRelation("allocates-depth", "depth.loc.beta")
+                });
+
+            var error = AssertRelationOracleRed(
+                projection,
+                "city.interior_allocation_relation_cardinality",
+                "loc.alpha");
+
+            Assert.Contains("observed 2 canonical relations", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("'depth.loc.alpha'", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("'depth.loc.beta'", error.Detail, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void MissingAllocationProjectionIsRedAgainstIndependentExpectedSubjectSet()
+        {
+            var projection = BuildSyntheticProjection(
+                "loc.alpha",
+                new[] { new DesignRelation("allocates-depth", "depth.loc.alpha") },
+                new[] { "allocation.loc.alpha" });
+
+            var error = Assert.Throws<CityInvariantException>(() =>
+                new CityInteriorRelationOracle().Validate(projection, SyntheticExpectedInteriorIds));
+
+            Assert.Equal("city.interior_allocation_projection_missing", error.MachineCode);
             Assert.Equal("loc.alpha", error.SubjectId);
-            Assert.Contains("depth.loc.beta", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("allocation.loc.alpha", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("allocates-depth", error.Detail, StringComparison.Ordinal);
+            Assert.Contains(CityDesignWorldProvider.ProgrammeSourcePath, error.SourcePaths);
+            Assert.Contains(CityDesignWorldProvider.InteriorsSourcePath, error.SourcePaths);
+        }
+
+        [Fact]
+        public void MissingDepthProjectionIsRedAgainstIndependentExpectedSubjectSet()
+        {
+            var projection = BuildSyntheticProjection(
+                "loc.alpha",
+                new[] { new DesignRelation("allocates-depth", "depth.loc.beta") },
+                new[] { "depth.loc.alpha" });
+
+            var error = Assert.Throws<CityInvariantException>(() =>
+                new CityInteriorRelationOracle().Validate(projection, SyntheticExpectedInteriorIds));
+
+            Assert.Equal("city.interior_depth_projection_missing", error.MachineCode);
+            Assert.Equal("loc.alpha", error.SubjectId);
             Assert.Contains("depth.loc.alpha", error.Detail, StringComparison.Ordinal);
+            Assert.Contains("allocates-depth", error.Detail, StringComparison.Ordinal);
+            Assert.Contains(CityDesignWorldProvider.ProgrammeSourcePath, error.SourcePaths);
+            Assert.Contains(CityDesignWorldProvider.InteriorsSourcePath, error.SourcePaths);
+        }
+
+        [Fact]
+        public void DanglingRelationTargetFailsClosedInGenericProjectionBeforeCityOracle()
+        {
+            var error = Assert.Throws<DesignWorldProjectionException>(() =>
+                BuildSyntheticProjection(
+                    "loc.alpha",
+                    new[] { new DesignRelation("allocates-depth", "depth.loc.missing") }));
+
+            Assert.Equal("dw.relation_target_outside_universe", error.MachineCode);
+        }
+
+        private static CityInvariantException AssertRelationOracleRed(
+            DesignWorldProjection projection,
+            string expectedMachineCode,
+            string expectedSubject)
+        {
+            var error = Assert.Throws<CityInvariantException>(() =>
+                new CityInteriorRelationOracle().Validate(projection, SyntheticExpectedInteriorIds));
+
+            Assert.Equal(expectedMachineCode, error.MachineCode);
+            Assert.Equal(expectedSubject, error.SubjectId);
+            Assert.Contains("allocates-depth", error.Rule, StringComparison.Ordinal);
+            Assert.Contains("allocation." + expectedSubject, error.Detail, StringComparison.Ordinal);
+            Assert.Contains(CityDesignWorldProvider.ProgrammeSourcePath, error.SourcePaths);
+            Assert.Contains(CityDesignWorldProvider.InteriorsSourcePath, error.SourcePaths);
+            return error;
         }
 
         private static DesignWorldProjection BuildSyntheticProjection(
             string mutatedSubject,
-            IEnumerable<DesignRelation> mutatedRelations)
+            IEnumerable<DesignRelation> mutatedRelations,
+            IEnumerable<string> omittedFactIds = null)
         {
             const string source =
                 "depth-alpha-anchor\n" +
@@ -90,40 +175,49 @@ namespace Arkus.Harness.Tests
                 "depth-beta-anchor\n" +
                 "allocation-beta-anchor\n";
 
+            var omitted = new HashSet<string>(
+                omittedFactIds ?? Array.Empty<string>(),
+                StringComparer.Ordinal);
             var definitions = new List<AnchoredFactDefinition>();
-            foreach (var id in new[] { "loc.alpha", "loc.beta" })
+            var universeIds = new List<string>();
+            foreach (var id in SyntheticExpectedInteriorIds)
             {
-                definitions.Add(new AnchoredFactDefinition(
-                    "depth." + id,
-                    "city-interior-depth",
-                    "depth-" + id.Substring("loc.".Length) + "-anchor",
-                    new Dictionary<string, DesignValue>(StringComparer.Ordinal)
-                    {
-                        ["interior-depth"] = DesignValue.String("I1")
-                    }));
+                var suffix = id.Substring("loc.".Length);
+                var depthFactId = "depth." + id;
+                if (!omitted.Contains(depthFactId))
+                {
+                    definitions.Add(new AnchoredFactDefinition(
+                        depthFactId,
+                        "city-interior-depth",
+                        "depth-" + suffix + "-anchor",
+                        new Dictionary<string, DesignValue>(StringComparer.Ordinal)
+                        {
+                            ["interior-depth"] = DesignValue.String("I1")
+                        }));
+                    universeIds.Add(depthFactId);
+                }
 
-                var relations = StringComparer.Ordinal.Equals(id, mutatedSubject)
-                    ? mutatedRelations
-                    : new[] { new DesignRelation("allocates-depth", "depth." + id) };
+                var allocationFactId = "allocation." + id;
+                if (!omitted.Contains(allocationFactId))
+                {
+                    var relations = StringComparer.Ordinal.Equals(id, mutatedSubject)
+                        ? mutatedRelations
+                        : new[] { new DesignRelation("allocates-depth", depthFactId) };
 
-                definitions.Add(new AnchoredFactDefinition(
-                    "allocation." + id,
-                    "city-interior-allocation",
-                    "allocation-" + id.Substring("loc.".Length) + "-anchor",
-                    new Dictionary<string, DesignValue>(StringComparer.Ordinal)
-                    {
-                        ["allocated"] = DesignValue.Boolean(true)
-                    },
-                    relations));
+                    definitions.Add(new AnchoredFactDefinition(
+                        allocationFactId,
+                        "city-interior-allocation",
+                        "allocation-" + suffix + "-anchor",
+                        new Dictionary<string, DesignValue>(StringComparer.Ordinal)
+                        {
+                            ["allocated"] = DesignValue.Boolean(true)
+                        },
+                        relations));
+                    universeIds.Add(allocationFactId);
+                }
             }
 
-            var universe = new StaticDesignAuthorityUniverse(new[]
-            {
-                "depth.loc.alpha",
-                "allocation.loc.alpha",
-                "depth.loc.beta",
-                "allocation.loc.beta"
-            });
+            var universe = new StaticDesignAuthorityUniverse(universeIds);
             var reader = new AnchoredTextAuthorityReader(
                 "dw01-relation-oracle-synthetic",
                 CityDesignWorldProvider.InteriorsSourcePath,
@@ -135,7 +229,7 @@ namespace Arkus.Harness.Tests
                 projection, universe, reader, SyntheticVersion);
             Assert.True(
                 genericReport.IsValid,
-                "The causal control must preserve the generic self-confirming path so only the independent CITY oracle detects the defect.");
+                "The causal control must preserve the generic self-confirming path so only the independent CITY obligation set detects the defect.");
 
             return projection;
         }
