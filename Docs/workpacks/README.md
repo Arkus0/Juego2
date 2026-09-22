@@ -2,7 +2,7 @@
 
 Each workpack is one independently reviewable contract. Work only inside its allowed scope and stop when its Definition of Done is met.
 
-For all `HK-*` workpacks through `WP-HK-GATE`, all H1 workpacks marked `FOUNDATIONAL`, and all DW workpacks if the DW planning PR is accepted:
+For all `HK-*` workpacks through `WP-HK-GATE`, all H1 workpacks marked `FOUNDATIONAL`, and all DW workpacks:
 
 - `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` is binding;
 - exact-SHA evidence is required;
@@ -49,7 +49,7 @@ Responsibilities:
 
 `CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are documentation/research/planning only. `CITY-04`, `CITY-07` and `CITY-08` are LOCAL and MUST NOT begin before their stated Unity/bridge/catalogue prerequisites have passed. The H1 plan makes that interlock explicit: `H1-08 -> CITY-04` is a non-blocking greybox side edge, while `H1-GATE -> CITY-07` protects keeper realization; CITY-08 remains its own later authoring-efficiency owner.
 
-`WP-CITY-00`, `WP-CITY-01`, `WP-CITY-02`, `WP-CITY-05`, `WP-CITY-06` and `WP-CITY-03` are COMPLETE. CITY Programme v2 is ACCEPTED on candidate `87a902584f2c46b2d256f6fef26829e9182e7605` (review `#5261734418`, PR `#70`, merge `058e2f4f7c5b018d60cce84e9c89bd07249dd36a`). `WP-CITY-01` passed on candidate `3444555a983415645dcc2897b748d6c4f6294f19` (review `#5263809993`, PR `#73`, merge `a9ff655e5bf2319690d919b88bd57389a32483f3`). `WP-CITY-02` passed on candidate `ddcb22d9a2dfcf68054db2b762fc7ff7aed68ae8` (review `#5266113192`, PR `#81`, merge `1bdb7b6e914692493b17a9d2215d881dfe326cb0`). `WP-CITY-05` passed on candidate `10d1528b0354b16a614fb10a3933a25b32f15f28` (review `#5267776704`, PR `#83`, merge `47909a72eb6d38332f62e9c01426c8cd40e1863b`). `WP-CITY-06` passed on candidate `c73cbb19f8b152bd4b97ce3154eb18a78deaec3c` (review `#5268249668`, PR `#90`, merge `acb84ec9ba7aa94e962bf7b35d7e53c0549ba758`). `WP-CITY-03` passed on candidate `420999e9a60e7240bcfb514b3239b652f0e09a5f` (review `#5268853516`, PR `#94`, merge `a3abeaf82752bfe9dac2f594c06eb8def3b108e2`). The next CITY workpack in the spine is `WP-CITY-04 — LOCAL retained-seed greybox + traversal validation`, but it remains blocked until `WP-H1-08` PASS.
+`WP-CITY-00`, `WP-CITY-01`, `WP-CITY-02`, `WP-CITY-05`, `WP-CITY-06` and `WP-CITY-03` are COMPLETE. CITY Programme v2 is ACCEPTED on candidate `87a902584f2c46b2d256f6fef26829e9182e7605` (review `#5261734418`, PR `#70`, merge `058e2f4f7c5b018d60cce84e9c89bd07249dd36a`). `WP-CITY-01` passed on candidate `3444555a983415645dcc2897b748d6c4f6294f19` (review `#5263809993`, PR `#73`, merge `a9ff655e5bf2319690d919b88bd57389a32483f3`). `WP-CITY-02` passed on candidate `ddcb22d9a2dfcf68054db2b762fc7ff7aed68ae8` (review `#5266113192`, PR `#81`, merge `1bdb7b6e914692493b17a9d2215d881dfe326cb0`). `WP-CITY-05` passed on candidate `10d1528b0354b16a614fb10a3933a25b32f15f28` (review `#5267776704`, PR `#83`, merge `47909a72eb6d38332f62e9c01426c8cd40e1863b`). `WP-CITY-06` passed on candidate `c73cbb19f8b152bd4b97ce3154eb18a78deaec3c` (review `#5268249668`, PR `#90`, merge `acb84ec9ba6aa94e962bf7b35d7e53c0549ba758`). `WP-CITY-03` passed on candidate `420999e9a60e7240bcfb514b3239b652f0e09a5f` (review `#5268853516`, PR `#94`, merge `a3abeaf82752bfe9dac2f594c06eb8def3b108e2`). The next CITY workpack in the spine is `WP-CITY-04 — LOCAL retained-seed greybox + traversal validation`, but it remains blocked until `WP-H1-08` PASS.
 
 `PA/` is the non-foundational Living World research/adoption track. Canonical research meanings remain in `Docs/research/living-world/PA_ROADMAP.md`; the executable Worker → Reviewer contracts live in `Docs/workpacks/PA/`.
 
@@ -79,13 +79,11 @@ CTX-01 -> CTX-02 -> CTX-03
 
 `WP-CTX-01 — Role-specific bootstrap + accepted-state navigation` is **COMPLETE** on repaired frozen candidate `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39` (independent PASS review `#5273801466`, PR `#110`, implementation merge `fbd3e5526e760efc89f54e7c12a274af10d4765f`). The repaired accepted contract uses `docsync-first-parent-v1` so the derived navigation index can be persisted without self-reference while remaining stale-detected and non-authoritative. After successful DocSync, `WP-CTX-02 — Accepted-contract capsules + predecessor inheritance compression` is the next dependency-valid CTX action. CTX does not semantically block H1/CITY/PA.
 
-## Proposed foundational second-consumer track
+## Foundational second-consumer track
 
-`DW/` is a proposed **FOUNDATIONAL VALIDATION** track whose planning artifacts live in `Docs/workpacks/DW/` and `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`. It becomes binding only if its PROCESS_ONLY planning PR independently PASSes, merges and completes DocSync. Until then no `WP-DW-*` implementation is authorized.
+`DW/` is an **ACCEPTED FOUNDATIONAL VALIDATION** track. Its architecture is `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`; all seven DW implementation/gate workpacks are governed by `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` v1.5 or later accepted successor.
 
-DW does **not** invalidate CTX. CTX remains the owner of process-context/bootstrap/capsule policy and its full accepted sequence remains useful independently. DW adds a different layer: a typed, provenance-preserving Design World projection over accepted CITY/PA facts. The measured structured-context comparison deliberately waits for accepted `CTX-03` so DW must beat the best accepted baseline rather than an obsolete one.
-
-Proposed DW sequence:
+The DW programme plan is **ACCEPTED** on frozen candidate `cbb0114bb9ee1248739c093109a9b71e26751444` (independent PASS review `#5274794434`, PR `#117`, merge `b831050e9df8b61b76744e0c5f544bd7ec2d79b5`). Its reviewed sequence is:
 
 ```text
 DW-00 -> DW-01 -> DW-02 -> DW-03 -> DW-04 -> DW-05 -> DW-GATE
@@ -95,6 +93,8 @@ DW-00 -> DW-01 -> DW-02 -> DW-03 -> DW-04 -> DW-05 -> DW-GATE
                           accepted   accepted
 ```
 
-H1 continues independently in parallel. `DW-00..03` do not depend on CTX completion; `DW-04` does. If accepted, final H2 external/public-boundary acceptance must explicitly consume or disposition `DW-GATE` evidence, while H1-GATE remains the independent Unity-readiness owner.
+DW does **not** invalidate CTX. CTX remains the owner of process-context/bootstrap/capsule policy and its full accepted sequence remains useful independently. DW adds a typed, provenance-preserving Design World projection over accepted CITY/PA facts. The measured structured-context comparison waits for accepted `CTX-03` so DW must beat the best accepted baseline rather than an obsolete one.
+
+`WP-DW-00 — Authority-preserving Design World projection contract` is the sole default DW start and is dependency-valid after this plan DocSync; it remains `NOT_STARTED` until a human explicitly starts its Worker. Later DW workpacks require their stated serial/cross-track predecessors. H1 continues independently in parallel. Final H2 external/public-boundary acceptance must explicitly consume accepted `DW-GATE` evidence or review/disposition the accepted DW interlock, while H1-GATE remains the independent Unity/gameplay-readiness owner.
 
 The track is intentionally limited to two real consumers (CITY and PA), one structured-context trial and one generic-boundary stress/closure step. Design↔Unity drift, generated art briefs, source-catalogue coverage, replay QA, narrative knowledge validation and non-game product experiments remain downstream candidates, not current DW implementation scope.
