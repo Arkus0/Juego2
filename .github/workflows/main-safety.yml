@@ -4,6 +4,28 @@ on:
   push:
     branches: [main]
   pull_request:
+    paths:
+      - '.github/workflows/main-safety.yml'
+      - 'global.json'
+      - 'Juego2.sln'
+      - '**/*.sln'
+      - '**/*.csproj'
+      - 'src/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'Directory.Build.props'
+      - 'Directory.Packages.props'
+      - 'Directory.*.props'
+      - 'Directory.*.targets'
+      - '**/Directory.*.props'
+      - '**/Directory.*.targets'
+      - '**/*.props'
+      - '**/*.targets'
+      - 'NuGet.config'
+      - '**/NuGet.config'
+      - 'packages.lock.json'
+      - '**/packages.lock.json'
+      - '**/*.lock.json'
   workflow_dispatch:
 
 permissions:
@@ -82,3 +104,5 @@ jobs:
           set -euo pipefail
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-handoff.py --self-test
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validation-context.py self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-context.py --self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py --self-test
