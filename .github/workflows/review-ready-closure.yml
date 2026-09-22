@@ -3,6 +3,9 @@ name: Arkus Review Ready Closure
 on:
   issue_comment:
     types: [created]
+  workflow_run:
+    workflows: ["Arkus Candidate Validation"]
+    types: [completed]
 
 permissions:
   actions: read
@@ -14,35 +17,81 @@ jobs:
   close-review-ready:
     name: Review-ready terminal closure
     if: >-
-      github.event.issue.pull_request != null &&
-      github.event.comment.user.login == 'github-actions[bot]'
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       github.event.comment.user.login == 'github-actions[bot]') ||
+      github.event_name == 'workflow_run'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - name: Parse Automation V2 marker
+      - name: Resolve durable marker and target PR
         id: marker
         env:
-          BODY: ${{ github.event.comment.body || '' }}
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          COMMENT_BODY: ${{ github.event.comment.body || '' }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || '' }}
+          WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha || '' }}
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY' >> "${GITHUB_OUTPUT}"
+          if [[ "${EVENT_NAME}" == "issue_comment" ]]; then
+            python3 - <<'PY' >> "${GITHUB_OUTPUT}"
           import os, re
-          body = os.environ.get("BODY", "")
+          body = os.environ.get("COMMENT_BODY", "")
           state = re.search(r"^State:\s*(\S+)\s*$", body, re.M)
           target = re.search(r"^Target SHA:\s*([0-9a-fA-F]{40})\s*$", body, re.M)
           automation = any(line.strip() == "ARKUS_AUTOMATION_V2" for line in body.splitlines())
           valid = automation and state is not None and state.group(1) == "REVIEW_READY" and target is not None
           print(f"valid={'true' if valid else 'false'}")
           print(f"target_sha={target.group(1).lower() if valid else ''}")
+          print(f"pr={os.environ.get('ISSUE_NUMBER','') if valid else ''}")
           PY
+            exit 0
+          fi
+
+          target="${WORKFLOW_HEAD_SHA,,}"
+          if [[ ! "${target}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "valid=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          pr="$(jq -r '.workflow_run.pull_requests[0].number // empty' "${GITHUB_EVENT_PATH}")"
+          if [[ -z "${pr}" ]]; then
+            pr="$(gh api -H 'Accept: application/vnd.github+json' \
+              "repos/${GITHUB_REPOSITORY}/commits/${target}/pulls" \
+              --jq '[.[] | select(.state == "open")] | .[0].number // empty')"
+          fi
+          if [[ -z "${pr}" ]]; then
+            echo "valid=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          comments="${RUNNER_TEMP}/review-ready-comments.json"
+          gh api --paginate --slurp \
+            "repos/${GITHUB_REPOSITORY}/issues/${pr}/comments?per_page=100" > "${comments}"
+          marker_found="$(jq -r --arg sha "${target}" '
+            [.[][]
+              | select(.user.login == "github-actions[bot]")
+              | .body
+              | select(contains("ARKUS_AUTOMATION_V2"))
+              | select(test("(?m)^State: REVIEW_READY\\s*$"))
+              | select(test("(?m)^Target SHA: " + $sha + "\\s*$"))]
+            | if length > 0 then "true" else "false" end
+          ' "${comments}")"
+
+          echo "valid=${marker_found}" >> "${GITHUB_OUTPUT}"
+          if [[ "${marker_found}" == "true" ]]; then
+            echo "target_sha=${target}" >> "${GITHUB_OUTPUT}"
+            echo "pr=${pr}" >> "${GITHUB_OUTPUT}"
+          fi
 
       - name: Read canonical PR after marker
         id: pr
         if: steps.marker.outputs.valid == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          PR: ${{ github.event.issue.number }}
+          PR: ${{ steps.marker.outputs.pr }}
         shell: bash
         run: |
           set -euo pipefail
@@ -60,7 +109,7 @@ jobs:
         if: steps.marker.outputs.valid == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          PR: ${{ github.event.issue.number }}
+          PR: ${{ steps.marker.outputs.pr }}
         shell: bash
         run: |
           set -euo pipefail
@@ -76,7 +125,7 @@ jobs:
         if: steps.marker.outputs.valid == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          PR: ${{ github.event.issue.number }}
+          PR: ${{ steps.marker.outputs.pr }}
           MARKER_SHA: ${{ steps.marker.outputs.target_sha }}
         shell: bash
         run: |
@@ -88,8 +137,9 @@ jobs:
           handoff="$(jq -r '[.check_runs[] | select(.name == "Worker handoff lint")] | sort_by(.completed_at // .started_at // "") | reverse | .[0].conclusion // "missing"' checks.json)"
           freeze="$(jq -r '[.check_runs[] | select(.name == "Freeze exact-SHA validation")] | sort_by(.completed_at // .started_at // "") | reverse | .[0].conclusion // "missing"' checks.json)"
 
-          # This read is intentionally after the REVIEW_READY comment event and
-          # after observing both prerequisite checks.
+          # This read is intentionally after the durable REVIEW_READY marker and
+          # after observing both prerequisite checks. On workflow_run retries the
+          # marker may predate this run; reusing it is intentional and idempotent.
           final_head="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.head.sha')"
 
           python3 - "${handoff}" "${freeze}" "${MARKER_SHA}" "${final_head}" <<'PY'
@@ -129,7 +179,7 @@ jobs:
         if: steps.marker.outputs.valid == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          PR: ${{ github.event.issue.number }}
+          PR: ${{ steps.marker.outputs.pr }}
           TARGET_SHA: ${{ steps.marker.outputs.target_sha }}
         shell: bash
         run: |
@@ -151,7 +201,7 @@ jobs:
           State: REVIEW_READY_CLOSED
           Key: ${key}
           Target SHA: ${TARGET_SHA}
-          Detail: durable REVIEW_READY observed; Worker handoff lint and freeze exact-SHA validation are green; final live PR HEAD still equals the frozen SHA. Lifecycle evidence only; independent Reviewer judgment remains required.
+          Detail: durable REVIEW_READY observed; Worker handoff lint and freeze exact-SHA validation are green; final live PR HEAD still equals the frozen SHA. Closure is retry-safe for same-SHA gate/metadata repairs and remains lifecycle evidence only; independent Reviewer judgment is still required.
           EOF
           )
           gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
