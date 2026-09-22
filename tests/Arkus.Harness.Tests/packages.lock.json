@@ -158,6 +158,12 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
+      "arkus.designworld": {
+        "type": "Project",
+        "dependencies": {
+          "Arkus.Game.World": "[1.0.0, )"
+        }
+      },
       "arkus.enginebridge": {
         "type": "Project"
       },
