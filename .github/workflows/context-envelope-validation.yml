@@ -1,0 +1,104 @@
+name: CTX Process Envelope
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  envelope:
+    name: CTX process envelope
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Self-test deterministic CTX-03 process controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          python3 scripts/context-envelope-check.py --self-test
+          python3 scripts/mechanical-verifier-classifier.py --self-test
+          python3 scripts/review-ready-closure.py --self-test
+          python3 scripts/derive-worker-review-metadata.py --self-test
+
+      - name: Audit effective role envelope and same-snapshot routes
+        id: audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python3 scripts/context-envelope-check.py \
+            --audit \
+            --allow-uncalibrated \
+            ${BASE_SHA:+--base-ref "${BASE_SHA}"} \
+            --output ctx-envelope-report.json \
+            > ctx-envelope.log 2>&1
+          status=$?
+          set -e
+          cat ctx-envelope.log
+          case "${status}" in
+            0) outcome=PASS ;;
+            20) outcome=FAIL ;;
+            21) outcome=REVIEW_BLOCKED ;;
+            22) outcome=NOT_APPLICABLE ;;
+            23) outcome=INFRA_ERROR ;;
+            *) outcome=INFRA_ERROR ;;
+          esac
+          echo "reported_outcome=${outcome}" >> "${GITHUB_OUTPUT}"
+          echo "raw_status=${status}" >> "${GITHUB_OUTPUT}"
+
+      - name: Classify verifier outcome without false-red promotion
+        shell: bash
+        env:
+          REPORTED_OUTCOME: ${{ steps.audit.outputs.reported_outcome }}
+        run: |
+          set -euo pipefail
+          conclusion=success
+          case "${REPORTED_OUTCOME}" in
+            FAIL|REVIEW_BLOCKED|INFRA_ERROR) conclusion=failure ;;
+          esac
+          cat > mechanical-state.json <<EOF
+          {
+            "checks": [
+              {
+                "name": "CTX process envelope",
+                "conclusion": "${conclusion}",
+                "reported_outcome": "${REPORTED_OUTCOME}"
+              }
+            ],
+            "required_registered_verifiers": ["ctx-process-envelope"]
+          }
+          EOF
+          set +e
+          python3 scripts/mechanical-verifier-classifier.py \
+            --state mechanical-state.json \
+            --output mechanical-decision.json
+          classified=$?
+          set -e
+          cat mechanical-decision.json
+          exit "${classified}"
+
+      - name: Upload CTX process evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ctx-process-envelope-${{ env.TARGET_SHA }}
+          path: |
+            ctx-envelope.log
+            ctx-envelope-report.json
+            mechanical-state.json
+            mechanical-decision.json
+          if-no-files-found: warn
+          retention-days: 30
