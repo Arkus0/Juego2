@@ -38,13 +38,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          args=(--audit --output ctx-envelope-report.json)
+          if [[ -n "${BASE_SHA}" ]]; then
+            args+=(--base-ref "${BASE_SHA}")
+          fi
           set +e
-          python3 scripts/context-envelope-check.py \
-            --audit \
-            --allow-uncalibrated \
-            ${BASE_SHA:+--base-ref "${BASE_SHA}"} \
-            --output ctx-envelope-report.json \
-            > ctx-envelope.log 2>&1
+          python3 scripts/context-envelope-check.py "${args[@]}" > ctx-envelope.log 2>&1
           status=$?
           set -e
           cat ctx-envelope.log
