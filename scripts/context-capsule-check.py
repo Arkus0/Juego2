@@ -17,12 +17,39 @@ INDEX_SCHEMA = "arkus.accepted-contract-capsule-index@1"
 AUTHORITY = "NON_AUTHORITATIVE_NAVIGATION_ONLY"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$", re.I)
 CAPSULE_ROOT = "Docs/engineering/context-capsules/"
+CANONICAL_INDEX_PATH = "Docs/engineering/context-capsules/index.json"
+CANONICAL_PROTOCOL_PATH = "Docs/engineering/CONTEXT_CAPSULE_V1.md"
 CTX02_EVIDENCE_ROOT = "Docs/evidence/CTX-02/"
 CITY_PRODUCT_SEED = "Docs/production/CITY_PRODUCT_SEED.md"
+PA_WORKPACK_GLOB = "Docs/workpacks/PA/WP-PA-[0-9][0-9].md"
+PA_RESULT_TEMPLATE = "Docs/research/living-world/results/PA-{NN}.md"
 CTX02_GENERATED_AUTHORITY_PATHS = {
-    "Docs/engineering/CONTEXT_CAPSULE_V1.md",
+    CANONICAL_PROTOCOL_PATH,
     "Docs/engineering/context-capsule-schema.json",
-    "Docs/engineering/context-capsules/index.json",
+    CANONICAL_INDEX_PATH,
+}
+
+# These selectors are checker-owned because allowing a PA capsule or its index to
+# choose the table/columns used as its own completeness oracle creates
+# self-confirmation. Future accepted PA capsules must add a reviewed checker-owned
+# selector before capsule coverage can be declared complete; until then they fail
+# closed to authoritative reconstruction.
+CANONICAL_PA_DISPOSITION_SELECTORS = {
+    "WP-PA-01": {
+        "section": "## 3. Donor → Juego2 disposition",
+        "key_column": 0,
+        "status_column": 2,
+    },
+    "WP-PA-02": {
+        "section": "## 3. Donor → Juego2 mechanism disposition",
+        "key_column": 0,
+        "status_column": 2,
+    },
+    "WP-PA-03": {
+        "section": "## 4. Minimal relationship vocabulary recommendation",
+        "key_column": 0,
+        "status_column": 1,
+    },
 }
 
 
@@ -89,6 +116,35 @@ def read_bound_source(repo_root: Path, source: dict, *, label: str) -> bytes:
 
 def strip_md(value: str) -> str:
     return " ".join(value.replace("**", "").replace("`", "").split()).strip()
+
+
+def canonical_workpack_binding(capsule_id: str) -> tuple[str, str, str]:
+    """Return checker-owned canonical workpack path, track and content mode."""
+    if capsule_id.startswith("WP-HK-"):
+        return f"Docs/workpacks/HK/{capsule_id}.md", "H0", "boundary_summary"
+    for prefix, directory, track in (
+        ("WP-H1-", "H1", "H1"),
+        ("WP-CITY-", "CITY", "CITY"),
+        ("WP-PA-", "PA", "PA"),
+        ("WP-CTX-", "CTX", "CTX"),
+    ):
+        if capsule_id.startswith(prefix):
+            mode = "structured_disposition" if track == "PA" else "boundary_summary"
+            return f"Docs/workpacks/{directory}/{capsule_id}.md", track, mode
+    raise CapsuleError(f"{capsule_id}: no checker-owned canonical workpack binding")
+
+
+def canonical_pa_result_path(capsule_id: str) -> str:
+    match = re.fullmatch(r"WP-PA-(\d\d)", capsule_id)
+    if not match:
+        raise CapsuleError(f"{capsule_id}: PA capsule id must be WP-PA-NN")
+    return PA_RESULT_TEMPLATE.replace("{NN}", match.group(1))
+
+
+def canonical_capsule_path(capsule_id: str) -> str:
+    if not isinstance(capsule_id, str) or not capsule_id:
+        raise CapsuleError("capsule index entry requires non-empty capsule_id")
+    return f"{CAPSULE_ROOT}{capsule_id}.json"
 
 
 def parse_completion(text: str) -> dict:
@@ -192,10 +248,15 @@ def validate_basic_shape(capsule: dict) -> None:
     cid = capsule.get("capsule_id")
     if not isinstance(cid, str) or not cid:
         raise CapsuleError("capsule_id required")
-    if capsule.get("track") not in {"H0", "H1", "CITY", "PA", "CTX"}:
-        raise CapsuleError(f"{cid}: unsupported track")
-    if capsule.get("content_mode") not in {"boundary_summary", "structured_disposition"}:
-        raise CapsuleError(f"{cid}: content_mode must be boundary_summary or structured_disposition")
+    canonical_path, canonical_track, canonical_mode = canonical_workpack_binding(cid)
+    if capsule.get("track") != canonical_track:
+        raise CapsuleError(
+            f"{cid}: track must equal checker-owned canonical track {canonical_track} derived from {canonical_path}"
+        )
+    if capsule.get("content_mode") != canonical_mode:
+        raise CapsuleError(
+            f"{cid}: content_mode must equal checker-owned canonical mode {canonical_mode}"
+        )
     identity = capsule.get("accepted_identity")
     if not isinstance(identity, dict):
         raise CapsuleError(f"{cid}: accepted_identity required")
@@ -254,10 +315,10 @@ def validate_identity(repo_root: Path, capsule: dict, live_state: dict | None) -
     if not isinstance(identity_source, dict):
         raise CapsuleError(f"{cid}: identity_source required")
     identity_path = normalized_repo_path(identity_source.get("path"), label=f"{cid}.identity_source")
-    expected_name = f"{cid}.md"
-    if not identity_path.startswith("Docs/workpacks/") or PurePosixPath(identity_path).name != expected_name:
+    canonical_path, _, _ = canonical_workpack_binding(cid)
+    if identity_path != canonical_path:
         raise CapsuleError(
-            f"{cid}: identity_source must be canonical external workpack Docs/workpacks/**/{expected_name}"
+            f"{cid}: identity_source must equal checker-owned canonical workpack {canonical_path}; got {identity_path}"
         )
     require_external_authority_path(identity_path, label=f"{cid}.identity_source")
     data = read_bound_source(repo_root, identity_source, label=f"{cid}.identity_source")
@@ -306,6 +367,12 @@ def validate_sources(repo_root: Path, capsule: dict) -> None:
         if path in seen:
             raise CapsuleError(f"{cid}: duplicate authoritative source {path}")
         seen.add(path)
+    if capsule["track"] == "PA":
+        canonical_result = canonical_pa_result_path(cid)
+        if canonical_result not in seen:
+            raise CapsuleError(
+                f"{cid}: PA authoritative_sources must include checker-owned canonical result {canonical_result}"
+            )
 
 
 def validate_mandatory_reads(repo_root: Path, capsule: dict) -> None:
@@ -322,6 +389,36 @@ def validate_mandatory_reads(repo_root: Path, capsule: dict) -> None:
         if not isinstance(reason, str) or not reason.strip():
             raise CapsuleError(f"{label}.reason must be a non-empty string")
         read_bound_source(repo_root, source, label=label)
+
+
+def validate_canonical_pa_selector(capsule: dict) -> None:
+    if capsule["track"] != "PA":
+        return
+    cid = capsule["capsule_id"]
+    selector = CANONICAL_PA_DISPOSITION_SELECTORS.get(cid)
+    if selector is None:
+        raise CapsuleError(
+            f"{cid}: no checker-owned canonical PA disposition selector; "
+            "RECONSTRUCT_FROM_AUTHORITATIVE_SOURCES until reviewed selector is added"
+        )
+    spec = capsule.get("disposition_source")
+    dispositions = capsule.get("dispositions")
+    if not isinstance(spec, dict):
+        raise CapsuleError(f"{cid}: accepted PA capsule requires disposition_source")
+    if not isinstance(dispositions, list) or not dispositions:
+        raise CapsuleError(f"{cid}: accepted PA capsule requires non-empty dispositions")
+    expected_path = canonical_pa_result_path(cid)
+    actual_path = normalized_repo_path(spec.get("path"), label=f"{cid}.disposition_source")
+    if actual_path != expected_path:
+        raise CapsuleError(
+            f"{cid}: disposition_source must equal checker-owned canonical PA result {expected_path}; got {actual_path}"
+        )
+    for key, expected in selector.items():
+        if spec.get(key) != expected:
+            raise CapsuleError(
+                f"{cid}: disposition_source.{key} must equal checker-owned canonical selector {expected!r}; "
+                f"got {spec.get(key)!r}"
+            )
 
 
 def validate_dispositions(repo_root: Path, capsule: dict) -> None:
@@ -402,8 +499,6 @@ def validate_city_noncompressible(capsule: dict) -> None:
     if capsule["track"] != "CITY":
         return
     cid = capsule["capsule_id"]
-    if capsule.get("content_mode") != "boundary_summary":
-        raise CapsuleError(f"{cid}: CITY capsule must be boundary_summary")
     reads = capsule["mandatory_source_reads"]
     if not reads:
         raise CapsuleError(f"{cid}: CITY boundary capsule must preserve mandatory non-compressible source reads")
@@ -424,6 +519,7 @@ def validate_capsule(repo_root: Path, capsule: dict, live_state: dict | None = N
     identity_result = validate_identity(repo_root, capsule, live_state)
     validate_sources(repo_root, capsule)
     validate_mandatory_reads(repo_root, capsule)
+    validate_canonical_pa_selector(capsule)
     validate_dispositions(repo_root, capsule)
     validate_directionality(capsule)
     validate_city_noncompressible(capsule)
@@ -451,24 +547,27 @@ def validate_pa_chain(repo_root: Path, index: dict, capsules: dict[str, dict]) -
         raise CapsuleError("index missing pa_accepted_result_chain coverage rule")
     workpack_glob = rule.get("workpack_glob")
     result_template = rule.get("result_template")
-    if (
-        not isinstance(workpack_glob, str)
-        or not isinstance(result_template, str)
-        or "{NN}" not in result_template
-    ):
-        raise CapsuleError("invalid PA chain discovery rule")
+    if workpack_glob != PA_WORKPACK_GLOB:
+        raise CapsuleError(
+            f"pa_accepted_result_chain.workpack_glob must equal checker-owned canonical selector {PA_WORKPACK_GLOB!r}"
+        )
+    if result_template != PA_RESULT_TEMPLATE:
+        raise CapsuleError(
+            f"pa_accepted_result_chain.result_template must equal checker-owned canonical template {PA_RESULT_TEMPLATE!r}"
+        )
 
-    # The completion side defines the universe. A result/capsule pair may not
-    # disappear together and thereby remove itself from the inventory being proved.
+    # The completion side defines the universe. The selector and canonical result
+    # derivation are checker-owned, so result/capsule/index/config cannot disappear
+    # or narrow themselves out of the inventory being proved.
     accepted_results: list[tuple[str, str]] = []
     missing_results: list[str] = []
-    for wp_path_str in sorted(glob.glob(str(repo_root / workpack_glob))):
+    for wp_path_str in sorted(glob.glob(str(repo_root / PA_WORKPACK_GLOB))):
         wp_path = Path(wp_path_str)
         match = re.fullmatch(r"WP-PA-(\d\d)\.md", wp_path.name)
         if not match or not workpack_is_complete(wp_path):
             continue
         num = match.group(1)
-        result_path = result_template.replace("{NN}", num)
+        result_path = PA_RESULT_TEMPLATE.replace("{NN}", num)
         if not (repo_root / result_path).is_file():
             missing_results.append(f"WP-PA-{num} -> {result_path}")
             continue
@@ -488,15 +587,10 @@ def validate_pa_chain(repo_root: Path, index: dict, capsules: dict[str, dict]) -
         if capsule is None:
             missing.append(cid)
             continue
-        if capsule.get("track") != "PA":
-            raise CapsuleError(f"{cid}: accepted PA chain capsule must declare track=PA")
-        if capsule.get("content_mode") != "structured_disposition":
-            raise CapsuleError(f"{cid}: accepted PA chain capsule must use content_mode=structured_disposition")
+        # validate_capsule already binds PA track/mode/source/selector. Keep the
+        # chain-level canonical source equality explicit because this is the
+        # completeness proof joining independently discovered workpack -> result -> capsule.
         disposition_source = capsule.get("disposition_source")
-        if not isinstance(disposition_source, dict):
-            raise CapsuleError(f"{cid}: accepted PA chain capsule requires disposition_source")
-        if not isinstance(capsule.get("dispositions"), list) or not capsule["dispositions"]:
-            raise CapsuleError(f"{cid}: accepted PA chain capsule requires non-empty dispositions")
         source_by_path = {
             source.get("path"): source
             for source in capsule.get("authoritative_sources", [])
@@ -505,13 +599,14 @@ def validate_pa_chain(repo_root: Path, index: dict, capsules: dict[str, dict]) -
         canonical_source = source_by_path.get(result_path)
         if canonical_source is None:
             raise CapsuleError(f"{cid}: capsule does not point to accepted PA result {result_path}")
+        if not isinstance(disposition_source, dict):
+            raise CapsuleError(f"{cid}: accepted PA chain capsule requires disposition_source")
         disposition_path = normalized_repo_path(
             disposition_source.get("path"), label=f"{cid}.disposition_source"
         )
         if disposition_path != result_path:
             raise CapsuleError(
-                f"{cid}: disposition_source must be canonical accepted PA result {result_path}; "
-                f"got {disposition_path}"
+                f"{cid}: disposition_source must be canonical accepted PA result {result_path}; got {disposition_path}"
             )
         if str(disposition_source.get("git_blob_sha", "")).lower() != str(
             canonical_source.get("git_blob_sha", "")
@@ -532,11 +627,21 @@ def validate_pa_chain(repo_root: Path, index: dict, capsules: dict[str, dict]) -
 
 
 def audit_index(repo_root: Path, index_path: Path, live_state: dict | None = None) -> dict:
+    expected_index = (repo_root / CANONICAL_INDEX_PATH).resolve()
+    if index_path.resolve() != expected_index:
+        raise CapsuleError(
+            f"--audit-index must use checker-owned canonical index {CANONICAL_INDEX_PATH}; "
+            f"got {index_path}"
+        )
     index = load_json(index_path)
     if index.get("schema") != INDEX_SCHEMA:
         raise CapsuleError("unexpected capsule index schema")
     if index.get("authority") != AUTHORITY:
         raise CapsuleError("capsule index must remain NON_AUTHORITATIVE_NAVIGATION_ONLY")
+    if index.get("protocol") != CANONICAL_PROTOCOL_PATH:
+        raise CapsuleError(
+            f"capsule index protocol must equal checker-owned canonical path {CANONICAL_PROTOCOL_PATH}"
+        )
     entries = index.get("entries")
     if not isinstance(entries, list) or not entries:
         raise CapsuleError("capsule index entries must be non-empty")
@@ -545,12 +650,17 @@ def audit_index(repo_root: Path, index_path: Path, live_state: dict | None = Non
     for entry in entries:
         if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
             raise CapsuleError("capsule index entry requires path")
+        entry_cid = entry.get("capsule_id")
+        expected_entry_path = canonical_capsule_path(entry_cid)
         entry_path = normalized_repo_path(entry["path"], label="capsule index entry")
-        if not entry_path.startswith(CAPSULE_ROOT) or entry_path == "Docs/engineering/context-capsules/index.json":
-            raise CapsuleError(f"capsule index entry must point to a capsule file: {entry_path}")
+        if entry_path != expected_entry_path:
+            raise CapsuleError(
+                f"{entry_cid}: index path must equal checker-owned canonical capsule path {expected_entry_path}; "
+                f"got {entry_path}"
+            )
         capsule = load_json(repo_root / entry_path)
         cid = capsule.get("capsule_id")
-        if entry.get("capsule_id") != cid:
+        if entry_cid != cid:
             raise CapsuleError(f"index/capsule id mismatch for {entry_path}")
         if cid in capsules:
             raise CapsuleError(f"duplicate capsule id in index: {cid}")
@@ -629,9 +739,7 @@ def run_self_test() -> None:
             "escalate_if": ["material exact semantics needed"],
             "disposition_source": {
                 **source,
-                "section": "## 4. Minimal relationship vocabulary recommendation",
-                "key_column": 0,
-                "status_column": 1,
+                **CANONICAL_PA_DISPOSITION_SELECTORS["WP-PA-03"],
             },
             "dispositions": [
                 {"source_key": "directed trust", "status": "ADOPT"},
@@ -662,13 +770,35 @@ def run_self_test() -> None:
             "path": "Docs/evidence/CTX-02/SELF.md",
             "git_blob_sha": "0" * 40,
         }
-        expect_failure(lambda: validate_capsule(repo, bad_identity_source), "canonical external workpack")
+        expect_failure(lambda: validate_capsule(repo, bad_identity_source), "checker-owned canonical workpack")
+
+        alternate_identity = copy.deepcopy(capsule)
+        (repo / "Docs/workpacks/ALT").mkdir(parents=True)
+        alt_wp = repo / "Docs/workpacks/ALT/WP-PA-03.md"
+        alt_wp.write_text(wp_text, encoding="utf-8")
+        alternate_identity["identity_source"] = {
+            "path": "Docs/workpacks/ALT/WP-PA-03.md",
+            "git_blob_sha": git_blob_sha(alt_wp.read_bytes()),
+        }
+        expect_failure(lambda: validate_capsule(repo, alternate_identity), "checker-owned canonical workpack")
 
         self_source = copy.deepcopy(capsule)
         self_source["authoritative_sources"] = [
             {"path": "Docs/engineering/context-capsules/WP-PA-03.json", "git_blob_sha": "0" * 40}
         ]
         expect_failure(lambda: validate_capsule(repo, self_source), "self-confirmation is forbidden")
+
+        bad_track = copy.deepcopy(capsule)
+        bad_track["track"] = "H1"
+        expect_failure(lambda: validate_capsule(repo, bad_track), "checker-owned canonical track")
+
+        bad_mode = copy.deepcopy(capsule)
+        bad_mode["content_mode"] = "boundary_summary"
+        expect_failure(lambda: validate_capsule(repo, bad_mode), "checker-owned canonical mode")
+
+        bad_selector = copy.deepcopy(capsule)
+        bad_selector["disposition_source"]["section"] = "## 5. Next"
+        expect_failure(lambda: validate_capsule(repo, bad_selector), "checker-owned canonical selector")
 
         malformed_reopen = copy.deepcopy(capsule)
         malformed_reopen["reopen_conditions"] = [None]
@@ -733,8 +863,9 @@ def run_self_test() -> None:
         expect_failure(lambda: validate_capsule(repo, capsule), "source fingerprint mismatch")
         result.write_text(result_text, encoding="utf-8")
 
+        city_wp_text = wp_text.replace("WP-PA-03", "WP-CITY-03")
         city_wp = repo / "Docs/workpacks/CITY/WP-CITY-03.md"
-        city_wp.write_text(wp_text.replace("WP-PA-03", "WP-CITY-03"), encoding="utf-8")
+        city_wp.write_text(city_wp_text, encoding="utf-8")
         city = copy.deepcopy(capsule)
         city["capsule_id"] = "WP-CITY-03"
         city["track"] = "CITY"
@@ -743,6 +874,7 @@ def run_self_test() -> None:
             "path": "Docs/workpacks/CITY/WP-CITY-03.md",
             "git_blob_sha": git_blob_sha(city_wp.read_bytes()),
         }
+        city["authoritative_sources"] = [copy.deepcopy(city["identity_source"])]
         city.pop("disposition_source", None)
         city.pop("dispositions", None)
         city.pop("directional_semantics", None)
@@ -760,6 +892,10 @@ def run_self_test() -> None:
             }
         ]
         validate_capsule(repo, city)
+        hidden_city = copy.deepcopy(city)
+        hidden_city["track"] = "H1"
+        hidden_city["mandatory_source_reads"] = []
+        expect_failure(lambda: validate_capsule(repo, hidden_city), "checker-owned canonical track")
         other_spec = repo / "Docs/production/OTHER.md"
         other_spec.write_text("not the seed", encoding="utf-8")
         wrong_city_read = copy.deepcopy(city)
@@ -774,14 +910,37 @@ def run_self_test() -> None:
         expect_failure(lambda: validate_capsule(repo, wrong_city_read), CITY_PRODUCT_SEED)
 
         index = {
+            "schema": INDEX_SCHEMA,
+            "authority": AUTHORITY,
+            "protocol": CANONICAL_PROTOCOL_PATH,
+            "entries": [
+                {"capsule_id": "WP-PA-03", "path": canonical_capsule_path("WP-PA-03")},
+            ],
             "coverage_rules": {
                 "pa_accepted_result_chain": {
-                    "workpack_glob": "Docs/workpacks/PA/WP-PA-[0-9][0-9].md",
-                    "result_template": "Docs/research/living-world/results/PA-{NN}.md",
+                    "workpack_glob": PA_WORKPACK_GLOB,
+                    "result_template": PA_RESULT_TEMPLATE,
                 }
-            }
+            },
         }
         validate_pa_chain(repo, index, {"WP-PA-03": capsule})
+
+        narrow = copy.deepcopy(index)
+        narrow["coverage_rules"]["pa_accepted_result_chain"]["workpack_glob"] = (
+            "Docs/workpacks/PA/WP-PA-0[1-3].md"
+        )
+        expect_failure(
+            lambda: validate_pa_chain(repo, narrow, {"WP-PA-03": capsule}),
+            "checker-owned canonical selector",
+        )
+        redirected = copy.deepcopy(index)
+        redirected["coverage_rules"]["pa_accepted_result_chain"]["result_template"] = (
+            "Docs/research/living-world/alternate/PA-{NN}.md"
+        )
+        expect_failure(
+            lambda: validate_pa_chain(repo, redirected, {"WP-PA-03": capsule}),
+            "checker-owned canonical template",
+        )
 
         # Regression for Reviewer #5274389905 B2: a COMPLETE workpack remains
         # authoritative inventory even when both its canonical result and capsule
@@ -792,13 +951,19 @@ def run_self_test() -> None:
             lambda: validate_pa_chain(repo, index, {"WP-PA-03": capsule}),
             "accepted PA canonical result missing for COMPLETE workpack(s): WP-PA-04",
         )
+        # The exact current Reviewer defect class: selector narrowing cannot hide
+        # that missing result because selector equality fails before discovery.
+        expect_failure(
+            lambda: validate_pa_chain(repo, narrow, {"WP-PA-03": capsule}),
+            "checker-owned canonical selector",
+        )
         wp04.unlink()
 
         rebound = copy.deepcopy(capsule)
         rebound["disposition_source"]["path"] = "Docs/research/living-world/results/OTHER.md"
         expect_failure(
-            lambda: validate_pa_chain(repo, index, {"WP-PA-03": rebound}),
-            "disposition_source must be canonical accepted PA result",
+            lambda: validate_capsule(repo, rebound),
+            "checker-owned canonical PA result",
         )
 
     print("context-capsule self-test: PASS")
@@ -808,7 +973,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo-root", default=".")
     parser.add_argument("--capsule")
-    parser.add_argument("--index", default="Docs/engineering/context-capsules/index.json")
+    parser.add_argument("--index", default=CANONICAL_INDEX_PATH)
     parser.add_argument("--accepted-state")
     parser.add_argument("--require-live-state", action="store_true")
     parser.add_argument("--audit-index", action="store_true")
