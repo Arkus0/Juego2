@@ -3,8 +3,8 @@
   "authority": "PROCESS_BUDGET_AND_MEASUREMENT_ONLY",
   "protocol": "Docs/engineering/CONTEXT_ENVELOPE_V1.md",
   "profile_source": "Docs/engineering/context-bootstrap-profiles.json",
-  "calibration_sha": "7ea2371e02393481af60e4943481a8d5944adbec",
-  "calibration_workflow_run": 35700255006,
+  "calibration_sha": "64437ca5fcbc124660c8c47328ef281dd0fd8aa0",
+  "calibration_workflow_run": 35703773432,
   "estimator": {
     "name": "utf8-byte4-v1",
     "definition": "ceil(UTF-8 bytes / 4) per unique repository source, summed after de-duplication",
@@ -20,7 +20,7 @@
         "baseline_estimate": 19028,
         "ceiling_estimate": 22834,
         "ceiling_revision": 1,
-        "rationale": "Exact CTX-03 calibration on workflow run 35700255006; ceiling is ceil(19028 * 1.20)."
+        "rationale": "Exact final-shape CTX-03 calibration on workflow run 35703773432; ceiling is ceil(19028 * 1.20)."
       },
       "repair_worker": {
         "substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
@@ -41,10 +41,10 @@
           "<EXACT_MILESTONE_OR_GATE_CONTRACT>": "Docs/workpacks/CTX/WP-CTX-03.md",
           "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>": "Docs/workpacks/CTX/README.md"
         },
-        "baseline_estimate": 22632,
-        "ceiling_estimate": 27159,
+        "baseline_estimate": 19955,
+        "ceiling_estimate": 23946,
         "ceiling_revision": 1,
-        "rationale": "Exact planner starting pack calibrates to 22632; ceiling is ceil(22632 * 1.20)."
+        "rationale": "Final-shape planner starting pack calibrates to 19955 after accepted-closure history moved out of current ROADMAP; ceiling is ceil(19955 * 1.20)."
       },
       "docsync": {
         "substitutions": {"<EXACT_ACCEPTED_WP>": "Docs/workpacks/CTX/WP-CTX-02.md"},
@@ -63,7 +63,7 @@
     }
   },
   "same_snapshot_measurement": {
-    "snapshot_contract": "All pre/post file bytes are read from the same checked-out candidate snapshot. Pre-CTX routing is reconstructed from the pre-CTX Worker/Reviewer rule family: AGENTS + ROADMAP + exact WP + Worker Review Protocol + full direct accepted predecessor evidence. Post-CTX routing is the accepted role profile plus validated capsule navigation. Sources that remain binding in both designs are held constant. Dynamic live GitHub/diff inputs are mandatory but excluded from the delta.",
+    "snapshot_contract": "All pre/post file bytes are read from the same checked-out candidate snapshot. Pre-CTX routing is reconstructed from checker-owned canonical representative direct-predecessor sources, not from the compact artifacts being measured. Post-CTX routing is the accepted canonical role profile plus validated capsule navigation. Sources that remain binding in both designs are held constant. Dynamic live GitHub/diff inputs are mandatory but excluded from the delta.",
     "legacy_rule_source_sha": "e388f6e3c9d42e89418bd8877ed36fcbcf6d2aaa",
     "routes": [
       {"id":"H1-worker","profile":"worker","exact_wp":"Docs/workpacks/H1/WP-H1-02.md","capsules":["WP-HK-GATE"],"held_constant_sources":["Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md","Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md"]},
