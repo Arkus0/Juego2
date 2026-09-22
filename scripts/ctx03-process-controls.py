@@ -67,6 +67,11 @@ def run_controls(root: Path) -> list[str]:
     if not m.profile_universe_errors(root, narrowed_profiles):
         errors.append("removing an accepted role profile from audited config did not turn RED")
 
+    narrowed_conditional_budgets = copy.deepcopy(cfg)
+    narrowed_conditional_budgets["process_envelope"]["conditional_profile_budgets"].pop("docsync", None)
+    if not m.conditional_profile_universe_errors(root, narrowed_conditional_budgets):
+        errors.append("removing a canonical conditional-profile budget did not turn RED")
+
     narrowed_route_budgets = copy.deepcopy(cfg)
     narrowed_route_budgets["process_envelope"]["effective_route_budgets"].pop("H1-worker", None)
     if not m.route_budget_universe_errors(narrowed_route_budgets):
@@ -82,6 +87,29 @@ def run_controls(root: Path) -> list[str]:
     if not m.profile_universe_errors(root, redirected_sub):
         errors.append("redirecting a calibration placeholder to a friendlier source did not turn RED")
 
+    # If canonical profile prose gains a new explicit fixed repository source,
+    # the checker-owned universe must be deliberately revised instead of silently
+    # inheriting/shrinking from the profile under audit.
+    profiles_path = root / m.CANONICAL_PROFILE_SOURCE
+    profiles_doc = m.load(profiles_path)
+    mutated_profiles = copy.deepcopy(profiles_doc)
+    mutated_profiles["profiles"]["docsync"]["conditional_reads"]["synthetic_new_fixed"] = "Docs/engineering/CONTEXT_ENVELOPE_V1.md"
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        target = tmp / m.CANONICAL_PROFILE_SOURCE
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(mutated_profiles), encoding="utf-8")
+        # copy every canonical fixed source so the universe check reaches the new-source comparison
+        fixed = set().union(*m.CANONICAL_FIXED_CONDITIONAL_SOURCES.values())
+        copy_required(root, tmp, fixed)
+        try:
+            e = m.conditional_profile_universe_errors(tmp, cfg)
+        except Exception as exc:
+            errors.append(f"new fixed conditional source control crashed: {exc}")
+        else:
+            if not any("CONTEXT_ENVELOPE_V1.md" in item for item in e):
+                errors.append("adding a new fixed conditional source to canonical profile did not turn RED pending checker review")
+
     # Pre-CTX baseline is checker-owned rather than capsule-derived.
     pa_source = "Docs/research/living-world/results/PA-03.md"
     if pa_source not in m.PRE_CTX_DEPENDENCY_SOURCES["PA-worker"]:
@@ -89,32 +117,43 @@ def run_controls(root: Path) -> list[str]:
     if set(m.PRE_CTX_DEPENDENCY_SOURCES) != {r["id"] for r in m.CANONICAL_ROUTE_CONFIGS}:
         errors.append("checker-owned pre-CTX universe and representative route universe diverge")
 
-    # Base-profile control remains: unrelated growth is neutral while growth of a
-    # real unconditional initial source crosses the base-profile ceiling.
+    headroom = float(cfg["process_envelope"]["headroom_fraction"])
+
+    # Base-profile control: unrelated growth is neutral while growth of a real
+    # unconditional initial source crosses the base-profile ceiling.
     paths, _dynamic = m.accepted_profile_sources(root, cfg, "worker")
     pcfg = cfg["process_envelope"]["profiles"]["worker"]
-    headroom = float(cfg["process_envelope"]["headroom_fraction"])
     with tempfile.TemporaryDirectory() as td:
         tmp = Path(td)
         copy_required(root, tmp, paths)
         before, _ = m.estimate_paths(tmp, paths)
         if m.ceiling_errors(before, pcfg, headroom, False):
             errors.append("calibrated worker base corpus is already over its reviewed ceiling")
-
         unrelated = tmp / "unrelated-growth.bin"
         unrelated.write_bytes(b"x" * 100_000)
         after_unrelated, _ = m.estimate_paths(tmp, paths)
         if after_unrelated != before or m.ceiling_errors(after_unrelated, pcfg, headroom, False):
             errors.append("unrelated repository growth affected the base profile envelope")
-
         target = sorted(paths)[0]
         if not growth_crosses_ceiling(m, root, paths, target, pcfg, headroom):
             errors.append("synthetic growth of a real initial required source did not turn the base envelope RED")
 
-    # Circuit-break the Reviewer's class: conditionally mandatory sources must be
-    # inside route-effective budgets. These are not hand-added to the base pack;
-    # they are selected by checker-owned concrete routes and then independently
-    # challenged here by growing the real source across its route ceiling.
+    # Circuit-break ALL checker-owned fixed conditional profile sources, not only
+    # the six representative measurement routes. This closes repair_worker,
+    # planner_gate and docsync variants as well as Worker/Reviewer H1/CITY cases.
+    for profile_name, fixed_sources in m.CANONICAL_FIXED_CONDITIONAL_SOURCES.items():
+        cpaths, _dynamic = m.conditional_profile_sources(root, cfg, profile_name)
+        budget = cfg["process_envelope"]["conditional_profile_budgets"][profile_name]
+        current, _ = m.estimate_paths(root, cpaths)
+        if m.ceiling_errors(current, budget, headroom, False):
+            errors.append(f"conditional/{profile_name}: calibrated fixed-conditional corpus is already over ceiling")
+            continue
+        for victim in sorted(fixed_sources):
+            if not growth_crosses_ceiling(m, root, cpaths, victim, budget, headroom):
+                errors.append(f"conditional/{profile_name}: growth of fixed conditional {victim} did not turn envelope RED")
+
+    # Concrete route-effective controls remain separately required because they
+    # include capsule payloads, non-compressible reads and authoritative escalation.
     route_by_id = {r["id"]: r for r in m.CANONICAL_ROUTE_CONFIGS}
     conditional_growth_cases = [
         ("H1-worker", "minimum", "Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md"),
@@ -136,15 +175,14 @@ def run_controls(root: Path) -> list[str]:
         if not growth_crosses_ceiling(m, root, effective_paths, victim, budget, headroom):
             errors.append(f"{route_id}/{mode}: growth of conditionally mandatory {victim} did not turn route-effective envelope RED")
 
-    # Ceiling increases cannot ride along as silent side effects, including the
-    # new route-effective layer.
-    old = {"process_envelope": {"profiles": {"worker": {"ceiling_estimate": 100, "ceiling_revision": 3}}, "effective_route_budgets": {"H1-worker": {"minimum": {"ceiling_estimate": 100, "ceiling_revision": 3}}}}}
-    bad = {"process_envelope": {"profiles": {"worker": {"ceiling_estimate": 101, "ceiling_revision": 3}}, "effective_route_budgets": {"H1-worker": {"minimum": {"ceiling_estimate": 101, "ceiling_revision": 3}}}}}
-    if len(m.ceiling_change_errors(old, bad)) < 4:
-        errors.append("profile/route ceiling increase without revision+justification did not fail closed")
-    good = {"process_envelope": {"profiles": {"worker": {"ceiling_estimate": 101, "ceiling_revision": 4, "ceiling_increase_justification": "reviewed reason"}}, "effective_route_budgets": {"H1-worker": {"minimum": {"ceiling_estimate": 101, "ceiling_revision": 4, "ceiling_increase_justification": "reviewed reason"}}}}}
+    # Ceiling increases cannot ride along as silent side effects in any layer.
+    old = {"process_envelope": {"profiles": {"worker": {"ceiling_estimate": 100, "ceiling_revision": 3}}, "conditional_profile_budgets": {"worker": {"ceiling_estimate": 100, "ceiling_revision": 3}}, "effective_route_budgets": {"H1-worker": {"minimum": {"ceiling_estimate": 100, "ceiling_revision": 3}}}}}
+    bad = {"process_envelope": {"profiles": {"worker": {"ceiling_estimate": 101, "ceiling_revision": 3}}, "conditional_profile_budgets": {"worker": {"ceiling_estimate": 101, "ceiling_revision": 3}}, "effective_route_budgets": {"H1-worker": {"minimum": {"ceiling_estimate": 101, "ceiling_revision": 3}}}}}
+    if len(m.ceiling_change_errors(old, bad)) < 6:
+        errors.append("base/conditional/route ceiling increase without revision+justification did not fail closed")
+    good = {"process_envelope": {"profiles": {"worker": {"ceiling_estimate": 101, "ceiling_revision": 4, "ceiling_increase_justification": "reviewed reason"}}, "conditional_profile_budgets": {"worker": {"ceiling_estimate": 101, "ceiling_revision": 4, "ceiling_increase_justification": "reviewed reason"}}, "effective_route_budgets": {"H1-worker": {"minimum": {"ceiling_estimate": 101, "ceiling_revision": 4, "ceiling_increase_justification": "reviewed reason"}}}}}
     if m.ceiling_change_errors(old, good):
-        errors.append("explicit reviewed profile/route ceiling increase fixture did not turn GREEN")
+        errors.append("explicit reviewed base/conditional/route ceiling increase fixture did not turn GREEN")
 
     # Escalation completeness universe comes from the role profile, not the record.
     real = json.loads((root / ESCALATIONS).read_text(encoding="utf-8"))
@@ -167,7 +205,7 @@ def run_controls(root: Path) -> list[str]:
 
     # Workflow-level retry contract: closure must wake both on the original marker
     # and on later Candidate Validation completion, so an existing same-SHA marker
-    # can be reused after metadata/gate repair without needing a duplicate marker.
+    # can be reused after metadata/gate repair without a duplicate marker.
     workflow = (root / CLOSURE_WORKFLOW).read_text(encoding="utf-8")
     for token in ("issue_comment:", "workflow_run:", "Arkus Candidate Validation", "review-ready-closed:${PR}:${TARGET_SHA}"):
         if token not in workflow:
