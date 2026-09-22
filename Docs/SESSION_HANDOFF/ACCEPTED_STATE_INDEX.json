@@ -3,14 +3,14 @@
   "authority": "DERIVED_NAVIGATION_ONLY",
   "freshness_contract": "docsync-first-parent-v1",
   "projection_phase": "DOCSYNC_PERSISTED",
-  "generated_from_main_sha": "2da4b6fd4a6eb7bac166c77ba8fe05796874cbbf",
+  "generated_from_main_sha": "31f8258cf2873e9080d9dacad2cfe956f0e2fa2e",
   "generated_on": "2026-09-22",
   "stale_rule": "Mutable main-derived hints are live-usable only when projection_phase is DOCSYNC_PERSISTED and generated_from_main_sha exactly equals the first parent of current live main. A CANDIDATE projection is always stale for live use. Any later main commit makes a persisted projection stale.",
   "tracks": {
     "H0": {"accepted_state_hint":"COMPLETE","accepted_workpacks_hint":["WP-HK-GATE"],"next_contract_hint":null,"sources":["Docs/ROADMAP.md","Docs/workpacks/README.md"]},
     "H1": {"accepted_state_hint":"WP-H1-00_AND_WP-H1-01_COMPLETE","accepted_workpacks_hint":["WP-H1-00","WP-H1-01"],"next_contract_hint":"WP-H1-02","sources":["Docs/workpacks/H1/README.md","Docs/workpacks/H1/WP-H1-02.md","Docs/workpacks/README.md"]},
     "CITY": {"accepted_state_hint":"THROUGH_WP-CITY-03_ON_ACCEPTED_SPINE","accepted_workpacks_hint":["WP-CITY-00","WP-CITY-01","WP-CITY-02","WP-CITY-05","WP-CITY-06","WP-CITY-03"],"next_contract_hint":"WP-CITY-04","accepted_dependency_hint":{"satisfied":["WP-CITY-03 PASS + merge + DocSync"],"not_accepted_on_generated_main":["WP-H1-08 PASS + merge + DocSync"],"source":"Docs/workpacks/CITY/WP-CITY-04.md"},"sources":["Docs/workpacks/README.md","Docs/workpacks/CITY/WP-CITY-04.md"]},
-    "PA": {"accepted_state_hint":"THROUGH_WP-PA-03","accepted_workpacks_hint":["WP-PA-01","WP-PA-02","WP-PA-03"],"next_contract_hint":"WP-PA-04","sources":["Docs/workpacks/README.md","Docs/workpacks/PA/WP-PA-04.md"]},
+    "PA": {"accepted_state_hint":"THROUGH_WP-PA-05","accepted_workpacks_hint":["WP-PA-01","WP-PA-02","WP-PA-03","WP-PA-04","WP-PA-05"],"next_contract_hint":"WP-PA-06","sources":["Docs/workpacks/README.md","Docs/workpacks/PA/WP-PA-06.md"]},
     "CTX": {"accepted_state_hint":"THROUGH_WP-CTX-03","accepted_workpacks_hint":["WP-CTX-01","WP-CTX-02","WP-CTX-03"],"next_contract_hint":null,"sources":["Docs/workpacks/CTX/README.md","Docs/workpacks/CTX/WP-CTX-01.md","Docs/workpacks/CTX/WP-CTX-02.md","Docs/workpacks/CTX/WP-CTX-03.md","Docs/evidence/CTX-03/DOCSYNC.md","Docs/engineering/CONTEXT_CAPSULE_V1.md","Docs/workpacks/README.md"]},
     "DW": {"accepted_state_hint":"THROUGH_WP-DW-00","accepted_workpacks_hint":["WP-DW-00"],"next_contract_hint":"WP-DW-01","sources":["Docs/workpacks/DW/README.md","Docs/workpacks/DW/WP-DW-00.md","Docs/workpacks/DW/WP-DW-01.md","Docs/evidence/WP-DW-00/DOCSYNC.md","Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md","Docs/workpacks/README.md","Docs/ROADMAP.md"]}
   },
