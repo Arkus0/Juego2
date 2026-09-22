@@ -1,0 +1,43 @@
+name: Context Capsule Validation
+
+on:
+  pull_request:
+    paths:
+      - 'Docs/engineering/CONTEXT_CAPSULE_V1.md'
+      - 'Docs/engineering/context-capsule-schema.json'
+      - 'Docs/engineering/context-capsules/**'
+      - 'Docs/research/living-world/results/PA-*.md'
+      - 'Docs/workpacks/PA/WP-PA-*.md'
+      - 'Docs/workpacks/HK/WP-HK-GATE.md'
+      - 'Docs/workpacks/CITY/WP-CITY-03.md'
+      - 'Docs/production/CITY_PRODUCT_SEED.md'
+      - 'scripts/context-capsule-check.py'
+      - '.github/workflows/context-capsule-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capsule-contract:
+    name: Accepted-contract capsule audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact PR candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Self-test negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/context-capsule-check.py --self-test
+
+      - name: Audit representative capsules and accepted PA chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/context-capsule-check.py --audit-index --repo-root .
