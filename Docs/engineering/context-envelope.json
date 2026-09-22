@@ -3,8 +3,8 @@
   "authority": "PROCESS_BUDGET_AND_MEASUREMENT_ONLY",
   "protocol": "Docs/engineering/CONTEXT_ENVELOPE_V1.md",
   "profile_source": "Docs/engineering/context-bootstrap-profiles.json",
-  "calibration_sha": "64437ca5fcbc124660c8c47328ef281dd0fd8aa0",
-  "calibration_workflow_run": 35703773432,
+  "calibration_sha": "80fe3c3c5ae03ebf169bf52b4648aca17fb254ef",
+  "calibration_workflow_run": 35707134612,
   "estimator": {
     "name": "utf8-byte4-v1",
     "definition": "ceil(UTF-8 bytes / 4) per unique repository source, summed after de-duplication",
@@ -15,51 +15,12 @@
     "scope": "Three-layer static budget. Base profile budgets cover repository-owned initial_reads. Conditional-profile budgets cover the checker-owned superset of every fixed repository source named or required by canonical conditional_reads for that profile. Route-effective budgets cover concrete H1/CITY/PA mandatory capsule/non-compressible/escalation sets. Live GitHub state, PR diff bytes and candidate-specific exact dependency/evidence payloads remain mandatory but are held outside this static corpus budget because CTX does not control their identity or size.",
     "headroom_fraction": 0.20,
     "profiles": {
-      "worker": {
-        "substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
-        "baseline_estimate": 19028,
-        "ceiling_estimate": 22834,
-        "ceiling_revision": 1,
-        "rationale": "Exact final-shape CTX-03 base-profile calibration on workflow run 35703773432; ceiling is ceil(19028 * 1.20). Fixed conditional sources are budgeted separately below."
-      },
-      "repair_worker": {
-        "substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
-        "baseline_estimate": 19028,
-        "ceiling_estimate": 22834,
-        "ceiling_revision": 1,
-        "rationale": "Repository-owned base initial reads calibrate to 19028; exact FAIL/PR/evidence remain dynamic mandatory inputs outside the static corpus budget."
-      },
-      "reviewer": {
-        "substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"},
-        "baseline_estimate": 19028,
-        "ceiling_estimate": 22834,
-        "ceiling_revision": 1,
-        "rationale": "Repository-owned base initial reads calibrate to 19028; candidate diff/live PR remain dynamic mandatory inputs outside the static corpus budget."
-      },
-      "planner_gate": {
-        "substitutions": {
-          "<EXACT_MILESTONE_OR_GATE_CONTRACT>": "Docs/workpacks/CTX/WP-CTX-03.md",
-          "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>": "Docs/workpacks/CTX/README.md"
-        },
-        "baseline_estimate": 19955,
-        "ceiling_estimate": 23946,
-        "ceiling_revision": 1,
-        "rationale": "Final-shape planner starting pack calibrates to 19955 after accepted-closure history moved out of current ROADMAP; ceiling is ceil(19955 * 1.20)."
-      },
-      "docsync": {
-        "substitutions": {"<EXACT_ACCEPTED_WP>": "Docs/workpacks/CTX/WP-CTX-02.md"},
-        "baseline_estimate": 8594,
-        "ceiling_estimate": 10313,
-        "ceiling_revision": 1,
-        "rationale": "Repository-owned DocSync starting sources calibrate to 8594; accepted PR/review/merge data remains dynamic and mandatory."
-      },
-      "h1_local_executor": {
-        "substitutions": {"<EXACT_H1_WP>": "Docs/workpacks/H1/WP-H1-02.md"},
-        "baseline_estimate": 6311,
-        "ceiling_estimate": 7574,
-        "ceiling_revision": 1,
-        "rationale": "The narrow local-executor repository corpus calibrates to 6311; external anchor/manifest/named-file inputs remain dynamic and mandatory."
-      }
+      "worker": {"substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"}, "baseline_estimate": 19028, "ceiling_estimate": 22834, "ceiling_revision": 1, "rationale": "Exact CTX-03 base-profile calibration; fixed conditional sources are budgeted separately below."},
+      "repair_worker": {"substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"}, "baseline_estimate": 19028, "ceiling_estimate": 22834, "ceiling_revision": 1, "rationale": "Repository-owned base initial reads calibrate to 19028; exact FAIL/PR/evidence remain dynamic mandatory inputs outside the static corpus budget."},
+      "reviewer": {"substitutions": {"<EXACT_WP>": "Docs/workpacks/CTX/WP-CTX-03.md"}, "baseline_estimate": 19028, "ceiling_estimate": 22834, "ceiling_revision": 1, "rationale": "Repository-owned base initial reads calibrate to 19028; candidate diff/live PR remain dynamic mandatory inputs outside the static corpus budget."},
+      "planner_gate": {"substitutions": {"<EXACT_MILESTONE_OR_GATE_CONTRACT>": "Docs/workpacks/CTX/WP-CTX-03.md", "<RELEVANT_TRACK_README_OR_CONSTITUENT_WPS>": "Docs/workpacks/CTX/README.md"}, "baseline_estimate": 19955, "ceiling_estimate": 23946, "ceiling_revision": 1, "rationale": "Planner base calibrates to 19955 after accepted-closure history moved out of current ROADMAP."},
+      "docsync": {"substitutions": {"<EXACT_ACCEPTED_WP>": "Docs/workpacks/CTX/WP-CTX-02.md"}, "baseline_estimate": 8594, "ceiling_estimate": 10313, "ceiling_revision": 1, "rationale": "Repository-owned DocSync starting sources calibrate to 8594; accepted PR/review/merge data remains dynamic and mandatory."},
+      "h1_local_executor": {"substitutions": {"<EXACT_H1_WP>": "Docs/workpacks/H1/WP-H1-02.md"}, "baseline_estimate": 6311, "ceiling_estimate": 7574, "ceiling_revision": 1, "rationale": "The narrow local-executor repository corpus calibrates to 6311; external anchor/manifest/named-file inputs remain dynamic and mandatory."}
     },
     "conditional_profile_budgets": {
       "worker": {"baseline_estimate": 39134, "ceiling_estimate": 46961, "ceiling_revision": 1, "rationale": "Base Worker pack plus checker-owned fixed conditional superset: foundational proof, H1 remote/local protocol, ROADMAP, capsule protocol and capsule index."},
@@ -70,30 +31,12 @@
       "h1_local_executor": {"baseline_estimate": 6311, "ceiling_estimate": 7574, "ceiling_revision": 1, "rationale": "Local executor declares no fixed conditional_reads; its conditional-profile set therefore equals its base pack."}
     },
     "effective_route_budgets": {
-      "H1-worker": {
-        "minimum": {"baseline_estimate": 29896, "ceiling_estimate": 35876, "ceiling_revision": 1, "rationale": "Worker H1 route including checker-owned foundational + H1-local mandatory conditionals and accepted predecessor capsule navigation."},
-        "escalated": {"baseline_estimate": 37028, "ceiling_estimate": 44434, "ceiling_revision": 1, "rationale": "Same H1 route after authoritative predecessor escalation; ceiling is ceil(37028 * 1.20)."}
-      },
-      "H1-reviewer": {
-        "minimum": {"baseline_estimate": 29896, "ceiling_estimate": 35876, "ceiling_revision": 1, "rationale": "Reviewer H1 route including checker-owned foundational + H1-local mandatory conditionals and accepted predecessor capsule navigation."},
-        "escalated": {"baseline_estimate": 37028, "ceiling_estimate": 44434, "ceiling_revision": 1, "rationale": "Same H1 route after authoritative predecessor escalation; ceiling is ceil(37028 * 1.20)."}
-      },
-      "CITY-worker": {
-        "minimum": {"baseline_estimate": 35241, "ceiling_estimate": 42290, "ceiling_revision": 1, "rationale": "Worker CITY route including checker-owned cross-track ROADMAP requirement and non-compressible CITY predecessor material."},
-        "escalated": {"baseline_estimate": 36228, "ceiling_estimate": 43474, "ceiling_revision": 1, "rationale": "Same CITY route after authoritative predecessor escalation; ceiling is ceil(36228 * 1.20)."}
-      },
-      "CITY-reviewer": {
-        "minimum": {"baseline_estimate": 35241, "ceiling_estimate": 42290, "ceiling_revision": 1, "rationale": "Reviewer CITY route including checker-owned cross-track ROADMAP requirement and non-compressible CITY predecessor material."},
-        "escalated": {"baseline_estimate": 36228, "ceiling_estimate": 43474, "ceiling_revision": 1, "rationale": "Same CITY route after authoritative predecessor escalation; ceiling is ceil(36228 * 1.20)."}
-      },
-      "PA-worker": {
-        "minimum": {"baseline_estimate": 22855, "ceiling_estimate": 27426, "ceiling_revision": 1, "rationale": "Cumulative PA Worker route with all accepted PA capsules and their mandatory reads."},
-        "escalated": {"baseline_estimate": 43067, "ceiling_estimate": 51681, "ceiling_revision": 1, "rationale": "Cumulative PA Worker route after material escalation to authoritative accepted PA results."}
-      },
-      "PA-reviewer": {
-        "minimum": {"baseline_estimate": 22855, "ceiling_estimate": 27426, "ceiling_revision": 1, "rationale": "Cumulative PA Reviewer route with all accepted PA capsules and their mandatory reads."},
-        "escalated": {"baseline_estimate": 43067, "ceiling_estimate": 51681, "ceiling_revision": 1, "rationale": "Cumulative PA Reviewer route after material escalation to authoritative accepted PA results."}
-      }
+      "H1-worker": {"minimum": {"baseline_estimate": 29896, "ceiling_estimate": 35876, "ceiling_revision": 1, "rationale": "Worker H1 route including foundational + H1-local mandatory conditionals and accepted predecessor capsule navigation."}, "escalated": {"baseline_estimate": 37028, "ceiling_estimate": 44434, "ceiling_revision": 1, "rationale": "Same H1 route after authoritative predecessor escalation."}},
+      "H1-reviewer": {"minimum": {"baseline_estimate": 29896, "ceiling_estimate": 35876, "ceiling_revision": 1, "rationale": "Reviewer H1 route including foundational + H1-local mandatory conditionals and accepted predecessor capsule navigation."}, "escalated": {"baseline_estimate": 37028, "ceiling_estimate": 44434, "ceiling_revision": 1, "rationale": "Same H1 route after authoritative predecessor escalation."}},
+      "CITY-worker": {"minimum": {"baseline_estimate": 35241, "ceiling_estimate": 42290, "ceiling_revision": 1, "rationale": "Worker CITY route including cross-track ROADMAP and non-compressible CITY predecessor material."}, "escalated": {"baseline_estimate": 36228, "ceiling_estimate": 43474, "ceiling_revision": 1, "rationale": "Same CITY route after authoritative predecessor escalation."}},
+      "CITY-reviewer": {"minimum": {"baseline_estimate": 35241, "ceiling_estimate": 42290, "ceiling_revision": 1, "rationale": "Reviewer CITY route including cross-track ROADMAP and non-compressible CITY predecessor material."}, "escalated": {"baseline_estimate": 36228, "ceiling_estimate": 43474, "ceiling_revision": 1, "rationale": "Same CITY route after authoritative predecessor escalation."}},
+      "PA-worker": {"minimum": {"baseline_estimate": 22855, "ceiling_estimate": 27426, "ceiling_revision": 1, "rationale": "Cumulative PA Worker route with all accepted PA capsules and mandatory reads."}, "escalated": {"baseline_estimate": 43067, "ceiling_estimate": 51681, "ceiling_revision": 1, "rationale": "Cumulative PA Worker route after material escalation to authoritative accepted PA results."}},
+      "PA-reviewer": {"minimum": {"baseline_estimate": 22855, "ceiling_estimate": 27426, "ceiling_revision": 1, "rationale": "Cumulative PA Reviewer route with all accepted PA capsules and mandatory reads."}, "escalated": {"baseline_estimate": 43067, "ceiling_estimate": 51681, "ceiling_revision": 1, "rationale": "Cumulative PA Reviewer route after material escalation to authoritative accepted PA results."}}
     }
   },
   "same_snapshot_measurement": {
