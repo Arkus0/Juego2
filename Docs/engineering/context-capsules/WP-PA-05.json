@@ -16,7 +16,7 @@
   "authoritative_sources": [
     {
       "path": "Docs/research/living-world/results/PA-05.md",
-      "git_blob_sha": "71480aa19ea308d1f0207c78053cc43477e648bb",
+      "git_blob_sha": "d38e8b6261876b28d297893f96150f9f527d7270",
       "kind": "canonical_research_result"
     }
   ],
@@ -130,7 +130,7 @@
   ],
   "disposition_source": {
     "path": "Docs/research/living-world/results/PA-05.md",
-    "git_blob_sha": "71480aa19ea308d1f0207c78053cc43477e648bb",
+    "git_blob_sha": "d38e8b6261876b28d297893f96150f9f527d7270",
     "section": "## 6. Mechanism dispositions",
     "key_column": 0,
     "status_column": 1
