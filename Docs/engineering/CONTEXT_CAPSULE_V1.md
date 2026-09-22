@@ -8,7 +8,8 @@ Reduce repeated predecessor prose without moving semantic or proof authority. A 
 
 Machine schema: `Docs/engineering/context-capsule-schema.json`  
 Discoverability index: `Docs/engineering/context-capsules/index.json`  
-Mechanical checker: `scripts/context-capsule-check.py`
+Mechanical checker: `scripts/context-capsule-check.py`  
+Independent representative controls: `scripts/context-capsule-controls.py`
 
 This protocol becomes binding only after `WP-CTX-02` receives independent PASS, merges and completes DocSync. At that adoption boundary it is a **narrow amendment to the predecessor-read mechanics** in `AGENTS.md` and `WORKER_REVIEW_PROTOCOL.md` v1.8: a validated capsule may satisfy initial accepted-predecessor reconstruction until an escalation trigger fires. It does not amend ownership, proof thresholds, exact-SHA freeze/review, Reviewer independence, reopen rules or finalization.
 
@@ -24,9 +25,10 @@ A role may use a capsule as the **starting representation** of an accepted prede
 
 1. live GitHub does not show the predecessor reopened/revoked/superseded;
 2. the capsule's reviewed candidate SHA, merge SHA and PASS review agree with independent accepted completion metadata;
-3. every bound source still has the exact recorded Git blob SHA;
-4. required structured coverage checks pass;
-5. no mandatory escalation condition is active.
+3. every bound source still has the exact recorded Git blob SHA and is outside the capsule/CTX-02-generated authority layer;
+4. required source-derived structured coverage checks pass;
+5. the CTX-02 independent representative semantic controls for the selected near-term H1/CITY/PA boundaries pass;
+6. no mandatory escalation condition is active.
 
 Failure of any condition means:
 
@@ -36,11 +38,19 @@ RECONSTRUCT_FROM_AUTHORITATIVE_SOURCES
 
 Missing capsule is never negative evidence and never blocks ordinary source-based reconstruction.
 
+`VALID_NAVIGATION_ONLY` is deliberately **not** a generic semantic-equivalence verdict. CTX-02 separates validation into three classes:
+
+1. **production/source-derived invariants** — exact accepted identity, independent source paths/fingerprints, deterministic structured coverage and exact mandatory-read identities where the contract names them;
+2. **representative semantic controls** — a small test-only external oracle validates the material content of the actual H1/CITY/PA representative capsules and defect-injects lossy/invented substitutions;
+3. **human/escalation-only judgment** — arbitrary future natural-language completeness/equivalence and contested interpretation are not auto-proved; material ambiguity or contradiction opens authoritative sources and independent review.
+
+The production checker must never grow a registry of approved natural-language meanings merely to turn class 2/3 into class 1.
+
 ## 2. Contract-scoped freshness, not global-main freshness
 
 CTX-01's accepted-state index is a mutable main-derived navigation projection and therefore uses `docsync-first-parent-v1`. Capsules are different: they describe an immutable accepted contract identity.
 
-An unrelated later `main` commit does **not** stale a capsule. A capsule becomes unusable when the accepted predecessor identity is reopened/superseded, a bound authoritative source changes, its exact reviewed/merge identity no longer agrees, its structured coverage becomes lossy, or live state contradicts it.
+An unrelated later `main` commit does **not** stale a capsule. A capsule becomes unusable when the accepted predecessor identity is reopened/superseded, a bound authoritative source changes, its exact reviewed/merge identity no longer agrees, its structured coverage becomes lossy, a representative semantic control detects changed material content, or live state contradicts it.
 
 This distinction is deliberate. Requiring `capsule.source_main_sha == current main` would destroy reuse and recreate the token problem CTX-02 exists to solve.
 
@@ -61,6 +71,8 @@ A capsule may add structured disposition coverage, directional/asymmetric semant
 
 It may not cache transient PR/check/branch state.
 
+The accepted identity source must be the matching external canonical workpack under `Docs/workpacks/**/<capsule_id>.md`. `identity_source`, `authoritative_sources`, `disposition_source` and mandatory source reads may not point back into `Docs/engineering/context-capsules/**`, the capsule index, or CTX-02-generated evidence/protocol and then use those bytes to self-certify predecessor authority.
+
 ## 4. Structured PA result chain
 
 The PA track is cumulative by contract: later PA WPs require all earlier accepted findings. CTX-02 therefore explicitly treats the canonical PA result chain as a capsule family.
@@ -68,6 +80,8 @@ The PA track is cumulative by contract: later PA WPs require all earlier accepte
 For each accepted `Docs/research/living-world/results/PA-NN.md` whose matching `WP-PA-NN` is `COMPLETE`, the capsule index must contain one `WP-PA-NN` capsule pointing to that result. Future PA DocSync adds the newly accepted capsule before capsule-chain coverage may be declared complete.
 
 PA disposition compression is **status-preserving**, not a prose summary. The checker extracts the authoritative disposition table and requires exact key/status coverage. Mixed states such as `ADOPT ... / LATER ...`, `LATER / non-authoritative`, `REJECT as authority` and `REJECT baseline` are preserved as distinct source statuses; they may not be flattened to a binary keep/drop decision.
+
+The disposition oracle is valid only because the PA-chain checker independently discovers the canonical accepted `PA-NN.md` result and requires `disposition_source.path` and fingerprint to be that same result binding. A different internally coherent table may not certify the accepted PA result.
 
 Exclusions are first-class contract material. In particular, PA-03's rejection of default global/N-hop social target discovery carries the inherited PA-02 bounded-discovery guarantee and is protected exactly like a positive adoption.
 
@@ -85,7 +99,7 @@ affinity(A -> B) != affinity(B -> A)
 fear(A -> B) != fear(B -> A)
 ```
 
-Collapsing either direction to a mirrored/symmetric representation is a validation failure.
+Production validation rejects collapse or malformed structure. Because a different invented pair can still remain syntactically distinct, the representative PA semantic control independently pins the actual accepted directional values. Arbitrary future directional interpretation remains subject to authoritative-source review.
 
 ## 6. CITY is boundary-only
 
@@ -93,13 +107,15 @@ CTX-02's acceptance requires a representative CITY consumer, but CITY production
 
 `WP-CITY-03` therefore has only a **boundary capsule**: it tells CITY-04 which accepted owner/boundary it inherits and where the exact source lives. `Docs/production/CITY_PRODUCT_SEED.md` is explicitly `noncompressible=true` and remains a mandatory exact read for construction/measurement.
 
-A CITY capsule must fail validation if it omits its non-compressible source. No capsule may substitute a short seed summary for geometry, route, parcel, scenario, seam or measurement specification.
+The production checker requires that exact path for the representative `WP-CITY-03` boundary; an arbitrary different valid/non-compressible file cannot satisfy the obligation. No capsule may substitute a short seed summary for geometry, route, parcel, scenario, seam or measurement specification.
 
 ## 7. H1 boundary coverage
 
 Near-term H1 uses a capsule for the accepted HK-GATE boundary actually consumed by H1-02. CTX-02 does not bulk-migrate H0 history.
 
 The capsule is sufficient to navigate the inherited/current ownership split; exact H0 proof is opened only when the current H1 claim, a contradiction or a reopen question makes it material. Its navigation pointers include the accepted gate verdict, proof matrix and residual-risk evidence so deepening does not require rediscovery.
+
+The representative H1 control validates actual material `id -> statement + source pointer` content, not only statement IDs. Keeping an ID and valid source fingerprints while inverting/inventing the statement is therefore a control failure even though the production checker intentionally does not attempt generic prose equivalence.
 
 ## 8. Worker predecessor reconstruction
 
@@ -124,6 +140,8 @@ The Reviewer independently checks live accepted state and capsule validity. For 
 
 Concrete contradictory evidence can reopen a predecessor even when a capsule says `ACCEPTED`. The checker supports an external accepted-state input; `state != ACCEPTED` or exact-SHA mismatch fails closed.
 
+A representative semantic GREEN is evidence that the selected CTX-02 examples survived known compression-loss classes. It does not authorize a Reviewer to stop challenging source semantics when the current claim makes them material.
+
 ## 10. DocSync and future PA results
 
 After a later PA result independently passes and merges, DocSync:
@@ -138,22 +156,35 @@ After a later PA result independently passes and merges, DocSync:
 
 If capsule production fails, DocSync may still reconstruct truth from authoritative sources but must not claim capsule coverage complete or silently omit the accepted result.
 
+Future capsules whose natural-language semantics are not covered by the representative test oracle remain usable only under the class-3 rule: any material uncertainty/escalation requires authoritative reconstruction and independent judgment. CTX-02 does not require extending a production semantic registry.
+
 ## 11. Fail-closed controls
 
 The checker self-test and independent CTX-02 control harness exercise at least:
 
 - stale reviewed-candidate SHA mismatch;
+- completion identity source redirected away from the canonical external workpack;
+- authoritative source redirected back into capsule/CTX-02 generated evidence;
 - changed source bytes / blob fingerprint mismatch;
 - one material positive exported guarantee omitted while another remains;
 - one material exclusion omitted while another remains;
+- representative guarantee statement inverted/invented while ID, source pointer and source fingerprints remain unchanged;
+- symmetric representative exclusion/non-claim statement inversion/invention;
+- representative reopen-condition and escalation-trigger substitution with structurally valid but materially opposite/invented text;
 - omitted material `REJECT` disposition;
 - `LATER` reclassified as adopted/rejected;
+- PA disposition source rebound to a different internally coherent result table;
 - A→B/B→A collapse;
+- representative directional value changed to a different but still structurally asymmetric expression;
 - predecessor external state changed to `REOPENED`;
 - live accepted exact-SHA mismatch;
-- CITY boundary capsule without mandatory non-compressible seed source.
+- CITY boundary capsule without the exact mandatory non-compressible `CITY_PRODUCT_SEED.md` source.
 
-The repository audit additionally checks every indexed representative capsule and discovers the accepted PA result-chain universe from repository state rather than trusting the capsule index to define its own completeness. The independent omission oracle is test-only evidence and is not promoted to a production semantic registry.
+The repository audit additionally checks every indexed representative capsule and discovers the accepted PA result-chain universe from repository state rather than trusting the capsule index to define its own completeness.
+
+The independent representative semantic oracle is test-only evidence for the selected H1/CITY/PA boundaries. It validates actual material content rather than only IDs, but it is **not** imported by the production checker, does not become semantic authority, and does not claim generic natural-language proof. Production audit + independent controls together form CTX-02's mechanical validation surface; unresolved semantics stay with escalation + independent Reviewer judgment.
+
+The circuit-breaker trust analysis that defines this split is durable at `Docs/evidence/CTX-02/TRUST_BOUNDARY_REAUDIT.md`.
 
 ## 12. Adoption boundary
 
