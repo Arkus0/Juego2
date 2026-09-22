@@ -23,16 +23,16 @@ fi
 
 echo "[preflight] candidate ${candidate_sha}"
 
-if [[ -f scripts/validate-main-safety-trigger.py ]]; then
-  echo "[preflight] Main Safety PR coverage guard"
-  PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py --self-test
-  PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py
-fi
+echo "[preflight] Main Safety PR coverage guard"
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py --self-test
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-main-safety-trigger.py
 
-if [[ -f scripts/validate-worker-preflight-context.py ]]; then
-  echo "[preflight] delegated-context negative controls"
-  PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-context.py --self-test
-fi
+echo "[preflight] delegated-context negative controls"
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-context.py --self-test
+
+echo "[preflight] local/delegated contract regression guard"
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-contract.py --self-test
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-contract.py
 
 required_sdk="$(python3 - <<'PY'
 import json
@@ -85,15 +85,11 @@ for path in sorted(Path('scripts').glob('*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
 PY
 
-if [[ -f scripts/validate-worker-handoff.py ]]; then
-  echo "[preflight] handoff linter self-test"
-  PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-handoff.py --self-test
-fi
+echo "[preflight] handoff linter self-test"
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-handoff.py --self-test
 
-if [[ -f scripts/validation-context.py ]]; then
-  echo "[preflight] validation-context self-test"
-  PYTHONDONTWRITEBYTECODE=1 python3 scripts/validation-context.py self-test
-fi
+echo "[preflight] validation-context self-test"
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/validation-context.py self-test
 
 echo "[preflight] clean-tree check"
 if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
