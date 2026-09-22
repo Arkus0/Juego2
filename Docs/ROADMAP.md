@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.33 — 2026-09-22
+Version: 1.34 — 2026-09-22
 
 ## North star
 
@@ -50,7 +50,7 @@ Before implementation, the original HK06 and HK07 workpacks were deliberately sp
 
 Before implementation, HK08 and HK09 were likewise split where each umbrella mixed two independently reviewable claims. The executable downstream chain is now `HK07B → HK08A → HK08B → HK09A → HK09B → HK10 → HK-GATE`. The old `WP-HK-08.md` and `WP-HK-09.md` remain as SUPERSEDED umbrella records and must not be implemented directly.
 
-No H0 workpack remains. The accepted H0 boundary is the predecessor for the accepted H1 plan below. After planning PR `#71` PASS, merge and DocSync, the first dependency-valid H1 Worker is `WP-H1-00`; it remains `NOT_STARTED` until a human explicitly starts it.
+No H0 workpack remains. The accepted H0 boundary is the predecessor for the accepted H1 plan below. `WP-H1-00` and `WP-H1-01` are complete; the next default dependency-valid H1 Worker is `WP-H1-02`, which remains `NOT_STARTED` until a human explicitly starts it.
 
 | Order | Workpack | Outcome |
 |---:|---|---|
