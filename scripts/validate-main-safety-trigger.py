@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Regression guard for Arkus Main Safety pull-request path coverage.
 
-Main Safety intentionally remains path-filtered so documentation-only/process-only changes do
-not pay for a full .NET build. The filter must nevertheless cover current and future central
-MSBuild/NuGet inputs: project/solution files, Directory.* props/targets, arbitrary imported
-.props/.targets, NuGet.config and package lock files. This checker makes that allow-list an
-explicit tested contract instead of an easy-to-forget workflow detail.
+Main Safety intentionally remains path-filtered so documentation-only changes do not pay for a
+full .NET build. The filter must nevertheless cover current and future central MSBuild/NuGet
+inputs: workflow definitions, project/solution files, Directory.* props/targets, arbitrary
+imported .props/.targets, NuGet.config and package lock files. This checker makes that
+allow-list an explicit tested contract instead of an easy-to-forget workflow detail.
 """
 
 from __future__ import annotations
@@ -19,6 +19,7 @@ WORKFLOW = Path(".github/workflows/main-safety.yml")
 
 REQUIRED_PATHS = {
     ".github/workflows/main-safety.yml",
+    ".github/workflows/**",
     "global.json",
     "Juego2.sln",
     "**/*.sln",
@@ -136,6 +137,7 @@ def self_test() -> None:
     assert validate(good) == []
 
     for removed in (
+        ".github/workflows/**",
         "Directory.Build.props",
         "Directory.Packages.props",
         "**/Directory.*.targets",
