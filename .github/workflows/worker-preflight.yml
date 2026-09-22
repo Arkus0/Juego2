@@ -97,6 +97,37 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-contract.py --self-test
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-contract.py
 
+      - name: Simulate chat Worker without resolvable exact SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          fake_bin="$(mktemp -d)"
+          trap 'rm -rf "${fake_bin}"' EXIT
+          cat > "${fake_bin}/dotnet" <<'SH'
+          #!/usr/bin/env bash
+          echo 'simulated dotnet host: SDK selected by global.json is not installed' >&2
+          exit 145
+          SH
+          chmod +x "${fake_bin}/dotnet"
+
+          set +e
+          output="$(PATH="${fake_bin}:${PATH}" bash scripts/worker-preflight.sh 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "${output}"
+
+          test "${status}" -eq 10 || {
+            echo "::error::simulated chat Worker returned ${status}, expected delegation exit 10"
+            exit 5
+          }
+          grep -F "WORKER_PREFLIGHT_DELEGATION_REQUIRED" <<<"${output}" >/dev/null
+          grep -F "Candidate SHA: ${PREFLIGHT_SHA}" <<<"${output}" >/dev/null
+          if grep -F "WORKER_PREFLIGHT_GREEN" <<<"${output}" >/dev/null; then
+            echo "::error::SDK-miss simulation incorrectly emitted local GREEN"
+            exit 6
+          fi
+          echo "SIMULATED_CHAT_WORKER_DELEGATION_GREEN"
+
       - name: Reject stale candidate before issuing receipt
         shell: bash
         env:
