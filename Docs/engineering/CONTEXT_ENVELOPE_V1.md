@@ -51,7 +51,7 @@ Pre/post bytes are always read from the **same checked-out candidate snapshot**.
 
 The representative route universe, canonical profile source, calibration substitutions and pre-CTX direct-predecessor source universe are checker-owned. `context-envelope.json` repeats them only as reviewed assertions. The artifact being measured therefore cannot narrow its own baseline or choose a friendlier route after seeing the result.
 
-Dynamic mandatory inputs whose size CTX does not control — live GitHub state, exact PR diff, current Reviewer FAIL, local-execution manifest-named files — remain mandatory but are held outside the static corpus delta. They may not be silently omitted to improve the number.
+Dynamic mandatory inputs whose identity/size CTX does not control — live GitHub state, exact PR diff, current Reviewer FAIL, exact dependency/evidence sources and local-execution manifest-named files — remain mandatory but are held outside the static corpus delta. They may not be silently omitted to improve the number.
 
 H1 sources that remain binding because the WP is foundational/local are held constant in both routes. CITY-04's unresolved cross-track gate forces ROADMAP into the post route. The cumulative PA route includes all currently accepted PA capsules.
 
@@ -75,24 +75,34 @@ Decision: **KEEP CTX-02 CAPSULE CHAIN / DO NOT ADD A SECOND PA COMPACT REGISTRY 
 
 ## 5. CI-only process envelope
 
-The process envelope has two deliberately separate layers:
+The process envelope has **three** separate layers so no fixed conditional context can hide outside a ceiling:
 
-1. a **base profile budget** derived from accepted `initial_reads`; and
-2. a **route-effective mandatory budget** derived from the checker-owned concrete H1/CITY/PA routes, including repository sources that the route itself makes mandatory through conditional reads, capsule navigation, non-compressible material or authoritative escalation.
+1. **base profile budget** — canonical repository-owned `initial_reads` for every accepted role profile;
+2. **conditional-profile budget** — base pack plus a checker-owned superset of every fixed repository source that canonical `conditional_reads` can make mandatory for that profile;
+3. **route-effective budget** — concrete checker-owned H1/CITY/PA minimum and escalated routes, including capsule payloads, non-compressible sources and authoritative predecessor/result escalation.
 
-The second layer is normative for the Reviewer's growth concern: `FOUNDATIONAL_PROOF_STANDARD.md`, `H1_REMOTE_LOCAL_EXECUTION.md`, CITY `ROADMAP.md`, capsule surfaces and representative authoritative predecessor/result sources are all counted in the applicable route budget even though they are not unconditional base reads. The config does not get to decide whether those sources participate: route membership and the minimum required source oracle are checker-owned.
+The checker owns `CANONICAL_FIXED_CONDITIONAL_SOURCES`; the profile/config under audit cannot shrink it. Separately, the checker extracts explicit `Docs/...md|json` paths from current canonical `conditional_reads`. If the profile introduces a new fixed repository source that is absent from the checker-owned universe, validation turns RED until the oracle and calibration are intentionally reviewed. Deleting/narrowing profile prose does not shrink the checker-owned set.
 
-For every base profile and every route-effective minimum/escalated mode:
+This closes all currently fixed conditional classes, not only the six representative measurement routes:
+
+- Worker / repair Worker / Reviewer: `FOUNDATIONAL_PROOF_STANDARD.md`, `H1_REMOTE_LOCAL_EXECUTION.md`, `ROADMAP.md`, capsule protocol and capsule index;
+- planner/gate: foundational proof in addition to its base ROADMAP;
+- DocSync: ROADMAP plus accepted-PA capsule protocol/index;
+- H1 local executor: no additional fixed conditional reads, so its conditional set equals its base pack.
+
+Candidate-specific exact dependency/evidence paths remain mandatory dynamic inputs outside the static corpus budget because their identity/size is selected by the concrete candidate rather than CTX. That exclusion cannot be used to omit a known fixed repository protocol or global state source.
+
+For every base profile, every conditional-profile superset, and every route-effective minimum/escalated mode:
 
 ```text
 reviewed ceiling = ceil(calibrated post-CTX baseline * (1 + reviewed headroom))
 ```
 
-The initial headroom is 20%. The budget file is CI-only and is not a normal Worker/Reviewer read.
+Initial headroom is 20%. The budget file is CI-only and is not a normal Worker/Reviewer read.
 
-Unrelated repository growth outside the derived effective set does not affect the estimate. Growth of a source that is mandatory for a concrete effective route does. A future ceiling increase in either layer must be an explicit diff with both an incremented `ceiling_revision` and non-empty `ceiling_increase_justification`.
+Unrelated repository growth outside a derived effective set does not affect that set's estimate. Growth of **any checker-owned fixed conditional source** is tested against every applicable conditional-profile ceiling; concrete H1/CITY/PA route growth is additionally tested against its route ceiling. Future ceiling increases in any layer require an explicit diff with both incremented `ceiling_revision` and non-empty `ceiling_increase_justification`.
 
-Independent controls challenge route removal, profile removal, route-budget removal, profile-source redirection, calibration-placeholder redirection, unconditional required-source growth, H1 foundational/local conditional growth, CITY/ROADMAP conditional growth, PA authoritative escalation growth and mandatory-escalation omission. The measured artifact cannot choose its own completeness universe.
+Independent controls challenge route/profile/budget removal, profile-source or substitution redirection, introduction of a new unreviewed fixed conditional source, unconditional required-source growth, every checker-owned fixed conditional source for every profile, H1/CITY concrete routes, PA authoritative escalation and mandatory-escalation omission. The measured artifact cannot choose its own completeness universe.
 
 ## 6. Mechanical false-red audit
 
@@ -160,7 +170,7 @@ CTX-03 uses machine-readable rows for naturally tabular process facts and keeps 
 
 After adoption, DocSync regenerates the one compact `ACCEPTED_STATE_INDEX.json` projection from authoritative sources, then updates only current-state docs whose effective accepted meaning changed. It does not copy the same transition into several current-state narratives merely to preserve chronology. Accepted closure chronology lives under exact evidence or `Docs/history/**`, deliberately outside normal role bootstrap.
 
-ROADMAP v1.33 demonstrates the separation: verbose H0 accepted PR/review/action closure narrative moved to `Docs/history/ROADMAP_ACCEPTED_CLOSURES.md`, while current H0 state, ordering, architecture consequences and gates remain in ROADMAP. `ctx03-docsync-history-check.py` protects both sides: normal bootstrap must not pull history back in, and representative exact historical reconstruction pointers must remain present.
+ROADMAP v1.33 demonstrates the separation: verbose H0 accepted closure narrative moved to `Docs/history/ROADMAP_ACCEPTED_CLOSURES.md`, while current H0 state, ordering, architecture consequences and gates remain in ROADMAP. `ctx03-docsync-history-check.py` protects both sides: normal bootstrap must not pull history back in, and representative exact historical reconstruction pointers must remain present.
 
 A derived current-state row cannot override live GitHub or an exact accepted source. Contradiction triggers reconstruction.
 
