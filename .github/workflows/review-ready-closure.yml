@@ -232,6 +232,15 @@ jobs:
           python3 process-oracle/scripts/validation-context.py record-match \
             --pr-json pr-final.json --target-sha "${TARGET_SHA}" --record current-context.json >/dev/null
 
+          # Preserve the accepted CTX-03 retry key contract while extending it
+          # with the stronger Batch-B binding digest. The old PR+SHA prefix is an
+          # executable invariant, not a compatibility comment.
+          legacy_retry_key_prefix="review-ready-closed:${PR}:${TARGET_SHA}"
+          [[ "${CLOSED_KEY}" == "${legacy_retry_key_prefix}:"* ]] || {
+            echo "::error::Terminal closure key no longer preserves CTX-03 PR+SHA retry identity"
+            exit 2
+          }
+
           if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${CLOSED_KEY}"; then
             exit 0
           fi
