@@ -1,24 +1,35 @@
 #!/usr/bin/env python3
-"""Real OpenRouter adapter for the owner-authorized DW-04 Luna calibration/acceptance protocol.
+"""Real OpenRouter adapter for the owner-authorized DW-04 Luna protocol.
 
 Reads one canonical DW-04 request JSON object from stdin and writes one JSON
 response to stdout. Expected answers/oracles are intentionally unavailable here.
 The exact versioned Luna route is served through the pinned OpenAI provider with
-provider fallback disabled.
+provider fallback disabled. The JSON schema constrains fact *format* only; it does
+not encode task-specific expected answers.
 """
 
 import hashlib
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.request
 import uuid
 
 ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
-FORMAT_NAME = "dw04_answer_v1"
+FORMAT_NAME = "dw04_answer_v2"
 MODEL = "openai/gpt-5.6-luna-20260709"
 EXPECTED_PROVIDER = "OpenAI"
+TYPE_SCHEMAS = {
+    "importance": {"type": "string", "enum": ["A", "B", "C", "D"]},
+    "spatial_depth": {"type": "string", "enum": ["S0", "S1", "S2", "S3", "S4"]},
+    "interior": {"type": "string", "enum": ["I0", "I1", "I2", "I3"]},
+    "fixture": {"type": "string", "pattern": "^[A-Z]{2}-[0-9]{2}$"},
+    "boolean": {"type": "string", "enum": ["YES", "NO"]},
+    "requirement": {"type": "string", "enum": ["REQUIRED", "NOT_REQUIRED"]},
+    "token": {"type": "string", "minLength": 1},
+}
 
 
 def fail(message, code=2):
@@ -28,6 +39,34 @@ def fail(message, code=2):
 
 def retryable_http_status(status):
     return status in (408, 425, 429) or 500 <= status <= 599
+
+
+def validate_contract(contract):
+    required = {"fact_keys", "fact_value_types", "allowed_blockers", "allowed_verdicts", "evidence_ids"}
+    if not isinstance(contract, dict) or set(contract) != required:
+        fail("DW-04 response contract shape is invalid")
+    keys = contract["fact_keys"]
+    types = contract["fact_value_types"]
+    if not isinstance(keys, list) or not keys or not all(isinstance(x, str) for x in keys):
+        fail("DW-04 response contract fact_keys are invalid")
+    if not isinstance(types, dict) or set(types) != set(keys):
+        fail("DW-04 fact_value_types must cover exactly the fact keys")
+    if not all(value in TYPE_SCHEMAS for value in types.values()):
+        fail("DW-04 response contract uses an unknown canonical fact type")
+    for field in ("allowed_blockers", "allowed_verdicts", "evidence_ids"):
+        if not isinstance(contract[field], list) or not all(isinstance(x, str) for x in contract[field]):
+            fail(f"DW-04 response contract {field} is invalid")
+
+
+def value_matches_type(value, kind):
+    if not isinstance(value, str):
+        return False
+    schema = TYPE_SCHEMAS[kind]
+    if "enum" in schema:
+        return value in schema["enum"]
+    if "pattern" in schema:
+        return re.fullmatch(schema["pattern"], value) is not None
+    return bool(value)
 
 
 def validate_answer(answer, contract=None):
@@ -43,8 +82,12 @@ def validate_answer(answer, contract=None):
     if not isinstance(answer["verdict"], str):
         fail("provider verdict must be a string")
     if contract is not None:
+        validate_contract(contract)
         if set(facts) != set(contract["fact_keys"]):
             fail("provider facts differ from the frozen fact-key contract")
+        for key, value in facts.items():
+            if not value_matches_type(value, contract["fact_value_types"][key]):
+                fail(f"provider fact {key} violates canonical token type")
         if not set(answer["blockers"]) <= set(contract["allowed_blockers"]):
             fail("provider emitted blocker outside frozen formatting vocabulary")
         if answer["verdict"] not in contract["allowed_verdicts"]:
@@ -55,8 +98,10 @@ def validate_answer(answer, contract=None):
 
 def main():
     if len(sys.argv) == 2 and sys.argv[1] == "--self-test":
-        contract = {"fact_keys": ["f"], "allowed_blockers": ["b"], "allowed_verdicts": ["REPORT", "REJECT"], "evidence_ids": ["e"]}
-        validate_answer({"facts": {"f": "v"}, "blockers": [], "verdict": "REPORT", "evidence": ["e"]}, contract)
+        contract = {"fact_keys": ["f"], "fact_value_types": {"f": "boolean"}, "allowed_blockers": ["b"], "allowed_verdicts": ["REPORT", "REJECT"], "evidence_ids": ["e"]}
+        validate_answer({"facts": {"f": "YES"}, "blockers": [], "verdict": "REPORT", "evidence": ["e"]}, contract)
+        assert not value_matches_type("true", "boolean")
+        assert value_matches_type("NC-01", "fixture") and not value_matches_type("PA-02 NC-01", "fixture")
         assert retryable_http_status(408) and retryable_http_status(429) and retryable_http_status(500) and retryable_http_status(503)
         assert not retryable_http_status(400) and not retryable_http_status(401) and not retryable_http_status(402) and not retryable_http_status(404)
         print("DW-04 OpenRouter Luna adapter self-test: GREEN")
@@ -97,13 +142,7 @@ def main():
         fail("DW-04 Luna calls must use no tools and no explicit reasoning override")
 
     response_contract = request.get("response_contract")
-    if not isinstance(response_contract, dict) or set(response_contract) != {"fact_keys", "allowed_blockers", "allowed_verdicts", "evidence_ids"}:
-        fail("DW-04 response contract shape is invalid")
-    if not isinstance(response_contract["fact_keys"], list) or not all(isinstance(x, str) for x in response_contract["fact_keys"]):
-        fail("DW-04 response contract fact_keys are invalid")
-    for field in ("allowed_blockers", "allowed_verdicts", "evidence_ids"):
-        if not isinstance(response_contract[field], list) or not all(isinstance(x, str) for x in response_contract[field]):
-            fail(f"DW-04 response contract {field} is invalid")
+    validate_contract(response_contract)
 
     contexts = request.get("context_fragments")
     if not isinstance(contexts, list) or not contexts:
@@ -121,12 +160,13 @@ def main():
     if not isinstance(budget, dict) or not isinstance(budget.get("max_output_tokens"), int):
         fail("execution budget is missing max_output_tokens")
 
+    fact_properties = {key: TYPE_SCHEMAS[response_contract["fact_value_types"][key]] for key in response_contract["fact_keys"]}
     schema = {
         "type": "object",
         "properties": {
             "facts": {
                 "type": "object",
-                "properties": {key: {"type": "string"} for key in response_contract["fact_keys"]},
+                "properties": fact_properties,
                 "required": response_contract["fact_keys"],
                 "additionalProperties": False,
             },
@@ -139,7 +179,7 @@ def main():
     }
     user_text = (
         "TASK\n" + request.get("task_prompt", "")
-        + "\n\nRESPONSE CONTRACT (formatting vocabulary only; allowed does not mean true)\n"
+        + "\n\nRESPONSE CONTRACT (canonical formatting vocabulary only; allowed does not mean true)\n"
         + json.dumps(response_contract, ensure_ascii=False, sort_keys=True)
         + "\n\nAUTHORITATIVE CONTEXT\n" + "\n\n".join(rendered)
     )
