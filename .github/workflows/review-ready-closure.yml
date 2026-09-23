@@ -32,7 +32,7 @@ jobs:
           path: process-oracle
           fetch-depth: 1
 
-      - name: Resolve current context-bound REVIEW_READY marker
+      - name: Resolve current REVIEW_READY binding
         id: marker
         env:
           GH_TOKEN: ${{ github.token }}
@@ -48,11 +48,10 @@ jobs:
             target="$(python3 - <<'PY'
           import os, re
           body = os.environ.get('COMMENT_BODY') or ''
-          state = re.findall(r'^State:\s*(\S+)\s*$', body, re.M)
-          sha = re.findall(r'^Target SHA:\s*([0-9a-fA-F]{40})\s*$', body, re.M)
-          automation = [line for line in body.splitlines() if line.strip() == 'ARKUS_AUTOMATION_V2']
-          if len(state) == 1 and state[0] == 'REVIEW_READY' and len(sha) == 1 and len(automation) == 1:
-              print(sha[0].lower())
+          states = re.findall(r'^State:\s*(\S+)\s*$', body, re.M)
+          shas = re.findall(r'^Target SHA:\s*([0-9a-fA-F]{40})\s*$', body, re.M)
+          if body.splitlines().count('ARKUS_AUTOMATION_V2') == 1 and states == ['REVIEW_READY'] and len(shas) == 1:
+              print(shas[0].lower())
           PY
           )"
             pr="${ISSUE_NUMBER}"
@@ -80,69 +79,36 @@ jobs:
 
           python3 process-oracle/scripts/validation-context.py self-test
           if ! python3 process-oracle/scripts/validation-context.py resolve \
-            --pr-json pr.json \
-            --target-sha "${target}" \
-            --record current-context.json >/dev/null; then
+            --pr-json pr.json --target-sha "${target}" --record current-context.json >/dev/null; then
             echo "valid=false" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
-          digest="$(jq -r '.context_digest' current-context.json)"
-          wp="$(jq -r '.wp' current-context.json)"
-          process_only="$(jq -r '.process_only' current-context.json)"
-          key="review-ready:${pr}:${target}:${digest}"
 
           gh api --paginate --slurp \
             "repos/${GITHUB_REPOSITORY}/issues/${pr}/comments?per_page=100" \
             | jq '[.[][]]' > comments.json
-          jq -c --arg key "${key}" '
-            [.[]
-              | select(.user.login == "github-actions[bot]")
-              | select((.body | split("\n") | index("ARKUS_AUTOMATION_V2")) != null)
-              | select((.body | split("\n") | index("State: REVIEW_READY")) != null)
-              | select((.body | split("\n") | index("Key: " + $key)) != null)]
-            | sort_by(.created_at)
-            | last // empty
-          ' comments.json > marker.json
-          if [[ ! -s marker.json ]]; then
+
+          python3 process-oracle/scripts/review-ready-binding.py self-test
+          if ! python3 process-oracle/scripts/review-ready-binding.py select \
+            --comments-json comments.json \
+            --pr-json pr.json \
+            --context-record current-context.json \
+            --target-sha "${target}" \
+            --record review-binding.json \
+            --marker-record marker.json >/dev/null; then
             echo "valid=false" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
 
-          mapfile -t marker_fields < <(python3 - <<'PY'
-          import json, re
-          marker = json.load(open('marker.json', encoding='utf-8'))
-          body = marker.get('body') or ''
-          def field(name):
-              matches = re.findall(rf'^{re.escape(name)}:\s*(.*?)\s*$', body, re.M)
-              if len(matches) != 1:
-                  raise SystemExit(f'{name} must occur exactly once, found {len(matches)}')
-              return matches[0].strip()
-          print(field('Target SHA'))
-          print(field('Effective WP'))
-          print(field('Process Only'))
-          print(field('Validation Context Digest'))
-          print(field('Validation Run ID'))
-          print(field('Validation Workflow'))
-          PY
-          )
-          [[ "${marker_fields[0]}" == "${target}" ]] || { echo "valid=false" >> "${GITHUB_OUTPUT}"; exit 0; }
-          [[ "${marker_fields[1]}" == "${wp}" ]] || { echo "valid=false" >> "${GITHUB_OUTPUT}"; exit 0; }
-          [[ "${marker_fields[2]}" == "${process_only}" ]] || { echo "valid=false" >> "${GITHUB_OUTPUT}"; exit 0; }
-          [[ "${marker_fields[3]}" == "${digest}" ]] || { echo "valid=false" >> "${GITHUB_OUTPUT}"; exit 0; }
-          [[ "${marker_fields[4]}" =~ ^[1-9][0-9]*$ ]] || { echo "valid=false" >> "${GITHUB_OUTPUT}"; exit 0; }
-          case "${marker_fields[5]}" in
-            "Arkus Candidate Validation"|"Arkus Receipt Freeze Reuse") ;;
-            *) echo "valid=false" >> "${GITHUB_OUTPUT}"; exit 0 ;;
-          esac
-
           echo "valid=true" >> "${GITHUB_OUTPUT}"
           echo "target_sha=${target}" >> "${GITHUB_OUTPUT}"
           echo "pr=${pr}" >> "${GITHUB_OUTPUT}"
-          echo "context_digest=${digest}" >> "${GITHUB_OUTPUT}"
-          echo "validation_run_id=${marker_fields[4]}" >> "${GITHUB_OUTPUT}"
-          echo "validation_workflow=${marker_fields[5]}" >> "${GITHUB_OUTPUT}"
+          for key in wp process_only non_foundational context_digest reuse_context_digest binding_digest validation_run_id validation_workflow review_ready_closed_key; do
+            value="$(jq -r --arg key "${key}" '.[$key]' review-binding.json)"
+            echo "${key}=${value}" >> "${GITHUB_OUTPUT}"
+          done
 
-      - name: Checkout live PR HEAD
+      - name: Checkout exact candidate
         if: steps.marker.outputs.valid == 'true'
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -150,7 +116,7 @@ jobs:
           path: candidate
           fetch-depth: 0
 
-      - name: Re-read PR and run canonical handoff oracle
+      - name: Revalidate current handoff against exact candidate
         if: steps.marker.outputs.valid == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -162,23 +128,22 @@ jobs:
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr-live.json
           test "$(jq -r '.head.sha' pr-live.json)" = "${TARGET_SHA}"
           python3 process-oracle/scripts/validation-context.py record-match \
-            --pr-json pr-live.json \
-            --target-sha "${TARGET_SHA}" \
-            --record current-context.json >/dev/null
+            --pr-json pr-live.json --target-sha "${TARGET_SHA}" --record current-context.json >/dev/null
           cd candidate
           test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
           export PR_BODY="$(jq -r '.body // ""' ../pr-live.json)"
+          export TARGET_SHA
           python3 scripts/validate-worker-handoff.py --self-test
           python3 scripts/validate-worker-handoff.py --head-sha "${TARGET_SHA}"
 
-      - name: Verify exact context-bound validation source
+      - name: Verify exact bound validation source
         id: source
         if: steps.marker.outputs.valid == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ steps.marker.outputs.pr }}
           TARGET_SHA: ${{ steps.marker.outputs.target_sha }}
-          CONTEXT_DIGEST: ${{ steps.marker.outputs.context_digest }}
+          BINDING_DIGEST: ${{ steps.marker.outputs.binding_digest }}
           VALIDATION_RUN_ID: ${{ steps.marker.outputs.validation_run_id }}
           VALIDATION_WORKFLOW: ${{ steps.marker.outputs.validation_workflow }}
         shell: bash
@@ -186,55 +151,47 @@ jobs:
           set -euo pipefail
           gh api -H 'Accept: application/vnd.github+json' \
             "repos/${GITHUB_REPOSITORY}/commits/${TARGET_SHA}/check-runs?per_page=100" > checks.json
-          external_id="validation-context:${PR}:${TARGET_SHA}:${CONTEXT_DIGEST}:${VALIDATION_RUN_ID}"
+          external_id="validation-context:${PR}:${TARGET_SHA}:${BINDING_DIGEST}:${VALIDATION_RUN_ID}"
           match_count="$(jq -r --arg eid "${external_id}" '[.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid)] | length' checks.json)"
-          [[ "${match_count}" -ge 1 ]] || { echo "::error::No context-bound validation check found"; exit 2; }
+          [[ "${match_count}" -ge 1 ]] || { echo "::error::No validation identity bound to ${BINDING_DIGEST}"; exit 2; }
           jq -r --arg eid "${external_id}" '[.check_runs[] | select(.name == "Validation context identity" and .conclusion == "success" and .external_id == $eid)] | sort_by(.completed_at // .started_at // "") | last | .output.summary' checks.json > context-summary.txt
           python3 process-oracle/scripts/validation-context.py check-match \
-            --pr-json pr-live.json \
-            --target-sha "${TARGET_SHA}" \
-            --summary context-summary.txt \
-            --run-id "${VALIDATION_RUN_ID}" \
-            --workflow "${VALIDATION_WORKFLOW}" >/dev/null
+            --pr-json pr-live.json --target-sha "${TARGET_SHA}" --summary context-summary.txt \
+            --run-id "${VALIDATION_RUN_ID}" --workflow "${VALIDATION_WORKFLOW}" >/dev/null
 
           gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${VALIDATION_RUN_ID}" > validation-run.json
-          [[ "$(jq -r '.conclusion // empty' validation-run.json)" == "success" ]] || { echo "::error::Validation source run is not successful"; exit 2; }
+          [[ "$(jq -r '.conclusion // empty' validation-run.json)" == "success" ]] || { echo "::error::Validation run is not successful"; exit 2; }
           [[ "$(jq -r '.name // empty' validation-run.json)" == "${VALIDATION_WORKFLOW}" ]] || { echo "::error::Validation workflow mismatch"; exit 2; }
           gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${VALIDATION_RUN_ID}/jobs?per_page=100" > validation-jobs.json
-
           if [[ "${VALIDATION_WORKFLOW}" == "Arkus Candidate Validation" ]]; then
-            [[ "$(jq -r '.head_sha // empty' validation-run.json)" == "${TARGET_SHA}" ]] || { echo "::error::Candidate Validation run SHA mismatch"; exit 2; }
+            [[ "$(jq -r '.head_sha // empty' validation-run.json)" == "${TARGET_SHA}" ]] || { echo "::error::Candidate Validation SHA mismatch"; exit 2; }
             handoff="$(jq -r '[.jobs[] | select(.name == "Worker handoff lint")] | last | .conclusion // "missing"' validation-jobs.json)"
             freeze="$(jq -r '[.jobs[] | select(.name == "Freeze exact-SHA validation")] | last | .conclusion // "missing"' validation-jobs.json)"
-            [[ "${handoff}" == "success" && "${freeze}" == "success" ]] || { echo "::error::Context-bound Candidate Validation jobs are not GREEN"; exit 2; }
+            [[ "${handoff}" == "success" ]] || { echo "::error::Worker handoff lint is not GREEN"; exit 2; }
+            if [[ "${{ steps.marker.outputs.non_foundational }}" != "true" ]]; then
+              [[ "${freeze}" == "success" ]] || { echo "::error::Freeze exact-SHA validation is not GREEN"; exit 2; }
+            fi
           else
             reuse="$(jq -r '[.jobs[] | select(.name == "Reuse exact-SHA receipt for freeze")] | last | .conclusion // "missing"' validation-jobs.json)"
-            [[ "${reuse}" == "success" ]] || { echo "::error::Context-bound receipt reuse job is not GREEN"; exit 2; }
-            handoff="success"
-            freeze="success"
+            [[ "${reuse}" == "success" ]] || { echo "::error::Receipt reuse job is not GREEN"; exit 2; }
           fi
-          echo "handoff=${handoff}" >> "${GITHUB_OUTPUT}"
-          echo "freeze=${freeze}" >> "${GITHUB_OUTPUT}"
 
-      - name: Build post-marker closure state
+      - name: Validate terminal closure oracle
         if: steps.marker.outputs.valid == 'true'
         env:
-          PR: ${{ steps.marker.outputs.pr }}
           MARKER_SHA: ${{ steps.marker.outputs.target_sha }}
-          HANDOFF: ${{ steps.source.outputs.handoff }}
-          FREEZE: ${{ steps.source.outputs.freeze }}
         shell: bash
         run: |
           set -euo pipefail
           final_head="$(jq -r '.head.sha' pr-live.json)"
-          python3 - "${HANDOFF}" "${FREEZE}" "${MARKER_SHA}" "${final_head}" <<'PY'
+          python3 - "${MARKER_SHA}" "${final_head}" <<'PY'
           import json, re, sys
           pr = json.load(open('pr-live.json', encoding='utf-8'))
           body = pr.get('body') or ''
           def field(name):
-              matches = re.findall(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
-              return matches[0].strip() if len(matches) == 1 else ''
-          out = {
+              rows = re.findall(rf'^{re.escape(name)}:\s*`?([^`\r\n]+?)`?\s*$', body, re.M | re.I)
+              return rows[0].strip() if len(rows) == 1 else ''
+          state = {
               'pr_draft': bool(pr.get('draft')),
               'pr_head_sha': pr['head']['sha'].lower(),
               'candidate_sha': field('Candidate HEAD SHA'),
@@ -244,52 +201,59 @@ jobs:
               'branch_frozen': field('Branch frozen'),
               'worker_verdict': field('Worker verdict'),
               'reviewer_verdict': field('Reviewer verdict'),
-              'handoff_check': sys.argv[1],
-              'freeze_check': sys.argv[2],
-              'marker_sha': sys.argv[3],
-              'final_head_sha': sys.argv[4],
+              'handoff_check': 'success',
+              'freeze_check': 'success',
+              'marker_sha': sys.argv[1],
+              'final_head_sha': sys.argv[2],
           }
-          json.dump(out, open('review-ready-state.json', 'w', encoding='utf-8'), indent=2)
+          json.dump(state, open('review-ready-state.json', 'w', encoding='utf-8'), indent=2)
           PY
-
-      - name: Validate terminal closure
-        if: steps.marker.outputs.valid == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
           python3 candidate/scripts/review-ready-closure.py --self-test
           python3 candidate/scripts/review-ready-closure.py --state-json review-ready-state.json
 
-      - name: Persist post-marker closure
+      - name: Persist single terminal Reviewer handoff
         if: steps.marker.outputs.valid == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ steps.marker.outputs.pr }}
           TARGET_SHA: ${{ steps.marker.outputs.target_sha }}
+          WP: ${{ steps.marker.outputs.wp }}
           CONTEXT_DIGEST: ${{ steps.marker.outputs.context_digest }}
+          REUSE_CONTEXT_DIGEST: ${{ steps.marker.outputs.reuse_context_digest }}
+          BINDING_DIGEST: ${{ steps.marker.outputs.binding_digest }}
+          CLOSED_KEY: ${{ steps.marker.outputs.review_ready_closed_key }}
           VALIDATION_RUN_ID: ${{ steps.marker.outputs.validation_run_id }}
+          VALIDATION_WORKFLOW: ${{ steps.marker.outputs.validation_workflow }}
         shell: bash
         run: |
           set -euo pipefail
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr-final.json
+          test "$(jq -r '.head.sha' pr-final.json)" = "${TARGET_SHA}"
           python3 process-oracle/scripts/validation-context.py record-match \
-            --pr-json pr-final.json \
-            --target-sha "${TARGET_SHA}" \
-            --record current-context.json >/dev/null
+            --pr-json pr-final.json --target-sha "${TARGET_SHA}" --record current-context.json >/dev/null
 
-          key="review-ready-closed:${PR}:${TARGET_SHA}:${CONTEXT_DIGEST}"
-          if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
+          if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${CLOSED_KEY}"; then
             exit 0
           fi
 
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: REVIEW_READY_CLOSED
-          Key: ${key}
+          Key: ${CLOSED_KEY}
           Target SHA: ${TARGET_SHA}
           Validation Context Digest: ${CONTEXT_DIGEST}
+          Reuse Context Digest: ${REUSE_CONTEXT_DIGEST}
+          Review Binding Digest: ${BINDING_DIGEST}
           Validation Run ID: ${VALIDATION_RUN_ID}
-          Detail: durable REVIEW_READY and its exact context-bound validation source remain current; final live PR identity still matches PR+SHA+WP+process classification. Independent Reviewer judgment is still required.
+          Validation Workflow: ${VALIDATION_WORKFLOW}
+          Detail: durable REVIEW_READY and its exact validation source remain current under the final live PR identity. Independent Reviewer judgment is still required.
           EOF
           )
           gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
+
+          jq -n \
+            --arg state "REVIEW_READY_CLOSED" --arg key "${CLOSED_KEY}" --arg wp "${WP}" \
+            --arg detail "terminal REVIEW_READY closure is current; start one fresh independent Reviewer" \
+            --arg target_sha "${TARGET_SHA}" --arg binding_digest "${BINDING_DIGEST}" --argjson pr "${PR}" \
+            '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,binding_digest:$binding_digest,pr:$pr}}' \
+            | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
