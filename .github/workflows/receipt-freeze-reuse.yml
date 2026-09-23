@@ -59,7 +59,6 @@ jobs:
         run: |
           set -euo pipefail
           sha="${SHA}"
-
           python3 process-oracle/scripts/validation-context.py self-test
           python3 process-oracle/scripts/validation-context.py resolve \
             --pr-json pr.json --target-sha "${sha}" --record VALIDATION_CONTEXT.json >/dev/null
@@ -75,8 +74,7 @@ jobs:
           export PR_BODY="$(jq -r '.body // ""' pr.json)"
           export TARGET_SHA="${sha}"
           python3 process-oracle/scripts/validate-worker-handoff.py --self-test
-          python3 process-oracle/scripts/validate-worker-handoff.py \
-            --head-sha "${sha}" --repo-root candidate
+          python3 process-oracle/scripts/validate-worker-handoff.py --head-sha "${sha}" --repo-root candidate
 
           python3 process-oracle/scripts/reuse-context.py self-test
           python3 process-oracle/scripts/reuse-context.py resolve \
@@ -89,7 +87,6 @@ jobs:
           artifact_id="$(jq -r '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | reverse | .[0].id // empty' <<<"${artifact_json}")"
           source_run_id="$(jq -r '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | reverse | .[0].workflow_run.id // empty' <<<"${artifact_json}")"
           [[ -n "${artifact_id}" && -n "${source_run_id}" ]] || { echo "::error::No reusable receipt artifact for ${sha}"; exit 2; }
-
           run_json="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${source_run_id}")"
           [[ "$(jq -r '.conclusion // empty' <<<"${run_json}")" == "success" ]] || { echo "::error::Source run is not successful"; exit 2; }
           [[ "$(jq -r '.head_sha // empty' <<<"${run_json}")" == "${sha}" ]] || { echo "::error::Source run SHA does not match frozen SHA"; exit 2; }
@@ -165,7 +162,7 @@ jobs:
           set -euo pipefail
           key="review-ready:${PR}:${SHA}:${REUSE_CONTEXT_DIGEST}"
           if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then exit 0; fi
-          detail="frozen metadata and durable HK-00 exact-SHA receipt are verified against the complete current mutable handoff context and exact candidate tree (receipt source run ${SOURCE_RUN_ID}). Start a fresh independent Reviewer."
+          detail="frozen metadata and durable HK-00 exact-SHA receipt are verified against the complete current mutable handoff context and exact candidate tree (receipt source run ${SOURCE_RUN_ID}). Terminal closure must still revalidate this binding before any Reviewer notification."
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: REVIEW_READY
@@ -183,8 +180,5 @@ jobs:
           EOF
           )
           gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
-          jq -n \
-            --arg state "REVIEW_READY" --arg key "${key}" --arg wp "${WP}" --arg detail "${detail}" \
-            --arg target_sha "${SHA}" --arg context_digest "${CONTEXT_DIGEST}" --arg reuse_context_digest "${REUSE_CONTEXT_DIGEST}" --argjson pr "${PR}" \
-            '{event_type:"arkus_notification",client_payload:{state:$state,key:$key,wp:$wp,detail:$detail,target_sha:$target_sha,context_digest:$context_digest,reuse_context_digest:$reuse_context_digest,pr:$pr}}' \
-            | gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input - >/dev/null
+          # REVIEW_READY is deliberately not dispatched to Telegram. The single
+          # actionable Reviewer notification is emitted by REVIEW_READY_CLOSED.
