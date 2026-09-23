@@ -65,4 +65,12 @@ Combining all three would make one Reviewer validate context routing, semantic c
 
 `WP-CTX-03 — Structured evidence, quality-preserving context envelope, DocSync and history separation` is **COMPLETE** on final circuit-breaker candidate `8851f3a295c848be5724d5d9b796e00d2037d6e8` (independent PASS review `#5277502546`, PR `#121`, implementation merge `d2cf7145b4ec83c3935286f2d9faeabbcd032148`). Its accepted effective-read-set oracle derives repository-backed mandatory context from profile/route authority, caller omission cannot silently shrink that universe, and new unclassified read surfaces/classes fail closed.
 
-The reviewed CTX-01 → CTX-02 → CTX-03 programme is **COMPLETE**. There is no next CTX workpack. CTX does not semantically block H1/CITY/PA; after this DocSync, the CTX-03 side prerequisite referenced by `WP-DW-04` is accepted, while DW retains all of its own serial and cross-track gates.
+The reviewed CTX-01 → CTX-02 → CTX-03 programme is **COMPLETE**. There is no next standalone CTX compression/process workpack. CTX does not semantically block H1/CITY/PA; the CTX-03 side prerequisite used by DW is accepted.
+
+## Post-program CTX↔DW composition
+
+After accepted `WP-DW-GATE`, a separate cross-track `WP-CTX-DW-GATE` may test the composition of CTX as control/routing plane and DW as selective structured knowledge plane. This does not reopen CTX-01..03 and does not imply general DW adoption.
+
+The composition principle is: **all material information must be discoverable from CTX, but not all material information belongs in DW**. Authoritative accepted sources remain truth; DW may be `USE`, `OPTIONAL` or `NOT_MATERIAL` for a concrete claim.
+
+`WP-CTX-DW-GATE` explicitly does not block H1-03/H1-03A. Its H1 integration plan is recorded in `Docs/workpacks/H1/CTX_DW_ADOPTION_PLAN.md`, with first planned material observations at H1-04 and H1-06 and fresh-agent composition at H1-GATE. Future H2 planning input is recorded separately under `Docs/workpacks/H2/CTX_DW_PLANNING_INPUT.md`.
