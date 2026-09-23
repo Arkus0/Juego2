@@ -15,9 +15,11 @@ def ancestor(a,b):
     try: subprocess.check_call(["git","merge-base","--is-ancestor",a,b],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e: raise ProtocolError(f"chronology violation: {a} !<= {b}") from e
 def response_contract(p,oracle,t):
-    task=p["tasks"][t]; vocab=p["response_vocabulary"]; facts=oracle["tasks"][t]["oracle"]["facts"]
+    task=p["tasks"][t]; facts=oracle["tasks"][t]["oracle"]["facts"]
     req(set(task["fact_value_types"])==set(facts),f"fact type surface drift: {t}")
-    return {"fact_keys":list(facts),"fact_value_types":task["fact_value_types"],"allowed_blockers":vocab["allowed_blockers"],"allowed_verdicts":vocab["allowed_verdicts"],"evidence_ids":vocab["evidence_ids"]}
+    req(set(task["allowed_blockers"])==set(oracle["tasks"][t]["oracle"]["blockers"]),f"task blocker surface drift: {t}")
+    req(set(task["evidence_ids"])==set(oracle["tasks"][t]["oracle"]["evidence"]),f"task evidence surface drift: {t}")
+    return {"fact_keys":list(facts),"fact_value_types":task["fact_value_types"],"allowed_blockers":task["allowed_blockers"],"allowed_verdicts":p["response_vocabulary"]["allowed_verdicts"],"evidence_ids":task["evidence_ids"]}
 def check_calibration(f,p):
     cc=f["calibration_commit"]; ancestor(f["calibration_oracle_commit"],cc); ancestor(cc,f["freeze_parent"]); req(blob(cc,CAL)==f["calibration_receipt_blob"]==blob("HEAD",CAL),"calibration receipt drift")
     r=load(cc,CAL); cp=load(r["calibration_protocol_commit"],"Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json"); o=load(f["calibration_oracle_commit"],CAL_ORACLES); ctx=load(r["calibration_protocol_commit"],"Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json")
@@ -27,7 +29,7 @@ def check_calibration(f,p):
     req(p["model_config"]["run_policy"]=="acceptance-no-replacement; objective invalid is terminal evidence; semantic misses are never rerun","acceptance run policy drift")
     pre=load(f["precalibration_commit"],PRE); expected=[{"task":t,"run":i,"route":"CTX"} for t in pre["calibration_policy"]["run_order"] for i in (1,2)]; req([x["slot"] for x in r["runs"]]==expected,"calibration slot drift")
     for x in r["runs"]:
-        t=x["slot"]["task"]; task=cp["tasks"][t]; req(x["resolved_provider"]=="OpenAI" and x["provider_request_id"],"calibration provider identity missing"); trial.check_request(x["request"],p["model_config"],x["slot"],task["semantic_question"],task["response_contract"],cp["system_prompt"],None); req(x["request"]["context_fragments"]==ctx["contexts"][t],"calibration context drift"); req(trial.score(o["tasks"][t]["oracle"],x["answer"])["pass"],f"calibration miss: {t}")
+        t=x["slot"]["task"]; task=cp["tasks"][t]; req(x["resolved_provider"]=="OpenAI" and x["provider_request_id"],"calibration provider identity missing"); trial.check_request(x["request"],cp["model_config"],x["slot"],task["semantic_question"],task["response_contract"],cp["system_prompt"],None); req(x["request"]["context_fragments"]==ctx["contexts"][t],"calibration context drift"); req(trial.score(o["tasks"][t]["oracle"],x["answer"])["pass"],f"calibration miss: {t}")
 def check_structure(f,p,plan,assembly_commit):
     ancestor(f["freeze_commit"],assembly_commit); req(blob(assembly_commit,ASSEMBLY)==blob("HEAD",ASSEMBLY),"assembly drift"); a=load(assembly_commit,ASSEMBLY); req(a["freeze_commit"]==f["freeze_commit"] and a["freeze_blob"]==f["freeze_blob"] and a["context_plan_blob"]==f["context_plan_blob"],"assembly identity mismatch")
     pre=load(f["precalibration_commit"],PRE); so=load(f["acceptance_oracle_commit"],SOURCE_ORACLES); complete=True
