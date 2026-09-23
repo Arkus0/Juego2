@@ -1,10 +1,14 @@
 # WP-DW-GATE — Design World second-consumer readiness gate
 
-Status: PLANNED / NOT_STARTED
+Status: COMPLETE / ACCEPTED
 Class: FOUNDATIONAL GATE
 EXECUTION_REQUIREMENT: REMOTE_OK
 Depends on: `WP-DW-05` PASS + merge + DocSync
 Blocks: final H2 external/public-boundary acceptance unless H2 explicitly reviews and dispositions the DW evidence/interlock
+
+Acceptance: exact candidate `6152239062d3b25b91682f98f18a9eccf5e1ca1e`; independent PASS review `#5294645167`; PR `#161`; implementation merge `79586c8176d0f2c05bec6bc53f1e9802095e8e0d`.
+
+Post-PASS reconciliation: `Docs/evidence/WP-DW-GATE/DOCSYNC.md`.
 
 ## Objective and central claim
 
