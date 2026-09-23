@@ -80,8 +80,8 @@ jobs:
             exit 2
           }
 
-      - name: Restore dependencies
-        run: dotnet restore Juego2.sln
+      - name: Restore dependencies (locked)
+        run: dotnet restore Juego2.sln --locked-mode
 
       - name: Build release
         run: dotnet build Juego2.sln --no-restore -c Release

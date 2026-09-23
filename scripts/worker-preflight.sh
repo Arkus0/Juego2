@@ -80,11 +80,8 @@ EOF
 fi
 
 echo "[preflight] SDK ${actual_sdk}"
-# This repository does not currently commit packages.lock.json files, so --locked-mode
-# would fail rather than make restore more deterministic. Adopt locked restore only together
-# with reviewed lockfiles for the full solution.
-echo "[preflight] restore"
-dotnet restore Juego2.sln
+echo "[preflight] locked restore"
+dotnet restore Juego2.sln --locked-mode
 
 echo "[preflight] build Release --no-restore"
 dotnet build Juego2.sln -c Release --no-restore
