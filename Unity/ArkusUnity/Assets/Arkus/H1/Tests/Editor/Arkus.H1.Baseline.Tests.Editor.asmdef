@@ -1,0 +1,21 @@
+{
+  "name": "Arkus.H1.Baseline.Tests.Editor",
+  "rootNamespace": "Arkus.H1.Editor.Tests",
+  "references": [
+    "Arkus.H1.Baseline.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

@@ -8,3 +8,17 @@ artifacts/
 /validation.log
 __pycache__/
 *.py[cod]
+
+# Unity H1 retained project: generated/editor-local state only.
+Unity/ArkusUnity/[Ll]ibrary/
+Unity/ArkusUnity/[Tt]emp/
+Unity/ArkusUnity/[Oo]bj/
+Unity/ArkusUnity/[Bb]uild/
+Unity/ArkusUnity/[Bb]uilds/
+Unity/ArkusUnity/[Ll]ogs/
+Unity/ArkusUnity/[Uu]ser[Ss]ettings/
+Unity/ArkusUnity/MemoryCaptures/
+Unity/ArkusUnity/Recordings/
+Unity/ArkusUnity/*.csproj
+Unity/ArkusUnity/*.sln
+Unity/ArkusUnity/*.user
