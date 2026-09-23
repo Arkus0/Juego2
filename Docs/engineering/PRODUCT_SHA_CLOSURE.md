@@ -24,6 +24,7 @@ Normal budget:
 - **Arkus Candidate Validation** is a freeze-time gate. Draft pushes do not run its product observation/verifier. It runs when a non-draft candidate is opened/updated or marked Ready, and manual observation remains explicit.
 - `pull_request.edited` never triggers expensive product validation. Editing handoff prose or exact-SHA metadata is not a product mutation.
 - If same-SHA metadata needs correction after a failed closure attempt, finish all corrections first, then perform at most one deliberate Draft -> Ready transition to request a fresh lightweight/final gate evaluation. Do not iterate edit -> Actions -> edit -> Actions.
+- The durable context-bound `REVIEW_READY` marker is the terminal mechanical Worker -> Reviewer handoff state. There is no second `REVIEW_READY_CLOSED` phase or workflow in the normal path. Reviewer PASS/FAIL independently rechecks that a matching `REVIEW_READY` marker predates the verdict and still binds the reviewed SHA/context.
 
 A workflow may still fail closed when SHA/WP/classification no longer match. That is integrity, not permission to rerun unrelated product tests.
 
@@ -38,11 +39,11 @@ For a normal implementation/repair cycle:
 5. Require either local `WORKER_PREFLIGHT_GREEN` or a same-PR, same-SHA Main Safety GREEN. A manual dedicated preflight may substitute when explicitly requested.
 6. Perform one strict Worker pre-review against that exact SHA.
 7. Persist CLEAN outside repository bytes, reconcile the handoff once, mark Ready, and stop writing.
-8. Candidate Validation performs the final WP-specific exact-SHA freeze verification once.
+8. Candidate Validation performs the final WP-specific exact-SHA freeze verification once and Automation persists context-bound `REVIEW_READY`.
 
 A protocol-only correction on unchanged `PRODUCT_SHA` does not require another semantic Worker pre-review or another Main Safety run. Only the affected metadata gate is repaired/rechecked.
 
-## 4. Reviewer classification
+## 4. Reviewer classification and execution budget
 
 Independent Reviewer verdicts are about the material claim.
 
@@ -51,6 +52,8 @@ Independent Reviewer verdicts are about the material claim.
 - `PROTOCOL_FIX` / `REVIEW_BLOCKED`: administrative or lifecycle metadata is malformed/stale but the exact `PRODUCT_SHA` and material evidence remain identifiable and unchanged.
 
 A pure protocol defect must not be promoted into semantic `FAIL` merely because a checker is red. Fix it without reopening product implementation or rerunning expensive execution unless the fix changes Git bytes or makes prior evidence untrustworthy.
+
+Reviewer independence means independent judgment and independent attempts to falsify the claim; it does **not** require mechanically repeating an identical execution that is already durably bound to the exact reviewed SHA. The Reviewer should consume trustworthy exact-SHA CI/receipt results for mechanical facts already established and run additional targeted probes only when they add information: for example to test a causal false-green hypothesis, cover a materially unproved claim, resolve contradictory evidence, or replace evidence whose identity/provenance cannot be trusted. Re-running the same build/test/proof command solely because a new Reviewer session started is redundant work, not additional independence.
 
 ## 5. DocSync budget
 
@@ -88,4 +91,4 @@ is valid.
 
 is a protocol bug.
 
-Where older operational text conflicts with this amendment on Action cadence, same-SHA metadata invalidation, Reviewer classification of protocol-only defects, or mandatory per-PASS DocSync churn, this amendment governs. Material acceptance/proof requirements remain unchanged.
+Where older operational text conflicts with this amendment on Action cadence, same-SHA metadata invalidation, Reviewer execution reuse, `REVIEW_READY` terminal handoff, Reviewer classification of protocol-only defects, or mandatory per-PASS DocSync churn, this amendment governs. Material acceptance/proof requirements remain unchanged.
