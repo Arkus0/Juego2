@@ -43,6 +43,22 @@ class RoutingTests(unittest.TestCase):
         self.assertIsNone(module.latest_marker(rows, "REPAIR_REQUIRED", sha1))
         self.assertEqual(module.latest_marker(rows, "REVIEW_READY", sha1), rows[0])
 
+    def test_review_ready_must_match_current_validation_context(self):
+        root = Path(__file__).resolve().parents[1]
+        sha = "a" * 40
+        pr = {"number": 123, "head": {"sha": sha}, "body": "WP: WP-H1-03\nClass: FOUNDATIONAL\n"}
+        context = module.validation_context_module(root).resolve_context(pr, sha)
+        digest = context["context_digest"]
+        row = {"state": "REVIEW_READY", "target sha": sha,
+               "key": f"review-ready:123:{sha}:{digest}",
+               "validation context digest": digest, "effective wp": context["wp"],
+               "process only": context["process_only"],
+               "non foundational": context["non_foundational"]}
+        self.assertTrue(module.ready_context_matches(root, pr, row))
+        changed = dict(pr, body="WP: WP-H1-03\nClass: NON-FOUNDATIONAL\n")
+        self.assertFalse(module.ready_context_matches(root, changed, row))
+        self.assertFalse(module.ready_context_matches(root, pr, dict(row, key="stale")))
+
     def test_markdown_verdict_fields(self):
         body = "## **Reviewer verdict:** `FAIL`\n**Reviewed candidate SHA:** `" + "a" * 40 + "`"
         parsed = module.fields(body)
@@ -106,6 +122,15 @@ class RoutingTests(unittest.TestCase):
         self.assertEqual(len(markers), 1)
         self.assertEqual(markers[0]["state"], "OWNER_CONTINUE")
 
+    def test_owner_continuation_requires_matching_second_fail_offer(self):
+        sha = "a" * 40
+        rows = [{"state": "OWNER_CONTINUE", "target sha": sha, "fail count": "2"}]
+        self.assertFalse(module.owner_authorized_continuation(rows))
+        rows.append({"state": "SECOND_FAIL_OFFERED", "target sha": "b" * 40, "fail count": "2"})
+        self.assertFalse(module.owner_authorized_continuation(rows))
+        rows.append({"state": "SECOND_FAIL_OFFERED", "target sha": sha, "fail count": "2"})
+        self.assertTrue(module.owner_authorized_continuation(rows))
+
     def test_marker_provenance_matches_state(self):
         sha = "a" * 40
         ready = f"ARKUS_AUTOMATION_V2\nState: REVIEW_READY\nTarget SHA: {sha}\n"
@@ -155,6 +180,22 @@ class RoutingTests(unittest.TestCase):
         self.assertEqual(module.effort_for_worker("Class: FOUNDATIONAL AUTHORITY"), "xhigh")
         self.assertEqual(module.effort_for_worker("Class: PROCESS_ONLY"), "high")
         self.assertEqual(module.effort_for_worker("Class: PROCESS_ONLY\nForbidden: architecture work"), "high")
+
+    def test_circuit_breaker_is_checked_on_first_and_third_fail(self):
+        audit = {"classification": "valid", "same_foundational_defect_class": False,
+                 "self_shrinking_completeness": True,
+                 "proof_machinery_expansion_without_progress": False,
+                 "criterion": "Bounded completeness claim", "evidence": "Fixture drops discovered targets",
+                 "minimal_next_action": "Stop and reopen proof boundary"}
+        self.assertEqual(module.audit_policy(audit, 1), "circuit_breaker")
+        self.assertEqual(module.audit_policy(audit, 3), "circuit_breaker")
+        audit["self_shrinking_completeness"] = False
+        self.assertEqual(module.audit_policy(audit, 3), "valid")
+        audit["classification"] = "overdefense"
+        self.assertEqual(module.audit_policy(audit, 2), "appeal")
+        self.assertEqual(module.audit_policy(audit, 3), "needs_pc")
+        with self.assertRaisesRegex(module.StopFlow, "invalid or missing"):
+            module.audit_policy(dict(audit, evidence=""), 2)
 
 
 if __name__ == "__main__":

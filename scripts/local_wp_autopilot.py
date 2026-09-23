@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import importlib.util
 import json
 import os
 import re
@@ -17,6 +18,7 @@ import time
 import uuid
 from contextlib import contextmanager
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Self
 
@@ -119,7 +121,7 @@ def local_markers(pr: int) -> list[dict[str, str]]:
         marker = fields(body)
         actor = (row.get("user") or {}).get("login")
         state = marker.get("state")
-        if state in {"SECOND_FAIL_OFFERED", "OVERDEFENSE_APPEAL_STARTED", "PROTOCOL_FIX_STARTED"} and actor != "Arkus0":
+        if state in {"SECOND_FAIL_OFFERED", "OVERDEFENSE_APPEAL_STARTED", "PROTOCOL_FIX_STARTED", "FAIL_AUDIT_COMPLETE"} and actor != "Arkus0":
             continue
         if state in {"OWNER_CONTINUE", "CONTINUE_UNAVAILABLE", "CONTINUE_EXPIRED"} and actor != "github-actions[bot]":
             continue
@@ -132,6 +134,42 @@ def latest_marker(rows: list[dict[str, str]], state: str, sha: str | None = None
         if row.get("state") == state and (sha is None or row.get("target sha", "").lower() == sha):
             return row
     return None
+
+
+def owner_authorized_continuation(rows: list[dict[str, str]]) -> bool:
+    offers = {row.get("target sha", "").lower() for row in rows
+              if row.get("state") == "SECOND_FAIL_OFFERED" and row.get("fail count") == "2"}
+    return any(row.get("state") == "OWNER_CONTINUE" and row.get("fail count") == "2" and
+               row.get("target sha", "").lower() in offers for row in rows)
+
+
+@lru_cache(maxsize=4)
+def validation_context_module(root: Path) -> Any:
+    source = root / "scripts" / "validation-context.py"
+    spec = importlib.util.spec_from_file_location("arkus_validation_context", source)
+    if spec is None or spec.loader is None:
+        raise StopFlow("Canonical validation-context resolver unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def ready_context_matches(root: Path, pr: dict[str, Any], row: dict[str, str] | None) -> bool:
+    if not row:
+        return False
+    sha = (pr.get("head") or {}).get("sha", "").lower()
+    try:
+        context = validation_context_module(root).resolve_context(pr, sha)
+    except (OSError, ValueError, AttributeError) as exc:
+        raise StopFlow(f"PR #{pr.get('number')} validation context invalid: {exc}") from exc
+    digest = context["context_digest"]
+    return (row.get("state") == "REVIEW_READY" and
+            row.get("target sha", "").lower() == sha and
+            row.get("key") == f"review-ready:{pr['number']}:{sha}:{digest}" and
+            row.get("validation context digest", "").lower() == digest and
+            row.get("effective wp") == context["wp"] and
+            row.get("process only", "").lower() == context["process_only"] and
+            row.get("non foundational", "").lower() == context["non_foundational"])
 
 
 def prs_for_wp(wp: str) -> list[dict[str, Any]]:
@@ -336,6 +374,20 @@ class AppServer:
                 raise StopFlow(f"Model/effort unavailable: {model} {efforts - available}")
 
 
+async def quota_before_reasoning(app: AppServer, wp: str, pr: int | None) -> None:
+    while True:
+        decision, reset = await app.guard()
+        if decision == "stop_general":
+            notify("HUMAN_ACTION_REQUIRED", "Cuota general <=3%; controlador detenido sin reanudación automática.", wp, pr)
+            raise StopFlow("General quota <=3%; stopped", notified=True)
+        if decision == "run":
+            return
+        assert decision == "wait_short" and reset is not None
+        print(f"Short quota <=3%; pause until {reset} (Unix seconds)", flush=True)
+        while int(time.time()) < int(reset) + 30:
+            await asyncio.sleep(min(60, int(reset) + 30 - int(time.time())))
+
+
 def notify(state: str, detail: str, wp: str = "", pr: int | None = None,
            target_sha: str = "", fail_count: int | None = None) -> None:
     # Reuse the repository's existing Telegram workflow; never handle bot secrets here.
@@ -522,8 +574,23 @@ def reviewed_fails(pr: int) -> list[dict[str, str]]:
     return [row for row in reviewed_verdicts(pr) if row["verdict"] == "FAIL"]
 
 
-def classify_second_fail(fails: list[dict[str, str]]) -> bool:
-    return len(fails) >= 2
+def audit_policy(audit: dict[str, Any], fail_count: int) -> str:
+    if (audit.get("classification") not in {"valid", "overdefense", "uncertain"} or
+        any(type(audit.get(key)) is not bool for key in
+            ("same_foundational_defect_class", "self_shrinking_completeness",
+             "proof_machinery_expansion_without_progress")) or
+        any(not isinstance(audit.get(key), str) or not audit[key].strip()
+            for key in ("criterion", "evidence", "minimal_next_action"))):
+        raise StopFlow("FAIL audit has invalid or missing decision fields")
+    if (audit["self_shrinking_completeness"] or
+        audit["proof_machinery_expansion_without_progress"] or
+        (fail_count >= 2 and audit["same_foundational_defect_class"])):
+        return "circuit_breaker"
+    if audit["classification"] == "uncertain" or (fail_count != 2 and audit["classification"] == "overdefense"):
+        return "needs_pc"
+    if fail_count == 2 and audit["classification"] == "overdefense":
+        return "appeal"
+    return "valid"
 
 
 async def wait_for_state(pr: int, predicate, timeout: int = 1800) -> tuple[dict[str, Any], list[dict[str, str]]]:
@@ -555,6 +622,8 @@ async def main_async(args: argparse.Namespace) -> None:
             if not args.dry_run:
                 run("git", "fetch", "origin", "main", cwd=root)
             pr = canonical_pr(wp)
+            if pr and pr.get("merged_at"):
+                raise StopFlow(f"{wp} already has merged PR #{pr['number']}; use its validated DocSync handoff, not a new cycle")
             if pr is None and not args.dry_run:
                 prepare_new_wp(root)
             wp_file = wp_path(root, wp)
@@ -566,28 +635,18 @@ async def main_async(args: argparse.Namespace) -> None:
                 decision, reset = await app.guard()
                 print(f"Would route {wp}; PR={pr['number'] if pr else 'new'}; worker effort={effort_for_worker(wp_text)}; quota={decision}; reset={reset}")
                 return
-            fail_audited = 0
             appeal_sha = ""
             appeal_rejected_sha = ""
             second_fail_detail = "Luna confirmó un FAIL real; al cuarto FAIL se detiene obligatoriamente."
             while True:
-                decision, reset = await app.guard()
-                if decision == "stop_general":
-                    notify("HUMAN_ACTION_REQUIRED", "Cuota general <=3%; controlador detenido sin reanudación automática.", wp, pr["number"] if pr else None)
-                    raise StopFlow("General quota <=3%; stopped", notified=True)
-                if decision == "wait_short":
-                    print(f"Short quota <=3%; pause until {reset} (Unix seconds)", flush=True)
-                    # Local timer uses no model turns. Re-check actual limits after reset.
-                    while int(time.time()) < int(reset) + 30:
-                        await asyncio.sleep(min(60, int(reset) + 30 - int(time.time())))
-                    continue
                 if pr is None:
+                    await quota_before_reasoning(app, wp, None)
                     await codex_role(root, state, "worker", f"$implement-workpack Worker {wp}. Sigue PRODUCT_SHA_CLOSURE.md: usa Main Safety same-PR/same-SHA como preflight normal y evita reejecuciones redundantes. Este controlador iniciará un Reviewer fresco solo tras REVIEW_READY. No revises ni inicies otro WP.",
                                      "gpt-6-sol", effort_for_worker(wp_text))
                     pr = canonical_pr(wp)
                     if not pr or pr["state"] != "open":
                         raise StopFlow(f"Worker ended without a canonical open PR for {wp}")
-                    await wait_for_state(pr["number"], lambda p, m: bool(latest_marker(m, "REVIEW_READY", p["head"]["sha"].lower())) or bool(latest_marker(m, "BLOCKED")))
+                    await wait_for_state(pr["number"], lambda p, m: ready_context_matches(root, p, latest_marker(m, "REVIEW_READY", p["head"]["sha"].lower())) or bool(latest_marker(m, "BLOCKED")))
                     continue
                 current = gh_json("api", f"repos/{REPO}/pulls/{pr['number']}")
                 rows = markers(pr["number"])
@@ -606,6 +665,7 @@ async def main_async(args: argparse.Namespace) -> None:
                         wp = next_from_merged_pr(root, current)
                         count += 1
                         break
+                    await quota_before_reasoning(app, wp, pr["number"])
                     await codex_role(root, state, "docsync", f"Finaliza DocSync del PR #{pr['number']} de {wp}. Confirma PASS y merge exacto en GitHub. Sigue PRODUCT_SHA_CLOSURE.md y $update-handoff: cero commits por defecto si ninguna autoridad documental cambia; si cambia, una reconciliación acotada. Emite DOCSYNC_COMPLETE con Next WP válido. No cambies implementación.", "gpt-6-luna", "high")
                     await wait_for_state(pr["number"], lambda p, m: bool(latest_marker(m, "DOCSYNC_COMPLETE")))
                     continue
@@ -615,7 +675,8 @@ async def main_async(args: argparse.Namespace) -> None:
                 verdicts = reviewed_verdicts(pr["number"])
                 fails = [row for row in verdicts if row["verdict"] == "FAIL"]
                 repair = latest_marker(rows, "REPAIR_REQUIRED", frozen)
-                ready = latest_marker(rows, "REVIEW_READY", frozen)
+                ready_candidate = latest_marker(rows, "REVIEW_READY", frozen)
+                ready = ready_candidate if ready_context_matches(root, current, ready_candidate) else None
                 latest_current_verdict = next((row for row in reversed(verdicts) if row["sha"] == frozen), None)
                 if latest_current_verdict and latest_current_verdict["verdict"] == "REVIEW_BLOCKED":
                     raise StopFlow(f"PR #{pr['number']} Reviewer reported REVIEW_BLOCKED; PC assessment required")
@@ -625,7 +686,7 @@ async def main_async(args: argparse.Namespace) -> None:
                         pass
                     else:
                         protocol_statuses = [row for row in verdicts if row["sha"] == frozen and row["verdict"] == "PROTOCOL_FIX"]
-                        if len(protocol_statuses) > 2:
+                        if len(protocol_statuses) > 1:
                             raise StopFlow(f"PR #{pr['number']} has repeated protocol-only closure failures")
                         local_rows = local_markers(pr["number"])
                         started = any(row.get("state") == "PROTOCOL_FIX_STARTED" and
@@ -633,6 +694,7 @@ async def main_async(args: argparse.Namespace) -> None:
                                       row.get("review id") == latest_current_verdict["id"] for row in local_rows)
                         if started:
                             raise StopFlow(f"PR #{pr['number']} protocol correction started without new REVIEW_READY; PC reconciliation required")
+                        await quota_before_reasoning(app, wp, pr["number"])
                         body = ("ARKUS_LOCAL_AUTOPILOT\nState: PROTOCOL_FIX_STARTED\n"
                                 f"Target SHA: {frozen}\nReview ID: {latest_current_verdict['id']}\n"
                                 "Detail: metadata-only correction; no product commit, semantic FAIL or proof rerun.\n")
@@ -642,7 +704,8 @@ async def main_async(args: argparse.Namespace) -> None:
                             "gpt-6-sol", "high")
                         new_pr, _ = await wait_for_state(pr["number"], lambda p, m, frozen=frozen, after=latest_current_verdict["at"]:
                                                          p["head"]["sha"].lower() != frozen or
-                                                         bool((row := latest_marker(m, "REVIEW_READY", frozen)) and row.get("_created_at", "") > after))
+                                                         bool((row := latest_marker(m, "REVIEW_READY", frozen)) and
+                                                              row.get("_created_at", "") > after and ready_context_matches(root, p, row)))
                         if new_pr["head"]["sha"].lower() != frozen:
                             raise StopFlow(f"PR #{pr['number']} protocol-only correction changed PRODUCT_SHA")
                         continue
@@ -662,39 +725,49 @@ async def main_async(args: argparse.Namespace) -> None:
                         notify("BLOCKED", "Cuarto FAIL: detención obligatoria. Requiere acudir al PC y reauditar.", wp, pr["number"])
                         raise StopFlow("Fourth FAIL; PC required", notified=True)
                     local_rows = local_markers(pr["number"])
-                    owner_continued = any(row.get("state") == "OWNER_CONTINUE" for row in local_rows)
-                    already_offered = any(row.get("state") == "SECOND_FAIL_OFFERED" and row.get("target sha") == frozen and
-                                          row.get("fail count") == str(len(fails)) for row in local_rows)
+                    owner_continued = owner_authorized_continuation(local_rows)
                     appeal_started = latest_marker(local_rows, "OVERDEFENSE_APPEAL_STARTED", frozen)
                     if appeal_started:
                         baseline = appeal_started.get("fail count", "")
                         if not baseline.isdecimal() or len(fails) <= int(baseline):
                             raise StopFlow(f"PR #{pr['number']} appeal started but has no new verdict; PC reconciliation required")
-                    if (classify_second_fail(fails) and not owner_continued and not already_offered
-                        and not appeal_started and fail_audited != len(fails) and appeal_rejected_sha != frozen):
+                    audit_row = next((row for row in reversed(local_rows)
+                                      if row.get("state") == "FAIL_AUDIT_COMPLETE" and
+                                      row.get("target sha") == frozen and
+                                      row.get("fail count") == str(len(fails))), None)
+                    if audit_row:
+                        try:
+                            audit = json.loads(audit_row["audit json"])
+                        except (KeyError, json.JSONDecodeError) as exc:
+                            raise StopFlow(f"PR #{pr['number']} has malformed durable FAIL audit") from exc
+                    else:
                         schema = root / "scripts" / "local_wp_fail_audit.schema.json"
+                        await quota_before_reasoning(app, wp, pr["number"])
                         result = await codex_role(root, state, "fail-audit",
-                            f"Audita los dos últimos FAIL del PR #{pr['number']} / {wp}. Usa GitHub y contratos exactos. Decide si el último es defecto real, sobredefensa/duplicación de garantía aceptada, o incierto. Evalúa también mismo defecto fundacional, prueba de completitud autocircular y expansión de maquinaria sin progreso. No edites ni emitas veredicto. Responde al esquema JSON.",
+                            f"Audita el FAIL material #{len(fails)} del PR #{pr['number']} / {wp} contra GitHub y contratos exactos. Decide si el último es defecto real, sobredefensa/duplicación de garantía aceptada, o incierto. Incluso al primer FAIL, detecta inmediatamente una prueba de completitud autocircular/autorreductora. En cada FAIL detecta también clase fundacional repetida y expansión de maquinaria de prueba sin progreso. No edites ni emitas veredicto. Responde al esquema JSON.",
                             "gpt-6-luna", "xhigh", schema)
                         audit = json.loads(result)
-                        fail_audited = len(fails)
                         if not all(isinstance(audit.get(key), str) and audit[key].strip()
                                    for key in ("criterion", "evidence", "minimal_next_action")):
-                            raise StopFlow("Second-FAIL audit lacks a concrete criterion, evidence or next action")
-                        if (audit["self_shrinking_completeness"] or
-                            audit["proof_machinery_expansion_without_progress"] or
-                            (audit["classification"] == "valid" and audit["same_foundational_defect_class"])):
-                            notify("BLOCKED", f"Circuit breaker de prueba/arquitectura: {audit['evidence']}", wp, pr["number"])
-                            raise StopFlow("Foundational circuit breaker", notified=True)
-                        if audit["classification"] == "uncertain":
-                            notify("BLOCKED", "Segundo FAIL ambiguo; Luna no pudo distinguir defecto real de sobredefensa.", wp, pr["number"])
-                            raise StopFlow("Second FAIL ambiguous", notified=True)
-                        if audit["classification"] == "overdefense":
-                            appeal_sha = frozen
-                        else:
-                            second_fail_detail = f"Luna confirmó FAIL real: {audit['evidence']}. Pulsa continuar para otra reparación; cuarto FAIL exige PC."
+                            raise StopFlow("FAIL audit lacks a concrete criterion, evidence or next action")
+                        body = ("ARKUS_LOCAL_AUTOPILOT\nState: FAIL_AUDIT_COMPLETE\n"
+                                f"Target SHA: {frozen}\nFail count: {len(fails)}\n"
+                                f"Audit JSON: {json.dumps(audit, ensure_ascii=False, separators=(',', ':'))}\n")
+                        run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
+                    policy = audit_policy(audit, len(fails))
+                    if policy == "circuit_breaker":
+                        notify("BLOCKED", f"Circuit breaker de prueba/arquitectura: {audit['evidence']}", wp, pr["number"])
+                        raise StopFlow("Foundational circuit breaker", notified=True)
+                    if policy == "needs_pc":
+                        notify("BLOCKED", f"FAIL #{len(fails)} requiere juicio humano: {audit['evidence']}", wp, pr["number"])
+                        raise StopFlow("FAIL audit requires PC", notified=True)
+                    if policy == "appeal" and not appeal_started and appeal_rejected_sha != frozen:
+                        appeal_sha = frozen
+                    if len(fails) == 2 and policy == "valid":
+                        second_fail_detail = f"Luna confirmó FAIL real: {audit['evidence']}. Pulsa continuar para otra reparación; cuarto FAIL exige PC."
                     if appeal_sha == frozen:
                         before_appeal_fails = len(fails)
+                        await quota_before_reasoning(app, wp, pr["number"])
                         body = ("ARKUS_LOCAL_AUTOPILOT\nState: OVERDEFENSE_APPEAL_STARTED\n"
                                 f"Target SHA: {frozen}\nFail count: {before_appeal_fails}\n"
                                 "Detail: one independent same-SHA appeal is starting; restart must not repeat it.\n")
@@ -716,11 +789,15 @@ async def main_async(args: argparse.Namespace) -> None:
                             second_fail_detail)
                         await wait_for_owner_continue(pr["number"], frozen, len(fails))
                         continue
+                    await quota_before_reasoning(app, wp, pr["number"])
                     await codex_role(root, state, "repair", f"$repair-workpack Corrige el FAIL material de {wp}. PR canónico #{pr['number']}; conserva historia, revalida, pre-review y congela SHA nuevo. Sigue PRODUCT_SHA_CLOSURE.md: no repitas ejecución same-SHA por metadata. No actúes como Reviewer.", "gpt-6-sol", effort_for_worker(wp_text))
-                    await wait_for_state(pr["number"], lambda p, m, frozen=frozen: p["head"]["sha"].lower() != frozen and bool(latest_marker(m, "REVIEW_READY", p["head"]["sha"].lower())))
+                    await wait_for_state(pr["number"], lambda p, m, frozen=frozen:
+                                         p["head"]["sha"].lower() != frozen and
+                                         ready_context_matches(root, p, latest_marker(m, "REVIEW_READY", p["head"]["sha"].lower())))
                     continue
                 if ready:
                     review_id = uuid.uuid4().hex
+                    await quota_before_reasoning(app, wp, pr["number"])
                     await codex_role(root, state, "reviewer", f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']} / {wp}, SHA {frozen}. No recibes contexto del Worker. Sigue PRODUCT_SHA_CLOSURE.md: usa CI exact-SHA para hechos mecánicos; usa PROTOCOL_FIX/REVIEW_BLOCKED, no FAIL, para metadata pura. Publica una sola revisión o comentario en GitHub con líneas literales 'Reviewer verdict: PASS|FAIL|PROTOCOL_FIX|REVIEW_BLOCKED' (elige un valor, sin barras), 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. Si PASS, finaliza merge y DocSync documental según protocolo. No repares implementación.", "gpt-6-sol", "xhigh")
                     await wait_for_state(pr["number"], lambda p, m, review_id=review_id, pr_number=pr["number"]:
                                          any(row["id"] == review_id for row in reviewed_verdicts(pr_number)))
