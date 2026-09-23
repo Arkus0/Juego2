@@ -1,0 +1,94 @@
+name: DW-04 Persist Acceptance Evidence
+
+on:
+  pull_request:
+    types: [edited]
+
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: dw04-persist-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  persist:
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 persist: 10750049310 25272a8f9ce1631dbe3b9586c3af7dc12f02b3b1')
+    runs-on: ubuntu-24.04
+    env:
+      HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      SOURCE_RUN: '35861322561'
+      ARTIFACT_NAME: dw04-acceptance-25272a8f9ce1631dbe3b9586c3af7dc12f02b3b1-35861322561
+      SOURCE_CAMPAIGN_SHA: 25272a8f9ce1631dbe3b9586c3af7dc12f02b3b1
+    steps:
+      - name: Checkout exact persistence candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {ref: '${{ env.TARGET_SHA }}', fetch-depth: 0}
+      - name: Validate one-shot persistence request
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test "${{ github.event.pull_request.number }}" = "150"
+          marker="DW04 persist: 10750049310 ${SOURCE_CAMPAIGN_SHA}"
+          jq -e --arg marker "${marker}" '(.pull_request.body // "") | contains($marker)' "${GITHUB_EVENT_PATH}" >/dev/null
+          test "$(git merge-base ${SOURCE_CAMPAIGN_SHA} HEAD)" = "${SOURCE_CAMPAIGN_SHA}"
+          test ! -e Docs/evidence/WP-DW-04/ACCEPTANCE_TRANSCRIPT.jsonl
+          test ! -e Docs/evidence/WP-DW-04/ACCEPTANCE_PROVIDER_RAW.jsonl
+          test ! -e Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json
+          test ! -e Docs/evidence/WP-DW-04/TRIAL_RESULT.json
+      - name: Download exact durable campaign artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/dw04
+          gh run download "${SOURCE_RUN}" --repo "${GITHUB_REPOSITORY}" --name "${ARTIFACT_NAME}" --dir /tmp/dw04
+          test -s /tmp/dw04/ACCEPTANCE_TRANSCRIPT.jsonl
+          test -s /tmp/dw04/ACCEPTANCE_PROVIDER_RAW.jsonl
+          test -s /tmp/dw04/CAMPAIGN_RECEIPT.json
+          test -s /tmp/dw04/TRIAL_RESULT.json
+          test -s /tmp/dw04/CAMPAIGN_START_RECEIPT.json
+      - name: Verify artifact identity and PASS before persistence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          p=pathlib.Path('/tmp/dw04')
+          receipt=json.loads((p/'CAMPAIGN_RECEIPT.json').read_text())
+          result=json.loads((p/'TRIAL_RESULT.json').read_text())
+          transcript=(p/'ACCEPTANCE_TRANSCRIPT.jsonl').read_bytes()
+          rows=[json.loads(x) for x in transcript.decode().splitlines() if x.strip()]
+          raw=[json.loads(x) for x in (p/'ACCEPTANCE_PROVIDER_RAW.jsonl').read_text().splitlines() if x.strip()]
+          assert receipt['candidate_sha']=='25272a8f9ce1631dbe3b9586c3af7dc12f02b3b1'
+          assert receipt['github_run_id']=='35861322561'
+          assert receipt['execution_count']==36 and len(set(receipt['provider_request_ids']))==36
+          assert receipt['transcript_sha256']==hashlib.sha256(transcript).hexdigest()
+          assert len(rows)==36 and len(raw)==36
+          assert result['disposition']=='PASS' and result['structural'] is True and result['provider_request_count']==36
+          assert result['saving']>=0.30
+          assert all(pair['CTX']['pass'] and pair['DW']['pass'] for pair in result['pairs']) and len(result['pairs'])==18
+          PY
+      - name: Persist evidence and remove one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp /tmp/dw04/ACCEPTANCE_TRANSCRIPT.jsonl Docs/evidence/WP-DW-04/
+          cp /tmp/dw04/ACCEPTANCE_PROVIDER_RAW.jsonl Docs/evidence/WP-DW-04/
+          cp /tmp/dw04/CAMPAIGN_RECEIPT.json Docs/evidence/WP-DW-04/
+          cp /tmp/dw04/CAMPAIGN_START_RECEIPT.json Docs/evidence/WP-DW-04/
+          cp /tmp/dw04/TRIAL_RESULT.json Docs/evidence/WP-DW-04/
+          git rm .github/workflows/dw04-persist-result.yml
+          git add Docs/evidence/WP-DW-04/ACCEPTANCE_TRANSCRIPT.jsonl Docs/evidence/WP-DW-04/ACCEPTANCE_PROVIDER_RAW.jsonl Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json Docs/evidence/WP-DW-04/CAMPAIGN_START_RECEIPT.json Docs/evidence/WP-DW-04/TRIAL_RESULT.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'dw04: persist repaired acceptance evidence'
+          git push origin "HEAD:${HEAD_BRANCH}"
