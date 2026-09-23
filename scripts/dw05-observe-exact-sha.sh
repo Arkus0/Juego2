@@ -25,8 +25,10 @@ for path in \
   Docs/evidence/WP-DW-05/PREDECESSOR_RESIDUAL_INVENTORY.json \
   Docs/evidence/WP-DW-05/LIMITATIONS_MANIFEST.json \
   Docs/evidence/WP-DW-05/H2_BOUNDARY_INPUT_V1.json \
+  Docs/evidence/WP-DW-05/fixtures/neutral-observatory.txt \
   tests/Arkus.Harness.Tests/Dw05GenericBoundaryStressTests.cs \
-  tests/Arkus.Harness.Tests/Dw05TransitiveKernelLeakageTests.cs; do
+  tests/Arkus.Harness.Tests/Dw05TransitiveKernelLeakageTests.cs \
+  tests/Arkus.Harness.Tests/Dw05NeutralFixtureAuthorityTests.cs; do
   test -f "${path}"
 done
 
@@ -76,7 +78,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/dw05-observe-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: accepted-generic-dw-h0-seam-immutability=GREEN; transitive-h0-kernel-immutability=GREEN; predecessor-source-immutability=GREEN; locked-restore=GREEN; release-build=GREEN; focused-dw05=GREEN; regression=GREEN
+Required gates: accepted-generic-dw-h0-seam-immutability=GREEN; transitive-h0-kernel-immutability=GREEN; real-neutral-authority-fixture=GREEN; predecessor-source-immutability=GREEN; locked-restore=GREEN; release-build=GREEN; focused-dw05=GREEN; regression=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-DW-05
 EOF
