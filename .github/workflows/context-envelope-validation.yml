@@ -2,9 +2,11 @@ name: CTX Process Envelope
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened]
     # CTX-03 protects process/context machinery. Product-only WPs should not pay
-    # this suite on every push.
+    # this suite on every push. A Draft -> Ready transition on an unchanged SHA
+    # also does not change the CTX process/context bytes, so synchronize/opened
+    # evidence remains authoritative for that candidate.
     paths:
       - 'AGENTS.md'
       - '.agents/skills/**'
