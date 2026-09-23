@@ -70,12 +70,13 @@ jobs:
 
       # First pilot is deliberately cache-free: prove a clean cloud import before
       # optimizing runner time or allowing exact-input receipt reuse.
+      # Coverage stays at the action/CLI default in this pilot because the pinned
+      # action currently renders an explicit false as an unsupported negated flag.
       - name: Run effective Unity EditMode suite
         uses: game-ci/unity-test-runner@32e57712352b500e17974b245a6dce9e11a73213
         with:
           projectPath: Unity/ArkusUnity
           testMode: editmode
-          coverageEnabled: false
           artifactsPath: artifacts
           checkName: H1 Unity CI Pilot EditMode
           cliVersion: v0.1.69
