@@ -1,0 +1,52 @@
+{
+  "schema": "dw04-calibration-protocol-v1",
+  "precalibration_commit": "ad570738613c992963668be5abd89bfdeb26b7d6",
+  "calibration_oracle_commit": "e51a6d981fccb8feb1588eceae6f736d7eb5dc42",
+  "context_path": "Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json",
+  "route": "CTX_ONLY",
+  "provider_adapter": "scripts/dw04-openai-adapter.py",
+  "model_config": {
+    "provider": "openai-responses",
+    "model": "gpt-5.6-luna",
+    "version": "api-model-id:gpt-5.6-luna",
+    "temperature": null,
+    "thinking": "none",
+    "tool_policy": "none",
+    "execution_budget": {"max_output_tokens": 1200, "timeout_seconds": 120},
+    "run_policy": "exactly-two-designated-ctx-runs-per-calibration-task-no-semantic-retry",
+    "provider_options": {"endpoint": "https://api.openai.com/v1/responses", "store": false, "structured_output": "dw04_answer_v1"}
+  },
+  "system_prompt": "You are executing a frozen repository context-evaluation task. The supplied context fragments are the only semantic authority for this run: do not use memory, outside knowledge, web search, tools, or unstated assumptions. Return only the canonical structured answer. The facts object must contain exactly the fact keys named by the task prompt and every fact value must be a string. blockers and evidence are arrays of canonical identifiers using only the naming rules in the task prompt. verdict must be REPORT or REJECT. A blocker identifier is emitted only when the supplied context actually establishes that contradiction; otherwise omit it. Optional prose is forbidden for this trial.",
+  "tasks": {
+    "C-CITY-01": {
+      "prompt": "Identify the accepted importance, depth and interior commitment of loc.casco.bar. Canonical facts keys: importance, spatial_depth, interior. This is a report task with no proposal under review, so blockers must be empty and verdict is REPORT. Canonical evidence mapping: the supplied loc.casco.bar CITY-02 row is CITY02:§4:loc.casco.bar.",
+      "fact_keys": ["importance", "spatial_depth", "interior"],
+      "allowed_blockers": [],
+      "allowed_verdicts": ["REPORT"],
+      "evidence_ids": ["CITY02:§4:loc.casco.bar"]
+    },
+    "C-CITY-02": {
+      "prompt": "Does the bus arrival threshold promise a deep enterable interior? Give the accepted importance, spatial depth and interior classifications. Canonical facts keys: importance, spatial_depth, interior. If the supplied accepted row disproves the proposed deep interior, use blocker id deep_interior_unpromised and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied loc.entrada.arrival CITY-02 row is CITY02:§4:loc.entrada.arrival.",
+      "fact_keys": ["importance", "spatial_depth", "interior"],
+      "allowed_blockers": ["deep_interior_unpromised"],
+      "allowed_verdicts": ["REPORT", "REJECT"],
+      "evidence_ids": ["CITY02:§4:loc.entrada.arrival"]
+    },
+    "C-PA-01": {
+      "prompt": "Does PA-02 permit actor initiative to be manufactured by a player/quest/script schedule trigger? Identify the relevant negative fixture and the autonomy requirements. Canonical facts keys: fixture, player_trigger_required, actor_decision_without_player. Use string values only. If the supplied control rejects player/quest/script triggering as the source of the actor action, use blocker id player_trigger_fake_agency and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied PA-02 NC-01 block is PA02:§9:NC-01.",
+      "fact_keys": ["fixture", "player_trigger_required", "actor_decision_without_player"],
+      "allowed_blockers": ["player_trigger_fake_agency"],
+      "allowed_verdicts": ["REPORT", "REJECT"],
+      "evidence_ids": ["PA02:§9:NC-01"]
+    },
+    "C-PA-02": {
+      "prompt": "Review an assumption that an A-to-B relationship edge implies or overwrites the reverse B-to-A edge; recover the PA-03 NC-01 asymmetry control. Canonical facts keys: fixture, A_to_B_implies_B_to_A, B_to_A_stays_LOW. Use string values only. If the supplied control rejects mirroring/substitution of the directed edge, use blocker id directional_edge_mirroring and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied PA-03 NC-01 block is PA03:§8:NC-01.",
+      "fact_keys": ["fixture", "A_to_B_implies_B_to_A", "B_to_A_stays_LOW"],
+      "allowed_blockers": ["directional_edge_mirroring"],
+      "allowed_verdicts": ["REPORT", "REJECT"],
+      "evidence_ids": ["PA03:§8:NC-01"]
+    }
+  },
+  "invalid_run_policy": "Only an objective transport/provider failure that yields no parseable structured answer may be retried once for that exact slot. The original invalid record must be retained. A scorable semantic oracle miss is never retryable.",
+  "readiness": "All eight designated CTX runs must be scorable and pass the pre-frozen calibration oracles under this exact protocol before TASK_SELECTION_FREEZE may be created."
+}
