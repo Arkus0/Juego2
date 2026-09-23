@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EXPECTED_SHA="${1:-${CANDIDATE_SHA:-}}"
 BASELINE_SHA="82369fdb69e33e3492b41c4aaa7f1ae9aaed18af"
-PRECALIBRATION_COMMIT="ad570738613c992963668be5abd89bfdeb26b7d6"
+PRECALIBRATION_COMMIT="9cbed950a3469897cf286c9a90624c240701528f"
 cd "${ROOT}"
 
 candidate_dirty_status() {
@@ -24,11 +24,15 @@ git merge-base --is-ancestor "${PRECALIBRATION_COMMIT}" "${actual}" || { echo "D
 
 for path in \
   Docs/evidence/WP-DW-04/PRECALIBRATION_FREEZE.json \
+  Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_02.md \
   Docs/evidence/WP-DW-04/CALIBRATION_ORACLES.json \
   Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json \
+  Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json \
+  Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json \
   Docs/evidence/WP-DW-04/PREDECESSOR_CONTRACT_CHECK.md \
   Docs/evidence/WP-DW-04/WORKER_PLAN.md \
   scripts/dw04-trial.py \
+  scripts/dw04-openai-adapter.py \
   tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj \
   tools/Arkus.Dw04.Retrieval/Program.cs; do
   test -f "${path}"
@@ -53,20 +57,44 @@ git diff --exit-code "${BASELINE_SHA}" "${actual}" -- \
 
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-trial.py precheck --pre-commit "${PRECALIBRATION_COMMIT}"
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-trial.py selftest
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-openai-adapter.py --self-test
 PYTHONDONTWRITEBYTECODE=1 python3 - <<'PY'
 import json
+import subprocess
 from pathlib import Path
 root = Path('.')
+pre = '9cbed950a3469897cf286c9a90624c240701528f'
+for name in ('CALIBRATION_ORACLES.json', 'ACCEPTANCE_SOURCE_ORACLES.json', 'CALIBRATION_CONTEXT.json', 'CALIBRATION_PROTOCOL.json'):
+    data = json.loads((root / 'Docs/evidence/WP-DW-04' / name).read_text(encoding='utf-8'))
+    assert data['precalibration_commit'] == pre, name
 for name in ('CALIBRATION_ORACLES.json', 'ACCEPTANCE_SOURCE_ORACLES.json'):
     data = json.loads((root / 'Docs/evidence/WP-DW-04' / name).read_text(encoding='utf-8'))
-    assert data['precalibration_commit'] == 'ad570738613c992963668be5abd89bfdeb26b7d6', name
     for task in data['tasks'].values():
         for item in task.get('required_context', []):
             source = (root / item['source_path']).read_text(encoding='utf-8')
             assert item['literal'] in source, (name, item)
+context = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json').read_text(encoding='utf-8'))
+predata = json.loads((root / 'Docs/evidence/WP-DW-04/PRECALIBRATION_FREEZE.json').read_text(encoding='utf-8'))
+assert context['baseline_sha'] == predata['baseline_sha']
+for task, fragments in context['contexts'].items():
+    assert task in predata['calibration_policy']['run_order']
+    for fragment in fragments:
+        source_path = fragment['source_path']
+        assert predata['authority_blobs'][source_path] == fragment['source_blob']
+        source = (root / source_path).read_text(encoding='utf-8')
+        assert fragment['text'] in source, (task, fragment['id'])
+protocol = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json').read_text(encoding='utf-8'))
+assert set(protocol['tasks']) == set(predata['calibration_policy']['run_order'])
+assert protocol['model_config']['provider'] == 'openai-responses'
+assert protocol['model_config']['model'] == 'gpt-5.6-luna'
+assert protocol['model_config']['thinking'] == 'none'
+assert protocol['model_config']['tool_policy'] == 'none'
+for task in predata['eligible_tasks']:
+    if task['partition'] == 'calibration':
+        assert protocol['tasks'][task['id']]['prompt'].startswith(task['question'])
 for path in sorted((root / 'scripts').glob('dw04-*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
-print('DW-04 frozen universe/oracles/scorer: GREEN')
+print('DW-04 frozen universe/oracles/CTX/provider protocol: GREEN')
 PY
 
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
@@ -107,6 +135,8 @@ Candidate SHA: ${actual}
 Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/dw04-observe-exact-sha.sh ${actual}
 Instrument/universe/oracles: GREEN
+Semantically-sufficient CTX calibration freeze: GREEN
+Real-provider adapter contract: GREEN
 Accepted-authority immutability: GREEN
 Locked restore/build/regression: GREEN
 Typed retrieval determinism/source replay: GREEN
