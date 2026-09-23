@@ -39,7 +39,7 @@ if [[ -f Unity/ArkusUnity/Packages/packages-lock.json \
    && -f Docs/evidence/WP-H1-02/second-import-inventory.json \
    && -f Docs/evidence/WP-H1-02/editmode-results.xml \
    && -f Docs/evidence/WP-H1-02/PACKAGE_LEGAL_OBSERVATION.md \
-   && -f Docs/evidence/WP-H1-02/LOCAL_RESULT.md ]]; then
+   && -f Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md ]]; then
   python3 scripts/h1-02-static-check.py --mode final --self-test
   python3 - <<'PY'
 import json
@@ -54,7 +54,7 @@ print('H1_02_SECOND_IMPORT_PARITY_GREEN')
 PY
   grep -Eq 'tests="[1-9][0-9]*"' Docs/evidence/WP-H1-02/editmode-results.xml
   grep -Eq 'failures="0"' Docs/evidence/WP-H1-02/editmode-results.xml
-  grep -Fxq 'LOCAL_EXECUTION_RESULT: PASS' Docs/evidence/WP-H1-02/LOCAL_RESULT.md
+  grep -Fxq 'LOCAL_EXECUTION_RESULT: PASS' Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md
   grep -Fxq 'PACKAGE_LEGAL_OBSERVATION: COMPLETE' Docs/evidence/WP-H1-02/PACKAGE_LEGAL_OBSERVATION.md
   result="GREEN"
   required="remote-static=GREEN; causal-negative-controls=GREEN; h0-locked-restore=GREEN; h0-release-build=GREEN; local-unity-evidence=GREEN; editmode=GREEN; effective-inventory=GREEN; clean-second-import=GREEN; dependency-legal-observation=GREEN"
