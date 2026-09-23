@@ -17,13 +17,11 @@ on:
       - 'scripts/context-envelope-check.py'
       - 'scripts/ctx03-*.py'
       - 'scripts/mechanical-verifier-classifier.py'
-      - 'scripts/review-ready-closure.py'
       - 'scripts/derive-worker-review-metadata.py'
       - 'scripts/validate-worker-handoff.py'
       - 'scripts/validation-context.py'
       - '.github/workflows/candidate-validation.yml'
       - '.github/workflows/worker-preflight.yml'
-      - '.github/workflows/review-ready-closure.yml'
       - '.github/workflows/state-transitions.yml'
       - '.github/workflows/receipt-freeze-reuse.yml'
       - '.github/workflows/context-envelope-validation.yml'
@@ -57,7 +55,6 @@ jobs:
           python3 scripts/ctx03-dynamic-slot-controls.py --self-test
           python3 scripts/ctx03-effective-read-set-controls.py --self-test
           python3 scripts/mechanical-verifier-classifier.py --self-test
-          python3 scripts/review-ready-closure.py --self-test
           python3 scripts/derive-worker-review-metadata.py --self-test
           python3 scripts/validate-worker-handoff.py --self-test
           python3 scripts/ctx03-quality-replay.py --self-test
