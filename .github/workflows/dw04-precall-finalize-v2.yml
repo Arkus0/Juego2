@@ -1,0 +1,353 @@
+name: DW-04 Pre-call Finalization V2
+
+on:
+  pull_request:
+    types: [edited]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: dw04-precall-finalize-v2-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  finalize:
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 finalize: PRECALL_V2')
+    runs-on: ubuntu-24.04
+    env:
+      OLD_FREEZE: 6239389b29447c3124bdb9a5fc2d9d2956729ff4
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - name: Checkout exact pre-finalization candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Prove admissible zero-call boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          git merge-base --is-ancestor "${OLD_FREEZE}" HEAD
+          test ! -e Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+          test "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)" = "$(git rev-parse ${OLD_FREEZE}:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
+          jq -e '.selected == ["A-CITY-01","A-CITY-02","A-CITY-03","A-PA-01","A-PA-02","A-PA-03"]' Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json >/dev/null
+          jq -e '.selected == ["A-CITY-01","A-CITY-02","A-CITY-03","A-PA-01","A-PA-02","A-PA-03"] and (.slots|length)==36 and .correctness=="all_36" and .context_reduction_min==0.30' Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json >/dev/null
+          test "$(jq -r '.acceptance_invalid_policy' Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json)" = 'No replacement calls in the acceptance generation. Any objective invalid prevents a 36-record PASS and is retained as campaign evidence; semantic misses are never rerun.'
+          ! jq -r '.pull_request.body // ""' "${GITHUB_EVENT_PATH}" | grep -Fq 'DW04 campaign: ACCEPTANCE'
+
+      - name: Close PA disposition retrieval contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > tools/Arkus.Dw04.Retrieval/Program.cs <<'EOF'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Text.Json;
+          using System.Text.Encodings.Web;
+          using Arkus.DesignWorld;
+
+          // Read-only navigation adapter over accepted DW-02/03 production query providers.
+          // Expected answers/oracles are not imported. Semantic authority remains accepted source bytes.
+          if (args.Length < 3)
+              throw new ArgumentException("Usage: <repository-root> city <id> | pa-fixture <paId> <key> | pa-finding <paId> <key> | pa-disposition <paId> <key>");
+
+          var root = Path.GetFullPath(args[0]);
+          var jsonOptions = new JsonSerializerOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+          string Read(string path) => File.ReadAllText(Path.Combine(root, path.Replace('/', Path.DirectorySeparatorChar)));
+          object Provenance(DesignAuthorityAnchor p) => new { p.AuthorityId, p.SourcePath, p.Anchor, p.SourceDigest, p.AnchorDigest };
+          object CompactPaProvenance(DesignAuthorityAnchor p) => new { p.SourcePath, p.Anchor, p.SourceDigest };
+
+          if (args[1] == "city" && args.Length == 3)
+          {
+              var source = Read(CityProductionQueryProvider.ProgrammeSourcePath);
+              var dataset = new CityProductionQueryProvider().BuildAndValidate(source);
+              var row = dataset.Queries.AllSubjects.Single(x => x.FactId == args[2]);
+              var ledgerStart = source.IndexOf("## 4. District × location programme", StringComparison.Ordinal);
+              var ledgerEnd = source.IndexOf("### 4.1 Required-domain coverage", ledgerStart, StringComparison.Ordinal);
+              if (ledgerStart < 0 || ledgerEnd <= ledgerStart) throw new InvalidDataException("Accepted CITY-02 §4 ledger boundaries missing");
+              var sourceRow = source.Substring(ledgerStart, ledgerEnd - ledgerStart).Split('\n')
+                  .Single(x => x.StartsWith("| `" + row.FactId + "` |", StringComparison.Ordinal));
+              Console.WriteLine(JsonSerializer.Serialize(new { row.FactId, row.District, row.Label, row.Importance, row.SpatialDepth, row.InteriorDepth, row.ProgrammeKind, SourceRow = sourceRow, Provenance = Provenance(row.Provenance) }, jsonOptions));
+              return;
+          }
+
+          if ((args[1] == "pa-fixture" || args[1] == "pa-finding" || args[1] == "pa-disposition") && args.Length == 4)
+          {
+              var sources = new PaAcceptedCorpusSources(
+                  Read(PaProjectionManifest.Pa01Path), Read(PaProjectionManifest.Pa02Path), Read(PaProjectionManifest.Pa03Path),
+                  Read(PaProjectionManifest.Pa04Path), Read(PaProjectionManifest.Pa05Path), Read(PaProjectionManifest.Pa05FixturesPath));
+              var dataset = new PaDesignWorldProvider().BuildAndValidate(sources);
+              PaCorpusQueryRecord row = args[1] switch
+              {
+                  "pa-fixture" => dataset.Queries.Fixture(args[2], args[3]),
+                  "pa-disposition" => dataset.Queries.ByPa(args[2], "disposition").Single(x => x.SourceKey == args[3]),
+                  _ => dataset.Queries.ByPa(args[2], "finding").Single(x => x.SourceKey == args[3])
+              };
+              if (args[1] == "pa-disposition")
+              {
+                  Console.WriteLine(JsonSerializer.Serialize(new { row.FactId, row.PaId, row.RecordKind, row.SourceKey, row.MaterialText, Provenance = CompactPaProvenance(row.Provenance) }, jsonOptions));
+                  return;
+              }
+              Console.WriteLine(JsonSerializer.Serialize(new { row.FactId, row.PaId, row.RecordKind, row.SourceKey, Provenance = CompactPaProvenance(row.Provenance) }, jsonOptions));
+              return;
+          }
+          throw new ArgumentException("Unsupported retrieval query");
+          EOF
+
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json'); d=json.loads(p.read_text())
+          rows=[x for x in d['context_plan']['A-PA-03']['DW'] if x['origin']=='source_excerpt']
+          assert len(rows)==4 and [x['selector'].split('|')[1].strip() for x in rows]==['DL-11','DL-12','DL-13','DL-14']
+          path='Docs/research/living-world/results/PA-01.md'
+          queries=[{"id":f"dw-pa01-{k.lower()}-disposition","source_path":path,"origin":"dw_query","selector":k,"query_args":["pa-disposition","pa01",k],"extract":None} for k in ('DL-11','DL-12','DL-13','DL-14')]
+          d['context_plan']['A-PA-03']['DW']=queries+rows
+          p.write_text(json.dumps(d,ensure_ascii=False,separators=(',',':'))+'\n')
+
+          p=pathlib.Path('scripts/dw04-trial.py'); s=p.read_text(); old='argv[0] in ("city", "pa-fixture", "pa-finding")'; assert s.count(old)==1; p.write_text(s.replace(old,'argv[0] in ("city", "pa-fixture", "pa-finding", "pa-disposition")'))
+
+          p=pathlib.Path('scripts/dw04-prepare-acceptance.py'); s=p.read_text()
+          for k in ('DL-11','DL-12','DL-13','DL-14'):
+              s=s.replace(f'["pa-finding","pa01","{k}"]',f'["pa-disposition","pa01","{k}"]')
+          p.write_text(s)
+          PY
+
+      - name: Unify canonical no-rerun executor and raw evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f scripts/dw04-execute.py
+          cat > scripts/dw04-acceptance-execute.py <<'PY'
+          #!/usr/bin/env python3
+          """Execute the frozen 36-call DW-04 acceptance schedule exactly once."""
+          import argparse,datetime,hashlib,json,os,pathlib,subprocess,sys
+          from importlib.machinery import SourceFileLoader
+          ROOT=pathlib.Path(__file__).resolve().parents[1]
+          trial=SourceFileLoader("dw04_trial",str(ROOT/"scripts/dw04-trial.py")).load_module(); audit=SourceFileLoader("dw04_audit",str(ROOT/"scripts/dw04-acceptance-audit.py")).load_module()
+          FREEZE="Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json"; PROTOCOL="Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json"; PLAN="Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json"; ASSEMBLY="Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json"; SOURCE_ORACLES="Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json"; RETRIEVAL="tools/Arkus.Dw04.Retrieval/Program.cs"
+          class ProtocolError(ValueError): pass
+          def req(c,m):
+              if not c: raise ProtocolError(m)
+          def git(*a): return subprocess.check_output(["git",*a],cwd=ROOT,stderr=subprocess.PIPE)
+          def load(c,p): return json.loads(git("show",f"{c}:{p}"))
+          def blob(c,p): return git("rev-parse",f"{c}:{p}").decode().strip()
+          def now(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
+          def compact(r):
+              return {"provider_request_id":r.get("provider_request_id"),"provider_response_id":r.get("provider_response_id"),"client_request_id":r.get("client_request_id"),"model":r.get("model"),"resolved_model":r.get("resolved_model"),"resolved_provider":r.get("resolved_provider"),"provider_request_body_sha256":r.get("provider_request_body_sha256"),"usage":r.get("usage"),"raw":{"answer":r.get("raw",{}).get("answer")}}
+          def main():
+              q=argparse.ArgumentParser(); q.add_argument("--freeze-commit",required=True); q.add_argument("--assembly-commit",required=True); q.add_argument("--output",required=True); q.add_argument("--raw-output",required=True); a=q.parse_args(); req(os.environ.get("DW04_CAMPAIGN_ID"),"campaign id required")
+              f=load(a.freeze_commit,FREEZE); f["freeze_commit"]=a.freeze_commit; f["freeze_blob"]=blob(a.freeze_commit,FREEZE); p=load(a.freeze_commit,PROTOCOL); plan=load(a.freeze_commit,PLAN); so=load(f["acceptance_oracle_commit"],SOURCE_ORACLES)
+              req(blob(a.freeze_commit,PROTOCOL)==f["protocol_blob"]==blob("HEAD",PROTOCOL),"protocol drift"); req(blob(a.freeze_commit,PLAN)==f["context_plan_blob"]==blob("HEAD",PLAN),"plan drift")
+              req(p.get("canonical_executor")=="scripts/dw04-acceptance-execute.py" and p.get("canonical_workflow")==".github/workflows/dw04-campaign.yml","canonical route drift")
+              for path,key in (("scripts/dw04-acceptance-execute.py","executor"),("scripts/dw04-openrouter-luna-adapter.py","adapter"),(RETRIEVAL,"retrieval")): req(blob(a.freeze_commit,path)==p["script_blobs"][key]==blob("HEAD",path),f"{key} drift")
+              assembly=audit.check_structure(f,p,plan,a.assembly_commit); out=pathlib.Path(a.output); raw=pathlib.Path(a.raw_output); req(not out.exists() and not raw.exists(),"acceptance evidence exists; rerun forbidden")
+              fd=os.open(out,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600); rfd=os.open(raw,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600); count=0; adapter=ROOT/'scripts/dw04-openrouter-luna-adapter.py'
+              with os.fdopen(fd,'w',encoding='utf-8') as log, os.fdopen(rfd,'w',encoding='utf-8') as rawlog:
+                  for slot in p['slots']:
+                      t=slot['task']; task=p['tasks'][t]; rc=audit.response_contract(p,so,t); ctx=assembly['contexts'][t][slot['route']]; request=dict(p['model_config']); request.update({'task_prompt':task['prompt'],'response_contract':rc,'system_prompt':p['system_prompt'],'slot':slot,'context_fragments':ctx,'seed':p['pair_seeds'][slot['pair']]}); trial.check_request(request,p['model_config'],slot,task['prompt'],rc,p['system_prompt'],p['pair_seeds'][slot['pair']])
+                      started=now(); cp=subprocess.run([sys.executable,str(adapter)],input=trial.canonical(request),cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=p['timeout_seconds'],check=False); ended=now(); base={'slot':slot,'request':request,'request_sha256':trial.digest(trial.canonical(request)),'started':started,'ended':ended,'freeze_commit':a.freeze_commit,'freeze_blob':f['freeze_blob'],'assembly_commit':a.assembly_commit,'assembly_blob':blob(a.assembly_commit,ASSEMBLY),'injected_source_bytes':sum(len(x['text'].encode()) for x in ctx)}
+                      if cp.returncode or not cp.stdout:
+                          inv={**base,'state':'RUN_INVALID_TERMINAL','exit_code':cp.returncode,'stderr_sha256':hashlib.sha256(cp.stderr).hexdigest(),'stderr_excerpt':cp.stderr.decode('utf-8',errors='replace')[:1200]}; rawlog.write(json.dumps({'slot':slot,'invalid':inv},ensure_ascii=False)+'\n'); rawlog.flush(); log.write(json.dumps(inv,ensure_ascii=False)+'\n'); log.flush(); raise ProtocolError('provider invalid; frozen acceptance policy permits no replacement call')
+                      response=json.loads(cp.stdout); req(response.get('provider_request_id') and response.get('resolved_provider')=='OpenAI' and response.get('model')==p['model_config']['model'],'provider identity drift'); rawlog.write(json.dumps({'slot':slot,'response':response},ensure_ascii=False)+'\n'); rawlog.flush(); base['response']=compact(response); log.write(json.dumps(base,ensure_ascii=False)+'\n'); log.flush(); count+=1
+              req(count==36,'acceptance campaign incomplete'); print('DW04_ACCEPTANCE_36_RECORDED')
+          if __name__=='__main__':
+              try: main()
+              except (ProtocolError,trial.ProtocolError,audit.ProtocolError,subprocess.CalledProcessError,subprocess.TimeoutExpired,OSError,KeyError,ValueError,json.JSONDecodeError) as e: print('DW04 ACCEPTANCE EXECUTION BLOCKED: '+str(e),file=sys.stderr); sys.exit(1)
+          PY
+          chmod +x scripts/dw04-acceptance-execute.py
+
+      - name: Harden assembler provenance and audit pinning
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib
+          p=pathlib.Path('scripts/dw04-acceptance-assemble.py'); s=p.read_text()
+          old='prov=obj.get("Provenance") or {}; require(prov.get("SourcePath")==path,f"query provenance mismatch: {item[\'id\']}"); return {"id":item["id"],"source_path":path,"source_blob":authority[path],"origin":"dw_query","selector":item["selector"],"text":text,"query_receipt":{"args":item["query_args"],"output_sha256":sha(text),"provenance":prov}}'
+          new='prov=obj.get("Provenance") or {}; src=source(baseline,path); require(prov.get("SourcePath")==path and prov.get("SourceDigest")==sha(src),f"query provenance mismatch: {item[\'id\']}"); return {"id":item["id"],"source_path":path,"source_blob":authority[path],"source_sha256":sha(src),"origin":"dw_query","selector":item["selector"],"text":text,"query_receipt":{"args":item["query_args"],"output_sha256":sha(text),"provenance":prov}}'
+          assert s.count(old)==1; p.write_text(s.replace(old,new))
+
+          p=pathlib.Path('scripts/dw04-acceptance-audit.py'); s=p.read_text()
+          old='for path,key in (("scripts/dw04-trial.py","scorer"),("scripts/dw04-acceptance-assemble.py","assembler"),("scripts/dw04-acceptance-execute.py","executor"),("scripts/dw04-acceptance-audit.py","audit"),("scripts/dw04-openrouter-luna-adapter.py","adapter"),(".github/workflows/dw04-campaign.yml","workflow")): req(blob(fc,path)==p["script_blobs"][key]==blob("HEAD",path),f"{key} blob drift")'
+          new='req(p.get("canonical_executor")=="scripts/dw04-acceptance-execute.py" and p.get("canonical_workflow")==".github/workflows/dw04-campaign.yml","canonical route drift");\n    for path,key in (("scripts/dw04-trial.py","scorer"),("scripts/dw04-acceptance-assemble.py","assembler"),("scripts/dw04-acceptance-execute.py","executor"),("scripts/dw04-acceptance-audit.py","audit"),("scripts/dw04-openrouter-luna-adapter.py","adapter"),("tools/Arkus.Dw04.Retrieval/Program.cs","retrieval"),(".github/workflows/dw04-assemble.yml","assembly_workflow"),(".github/workflows/dw04-campaign.yml","workflow"),("scripts/dw04-verify-exact-sha.sh","verifier")): req(blob(fc,path)==p["script_blobs"][key]==blob("HEAD",path),f"{key} blob drift")'
+          assert s.count(old)==1; p.write_text(s.replace(old,new))
+          PY
+
+      - name: Install dynamic pinned assembly workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .github/workflows/dw04-assemble.yml <<'EOF'
+          name: DW-04 Frozen Assembly
+          on:
+            pull_request:
+              types: [edited]
+          permissions:
+            contents: write
+            pull-requests: read
+          concurrency:
+            group: dw04-assembly-pr-${{ github.event.pull_request.number }}
+            cancel-in-progress: false
+          jobs:
+            assemble:
+              if: >-
+                github.event.pull_request.draft == true &&
+                github.event.pull_request.head.repo.full_name == github.repository &&
+                contains(github.event.pull_request.body || '', 'DW04 assembly:')
+              runs-on: ubuntu-24.04
+              env:
+                TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+                HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+              steps:
+                - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+                  with: {ref: '${{ env.TARGET_SHA }}', fetch-depth: 0}
+                - name: Validate exact effective freeze
+                  shell: bash
+                  run: |
+                    set -euo pipefail
+                    test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+                    freeze="$(git log -1 --format=%H "${TARGET_SHA}" -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"; test -n "${freeze}"
+                    marker="DW04 assembly: ${freeze}"; jq -e --arg m "${marker}" '(.pull_request.body // "")|contains($m)' "${GITHUB_EVENT_PATH}" >/dev/null
+                    test "$(git rev-parse ${freeze}:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)" = "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
+                    protocol="$(jq -r '.protocol_blob' Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"; test "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json)" = "${protocol}"
+                    for spec in 'assembler scripts/dw04-acceptance-assemble.py' 'retrieval tools/Arkus.Dw04.Retrieval/Program.cs' 'assembly_workflow .github/workflows/dw04-assemble.yml'; do key="${spec%% *}"; path="${spec#* }"; test "$(git rev-parse HEAD:${path})" = "$(jq -r --arg k "${key}" '.script_blobs[$k]' Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json)"; done
+                    test ! -e Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+                    echo "FREEZE_COMMIT=${freeze}" >> "${GITHUB_ENV}"
+                - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+                  with: {global-json-file: global.json}
+                - name: Build frozen retrieval
+                  run: dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
+                - name: Materialize twice-equivalent frozen contexts
+                  run: python3 scripts/dw04-acceptance-assemble.py --freeze-commit "${FREEZE_COMMIT}" --output Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+                - name: Prove structural completeness and saving
+                  shell: bash
+                  run: |
+                    set -euo pipefail
+                    python3 - <<'PY2'
+                    import json,statistics,pathlib
+                    p=pathlib.Path('Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json'); a=json.loads(p.read_text()); o=json.load(open('Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json')); ctx=[]; dw=[]
+                    for task,routes in a['contexts'].items():
+                        for need in o['tasks'][task]['required_context']:
+                            for route in ('CTX','DW'): assert any(f['source_path']==need['source_path'] and need['literal'] in f['text'] for f in routes[route]),(task,route,need)
+                        c=sum(len(f['text'].encode()) for f in routes['CTX']); d=sum(len(f['text'].encode()) for f in routes['DW']); ctx.append(c); dw.append(d); print(f'{task}: CTX={c} DW={d} saving={1-d/c:.6f}')
+                    mc=statistics.median(ctx); md=statistics.median(dw); saving=1-md/mc; assert saving>=0.30,(mc,md,saving); a.update({'structural':True,'median_ctx_bytes':mc,'median_dw_bytes':md,'saving':saving}); p.write_text(json.dumps(a,ensure_ascii=False,indent=2)+'\n'); print(f'MEDIAN_CTX_BYTES={mc} MEDIAN_DW_BYTES={md} SAVING={saving:.6f}')
+                    PY2
+                - name: Commit immutable assembly
+                  shell: bash
+                  run: |
+                    set -euo pipefail
+                    git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'; git add Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json; git commit -m 'dw04: materialize final frozen acceptance contexts'; git push origin "HEAD:${HEAD_BRANCH}"
+          EOF
+
+      - name: Align acceptance workflow with canonical executor
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib
+          p=pathlib.Path('.github/workflows/dw04-campaign.yml'); s=p.read_text()
+          old='freeze="$(git log --format=%H --diff-filter=A -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json | head -1)"'; assert s.count(old)==1; s=s.replace(old,'freeze="$(git log -1 --format=%H "${TARGET_SHA}" -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"')
+          old='run: python3 scripts/dw04-acceptance-execute.py --freeze-commit "${DW04_FREEZE_COMMIT}" --assembly-commit "${DW04_ASSEMBLY_COMMIT}" --output artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl'; assert s.count(old)==1; s=s.replace(old,'run: python3 scripts/dw04-acceptance-execute.py --freeze-commit "${DW04_FREEZE_COMMIT}" --assembly-commit "${DW04_ASSEMBLY_COMMIT}" --output artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl --raw-output artifacts/observed/dw04-acceptance/ACCEPTANCE_PROVIDER_RAW.jsonl')
+          needle='      - name: Claim unique durable acceptance campaign\n'; assert s.count(needle)==1
+          gate='''      - name: Verify frozen substrate before campaign claim\n        shell: bash\n        run: |\n          set -euo pipefail\n          python3 - <<'PY2'\n          import json,subprocess\n          f=json.load(open('Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json')); p=json.load(open('Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json')); assert p['canonical_executor']=='scripts/dw04-acceptance-execute.py' and p['canonical_workflow']=='.github/workflows/dw04-campaign.yml'\n          for path,key in [('scripts/dw04-trial.py','scorer'),('scripts/dw04-acceptance-assemble.py','assembler'),('scripts/dw04-acceptance-execute.py','executor'),('scripts/dw04-acceptance-audit.py','audit'),('scripts/dw04-openrouter-luna-adapter.py','adapter'),('tools/Arkus.Dw04.Retrieval/Program.cs','retrieval'),('.github/workflows/dw04-assemble.yml','assembly_workflow'),('.github/workflows/dw04-campaign.yml','workflow'),('scripts/dw04-verify-exact-sha.sh','verifier')]: assert subprocess.check_output(['git','rev-parse',f'HEAD:{path}']).decode().strip()==p['script_blobs'][key],key\n          a=json.load(open('Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json')); assert a['freeze_commit']==f.get('effective_freeze_commit',a['freeze_commit']); assert a.get('structural') is True and a.get('saving',0)>=0.30\n          PY2\n'''
+          p.write_text(s.replace(needle,gate+needle))
+          PY
+
+      - name: Align observation and final verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib
+          p=pathlib.Path('scripts/dw04-observe-exact-sha.sh'); s=p.read_text(); s=s.replace("(['pa-finding', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),","(['pa-disposition', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),"); p.write_text(s)
+          PY
+          cat > scripts/dw04-verify-exact-sha.sh <<'EOF'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "${ROOT}"; actual="$(git rev-parse HEAD)"; expected="${1:-${CANDIDATE_SHA:-${actual}}}"; test "${actual}" = "${expected}"
+          freeze="$(git log -1 --format=%H -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"; test -n "${freeze}"; test ! -e scripts/dw04-execute.py
+          for x in Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json Docs/evidence/WP-DW-04/ACCEPTANCE_TRANSCRIPT.jsonl Docs/evidence/WP-DW-04/ACCEPTANCE_PROVIDER_RAW.jsonl Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json Docs/evidence/WP-DW-04/TRIAL_RESULT.json; do test -f "$x"; done
+          tmp="$(mktemp)"; trap 'rm -f "${tmp}"' EXIT; python3 scripts/dw04-acceptance-audit.py --freeze-commit "${freeze}" --transcript Docs/evidence/WP-DW-04/ACCEPTANCE_TRANSCRIPT.jsonl > "${tmp}"
+          python3 - "${tmp}" <<'PY'
+          import json,pathlib,sys,hashlib
+          x=json.loads(pathlib.Path(sys.argv[1]).read_text()); y=json.load(open('Docs/evidence/WP-DW-04/TRIAL_RESULT.json')); assert x==y and x['disposition']=='PASS' and x['structural'] is True and x['saving']>=.30 and x['provider_request_count']==36
+          r=json.load(open('Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json')); assert r['execution_count']==36 and len(set(r['provider_request_ids']))==36; assert len([z for z in open('Docs/evidence/WP-DW-04/ACCEPTANCE_PROVIDER_RAW.jsonl') if z.strip()])==36
+          PY
+          echo 'DW-04 final canonical route GREEN'
+          EOF
+          chmod +x scripts/dw04-verify-exact-sha.sh
+
+      - name: Record amendment and commit substrate
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > Docs/evidence/WP-DW-04/ACCEPTANCE_PREEXECUTION_AMENDMENT_04.md <<'EOF'
+          # DW-04 acceptance pre-execution amendment 04 — typed PA dispositions + full executable pinning
+
+          Status: `PRE_EXECUTION / 0_OF_36`; owner-directed mechanical closure, not independent Reviewer approval.
+
+          Historical freeze `0c57a766f8b25e0c1e22d746c05a5678ae275841` remains superseded pre-call; assembly run `35848012735` failed before any model request on an ambiguous CITY selector. Later freezes `960ef57ce2ae99c6499fbc6cd2e9391181c20d86` and `1847c45f953bfea0aabebeba0a1eb76e9d4a9a6d` also failed closed before acceptance calls. The latter materialized all routes in run `35849847978` / job `107144665438` but measured only 14.7% median saving. Amendment 03 then introduced owner-authorized compact PA navigation/source-open while retaining the 30% threshold.
+
+          Amendment 03 still represented A-PA-03 through a `pa-finding` navigation record. The controlling pre-call requirement is stricter: DL-11, DL-12, DL-13 and DL-14 must each be retrieved through the typed `pa-disposition` surface, with the route literally carrying REJECT, REJECT, LATER and REJECT respectively, while accepted PA-01 source rows remain authority. This amendment changes those four DW queries to `pa-disposition`, keeps their four exact source-row opens, and keeps PA navigation compact enough for the unchanged structural saving test.
+
+          The same refreeze also removes the competing executor and content-addresses scorer/audit, assembler, canonical executor, OpenRouter Luna adapter, retrieval adapter, assembly workflow, acceptance workflow and final verifier. The canonical executor writes a compact audit transcript plus separate raw provider evidence, requires exact Luna/OpenAI identity, preserves request hashes/freeze/assembly/source-byte accounting, and permits no replacement acceptance call after an objective invalid.
+
+          No task, semantic question, source oracle, expected fact/blocker/verdict/evidence, CTX meaning, authority, response schema, R1/R2/R3 ordering, 18-pair/36-slot budget, all-36 correctness rule, 30% threshold, model or provider changes. No acceptance campaign has been armed or executed.
+          EOF
+          python3 -m py_compile scripts/dw04-trial.py scripts/dw04-acceptance-assemble.py scripts/dw04-acceptance-execute.py scripts/dw04-acceptance-audit.py scripts/dw04-openrouter-luna-adapter.py
+          bash -n scripts/dw04-observe-exact-sha.sh scripts/dw04-verify-exact-sha.sh
+          git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'; git add -A; git commit -m 'dw04: close typed disposition and canonical route pre-call'; echo "SUBSTRATE=$(git rev-parse HEAD)" >> "${GITHUB_ENV}"
+
+      - name: Prove typed dispositions deterministically
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
+          python3 - <<'PY'
+          import json,subprocess,pathlib
+          root=str(pathlib.Path('.').resolve()); expect={'DL-11':'REJECT','DL-12':'REJECT','DL-13':'LATER','DL-14':'REJECT'}
+          for key,value in expect.items():
+              cmd=['dotnet','run','--project','tools/Arkus.Dw04.Retrieval','-c','Release','--no-build','--',root,'pa-disposition','pa01',key]; a=subprocess.check_output(cmd).decode().strip(); b=subprocess.check_output(cmd).decode().strip(); assert a==b; o=json.loads(a); assert o['RecordKind']=='disposition' and o['SourceKey']==key and value in o['MaterialText'] and o['Provenance']['SourcePath']=='Docs/research/living-world/results/PA-01.md',(key,o); print(key,value)
+          PY
+
+      - name: Commit fully content-addressed protocol
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess,pathlib
+          path=pathlib.Path('Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json'); p=json.loads(path.read_text()); assert len(p['slots'])==36 and p['correctness']=='all_36' and p['context_reduction_min']==.30; assert p['acceptance_invalid_policy']=='No replacement calls in the acceptance generation. Any objective invalid prevents a 36-record PASS and is retained as campaign evidence; semantic misses are never rerun.'
+          files={'scorer':'scripts/dw04-trial.py','assembler':'scripts/dw04-acceptance-assemble.py','executor':'scripts/dw04-acceptance-execute.py','audit':'scripts/dw04-acceptance-audit.py','adapter':'scripts/dw04-openrouter-luna-adapter.py','retrieval':'tools/Arkus.Dw04.Retrieval/Program.cs','assembly_workflow':'.github/workflows/dw04-assemble.yml','workflow':'.github/workflows/dw04-campaign.yml','verifier':'scripts/dw04-verify-exact-sha.sh'}; p['canonical_executor']='scripts/dw04-acceptance-execute.py'; p['canonical_workflow']='.github/workflows/dw04-campaign.yml'; p['script_blobs']={k:subprocess.check_output(['git','rev-parse',f'HEAD:{v}']).decode().strip() for k,v in files.items()}; path.write_text(json.dumps(p,ensure_ascii=False,separators=(',',':'))+'\n')
+          PY
+          git add Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json; git commit -m 'dw04: pin complete acceptance executable substrate'; echo "PROTOCOL=$(git rev-parse HEAD)" >> "${GITHUB_ENV}"
+
+      - name: Emit final replacement freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess,pathlib,os
+          path=pathlib.Path('Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json'); f=json.loads(path.read_text()); assert f['selected']==['A-CITY-01','A-CITY-02','A-CITY-03','A-PA-01','A-PA-02','A-PA-03']; f['freeze_parent']=os.environ['PROTOCOL']; f['context_plan_blob']=subprocess.check_output(['git','rev-parse','HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json']).decode().strip(); f['protocol_blob']=subprocess.check_output(['git','rev-parse','HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json']).decode().strip(); f['retrieval_adapter_blob']=subprocess.check_output(['git','rev-parse','HEAD:tools/Arkus.Dw04.Retrieval/Program.cs']).decode().strip(); f['supersedes_freeze_commit']='6239389b29447c3124bdb9a5fc2d9d2956729ff4'; f['preexecution_amendment']='Docs/evidence/WP-DW-04/ACCEPTANCE_PREEXECUTION_AMENDMENT_04.md'; f['proof_boundary']='Acceptance usage remains 0/36. A-PA-03 now uses four typed pa-disposition queries carrying REJECT/REJECT/LATER/REJECT plus exact accepted-source rows; all experiment executables are content-addressed. Semantic tasks/oracles, CTX, model/provider, answer schema, 36-slot schedule, all-36 rule and >=30% threshold are unchanged.'; path.write_text(json.dumps(f,ensure_ascii=False,separators=(',',':'))+'\n')
+          PY
+          git add Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json; git commit -m 'dw04: freeze final typed-disposition pre-call substrate'; echo "NEW_FREEZE=$(git rev-parse HEAD)" >> "${GITHUB_ENV}"
+
+      - name: Verify identities and push final freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${NEW_FREEZE}"
+          python3 - <<'PY'
+          import json,subprocess
+          f=json.load(open('Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json')); p=json.load(open('Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json')); plan=json.load(open('Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json')); assert [x['query_args'][0] for x in plan['context_plan']['A-PA-03']['DW'] if x['origin']=='dw_query']==['pa-disposition']*4; assert len(p['slots'])==36 and p['model_config']['model']=='openai/gpt-5.6-luna-20260709' and p['model_config']['provider_options']['routing']=={'order':['openai'],'allow_fallbacks':False,'require_parameters':True}; assert subprocess.check_output(['git','rev-parse','HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json']).decode().strip()==f['protocol_blob']; assert subprocess.check_output(['git','rev-parse','HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json']).decode().strip()==f['context_plan_blob']
+          for path,key in [('scripts/dw04-trial.py','scorer'),('scripts/dw04-acceptance-assemble.py','assembler'),('scripts/dw04-acceptance-execute.py','executor'),('scripts/dw04-acceptance-audit.py','audit'),('scripts/dw04-openrouter-luna-adapter.py','adapter'),('tools/Arkus.Dw04.Retrieval/Program.cs','retrieval'),('.github/workflows/dw04-assemble.yml','assembly_workflow'),('.github/workflows/dw04-campaign.yml','workflow'),('scripts/dw04-verify-exact-sha.sh','verifier')]: assert subprocess.check_output(['git','rev-parse',f'HEAD:{path}']).decode().strip()==p['script_blobs'][key],key
+          PY
+          git push origin "HEAD:${HEAD_BRANCH}"
