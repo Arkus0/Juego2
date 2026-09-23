@@ -67,7 +67,12 @@ jobs:
           else:
               if event_name == 'repository_dispatch':
                   payload = event.get('client_payload', {})
-                  state = str(payload.get('state', '')).upper()
+                  marker_state = str(payload.get('state', '')).upper()
+                  # REVIEW_READY is deliberately intermediate for every input
+                  # transport. Only REVIEW_READY_CLOSED may launch a Reviewer.
+                  if marker_state == 'REVIEW_READY':
+                      sys.exit(0)
+                  state = 'REVIEW_READY' if marker_state == 'REVIEW_READY_CLOSED' else marker_state
                   detail = str(payload.get('detail', '')).strip()[:420]
                   next_wp = str(payload.get('next_wp', '')).strip()[:120]
                   milestone = str(payload.get('milestone', '')).strip()[:120]
@@ -97,10 +102,6 @@ jobs:
                           key, value = line.split(':', 1)
                           fields[key.strip()] = value.strip()
                   marker_state = fields.get('State', '').upper()
-
-                  # Raw REVIEW_READY is an intermediate marker consumed by the
-                  # closure workflow. It no longer launches a Reviewer. Only the
-                  # idempotent REVIEW_READY_CLOSED marker is user-actionable.
                   if marker_state == 'REVIEW_READY':
                       sys.exit(0)
                   state = 'REVIEW_READY' if marker_state == 'REVIEW_READY_CLOSED' else marker_state
