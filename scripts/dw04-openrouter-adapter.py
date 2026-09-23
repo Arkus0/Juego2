@@ -3,8 +3,8 @@
 
 Reads one canonical DW-04 request JSON object from stdin and writes one JSON
 response to stdout. Expected answers/oracles are intentionally unavailable here.
-The exact DeepSeek model and DeepSeek provider route are supplied by the frozen
-protocol, with provider fallback disabled for matched-run reproducibility.
+The exact DeepSeek model is supplied by the frozen protocol and served through
+one pinned DeepInfra route, with provider fallback disabled.
 """
 
 import hashlib
@@ -85,9 +85,9 @@ def main():
     if options.get("endpoint") != ENDPOINT or options.get("structured_output") != FORMAT_NAME:
         fail("provider options differ from the reviewed adapter contract")
     routing = options.get("routing")
-    expected_routing = {"order": ["deepseek"], "allow_fallbacks": False, "require_parameters": True}
+    expected_routing = {"order": ["deepinfra"], "allow_fallbacks": False, "require_parameters": True}
     if routing != expected_routing:
-        fail("provider routing differs from the frozen DeepSeek-only route")
+        fail("provider routing differs from the frozen DeepInfra-only serving route")
     if request.get("tool_policy") != "none" or request.get("thinking") is not None:
         fail("DW-04 DeepSeek calls must use no tools and no extra reasoning control")
 
