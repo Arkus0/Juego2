@@ -1,0 +1,40 @@
+name: DW-04 PA Disposition Probe
+on:
+  pull_request:
+    types: [edited]
+permissions:
+  contents: read
+jobs:
+  probe:
+    if: >-
+      github.event.pull_request.draft == true &&
+      contains(github.event.pull_request.body || '', 'DW04 probe: PA_DISPOSITION')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+      - name: Build and query typed dispositions
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
+          python3 - <<'PY'
+          import json,subprocess,pathlib
+          root=str(pathlib.Path('.').resolve())
+          expected={'DL-11':'REJECT','DL-12':'REJECT','DL-13':'LATER','DL-14':'REJECT'}
+          for key,value in expected.items():
+              cmd=['dotnet','run','--project','tools/Arkus.Dw04.Retrieval','-c','Release','--no-build','--',root,'pa-disposition','pa01',key]
+              a=subprocess.check_output(cmd).decode().strip(); b=subprocess.check_output(cmd).decode().strip()
+              print(key,a)
+              assert a==b
+              o=json.loads(a)
+              assert o['RecordKind']=='disposition'
+              assert o['SourceKey']==key
+              assert value in o['MaterialText']
+              assert o['Provenance']['SourcePath']=='Docs/research/living-world/results/PA-01.md'
+          PY
