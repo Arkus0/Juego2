@@ -3,9 +3,11 @@
 
 Main Safety intentionally remains path-filtered so documentation-only changes do not pay for a
 full .NET build. The filter must nevertheless cover current and future central MSBuild/NuGet
-inputs: workflow definitions, project/solution files, Directory.* props/targets, arbitrary
-imported .props/.targets, NuGet.config and package lock files. This checker makes that
-allow-list an explicit tested contract instead of an easy-to-forget workflow detail.
+inputs plus analyzer configuration that can change build success: workflow definitions,
+project/solution files, Directory.* props/targets, arbitrary imported .props/.targets,
+NuGet.config, package lock files, EditorConfig/global analyzer config and rulesets. This
+checker makes that allow-list an explicit tested contract instead of an easy-to-forget
+workflow detail.
 """
 
 from __future__ import annotations
@@ -40,6 +42,12 @@ REQUIRED_PATHS = {
     "packages.lock.json",
     "**/packages.lock.json",
     "**/*.lock.json",
+    ".editorconfig",
+    "**/.editorconfig",
+    "*.globalconfig",
+    "**/*.globalconfig",
+    "*.ruleset",
+    "**/*.ruleset",
 }
 
 
@@ -144,6 +152,12 @@ def self_test() -> None:
         "**/*.props",
         "NuGet.config",
         "**/packages.lock.json",
+        ".editorconfig",
+        "**/.editorconfig",
+        "*.globalconfig",
+        "**/*.globalconfig",
+        "*.ruleset",
+        "**/*.ruleset",
     ):
         broken = good.replace(f"      - '{removed}'\n", "")
         if not validate(broken):
