@@ -1,0 +1,458 @@
+{
+  "schema": "dw04-context-assembly-v3",
+  "freeze_commit": "1032343542f09d969a3eabe81734fe53b5cc3ec2",
+  "freeze_blob": "300a1e151fe7172491b865fb67cb25f4a1ff94ca",
+  "context_plan_blob": "c980ef0c667b1a28edcb360d08a5a8651104e989",
+  "baseline_sha": "82369fdb69e33e3492b41c4aaa7f1ae9aaed18af",
+  "contexts": {
+    "A-CITY-01": {
+      "CTX": [
+        {
+          "id": "city02-classification-vocabulary",
+          "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+          "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+          "origin": "source_excerpt",
+          "selector": "### 2.1 Enclosed-interior priority",
+          "text": "### 2.1 Enclosed-interior priority\n\nEnclosed-interior priority is separate from `S0..S4`. A deep exterior/shared court can be `S3` with no enclosed interior; a shallow office may be `S2` with a small enclosed room.\n\n- `I0 NONE` — no enterable enclosed interior promised by CITY-02.\n- `I1 SHALLOW` — one bounded enterable room/zone or equivalent shallow access.\n- `I2 DEEP` — multiple meaningful enclosed zones/thresholds are required.\n- `I3 HERO` — layered enclosed/exterior relation with multiple meaningful access/discovery opportunities; exact layout belongs to CITY-06.\n\n---\n\n## 3. Two orthogonal classifications\n\n### 3.1 Systemic importance — `A..D`\n\n- `A` — **primary systemic anchor**: repeated-use location expected to carry more than one important product function or consequence pathway.\n- `B` — **supporting systemic/playable location**: meaningful recurring or scenario-supporting place that enriches routes/district use without carrying the city's main causal load.\n- `C` — **ambient urban fabric**: playable/legible fabric whose main job is ordinary city coherence, traversal, residence/work texture or spacing.\n- `D` — **scenic context**: composition/identity context not promised as systemic playable content.\n\n### 3.2 Spatial production depth — `S0..S4`\n\n- `S0` — scenic envelope / inaccessible context.\n- `S1` — authored shell, façade or exterior threshold only.\n- `S2` — shallow playable place with bounded interaction/spatial use.\n- `S3` — deep playable place with multiple authored spaces, thresholds or anchors.\n- `S4` — hero layered place with multiple meaningful access/discovery opportunities."
+        },
+        {
+          "id": "city02-shared-court-row",
+          "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+          "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+          "origin": "source_excerpt",
+          "selector": "loc.casco.shared_court",
+          "text": "| `loc.casco.shared_court` | Casco Viejo | passage + shared court / stair relation | `W.CASCO` / lower lanes | residential fabric, quiet semi-private | **C** | **S3** | I0 | public passage + semi-private court | route texture, ordinary neighbour use, second-layer spatial depth |"
+        }
+      ],
+      "DW": [
+        {
+          "id": "dw-city-shared-court",
+          "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+          "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+          "source_sha256": "989e3701ce44df004ecb002f916769338061b0a14c723102ae336ae08e6422a7",
+          "origin": "dw_query",
+          "selector": "loc.casco.shared_court",
+          "text": "{\"FactId\":\"loc.casco.shared_court\",\"District\":\"Casco Viejo\",\"Label\":\"passage + shared court / stair relation\",\"Importance\":\"C\",\"SpatialDepth\":\"S3\",\"InteriorDepth\":\"I0\",\"ProgrammeKind\":\"poi\",\"SourceRow\":\"| `loc.casco.shared_court` | Casco Viejo | passage + shared court / stair relation | `W.CASCO` / lower lanes | residential fabric, quiet semi-private | **C** | **S3** | I0 | public passage + semi-private court | route texture, ordinary neighbour use, second-layer spatial depth |\",\"Provenance\":{\"AuthorityId\":\"city02-location-programme-dw02-v1\",\"SourcePath\":\"Docs/production/CITY_LOCATION_PROGRAMME.md\",\"Anchor\":\"| `loc.casco.shared_court` | Casco Viejo | passage + shared court / stair relation | `W.CASCO` / lower lanes | residential fabric, quiet semi-private | **C** | **S3** | I0 | public passage + semi-private court | route texture, ordinary neighbour use, second-layer spatial depth |\",\"SourceDigest\":\"989e3701ce44df004ecb002f916769338061b0a14c723102ae336ae08e6422a7\",\"AnchorDigest\":\"6719c63213b01510e7fefde1e0d7d20f923234014a7213317b6a210b4b8e42b6\"}}",
+          "query_receipt": {
+            "args": [
+              "city",
+              "loc.casco.shared_court"
+            ],
+            "output_sha256": "b57c72f38954723685c9ae6caa3feaeebca953fbc432da73416a7e1b1db895be",
+            "provenance": {
+              "AuthorityId": "city02-location-programme-dw02-v1",
+              "SourcePath": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+              "Anchor": "| `loc.casco.shared_court` | Casco Viejo | passage + shared court / stair relation | `W.CASCO` / lower lanes | residential fabric, quiet semi-private | **C** | **S3** | I0 | public passage + semi-private court | route texture, ordinary neighbour use, second-layer spatial depth |",
+              "SourceDigest": "989e3701ce44df004ecb002f916769338061b0a14c723102ae336ae08e6422a7",
+              "AnchorDigest": "6719c63213b01510e7fefde1e0d7d20f923234014a7213317b6a210b4b8e42b6"
+            }
+          }
+        }
+      ]
+    },
+    "A-CITY-02": {
+      "CTX": [
+        {
+          "id": "city02-classification-vocabulary",
+          "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+          "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+          "origin": "source_excerpt",
+          "selector": "### 2.1 Enclosed-interior priority",
+          "text": "### 2.1 Enclosed-interior priority\n\nEnclosed-interior priority is separate from `S0..S4`. A deep exterior/shared court can be `S3` with no enclosed interior; a shallow office may be `S2` with a small enclosed room.\n\n- `I0 NONE` — no enterable enclosed interior promised by CITY-02.\n- `I1 SHALLOW` — one bounded enterable room/zone or equivalent shallow access.\n- `I2 DEEP` — multiple meaningful enclosed zones/thresholds are required.\n- `I3 HERO` — layered enclosed/exterior relation with multiple meaningful access/discovery opportunities; exact layout belongs to CITY-06.\n\n---\n\n## 3. Two orthogonal classifications\n\n### 3.1 Systemic importance — `A..D`\n\n- `A` — **primary systemic anchor**: repeated-use location expected to carry more than one important product function or consequence pathway.\n- `B` — **supporting systemic/playable location**: meaningful recurring or scenario-supporting place that enriches routes/district use without carrying the city's main causal load.\n- `C` — **ambient urban fabric**: playable/legible fabric whose main job is ordinary city coherence, traversal, residence/work texture or spacing.\n- `D` — **scenic context**: composition/identity context not promised as systemic playable content.\n\n### 3.2 Spatial production depth — `S0..S4`\n\n- `S0` — scenic envelope / inaccessible context.\n- `S1` — authored shell, façade or exterior threshold only.\n- `S2` — shallow playable place with bounded interaction/spatial use.\n- `S3` — deep playable place with multiple authored spaces, thresholds or anchors.\n- `S4` — hero layered place with multiple meaningful access/discovery opportunities."
+        },
+        {
+          "id": "city02-puerto-landing-row",
+          "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+          "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+          "origin": "source_excerpt",
+          "selector": "loc.puerto.landing",
+          "text": "| `loc.puerto.landing` | Puerto Fluvial | X6/X7 landing / upstream port threshold | `O.PUERTO_UP` | crossing, arrival, territorial access | **B** | **S1** | I0 | public subject to inherited crossing availability | real crossing choice/state consequence, meeting/observation point |"
+        },
+        {
+          "id": "city01-x6-row",
+          "source_path": "Docs/production/CITY_MOBILITY_TOPOLOGY.md",
+          "source_blob": "c8f99c7790e6cee79c0371886056e0441cb1a602",
+          "origin": "source_excerpt",
+          "selector": "`X6`",
+          "text": "| `X6` | `W.LANDING ↔ O.PUERTO_UP` | **State 1 only**; hours/fare; high water suspends | EW | AX6 | 1.0 + wait | La barca |"
+        },
+        {
+          "id": "city01-ax6-line",
+          "source_path": "Docs/production/CITY_MOBILITY_TOPOLOGY.md",
+          "source_blob": "c8f99c7790e6cee79c0371886056e0441cb1a602",
+          "origin": "source_excerpt",
+          "selector": "`AX6`",
+          "text": "- `AX6` — State-1 ferry: pedestrian/porter/carryable load only in CITY-01. CITY-01 deliberately makes **no** claim that X6 carries carts, handcarts or bicycles."
+        }
+      ],
+      "DW": [
+        {
+          "id": "dw-city-puerto-landing",
+          "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+          "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+          "source_sha256": "989e3701ce44df004ecb002f916769338061b0a14c723102ae336ae08e6422a7",
+          "origin": "dw_query",
+          "selector": "loc.puerto.landing",
+          "text": "{\"FactId\":\"loc.puerto.landing\",\"District\":\"Puerto Fluvial\",\"Label\":\"X6/X7 landing / upstream port threshold\",\"Importance\":\"B\",\"SpatialDepth\":\"S1\",\"InteriorDepth\":\"I0\",\"ProgrammeKind\":\"poi\",\"SourceRow\":\"| `loc.puerto.landing` | Puerto Fluvial | X6/X7 landing / upstream port threshold | `O.PUERTO_UP` | crossing, arrival, territorial access | **B** | **S1** | I0 | public subject to inherited crossing availability | real crossing choice/state consequence, meeting/observation point |\",\"Provenance\":{\"AuthorityId\":\"city02-location-programme-dw02-v1\",\"SourcePath\":\"Docs/production/CITY_LOCATION_PROGRAMME.md\",\"Anchor\":\"| `loc.puerto.landing` | Puerto Fluvial | X6/X7 landing / upstream port threshold | `O.PUERTO_UP` | crossing, arrival, territorial access | **B** | **S1** | I0 | public subject to inherited crossing availability | real crossing choice/state consequence, meeting/observation point |\",\"SourceDigest\":\"989e3701ce44df004ecb002f916769338061b0a14c723102ae336ae08e6422a7\",\"AnchorDigest\":\"7d72dcb66d684f66c4aed977513b5f1bd6caf889235aa4ee51439bc4beff3e65\"}}",
+          "query_receipt": {
+            "args": [
+              "city",
+              "loc.puerto.landing"
+            ],
+            "output_sha256": "3da36a8eab1b98e8e6307d7a1b33c77d2e1da4d72fdbaea87db68cd50316a9ec",
+            "provenance": {
+              "AuthorityId": "city02-location-programme-dw02-v1",
+              "SourcePath": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+              "Anchor": "| `loc.puerto.landing` | Puerto Fluvial | X6/X7 landing / upstream port threshold | `O.PUERTO_UP` | crossing, arrival, territorial access | **B** | **S1** | I0 | public subject to inherited crossing availability | real crossing choice/state consequence, meeting/observation point |",
+              "SourceDigest": "989e3701ce44df004ecb002f916769338061b0a14c723102ae336ae08e6422a7",
+              "AnchorDigest": "7d72dcb66d684f66c4aed977513b5f1bd6caf889235aa4ee51439bc4beff3e65"
+            }
+          }
+        },
+        {
+          "id": "dw-fallback-x6",
+          "source_path": "Docs/production/CITY_MOBILITY_TOPOLOGY.md",
+          "source_blob": "c8f99c7790e6cee79c0371886056e0441cb1a602",
+          "origin": "source_excerpt",
+          "selector": "`X6`",
+          "text": "| `X6` | `W.LANDING ↔ O.PUERTO_UP` | **State 1 only**; hours/fare; high water suspends | EW | AX6 | 1.0 + wait | La barca |"
+        },
+        {
+          "id": "dw-fallback-ax6",
+          "source_path": "Docs/production/CITY_MOBILITY_TOPOLOGY.md",
+          "source_blob": "c8f99c7790e6cee79c0371886056e0441cb1a602",
+          "origin": "source_excerpt",
+          "selector": "`AX6`",
+          "text": "- `AX6` — State-1 ferry: pedestrian/porter/carryable load only in CITY-01. CITY-01 deliberately makes **no** claim that X6 carries carts, handcarts or bicycles."
+        }
+      ]
+    },
+    "A-CITY-03": {
+      "CTX": [
+        {
+          "id": "city02-classification-vocabulary",
+          "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+          "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+          "origin": "source_excerpt",
+          "selector": "### 2.1 Enclosed-interior priority",
+          "text": "### 2.1 Enclosed-interior priority\n\nEnclosed-interior priority is separate from `S0..S4`. A deep exterior/shared court can be `S3` with no enclosed interior; a shallow office may be `S2` with a small enclosed room.\n\n- `I0 NONE` — no enterable enclosed interior promised by CITY-02.\n- `I1 SHALLOW` — one bounded enterable room/zone or equivalent shallow access.\n- `I2 DEEP` — multiple meaningful enclosed zones/thresholds are required.\n- `I3 HERO` — layered enclosed/exterior relation with multiple meaningful access/discovery opportunities; exact layout belongs to CITY-06.\n\n---\n\n## 3. Two orthogonal classifications\n\n### 3.1 Systemic importance — `A..D`\n\n- `A` — **primary systemic anchor**: repeated-use location expected to carry more than one important product function or consequence pathway.\n- `B` — **supporting systemic/playable location**: meaningful recurring or scenario-supporting place that enriches routes/district use without carrying the city's main causal load.\n- `C` — **ambient urban fabric**: playable/legible fabric whose main job is ordinary city coherence, traversal, residence/work texture or spacing.\n- `D` — **scenic context**: composition/identity context not promised as systemic playable content.\n\n### 3.2 Spatial production depth — `S0..S4`\n\n- `S0` — scenic envelope / inaccessible context.\n- `S1` — authored shell, façade or exterior threshold only.\n- `S2` — shallow playable place with bounded interaction/spatial use.\n- `S3` — deep playable place with multiple authored spaces, thresholds or anchors.\n- `S4` — hero layered place with multiple meaningful access/discovery opportunities."
+        },
+        {
+          "id": "city02-town-hall-row",
+          "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+          "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+          "origin": "source_excerpt",
+          "selector": "loc.plaza.ayuntamiento",
+          "text": "| `loc.plaza.ayuntamiento` | Plaza y Ayuntamiento | town hall / civic office | `W.PLAZA` | civic, governance, authority | **A** | **S3** | **I2** | public + staff/service + private records layer | municipal decisions, permissions/notices, institutional witness |"
+        }
+      ],
+      "DW": [
+        {
+          "id": "dw-city-town-hall",
+          "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+          "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+          "source_sha256": "989e3701ce44df004ecb002f916769338061b0a14c723102ae336ae08e6422a7",
+          "origin": "dw_query",
+          "selector": "loc.plaza.ayuntamiento",
+          "text": "{\"FactId\":\"loc.plaza.ayuntamiento\",\"District\":\"Plaza y Ayuntamiento\",\"Label\":\"town hall / civic office\",\"Importance\":\"A\",\"SpatialDepth\":\"S3\",\"InteriorDepth\":\"I2\",\"ProgrammeKind\":\"poi\",\"SourceRow\":\"| `loc.plaza.ayuntamiento` | Plaza y Ayuntamiento | town hall / civic office | `W.PLAZA` | civic, governance, authority | **A** | **S3** | **I2** | public + staff/service + private records layer | municipal decisions, permissions/notices, institutional witness |\",\"Provenance\":{\"AuthorityId\":\"city02-location-programme-dw02-v1\",\"SourcePath\":\"Docs/production/CITY_LOCATION_PROGRAMME.md\",\"Anchor\":\"| `loc.plaza.ayuntamiento` | Plaza y Ayuntamiento | town hall / civic office | `W.PLAZA` | civic, governance, authority | **A** | **S3** | **I2** | public + staff/service + private records layer | municipal decisions, permissions/notices, institutional witness |\",\"SourceDigest\":\"989e3701ce44df004ecb002f916769338061b0a14c723102ae336ae08e6422a7\",\"AnchorDigest\":\"c43f42673b939447f2f70af57eef89a72499c421fb9dcf5f7defb9e19b55c600\"}}",
+          "query_receipt": {
+            "args": [
+              "city",
+              "loc.plaza.ayuntamiento"
+            ],
+            "output_sha256": "271bd09718871bcaa88513775dc6567e0d0e1395af5039fd5926d78887939fb3",
+            "provenance": {
+              "AuthorityId": "city02-location-programme-dw02-v1",
+              "SourcePath": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+              "Anchor": "| `loc.plaza.ayuntamiento` | Plaza y Ayuntamiento | town hall / civic office | `W.PLAZA` | civic, governance, authority | **A** | **S3** | **I2** | public + staff/service + private records layer | municipal decisions, permissions/notices, institutional witness |",
+              "SourceDigest": "989e3701ce44df004ecb002f916769338061b0a14c723102ae336ae08e6422a7",
+              "AnchorDigest": "c43f42673b939447f2f70af57eef89a72499c421fb9dcf5f7defb9e19b55c600"
+            }
+          }
+        }
+      ]
+    },
+    "A-PA-01": {
+      "CTX": [
+        {
+          "id": "pa04-disposition-table",
+          "source_path": "Docs/research/living-world/results/PA-04.md",
+          "source_blob": "d065241d5dd4ed663dd686fa288e6d8a43e1dc46",
+          "origin": "source_excerpt",
+          "selector": "## 11. Juego2 disposition table",
+          "text": "## 11. Juego2 disposition table\n\n| Mechanism | Status | Juego2 recommendation |\n|---|---|---|\n| canonical truth separate from actor belief | **ADOPT** | mandatory authority boundary |\n| `UNKNOWN` for missing actor knowledge | **ADOPT** | fail closed; no truth fallback |\n| actor-local belief/access keyed by actor + proposition/facet | **ADOPT concept** | exact model/index deferred |\n| perception as acquisition cause | **ADOPT concept** | sensory implementation deferred |\n| accessed public source as acquisition cause | **ADOPT concept** | public does not imply ambient knowledge |\n| communication as acquisition cause | **ADOPT boundary** | PA-05 owns send/propagate semantics |\n| authored initial/grant knowledge with traceable rule | **ADAPT** | useful for content; may not become duplicate truth copy |\n| bounded named inference from accessible inputs | **LATER / conditional** | only for a demonstrated gameplay need |\n| immediate provenance + acquisition/revision time | **ADOPT** | enough for explanation without unbounded history |\n| bounded certainty/strength | **ADAPT / conditional** | retain only with real behavioural/revision consumer |\n| actor-visible `isTrue/isFalse/isStale` | **REJECT** | hidden omniscience leak |\n| automatic truth→belief synchronization | **REJECT** | destroys ignorance/stale/false belief |\n| duplicated dialogue/quest `knows_X` authority | **REJECT baseline** | dialogue/conditions consume common epistemic state |\n| general recursive Theory of Mind | **REJECT baseline** | unnecessary for current proof |\n| LLM/general reasoner as belief authority | **REJECT baseline** | opaque/non-deterministic authority |\n| unbounded provenance chain inside each belief | **REJECT** | PA-05/06 ownership and state-growth risk |\n| global actor/fact scan for normal knowledge lookup | **REJECT** | preserve bounded-discovery intent |\n| privileged debug truth comparison | **ADOPT for tooling/test only** | segregated from actor-safe input |"
+        },
+        {
+          "id": "pa04-nc02-section",
+          "source_path": "Docs/research/living-world/results/PA-04.md",
+          "source_blob": "d065241d5dd4ed663dd686fa288e6d8a43e1dc46",
+          "origin": "source_excerpt",
+          "selector": "### NC-02 — Privileged/debug metadata is causally non-authoritative",
+          "text": "### NC-02 — Privileged/debug metadata is causally non-authoritative\n\nThis is an explicit **defect-injection isolation test**, separate from CF-02's real canonical truth change.\n\nHold fixed:\n\n```text\ncanonical world truth\nactor belief state\nall actor-visible inputs\nopportunity / relationship / seed / profile\n```\n\nThen mutate **only a privileged diagnostic projection/metadata value that actor-safe code is forbidden to consume**, for example inject a different `truthRelation`, `debugIsStale`, canonical-comparison annotation or equivalent test-only field, even if the injected diagnostic value is intentionally inconsistent with canonical truth.\n\nRequired:\n\n```text\nactor-safe query result = unchanged\nbelief-gated decision input = unchanged\nmaterial decision = unchanged\n```\n\nIf the diagnostic mutation changes behaviour, the implementation has a hidden dependency on privileged truth metadata and fails PA-04."
+        }
+      ],
+      "DW": [
+        {
+          "id": "dw-pa04-nc02",
+          "source_path": "Docs/research/living-world/results/PA-04.md",
+          "source_blob": "d065241d5dd4ed663dd686fa288e6d8a43e1dc46",
+          "source_sha256": "fc22ed69507e2d93d28686c71ed8da1519e036086e354813797110ca09551363",
+          "origin": "dw_query",
+          "selector": "NC-02",
+          "text": "{\"FactId\":\"pa04.fixture.nc-02\",\"PaId\":\"pa04\",\"RecordKind\":\"fixture\",\"SourceKey\":\"NC-02\",\"Provenance\":{\"SourcePath\":\"Docs/research/living-world/results/PA-04.md\",\"Anchor\":\"### NC-02 — Privileged/debug metadata is causally non-authoritative\\n\\nThis is an explicit **defect-injection isolation test**, separate from CF-02's real canonical truth change.\\n\\nHold fixed:\\n\\n```text\\ncanonical world truth\\nactor belief state\\nall actor-visible inputs\\nopportunity / relationship / seed / profile\\n```\\n\\nThen mutate **only a privileged diagnostic projection/metadata value that actor-safe code is forbidden to consume**, for example inject a different `truthRelation`, `debugIsStale`, canonical-comparison annotation or equivalent test-only field, even if the injected diagnostic value is intentionally inconsistent with canonical truth.\\n\\nRequired:\\n\\n```text\\nactor-safe query result = unchanged\\nbelief-gated decision input = unchanged\\nmaterial decision = unchanged\\n```\\n\\nIf the diagnostic mutation changes behaviour, the implementation has a hidden dependency on privileged truth metadata and fails PA-04.\\n\",\"SourceDigest\":\"fc22ed69507e2d93d28686c71ed8da1519e036086e354813797110ca09551363\"}}",
+          "query_receipt": {
+            "args": [
+              "pa-fixture",
+              "pa04",
+              "NC-02"
+            ],
+            "output_sha256": "8fe02187c4e670a1514a9cf1dd8620dfd76940e80f9b564d0ba579d7c7fb5ca5",
+            "provenance": {
+              "SourcePath": "Docs/research/living-world/results/PA-04.md",
+              "Anchor": "### NC-02 — Privileged/debug metadata is causally non-authoritative\n\nThis is an explicit **defect-injection isolation test**, separate from CF-02's real canonical truth change.\n\nHold fixed:\n\n```text\ncanonical world truth\nactor belief state\nall actor-visible inputs\nopportunity / relationship / seed / profile\n```\n\nThen mutate **only a privileged diagnostic projection/metadata value that actor-safe code is forbidden to consume**, for example inject a different `truthRelation`, `debugIsStale`, canonical-comparison annotation or equivalent test-only field, even if the injected diagnostic value is intentionally inconsistent with canonical truth.\n\nRequired:\n\n```text\nactor-safe query result = unchanged\nbelief-gated decision input = unchanged\nmaterial decision = unchanged\n```\n\nIf the diagnostic mutation changes behaviour, the implementation has a hidden dependency on privileged truth metadata and fails PA-04.\n",
+              "SourceDigest": "fc22ed69507e2d93d28686c71ed8da1519e036086e354813797110ca09551363"
+            }
+          }
+        },
+        {
+          "id": "dw-pa04-stale-disposition",
+          "source_path": "Docs/research/living-world/results/PA-04.md",
+          "source_blob": "d065241d5dd4ed663dd686fa288e6d8a43e1dc46",
+          "origin": "source_excerpt",
+          "selector": "actor-visible `isTrue/isFalse/isStale`",
+          "text": "| actor-visible `isTrue/isFalse/isStale` | **REJECT** | hidden omniscience leak |"
+        },
+        {
+          "id": "dw-pa04-sync-disposition",
+          "source_path": "Docs/research/living-world/results/PA-04.md",
+          "source_blob": "d065241d5dd4ed663dd686fa288e6d8a43e1dc46",
+          "origin": "source_excerpt",
+          "selector": "automatic truth→belief synchronization",
+          "text": "| automatic truth→belief synchronization | **REJECT** | destroys ignorance/stale/false belief |"
+        },
+        {
+          "id": "dw-pa04-nc02-required",
+          "source_path": "Docs/research/living-world/results/PA-04.md",
+          "source_blob": "d065241d5dd4ed663dd686fa288e6d8a43e1dc46",
+          "origin": "source_excerpt",
+          "selector": "actor-safe query result = unchanged",
+          "text": "actor-safe query result = unchanged"
+        }
+      ]
+    },
+    "A-PA-02": {
+      "CTX": [
+        {
+          "id": "pa05-disposition-table",
+          "source_path": "Docs/research/living-world/results/PA-05.md",
+          "source_blob": "d38e8b6261876b28d297893f96150f9f527d7270",
+          "origin": "source_excerpt",
+          "selector": "## 6. Mechanism dispositions",
+          "text": "## 6. Mechanism dispositions\n\n| Relationship/mechanism | Juego2 disposition | Reason |\n|---|---|---|\n| Explicit sender→receiver assertion transfer | `ADOPT` | Selective, delayed, traceable causal edge. |\n| Receiver-owned PA-04 acquisition/revision | `ADOPT` | Preserves epistemic authority and non-omniscience. |\n| Explicit communication opportunity/channel | `ADOPT` | Prevents telepathy and supports missed information. |\n| Actor-accessible/reported provenance | `ADOPT` | Legitimate source reasoning without hidden knowledge. |\n| Privileged causal/debug lineage | `ADAPT` | Useful for replay/debug/guards; engine-only by default. |\n| Technical repeat/loop guards | `ADOPT` | Bounded operation; not epistemic evidence. |\n| Configurable propagation budgets | `ADAPT / LATER tuning` | Termination/perf guard without invented constants. |\n| Automatic graph diffusion as baseline | `REJECT` | Replaces actor motive/opportunity with mechanical spread. |\n| Global RumourManager choosing targets/acceptance | `REJECT` | Steals PA-02/PA-04 ownership and risks omniscience. |\n| Recursive hidden lineage embedded in ActorBelief | `REJECT` | Epistemic leak + unbounded duplication. |\n| Repetition changes canonical truth | `REJECT` | Confuses popularity with world authority. |\n| Dialogue/quest rumour flags duplicating PA-04 state | `REJECT` | Creates divergent epistemic authorities. |\n| Generic stochastic distortion engine | `LATER` | Not required to prove false/partial assertions. |\n| Universal confidence/corroboration formula | `LATER / owner-dependent` | No accepted need justifies one formula here. |"
+        },
+        {
+          "id": "pa05-fixture-ownership",
+          "source_path": "Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md",
+          "source_blob": "3cfb1b431acd9ffb8e1e1098e195367abd96d553",
+          "origin": "source_excerpt",
+          "selector": "## 1. Ownership diagram",
+          "text": "## 1. Ownership diagram\n\n```text\nPA-02 / authored action owner\n  sender motive + chosen communication action/target\n                 │\n                 ▼\ncommunication opportunity/channel\n  participants + time/context + channel eligibility\n                 │\n                 ▼\nPA-05 TRANSFER\n  sender\n  receiver\n  asserted proposition/value\n  actor-visible transfer context/provenance payload\n                 │\n                 ▼\nPA-04 RECEIVER EPISTEMIC BOUNDARY\n  receiver-owned Acquire/Revise(COMMUNICATION)\n  may consume receiver-accessible relationship/context/provenance\n                 │\n                 ▼\nActorBelief / actor-safe KnowledgeQuery\n                 │\n                 ├────────► later behaviour/dialogue consumers\n                 │\n                 └────────► later PA-02 actor decision MAY choose retell\n\nPARALLEL PRIVILEGED ENGINE LANE\n  root/parent/hop/lineage technical metadata\n       ├─ replay/debug\n       ├─ persistence validation\n       ├─ technical loop/dedup guard\n       └─ configured propagation budget\n\n  MUST NOT feed actor belief/confidence/corroboration/dialogue/action\n  unless the corresponding provenance was separately acquired by the actor.\n```\n\nOwnership exclusions:\n\n- PA-05 does not choose sender motive; PA-02 does.\n- PA-05 does not choose receiver epistemic outcome; PA-04 does.\n- PA-05 does not define trust semantics; PA-03 does.\n- PA-05 transfer history is not PA-06 autobiographical memory.\n- PA-05 player cases do not define the generic PA-09 player-action system.\n- PA-05 does not turn public/perception acquisition into communication."
+        },
+        {
+          "id": "pa05-nc02-section",
+          "source_path": "Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md",
+          "source_blob": "3cfb1b431acd9ffb8e1e1098e195367abd96d553",
+          "origin": "source_excerpt",
+          "selector": "## 6. NC-02 — HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE",
+          "text": "## 6. NC-02 — HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE\n\n### Purpose\n\nDirectly preserve the donor FAIL→PASS correction. This is the principal PA-05 negative regression.\n\n### Paired setup\n\nCarmen receives two reports in both Run A and Run B.\n\nActor-visible inputs are byte/semantically equal between runs:\n\n```text\ncanonical WorldFact(X)\nCarmen initial ActorBelief(X)\nreport #1: immediate speaker=Manolo, asserted X=true\nreport #2: immediate speaker=Paco,   asserted X=true\nactor-accessible reported provenance: NONE beyond immediate speakers\nchannel/context visible to Carmen\nPA-03 inputs exposed to Carmen's receiver rule\nreceiver rule/config\nseed/order/timestamps visible to Carmen\nboth reports are DELIVERED in both runs\n```\n\nOnly privileged engine metadata differs:\n\n```text\nRun A engine lineage:\n  report #1 root=L1\n  report #2 root=L1\n\nRun B engine lineage:\n  report #1 root=L1\n  report #2 root=L2\n```\n\nImportant isolation requirement:\n\n> The technical guard configuration for this fixture MUST permit both already-declared deliveries in both runs. A same-lineage guard may not suppress report #2 in Run A, because that would change Carmen's actor-visible evidence and invalidate the claimed one-variable counterfactual.\n\n### Required result\n\nCarmen's complete actor-facing epistemic output is identical across Run A/B:\n\n```text\nbelief proposition/value\nbelief-held/unknown state\nconfidence/corroboration result if such a fixture-local output exists\nactor-facing explanation/reasons\nbehaviour/dialogue eligibility derived from that belief/provenance\n```\n\nIf any of those differ solely because engine lineage changed, PA-05 FAILS.\n\nEngine/debug trace is allowed to differ and report the different root topology.\n\n### Explicit false-green guards\n\nThe control is invalid if:\n\n- one report is missing/suppressed in one run;\n- timestamp/order/channel differs;\n- immediate speaker differs;\n- relationship/context differs;\n- receiver rule differs;\n- hidden lineage is copied into actor-accessible provenance before evaluation;\n- the assertion merely compares stored inputs rather than executing the same effective receiver epistemic/query surface used by the consumer."
+        }
+      ],
+      "DW": [
+        {
+          "id": "dw-pa05-nc02",
+          "source_path": "Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md",
+          "source_blob": "3cfb1b431acd9ffb8e1e1098e195367abd96d553",
+          "source_sha256": "d465e27dc9f4f4c48a476188629d25ceb71ac8bb9c8bb7cb9f14d3bff2b6ab14",
+          "origin": "dw_query",
+          "selector": "NC-02",
+          "text": "{\"FactId\":\"pa05.fixture.nc-02\",\"PaId\":\"pa05\",\"RecordKind\":\"fixture\",\"SourceKey\":\"NC-02\",\"Provenance\":{\"SourcePath\":\"Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md\",\"Anchor\":\"## 6. NC-02 — HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE\\n\\n### Purpose\\n\\nDirectly preserve the donor FAIL→PASS correction. This is the principal PA-05 negative regression.\\n\\n### Paired setup\\n\\nCarmen receives two reports in both Run A and Run B.\\n\\nActor-visible inputs are byte/semantically equal between runs:\\n\\n```text\\ncanonical WorldFact(X)\\nCarmen initial ActorBelief(X)\\nreport #1: immediate speaker=Manolo, asserted X=true\\nreport #2: immediate speaker=Paco,   asserted X=true\\nactor-accessible reported provenance: NONE beyond immediate speakers\\nchannel/context visible to Carmen\\nPA-03 inputs exposed to Carmen's receiver rule\\nreceiver rule/config\\nseed/order/timestamps visible to Carmen\\nboth reports are DELIVERED in both runs\\n```\\n\\nOnly privileged engine metadata differs:\\n\\n```text\\nRun A engine lineage:\\n  report #1 root=L1\\n  report #2 root=L1\\n\\nRun B engine lineage:\\n  report #1 root=L1\\n  report #2 root=L2\\n```\\n\\nImportant isolation requirement:\\n\\n> The technical guard configuration for this fixture MUST permit both already-declared deliveries in both runs. A same-lineage guard may not suppress report #2 in Run A, because that would change Carmen's actor-visible evidence and invalidate the claimed one-variable counterfactual.\\n\\n### Required result\\n\\nCarmen's complete actor-facing epistemic output is identical across Run A/B:\\n\\n```text\\nbelief proposition/value\\nbelief-held/unknown state\\nconfidence/corroboration result if such a fixture-local output exists\\nactor-facing explanation/reasons\\nbehaviour/dialogue eligibility derived from that belief/provenance\\n```\\n\\nIf any of those differ solely because engine lineage changed, PA-05 FAILS.\\n\\nEngine/debug trace is allowed to differ and report the different root topology.\\n\\n### Explicit false-green guards\\n\\nThe control is invalid if:\\n\\n- one report is missing/suppressed in one run;\\n- timestamp/order/channel differs;\\n- immediate speaker differs;\\n- relationship/context differs;\\n- receiver rule differs;\\n- hidden lineage is copied into actor-accessible provenance before evaluation;\\n- the assertion merely compares stored inputs rather than executing the same effective receiver epistemic/query surface used by the consumer.\\n\",\"SourceDigest\":\"d465e27dc9f4f4c48a476188629d25ceb71ac8bb9c8bb7cb9f14d3bff2b6ab14\"}}",
+          "query_receipt": {
+            "args": [
+              "pa-fixture",
+              "pa05",
+              "NC-02"
+            ],
+            "output_sha256": "3471e326ed24b91e94fbbbb1042d7ebc13462e4437954a20a10e8db853c427b1",
+            "provenance": {
+              "SourcePath": "Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md",
+              "Anchor": "## 6. NC-02 — HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE\n\n### Purpose\n\nDirectly preserve the donor FAIL→PASS correction. This is the principal PA-05 negative regression.\n\n### Paired setup\n\nCarmen receives two reports in both Run A and Run B.\n\nActor-visible inputs are byte/semantically equal between runs:\n\n```text\ncanonical WorldFact(X)\nCarmen initial ActorBelief(X)\nreport #1: immediate speaker=Manolo, asserted X=true\nreport #2: immediate speaker=Paco,   asserted X=true\nactor-accessible reported provenance: NONE beyond immediate speakers\nchannel/context visible to Carmen\nPA-03 inputs exposed to Carmen's receiver rule\nreceiver rule/config\nseed/order/timestamps visible to Carmen\nboth reports are DELIVERED in both runs\n```\n\nOnly privileged engine metadata differs:\n\n```text\nRun A engine lineage:\n  report #1 root=L1\n  report #2 root=L1\n\nRun B engine lineage:\n  report #1 root=L1\n  report #2 root=L2\n```\n\nImportant isolation requirement:\n\n> The technical guard configuration for this fixture MUST permit both already-declared deliveries in both runs. A same-lineage guard may not suppress report #2 in Run A, because that would change Carmen's actor-visible evidence and invalidate the claimed one-variable counterfactual.\n\n### Required result\n\nCarmen's complete actor-facing epistemic output is identical across Run A/B:\n\n```text\nbelief proposition/value\nbelief-held/unknown state\nconfidence/corroboration result if such a fixture-local output exists\nactor-facing explanation/reasons\nbehaviour/dialogue eligibility derived from that belief/provenance\n```\n\nIf any of those differ solely because engine lineage changed, PA-05 FAILS.\n\nEngine/debug trace is allowed to differ and report the different root topology.\n\n### Explicit false-green guards\n\nThe control is invalid if:\n\n- one report is missing/suppressed in one run;\n- timestamp/order/channel differs;\n- immediate speaker differs;\n- relationship/context differs;\n- receiver rule differs;\n- hidden lineage is copied into actor-accessible provenance before evaluation;\n- the assertion merely compares stored inputs rather than executing the same effective receiver epistemic/query surface used by the consumer.\n",
+              "SourceDigest": "d465e27dc9f4f4c48a476188629d25ceb71ac8bb9c8bb7cb9f14d3bff2b6ab14"
+            }
+          }
+        },
+        {
+          "id": "dw-pa05-nc02-heading",
+          "source_path": "Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md",
+          "source_blob": "3cfb1b431acd9ffb8e1e1098e195367abd96d553",
+          "origin": "source_excerpt",
+          "selector": "## 6. NC-02 — HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE",
+          "text": "## 6. NC-02 — HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE"
+        },
+        {
+          "id": "dw-pa05-lineage-disposition",
+          "source_path": "Docs/research/living-world/results/PA-05.md",
+          "source_blob": "d38e8b6261876b28d297893f96150f9f527d7270",
+          "origin": "source_excerpt",
+          "selector": "Recursive hidden lineage embedded in ActorBelief",
+          "text": "| Recursive hidden lineage embedded in ActorBelief | `REJECT` | Epistemic leak + unbounded duplication. |"
+        },
+        {
+          "id": "dw-pa05-owner-line",
+          "source_path": "Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md",
+          "source_blob": "3cfb1b431acd9ffb8e1e1098e195367abd96d553",
+          "origin": "source_excerpt",
+          "selector": "PA-04 RECEIVER EPISTEMIC BOUNDARY",
+          "text": "PA-04 RECEIVER EPISTEMIC BOUNDARY"
+        }
+      ]
+    },
+    "A-PA-03": {
+      "CTX": [
+        {
+          "id": "pa01-disposition-section",
+          "source_path": "Docs/research/living-world/results/PA-01.md",
+          "source_blob": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+          "origin": "source_excerpt",
+          "selector": "## 3. Donor → Juego2 disposition",
+          "text": "## 3. Donor → Juego2 disposition\n\n| ID | Finding/mechanism | Disposition | Juego2 meaning |\n|---|---|---|---|\n| DL-01 | schedule distinct from concrete behaviour | **ADOPT** | schedule owns normal semantic intent, not path/animation/day-script execution |\n| DL-02 | activity distinct from destination/affordance | **ADOPT** | intent says what is sought; compatible place/resource resolution is downstream and fallible |\n| DL-03 | lifecycle, cleanup and recovery | **ADOPT** | interruption releases/suspends transient ownership and causes current-context re-evaluation |\n| DL-04 | travel matters | **ADAPT** | travel consumes causal time/location; H3 owns movement/path implementation and tuning |\n| DL-05 | capacity/contention can invalidate routine | **ADOPT** problem / **LATER** exact validator | scarce observable opportunities cannot be double-used; exact validator topology is not frozen |\n| DL-06 | expected vs actual routine/state | **ADOPT** | tooling can distinguish baseline expectation from deviation without granting omniscient actor/player knowledge |\n| DL-07 | stable base + bounded calendar/world context | **ADAPT** | explicit context may select/replace ordinary intent; exact priority representation remains later-owned |\n| DL-08 | important actors benefit from characterful routine | **ADAPT** | learnable actors should have meaningful routine differentiation; donor actor-tier class names are not authority |\n| DL-09 | dense schedules do not create agency | **ADOPT** | actor-originated choice belongs to PA-02; timetable entries are not autonomous initiative |\n| DL-10 | FULL/ABSTRACT fidelity may differ | **ADAPT** | cheaper off-screen fidelity is allowed if causal meaning reconciles on re-entry |\n| DL-11 | exact physical off-screen path simulation | **REJECT** as requirement | no PA-01 product need justifies exact hidden route execution |\n| DL-12 | unique executable 24h script for every visible citizen | **REJECT** | use reusable semantics plus meaningful authored differences |\n| DL-13 | exact static capacity/travel checker architecture | **LATER** | useful validation target, but not proven prior-art mechanism and not frozen here |\n| DL-14 | donor M9/M10/`WorldState`/schema/API ownership | **REJECT** as authority | historical implementation routing is stripped |"
+        }
+      ],
+      "DW": [
+        {
+          "id": "dw-pa01-dl-11-disposition",
+          "source_path": "Docs/research/living-world/results/PA-01.md",
+          "source_blob": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+          "source_sha256": "ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177",
+          "origin": "dw_query",
+          "selector": "DL-11",
+          "text": "{\"FactId\":\"pa01.finding.dl-11.disposition\",\"PaId\":\"pa01\",\"RecordKind\":\"disposition\",\"SourceKey\":\"DL-11\",\"Disposition\":\"REJECT\",\"Qualification\":\"as requirement\",\"Provenance\":{\"SourcePath\":\"Docs/research/living-world/results/PA-01.md\",\"Anchor\":\"| DL-11 | exact physical off-screen path simulation | **REJECT** as requirement | no PA-01 product need justifies exact hidden route execution |\",\"SourceDigest\":\"ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177\"}}",
+          "query_receipt": {
+            "args": [
+              "pa-disposition",
+              "pa01",
+              "DL-11"
+            ],
+            "output_sha256": "2eaf18590132b11d259a38d1980fbef839560bdde52201f3a71a29e1dbae55c8",
+            "provenance": {
+              "SourcePath": "Docs/research/living-world/results/PA-01.md",
+              "Anchor": "| DL-11 | exact physical off-screen path simulation | **REJECT** as requirement | no PA-01 product need justifies exact hidden route execution |",
+              "SourceDigest": "ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177"
+            }
+          }
+        },
+        {
+          "id": "dw-pa01-dl-12-disposition",
+          "source_path": "Docs/research/living-world/results/PA-01.md",
+          "source_blob": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+          "source_sha256": "ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177",
+          "origin": "dw_query",
+          "selector": "DL-12",
+          "text": "{\"FactId\":\"pa01.finding.dl-12.disposition\",\"PaId\":\"pa01\",\"RecordKind\":\"disposition\",\"SourceKey\":\"DL-12\",\"Disposition\":\"REJECT\",\"Qualification\":\"\",\"Provenance\":{\"SourcePath\":\"Docs/research/living-world/results/PA-01.md\",\"Anchor\":\"| DL-12 | unique executable 24h script for every visible citizen | **REJECT** | use reusable semantics plus meaningful authored differences |\",\"SourceDigest\":\"ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177\"}}",
+          "query_receipt": {
+            "args": [
+              "pa-disposition",
+              "pa01",
+              "DL-12"
+            ],
+            "output_sha256": "6a362f0a0f95e9fe68785f1587e283c282d75263d7401350492514f937fa185f",
+            "provenance": {
+              "SourcePath": "Docs/research/living-world/results/PA-01.md",
+              "Anchor": "| DL-12 | unique executable 24h script for every visible citizen | **REJECT** | use reusable semantics plus meaningful authored differences |",
+              "SourceDigest": "ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177"
+            }
+          }
+        },
+        {
+          "id": "dw-pa01-dl-13-disposition",
+          "source_path": "Docs/research/living-world/results/PA-01.md",
+          "source_blob": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+          "source_sha256": "ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177",
+          "origin": "dw_query",
+          "selector": "DL-13",
+          "text": "{\"FactId\":\"pa01.finding.dl-13.disposition\",\"PaId\":\"pa01\",\"RecordKind\":\"disposition\",\"SourceKey\":\"DL-13\",\"Disposition\":\"LATER\",\"Qualification\":\"\",\"Provenance\":{\"SourcePath\":\"Docs/research/living-world/results/PA-01.md\",\"Anchor\":\"| DL-13 | exact static capacity/travel checker architecture | **LATER** | useful validation target, but not proven prior-art mechanism and not frozen here |\",\"SourceDigest\":\"ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177\"}}",
+          "query_receipt": {
+            "args": [
+              "pa-disposition",
+              "pa01",
+              "DL-13"
+            ],
+            "output_sha256": "c31c1f38f2092e26a906511fb5bc6de55d1b3fd3e0571b41b39d8e380aa384c9",
+            "provenance": {
+              "SourcePath": "Docs/research/living-world/results/PA-01.md",
+              "Anchor": "| DL-13 | exact static capacity/travel checker architecture | **LATER** | useful validation target, but not proven prior-art mechanism and not frozen here |",
+              "SourceDigest": "ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177"
+            }
+          }
+        },
+        {
+          "id": "dw-pa01-dl-14-disposition",
+          "source_path": "Docs/research/living-world/results/PA-01.md",
+          "source_blob": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+          "source_sha256": "ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177",
+          "origin": "dw_query",
+          "selector": "DL-14",
+          "text": "{\"FactId\":\"pa01.finding.dl-14.disposition\",\"PaId\":\"pa01\",\"RecordKind\":\"disposition\",\"SourceKey\":\"DL-14\",\"Disposition\":\"REJECT\",\"Qualification\":\"as authority\",\"Provenance\":{\"SourcePath\":\"Docs/research/living-world/results/PA-01.md\",\"Anchor\":\"| DL-14 | donor M9/M10/`WorldState`/schema/API ownership | **REJECT** as authority | historical implementation routing is stripped |\",\"SourceDigest\":\"ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177\"}}",
+          "query_receipt": {
+            "args": [
+              "pa-disposition",
+              "pa01",
+              "DL-14"
+            ],
+            "output_sha256": "a7a773994570f6ceb8caa74993e92e9eb0d79c997002c25e42cad26f77570e9b",
+            "provenance": {
+              "SourcePath": "Docs/research/living-world/results/PA-01.md",
+              "Anchor": "| DL-14 | donor M9/M10/`WorldState`/schema/API ownership | **REJECT** as authority | historical implementation routing is stripped |",
+              "SourceDigest": "ab1cba38c9e2dad6135beecdb62fdcbb2ff4657df86c60530c5c1caae05c5177"
+            }
+          }
+        },
+        {
+          "id": "dw-pa01-dl11-row",
+          "source_path": "Docs/research/living-world/results/PA-01.md",
+          "source_blob": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+          "origin": "source_excerpt",
+          "selector": "| DL-11 | exact physical off-screen path simulation | **REJECT**",
+          "text": "| DL-11 | exact physical off-screen path simulation | **REJECT** as requirement | no PA-01 product need justifies exact hidden route execution |"
+        },
+        {
+          "id": "dw-pa01-dl12-row",
+          "source_path": "Docs/research/living-world/results/PA-01.md",
+          "source_blob": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+          "origin": "source_excerpt",
+          "selector": "| DL-12 | unique executable 24h script for every visible citizen | **REJECT**",
+          "text": "| DL-12 | unique executable 24h script for every visible citizen | **REJECT** | use reusable semantics plus meaningful authored differences |"
+        },
+        {
+          "id": "dw-pa01-dl13-row",
+          "source_path": "Docs/research/living-world/results/PA-01.md",
+          "source_blob": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+          "origin": "source_excerpt",
+          "selector": "| DL-13 | exact static capacity/travel checker architecture | **LATER**",
+          "text": "| DL-13 | exact static capacity/travel checker architecture | **LATER** | useful validation target, but not proven prior-art mechanism and not frozen here |"
+        },
+        {
+          "id": "dw-pa01-dl14-row",
+          "source_path": "Docs/research/living-world/results/PA-01.md",
+          "source_blob": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+          "origin": "source_excerpt",
+          "selector": "| DL-14 | donor M9/M10/`WorldState`/schema/API ownership | **REJECT**",
+          "text": "| DL-14 | donor M9/M10/`WorldState`/schema/API ownership | **REJECT** as authority | historical implementation routing is stripped |"
+        }
+      ]
+    }
+  },
+  "structural": true,
+  "median_ctx_bytes": 2258.5,
+  "median_dw_bytes": 1380.5,
+  "saving": 0.3887535975204782
+}
