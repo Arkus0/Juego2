@@ -24,7 +24,7 @@ def materialize(item,baseline,authority):
     path=item["source_path"]; require(authority.get(path)==blob(baseline,path),f"authority drift: {path}")
     if item["origin"]=="source_excerpt":
         text=extract(source(baseline,path),item["extract"]); require(item["selector"] in text,f"selector absent: {item['id']}"); return {"id":item["id"],"source_path":path,"source_blob":authority[path],"origin":"source_excerpt","selector":item["selector"],"text":text}
-    require(item["origin"]=="dw_query","unknown origin"); text,obj=query(item["query_args"]); prov=obj.get("Provenance") or {}; require(prov.get("SourcePath")==path,f"query provenance mismatch: {item['id']}"); return {"id":item["id"],"source_path":path,"source_blob":authority[path],"origin":"dw_query","selector":item["selector"],"text":text,"query_receipt":{"args":item["query_args"],"output_sha256":sha(text),"provenance":prov}}
+    require(item["origin"]=="dw_query","unknown origin"); text,obj=query(item["query_args"]); prov=obj.get("Provenance") or {}; src=source(baseline,path); require(prov.get("SourcePath")==path and prov.get("SourceDigest")==sha(src),f"query provenance mismatch: {item['id']}"); return {"id":item["id"],"source_path":path,"source_blob":authority[path],"source_sha256":sha(src),"origin":"dw_query","selector":item["selector"],"text":text,"query_receipt":{"args":item["query_args"],"output_sha256":sha(text),"provenance":prov}}
 def build(fc):
     f=load(fc,FREEZE); require(blob(fc,FREEZE)==blob("HEAD",FREEZE),"freeze drift"); require(blob(fc,PLAN)==f["context_plan_blob"]==blob("HEAD",PLAN),"context plan drift")
     p=load(fc,PLAN); pre=load(f["precalibration_commit"],PRE); require(p["selected"]==f["selected"],"plan selection drift")

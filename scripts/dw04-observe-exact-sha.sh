@@ -136,7 +136,7 @@ root = str(Path('.').resolve())
 cases = [
     (['city', 'loc.casco.shared_court'], 'Docs/production/CITY_LOCATION_PROGRAMME.md', 'SourceRow'),
     (['city', 'loc.puerto.landing'], 'Docs/production/CITY_LOCATION_PROGRAMME.md', 'SourceRow'),
-    (['pa-finding', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
+    (['pa-disposition', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
     (['pa-fixture', 'pa04', 'NC-02'], 'Docs/research/living-world/results/PA-04.md', 'MaterialText'),
     (['pa-fixture', 'pa05', 'NC-02'], 'Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md', 'MaterialText'),
 ]

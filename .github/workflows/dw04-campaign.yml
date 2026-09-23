@@ -110,7 +110,7 @@ jobs:
           test "${PR_NUMBER}" = "150"
           marker="DW04 campaign: ACCEPTANCE ${TARGET_SHA}"
           jq -e --arg marker "${marker}" '.pull_request.draft == true and .pull_request.head.repo.full_name == .repository.full_name and ((.pull_request.body // "") | contains($marker))' "${GITHUB_EVENT_PATH}" >/dev/null
-          freeze="$(git log --format=%H --diff-filter=A -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json | head -1)"
+          freeze="$(git log -1 --format=%H "${TARGET_SHA}" -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
           assembly="$(git log --format=%H --diff-filter=A -- Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json | head -1)"
           test -n "${freeze}" && test -n "${assembly}"
           git merge-base --is-ancestor "${freeze}" "${assembly}"
@@ -125,6 +125,16 @@ jobs:
         with: {global-json-file: global.json}
       - name: Build frozen retrieval adapter
         run: dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
+      - name: Verify frozen substrate before campaign claim
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY2'
+          import json,subprocess
+          f=json.load(open('Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json')); p=json.load(open('Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json')); assert p['canonical_executor']=='scripts/dw04-acceptance-execute.py' and p['canonical_workflow']=='.github/workflows/dw04-campaign.yml'
+          for path,key in [('scripts/dw04-trial.py','scorer'),('scripts/dw04-acceptance-assemble.py','assembler'),('scripts/dw04-acceptance-execute.py','executor'),('scripts/dw04-acceptance-audit.py','audit'),('scripts/dw04-openrouter-luna-adapter.py','adapter'),('tools/Arkus.Dw04.Retrieval/Program.cs','retrieval'),('.github/workflows/dw04-assemble.yml','assembly_workflow'),('.github/workflows/dw04-campaign.yml','workflow'),('scripts/dw04-verify-exact-sha.sh','verifier')]: assert subprocess.check_output(['git','rev-parse',f'HEAD:{path}']).decode().strip()==p['script_blobs'][key],key
+          a=json.load(open('Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json')); assert a['freeze_commit']==f.get('effective_freeze_commit',a['freeze_commit']); assert a.get('structural') is True and a.get('saving',0)>=0.30
+          PY2
       - name: Claim unique durable acceptance campaign
         env: {GH_TOKEN: '${{ github.token }}'}
         shell: bash
@@ -140,7 +150,7 @@ jobs:
           jq -n --arg name 'DW-04 acceptance campaign start' --arg head_sha "${TARGET_SHA}" --arg external_id "${campaign_id}" '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"neutral",output:{title:"DW-04 acceptance campaign claimed",summary:"Unique exact-SHA 36-call campaign claimed before provider calls."}}' | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
       - name: Execute exactly 36 frozen paired calls
         env: {OPENROUTER_API_KEY: '${{ secrets.OPENROUTER_API_KEY }}'}
-        run: python3 scripts/dw04-acceptance-execute.py --freeze-commit "${DW04_FREEZE_COMMIT}" --assembly-commit "${DW04_ASSEMBLY_COMMIT}" --output artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl
+        run: python3 scripts/dw04-acceptance-execute.py --freeze-commit "${DW04_FREEZE_COMMIT}" --assembly-commit "${DW04_ASSEMBLY_COMMIT}" --output artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl --raw-output artifacts/observed/dw04-acceptance/ACCEPTANCE_PROVIDER_RAW.jsonl
       - name: Audit paired result
         shell: bash
         run: |

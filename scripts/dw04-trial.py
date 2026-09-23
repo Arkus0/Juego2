@@ -229,7 +229,7 @@ def context_check(freeze, assembly, pre, selected):
                             "unverified non-source fragment")
                     query = f["query_receipt"]
                     argv = query.get("args", [])
-                    require(argv and argv[0] in ("city", "pa-fixture", "pa-finding") and
+                    require(argv and argv[0] in ("city", "pa-fixture", "pa-finding", "pa-disposition") and
                             digest(f["text"].encode()) == query.get("output_sha256"), "typed query receipt/context mismatch")
                     key = tuple(argv)
                     if key not in queries:
