@@ -24,6 +24,18 @@ DW-05 adds one structurally different neutral observatory/calibration graph exer
 5. External packaging/versioning and fresh-repository consumption require their own executable evidence.
 6. DW-04's quality/context result remains bounded to its frozen experiment and cannot serve as a blanket adoption decision.
 
+## Limitations that remain after the bounded stress
+
+The machine-readable classification is authoritative for this planning input, but the material open/bounded classes are stated here explicitly rather than hidden behind a pointer:
+
+- **Generic/DW tooling limits:** explicit source-adapter definitions are still required; provenance is conservatively whole-document-digest-bound; future PA shapes/domains and unstructured narrative can require reviewed DW extension; CITY/PA provider colocation and the lingering DW-03 nullability suppression remain implementation/product-boundary debt.
+- **Domain-owned limits:** future CITY source schemas/identity families, district ontology meaning, consumer-required semantic relations and PA evidence-attribution granularity remain owned by their source/domain consumers rather than H0.
+- **Runtime/Unity limits:** runtime access state, realized traversal evidence, geometry/Unity conformance, runtime realization and design↔Unity drift remain unproven by DW.
+- **Evidence/generalization limits:** DW-04 model variance/statistical power, context-quality generalization and provider token/cost observations remain bounded/diagnostic; arbitrary-domain universality is explicitly rejected as a current claim.
+- **Productization limits:** external-repository consumption/versioned packaging, production cost/effort and actual content-catalogue coverage remain unproven.
+
+The exact ids, status and causal owner for every item are in `LIMITATIONS_MANIFEST.json`; the independent source anchors that prevent residual omission are in `PREDECESSOR_RESIDUAL_INVENTORY.json`.
+
 ## Optional downstream opportunities — not contracts
 
 - `design-unity-drift` — prerequisite: accepted H1 normalized/effective Unity observation boundary; owner for planning disposition: H2.
