@@ -17,6 +17,10 @@ object Provenance(DesignAuthorityAnchor p) => new
 {
     p.AuthorityId, p.SourcePath, p.Anchor, p.SourceDigest, p.AnchorDigest
 };
+object CompactPaProvenance(DesignAuthorityAnchor p) => new
+{
+    p.SourcePath, p.Anchor
+};
 
 if (args[1] == "city" && args.Length == 3)
 {
@@ -49,11 +53,14 @@ if ((args[1] == "pa-fixture" || args[1] == "pa-finding") && args.Length == 4)
     PaCorpusQueryRecord row = args[1] == "pa-fixture"
         ? dataset.Queries.Fixture(args[2], args[3])
         : dataset.Queries.ByPa(args[2], "finding").Single(x => x.SourceKey == args[3]);
+
+    // DW-04 uses PA queries as a compact navigation/provenance index and opens
+    // exact accepted source bytes on demand. Deliberately do not inject the full
+    // material/disposition body here; source truth remains in accepted PA files.
     Console.WriteLine(JsonSerializer.Serialize(new
     {
         row.FactId, row.PaId, row.RecordKind, row.SourceKey,
-        row.MaterialText, row.DispositionText,
-        Provenance = Provenance(row.Provenance)
+        Provenance = CompactPaProvenance(row.Provenance)
     }, jsonOptions));
     return;
 }
