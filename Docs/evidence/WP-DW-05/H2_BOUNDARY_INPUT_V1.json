@@ -1,0 +1,86 @@
+{
+  "schema": "dw05-h2-boundary-input-v1",
+  "baseline_sha": "18d4aa33be526c65a53796aa305a56fe8df15d12",
+  "authority": "PLANNING_INPUT_ONLY",
+  "accepted_capabilities": [
+    "generic-typed-fact-envelope",
+    "generic-typed-relations",
+    "source-authority-provenance",
+    "fail-closed-missing-stale-ambiguous-provenance",
+    "deterministic-normalized-projection",
+    "clean-rebuild-equality",
+    "projection-diff",
+    "public-derived-fact-querying",
+    "generic-h0-world-object-extension-projection",
+    "bounded-city-consumer",
+    "bounded-pa-consumer",
+    "bounded-dw04-context-quality-evidence"
+  ],
+  "exercised_by_consumer": {
+    "CITY": [
+      "typed-facts-and-relations",
+      "source-provenance",
+      "independent-domain-semantic-oracles",
+      "complete-declared-production-query-universes",
+      "deterministic-content-shape-projection"
+    ],
+    "PA": [
+      "typed-findings-evidence-dispositions-fixtures-relations",
+      "exact-source-provenance",
+      "independent-source-corpus-oracle",
+      "compact-deterministic-query-index",
+      "query-completeness-oracle"
+    ],
+    "DW04_trial": [
+      "bounded-structured-context-retrieval",
+      "bounded-required-facts-blockers-verdict-preservation",
+      "bounded-source-context-byte-reduction"
+    ]
+  },
+  "neutral_probe_exercised": [
+    "string-integer-boolean-decimal-fields",
+    "multiple-neutral-fact-types",
+    "typed-relations",
+    "public-DesignWorldProjection.Facts-query",
+    "authority-anchor-resolution",
+    "generic-projection-validator",
+    "h0-world-object-extension-surface",
+    "deterministic-rebuild",
+    "projection-diff",
+    "missing-provenance-negative",
+    "stale-provenance-negative",
+    "relation-target-outside-universe-negative",
+    "transitive-h0-kernel-leakage-audit"
+  ],
+  "required_consequences": [
+    "Preserve accepted source documents as semantic authority; DW remains derived and rebuildable.",
+    "Preserve the generic fact/relation/provenance envelope without CITY/PA semantics in H0.",
+    "Keep semantic necessity/cardinality oracles with the owning domain/consumer rather than teaching H0 domain rules.",
+    "Keep provenance/rebuild fail-closed behavior as a public-boundary requirement.",
+    "Treat DW-04 quality/context evidence as bounded to its frozen experiment.",
+    "Route packaging/versioning and external-consumer claims to H2 rather than inferring them from in-repo project references."
+  ],
+  "optional_opportunities": [
+    "design-unity-drift",
+    "generated-art-briefs",
+    "content-catalogue-coverage",
+    "replay-qa",
+    "narrative-knowledge-checks"
+  ],
+  "rejected_or_premature": [
+    "general-dw-adoption-decision",
+    "arbitrary-domain-universality",
+    "external-repository-consumability",
+    "automatic-domain-semantic-oracle-generation",
+    "automatic-production-cost-estimation",
+    "unity-drift-as-current-dw-capability",
+    "generated-art-briefs-as-current-dw-capability"
+  ],
+  "claims": {
+    "arbitrary_domain_universality": false,
+    "external_repository_consumability": false,
+    "general_dw_adoption_authorized": false,
+    "h2_scope_binding": false
+  },
+  "limitations_manifest": "Docs/evidence/WP-DW-05/LIMITATIONS_MANIFEST.json"
+}
