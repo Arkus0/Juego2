@@ -26,21 +26,21 @@
       "evidence_ids": ["CITY02:§4:loc.casco.bar"]
     },
     "C-CITY-02": {
-      "prompt": "Does the bus arrival threshold promise a deep enterable interior? Give the accepted importance, spatial depth and interior classifications. Canonical facts keys: importance, spatial_depth, interior. If the supplied accepted row disproves the proposed deep interior, use blocker id deep_interior_unpromised and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied loc.entrada.arrival CITY-02 row is CITY02:§4:loc.entrada.arrival.",
+      "prompt": "Does the bus arrival threshold promise a deep enterable interior? Give the accepted classifications. Canonical facts keys: importance, spatial_depth, interior. If the supplied accepted row disproves the proposed deep interior, use blocker id deep_interior_unpromised and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied loc.entrada.arrival CITY-02 row is CITY02:§4:loc.entrada.arrival.",
       "fact_keys": ["importance", "spatial_depth", "interior"],
       "allowed_blockers": ["deep_interior_unpromised"],
       "allowed_verdicts": ["REPORT", "REJECT"],
       "evidence_ids": ["CITY02:§4:loc.entrada.arrival"]
     },
     "C-PA-01": {
-      "prompt": "Does PA-02 permit actor initiative to depend on a player/quest/script trigger? Identify the relevant negative fixture and the autonomy requirements. Canonical facts keys: fixture, player_trigger_required, actor_decision_without_player. Use string values only. If the supplied control rejects player/quest/script triggering as the source of the actor action, use blocker id player_trigger_fake_agency and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied PA-02 NC-01 block is PA02:§9:NC-01.",
+      "prompt": "Does PA-02 permit actor initiative to depend on a player/quest/script trigger? Identify the relevant negative fixture and the autonomy requirement when the player is absent. Canonical facts keys: fixture, player_trigger_required, actor_decision_without_player. Use string values only. If the supplied control rejects player/quest/script triggering as the source of the actor action, use blocker id player_trigger_fake_agency and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied PA-02 NC-01 block is PA02:§9:NC-01.",
       "fact_keys": ["fixture", "player_trigger_required", "actor_decision_without_player"],
       "allowed_blockers": ["player_trigger_fake_agency"],
       "allowed_verdicts": ["REPORT", "REJECT"],
       "evidence_ids": ["PA02:§9:NC-01"]
     },
     "C-PA-02": {
-      "prompt": "Review an assumption that an A-to-B relationship edge implies or overwrites the reverse B-to-A edge; recover the PA-03 NC-01 asymmetry control. Canonical facts keys: fixture, A_to_B_implies_B_to_A, B_to_A_stays_LOW. Use string values only. If the supplied control rejects mirroring/substitution of the directed edge, use blocker id directional_edge_mirroring and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied PA-03 NC-01 block is PA03:§8:NC-01.",
+      "prompt": "Review an assumption that an A-to-B relationship edge implies the reverse B-to-A edge; recover the PA-03 NC-01 asymmetry control. Canonical facts keys: fixture, A_to_B_implies_B_to_A, B_to_A_stays_LOW. Use string values only. If the supplied control rejects mirroring/substitution of the directed edge, use blocker id directional_edge_mirroring and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied PA-03 NC-01 block is PA03:§8:NC-01.",
       "fact_keys": ["fixture", "A_to_B_implies_B_to_A", "B_to_A_stays_LOW"],
       "allowed_blockers": ["directional_edge_mirroring"],
       "allowed_verdicts": ["REPORT", "REJECT"],
