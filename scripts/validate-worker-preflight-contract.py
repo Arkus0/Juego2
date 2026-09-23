@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Regression guard for Batch A Worker-preflight execution semantics.
+"""Simple regression guard for the Batch A Worker-preflight contract.
 
 The contract has two valid executors: local exact-SDK execution and a repository-owned
-pull-request workflow used when the Worker environment lacks that SDK. This checker prevents
-future edits from silently making chat/cloud Workers NOT_READY again or weakening the
-PR+SHA identity of delegated evidence.
+pull-request workflow used when the Worker environment lacks that SDK. This checker intentionally
+performs shallow textual checks for the expected wiring and commands. It is not a Bash/YAML
+interpreter and does not prove command reachability; actual execution is established by the
+preflight and CI runs themselves.
 """
 
 from __future__ import annotations
@@ -16,11 +17,14 @@ import sys
 SURFACES = {
     "local": Path("scripts/worker-preflight.sh"),
     "workflow": Path(".github/workflows/worker-preflight.yml"),
+    "main_safety": Path(".github/workflows/main-safety.yml"),
     "implement": Path(".agents/skills/implement-workpack/SKILL.md"),
     "repair": Path(".agents/skills/repair-workpack/SKILL.md"),
     "protocol": Path("Docs/engineering/WORKER_REVIEW_PROTOCOL.md"),
     "plan": Path("Docs/engineering/OPERATIONAL_HARDENING_BATCHES.md"),
 }
+
+LOCKED_RESTORE = "dotnet restore Juego2.sln --locked-mode"
 
 
 def validate_texts(texts: dict[str, str]) -> list[str]:
@@ -28,6 +32,7 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
 
     local = texts.get("local", "")
     workflow = texts.get("workflow", "")
+    main_safety = texts.get("main_safety", "")
     implement = texts.get("implement", "")
     repair = texts.get("repair", "")
     protocol = texts.get("protocol", "")
@@ -36,7 +41,7 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
     local_required = [
         "WORKER_PREFLIGHT_DELEGATION_REQUIRED",
         "WORKER_PREFLIGHT_GREEN",
-        "dotnet restore Juego2.sln",
+        LOCKED_RESTORE,
         "dotnet build Juego2.sln",
         "dotnet test Juego2.sln",
         "validate-worker-preflight-context.py --self-test",
@@ -51,7 +56,7 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
         "ref: ${{ github.event.pull_request.head.sha }}",
         "global-json-file: global.json",
         "validate-worker-preflight-context.py",
-        "dotnet restore Juego2.sln",
+        f"run: {LOCKED_RESTORE}",
         "dotnet build Juego2.sln --no-restore -c Release",
         "dotnet test Juego2.sln --no-build --no-restore -c Release",
         "Simulate chat Worker without resolvable exact SDK",
@@ -63,6 +68,15 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
     for token in workflow_required:
         if token not in workflow:
             errors.append(f"delegated workflow missing {token!r}")
+
+    main_safety_required = [
+        f"run: {LOCKED_RESTORE}",
+        "dotnet build Juego2.sln --no-restore -c Release",
+        "dotnet test Juego2.sln --no-build --no-restore -c Release",
+    ]
+    for token in main_safety_required:
+        if token not in main_safety:
+            errors.append(f"Main Safety missing {token!r}")
 
     for name, text in (
         ("implement", implement),
@@ -98,8 +112,31 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
 
 def self_test() -> None:
     base = {
-        "local": "WORKER_PREFLIGHT_DELEGATION_REQUIRED WORKER_PREFLIGHT_GREEN dotnet restore Juego2.sln dotnet build Juego2.sln dotnet test Juego2.sln validate-worker-preflight-context.py --self-test",
-        "workflow": "pull_request: worker-preflight-pr-${{ github.event.pull_request.number }} ref: ${{ github.event.pull_request.head.sha }} global-json-file: global.json validate-worker-preflight-context.py dotnet restore Juego2.sln dotnet build Juego2.sln --no-restore -c Release dotnet test Juego2.sln --no-build --no-restore -c Release Simulate chat Worker without resolvable exact SDK SIMULATED_CHAT_WORKER_DELEGATION_GREEN gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\" WORKER_PREFLIGHT_DELEGATED_GREEN Workflow run ID:",
+        "local": """WORKER_PREFLIGHT_DELEGATION_REQUIRED
+WORKER_PREFLIGHT_GREEN
+dotnet restore Juego2.sln --locked-mode
+dotnet build Juego2.sln
+dotnet test Juego2.sln
+validate-worker-preflight-context.py --self-test
+""",
+        "workflow": """pull_request:
+worker-preflight-pr-${{ github.event.pull_request.number }}
+ref: ${{ github.event.pull_request.head.sha }}
+global-json-file: global.json
+validate-worker-preflight-context.py
+run: dotnet restore Juego2.sln --locked-mode
+dotnet build Juego2.sln --no-restore -c Release
+dotnet test Juego2.sln --no-build --no-restore -c Release
+Simulate chat Worker without resolvable exact SDK
+SIMULATED_CHAT_WORKER_DELEGATION_GREEN
+gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\"
+WORKER_PREFLIGHT_DELEGATED_GREEN
+Workflow run ID:
+""",
+        "main_safety": """run: dotnet restore Juego2.sln --locked-mode
+dotnet build Juego2.sln --no-restore -c Release
+dotnet test Juego2.sln --no-build --no-restore -c Release
+""",
         "implement": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
         "repair": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
         "protocol": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
@@ -109,7 +146,10 @@ def self_test() -> None:
 
     mutations = [
         ("local", "WORKER_PREFLIGHT_DELEGATION_REQUIRED", ""),
+        ("local", LOCKED_RESTORE, "dotnet restore Juego2.sln"),
         ("workflow", "ref: ${{ github.event.pull_request.head.sha }}", "ref: main"),
+        ("workflow", f"run: {LOCKED_RESTORE}", "run: dotnet restore Juego2.sln"),
+        ("main_safety", f"run: {LOCKED_RESTORE}", "run: dotnet restore Juego2.sln"),
         ("workflow", "SIMULATED_CHAT_WORKER_DELEGATION_GREEN", ""),
         ("workflow", "gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\"", ""),
         ("protocol", "WORKER_PREFLIGHT_DELEGATED_GREEN", ""),
