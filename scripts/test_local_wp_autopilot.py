@@ -178,6 +178,22 @@ class RoutingTests(unittest.TestCase):
                        {"state": "OWNER_CONTINUE", "target sha": sha, "fail count": "3"}]
         self.assertFalse(module.owner_authorized_continuation(count_three, 2))
         self.assertTrue(module.owner_authorized_continuation(count_three, 3))
+        rows.append({"state": "CONTINUE_EXPIRED", "target sha": sha, "fail count": "2"})
+        with self.assertRaisesRegex(module.StopFlow, "expired or became unavailable"):
+            module.owner_authorized_continuation(rows, 3)
+
+    def test_expired_offer_cannot_be_redispatched(self):
+        sha = "a" * 40
+        rows = [{"state": "SECOND_FAIL_OFFERED", "target sha": sha, "fail count": "2"},
+                {"state": "CONTINUE_EXPIRED", "target sha": sha, "fail count": "2"}]
+        with patch.object(module, "local_markers", return_value=rows), \
+             self.assertRaisesRegex(module.StopFlow, "expired or became unavailable"):
+            module.offer_continue(123, sha, 2, "H1-03", "Decision")
+        stale = [{"state": "SECOND_FAIL_OFFERED", "target sha": sha, "fail count": "2",
+                  "_created_at": "2020-01-01T00:00:00Z"}]
+        with patch.object(module, "local_markers", return_value=stale), \
+             self.assertRaisesRegex(module.StopFlow, "offer is stale"):
+            module.offer_continue(123, sha, 2, "H1-03", "Decision")
 
     def test_marker_provenance_matches_state(self):
         sha = "a" * 40

@@ -13,12 +13,14 @@ import os
 import re
 import subprocess
 import time
+from datetime import datetime
 from urllib.error import URLError
 from urllib.request import Request, urlopen
 
 REPO = "Arkus0/Juego2"
 SHA_RE = re.compile(r"[0-9a-f]{40}\Z")
 REVIEW_ID_RE = re.compile(r"[0-9a-f]{32}\Z")
+CONTINUE_OFFER_TTL = 21000
 
 
 class ReceiverError(Exception):
@@ -81,6 +83,15 @@ def authorized_click(query: dict, chat_id: int, pr: int, sha: str, fail_count: i
             chat.get("id") == chat_id and sender.get("id") == chat_id)
 
 
+def fresh_offer(created_at: str, now: float | None = None) -> bool:
+    try:
+        stamp = datetime.fromisoformat(created_at.replace("Z", "+00:00")).timestamp()
+    except (ValueError, TypeError):
+        return False
+    age = (time.time() if now is None else now) - stamp
+    return -120 <= age <= CONTINUE_OFFER_TTL
+
+
 def validate_current(pr: int, sha: str, fail_count: int) -> str:
     current = github(f"repos/{REPO}/pulls/{pr}")
     if current.get("state") != "open" or current.get("merged") or current.get("draft"):
@@ -92,12 +103,19 @@ def validate_current(pr: int, sha: str, fail_count: int) -> str:
         raise ReceiverError("Frozen SHA mismatch")
     raw = github(f"repos/{REPO}/issues/{pr}/comments?per_page=100")
     comments = flatten_comments(raw)
-    offered = any((item.get("user") or {}).get("login") == "Arkus0" and
-                  marker(item.get("body") or "", "SECOND_FAIL_OFFERED", sha, fail_count) for item in comments)
+    offers = [item for item in comments if (item.get("user") or {}).get("login") == "Arkus0" and
+              marker(item.get("body") or "", "SECOND_FAIL_OFFERED", sha, fail_count)]
     continued = any((item.get("user") or {}).get("login") == "github-actions[bot]" and
                     marker(item.get("body") or "", "OWNER_CONTINUE", sha, fail_count) for item in comments)
-    if not offered:
+    expired = any((item.get("user") or {}).get("login") == "github-actions[bot]" and
+                  any(marker(item.get("body") or "", state, sha, fail_count)
+                      for state in ("CONTINUE_EXPIRED", "CONTINUE_UNAVAILABLE")) for item in comments)
+    if not offers:
         raise ReceiverError("No matching second-FAIL offer")
+    if not all(fresh_offer(item.get("created_at", "")) for item in offers):
+        raise ReceiverError("Owner-continue offer is stale; PC required")
+    if expired:
+        raise ReceiverError("Owner-continue decision expired or became unavailable; PC required")
     if continued:
         return "already"
     reviews = flatten_comments(github(f"repos/{REPO}/pulls/{pr}/reviews?per_page=100"))

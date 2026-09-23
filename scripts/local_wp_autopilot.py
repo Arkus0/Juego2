@@ -18,6 +18,7 @@ import time
 import uuid
 from contextlib import contextmanager
 from dataclasses import dataclass
+from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Self
@@ -28,6 +29,7 @@ SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 REVIEW_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 TOKEN_ENV = ("OPENAI_API_KEY", "OPENROUTER_API_KEY", "ANTHROPIC_API_KEY",
              "AZURE_OPENAI_API_KEY", "CODEX_API_KEY", "OPENAI_BASE_URL")
+CONTINUE_OFFER_TTL = 21000
 
 
 class StopFlow(Exception):
@@ -142,11 +144,23 @@ def owner_authorized_continuation(rows: list[dict[str, str]], fail_count: int) -
     # existed; a count-3 click must be accepted without permitting count 4.
     offers = {(row.get("target sha", "").lower(), row.get("fail count")) for row in rows
               if row.get("state") == "SECOND_FAIL_OFFERED" and row.get("fail count") in {"2", "3"}}
+    if any(row.get("state") in {"CONTINUE_EXPIRED", "CONTINUE_UNAVAILABLE"} and
+           (row.get("target sha", "").lower(), row.get("fail count")) in offers for row in rows):
+        raise StopFlow("Owner-continue decision expired or became unavailable; PC required")
     return any(row.get("state") == "OWNER_CONTINUE" and
                row.get("fail count") in {"2", "3"} and
                int(row["fail count"]) <= fail_count < 4 and
                (row.get("target sha", "").lower(), row["fail count"]) in offers
                for row in rows)
+
+
+def fresh_offer(created_at: str, now: float | None = None) -> bool:
+    try:
+        stamp = datetime.fromisoformat(created_at.replace("Z", "+00:00")).timestamp()
+    except (ValueError, TypeError):
+        return False
+    age = (time.time() if now is None else now) - stamp
+    return -120 <= age <= CONTINUE_OFFER_TTL
 
 
 @lru_cache(maxsize=4)
@@ -431,8 +445,14 @@ def dispatch_continue_receiver(pr: int, sha: str, fail_count: int) -> None:
 
 def offer_continue(pr: int, sha: str, fail_count: int, wp: str, detail: str) -> None:
     existing = local_markers(pr)
-    if not any(row.get("state") == "SECOND_FAIL_OFFERED" and row.get("target sha") == sha and
-               row.get("fail count") == str(fail_count) for row in existing):
+    if any(row.get("state") in {"CONTINUE_EXPIRED", "CONTINUE_UNAVAILABLE"} and
+           row.get("target sha") == sha and row.get("fail count") == str(fail_count) for row in existing):
+        raise StopFlow("Owner-continue decision expired or became unavailable; PC required")
+    offers = [row for row in existing if row.get("state") == "SECOND_FAIL_OFFERED" and
+              row.get("target sha") == sha and row.get("fail count") == str(fail_count)]
+    if offers and not all(fresh_offer(row.get("_created_at", "")) for row in offers):
+        raise StopFlow("Owner-continue offer is stale; PC required before any receiver restart")
+    if not offers:
         body = ("ARKUS_LOCAL_AUTOPILOT\nState: SECOND_FAIL_OFFERED\n"
                 f"Target SHA: {sha}\nFail count: {fail_count}\n"
                 "Detail: Luna classified the latest FAIL as valid; owner may authorize bounded continuation. No PASS or proof claim.\n")
@@ -451,12 +471,12 @@ async def wait_for_owner_continue(pr: int, sha: str, fail_count: int, timeout: i
         if current.get("state") != "open" or current["head"]["sha"].lower() != sha:
             raise StopFlow("PR changed while awaiting Telegram owner decision")
         rows = local_markers(pr)
-        if any(row.get("state") == "OWNER_CONTINUE" and row.get("target sha") == sha and
-               row.get("fail count") == str(fail_count) for row in rows):
-            return
         if any(row.get("state") in {"CONTINUE_UNAVAILABLE", "CONTINUE_EXPIRED"} and
                row.get("target sha") == sha and row.get("fail count") == str(fail_count) for row in rows):
             raise StopFlow("Telegram continue receiver unavailable or expired; PC intervention required")
+        if any(row.get("state") == "OWNER_CONTINUE" and row.get("target sha") == sha and
+               row.get("fail count") == str(fail_count) for row in rows):
+            return
         await asyncio.sleep(30)
     raise StopFlow("Telegram continue button expired without owner decision")
 

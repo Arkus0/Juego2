@@ -4,6 +4,7 @@
 import importlib.util
 import sys
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -40,7 +41,8 @@ class ReceiverTests(unittest.TestCase):
         pr = {"state": "open", "merged": False, "draft": False,
               "head": {"sha": sha}, "body": f"Frozen candidate SHA: {sha}\n"}
         offer = {"body": f"ARKUS_LOCAL_AUTOPILOT\nState: SECOND_FAIL_OFFERED\nTarget SHA: {sha}\nFail count: 2\n",
-                 "user": {"login": "Arkus0"}}
+                 "user": {"login": "Arkus0"},
+                 "created_at": datetime.now(timezone.utc).isoformat()}
         previous_sha = "b" * 40
         fail = {"body": f"Reviewer verdict: FAIL\nReviewed candidate SHA: {sha}\nAutopilot review ID: {'1' * 32}\n",
                 "user": {"login": "Arkus0"}}
@@ -54,6 +56,15 @@ class ReceiverTests(unittest.TestCase):
             module.validate_current(123, sha, 2)
         with patch.object(module, "github", side_effect=[pr, [[offer, fail, previous_fail]], [[fail, previous_fail]]]):
             self.assertEqual(module.validate_current(123, sha, 2), "ready")
+        expired = {"body": f"ARKUS_LOCAL_AUTOPILOT\nState: CONTINUE_EXPIRED\nTarget SHA: {sha}\nFail count: 2\n",
+                   "user": {"login": "github-actions[bot]"}}
+        with patch.object(module, "github", side_effect=[pr, [[offer, expired]]]), \
+             self.assertRaisesRegex(module.ReceiverError, "expired or became unavailable"):
+            module.validate_current(123, sha, 2)
+        stale_offer = dict(offer, created_at="2020-01-01T00:00:00Z")
+        with patch.object(module, "github", side_effect=[pr, [[stale_offer]]]), \
+             self.assertRaisesRegex(module.ReceiverError, "offer is stale"):
+            module.validate_current(123, sha, 2)
         with patch.object(module, "github", side_effect=[pr, [[offer]], [[fail, fail]]]), \
              self.assertRaisesRegex(module.ReceiverError, "FAIL count changed"):
             module.validate_current(123, sha, 2)
