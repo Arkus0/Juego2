@@ -8,6 +8,8 @@ This is a fresh Worker role. It never inherits Reviewer authority.
 
 Read the exact WP, latest independent review, relevant accepted predecessor contract, `AGENTS.md`, and `Docs/engineering/PRODUCT_SHA_CLOSURE.md`. The amendment governs Action cadence, same-SHA protocol repair and DocSync cost; it does not weaken the material blocker or WP acceptance criteria.
 
+Accepted predecessor capsules remain governed by `Docs/engineering/CONTEXT_CAPSULE_V1.md`: use them only for navigation and escalate to exact authoritative sources when stale, lossy, contradictory or material to the repair.
+
 For H1 work requiring Unity/local execution, also follow `Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md` and rerun local evidence only when the repair can materially invalidate it.
 
 ## Flow
