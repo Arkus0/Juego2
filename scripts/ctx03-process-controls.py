@@ -15,7 +15,11 @@ from pathlib import Path
 CHECKER = Path("scripts/context-envelope-check.py")
 CONFIG = Path("Docs/engineering/context-envelope.json")
 ESCALATIONS = Path("Docs/evidence/CTX-03/CONTEXT_ESCALATIONS.json")
-CLOSURE_WORKFLOW = Path(".github/workflows/review-ready-closure.yml")
+STATE_TRANSITIONS_WORKFLOW = Path(".github/workflows/state-transitions.yml")
+OBSOLETE_SECOND_CLOSURE = (
+    Path(".github/workflows/review-ready-closure.yml"),
+    Path("scripts/review-ready-closure.py"),
+)
 
 
 def module(root: Path):
@@ -203,13 +207,28 @@ def run_controls(root: Path) -> list[str]:
         finally:
             p.unlink(missing_ok=True)
 
-    # Workflow-level retry contract: closure must wake both on the original marker
-    # and on later Candidate Validation completion, so an existing same-SHA marker
-    # can be reused after metadata/gate repair without a duplicate marker.
-    workflow = (root / CLOSURE_WORKFLOW).read_text(encoding="utf-8")
-    for token in ("issue_comment:", "workflow_run:", "Arkus Candidate Validation", "review-ready-closed:${PR}:${TARGET_SHA}"):
+    # REVIEW_READY is now the terminal mechanical handoff. Preserve the integrity
+    # that the old second closure pass duplicated: an exact Reviewer verdict can
+    # advance only when a matching REVIEW_READY marker predates that verdict and
+    # still binds the reviewed SHA plus the live validation-context digest.
+    workflow = (root / STATE_TRANSITIONS_WORKFLOW).read_text(encoding="utf-8")
+    for token in (
+        '[[ "${reviewed_sha}" == "${frozen_sha}" ]]',
+        'marker_key="review-ready:${PR}:${reviewed_sha}:${digest}"',
+        'select(.created_at <= $before)',
+        'State: REVIEW_READY',
+        'No context-matching REVIEW_READY marker predating Reviewer verdict',
+        '[[ "${marker_fields[0]}" == "${reviewed_sha}" ]]',
+        '[[ "${marker_fields[4]}" == "${digest}" ]]',
+    ):
         if token not in workflow:
-            errors.append(f"review-ready closure retry contract missing workflow token: {token}")
+            errors.append(f"direct REVIEW_READY integrity contract missing state-transition token: {token}")
+
+    # A second terminal closure phase adds no new authority and previously caused
+    # same-SHA retry loops. Keep it removed rather than letting ceremony regrow.
+    for obsolete in OBSOLETE_SECOND_CLOSURE:
+        if (root / obsolete).exists():
+            errors.append(f"obsolete second REVIEW_READY closure phase reintroduced: {obsolete}")
 
     return errors
 
