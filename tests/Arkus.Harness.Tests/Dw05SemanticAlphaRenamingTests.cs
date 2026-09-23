@@ -16,11 +16,9 @@ namespace Arkus.Harness.Tests
         public void AcceptedCityAndPaGraphsRemainBehaviorallyInvariantUnderSystematicSemanticAlphaRenaming()
         {
             var root = FindRepositoryRoot();
-            var cases = new[]
-            {
-                new DomainCase("city", BuildCityFacts(root)),
-                new DomainCase("pa", BuildPaFacts(root))
-            };
+            var cases = BuildCityCases(root)
+                .Concat(new[] { new DomainCase("pa", BuildPaFacts(root)) })
+                .ToArray();
 
             foreach (var domainCase in cases)
             {
@@ -47,21 +45,26 @@ namespace Arkus.Harness.Tests
         [Fact]
         public void RuntimeDerivedFieldFamilyDependencyThroughIndirectHelperBreaksDifferentialOracle()
         {
-            var cityFacts = BuildCityFacts(FindRepositoryRoot());
-            var family = DeriveRepeatedFieldFamily(cityFacts.SelectMany(fact => fact.Fields.Keys));
+            var cityCases = BuildCityCases(FindRepositoryRoot());
+            var selected = cityCases
+                .Select(domainCase => new FamilyCase(domainCase, TryDeriveRepeatedFieldFamily(
+                    domainCase.Facts.SelectMany(fact => fact.Fields.Keys))))
+                .First(item => item.Family != null);
+            var family = selected.Family!;
+            var cityFacts = selected.Domain.Facts;
             var renamedFacts = AlphaRename(cityFacts);
 
             Assert.True(
                 cityFacts.SelectMany(fact => fact.Fields.Keys)
                     .Distinct(StringComparer.Ordinal)
                     .Count(field => field.StartsWith(family, StringComparison.Ordinal)) >= 3,
-                "The causal control must use a real repeated CITY field family derived from the accepted graph.");
+                "The causal control must use a real repeated CITY field family derived from an accepted projection.");
             Assert.DoesNotContain(
                 renamedFacts.SelectMany(fact => fact.Fields.Keys),
                 field => field.StartsWith(family, StringComparison.Ordinal));
 
-            var original = BuildScenario("city-family-control", cityFacts);
-            var renamed = BuildScenario("city-family-control", renamedFacts);
+            var original = BuildScenario(selected.Domain.Name + "-family-control", cityFacts);
+            var renamed = BuildScenario(selected.Domain.Name + "-family-control", renamedFacts);
             var dependency = new InjectedFamilyDependency(family);
 
             var differences = CompareObservations(
@@ -76,8 +79,8 @@ namespace Arkus.Harness.Tests
         public void DomainVocabularyUsedOnlyAsOpaquePayloadDoesNotCreateBehavioralFalsePositive()
         {
             var root = FindRepositoryRoot();
-            var cityFacts = BuildCityFacts(root);
-            var adoptedDomainText = cityFacts
+            var adoptedDomainText = BuildCityCases(root)
+                .SelectMany(domainCase => domainCase.Facts)
                 .SelectMany(fact => fact.Fields.Keys)
                 .OrderBy(value => value, StringComparer.Ordinal)
                 .First();
@@ -177,11 +180,11 @@ namespace Arkus.Harness.Tests
         private static IReadOnlyList<DesignFact> AlphaRename(IReadOnlyList<DesignFact> facts)
         {
             var inventory = Inventory(facts);
-            var idMap = MakeMap(inventory.Identities, "alpha.fact.");
-            var typeMap = MakeMap(inventory.FactTypes, "alpha-type-");
-            var fieldMap = MakeMap(inventory.Fields, "alpha-field-");
-            var relationMap = MakeMap(inventory.Relations, "alpha-relation-");
-            var valueMap = MakeMap(inventory.CategoricalStringValues, "alpha-value-");
+            var idMap = MakeMap(inventory.Identities, "dw05-alpha.fact.");
+            var typeMap = MakeMap(inventory.FactTypes, "dw05-alpha-type-");
+            var fieldMap = MakeMap(inventory.Fields, "dw05-alpha-field-");
+            var relationMap = MakeMap(inventory.Relations, "dw05-alpha-relation-");
+            var valueMap = MakeMap(inventory.CategoricalStringValues, "dw05-alpha-value-");
             var renamed = new List<DesignFact>(facts.Count);
 
             foreach (var fact in facts)
@@ -341,7 +344,9 @@ namespace Arkus.Harness.Tests
             IReadOnlyCollection<string> renamed)
         {
             Assert.Equal(original.Count, renamed.Count);
-            var overlap = original.Intersect(renamed, StringComparer.Ordinal).OrderBy(value => value, StringComparer.Ordinal).ToArray();
+            var overlap = original.Intersect(renamed, StringComparer.Ordinal)
+                .OrderBy(value => value, StringComparer.Ordinal)
+                .ToArray();
             Assert.True(
                 overlap.Length == 0,
                 domain + " alpha-renaming retained semantic atoms on " + axis + ": " + string.Join(",", overlap));
@@ -375,7 +380,7 @@ namespace Arkus.Harness.Tests
                 .OrderBy(group => group.Key)
                 .Select(group => group.Key + ":" + group.Count().ToString(CultureInfo.InvariantCulture)));
 
-        private static string DeriveRepeatedFieldFamily(IEnumerable<string> fields)
+        private static string? TryDeriveRepeatedFieldFamily(IEnumerable<string> fields)
         {
             var distinct = fields.Distinct(StringComparer.Ordinal).ToArray();
             var candidates = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -393,31 +398,27 @@ namespace Arkus.Harness.Tests
                 }
             }
 
-            var family = candidates
+            return candidates
                 .Where(pair => pair.Value >= 3)
                 .OrderByDescending(pair => pair.Key.Length)
                 .ThenByDescending(pair => pair.Value)
                 .ThenBy(pair => pair.Key, StringComparer.Ordinal)
                 .Select(pair => pair.Key)
                 .FirstOrDefault();
-            if (family == null)
-            {
-                throw new InvalidOperationException("No repeated CITY field family could be structurally derived for the causal control.");
-            }
-
-            return family;
         }
 
-        private static IReadOnlyList<DesignFact> BuildCityFacts(string root)
+        private static IReadOnlyList<DomainCase> BuildCityCases(string root)
         {
             var city = new CityDesignWorldProvider().BuildAndValidate(
                 File.ReadAllText(Path.Combine(root, CityDesignWorldProvider.ProgrammeSourcePath)),
                 File.ReadAllText(Path.Combine(root, CityDesignWorldProvider.BindingSourcePath)),
                 File.ReadAllText(Path.Combine(root, CityDesignWorldProvider.InteriorsSourcePath)));
-            return city.ProgrammeProjection.Facts
-                .Concat(city.BindingProjection.Facts)
-                .Concat(city.InteriorProjection.Facts)
-                .ToArray();
+            return new[]
+            {
+                new DomainCase("city-programme", city.ProgrammeProjection.Facts),
+                new DomainCase("city-binding", city.BindingProjection.Facts),
+                new DomainCase("city-interiors", city.InteriorProjection.Facts)
+            };
         }
 
         private static IReadOnlyList<DesignFact> BuildPaFacts(string root)
@@ -506,6 +507,7 @@ namespace Arkus.Harness.Tests
         }
 
         private sealed record DomainCase(string Name, IReadOnlyList<DesignFact> Facts);
+        private sealed record FamilyCase(DomainCase Domain, string? Family);
         private sealed record Scenario(
             DesignWorldProjection Projection,
             IDesignAuthorityUniverse Universe,
