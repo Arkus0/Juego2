@@ -26,9 +26,12 @@ test -f Docs/evidence/WP-H1-02/PREDECESSOR_CONTRACT_CHECK.md
 test -f Docs/evidence/WP-H1-02/PROOF_PLAN.md
 test -f Docs/evidence/WP-H1-02/DEPENDENCY_ADOPTION.md
 
-python3 scripts/h1-02-static-check.py --mode remote-prep --self-test
-
+# The static boundary checker evaluates the real resolved MSBuild graph, so its
+# accepted project universe must be restored before observation. Restore is
+# locked and only materializes ignored build state; it does not alter product or
+# Unity inputs.
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
+python3 scripts/h1-02-static-check.py --mode remote-prep --self-test
 DOTNET_NOLOGO=1 dotnet build Juego2.sln --configuration Release --no-restore -m:1 --disable-build-servers
 
 result="READY_FOR_LOCAL_VALIDATION"
