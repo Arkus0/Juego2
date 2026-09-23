@@ -2,7 +2,31 @@ name: CTX Process Envelope
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+    types: [opened, synchronize, reopened, ready_for_review]
+    # CTX-03 protects process/context machinery. Product-only WPs should not pay
+    # this suite on every push.
+    paths:
+      - 'AGENTS.md'
+      - '.agents/skills/**'
+      - 'Docs/engineering/CONTEXT_*.md'
+      - 'Docs/engineering/WORKER_REVIEW_PROTOCOL.md'
+      - 'Docs/engineering/PRODUCT_SHA_CLOSURE.md'
+      - 'Docs/engineering/context-bootstrap-profiles.json'
+      - 'Docs/SESSION_HANDOFF/**'
+      - 'Docs/evidence/CTX-03/**'
+      - 'scripts/context-envelope-check.py'
+      - 'scripts/ctx03-*.py'
+      - 'scripts/mechanical-verifier-classifier.py'
+      - 'scripts/review-ready-closure.py'
+      - 'scripts/derive-worker-review-metadata.py'
+      - 'scripts/validate-worker-handoff.py'
+      - 'scripts/validation-context.py'
+      - '.github/workflows/candidate-validation.yml'
+      - '.github/workflows/worker-preflight.yml'
+      - '.github/workflows/review-ready-closure.yml'
+      - '.github/workflows/state-transitions.yml'
+      - '.github/workflows/receipt-freeze-reuse.yml'
+      - '.github/workflows/context-envelope-validation.yml'
   workflow_dispatch:
 
 permissions:

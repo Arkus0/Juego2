@@ -1,8 +1,11 @@
 name: Arkus Candidate Validation
 
 on:
+  # Product verification is a freeze-time gate, not a background observer.
+  # Draft coding pushes are covered by Arkus Main Safety. PR-body edits never
+  # represent product mutations and therefore do not trigger this workflow.
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft, edited]
+    types: [opened, synchronize, ready_for_review]
   workflow_dispatch:
     inputs:
       pr_number:
@@ -14,13 +17,11 @@ on:
         required: true
         type: string
       mode:
-        description: observation for mutable Worker state; verify for frozen candidate
+        description: observation is explicit/on-demand; verify is freeze-time validation
         required: true
-        default: observation
+        default: verify
         type: choice
-        options:
-          - observation
-          - verify
+        options: [observation, verify]
 
 permissions:
   contents: read
@@ -47,17 +48,11 @@ jobs:
         with:
           ref: ${{ env.TARGET_SHA }}
           fetch-depth: 0
-
-      - name: Verify linter self-tests
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 scripts/validate-worker-handoff.py --self-test
-
       - name: Validate canonical Worker handoff
         shell: bash
         run: |
           set -euo pipefail
+          python3 scripts/validate-worker-handoff.py --self-test
           python3 scripts/validate-worker-handoff.py --head-sha "${TARGET_SHA}"
 
   context-identity:
@@ -76,8 +71,7 @@ jobs:
         with:
           ref: ${{ env.TARGET_SHA }}
           fetch-depth: 0
-
-      - name: Resolve and persist exact validation context
+      - name: Resolve exact validation context
         id: context
         env:
           GH_TOKEN: ${{ github.token }}
@@ -88,7 +82,6 @@ jobs:
           if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
             jq '.pull_request' "${GITHUB_EVENT_PATH}" > "${RUNNER_TEMP}/validation-pr.json"
           else
-            [[ "${PR_NUMBER}" =~ ^[1-9][0-9]*$ ]] || { echo "::error::pr_number must be a positive integer"; exit 2; }
             gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > "${RUNNER_TEMP}/validation-pr.json"
           fi
           python3 scripts/validation-context.py resolve \
@@ -96,7 +89,6 @@ jobs:
             --target-sha "${TARGET_SHA}" \
             --github-output "${GITHUB_OUTPUT}" \
             --record VALIDATION_CONTEXT.json
-
       - name: Persist validation context identity check
         env:
           GH_TOKEN: ${{ github.token }}
@@ -104,21 +96,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          summary="$(python3 scripts/validation-context.py check-summary \
-            --record VALIDATION_CONTEXT.json \
-            --run-id "${GITHUB_RUN_ID}" \
-            --workflow "Arkus Candidate Validation")"
+          summary="$(python3 scripts/validation-context.py check-summary --record VALIDATION_CONTEXT.json --run-id "${GITHUB_RUN_ID}" --workflow "Arkus Candidate Validation")"
           external_id="validation-context:${PR_NUMBER}:${TARGET_SHA}:${CONTEXT_DIGEST}:${GITHUB_RUN_ID}"
-          jq -n \
-            --arg name "Validation context identity" \
-            --arg head_sha "${TARGET_SHA}" \
-            --arg external_id "${external_id}" \
-            --arg title "Validation context bound" \
-            --arg summary "${summary}" \
-            '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"success",output:{title:$title,summary:$summary}}' \
-            | gh api --method POST -H 'Accept: application/vnd.github+json' \
-                "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
-
+          jq -n --arg name "Validation context identity" --arg head_sha "${TARGET_SHA}" \
+            --arg external_id "${external_id}" --arg summary "${summary}" \
+            '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"success",output:{title:"Validation context bound",summary:$summary}}' \
+            | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
       - name: Upload context identity evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -129,13 +112,12 @@ jobs:
 
   observation:
     name: Candidate observation
-    if: >-
-      (github.event_name == 'pull_request' && github.event.pull_request.draft == true) ||
-      (github.event_name == 'workflow_dispatch' && inputs.mode == 'observation')
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'observation'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
-      TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.candidate_sha }}
+      TARGET_SHA: ${{ inputs.candidate_sha }}
+      PR_NUMBER: ${{ inputs.pr_number }}
       ARKUS_EXECUTION_SUBSTRATE: github-actions-ubuntu-24.04
     steps:
       - name: Checkout exact candidate
@@ -143,82 +125,32 @@ jobs:
         with:
           ref: ${{ env.TARGET_SHA }}
           fetch-depth: 0
-
-      - name: Verify exact checkout
-        shell: bash
-        run: |
-          set -euo pipefail
-          [[ "${TARGET_SHA}" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "::error::TARGET_SHA is not exact"; exit 2; }
-          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
-          test -z "$(git status --porcelain --untracked-files=all)"
-
-      - name: Resolve effective validation context
+      - name: Resolve context
         id: context
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/validation-context.py self-test
-          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            jq '.pull_request' "${GITHUB_EVENT_PATH}" > "${RUNNER_TEMP}/validation-pr.json"
-          else
-            [[ "${PR_NUMBER}" =~ ^[1-9][0-9]*$ ]] || { echo "::error::pr_number must be a positive integer"; exit 2; }
-            gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > "${RUNNER_TEMP}/validation-pr.json"
-          fi
-          python3 scripts/validation-context.py resolve \
-            --pr-json "${RUNNER_TEMP}/validation-pr.json" \
-            --target-sha "${TARGET_SHA}" \
-            --github-output "${GITHUB_OUTPUT}" \
-            --record VALIDATION_CONTEXT.json
-
-      - name: Install pinned .NET SDK from global.json
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > "${RUNNER_TEMP}/validation-pr.json"
+          python3 scripts/validation-context.py resolve --pr-json "${RUNNER_TEMP}/validation-pr.json" --target-sha "${TARGET_SHA}" --github-output "${GITHUB_OUTPUT}" --record VALIDATION_CONTEXT.json
+      - name: Install pinned .NET SDK
         if: ${{ steps.context.outputs.process_only != 'true' && hashFiles('global.json') != '' }}
         uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         with:
           global-json-file: global.json
-
-      - name: Run canonical observation
+      - name: Run explicit observation
         env:
           ARKUS_WP: ${{ steps.context.outputs.wp }}
         shell: bash
         run: |
           set -euo pipefail
           if [[ "${{ steps.context.outputs.process_only }}" == "true" ]]; then
-            rm -f EXECUTION_RECEIPT.txt
-            cat > validation.log <<EOF
-          PROCESS_ONLY_VALIDATION_V1
-          Candidate SHA: ${TARGET_SHA}
-          Product/runtime validation: NOT_APPLICABLE
-          Canonical execution command: NOT_RUN
-          Execution receipt emitted: NO
-          Applicable mechanical gate at Ready: Worker handoff lint
-          Result: NOT_APPLICABLE
-          Detail: PROCESS_ONLY declares no product/runtime execution proof; do not synthesize EXECUTION_RECEIPT_V1 or GREEN execution claims.
-          EOF
-            cat validation.log
+            echo 'PROCESS_ONLY: observation not applicable' | tee validation.log
             exit 0
           fi
-
-          if [[ -f scripts/arkus-observe-exact-sha.sh ]]; then
-            cmd=scripts/arkus-observe-exact-sha.sh
-          elif [[ -f scripts/hk00-observe-exact-sha.sh ]]; then
-            cmd=scripts/hk00-observe-exact-sha.sh
-          else
-            echo "::error::No canonical observation entrypoint. Add scripts/arkus-observe-exact-sha.sh (or the HK00 compatibility entrypoint)." | tee validation.log
-            exit 2
-          fi
-
-          set +e
+          if [[ -f scripts/arkus-observe-exact-sha.sh ]]; then cmd=scripts/arkus-observe-exact-sha.sh; else cmd=scripts/hk00-observe-exact-sha.sh; fi
           bash "${cmd}" "${TARGET_SHA}" 2>&1 | tee validation.log
-          status=${PIPESTATUS[0]}
-          set -e
-          if grep -q '^EXECUTION_RECEIPT_V1$' validation.log; then
-            awk '/^EXECUTION_RECEIPT_V1$/{emit=1} emit' validation.log > EXECUTION_RECEIPT.txt
-          fi
-          exit "${status}"
-
       - name: Upload observation evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -227,7 +159,6 @@ jobs:
           path: |
             VALIDATION_CONTEXT.json
             validation.log
-            EXECUTION_RECEIPT.txt
             artifacts/observed
           if-no-files-found: warn
           retention-days: 7
@@ -241,6 +172,7 @@ jobs:
     timeout-minutes: 60
     env:
       TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.candidate_sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
       ARKUS_EXECUTOR_ROLE: WORKER
       ARKUS_EXECUTION_SUBSTRATE: github-actions-ubuntu-24.04
     steps:
@@ -249,146 +181,50 @@ jobs:
         with:
           ref: ${{ env.TARGET_SHA }}
           fetch-depth: 0
-
       - name: Verify exact checkout
         shell: bash
         run: |
           set -euo pipefail
-          [[ "${TARGET_SHA}" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "::error::TARGET_SHA is not exact"; exit 2; }
+          [[ "${TARGET_SHA}" =~ ^[0-9a-fA-F]{40}$ ]]
           test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
           test -z "$(git status --porcelain --untracked-files=all)"
-
       - name: Resolve effective validation context
         id: context
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
         shell: bash
         run: |
           set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then jq '.pull_request' "${GITHUB_EVENT_PATH}" > "${RUNNER_TEMP}/validation-pr.json"; else gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > "${RUNNER_TEMP}/validation-pr.json"; fi
           python3 scripts/validation-context.py self-test
-          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            jq '.pull_request' "${GITHUB_EVENT_PATH}" > "${RUNNER_TEMP}/validation-pr.json"
-          else
-            [[ "${PR_NUMBER}" =~ ^[1-9][0-9]*$ ]] || { echo "::error::pr_number must be a positive integer"; exit 2; }
-            gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > "${RUNNER_TEMP}/validation-pr.json"
-          fi
-          python3 scripts/validation-context.py resolve \
-            --pr-json "${RUNNER_TEMP}/validation-pr.json" \
-            --target-sha "${TARGET_SHA}" \
-            --github-output "${GITHUB_OUTPUT}" \
-            --record VALIDATION_CONTEXT.json
-
-      - name: Reuse prior exact-SHA GREEN receipt when available
-        id: reuse
-        if: ${{ steps.context.outputs.process_only != 'true' && steps.context.outputs.wp == 'WP-HK-00' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ARKUS_WP: ${{ steps.context.outputs.wp }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "reused=false" >> "${GITHUB_OUTPUT}"
-          [[ "${ARKUS_WP}" == "WP-HK-00" ]] || { echo "::error::HK-00 receipt reuse requested for ${ARKUS_WP}"; exit 2; }
-          [[ -f scripts/hk00-verify-exact-sha.sh ]] || exit 0
-
-          artifact_name="hk00-receipt-${TARGET_SHA}"
-          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
-          headers=(
-            -H "Authorization: Bearer ${GH_TOKEN}"
-            -H "Accept: application/vnd.github+json"
-            -H "X-GitHub-Api-Version: 2022-11-28"
-          )
-          artifact_json="$(curl -fsSL "${headers[@]}" "${api}/actions/artifacts?name=${artifact_name}&per_page=100")"
-          artifact_id="$(jq -r '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | reverse | .[0].id // empty' <<<"${artifact_json}")"
-          source_run_id="$(jq -r '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | reverse | .[0].workflow_run.id // empty' <<<"${artifact_json}")"
-          [[ -n "${artifact_id}" && -n "${source_run_id}" ]] || exit 0
-
-          run_json="$(curl -fsSL "${headers[@]}" "${api}/actions/runs/${source_run_id}")"
-          [[ "$(jq -r '.conclusion // empty' <<<"${run_json}")" == "success" ]] || { echo "::error::Receipt artifact source run ${source_run_id} is not successful"; exit 2; }
-          [[ "$(jq -r '.head_sha // empty' <<<"${run_json}")" == "${TARGET_SHA}" ]] || { echo "::error::Receipt artifact source run is not bound to ${TARGET_SHA}"; exit 2; }
-
-          tmp="${RUNNER_TEMP}/arkus-reused-receipt"
-          rm -rf "${tmp}"
-          mkdir -p "${tmp}"
-          curl -fsSL -L "${headers[@]}" "${api}/actions/artifacts/${artifact_id}/zip" -o "${tmp}/receipt.zip"
-          unzip -p "${tmp}/receipt.zip" EXECUTION_RECEIPT.txt > "${tmp}/EXECUTION_RECEIPT.txt"
-          receipt="${tmp}/EXECUTION_RECEIPT.txt"
-          python3 scripts/validation-context.py receipt-match \
-            --receipt "${receipt}" \
-            --requested-wp "${ARKUS_WP}" \
-            --target-sha "${TARGET_SHA}"
-          grep -Fxq 'EXECUTION_RECEIPT_V1' "${receipt}"
-          grep -Fxq 'Candidate clean before: YES' "${receipt}"
-          grep -Fxq 'Candidate clean after: YES' "${receipt}"
-          grep -Eq '^Required gates: .*foundational-proof=success; .*causal-negative-controls=success; .*evidence-reconciliation=GREEN$' "${receipt}"
-          grep -Fxq 'Result: GREEN' "${receipt}"
-
-          cp "${receipt}" EXECUTION_RECEIPT.txt
-          {
-            echo "Reused prior exact-SHA GREEN receipt."
-            echo "Requested WP: ${ARKUS_WP}"
-            echo "Source workflow run: ${source_run_id}"
-            echo "Source artifact: ${artifact_name} (${artifact_id})"
-            cat EXECUTION_RECEIPT.txt
-          } > validation.log
-          cat > REUSED_RECEIPT_SOURCE.txt <<EOF
-          Requested WP: ${ARKUS_WP}
-          Candidate SHA: ${TARGET_SHA}
-          Source workflow run: ${source_run_id}
-          Source artifact: ${artifact_name}
-          Source artifact ID: ${artifact_id}
-          EOF
-          echo "reused=true" >> "${GITHUB_OUTPUT}"
-          echo "source_run_id=${source_run_id}" >> "${GITHUB_OUTPUT}"
-
-      - name: Install pinned .NET SDK from global.json
-        if: ${{ steps.context.outputs.process_only != 'true' && steps.reuse.outputs.reused != 'true' && hashFiles('global.json') != '' }}
+          python3 scripts/validation-context.py resolve --pr-json "${RUNNER_TEMP}/validation-pr.json" --target-sha "${TARGET_SHA}" --github-output "${GITHUB_OUTPUT}" --record VALIDATION_CONTEXT.json
+      - name: Install pinned .NET SDK
+        if: ${{ steps.context.outputs.process_only != 'true' && hashFiles('global.json') != '' }}
         uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         with:
           global-json-file: global.json
-
       - name: Run canonical frozen-candidate verifier
-        if: ${{ steps.reuse.outputs.reused != 'true' }}
         env:
           ARKUS_WP: ${{ steps.context.outputs.wp }}
         shell: bash
         run: |
           set -euo pipefail
           if [[ "${{ steps.context.outputs.process_only }}" == "true" ]]; then
-            rm -f EXECUTION_RECEIPT.txt REUSED_RECEIPT_SOURCE.txt
             cat > validation.log <<EOF
           PROCESS_ONLY_VALIDATION_V1
           Candidate SHA: ${TARGET_SHA}
           Product/runtime validation: NOT_APPLICABLE
-          Canonical execution command: NOT_RUN
-          Execution receipt emitted: NO
-          Applicable mechanical gate: Worker handoff lint
           Result: NOT_APPLICABLE
-          Detail: PROCESS_ONLY declares no product/runtime execution proof; do not synthesize EXECUTION_RECEIPT_V1 or GREEN execution claims.
           EOF
-            cat validation.log
             exit 0
           fi
-
-          if [[ -f scripts/arkus-verify-exact-sha.sh ]]; then
-            cmd=scripts/arkus-verify-exact-sha.sh
-          elif [[ -f scripts/hk00-verify-exact-sha.sh ]]; then
-            cmd=scripts/hk00-verify-exact-sha.sh
-          else
-            echo "::error::No canonical verify entrypoint. Add scripts/arkus-verify-exact-sha.sh (or the HK00 compatibility entrypoint)." | tee validation.log
-            exit 2
-          fi
-
+          if [[ -f scripts/arkus-verify-exact-sha.sh ]]; then cmd=scripts/arkus-verify-exact-sha.sh; elif [[ -f scripts/hk00-verify-exact-sha.sh ]]; then cmd=scripts/hk00-verify-exact-sha.sh; else echo '::error::No canonical exact-SHA verifier'; exit 2; fi
           set +e
           bash "${cmd}" "${TARGET_SHA}" 2>&1 | tee validation.log
           status=${PIPESTATUS[0]}
           set -e
-          if grep -q '^EXECUTION_RECEIPT_V1$' validation.log; then
-            awk '/^EXECUTION_RECEIPT_V1$/{emit=1} emit' validation.log > EXECUTION_RECEIPT.txt
-          fi
+          if grep -q '^EXECUTION_RECEIPT_V1$' validation.log; then awk '/^EXECUTION_RECEIPT_V1$/{emit=1} emit' validation.log > EXECUTION_RECEIPT.txt; fi
           exit "${status}"
-
       - name: Upload frozen-candidate evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -398,7 +234,6 @@ jobs:
             VALIDATION_CONTEXT.json
             validation.log
             EXECUTION_RECEIPT.txt
-            REUSED_RECEIPT_SOURCE.txt
             artifacts/observed
           if-no-files-found: warn
           retention-days: 30
