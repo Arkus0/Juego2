@@ -1,0 +1,112 @@
+{
+  "schema": "ctx-dw-gate-falsification-v1",
+  "purpose": "Bounded deterministic falsification of CTX↔DW composition; model prose is not an oracle.",
+  "cases": [
+    {
+      "id": "01-hidden-materiality",
+      "kind": "hidden-materiality",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-05.md"], "claim_required_sources": ["Docs/workpacks/H1/WP-H1-04.md"], "compact_visible_sources": ["Docs/workpacks/H1/WP-H1-05.md"]},
+      "dw": {"advice": "NOT_MATERIAL", "lifecycle": {"independent_universe": true, "projection_owner": true, "completeness_green": true, "provenance_green": true, "staleness_green": true, "rebuild_green": true}},
+      "authority_records": {"Docs/workpacks/H1/WP-H1-04.md": {"blockers": ["hidden-source-requirement"]}, "Docs/workpacks/H1/WP-H1-05.md": {"blockers": []}},
+      "baseline_material_blockers": ["hidden-source-requirement"],
+      "expected": {"dw_status": "NOT_MATERIAL", "dw_loaded": false, "dw_admitted": false, "opened_sources": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "discovered_blockers": ["hidden-source-requirement"]}
+    },
+    {
+      "id": "02-ctx-dw-contradiction",
+      "kind": "ctx-dw-contradiction",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-05.md"], "claim_required_sources": []},
+      "dw": {"advice": "USE", "lifecycle": {"independent_universe": true, "projection_owner": true, "completeness_green": true, "provenance_green": true, "staleness_green": true, "rebuild_green": true}, "decision_critical_provenance_source": "Docs/workpacks/H1/WP-H1-06.md"},
+      "ctx_dw_contradiction": true,
+      "contradiction_authority_sources": ["Docs/workpacks/H1/WP-H1-04.md"],
+      "authority_records": {"Docs/workpacks/H1/WP-H1-04.md": {"blockers": ["compact-surfaces-disagree"]}, "Docs/workpacks/H1/WP-H1-05.md": {"blockers": []}, "Docs/workpacks/H1/WP-H1-06.md": {"blockers": []}},
+      "baseline_material_blockers": ["compact-surfaces-disagree"],
+      "expected": {"dw_status": "CONTRADICTION_SOURCE_OPEN", "dw_loaded": false, "dw_admitted": false, "opened_sources": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "discovered_blockers": ["compact-surfaces-disagree"]}
+    },
+    {
+      "id": "03-stale-dw",
+      "kind": "stale-dw",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-05.md"], "claim_required_sources": []},
+      "dw": {"advice": "USE", "lifecycle": {"independent_universe": true, "projection_owner": true, "completeness_green": true, "provenance_green": true, "staleness_green": false, "rebuild_green": true}, "authority_fallback_sources": ["Docs/workpacks/H1/WP-H1-04.md"]},
+      "authority_records": {"Docs/workpacks/H1/WP-H1-04.md": {"blockers": ["stale-projection"]}, "Docs/workpacks/H1/WP-H1-05.md": {"blockers": []}},
+      "baseline_material_blockers": ["stale-projection"],
+      "expected": {"dw_status": "USE_REJECTED_LIFECYCLE", "dw_loaded": false, "dw_admitted": false, "opened_sources": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "discovered_blockers": ["stale-projection"]}
+    },
+    {
+      "id": "04-dw-abstention",
+      "kind": "dw-abstention",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-03A.md"], "claim_required_sources": ["Docs/workpacks/H1/WP-H1-03.md"]},
+      "dw": {"advice": "NOT_MATERIAL", "lifecycle": {"independent_universe": true, "projection_owner": true, "completeness_green": true, "provenance_green": true, "staleness_green": true, "rebuild_green": true}},
+      "authority_records": {"Docs/workpacks/H1/WP-H1-03.md": {"blockers": []}, "Docs/workpacks/H1/WP-H1-03A.md": {"blockers": []}},
+      "baseline_material_blockers": [],
+      "initial_context_units": {"selective": 2, "baseline": 5},
+      "expected": {"dw_status": "NOT_MATERIAL", "dw_loaded": false, "dw_admitted": false, "opened_sources": ["Docs/workpacks/H1/WP-H1-03.md", "Docs/workpacks/H1/WP-H1-03A.md"], "discovered_blockers": []}
+    },
+    {
+      "id": "05-material-dw",
+      "kind": "material-dw",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-05.md"], "claim_required_sources": []},
+      "dw": {"advice": "USE", "lifecycle": {"independent_universe": true, "projection_owner": true, "completeness_green": true, "provenance_green": true, "staleness_green": true, "rebuild_green": true}, "decision_critical_provenance_source": "Docs/workpacks/H1/WP-H1-04.md"},
+      "authority_records": {"Docs/workpacks/H1/WP-H1-04.md": {"blockers": []}, "Docs/workpacks/H1/WP-H1-05.md": {"blockers": []}, "Docs/workpacks/H1/WP-H1-06.md": {"blockers": []}},
+      "baseline_material_blockers": [],
+      "initial_context_units": {"selective": 2, "baseline": 6},
+      "expected": {"dw_status": "USE", "dw_loaded": true, "dw_admitted": true, "opened_sources": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "discovered_blockers": []},
+      "material_variants": [
+        {"id": "catalogue-identity", "decision_critical_provenance_source": "Docs/workpacks/H1/WP-H1-04.md", "baseline_material_blockers": [], "initial_context_units": {"selective": 2, "baseline": 6}, "expected": {"dw_status": "USE", "dw_loaded": true, "dw_admitted": true, "opened_sources": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "discovered_blockers": []}},
+        {"id": "asset-prefab-relation", "decision_critical_provenance_source": "Docs/workpacks/H1/WP-H1-06.md", "baseline_material_blockers": [], "initial_context_units": {"selective": 2, "baseline": 7}, "expected": {"dw_status": "USE", "dw_loaded": true, "dw_admitted": true, "opened_sources": ["Docs/workpacks/H1/WP-H1-05.md", "Docs/workpacks/H1/WP-H1-06.md"], "discovered_blockers": []}}
+      ]
+    },
+    {
+      "id": "06-negative-claim",
+      "kind": "negative-claim",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-05.md"], "claim_required_sources": []},
+      "claim": {"negative": true, "completeness_oracle_green": false, "authoritative_universe_sources": ["Docs/workpacks/H1/WP-H1-04.md"]},
+      "dw": {"advice": "OPTIONAL", "lifecycle": {"independent_universe": true, "projection_owner": true, "completeness_green": true, "provenance_green": true, "staleness_green": true, "rebuild_green": true}},
+      "authority_records": {"Docs/workpacks/H1/WP-H1-04.md": {"blockers": ["omitted-authoritative-record"]}, "Docs/workpacks/H1/WP-H1-05.md": {"blockers": []}},
+      "baseline_material_blockers": ["omitted-authoritative-record"],
+      "expected": {"dw_status": "OPTIONAL", "dw_loaded": false, "dw_admitted": false, "opened_sources": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "discovered_blockers": ["omitted-authoritative-record"]}
+    },
+    {
+      "id": "07-domain-leakage-differential",
+      "kind": "domain-leakage-differential",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-05.md"], "claim_required_sources": []},
+      "dw": {"advice": "OPTIONAL", "lifecycle": {"independent_universe": true, "projection_owner": true, "completeness_green": true, "provenance_green": true, "staleness_green": true, "rebuild_green": true}},
+      "authority_records": {"Docs/workpacks/H1/WP-H1-05.md": {"blockers": []}},
+      "baseline_material_blockers": [],
+      "diagnostic_text": "CITY allocated required-role finding disposition",
+      "alpha_renamed_diagnostic_text": "OMEGA frobnicated role-x signal-y outcome-z",
+      "expected": {"dw_status": "OPTIONAL", "dw_loaded": false, "dw_admitted": false, "opened_sources": ["Docs/workpacks/H1/WP-H1-05.md"], "discovered_blockers": []}
+    },
+    {
+      "id": "08-false-positive",
+      "kind": "false-positive",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-03A.md"], "claim_required_sources": []},
+      "dw": {"advice": "NOT_MATERIAL", "lifecycle": {"independent_universe": true, "projection_owner": true, "completeness_green": true, "provenance_green": true, "staleness_green": true, "rebuild_green": true}},
+      "opaque_text": "diagnostic: city pa Quaternius finding disposition required-role allocated prefab",
+      "authority_records": {"Docs/workpacks/H1/WP-H1-03A.md": {"blockers": []}},
+      "baseline_material_blockers": [],
+      "expected": {"dw_status": "NOT_MATERIAL", "dw_loaded": false, "dw_admitted": false, "opened_sources": ["Docs/workpacks/H1/WP-H1-03A.md"], "discovered_blockers": []}
+    },
+    {
+      "id": "09-h1-projection-bootstrap",
+      "kind": "h1-projection-bootstrap",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-05.md"], "claim_required_sources": []},
+      "dw": {"advice": "USE", "lifecycle": {"independent_universe": false, "projection_owner": true, "completeness_green": false, "provenance_green": false, "staleness_green": false, "rebuild_green": false}, "authority_fallback_sources": ["Docs/workpacks/H1/WP-H1-04.md"], "decision_critical_provenance_source": "Docs/workpacks/H1/WP-H1-04.md"},
+      "authority_records": {"Docs/workpacks/H1/WP-H1-04.md": {"blockers": []}, "Docs/workpacks/H1/WP-H1-05.md": {"blockers": []}},
+      "baseline_material_blockers": [],
+      "product_oracle_before": "H1 product authority unchanged",
+      "product_oracle_after": "H1 product authority unchanged",
+      "expected": {"dw_status": "USE_REJECTED_LIFECYCLE", "dw_loaded": false, "dw_admitted": false, "opened_sources": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "discovered_blockers": []},
+      "after_rebuild_expected": {"dw_status": "USE", "dw_loaded": true, "dw_admitted": true, "opened_sources": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "discovered_blockers": []}
+    },
+    {
+      "id": "10-routing-authority-conflict",
+      "kind": "routing-authority-conflict",
+      "ctx": {"mandatory_sources": ["Docs/workpacks/H1/WP-H1-06.md"], "claim_required_sources": ["Docs/workpacks/H1/WP-H1-04.md"]},
+      "dw": {"advice": "NOT_MATERIAL", "lifecycle": {"independent_universe": true, "projection_owner": true, "completeness_green": true, "provenance_green": true, "staleness_green": true, "rebuild_green": true}},
+      "authority_records": {"Docs/workpacks/H1/WP-H1-04.md": {"blockers": ["ctx-mandated-source-blocker"]}, "Docs/workpacks/H1/WP-H1-06.md": {"blockers": []}},
+      "baseline_material_blockers": ["ctx-mandated-source-blocker"],
+      "reviewer_expansion_sources": [],
+      "expected": {"dw_status": "NOT_MATERIAL", "dw_loaded": false, "dw_admitted": false, "opened_sources": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-06.md"], "discovered_blockers": ["ctx-mandated-source-blocker"]}
+    }
+  ]
+}
