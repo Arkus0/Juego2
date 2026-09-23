@@ -25,17 +25,19 @@ for path in \
   Docs/evidence/WP-DW-05/PREDECESSOR_RESIDUAL_INVENTORY.json \
   Docs/evidence/WP-DW-05/LIMITATIONS_MANIFEST.json \
   Docs/evidence/WP-DW-05/H2_BOUNDARY_INPUT_V1.json \
-  tests/Arkus.Harness.Tests/Dw05GenericBoundaryStressTests.cs; do
+  tests/Arkus.Harness.Tests/Dw05GenericBoundaryStressTests.cs \
+  tests/Arkus.Harness.Tests/Dw05TransitiveKernelLeakageTests.cs; do
   test -f "${path}"
 done
 
 # DW-05 may add probe/test/evidence/validation glue, but it may not silently
-# repair the accepted generic DW seam or H0 semantics to make the probe fit.
+# repair the accepted generic DW seam or H0/kernel semantics to make the probe fit.
 git diff --exit-code "${BASELINE_SHA}" "${actual}" -- \
   src/Arkus.DesignWorld/Arkus.DesignWorld.csproj \
   src/Arkus.DesignWorld/DesignWorldContracts.cs \
   src/Arkus.DesignWorld/DesignWorldProjection.cs \
-  src/Arkus.Game.World
+  src/Arkus.Game.World \
+  src/Arkus.Game.Core
 
 # Accepted predecessor/source semantics are inputs to this stress test, not a
 # surface the Worker may rewrite to manufacture closure.
@@ -74,7 +76,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/dw05-observe-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: accepted-generic-dw-h0-seam-immutability=GREEN; predecessor-source-immutability=GREEN; locked-restore=GREEN; release-build=GREEN; focused-dw05=GREEN; regression=GREEN
+Required gates: accepted-generic-dw-h0-seam-immutability=GREEN; transitive-h0-kernel-immutability=GREEN; predecessor-source-immutability=GREEN; locked-restore=GREEN; release-build=GREEN; focused-dw05=GREEN; regression=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-DW-05
 EOF
