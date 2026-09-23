@@ -14,6 +14,7 @@ cleanup() {
   git worktree remove --force "${TMP_ROOT}/g1" >/dev/null 2>&1 || true
   git worktree remove --force "${TMP_ROOT}/g2" >/dev/null 2>&1 || true
   git worktree remove --force "${TMP_ROOT}/g3" >/dev/null 2>&1 || true
+  git worktree remove --force "${TMP_ROOT}/g4" >/dev/null 2>&1 || true
   rm -rf "${TMP_ROOT}"
 }
 trap cleanup EXIT
@@ -85,6 +86,26 @@ if [[ ${g3_status} -eq 0 ]] || ! grep -Fq 'DW_GATE_EVIDENCE_RED h2-handoff-overc
 fi
 echo "DW_GATE_NEGATIVE_RED G3 external-repository-overclaim"
 
+# G4: the gate may not rewrite predecessor proof machinery to manufacture PASS.
+git worktree add --detach "${TMP_ROOT}/g4" "${CANDIDATE}" >/dev/null
+(
+  cd "${TMP_ROOT}/g4"
+  printf '\n# gate-negative-tamper\n' >> scripts/dw04-verify-exact-sha.sh
+  git add scripts/dw04-verify-exact-sha.sh
+  git -c user.name='DW Gate Negative' -c user.email='dw-gate-negative@example.invalid' commit -m 'negative predecessor proof tamper' >/dev/null
+)
+g4_sha="$(git -C "${TMP_ROOT}/g4" rev-parse HEAD)"
+set +e
+g4_log="$(cd "${TMP_ROOT}/g4" && bash scripts/dwgate-closure-check.sh "${g4_sha}" 2>&1)"
+g4_status=$?
+set -e
+if [[ ${g4_status} -eq 0 ]] || ! grep -Fq 'DW_GATE_CLOSURE_RED predecessor-or-product-proof-surface-changed' <<<"${g4_log}"; then
+  echo "DW GATE G4 false-green or wrong RED reason" >&2
+  printf '%s\n' "${g4_log}" >&2
+  exit 1
+fi
+echo "DW_GATE_NEGATIVE_RED G4 predecessor-proof-machinery-tamper"
+
 cd "${ROOT}"
 [[ -z "$(candidate_dirty_status)" ]] || { echo "DW GATE candidate changed during disposable negative controls" >&2; exit 2; }
-echo "DW_GATE_NEGATIVE_CONFORMANCE_GREEN red_controls=3"
+echo "DW_GATE_NEGATIVE_CONFORMANCE_GREEN red_controls=4"

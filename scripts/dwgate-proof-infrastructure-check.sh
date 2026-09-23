@@ -14,6 +14,10 @@ if not runner.is_file():
     raise SystemExit(1)
 
 text = runner.read_text(encoding="utf-8")
+if "bash scripts/dwgate-closure-check.sh" not in text:
+    print("DW_GATE_PROOF_INFRA_RED closure-guard-not-wired", file=sys.stderr)
+    raise SystemExit(1)
+
 decl = re.search(r"GATE_STAGES=\((?P<body>.*?)\)", text, flags=re.DOTALL)
 if decl is None:
     print("DW_GATE_PROOF_INFRA_RED stage-universe-missing", file=sys.stderr)
@@ -45,7 +49,7 @@ checks = {
     "dw01-city-invariants": "FullyQualifiedName~Dw01",
     "dw02-city-queries": "FullyQualifiedName~Dw02",
     "dw03-pa-losslessness": "FullyQualifiedName~Dw03",
-    "dw04-paired-agent-evidence": "scripts/dw04-verify-exact-sha.sh",
+    "dw04-paired-agent-evidence": "scripts/dwgate-dw04-accepted-check.sh",
     "dw05-generic-boundary": "FullyQualifiedName~Dw05",
     "gate-evidence-audit": "scripts/dwgate-evidence-audit.py",
     "gate-negative-conformance": "scripts/dwgate-negative-conformance.sh",
@@ -62,5 +66,5 @@ if len(reg) != 1 or "dotnet test" not in reg[0] or "--filter" in reg[0]:
     print("DW_GATE_PROOF_INFRA_RED full-regression-not-unfiltered", file=sys.stderr)
     raise SystemExit(1)
 
-print("DW_GATE_PROOF_INFRA_GREEN declared=9 executed=9 full_regression=1")
+print("DW_GATE_PROOF_INFRA_GREEN declared=9 executed=9 closure_guard=1 full_regression=1")
 PY
