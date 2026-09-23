@@ -1,10 +1,12 @@
 # WP-DW-03 — PA typed corpus and lossless provenance projection
 
-Status: PLANNED / NOT_STARTED
+Status: COMPLETE / ACCEPTED
 Class: FOUNDATIONAL
 EXECUTION_REQUIREMENT: REMOTE_OK
 Depends on: `WP-DW-02` PASS + merge + DocSync; `WP-PA-05` PASS + merge + DocSync
 Blocks: `WP-DW-04`
+
+Acceptance: frozen candidate `db8b85b4fe77af99cdb5ebf58626a31107c238b3`; independent PASS review `#5287315277`; PR `#143`; merge `10bbbb0cb64bcfab476281c089812332af136bb1`; final fully GREEN exact-SHA validation Actions `35822685114`; post-PASS DocSync `Docs/evidence/WP-DW-03/DOCSYNC.md`.
 
 ## Objective and central claim
 
