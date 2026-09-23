@@ -54,7 +54,7 @@ jobs:
                       i += 1
                   blocks.append('\n'.join(out)+'\n'); continue
               i += 1
-          if len(blocks) != 11:
+          if len(blocks) != 12:
               raise SystemExit(f'unexpected V2 executable block count: {len(blocks)}')
           env=os.environ.copy(); env_file=pathlib.Path(env['GITHUB_ENV'])
           for n,block in enumerate(blocks,1):
