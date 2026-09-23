@@ -47,7 +47,7 @@ jobs:
             echo "::error::PR body must contain exact marker: ${marker}"
             exit 2
           }
-          test "${PR_NUMBER}" = "150" || { echo "::error::DW-04 canonical PR is #150"; exit 2; }
+          test "${PR_NUMBER}" = "151" || { echo "::error::DW-04 isolated canonical PR is #151"; exit 2; }
 
       - name: Require configured provider credential before claiming campaign
         env:
