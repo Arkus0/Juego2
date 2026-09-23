@@ -59,7 +59,7 @@ def main():
     parser.add_argument("--freeze-commit", required=True)
     parser.add_argument("--assembly-commit", required=True)
     parser.add_argument("--output", required=True, help="new, nonexistent audit transcript path")
-    parser.add_argument("--raw-output", required=True, help="new, nonexistent raw provider evidence path")
+    parser.add_argument("--raw-output", help="optional raw provider evidence path; defaults beside --output")
     args = parser.parse_args()
 
     pre, _ = trial.frozen_file(args.pre_commit, trial.PRE)
@@ -88,7 +88,7 @@ def main():
                   "provider adapter script changed after freeze")
 
     output_path = pathlib.Path(args.output)
-    raw_path = pathlib.Path(args.raw_output)
+    raw_path = pathlib.Path(args.raw_output) if args.raw_output else output_path.with_name("ACCEPTANCE_PROVIDER_RAW.jsonl")
     trial.require(not output_path.exists() and not raw_path.exists(), "transcript paths already exist; no overwrite/rerun")
     trial.require(trial.context_check(freeze, assembly, pre, selected),
                   "structural source/fallback completeness RED before any model call")
