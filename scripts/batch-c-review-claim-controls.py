@@ -19,7 +19,7 @@ def workflow_errors(text: str) -> list[str]:
         "policy self-test": "review-claim.py self-test",
         "live PR fetch": 'gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json',
         "stale-SHA rejection": '[[ "${head}" == "${target}" ]]',
-        "ready-only claim": '[[ "$(jq -r \' .draft\' pr.json)" == "false" ]]'.replace("' .draft'", "'.draft'"),
+        "ready-only claim": "[[ \"$(jq -r '.draft' pr.json)\" == \"false\" ]]",
         "claim decision": "review-claim.py decide",
         "release decision": "review-claim.py can-release",
         "grant marker": "State: REVIEW_CLAIMED",
