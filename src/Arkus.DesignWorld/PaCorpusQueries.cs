@@ -15,6 +15,7 @@ namespace Arkus.DesignWorld
             FactType = fact.FactType;
             PaId = RequiredString(fact, "pa-id");
             RecordKind = RequiredString(fact, "record-kind");
+            Domain = RequiredString(fact, "domain");
             FailureFamily = RequiredString(fact, "failure-family");
             SourceKey = RequiredString(fact, "source-key");
             MaterialText = RequiredString(fact, "material-text");
@@ -27,6 +28,7 @@ namespace Arkus.DesignWorld
         public string FactType { get; }
         public string PaId { get; }
         public string RecordKind { get; }
+        public string Domain { get; }
         public string FailureFamily { get; }
         public string SourceKey { get; }
         public string MaterialText { get; }
@@ -92,6 +94,15 @@ namespace Arkus.DesignWorld
             return _facts.Values
                 .Where(fact => StringField(fact, "pa-id") == paId &&
                     (recordKind == null || StringField(fact, "record-kind") == recordKind))
+                .OrderBy(fact => fact.FactId, StringComparer.Ordinal)
+                .Select(ToRecord).ToList().AsReadOnly();
+        }
+
+        public IReadOnlyList<PaCorpusQueryRecord> ByDomain(string domain)
+        {
+            if (domain == null) throw new ArgumentNullException(nameof(domain));
+            return _facts.Values
+                .Where(fact => StringField(fact, "domain") == domain)
                 .OrderBy(fact => fact.FactId, StringComparer.Ordinal)
                 .Select(ToRecord).ToList().AsReadOnly();
         }
