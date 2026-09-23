@@ -136,11 +136,17 @@ def latest_marker(rows: list[dict[str, str]], state: str, sha: str | None = None
     return None
 
 
-def owner_authorized_continuation(rows: list[dict[str, str]]) -> bool:
-    offers = {row.get("target sha", "").lower() for row in rows
-              if row.get("state") == "SECOND_FAIL_OFFERED" and row.get("fail count") == "2"}
-    return any(row.get("state") == "OWNER_CONTINUE" and row.get("fail count") == "2" and
-               row.get("target sha", "").lower() in offers for row in rows)
+def owner_authorized_continuation(rows: list[dict[str, str]], fail_count: int) -> bool:
+    # A count-2 click authorizes bounded continuation through count 3. If an
+    # independent same-SHA appeal itself creates count 3, no count-2 click
+    # existed; a count-3 click must be accepted without permitting count 4.
+    offers = {(row.get("target sha", "").lower(), row.get("fail count")) for row in rows
+              if row.get("state") == "SECOND_FAIL_OFFERED" and row.get("fail count") in {"2", "3"}}
+    return any(row.get("state") == "OWNER_CONTINUE" and
+               row.get("fail count") in {"2", "3"} and
+               int(row["fail count"]) <= fail_count < 4 and
+               (row.get("target sha", "").lower(), row["fail count"]) in offers
+               for row in rows)
 
 
 @lru_cache(maxsize=4)
@@ -221,9 +227,8 @@ def validate_docsync(root: Path, pr: dict[str, Any], row: dict[str, str]) -> Non
     changed = set(run("git", "diff", "--name-only", parents[1], commit, cwd=root).splitlines())
     if not changed or any(not name.startswith("Docs/") for name in changed):
         raise StopFlow(f"PR #{number} DocSync commit is not docs-only")
-    if not any(name.startswith(("Docs/workpacks/", "Docs/evidence/", "Docs/architecture/")) or
-               name in {"Docs/ROADMAP.md", "Docs/engineering/PRODUCT_ARCHITECTURE.md"} for name in changed):
-        raise StopFlow(f"PR #{number} DocSync commit lacks an authoritative document change")
+    # Which Docs files changed accepted meaning is a DocSync judgment. The
+    # controller can check byte scope, not infer a closed list of authorities.
 
 
 def next_from_merged_pr(root: Path, pr: dict[str, Any]) -> str | None:
@@ -725,7 +730,7 @@ async def main_async(args: argparse.Namespace) -> None:
                         notify("BLOCKED", "Cuarto FAIL: detención obligatoria. Requiere acudir al PC y reauditar.", wp, pr["number"])
                         raise StopFlow("Fourth FAIL; PC required", notified=True)
                     local_rows = local_markers(pr["number"])
-                    owner_continued = owner_authorized_continuation(local_rows)
+                    owner_continued = owner_authorized_continuation(local_rows, len(fails))
                     appeal_started = latest_marker(local_rows, "OVERDEFENSE_APPEAL_STARTED", frozen)
                     if appeal_started:
                         baseline = appeal_started.get("fail count", "")

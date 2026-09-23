@@ -112,6 +112,22 @@ class RoutingTests(unittest.TestCase):
         with patch.object(module.subprocess, "run", return_value=type("Result", (), {"returncode": 0})()):
             module.validate_docsync(Path("."), pr, row)
 
+    def test_docsync_can_reconcile_an_engineering_authority(self):
+        merge_sha, docs_sha = "a" * 40, "b" * 40
+        pr = {"number": 123, "merged_at": "2026-01-01T00:00:00Z", "body": "WP: WP-H1-02",
+              "merge_commit_sha": merge_sha}
+        row = {"key": f"docsync-complete:123:{docs_sha}", "wp": "WP-H1-02",
+               "next wp": "WP-H1-03", "_created_at": "2026-01-02T00:00:00Z"}
+        def fake_git(*args, **_kwargs):
+            if args[1] == "rev-list":
+                return f"{docs_sha} {merge_sha}"
+            if args[1] == "diff":
+                return "Docs/engineering/WORKER_REVIEW_PROTOCOL.md"
+            raise AssertionError(args)
+        with patch.object(module.subprocess, "run", return_value=type("Result", (), {"returncode": 0})()), \
+             patch.object(module, "run", side_effect=fake_git):
+            module.validate_docsync(Path("."), pr, row)
+
     def test_public_comment_cannot_authorize_continuation(self):
         sha = "a" * 40
         body = f"ARKUS_LOCAL_AUTOPILOT\nState: OWNER_CONTINUE\nTarget SHA: {sha}\nFail count: 2\n"
@@ -125,11 +141,17 @@ class RoutingTests(unittest.TestCase):
     def test_owner_continuation_requires_matching_second_fail_offer(self):
         sha = "a" * 40
         rows = [{"state": "OWNER_CONTINUE", "target sha": sha, "fail count": "2"}]
-        self.assertFalse(module.owner_authorized_continuation(rows))
+        self.assertFalse(module.owner_authorized_continuation(rows, 2))
         rows.append({"state": "SECOND_FAIL_OFFERED", "target sha": "b" * 40, "fail count": "2"})
-        self.assertFalse(module.owner_authorized_continuation(rows))
+        self.assertFalse(module.owner_authorized_continuation(rows, 2))
         rows.append({"state": "SECOND_FAIL_OFFERED", "target sha": sha, "fail count": "2"})
-        self.assertTrue(module.owner_authorized_continuation(rows))
+        self.assertTrue(module.owner_authorized_continuation(rows, 2))
+        self.assertTrue(module.owner_authorized_continuation(rows, 3))
+        self.assertFalse(module.owner_authorized_continuation(rows, 4))
+        count_three = [{"state": "SECOND_FAIL_OFFERED", "target sha": sha, "fail count": "3"},
+                       {"state": "OWNER_CONTINUE", "target sha": sha, "fail count": "3"}]
+        self.assertFalse(module.owner_authorized_continuation(count_three, 2))
+        self.assertTrue(module.owner_authorized_continuation(count_three, 3))
 
     def test_marker_provenance_matches_state(self):
         sha = "a" * 40
