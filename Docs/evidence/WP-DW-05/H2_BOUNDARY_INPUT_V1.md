@@ -9,7 +9,11 @@ This report is versioned planning evidence only. H2 must independently review an
 
 ## Capabilities actually exercised before/through DW-05
 
-The accepted DW spine has executable evidence for a generic typed fact/relation/provenance envelope, deterministic normalization/rebuild/diff, bounded CITY semantic/query consumers, bounded PA typed/lossless retrieval and the exact DW-04 structured-context campaign. DW-05 adds one structurally different neutral observatory/calibration graph exercising string/integer/boolean/decimal fields, typed relations, public projected-fact queries, provenance resolution, H0 world-state projection, clean rebuild and generic fail-closed missing/stale provenance paths.
+The accepted generic spine has executable evidence for typed facts/relations/provenance, deterministic normalization/rebuild/diff and H0 world-object-extension projection.
+
+**CITY exercised** typed facts/relations, source provenance, independently owned CITY semantic oracles, complete declared production-query universes and deterministic content-shape projection. **PA exercised** typed findings/evidence/dispositions/fixtures/relations, exact source provenance, an independent source-corpus oracle, deterministic compact query indexing and source-side query-completeness checking. **DW-04 exercised** only its bounded frozen structured-context campaign: required facts/blockers/verdict preservation plus measured source-context-byte reduction for that exact task/model/configuration universe.
+
+DW-05 adds one structurally different neutral observatory/calibration graph exercising string/integer/boolean/decimal fields, typed relations, public projected-fact queries, provenance resolution, H0 world-state projection, clean rebuild, generic fail-closed missing/stale provenance paths and the reached H0 dependency chain `Arkus.Game.World -> Arkus.Game.Core` for domain-leakage checking.
 
 ## Required consequences for future boundary design
 
