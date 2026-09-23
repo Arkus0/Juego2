@@ -17,10 +17,10 @@ jobs:
     if: >-
       github.event.pull_request.draft == true &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      contains(github.event.pull_request.body || '', 'DW04 assembly: 1847c45f953bfea0aabebeba0a1eb76e9d4a9a6d')
+      contains(github.event.pull_request.body || '', 'DW04 assembly: 6239389b29447c3124bdb9a5fc2d9d2956729ff4')
     runs-on: ubuntu-24.04
     env:
-      FREEZE_COMMIT: 1847c45f953bfea0aabebeba0a1eb76e9d4a9a6d
+      FREEZE_COMMIT: 6239389b29447c3124bdb9a5fc2d9d2956729ff4
       TARGET_SHA: ${{ github.event.pull_request.head.sha }}
       HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
     steps:
@@ -29,7 +29,7 @@ jobs:
         with:
           ref: ${{ env.TARGET_SHA }}
           fetch-depth: 0
-      - name: Validate immutable freeze and pinned assembler
+      - name: Validate immutable freeze and pinned assembly route
         shell: bash
         run: |
           set -euo pipefail
@@ -37,7 +37,11 @@ jobs:
           git merge-base --is-ancestor "${FREEZE_COMMIT}" "${TARGET_SHA}"
           test "$(git rev-parse ${FREEZE_COMMIT}:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)" = "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
           protocol_blob="$(jq -r '.protocol_blob' Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
+          plan_blob="$(jq -r '.context_plan_blob' Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
+          retrieval_blob="$(jq -r '.retrieval_adapter_blob' Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
           test "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json)" = "${protocol_blob}"
+          test "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json)" = "${plan_blob}"
+          test "$(git rev-parse HEAD:tools/Arkus.Dw04.Retrieval/Program.cs)" = "${retrieval_blob}"
           expected_assembler="$(jq -r '.script_blobs.assembler' Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json)"
           test "$(git rev-parse HEAD:scripts/dw04-acceptance-assemble.py)" = "${expected_assembler}"
           test ! -e Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
@@ -75,5 +79,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
-          git commit -m 'dw04: materialize frozen acceptance contexts'
+          git commit -m 'dw04: materialize compact frozen acceptance contexts'
           git push origin "HEAD:${HEAD_BRANCH}"
