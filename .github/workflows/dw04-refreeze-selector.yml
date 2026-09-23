@@ -17,10 +17,10 @@ jobs:
     if: >-
       github.event.pull_request.draft == true &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      contains(github.event.pull_request.body || '', 'DW04 refreeze: selector-uniqueness')
+      contains(github.event.pull_request.body || '', 'DW04 refreeze: city-selector-class-02')
     runs-on: ubuntu-24.04
     env:
-      OLD_FREEZE: 0c57a766f8b25e0c1e22d746c05a5678ae275841
+      OLD_FREEZE: 960ef57ce2ae99c6499fbc6cd2e9391181c20d86
       TARGET_SHA: ${{ github.event.pull_request.head.sha }}
       HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
     steps:
@@ -42,7 +42,7 @@ jobs:
           test "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json)" = "${old_plan}"
           test "$(jq -r '.selected|join(",")' Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)" = 'A-CITY-01,A-CITY-02,A-CITY-03,A-PA-01,A-PA-02,A-PA-03'
 
-      - name: Apply exactly one nonsemantic selector correction
+      - name: Close the remaining CITY section-4 selector class
         shell: bash
         run: |
           set -euo pipefail
@@ -50,33 +50,42 @@ jobs:
           import json, pathlib
           path=pathlib.Path('Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json')
           data=json.loads(path.read_text())
-          item=next(x for x in data['context_plan']['A-CITY-02']['CTX'] if x['id']=='city02-puerto-landing-row')
-          old='| `loc.puerto.landing` |'
-          new='| `loc.puerto.landing` | Puerto Fluvial | X6/X7 landing / upstream port threshold |'
-          assert item['extract']=={'mode':'line_contains','needle':old}, item
-          item['extract']['needle']=new
+          cases={
+            ('A-CITY-01','city02-shared-court-row'):(
+              '| `loc.casco.shared_court` |',
+              '| `loc.casco.shared_court` | Casco Viejo | passage + shared court / stair relation |'),
+            ('A-CITY-03','city02-town-hall-row'):(
+              '| `loc.plaza.ayuntamiento` |',
+              '| `loc.plaza.ayuntamiento` | Plaza y Ayuntamiento | town hall / civic office |'),
+          }
+          for (task,fid),(old,new) in cases.items():
+              item=next(x for x in data['context_plan'][task]['CTX'] if x['id']==fid)
+              assert item['extract']=={'mode':'line_contains','needle':old}, (task,item)
+              item['extract']['needle']=new
+          puerto=next(x for x in data['context_plan']['A-CITY-02']['CTX'] if x['id']=='city02-puerto-landing-row')
+          assert puerto['extract']['needle']=='| `loc.puerto.landing` | Puerto Fluvial | X6/X7 landing / upstream port threshold |'
           path.write_text(json.dumps(data,ensure_ascii=False,separators=(',',':'))+'\n')
           PY
-          cat > Docs/evidence/WP-DW-04/ACCEPTANCE_PREEXECUTION_AMENDMENT_01.md <<'EOF'
-          # DW-04 acceptance pre-execution amendment 01 — selector uniqueness
+          cat > Docs/evidence/WP-DW-04/ACCEPTANCE_PREEXECUTION_AMENDMENT_02.md <<'EOF'
+          # DW-04 acceptance pre-execution amendment 02 — close CITY §4 selector class
 
-          Status: mechanical pre-execution correction; no acceptance provider/model call has occurred.
+          Status: mechanical pre-execution correction; acceptance provider/model usage remains 0/36.
 
-          The first deterministic post-freeze assembly attempt (GitHub Actions run `35848658608`) stopped before context measurement and before any model call because the CTX `A-CITY-02` selector `| `loc.puerto.landing` |` matched both the authoritative §4 programme row and the later §5 systemic-use-profile row.
+          Deterministic assembly had already proved two members of the same selector defect class before any model call: the original freeze failed on `loc.puerto.landing`, and replacement freeze `960ef57ce2ae99c6499fbc6cd2e9391181c20d86` failed in run `35849331838` / job `107143000824` on `loc.plaza.ayuntamiento`. In both cases a short `line_contains` needle matched the intended §4 programme row and a later table repeating the same programme identifier.
 
-          This amendment changes exactly one extraction needle in `ACCEPTANCE_CONTEXT_PLAN.json` so it uniquely selects the already intended §4 programme row by including the §4 row's `Puerto Fluvial` and `X6/X7 landing / upstream port threshold` columns. It does not change the selected task, semantic question, authority file, expected facts/blockers/verdict/evidence, CTX meaning, DW query/fallback meaning, model/provider/configuration, answer schema, scorer, 36-slot order, correctness rule, byte threshold, or acceptance retry policy.
+          This amendment closes that entire known CITY §4 class by making the two remaining short §4 row needles (`loc.casco.shared_court`, `loc.plaza.ayuntamiento`) uniquely identify their already intended §4 ledger rows. The already-corrected Puerto needle is preserved. No task identity, semantic question, authority file, expected fact/blocker/verdict/evidence, CTX or DW meaning, model/provider/configuration, answer schema, scorer, 36-slot order, correctness rule, byte threshold or retry policy changes.
 
-          The failed assembly produced no `CONTEXT_ASSEMBLY.json`, no scorable route result, no provider request ID and no acceptance model observation. Therefore the correction is independent of acceptance outcome. The superseded freeze remains in Git history; a new freeze re-content-addresses the corrected plan before assembly is attempted again. This is a Worker/owner-directed mechanical pre-execution amendment, not an independent Reviewer approval; the later Reviewer must assess its acceptability.
+          Both failed assemblies stopped before context measurement completion and before provider execution; neither produced an acceptance model response or provider request ID. The replacement freeze therefore remains pre-result. This is owner/Worker-directed mechanical pre-execution repair, not independent Reviewer approval.
           EOF
 
-      - name: Commit corrected plan and amendment before new freeze
+      - name: Commit corrected plan and amendment before replacement freeze
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json Docs/evidence/WP-DW-04/ACCEPTANCE_PREEXECUTION_AMENDMENT_01.md
-          git commit -m 'dw04: make frozen puerto selector mechanically unique'
+          git add Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json Docs/evidence/WP-DW-04/ACCEPTANCE_PREEXECUTION_AMENDMENT_02.md
+          git commit -m 'dw04: close CITY section-4 selector ambiguity class'
           echo "REFREEZE_PARENT=$(git rev-parse HEAD)" >> "${GITHUB_ENV}"
 
       - name: Reissue identical semantic freeze over corrected plan
@@ -93,32 +102,16 @@ jobs:
           assert new_plan != f['context_plan_blob']
           f['freeze_parent']=os.environ['REFREEZE_PARENT']
           f['context_plan_blob']=new_plan
-          f['supersedes_freeze_commit']='0c57a766f8b25e0c1e22d746c05a5678ae275841'
-          f['preexecution_amendment']='Docs/evidence/WP-DW-04/ACCEPTANCE_PREEXECUTION_AMENDMENT_01.md'
-          f['proof_boundary']='No acceptance CTX or DW model call occurred before this replacement freeze. The only change from the superseded freeze is the mechanically unique extraction needle documented in ACCEPTANCE_PREEXECUTION_AMENDMENT_01.md; all semantic and execution policy remains unchanged and content-addressed.'
+          f['supersedes_freeze_commit']='960ef57ce2ae99c6499fbc6cd2e9391181c20d86'
+          f['preexecution_amendment']='Docs/evidence/WP-DW-04/ACCEPTANCE_PREEXECUTION_AMENDMENT_02.md'
+          f['proof_boundary']='Acceptance provider/model usage is 0/36. This replacement freeze changes only the mechanically unique CITY §4 extraction needles documented in ACCEPTANCE_PREEXECUTION_AMENDMENT_02.md; all task semantics, source oracles, model/configuration and decision policy remain unchanged.'
           freeze_path.write_text(json.dumps(f,ensure_ascii=False,separators=(',',':'))+'\n')
           PY
           git add Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json
-          git commit -m 'dw04: refreeze unchanged acceptance semantics after selector fix'
+          git commit -m 'dw04: refreeze unchanged semantics after CITY selector-class fix'
           echo "NEW_FREEZE=$(git rev-parse HEAD)" >> "${GITHUB_ENV}"
 
-      - name: Retarget assembly-only workflow to replacement freeze
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import pathlib, os
-          p=pathlib.Path('.github/workflows/dw04-assemble.yml')
-          text=p.read_text()
-          old='0c57a766f8b25e0c1e22d746c05a5678ae275841'
-          new=os.environ['NEW_FREEZE']
-          assert text.count(old)==2, text.count(old)
-          p.write_text(text.replace(old,new))
-          PY
-          git add .github/workflows/dw04-assemble.yml
-          git commit -m 'dw04: retarget deterministic assembly to replacement freeze'
-
-      - name: Push pre-call repaired lineage
+      - name: Push replacement freeze lineage
         shell: bash
         run: |
           set -euo pipefail
