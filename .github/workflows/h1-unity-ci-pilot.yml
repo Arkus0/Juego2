@@ -117,18 +117,88 @@ jobs:
           print(f'H1_UNITY_CI_ORACLE_GREEN result={matching[0]} total=5 passed=5 failed=0')
           PY
 
-      - name: Diagnose tracked source drift
+      - name: Reconcile deterministic GameCI package injection
         shell: bash
         run: |
           set -euo pipefail
-          status="$(git status --porcelain --untracked-files=no)"
-          if [[ -n "${status}" ]]; then
-            echo 'TRACKED_DRIFT_BEGIN'
-            printf '%s\n' "${status}"
-            git diff --no-ext-diff -- . ':(exclude)artifacts/**' || true
-            echo 'TRACKED_DRIFT_END'
-            exit 1
-          fi
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          target = os.environ['TARGET_SHA']
+          manifest_path = Path('Unity/ArkusUnity/Packages/manifest.json')
+          lock_path = Path('Unity/ArkusUnity/Packages/packages-lock.json')
+          allowed_paths = {str(manifest_path), str(lock_path)}
+
+          status = subprocess.check_output(
+              ['git', 'status', '--porcelain', '--untracked-files=no'], text=True
+          ).splitlines()
+          changed = {line[3:] for line in status if len(line) >= 4}
+          if changed != allowed_paths:
+              raise SystemExit(f'unexpected tracked Unity drift: {sorted(changed)}')
+
+          def baseline_json(path: Path):
+              raw = subprocess.check_output(
+                  ['git', 'show', f'{target}:{path.as_posix()}'], text=True
+              )
+              return json.loads(raw)
+
+          baseline_manifest = baseline_json(manifest_path)
+          current_manifest = json.loads(manifest_path.read_text())
+          expected_manifest = json.loads(json.dumps(baseline_manifest))
+          expected_manifest['dependencies'].update({
+              'com.unity.sdk.linux-arm64': '1.1.0',
+              'com.unity.sdk.linux-x86_64': '1.1.0',
+              'com.unity.toolchain.linux-x86_64-linux': '1.1.0',
+          })
+          if current_manifest != expected_manifest:
+              raise SystemExit('manifest drift is not the known GameCI Linux platform-package injection')
+
+          baseline_lock = baseline_json(lock_path)
+          current_lock = json.loads(lock_path.read_text())
+          expected_lock = json.loads(json.dumps(baseline_lock))
+          expected_lock['dependencies'].update({
+              'com.unity.sdk.linux-arm64': {
+                  'version': '1.1.0',
+                  'depth': 0,
+                  'source': 'registry',
+                  'dependencies': {'com.unity.sysroot.base': '1.1.0'},
+                  'url': 'https://packages.unity.com',
+              },
+              'com.unity.sdk.linux-x86_64': {
+                  'version': '1.1.0',
+                  'depth': 0,
+                  'source': 'registry',
+                  'dependencies': {'com.unity.sysroot.base': '1.1.0'},
+                  'url': 'https://packages.unity.com',
+              },
+              'com.unity.sysroot.base': {
+                  'version': '1.1.0',
+                  'depth': 1,
+                  'source': 'registry',
+                  'dependencies': {},
+                  'url': 'https://packages.unity.com',
+              },
+              'com.unity.toolchain.linux-x86_64-linux': {
+                  'version': '1.1.0',
+                  'depth': 0,
+                  'source': 'registry',
+                  'dependencies': {'com.unity.sysroot.base': '1.1.0'},
+                  'url': 'https://packages.unity.com',
+              },
+          })
+          if current_lock != expected_lock:
+              raise SystemExit('packages-lock drift is not the known GameCI Linux platform-package injection')
+
+          print('GAMECI_PACKAGE_DRIFT_RECONCILED paths=manifest.json,packages-lock.json')
+          PY
+
+          git restore --source="${TARGET_SHA}" -- \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json
+          test -z "$(git status --porcelain --untracked-files=no)"
 
       - name: Write exact-SHA pilot receipt
         if: success()
@@ -147,6 +217,7 @@ jobs:
           GameCI test-runner commit: 32e57712352b500e17974b245a6dce9e11a73213
           GameCI CLI: v0.1.69
           Library cache: DISABLED_FOR_CLEAN_PILOT
+          GameCI package drift: EXACT_KNOWN_PLATFORM_INJECTION_RECONCILED_AND_RESTORED
           Result: GREEN
           EOF
           cat H1_UNITY_CI_RECEIPT.txt
