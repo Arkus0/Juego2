@@ -7,8 +7,7 @@ PRECALIBRATION_COMMIT="9cbed950a3469897cf286c9a90624c240701528f"
 cd "${ROOT}"
 
 candidate_dirty_status() {
-  git status --porcelain --untracked-files=all | \
-    grep -Ev '^\?\? (VALIDATION_CONTEXT\.json|validation\.log|EXECUTION_RECEIPT\.txt|artifacts/observed/.*)$' || true
+  git status --porcelain --untracked-files=all | grep -Ev '^\?\? (VALIDATION_CONTEXT\.json|validation\.log|EXECUTION_RECEIPT\.txt|artifacts/observed/.*)$' || true
 }
 
 actual="$(git rev-parse HEAD)"
@@ -24,6 +23,7 @@ required=(
   Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json
   Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
   Docs/evidence/WP-DW-04/ACCEPTANCE_TRANSCRIPT.jsonl
+  Docs/evidence/WP-DW-04/ACCEPTANCE_INVALID_ATTEMPTS.json
   Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json
   Docs/evidence/WP-DW-04/TRIAL_RESULT.json
   Docs/evidence/WP-DW-04/PROOF_MATRIX.md
@@ -41,10 +41,7 @@ git merge-base --is-ancestor "${PRECALIBRATION_COMMIT}" "${freeze_commit}" || { 
 
 audit_tmp="$(mktemp)"
 trap 'rm -f "${audit_tmp}"' EXIT
-PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-trial.py audit \
-  --pre-commit "${PRECALIBRATION_COMMIT}" \
-  --freeze-commit "${freeze_commit}" \
-  --transcript Docs/evidence/WP-DW-04/ACCEPTANCE_TRANSCRIPT.jsonl > "${audit_tmp}"
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-trial.py audit --pre-commit "${PRECALIBRATION_COMMIT}" --freeze-commit "${freeze_commit}" --transcript Docs/evidence/WP-DW-04/ACCEPTANCE_TRANSCRIPT.jsonl > "${audit_tmp}"
 
 PYTHONDONTWRITEBYTECODE=1 python3 - "${audit_tmp}" <<'PY'
 import json, pathlib, sys
@@ -65,30 +62,41 @@ PYTHONDONTWRITEBYTECODE=1 python3 - "${freeze_commit}" <<'PY'
 import hashlib, json, pathlib, sys
 receipt = json.loads(pathlib.Path('Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json').read_text(encoding='utf-8'))
 transcript = pathlib.Path('Docs/evidence/WP-DW-04/ACCEPTANCE_TRANSCRIPT.jsonl').read_bytes()
+invalid_bytes = pathlib.Path('Docs/evidence/WP-DW-04/ACCEPTANCE_INVALID_ATTEMPTS.json').read_bytes()
+invalid = json.loads(invalid_bytes)
 assert receipt.get('schema') == 'dw04-campaign-receipt-v1'
 assert receipt.get('repository') == 'Arkus0/Juego2'
+assert receipt.get('pr_number') == 151
 assert receipt.get('phase') == 'acceptance'
 assert receipt.get('freeze_commit') == sys.argv[1]
 assert receipt.get('transcript_sha256') == hashlib.sha256(transcript).hexdigest()
+assert receipt.get('invalid_attempts_sha256') == hashlib.sha256(invalid_bytes).hexdigest()
+assert receipt.get('invalid_attempt_count') == len(invalid)
 ids = receipt.get('provider_request_ids')
 assert isinstance(ids, list) and len(ids) == 36 and len(set(ids)) == 36 and all(ids)
 run_id = receipt.get('workflow_run_id')
 assert isinstance(run_id, int) and run_id > 0
-print(f'DW-04 campaign receipt structure: GREEN (run {run_id})')
+assert receipt.get('campaign_id')
+print(f'DW-04 campaign receipt structure: GREEN (run {run_id}; invalid attempts {len(invalid)})')
 PY
 
 run_id="$(python3 -c "import json; print(json.load(open('Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json'))['workflow_run_id'])")"
+campaign_id="$(python3 -c "import json; print(json.load(open('Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json'))['campaign_id'])")"
+campaign_candidate="$(python3 -c "import json; print(json.load(open('Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json'))['candidate_sha'])")"
 repo="${GITHUB_REPOSITORY:-Arkus0/Juego2}"
 api="https://api.github.com/repos/${repo}"
 run_json="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${api}/actions/runs/${run_id}")" || { echo "Cannot verify durable DW-04 campaign run on live GitHub" >&2; exit 2; }
 [[ "$(jq -r '.conclusion // empty' <<<"${run_json}")" == "success" ]] || { echo "DW-04 campaign source run is not successful" >&2; exit 2; }
-[[ "$(jq -r '.event // empty' <<<"${run_json}")" == "workflow_dispatch" ]] || { echo "DW-04 campaign source was not an explicit one-shot dispatch" >&2; exit 2; }
-run_name="$(jq -r '.name // empty' <<<"${run_json}")"
-[[ "${run_name}" == "DW-04 Paired Agent Campaign" ]] || { echo "Unexpected DW-04 campaign workflow identity: ${run_name}" >&2; exit 2; }
-freeze_short="${freeze_commit:0:12}"
-runs_json="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${api}/actions/workflows/dw04-campaign.yml/runs?event=workflow_dispatch&per_page=100")" || { echo "Cannot enumerate DW-04 campaigns for uniqueness" >&2; exit 2; }
-matching="$(jq --arg marker "acceptance-${freeze_short}" '[.workflow_runs[] | select((.display_title // "") | contains($marker))] | length' <<<"${runs_json}")"
-[[ "${matching}" == "1" ]] || { echo "DW-04 acceptance campaign uniqueness violated: ${matching} runs for freeze ${freeze_short}" >&2; exit 2; }
+[[ "$(jq -r '.event // empty' <<<"${run_json}")" == "pull_request" ]] || { echo "DW-04 campaign source was not the reviewed PR-edited workflow" >&2; exit 2; }
+[[ "$(jq -r '.name // empty' <<<"${run_json}")" == "DW-04 Model Campaign" ]] || { echo "Unexpected DW-04 campaign workflow identity" >&2; exit 2; }
+[[ "$(jq -r '.head_sha // empty' <<<"${run_json}")" == "${campaign_candidate}" ]] || { echo "DW-04 campaign run head differs from receipt candidate" >&2; exit 2; }
+jq -e '.pull_requests | any(.number == 151)' <<<"${run_json}" >/dev/null || { echo "DW-04 campaign run is not bound to isolated PR #151" >&2; exit 2; }
+
+checks_json="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${api}/commits/${freeze_commit}/check-runs")" || { echo "Cannot enumerate DW-04 acceptance campaign claims" >&2; exit 2; }
+start_count="$(jq --arg cid "${campaign_id}" '[.check_runs[] | select(.name == "DW-04 acceptance campaign start" and .external_id == $cid)] | length' <<<"${checks_json}")"
+[[ "${start_count}" == "1" ]] || { echo "DW-04 durable acceptance campaign uniqueness/identity violated" >&2; exit 2; }
+result_count="$(jq '[.check_runs[] | select(.name == "DW-04 acceptance result" and .conclusion == "success")] | length' <<<"${checks_json}")"
+[[ "${result_count}" == "1" ]] || { echo "DW-04 durable acceptance PASS check missing/duplicated" >&2; exit 2; }
 
 for marker in \
   'FOUNDATIONAL_PROOF_VERDICT: READY' \
