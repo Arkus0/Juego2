@@ -1,0 +1,176 @@
+name: Arkus Reviewer Claim
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: arkus-review-claim-pr-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  claim:
+    name: Reviewer claim lease
+    if: >-
+      github.event.issue.pull_request != null &&
+      (github.event.comment.author_association == 'OWNER' ||
+       github.event.comment.author_association == 'MEMBER' ||
+       github.event.comment.author_association == 'COLLABORATOR') &&
+      contains(github.event.comment.body, 'ARKUS_AUTOMATION_V2') &&
+      (contains(github.event.comment.body, 'State: REVIEW_CLAIM_REQUEST') ||
+       contains(github.event.comment.body, 'State: REVIEW_CLAIM_RELEASE_REQUEST'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.issue.number }}
+      REQUEST_COMMENT_ID: ${{ github.event.comment.id }}
+      REQUEST_BODY: ${{ github.event.comment.body }}
+
+    steps:
+      - name: Checkout claim policy
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: process-oracle
+          fetch-depth: 1
+
+      - name: Parse request and live PR
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 process-oracle/scripts/review-claim.py self-test
+          python3 - <<'PY' > request.env
+          import os, re
+          body = os.environ['REQUEST_BODY']
+          states = re.findall(r'^State:\s*(REVIEW_CLAIM_REQUEST|REVIEW_CLAIM_RELEASE_REQUEST)\s*$', body, re.M)
+          shas = re.findall(r'^Target SHA:\s*([0-9a-fA-F]{40})\s*$', body, re.M)
+          claim_ids = re.findall(r'^Claim ID:\s*(\d+)\s*$', body, re.M)
+          if len(states) != 1 or len(shas) != 1:
+              raise SystemExit('request requires exactly one State and exact Target SHA')
+          if states[0] == 'REVIEW_CLAIM_REQUEST' and claim_ids:
+              raise SystemExit('claim requester may not choose its own Claim ID')
+          if states[0] == 'REVIEW_CLAIM_RELEASE_REQUEST' and len(claim_ids) != 1:
+              raise SystemExit('release request requires exactly one Claim ID')
+          print(f"state={states[0]}")
+          print(f"target_sha={shas[0].lower()}")
+          print(f"claim_id={claim_ids[0] if claim_ids else os.environ['REQUEST_COMMENT_ID']}")
+          PY
+          cat request.env >> "${GITHUB_OUTPUT}"
+
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
+          state="$(grep '^state=' request.env | cut -d= -f2)"
+          target="$(grep '^target_sha=' request.env | cut -d= -f2)"
+          if [[ "${state}" == "REVIEW_CLAIM_REQUEST" ]]; then
+            head="$(jq -r '.head.sha // empty' pr.json | tr '[:upper:]' '[:lower:]')"
+            [[ "${head}" == "${target}" ]] || { echo "::error::stale claim target ${target}; live HEAD is ${head}"; exit 2; }
+            [[ "$(jq -r '.draft' pr.json)" == "false" ]] || { echo "::error::Reviewer claim requires Ready PR"; exit 2; }
+          fi
+
+      - name: Snapshot claim markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate | jq -s 'add' > comments.json
+
+      - name: Decide claim
+        id: decide
+        if: steps.request.outputs.state == 'REVIEW_CLAIM_REQUEST'
+        env:
+          TARGET_SHA: ${{ steps.request.outputs.target_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          now="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          PYTHONDONTWRITEBYTECODE=1 python3 process-oracle/scripts/review-claim.py decide \
+            --comments-json comments.json \
+            --request-id "${REQUEST_COMMENT_ID}" \
+            --target-sha "${TARGET_SHA}" \
+            --now "${now}" \
+            --github-output "${GITHUB_OUTPUT}"
+          echo "claimed_at=${now}" >> "${GITHUB_OUTPUT}"
+          echo "expires_at=$(date -u -d '+90 minutes' +'%Y-%m-%dT%H:%M:%SZ')" >> "${GITHUB_OUTPUT}"
+
+      - name: Publish claim result
+        if: steps.request.outputs.state == 'REVIEW_CLAIM_REQUEST'
+        env:
+          TARGET_SHA: ${{ steps.request.outputs.target_sha }}
+          DECISION: ${{ steps.decide.outputs.decision }}
+          CLAIM_ID: ${{ steps.decide.outputs.claim_id }}
+          ACTIVE_CLAIM_ID: ${{ steps.decide.outputs.active_claim_id }}
+          ACTIVE_EXPIRES_AT: ${{ steps.decide.outputs.active_expires_at }}
+          CLAIMED_AT: ${{ steps.decide.outputs.claimed_at }}
+          EXPIRES_AT: ${{ steps.decide.outputs.expires_at }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${DECISION}" == "GRANT" ]]; then
+            body=$(cat <<EOF
+          ARKUS_AUTOMATION_V2
+          State: REVIEW_CLAIMED
+          Claim ID: ${CLAIM_ID}
+          Target SHA: ${TARGET_SHA}
+          Claimed At: ${CLAIMED_AT}
+          Expires At: ${EXPIRES_AT}
+          Detail: exclusive Reviewer lease granted for this exact PR+SHA; release after verdict or allow expiry for abandoned sessions.
+          EOF
+            )
+          else
+            body=$(cat <<EOF
+          ARKUS_AUTOMATION_V2
+          State: REVIEW_CLAIM_DENIED
+          Claim ID: ${CLAIM_ID}
+          Target SHA: ${TARGET_SHA}
+          Active Claim ID: ${ACTIVE_CLAIM_ID}
+          Active Claim Expires At: ${ACTIVE_EXPIRES_AT}
+          Detail: another live Reviewer lease already owns this exact PR+SHA. Do not perform a duplicate review.
+          EOF
+            )
+          fi
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
+
+      - name: Decide release
+        id: release
+        if: steps.request.outputs.state == 'REVIEW_CLAIM_RELEASE_REQUEST'
+        env:
+          TARGET_SHA: ${{ steps.request.outputs.target_sha }}
+          CLAIM_ID: ${{ steps.request.outputs.claim_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          now="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          can_release="$(PYTHONDONTWRITEBYTECODE=1 python3 process-oracle/scripts/review-claim.py can-release \
+            --comments-json comments.json --claim-id "${CLAIM_ID}" --target-sha "${TARGET_SHA}" --now "${now}")"
+          echo "can_release=${can_release}" >> "${GITHUB_OUTPUT}"
+
+      - name: Publish release result
+        if: steps.request.outputs.state == 'REVIEW_CLAIM_RELEASE_REQUEST'
+        env:
+          TARGET_SHA: ${{ steps.request.outputs.target_sha }}
+          CLAIM_ID: ${{ steps.request.outputs.claim_id }}
+          CAN_RELEASE: ${{ steps.release.outputs.can_release }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${CAN_RELEASE}" == "YES" ]]; then
+            state="REVIEW_CLAIM_RELEASED"
+            detail="Reviewer lease released; a later session may claim this exact SHA if another review is genuinely needed."
+          else
+            state="REVIEW_CLAIM_RELEASE_DENIED"
+            detail="No live matching claim exists; nothing was released."
+          fi
+          body=$(cat <<EOF
+          ARKUS_AUTOMATION_V2
+          State: ${state}
+          Claim ID: ${CLAIM_ID}
+          Target SHA: ${TARGET_SHA}
+          Detail: ${detail}
+          EOF
+          )
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="${body}" >/dev/null
