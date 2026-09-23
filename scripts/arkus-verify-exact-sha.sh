@@ -9,6 +9,10 @@ resolve_wp() {
     printf '%s\n' "${ARKUS_WP}"
     return
   fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-CTX-DW-GATE`?[[:space:]]*$'; then
+    printf '%s\n' 'WP-CTX-DW-GATE'
+    return
+  fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-DW-GATE`?[[:space:]]*$'; then
     printf '%s\n' 'WP-DW-GATE'
     return
@@ -130,6 +134,9 @@ resolve_wp() {
 }
 
 case "$(resolve_wp)" in
+  WP-CTX-DW-GATE)
+    exec bash scripts/ctxdwgate-verify-exact-sha.sh "$@"
+    ;;
   WP-DW-GATE)
     exec bash scripts/dwgate-verify-exact-sha.sh "$@"
     ;;
