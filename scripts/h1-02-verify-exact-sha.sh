@@ -5,11 +5,16 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EXPECTED_SHA="${1:-${CANDIDATE_SHA:-}}"
 cd "${ROOT}"
 
+candidate_dirty_status() {
+  git status --porcelain --untracked-files=all | \
+    grep -Ev '^\?\? (VALIDATION_CONTEXT\.json|validation\.log|EXECUTION_RECEIPT\.txt|artifacts/observed/.*)$' || true
+}
+
 actual="$(git rev-parse HEAD)"
 if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 [[ "${EXPECTED_SHA}" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "Invalid expected SHA: ${EXPECTED_SHA}" >&2; exit 2; }
 [[ "${actual}" == "${EXPECTED_SHA}" ]] || { echo "SHA mismatch: expected ${EXPECTED_SHA}, observed ${actual}" >&2; exit 2; }
-[[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean before H1-02 verification" >&2; exit 2; }
+[[ -z "$(candidate_dirty_status)" ]] || { echo "Candidate is not clean before H1-02 verification" >&2; candidate_dirty_status >&2; exit 2; }
 
 for required in \
   Unity/ArkusUnity/Packages/packages-lock.json \
@@ -17,7 +22,7 @@ for required in \
   Docs/evidence/WP-H1-02/second-import-inventory.json \
   Docs/evidence/WP-H1-02/editmode-results.xml \
   Docs/evidence/WP-H1-02/PACKAGE_LEGAL_OBSERVATION.md \
-  Docs/evidence/WP-H1-02/LOCAL_RESULT.md \
+  Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md \
   Docs/evidence/WP-H1-02/WORKER_PRE_REVIEW.md; do
   test -f "${required}" || { echo "Missing H1-02 verification evidence: ${required}" >&2; exit 2; }
 done
@@ -29,7 +34,7 @@ grep -Fxq 'FOUNDATIONAL_PROOF_VERDICT: READY' Docs/evidence/WP-H1-02/PROOF_PLAN.
 grep -Fxq 'UNRESOLVED_PROOF_OBLIGATIONS: 0' Docs/evidence/WP-H1-02/PROOF_PLAN.md
 grep -Fxq 'KNOWN_UNDETECTED_DEFECT_CLASSES: 0' Docs/evidence/WP-H1-02/PROOF_PLAN.md
 grep -Fxq 'PROOF_BUDGET_VERDICT: WITHIN_BUDGET' Docs/evidence/WP-H1-02/PROOF_PLAN.md
-grep -Fxq 'LOCAL_EXECUTION_RESULT: PASS' Docs/evidence/WP-H1-02/LOCAL_RESULT.md
+grep -Fxq 'LOCAL_EXECUTION_RESULT: PASS' Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md
 grep -Fxq 'WORKER_PRE_REVIEW: CLEAN' Docs/evidence/WP-H1-02/WORKER_PRE_REVIEW.md
 grep -Eq '^WORKER_PRE_REVIEW_FINDINGS_FIXED: [0-9]+$' Docs/evidence/WP-H1-02/WORKER_PRE_REVIEW.md
 
@@ -40,7 +45,7 @@ if [[ -n "${PR_BODY:-}" ]]; then
   printf '%s\n' "${PR_BODY}" | grep -Eq '^Branch frozen:[[:space:]]*YES[[:space:]]*$'
 fi
 
-[[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean after H1-02 verification" >&2; exit 2; }
+[[ -z "$(candidate_dirty_status)" ]] || { echo "Candidate is not clean after H1-02 verification" >&2; candidate_dirty_status >&2; exit 2; }
 
 cat <<EOF
 EXECUTION_RECEIPT_V1
