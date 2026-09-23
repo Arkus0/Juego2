@@ -3,36 +3,9 @@ name: Arkus Main Safety
 on:
   push:
     branches: [main]
+  # Deliberately unfiltered: any repository file can become a build input through MSBuild,
+  # analyzers, generators or project metadata, so path allow-lists can create false-green PRs.
   pull_request:
-    paths:
-      - '.github/workflows/main-safety.yml'
-      - '.github/workflows/**'
-      - 'global.json'
-      - 'Juego2.sln'
-      - '**/*.sln'
-      - '**/*.csproj'
-      - 'src/**'
-      - 'tests/**'
-      - 'scripts/**'
-      - 'Directory.Build.props'
-      - 'Directory.Packages.props'
-      - 'Directory.*.props'
-      - 'Directory.*.targets'
-      - '**/Directory.*.props'
-      - '**/Directory.*.targets'
-      - '**/*.props'
-      - '**/*.targets'
-      - 'NuGet.config'
-      - '**/NuGet.config'
-      - 'packages.lock.json'
-      - '**/packages.lock.json'
-      - '**/*.lock.json'
-      - '.editorconfig'
-      - '**/.editorconfig'
-      - '*.globalconfig'
-      - '**/*.globalconfig'
-      - '*.ruleset'
-      - '**/*.ruleset'
   workflow_dispatch:
 
 permissions:
