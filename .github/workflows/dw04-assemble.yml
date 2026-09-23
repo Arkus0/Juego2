@@ -17,10 +17,10 @@ jobs:
     if: >-
       github.event.pull_request.draft == true &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      contains(github.event.pull_request.body || '', 'DW04 assembly: 960ef57ce2ae99c6499fbc6cd2e9391181c20d86')
+      contains(github.event.pull_request.body || '', 'DW04 assembly: 1847c45f953bfea0aabebeba0a1eb76e9d4a9a6d')
     runs-on: ubuntu-24.04
     env:
-      FREEZE_COMMIT: 960ef57ce2ae99c6499fbc6cd2e9391181c20d86
+      FREEZE_COMMIT: 1847c45f953bfea0aabebeba0a1eb76e9d4a9a6d
       TARGET_SHA: ${{ github.event.pull_request.head.sha }}
       HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
     steps:
