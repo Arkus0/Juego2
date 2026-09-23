@@ -1,0 +1,65 @@
+{
+  "schema": "dw04-calibration-context-v1",
+  "precalibration_commit": "ad570738613c992963668be5abd89bfdeb26b7d6",
+  "baseline_sha": "82369fdb69e33e3492b41c4aaa7f1ae9aaed18af",
+  "route": "CTX",
+  "assembly_rule": "Accepted CTX-03 bounded inspection/escalation: inject the smallest semantically sufficient exact-source fragments, including table schema when a row depends on it; never inflate with unrelated document content.",
+  "contexts": {
+    "C-CITY-01": [
+      {
+        "id": "city02-programme-header",
+        "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+        "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+        "origin": "source_excerpt",
+        "selector": "| Programme ID |",
+        "text": "| Programme ID | District/family | Place / family | Mobility anchor | Domain | A–D | S | Interior | Default access posture | Non-visual revisit reason |\n|---|---|---|---|---|---|---|---|---|---|"
+      },
+      {
+        "id": "city02-loc-casco-bar",
+        "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+        "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+        "origin": "source_excerpt",
+        "selector": "loc.casco.bar",
+        "text": "| `loc.casco.bar` | Casco Viejo | bar / social house | `W.CASCO` | food, drink, social, information | **A** | **S4** | **I3** | public + service + semi-private layers | service/social use, meeting/witness potential, repeat interior use |"
+      }
+    ],
+    "C-CITY-02": [
+      {
+        "id": "city02-programme-header",
+        "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+        "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+        "origin": "source_excerpt",
+        "selector": "| Programme ID |",
+        "text": "| Programme ID | District/family | Place / family | Mobility anchor | Domain | A–D | S | Interior | Default access posture | Non-visual revisit reason |\n|---|---|---|---|---|---|---|---|---|---|"
+      },
+      {
+        "id": "city02-loc-entrada-arrival",
+        "source_path": "Docs/production/CITY_LOCATION_PROGRAMME.md",
+        "source_blob": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+        "origin": "source_excerpt",
+        "selector": "loc.entrada.arrival",
+        "text": "| `loc.entrada.arrival` | Entrada y Carretera | bus stop / arrival threshold | `O.ENTRADA` | arrival, visitor edge, information | **A** | **S1** | I0 | public | outsiders enter/leave here; strong information/meeting function with shallow spatial depth |"
+      }
+    ],
+    "C-PA-01": [
+      {
+        "id": "pa02-nc01",
+        "source_path": "Docs/research/living-world/results/PA-02.md",
+        "source_blob": "ce05c64f8bb0cf1f2a0090d35fa1f32757fdd33d",
+        "origin": "source_excerpt",
+        "selector": "NC-01",
+        "text": "### NC-01 — No-player-trigger / fake agency control\n\n```text\nGIVEN the same actor-accessible state, problem, relevant targets and seed\nWHEN player presence and any player/quest trigger are absent\nTHEN Antonio can still form and resolve the autonomous decision.\n```\n\nFAIL if the action exists only because entering a trigger volume, opening dialogue, starting a quest or a scripted event directly selects Antonio's action."
+      }
+    ],
+    "C-PA-02": [
+      {
+        "id": "pa03-nc01",
+        "source_path": "Docs/research/living-world/results/PA-03.md",
+        "source_blob": "f2c553e01fb00a4ef2da88e9bc76f644436f0dfe",
+        "origin": "source_excerpt",
+        "selector": "NC-01",
+        "text": "### NC-01 — Required asymmetry control: A→B must not imply B→A\n\n```text\nGIVEN Antonio has already chosen a proposal to Manolo\nAND Manolo genuinely owns an optional response decision\nAND response semantics consume Manolo -> Antonio state\n\nBASE\n  trust(Antonio -> Manolo) = HIGH\n  trust(Manolo -> Antonio) = LOW\n\nMUTATION\n  change only trust(Antonio -> Manolo) HIGH -> LOW\n\nPASS\n  trust(Manolo -> Antonio) remains LOW\n  Manolo's relationship input is not silently overwritten/mirrored\n  any receiver response change must arise from Manolo-authorized inputs, not from reusing Antonio's edge\n\nFAIL\n  B -> A is auto-mutated\n  OR receiver code substitutes A -> B for B -> A\n  OR one symmetric score makes the two directions observationally inseparable.\n```"
+      }
+    ]
+  }
+}
