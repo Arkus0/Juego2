@@ -31,7 +31,7 @@ for path in \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_06.md \
   Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json \
   Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json \
-  Docs/evidence/WP-DW-04/CALIBRATION_LUNA_GEN1_RESULTS.json \
+  Docs/evidence/WP-DW-04/CALIBRATION_LUNA_GEN1_CLOSED.json \
   Docs/evidence/WP-DW-04/CALIBRATION_ORACLES.json \
   Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json \
   Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json \
@@ -82,13 +82,37 @@ for name in ('CALIBRATION_ORACLES.json', 'ACCEPTANCE_SOURCE_ORACLES.json'):
 context = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json').read_text(encoding='utf-8'))
 pre = json.loads((root / 'Docs/evidence/WP-DW-04/PRECALIBRATION_FREEZE.json').read_text(encoding='utf-8'))
 assert context['baseline_sha'] == pre['baseline_sha']
+for task, fragments in context['contexts'].items():
+    assert task in pre['calibration_policy']['run_order']
+    for fragment in fragments:
+        source_path = fragment['source_path']
+        assert pre['authority_blobs'][source_path] == fragment['source_blob']
+        source = (root / source_path).read_text(encoding='utf-8')
+        assert fragment['text'] in source, (task, fragment['id'])
 protocol = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json').read_text(encoding='utf-8'))
 assert set(protocol['tasks']) == set(pre['calibration_policy']['run_order'])
 assert protocol['prior_invalid_attempts'] == []
 assert protocol['restart_generation'] == 2
+assert protocol['restart_authorization'] == 'PR#150-comment-5792657967'
 assert protocol['provider_adapter'] == 'scripts/dw04-openrouter-luna-adapter.py'
-assert protocol['canonical_value_rules']['boolean'] == ['YES','NO']
-assert protocol['canonical_value_rules']['requirement'] == ['REQUIRED','NOT_REQUIRED']
+assert protocol['superseded_calibration_evidence'] == [
+    'Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json',
+    'Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json',
+    'Docs/evidence/WP-DW-04/CALIBRATION_LUNA_GEN1_CLOSED.json',
+    'Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_06.md',
+]
+expected_domains = {
+    'importance':['A','B','C','D'],
+    'spatial_depth':['S0','S1','S2','S3','S4'],
+    'interior':['I0','I1','I2','I3'],
+    'fixture':['NC-01','NC-02','DL-11','DL-12','DL-13','DL-14'],
+    'player_trigger_required':['YES','NO'],
+    'actor_decision_without_player':['REQUIRED','NOT_REQUIRED'],
+    'A_to_B_implies_B_to_A':['YES','NO'],
+    'B_to_A_stays_LOW':['YES','NO'],
+}
+assert protocol['canonical_fact_domains'] == expected_domains
+assert protocol['verdict_rule'].startswith('REJECT when the structured blockers array is non-empty')
 config = protocol['model_config']
 assert config['provider'] == 'openrouter-chat-completions'
 assert config['model'] == 'openai/gpt-5.6-luna-20260709'
@@ -97,29 +121,33 @@ assert config['temperature'] is None
 assert config['thinking'] is None
 assert config['tool_policy'] == 'none'
 assert config['provider_options']['endpoint'] == 'https://openrouter.ai/api/v1/chat/completions'
-assert config['provider_options']['structured_output'] == 'dw04_answer_v2'
+assert config['provider_options']['structured_output'] == 'dw04_answer_v1'
 assert config['provider_options']['routing'] == {'order':['openai'],'allow_fallbacks':False,'require_parameters':True}
-assert 'CALIBRATION_LUNA_GEN1_RESULTS.json' in protocol['superseded_calibration_evidence'][2]
-gen1 = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_LUNA_GEN1_RESULTS.json').read_text(encoding='utf-8'))
-assert gen1['campaign']['github_run_id'] == '35844576874'
-assert gen1['summary']['scorable_runs'] == 8 and gen1['summary']['invalid_attempts'] == 0
-assert gen1['summary']['exact_oracle_passes'] == 2 and gen1['summary']['readiness'] == 'NOT_READY'
-assert gen1['summary']['artifact_id'] == 10742434394
-assert gen1['summary']['artifact_zip_sha256'] == 'e9ba2871937300ede466e400ed3a77f7050aac26074f968027748d66c74f53a0'
+invalid = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json').read_text(encoding='utf-8'))
+assert invalid['workflow_run_id'] == 35840654094 and invalid['artifact_id'] == 10740668694
+closed = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json').read_text(encoding='utf-8'))
+assert closed['workflow_run_id'] == 35842779697 and closed['artifact_id'] == 10742271293
+assert closed['readiness'] == 'NOT_READY' and closed['carry_forward_into_restart'] is False
+luna1 = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_LUNA_GEN1_CLOSED.json').read_text(encoding='utf-8'))
+assert luna1['campaign']['github_run_id'] == '35844576874'
+assert luna1['artifact']['artifact_id'] == 10742434394
+assert luna1['run_count'] == 8 and luna1['invalid_attempt_count'] == 0
+assert luna1['readiness'] == 'NOT_READY' and luna1['acceptance_authorized'] is False
 questions = {task['id']: task['question'] for task in pre['eligible_tasks'] if task['partition'] == 'calibration'}
-shared_vocab = []
+contracts = []
 for task_id, task in protocol['tasks'].items():
     assert task['semantic_question'] == questions[task_id]
     rc = task['response_contract']
-    assert set(rc) == {'fact_keys','fact_value_types','allowed_blockers','allowed_verdicts','evidence_ids'}
-    assert set(rc['fact_keys']) == set(rc['fact_value_types'])
+    assert set(rc) == {'fact_keys','allowed_blockers','allowed_verdicts','evidence_ids'}
     assert rc['fact_keys'] and rc['allowed_verdicts'] and rc['evidence_ids']
     assert set(rc['allowed_verdicts']).issubset({'REPORT','REJECT'})
-    shared_vocab.append((tuple(rc['allowed_blockers']), tuple(rc['allowed_verdicts']), tuple(rc['evidence_ids'])))
-assert len(set(shared_vocab)) == 1, 'task-specific blocker/verdict/evidence vocabulary would leak expected semantics'
+    for key in rc['fact_keys']:
+        assert key in expected_domains, ('missing canonical domain', task_id, key)
+    contracts.append((tuple(rc['allowed_blockers']), tuple(rc['allowed_verdicts']), tuple(rc['evidence_ids'])))
+assert len(set(contracts)) == 1, 'task-specific response vocabulary would leak expected semantics'
 for path in sorted((root / 'scripts').glob('dw04-*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
-print('DW-04 frozen universe/oracles/CTX/OpenRouter-Luna generation-2 protocol: GREEN')
+print('DW-04 frozen universe/oracles/CTX/final canonical-schema Luna protocol: GREEN')
 PY
 
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
@@ -161,9 +189,9 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/dw04-observe-exact-sha.sh ${actual}
 Instrument/universe/oracles: GREEN
 Semantically-sufficient CTX calibration freeze: GREEN
-Superseded calibration evidence: GREEN (DeepSeek campaigns plus Luna generation 1 retained; no carry-forward)
-Owner-authorized pre-acceptance calibration amendment: GREEN
-Canonical answer-format schema: GREEN (general type vocabularies; unchanged semantic oracles)
+Superseded calibration evidence: GREEN (DeepSeek plus Luna generation 1 retained; no carry-forward)
+Owner-authorized final calibration budget amendment: GREEN (PR #150 comment 5792657967)
+Canonical fact-domain/output contract: GREEN
 Real-provider adapter contract: GREEN (OpenRouter / exact GPT-5.6 Luna 20260709 / pinned OpenAI serving provider)
 Accepted-authority immutability: GREEN
 Locked restore/build/regression: GREEN

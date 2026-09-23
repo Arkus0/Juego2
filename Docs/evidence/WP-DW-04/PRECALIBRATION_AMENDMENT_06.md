@@ -1,51 +1,62 @@
-# DW-04 pre-acceptance calibration amendment 06 — canonical answer schema repair
+# DW-04 pre-calibration amendment 06 — final canonical-schema calibration generation
 
-Status: **OWNER-AUTHORIZED PLAN-LEVEL CALIBRATION INSTRUMENT REPAIR / NO ACCEPTANCE EXECUTION**
+Status: **OWNER-AUTHORIZED PLAN-LEVEL CALIBRATION BUDGET AMENDMENT / FINAL GENERATION**
 
-Effective pre-calibration universe remains `9cbed950a3469897cf286c9a90624c240701528f`. Calibration and acceptance task identities, source truth, semantic questions, frozen oracles, selection rule, CTX/DW semantics, 30% reduction threshold and 100% correctness requirement remain unchanged.
+Effective pre-calibration task universe, accepted source truth and all semantic oracles remain unchanged from `9cbed950a3469897cf286c9a90624c240701528f` / `88c05db465a3abb9196c1ba8c9f60c42d5506453`.
 
-## Durable owner authorization
+Durable owner authorization: PR #150 conversation comment `5792657967`.
 
-The repository owner explicitly authorized completing DW-04 here without an intermediate Reviewer round and authorized additional **pre-acceptance calibration-only** iterations needed to repair already-declared calibratable instrument dimensions in PR #150 comment `5792698702`, provided that:
+## Trigger
 
-- every prior campaign/result remains preserved and auditable;
-- no successful prior answer is carried forward into a later calibration generation;
-- acceptance tasks remain completely unexecuted until calibration becomes READY;
-- no task identity, authority bytes, semantic question, expected fact/blocker/verdict/evidence oracle, acceptance selection rule, CTX/DW meaning, 30% threshold or 100% correctness rule changes;
-- calibration changes are limited to provider/model/configuration, execution budget, nonsemantic prompt/output formatting, machine-readable schema and objective invalid-run policy;
-- semantic misses may not be selectively retried within a generation.
+Owner-authorized Luna calibration generation 1 executed all eight designated CTX slots on run `35844576874` with zero provider/transport invalid attempts. Provider routing and strict structured JSON were stable, but the calibration instrument still allowed unrestricted free-form fact values and left generic verdict-token semantics under-specified.
 
-This authorization is a transparent owner plan-level amendment, not an independent Reviewer PASS. The final complete DW-04 candidate remains subject to independent review.
+The resulting evidence is retained in `CALIBRATION_LUNA_GEN1_CLOSED.json`. It is `NOT_READY` under the exact pre-frozen scorer and cannot contribute any successful slot to this final generation.
 
-## Generation 1 Luna result
+The failure pattern is instrument-facing rather than a source-truth contradiction:
 
-Workflow run `35844576874` on candidate `8d610ec008c5d4676dbbf39cf90f92cf9ea8df7c` completed all eight designated CTX calls successfully at the transport/provider/schema layer:
+- both `C-CITY-01` runs were exact PASS;
+- both `C-PA-01` runs recovered the correct blocker, evidence and REJECT disposition but rendered canonical fact tokens as explanatory prose;
+- both `C-CITY-02` runs recovered A/S1/I0 material and the blocker but rendered some canonical values as prose and emitted REPORT rather than the intended review disposition;
+- both `C-PA-02` runs recovered the asymmetry control/blocker/evidence but rendered canonical fact tokens as free-form text and emitted REPORT rather than the intended review disposition.
 
-- exact model `openai/gpt-5.6-luna-20260709`;
-- resolved provider `OpenAI` on all eight calls;
-- zero `RUN_INVALID` attempts;
-- all eight produced parseable structured answers;
-- calibration readiness was `NOT_READY` under the unchanged oracle.
+DW-04 explicitly makes non-semantic prompt/output formatting and canonical answer schema formatting calibratable before acceptance, and explicitly forbids treating semantically correct structured content as wrong merely because of free-form wording. Calibration exists to validate the execution instrument before `TASK_SELECTION_FREEZE`.
 
-The complete result is retained as `CALIBRATION_LUNA_GEN1_RESULTS.json` and contributes no favorable slot to the next generation.
+## Owner-authorized proof-budget amendment
 
-## Causal diagnosis
+The original `PRECALIBRATION_FREEZE` proof budget allowed exactly eight designated calls plus bounded objective-invalid replacements. The owner now authorizes one plan-level extension of exactly **eight additional fresh CTX-only calls** to validate the corrected canonical schema. This is an explicit process deviation/amendment, not a hidden retry and not an independent Reviewer PASS.
 
-The generation exposed an instrument-format defect rather than provider instability. The response schema constrained only fact keys to strings, while the scorer required canonical tokens. This allowed semantically correct content to become false REDs, for example explanatory `S1 (shallow)` instead of canonical `S1`, prose forms of `NO`/`YES`, and descriptive fixture text instead of the canonical fixture identifier. The output contract also allowed `REPORT` and `REJECT` without defining their general decision semantics, while the oracle scored them exactly.
+No further calibration generation is authorized under the current DW-04 plan after this one.
 
-The correction is general and answer-independent:
+## Final generation correction
 
-- fact fields receive canonical **type vocabularies**, not task-specific expected values;
-- importance uses the full `A..D` universe;
-- spatial depth uses the full `S0..S4` universe;
-- interior uses the full `I0..I3` universe;
-- boolean fields use `YES|NO`;
-- requirement fields use `REQUIRED|NOT_REQUIRED`;
-- fixture values are identifier-shaped tokens, not descriptive prose;
-- verdict semantics are declared generically: `REJECT` when the proposition/assumption/promise under review is contradicted by supplied authority or a causal blocker is established against it; `REPORT` for neutral recovery/reporting when no proposition is rejected.
+Model/provider remain unchanged from Luna generation 1:
 
-No expected answer is supplied to the adapter and no oracle is changed.
+- OpenRouter gateway;
+- exact model/version `openai/gpt-5.6-luna-20260709`;
+- `openai` serving provider only;
+- fallback disabled;
+- required-parameter routing enabled;
+- no tools;
+- no explicit reasoning override;
+- output budget and timeout unchanged.
 
-## Generation 2 rule
+Only the pre-acceptance execution instrument is tightened:
 
-Generation 2 reruns all eight CTX calibration slots from scratch using the same exact Luna model/provider route. No generation-1 answer counts. Within generation 2 a slot may receive at most one replacement for an objective provider/transport invalid with no scorable answer; semantic misses are not selectively rerun. Acceptance remains blocked until all eight generation-2 slots satisfy the unchanged pre-frozen oracle.
+- canonical fact fields use task-independent field-domain constraints rather than arbitrary strings:
+  - `importance`: `A|B|C|D`;
+  - `spatial_depth`: `S0|S1|S2|S3|S4`;
+  - `interior`: `I0|I1|I2|I3`;
+  - yes/no relation/trigger fields: `YES|NO`;
+  - requirement fields: `REQUIRED|NOT_REQUIRED`;
+  - fixture identifiers: a shared union vocabulary covering frozen fixture/disposition identifiers rather than a task-specific expected answer;
+- canonical facts must be tokens only, without explanatory suffixes;
+- generic verdict semantics are defined consistently for all tasks: `REJECT` when the model emits a causal blocker invalidating the reviewed proposal/assumption, `REPORT` when it emits no blocker;
+- blocker/evidence vocabularies remain shared unions and do not reveal which item is expected for a task.
+
+## Immutable boundary
+
+This amendment does not change task identity, semantic question, accepted source bytes, authority anchors, expected fact values, blocker identities, evidence identities, expected verdicts, acceptance selection rule, CTX baseline meaning, DW retrieval meaning, scorer equality semantics, the 30% reduction threshold, 100% acceptance correctness, or acceptance pair/run count.
+
+All eight final-generation slots start from fresh attempt 1. Prior DeepSeek/Luna results are evidence only and cannot satisfy readiness. Each final-generation slot retains at most one objective provider/transport invalid replacement. Semantic misses are not retryable.
+
+If this final generation is not READY on all eight slots, DW-04 stops under the current plan. If it is READY, `TASK_SELECTION_FREEZE` is created immediately before any acceptance-route call and the 36 acceptance executions proceed without an intermediate Reviewer round, as authorized by the owner. Final independent review remains mandatory for the completed candidate.
