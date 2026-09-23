@@ -1,0 +1,4 @@
+OBSERVATORY|id=observatory.north|elevation_m=2410|remote=true
+DETECTOR|id=detector.spectro|wavelength_min_nm=380.5|wavelength_max_nm=740.25
+CALIBRATION|id=calibration.lamp-a|mode=argon
+CONDITION|sky=clear
