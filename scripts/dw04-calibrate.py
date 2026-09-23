@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Execute the frozen DW-04 CTX-only calibration campaign.
-
-This runner never executes acceptance tasks or DW retrieval. It sends exactly the
-predeclared eight CTX calibration slots to the frozen real-provider adapter, retains
-objective invalid attempts, and scores only after all designated calls are complete.
-"""
+"""Execute the frozen DW-04 CTX-only calibration campaign."""
 
 import argparse
 import datetime as dt
@@ -46,43 +41,27 @@ def invoke(command, request, timeout):
         )
     except subprocess.TimeoutExpired as exc:
         return None, {
-            "state": "RUN_INVALID",
-            "kind": "timeout",
-            "started": started,
-            "ended": now(),
+            "state": "RUN_INVALID", "kind": "timeout", "started": started, "ended": now(),
             "stderr_sha256": hashlib.sha256((exc.stderr or b"")).hexdigest(),
         }, True
     ended = now()
     if completed.returncode:
         invalid = {
-            "state": "RUN_INVALID",
-            "kind": "provider_or_adapter_failure",
-            "exit_code": completed.returncode,
-            "started": started,
-            "ended": ended,
-            "stderr_sha256": hashlib.sha256(completed.stderr).hexdigest(),
+            "state": "RUN_INVALID", "kind": "provider_or_adapter_failure", "exit_code": completed.returncode,
+            "started": started, "ended": ended, "stderr_sha256": hashlib.sha256(completed.stderr).hexdigest(),
         }
-        # The frozen policy permits one replacement only for objective provider /
-        # transport failure before a scorable structured answer. Adapter exit 3 is
-        # reserved for that class; contract/harness exit 2 is not retried.
         return None, invalid, completed.returncode == 3
     try:
         response = json.loads(completed.stdout)
     except json.JSONDecodeError:
         return None, {
-            "state": "RUN_INVALID",
-            "kind": "provider_non_json",
-            "started": started,
-            "ended": ended,
+            "state": "RUN_INVALID", "kind": "provider_non_json", "started": started, "ended": ended,
             "stdout_sha256": hashlib.sha256(completed.stdout).hexdigest(),
             "stderr_sha256": hashlib.sha256(completed.stderr).hexdigest(),
         }, False
     if not response.get("provider_request_id") or not isinstance(response.get("raw", {}).get("answer"), dict):
         return None, {
-            "state": "RUN_INVALID",
-            "kind": "provider_missing_structured_evidence",
-            "started": started,
-            "ended": ended,
+            "state": "RUN_INVALID", "kind": "provider_missing_structured_evidence", "started": started, "ended": ended,
             "response_sha256": trial.digest(trial.canonical(response)),
         }, False
     return response, {"started": started, "ended": ended}, False
@@ -167,11 +146,15 @@ def main():
             "context_fragments": context["contexts"][task_id],
             "seed": None,
         })
+        trial.check_request(request, protocol["model_config"], slot, task["semantic_question"],
+                            task["response_contract"], protocol["system_prompt"], None)
         attempts = 0
         while True:
             attempts += 1
             response, meta, retryable = invoke(command, request, timeout)
             if response is not None:
+                trial.require(response.get("model") == protocol["model_config"]["model"],
+                              "provider response model differs from frozen calibration model")
                 answer = response["raw"]["answer"]
                 record = {
                     "slot": slot,
@@ -183,6 +166,7 @@ def main():
                     "client_request_id": response.get("client_request_id"),
                     "model": response.get("model"),
                     "resolved_model": response.get("resolved_model"),
+                    "resolved_provider": response.get("resolved_provider"),
                     "usage": response.get("usage"),
                     "answer": answer,
                     "response": response,
