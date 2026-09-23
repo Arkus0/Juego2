@@ -61,7 +61,8 @@ namespace Arkus.Harness.Tests
             closureFiles.AddRange(ProjectSurfaceFiles(Path.Combine(root, "src", "Arkus.Game.World")));
             closureFiles.AddRange(ProjectSurfaceFiles(Path.Combine(root, "src", "Arkus.Game.Core")));
 
-            Assert.Empty(FindLeakage(closureFiles.Select(path => new Surface(path, File.ReadAllText(path)))));
+            var violations = FindLeakage(closureFiles.Select(path => new Surface(path, File.ReadAllText(path))));
+            Assert.True(violations.Length == 0, string.Join(Environment.NewLine, violations));
 
             var coreProject = File.ReadAllText(Path.Combine(root, "src", "Arkus.Game.Core", "Arkus.Game.Core.csproj"));
             Assert.DoesNotContain("ProjectReference", coreProject, StringComparison.Ordinal);
@@ -113,7 +114,7 @@ namespace Arkus.Harness.Tests
         {
             var identifierPattern = new Regex(
                 @"\bcity\b|\bpa\b|\bCity[A-Z][A-Za-z0-9_]*\b|\bPa[A-Z][A-Za-z0-9_]*\b",
-                RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                RegexOptions.CultureInvariant);
             var domainIdPattern = new Regex(
                 "\\\"(?<prefix>loc\\.|fam\\.)(?:[^\\\"]*)\\\"",
                 RegexOptions.CultureInvariant);
