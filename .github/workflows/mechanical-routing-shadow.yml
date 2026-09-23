@@ -9,9 +9,15 @@ on:
       - 'scripts/workpack-verifier.py'
       - 'scripts/docsync.py'
       - 'scripts/reuse-context.py'
+      - 'scripts/review-ready-binding.py'
+      - 'scripts/review-ready-integration-controls.py'
+      - 'scripts/pa06-docsync-chain-controls.py'
       - 'scripts/context-capsule-check.py'
       - 'scripts/pa-disposition-selector-controls.py'
       - '.github/workflows/receipt-freeze-reuse.yml'
+      - '.github/workflows/review-ready-closure.yml'
+      - '.github/workflows/state-transitions.yml'
+      - '.github/workflows/telegram-notify.yml'
       - 'Docs/engineering/workpack-verifiers.json'
       - 'Docs/engineering/PA_DISPOSITION_TABLE_V1.md'
   push:
@@ -23,9 +29,15 @@ on:
       - 'scripts/workpack-verifier.py'
       - 'scripts/docsync.py'
       - 'scripts/reuse-context.py'
+      - 'scripts/review-ready-binding.py'
+      - 'scripts/review-ready-integration-controls.py'
+      - 'scripts/pa06-docsync-chain-controls.py'
       - 'scripts/context-capsule-check.py'
       - 'scripts/pa-disposition-selector-controls.py'
       - '.github/workflows/receipt-freeze-reuse.yml'
+      - '.github/workflows/review-ready-closure.yml'
+      - '.github/workflows/state-transitions.yml'
+      - '.github/workflows/telegram-notify.yml'
       - 'Docs/engineering/workpack-verifiers.json'
       - 'Docs/engineering/PA_DISPOSITION_TABLE_V1.md'
   workflow_dispatch:
@@ -35,7 +47,7 @@ permissions:
 
 jobs:
   shadow:
-    name: Registry equals legacy routing
+    name: Registry and terminal-review causal shadow
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -49,12 +61,22 @@ jobs:
             scripts/workpack-verifier.py \
             scripts/docsync.py \
             scripts/reuse-context.py \
+            scripts/review-ready-binding.py \
+            scripts/review-ready-integration-controls.py \
+            scripts/pa06-docsync-chain-controls.py \
             scripts/context-capsule-check.py \
             scripts/pa-disposition-selector-controls.py
       - name: Exact routing equivalence
         run: PYTHONDONTWRITEBYTECODE=1 python3 scripts/workpack-verifier.py self-test
-      - name: Same-SHA reuse context causal self-test
-        run: PYTHONDONTWRITEBYTECODE=1 python3 scripts/reuse-context.py self-test
+      - name: Same-SHA reuse and terminal binding controls
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/reuse-context.py self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/review-ready-binding.py self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/review-ready-integration-controls.py
+      - name: DocSync fail-closed controls
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/docsync.py self-test
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/pa06-docsync-chain-controls.py
       - name: Capsule checker causal self-test
         run: PYTHONDONTWRITEBYTECODE=1 python3 scripts/context-capsule-check.py --self-test
       - name: PA standard-selector controls
