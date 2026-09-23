@@ -1,119 +1,58 @@
 # WP-CTX-DW-GATE — Proof Matrix
 
-FOUNDATIONAL_PROOF_VERDICT: **REPAIRED / PENDING FINAL EXACT-SHA CLOSURE**
-UNRESOLVED_PROOF_OBLIGATIONS: **0 semantic blockers in Worker repair precheck**
-BOUNDED_SCENARIOS: **10**
-DISCOVERABILITY_REGRESSIONS: **0**
-DETERMINISTIC_RESULT_DIGEST: `4be0afefe56592a0fc10822a8167f4489492e848f9f576c9cf502745e032e2f6`
+FOUNDATIONAL_PROOF_VERDICT: **REPAIRED / PENDING FINAL EXACT-SHA CLOSURE**  
+UNRESOLVED_PROOF_OBLIGATIONS: **0 semantic blockers in Worker repair precheck**  
+BOUNDED_SCENARIOS: **10**  
+DISCOVERABILITY_REGRESSIONS: **0**  
+DETERMINISTIC_RESULT_DIGEST: `5222f4752cd34bc4d7a2f3a6b161de708153138ec42638f168059d8c738536b9`  
 PROJECTION_SOURCE_SHA256: `4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683`
 
 This remains bounded proof evidence for CTX↔DW composition only. It is not product/runtime code, a general DW-adoption decision, an H1 product oracle, or H1-GATE public-client evidence.
 
 ## Repair principle
 
-The failed candidate proved an internally consistent model by reading its answers from `FALSIFICATION_SUITE.json`. The repaired v2 suite is deliberately weaker as an oracle and stronger as a falsifier: it may declare stimuli and expected route outcomes, but it is forbidden to declare authority contents, material blockers, lifecycle truth or context-unit counts. `scripts/ctx-dw-gate-proof.py` rejects the old `authority_records`, `baseline_material_blockers`, `initial_context_units` and `dw.lifecycle` answer fields.
+The v3 falsification suite may declare stimuli and expected route outcomes, but it cannot declare contradiction truth, authority contents, lifecycle truth, material blockers, context-unit counts, or precomputed materiality for the structural routing probes. Causal truth is computed from repository authorities, the accepted CTX resolver, the source/projection artifacts, and structural signal fields.
 
-Causal truth now comes from three independent surfaces:
+The three previously repaired classes remain intact: real H1-05 → H1-04 discoverability through accepted CTX dependency mechanics plus an independent parser/oracle; H1→DW lifecycle computed from separate source/projection artifacts; and two material structured DW query shapes with provenance and artifact-derived context measurement.
 
-1. live repository workpack authority plus the accepted CTX-03 dependency/read-set resolver;
-2. `H1_PROJECTION_SOURCE.json`, an independently enumerated synthetic H1-like source universe;
-3. `H1_PROJECTION.json`, a separate concrete generic facts/relations/provenance projection checked and rebuilt from that source universe.
+## Current independent-review repair
 
-The synthetic H1-like universe is intentionally small because H1-04 has not yet accepted a real catalogue universe. It is gate evidence only and cannot become H1 product authority.
+| causal class | behavioral proof | result |
+|---|---|---|
+| CTX↔DW contradiction | a compact CTX surface is independently built from the source universe, then the fixture mutates a real fact value. The DW projection remains lifecycle-GREEN. The harness queries both representations and compares content. Mismatch yields `CONTRADICTION_SOURCE_OPEN` + fail-closed; removing the mutation yields ordinary `USE`. A separate relation-target mutation is also detected. | GREEN |
+| negative claim | an intentionally incomplete compact projection omits the queried result. For a real authority record (`catalogue:market-material/logical_id`) the compact view appears absent, authority returns the counterexample, status becomes `REFUTED_BY_AUTHORITY`, and `claim_closed=false`. A paired truly absent record becomes `CONFIRMED_BY_AUTHORITY` with `claim_closed=true`. | GREEN |
+| domain leakage differential | routing advice is derived from structural semantics (`decision_critical`, `structured_lookup`) rather than text. Adopted CITY vocabulary and alpha-renamed OMEGA vocabulary traverse the same route and remain equivalent. An injected domain-label-dependent policy makes the differential diverge and is required to turn RED. | GREEN |
+| false-positive | opaque text containing CITY, PA, Quaternius, finding, disposition, required-role, allocated and prefab traverses the same structural classifier and remains `NOT_MATERIAL`. Removing the text leaves the route unchanged. An injected text-presence dependency makes the differential diverge and is required to turn RED. | GREEN |
 
-## Contract exercised
+## Contradiction is detected, not declared
 
-| # | causal class | computed behavior | result |
-|---|---|---|---|
-| 1 | hidden materiality | compact input contains only `WP-H1-05`; the accepted CTX-03 dependency resolver derives `WP-H1-04` from the real `Depends on:` authority; an independent parser derives the baseline dependency separately; H1-04's real current status yields `dependency-not-accepted:WP-H1-04` | GREEN |
-| 2 | CTX↔DW contradiction | a real projected catalogue fact is queried; its provenance source is opened instead of voting between compact surfaces | GREEN |
-| 3 | stale DW | corrupting the recorded source fingerprint makes computed staleness/rebuild RED and rejects `USE`; CTX authority discovery remains intact | GREEN |
-| 4 | DW abstention | H1-03/03A-like route remains `NOT_MATERIAL` and no DW query/corpus load occurs | GREEN |
-| 5 | material DW | concrete fact and relation queries return DW records with provenance and source-open the represented source | GREEN |
-| 6 | negative claim | absence is checked against the independent source universe, not the compact projection, and the source universe is opened | GREEN |
-| 7 | domain-leakage differential | alpha-renamed diagnostic vocabulary leaves routing invariant | GREEN |
-| 8 | false-positive control | opaque CITY/PA/H1-like vocabulary cannot manufacture `USE` | GREEN |
-| 9 | H1 projection bootstrap | empty pre-bootstrap projection fails computed completeness/provenance/rebuild; deterministic rebuild from the source universe makes the same query eligible without mutating H1 authority | GREEN |
-| 10 | routing-authority conflict | DW `NOT_MATERIAL` cannot suppress the H1-04 read derived by accepted CTX dependency mechanics | GREEN |
+Scenario 02 contains no `contradiction: true` answer field. The compact CTX representation uses a different schema from the DW projection and is built independently from the same source universe. The scenario stimulus mutates `catalogue:market-prefab / logical_id` to `ctx-mutated.market.prefab`; the lifecycle-GREEN DW row remains `qsrc.market.prefab`. `route()` detects the mismatch by comparing the queried rows; that comparison drives source-open/fail-closed.
 
-## Non-circular CTX discoverability
+Causal controls prove mutation present → contradiction; mutation removed → no contradiction and `USE`; and a separate `derived-from` relation-target corruption → contradiction, so the detector is not hard-wired to the fact example.
 
-Scenario 01 no longer contains `WP-H1-04` in a fixture-owned `claim_required_sources` list. Its compact start is only:
+## Negative-claim falsification by authority
 
-- `Docs/workpacks/H1/WP-H1-05.md`.
+Scenario 06 executes two worlds through the same logic. The compact view is deliberately incomplete and has no completeness oracle sufficient to close an absence, so authority is queried. A false absence for `catalogue:market-material / logical_id` is refuted by a concrete authority counterexample and cannot close. A truly absent `catalogue:missing-entry / logical_id` is confirmed. The authority result therefore changes the result rather than being discarded.
 
-The harness imports `scripts/ctx03-dynamic-context-check.py` and exercises its accepted `direct_dependency_contracts()` mechanic against the actual H1-05 bytes. That discovers `Docs/workpacks/H1/WP-H1-04.md` from the real `Depends on: WP-H1-04 PASS` line.
+## Structural domain-leakage / false-positive seam
 
-The comparison oracle is separate code that independently parses the authoritative H1-05 dependency declaration. It does not consume the CTX result. The blocker is then derived from the actual H1-04 `Status:` line rather than from the falsification JSON. On this candidate the authority is `PLANNED / NOT_STARTED`, therefore the bounded blocker is `dependency-not-accepted:WP-H1-04`.
+Cases 07/08 no longer use unused diagnostic fields and no longer predeclare `dw.advice`. `route()` computes advice structurally: both decision-critical + structured lookup → `USE`; exactly one → `OPTIONAL`; neither → `NOT_MATERIAL`. Surface labels/text travel through the same route but are not semantic inputs.
 
-Two adversarial checks bind the result causally:
+The controls do not use a token blacklist/whitelist. Instead they mutate routing behavior: a deliberately domain-label-bound policy makes CITY vs alpha-renamed OMEGA diverge, and a deliberately text-presence-bound policy makes opaque text affect materiality. Both must be detected RED.
 
-- suppressing the CTX-derived dependency leaves the independently derived baseline source missing and turns the audit RED;
-- mutating the H1-04 authority status to accepted in the isolated control removes the derived blocker, proving the blocker is content-driven rather than fixture-driven.
+## Preserved lifecycle and selective-utility evidence
 
-## Computed H1→DW lifecycle
+`H1_PROJECTION_SOURCE.json` remains the independent 3-record/2-relation source universe. `H1_PROJECTION.json` remains the separate 9-fact/2-relation generic projection with exact source fingerprint and per-row provenance. Admission still requires exact independently rebuilt facts/relations/cardinality/targets, provenance, current source fingerprint and deterministic rebuild parity.
 
-`H1_PROJECTION_SOURCE.json` independently enumerates 3 H1-like records and 2 relationships. `H1_PROJECTION.json` contains the separately materialized generic projection: **9 facts + 2 relations**, each carrying source path, exact source SHA-256 and source record identity.
-
-The harness computes all admission predicates from artifacts:
-
-| predicate | computation |
-|---|---|
-| independent universe | source and projection are distinct artifacts; source schema contains independently enumerated records + relations |
-| projection owner/schema | concrete adapter ID + projection schema must match the declared source projection schema |
-| completeness | exact independently rebuilt fact tuples and relation tuples, including cardinality/targets, must equal the stored projection |
-| provenance | every fact/relation must carry the exact source path, current source SHA-256 and non-empty source record identity |
-| staleness | stored source identity/fingerprint must equal current source bytes |
-| rebuild | deterministic normalized rebuild from the independent source must exactly reproduce the stored projection |
-
-No lifecycle predicate can be supplied by the suite. Scenario 09 empties the real projected facts/relations and is rejected; its after-rebuild path calls the actual deterministic builder and re-evaluates the same predicates rather than flipping booleans.
-
-## Selective DW utility is exercised
-
-Scenario 05 performs two materially different generic queries against the concrete projection:
-
-- **catalogue/identity fact** — query `catalogue:market-prefab / logical_id`; observed DW record includes `qsrc.market.prefab` plus exact provenance; compact query payload = **348 bytes** versus **1204 bytes** for the independent source artifact;
-- **asset/prefab relation** — query `derived-from` from `asset:market-managed-variant`; observed relation targets `catalogue:market-prefab` and carries exact provenance; compact query payload = **380 bytes** versus **1204 bytes** for the independent source artifact.
-
-`dw_loaded=true` is set only after a concrete query returns a record from a lifecycle-GREEN projection. The decision-critical record source is then opened from the returned provenance. The byte comparison is derived from the actual serialized query result and source artifact; it is only a bounded initial-context comparison, not a token benchmark or generalized savings claim.
-
-An empty projection cannot produce the same PASS: it fails lifecycle admission before either material query can succeed.
+Scenario 05 still performs both material shapes: fact `catalogue:market-prefab / logical_id`, and relation `derived-from` from `asset:market-managed-variant`. `dw_loaded=true` remains impossible without an actual lifecycle-GREEN result; provenance drives source-open; context comparison remains artifact-derived.
 
 ## Adversarial controls
 
-The harness executes these controls independently of fixture labels, and all must be true before the suite can return GREEN:
+All previous lifecycle/discoverability corruption controls remain required, plus: equivalent relation contradiction detected; alpha-renaming structural invariance; injected domain-label dependency detected RED; opaque text structurally ignored; injected text dependency detected RED. The negative-claim pair must produce both `REFUTED_BY_AUTHORITY` and `CONFIRMED_BY_AUTHORITY`.
 
-- baseline lifecycle computed GREEN;
-- empty DW → RED;
-- relation target corruption → RED;
-- provenance fingerprint corruption → RED;
-- stored source fingerprint staleness → RED;
-- independent source/authority mutation with unchanged projection → RED;
-- deterministic rebuild A == rebuild B;
-- real H1-04 status content changes the authoritative blocker;
-- suppressing the CTX-derived H1-04 dependency is detected against the independent baseline.
+## Reused predecessor evidence and boundaries
 
-This directly answers the failure-mode question from review: a DW with no facts/relations, a projection with forged provenance, or an authority/source whose bytes changed cannot remain GREEN merely because a fixture says lifecycle is valid.
-
-## Reused predecessor evidence
-
-No DW-04 paired-agent campaign, model call or Unity run is repeated. The harness fails closed unless these accepted predecessor surfaces retain their accepted markers:
-
-- `Docs/workpacks/CTX/WP-CTX-03.md`;
-- `Docs/evidence/CTX-03/DOCSYNC.md`;
-- `Docs/workpacks/DW/WP-DW-GATE.md`;
-- `Docs/evidence/WP-DW-GATE/DOCSYNC.md`.
-
-No product/runtime, H0, H1 semantic, CITY, PA, CTX predecessor or DW predecessor implementation is modified by this repair.
-
-## H1/H2 boundary preserved
-
-- H1-03 and H1-03A remain unblocked and normally `NOT_MATERIAL` for DW.
-- H1-04 remains source-first and does not consume this synthetic gate projection as product knowledge.
-- post-H1-04 real projection admission still requires the full lifecycle as a separate non-product boundary.
-- H1-05/H1-06 remain eligible real consumers only after that real projection exists and is current/complete; authority fallback remains legal.
-- nothing here pre-seeds or satisfies the mandatory H1-GATE public-client trial.
-- future H2 may consume an accepted result as knowledge/context-portability input, not product-portability proof.
+No DW-04 model campaign or Unity run is repeated. No product/runtime, H0, H1 semantic, CITY, PA, CTX predecessor or DW predecessor implementation is modified. H1-03/H1-03A remain unblocked; H1-04 remains source-first; post-H1-04 projection admission still requires the full lifecycle separately; H1-GATE public-client trial remains separate.
 
 ## Reproduction
 
@@ -122,8 +61,8 @@ python3 scripts/ctx-dw-gate-proof.py
 python3 scripts/ctx-dw-gate-proof.py --json
 ```
 
-Expected repaired headline before exact-SHA closure:
+Expected deterministic headline before final exact-SHA closure:
 
 ```text
-CTX_DW_GATE_GREEN cases=10 material_variants=2 abstentions=1 facts=9 relations=2 discoverability_regressions=0 digest=4be0afefe56592a0fc10822a8167f4489492e848f9f576c9cf502745e032e2f6
+CTX_DW_GATE_GREEN cases=10 material_variants=2 negative_variants=2 abstentions=1 facts=9 relations=2 discoverability_regressions=0 digest=5222f4752cd34bc4d7a2f3a6b161de708153138ec42638f168059d8c738536b9
 ```
