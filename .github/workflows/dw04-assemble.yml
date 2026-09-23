@@ -1,0 +1,79 @@
+name: DW-04 Frozen Assembly
+
+on:
+  pull_request:
+    types: [edited]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: dw04-assembly-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  assemble:
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 assembly: 0c57a766f8b25e0c1e22d746c05a5678ae275841')
+    runs-on: ubuntu-24.04
+    env:
+      FREEZE_COMMIT: 0c57a766f8b25e0c1e22d746c05a5678ae275841
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - name: Checkout exact pre-assembly candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+      - name: Validate immutable freeze and pinned assembler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          git merge-base --is-ancestor "${FREEZE_COMMIT}" "${TARGET_SHA}"
+          test "$(git rev-parse ${FREEZE_COMMIT}:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)" = "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
+          protocol_blob="$(jq -r '.protocol_blob' Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
+          test "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json)" = "${protocol_blob}"
+          expected_assembler="$(jq -r '.script_blobs.assembler' Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json)"
+          test "$(git rev-parse HEAD:scripts/dw04-acceptance-assemble.py)" = "${expected_assembler}"
+          test ! -e Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+      - name: Install pinned .NET SDK
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+      - name: Build retrieval tool
+        run: dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
+      - name: Materialize frozen contexts
+        run: python3 scripts/dw04-acceptance-assemble.py --freeze-commit "${FREEZE_COMMIT}" --output Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+      - name: Pre-call structural and byte check
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,statistics
+          a=json.load(open('Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json'))
+          o=json.load(open('Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json'))
+          ctx=[]; dw=[]
+          for task,routes in a['contexts'].items():
+              for need in o['tasks'][task]['required_context']:
+                  for route in ('CTX','DW'):
+                      assert any(f['source_path']==need['source_path'] and need['literal'] in f['text'] for f in routes[route]), (task,route,need)
+              c=sum(len(f['text'].encode()) for f in routes['CTX']); d=sum(len(f['text'].encode()) for f in routes['DW'])
+              ctx.append(c); dw.append(d); print(f'{task}: CTX={c} DW={d} saving={1-d/c:.3f}')
+          mc=statistics.median(ctx); md=statistics.median(dw); saving=1-md/mc
+          print(f'MEDIAN: CTX={mc} DW={md} saving={saving:.3f}')
+          assert saving >= 0.30, 'frozen context plan misses 30% pre-call threshold'
+          PY
+      - name: Commit immutable assembly evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+          git commit -m 'dw04: materialize frozen acceptance contexts'
+          git push origin "HEAD:${HEAD_BRANCH}"
