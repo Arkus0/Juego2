@@ -1,7 +1,7 @@
 {
   "schema": "dw04-calibration-protocol-v1",
-  "precalibration_commit": "ad570738613c992963668be5abd89bfdeb26b7d6",
-  "calibration_oracle_commit": "e51a6d981fccb8feb1588eceae6f736d7eb5dc42",
+  "precalibration_commit": "9cbed950a3469897cf286c9a90624c240701528f",
+  "calibration_oracle_commit": "88c05db465a3abb9196c1ba8c9f60c42d5506453",
   "context_path": "Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json",
   "route": "CTX_ONLY",
   "provider_adapter": "scripts/dw04-openai-adapter.py",
@@ -33,7 +33,7 @@
       "evidence_ids": ["CITY02:§4:loc.entrada.arrival"]
     },
     "C-PA-01": {
-      "prompt": "Does PA-02 permit actor initiative to be manufactured by a player/quest/script schedule trigger? Identify the relevant negative fixture and the autonomy requirements. Canonical facts keys: fixture, player_trigger_required, actor_decision_without_player. Use string values only. If the supplied control rejects player/quest/script triggering as the source of the actor action, use blocker id player_trigger_fake_agency and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied PA-02 NC-01 block is PA02:§9:NC-01.",
+      "prompt": "Does PA-02 permit actor initiative to depend on a player/quest/script trigger? Identify the relevant negative fixture and the autonomy requirements. Canonical facts keys: fixture, player_trigger_required, actor_decision_without_player. Use string values only. If the supplied control rejects player/quest/script triggering as the source of the actor action, use blocker id player_trigger_fake_agency and verdict REJECT; otherwise blockers must be empty and verdict REPORT. Canonical evidence mapping: the supplied PA-02 NC-01 block is PA02:§9:NC-01.",
       "fact_keys": ["fixture", "player_trigger_required", "actor_decision_without_player"],
       "allowed_blockers": ["player_trigger_fake_agency"],
       "allowed_verdicts": ["REPORT", "REJECT"],
