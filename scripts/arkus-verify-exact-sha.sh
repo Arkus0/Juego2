@@ -9,6 +9,10 @@ resolve_wp() {
     printf '%s\n' "${ARKUS_WP}"
     return
   fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-DW-04`?[[:space:]]*$'; then
+    printf '%s\n' 'WP-DW-04'
+    return
+  fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-DW-03`?[[:space:]]*$'; then
     printf '%s\n' 'WP-DW-03'
     return
@@ -114,6 +118,11 @@ resolve_wp() {
 }
 
 case "$(resolve_wp)" in
+  WP-DW-04)
+    python3 scripts/dw04-evidence-integrity.py
+    dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
+    exec bash scripts/dw04-verify-exact-sha.sh "$@"
+    ;;
   WP-DW-03)
     exec bash scripts/dw03-verify-exact-sha.sh "$@"
     ;;

@@ -1,0 +1,60 @@
+{
+  "schema": "dw04-calibration-results-v1",
+  "precalibration_commit": "9cbed950a3469897cf286c9a90624c240701528f",
+  "calibration_oracle_commit": "88c05db465a3abb9196c1ba8c9f60c42d5506453",
+  "calibration_protocol_commit": "8d610ec008c5d4676dbbf39cf90f92cf9ea8df7c",
+  "campaign": {
+    "campaign_id": "github-actions:Arkus0/Juego2:pr150:sha8d610ec008c5d4676dbbf39cf90f92cf9ea8df7c:run35844576874:calibration-r1",
+    "repository": "Arkus0/Juego2",
+    "pr_number": "150",
+    "candidate_sha": "8d610ec008c5d4676dbbf39cf90f92cf9ea8df7c",
+    "github_run_id": "35844576874"
+  },
+  "model_config": {
+    "provider": "openrouter-chat-completions",
+    "model": "openai/gpt-5.6-luna-20260709",
+    "version": "openrouter-model-id:openai/gpt-5.6-luna-20260709",
+    "temperature": null,
+    "thinking": null,
+    "tool_policy": "none",
+    "execution_budget": {"max_output_tokens": 1200, "timeout_seconds": 120},
+    "run_policy": "owner-authorized-full-calibration-restart; exactly-two-designated-ctx-runs-per-calibration-task; no-semantic-retry; one-objective-invalid-replacement-maximum-per-restarted-slot",
+    "provider_options": {
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "structured_output": "dw04_answer_v1",
+      "routing": {"order":["openai"],"allow_fallbacks":false,"require_parameters":true}
+    }
+  },
+  "summary": {
+    "designated_runs": 8,
+    "scorable_runs": 8,
+    "invalid_attempts": 0,
+    "resolved_provider_all_runs": "OpenAI",
+    "exact_oracle_passes": 2,
+    "exact_oracle_failures": 6,
+    "readiness": "NOT_READY",
+    "artifact_id": 10742434394,
+    "artifact_zip_sha256": "e9ba2871937300ede466e400ed3a77f7050aac26074f968027748d66c74f53a0"
+  },
+  "scoring": [
+    {"slot":{"task":"C-CITY-01","run":1,"route":"CTX"},"pass":true,"errors":[]},
+    {"slot":{"task":"C-CITY-01","run":2,"route":"CTX"},"pass":true,"errors":[]},
+    {"slot":{"task":"C-PA-01","run":1,"route":"CTX"},"pass":false,"errors":["fact:fixture","fact:player_trigger_required","fact:actor_decision_without_player"]},
+    {"slot":{"task":"C-PA-01","run":2,"route":"CTX"},"pass":false,"errors":["fact:fixture","fact:player_trigger_required","fact:actor_decision_without_player"]},
+    {"slot":{"task":"C-CITY-02","run":1,"route":"CTX"},"pass":false,"errors":["fact:spatial_depth","fact:interior","verdict mismatch"]},
+    {"slot":{"task":"C-CITY-02","run":2,"route":"CTX"},"pass":false,"errors":["fact:importance","fact:spatial_depth","verdict mismatch"]},
+    {"slot":{"task":"C-PA-02","run":1,"route":"CTX"},"pass":false,"errors":["fact:fixture","fact:A_to_B_implies_B_to_A","fact:B_to_A_stays_LOW","verdict mismatch"]},
+    {"slot":{"task":"C-PA-02","run":2,"route":"CTX"},"pass":false,"errors":["fact:fixture","fact:A_to_B_implies_B_to_A","fact:B_to_A_stays_LOW","verdict mismatch"]}
+  ],
+  "answers": [
+    {"slot":{"task":"C-CITY-01","run":1,"route":"CTX"},"answer":{"facts":{"importance":"A","spatial_depth":"S4","interior":"I3"},"blockers":[],"verdict":"REPORT","evidence":["CITY02:§4:loc.casco.bar"]},"resolved_provider":"OpenAI","resolved_model":"openai/gpt-5.6-luna"},
+    {"slot":{"task":"C-CITY-01","run":2,"route":"CTX"},"answer":{"facts":{"importance":"A","spatial_depth":"S4","interior":"I3"},"blockers":[],"verdict":"REPORT","evidence":["CITY02:§4:loc.casco.bar"]},"resolved_provider":"OpenAI","resolved_model":"openai/gpt-5.6-luna"},
+    {"slot":{"task":"C-PA-01","run":1,"route":"CTX"},"answer":{"facts":{"fixture":"PA-02 NC-01 — No-player-trigger / fake agency control","player_trigger_required":"No; the player and any player/quest trigger must be absent.","actor_decision_without_player":"Antonio must still form and resolve the autonomous decision without the player."},"blockers":["player_trigger_fake_agency"],"verdict":"REJECT","evidence":["PA02:§9:NC-01"]},"resolved_provider":"OpenAI","resolved_model":"openai/gpt-5.6-luna"},
+    {"slot":{"task":"C-PA-01","run":2,"route":"CTX"},"answer":{"facts":{"fixture":"PA-02 §9: NC-01 — No-player-trigger / fake agency control","player_trigger_required":"No. Player presence and any player/quest trigger must be absent.","actor_decision_without_player":"Antonio must still form and resolve the autonomous decision from the same actor-accessible state, problem, relevant targets, and seed."},"blockers":["player_trigger_fake_agency"],"verdict":"REJECT","evidence":["PA02:§9:NC-01"]},"resolved_provider":"OpenAI","resolved_model":"openai/gpt-5.6-luna"},
+    {"slot":{"task":"C-CITY-02","run":1,"route":"CTX"},"answer":{"facts":{"importance":"A","spatial_depth":"S1 (shallow)","interior":"I0 (no deep enterable interior promised)"},"blockers":["deep_interior_unpromised"],"verdict":"REPORT","evidence":["CITY02:§4:loc.entrada.arrival"]},"resolved_provider":"OpenAI","resolved_model":"openai/gpt-5.6-luna"},
+    {"slot":{"task":"C-CITY-02","run":2,"route":"CTX"},"answer":{"facts":{"importance":"A / S1","spatial_depth":"shallow","interior":"I0"},"blockers":["deep_interior_unpromised"],"verdict":"REPORT","evidence":["CITY02:§4:loc.entrada.arrival"]},"resolved_provider":"OpenAI","resolved_model":"openai/gpt-5.6-luna"},
+    {"slot":{"task":"C-PA-02","run":1,"route":"CTX"},"answer":{"facts":{"fixture":"PA-03 NC-01","A_to_B_implies_B_to_A":"false","B_to_A_stays_LOW":"true"},"blockers":["directional_edge_mirroring"],"verdict":"REPORT","evidence":["PA03:§8:NC-01"]},"resolved_provider":"OpenAI","resolved_model":"openai/gpt-5.6-luna"},
+    {"slot":{"task":"C-PA-02","run":2,"route":"CTX"},"answer":{"facts":{"fixture":"Antonio has chosen a proposal to Manolo; Manolo owns an optional response decision. Base trust is Antonio→Manolo HIGH and Manolo→Antonio LOW; mutate only Antonio→Manolo to LOW.","A_to_B_implies_B_to_A":"No. Changing Antonio→Manolo must not automatically mutate, mirror, or substitute for Manolo→Antonio.","B_to_A_stays_LOW":"Yes. Manolo→Antonio remains LOW unless changed by Manolo-authorized inputs."},"blockers":["directional_edge_mirroring"],"verdict":"REPORT","evidence":["PA03:§8:NC-01"]},"resolved_provider":"OpenAI","resolved_model":"openai/gpt-5.6-luna"}
+  ],
+  "preservation_note": "This repository summary preserves the complete semantic/scoring surface and provider resolution needed to audit the generation-1 diagnosis. The immutable GitHub Actions artifact 10742434394 remains the full raw request/response evidence and its zip SHA256 is pinned above. No generation-1 answer may be carried forward into generation 2 readiness."
+}

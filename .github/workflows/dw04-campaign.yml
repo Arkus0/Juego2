@@ -1,0 +1,187 @@
+name: DW-04 Model Campaign
+
+on:
+  pull_request:
+    types: [edited]
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: read
+
+concurrency:
+  group: dw04-model-campaign-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  calibration:
+    name: Frozen CTX-only calibration
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 campaign: CALIBRATION')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PRECALIBRATION_COMMIT: 9cbed950a3469897cf286c9a90624c240701528f
+      ARKUS_EXECUTION_SUBSTRATE: github-actions-ubuntu-24.04
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {ref: '${{ env.TARGET_SHA }}', fetch-depth: 0}
+      - name: Validate exact campaign request
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          marker="DW04 campaign: CALIBRATION ${TARGET_SHA}"
+          jq -e --arg marker "${marker}" '.pull_request.draft == true and .pull_request.head.repo.full_name == .repository.full_name and ((.pull_request.body // "") | contains($marker))' "${GITHUB_EVENT_PATH}" >/dev/null
+          test "${PR_NUMBER}" = "150"
+      - name: Require configured provider credential before claiming campaign
+        env: {OPENROUTER_API_KEY: '${{ secrets.OPENROUTER_API_KEY }}'}
+        run: test -n "${OPENROUTER_API_KEY}"
+      - name: Install pinned .NET SDK from global.json
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with: {global-json-file: global.json}
+      - name: Re-prove canonical observation on campaign candidate
+        env: {ARKUS_WP: WP-DW-04}
+        run: bash scripts/dw04-observe-exact-sha.sh "${TARGET_SHA}"
+      - name: Claim unique durable calibration campaign
+        env: {GH_TOKEN: '${{ github.token }}'}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="repos/${GITHUB_REPOSITORY}/commits/${TARGET_SHA}/check-runs"
+          existing="$(gh api -H 'Accept: application/vnd.github+json' "${api}" --jq '[.check_runs[] | select(.name == "DW-04 calibration campaign start")] | length')"
+          test "${existing}" = "0"
+          protocol='Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json'
+          model="$(jq -r '.model_config.model' "${protocol}")"; restart_generation="$(jq -r '.restart_generation // 0' "${protocol}")"
+          campaign_id="github-actions:${GITHUB_REPOSITORY}:pr${PR_NUMBER}:sha${TARGET_SHA}:run${GITHUB_RUN_ID}:calibration-r${restart_generation}"
+          echo "DW04_CAMPAIGN_ID=${campaign_id}" >> "${GITHUB_ENV}"
+          mkdir -p artifacts/observed/dw04-calibration
+          jq -n --arg schema dw04-campaign-start-v1 --arg campaign_id "${campaign_id}" --arg repository "${GITHUB_REPOSITORY}" --arg pr_number "${PR_NUMBER}" --arg candidate_sha "${TARGET_SHA}" --arg run_id "${GITHUB_RUN_ID}" --arg model "${model}" '{schema:$schema,campaign_id:$campaign_id,repository:$repository,pr_number:$pr_number,candidate_sha:$candidate_sha,github_run_id:$run_id,phase:"CALIBRATION",state:"CLAIMED_BEFORE_PROVIDER_CALLS",model:$model}' > artifacts/observed/dw04-calibration/CAMPAIGN_START_RECEIPT.json
+          jq -n --arg name 'DW-04 calibration campaign start' --arg head_sha "${TARGET_SHA}" --arg external_id "${campaign_id}" '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"neutral",output:{title:"DW-04 calibration campaign claimed",summary:"Unique exact-SHA calibration campaign claimed before provider calls."}}' | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
+      - name: Execute frozen eight-call CTX calibration
+        env:
+          OPENROUTER_API_KEY: '${{ secrets.OPENROUTER_API_KEY }}'
+          DW04_PR_NUMBER: '${{ env.PR_NUMBER }}'
+          DW04_CANDIDATE_SHA: '${{ env.TARGET_SHA }}'
+        run: python3 scripts/dw04-calibrate.py --pre-commit "${PRECALIBRATION_COMMIT}" --protocol-commit "${TARGET_SHA}" --output artifacts/observed/dw04-calibration/CALIBRATION_RESULTS.json
+      - name: Persist READY check
+        if: success()
+        env: {GH_TOKEN: '${{ github.token }}'}
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '"readiness": "READY"' artifacts/observed/dw04-calibration/CALIBRATION_RESULTS.json
+          jq -n --arg name 'DW-04 calibration result' --arg head_sha "${TARGET_SHA}" --arg external_id "${DW04_CAMPAIGN_ID}:result" '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"success",output:{title:"DW-04 calibration READY",summary:"All eight frozen CTX calibration slots passed."}}' | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
+      - name: Upload complete calibration evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dw04-calibration-${{ env.TARGET_SHA }}-${{ github.run_id }}
+          path: artifacts/observed/dw04-calibration
+          if-no-files-found: warn
+          retention-days: 30
+
+  acceptance:
+    name: Frozen 36-call paired acceptance
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 campaign: ACCEPTANCE')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Checkout exact acceptance candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {ref: '${{ env.TARGET_SHA }}', fetch-depth: 0}
+      - name: Validate frozen acceptance request
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test "${PR_NUMBER}" = "150"
+          marker="DW04 campaign: ACCEPTANCE ${TARGET_SHA}"
+          jq -e --arg marker "${marker}" '.pull_request.draft == true and .pull_request.head.repo.full_name == .repository.full_name and ((.pull_request.body // "") | contains($marker))' "${GITHUB_EVENT_PATH}" >/dev/null
+          freeze="$(git log -1 --format=%H "${TARGET_SHA}" -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
+          assembly="$(git log -1 --format=%H --diff-filter=A -- Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json)"
+          test -n "${freeze}" && test -n "${assembly}"
+          git merge-base --is-ancestor "${freeze}" "${assembly}"
+          git merge-base --is-ancestor "${assembly}" "${TARGET_SHA}"
+          echo "DW04_FREEZE_COMMIT=${freeze}" >> "${GITHUB_ENV}"
+          echo "DW04_ASSEMBLY_COMMIT=${assembly}" >> "${GITHUB_ENV}"
+      - name: Require provider credential
+        env: {OPENROUTER_API_KEY: '${{ secrets.OPENROUTER_API_KEY }}'}
+        run: test -n "${OPENROUTER_API_KEY}"
+      - name: Install pinned .NET SDK from global.json
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with: {global-json-file: global.json}
+      - name: Build frozen retrieval adapter
+        run: dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
+      - name: Verify frozen substrate before campaign claim
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY2'
+          import json,subprocess
+          f=json.load(open('Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json')); p=json.load(open('Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json')); assert p['canonical_executor']=='scripts/dw04-acceptance-execute.py' and p['canonical_workflow']=='.github/workflows/dw04-campaign.yml'
+          for path,key in [('scripts/dw04-trial.py','scorer'),('scripts/dw04-acceptance-assemble.py','assembler'),('scripts/dw04-acceptance-execute.py','executor'),('scripts/dw04-acceptance-audit.py','audit'),('scripts/dw04-openrouter-luna-adapter.py','adapter'),('tools/Arkus.Dw04.Retrieval/Program.cs','retrieval'),('.github/workflows/dw04-assemble.yml','assembly_workflow'),('.github/workflows/dw04-campaign.yml','workflow'),('scripts/dw04-verify-exact-sha.sh','verifier')]: assert subprocess.check_output(['git','rev-parse',f'HEAD:{path}']).decode().strip()==p['script_blobs'][key],key
+          a=json.load(open('Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json')); assert a['freeze_commit']==f.get('effective_freeze_commit',a['freeze_commit']); assert a.get('structural') is True and a.get('saving',0)>=0.30
+          PY2
+      - name: Claim unique durable acceptance campaign
+        env: {GH_TOKEN: '${{ github.token }}'}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="repos/${GITHUB_REPOSITORY}/commits/${TARGET_SHA}/check-runs"
+          existing="$(gh api -H 'Accept: application/vnd.github+json' "${api}" --jq '[.check_runs[] | select(.name == "DW-04 acceptance campaign start")] | length')"
+          test "${existing}" = "0"
+          campaign_id="github-actions:${GITHUB_REPOSITORY}:pr${PR_NUMBER}:sha${TARGET_SHA}:run${GITHUB_RUN_ID}:acceptance"
+          echo "DW04_CAMPAIGN_ID=${campaign_id}" >> "${GITHUB_ENV}"
+          mkdir -p artifacts/observed/dw04-acceptance
+          jq -n --arg schema dw04-acceptance-campaign-start-v1 --arg campaign_id "${campaign_id}" --arg candidate_sha "${TARGET_SHA}" --arg run_id "${GITHUB_RUN_ID}" --arg freeze "${DW04_FREEZE_COMMIT}" --arg assembly "${DW04_ASSEMBLY_COMMIT}" '{schema:$schema,campaign_id:$campaign_id,candidate_sha:$candidate_sha,github_run_id:$run_id,freeze_commit:$freeze,assembly_commit:$assembly,state:"CLAIMED_BEFORE_PROVIDER_CALLS"}' > artifacts/observed/dw04-acceptance/CAMPAIGN_START_RECEIPT.json
+          jq -n --arg name 'DW-04 acceptance campaign start' --arg head_sha "${TARGET_SHA}" --arg external_id "${campaign_id}" '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"neutral",output:{title:"DW-04 acceptance campaign claimed",summary:"Unique exact-SHA 36-call campaign claimed before provider calls."}}' | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
+      - name: Execute exactly 36 frozen paired calls
+        env: {OPENROUTER_API_KEY: '${{ secrets.OPENROUTER_API_KEY }}'}
+        run: python3 scripts/dw04-acceptance-execute.py --freeze-commit "${DW04_FREEZE_COMMIT}" --assembly-commit "${DW04_ASSEMBLY_COMMIT}" --output artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl --raw-output artifacts/observed/dw04-acceptance/ACCEPTANCE_PROVIDER_RAW.jsonl
+      - name: Audit paired result
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/dw04-acceptance-audit.py --freeze-commit "${DW04_FREEZE_COMMIT}" --transcript artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl > artifacts/observed/dw04-acceptance/TRIAL_RESULT.json
+          jq -e '.disposition == "PASS"' artifacts/observed/dw04-acceptance/TRIAL_RESULT.json >/dev/null
+      - name: Create final campaign receipt
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib
+          p=pathlib.Path('artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl')
+          rows=[json.loads(x) for x in p.read_text().splitlines() if x.strip()]
+          receipt={'schema':'dw04-acceptance-campaign-receipt-v1','campaign_id':os.environ['DW04_CAMPAIGN_ID'],'github_run_id':os.environ['GITHUB_RUN_ID'],'candidate_sha':os.environ['TARGET_SHA'],'freeze_commit':os.environ['DW04_FREEZE_COMMIT'],'assembly_commit':os.environ['DW04_ASSEMBLY_COMMIT'],'transcript_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'provider_request_ids':[r['response']['provider_request_id'] for r in rows],'execution_count':len(rows)}
+          pathlib.Path('artifacts/observed/dw04-acceptance/CAMPAIGN_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          PY
+      - name: Persist acceptance PASS check
+        if: success()
+        env: {GH_TOKEN: '${{ github.token }}'}
+        shell: bash
+        run: |
+          set -euo pipefail
+          saving="$(jq -r '.saving' artifacts/observed/dw04-acceptance/TRIAL_RESULT.json)"
+          jq -n --arg name 'DW-04 acceptance result' --arg head_sha "${TARGET_SHA}" --arg external_id "${DW04_CAMPAIGN_ID}:result" --arg saving "${saving}" '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"success",output:{title:"DW-04 paired acceptance PASS",summary:("All 36 calls passed frozen oracles; structural route complete; median byte saving="+$saving)}}' | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
+      - name: Upload complete acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dw04-acceptance-${{ env.TARGET_SHA }}-${{ github.run_id }}
+          path: artifacts/observed/dw04-acceptance
+          if-no-files-found: warn
+          retention-days: 30

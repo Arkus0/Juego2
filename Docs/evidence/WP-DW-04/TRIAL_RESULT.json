@@ -1,0 +1,228 @@
+{
+  "disposition": "PASS",
+  "pairs": [
+    {
+      "task": "A-CITY-01",
+      "pair": "R1",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-CITY-01",
+      "pair": "R2",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-CITY-01",
+      "pair": "R3",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-CITY-02",
+      "pair": "R1",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-CITY-02",
+      "pair": "R2",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-CITY-02",
+      "pair": "R3",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-CITY-03",
+      "pair": "R1",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-CITY-03",
+      "pair": "R2",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-CITY-03",
+      "pair": "R3",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-PA-01",
+      "pair": "R1",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-PA-01",
+      "pair": "R2",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-PA-01",
+      "pair": "R3",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-PA-02",
+      "pair": "R1",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-PA-02",
+      "pair": "R2",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-PA-02",
+      "pair": "R3",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-PA-03",
+      "pair": "R1",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-PA-03",
+      "pair": "R2",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    },
+    {
+      "task": "A-PA-03",
+      "pair": "R3",
+      "CTX": {
+        "pass": true,
+        "errors": []
+      },
+      "DW": {
+        "pass": true,
+        "errors": []
+      }
+    }
+  ],
+  "median_ctx_bytes": 2258.5,
+  "median_dw_bytes": 1380.5,
+  "saving": 0.3887535975204782,
+  "structural": true,
+  "provider_request_count": 36,
+  "assembly_commit": "25272a8f9ce1631dbe3b9586c3af7dc12f02b3b1",
+  "freeze_commit": "1032343542f09d969a3eabe81734fe53b5cc3ec2"
+}

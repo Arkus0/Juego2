@@ -1,0 +1,59 @@
+name: DW-04 Frozen Assembly
+on:
+  pull_request:
+    types: [edited]
+permissions:
+  contents: write
+  pull-requests: read
+concurrency:
+  group: dw04-assembly-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+jobs:
+  assemble:
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 assembly:')
+    runs-on: ubuntu-24.04
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {ref: '${{ env.TARGET_SHA }}', fetch-depth: 0}
+      - name: Validate exact effective freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          freeze="$(git log -1 --format=%H "${TARGET_SHA}" -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"; test -n "${freeze}"
+          marker="DW04 assembly: ${freeze}"; jq -e --arg m "${marker}" '(.pull_request.body // "")|contains($m)' "${GITHUB_EVENT_PATH}" >/dev/null
+          test "$(git rev-parse ${freeze}:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)" = "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
+          protocol="$(jq -r '.protocol_blob' Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"; test "$(git rev-parse HEAD:Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json)" = "${protocol}"
+          for spec in 'assembler scripts/dw04-acceptance-assemble.py' 'retrieval tools/Arkus.Dw04.Retrieval/Program.cs' 'assembly_workflow .github/workflows/dw04-assemble.yml'; do key="${spec%% *}"; path="${spec#* }"; test "$(git rev-parse HEAD:${path})" = "$(jq -r --arg k "${key}" '.script_blobs[$k]' Docs/evidence/WP-DW-04/ACCEPTANCE_PROTOCOL.json)"; done
+          test ! -e Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+          echo "FREEZE_COMMIT=${freeze}" >> "${GITHUB_ENV}"
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with: {global-json-file: global.json}
+      - name: Build frozen retrieval
+        run: dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
+      - name: Materialize twice-equivalent frozen contexts
+        run: python3 scripts/dw04-acceptance-assemble.py --freeze-commit "${FREEZE_COMMIT}" --output Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+      - name: Prove structural completeness and saving
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY2'
+          import json,statistics,pathlib
+          p=pathlib.Path('Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json'); a=json.loads(p.read_text()); o=json.load(open('Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json')); ctx=[]; dw=[]
+          for task,routes in a['contexts'].items():
+              for need in o['tasks'][task]['required_context']:
+                  for route in ('CTX','DW'): assert any(f['source_path']==need['source_path'] and need['literal'] in f['text'] for f in routes[route]),(task,route,need)
+              c=sum(len(f['text'].encode()) for f in routes['CTX']); d=sum(len(f['text'].encode()) for f in routes['DW']); ctx.append(c); dw.append(d); print(f'{task}: CTX={c} DW={d} saving={1-d/c:.6f}')
+          mc=statistics.median(ctx); md=statistics.median(dw); saving=1-md/mc; assert saving>=0.30,(mc,md,saving); a.update({'structural':True,'median_ctx_bytes':mc,'median_dw_bytes':md,'saving':saving}); p.write_text(json.dumps(a,ensure_ascii=False,indent=2)+'\n'); print(f'MEDIAN_CTX_BYTES={mc} MEDIAN_DW_BYTES={md} SAVING={saving:.6f}')
+          PY2
+      - name: Commit immutable assembly
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'; git add Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json; git commit -m 'dw04: materialize final frozen acceptance contexts'; git push origin "HEAD:${HEAD_BRANCH}"

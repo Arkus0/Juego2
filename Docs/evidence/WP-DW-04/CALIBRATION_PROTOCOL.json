@@ -1,0 +1,63 @@
+{
+  "schema": "dw04-calibration-protocol-v1",
+  "precalibration_commit": "9cbed950a3469897cf286c9a90624c240701528f",
+  "calibration_oracle_commit": "88c05db465a3abb9196c1ba8c9f60c42d5506453",
+  "context_path": "Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json",
+  "prior_invalid_attempts": [],
+  "restart_generation": 2,
+  "restart_authorization": "PR#150-comment-5792698702",
+  "superseded_calibration_evidence": [
+    "Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json",
+    "Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json",
+    "Docs/evidence/WP-DW-04/CALIBRATION_LUNA_GEN1_RESULTS.json",
+    "Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_05.md",
+    "Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_06.md"
+  ],
+  "route": "CTX_ONLY",
+  "provider_adapter": "scripts/dw04-openrouter-luna-adapter.py",
+  "model_config": {
+    "provider": "openrouter-chat-completions",
+    "model": "openai/gpt-5.6-luna-20260709",
+    "version": "openrouter-model-id:openai/gpt-5.6-luna-20260709",
+    "temperature": null,
+    "thinking": null,
+    "tool_policy": "none",
+    "execution_budget": {"max_output_tokens": 1200, "timeout_seconds": 120},
+    "run_policy": "owner-authorized-pre-acceptance-instrument-calibration-generation-2; exactly-two-designated-ctx-runs-per-calibration-task; no-selective-semantic-retry; one-objective-invalid-replacement-maximum-per-slot",
+    "provider_options": {
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "structured_output": "dw04_answer_v2",
+      "routing": {"order":["openai"],"allow_fallbacks":false,"require_parameters":true}
+    }
+  },
+  "canonical_value_rules": {
+    "importance": ["A","B","C","D"],
+    "spatial_depth": ["S0","S1","S2","S3","S4"],
+    "interior": ["I0","I1","I2","I3"],
+    "fixture_pattern": "^[A-Z]{2}-[0-9]{2}$",
+    "boolean": ["YES","NO"],
+    "requirement": ["REQUIRED","NOT_REQUIRED"],
+    "verdict_policy": "REJECT when the proposition, assumption or promise under review is contradicted by the supplied authority or a causal blocker is established against it; REPORT only for neutral recovery/reporting when no proposition is rejected."
+  },
+  "system_prompt": "You are executing a frozen repository context-evaluation task. The supplied context fragments are the only semantic authority for this run: do not use memory, outside knowledge, web search, tools, or unstated assumptions. Return only the canonical structured answer. Facts must use only the canonical token forms declared in the response contract; never add explanatory prose, parentheticals, source labels or sentences inside fact values. A fixture fact is only its fixture identifier token such as NC-01. Boolean facts are exactly YES or NO. Requirement facts are exactly REQUIRED or NOT_REQUIRED. Classification facts are only their code token. Verdict policy: REJECT when the proposition, assumption or promise under review is contradicted by the authority or a causal blocker is established against it; REPORT only for neutral recovery/reporting when no proposition is rejected. blockers and evidence contain only identifiers allowed by the response contract. Optional prose is forbidden.",
+  "tasks": {
+    "C-CITY-01": {
+      "semantic_question": "Identify the accepted importance, depth and interior commitment of loc.casco.bar.",
+      "response_contract": {"fact_keys":["importance","spatial_depth","interior"],"fact_value_types":{"importance":"importance","spatial_depth":"spatial_depth","interior":"interior"},"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
+    },
+    "C-CITY-02": {
+      "semantic_question": "Does the bus arrival threshold promise a deep enterable interior? Give the accepted classifications.",
+      "response_contract": {"fact_keys":["importance","spatial_depth","interior"],"fact_value_types":{"importance":"importance","spatial_depth":"spatial_depth","interior":"interior"},"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
+    },
+    "C-PA-01": {
+      "semantic_question": "Does PA-02 permit actor initiative to depend on a player/quest/script trigger? Identify the relevant negative fixture and the autonomy requirement when the player is absent.",
+      "response_contract": {"fact_keys":["fixture","player_trigger_required","actor_decision_without_player"],"fact_value_types":{"fixture":"fixture","player_trigger_required":"boolean","actor_decision_without_player":"requirement"},"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
+    },
+    "C-PA-02": {
+      "semantic_question": "Review an assumption that an A-to-B relationship edge implies the reverse B-to-A edge; recover the PA-03 NC-01 asymmetry control.",
+      "response_contract": {"fact_keys":["fixture","A_to_B_implies_B_to_A","B_to_A_stays_LOW"],"fact_value_types":{"fixture":"fixture","A_to_B_implies_B_to_A":"boolean","B_to_A_stays_LOW":"boolean"},"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
+    }
+  },
+  "invalid_run_policy": "Within generation 2 each designated slot may have at most one objective provider/transport invalid attempt and one replacement before a scorable structured answer. Semantic oracle misses are never selectively retryable within a generation. Earlier generations remain evidence and contribute no favorable result.",
+  "readiness": "All eight generation-2 Luna CTX slots must end with one scorable original/replacement answer that passes the unchanged pre-frozen calibration oracle. Earlier campaigns remain evidence and contribute no favorable result."
+}

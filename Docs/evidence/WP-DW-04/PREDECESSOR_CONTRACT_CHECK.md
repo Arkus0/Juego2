@@ -1,0 +1,9 @@
+# PREDECESSOR_CONTRACT_CHECK — DW-04 before implementation
+
+Baseline: `main@82369fdb69e33e3492b41c4aaa7f1ae9aaed18af`. Direct dependencies are accepted and DocSync-complete: DW-03 candidate `db8b85b4fe77af99cdb5ebf58626a31107c238b3`, independent PASS `#5287315277`, merge `10bbbb0cb64bcfab476281c089812332af136bb1`; CTX-03 candidate `8851f3a295c848be5724d5d9b796e00d2037d6e8`, independent PASS `#5277502546`, merge `d2cf7145b4ec83c3935286f2d9faeabbcd032148`.
+
+Authoritative reads: `Docs/workpacks/DW/WP-DW-04.md`, `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`, `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md`, `Docs/engineering/CONTEXT_ENVELOPE_V1.md`, `Docs/evidence/WP-DW-03/DOCSYNC.md`, `Docs/evidence/WP-DW-03/SOURCE_MANIFEST_V1.md`, `Docs/evidence/WP-DW-03/RESIDUAL_RISK.md`, `Docs/evidence/WP-DW-02/DOCSYNC.md`, `Docs/evidence/CTX-03/DOCSYNC.md`, `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`, and the accepted CITY/PA sources pinned in `PRECALIBRATION_FREEZE.json`. The derived accepted-state index is navigation, not oracle authority.
+
+Inherited and consumed: DW-02 CITY source-side ledger/query conformance; DW-03 PA-01..05 exact accepted source universe, typed records, query memberships and exact provenance/fallback; CTX-03 process/context bootstrap, escalation and effective mandatory reads. Accepted source files remain semantic authority. No predecessor projection or CTX policy is changed by this experiment.
+
+DW-04 owns task selection, chronological freezes, CTX baseline vs DW retrieval assembly, actual matched model execution, scoring and context accounting. Reopen DW-02/03 only on concrete source projection/retrieval contradiction in their accepted scope; reopen CTX-03 only on effective contradiction of its accepted baseline guarantee. A selection, instrumentation, scorer or run-policy failure belongs to DW-04.
