@@ -38,12 +38,28 @@ def invalid_receipt(slot, attempt, completed, request, freeze_commit, freeze_sha
     }
 
 
+def compact_response(response):
+    raw = response.get("raw", {})
+    return {
+        "provider_request_id": response.get("provider_request_id"),
+        "provider_response_id": response.get("provider_response_id"),
+        "client_request_id": response.get("client_request_id"),
+        "model": response.get("model"),
+        "resolved_model": response.get("resolved_model"),
+        "resolved_provider": response.get("resolved_provider"),
+        "provider_request_body_sha256": response.get("provider_request_body_sha256"),
+        "usage": response.get("usage"),
+        "raw": {"answer": raw.get("answer")},
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--pre-commit", required=True)
     parser.add_argument("--freeze-commit", required=True)
     parser.add_argument("--assembly-commit", required=True)
-    parser.add_argument("--output", required=True, help="new, nonexistent transcript path")
+    parser.add_argument("--output", required=True, help="new, nonexistent audit transcript path")
+    parser.add_argument("--raw-output", required=True, help="new, nonexistent raw provider evidence path")
     args = parser.parse_args()
 
     pre, _ = trial.frozen_file(args.pre_commit, trial.PRE)
@@ -72,13 +88,15 @@ def main():
                   "provider adapter script changed after freeze")
 
     output_path = pathlib.Path(args.output)
-    trial.require(not output_path.exists(), "transcript path already exists; no overwrite/rerun")
+    raw_path = pathlib.Path(args.raw_output)
+    trial.require(not output_path.exists() and not raw_path.exists(), "transcript paths already exist; no overwrite/rerun")
     trial.require(trial.context_check(freeze, assembly, pre, selected),
                   "structural source/fallback completeness RED before any model call")
 
-    fd = os.open(output_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    audit_fd = os.open(output_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    raw_fd = os.open(raw_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     records = []
-    with os.fdopen(fd, "w", encoding="utf-8") as log:
+    with os.fdopen(audit_fd, "w", encoding="utf-8") as log, os.fdopen(raw_fd, "w", encoding="utf-8") as raw_log:
         for slot in freeze["slots"]:
             task, route = slot["task"], slot["route"]
             context = assembly["contexts"][task][route]
@@ -104,10 +122,14 @@ def main():
                         response = json.loads(completed.stdout)
                     except json.JSONDecodeError as exc:
                         raise trial.ProtocolError("provider returned non-JSON with exit 0; semantic retry forbidden") from exc
+                    raw_log.write(json.dumps({"slot": slot, "attempt": attempt, "response": response}, ensure_ascii=False) + "\n")
+                    raw_log.flush()
                     break
                 receipt = invalid_receipt(slot, attempt, completed, request, args.freeze_commit, freeze_sha,
                                           args.assembly_commit, assembly_sha)
                 invalids.append(receipt)
+                raw_log.write(json.dumps({"slot": slot, "attempt": attempt, "invalid": receipt}, ensure_ascii=False) + "\n")
+                raw_log.flush()
                 if completed.returncode == 3 and attempt == 1:
                     continue
                 terminal = {"slot":slot,"state":"RUN_INVALID_TERMINAL","invalid_attempts":invalids,
@@ -128,7 +150,7 @@ def main():
                 "invalid_attempts": invalids,
                 "request": request,
                 "request_sha256": trial.digest(trial.canonical(request)),
-                "response": response,
+                "response": compact_response(response),
                 "injected_source_bytes": sum(len(f["text"].encode("utf-8")) for f in context),
                 "started": started,
                 "ended": now(),
@@ -142,7 +164,7 @@ def main():
             log.flush()
 
     trial.require(len(records) == 36, "incomplete execution campaign")
-    print("36 scorable provider executions recorded; frozen objective-invalid replacements, if any, are attached to their slots")
+    print("36 scorable provider executions recorded; compact audit transcript and raw provider evidence are both preserved")
 
 
 if __name__ == "__main__":
