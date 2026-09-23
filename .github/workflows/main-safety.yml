@@ -27,6 +27,12 @@ on:
       - 'packages.lock.json'
       - '**/packages.lock.json'
       - '**/*.lock.json'
+      - '.editorconfig'
+      - '**/.editorconfig'
+      - '*.globalconfig'
+      - '**/*.globalconfig'
+      - '*.ruleset'
+      - '**/*.ruleset'
   workflow_dispatch:
 
 permissions:
