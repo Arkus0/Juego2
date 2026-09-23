@@ -19,6 +19,7 @@ EXPECTED_EDITOR = "6000.3.24f1"
 EXPECTED_REVISION = "4e7b9b5b6244"
 EXPECTED_DIRECT_PACKAGES = {"com.unity.test-framework": "1.6.0"}
 PROJECT_REL = Path("Unity/ArkusUnity")
+UNITY_WRAPPER_REL = Path("scripts/h1-02-unity.ps1")
 
 REQUIRED_IGNORES = {
     "Unity/ArkusUnity/[Ll]ibrary/",
@@ -165,6 +166,33 @@ def check_meta_files(root: Path) -> None:
         fail("visible-meta-missing:" + ",".join(missing))
 
 
+def check_unity_wrapper(root: Path) -> None:
+    path = root / UNITY_WRAPPER_REL
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        fail(f"unity-wrapper-missing:{path}")
+
+    executable = "\n".join(
+        line for line in text.splitlines() if not line.lstrip().startswith("#")
+    )
+    required = (
+        "Start-Process",
+        "-Wait",
+        "-PassThru",
+        "$process.ExitCode",
+        "ConvertTo-UnityProcessArgument",
+    )
+    for token in required:
+        if token not in executable:
+            fail(f"unity-wrapper-wait-contract-missing:{token}")
+
+    if "$LASTEXITCODE" in executable:
+        fail("unity-wrapper-must-not-use-last-exit-code-for-unity-gui-process")
+    if "& $editor @arguments" in executable:
+        fail("unity-wrapper-direct-gui-invocation-reintroduced")
+
+
 def check_effective_inventory(root: Path) -> None:
     inventory = read_json(root / "Docs/evidence/WP-H1-02/effective-inventory.json")
     expected_scalars = {
@@ -206,6 +234,7 @@ def run_checks(root: Path, *, final: bool) -> None:
     check_h0_project_graph(root)
     check_asmdef_direction(root)
     check_meta_files(root)
+    check_unity_wrapper(root)
     if final:
         check_effective_inventory(root)
 
@@ -264,6 +293,15 @@ def run_self_tests(root: Path) -> None:
         path.write_text(text, encoding="utf-8")
 
     expect_red(root, "unity-cache-ignore", remove_library_ignore)
+
+    def remove_unity_wait(r: Path) -> None:
+        path = r / UNITY_WRAPPER_REL
+        text = path.read_text(encoding="utf-8").replace(
+            " -Wait -PassThru", " -PassThru", 1
+        )
+        path.write_text(text, encoding="utf-8")
+
+    expect_red(root, "unity-process-wait", remove_unity_wait)
 
 
 def parse_args() -> argparse.Namespace:
