@@ -26,7 +26,11 @@ The sequence contains 13 claim-owned implementation workpacks plus `WP-H1-GATE`.
 
 Planned cross-track `WP-CTX-DW-GATE` does **not** block `WP-H1-03` or `WP-H1-03A`. Those authority/lifecycle workpacks continue on the existing H1 chain and are expected to use CTX plus authoritative H1/H0 sources, with DW normally `NOT_MATERIAL` unless concrete evidence says otherwise.
 
-If the CTX↔DW gate is accepted, first material H1 observations are planned at `H1-04` (catalogue/identity + first real-source adoption) and `H1-06` (asset/prefab relationships), without changing either product claim. `H1-GATE` should then use the accepted selective route for its planned fresh-agent trial where DW is material. Deterministic H1 evidence remains the oracle.
+The plan does not assume that DW already contains H1 catalogue/Quaternius knowledge. `H1-04` remains source-first and establishes the accepted real-source plus catalogue/identity authority. Only after H1-04 PASS may a separate non-product CTX↔DW projection owner derive an H1 DW projection, with an independently enumerated source universe, completeness oracle, exact provenance, stale detection and deterministic rebuild. No H1 product workpack waits for this projection: when unavailable or stale, CTX routes directly to authority.
+
+`H1-05` is the first eligible real H1 consumer of that projection when it is current and materially useful; `H1-06` is the second planned observation for the different asset/prefab relation shape. DW routing advice cannot shrink CTX mandatory reads or escalation requirements.
+
+The required `H1-GATE` fresh independent public-client AI-agent trial remains on its accepted public launch-profile/MCP discovery/schema bootstrap and is not pre-seeded with Juego2-private CTX/DW knowledge. Any CTX↔DW fresh-agent composition probe is separate and cannot substitute for or repair H1-GATE public discoverability.
 
 Detailed planning input: `Docs/workpacks/H1/CTX_DW_ADOPTION_PLAN.md`.
 
