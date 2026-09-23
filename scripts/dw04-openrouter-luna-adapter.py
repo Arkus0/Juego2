@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-"""Real OpenRouter adapter for the owner-authorized DW-04 Luna calibration/acceptance protocol.
+"""Real OpenRouter adapter for the frozen DW-04 Luna protocol.
 
-Reads one canonical DW-04 request JSON object from stdin and writes one JSON
-response to stdout. Expected answers/oracles are intentionally unavailable here.
-The exact versioned Luna route is served through the pinned OpenAI provider with
-provider fallback disabled.
+The adapter owns only transport plus task-independent canonical output formatting.
+Expected task answers/oracles are intentionally unavailable here.
 """
 
 import hashlib
@@ -19,6 +17,16 @@ ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 FORMAT_NAME = "dw04_answer_v1"
 MODEL = "openai/gpt-5.6-luna-20260709"
 EXPECTED_PROVIDER = "OpenAI"
+FACT_DOMAINS = {
+    "importance": ["A", "B", "C", "D"],
+    "spatial_depth": ["S0", "S1", "S2", "S3", "S4"],
+    "interior": ["I0", "I1", "I2", "I3"],
+    "fixture": ["NC-01", "NC-02", "DL-11", "DL-12", "DL-13", "DL-14"],
+    "player_trigger_required": ["YES", "NO"],
+    "actor_decision_without_player": ["REQUIRED", "NOT_REQUIRED"],
+    "A_to_B_implies_B_to_A": ["YES", "NO"],
+    "B_to_A_stays_LOW": ["YES", "NO"],
+}
 
 
 def fail(message, code=2):
@@ -30,12 +38,23 @@ def retryable_http_status(status):
     return status in (408, 425, 429) or 500 <= status <= 599
 
 
+def fact_schema(key):
+    domain = FACT_DOMAINS.get(key)
+    if domain is None:
+        return {"type": "string"}
+    return {"type": "string", "enum": domain}
+
+
 def validate_answer(answer, contract=None):
     if not isinstance(answer, dict) or set(answer) != {"facts", "blockers", "verdict", "evidence"}:
         fail("provider structured answer has wrong top-level shape")
     facts = answer["facts"]
     if not isinstance(facts, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in facts.items()):
         fail("provider facts must be a string-to-string object")
+    for key, value in facts.items():
+        domain = FACT_DOMAINS.get(key)
+        if domain is not None and value not in domain:
+            fail(f"provider fact {key} is outside canonical field domain")
     for field in ("blockers", "evidence"):
         value = answer[field]
         if not isinstance(value, list) or not all(isinstance(x, str) for x in value) or len(value) != len(set(value)):
@@ -55,11 +74,16 @@ def validate_answer(answer, contract=None):
 
 def main():
     if len(sys.argv) == 2 and sys.argv[1] == "--self-test":
-        contract = {"fact_keys": ["f"], "allowed_blockers": ["b"], "allowed_verdicts": ["REPORT", "REJECT"], "evidence_ids": ["e"]}
-        validate_answer({"facts": {"f": "v"}, "blockers": [], "verdict": "REPORT", "evidence": ["e"]}, contract)
+        contract = {"fact_keys": ["importance"], "allowed_blockers": ["b"], "allowed_verdicts": ["REPORT", "REJECT"], "evidence_ids": ["e"]}
+        validate_answer({"facts": {"importance": "A"}, "blockers": [], "verdict": "REPORT", "evidence": ["e"]}, contract)
+        try:
+            validate_answer({"facts": {"importance": "A / S1"}, "blockers": [], "verdict": "REPORT", "evidence": ["e"]}, contract)
+            raise AssertionError("noncanonical fact value unexpectedly accepted")
+        except SystemExit as exc:
+            assert exc.code == 2
         assert retryable_http_status(408) and retryable_http_status(429) and retryable_http_status(500) and retryable_http_status(503)
         assert not retryable_http_status(400) and not retryable_http_status(401) and not retryable_http_status(402) and not retryable_http_status(404)
-        print("DW-04 OpenRouter Luna adapter self-test: GREEN")
+        print("DW-04 OpenRouter Luna canonical-schema adapter self-test: GREEN")
         return
     if len(sys.argv) != 1:
         fail("usage: dw04-openrouter-luna-adapter.py [--self-test]")
@@ -126,12 +150,19 @@ def main():
         "properties": {
             "facts": {
                 "type": "object",
-                "properties": {key: {"type": "string"} for key in response_contract["fact_keys"]},
+                "properties": {key: fact_schema(key) for key in response_contract["fact_keys"]},
                 "required": response_contract["fact_keys"],
                 "additionalProperties": False,
             },
-            "blockers": {"type": "array", "items": {"type": "string", "enum": response_contract["allowed_blockers"]}},
-            "verdict": {"type": "string", "enum": response_contract["allowed_verdicts"]},
+            "blockers": {
+                "type": "array",
+                "items": {"type": "string", "enum": response_contract["allowed_blockers"]},
+            },
+            "verdict": {
+                "type": "string",
+                "enum": response_contract["allowed_verdicts"],
+                "description": "Disposition of the reviewed claim: REJECT when blockers is non-empty because a causal blocker invalidates it; REPORT when blockers is empty.",
+            },
             "evidence": {"type": "array", "items": {"type": "string", "enum": response_contract["evidence_ids"]}},
         },
         "required": ["facts", "blockers", "verdict", "evidence"],
@@ -141,6 +172,8 @@ def main():
         "TASK\n" + request.get("task_prompt", "")
         + "\n\nRESPONSE CONTRACT (formatting vocabulary only; allowed does not mean true)\n"
         + json.dumps(response_contract, ensure_ascii=False, sort_keys=True)
+        + "\n\nCANONICAL FACT DOMAINS FOR REQUESTED KEYS\n"
+        + json.dumps({key: FACT_DOMAINS.get(key, "string") for key in response_contract["fact_keys"]}, ensure_ascii=False, sort_keys=True)
         + "\n\nAUTHORITATIVE CONTEXT\n" + "\n\n".join(rendered)
     )
     body = {

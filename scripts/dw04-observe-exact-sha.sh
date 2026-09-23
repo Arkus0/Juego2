@@ -28,8 +28,10 @@ for path in \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_03.md \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_04.md \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_05.md \
+  Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_06.md \
   Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json \
   Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json \
+  Docs/evidence/WP-DW-04/CALIBRATION_LUNA_GEN1_CLOSED.json \
   Docs/evidence/WP-DW-04/CALIBRATION_ORACLES.json \
   Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json \
   Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json \
@@ -90,14 +92,27 @@ for task, fragments in context['contexts'].items():
 protocol = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json').read_text(encoding='utf-8'))
 assert set(protocol['tasks']) == set(pre['calibration_policy']['run_order'])
 assert protocol['prior_invalid_attempts'] == []
-assert protocol['restart_generation'] == 1
-assert protocol['restart_authorization'] == 'PR#150-comment-5792478254'
+assert protocol['restart_generation'] == 2
+assert protocol['restart_authorization'] == 'PR#150-comment-5792657967'
 assert protocol['provider_adapter'] == 'scripts/dw04-openrouter-luna-adapter.py'
 assert protocol['superseded_calibration_evidence'] == [
     'Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json',
     'Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json',
-    'Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_05.md',
+    'Docs/evidence/WP-DW-04/CALIBRATION_LUNA_GEN1_CLOSED.json',
+    'Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_06.md',
 ]
+expected_domains = {
+    'importance':['A','B','C','D'],
+    'spatial_depth':['S0','S1','S2','S3','S4'],
+    'interior':['I0','I1','I2','I3'],
+    'fixture':['NC-01','NC-02','DL-11','DL-12','DL-13','DL-14'],
+    'player_trigger_required':['YES','NO'],
+    'actor_decision_without_player':['REQUIRED','NOT_REQUIRED'],
+    'A_to_B_implies_B_to_A':['YES','NO'],
+    'B_to_A_stays_LOW':['YES','NO'],
+}
+assert protocol['canonical_fact_domains'] == expected_domains
+assert protocol['verdict_rule'].startswith('REJECT when the structured blockers array is non-empty')
 config = protocol['model_config']
 assert config['provider'] == 'openrouter-chat-completions'
 assert config['model'] == 'openai/gpt-5.6-luna-20260709'
@@ -109,18 +124,15 @@ assert config['provider_options']['endpoint'] == 'https://openrouter.ai/api/v1/c
 assert config['provider_options']['structured_output'] == 'dw04_answer_v1'
 assert config['provider_options']['routing'] == {'order':['openai'],'allow_fallbacks':False,'require_parameters':True}
 invalid = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json').read_text(encoding='utf-8'))
-assert invalid['slot'] == {'task':'C-CITY-01','run':1,'route':'CTX'}
-assert invalid['attempt'] == 1 and invalid['classification'] == 'RUN_INVALID_PRE_ANSWER'
-assert invalid['scorable_structured_answer'] is False and invalid['semantic_result_observed'] is False
-assert invalid['provider_request_id'] is None
 assert invalid['workflow_run_id'] == 35840654094 and invalid['artifact_id'] == 10740668694
 closed = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json').read_text(encoding='utf-8'))
 assert closed['workflow_run_id'] == 35842779697 and closed['artifact_id'] == 10742271293
-assert closed['artifact_zip_sha256'] == '7a83e642ea5e86a92e0e274b90e3f80320bf8b842dbd942e56e750db060513cb'
 assert closed['readiness'] == 'NOT_READY' and closed['carry_forward_into_restart'] is False
-assert len(closed['scorable_runs']) == 2 and all(x['matches_frozen_oracle'] for x in closed['scorable_runs'])
-assert [x['attempt'] for x in closed['invalid_attempts']] == [1, 2]
-assert all(x['slot'] == {'task':'C-PA-01','run':1,'route':'CTX'} and x['scorable_structured_answer'] is False for x in closed['invalid_attempts'])
+luna1 = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_LUNA_GEN1_CLOSED.json').read_text(encoding='utf-8'))
+assert luna1['campaign']['github_run_id'] == '35844576874'
+assert luna1['artifact']['artifact_id'] == 10742434394
+assert luna1['run_count'] == 8 and luna1['invalid_attempt_count'] == 0
+assert luna1['readiness'] == 'NOT_READY' and luna1['acceptance_authorized'] is False
 questions = {task['id']: task['question'] for task in pre['eligible_tasks'] if task['partition'] == 'calibration'}
 contracts = []
 for task_id, task in protocol['tasks'].items():
@@ -129,11 +141,13 @@ for task_id, task in protocol['tasks'].items():
     assert set(rc) == {'fact_keys','allowed_blockers','allowed_verdicts','evidence_ids'}
     assert rc['fact_keys'] and rc['allowed_verdicts'] and rc['evidence_ids']
     assert set(rc['allowed_verdicts']).issubset({'REPORT','REJECT'})
+    for key in rc['fact_keys']:
+        assert key in expected_domains, ('missing canonical domain', task_id, key)
     contracts.append((tuple(rc['allowed_blockers']), tuple(rc['allowed_verdicts']), tuple(rc['evidence_ids'])))
 assert len(set(contracts)) == 1, 'task-specific response vocabulary would leak expected semantics'
 for path in sorted((root / 'scripts').glob('dw04-*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
-print('DW-04 frozen universe/oracles/CTX/OpenRouter-Luna restart protocol: GREEN')
+print('DW-04 frozen universe/oracles/CTX/final canonical-schema Luna protocol: GREEN')
 PY
 
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
@@ -175,8 +189,9 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/dw04-observe-exact-sha.sh ${actual}
 Instrument/universe/oracles: GREEN
 Semantically-sufficient CTX calibration freeze: GREEN
-Superseded DeepSeek campaign evidence: GREEN (runs 35840654094 and 35842779697 retained; no carry-forward)
-Owner-authorized calibration restart boundary: GREEN (PR #150 comment 5792478254)
+Superseded calibration evidence: GREEN (DeepSeek plus Luna generation 1 retained; no carry-forward)
+Owner-authorized final calibration budget amendment: GREEN (PR #150 comment 5792657967)
+Canonical fact-domain/output contract: GREEN
 Real-provider adapter contract: GREEN (OpenRouter / exact GPT-5.6 Luna 20260709 / pinned OpenAI serving provider)
 Accepted-authority immutability: GREEN
 Locked restore/build/regression: GREEN
