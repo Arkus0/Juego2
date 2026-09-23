@@ -25,6 +25,7 @@ git merge-base --is-ancestor "${PRECALIBRATION_COMMIT}" "${actual}" || { echo "D
 for path in \
   Docs/evidence/WP-DW-04/PRECALIBRATION_FREEZE.json \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_02.md \
+  Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_03.md \
   Docs/evidence/WP-DW-04/CALIBRATION_ORACLES.json \
   Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json \
   Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json \
@@ -38,6 +39,7 @@ for path in \
   tools/Arkus.Dw04.Retrieval/Program.cs; do
   test -f "${path}"
 done
+test ! -e scripts/dw04-openai-adapter.py
 
 git diff --exit-code "${BASELINE_SHA}" "${actual}" -- \
   Docs/production/CITY_LOCATION_PROGRAMME.md \
