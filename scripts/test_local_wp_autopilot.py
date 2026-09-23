@@ -87,6 +87,19 @@ class RoutingTests(unittest.TestCase):
              self.assertRaisesRegex(module.StopFlow, "already has a PR"):
             module.latest_next_wp(Path("."))
 
+    def test_adopt_requires_exact_canonical_branch_and_sha(self):
+        sha = "a" * 40
+        pr = {"number": 123, "head": {"sha": sha, "ref": "codex/h1-03",
+                                     "repo": {"full_name": module.REPO}}}
+        with patch.object(module, "run", side_effect=[sha, "codex/h1-03"]):
+            module.assert_pr_checkout(Path("."), pr)
+        with patch.object(module, "run", side_effect=[sha, "main"]), \
+             self.assertRaisesRegex(module.StopFlow, "exact head branch"):
+            module.assert_pr_checkout(Path("."), pr)
+        with patch.object(module, "run", side_effect=["b" * 40, "codex/h1-03"]), \
+             self.assertRaisesRegex(module.StopFlow, "exact head branch"):
+            module.assert_pr_checkout(Path("."), pr)
+
     def test_docsync_marker_requires_canonical_key_and_wp(self):
         pr = {"number": 123, "merged_at": "2026-01-01T00:00:00Z", "body": "WP: WP-H1-02"}
         row = {"key": "docsync-complete:123:" + "a" * 40,
@@ -199,6 +212,29 @@ class RoutingTests(unittest.TestCase):
                "user": {"login": "Arkus0"}, "created_at": "2026-01-01T00:00:00Z"}
         with patch.object(module, "gh_pages", side_effect=[[row], []]):
             self.assertEqual(module.reviewed_verdicts(123)[0]["verdict"], "PROTOCOL_FIX")
+
+    def test_manual_untagged_verdict_stops_adoption(self):
+        sha = "a" * 40
+        row = {"body": f"Reviewer verdict: FAIL\nReviewed candidate SHA: {sha}\n",
+               "user": {"login": "Arkus0"}, "created_at": "2026-01-01T00:00:00Z"}
+        with patch.object(module, "gh_pages", side_effect=[[row], []]), \
+             self.assertRaisesRegex(module.StopFlow, "manual/untagged"):
+            module.reviewed_verdicts(123)
+
+    def test_material_fail_only_same_sha_appeal_can_supersede(self):
+        sha = "a" * 40
+        failed = {"id": "1" * 32, "sha": sha, "verdict": "FAIL", "at": "2026-01-01T00:00:00Z"}
+        appeal = {"state": "OVERDEFENSE_APPEAL_STARTED", "target sha": sha,
+                  "review id": "2" * 32, "_created_at": "2026-01-01T00:01:00Z"}
+        passed = {"id": "2" * 32, "sha": sha, "verdict": "PASS", "at": "2026-01-01T00:02:00Z"}
+        module.assert_verdict_sequence(123, sha, [failed, passed], [appeal])
+        with self.assertRaisesRegex(module.StopFlow, "one authorized appeal"):
+            module.assert_verdict_sequence(123, sha, [failed, passed], [])
+        protocol = dict(passed, verdict="PROTOCOL_FIX")
+        with self.assertRaisesRegex(module.StopFlow, "one authorized appeal"):
+            module.assert_verdict_sequence(123, sha, [failed, protocol], [appeal])
+        with self.assertRaisesRegex(module.StopFlow, "fixed same-SHA PASS"):
+            module.assert_verdict_sequence(123, sha, [passed, failed], [appeal])
 
     def test_environment_excludes_model_api_keys(self):
         old = module.os.environ.get("OPENAI_API_KEY")

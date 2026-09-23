@@ -195,6 +195,18 @@ def canonical_pr(wp: str) -> dict[str, Any] | None:
     return max(merged, key=lambda p: p["merged_at"]) if merged else None
 
 
+def assert_pr_checkout(root: Path, pr: dict[str, Any]) -> None:
+    head = pr.get("head") or {}
+    if ((head.get("repo") or {}).get("full_name") != REPO or
+        not SHA_RE.fullmatch((head.get("sha") or "").lower()) or
+        not head.get("ref")):
+        raise StopFlow(f"PR #{pr['number']} does not have a same-repository canonical head")
+    local_sha = run("git", "rev-parse", "HEAD", cwd=root).lower()
+    local_branch = run("git", "branch", "--show-current", cwd=root)
+    if local_sha != head["sha"].lower() or local_branch != head["ref"]:
+        raise StopFlow(f"PR #{pr['number']} local checkout is not its exact head branch/SHA; switch to the canonical branch before adoption")
+
+
 def validate_docsync(root: Path, pr: dict[str, Any], row: dict[str, str]) -> None:
     number = pr["number"]
     merge_at = pr.get("merged_at") or ""
@@ -566,7 +578,10 @@ def reviewed_verdicts(pr: int) -> list[dict[str, str]]:
         record = fields(item.get("body") or "")
         verdict = record.get("reviewer verdict", "").upper()
         review_id = record.get("autopilot review id", "").lower()
-        if verdict in {"PASS", "FAIL", "PROTOCOL_FIX", "REVIEW_BLOCKED"} and SHA_RE.fullmatch(record.get("reviewed candidate sha", "").lower()) and REVIEW_ID_RE.fullmatch(review_id):
+        reviewed_sha = record.get("reviewed candidate sha", "").lower()
+        if verdict in {"PASS", "FAIL", "PROTOCOL_FIX", "REVIEW_BLOCKED"} and SHA_RE.fullmatch(reviewed_sha):
+            if not REVIEW_ID_RE.fullmatch(review_id):
+                raise StopFlow(f"PR #{pr} has a manual/untagged exact-SHA verdict; PC reconciliation required before autopilot adoption")
             row = {"id": review_id, "sha": record["reviewed candidate sha"].lower(),
                    "verdict": verdict, "body": item.get("body") or "",
                    "at": item.get("submitted_at") or item.get("created_at") or ""}
@@ -580,6 +595,28 @@ def reviewed_verdicts(pr: int) -> list[dict[str, str]]:
 
 def reviewed_fails(pr: int) -> list[dict[str, str]]:
     return [row for row in reviewed_verdicts(pr) if row["verdict"] == "FAIL"]
+
+
+def assert_verdict_sequence(pr: int, sha: str, verdicts: list[dict[str, str]],
+                            local_rows: list[dict[str, str]]) -> None:
+    same = [row for row in verdicts if row["sha"] == sha]
+    first_fail = next((index for index, row in enumerate(same) if row["verdict"] == "FAIL"), None)
+    if first_fail is None:
+        if any(row["verdict"] == "PASS" for row in same[:-1]):
+            raise StopFlow(f"PR #{pr} has a verdict after fixed same-SHA PASS")
+        return
+    prior = same[:first_fail]
+    if any(row["verdict"] == "PASS" for row in prior):
+        raise StopFlow(f"PR #{pr} has FAIL after fixed same-SHA PASS")
+    later = same[first_fail + 1:]
+    if not later:
+        return
+    appeal = latest_marker(local_rows, "OVERDEFENSE_APPEAL_STARTED", sha)
+    appeal_id = (appeal or {}).get("review id", "").lower()
+    if (len(later) != 1 or not REVIEW_ID_RE.fullmatch(appeal_id) or
+        later[0]["id"] != appeal_id or later[0]["verdict"] not in {"PASS", "FAIL"} or
+        not (same[first_fail]["at"] <= appeal.get("_created_at", "") <= later[0]["at"])):
+        raise StopFlow(f"PR #{pr} has a same-SHA verdict after material FAIL without the one authorized appeal")
 
 
 def audit_policy(audit: dict[str, Any], fail_count: int) -> str:
@@ -639,6 +676,8 @@ async def main_async(args: argparse.Namespace) -> None:
             assert_dependencies(root, wp_text)
             if pr and pr["state"] == "open" and not args.adopt:
                 raise StopFlow(f"{wp} already has open PR #{pr['number']}; use --adopt only after its current role has stopped")
+            if pr and pr["state"] == "open":
+                assert_pr_checkout(root, pr)
             if args.dry_run:
                 decision, reset = await app.guard()
                 print(f"Would route {wp}; PR={pr['number'] if pr else 'new'}; worker effort={effort_for_worker(wp_text)}; quota={decision}; reset={reset}")
@@ -658,11 +697,15 @@ async def main_async(args: argparse.Namespace) -> None:
                     continue
                 current = gh_json("api", f"repos/{REPO}/pulls/{pr['number']}")
                 rows = markers(pr["number"])
+                if not current.get("merged") and current.get("state") == "open":
+                    assert_pr_checkout(root, current)
                 if latest_marker(rows, "BLOCKED") or latest_marker(rows, "HUMAN_ACTION_REQUIRED"):
                     raise StopFlow(f"PR #{pr['number']} has a human-action/block marker")
                 if current.get("merged"):
                     frozen_merged = fields(current.get("body") or "").get("frozen candidate sha", "").lower()
-                    accepted = next((row for row in reversed(reviewed_verdicts(pr["number"]))
+                    merged_verdicts = reviewed_verdicts(pr["number"])
+                    assert_verdict_sequence(pr["number"], frozen_merged, merged_verdicts, local_markers(pr["number"]))
+                    accepted = next((row for row in reversed(merged_verdicts)
                                      if row["sha"] == frozen_merged), None)
                     if (not SHA_RE.fullmatch(frozen_merged) or
                         frozen_merged != current["head"]["sha"].lower() or
@@ -683,6 +726,7 @@ async def main_async(args: argparse.Namespace) -> None:
                 if not SHA_RE.fullmatch(frozen) or frozen != current["head"]["sha"].lower():
                     raise StopFlow(f"PR #{pr['number']} has no coherent frozen SHA; Worker must repair handoff")
                 verdicts = reviewed_verdicts(pr["number"])
+                assert_verdict_sequence(pr["number"], frozen, verdicts, local_markers(pr["number"]))
                 fails = [row for row in verdicts if row["verdict"] == "FAIL"]
                 repair = latest_marker(rows, "REPAIR_REQUIRED", frozen)
                 ready_candidate = latest_marker(rows, "REVIEW_READY", frozen)
@@ -725,9 +769,6 @@ async def main_async(args: argparse.Namespace) -> None:
                 if latest_current_verdict and latest_current_verdict["verdict"] == "FAIL" and not repair:
                     await wait_for_state(pr["number"], lambda p, m, frozen=frozen: bool(latest_marker(m, "REPAIR_REQUIRED", frozen)))
                     continue
-                if (repair and latest_current_verdict and latest_current_verdict["verdict"] == "PROTOCOL_FIX" and
-                    ready and ready.get("_created_at", "") > latest_current_verdict["at"]):
-                    repair = None
                 if repair:
                     if not latest_current_verdict or latest_current_verdict["verdict"] != "FAIL":
                         raise StopFlow(f"PR #{pr['number']} has REPAIR_REQUIRED without a parseable independent FAIL on {frozen}")
@@ -778,11 +819,12 @@ async def main_async(args: argparse.Namespace) -> None:
                     if appeal_sha == frozen:
                         before_appeal_fails = len(fails)
                         await quota_before_reasoning(app, wp, pr["number"])
+                        review_id = uuid.uuid4().hex
                         body = ("ARKUS_LOCAL_AUTOPILOT\nState: OVERDEFENSE_APPEAL_STARTED\n"
                                 f"Target SHA: {frozen}\nFail count: {before_appeal_fails}\n"
+                                f"Review ID: {review_id}\n"
                                 "Detail: one independent same-SHA appeal is starting; restart must not repeat it.\n")
                         run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
-                        review_id = uuid.uuid4().hex
                         await codex_role(root, state, "appeal-reviewer",
                             f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']}, SHA {frozen}. Hubo FAIL previo y auditoría de posible sobredefensa. Reconstruye el contrato sin confiar en la auditoría; si el FAIL es inválido, deja PASS exact-SHA razonado que lo supersede; si es válido, mantén FAIL. Publica un solo veredicto en GitHub con líneas literales 'Reviewer verdict: PASS' o 'Reviewer verdict: FAIL', 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. No edites ni repares.",
                             "gpt-6-sol", "xhigh")
