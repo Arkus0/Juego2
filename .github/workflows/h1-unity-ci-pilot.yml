@@ -117,11 +117,18 @@ jobs:
           print(f'H1_UNITY_CI_ORACLE_GREEN result={matching[0]} total=5 passed=5 failed=0')
           PY
 
-      - name: Verify tracked source stayed unchanged
+      - name: Diagnose tracked source drift
         shell: bash
         run: |
           set -euo pipefail
-          test -z "$(git status --porcelain --untracked-files=no)"
+          status="$(git status --porcelain --untracked-files=no)"
+          if [[ -n "${status}" ]]; then
+            echo 'TRACKED_DRIFT_BEGIN'
+            printf '%s\n' "${status}"
+            git diff --no-ext-diff -- . ':(exclude)artifacts/**' || true
+            echo 'TRACKED_DRIFT_END'
+            exit 1
+          fi
 
       - name: Write exact-SHA pilot receipt
         if: success()
