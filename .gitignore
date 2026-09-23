@@ -6,3 +6,5 @@ artifacts/
 .vs/
 .idea/
 /validation.log
+__pycache__/
+*.py[cod]

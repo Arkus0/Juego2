@@ -6,7 +6,7 @@ Juego2 / Arkus Harness is a **game-development and software-verification project
 
 Juego2 is harness-first. H0 (`HK-*`) builds and proves the AI-native authoring kernel before Unity/gameplay.
 
-There is no automation bootstrap. The human invokes Worker, Reviewer and finalization/documentation roles manually.
+There is no automation bootstrap that may impersonate an independent role. The user explicitly invokes Worker and Reviewer role sessions, normally through remote/chat execution; repository automation may enforce protocol, CI, state transitions and notifications around those disposable sessions. A local phase is required only when the applicable contract demands real local/editor/toolchain evidence.
 
 For any implementation task:
 
@@ -21,4 +21,4 @@ Do not import architecture/code from `Arkus0/Juego` unless an explicit Juego2 co
 
 A session that acted as Worker or directed implementation of a candidate must not act as its independent Reviewer.
 
-Cloud execution must never fabricate later local/editor evidence. GitHub Actions and repository-triggered role transitions are not part of Juego2's operating model.
+Cloud execution must never fabricate later local/editor evidence. GitHub Actions and repository-triggered automation may validate and advance declared process state, but they do not originate or substitute for an independent Worker/Reviewer role judgement.
