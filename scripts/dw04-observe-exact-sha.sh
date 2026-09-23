@@ -32,7 +32,8 @@ for path in \
   Docs/evidence/WP-DW-04/PREDECESSOR_CONTRACT_CHECK.md \
   Docs/evidence/WP-DW-04/WORKER_PLAN.md \
   scripts/dw04-trial.py \
-  scripts/dw04-openai-adapter.py \
+  scripts/dw04-calibrate.py \
+  scripts/dw04-openrouter-adapter.py \
   tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj \
   tools/Arkus.Dw04.Retrieval/Program.cs; do
   test -f "${path}"
@@ -55,7 +56,7 @@ git diff --exit-code "${BASELINE_SHA}" "${actual}" -- \
 
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-trial.py precheck --pre-commit "${PRECALIBRATION_COMMIT}"
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-trial.py selftest
-PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-openai-adapter.py --self-test
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-openrouter-adapter.py --self-test
 PYTHONDONTWRITEBYTECODE=1 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -82,20 +83,29 @@ for task, fragments in context['contexts'].items():
         assert fragment['text'] in source, (task, fragment['id'])
 protocol = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json').read_text(encoding='utf-8'))
 assert set(protocol['tasks']) == set(pre['calibration_policy']['run_order'])
-assert protocol['model_config']['provider'] == 'openai-responses'
-assert protocol['model_config']['model'] == 'gpt-5.6-luna'
-assert protocol['model_config']['thinking'] == 'none'
-assert protocol['model_config']['tool_policy'] == 'none'
+config = protocol['model_config']
+assert protocol['provider_adapter'] == 'scripts/dw04-openrouter-adapter.py'
+assert config['provider'] == 'openrouter-chat-completions'
+assert config['model'] == 'deepseek/deepseek-v4.1-flash'
+assert config['version'] == 'openrouter-model-id:deepseek/deepseek-v4.1-flash'
+assert config['temperature'] == 0
+assert config['thinking'] is None
+assert config['tool_policy'] == 'none'
+assert config['provider_options']['endpoint'] == 'https://openrouter.ai/api/v1/chat/completions'
+assert config['provider_options']['routing'] == {'order':['deepseek'],'allow_fallbacks':False,'require_parameters':True}
 questions = {task['id']: task['question'] for task in pre['eligible_tasks'] if task['partition'] == 'calibration'}
+contracts = []
 for task_id, task in protocol['tasks'].items():
     assert task['semantic_question'] == questions[task_id]
     rc = task['response_contract']
     assert set(rc) == {'fact_keys','allowed_blockers','allowed_verdicts','evidence_ids'}
     assert rc['fact_keys'] and rc['allowed_verdicts'] and rc['evidence_ids']
     assert set(rc['allowed_verdicts']).issubset({'REPORT','REJECT'})
+    contracts.append((tuple(rc['allowed_blockers']), tuple(rc['allowed_verdicts']), tuple(rc['evidence_ids'])))
+assert len(set(contracts)) == 1, 'task-specific response vocabulary would leak expected semantics'
 for path in sorted((root / 'scripts').glob('dw04-*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
-print('DW-04 frozen universe/oracles/CTX/provider protocol: GREEN')
+print('DW-04 frozen universe/oracles/CTX/OpenRouter-DeepSeek protocol: GREEN')
 PY
 
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
@@ -137,7 +147,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/dw04-observe-exact-sha.sh ${actual}
 Instrument/universe/oracles: GREEN
 Semantically-sufficient CTX calibration freeze: GREEN
-Real-provider adapter contract: GREEN
+Real-provider adapter contract: GREEN (OpenRouter / pinned DeepSeek V4.1 Flash)
 Accepted-authority immutability: GREEN
 Locked restore/build/regression: GREEN
 Typed retrieval determinism/source replay: GREEN
