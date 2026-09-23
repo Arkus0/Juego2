@@ -43,8 +43,22 @@ Canonical campaign outputs are persisted at:
 - `Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json`
 - `Docs/evidence/WP-DW-04/TRIAL_RESULT.json`
 
+## Post-review evidence-integrity repair
+
+The Reviewer identified one remaining false-green class: the frozen verifier replayed `ACCEPTANCE_TRANSCRIPT.jsonl` but did not prove that the scored transcript was the transcript named by `CAMPAIGN_RECEIPT.json` or that each scored response was the compact projection of the corresponding immutable provider record.
+
+This is closed without changing or rerunning the acceptance campaign:
+
+- `scripts/dw04-evidence-integrity.py` hashes the exact transcript bytes and requires equality with `CAMPAIGN_RECEIPT.json.transcript_sha256`.
+- It requires exactly 36 scored records and 36 raw provider records, identical slot ordering, 36 unique provider request IDs and exact equality with the receipt's ordered request-ID inventory.
+- For every slot it reconstructs the executor's durable compact response projection from `ACCEPTANCE_PROVIDER_RAW.jsonl` and requires exact equality with the response scored in `ACCEPTANCE_TRANSCRIPT.jsonl`.
+- A causal negative control mutates only one scored verdict while leaving provider raw evidence and receipt untouched and requires that comparison to go RED.
+- `scripts/arkus-verify-exact-sha.sh` executes this integrity checker before the frozen DW-04 verifier, so normal exact-SHA validation cannot declare DW-04 GREEN without proving the provider-evidence binding.
+
+No campaign answer, oracle, scorer, route, receipt, raw provider record or trial result was modified by this repair.
+
 ## Worker conclusion
 
-The bounded central claim of WP-DW-04 is established on the frozen six-task universe: the repaired DW route preserves agent correctness relative to CTX for every designated paired execution while exceeding the contractual source-context reduction threshold. This does not claim universal model superiority or universal cost reduction.
+The bounded central claim of WP-DW-04 is established on the frozen six-task universe: the repaired DW route preserves agent correctness relative to CTX for every designated paired execution while exceeding the contractual source-context reduction threshold. The post-review integrity repair additionally binds that scored PASS causally to the immutable provider evidence. This does not claim universal model superiority or universal cost reduction.
 
 Candidate is CLEAN and ready for independent Reviewer. Do not merge or unlock DW-05 without Reviewer PASS.
