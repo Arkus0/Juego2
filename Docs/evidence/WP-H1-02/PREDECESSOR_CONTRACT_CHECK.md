@@ -1,13 +1,34 @@
 # WP-H1-02 — PREDECESSOR_CONTRACT_CHECK
 
 Status: COMPLETE BEFORE IMPLEMENTATION
-Worker: ChatGPT GPT-5.6 Sol
+Worker: ChatGPT GPT-5.6 Sol; refreshed by receiving Worker Codex local GPT-5
 Baseline main: `82369fdb69e33e3492b41c4aaa7f1ae9aaed18af`
 Direct dependency: `WP-HK-GATE`
 
+## Receiving-Worker transfer refresh
+
+Transfer SHA: `3811a19257f20a2be0bef2572600d0e77c9733b0`
+Live main at refresh: `18d4aa33be526c65a53796aa305a56fe8df15d12`
+
+The two commits added to `main` after the original baseline are the accepted
+DW-04 trial and its DocSync. A path-scoped comparison confirms that they do not
+change `WP-HK-GATE`, its capsule, the foundational proof standard, the H1
+architecture/execution ADR or the dependency/IP policy consumed here. The
+accepted HK-GATE identity and inherited/current ownership split below are
+therefore unchanged; the receiving Worker consumes the existing predecessor
+check rather than re-proving H0.
+
 ## Accepted predecessor identity
 
-The CTX-02 accepted-contract capsule `Docs/engineering/context-capsules/WP-HK-GATE.json` is used as the initial navigation representation. Its accepted identity was independently confirmed against the authoritative `Docs/workpacks/HK/WP-HK-GATE.md` on the baseline main:
+The CTX-02 accepted-contract capsule
+`Docs/engineering/context-capsules/WP-HK-GATE.json` was attempted as the
+initial navigation representation, but the production checker rejected its
+current `identity_source` blob fingerprint (`36d0ae...` recorded versus
+`81ce6f...` effective). The receiving Worker therefore treated the capsule as
+unusable and reconstructed the dependency from the authoritative gate
+contract, verdict, proof matrix and residual-risk record. The contract and
+verdict resolve the proof-matrix/residual pre-final snapshot to the accepted
+final state:
 
 - reviewed candidate: `0fa3d4fb039a3d0049cea0f3eed1c83128ec7dcd`;
 - independent PASS review: `#5261636151`;
@@ -16,6 +37,10 @@ The CTX-02 accepted-contract capsule `Docs/engineering/context-capsules/WP-HK-GA
 
 Authoritative escalations performed for this consumer:
 
+- `Docs/workpacks/HK/WP-HK-GATE.md`,
+  `Docs/evidence/WP-HK-GATE/VERDICT.md`,
+  `Docs/evidence/WP-HK-GATE/PROOF_MATRIX.md` and
+  `Docs/evidence/WP-HK-GATE/RESIDUAL_RISK.md` because capsule validation failed;
 - `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` because H1-02 is FOUNDATIONAL;
 - `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md` and `Docs/architecture/ADR-H1-004-PUBLIC-EDITOR-EXECUTION-SEAM.md` because the current claim fixes the downstream project/toolchain and batch-launch substrate;
 - `Docs/engineering/DEPENDENCY_IP_POLICY.md` because H1-02 owns exact Unity/package adoption records.

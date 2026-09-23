@@ -104,17 +104,20 @@ Write-Host "H1-02 action:  $Action"
 
 # Unity.exe is a Windows GUI-subsystem executable. Invoking it directly from
 # Windows PowerShell can return control before the Editor process has exited,
-# leaving $LASTEXITCODE unset. Start-Process -Wait -PassThru binds success to
-# the actual Unity process lifetime and its real exit code.
+# leaving $LASTEXITCODE unset. Start-Process returns the exact process object;
+# waiting on that object avoids Start-Process -Wait's process-tree semantics
+# while still binding success to Unity's real process lifetime and exit code.
 $processArguments = ($arguments | ForEach-Object {
     ConvertTo-UnityProcessArgument ([string]$_)
 }) -join ' '
 
-$process = Start-Process -FilePath $editor -ArgumentList $processArguments -Wait -PassThru
+$process = Start-Process -FilePath $editor -ArgumentList $processArguments -PassThru
 if ($null -eq $process) {
     throw "UNITY_PROCESS_START_FAILED: action=$Action editor=$editor"
 }
 
+$process.WaitForExit()
+$process.Refresh()
 $exitCode = $process.ExitCode
 Write-Host "H1-02 Unity exit: $exitCode"
 

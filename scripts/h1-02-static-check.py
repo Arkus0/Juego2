@@ -178,8 +178,9 @@ def check_unity_wrapper(root: Path) -> None:
     )
     required = (
         "Start-Process",
-        "-Wait",
         "-PassThru",
+        "$process.WaitForExit()",
+        "$process.Refresh()",
         "$process.ExitCode",
         "ConvertTo-UnityProcessArgument",
     )
@@ -189,6 +190,8 @@ def check_unity_wrapper(root: Path) -> None:
 
     if "$LASTEXITCODE" in executable:
         fail("unity-wrapper-must-not-use-last-exit-code-for-unity-gui-process")
+    if "-Wait" in executable:
+        fail("unity-wrapper-must-not-use-start-process-tree-wait")
     if "& $editor @arguments" in executable:
         fail("unity-wrapper-direct-gui-invocation-reintroduced")
 
@@ -294,16 +297,16 @@ def run_self_tests(root: Path) -> None:
 
     expect_red(root, "unity-cache-ignore", remove_library_ignore)
 
-    def remove_unity_wait(r: Path) -> None:
+    def remove_exact_process_wait(r: Path) -> None:
         path = r / UNITY_WRAPPER_REL
         text = path.read_text(encoding="utf-8")
-        old = "$process = Start-Process -FilePath $editor -ArgumentList $processArguments -Wait -PassThru"
-        new = "$process = Start-Process -FilePath $editor -ArgumentList $processArguments -PassThru"
+        old = "$process.WaitForExit()"
+        new = "$null = $process.HasExited"
         if old not in text:
             fail("unity-process-wait-negative-fixture-anchor-missing")
         path.write_text(text.replace(old, new, 1), encoding="utf-8")
 
-    expect_red(root, "unity-process-wait", remove_unity_wait)
+    expect_red(root, "unity-exact-process-wait", remove_exact_process_wait)
 
 
 def parse_args() -> argparse.Namespace:
