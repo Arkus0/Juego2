@@ -1,10 +1,14 @@
 # WP-DW-05 — Generic-boundary stress and H2 impact assessment
 
-Status: PLANNED / NOT_STARTED
+Status: COMPLETE / ACCEPTED
 Class: FOUNDATIONAL
 EXECUTION_REQUIREMENT: REMOTE_OK
 Depends on: `WP-DW-04` PASS + merge + DocSync
 Blocks: `WP-DW-GATE`
+
+Acceptance: exact candidate `c3c5ee77fed613c46d7f61e6e24e50ac49c9eaf1`; independent PASS review `#5293868255`; PR `#154`; implementation merge `9ea504ec1b98dfe7a1dd6fdb83953474d9a1e1be`; owner protocol override comment `#5798718871`. The remaining Candidate Validation failure was limited to stale handoff metadata and is explicitly non-blocking for this accepted candidate; no new candidate/review cycle is required.
+
+Post-PASS reconciliation: `Docs/evidence/WP-DW-05/DOCSYNC.md`.
 
 ## Objective and central claim
 
@@ -85,4 +89,4 @@ A DW predecessor reopens only when this stress test proves its accepted guarante
 
 ## PASS consequence / next dependency
 
-PASS permits `WP-DW-GATE`. The H2 input report becomes evidence available to the future H2 planner but is not binding H2 scope until H2's own reviewed plan adopts/dispositions it.
+PASS permits `WP-DW-GATE`. The H2 input report is accepted evidence available to the future H2 planner but is not binding H2 scope until H2's own reviewed plan adopts/dispositions it.
