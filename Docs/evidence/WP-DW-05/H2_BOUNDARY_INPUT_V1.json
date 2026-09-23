@@ -16,6 +16,27 @@
     "bounded-pa-consumer",
     "bounded-dw04-context-quality-evidence"
   ],
+  "exercised_by_consumer": {
+    "CITY": [
+      "typed-facts-and-relations",
+      "source-provenance",
+      "independent-domain-semantic-oracles",
+      "complete-declared-production-query-universes",
+      "deterministic-content-shape-projection"
+    ],
+    "PA": [
+      "typed-findings-evidence-dispositions-fixtures-relations",
+      "exact-source-provenance",
+      "independent-source-corpus-oracle",
+      "compact-deterministic-query-index",
+      "query-completeness-oracle"
+    ],
+    "DW04_trial": [
+      "bounded-structured-context-retrieval",
+      "bounded-required-facts-blockers-verdict-preservation",
+      "bounded-source-context-byte-reduction"
+    ]
+  },
   "neutral_probe_exercised": [
     "string-integer-boolean-decimal-fields",
     "multiple-neutral-fact-types",
@@ -28,7 +49,8 @@
     "projection-diff",
     "missing-provenance-negative",
     "stale-provenance-negative",
-    "relation-target-outside-universe-negative"
+    "relation-target-outside-universe-negative",
+    "transitive-h0-kernel-leakage-audit"
   ],
   "required_consequences": [
     "Preserve accepted source documents as semantic authority; DW remains derived and rebuildable.",
