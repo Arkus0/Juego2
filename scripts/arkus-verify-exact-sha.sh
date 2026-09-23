@@ -119,6 +119,7 @@ resolve_wp() {
 
 case "$(resolve_wp)" in
   WP-DW-04)
+    python3 scripts/dw04-evidence-integrity.py
     exec bash scripts/dw04-verify-exact-sha.sh "$@"
     ;;
   WP-DW-03)
