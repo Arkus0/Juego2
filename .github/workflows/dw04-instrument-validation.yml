@@ -39,3 +39,24 @@ jobs:
           PY
       - name: Compile real DW query adapter with pinned SDK
         run: dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj -c Release
+      - name: Exercise accepted CITY and PA query/fallback cases
+        run: |
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          root = str(Path('.').resolve())
+          cases = [
+              (['city', 'loc.casco.shared_court'], 'Docs/production/CITY_LOCATION_PROGRAMME.md', 'SourceRow'),
+              (['city', 'loc.puerto.landing'], 'Docs/production/CITY_LOCATION_PROGRAMME.md', 'SourceRow'),
+              (['pa-finding', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
+              (['pa-fixture', 'pa04', 'NC-02'], 'Docs/research/living-world/results/PA-04.md', 'MaterialText'),
+              (['pa-fixture', 'pa05', 'NC-02'], 'Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md', 'MaterialText'),
+          ]
+          for query, path, material_field in cases:
+              raw = subprocess.check_output(['dotnet', 'run', '--project', 'tools/Arkus.Dw04.Retrieval',
+                                             '-c', 'Release', '--no-build', '--', root, *query])
+              result = json.loads(raw)
+              assert result['Provenance']['SourcePath'] == path, query
+              assert result[material_field], query
+          print('DW-04 typed query/source-open smoke: GREEN')
+          PY
