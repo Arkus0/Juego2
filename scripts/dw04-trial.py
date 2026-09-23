@@ -48,10 +48,12 @@ def frozen_file(commit, path):
     require(len(commit) == 40 and all(c in "0123456789abcdef" for c in commit), "exact 40-character freeze commit required")
     try:
         raw = git("show", f"{commit}:{path}")
+        frozen_blob = git("rev-parse", f"{commit}:{path}").decode().strip()
+        current_blob = git("rev-parse", f"HEAD:{path}").decode().strip()
         git("merge-base", "--is-ancestor", commit, "HEAD")
     except subprocess.CalledProcessError as exc:
         raise ProtocolError("freeze must exist in candidate Git ancestry at canonical path") from exc
-    require((ROOT / path).read_bytes() == raw, "freeze changed after committed anchor")
+    require(current_blob == frozen_blob, f"freeze changed after committed anchor: {path}")
     return json.loads(raw), digest(raw)
 
 
