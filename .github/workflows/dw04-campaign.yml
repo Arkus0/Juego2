@@ -111,7 +111,7 @@ jobs:
           marker="DW04 campaign: ACCEPTANCE ${TARGET_SHA}"
           jq -e --arg marker "${marker}" '.pull_request.draft == true and .pull_request.head.repo.full_name == .repository.full_name and ((.pull_request.body // "") | contains($marker))' "${GITHUB_EVENT_PATH}" >/dev/null
           freeze="$(git log -1 --format=%H "${TARGET_SHA}" -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json)"
-          assembly="$(git log --format=%H --diff-filter=A -- Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json | head -1)"
+          assembly="$(git log -1 --format=%H --diff-filter=A -- Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json)"
           test -n "${freeze}" && test -n "${assembly}"
           git merge-base --is-ancestor "${freeze}" "${assembly}"
           git merge-base --is-ancestor "${assembly}" "${TARGET_SHA}"
