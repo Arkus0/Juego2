@@ -79,6 +79,15 @@ def main():
     if request.get("tool_policy") != "none":
         fail("DW-04 provider calls must not enable tools")
 
+    response_contract = request.get("response_contract")
+    if not isinstance(response_contract, dict) or set(response_contract) != {"fact_keys", "allowed_blockers", "allowed_verdicts", "evidence_ids"}:
+        fail("DW-04 response contract shape is invalid")
+    if not isinstance(response_contract["fact_keys"], list) or not all(isinstance(x, str) for x in response_contract["fact_keys"]):
+        fail("DW-04 response contract fact_keys are invalid")
+    for field in ("allowed_blockers", "allowed_verdicts", "evidence_ids"):
+        if not isinstance(response_contract[field], list) or not all(isinstance(x, str) for x in response_contract[field]):
+            fail(f"DW-04 response contract {field} is invalid")
+
     contexts = request.get("context_fragments")
     if not isinstance(contexts, list) or not contexts:
         fail("DW-04 request has no context fragments")
@@ -106,7 +115,12 @@ def main():
         "required": ["facts", "blockers", "verdict", "evidence"],
         "additionalProperties": False,
     }
-    user_text = "TASK\n" + request.get("task_prompt", "") + "\n\nAUTHORITATIVE CONTEXT\n" + "\n\n".join(rendered)
+    user_text = (
+        "TASK\n" + request.get("task_prompt", "")
+        + "\n\nRESPONSE CONTRACT (formatting vocabulary only; allowed does not mean true)\n"
+        + json.dumps(response_contract, ensure_ascii=False, sort_keys=True)
+        + "\n\nAUTHORITATIVE CONTEXT\n" + "\n\n".join(rendered)
+    )
     body = {
         "model": request.get("model"),
         "instructions": request.get("system_prompt"),
