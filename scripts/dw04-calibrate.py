@@ -67,6 +67,27 @@ def invoke(command, request, timeout):
     return response, {"started": started, "ended": ended}, False
 
 
+def load_retained_invalid(protocol, protocol_commit, valid_slots):
+    retained = []
+    consumed = {}
+    for path in protocol.get("prior_invalid_attempts", []):
+        record, _ = trial.frozen_file(protocol_commit, path)
+        slot = record.get("slot")
+        key = json.dumps(slot, sort_keys=True)
+        trial.require(slot in valid_slots, "retained invalid attempt is outside the designated calibration schedule")
+        trial.require(record.get("classification") == "RUN_INVALID_PRE_ANSWER" and
+                      record.get("state") == "RUN_INVALID" and
+                      record.get("scorable_structured_answer") is False and
+                      record.get("semantic_result_observed") is False and
+                      record.get("provider_request_id") is None,
+                      "retained invalid attempt is not objective pre-answer evidence")
+        trial.require(record.get("attempt") == 1, "retained invalid attempt must consume exactly attempt 1")
+        trial.require(key not in consumed, "more than one retained invalid attempt already consumed for one slot")
+        consumed[key] = 1
+        retained.append({"evidence_path": path, **record})
+    return retained, consumed
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--pre-commit", required=True)
@@ -114,6 +135,7 @@ def main():
     command = [sys.executable, str(adapter)]
     timeout = int(protocol["model_config"]["execution_budget"]["timeout_seconds"])
     slots = [{"task": task, "run": run, "route": "CTX"} for task in tasks for run in (1, 2)]
+    retained_invalid, consumed_invalid = load_retained_invalid(protocol, args.protocol_commit, slots)
 
     result = {
         "schema": "dw04-calibration-results-v1",
@@ -129,7 +151,7 @@ def main():
         },
         "model_config": protocol["model_config"],
         "runs": [],
-        "invalid_attempts": [],
+        "invalid_attempts": retained_invalid,
         "readiness": "NOT_READY",
     }
     write_json(output, result)
@@ -148,9 +170,11 @@ def main():
         })
         trial.check_request(request, protocol["model_config"], slot, task["semantic_question"],
                             task["response_contract"], protocol["system_prompt"], None)
-        attempts = 0
+        slot_key = json.dumps(slot, sort_keys=True)
+        attempts = consumed_invalid.get(slot_key, 0)
         while True:
             attempts += 1
+            trial.require(attempts <= 2, "objective invalid-run replacement budget exceeded before provider call")
             response, meta, retryable = invoke(command, request, timeout)
             if response is not None:
                 trial.require(response.get("model") == protocol["model_config"]["model"],
@@ -158,6 +182,7 @@ def main():
                 answer = response["raw"]["answer"]
                 record = {
                     "slot": slot,
+                    "attempt": attempts,
                     "route": "CTX",
                     "request": request,
                     "request_sha256": trial.digest(trial.canonical(request)),
