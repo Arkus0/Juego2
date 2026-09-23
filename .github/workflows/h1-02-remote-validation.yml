@@ -1,0 +1,51 @@
+name: H1-02 Remote Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-02-remote-validation.yml'
+      - '.gitignore'
+      - 'Unity/ArkusUnity/**'
+      - 'scripts/h1-02-*'
+      - 'Docs/evidence/WP-H1-02/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-02-remote-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  remote-static:
+    name: H1-02 static claim checks
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'work/wp-h1-02'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 1
+
+      - name: Run repository-side H1-02 proof and negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/h1-02-static-check.py --mode remote-prep --self-test
+
+      - name: Verify proof is non-mutating and Unity caches are untracked
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
+          if git ls-files 'Unity/ArkusUnity/Library/**' 'Unity/ArkusUnity/Temp/**' 'Unity/ArkusUnity/Logs/**' 'Unity/ArkusUnity/UserSettings/**' | grep -q .; then
+            echo 'tracked Unity cache/editor-local state detected' >&2
+            exit 1
+          fi
+          echo H1_02_REMOTE_VALIDATION_GREEN
