@@ -8,14 +8,32 @@ import importlib.util
 import json
 import math
 import shutil
+import subprocess
 import sys
 import tempfile
+import textwrap
 from pathlib import Path
 
 CHECKER = Path("scripts/context-envelope-check.py")
 CONFIG = Path("Docs/engineering/context-envelope.json")
 ESCALATIONS = Path("Docs/evidence/CTX-03/CONTEXT_ESCALATIONS.json")
-CLOSURE_WORKFLOW = Path(".github/workflows/review-ready-closure.yml")
+STATE_TRANSITIONS_WORKFLOW = Path(".github/workflows/state-transitions.yml")
+OBSOLETE_SECOND_CLOSURE = (
+    Path(".github/workflows/review-ready-closure.yml"),
+    Path("scripts/review-ready-closure.py"),
+)
+DIRECT_GATE_MARKERS = (
+    (
+        "REVIEW_READY producer",
+        "# CTX_DIRECT_REVIEW_READY_GATE_BEGIN",
+        "# CTX_DIRECT_REVIEW_READY_GATE_END",
+    ),
+    (
+        "Reviewer PASS consumer",
+        "# CTX_DIRECT_PASS_GATE_BEGIN",
+        "# CTX_DIRECT_PASS_GATE_END",
+    ),
+)
 
 
 def module(root: Path):
@@ -25,6 +43,50 @@ def module(root: Path):
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
+
+
+def extract_shell_gate(workflow: str, begin: str, end: str) -> str:
+    if workflow.count(begin) != 1 or workflow.count(end) != 1:
+        raise ValueError(f"gate markers must occur exactly once: {begin} / {end}")
+    after = workflow.split(begin, 1)[1]
+    body = after.split(end, 1)[0]
+    source = textwrap.dedent(body).strip()
+    if "direct_candidate_validation_gate()" not in source:
+        raise ValueError(f"gate body does not define direct_candidate_validation_gate: {begin}")
+    return source
+
+
+def shell_gate_allows(
+    source: str,
+    run_conclusion: str,
+    handoff_job: str,
+    context_job: str,
+    freeze_job: str,
+    non_foundational: str,
+) -> bool:
+    script = (
+        "set -u\n"
+        + source
+        + "\ndirect_candidate_validation_gate \"$1\" \"$2\" \"$3\" \"$4\" \"$5\"\n"
+    )
+    proc = subprocess.run(
+        [
+            "bash",
+            "-c",
+            script,
+            "ctx03-direct-gate",
+            run_conclusion,
+            handoff_job,
+            context_job,
+            freeze_job,
+            non_foundational,
+        ],
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    return proc.returncode == 0
 
 
 def copy_required(root: Path, tmp: Path, paths: set[str]) -> None:
@@ -203,19 +265,81 @@ def run_controls(root: Path) -> list[str]:
         finally:
             p.unlink(missing_ok=True)
 
-    # Workflow-level retry contract: closure must wake both on the original marker
-    # and on later Candidate Validation completion, so an existing same-SHA marker
-    # can be reused after metadata/gate repair without a duplicate marker.
-    workflow = (root / CLOSURE_WORKFLOW).read_text(encoding="utf-8")
-    for token in ("issue_comment:", "workflow_run:", "Arkus Candidate Validation", "review-ready-closed:${PR}:${TARGET_SHA}"):
+    # REVIEW_READY is now the terminal mechanical handoff. Preserve the integrity
+    # that the old second closure pass duplicated: an exact Reviewer verdict can
+    # advance only when a matching REVIEW_READY marker predates that verdict and
+    # still binds the reviewed SHA plus the live validation-context digest.
+    workflow = (root / STATE_TRANSITIONS_WORKFLOW).read_text(encoding="utf-8")
+    for token in (
+        "github.event.workflow_run.conclusion == 'success'",
+        '[[ "${reviewed_sha}" == "${frozen_sha}" ]]',
+        'marker_key="review-ready:${PR}:${reviewed_sha}:${digest}"',
+        'select(.created_at <= $before)',
+        'State: REVIEW_READY',
+        'No context-matching REVIEW_READY marker predating Reviewer verdict',
+        '[[ "${marker_fields[0]}" == "${reviewed_sha}" ]]',
+        '[[ "${marker_fields[4]}" == "${digest}" ]]',
+        'direct_candidate_validation_gate "${RUN_CONCLUSION}" "${handoff_job}" "${context_job}" "${freeze_job}" "${non_foundational}"',
+        'direct_candidate_validation_gate "${run_conclusion}" "${handoff_job}" "${context_job}" "${freeze_job}" "${non_foundational}"',
+    ):
         if token not in workflow:
-            errors.append(f"review-ready closure retry contract missing workflow token: {token}")
+            errors.append(f"direct REVIEW_READY integrity contract missing state-transition token: {token}")
+
+    # Execute the exact gate predicates embedded in the production workflow. This
+    # is not a duplicate model: the shell source under test is extracted verbatim
+    # from both the REVIEW_READY producer and Reviewer PASS consumer.
+    for label, begin, end in DIRECT_GATE_MARKERS:
+        try:
+            gate = extract_shell_gate(workflow, begin, end)
+        except ValueError as exc:
+            errors.append(f"{label}: {exc}")
+            continue
+
+        for proof_class in ("true", "false"):
+            if not shell_gate_allows(gate, "success", "success", "success", "success", proof_class):
+                errors.append(f"{label}: all-GREEN Candidate Validation was rejected for non_foundational={proof_class}")
+
+        # Exact blocker reproduction: NON-FOUNDATIONAL is never an exemption from
+        # source-run success or Freeze exact-SHA validation success.
+        negative_cases = (
+            ("failure", "success", "success", "success", "true", "failed Candidate Validation run"),
+            ("success", "success", "success", "failure", "true", "failed freeze job"),
+            ("success", "success", "success", "missing", "true", "missing freeze job"),
+            ("success", "failure", "success", "success", "true", "failed handoff job"),
+            ("success", "success", "failure", "success", "true", "failed context job"),
+        )
+        for run_status, handoff, context, freeze, proof_class, case in negative_cases:
+            if shell_gate_allows(gate, run_status, handoff, context, freeze, proof_class):
+                errors.append(f"{label}: NON-FOUNDATIONAL {case} remained accept-capable")
+
+    # A second terminal closure phase adds no new authority and previously caused
+    # same-SHA retry loops. Keep it removed rather than letting ceremony regrow.
+    for obsolete in OBSOLETE_SECOND_CLOSURE:
+        if (root / obsolete).exists():
+            errors.append(f"obsolete second REVIEW_READY closure phase reintroduced: {obsolete}")
 
     return errors
 
 
 def self_test() -> None:
     assert math.ceil(100 * 1.2) == 120
+    synthetic = """
+    direct_candidate_validation_gate() {
+      local run_conclusion="$1"
+      local handoff_job="$2"
+      local context_job="$3"
+      local freeze_job="$4"
+      local non_foundational="$5"
+      [[ "${non_foundational}" == "true" || "${non_foundational}" == "false" ]] &&
+        [[ "${run_conclusion}" == "success" ]] &&
+        [[ "${handoff_job}" == "success" ]] &&
+        [[ "${context_job}" == "success" ]] &&
+        [[ "${freeze_job}" == "success" ]]
+    }
+    """
+    assert shell_gate_allows(textwrap.dedent(synthetic), "success", "success", "success", "success", "true")
+    assert not shell_gate_allows(textwrap.dedent(synthetic), "failure", "success", "success", "success", "true")
+    assert not shell_gate_allows(textwrap.dedent(synthetic), "success", "success", "success", "failure", "true")
     print("ctx03-process-controls self-test: PASS")
 
 

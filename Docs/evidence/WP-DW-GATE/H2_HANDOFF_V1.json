@@ -1,0 +1,58 @@
+{
+  "schema": "dw-gate-h2-handoff-v1",
+  "authority": "PLANNING_INPUT_ONLY",
+  "gate_scope": "Accepted DW-00..05 composition for second-consumer readiness; not a new product contract.",
+  "accepted_inputs": [
+    "Docs/evidence/WP-DW-00",
+    "Docs/evidence/WP-DW-01",
+    "Docs/evidence/WP-DW-02",
+    "Docs/evidence/WP-DW-03",
+    "Docs/evidence/WP-DW-04",
+    "Docs/evidence/WP-DW-05"
+  ],
+  "predecessor_residual_inventory": "Docs/evidence/WP-DW-05/PREDECESSOR_RESIDUAL_INVENTORY.json",
+  "predecessor_residual_clause_count": 51,
+  "limitations_manifest": "Docs/evidence/WP-DW-05/LIMITATIONS_MANIFEST.json",
+  "limitations_reference_mode": "WHOLE_FILE_AUTHORITATIVE_REFERENCE",
+  "limitations_count": 33,
+  "demonstrated_public_capabilities": [
+    "generic typed fact/relation/provenance envelope used by two materially different real project consumers: CITY and PA",
+    "deterministic normalized projection and clean rebuild equality on the accepted bounded consumer universes",
+    "public derived-fact querying with consumer-owned semantic necessity/cardinality oracles",
+    "fail-closed missing/stale/ambiguous provenance behavior",
+    "bounded DW-04 paired-agent correctness preservation with accepted context reduction under its frozen protocol",
+    "neutral third-shape stress without CITY/PA semantics becoming required H0 behavior"
+  ],
+  "required_h2_boundary_considerations": [
+    "Preserve accepted source documents as semantic authority; DW remains derived and rebuildable.",
+    "Preserve the generic fact/relation/provenance envelope without CITY/PA semantics in H0.",
+    "Keep semantic necessity/cardinality oracles with the owning domain/consumer rather than teaching H0 domain rules.",
+    "Keep provenance/rebuild fail-closed behavior as a public-boundary requirement.",
+    "Treat DW-04 quality/context evidence as bounded to its frozen experiment.",
+    "Route packaging/versioning and external-consumer claims to H2 rather than inferring them from in-repo project references.",
+    "Explicitly consume or disposition this DW-GATE evidence before final H2 public/external-boundary acceptance."
+  ],
+  "optional_downstream_opportunities": [
+    "design-unity-drift",
+    "generated-art-briefs",
+    "content-catalogue-coverage",
+    "replay-qa",
+    "narrative-knowledge-checks"
+  ],
+  "explicit_non_claims": [
+    "arbitrary-domain universality",
+    "fresh external-repository consumability or package/version distribution",
+    "general DW adoption authorization",
+    "Unity/runtime correctness or design↔Unity parity",
+    "automatic generation of domain semantic oracles",
+    "automatic production-cost estimation",
+    "agent/model performance outside the exact accepted DW-04 frozen universe"
+  ],
+  "claims": {
+    "arbitrary_domain_universality": false,
+    "external_repository_consumability": false,
+    "general_dw_adoption_authorized": false,
+    "h2_scope_binding": false
+  },
+  "roadmap_interlock": "Final H2 public/external-boundary acceptance must consume accepted DW-GATE evidence or explicitly review and disposition the DW interlock."
+}

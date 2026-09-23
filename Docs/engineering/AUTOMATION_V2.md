@@ -20,25 +20,27 @@ The authority order remains:
 
 Workflow YAML is replaceable orchestration. It may call canonical repository entrypoints but must not redefine their proof semantics.
 
+For cadence, same-`PRODUCT_SHA` metadata closure, Reviewer protocol-only classification, direct `REVIEW_READY` handoff and zero-commit DocSync, `PRODUCT_SHA_CLOSURE.md` supersedes older descriptions in this document.
+
 ## Automated flow
 
 ```text
 Draft Worker PR
-  -> Candidate observation on every relevant PR update
+  -> Main Safety on each material push; WP-specific observation only when requested
   -> Worker fixes/reconciles evidence
-  -> Worker pre-review CLEAN
-  -> Worker obtains exact-SHA GREEN receipt where the WP requires one
+  -> Worker consumes same-PR/same-SHA Main Safety GREEN (or explicit fallback preflight)
+  -> Worker pre-review CLEAN at exact PRODUCT_SHA
   -> Worker freezes that exact SHA and marks PR Ready
   -> Worker handoff lint mechanically validates the canonical Ready handoff
-  -> Freeze handoff validates/reuses the same exact-SHA GREEN receipt where applicable
-     (full verifier runs only when no valid reusable receipt exists)
-  -> REVIEW_READY marker
+  -> Candidate Validation performs exact-SHA freeze verification
+  -> context-bound REVIEW_READY marker (terminal handoff; no closure pass)
   -> human or opt-in local driver starts a fresh independent Reviewer
-  -> Reviewer emits exact-SHA PASS or FAIL
+  -> Reviewer emits exact-SHA PASS / material FAIL, or protocol-only status
      FAIL -> REPAIR_REQUIRED marker; human or local driver starts fresh repair Worker
+     PROTOCOL_FIX -> same-SHA metadata correction; no product rerun
      PASS -> exact-SHA merge preflight -> automatic merge
           -> DOCSYNC_REQUIRED after confirmed merge for Worker-lifecycle WPs
-          -> successful Reviewer/finalizer performs documentation-only DocSync
+          -> successful Reviewer/finalizer performs bounded delta DocSync
           -> DOCSYNC_COMPLETE marker with dependency-valid Next WP
           -> human or local driver starts the next Worker
 ```
@@ -55,7 +57,7 @@ Telegram remains an optional handoff surface for manual role starts: high-value 
 
 Runs PR code with a **read-only token** plus read-only Actions access for receipt reuse.
 
-- Draft PR: observation mode.
+- Draft PR: no automatic Candidate Validation; Main Safety covers material pushes. Observation is explicit.
 - Ready/non-draft PR: frozen-candidate verify/handoff mode.
 - Ready PRs also run the separate `Worker handoff lint` job.
 - Manual `workflow_dispatch`: exact SHA + explicit observation/verify mode.

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 14:25:11Z" end-time="2026-09-23 14:25:12Z" duration="0,0369018">
+  <test-suite type="TestSuite" id="1000" name="ArkusUnity" fullname="ArkusUnity" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-23 14:25:11Z" end-time="2026-09-23 14:25:12Z" duration="0.036902" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1007" name="Arkus.H1.Baseline.Tests.Editor.dll" fullname="C:/Juego Harness/Unity/ArkusUnity/Library/ScriptAssemblies/Arkus.H1.Baseline.Tests.Editor.dll" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.029125" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1576" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1008" name="Arkus" fullname="Arkus" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.028898" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1009" name="H1" fullname="Arkus.H1" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.028823" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1010" name="Editor" fullname="Arkus.H1.Editor" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.028752" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1011" name="Tests" fullname="Arkus.H1.Editor.Tests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.028655" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1001" name="H1BaselineTests" fullname="Arkus.H1.Editor.Tests.H1BaselineTests" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.027883" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1004" name="BuiltInRenderPipelineIsTheRetainedBaseline" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.BuiltInRenderPipelineIsTheRetainedBaseline" methodname="BuiltInRenderPipelineIsTheRetainedBaseline" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="1690284163" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.008955" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1002" name="EffectiveEditorMatchesPinnedPatch" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.EffectiveEditorMatchesPinnedPatch" methodname="EffectiveEditorMatchesPinnedPatch" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="340608555" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.002293" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1003" name="ForceTextAndVisibleMetaPolicyAreEffective" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.ForceTextAndVisibleMetaPolicyAreEffective" methodname="ForceTextAndVisibleMetaPolicyAreEffective" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="718496065" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.001327" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1005" name="PackagesLockExists" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.PackagesLockExists" methodname="PackagesLockExists" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="1706063847" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.000466" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1006" name="RepositoryOwnedUnityCodeHasVisibleMetaFiles" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.RepositoryOwnedUnityCodeHasVisibleMetaFiles" methodname="RepositoryOwnedUnityCodeHasVisibleMetaFiles" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="917237483" result="Passed" start-time="2026-09-23 14:25:12Z" end-time="2026-09-23 14:25:12Z" duration="0.004708" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: C:\Juego Harness\Docs\evidence\WP-H1-02\editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

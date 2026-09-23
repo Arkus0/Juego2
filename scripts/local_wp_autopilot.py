@@ -101,7 +101,7 @@ def markers(pr: int) -> list[dict[str, str]]:
         state = parsed.get("state")
         if state == "DOCSYNC_COMPLETE" and actor != "Arkus0":
             continue
-        if state in {"REVIEW_READY_CLOSED", "REPAIR_REQUIRED", "PASS_PREFLIGHT_GREEN"} and actor != "github-actions[bot]":
+        if state in {"REVIEW_READY", "REPAIR_REQUIRED", "PASS_PREFLIGHT_GREEN"} and actor != "github-actions[bot]":
             continue
         if actor not in {"Arkus0", "github-actions[bot]"}:
             continue
@@ -119,7 +119,7 @@ def local_markers(pr: int) -> list[dict[str, str]]:
         marker = fields(body)
         actor = (row.get("user") or {}).get("login")
         state = marker.get("state")
-        if state in {"SECOND_FAIL_OFFERED", "OVERDEFENSE_APPEAL_STARTED"} and actor != "Arkus0":
+        if state in {"SECOND_FAIL_OFFERED", "OVERDEFENSE_APPEAL_STARTED", "PROTOCOL_FIX_STARTED"} and actor != "Arkus0":
             continue
         if state in {"OWNER_CONTINUE", "CONTINUE_UNAVAILABLE", "CONTINUE_EXPIRED"} and actor != "github-actions[bot]":
             continue
@@ -173,20 +173,19 @@ def validate_docsync(root: Path, pr: dict[str, Any], row: dict[str, str]) -> Non
                               cwd=root, env=clean_env(), capture_output=True, check=False)
     if ancestor.returncode:
         raise StopFlow(f"PR #{number} DocSync commit is not on current main")
+    if commit == merge_commit:
+        if not row.get("detail", "").strip():
+            raise StopFlow(f"PR #{number} zero-commit DocSync needs a concrete detail")
+        return
     parents = run("git", "rev-list", "--parents", "-n", "1", commit, cwd=root).split()
     if len(parents) < 2:
         raise StopFlow(f"PR #{number} DocSync commit lacks a first parent")
     changed = set(run("git", "diff", "--name-only", parents[1], commit, cwd=root).splitlines())
-    evidence_candidates = {f"Docs/evidence/WP-{expected_wp}/DOCSYNC.md",
-                           f"Docs/evidence/{expected_wp}/DOCSYNC.md"}
-    if ("Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json" not in changed or
-        not changed.intersection(evidence_candidates)):
-        raise StopFlow(f"PR #{number} DocSync commit lacks this WP's persisted evidence/index change")
-    raw = run("git", "show", f"{commit}:Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json", cwd=root)
-    index = json.loads(raw)
-    if (index.get("projection_phase") != "DOCSYNC_PERSISTED" or
-        index.get("generated_from_main_sha") != parents[1]):
-        raise StopFlow(f"PR #{number} DocSync projection does not match its first parent")
+    if not changed or any(not name.startswith("Docs/") for name in changed):
+        raise StopFlow(f"PR #{number} DocSync commit is not docs-only")
+    if not any(name.startswith(("Docs/workpacks/", "Docs/evidence/", "Docs/architecture/")) or
+               name in {"Docs/ROADMAP.md", "Docs/engineering/PRODUCT_ARCHITECTURE.md"} for name in changed):
+        raise StopFlow(f"PR #{number} DocSync commit lacks an authoritative document change")
 
 
 def next_from_merged_pr(root: Path, pr: dict[str, Any]) -> str | None:
@@ -507,7 +506,7 @@ def reviewed_verdicts(pr: int) -> list[dict[str, str]]:
         record = fields(item.get("body") or "")
         verdict = record.get("reviewer verdict", "").upper()
         review_id = record.get("autopilot review id", "").lower()
-        if verdict in {"PASS", "FAIL"} and SHA_RE.fullmatch(record.get("reviewed candidate sha", "").lower()) and REVIEW_ID_RE.fullmatch(review_id):
+        if verdict in {"PASS", "FAIL", "PROTOCOL_FIX", "REVIEW_BLOCKED"} and SHA_RE.fullmatch(record.get("reviewed candidate sha", "").lower()) and REVIEW_ID_RE.fullmatch(review_id):
             row = {"id": review_id, "sha": record["reviewed candidate sha"].lower(),
                    "verdict": verdict, "body": item.get("body") or "",
                    "at": item.get("submitted_at") or item.get("created_at") or ""}
@@ -583,12 +582,12 @@ async def main_async(args: argparse.Namespace) -> None:
                         await asyncio.sleep(min(60, int(reset) + 30 - int(time.time())))
                     continue
                 if pr is None:
-                    await codex_role(root, state, "worker", f"$implement-workpack Worker {wp}. Este controlador iniciará un Reviewer fresco solo tras REVIEW_READY_CLOSED. No revises ni inicies otro WP.",
+                    await codex_role(root, state, "worker", f"$implement-workpack Worker {wp}. Sigue PRODUCT_SHA_CLOSURE.md: usa Main Safety same-PR/same-SHA como preflight normal y evita reejecuciones redundantes. Este controlador iniciará un Reviewer fresco solo tras REVIEW_READY. No revises ni inicies otro WP.",
                                      "gpt-6-sol", effort_for_worker(wp_text))
                     pr = canonical_pr(wp)
                     if not pr or pr["state"] != "open":
                         raise StopFlow(f"Worker ended without a canonical open PR for {wp}")
-                    await wait_for_state(pr["number"], lambda p, m: bool(latest_marker(m, "REVIEW_READY_CLOSED", p["head"]["sha"].lower())) or bool(latest_marker(m, "BLOCKED")))
+                    await wait_for_state(pr["number"], lambda p, m: bool(latest_marker(m, "REVIEW_READY", p["head"]["sha"].lower())) or bool(latest_marker(m, "BLOCKED")))
                     continue
                 current = gh_json("api", f"repos/{REPO}/pulls/{pr['number']}")
                 rows = markers(pr["number"])
@@ -607,7 +606,7 @@ async def main_async(args: argparse.Namespace) -> None:
                         wp = next_from_merged_pr(root, current)
                         count += 1
                         break
-                    await codex_role(root, state, "docsync", f"Finaliza DocSync del PR #{pr['number']} de {wp}. Confirma PASS y merge exacto en GitHub. Solo documentación; emite DOCSYNC_COMPLETE con Next WP válido. No cambies implementación.", "gpt-6-luna", "high")
+                    await codex_role(root, state, "docsync", f"Finaliza DocSync del PR #{pr['number']} de {wp}. Confirma PASS y merge exacto en GitHub. Sigue PRODUCT_SHA_CLOSURE.md y $update-handoff: cero commits por defecto si ninguna autoridad documental cambia; si cambia, una reconciliación acotada. Emite DOCSYNC_COMPLETE con Next WP válido. No cambies implementación.", "gpt-6-luna", "high")
                     await wait_for_state(pr["number"], lambda p, m: bool(latest_marker(m, "DOCSYNC_COMPLETE")))
                     continue
                 frozen = fields(current.get("body") or "").get("frozen candidate sha", "").lower()
@@ -616,14 +615,46 @@ async def main_async(args: argparse.Namespace) -> None:
                 verdicts = reviewed_verdicts(pr["number"])
                 fails = [row for row in verdicts if row["verdict"] == "FAIL"]
                 repair = latest_marker(rows, "REPAIR_REQUIRED", frozen)
-                ready = latest_marker(rows, "REVIEW_READY_CLOSED", frozen)
+                ready = latest_marker(rows, "REVIEW_READY", frozen)
                 latest_current_verdict = next((row for row in reversed(verdicts) if row["sha"] == frozen), None)
+                if latest_current_verdict and latest_current_verdict["verdict"] == "REVIEW_BLOCKED":
+                    raise StopFlow(f"PR #{pr['number']} Reviewer reported REVIEW_BLOCKED; PC assessment required")
+                if latest_current_verdict and latest_current_verdict["verdict"] == "PROTOCOL_FIX":
+                    if ready and ready.get("_created_at", "") > latest_current_verdict["at"]:
+                        # A new context-bound marker confirms same-SHA metadata closure.
+                        pass
+                    else:
+                        protocol_statuses = [row for row in verdicts if row["sha"] == frozen and row["verdict"] == "PROTOCOL_FIX"]
+                        if len(protocol_statuses) > 2:
+                            raise StopFlow(f"PR #{pr['number']} has repeated protocol-only closure failures")
+                        local_rows = local_markers(pr["number"])
+                        started = any(row.get("state") == "PROTOCOL_FIX_STARTED" and
+                                      row.get("target sha") == frozen and
+                                      row.get("review id") == latest_current_verdict["id"] for row in local_rows)
+                        if started:
+                            raise StopFlow(f"PR #{pr['number']} protocol correction started without new REVIEW_READY; PC reconciliation required")
+                        body = ("ARKUS_LOCAL_AUTOPILOT\nState: PROTOCOL_FIX_STARTED\n"
+                                f"Target SHA: {frozen}\nReview ID: {latest_current_verdict['id']}\n"
+                                "Detail: metadata-only correction; no product commit, semantic FAIL or proof rerun.\n")
+                        run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
+                        await codex_role(root, state, "protocol-fix",
+                            f"Corrige solo los defectos de metadata/lifecycle PROTOCOL_FIX del Reviewer ID {latest_current_verdict['id']} en PR #{pr['number']} / {wp}. Mantén PRODUCT_SHA {frozen}; no hagas git commit ni cambies implementación/evidencia. Sigue PRODUCT_SHA_CLOSURE.md: reusa producto GREEN y solicita como máximo una nueva evaluación Ready. Si el SHA material cambia o el bloqueo no es metadata pura, detente sin fingir corrección. No actúes como Reviewer.",
+                            "gpt-6-sol", "high")
+                        new_pr, _ = await wait_for_state(pr["number"], lambda p, m, frozen=frozen, after=latest_current_verdict["at"]:
+                                                         p["head"]["sha"].lower() != frozen or
+                                                         bool((row := latest_marker(m, "REVIEW_READY", frozen)) and row.get("_created_at", "") > after))
+                        if new_pr["head"]["sha"].lower() != frozen:
+                            raise StopFlow(f"PR #{pr['number']} protocol-only correction changed PRODUCT_SHA")
+                        continue
                 if latest_current_verdict and latest_current_verdict["verdict"] == "PASS":
                     await wait_for_state(pr["number"], lambda p, m: bool(p.get("merged")))
                     continue
                 if latest_current_verdict and latest_current_verdict["verdict"] == "FAIL" and not repair:
                     await wait_for_state(pr["number"], lambda p, m, frozen=frozen: bool(latest_marker(m, "REPAIR_REQUIRED", frozen)))
                     continue
+                if (repair and latest_current_verdict and latest_current_verdict["verdict"] == "PROTOCOL_FIX" and
+                    ready and ready.get("_created_at", "") > latest_current_verdict["at"]):
+                    repair = None
                 if repair:
                     if not latest_current_verdict or latest_current_verdict["verdict"] != "FAIL":
                         raise StopFlow(f"PR #{pr['number']} has REPAIR_REQUIRED without a parseable independent FAIL on {frozen}")
@@ -673,8 +704,10 @@ async def main_async(args: argparse.Namespace) -> None:
                             f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']}, SHA {frozen}. Hubo FAIL previo y auditoría de posible sobredefensa. Reconstruye el contrato sin confiar en la auditoría; si el FAIL es inválido, deja PASS exact-SHA razonado que lo supersede; si es válido, mantén FAIL. Publica un solo veredicto en GitHub con líneas literales 'Reviewer verdict: PASS' o 'Reviewer verdict: FAIL', 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. No edites ni repares.",
                             "gpt-6-sol", "xhigh")
                         appeal_sha = ""
-                        await wait_for_state(pr["number"], lambda p, m, frozen=frozen, pr_number=pr["number"], before=before_appeal_fails: p.get("merged") or bool(latest_marker(m, "PASS_PREFLIGHT_GREEN", frozen)) or len(reviewed_fails(pr_number)) > before)
-                        if len(reviewed_fails(pr["number"])) > before_appeal_fails:
+                        await wait_for_state(pr["number"], lambda p, m, review_id=review_id, pr_number=pr["number"]:
+                                             any(row["id"] == review_id for row in reviewed_verdicts(pr_number)))
+                        appeal_verdict = next(row for row in reviewed_verdicts(pr["number"]) if row["id"] == review_id)
+                        if appeal_verdict["verdict"] == "FAIL":
                             appeal_rejected_sha = frozen
                             second_fail_detail = "Un Reviewer Sol independiente sostuvo el FAIL que Luna consideró posible sobredefensa. Pulsa continuar para otra reparación; cuarto FAIL exige PC."
                         continue
@@ -683,15 +716,16 @@ async def main_async(args: argparse.Namespace) -> None:
                             second_fail_detail)
                         await wait_for_owner_continue(pr["number"], frozen, len(fails))
                         continue
-                    await codex_role(root, state, "repair", f"$repair-workpack Corrige el FAIL de {wp}. PR canónico #{pr['number']}; conserva historia, revalida, pre-review y congela SHA nuevo. No actúes como Reviewer.", "gpt-6-sol", effort_for_worker(wp_text))
-                    await wait_for_state(pr["number"], lambda p, m, frozen=frozen: p["head"]["sha"].lower() != frozen and bool(latest_marker(m, "REVIEW_READY_CLOSED", p["head"]["sha"].lower())))
+                    await codex_role(root, state, "repair", f"$repair-workpack Corrige el FAIL material de {wp}. PR canónico #{pr['number']}; conserva historia, revalida, pre-review y congela SHA nuevo. Sigue PRODUCT_SHA_CLOSURE.md: no repitas ejecución same-SHA por metadata. No actúes como Reviewer.", "gpt-6-sol", effort_for_worker(wp_text))
+                    await wait_for_state(pr["number"], lambda p, m, frozen=frozen: p["head"]["sha"].lower() != frozen and bool(latest_marker(m, "REVIEW_READY", p["head"]["sha"].lower())))
                     continue
                 if ready:
                     review_id = uuid.uuid4().hex
-                    await codex_role(root, state, "reviewer", f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']} / {wp}, SHA {frozen}. No recibes contexto del Worker. Publica un solo veredicto en GitHub con líneas literales 'Reviewer verdict: PASS' o 'Reviewer verdict: FAIL', 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. Si PASS, finaliza merge y DocSync documental según protocolo. No repares implementación.", "gpt-6-sol", "xhigh")
-                    await wait_for_state(pr["number"], lambda p, m, frozen=frozen: p.get("merged") or bool(latest_marker(m, "REPAIR_REQUIRED", frozen)))
+                    await codex_role(root, state, "reviewer", f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']} / {wp}, SHA {frozen}. No recibes contexto del Worker. Sigue PRODUCT_SHA_CLOSURE.md: usa CI exact-SHA para hechos mecánicos; usa PROTOCOL_FIX/REVIEW_BLOCKED, no FAIL, para metadata pura. Publica una sola revisión o comentario en GitHub con líneas literales 'Reviewer verdict: PASS|FAIL|PROTOCOL_FIX|REVIEW_BLOCKED' (elige un valor, sin barras), 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. Si PASS, finaliza merge y DocSync documental según protocolo. No repares implementación.", "gpt-6-sol", "xhigh")
+                    await wait_for_state(pr["number"], lambda p, m, review_id=review_id, pr_number=pr["number"]:
+                                         any(row["id"] == review_id for row in reviewed_verdicts(pr_number)))
                     continue
-                raise StopFlow(f"PR #{pr['number']} is neither REVIEW_READY_CLOSED nor REPAIR_REQUIRED for frozen SHA")
+                raise StopFlow(f"PR #{pr['number']} is neither REVIEW_READY nor REPAIR_REQUIRED for frozen SHA")
             if wp and not args.one_wp:
                 # A later WP starts only after the prior DOCSYNC_COMPLETE and a fresh quota check.
                 pr = None

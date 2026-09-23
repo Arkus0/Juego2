@@ -38,10 +38,10 @@ class RoutingTests(unittest.TestCase):
 
     def test_marker_requires_matching_sha(self):
         sha1, sha2 = "a" * 40, "b" * 40
-        rows = [{"state": "REVIEW_READY_CLOSED", "target sha": sha1},
+        rows = [{"state": "REVIEW_READY", "target sha": sha1},
                 {"state": "REPAIR_REQUIRED", "target sha": sha2}]
         self.assertIsNone(module.latest_marker(rows, "REPAIR_REQUIRED", sha1))
-        self.assertEqual(module.latest_marker(rows, "REVIEW_READY_CLOSED", sha1), rows[0])
+        self.assertEqual(module.latest_marker(rows, "REVIEW_READY", sha1), rows[0])
 
     def test_markdown_verdict_fields(self):
         body = "## **Reviewer verdict:** `FAIL`\n**Reviewed candidate SHA:** `" + "a" * 40 + "`"
@@ -86,6 +86,16 @@ class RoutingTests(unittest.TestCase):
              self.assertRaisesRegex(module.StopFlow, "does not descend from its merge"):
             module.validate_docsync(Path("."), pr, row)
 
+    def test_zero_commit_docsync_accepts_exact_merge_key(self):
+        sha = "a" * 40
+        pr = {"number": 123, "merged_at": "2026-01-01T00:00:00Z", "body": "WP: WP-H1-02",
+              "merge_commit_sha": sha}
+        row = {"key": f"docsync-complete:123:{sha}", "wp": "WP-H1-02",
+               "next wp": "WP-H1-03", "detail": "No authoritative document meaning changed.",
+               "_created_at": "2026-01-02T00:00:00Z"}
+        with patch.object(module.subprocess, "run", return_value=type("Result", (), {"returncode": 0})()):
+            module.validate_docsync(Path("."), pr, row)
+
     def test_public_comment_cannot_authorize_continuation(self):
         sha = "a" * 40
         body = f"ARKUS_LOCAL_AUTOPILOT\nState: OWNER_CONTINUE\nTarget SHA: {sha}\nFail count: 2\n"
@@ -98,7 +108,7 @@ class RoutingTests(unittest.TestCase):
 
     def test_marker_provenance_matches_state(self):
         sha = "a" * 40
-        ready = f"ARKUS_AUTOMATION_V2\nState: REVIEW_READY_CLOSED\nTarget SHA: {sha}\n"
+        ready = f"ARKUS_AUTOMATION_V2\nState: REVIEW_READY\nTarget SHA: {sha}\n"
         docsync = "ARKUS_AUTOMATION_V2\nState: DOCSYNC_COMPLETE\nNext WP: NONE\n"
         rows = [{"body": ready, "user": {"login": "Arkus0"}},
                 {"body": ready, "user": {"login": "github-actions[bot]"}},
@@ -106,7 +116,7 @@ class RoutingTests(unittest.TestCase):
                 {"body": docsync, "user": {"login": "Arkus0"}}]
         with patch.object(module, "gh_pages", return_value=rows):
             accepted = module.markers(123)
-        self.assertEqual([r["state"] for r in accepted], ["REVIEW_READY_CLOSED", "DOCSYNC_COMPLETE"])
+        self.assertEqual([r["state"] for r in accepted], ["REVIEW_READY", "DOCSYNC_COMPLETE"])
 
     def test_duplicate_review_and_comment_count_once(self):
         sha = "a" * 40
@@ -122,6 +132,13 @@ class RoutingTests(unittest.TestCase):
                  "user": {"login": "Arkus0"}, "created_at": f"2026-01-01T00:00:0{i}Z"} for i in ("1", "2")]
         with patch.object(module, "gh_pages", side_effect=[rows, []]):
             self.assertEqual(len(module.reviewed_fails(123)), 2)
+
+    def test_protocol_fix_is_not_a_material_fail(self):
+        sha = "a" * 40
+        row = {"body": f"Reviewer verdict: PROTOCOL_FIX\nReviewed candidate SHA: {sha}\nAutopilot review ID: {'1' * 32}\n",
+               "user": {"login": "Arkus0"}, "created_at": "2026-01-01T00:00:00Z"}
+        with patch.object(module, "gh_pages", side_effect=[[row], []]):
+            self.assertEqual(module.reviewed_verdicts(123)[0]["verdict"], "PROTOCOL_FIX")
 
     def test_environment_excludes_model_api_keys(self):
         old = module.os.environ.get("OPENAI_API_KEY")

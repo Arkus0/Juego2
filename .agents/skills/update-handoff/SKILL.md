@@ -1,46 +1,72 @@
 ---
 name: update-handoff
-description: Reconcile the compact Juego2 session handoff after accepted state changes without making it semantic or proof authority.
+description: Complete bounded post-PASS DocSync for Juego2, defaulting to zero commits unless authoritative document meaning changed.
 ---
 
 # update-handoff
 
-Keep `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` compact and reconstructible.
+Perform post-PASS DocSync as a **bounded delta reconciliation**, not a second review.
 
-## Context bootstrap
+Read `Docs/engineering/PRODUCT_SHA_CLOSURE.md` first. Its Flow Simplification V2 DocSync budget governs this skill. Accepted-contract capsule mechanics remain governed by `Docs/engineering/CONTEXT_CAPSULE_V1.md`.
 
-Use `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `docsync` profile in `Docs/engineering/context-bootstrap-profiles.json`. Reconstruct live GitHub state first.
+## Default: zero-commit DocSync
 
-`Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` is derived navigation only. Its live freshness contract is non-self-referential:
+After the accepted implementation PR merges:
 
-```text
-projection_phase == DOCSYNC_PERSISTED
-AND
-generated_from_main_sha == first_parent(current live main)
+1. Confirm the merged PR, exact reviewed `PRODUCT_SHA`, PASS and merge SHA from live GitHub.
+2. Determine the dependency-valid next action from direct accepted contracts/live state. Read full ROADMAP only when a cross-track/order/gate question is genuinely unresolved.
+3. Ask one question: **did this accepted transition change the effective accepted meaning of an authoritative document that future work relies on?**
+4. If **no**, make **no repository commit**. Do not regenerate `ACCEPTED_STATE_INDEX.json`, handoff summaries, capsules, history or track docs merely to record chronology.
+5. Emit one durable PR comment:
+   - `ARKUS_AUTOMATION_V2`
+   - `State: DOCSYNC_COMPLETE`
+   - `Key: docsync-complete:<PR>:<merge-sha>`
+   - `WP: <WP-ID>`
+   - `Next WP: <dependency-valid next WP or NONE>`
+   - short `Detail:` stating that no authoritative document meaning required reconciliation.
+6. STOP.
+
+Derived navigation is non-authoritative. If an index/handoff/cache becomes stale because it was not ceremonially rewritten, a later role escalates to live GitHub/authoritative sources. Stale navigation alone does not block an accepted transition.
+
+## When a DocSync commit is actually required
+
+Create one bounded documentation reconciliation only when the accepted transition really changes authoritative durable meaning, for example:
+
+- a ROADMAP gate/order/status that future dependency resolution consumes;
+- an exact workpack/track state document that is itself authoritative for subsequent scope;
+- an architecture/ADR decision;
+- an accepted-contract capsule whose represented accepted contract actually changed.
+
+Then:
+
+1. Touch only documents whose effective accepted meaning changed.
+2. Do not copy the same transition into multiple summaries for chronology.
+3. Run only validators applicable to the files actually changed.
+4. Never rerun product/.NET/Unity tests for documentation-only DocSync.
+5. Do not restart merely because unrelated `main` advanced. Rebase/reconcile only if that movement conflicts with a document you are actually changing.
+6. Persist one bounded DocSync commit/PR, confirm it merged, emit one `DOCSYNC_COMPLETE` marker, and STOP.
+
+If and only if capsule/index content is genuinely edited, run the canonical full CTX-02 validation surface required by `CONTEXT_CAPSULE_V1.md`:
+
+```bash
+python3 scripts/context-capsule-check.py --self-test
+python3 scripts/context-capsule-controls.py
+python3 scripts/context-capsule-omission-controls.py
+python3 scripts/context-capsule-pa-semantic-controls.py
+python3 scripts/context-capsule-check.py --audit-index --repo-root .
 ```
 
-`generated_from_main_sha` names the source `main` reconstructed before the DocSync persistence commit/merge. Never attempt to store the SHA of the commit that contains the index.
+These commands are conditional on changing that surface; they are not a mandatory tax after every PASS.
 
-After an accepted implementation transition:
+## Forbidden DocSync churn
 
-1. reconstruct current live `main` as `SOURCE_MAIN_SHA`, accepted merge/review and dependency-valid next action;
-2. regenerate the accepted-state index **once** from authoritative sources; do not maintain a second compact current-state registry for the same transition;
-3. set `projection_phase=DOCSYNC_PERSISTED` and `generated_from_main_sha=SOURCE_MAIN_SHA`;
-4. reconcile only authoritative/current-state docs whose effective accepted meaning actually changed. Do not copy the same accepted transition into ROADMAP, handoff, track README and evidence merely to preserve chronology; long closure chronology belongs under exact evidence or `Docs/history/` with stable pointers back to the accepted PR/review/SHA;
-5. after CTX-02 adoption, if the accepted transition creates/changes a canonical accepted PA result, create/update its one accepted-contract capsule from the exact accepted identity/result and update `Docs/engineering/context-capsules/index.json`; preserve every disposition key/status and never infer missing rows; any new PA capsule also requires a reviewed checker-owned canonical disposition selector before capsule-chain coverage can be declared complete;
-6. after CTX-02 adoption, whenever capsule/index state is affected run the full CTX-02 validation surface: `python3 scripts/context-capsule-check.py --self-test`, `python3 scripts/context-capsule-controls.py`, `python3 scripts/context-capsule-omission-controls.py`, `python3 scripts/context-capsule-pa-semantic-controls.py`, and `python3 scripts/context-capsule-check.py --audit-index --repo-root .`; a missing/invalid accepted PA capsule, missing checker-owned selector, or failed independent semantic control means capsule-chain/navigation coverage is incomplete, not that the authoritative PA result is invalid;
-7. after CTX-03 adoption, keep `Docs/history/**` out of normal role bootstrap. Historical material is read only when a current claim, contradiction or audit needs it. Preserve accepted evidence; never delete it for context savings;
-8. persist DocSync in a direct child/merge whose first parent is exactly `SOURCE_MAIN_SHA`;
-9. if main moved before persistence, stop and regenerate from the new source;
-10. query the resulting live main SHA and first parent and run `python3 scripts/context-bootstrap-check.py --current-main-sha <DOCSYNC_MAIN_SHA> --current-main-parent-sha <SOURCE_MAIN_SHA> --require-fresh`;
-11. only after that check passes emit exactly one `ARKUS_AUTOMATION_V2` comment on the merged implementation PR with `State: DOCSYNC_COMPLETE`, `Key: docsync-complete:<PR>:<reconciled-main-sha>`, `WP: <WP-ID>`, `Next WP: <dependency-valid next WP, or NONE>`, and a short `Detail:`.
+Do not require a docs commit solely to:
 
-The marker is notification/handoff metadata, not authority. Never emit it before DocSync is actually complete.
+- refresh a derived SHA/index after every merge;
+- preserve a complete chronology in multiple files;
+- make a compact cache perfectly fresh when live authoritative state is available;
+- re-run accepted product proof;
+- prove again that PASS was valid;
+- reconcile unrelated documentation.
 
-Accepted-contract capsules are also navigation only. They use contract-scoped identity/source freshness from `Docs/engineering/CONTEXT_CAPSULE_V1.md`, not the accepted-state index's first-parent freshness. Do not rewrite an unchanged capsule merely because unrelated `main` advanced.
-
-Reconcile affected accepted milestone/track state, open WP/PR ownership relevant to next action, frozen/reviewed/merged exact SHA, durable blocks/human decisions, and role-routing changes only when the accepted contract changed them.
-
-Read full `Docs/ROADMAP.md` when the next-action decision contains a cross-track/order/gate question not closed by exact accepted/direct dependency contracts. Missing/stale compact context causes escalation, never inference from silence.
-
-Do not copy private reasoning, transient chat history, long logs or stale implementation details. Handoff/index/capsules summarize and navigate; they never outrank live GitHub, ROADMAP when materially required, exact WP contracts, code or accepted evidence.
+DocSync should normally take minutes, and often seconds, after PASS. If it starts reconstructing the entire project or launching broad validation, the scope has escaped this skill.

@@ -9,6 +9,14 @@ resolve_wp() {
     printf '%s\n' "${ARKUS_WP}"
     return
   fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-DW-GATE`?[[:space:]]*$'; then
+    printf '%s\n' 'WP-DW-GATE'
+    return
+  fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-DW-05`?[[:space:]]*$'; then
+    printf '%s\n' 'WP-DW-05'
+    return
+  fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-DW-04`?[[:space:]]*$'; then
     printf '%s\n' 'WP-DW-04'
     return
@@ -27,6 +35,10 @@ resolve_wp() {
   fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-DW-00`?[[:space:]]*$'; then
     printf '%s\n' 'WP-DW-00'
+    return
+  fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-H1-02`?[[:space:]]*$'; then
+    printf '%s\n' 'WP-H1-02'
     return
   fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-H1-01`?[[:space:]]*$'; then
@@ -118,6 +130,12 @@ resolve_wp() {
 }
 
 case "$(resolve_wp)" in
+  WP-DW-GATE)
+    exec bash scripts/dwgate-observe-exact-sha.sh "$@"
+    ;;
+  WP-DW-05)
+    exec bash scripts/dw05-observe-exact-sha.sh "$@"
+    ;;
   WP-DW-04)
     exec bash scripts/dw04-observe-exact-sha.sh "$@"
     ;;
@@ -132,6 +150,9 @@ case "$(resolve_wp)" in
     ;;
   WP-DW-00)
     exec bash scripts/dw00-observe-exact-sha.sh "$@"
+    ;;
+  WP-H1-02)
+    exec bash scripts/h1-02-observe-exact-sha.sh "$@"
     ;;
   WP-H1-01)
     exec bash scripts/h1-01-observe-exact-sha.sh "$@"

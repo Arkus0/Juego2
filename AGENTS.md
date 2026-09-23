@@ -28,6 +28,8 @@ Juego2 uses **Automation V2** for mechanical GitHub Actions validation and state
 
 Every reasoning session reconstructs current GitHub state before acting. A controller-launched Reviewer must have fresh independent context; a failed Reviewer never becomes its own repair Worker. The next WP still waits for `DOCSYNC_COMPLETE`.
 
+After the `PRODUCT_SHA` anti-loop clarification is merged, the exact `Frozen candidate SHA` is also the cycle's material `PRODUCT_SHA`. GitHub-side PR body/comments/checks/status reconciliation that creates no Git commit and does not change effective WP/process/proof class is `NON_MATERIAL_CLOSURE`: rerun cheap live handoff/context gates and reuse an already-GREEN exact-SHA product validation only when its recorded context still matches. Any Git commit remains material, creates a new candidate SHA and invalidates the old validation/pre-review/review as before. See `Docs/engineering/PRODUCT_SHA_CLOSURE.md`.
+
 After `WP-CTX-01` independently passes, merges and completes DocSync, role sessions use `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` plus `Docs/engineering/context-bootstrap-profiles.json` to select the minimum **starting** context and explicit escalation path. This is routing only: live GitHub remains authoritative for mutable PR/branch/review/check state, exact workpack/evidence/architecture sources remain authoritative for semantics and proof, and mandatory predecessor/reviewer duties below are unchanged. `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` is derived navigation only and never proof authority.
 
 After `WP-CTX-02` independently passes, merges and completes DocSync, `Docs/engineering/CONTEXT_CAPSULE_V1.md` adds a second non-authoritative navigation layer for accepted predecessor contracts. A mechanically valid capsule may satisfy the **initial reconstruction** of an accepted predecessor boundary without loading every historical predecessor narrative, but it never becomes semantic/proof authority. Missing, stale, lossy or contradictory capsules fail closed to the authoritative sources; material non-compressible details, concrete contradiction/reopen questions and Reviewer verdicts that depend on an inherited guarantee still deepen to the exact sources named by the capsule/protocol.
@@ -43,7 +45,7 @@ If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Jue
 Treat short role requests as explicit routing instructions, not as abbreviated acceptance criteria:
 
 - `Worker <WP-ID>` (for example `Worker H1-02` or `Worker CITY-04`) means resolve that exact workpack under `Docs/workpacks/**` and execute `.agents/skills/implement-workpack/SKILL.md` for it. Reconstruct current `main`, dependencies and canonical ownership first; if the requested WP is blocked, report the blocker and STOP rather than selecting another WP.
-- `Corrige el FAIL de <WP-ID>` / `Repair <WP-ID>` means start a **fresh repair Worker** for that same WP and execute `.agents/skills/repair-workpack/SKILL.md`. Locate the canonical PR and latest independent FAIL from live GitHub state, preserve the failed candidate/history, repair the causal blocker, rerun required evidence plus the complete Worker pre-review, freeze a new exact SHA, mark Ready and STOP for a fresh independent Reviewer.
+- `Corrige el FAIL de <WP-ID>` / `Repair <WP-ID>` means start a **fresh repair Worker** for that same WP and execute `.agents/skills/repair-workpack/SKILL.md`. Locate the canonical PR and latest independent FAIL from live GitHub state, preserve the failed candidate/history, repair the causal blocker, rerun required evidence plus the complete Worker pre-review, freeze a new exact SHA, mark Ready and STOP for a fresh independent Reviewer. Exception: a correction proven to be `NON_MATERIAL_CLOSURE` under `Docs/engineering/PRODUCT_SHA_CLOSURE.md` creates no Git commit and therefore keeps the same `PRODUCT_SHA`; it needs current handoff/context gates, not another product execution or semantic Worker pre-review.
 - These Worker/repair shorthand commands never authorize independent review, merge, DocSync, a different WP, or scope beyond the requested WP.
 - For `LOCAL_UNITY_REQUIRED` or `HYBRID` work, use the exact local Unity/toolchain/evidence required by the WP. Missing mandatory local engine evidence is never silently treated as PASS-ready.
 - A local Git checkout is not sufficient to reconstruct PR/review/check state. Local Worker/repair sessions must use authenticated GitHub CLI (`gh`) or an equivalent live GitHub surface. Before GitHub mutations verify the repository is `Arkus0/Juego2` and that canonical WP/PR ownership is unambiguous.
@@ -57,7 +59,7 @@ Local workstation setup and verification is documented in `Docs/engineering/LOCA
 2. `Docs/ROADMAP.md` — milestone order and gates.
 3. `Docs/workpacks/**` — exact scope and Definition of Done for one unit of work.
 4. `Docs/engineering/EXECUTION_RECEIPT_PROTOCOL.md` — exact-SHA execution and evidence binding.
-5. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` — ownership, Worker pre-review, exact-SHA freeze, independent review and successful finalization.
+5. `Docs/engineering/WORKER_REVIEW_PROTOCOL.md` + `Docs/engineering/PRODUCT_SHA_CLOSURE.md` — ownership, Worker pre-review, exact-SHA/product identity, non-material closure, independent review and successful finalization.
 6. `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` — binding proof rules for foundational WPs.
 7. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
 8. `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md` + `Docs/architecture/ADR-H1-*` — accepted H1 identity, projection, synchronization and Unity-authority decisions after the H1 planning PR merges.
@@ -73,6 +75,8 @@ Local workstation setup and verification is documented in `Docs/engineering/LOCA
 - Foundational work is not done because one execution is green; completeness, causal negative-conformance tests and residual-risk evidence are required within the accepted trust boundary.
 - Validation is exact-SHA and executor-neutral. Automation V2 normally supplies hosted execution; Worker, independent Reviewer or capable local environments remain valid fallbacks.
 - GitHub Actions workflow YAML is orchestration only. Canonical scripts/contracts own validation semantics.
+- A same-SHA PR metadata repair is not a product mutation. Under `PRODUCT_SHA_CLOSURE.md`, automation must revalidate mutable handoff/context and may reuse immutable exact-SHA GREEN execution; it must fall back to full execution if source SHA/context/proof cannot be proven identical.
+- Mechanical closure defects should be rejected before an independent Reviewer starts. Same-`PRODUCT_SHA` reconciliation of derivable lifecycle metadata must not manufacture a new semantic review cycle; protocol defects remain material blockers when they compromise identity, provenance, acceptance evidence, role independence or another integrity guarantee.
 - Standard GitHub-hosted runners are allowed. Do not introduce larger/paid runners or paid CI as a normal dependency without explicit human approval.
 - Do not copy architecture or code from `Arkus0/Juego` by default. It is reference material only. Migration requires explicit justification and review.
 - Process lessons from `Juego` may be reused when they are engine/game independent.
@@ -115,20 +119,20 @@ This rule does not make predecessor prose or capsules unquestionable. Concrete c
 ## Worker → Reviewer → finalization flow
 
 - GitHub is the persistent repository, PR and evidence truth; sessions are disposable.
-- Draft + ACTIVE: Worker may write; Automation V2 runs candidate observation on relevant updates.
+- Draft + ACTIVE: Worker may write; Main Safety runs on material pushes. Candidate observation is explicit under `PRODUCT_SHA_CLOSURE.md`.
 - Before implementation, Worker completes and records the mandatory predecessor contract check.
 - Before freeze, Worker performs the required strict pre-review and repairs any in-claim blocker while still Draft + ACTIVE.
 - `WORKER_PRE_REVIEW: CLEAN` is readiness evidence, never independent PASS.
-- Worker stops all writers, binds exact HEAD as `Frozen candidate SHA`, records `Candidate HEAD SHA`, sets `FROZEN_FOR_REVIEW`/`Branch frozen: YES`, and marks the PR Ready.
-- Automation V2 runs frozen exact-SHA verification. Only after it is green and metadata agrees does it persist `REVIEW_READY`.
-- The human, or the prospectively adopted opt-in local driver, then starts a fresh independent Reviewer. The Reviewer reconstructs state and independently challenges the frozen candidate against its acceptance claims; it never repairs implementation.
-- PASS/FAIL binds the exact Frozen candidate SHA.
+- Worker stops all writers, binds exact HEAD as `Frozen candidate SHA`/`PRODUCT_SHA`, records `Candidate HEAD SHA`, sets `FROZEN_FOR_REVIEW`/`Branch frozen: YES`, and marks the PR Ready.
+- Automation V2 runs frozen exact-SHA verification. On later PR-body-only closure edits with the same `PRODUCT_SHA` and unchanged validation context, Automation V2 reruns mutable handoff/context gates and may reuse the prior immutable GREEN exact-SHA validation instead of rerunning product execution. Only after the resulting gates are green and metadata agrees does it persist `REVIEW_READY`.
+- The human, or the prospectively adopted opt-in local driver, then starts a fresh independent Reviewer. `REVIEW_READY` is the terminal mechanical handoff; there is no second closure marker. The Reviewer reconstructs state and independently challenges the frozen candidate against its acceptance claims; it never repairs implementation.
+- A material PASS/FAIL binds the exact Frozen candidate SHA. Pure lifecycle metadata defects are `PROTOCOL_FIX`/`REVIEW_BLOCKED`, not semantic FAILs; same-`PRODUCT_SHA` closure does not rerun product proof.
 - FAIL produces `REPAIR_REQUIRED`; a fresh repair Worker is started on the same WP, subject to the second-FAIL overdefense/circuit-breaker audit and verified owner-continue button when the local driver is active. A fourth FAIL stops for PC re-audit.
 - PASS fixes the independent verdict. Automation V2 may merge the exact SHA automatically after green preflight.
-- The successful Reviewer session then continues in finalization/DocSync mode: confirm merge, reconcile affected docs/evidence/handoff from current `main`, emit `DOCSYNC_COMPLETE`, resolve `Next WP`, and stop.
+- The successful Reviewer session then continues in finalization/DocSync mode: confirm merge, reconcile only authoritative document meaning actually changed (zero commits by default), emit `DOCSYNC_COMPLETE`, resolve `Next WP`, and stop.
 - No next WP starts before `DOCSYNC_COMPLETE`, whether started manually or by the local driver.
 - Automation never proves role independence. That remains a session/process obligation under `WORKER_REVIEW_PROTOCOL.md`.
 
 ## Skills / profiles
 
-Project skills under `.agents/skills/` and OpenCode role profiles under `.opencode/agents/` are optional manual helpers, not orchestration. Use the profile/skill appropriate to the current explicitly invoked role; never reuse Worker context as independent Reviewer.
+Project skills under `.agents/skills/` and OpenCode role profiles under `.opencode/agents/` are role instructions, not orchestration. Use the profile/skill appropriate to the current explicitly invoked or opt-in-controller-launched role; never reuse Worker context as independent Reviewer.
