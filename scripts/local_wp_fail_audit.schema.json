@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "classification": {"type": "string", "enum": ["valid", "overdefense", "uncertain"]},
+    "same_foundational_defect_class": {"type": "boolean"},
+    "self_shrinking_completeness": {"type": "boolean"},
+    "proof_machinery_expansion_without_progress": {"type": "boolean"},
+    "criterion": {"type": "string"},
+    "evidence": {"type": "string"},
+    "minimal_next_action": {"type": "string"}
+  },
+  "required": ["classification", "same_foundational_defect_class", "self_shrinking_completeness", "proof_machinery_expansion_without_progress", "criterion", "evidence", "minimal_next_action"],
+  "additionalProperties": false
+}

@@ -67,6 +67,7 @@ jobs:
           milestone = ''
           wp = ''
           target_sha = ''
+          fail_count = ''
           pr_number = None
           pr_url = f"https://github.com/{repo}"
           title = ''
@@ -83,6 +84,7 @@ jobs:
                   milestone = str(payload.get('milestone', '')).strip()[:120]
                   wp = str(payload.get('wp', '')).strip()[:120]
                   target_sha = str(payload.get('target_sha', '')).strip().lower()
+                  fail_count = str(payload.get('fail_count', '')).strip()
                   pr_number = payload.get('pr')
                   pr_url = f"https://github.com/{repo}/pull/{pr_number}" if pr_number else f"https://github.com/{repo}"
                   title = ''
@@ -138,6 +140,7 @@ jobs:
                   'MILESTONE_COMPLETE': '🏁 Hito completado',
                   'BLOCKED': '🛑 Bloqueado',
                   'HUMAN_ACTION_REQUIRED': '⚠️ Atención requerida',
+                  'SECOND_FAIL_DECISION': '🟠 Segundo FAIL válido — decisión del owner',
               }
 
               if state not in labels:
@@ -163,6 +166,7 @@ jobs:
                   'MILESTONE_COMPLETE': 'Milestone aceptado y reconciliado.',
                   'BLOCKED': 'La ejecución necesita desbloqueo antes de continuar.',
                   'HUMAN_ACTION_REQUIRED': 'Se necesita intervención humana antes de continuar.',
+                  'SECOND_FAIL_DECISION': 'Puedes autorizar una reparación más desde Telegram. El cuarto FAIL obliga a detenerse y acudir al PC.',
               }
               parts.append(detail or defaults[state])
 
@@ -199,6 +203,15 @@ jobs:
                   )
 
               rows = []
+              if state == 'SECOND_FAIL_DECISION':
+                  if not pr_number or not re.fullmatch(r'[0-9a-f]{40}', target_sha) or fail_count not in {'2', '3'}:
+                      print('SECOND_FAIL_DECISION requires PR, exact SHA and fail count 2 or 3', file=sys.stderr)
+                      sys.exit(1)
+                  callback_data = f'arkus:continue:{pr_number}:{target_sha}:{fail_count}'
+                  if len(callback_data.encode('utf-8')) > 64:
+                      print('Telegram callback_data exceeds 64 bytes', file=sys.stderr)
+                      sys.exit(1)
+                  rows.append([{'text': '▶️ Continuar hasta el 4.º FAIL', 'callback_data': callback_data}])
               if prompt:
                   if len(prompt) > 256:
                       print(f'ChatGPT handoff prompt exceeds Telegram copy_text limit: {len(prompt)}', file=sys.stderr)

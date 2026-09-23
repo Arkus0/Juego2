@@ -1,6 +1,6 @@
 # Worker → Reviewer Protocol
 
-Version: 1.9 — 2026-09-22
+Version: 2.0 — 2026-09-23
 
 ## Purpose
 
@@ -18,7 +18,11 @@ Strict review does **not** mean unbounded review. Worker and Reviewer must chall
 
 Accepted predecessor guarantees are compositional. A downstream WP is expected to consume binding guarantees already accepted by its dependencies rather than defensively re-proving them. Concrete evidence may reopen an inherited causal boundary; theoretical possibility or a desire for redundant proof may not.
 
+**Quality-first process budget:** context profiles and validated capsules are navigation aids for a minimum starting set, not an obligation to load all historical narrative every session. Deepen to exact authoritative sources when the current claim, a contradiction, a non-compressible source or a verdict needs them. Keep Worker pre-review concise and causal rather than duplicating a full Reviewer report; preserve the complete substantive check. Reuse valid exact-SHA execution receipts only for identical bytes/context. Do not ask a model to repeat deterministic polling, metadata derivation or quota checks. None of these savings removes required local Unity evidence, negative-conformance proof, strict pre-review, frozen-SHA coherence or the Reviewer's independent search.
+
 ## Adoption boundary
+
+The v2.0 local-autopilot amendment is **prospective**: it applies only after its own process PR receives independent PASS, merges and completes DocSync. It does not reopen, take over or change acceptance criteria for candidates already active/frozen/in review. The owner opts in per local run. Existing manual role starts remain valid. `LOCAL_WP_AUTOPILOT.md` defines the replaceable driver; this protocol remains binding for every role it launches.
 
 The Batch A amendment adds exact-candidate Worker preflight to Version 1.9 without replacing the CTX-02 capsule contract. It becomes binding only after the operational-hardening Batch A PR has merged to `main`, and only for an implementation or repair cycle that first enters `DRAFT + ACTIVE` after that merge. A candidate or cycle already active, frozen or in review before adoption is grandfathered and is not reopened merely to satisfy the new preflight. If a later fresh repair cycle begins after adoption, that new repair cycle is Batch A-governed. This prospective boundary explicitly prevents Batch A from retroactively changing DW-02 or any other already-running/frozen product cycle.
 
@@ -275,6 +279,8 @@ If merge is blocked by a code/implementation issue, if the SHA moved, or if DocS
 Documentation-only post-merge reconciliation does not redefine the reviewed implementation SHA.
 
 ## Foundational circuit breaker
+
+For an opt-in unattended run, a fresh Luna xhigh audit at the **second independent FAIL** must classify the concrete issue as valid, overdefense or uncertain against the exact WP and accepted predecessor ownership. The audit is a routing opinion, not a verdict. Uncertain or architectural-circuit-breaker cases stop for the owner. A valid FAIL offers a bounded Telegram owner-continue button; only a verified private-chat click bound to canonical PR, frozen SHA and current FAIL count may authorize further fresh repair/review cycles. An apparent concrete overdefense may be appealed **once on the same frozen SHA** to a new independent Sol xhigh Reviewer, who must explicitly address the previous FAIL. Only that new Reviewer can issue a reasoned superseding exact-SHA PASS; the original FAIL remains in history. If the new Reviewer sustains FAIL, offer the owner-continue button. At the **fourth FAIL** the driver stops without a remote-continue option and requires PC re-audit. The button is not PASS, does not waive proof, and never permits an architectural circuit breaker to be ignored. Review shopping or silently discarding a FAIL is forbidden.
 
 If two independent Reviewer FAILs expose the same foundational defect class, stop local patching and re-audit the foundation before another downstream repair loop.
 

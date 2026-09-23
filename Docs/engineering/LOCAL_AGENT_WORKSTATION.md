@@ -160,6 +160,8 @@ It is fine to have Unity Hub installed before starting. If the exact editor patc
 
 ## Starting a normal local Worker
 
+After the prospective local-autopilot process amendment is independently accepted and DocSync-complete, the owner may instead use the opt-in, ChatGPT-subscription-only driver in `Docs/engineering/LOCAL_WP_AUTOPILOT.md`. It launches fresh role sessions and uses GitHub markers to route them; it does not weaken this manual Worker/Reviewer path. Run its `--dry-run` first and pilot one WP with `--one-wp` before using the default continuous mode. Do not use it to take over an already active PR without confirming the current role has stopped.
+
 Open a **fresh Codex local session rooted at the Juego2 checkout** and issue the shorthand role request:
 
 ```text

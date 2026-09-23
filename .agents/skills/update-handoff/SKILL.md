@@ -1,3 +1,8 @@
+---
+name: update-handoff
+description: Reconcile the compact Juego2 session handoff after accepted state changes without making it semantic or proof authority.
+---
+
 # update-handoff
 
 Keep `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` compact and reconstructible.

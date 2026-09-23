@@ -1,14 +1,12 @@
 # Automation V2 — minimal GitHub Actions orchestration
 
-Version: 1.6 — 2026-09-21
+Version: 1.7 — 2026-09-23
 
 ## Purpose
 
 Juego2 uses GitHub Actions because the repository is public and standard hosted runners can provide practical validation compute without consuming the previous private-repository minute budget.
 
-Automation V2 is intentionally small. It automates mechanical validation and state transitions; it does **not** become the semantic authority for Arkus and it does not spawn or impersonate independent AI roles.
-
-There is no automation bootstrap, no role lease system, no dependency-routing daemon, no background Worker farm and no requirement to use a particular model/provider.
+Automation V2 is intentionally small. It automates mechanical validation and state transitions; it does **not** become the semantic authority for Arkus and it does not spawn or impersonate independent AI roles. The optional, prospectively adopted **local** driver in `LOCAL_WP_AUTOPILOT.md` may start fresh role sessions after checking these markers. It is not part of GitHub Actions, a role lease, a background Worker farm or a new proof authority. Manual role starts remain supported.
 
 ## Authority
 
@@ -35,19 +33,21 @@ Draft Worker PR
   -> Freeze handoff validates/reuses the same exact-SHA GREEN receipt where applicable
      (full verifier runs only when no valid reusable receipt exists)
   -> REVIEW_READY marker
-  -> human starts a fresh independent Reviewer
+  -> human or opt-in local driver starts a fresh independent Reviewer
   -> Reviewer emits exact-SHA PASS or FAIL
-     FAIL -> REPAIR_REQUIRED marker; human starts fresh repair Worker
+     FAIL -> REPAIR_REQUIRED marker; human or local driver starts fresh repair Worker
      PASS -> exact-SHA merge preflight -> automatic merge
           -> DOCSYNC_REQUIRED after confirmed merge for Worker-lifecycle WPs
           -> successful Reviewer/finalizer performs documentation-only DocSync
           -> DOCSYNC_COMPLETE marker with dependency-valid Next WP
-          -> human starts the next Worker
+          -> human or local driver starts the next Worker
 ```
 
-Only the mechanical validation/state-transition parts above are automated. Worker and independent Reviewer reasoning remain explicit. Routine post-PASS DocSync may continue in the successful Reviewer session or in a dedicated finalization session, but it may never alter implementation bytes or reconsider the accepted candidate.
+GitHub Actions still automates only the mechanical validation/state-transition parts above. The optional local driver automates **session launch/routing**, not Worker/Reviewer judgment. Routine post-PASS DocSync may continue in the successful Reviewer session or in a dedicated finalization session, but it may never alter implementation bytes or reconsider the accepted candidate.
 
-Telegram is an optional control surface for these human-started reasoning sessions: high-value transitions may include a short copyable ChatGPT handoff prompt plus links to ChatGPT and the relevant PR. The prompt is convenience only and always instructs the new session to reconstruct GitHub state instead of trusting Telegram context.
+The optional `telegram-continue.yml` workflow is a narrow **owner-control bridge** activated only for a second-FAIL decision from the local driver. It uses the existing Telegram bot secrets, accepts one callback from the configured private owner chat for the exact PR/SHA/fail count, and persists `OWNER_CONTINUE` as a routing marker. It does not issue a Reviewer verdict, merge, repair, or change product semantics. The fourth FAIL has no callback path. No always-on bot listener or model API key is introduced.
+
+Telegram remains an optional handoff surface for manual role starts: high-value transitions may include a short copyable ChatGPT prompt and links to ChatGPT and the relevant PR. The prompt is convenience only and always instructs the new session to reconstruct GitHub state instead of trusting Telegram context. The opt-in local driver instead consumes the durable GitHub transition directly; only the bounded second-FAIL button changes its route.
 
 ## Workflows
 

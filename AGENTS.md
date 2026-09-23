@@ -24,9 +24,9 @@ Legacy names may still exist in historical evidence, old commits or frozen candi
 
 ## Operating model
 
-Juego2 uses **Automation V2** for mechanical GitHub Actions validation and state transitions, but has no automation bootstrap, role leases, dependency-routing daemon or automatic AI-session spawning.
+Juego2 uses **Automation V2** for mechanical GitHub Actions validation and state transitions. After the opt-in local-autopilot process amendment receives independent PASS, merges and completes DocSync, the owner may additionally run `Docs/engineering/LOCAL_WP_AUTOPILOT.md` to launch fresh local ChatGPT-subscription Worker, Reviewer, repair and DocSync sessions. The local driver is routing/notification only, not semantic or proof authority. It cannot take over a pre-adoption active candidate without explicit recovery, and no API-key model provider is part of this flow. Without that opt-in, the human explicitly starts role sessions as before.
 
-The human explicitly starts Worker and fresh independent Reviewer sessions. Every reasoning session reconstructs current GitHub state before acting.
+Every reasoning session reconstructs current GitHub state before acting. A controller-launched Reviewer must have fresh independent context; a failed Reviewer never becomes its own repair Worker. The next WP still waits for `DOCSYNC_COMPLETE`.
 
 After `WP-CTX-01` independently passes, merges and completes DocSync, role sessions use `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` plus `Docs/engineering/context-bootstrap-profiles.json` to select the minimum **starting** context and explicit escalation path. This is routing only: live GitHub remains authoritative for mutable PR/branch/review/check state, exact workpack/evidence/architecture sources remain authoritative for semantics and proof, and mandatory predecessor/reviewer duties below are unchanged. `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` is derived navigation only and never proof authority.
 
@@ -36,7 +36,7 @@ A failed Reviewer stops at FAIL and never becomes the repair Worker. A successfu
 
 Automation may run canonical validation, persist handoff markers and merge an exact reviewed SHA after a valid PASS. It never substitutes for Worker pre-review or independent Reviewer judgment, and it does not perform semantic DocSync reasoning by itself.
 
-If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Juego2`, reconstruct current state, identify the next dependency-valid role, and do not silently cross from Worker to independent Reviewer or from Reviewer FAIL to repair Worker in the same context.
+If the user gives only a generic request such as `Ponte a trabajar en Arkus0/Juego2`, reconstruct current state and identify the next dependency-valid role. Outside an explicitly launched local-autopilot run, do not silently cross from Worker to independent Reviewer or from Reviewer FAIL to repair Worker in the same context. Within the opt-in driver, those boundaries are crossed only by new sessions and exact GitHub state checks.
 
 ## Shorthand role commands
 
@@ -62,9 +62,10 @@ Local workstation setup and verification is documented in `Docs/engineering/LOCA
 7. `Docs/engineering/PRODUCT_ARCHITECTURE.md` + `DEPENDENCY_IP_POLICY.md` — product ownership, adapter boundaries and external-dependency rules.
 8. `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md` + `Docs/architecture/ADR-H1-*` — accepted H1 identity, projection, synchronization and Unity-authority decisions after the H1 planning PR merges.
 9. `Docs/engineering/AUTOMATION_V2.md` — minimal replaceable GitHub Actions orchestration.
-10. `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` + `Docs/engineering/context-bootstrap-profiles.json` — role-specific initial-context selection and fail-closed escalation only; never semantic/proof authority above the applicable sources above.
-11. After CTX-02 adoption, `Docs/engineering/CONTEXT_CAPSULE_V1.md` + `Docs/engineering/context-capsules/index.json` — accepted-predecessor navigation/compression only; exact accepted sources remain authority and any validation/escalation failure returns to them.
-12. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` + `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` — compact routing/navigation only; never outrank current evidence.
+10. After prospective adoption, `Docs/engineering/LOCAL_WP_AUTOPILOT.md` — optional local session routing, quota and escalation policy; never semantic/proof authority.
+11. `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` + `Docs/engineering/context-bootstrap-profiles.json` — role-specific initial-context selection and fail-closed escalation only; never semantic/proof authority above the applicable sources above.
+12. After CTX-02 adoption, `Docs/engineering/CONTEXT_CAPSULE_V1.md` + `Docs/engineering/context-capsules/index.json` — accepted-predecessor navigation/compression only; exact accepted sources remain authority and any validation/escalation failure returns to them.
+13. `Docs/SESSION_HANDOFF/00_SESSION_HANDOFF_PROMPT.md` + `Docs/SESSION_HANDOFF/ACCEPTED_STATE_INDEX.json` — compact routing/navigation only; never outrank current evidence.
 
 ## Product rules
 
@@ -120,12 +121,12 @@ This rule does not make predecessor prose or capsules unquestionable. Concrete c
 - `WORKER_PRE_REVIEW: CLEAN` is readiness evidence, never independent PASS.
 - Worker stops all writers, binds exact HEAD as `Frozen candidate SHA`, records `Candidate HEAD SHA`, sets `FROZEN_FOR_REVIEW`/`Branch frozen: YES`, and marks the PR Ready.
 - Automation V2 runs frozen exact-SHA verification. Only after it is green and metadata agrees does it persist `REVIEW_READY`.
-- The human then starts a fresh independent Reviewer. The Reviewer reconstructs state and independently challenges the frozen candidate against its acceptance claims; it never repairs implementation.
+- The human, or the prospectively adopted opt-in local driver, then starts a fresh independent Reviewer. The Reviewer reconstructs state and independently challenges the frozen candidate against its acceptance claims; it never repairs implementation.
 - PASS/FAIL binds the exact Frozen candidate SHA.
-- FAIL produces `REPAIR_REQUIRED`; a fresh repair Worker is started on the same WP.
+- FAIL produces `REPAIR_REQUIRED`; a fresh repair Worker is started on the same WP, subject to the second-FAIL overdefense/circuit-breaker audit and verified owner-continue button when the local driver is active. A fourth FAIL stops for PC re-audit.
 - PASS fixes the independent verdict. Automation V2 may merge the exact SHA automatically after green preflight.
 - The successful Reviewer session then continues in finalization/DocSync mode: confirm merge, reconcile affected docs/evidence/handoff from current `main`, emit `DOCSYNC_COMPLETE`, resolve `Next WP`, and stop.
-- No next WP starts before `DOCSYNC_COMPLETE`.
+- No next WP starts before `DOCSYNC_COMPLETE`, whether started manually or by the local driver.
 - Automation never proves role independence. That remains a session/process obligation under `WORKER_REVIEW_PROTOCOL.md`.
 
 ## Skills / profiles

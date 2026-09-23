@@ -1,3 +1,8 @@
+---
+name: plan-milestone
+description: Plan a Juego2 milestone and its workpack boundaries without implementing product code or issuing an independent acceptance verdict.
+---
+
 # plan-milestone
 
 Plan a Juego2 milestone without implementing it.
