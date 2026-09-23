@@ -28,6 +28,9 @@ TYPE_SCHEMAS = {
     "fixture": {"type": "string", "pattern": "^[A-Z]{2}-[0-9]{2}$"},
     "boolean": {"type": "string", "enum": ["YES", "NO"]},
     "requirement": {"type": "string", "enum": ["REQUIRED", "NOT_REQUIRED"]},
+    "access_code": {"type": "string", "pattern": "^AX[0-9]+$"},
+    "pa_id": {"type": "string", "pattern": "^PA-[0-9]{2}$"},
+    "disposition": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
     "token": {"type": "string", "minLength": 1},
 }
 
@@ -102,6 +105,9 @@ def main():
         validate_answer({"facts": {"f": "YES"}, "blockers": [], "verdict": "REPORT", "evidence": ["e"]}, contract)
         assert not value_matches_type("true", "boolean")
         assert value_matches_type("NC-01", "fixture") and not value_matches_type("PA-02 NC-01", "fixture")
+        assert value_matches_type("AX6", "access_code") and not value_matches_type("pedestrian only", "access_code")
+        assert value_matches_type("PA-04", "pa_id") and not value_matches_type("receiver", "pa_id")
+        assert value_matches_type("REJECT", "disposition") and value_matches_type("LATER", "disposition") and not value_matches_type("REJECT as authority", "disposition")
         assert retryable_http_status(408) and retryable_http_status(429) and retryable_http_status(500) and retryable_http_status(503)
         assert not retryable_http_status(400) and not retryable_http_status(401) and not retryable_http_status(402) and not retryable_http_status(404)
         print("DW-04 OpenRouter Luna adapter self-test: GREEN")
