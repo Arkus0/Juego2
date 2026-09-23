@@ -1,28 +1,28 @@
 # WP-H1-02 — LOCAL_EXECUTION
 
 WP_ID: `WP-H1-02`
-LOCAL_ROUND: `2`
+LOCAL_ROUND: `3`
 REPOSITORY: `Arkus0/Juego2`
 CANONICAL_PR: `#152`
 CANONICAL_BRANCH: `work/wp-h1-02`
-EXECUTION_BASE_SHA: `7f2675bb829efba9d6b598441fc0f74dfb5dcd34`
-MANIFEST_COMMIT_ANCHOR: PR `#152` comment beginning `H1_LOCAL_HANDOFF_V1 WP=WP-H1-02 ROUND=2`
+EXECUTION_BASE_SHA: `7d8a0defeae3130320f04c31ca57b55bdbfdaebe`
+MANIFEST_COMMIT_ANCHOR: PR `#152` comment beginning `H1_LOCAL_HANDOFF_V1 WP=WP-H1-02 ROUND=3`
 RESULT_FILE: evidence directory + `LOCAL_EXECUTION_RESULT.md`
 
 ## Prompt for Codex local
 
-> Ejecuta únicamente el LOCAL_EXECUTION de WP-H1-02, LOCAL_ROUND 2. Lee `Docs/evidence/WP-H1-02/LOCAL_EXECUTION.md` en la rama canónica `work/wp-h1-02` y sigue ese contrato literalmente. No rediseñes ni repares. La reparación remota del wrapper Windows ya está incluida; debes validarla ejecutando Unity real. Publica los commits/anchors exigidos y STOP.
+> Ejecuta únicamente el LOCAL_EXECUTION de WP-H1-02, LOCAL_ROUND 3. Lee `Docs/evidence/WP-H1-02/LOCAL_EXECUTION.md` en la rama canónica `work/wp-h1-02` y sigue ese contrato literalmente. No rediseñes ni repares. La reparación Worker del wrapper Windows ya está incluida; debes validarla ejecutando Unity real. Publica los commits/anchors exigidos y STOP.
 
 This complete file is the authoritative local execution contract.
 
-## Why round 2 exists
+## Why round 3 exists
 
-Round 1 stopped correctly after discovering that Windows PowerShell could return from the GUI-subsystem `Unity.exe` before the Editor process exited, leaving `$LASTEXITCODE` empty even though Unity itself later terminated with code 0. The remote Worker repaired the canonical wrapper before this round:
+Round 1 stopped correctly after discovering that Windows PowerShell could return from the GUI-subsystem `Unity.exe` before the Editor process exited, leaving `$LASTEXITCODE` empty even though Unity itself later terminated with code 0. Round 2 then proved that `Start-Process -Wait -PassThru` waited on the spawned process tree and remained blocked after the real Unity process had exited successfully. The receiving Worker repaired the canonical wrapper before this round:
 
-- `scripts/h1-02-unity.ps1` now launches Unity through `Start-Process -Wait -PassThru` and consumes the actual process `ExitCode`;
-- `scripts/h1-02-static-check.py` now guards that execution shape and includes a causal negative control that removes `-Wait` from the executable invocation.
+- `scripts/h1-02-unity.ps1` launches Unity with `Start-Process -PassThru`, calls `WaitForExit()` on that exact returned process object, refreshes it and consumes its actual `ExitCode`;
+- `scripts/h1-02-static-check.py` rejects `Start-Process -Wait`, guards the exact-process wait/exit shape and includes a causal negative control that removes the `WaitForExit()` call.
 
-Do not reinterpret or repair this change locally. Round 2 exists to exercise it with the real Editor and then continue the already-decided H1-02 proof.
+Do not reinterpret or repair this change locally. Round 3 exists to exercise it with the real Editor and then continue the already-decided H1-02 proof.
 
 ## Role boundary
 
@@ -50,12 +50,12 @@ Resolve Unity in this order only:
 
 No platform modules are required. If exact 6000.3.24f1 still cannot run non-interactively, return `ENVIRONMENT_BLOCKED`; do not change the project pin.
 
-## SHA-chain preflight and deterministic cleanup of round-1 dirt
+## SHA-chain preflight and deterministic cleanup of stopped-round dirt
 
-Round 1 intentionally left **no commits**, but its stopped local checkout may still contain uncommitted generated outputs/caches. Cleaning those bytes back to the anchored round-2 state is explicitly authorized and is not a repair.
+Rounds 1 and 2 intentionally left **no commits**, but the stopped local checkout may still contain uncommitted generated outputs/caches. Cleaning those bytes back to the anchored round-3 state is explicitly authorized and is not a repair.
 
 1. Verify `git remote get-url origin` identifies `Arkus0/Juego2` and `gh auth status` succeeds.
-2. Read PR #152 and locate the durable comment beginning `H1_LOCAL_HANDOFF_V1 WP=WP-H1-02 ROUND=2`; call its exact `MANIFEST_COMMIT_SHA` value `$manifestSha`.
+2. Read PR #152 and locate the durable comment beginning `H1_LOCAL_HANDOFF_V1 WP=WP-H1-02 ROUND=3`; call its exact `MANIFEST_COMMIT_SHA` value `$manifestSha`.
 3. `git fetch origin work/wp-h1-02` and require `git rev-parse origin/work/wp-h1-02 == $manifestSha`.
 4. Checkout/reset the local repository exactly to `$manifestSha`:
 
@@ -66,7 +66,7 @@ git clean -fd -- Docs/evidence/WP-H1-02 Unity/ArkusUnity/Packages Unity/ArkusUni
 
 5. Delete only ignored Unity/editor-local caches from the retained project if present: `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`.
 6. Require `git status --porcelain --untracked-files=all` to be empty.
-7. Require `git rev-parse HEAD^ == 7f2675bb829efba9d6b598441fc0f74dfb5dcd34`.
+7. Require `git rev-parse HEAD^ == 7d8a0defeae3130320f04c31ca57b55bdbfdaebe`.
 8. Require `git diff --name-only HEAD^ HEAD` to output exactly `Docs/evidence/WP-H1-02/LOCAL_EXECUTION.md`.
 9. Verify the pinned `ProjectVersion.txt` says `6000.3.24f1 (4e7b9b5b6244)`.
 10. Read `Docs/workpacks/H1/WP-H1-02.md`, this manifest, `scripts/h1-02-unity.ps1` and `scripts/h1-02-static-check.py`. Do not reconstruct unrelated history.
@@ -118,7 +118,7 @@ Run:
 python scripts/h1-02-static-check.py --mode remote-prep --self-test
 ```
 
-Require GREEN plus every declared defect-injection control RED, including `unity-process-wait`. Any failure is `CANDIDATE_DEFECT`; do not repair locally.
+Require GREEN plus every declared defect-injection control RED, including `unity-exact-process-wait`. Any failure is `CANDIDATE_DEFECT`; do not repair locally.
 
 ## B. First clean configure/import through the repaired wrapper
 
@@ -127,10 +127,11 @@ With project caches absent, run:
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/h1-02-unity.ps1 `
   -Action configure -UnityEditorPath $unity -OutputPath $effective `
-  -LogPath (Join-Path $repo 'artifacts/h1-02/round2-configure.log')
+  -LogPath (Join-Path $repo 'artifacts/h1-02/round3-configure.log')
 ```
 
-This is the direct causal re-test of the round-1 defect. Require:
+This is the direct causal re-test of both observed wrapper failures, especially
+the round-2 process-tree wait that remained blocked after Unity exited. Require:
 
 - wrapper waits until Unity exits;
 - wrapper prints `H1-02 Unity exit: 0` and `H1_02_UNITY_configure_GREEN`;
@@ -147,7 +148,7 @@ Run:
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/h1-02-unity.ps1 `
   -Action editmode -UnityEditorPath $unity -OutputPath $editmode `
-  -LogPath (Join-Path $repo 'artifacts/h1-02/round2-editmode.log')
+  -LogPath (Join-Path $repo 'artifacts/h1-02/round3-editmode.log')
 ```
 
 Require wrapper exit 0, at least one test, zero failures. Preserve evidence and stop `CANDIDATE_DEFECT` on compile/import/test failure.
@@ -184,8 +185,8 @@ Run:
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/h1-02-unity.ps1 `
   -Action batch -UnityEditorPath $unity `
-  -OutputPath (Join-Path $repo 'artifacts/h1-02/round2-batch-inventory.json') `
-  -LogPath (Join-Path $repo 'artifacts/h1-02/round2-batch.log')
+  -OutputPath (Join-Path $repo 'artifacts/h1-02/round3-batch-inventory.json') `
+  -LogPath (Join-Path $repo 'artifacts/h1-02/round3-batch.log')
 ```
 
 Require exit 0 and equality with `$effective` for the same six effective fields from E.
@@ -209,15 +210,15 @@ Use exactly one if the round cannot PASS:
 - `ENVIRONMENT_BLOCKED` when the exact editor/license/tool environment cannot execute;
 - `REMOTE_DECISION_REQUIRED` when an unexpected package/config/generated-file/design choice or non-allowlisted mutation is required.
 
-On any stop classification: do not repair; publish a durable PR #152 comment beginning `H1_LOCAL_STOP_V1 WP=WP-H1-02 ROUND=2` with classification, SHA chain, stopped action and observations, then STOP. Do not commit partial candidate outputs.
+On any stop classification: do not repair; publish a durable PR #152 comment beginning `H1_LOCAL_STOP_V1 WP=WP-H1-02 ROUND=3` with classification, SHA chain, stopped action and observations, then STOP. Do not commit partial candidate outputs.
 
 ## PASS commit protocol
 
 1. Verify the complete visible changed-file set is allowlisted.
-2. Stage allowlisted project/evidence outputs from B-G **except** `$result` and commit them once with message `h1-02: record Unity 6.3 local baseline evidence round 2`. This exact commit is `PRODUCT_RESULT_SHA`; if there are genuinely no repository outputs it equals `MANIFEST_COMMIT_SHA`.
+2. Stage allowlisted project/evidence outputs from B-G **except** `$result` and commit them once with message `h1-02: record Unity 6.3 local baseline evidence round 3`. This exact commit is `PRODUCT_RESULT_SHA`; if there are genuinely no repository outputs it equals `MANIFEST_COMMIT_SHA`.
 3. Push and verify remote `work/wp-h1-02` HEAD equals `PRODUCT_RESULT_SHA` before writing the summary.
-4. Write `$result` with first line exactly `LOCAL_EXECUTION_RESULT: PASS` and include: WP, `LOCAL_ROUND: 2`, exact execution base, externally anchored manifest SHA, product-result SHA, repo/branch/PR, Windows version, Unity executable fingerprint, effective Unity version, package count/identity, commands+exit states, EditMode counts, first/second/batch parity, legal observation result, complete pre-product changed-file inventory, committed paths, mutation-allowlist compliance, evidence/log locations, and explicit statement that no local product/architecture decision was made.
-5. Commit **only** `$result` next with message `h1-02: record local execution result round 2`. This exact direct child is `EVIDENCE_COMMIT_SHA`.
+4. Write `$result` with first line exactly `LOCAL_EXECUTION_RESULT: PASS` and include: WP, `LOCAL_ROUND: 3`, exact execution base, externally anchored manifest SHA, product-result SHA, repo/branch/PR, Windows version, Unity executable fingerprint, effective Unity version, package count/identity, commands+exit states, EditMode counts, first/second/batch parity, legal observation result, complete pre-product changed-file inventory, committed paths, mutation-allowlist compliance, evidence/log locations, and explicit statement that no local product/architecture decision was made.
+5. Commit **only** `$result` next with message `h1-02: record local execution result round 3`. This exact direct child is `EVIDENCE_COMMIT_SHA`.
 6. Push and verify remote branch HEAD equals `EVIDENCE_COMMIT_SHA`.
-7. Add a durable PR #152 conversation comment beginning exactly `H1_LOCAL_RESULT_V1 WP=WP-H1-02 ROUND=2` and include execution base, manifest SHA, product-result SHA, evidence SHA, PASS, result filename, branch and `REMOTE_HEAD_VERIFIED: YES`.
+7. Add a durable PR #152 conversation comment beginning exactly `H1_LOCAL_RESULT_V1 WP=WP-H1-02 ROUND=3` and include execution base, manifest SHA, product-result SHA, evidence SHA, PASS, result filename, branch and `REMOTE_HEAD_VERIFIED: YES`.
 8. STOP. Do not perform Worker pre-review or freeze.
