@@ -1,0 +1,9 @@
+{
+  "schema": "dw04-acceptance-campaign-start-v1",
+  "campaign_id": "github-actions:Arkus0/Juego2:pr150:sha25272a8f9ce1631dbe3b9586c3af7dc12f02b3b1:run35861322561:acceptance",
+  "candidate_sha": "25272a8f9ce1631dbe3b9586c3af7dc12f02b3b1",
+  "github_run_id": "35861322561",
+  "freeze_commit": "1032343542f09d969a3eabe81734fe53b5cc3ec2",
+  "assembly_commit": "25272a8f9ce1631dbe3b9586c3af7dc12f02b3b1",
+  "state": "CLAIMED_BEFORE_PROVIDER_CALLS"
+}
