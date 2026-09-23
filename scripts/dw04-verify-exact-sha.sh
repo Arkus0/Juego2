@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EXPECTED_SHA="${1:-${CANDIDATE_SHA:-}}"
-PRECALIBRATION_COMMIT="ad570738613c992963668be5abd89bfdeb26b7d6"
+PRECALIBRATION_COMMIT="9cbed950a3469897cf286c9a90624c240701528f"
 cd "${ROOT}"
 
 candidate_dirty_status() {
@@ -61,8 +61,6 @@ if observed.get('saving', 0) < 0.30:
 print('DW-04 exact-SHA deterministic trial audit: PASS')
 PY
 
-# The campaign receipt is not semantic authority. It binds the committed transcript
-# to one externally durable GitHub Actions start and the provider request inventory.
 PYTHONDONTWRITEBYTECODE=1 python3 - "${freeze_commit}" <<'PY'
 import hashlib, json, pathlib, sys
 receipt = json.loads(pathlib.Path('Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json').read_text(encoding='utf-8'))
@@ -79,9 +77,6 @@ assert isinstance(run_id, int) and run_id > 0
 print(f'DW-04 campaign receipt structure: GREEN (run {run_id})')
 PY
 
-# Live public GitHub is required to close the favorable-second-campaign class.
-# The workflow run must exist, be successful and be the only acceptance campaign
-# bound to this exact freeze identifier. A network/API failure is BLOCKED, never GREEN.
 run_id="$(python3 -c "import json; print(json.load(open('Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json'))['workflow_run_id'])")"
 repo="${GITHUB_REPOSITORY:-Arkus0/Juego2}"
 api="https://api.github.com/repos/${repo}"
