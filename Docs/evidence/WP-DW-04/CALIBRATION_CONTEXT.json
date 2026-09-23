@@ -1,6 +1,6 @@
 {
   "schema": "dw04-calibration-context-v1",
-  "precalibration_commit": "ad570738613c992963668be5abd89bfdeb26b7d6",
+  "precalibration_commit": "9cbed950a3469897cf286c9a90624c240701528f",
   "baseline_sha": "82369fdb69e33e3492b41c4aaa7f1ae9aaed18af",
   "route": "CTX",
   "assembly_rule": "Accepted CTX-03 bounded inspection/escalation: inject the smallest semantically sufficient exact-source fragments, including table schema when a row depends on it; never inflate with unrelated document content.",
