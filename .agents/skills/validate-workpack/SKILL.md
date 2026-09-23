@@ -10,6 +10,8 @@ Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `reviewer` profile
 
 After CTX-03 adoption, mechanical handoff/envelope results are classified under `Docs/engineering/CONTEXT_ENVELOPE_V1.md`. This classification exists to keep pure protocol/infra defects out of semantic Reviewer rounds; it never narrows the Reviewer's causal search.
 
+After Batch C adoption, `Docs/engineering/REVIEW_CLAIM_V1.md` governs Reviewer concurrency. It prevents duplicate Reviewer sessions only; it never establishes independence, exact-SHA validity, evidence validity or semantic verdict.
+
 ## Preconditions
 
 - PR is Ready and `Worker state=FROZEN_FOR_REVIEW`.
@@ -18,6 +20,7 @@ After CTX-03 adoption, mechanical handoff/envelope results are classified under 
 - Worker pre-review is CLEAN for the exact final bytes.
 - After CTX-03 adoption, a durable Automation V2 `REVIEW_READY_CLOSED` marker targets that exact SHA. For the one-time CTX-03 adoption candidate itself, where the new issue-comment workflow cannot yet exist on default `main`, require the equivalent already-planned invariant: durable `REVIEW_READY` for the frozen SHA plus a post-marker live HEAD confirmation for that same SHA.
 - This reviewer/session did not act as Worker or direct implementation of this candidate. Otherwise STOP: `HUMAN_ACTION_REQUIRED: NEED_FRESH_REVIEWER`.
+- For every candidate that enters Reviewer after Batch C is accepted and merged, request the exact-SHA Reviewer lease before substantive review by posting `REVIEW_CLAIM_REQUEST` as defined in `REVIEW_CLAIM_V1.md`. Continue only after a bot-owned `REVIEW_CLAIMED` whose Claim ID equals this session's request-comment ID and whose lease is unexpired. On `REVIEW_CLAIM_DENIED`, STOP with `BLOCKED: DUPLICATE_REVIEW_CLAIM`; this consumes no semantic verdict. Batch C itself is the one-time adoption candidate and is reviewed under the pre-C protocol because its claim workflow cannot exist on default `main` yet.
 
 A red mechanical check is not automatically a Reviewer FAIL. Before semantic review begins, classify it as `FAIL | REVIEW_BLOCKED | NOT_APPLICABLE | INFRA_ERROR` using the registered verifier contract. `REVIEW_BLOCKED` and `INFRA_ERROR` stop review without consuming a semantic verdict. An unregistered verifier cannot by itself establish WP failure. A registered mechanical `FAIL` means the Worker should repair before independent review; it is not an independent Reviewer verdict.
 
@@ -47,3 +50,5 @@ FAIL includes criterion, observed evidence, expected behavior and minimal correc
 Do not use `FAIL` merely to report a mechanical `REVIEW_BLOCKED`, `NOT_APPLICABLE` or `INFRA_ERROR` condition that should have been resolved before semantic review. If such a condition is discovered at review start, stop with `BLOCKED` and name the exact mechanical condition; no semantic verdict is consumed.
 
 A valid review is not required to discover a novel defect. PASS is appropriate when serious independent challenge finds no blocking in-claim defect.
+
+For a post-Batch-C claimed review, after publishing the verdict (or stopping for any non-duplicate reason), post `REVIEW_CLAIM_RELEASE_REQUEST` with the granted Claim ID and exact SHA. Missing release is recoverable by lease expiry and never changes the verdict.
