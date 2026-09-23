@@ -84,12 +84,39 @@ switch ($Action) {
     }
 }
 
+function ConvertTo-UnityProcessArgument {
+    param([Parameter(Mandatory = $true)][string]$Value)
+
+    if ($Value.Contains('"')) {
+        throw "UNITY_ARGUMENT_QUOTE_UNSUPPORTED: $Value"
+    }
+
+    if ($Value -match '\s') {
+        return '"' + $Value + '"'
+    }
+
+    return $Value
+}
+
 Write-Host "H1-02 project: $projectPath"
 Write-Host "H1-02 editor:  $editor"
 Write-Host "H1-02 action:  $Action"
 
-& $editor @arguments
-$exitCode = $LASTEXITCODE
+# Unity.exe is a Windows GUI-subsystem executable. Invoking it directly from
+# Windows PowerShell can return control before the Editor process has exited,
+# leaving $LASTEXITCODE unset. Start-Process -Wait -PassThru binds success to
+# the actual Unity process lifetime and its real exit code.
+$processArguments = ($arguments | ForEach-Object {
+    ConvertTo-UnityProcessArgument ([string]$_)
+}) -join ' '
+
+$process = Start-Process -FilePath $editor -ArgumentList $processArguments -Wait -PassThru
+if ($null -eq $process) {
+    throw "UNITY_PROCESS_START_FAILED: action=$Action editor=$editor"
+}
+
+$exitCode = $process.ExitCode
+Write-Host "H1-02 Unity exit: $exitCode"
 
 if ($exitCode -ne 0) {
     throw "UNITY_BATCH_FAILED: action=$Action exit=$exitCode log=$LogPath"
