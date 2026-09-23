@@ -26,6 +26,8 @@ for path in \
   Docs/evidence/WP-DW-04/PRECALIBRATION_FREEZE.json \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_02.md \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_03.md \
+  Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_04.md \
+  Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json \
   Docs/evidence/WP-DW-04/CALIBRATION_ORACLES.json \
   Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json \
   Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json \
@@ -85,6 +87,7 @@ for task, fragments in context['contexts'].items():
         assert fragment['text'] in source, (task, fragment['id'])
 protocol = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json').read_text(encoding='utf-8'))
 assert set(protocol['tasks']) == set(pre['calibration_policy']['run_order'])
+assert protocol['prior_invalid_attempts'] == ['Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json']
 config = protocol['model_config']
 assert protocol['provider_adapter'] == 'scripts/dw04-openrouter-adapter.py'
 assert config['provider'] == 'openrouter-chat-completions'
@@ -94,7 +97,13 @@ assert config['temperature'] == 0
 assert config['thinking'] is None
 assert config['tool_policy'] == 'none'
 assert config['provider_options']['endpoint'] == 'https://openrouter.ai/api/v1/chat/completions'
-assert config['provider_options']['routing'] == {'order':['deepseek'],'allow_fallbacks':False,'require_parameters':True}
+assert config['provider_options']['routing'] == {'order':['deepinfra'],'allow_fallbacks':False,'require_parameters':True}
+invalid = json.loads((root / protocol['prior_invalid_attempts'][0]).read_text(encoding='utf-8'))
+assert invalid['slot'] == {'task':'C-CITY-01','run':1,'route':'CTX'}
+assert invalid['attempt'] == 1 and invalid['classification'] == 'RUN_INVALID_PRE_ANSWER'
+assert invalid['scorable_structured_answer'] is False and invalid['semantic_result_observed'] is False
+assert invalid['provider_request_id'] is None
+assert invalid['workflow_run_id'] == 35840654094 and invalid['artifact_id'] == 10740668694
 questions = {task['id']: task['question'] for task in pre['eligible_tasks'] if task['partition'] == 'calibration'}
 contracts = []
 for task_id, task in protocol['tasks'].items():
@@ -107,7 +116,7 @@ for task_id, task in protocol['tasks'].items():
 assert len(set(contracts)) == 1, 'task-specific response vocabulary would leak expected semantics'
 for path in sorted((root / 'scripts').glob('dw04-*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
-print('DW-04 frozen universe/oracles/CTX/OpenRouter-DeepSeek protocol: GREEN')
+print('DW-04 frozen universe/oracles/CTX/OpenRouter-DeepInfra protocol: GREEN')
 PY
 
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
@@ -149,7 +158,8 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/dw04-observe-exact-sha.sh ${actual}
 Instrument/universe/oracles: GREEN
 Semantically-sufficient CTX calibration freeze: GREEN
-Real-provider adapter contract: GREEN (OpenRouter / pinned DeepSeek V4.1 Flash)
+Retained objective invalid attempt accounting: GREEN (run 35840654094; C-CITY-01/R1 attempt 1 consumed)
+Real-provider adapter contract: GREEN (OpenRouter / DeepSeek V4.1 Flash / pinned DeepInfra serving provider)
 Accepted-authority immutability: GREEN
 Locked restore/build/regression: GREEN
 Typed retrieval determinism/source replay: GREEN
