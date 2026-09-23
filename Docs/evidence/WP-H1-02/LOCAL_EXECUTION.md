@@ -1,123 +1,116 @@
 # WP-H1-02 — LOCAL_EXECUTION
 
 WP_ID: `WP-H1-02`
-LOCAL_ROUND: `1`
+LOCAL_ROUND: `2`
 REPOSITORY: `Arkus0/Juego2`
 CANONICAL_PR: `#152`
 CANONICAL_BRANCH: `work/wp-h1-02`
-EXECUTION_BASE_SHA: `11ca31563b170cdae140a6e672234801596caa45`
-MANIFEST_COMMIT_ANCHOR: PR `#152` comment beginning `H1_LOCAL_HANDOFF_V1 WP=WP-H1-02 ROUND=1`
-RESULT_FILE: `Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md`
+EXECUTION_BASE_SHA: `7f2675bb829efba9d6b598441fc0f74dfb5dcd34`
+MANIFEST_COMMIT_ANCHOR: PR `#152` comment beginning `H1_LOCAL_HANDOFF_V1 WP=WP-H1-02 ROUND=2`
+RESULT_FILE: evidence directory + `LOCAL_EXECUTION_RESULT.md`
 
 ## Prompt for Codex local
 
-Copy/paste only this prompt into Codex on the Windows/Unity workstation:
+> Ejecuta únicamente el LOCAL_EXECUTION de WP-H1-02, LOCAL_ROUND 2. Lee `Docs/evidence/WP-H1-02/LOCAL_EXECUTION.md` en la rama canónica `work/wp-h1-02` y sigue ese contrato literalmente. No rediseñes ni repares. La reparación remota del wrapper Windows ya está incluida; debes validarla ejecutando Unity real. Publica los commits/anchors exigidos y STOP.
 
-> Ejecuta únicamente el LOCAL_EXECUTION de WP-H1-02. Lee `Docs/evidence/WP-H1-02/LOCAL_EXECUTION.md` en la rama canónica `work/wp-h1-02` y sigue ese contrato literalmente. No rediseñes ni repares. Si falta Unity 6000.3.24f1, usa únicamente la instalación headless exacta predeclarada en el manifest; no uses mi Unity 6000.6.0f1 como sustituto. Al terminar, publica los commits/anchors exigidos por el manifest y STOP.
+This complete file is the authoritative local execution contract.
 
-If Codex was launched by opening this file directly, the sentence above is only a convenience: **this complete file is the authoritative local execution contract**.
+## Why round 2 exists
+
+Round 1 stopped correctly after discovering that Windows PowerShell could return from the GUI-subsystem `Unity.exe` before the Editor process exited, leaving `$LASTEXITCODE` empty even though Unity itself later terminated with code 0. The remote Worker repaired the canonical wrapper before this round:
+
+- `scripts/h1-02-unity.ps1` now launches Unity through `Start-Process -Wait -PassThru` and consumes the actual process `ExitCode`;
+- `scripts/h1-02-static-check.py` now guards that execution shape and includes a causal negative control that removes `-Wait` from the executable invocation.
+
+Do not reinterpret or repair this change locally. Round 2 exists to exercise it with the real Editor and then continue the already-decided H1-02 proof.
 
 ## Role boundary
 
-Execute this manifest literally as the delegated H1 local executor. Do not redesign, repair, change package strategy, expand scope, alter this manifest, run Worker pre-review, freeze, review, merge, DocSync or begin another WP. Any required decision not encoded here returns `REMOTE_DECISION_REQUIRED`.
+You are the delegated **local executor only**. Do not redesign, repair, change package strategy, expand scope, alter this manifest, run Worker pre-review, freeze, review, merge, DocSync or begin another WP. Any required product/configuration decision not encoded here returns `REMOTE_DECISION_REQUIRED`.
 
 ## Required environment
 
-- Windows workstation.
-- Authenticated `git` + `gh` access to `Arkus0/Juego2`.
-- Exact Unity Editor required by H1-02: **`6000.3.24f1`**, changeset **`4e7b9b5b6244`**.
-- The already-installed `6000.6.0f1` is **not** an acceptable substitute for this WP.
-- Retained Unity project: `Unity/ArkusUnity`.
-- Expected direct test package: `com.unity.test-framework` version `1.6.0`.
-- Render pipeline baseline: Built-in (`GraphicsSettings.currentRenderPipeline == null`).
-- PowerShell and Python 3 must be available.
+- Windows workstation with authenticated `git` and `gh` access to `Arkus0/Juego2`.
+- Exact Unity Editor **`6000.3.24f1`**, changeset **`4e7b9b5b6244`**.
+- Do not substitute the installed `6000.6.0f1`.
+- Project: `Unity\ArkusUnity`.
+- Direct test package intent: `com.unity.test-framework` version `1.6.0`.
+- Render pipeline baseline: Built-in.
+- PowerShell and Python 3 available.
 
-### Exact editor resolution / installation
+Resolve Unity in this order only:
 
-Resolve the editor mechanically in this order:
-
-1. If non-empty `UNITY_EDITOR_PATH` points to an existing executable whose path/version is exact `6000.3.24f1`, use it.
-2. Otherwise use `C:\Program Files\Unity\Hub\Editor\6000.3.24f1\Editor\Unity.exe` if it exists.
-3. Otherwise, if `C:\Program Files\Unity Hub\Unity Hub.exe` exists, run this predeclared environment-only installation command:
+1. exact executable from non-empty `UNITY_EDITOR_PATH`;
+2. `C:\Program Files\Unity\Hub\Editor\6000.3.24f1\Editor\Unity.exe`;
+3. if absent and Unity Hub exists, the already-decided environment-only install command:
 
 ```powershell
 & 'C:\Program Files\Unity Hub\Unity Hub.exe' -- --headless install --version 6000.3.24f1 --changeset 4e7b9b5b6244
 ```
 
-No platform modules are required for this EditMode/toolchain baseline. After the command, require the exact editor executable at `C:\Program Files\Unity\Hub\Editor\6000.3.24f1\Editor\Unity.exe` (or an exact Hub-reported equivalent install path).
+No platform modules are required. If exact 6000.3.24f1 still cannot run non-interactively, return `ENVIRONMENT_BLOCKED`; do not change the project pin.
 
-If exact `6000.3.24f1` still cannot be resolved or the headless installation/license state requires an interactive decision, report `ENVIRONMENT_BLOCKED`; do not change the project pin and do not use 6000.6.
+## SHA-chain preflight and deterministic cleanup of round-1 dirt
 
-## Preconditions
-
-Before executing Unity actions:
+Round 1 intentionally left **no commits**, but its stopped local checkout may still contain uncommitted generated outputs/caches. Cleaning those bytes back to the anchored round-2 state is explicitly authorized and is not a repair.
 
 1. Verify `git remote get-url origin` identifies `Arkus0/Juego2` and `gh auth status` succeeds.
-2. Read PR `#152` and locate the durable external handoff comment beginning `H1_LOCAL_HANDOFF_V1 WP=WP-H1-02 ROUND=1`.
-3. Obtain its exact `MANIFEST_COMMIT_SHA`, fetch `work/wp-h1-02`, and verify remote canonical branch HEAD equals that SHA.
-4. Checkout that exact SHA and verify local `HEAD == MANIFEST_COMMIT_SHA`.
-5. Verify `git rev-parse HEAD^ == 11ca31563b170cdae140a6e672234801596caa45`.
-6. Verify `git diff --name-only HEAD^ HEAD` outputs exactly `Docs/evidence/WP-H1-02/LOCAL_EXECUTION.md`.
-7. Verify the working tree is clean before execution.
-8. Verify `Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt` declares `6000.3.24f1 (4e7b9b5b6244)`.
-9. Read `Docs/workpacks/H1/WP-H1-02.md`, this manifest, `scripts/h1-02-unity.ps1`, and `scripts/h1-02-static-check.py`. Do not reconstruct unrelated architecture/history.
+2. Read PR #152 and locate the durable comment beginning `H1_LOCAL_HANDOFF_V1 WP=WP-H1-02 ROUND=2`; call its exact `MANIFEST_COMMIT_SHA` value `$manifestSha`.
+3. `git fetch origin work/wp-h1-02` and require `git rev-parse origin/work/wp-h1-02 == $manifestSha`.
+4. Checkout/reset the local repository exactly to `$manifestSha`:
 
-Any identity/SHA/manifest-only mismatch is `REMOTE_DECISION_REQUIRED`.
+```powershell
+git reset --hard $manifestSha
+git clean -fd -- Docs/evidence/WP-H1-02 Unity/ArkusUnity/Packages Unity/ArkusUnity/ProjectSettings
+```
 
-## Allowed mutation paths
+5. Delete only ignored Unity/editor-local caches from the retained project if present: `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`.
+6. Require `git status --porcelain --untracked-files=all` to be empty.
+7. Require `git rev-parse HEAD^ == 7f2675bb829efba9d6b598441fc0f74dfb5dcd34`.
+8. Require `git diff --name-only HEAD^ HEAD` to output exactly `Docs/evidence/WP-H1-02/LOCAL_EXECUTION.md`.
+9. Verify the pinned `ProjectVersion.txt` says `6000.3.24f1 (4e7b9b5b6244)`.
+10. Read `Docs/workpacks/H1/WP-H1-02.md`, this manifest, `scripts/h1-02-unity.ps1` and `scripts/h1-02-static-check.py`. Do not reconstruct unrelated history.
 
-Before the result-summary commit, local execution may create/change **only**:
+Any SHA/identity/manifest-only mismatch is `REMOTE_DECISION_REQUIRED`.
 
-- `Unity/ArkusUnity/Packages/packages-lock.json`
-- `Unity/ArkusUnity/ProjectSettings/**`
-- `Docs/evidence/WP-H1-02/effective-inventory.json`
-- `Docs/evidence/WP-H1-02/second-import-inventory.json`
-- `Docs/evidence/WP-H1-02/editmode-results.xml`
-- `Docs/evidence/WP-H1-02/PACKAGE_LEGAL_OBSERVATION.md`
+## Evidence variables
 
-The separate result-summary commit may add only:
-
-- `Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md`
-
-Ignored/generated local-only paths such as `Unity/ArkusUnity/Library/**`, `Temp/**`, `Logs/**`, `Obj/**`, `UserSettings/**` and repo `artifacts/**` may exist locally but must never be force-added or committed.
-
-## Forbidden mutations
-
-Everything not listed above is forbidden, including:
-
-- this `LOCAL_EXECUTION.md` manifest;
-- `Unity/ArkusUnity/Packages/manifest.json`;
-- `Unity/ArkusUnity/Assets/**` and all repository-authored C#/asmdef/meta files;
-- `.gitignore`, scripts, workflows, workpack/architecture/process docs;
-- H0 `src/**`, `tests/**`, solution or package/build configuration;
-- bridge public capabilities, scenes, gameplay, materialization or third-party art.
-
-If Unity or a command proposes any non-ignored mutation outside the allowlist, STOP before staging it and return `REMOTE_DECISION_REQUIRED` with the complete changed-file inventory.
-
-## Exact actions
-
-From repository root set:
+From repository root define these variables so future generated evidence is not confused with pre-existing mandatory read inputs:
 
 ```powershell
 $repo = (git rev-parse --show-toplevel)
+$evidenceDir = Join-Path $repo 'Docs/evidence/WP-H1-02'
+$effective = Join-Path $evidenceDir 'effective-inventory.json'
+$second = Join-Path $evidenceDir 'second-import-inventory.json'
+$editmode = Join-Path $evidenceDir 'editmode-results.xml'
+$legal = Join-Path $evidenceDir 'PACKAGE_LEGAL_OBSERVATION.md'
+$result = Join-Path $evidenceDir 'LOCAL_EXECUTION_RESULT.md'
 $unity = $env:UNITY_EDITOR_PATH
 if ([string]::IsNullOrWhiteSpace($unity) -or -not (Test-Path -LiteralPath $unity -PathType Leaf)) {
     $unity = 'C:\Program Files\Unity\Hub\Editor\6000.3.24f1\Editor\Unity.exe'
 }
 if (-not (Test-Path -LiteralPath $unity -PathType Leaf)) {
-    throw 'ENVIRONMENT_BLOCKED: exact Unity 6000.3.24f1 executable is unavailable after the predeclared install step.'
+    throw 'ENVIRONMENT_BLOCKED: exact Unity 6000.3.24f1 executable unavailable.'
 }
 ```
 
-Record for the final result file:
+Record the Unity executable absolute path, Windows file/product version and SHA-256 for the final result.
 
-```powershell
-(Get-Item $unity).FullName
-(Get-Item $unity).VersionInfo | Format-List FileVersion,ProductVersion
-Get-FileHash -Algorithm SHA256 $unity
-```
+## Allowed repository mutations
 
-### A. Repository-side proof on the anchored local start
+Before the result-summary commit, only these may change:
+
+- `Unity\ArkusUnity\Packages\packages-lock.json`
+- `Unity\ArkusUnity\ProjectSettings\**`
+- under `$evidenceDir`: `effective-inventory.json`, `second-import-inventory.json`, `editmode-results.xml`, `PACKAGE_LEGAL_OBSERVATION.md`
+
+The separate result-summary commit may add only `$result`.
+
+Ignored `Library`, `Temp`, `Logs`, `Obj`, `UserSettings` and repo `artifacts` are local-only and must never be force-added.
+
+Everything else is forbidden, including this manifest, package intent, Assets, scripts, workflows, H0 code/tests/configuration, architecture/process docs, bridge capabilities, scenes/gameplay/materialization and third-party art.
+
+## A. Remote-owned checker on the anchored local start
 
 Run:
 
@@ -125,124 +118,79 @@ Run:
 python scripts/h1-02-static-check.py --mode remote-prep --self-test
 ```
 
-Require `H1_02_STATIC_CHECK_GREEN mode=remote-prep`, all declared injected defects RED, and `H1_02_STATIC_NEGATIVE_CONTROLS_GREEN`.
+Require GREEN plus every declared defect-injection control RED, including `unity-process-wait`. Any failure is `CANDIDATE_DEFECT`; do not repair locally.
 
-Any failure is `CANDIDATE_DEFECT`; do not repair locally.
+## B. First clean configure/import through the repaired wrapper
 
-### B. First clean import/configuration and effective inventory
+With project caches absent, run:
 
-Ensure these project-local caches are absent before first import: `Library`, `Temp`, `Logs`, `Obj`, `UserSettings`.
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/h1-02-unity.ps1 `
+  -Action configure -UnityEditorPath $unity -OutputPath $effective `
+  -LogPath (Join-Path $repo 'artifacts/h1-02/round2-configure.log')
+```
+
+This is the direct causal re-test of the round-1 defect. Require:
+
+- wrapper waits until Unity exits;
+- wrapper prints `H1-02 Unity exit: 0` and `H1_02_UNITY_configure_GREEN`;
+- effective inventory reports Unity `6000.3.24f1`, ForceText, Visible Meta Files and built-in pipeline;
+- generated package lock exists;
+- effective inventory contains Test Framework exactly `1.6.0`.
+
+If Unity itself exits nonzero, or the repaired wrapper still fails to wait/capture its real code, return `CANDIDATE_DEFECT` without local repair.
+
+## C. EditMode suite
 
 Run:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/h1-02-unity.ps1 `
-  -Action configure `
-  -UnityEditorPath $unity `
-  -OutputPath (Join-Path $repo 'Docs/evidence/WP-H1-02/effective-inventory.json') `
-  -LogPath (Join-Path $repo 'artifacts/h1-02/configure.log')
+  -Action editmode -UnityEditorPath $unity -OutputPath $editmode `
+  -LogPath (Join-Path $repo 'artifacts/h1-02/round2-editmode.log')
 ```
 
-PASS observations required:
+Require wrapper exit 0, at least one test, zero failures. Preserve evidence and stop `CANDIDATE_DEFECT` on compile/import/test failure.
 
-- exit 0;
-- effective inventory exists and reports `unityVersion = 6000.3.24f1`;
-- `serializationMode = ForceText`;
-- `externalVersionControl = Visible Meta Files`;
-- `renderPipeline = builtin`;
-- `Unity/ArkusUnity/Packages/packages-lock.json` exists;
-- effective package inventory contains `com.unity.test-framework` exactly `1.6.0`;
-- no prompt or discretionary decision was required.
+## D. Effective package legal/notices observation
 
-Unexpected package resolution, compile errors, prompts, or non-allowlisted generated repository files are `REMOTE_DECISION_REQUIRED` or `CANDIDATE_DEFECT` as appropriate; do not repair locally.
+Inspect only the resolved local package cache produced by B. Locate exactly one `package.json` with name `com.unity.test-framework` and version `1.6.0`.
 
-### C. EditMode batch proof
+Write `$legal` with first line exactly `PACKAGE_LEGAL_OBSERVATION: COMPLETE`, then record resolved package name/version, cache directory basename, package.json SHA-256, literal license/licensesUrl values if present, and names+SHA-256 of package-root LICENSE/NOTICE/Third Party files if present.
+
+Do not interpret terms. Missing exact package is `CANDIDATE_DEFECT`; absence of both license metadata and license/notices files is `REMOTE_DECISION_REQUIRED`.
+
+## E. Clean second import
+
+Create a temporary directory outside the repository, export `$manifestSha`, expand it, then overlay **only** the first-run retained package lock and ProjectSettings from the canonical repository. Do not copy caches.
+
+Run the copied `scripts/h1-02-unity.ps1` with `-Action configure`, exact `$unity`, output to a temporary `second-import-inventory.json`, and a temporary log. Copy that inventory to `$second`.
+
+Compare `$effective` and `$second` for exact equality of:
+
+- `unityVersion`
+- `serializationMode`
+- `externalVersionControl`
+- `renderPipeline`
+- `packages`
+- `assemblies`
+
+Ignore only the two hash fields. Any listed-field difference is `CANDIDATE_DEFECT`.
+
+## F. Fixed Arkus batch entry
 
 Run:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/h1-02-unity.ps1 `
-  -Action editmode `
-  -UnityEditorPath $unity `
-  -OutputPath (Join-Path $repo 'Docs/evidence/WP-H1-02/editmode-results.xml') `
-  -LogPath (Join-Path $repo 'artifacts/h1-02/editmode.log')
+  -Action batch -UnityEditorPath $unity `
+  -OutputPath (Join-Path $repo 'artifacts/h1-02/round2-batch-inventory.json') `
+  -LogPath (Join-Path $repo 'artifacts/h1-02/round2-batch.log')
 ```
 
-Require exit 0, at least one test and zero failures. A compile/import/test failure is `CANDIDATE_DEFECT`; preserve evidence and stop without repair.
+Require exit 0 and equality with `$effective` for the same six effective fields from E.
 
-### D. Effective package legal/notices observation
-
-Inspect only the resolved local package cache produced by action B. Locate exactly one resolved package whose `package.json` has:
-
-- `name == com.unity.test-framework`;
-- `version == 1.6.0`.
-
-Write `Docs/evidence/WP-H1-02/PACKAGE_LEGAL_OBSERVATION.md` containing:
-
-- first line exactly `PACKAGE_LEGAL_OBSERVATION: COMPLETE`;
-- resolved package name/version;
-- package cache directory basename;
-- `package.json` SHA-256;
-- literal `license` value if present;
-- literal `licensesUrl` value if present;
-- names and SHA-256 values of package-root files matching `LICENSE*`, `NOTICE*` or `Third Party*` (case-insensitive).
-
-Do not interpret or rewrite license terms. If the exact package cannot be found, return `CANDIDATE_DEFECT`. If neither license metadata nor any license/notices file exists, return `REMOTE_DECISION_REQUIRED`.
-
-### E. Clean second import
-
-Create a temporary directory outside the repository. Export the anchored `MANIFEST_COMMIT_SHA`, expand it, then overlay **only** the first-run retained project outputs before importing:
-
-```powershell
-$tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('arkus-h1-02-' + [guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Force -Path $tempRoot | Out-Null
-$archive = Join-Path $tempRoot 'repo.zip'
-git archive --format=zip --output=$archive $manifestSha
-$copy = Join-Path $tempRoot 'repo'
-Expand-Archive -LiteralPath $archive -DestinationPath $copy
-
-Copy-Item -LiteralPath (Join-Path $repo 'Unity/ArkusUnity/Packages/packages-lock.json') `
-  -Destination (Join-Path $copy 'Unity/ArkusUnity/Packages/packages-lock.json') -Force
-Copy-Item -Path (Join-Path $repo 'Unity/ArkusUnity/ProjectSettings/*') `
-  -Destination (Join-Path $copy 'Unity/ArkusUnity/ProjectSettings') -Recurse -Force
-
-powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $copy 'scripts/h1-02-unity.ps1') `
-  -Action configure `
-  -UnityEditorPath $unity `
-  -OutputPath (Join-Path $copy 'second-import-inventory.json') `
-  -LogPath (Join-Path $copy 'second-import.log')
-Copy-Item -LiteralPath (Join-Path $copy 'second-import-inventory.json') `
-  -Destination (Join-Path $repo 'Docs/evidence/WP-H1-02/second-import-inventory.json') -Force
-```
-
-Do **not** copy `Library`, `Temp`, `Logs`, `Obj`, `UserSettings` or other caches into the temporary project.
-
-Compare `effective-inventory.json` and `second-import-inventory.json` structurally for exact equality of these fields:
-
-- `unityVersion`;
-- `serializationMode`;
-- `externalVersionControl`;
-- `renderPipeline`;
-- `packages`;
-- `assemblies`.
-
-Ignore `manifestSha256` and `packagesLockSha256` for this parity assertion. Any listed-field difference is `CANDIDATE_DEFECT`; do not normalize it away.
-
-### F. Canonical non-interactive Arkus batch entry
-
-Run:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/h1-02-unity.ps1 `
-  -Action batch `
-  -UnityEditorPath $unity `
-  -OutputPath (Join-Path $repo 'artifacts/h1-02/batch-inventory.json') `
-  -LogPath (Join-Path $repo 'artifacts/h1-02/batch.log')
-```
-
-Require exit 0. Compare its inventory to `effective-inventory.json` for the same six effective fields from action E; require equality.
-
-### G. Final mechanical checks and mutation audit
+## G. Final mechanical check and mutation audit
 
 Run:
 
@@ -250,52 +198,26 @@ Run:
 python scripts/h1-02-static-check.py --mode final --self-test
 ```
 
-Require GREEN. Then collect the complete `git status --porcelain --untracked-files=all` inventory. Every visible changed/untracked repository path must match the allowlist above. Verify no tracked Unity cache/build/editor-local paths exist.
+Require GREEN. Then capture complete `git status --porcelain --untracked-files=all`. Every visible changed/untracked repository path must be inside the allowlist above. No tracked Unity cache/build/editor-local paths may exist.
 
 ## Stop classifications
 
-Use exactly one when the round cannot PASS:
+Use exactly one if the round cannot PASS:
 
-- `EXPECTED_NEGATIVE_CONTROL` only for the deliberately injected checker self-tests;
-- `CANDIDATE_DEFECT` when effective behavior falsifies a predeclared H1-02 claim;
-- `ENVIRONMENT_BLOCKED` when exact Unity/editor/license/tool availability prevents execution;
-- `REMOTE_DECISION_REQUIRED` when execution reveals a package/configuration/generated-file/design decision or would require a mutation outside the allowlist.
+- `EXPECTED_NEGATIVE_CONTROL` only for deliberate checker self-test fixtures;
+- `CANDIDATE_DEFECT` when effective behavior falsifies a predeclared claim;
+- `ENVIRONMENT_BLOCKED` when the exact editor/license/tool environment cannot execute;
+- `REMOTE_DECISION_REQUIRED` when an unexpected package/config/generated-file/design choice or non-allowlisted mutation is required.
 
-Do not repair locally after a stop condition.
+On any stop classification: do not repair; publish a durable PR #152 comment beginning `H1_LOCAL_STOP_V1 WP=WP-H1-02 ROUND=2` with classification, SHA chain, stopped action and observations, then STOP. Do not commit partial candidate outputs.
 
-## Commit protocol on PASS
+## PASS commit protocol
 
-1. Capture the complete changed-file inventory and verify every entry is allowlisted.
-2. Stage all allowlisted project/evidence outputs from actions B-G **except** `LOCAL_EXECUTION_RESULT.md`.
-3. Commit them in one commit with message `h1-02: record Unity 6.3 local baseline evidence` and record this exact SHA as `PRODUCT_RESULT_SHA`. If there are genuinely no repository mutations, `PRODUCT_RESULT_SHA = MANIFEST_COMMIT_SHA`.
-4. Push to `work/wp-h1-02` and verify remote branch HEAD equals `PRODUCT_RESULT_SHA` **before** writing the summary.
-5. Create `Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md` containing at minimum:
-   - first line exactly `LOCAL_EXECUTION_RESULT: PASS`;
-   - `WP: WP-H1-02`, `LOCAL_ROUND: 1`;
-   - exact `EXECUTION_BASE_SHA: 11ca31563b170cdae140a6e672234801596caa45`;
-   - exact externally anchored `MANIFEST_COMMIT_SHA`;
-   - exact `PRODUCT_RESULT_SHA`;
-   - repository/branch/PR identity;
-   - Windows version;
-   - Unity executable absolute path, Windows file/product version and SHA-256;
-   - effective `Application.unityVersion`;
-   - package/platform fingerprints and resolved package count;
-   - each action/command and exit state;
-   - EditMode test/failure counts;
-   - first/second/batch inventory parity result;
-   - package legal/notices observation path/result;
-   - complete visible changed-file inventory before product commit;
-   - complete paths committed in the product/output commit;
-   - explicit mutation-allowlist compliance and statement that no forbidden mutation was committed;
-   - evidence paths and local ignored-log paths;
-   - explicit statement that no architecture/product decision was made locally.
-6. Commit **only** `LOCAL_EXECUTION_RESULT.md` next with message `h1-02: record local execution result`. Record that exact direct-child SHA as `EVIDENCE_COMMIT_SHA`.
-7. Push it and verify remote `work/wp-h1-02` HEAD equals `EVIDENCE_COMMIT_SHA`.
-8. Only after that verification add a durable PR #152 conversation comment beginning exactly:
-
-```text
-H1_LOCAL_RESULT_V1 WP=WP-H1-02 ROUND=1
-```
-
-and include `EXECUTION_BASE_SHA`, `MANIFEST_COMMIT_SHA`, `PRODUCT_RESULT_SHA`, `EVIDENCE_COMMIT_SHA`, result, result path, branch and `REMOTE_HEAD_VERIFIED: YES`.
-9. STOP and return control to the remote Worker. Do not perform Worker pre-review or freeze.
+1. Verify the complete visible changed-file set is allowlisted.
+2. Stage allowlisted project/evidence outputs from B-G **except** `$result` and commit them once with message `h1-02: record Unity 6.3 local baseline evidence round 2`. This exact commit is `PRODUCT_RESULT_SHA`; if there are genuinely no repository outputs it equals `MANIFEST_COMMIT_SHA`.
+3. Push and verify remote `work/wp-h1-02` HEAD equals `PRODUCT_RESULT_SHA` before writing the summary.
+4. Write `$result` with first line exactly `LOCAL_EXECUTION_RESULT: PASS` and include: WP, `LOCAL_ROUND: 2`, exact execution base, externally anchored manifest SHA, product-result SHA, repo/branch/PR, Windows version, Unity executable fingerprint, effective Unity version, package count/identity, commands+exit states, EditMode counts, first/second/batch parity, legal observation result, complete pre-product changed-file inventory, committed paths, mutation-allowlist compliance, evidence/log locations, and explicit statement that no local product/architecture decision was made.
+5. Commit **only** `$result` next with message `h1-02: record local execution result round 2`. This exact direct child is `EVIDENCE_COMMIT_SHA`.
+6. Push and verify remote branch HEAD equals `EVIDENCE_COMMIT_SHA`.
+7. Add a durable PR #152 conversation comment beginning exactly `H1_LOCAL_RESULT_V1 WP=WP-H1-02 ROUND=2` and include execution base, manifest SHA, product-result SHA, evidence SHA, PASS, result filename, branch and `REMOTE_HEAD_VERIFIED: YES`.
+8. STOP. Do not perform Worker pre-review or freeze.
