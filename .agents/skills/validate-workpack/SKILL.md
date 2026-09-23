@@ -6,6 +6,8 @@ Independently review one frozen Juego2 candidate. Do not edit implementation.
 
 Read the exact WP, relevant accepted predecessor contracts/evidence, `AGENTS.md`, and `Docs/engineering/PRODUCT_SHA_CLOSURE.md`. The amendment governs same-SHA lifecycle classification and Action/DocSync cost. It does not narrow the Reviewer's material causal search.
 
+Accepted predecessor capsules remain governed by `Docs/engineering/CONTEXT_CAPSULE_V1.md`: they are navigation only and never review proof. Escalate to exact authoritative sources whenever the verdict materially depends on them or they are stale/lossy/contradictory.
+
 ## Preconditions
 
 - Reviewer is independent from the Worker/repair role.
