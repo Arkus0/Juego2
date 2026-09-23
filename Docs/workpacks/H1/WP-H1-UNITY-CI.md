@@ -45,7 +45,26 @@ Pinned execution inputs:
 - GameCI CLI `v0.1.69`;
 - project version read from the checked-out `ProjectVersion.txt`;
 - `testMode: editmode`;
-- coverage disabled for parity with the bounded H1-02 oracle.
+- `coverageEnabled: false` for parity with the bounded H1-02 oracle.
+
+## Bounded GameCI package-metadata exception
+
+The isolation rule permits exactly one transient, tool-generated exception during the pinned GameCI execution. GameCI may modify only these two tracked paths:
+
+- `Unity/ArkusUnity/Packages/manifest.json`;
+- `Unity/ArkusUnity/Packages/packages-lock.json`.
+
+That exception is valid only when the workflow proves all of the following in the same run:
+
+1. the pre-Unity checkout is clean and exactly equals the frozen target SHA;
+2. the complete set of tracked paths changed by GameCI is exactly the two paths above;
+3. `manifest.json` differs from the target only by the known GameCI Linux package injection pinned in the workflow;
+4. `packages-lock.json` differs from the target only by the corresponding known GameCI lock entries pinned in the workflow;
+5. any other tracked path or any other content delta is RED as an isolation failure;
+6. both files are restored from the exact target SHA after reconciliation; and
+7. the tracked working tree is then identical to the target SHA before evidence is accepted.
+
+This is not permission for product/source drift and does not generalize to later GameCI versions, package deltas, paths, or workpacks. A changed action/CLI or changed package injection requires a new explicit review rather than silently widening the exception.
 
 ## License boundary
 
@@ -67,7 +86,7 @@ The pilot may be called PASS only if one GitHub-hosted execution against the fro
 2. effective Unity editor test reports the pinned `6000.3.24f1` version;
 3. the existing EditMode suite executes in Unity and returns exactly `5/5` passed with zero failures;
 4. the effective tests still prove Force Text, Visible Meta Files, Built-in render pipeline, package lock presence, and visible-meta coverage because those are the accepted H1-02 tests, not duplicated workflow assertions;
-5. tracked repository source remains unchanged by execution;
+5. tracked repository state remains unchanged by execution except for the bounded transient GameCI package-metadata exception above, whose exact two-path delta must be reconciled and restored so the final tracked tree is identical to the frozen target SHA;
 6. test artifacts and an exact-SHA pilot receipt are retained by Actions.
 
 ## FAIL / INCONCLUSIVE
@@ -78,7 +97,7 @@ Classify causally:
 - GameCI image/tooling cannot execute the pinned Unity patch: infrastructure FAIL;
 - Unity launches but the accepted five tests do not all pass: substantive portability FAIL;
 - result cannot be bound to the exact H1-02 SHA: evidence FAIL;
-- workflow mutates tracked source: isolation FAIL.
+- any tracked mutation outside the bounded two-path exception, any mismatch from its exact known package delta, or any failure to restore a tracked tree identical to the target SHA: isolation FAIL.
 
 Do not repair H1-02 product semantics merely to make the cloud pilot green.
 
