@@ -182,6 +182,9 @@ def check_unity_wrapper(root: Path) -> None:
         "$process.WaitForExit()",
         "$process.Refresh()",
         "$process.ExitCode",
+        "if (-not (Test-Path -LiteralPath $OutputPath -PathType Leaf))",
+        "UNITY_OUTPUT_MISSING",
+        "UNITY_OUTPUT_EMPTY",
         "ConvertTo-UnityProcessArgument",
     )
     for token in required:
@@ -307,6 +310,17 @@ def run_self_tests(root: Path) -> None:
         path.write_text(text.replace(old, new, 1), encoding="utf-8")
 
     expect_red(root, "unity-exact-process-wait", remove_exact_process_wait)
+
+    def disable_output_postcondition(r: Path) -> None:
+        path = r / UNITY_WRAPPER_REL
+        text = path.read_text(encoding="utf-8")
+        old = "if (-not (Test-Path -LiteralPath $OutputPath -PathType Leaf))"
+        new = "if ($false)"
+        if old not in text:
+            fail("unity-output-postcondition-negative-fixture-anchor-missing")
+        path.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+    expect_red(root, "unity-output-postcondition", disable_output_postcondition)
 
 
 def parse_args() -> argparse.Namespace:

@@ -78,8 +78,7 @@ switch ($Action) {
         $arguments = $common + @(
             "-runTests",
             "-testPlatform", "EditMode",
-            "-testResults", $OutputPath,
-            "-quit"
+            "-testResults", $OutputPath
         )
     }
 }
@@ -123,6 +122,15 @@ Write-Host "H1-02 Unity exit: $exitCode"
 
 if ($exitCode -ne 0) {
     throw "UNITY_BATCH_FAILED: action=$Action exit=$exitCode log=$LogPath"
+}
+
+if (-not (Test-Path -LiteralPath $OutputPath -PathType Leaf)) {
+    throw "UNITY_OUTPUT_MISSING: action=$Action output=$OutputPath log=$LogPath"
+}
+
+$outputItem = Get-Item -LiteralPath $OutputPath
+if ($outputItem.Length -eq 0) {
+    throw "UNITY_OUTPUT_EMPTY: action=$Action output=$OutputPath log=$LogPath"
 }
 
 Write-Host "H1_02_UNITY_${Action}_GREEN"
