@@ -22,8 +22,7 @@ for required in \
   Docs/evidence/WP-H1-02/second-import-inventory.json \
   Docs/evidence/WP-H1-02/editmode-results.xml \
   Docs/evidence/WP-H1-02/PACKAGE_LEGAL_OBSERVATION.md \
-  Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md \
-  Docs/evidence/WP-H1-02/WORKER_PRE_REVIEW.md; do
+  Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md; do
   test -f "${required}" || { echo "Missing H1-02 verification evidence: ${required}" >&2; exit 2; }
 done
 
@@ -35,8 +34,6 @@ grep -Fxq 'UNRESOLVED_PROOF_OBLIGATIONS: 0' Docs/evidence/WP-H1-02/PROOF_PLAN.md
 grep -Fxq 'KNOWN_UNDETECTED_DEFECT_CLASSES: 0' Docs/evidence/WP-H1-02/PROOF_PLAN.md
 grep -Fxq 'PROOF_BUDGET_VERDICT: WITHIN_BUDGET' Docs/evidence/WP-H1-02/PROOF_PLAN.md
 grep -Fxq 'LOCAL_EXECUTION_RESULT: PASS' Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md
-grep -Fxq 'WORKER_PRE_REVIEW: CLEAN' Docs/evidence/WP-H1-02/WORKER_PRE_REVIEW.md
-grep -Eq '^WORKER_PRE_REVIEW_FINDINGS_FIXED: [0-9]+$' Docs/evidence/WP-H1-02/WORKER_PRE_REVIEW.md
 
 if [[ -n "${PR_BODY:-}" ]]; then
   printf '%s\n' "${PR_BODY}" | grep -Eq "^Candidate HEAD SHA:[[:space:]]*\`?${actual}\`?[[:space:]]*$"
@@ -56,7 +53,7 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/h1-02-verify-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: remote-static=GREEN; causal-negative-controls=GREEN; h0-build=GREEN; local-unity-evidence=GREEN; editmode=GREEN; effective-inventory=GREEN; clean-second-import=GREEN; dependency-legal-observation=GREEN; foundational-proof=GREEN; worker-pre-review=GREEN; frozen-metadata=GREEN
+Required gates: remote-static=GREEN; causal-negative-controls=GREEN; h0-build=GREEN; local-unity-evidence=GREEN; editmode=GREEN; effective-inventory=GREEN; clean-second-import=GREEN; dependency-legal-observation=GREEN; foundational-proof=GREEN; worker-pre-review=EXTERNAL_HANDOFF_LINT; frozen-metadata=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-H1-02
 EOF

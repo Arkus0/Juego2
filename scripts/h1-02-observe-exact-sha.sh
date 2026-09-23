@@ -52,8 +52,21 @@ for key in ('unityVersion', 'serializationMode', 'externalVersionControl', 'rend
         raise SystemExit(f'second-import-effective-inventory-mismatch:{key}')
 print('H1_02_SECOND_IMPORT_PARITY_GREEN')
 PY
-  grep -Eq 'tests="[1-9][0-9]*"' Docs/evidence/WP-H1-02/editmode-results.xml
-  grep -Eq 'failures="0"' Docs/evidence/WP-H1-02/editmode-results.xml
+  python3 - <<'PY'
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
+root = ET.parse(Path('Docs/evidence/WP-H1-02/editmode-results.xml')).getroot()
+if root.tag != 'test-run':
+    raise SystemExit(f'editmode-result-root-mismatch:{root.tag}')
+total = int(root.attrib.get('total', '0'))
+failed = int(root.attrib.get('failed', '-1'))
+if total < 1 or failed != 0 or root.attrib.get('result') != 'Passed':
+    raise SystemExit(
+        f'editmode-result-not-green:total={total}:failed={failed}:result={root.attrib.get("result")}'
+    )
+print(f'H1_02_EDITMODE_GREEN total={total} failed={failed}')
+PY
   grep -Fxq 'LOCAL_EXECUTION_RESULT: PASS' Docs/evidence/WP-H1-02/LOCAL_EXECUTION_RESULT.md
   grep -Fxq 'PACKAGE_LEGAL_OBSERVATION: COMPLETE' Docs/evidence/WP-H1-02/PACKAGE_LEGAL_OBSERVATION.md
   result="GREEN"

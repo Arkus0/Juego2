@@ -1,6 +1,6 @@
 # WP-H1-02 — foundational proof plan
 
-Status: REMOTE_PREP COMPLETE; LOCAL UNITY EVIDENCE PENDING
+Status: COMPLETE; LOCAL UNITY ROUND 4 PASS AND REMOTE CLOSEOUT VERIFIED
 
 ## Central claim
 
@@ -26,17 +26,18 @@ Outside the claim are arbitrary Unity/editor corruption, future editor upgrades,
 
 ## Proof obligations
 
-| Obligation | Positive evidence | Causal negative/control | Local requirement |
-|---|---|---|---|
-| exact editor pin | `ProjectVersion.txt` + effective `Application.unityVersion` | corrupt editor pin -> repository checker RED; wrong local Editor -> bootstrap RED | yes |
-| exact package intent + resolved lock | exact manifest + generated lock + Package Manager inventory | loosen package version -> checker RED; remove lock in final state -> checker RED | yes |
-| Force Text / visible meta | EditMode API assertions + effective inventory + committed meta files | effective settings assertion fails when setting is not applied | yes |
-| caches ignored | `.gitignore` + clean changed-file audit | remove Library ignore -> checker RED | no/yes audit |
-| H0 remains Unity-free | independent `src/**` + `tests/**` csproj scan | inject `UnityEngine` reference -> checker RED | no |
-| assembly shape | effective CompilationPipeline inventory | omission/divergence detected by inventory comparison | yes |
-| canonical batch entry | `scripts/h1-02-unity.ps1` fixes project root + `Arkus.H1.Editor.H1Batch.Run` | wrong editor/version or missing required output arg fails closed | yes |
-| clean second import equivalence | normalized inventory A == inventory B | package/assembly drift makes comparison RED | yes |
-| dependency/IP | exact adoption record + resolved package license/notices observation | unknown/contradictory terms stop local round | yes |
+| Proof obligation | Claim / trust-boundary scope | Completeness argument | Positive evidence | Negative control / defect injection | Result | Residual risk |
+|---|---|---|---|---|---|---|
+| exact editor pin | retained Unity toolchain identity | declared pin and effective Editor API/runtime value must agree | `ProjectVersion.txt`; round-4 executable/product fingerprint; `Application.unityVersion` inventory | corrupt editor pin makes the repository checker RED; a wrong local Editor fails bootstrap | GREEN | future upgrades require a new baseline |
+| exact package intent + resolved lock | direct and effective package graph | exact manifest intent is compared with Unity Package Manager output and generated lock | `manifest.json`, `packages-lock.json`, effective inventory | loosen direct version -> RED; missing lock in final mode -> RED | GREEN | upstream registry/cache integrity remains trusted infrastructure |
+| Force Text / visible meta | retained project serialization policy | Unity APIs and generated settings independently agree with committed configuration | EditMode assertions, effective inventory, generated ProjectSettings and `.meta` files | effective setting mismatch fails the Unity test/inventory path | GREEN | byte-identical YAML is not claimed |
+| caches ignored | repository boundary | tracked-file inventory is independent of Unity cache contents | `.gitignore`, product commit inventory, final clean-tree audit | remove Library ignore -> RED | GREEN | local caches remain disposable |
+| H0 remains Unity-free | engine-neutral predecessor boundary | all `src/**` and `tests/**` project files are independently enumerated | static checker plus main safety build/test | inject a Unity reference into an enumerated H0 project -> RED | GREEN | accepted H0 semantics are consumed, not re-proved |
+| assembly shape | effective Unity compilation universe | `CompilationPipeline` enumerates effective Editor/Player assemblies rather than trusting asmdef declarations alone | first and second effective inventories | omitted/drifting assembly changes normalized parity and/or required-name checks | GREEN | future assemblies require explicit revalidation |
+| canonical batch entry | fixed project + Arkus entry identity | wrapper owns exact project path, action mapping, process exit and non-empty output postcondition | configure/EditMode/batch logs and outputs | remove exact-process wait -> RED; disable output postcondition -> RED | GREEN | H1-03A later owns the public host lifecycle |
+| clean second import equivalence | reproducible clean-import claim | a Git archive at the manifest SHA is imported without caches and compared on six normalized effective fields | `effective-inventory.json` == `second-import-inventory.json` for all owned fields | any package/assembly/settings drift makes comparison RED | GREEN | byte identity and cross-OS equality are not claimed |
+| dependency/IP | exact adopted tool/package boundary | local resolved package bytes and legal file are observed, not inferred only from manifest prose | `DEPENDENCY_ADOPTION.md`, `PACKAGE_LEGAL_OBSERVATION.md` | missing exact package or all license/notices evidence stops closed | GREEN | release-wide notice bundling remains downstream packaging work |
+| exact delegated evidence chain | H1 remote/local integrity | Git ancestry, manifest-only/product/result-only diffs, remote-head anchors and allowlist are independently compared | round-4 handoff/result comments and `LOCAL_EXECUTION_RESULT.md` | self-reference, wrong parent, wrong remote head or extra mutation is rejected | GREEN | Git/GitHub integrity remains trusted base |
 
 ## Remote negative controls
 
@@ -45,13 +46,16 @@ Outside the claim are arbitrary Unity/editor corruption, future editor upgrades,
 1. editor pin removal/corruption;
 2. non-exact package version;
 3. Unity dependency inserted into an independently enumerated H0 project;
-4. Unity Library ignore removed.
+4. Unity Library ignore removed;
+5. exact Unity process wait removed;
+6. required output postcondition disabled.
 
 Each must turn the same checker RED for the intended causal reason, then the untouched repository remains GREEN.
 
-## Local evidence still required
+## Local evidence result
 
-No remote or plain-.NET result can prove the Unity API claims. The candidate is `READY_FOR_LOCAL_VALIDATION`, not review-ready, until the exact local execution manifest is run against the anchored SHA chain and produces:
+No remote or plain-.NET result substitutes for the Unity API claims. Round 4
+executed the exact local manifest and produced:
 
 - exact effective editor fingerprint;
 - generated `ProjectSettings` and package lock as predeclared candidate outputs;
@@ -63,14 +67,44 @@ No remote or plain-.NET result can prove the Unity API claims. The candidate is 
 - resolved license/notices observation;
 - result summary bound to the H1 remote/local SHA chain.
 
-## Foundational status before local execution
+The verified chain is:
 
-`FOUNDATIONAL_PROOF_VERDICT: NOT_READY`
+`e9e022f871ba6b7da95f663956b07d0519b99b2d`
+→ `27602941ebc98dd2befa4dea7b2354242459d049`
+→ `ed7f0d00f4a6d38daee51c6661af50ff2a423cd4`
+→ `91e1e42bc02e95952a00af6db549b78a9e94975e`.
 
-`UNRESOLVED_PROOF_OBLIGATIONS: 1` — mandatory effective local Unity round.
+The result is externally anchored in PR #152 comment `#5796728071`; every local
+mutation was allowlisted and the final candidate descends from the evidence
+commit.
 
-`KNOWN_UNDETECTED_DEFECT_CLASSES: 0` inside the remote-only subclaim; effective Unity defect classes remain deliberately unresolved until the required local oracle runs.
+## Residual-risk and proof-budget audit
 
-`TRUST_BOUNDARY: see this document / Trust boundary`
+- Editor availability/licensing remains a workstation prerequisite.
+- Byte-identical import output across operating systems or future Unity patches
+  is outside the claim; normalized effective state is the oracle.
+- Rendered/interactive quality, bridge public capabilities, materialization,
+  scenes, prefabs, asset catalogues and gameplay remain downstream.
+- Release-wide SBOM/notice packaging remains a release owner; this WP records
+  the exact adopted build/test package evidence needed by that later work.
+- No residual above can falsify the current exact toolchain/project-baseline
+  claim inside its trust boundary.
+- The two observed wrapper defects produced product/acceptance progress: exact
+  GUI-process waiting and a fail-closed required-output postcondition. Proof
+  machinery did not expand solely for hypothetical infrastructure behavior.
 
-`PROOF_BUDGET_VERDICT: WITHIN_BUDGET`
+UNCLASSIFIED_RESIDUALS: 0
+
+PREDECESSOR_REOPEN_TRIGGERED: NO
+
+## Foundational final status
+
+FOUNDATIONAL_PROOF_VERDICT: READY
+
+UNRESOLVED_PROOF_OBLIGATIONS: 0
+
+KNOWN_UNDETECTED_DEFECT_CLASSES: 0
+
+TRUST_BOUNDARY: see this document / Trust boundary
+
+PROOF_BUDGET_VERDICT: WITHIN_BUDGET
