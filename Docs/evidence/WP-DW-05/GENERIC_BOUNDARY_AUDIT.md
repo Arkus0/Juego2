@@ -29,7 +29,7 @@ The probe consumes only already-accepted public DW/H0 surfaces:
 - `DesignWorldProjectionValidator`;
 - `DesignWorldProjectionDiff`.
 
-The candidate pins the accepted generic DW files and `Arkus.Game.World` files to their baseline Git blob identities. No semantic repair to those files is part of DW-05.
+The candidate protects the accepted generic DW files plus the H0 dependency chain actually reached by the projector (`Arkus.Game.World` -> `Arkus.Game.Core`) against candidate mutation. No semantic repair to those files is part of DW-05.
 
 ## Hostile controls and their interpretation
 
@@ -37,14 +37,14 @@ The candidate pins the accepted generic DW files and `Arkus.Game.World` files to
 2. **Stale source bytes** — changing source bytes while validating an existing projection makes the existing validator report `dw.provenance_stale`. This is a generic-path RED.
 3. **Relation target outside the independent universe** — targeting `calibration.ghost` fails with `dw.relation_target_outside_universe`. This is a generic structural RED.
 4. **Domain-required relation omitted but graph remains structurally valid** — removing `calibrated-by` leaves the generic structural validator GREEN, while the independent neutral consumer oracle REDs. This is intentionally retained evidence, not hidden. It is classified as `domain_need`, not as a generic Arkus deficiency: the accepted generic seam represents typed relations but does not promise to infer which domain relations are semantically mandatory. That boundary matches the accepted DW invariant model used by CITY.
-5. **Injected CITY kernel vocabulary** — the leakage checker is required to RED when a synthetic `CityKernelRule` is inserted into the audited generic/H0 source set.
+5. **Injected domain vocabulary in the kernel dependency closure** — the leakage checks are required to RED for a synthetic `CityKernelRule` in `Arkus.Game.World` and for a synthetic `PaKernelDependency` in transitive `Arkus.Game.Core`.
 6. **Residual omission** — removing an independently inventoried predecessor limitation from the closure manifest is required to RED.
 7. **Unsupported kernel classification** — relabeling a domain-only limitation as `generic_arkus_contradiction_deficiency` without public-seam failure evidence is required to RED.
-8. **H0/generic seam mutation** — canonical DW-05 observation diffs the accepted baseline against the candidate and rejects any change to the generic DW contract/projection files or `src/Arkus.Game.World`; the test suite independently pins their baseline Git blob identities.
+8. **H0/generic seam mutation** — canonical DW-05 observation diffs the accepted baseline against the candidate and rejects any change to the generic DW contract/projection files, `src/Arkus.Game.World` or its reached `src/Arkus.Game.Core` dependency.
 
-## CITY / PA leakage audit
+## CITY / PA leakage and dependency audit
 
-The generic contract/projection files contain no CITY/PA types, rules or vocabulary required by the neutral probe. `Arkus.DesignWorld` directly references only `Arkus.Game.World`; the neutral probe does not consume `City*` or `Pa*` provider/query/oracle types.
+The generic contract/projection files contain no CITY/PA types, rules or vocabulary required by the neutral probe. `Arkus.DesignWorld` directly references `Arkus.Game.World`; that project in turn references `Arkus.Game.Core`, whose project has no further `ProjectReference`. The executable audit consumes the source/project surfaces for both H0 projects in that reached closure and finds no CITY/PA vocabulary. The neutral probe itself consumes no `City*` or `Pa*` provider/query/oracle type.
 
 CITY and PA implementations are currently co-located in the `Arkus.DesignWorld` assembly. That is recorded as `domain-provider-colocation`: an in-repo modularity/productization limitation, not evidence that the generic public seam requires CITY/PA knowledge. External package composition remains explicitly unproven and H2-owned.
 
@@ -65,7 +65,7 @@ The neutral shape did not require:
 - widening/changing the generic public contract;
 - a new shared abstraction or shared capability motivated by the probe;
 - an H0 semantic change;
-- CITY/PA knowledge in the probe or generic implementation;
+- CITY/PA knowledge in the probe or reached generic/H0 implementation;
 - weakening provenance or rebuild semantics.
 
 Therefore the Worker found no evidence satisfying the DW-00/H0 reopen conditions. This is bounded survival of the specified stress, not proof that all future domains will fit.
