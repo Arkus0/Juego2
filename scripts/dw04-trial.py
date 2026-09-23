@@ -17,6 +17,8 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PRE = "Docs/evidence/WP-DW-04/PRECALIBRATION_FREEZE.json"
 CAL_ORACLES = "Docs/evidence/WP-DW-04/CALIBRATION_ORACLES.json"
+CAL_CONTEXT = "Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json"
+CAL_PROTOCOL = "Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json"
 SOURCE_ORACLES = "Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json"
 CAL_RESULTS = "Docs/evidence/WP-DW-04/CALIBRATION_RESULTS.json"
 FREEZE = "Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json"
@@ -115,10 +117,24 @@ def score(oracle, answer):
 
 
 def make_slots(tasks):
-    # Interleaved route order, committed before first acceptance result.
     return [{"task": task, "pair": f"R{pair}", "route": route}
             for task in tasks for pair in (1, 2, 3)
             for route in (("CTX", "DW") if pair != 2 else ("DW", "CTX"))]
+
+
+def check_request(request, config, slot, prompt, response_contract, system_prompt, seed):
+    common = {"provider", "model", "version", "temperature", "thinking", "tool_policy",
+              "execution_budget", "run_policy", "provider_options"}
+    require(set(config) == common, "model/configuration freeze has undeclared or missing dimensions")
+    require(set(request) == common | {"task_prompt", "response_contract", "system_prompt", "slot", "context_fragments", "seed"},
+            "provider request has undeclared or missing configuration")
+    for field in common:
+        require(request.get(field) == config.get(field), f"paired model/configuration/run policy drift: {field}")
+    require(request["seed"] == seed, "matched seed/run identity mismatch")
+    require(request["task_prompt"] == prompt and request["system_prompt"] == system_prompt,
+            "system/task prompt drift")
+    require(request["response_contract"] == response_contract, "response contract drift")
+    require(request["slot"] == slot, "provider request slot drift")
 
 
 def calibration_check(pre, pre_commit, freeze):
@@ -128,28 +144,41 @@ def calibration_check(pre, pre_commit, freeze):
     ancestor(oracle_commit, result_commit)
     oracles, _ = frozen_file(oracle_commit, CAL_ORACLES)
     results, results_sha = frozen_file(result_commit, CAL_RESULTS)
+    protocol_commit = results.get("calibration_protocol_commit")
+    require(isinstance(protocol_commit, str), "calibration protocol commit missing from results")
+    ancestor(oracle_commit, protocol_commit)
+    ancestor(protocol_commit, result_commit)
+    protocol, _ = frozen_file(protocol_commit, CAL_PROTOCOL)
+    context, _ = frozen_file(protocol_commit, CAL_CONTEXT)
     require(oracles["precalibration_commit"] == pre_commit and oracles["route"] == "CTX_ONLY", "calibration oracle lineage/route")
-    require(set(oracles["tasks"]) == set(pre["calibration_policy"]["run_order"]), "calibration oracle task universe")
+    require(protocol["precalibration_commit"] == pre_commit and protocol["calibration_oracle_commit"] == oracle_commit,
+            "calibration protocol lineage mismatch")
+    require(context["precalibration_commit"] == pre_commit and context["route"] == "CTX", "calibration context lineage/route")
+    task_ids = set(pre["calibration_policy"]["run_order"])
+    require(set(oracles["tasks"]) == set(protocol["tasks"]) == set(context["contexts"]) == task_ids,
+            "calibration task universe mismatch")
     require(results_sha == freeze["calibration_receipt_digest"], "calibration result changed after acceptance freeze")
     require(results.get("precalibration_commit") == pre_commit and results.get("calibration_oracle_commit") == oracle_commit,
             "calibration input freeze mismatch")
+    require(results.get("calibration_protocol_commit") == protocol_commit, "calibration protocol identity mismatch")
     slots = [{"task": task, "run": i, "route": "CTX"}
              for task in pre["calibration_policy"]["run_order"] for i in (1, 2)]
     require([run.get("slot") for run in results["runs"]] == slots, "CTX calibration count/order/partition violation")
-    require(results["model_config"] == freeze["model_config"], "acceptance protocol differs from ready calibration")
+    require(results.get("readiness") == "READY", "calibration results are not READY")
+    require(results["model_config"] == protocol["model_config"] == freeze["model_config"],
+            "acceptance protocol differs from ready calibration")
     for run in results["runs"]:
+        task = run["slot"]["task"]
         require(run.get("provider_request_id") and run.get("model") == freeze["model_config"]["model"],
                 "calibration model call identity/model missing")
         require(run.get("route") == "CTX", "calibration used DW route")
         request = run.get("request", {})
-        require(all(request.get(key) == value for key, value in freeze["model_config"].items()),
-                "CTX calibration configuration differs from acceptance")
-        require(request.get("task_prompt") == next(t["question"] for t in pre["eligible_tasks"]
-                                                   if t["id"] == run["slot"]["task"]),
-                "calibration prompt not bound to pre-run task")
-        require(request.get("route") == "CTX" and request.get("slot") == run["slot"],
-                "calibration route/slot differs from scheduled CTX-only call")
-        require(score(oracles["tasks"][run["slot"]["task"]]["oracle"], run.get("answer"))["pass"],
+        task_protocol = protocol["tasks"][task]
+        check_request(request, freeze["model_config"], run["slot"], task_protocol["semantic_question"],
+                      task_protocol["response_contract"], protocol["system_prompt"], None)
+        require(request["context_fragments"] == context["contexts"][task],
+                "calibration context differs from frozen CTX context")
+        require(score(oracles["tasks"][task]["oracle"], run.get("answer"))["pass"],
                 "CTX calibration did not meet all-eight readiness criterion")
     return results_sha
 
@@ -162,26 +191,8 @@ def decide(pair_rows, structural, savings):
     return "PASS" if savings >= 0.30 else "FAIL"
 
 
-def check_request(request, config, slot, prompt, system_prompt, seed):
-    common = {"provider", "model", "version", "temperature", "thinking", "tool_policy",
-              "execution_budget", "run_policy", "provider_options"}
-    require(set(config) == common, "model/configuration freeze has undeclared or missing dimensions")
-    require(set(request) == common | {"task_prompt", "system_prompt", "slot", "context_fragments", "seed"},
-            "provider request has undeclared or missing configuration")
-    for field in common:
-        require(request.get(field) == config.get(field), f"paired model/configuration/run policy drift: {field}")
-    require(request["seed"] == seed, "matched seed/run identity mismatch")
-    require(request["task_prompt"] == prompt and request["system_prompt"] == system_prompt,
-            "system/task prompt drift")
-    require(request["slot"] == slot, "provider request slot drift")
-
-
 def context_check(freeze, assembly, pre, selected):
-    """Replay the actual typed-query path and compare required source literals.
-
-    Must run before the first model call. Repeating here at scoring time detects
-    assembly drift, but cannot replace the pre-execution check.
-    """
+    """Replay the actual typed-query path and compare required source literals."""
     require(set(assembly["contexts"]) == set(selected), "context task universe changed")
     require(set(freeze["context_plan"]) == set(selected), "context-plan task universe changed")
     queries = {}
@@ -256,6 +267,11 @@ def audit(freeze, transcript, pre, pre_commit, freeze_commit, freeze_digest):
         for field in ("oracle", "required_context"):
             require(freeze["tasks"][task][field] == source_oracles["tasks"][task][field],
                     f"oracle or structural requirement modified after calibration/results: {task}/{field}")
+        require("response_contract" in freeze["tasks"][task], f"missing frozen response contract: {task}")
+    vocab = {(tuple(t["response_contract"]["allowed_blockers"]),
+              tuple(t["response_contract"]["allowed_verdicts"]),
+              tuple(t["response_contract"]["evidence_ids"])) for t in freeze["tasks"].values()}
+    require(len(vocab) == 1, "task-specific acceptance response vocabulary leaks expected semantics")
     require(freeze["slots"] == make_slots(selected), "18 matched pairs/36 slot order changed")
     require(set(freeze["pair_seeds"]) == {"R1", "R2", "R3"}, "three matched seeds/identities required")
     require(freeze["precalibration_commit"] == pre_commit, "pre-calibration identity changed")
@@ -283,9 +299,8 @@ def audit(freeze, transcript, pre, pre_commit, freeze_commit, freeze_digest):
         task, pair, route = slot["task"], slot["pair"], slot["route"]
         require(record.get("request") and record.get("response"), "missing actual request/response")
         request = record["request"]
-        expected_request = freeze["model_config"]
-        check_request(request, expected_request, slot, freeze["tasks"][task]["prompt"],
-                      freeze["system_prompt"], freeze["pair_seeds"][pair])
+        check_request(request, freeze["model_config"], slot, freeze["tasks"][task]["prompt"],
+                      freeze["tasks"][task]["response_contract"], freeze["system_prompt"], freeze["pair_seeds"][pair])
         context = request.get("context_fragments")
         require(isinstance(context, list) and context, "no auditable context fragments")
         require(context == assembly["contexts"][task][route], "context changed after frozen assembly")
@@ -329,17 +344,25 @@ def selftest():
     config = {key: key for key in ("provider", "model", "version", "temperature", "thinking",
                                    "tool_policy", "execution_budget", "run_policy", "provider_options")}
     slot = {"task": "A-CITY-01", "pair": "R1", "route": "CTX"}
-    request = {**config, "task_prompt": "prompt", "system_prompt": "system", "slot": slot,
+    contract = {"fact_keys": ["f"], "allowed_blockers": ["b"], "allowed_verdicts": ["REPORT", "REJECT"], "evidence_ids": ["e"]}
+    request = {**config, "task_prompt": "prompt", "response_contract": contract, "system_prompt": "system", "slot": slot,
                "context_fragments": [], "seed": None}
-    check_request(request, config, slot, "prompt", "system", None)
+    check_request(request, config, slot, "prompt", contract, "system", None)
     for field in config:
         changed = {**request, field: "different"}
         try:
-            check_request(changed, config, slot, "prompt", "system", None)
+            check_request(changed, config, slot, "prompt", contract, "system", None)
         except ProtocolError:
             pass
         else:
             raise AssertionError("unnoticed configuration drift: " + field)
+    changed_contract = {**request, "response_contract": {**contract, "allowed_verdicts": ["REPORT"]}}
+    try:
+        check_request(changed_contract, config, slot, "prompt", contract, "system", None)
+    except ProtocolError:
+        pass
+    else:
+        raise AssertionError("unnoticed response-contract drift")
     print("DW04 scorer/slot causal controls: GREEN")
 
 
