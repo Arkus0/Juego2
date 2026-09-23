@@ -25,6 +25,10 @@ def fail(message, code=2):
     raise SystemExit(code)
 
 
+def retryable_http_status(status):
+    return status in (408, 425, 429) or 500 <= status <= 599
+
+
 def validate_answer(answer, contract=None):
     if not isinstance(answer, dict) or set(answer) != {"facts", "blockers", "verdict", "evidence"}:
         fail("provider structured answer has wrong top-level shape")
@@ -52,6 +56,8 @@ def main():
     if len(sys.argv) == 2 and sys.argv[1] == "--self-test":
         contract = {"fact_keys": ["f"], "allowed_blockers": ["b"], "allowed_verdicts": ["REPORT", "REJECT"], "evidence_ids": ["e"]}
         validate_answer({"facts": {"f": "v"}, "blockers": [], "verdict": "REPORT", "evidence": ["e"]}, contract)
+        assert retryable_http_status(408) and retryable_http_status(429) and retryable_http_status(500) and retryable_http_status(503)
+        assert not retryable_http_status(400) and not retryable_http_status(401) and not retryable_http_status(402) and not retryable_http_status(404)
         print("DW-04 OpenRouter adapter self-test: GREEN")
         return
     if len(sys.argv) != 1:
@@ -74,7 +80,9 @@ def main():
     options = request.get("provider_options")
     if request.get("provider") != "openrouter-chat-completions" or request.get("model") != MODEL or not isinstance(options, dict):
         fail("request is not frozen for the reviewed OpenRouter DeepSeek route")
-    if options.get("endpoint") != ENDPOINT or options.get("structured_output") != FORMAT_NAME or options.get("store") is not False:
+    if set(options) != {"endpoint", "structured_output", "routing"}:
+        fail("provider options contain an undeclared or non-effective dimension")
+    if options.get("endpoint") != ENDPOINT or options.get("structured_output") != FORMAT_NAME:
         fail("provider options differ from the reviewed adapter contract")
     routing = options.get("routing")
     expected_routing = {"order": ["deepseek"], "allow_fallbacks": False, "require_parameters": True}
@@ -145,16 +153,22 @@ def main():
         },
         "provider": routing,
     }
+    seed = request.get("seed")
+    if seed is not None:
+        if not isinstance(seed, int) or isinstance(seed, bool):
+            fail("frozen matched-run seed must be an integer or null")
+        body["seed"] = seed
 
     canonical_request = json.dumps(request, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     client_request_id = str(uuid.uuid5(uuid.NAMESPACE_URL, campaign_id + ":" + hashlib.sha256(canonical_request).hexdigest()))
+    provider_body = json.dumps(body, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     http_request = urllib.request.Request(
         ENDPOINT,
-        data=json.dumps(body, separators=(",", ":"), ensure_ascii=False).encode("utf-8"),
+        data=provider_body,
         headers={
             "Authorization": "Bearer " + api_key,
             "Content-Type": "application/json",
-            "X-Title": "Juego2 DW-04 frozen context trial",
+            "X-OpenRouter-Title": "Juego2 DW-04 frozen context trial",
         },
         method="POST",
     )
@@ -164,7 +178,8 @@ def main():
             response_bytes = http_response.read()
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")[:2000]
-        fail(f"OpenRouter provider HTTP {exc.code}: {detail}", 3)
+        code = 3 if retryable_http_status(exc.code) else 2
+        fail(f"OpenRouter provider HTTP {exc.code}: {detail}", code)
     except (urllib.error.URLError, TimeoutError) as exc:
         fail(f"OpenRouter provider transport failure: {exc}", 3)
 
@@ -191,8 +206,9 @@ def main():
         "model": request.get("model"),
         "resolved_model": response.get("model"),
         "resolved_provider": response.get("provider"),
+        "provider_request_body_sha256": hashlib.sha256(provider_body).hexdigest(),
         "usage": response.get("usage"),
-        "raw": {"answer": answer, "provider_response": response},
+        "raw": {"answer": answer, "provider_request_body": body, "provider_response": response},
     }
     json.dump(result, sys.stdout, ensure_ascii=False, separators=(",", ":"))
     sys.stdout.write("\n")
