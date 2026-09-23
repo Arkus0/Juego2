@@ -16,23 +16,23 @@
     "run_policy": "exactly-two-designated-ctx-runs-per-calibration-task-no-semantic-retry",
     "provider_options": {"endpoint": "https://api.openai.com/v1/responses", "store": false, "structured_output": "dw04_answer_v1"}
   },
-  "system_prompt": "You are executing a frozen repository context-evaluation task. The supplied context fragments are the only semantic authority for this run: do not use memory, outside knowledge, web search, tools, or unstated assumptions. The task's response contract is formatting vocabulary only, not an assertion that any allowed blocker or verdict is true. Return only the canonical structured answer. The facts object must contain exactly the fact keys named by the response contract and every fact value must be a string. blockers and evidence are arrays using only identifiers allowed by the response contract. verdict must use one allowed verdict. Optional prose is forbidden.",
+  "system_prompt": "You are executing a frozen repository context-evaluation task. The supplied context fragments are the only semantic authority for this run: do not use memory, outside knowledge, web search, tools, or unstated assumptions. The task's response contract is formatting vocabulary only, not an assertion that any allowed blocker, verdict or evidence identifier is true for this task. Return only the canonical structured answer. The facts object must contain exactly the fact keys named by the response contract and every fact value must be a string. blockers and evidence are arrays using only identifiers allowed by the response contract. verdict must use one allowed verdict. Optional prose is forbidden.",
   "tasks": {
     "C-CITY-01": {
       "semantic_question": "Identify the accepted importance, depth and interior commitment of loc.casco.bar.",
-      "response_contract": {"fact_keys":["importance","spatial_depth","interior"],"allowed_blockers":[],"allowed_verdicts":["REPORT"],"evidence_ids":["CITY02:§4:loc.casco.bar"]}
+      "response_contract": {"fact_keys":["importance","spatial_depth","interior"],"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
     },
     "C-CITY-02": {
       "semantic_question": "Does the bus arrival threshold promise a deep enterable interior? Give the accepted classifications.",
-      "response_contract": {"fact_keys":["importance","spatial_depth","interior"],"allowed_blockers":["deep_interior_unpromised"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.entrada.arrival"]}
+      "response_contract": {"fact_keys":["importance","spatial_depth","interior"],"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
     },
     "C-PA-01": {
       "semantic_question": "Does PA-02 permit actor initiative to depend on a player/quest/script trigger? Identify the relevant negative fixture and the autonomy requirement when the player is absent.",
-      "response_contract": {"fact_keys":["fixture","player_trigger_required","actor_decision_without_player"],"allowed_blockers":["player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["PA02:§9:NC-01"]}
+      "response_contract": {"fact_keys":["fixture","player_trigger_required","actor_decision_without_player"],"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
     },
     "C-PA-02": {
       "semantic_question": "Review an assumption that an A-to-B relationship edge implies the reverse B-to-A edge; recover the PA-03 NC-01 asymmetry control.",
-      "response_contract": {"fact_keys":["fixture","A_to_B_implies_B_to_A","B_to_A_stays_LOW"],"allowed_blockers":["directional_edge_mirroring"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["PA03:§8:NC-01"]}
+      "response_contract": {"fact_keys":["fixture","A_to_B_implies_B_to_A","B_to_A_stays_LOW"],"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
     }
   },
   "invalid_run_policy": "Only an objective transport/provider failure that yields no parseable structured answer may be retried once for that exact slot. The original invalid record must be retained. A scorable semantic oracle miss is never retryable.",
