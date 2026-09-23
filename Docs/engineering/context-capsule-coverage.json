@@ -1,0 +1,16 @@
+{
+  "schema": "arkus.context-capsule-coverage@1",
+  "authority": "CHECKER_OWNED_NAVIGATION_POLICY",
+  "fallback_without_usable_capsule": "RECONSTRUCT_FROM_AUTHORITATIVE_SOURCES",
+  "tracks": {
+    "H0": {"coverage": "optional", "workpack_directory": "HK"},
+    "H1": {"coverage": "optional", "workpack_directory": "H1"},
+    "CITY": {"coverage": "optional", "workpack_directory": "CITY"},
+    "PA": {"coverage": "required", "workpack_directory": "PA"},
+    "CTX": {"coverage": "none", "workpack_directory": "CTX"},
+    "DW": {"coverage": "optional", "workpack_directory": "DW"},
+    "H2": {"coverage": "optional", "workpack_directory": "H2"},
+    "ART": {"coverage": "none", "workpack_directory": "ART"},
+    "OPS": {"coverage": "none", "workpack_directory": "OPS"}
+  }
+}
