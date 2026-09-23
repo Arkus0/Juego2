@@ -2,7 +2,7 @@
 
 Perform post-PASS DocSync as a **bounded delta reconciliation**, not a second review.
 
-Read `Docs/engineering/PRODUCT_SHA_CLOSURE.md` first. Its Flow Simplification V2 DocSync budget governs this skill.
+Read `Docs/engineering/PRODUCT_SHA_CLOSURE.md` first. Its Flow Simplification V2 DocSync budget governs this skill. Accepted-contract capsule mechanics remain governed by `Docs/engineering/CONTEXT_CAPSULE_V1.md`.
 
 ## Default: zero-commit DocSync
 
@@ -36,10 +36,22 @@ Then:
 
 1. Touch only documents whose effective accepted meaning changed.
 2. Do not copy the same transition into multiple summaries for chronology.
-3. Run only validators applicable to the files actually changed. Capsule validators run only when capsule/index content is genuinely edited.
+3. Run only validators applicable to the files actually changed.
 4. Never rerun product/.NET/Unity tests for documentation-only DocSync.
 5. Do not restart merely because unrelated `main` advanced. Rebase/reconcile only if that movement conflicts with a document you are actually changing.
 6. Persist one bounded DocSync commit/PR, confirm it merged, emit one `DOCSYNC_COMPLETE` marker, and STOP.
+
+If and only if capsule/index content is genuinely edited, run the canonical full CTX-02 validation surface required by `CONTEXT_CAPSULE_V1.md`:
+
+```bash
+python3 scripts/context-capsule-check.py --self-test
+python3 scripts/context-capsule-controls.py
+python3 scripts/context-capsule-omission-controls.py
+python3 scripts/context-capsule-pa-semantic-controls.py
+python3 scripts/context-capsule-check.py --audit-index --repo-root .
+```
+
+These commands are conditional on changing that surface; they are not a mandatory tax after every PASS.
 
 ## Forbidden DocSync churn
 
