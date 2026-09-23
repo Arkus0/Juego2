@@ -165,16 +165,22 @@ def calibration_check(pre, pre_commit, freeze):
              for task in pre["calibration_policy"]["run_order"] for i in (1, 2)]
     require([run.get("slot") for run in results["runs"]] == slots, "CTX calibration count/order/partition violation")
     require(results.get("readiness") == "READY", "calibration results are not READY")
-    require(results["model_config"] == protocol["model_config"] == freeze["model_config"],
-            "acceptance protocol differs from ready calibration")
+    require(results["model_config"] == protocol["model_config"], "calibration result/protocol configuration drift")
+    effective_fields = {"provider", "model", "version", "temperature", "thinking", "tool_policy", "execution_budget", "provider_options"}
+    require(set(freeze["model_config"]) == effective_fields | {"run_policy"}, "acceptance model configuration shape drift")
+    for field in effective_fields:
+        require(freeze["model_config"].get(field) == protocol["model_config"].get(field),
+                f"acceptance effective model/config differs from ready calibration: {field}")
+    require(isinstance(freeze["model_config"].get("run_policy"), str) and "acceptance" in freeze["model_config"]["run_policy"],
+            "acceptance matched-run policy is not explicit")
     for run in results["runs"]:
         task = run["slot"]["task"]
-        require(run.get("provider_request_id") and run.get("model") == freeze["model_config"]["model"],
+        require(run.get("provider_request_id") and run.get("model") == protocol["model_config"]["model"],
                 "calibration model call identity/model missing")
         require(run.get("route") == "CTX", "calibration used DW route")
         request = run.get("request", {})
         task_protocol = protocol["tasks"][task]
-        check_request(request, freeze["model_config"], run["slot"], task_protocol["semantic_question"],
+        check_request(request, protocol["model_config"], run["slot"], task_protocol["semantic_question"],
                       task_protocol["response_contract"], protocol["system_prompt"], None)
         require(request["context_fragments"] == context["contexts"][task],
                 "calibration context differs from frozen CTX context")
@@ -229,7 +235,7 @@ def context_check(freeze, assembly, pre, selected):
                             "unverified non-source fragment")
                     query = f["query_receipt"]
                     argv = query.get("args", [])
-                    require(argv and argv[0] in ("city", "pa-fixture", "pa-finding") and
+                    require(argv and argv[0] in ("city", "pa-fixture", "pa-finding", "pa-disposition") and
                             digest(f["text"].encode()) == query.get("output_sha256"), "typed query receipt/context mismatch")
                     key = tuple(argv)
                     if key not in queries:
@@ -297,6 +303,16 @@ def audit(freeze, transcript, pre, pre_commit, freeze_commit, freeze_digest):
     for record in transcript:
         slot = record["slot"]
         task, pair, route = slot["task"], slot["pair"], slot["route"]
+        invalids = record.get("invalid_attempts", [])
+        require(isinstance(invalids, list) and len(invalids) <= 1, "acceptance invalid-run replacement budget exceeded")
+        if invalids:
+            invalid = invalids[0]
+            require(record.get("attempt") == 2 and invalid.get("slot") == slot and invalid.get("attempt") == 1 and
+                    invalid.get("state") == "RUN_INVALID" and invalid.get("retryable_objective_failure") is True and
+                    invalid.get("exit_code") == 3,
+                    "acceptance replacement was not one frozen objective provider/transport invalid")
+        else:
+            require(record.get("attempt") == 1, "unexpected acceptance attempt number without retained invalid receipt")
         require(record.get("request") and record.get("response"), "missing actual request/response")
         request = record["request"]
         check_request(request, freeze["model_config"], slot, freeze["tasks"][task]["prompt"],
@@ -310,6 +326,7 @@ def audit(freeze, transcript, pre, pre_commit, freeze_commit, freeze_digest):
         response = record["response"]
         require(response.get("provider_request_id") and response.get("raw"), "no provider execution identity/raw response")
         require(response.get("model") == request["model"], "provider returned a different model")
+        require(response.get("resolved_provider") == "OpenAI", "acceptance call escaped the frozen OpenAI serving provider")
         answer = response["raw"].get("answer")
         result = score(freeze["tasks"][task]["oracle"], answer)
         pairs.setdefault((task, pair), {})[route] = result
