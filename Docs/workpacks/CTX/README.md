@@ -65,4 +65,16 @@ Combining all three would make one Reviewer validate context routing, semantic c
 
 `WP-CTX-03 — Structured evidence, quality-preserving context envelope, DocSync and history separation` is **COMPLETE** on final circuit-breaker candidate `8851f3a295c848be5724d5d9b796e00d2037d6e8` (independent PASS review `#5277502546`, PR `#121`, implementation merge `d2cf7145b4ec83c3935286f2d9faeabbcd032148`). Its accepted effective-read-set oracle derives repository-backed mandatory context from profile/route authority, caller omission cannot silently shrink that universe, and new unclassified read surfaces/classes fail closed.
 
-The reviewed CTX-01 → CTX-02 → CTX-03 programme is **COMPLETE**. There is no next CTX workpack. CTX does not semantically block H1/CITY/PA; after this DocSync, the CTX-03 side prerequisite referenced by `WP-DW-04` is accepted, while DW retains all of its own serial and cross-track gates.
+The reviewed CTX-01 → CTX-02 → CTX-03 programme is **COMPLETE**. There is no next standalone CTX compression/process workpack. CTX does not semantically block H1/CITY/PA; the CTX-03 side prerequisite used by DW is accepted.
+
+## Post-program CTX↔DW composition
+
+After accepted `WP-DW-GATE`, a separate cross-track `WP-CTX-DW-GATE` may test the composition of CTX as control/routing plane and DW as selective structured knowledge plane. This does not reopen CTX-01..03 and does not imply general DW adoption.
+
+The composition principle is: **all material information must be discoverable from CTX, but not all material information belongs in DW**. For represented semantic facts, authoritative source > derived DW projection > CTX summary/navigation. For routing/process, accepted CTX effective-read-set, mandatory-read and escalation rules remain authoritative; DW only advises materiality and can never shrink those obligations. A material contradiction forces source-open/rebuild/fail-closed handling.
+
+`WP-CTX-DW-GATE` explicitly does not block H1-03/H1-03A. It also does not assume H1 projection semantics that DW-GATE never proved. H1-04 remains source-first and establishes the real Quaternius/catalogue authority; only after H1-04 PASS may a separate non-product CTX↔DW owner build and independently validate an H1 projection with source-universe completeness, provenance, staleness and deterministic rebuild controls. H1-05 is the first eligible real consumer of that projection when current/material, and H1-06 is the second distinct asset/prefab observation. If the projection is absent or stale, H1 continues through CTX→authoritative sources rather than blocking.
+
+The required fresh public-client AI-agent trial owned by `WP-H1-GATE` remains pure: it uses the H1 public bootstrap/discovery/schemas and is not pre-seeded with Juego2-private CTX/DW knowledge. CTX↔DW agent composition, if measured, is a separate observation and cannot repair or substitute H1-GATE public discoverability.
+
+Detailed H1 integration is recorded in `Docs/workpacks/H1/CTX_DW_ADOPTION_PLAN.md`; future H2 planning input is recorded separately under `Docs/workpacks/H2/CTX_DW_PLANNING_INPUT.md`.
