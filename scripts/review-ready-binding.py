@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Select and validate the current REVIEW_READY binding.
+"""Canonical REVIEW_READY / REVIEW_READY_CLOSED binding oracle.
 
-Normal Candidate Validation binds terminal review state to the validation-context
-digest. Exact-SHA receipt reuse binds it to the stronger reuse-context digest.
-This oracle is shared by closure and PASS transition so those consumers cannot
-drift apart.
+Candidate Validation binds review readiness to validation-context digest. Exact-SHA
+receipt reuse binds it to the stronger reuse-context digest. Closure and PASS use
+this same oracle so the two workflows cannot silently reconstruct different keys.
 """
 from __future__ import annotations
 
@@ -14,13 +13,13 @@ import json
 from pathlib import Path
 import re
 import sys
-import tempfile
 from typing import Any
 
 HERE = Path(__file__).resolve().parent
 SHA_RE = re.compile(r"^[0-9a-f]{40}$", re.I)
 DIGEST_RE = re.compile(r"^[0-9a-f]{64}$", re.I)
 ALLOWED_WORKFLOWS = {"Arkus Candidate Validation", "Arkus Receipt Freeze Reuse"}
+BOT = "github-actions[bot]"
 
 
 class BindingError(ValueError):
@@ -55,7 +54,7 @@ def bool_text(value: Any) -> str:
     return text
 
 
-def parse_marker(body: str) -> dict[str, str | None]:
+def parse_ready(body: str) -> dict[str, str | None]:
     if body.splitlines().count("ARKUS_AUTOMATION_V2") != 1:
         raise BindingError("marker must contain exactly one ARKUS_AUTOMATION_V2 line")
     if field(body, "State") != "REVIEW_READY":
@@ -94,7 +93,7 @@ def current_reuse_digest(pr: dict[str, Any], target_sha: str) -> str:
     return value
 
 
-def validate_marker(
+def validate_ready(
     *,
     body: str,
     pr: dict[str, Any],
@@ -102,7 +101,7 @@ def validate_marker(
     context: dict[str, Any],
     reuse_digest: str | None = None,
 ) -> dict[str, str]:
-    marker = parse_marker(body)
+    marker = parse_ready(body)
     pr_number = pr.get("number")
     if not isinstance(pr_number, int) or pr_number <= 0:
         raise BindingError("PR number missing/invalid")
@@ -163,7 +162,7 @@ def validate_marker(
     }
 
 
-def select_marker(
+def select_ready(
     *,
     comments: list[dict[str, Any]],
     pr: dict[str, Any],
@@ -174,7 +173,7 @@ def select_marker(
     reuse_digest: str | None = None
     candidates: list[tuple[str, int, dict[str, Any], dict[str, str]]] = []
     for comment in comments:
-        if str(((comment.get("user") or {}).get("login") or "")) != "github-actions[bot]":
+        if str(((comment.get("user") or {}).get("login") or "")) != BOT:
             continue
         created = str(comment.get("created_at") or "")
         if before and created and created > before:
@@ -183,10 +182,10 @@ def select_marker(
         if "State: REVIEW_READY" not in body or "ARKUS_AUTOMATION_V2" not in body:
             continue
         try:
-            parsed = parse_marker(body)
+            parsed = parse_ready(body)
             if parsed["validation_workflow"] == "Arkus Receipt Freeze Reuse" and reuse_digest is None:
                 reuse_digest = current_reuse_digest(pr, target_sha)
-            binding = validate_marker(
+            binding = validate_ready(
                 body=body,
                 pr=pr,
                 target_sha=target_sha,
@@ -202,49 +201,118 @@ def select_marker(
     return comment, binding
 
 
+def render_closed(binding: dict[str, str], *, detail: str) -> str:
+    required = (
+        "review_ready_closed_key", "target_sha", "context_digest", "reuse_context_digest",
+        "binding_digest", "validation_run_id", "validation_workflow",
+    )
+    for key in required:
+        if not str(binding.get(key) or ""):
+            raise BindingError(f"binding missing {key}")
+    return "\n".join(
+        [
+            "ARKUS_AUTOMATION_V2",
+            "State: REVIEW_READY_CLOSED",
+            f"Key: {binding['review_ready_closed_key']}",
+            f"Target SHA: {binding['target_sha']}",
+            f"Validation Context Digest: {binding['context_digest']}",
+            f"Reuse Context Digest: {binding['reuse_context_digest']}",
+            f"Review Binding Digest: {binding['binding_digest']}",
+            f"Validation Run ID: {binding['validation_run_id']}",
+            f"Validation Workflow: {binding['validation_workflow']}",
+            f"Detail: {detail}",
+        ]
+    )
+
+
+def validate_closed_body(body: str, binding: dict[str, str]) -> None:
+    if body.splitlines().count("ARKUS_AUTOMATION_V2") != 1:
+        raise BindingError("closed marker must contain exactly one ARKUS_AUTOMATION_V2 line")
+    expected = {
+        "State": "REVIEW_READY_CLOSED",
+        "Key": binding["review_ready_closed_key"],
+        "Target SHA": binding["target_sha"],
+        "Validation Context Digest": binding["context_digest"],
+        "Reuse Context Digest": binding["reuse_context_digest"],
+        "Review Binding Digest": binding["binding_digest"],
+        "Validation Run ID": binding["validation_run_id"],
+        "Validation Workflow": binding["validation_workflow"],
+    }
+    for name, value in expected.items():
+        if field(body, name) != value:
+            raise BindingError(f"closed marker {name} mismatch")
+
+
+def select_closed(
+    comments: list[dict[str, Any]],
+    binding: dict[str, str],
+    *,
+    before: str | None = None,
+) -> dict[str, Any]:
+    candidates: list[tuple[str, int, dict[str, Any]]] = []
+    for comment in comments:
+        if str(((comment.get("user") or {}).get("login") or "")) != BOT:
+            continue
+        created = str(comment.get("created_at") or "")
+        if before and created and created > before:
+            continue
+        body = str(comment.get("body") or "")
+        try:
+            validate_closed_body(body, binding)
+        except BindingError:
+            continue
+        candidates.append((created, int(comment.get("id") or 0), comment))
+    if not candidates:
+        raise BindingError("no matching REVIEW_READY_CLOSED marker predating Reviewer verdict")
+    return max(candidates, key=lambda row: (row[0], row[1]))[2]
+
+
 def self_test() -> None:
     sha = "a" * 40
     context_digest = "c" * 64
     pr = {"number": 77, "head": {"sha": sha}, "draft": False, "body": "WP: WP-HK-00\n"}
-    context = {
-        "wp": "WP-HK-00",
-        "process_only": False,
-        "non_foundational": False,
-        "context_digest": context_digest,
-    }
-    candidate_body = "\n".join(
-        [
-            "ARKUS_AUTOMATION_V2",
-            "State: REVIEW_READY",
-            f"Key: review-ready:77:{sha}:{context_digest}",
-            f"Target SHA: {sha}",
-            "Effective WP: WP-HK-00",
-            "Process Only: false",
-            "Non Foundational: false",
-            f"Validation Context Digest: {context_digest}",
-            "Validation Run ID: 123",
-            "Validation Workflow: Arkus Candidate Validation",
-        ]
-    )
-    got = validate_marker(body=candidate_body, pr=pr, target_sha=sha, context=context)
-    assert got["binding_digest"] == context_digest
+    context = {"wp": "WP-HK-00", "process_only": False, "non_foundational": False, "context_digest": context_digest}
+    candidate_body = "\n".join([
+        "ARKUS_AUTOMATION_V2", "State: REVIEW_READY",
+        f"Key: review-ready:77:{sha}:{context_digest}", f"Target SHA: {sha}",
+        "Effective WP: WP-HK-00", "Process Only: false", "Non Foundational: false",
+        f"Validation Context Digest: {context_digest}", "Validation Run ID: 123",
+        "Validation Workflow: Arkus Candidate Validation",
+    ])
+    candidate = validate_ready(body=candidate_body, pr=pr, target_sha=sha, context=context)
+    assert candidate["binding_digest"] == context_digest
 
     reuse_digest = current_reuse_digest(pr, sha)
     reuse_body = candidate_body.replace(
-        f"Key: review-ready:77:{sha}:{context_digest}",
-        f"Key: review-ready:77:{sha}:{reuse_digest}",
+        f"Key: review-ready:77:{sha}:{context_digest}", f"Key: review-ready:77:{sha}:{reuse_digest}",
     ).replace(
         "Validation Run ID: 123\nValidation Workflow: Arkus Candidate Validation",
         f"Reuse Context Digest: {reuse_digest}\nValidation Run ID: 456\nValidation Workflow: Arkus Receipt Freeze Reuse",
     )
-    got_reuse = validate_marker(
-        body=reuse_body,
-        pr=pr,
-        target_sha=sha,
-        context=context,
-        reuse_digest=reuse_digest,
+    ready_comment = {"id": 10, "created_at": "2026-09-23T03:00:00Z", "user": {"login": BOT}, "body": reuse_body}
+    _comment, reuse_binding = select_ready(comments=[ready_comment], pr=pr, target_sha=sha, context=context)
+    assert reuse_binding["binding_digest"] == reuse_digest
+
+    closed_body = render_closed(reuse_binding, detail="self-test")
+    closed_comment = {"id": 11, "created_at": "2026-09-23T03:01:00Z", "user": {"login": BOT}, "body": closed_body}
+    selected_closed = select_closed([ready_comment, closed_comment], reuse_binding, before="2026-09-23T03:02:00Z")
+    assert selected_closed["id"] == 11
+
+    # This is the exact Reviewer blocker: a CLOSED marker reconstructed from the
+    # ordinary context digest must not authorize PASS for a reuse-bound marker.
+    wrong_closed = closed_body.replace(
+        f"Key: {reuse_binding['review_ready_closed_key']}",
+        f"Key: review-ready-closed:77:{sha}:{context_digest}",
+    ).replace(
+        f"Review Binding Digest: {reuse_digest}",
+        f"Review Binding Digest: {context_digest}",
     )
-    assert got_reuse["binding_digest"] == reuse_digest
+    try:
+        validate_closed_body(wrong_closed, reuse_binding)
+    except BindingError:
+        pass
+    else:
+        raise AssertionError("context-digest CLOSED marker authorized reuse-bound PASS")
 
     for mutated, needle in (
         (reuse_body.replace(reuse_digest, "d" * 64, 1), "key mismatch"),
@@ -252,19 +320,34 @@ def self_test() -> None:
         (candidate_body.replace("Arkus Candidate Validation", "Unknown Validation"), "unsupported validation workflow"),
     ):
         try:
-            validate_marker(body=mutated, pr=pr, target_sha=sha, context=context, reuse_digest=reuse_digest)
+            validate_ready(body=mutated, pr=pr, target_sha=sha, context=context, reuse_digest=reuse_digest)
         except BindingError as exc:
             if needle not in str(exc):
                 raise AssertionError(f"expected {needle!r}, got {exc!r}") from exc
         else:
             raise AssertionError(f"mutation stayed GREEN: {needle}")
-    print("REVIEW_READY_BINDING_SELF_TEST_GREEN")
+    print("REVIEW_READY_BINDING_SELF_TEST_GREEN candidate_and_reuse_closed_pass_path=covered")
+
+
+def load_object(path: str) -> dict[str, Any]:
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        raise BindingError(f"{path}: expected object")
+    return raw
+
+
+def load_list(path: str) -> list[dict[str, Any]]:
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(raw, list):
+        raise BindingError(f"{path}: expected list")
+    return raw
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("self-test")
+
     select = sub.add_parser("select")
     select.add_argument("--comments-json", required=True)
     select.add_argument("--pr-json", required=True)
@@ -273,27 +356,43 @@ def main() -> int:
     select.add_argument("--before")
     select.add_argument("--record", required=True)
     select.add_argument("--marker-record")
+
+    render = sub.add_parser("render-closed")
+    render.add_argument("--binding-record", required=True)
+    render.add_argument("--detail", required=True)
+    render.add_argument("--output", required=True)
+
+    closed = sub.add_parser("closed-check")
+    closed.add_argument("--comments-json", required=True)
+    closed.add_argument("--binding-record", required=True)
+    closed.add_argument("--before")
+    closed.add_argument("--record")
+
     args = parser.parse_args()
     try:
         if args.command == "self-test":
             self_test()
             return 0
-        comments = json.loads(Path(args.comments_json).read_text(encoding="utf-8"))
-        pr = json.loads(Path(args.pr_json).read_text(encoding="utf-8"))
-        context = json.loads(Path(args.context_record).read_text(encoding="utf-8"))
-        if not isinstance(comments, list) or not isinstance(pr, dict) or not isinstance(context, dict):
-            raise BindingError("invalid input JSON shape")
-        marker, binding = select_marker(
-            comments=comments,
-            pr=pr,
-            target_sha=args.target_sha.lower(),
-            context=context,
-            before=args.before,
-        )
-        Path(args.record).write_text(json.dumps(binding, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        if args.marker_record:
-            Path(args.marker_record).write_text(json.dumps(marker, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        print(binding["binding_digest"])
+        if args.command == "select":
+            comments = load_list(args.comments_json)
+            pr = load_object(args.pr_json)
+            context = load_object(args.context_record)
+            marker, binding = select_ready(comments=comments, pr=pr, target_sha=args.target_sha.lower(), context=context, before=args.before)
+            Path(args.record).write_text(json.dumps(binding, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            if args.marker_record:
+                Path(args.marker_record).write_text(json.dumps(marker, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            print(binding["binding_digest"])
+            return 0
+        if args.command == "render-closed":
+            binding = load_object(args.binding_record)
+            Path(args.output).write_text(render_closed(binding, detail=args.detail) + "\n", encoding="utf-8")
+            return 0
+        comments = load_list(args.comments_json)
+        binding = load_object(args.binding_record)
+        marker = select_closed(comments, binding, before=args.before)
+        if args.record:
+            Path(args.record).write_text(json.dumps(marker, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        print(binding["review_ready_closed_key"])
         return 0
     except (BindingError, OSError, json.JSONDecodeError) as exc:
         print(f"REVIEW_READY_BINDING_ERROR: {exc}", file=sys.stderr)
