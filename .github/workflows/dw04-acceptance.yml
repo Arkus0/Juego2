@@ -1,0 +1,242 @@
+name: DW-04 Acceptance Preparation and Campaign
+
+on:
+  pull_request:
+    types: [edited]
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: read
+
+concurrency:
+  group: dw04-acceptance-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  prepare-freeze:
+    name: Materialize acceptance freeze
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 campaign: PREPARE_FREEZE')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      ARKUS_EXECUTION_SUBSTRATE: github-actions-ubuntu-24.04
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+      - name: Validate exact freeze request
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test "${PR_NUMBER}" = "150"
+          marker="DW04 campaign: PREPARE_FREEZE ${TARGET_SHA}"
+          jq -e --arg marker "${marker}" '.pull_request.draft == true and ((.pull_request.body // "") | contains($marker))' "${GITHUB_EVENT_PATH}" >/dev/null
+          test ! -e Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json
+      - name: Re-prove pre-acceptance observation
+        env:
+          ARKUS_WP: WP-DW-04
+        run: bash scripts/dw04-observe-exact-sha.sh "${TARGET_SHA}"
+      - name: Materialize deterministic acceptance freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/observed/dw04-freeze
+          python3 scripts/dw04-prepare-acceptance.py freeze --output artifacts/observed/dw04-freeze/TASK_SELECTION_FREEZE.json
+      - name: Upload acceptance freeze candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dw04-acceptance-freeze-${{ env.TARGET_SHA }}-${{ github.run_id }}
+          path: artifacts/observed/dw04-freeze
+          retention-days: 30
+
+  assemble:
+    name: Assemble frozen CTX and DW contexts
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 campaign: ASSEMBLY')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+      - name: Validate exact assembly request
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test "${PR_NUMBER}" = "150"
+          marker="DW04 campaign: ASSEMBLY ${TARGET_SHA}"
+          jq -e --arg marker "${marker}" '.pull_request.draft == true and ((.pull_request.body // "") | contains($marker))' "${GITHUB_EVENT_PATH}" >/dev/null
+          test -f Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json
+          test ! -e Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+      - name: Install pinned .NET SDK
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+      - name: Build frozen retrieval adapter
+        run: dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj -c Release -m:1 --disable-build-servers
+      - name: Assemble and structurally score both routes
+        id: assembly
+        shell: bash
+        run: |
+          set +e
+          freeze_commit="$(git log --diff-filter=A --format=%H -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json | tail -n 1)"
+          mkdir -p artifacts/observed/dw04-assembly
+          python3 scripts/dw04-prepare-acceptance.py assemble \
+            --freeze-commit "${freeze_commit}" \
+            --output artifacts/observed/dw04-assembly/CONTEXT_ASSEMBLY.json
+          code=$?
+          echo "exit_code=${code}" >> "${GITHUB_OUTPUT}"
+          exit 0
+      - name: Upload complete assembly evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dw04-context-assembly-${{ env.TARGET_SHA }}-${{ github.run_id }}
+          path: artifacts/observed/dw04-assembly
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Enforce structural and byte threshold before model calls
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.assembly.outputs.exit_code }}" = "0"
+          jq -e '.pre_execution_measurement.structural == true and .pre_execution_measurement.saving >= .pre_execution_measurement.threshold' \
+            artifacts/observed/dw04-assembly/CONTEXT_ASSEMBLY.json >/dev/null
+
+  acceptance:
+    name: Frozen 18-pair acceptance campaign
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 campaign: ACCEPTANCE')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PRECALIBRATION_COMMIT: 9cbed950a3469897cf286c9a90624c240701528f
+      ARKUS_EXECUTION_SUBSTRATE: github-actions-ubuntu-24.04
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+      - name: Validate exact acceptance request and committed freezes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test "${PR_NUMBER}" = "150"
+          marker="DW04 campaign: ACCEPTANCE ${TARGET_SHA}"
+          jq -e --arg marker "${marker}" '.pull_request.draft == true and ((.pull_request.body // "") | contains($marker))' "${GITHUB_EVENT_PATH}" >/dev/null
+          test -f Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json
+          test -f Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+          freeze_commit="$(git log --diff-filter=A --format=%H -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json | tail -n 1)"
+          assembly_commit="$(git log --diff-filter=A --format=%H -- Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json | tail -n 1)"
+          test -n "${freeze_commit}" && test -n "${assembly_commit}"
+          git merge-base --is-ancestor "${freeze_commit}" "${assembly_commit}"
+          git diff --exit-code "${freeze_commit}" HEAD -- Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json
+          git diff --exit-code "${assembly_commit}" HEAD -- Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json
+          echo "FREEZE_COMMIT=${freeze_commit}" >> "${GITHUB_ENV}"
+          echo "ASSEMBLY_COMMIT=${assembly_commit}" >> "${GITHUB_ENV}"
+      - name: Require provider credential
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: test -n "${OPENROUTER_API_KEY}"
+      - name: Install pinned .NET SDK
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+      - name: Re-prove exact acceptance candidate
+        env:
+          ARKUS_WP: WP-DW-04
+        run: bash scripts/dw04-observe-exact-sha.sh "${TARGET_SHA}"
+      - name: Claim unique durable acceptance campaign
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="repos/${GITHUB_REPOSITORY}/commits/${TARGET_SHA}/check-runs"
+          existing="$(gh api -H 'Accept: application/vnd.github+json' "${api}" --jq '[.check_runs[] | select(.name == "DW-04 acceptance campaign start")] | length')"
+          test "${existing}" = "0" || { echo "::error::acceptance campaign already claimed on ${TARGET_SHA}"; exit 20; }
+          campaign_id="github-actions:${GITHUB_REPOSITORY}:pr${PR_NUMBER}:sha${TARGET_SHA}:run${GITHUB_RUN_ID}:acceptance"
+          echo "DW04_CAMPAIGN_ID=${campaign_id}" >> "${GITHUB_ENV}"
+          summary="DW-04 frozen acceptance claimed before provider calls. PR #${PR_NUMBER}; candidate ${TARGET_SHA}; freeze ${FREEZE_COMMIT}; assembly ${ASSEMBLY_COMMIT}; run ${GITHUB_RUN_ID}."
+          jq -n --arg name 'DW-04 acceptance campaign start' --arg head_sha "${TARGET_SHA}" --arg external_id "${campaign_id}" --arg summary "${summary}" \
+            '{name:$name,head_sha:$head_sha,external_id:$external_id,status:"completed",conclusion:"neutral",output:{title:"DW-04 acceptance campaign claimed",summary:$summary}}' \
+            | gh api --method POST -H 'Accept: application/vnd.github+json' "repos/${GITHUB_REPOSITORY}/check-runs" --input - >/dev/null
+      - name: Execute frozen 36-call campaign
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/observed/dw04-acceptance
+          python3 scripts/dw04-execute.py \
+            --pre-commit "${PRECALIBRATION_COMMIT}" \
+            --freeze-commit "${FREEZE_COMMIT}" \
+            --assembly-commit "${ASSEMBLY_COMMIT}" \
+            --output artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl
+      - name: Deterministically audit complete transcript
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/dw04-trial.py audit \
+            --pre-commit "${PRECALIBRATION_COMMIT}" \
+            --freeze-commit "${FREEZE_COMMIT}" \
+            --transcript artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl \
+            > artifacts/observed/dw04-acceptance/TRIAL_RESULT.json
+      - name: Write campaign receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          transcript='artifacts/observed/dw04-acceptance/ACCEPTANCE_TRANSCRIPT.jsonl'
+          digest="$(sha256sum "${transcript}" | awk '{print $1}')"
+          ids="$(jq -s '[.[].response.provider_request_id]' "${transcript}")"
+          invalids="$(jq -s '[.[].invalid_attempts[]?] | length' "${transcript}")"
+          jq -n \
+            --arg schema 'dw04-campaign-receipt-v1' \
+            --arg repository "${GITHUB_REPOSITORY}" \
+            --arg candidate_sha "${TARGET_SHA}" \
+            --arg freeze_commit "${FREEZE_COMMIT}" \
+            --arg assembly_commit "${ASSEMBLY_COMMIT}" \
+            --arg transcript_sha256 "${digest}" \
+            --arg campaign_id "${DW04_CAMPAIGN_ID}" \
+            --argjson workflow_run_id "${GITHUB_RUN_ID}" \
+            --argjson provider_request_ids "${ids}" \
+            --argjson invalid_attempt_count "${invalids}" \
+            '{schema:$schema,repository:$repository,phase:"acceptance",candidate_sha:$candidate_sha,freeze_commit:$freeze_commit,assembly_commit:$assembly_commit,workflow_run_id:$workflow_run_id,campaign_id:$campaign_id,transcript_sha256:$transcript_sha256,provider_request_ids:$provider_request_ids,invalid_attempt_count:$invalid_attempt_count}' \
+            > artifacts/observed/dw04-acceptance/CAMPAIGN_RECEIPT.json
+          test "$(jq 'length' <<<"${ids}")" = "36"
+          test "$(jq 'unique | length' <<<"${ids}")" = "36"
+      - name: Enforce final campaign disposition
+        shell: bash
+        run: jq -e '.disposition == "PASS" and .structural == true and .saving >= 0.30' artifacts/observed/dw04-acceptance/TRIAL_RESULT.json >/dev/null
+      - name: Upload complete acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dw04-acceptance-${{ env.TARGET_SHA }}-${{ github.run_id }}
+          path: artifacts/observed/dw04-acceptance
+          if-no-files-found: warn
+          retention-days: 30
