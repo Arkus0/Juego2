@@ -10,6 +10,8 @@ CLOSURE = ROOT / ".github/workflows/review-ready-closure.yml"
 TRANSITIONS = ROOT / ".github/workflows/state-transitions.yml"
 REUSE = ROOT / ".github/workflows/receipt-freeze-reuse.yml"
 TELEGRAM = ROOT / ".github/workflows/telegram-notify.yml"
+RAW_SUPPRESSION = "if marker_state == 'REVIEW_READY':\n                      sys.exit(0)"
+CLOSED_PROMOTION = "state = 'REVIEW_READY' if marker_state == 'REVIEW_READY_CLOSED' else marker_state"
 
 
 def closure_errors(text: str) -> list[str]:
@@ -51,11 +53,16 @@ def reuse_errors(text: str) -> list[str]:
 
 
 def telegram_errors(text: str) -> list[str]:
-    required = {
-        "repository-dispatch raw suppression": "if marker_state == 'REVIEW_READY':\n                      sys.exit(0)",
-        "repository-dispatch closed promotion": "state = 'REVIEW_READY' if marker_state == 'REVIEW_READY_CLOSED' else marker_state",
-    }
-    return [label for label, needle in required.items() if needle not in text]
+    errors: list[str] = []
+    # Telegram has two transports that can carry automation markers:
+    # repository_dispatch and issue_comment. Both must suppress raw REVIEW_READY
+    # and promote CLOSED. Requiring two occurrences prevents one path from
+    # accidentally satisfying the other's control.
+    if text.count(RAW_SUPPRESSION) != 2:
+        errors.append(f"expected raw REVIEW_READY suppression in both Telegram paths, got {text.count(RAW_SUPPRESSION)}")
+    if text.count(CLOSED_PROMOTION) != 2:
+        errors.append(f"expected CLOSED promotion in both Telegram paths, got {text.count(CLOSED_PROMOTION)}")
+    return errors
 
 
 def mutate_must_red(text: str, old: str, new: str, checker, label: str) -> None:
@@ -104,10 +111,10 @@ def main() -> int:
             raise AssertionError("raw receipt-reuse dispatch stayed GREEN")
         mutate_must_red(
             telegram,
-            "if marker_state == 'REVIEW_READY':\n                      sys.exit(0)",
+            RAW_SUPPRESSION,
             "if marker_state == 'NEVER':\n                      sys.exit(0)",
             telegram_errors,
-            "Telegram re-enables raw REVIEW_READY repository dispatch",
+            "Telegram re-enables raw REVIEW_READY on one transport",
         )
         print("REVIEW_READY_INTEGRATION_CONTROLS_GREEN")
         return 0
