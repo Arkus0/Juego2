@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""Regression guard for Arkus Main Safety pull-request coverage.
+"""Regression guard for Arkus Main Safety pull-request execution coverage.
 
-Main Safety must run on every pull request. A path allow-list cannot prove completeness because
-MSBuild, analyzers, generators and project metadata can make arbitrary repository files material
-to restore/build/test. This checker therefore rejects any nested pull_request filter so future
-edits cannot silently reintroduce a false-green class by omitting a build-affecting path.
+Main Safety must run on every pull request. Trigger filters are insufficient because arbitrary
+repository files can become build inputs, and an unconditional trigger is still not enough if
+the safety job itself is gated. This checker therefore protects both the unfiltered PR trigger
+and the unconditional, fail-closed `jobs.build-test` execution path.
 """
 
 from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import re
 import sys
 
 WORKFLOW = Path(".github/workflows/main-safety.yml")
@@ -20,8 +21,24 @@ def _indent(line: str) -> int:
     return len(line) - len(line.lstrip(" "))
 
 
-def validate(text: str) -> list[str]:
-    lines = text.splitlines()
+def _find_direct_child(
+    lines: list[str], parent_index: int, parent_indent: int, key: str
+) -> tuple[int | None, int | None]:
+    """Find an exact YAML mapping key directly below a parent indentation level."""
+    for index in range(parent_index + 1, len(lines)):
+        raw = lines[index]
+        stripped = raw.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        indent = _indent(raw)
+        if indent <= parent_indent:
+            break
+        if indent == parent_indent + 2 and stripped == f"{key}:":
+            return index, indent
+    return None, None
+
+
+def _validate_unfiltered_pull_request(lines: list[str]) -> list[str]:
     errors: list[str] = []
 
     on_index = None
@@ -69,6 +86,51 @@ def validate(text: str) -> list[str]:
     return errors
 
 
+def _validate_unconditional_build_test(lines: list[str]) -> list[str]:
+    """Require the canonical Main Safety job to be an unconditional fail-closed PR gate."""
+    errors: list[str] = []
+
+    jobs_index = None
+    jobs_indent = None
+    for index, raw in enumerate(lines):
+        if raw.strip() == "jobs:":
+            jobs_index = index
+            jobs_indent = _indent(raw)
+            break
+    if jobs_index is None or jobs_indent is None:
+        return ["missing top-level jobs: block"]
+
+    job_index, job_indent = _find_direct_child(lines, jobs_index, jobs_indent, "build-test")
+    if job_index is None or job_indent is None:
+        return ["jobs block does not declare build-test safety job"]
+
+    property_indent = job_indent + 2
+    for index in range(job_index + 1, len(lines)):
+        raw = lines[index]
+        stripped = raw.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        indent = _indent(raw)
+        if indent <= job_indent:
+            break
+        if indent != property_indent:
+            continue
+
+        if stripped.startswith("if:"):
+            errors.append("jobs.build-test must not declare if:; Main Safety must run on every PR")
+        elif stripped.startswith("needs:"):
+            errors.append("jobs.build-test must not depend on another job that can suppress PR execution")
+        elif re.match(r"^continue-on-error\s*:\s*true\s*$", stripped, re.IGNORECASE):
+            errors.append("jobs.build-test must fail closed; continue-on-error: true is forbidden")
+
+    return errors
+
+
+def validate(text: str) -> list[str]:
+    lines = text.splitlines()
+    return _validate_unfiltered_pull_request(lines) + _validate_unconditional_build_test(lines)
+
+
 def self_test() -> None:
     good = """on:
   push:
@@ -76,8 +138,16 @@ def self_test() -> None:
   # All PRs must execute Main Safety.
   pull_request:
   workflow_dispatch:
+
+jobs:
+  build-test:
+    name: Safety build and test
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Restore
+        run: dotnet restore Juego2.sln --locked-mode
 """
-    assert validate(good) == []
+    assert validate(good) == [], validate(good)
 
     filtered_cases = (
         "paths:\n      - 'src/**'",
@@ -96,9 +166,27 @@ def self_test() -> None:
         if not validate(broken):
             raise AssertionError(f"self-test accepted inline pull_request configuration: {inline}")
 
-    missing = good.replace("  pull_request:\n", "")
-    if not validate(missing):
+    missing_trigger = good.replace("  pull_request:\n", "")
+    if not validate(missing_trigger):
         raise AssertionError("self-test accepted workflow without pull_request trigger")
+
+    missing_job = good.replace("  build-test:\n", "  other-job:\n")
+    if not validate(missing_job):
+        raise AssertionError("self-test accepted workflow without canonical build-test job")
+
+    job_guards = (
+        "    if: github.event_name == 'push'\n",
+        "    if: github.event_name != 'pull_request'\n",
+        "    needs: gate\n",
+        "    continue-on-error: true\n",
+    )
+    for guard in job_guards:
+        broken = good.replace(
+            "    name: Safety build and test\n",
+            guard + "    name: Safety build and test\n",
+        )
+        if not validate(broken):
+            raise AssertionError(f"self-test accepted suppressing/non-blocking build-test guard: {guard.strip()}")
 
 
 def main() -> int:
