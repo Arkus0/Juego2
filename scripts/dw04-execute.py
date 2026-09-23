@@ -27,6 +27,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--pre-commit", required=True)
     parser.add_argument("--freeze-commit", required=True)
+    parser.add_argument("--assembly-commit", required=True)
     parser.add_argument("--output", required=True, help="new, nonexistent transcript path")
     args = parser.parse_args()
     pre, _ = trial.frozen_file(args.pre_commit, trial.PRE)
@@ -38,6 +39,10 @@ def main():
     trial.require(freeze["scorer_sha256"] == trial.digest((ROOT / "scripts/dw04-trial.py").read_bytes()),
                   "scorer changed after freeze")
     trial.calibration_check(pre, args.pre_commit, freeze)
+    trial.ancestor(args.freeze_commit, args.assembly_commit)
+    assembly, assembly_sha = trial.frozen_file(args.assembly_commit, trial.ASSEMBLY)
+    trial.require(assembly["freeze_commit"] == args.freeze_commit and assembly["freeze_sha256"] == freeze_sha,
+                  "assembly must descend from the selection freeze before acceptance calls")
     adapter = freeze["provider_adapter"]
     command = adapter["command"]
     trial.require(isinstance(command, list) and command and all(isinstance(x, str) for x in command),
@@ -46,8 +51,8 @@ def main():
     trial.require(executable.is_file() and hashlib.sha256(executable.read_bytes()).hexdigest() == adapter["executable_sha256"],
                   "provider adapter binary/script changed after freeze")
     trial.require(not pathlib.Path(args.output).exists(), "transcript path already exists; no overwrite/rerun")
-    trial.require(set(freeze["contexts"]) == set(selected), "unfrozen route context set")
-    trial.require(trial.context_check(freeze, pre, selected), "structural source/fallback completeness RED before any model call")
+    trial.require(trial.context_check(freeze, assembly, pre, selected),
+                  "structural source/fallback completeness RED before any model call")
     # Exclusive creation happens before the first call. An interrupted campaign is
     # retained as partial evidence; never resume from selected successful slots.
     fd = os.open(args.output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -56,7 +61,7 @@ def main():
         with os.fdopen(fd, "w", encoding="utf-8") as log:
             for slot in freeze["slots"]:
                 task, route = slot["task"], slot["route"]
-                context = freeze["contexts"][task][route]
+                context = assembly["contexts"][task][route]
                 request = dict(freeze["model_config"])
                 request.update({"task_prompt": freeze["tasks"][task]["prompt"],
                                 "system_prompt": freeze["system_prompt"],
@@ -71,7 +76,8 @@ def main():
                     record = {"slot": slot, "state": "RUN_INVALID", "started": started, "ended": ended,
                               "exit_code": completed.returncode,
                               "stderr_sha256": hashlib.sha256(completed.stderr).hexdigest(),
-                              "freeze_commit": args.freeze_commit, "freeze_sha256": freeze_sha}
+                              "freeze_commit": args.freeze_commit, "freeze_sha256": freeze_sha,
+                              "assembly_commit": args.assembly_commit, "assembly_sha256": assembly_sha}
                     log.write(json.dumps(record, ensure_ascii=False) + "\n")
                     log.flush()
                     raise trial.ProtocolError("provider failed; preserve partial evidence and apply only frozen invalid-run policy")
@@ -85,7 +91,8 @@ def main():
                 record = {"slot": slot, "request": request, "request_sha256": trial.digest(trial.canonical(request)),
                           "response": response, "injected_source_bytes": sum(len(f["text"].encode("utf-8")) for f in context),
                           "started": started, "ended": ended, "freeze_commit": args.freeze_commit,
-                          "freeze_sha256": freeze_sha}
+                          "freeze_sha256": freeze_sha, "assembly_commit": args.assembly_commit,
+                          "assembly_sha256": assembly_sha}
                 records.append(record)
                 log.write(json.dumps(record, ensure_ascii=False) + "\n")
                 log.flush()

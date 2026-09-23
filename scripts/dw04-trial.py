@@ -20,6 +20,7 @@ CAL_ORACLES = "Docs/evidence/WP-DW-04/CALIBRATION_ORACLES.json"
 SOURCE_ORACLES = "Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json"
 CAL_RESULTS = "Docs/evidence/WP-DW-04/CALIBRATION_RESULTS.json"
 FREEZE = "Docs/evidence/WP-DW-04/TASK_SELECTION_FREEZE.json"
+ASSEMBLY = "Docs/evidence/WP-DW-04/CONTEXT_ASSEMBLY.json"
 
 
 class ProtocolError(ValueError):
@@ -157,22 +158,29 @@ def decide(pair_rows, structural, savings):
     return "PASS" if savings >= 0.30 else "FAIL"
 
 
-def context_check(freeze, pre, selected):
+def context_check(freeze, assembly, pre, selected):
     """Replay the actual typed-query path and compare required source literals.
 
     Must run before the first model call. Repeating here at scoring time detects
     assembly drift, but cannot replace the pre-execution check.
     """
-    require(set(freeze["contexts"]) == set(selected), "context task universe changed")
+    require(set(assembly["contexts"]) == set(selected), "context task universe changed")
+    require(set(freeze["context_plan"]) == set(selected), "context-plan task universe changed")
     queries = {}
     complete = True
     task_index = {t["id"]: t for t in pre["eligible_tasks"]}
     for task in selected:
         anchors = {a.partition("#")[0] for a in task_index[task]["anchors"]}
-        require(set(freeze["contexts"][task]) == {"CTX", "DW"}, "missing or extra context route")
+        require(set(assembly["contexts"][task]) == set(freeze["context_plan"][task]) == {"CTX", "DW"},
+                "missing or extra context route")
         for route in ("CTX", "DW"):
-            context = freeze["contexts"][task][route]
+            context = assembly["contexts"][task][route]
             require(isinstance(context, list) and context, "empty route context")
+            described = [{"id": f.get("id"), "source_path": f.get("source_path"),
+                          "origin": f.get("origin"), "selector": f.get("selector"),
+                          "query_args": f.get("query_receipt", {}).get("args")}
+                         for f in context]
+            require(described == freeze["context_plan"][task][route], "context source/query plan changed after freeze")
             require({f["source_path"] for f in context} <= anchors, "baseline inflated with unrelated authority")
             if route == "CTX":
                 for path in anchors:
@@ -185,7 +193,8 @@ def context_check(freeze, pre, selected):
                         and f.get("id") and isinstance(f.get("text"), str), "unbound source/context fragment")
                 source = git("show", f"{pre['baseline_sha']}:{path}").decode("utf-8")
                 if f.get("origin") == "source_excerpt":
-                    require(f["text"] in source, "source excerpt did not come from accepted source bytes")
+                    require(f.get("selector") and f["selector"] in f["text"] and f["text"] in source,
+                            "source excerpt is outside frozen selector or accepted source bytes")
                 else:
                     require(f.get("origin") == "dw_query" and route == "DW" and f.get("query_receipt"),
                             "unverified non-source fragment")
@@ -231,7 +240,6 @@ def audit(freeze, transcript, pre, pre_commit, freeze_commit, freeze_digest):
                     f"oracle or structural requirement modified after calibration/results: {task}/{field}")
     require(freeze["slots"] == make_slots(selected), "18 matched pairs/36 slot order changed")
     require(set(freeze["pair_seeds"]) == {"R1", "R2", "R3"}, "three matched seeds/identities required")
-    structural = context_check(freeze, pre, selected)
     require(freeze["precalibration_commit"] == pre_commit, "pre-calibration identity changed")
     require(freeze["scorer_sha256"] == digest((ROOT / "scripts/dw04-trial.py").read_bytes()), "scorer modified after freeze")
     require(freeze["context_reduction_min"] == 0.30 and freeze["correctness"] == "all_36", "threshold weakened")
@@ -240,8 +248,17 @@ def audit(freeze, transcript, pre, pre_commit, freeze_commit, freeze_digest):
     ancestor(freeze["calibration_commit"], freeze_commit)
     require(len(transcript) == 36, "missing, added or adaptively rerun acceptance execution")
     require([x.get("slot") for x in transcript] == freeze["slots"], "slot order or identity changed")
+    assembly_commits = {x.get("assembly_commit") for x in transcript}
+    require(len(assembly_commits) == 1 and next(iter(assembly_commits)), "acceptance contexts have multiple/missing assembly versions")
+    assembly_commit = next(iter(assembly_commits))
+    ancestor(freeze_commit, assembly_commit)
+    assembly, assembly_sha = frozen_file(assembly_commit, ASSEMBLY)
+    require(assembly["freeze_commit"] == freeze_commit and assembly["freeze_sha256"] == freeze_digest,
+            "context assembly predates or disagrees with the task-selection freeze")
+    structural = context_check(freeze, assembly, pre, selected)
     require(all(x.get("freeze_commit") == freeze_commit and x.get("freeze_sha256") == freeze_digest for x in transcript),
             "run not bound to immutable pre-result freeze")
+    require(all(x.get("assembly_sha256") == assembly_sha for x in transcript), "context assembly modified after runs")
     pairs, bytes_ctx, bytes_dw = {}, [], []
     for record in transcript:
         slot = record["slot"]
@@ -262,7 +279,7 @@ def audit(freeze, transcript, pre, pre_commit, freeze_commit, freeze_digest):
         require(request.get("slot") == slot, "provider request slot drift")
         context = request.get("context_fragments")
         require(isinstance(context, list) and context, "no auditable context fragments")
-        require(context == freeze["contexts"][task][route], "context changed after acceptance freeze")
+        require(context == assembly["contexts"][task][route], "context changed after frozen assembly")
         context_bytes = sum(len(f["text"].encode("utf-8")) for f in context)
         require(record.get("injected_source_bytes") == context_bytes, "source-open bytes excluded or inflated")
         require(record.get("request_sha256") == digest(canonical(request)), "effective provider request differs from logged request")

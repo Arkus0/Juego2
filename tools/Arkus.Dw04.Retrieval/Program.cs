@@ -23,7 +23,12 @@ if (args[1] == "city" && args.Length == 3)
     var source = Read(CityProductionQueryProvider.ProgrammeSourcePath);
     var dataset = new CityProductionQueryProvider().BuildAndValidate(source);
     var row = dataset.Queries.AllSubjects.Single(x => x.FactId == args[2]);
-    var sourceRow = source.Split('\n').Single(x => x.StartsWith("| `" + row.FactId + "` |", StringComparison.Ordinal));
+    var ledgerStart = source.IndexOf("## 4. District × location programme", StringComparison.Ordinal);
+    var ledgerEnd = source.IndexOf("### 4.1 Required-domain coverage", ledgerStart, StringComparison.Ordinal);
+    if (ledgerStart < 0 || ledgerEnd <= ledgerStart)
+        throw new InvalidDataException("Accepted CITY-02 §4 ledger boundaries missing");
+    var sourceRow = source.Substring(ledgerStart, ledgerEnd - ledgerStart).Split('\n')
+        .Single(x => x.StartsWith("| `" + row.FactId + "` |", StringComparison.Ordinal));
     Console.WriteLine(JsonSerializer.Serialize(new
     {
         row.FactId, row.District, row.Label, row.Importance,
