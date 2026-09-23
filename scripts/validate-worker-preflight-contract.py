@@ -24,22 +24,37 @@ SURFACES = {
 }
 
 LOCKED_RESTORE = "dotnet restore Juego2.sln --locked-mode"
+RESTORE_LITERAL = "dotnet restore Juego2.sln"
 
 
-def _has_executable_command(text: str, command: str) -> bool:
-    """Require the command as executable shell/YAML-run content, not a text decoy.
-
-    Batch A's regression contract is intentionally strict here: the current executors run
-    restore as a standalone shell line. Keeping the literal only in a comment, echo, prose,
-    variable or other non-executed text must not satisfy the guard.
-    """
+def _effective_lines(text: str) -> list[str]:
+    """Return non-comment lines, normalizing one-line GitHub Actions `run:` commands."""
+    effective: list[str] = []
     for raw in text.splitlines():
         stripped = raw.strip()
         if not stripped or stripped.startswith("#"):
             continue
-        if stripped == command or stripped == f"run: {command}":
-            return True
-    return False
+        if stripped.startswith("run: "):
+            stripped = stripped[len("run: ") :].strip()
+        effective.append(stripped)
+    return effective
+
+
+def _validate_locked_restore(text: str, surface: str) -> list[str]:
+    """Require canonical locked restore and reject executable/textual restore decoys.
+
+    The Batch A surfaces intentionally keep restore as a direct standalone command. A comment,
+    echo, wrapper, unlocked restore, or second non-canonical restore must not be able to preserve
+    the literal and satisfy the regression guard.
+    """
+    mentions = [line for line in _effective_lines(text) if RESTORE_LITERAL in line]
+    errors: list[str] = []
+    if LOCKED_RESTORE not in mentions:
+        errors.append(f"{surface} must execute canonical locked restore")
+    unexpected = [line for line in mentions if line != LOCKED_RESTORE]
+    if unexpected:
+        errors.append(f"{surface} contains non-canonical restore content: {unexpected[0]!r}")
+    return errors
 
 
 def validate_texts(texts: dict[str, str]) -> list[str]:
@@ -63,8 +78,7 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
     for token in local_required:
         if token not in local:
             errors.append(f"local preflight missing {token!r}")
-    if not _has_executable_command(local, LOCKED_RESTORE):
-        errors.append("local preflight must execute locked restore")
+    errors.extend(_validate_locked_restore(local, "local preflight"))
 
     workflow_required = [
         "pull_request:",
@@ -83,11 +97,8 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
     for token in workflow_required:
         if token not in workflow:
             errors.append(f"delegated workflow missing {token!r}")
-    if not _has_executable_command(workflow, LOCKED_RESTORE):
-        errors.append("delegated workflow must execute locked restore")
-
-    if not _has_executable_command(main_safety, LOCKED_RESTORE):
-        errors.append("Main Safety must execute locked restore")
+    errors.extend(_validate_locked_restore(workflow, "delegated workflow"))
+    errors.extend(_validate_locked_restore(main_safety, "Main Safety"))
 
     for name, text in (
         ("implement", implement),
@@ -144,7 +155,7 @@ gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\"
 WORKER_PREFLIGHT_DELEGATED_GREEN
 Workflow run ID:
 """,
-        "main_safety": "dotnet restore Juego2.sln --locked-mode\n",
+        "main_safety": "run: dotnet restore Juego2.sln --locked-mode\n",
         "implement": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
         "repair": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
         "protocol": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
@@ -154,10 +165,10 @@ Workflow run ID:
 
     mutations = [
         ("local", "WORKER_PREFLIGHT_DELEGATION_REQUIRED", ""),
-        ("local", LOCKED_RESTORE, "dotnet restore Juego2.sln"),
+        ("local", LOCKED_RESTORE, RESTORE_LITERAL),
         ("workflow", "ref: ${{ github.event.pull_request.head.sha }}", "ref: main"),
-        ("workflow", LOCKED_RESTORE, "dotnet restore Juego2.sln"),
-        ("main_safety", LOCKED_RESTORE, "dotnet restore Juego2.sln"),
+        ("workflow", LOCKED_RESTORE, RESTORE_LITERAL),
+        ("main_safety", LOCKED_RESTORE, RESTORE_LITERAL),
         ("workflow", "SIMULATED_CHAT_WORKER_DELEGATION_GREEN", ""),
         ("workflow", "gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\"", ""),
         ("protocol", "WORKER_PREFLIGHT_DELEGATED_GREEN", ""),
@@ -170,14 +181,17 @@ Workflow run ID:
             raise AssertionError(f"self-test failed to reject mutation {name}:{old}")
 
     for name in ("local", "workflow", "main_safety"):
-        for decoy in (
-            f"# {LOCKED_RESTORE}\ndotnet restore Juego2.sln",
-            f"echo '{LOCKED_RESTORE}'\ndotnet restore Juego2.sln",
-        ):
+        decoys = (
+            f"# {LOCKED_RESTORE}\n{RESTORE_LITERAL}",
+            f"echo '{LOCKED_RESTORE}'\n{RESTORE_LITERAL}",
+            f"{LOCKED_RESTORE}\n{RESTORE_LITERAL}",
+            f"bash -c '{RESTORE_LITERAL}'\n{LOCKED_RESTORE}",
+        )
+        for decoy in decoys:
             broken = dict(base)
             broken[name] = broken[name].replace(LOCKED_RESTORE, decoy)
             if not validate_texts(broken):
-                raise AssertionError(f"self-test accepted non-executable locked-restore decoy in {name}")
+                raise AssertionError(f"self-test accepted non-canonical restore decoy in {name}")
 
     broken = dict(base)
     broken["protocol"] += " GitHub Actions run is not a substitute for this Worker-environment gate"
