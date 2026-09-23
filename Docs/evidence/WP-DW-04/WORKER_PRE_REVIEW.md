@@ -2,19 +2,39 @@
 
 WORKER_PRE_REVIEW: NOT_READY
 FOUNDATIONAL_PROOF_VERDICT: NOT_READY
-TRUST_BOUNDARY: accepted Git/source blobs and accepted DW providers; actual provider adapter/request/response identity must be externally auditable
+TRUST_BOUNDARY: accepted Git/source blobs and accepted DW providers; actual OpenRouter/DeepSeek request-response identity must be externally auditable
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
-## Causal challenges already applied
+## Causal challenges already closed before calibration
 
-- A corpus selected from DW query results could silently shrink: RED via independently enumerated source-anchored twelve-task catalogue, immutable pre-result commit and exact six-task selection.
-- Calibration could leak acceptance tasks or transfer a successful calibration task: disjoint IDs/anchors, CTX-only calibration policy, eight designated slots and ancestry checks; **effective provider calls are not yet present**, so this is preparatory rather than complete proof.
-- Expected claims could be copied from the model or adjusted after outcomes: calibration and acceptance source oracles were written before model calls; scorer consumes their exact pre-result Git objects. Their correctness still needs independent source review.
-- A 2/3 apparent win or shared baseline instability could be mislabeled PASS: pure decision controls turn a single CTX-pass/DW-fail into FAIL and shared misses into INCONCLUSIVE. No majority or selective semantic rerun path is implemented.
-- Context bytes could omit source fallback or compare unequal configuration: acceptance audit recalculates every fragment's UTF-8 bytes, compares frozen contexts/requests/seed-or-slot identities, and replays typed queries. The concrete contexts and actual provider requests have yet to exist.
-- CTX could be inflated to win savings: only accepted task-anchor paths are permitted and a largely unrelated full document is rejected. A fresh reviewer must still challenge whether each concrete CTX excerpt follows the accepted bounded-read rule. The current simple CITY tasks may produce little or no genuine saving.
-- A fabricated provider adapter could emit expected answers without model work: the required concrete provider adapter, raw provider IDs/time, exact executable/dependencies and external run evidence are still missing. This is a blocking in-claim class until real execution and source review establish it.
-- A favorable second campaign could be run under a different local output filename: the exclusive JSONL create guards only one path. A durable unique start marker tied to the freeze/PR and independently auditable provider-side request inventory are required before running acceptance. No selective campaign after semantic outcomes may be accepted.
-- A route could be run on acceptance questions while drafting the selection freeze: the freeze now contains only source/query recipes; `CONTEXT_ASSEMBLY.json` must be committed as a descendant of `TASK_SELECTION_FREEZE` and before model calls. It cannot update those recipes or expected material after seeing answers.
+- **Adaptive corpus selection:** RED via independently enumerated source-anchored twelve-task catalogue, immutable pre-result partition and deterministic first-three-per-domain acceptance selection.
+- **Calibration/acceptance contamination:** calibration IDs are disjoint from the eight-task acceptance pool; only the four `C-*` tasks can run during CTX-only calibration; no calibration task may replace an acceptance task.
+- **Question/oracle mismatch:** PA-02 calibration wording was corrected before execution and the amendment remains in Git history; expected facts/blocker/verdict did not change.
+- **Model answer as oracle:** calibration and acceptance source oracles predate all provider calls and are derived from pinned accepted CITY/PA bytes.
+- **Response vocabulary leaking expected answer:** task-specific blocker/verdict/evidence allowlists were removed before provider execution. Calibration tasks share one union formatting vocabulary; the external oracle remains hidden from the adapter.
+- **Provider/model drift:** frozen route is OpenRouter -> exact `deepseek/deepseek-v4.1-flash` -> DeepSeek serving provider only, with fallback disabled and required-parameter routing enabled. Temperature, tool policy, reasoning-control posture, output budget and timeout are frozen.
+- **Provider simulation:** active adapter performs a real authenticated OpenRouter HTTP request. The superseded direct-OpenAI adapter is removed. Campaign execution requires `OPENROUTER_API_KEY` and a durable GitHub campaign identity claimed before the first call.
+- **Provider adapter substitution:** acceptance executor freezes and hashes the actual adapter script path, not merely the Python interpreter, and provider requests include the frozen response contract.
+- **2/3 or majority-vote false PASS:** decision controls make any CTX-pass/DW-fail a FAIL; shared instability remains INCONCLUSIVE; PASS requires all 36 designated acceptance answers correct.
+- **Context-cost vanity win:** deterministic audit recalculates injected UTF-8 source bytes; provider token accounting is supplemental. Structural source completeness is independently required, so a smaller broken route cannot PASS.
+- **CTX strawman inflation:** contexts may use only task anchors; full unrelated documents are forbidden. Calibration CITY contexts include the table header needed to interpret A–D/S/Interior plus the exact row, rather than a semantically meaningless isolated row.
+- **DW self-confirmation:** acceptance structural audit replays the real DW-02/03 typed query executable and checks source provenance/fallback against independent source literals.
+- **Second favorable campaign:** calibration campaign is exact-PR+SHA gated and creates a durable GitHub check-run start marker before provider calls; a second campaign on that exact SHA is fail-closed. Acceptance requires an analogous unique durable campaign identity tied to its freeze.
+- **Frozen request shape drift:** scorer now verifies model/configuration, task prompt, separate response contract, system prompt, slot, context and matched-run identity.
 
-The current code checks scorer semantics and catalogue invariants locally; the dedicated hosted instrument workflow must still compile the C# query adapter. No actual model run was performed or simulated as an acceptance observation. Missing proof prevents a clean pre-review, an exact-SHA Worker preflight closure and a REVIEW_READY marker. Keep PR Draft.
+## Deliberately not claimed yet
+
+No calibration provider call has occurred and no acceptance task has executed. Therefore none of the following is yet evidence-backed:
+
+- eight-run CTX calibration readiness;
+- final six-task `TASK_SELECTION_FREEZE`;
+- post-freeze CTX/DW `CONTEXT_ASSEMBLY`;
+- 18 matched pairs / 36 acceptance executions;
+- semantic preservation result;
+- >=30% median injected-source-byte reduction;
+- final campaign uniqueness/inventory;
+- final causal-negative matrix and circuit-breaker audit.
+
+The current external precondition is a GitHub Actions repository secret named `OPENROUTER_API_KEY`. It must be added outside the proof artifacts. The campaign marker must remain absent until canonical observation is GREEN on the exact candidate that will execute calibration.
+
+No actual model response has been simulated or substituted. Missing execution evidence prevents CLEAN pre-review, frozen candidate metadata and REVIEW_READY. Keep PR #150 Draft and keep DW-05 blocked.
