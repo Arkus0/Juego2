@@ -23,7 +23,7 @@ Normal budget:
 - The dedicated **Worker Candidate Preflight** workflow is explicit/on-demand fallback only. It must not run automatically on ordinary PR activity.
 - **Arkus Candidate Validation** is a freeze-time gate. Draft pushes do not run its product observation/verifier. It runs when a non-draft candidate is opened/updated or marked Ready, and manual observation remains explicit.
 - `pull_request.edited` never triggers expensive product validation. Editing handoff prose or exact-SHA metadata is not a product mutation.
-- If same-SHA metadata needs correction after a failed closure attempt, finish all corrections first, then perform at most one deliberate Ready transition/recheck. Do not iterate edit -> Actions -> edit -> Actions.
+- If same-SHA metadata needs correction after a failed closure attempt, finish all corrections first, then perform at most one deliberate Draft -> Ready transition to request a fresh lightweight/final gate evaluation. Do not iterate edit -> Actions -> edit -> Actions.
 
 A workflow may still fail closed when SHA/WP/classification no longer match. That is integrity, not permission to rerun unrelated product tests.
 
