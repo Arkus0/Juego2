@@ -116,7 +116,7 @@ for task_id, task in protocol['tasks'].items():
     assert rc['fact_keys'] and rc['allowed_verdicts'] and rc['evidence_ids']
     assert set(rc['allowed_verdicts']).issubset({'REPORT','REJECT'})
     shared_vocab.append((tuple(rc['allowed_blockers']), tuple(rc['allowed_verdicts']), tuple(rc['evidence_ids'])))
-assert len(set(shared_vocab)) == 1, 'task-specific blocker/verdict/evidence vocabulary would leak expected semantics'
+assert len(set(shared_vocab)) == 1, 'task-specific blocker/verdict/evidence vocabulary would leak expected semantics during calibration'
 for path in sorted((root / 'scripts').glob('dw04-*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
 print('DW-04 frozen universe/oracles/CTX/OpenRouter-Luna generation-2 protocol: GREEN')
@@ -134,26 +134,32 @@ import json, subprocess
 from pathlib import Path
 root = str(Path('.').resolve())
 cases = [
-    (['city', 'loc.casco.shared_court'], 'Docs/production/CITY_LOCATION_PROGRAMME.md', 'SourceRow'),
-    (['city', 'loc.puerto.landing'], 'Docs/production/CITY_LOCATION_PROGRAMME.md', 'SourceRow'),
-    (['pa-disposition', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
-    (['pa-disposition', 'pa01', 'DL-12'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
-    (['pa-disposition', 'pa01', 'DL-13'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
-    (['pa-disposition', 'pa01', 'DL-14'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
-    (['pa-fixture', 'pa04', 'NC-02'], 'Docs/research/living-world/results/PA-04.md', 'SourceKey'),
-    (['pa-fixture', 'pa05', 'NC-02'], 'Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md', 'SourceKey'),
+    (['city', 'loc.casco.shared_court'], 'Docs/production/CITY_LOCATION_PROGRAMME.md'),
+    (['city', 'loc.puerto.landing'], 'Docs/production/CITY_LOCATION_PROGRAMME.md'),
+    (['pa-disposition', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md'),
+    (['pa-disposition', 'pa01', 'DL-12'], 'Docs/research/living-world/results/PA-01.md'),
+    (['pa-disposition', 'pa01', 'DL-13'], 'Docs/research/living-world/results/PA-01.md'),
+    (['pa-disposition', 'pa01', 'DL-14'], 'Docs/research/living-world/results/PA-01.md'),
+    (['pa-fixture', 'pa04', 'NC-02'], 'Docs/research/living-world/results/PA-04.md'),
+    (['pa-fixture', 'pa05', 'NC-02'], 'Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md'),
 ]
-for query, expected_path, material_field in cases:
+for query, expected_path in cases:
     command = ['dotnet', 'run', '--project', 'tools/Arkus.Dw04.Retrieval', '-c', 'Release', '--no-build', '--', root, *query]
     first = subprocess.check_output(command).decode('utf-8').strip()
     second = subprocess.check_output(command).decode('utf-8').strip()
     assert first == second, query
     result = json.loads(first)
     assert result['Provenance']['SourcePath'] == expected_path, query
-    assert result[material_field], query
-    if query[0] == 'pa-disposition':
+    if query[0] == 'city':
+        assert result['SourceRow'], query
+    elif query[0] == 'pa-disposition':
         expected = {'DL-11':'REJECT','DL-12':'REJECT','DL-13':'LATER','DL-14':'REJECT'}[query[2]]
-        assert expected in result['MaterialText'], (query, result)
+        assert result['Disposition'] == expected, (query, result)
+        assert 'MaterialText' not in result, (query, result)
+        if query[2] == 'DL-11': assert result['Qualification'] == 'as requirement', result
+        if query[2] == 'DL-14': assert result['Qualification'] == 'as authority', result
+    else:
+        assert result['SourceKey'] == 'NC-02', query
 print('DW-04 accepted typed-query/source-open replay: GREEN')
 PY
 
@@ -169,7 +175,8 @@ Instrument/universe/oracles: GREEN
 Semantically-sufficient CTX calibration freeze: GREEN
 Superseded calibration evidence: GREEN (DeepSeek campaigns plus Luna generation 1 retained; no carry-forward)
 Owner-authorized pre-acceptance calibration amendment: GREEN
-Canonical answer-format schema: GREEN (general type vocabularies; unchanged semantic oracles)
+Canonical answer-format schema: GREEN (general typed domains; unchanged semantic oracles)
+PA disposition canonicalization: GREEN (canonical token separated from qualification)
 Real-provider adapter contract: GREEN (OpenRouter / exact GPT-5.6 Luna 20260709 / pinned OpenAI serving provider)
 Accepted-authority immutability: GREEN
 Locked restore/build/regression: GREEN
