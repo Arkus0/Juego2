@@ -8,9 +8,9 @@ CANONICAL_CAMPAIGN_RUN: 35861322561
 CANONICAL_CAMPAIGN_ARTIFACT: 10750049310
 CANONICAL_CAMPAIGN_ARTIFACT_DIGEST: sha256:60878580a4d77fb7781ae29bb9a3eda96a5cfe3a63a6f3f2958f572e70594ad1
 
-## Campaign history and non-adaptation
+## Campaign history and owner-authorized acceptance generation
 
-Campaign 01 remains immutable terminal FAIL evidence (`196012fb809bca68448ef0ad6d468115acb36ac5`, run `35853858468`, artifact `10746802865`). None of its 36 answers was rescored into a PASS, carried forward, selectively rerun or counted in the repaired generation.
+Campaign 01 remains preserved as immutable historical FAIL evidence (`196012fb809bca68448ef0ad6d468115acb36ac5`, run `35853858468`, artifact `10746802865`). Per the explicit owner direction governing DW-04 review, that earlier learning run is not a terminal blocker; the repaired generation is the operative acceptance attempt. None of Campaign 01's 36 answers was rescored into a PASS, carried forward, selectively rerun or counted in the repaired generation.
 
 The repaired generation executed all 36 acceptance slots afresh under the same six task identities, accepted source truth/oracles, semantic questions, CTX baseline semantics, Luna/OpenAI effective provider/model configuration, R1/R2/R3 ordering, 100% correctness rule, >=30% median source-byte reduction threshold, no-replacement policy and fail-closed CTX-pass/DW-fail decision rule.
 
@@ -45,20 +45,24 @@ Canonical campaign outputs are persisted at:
 
 ## Post-review evidence-integrity repair
 
-The Reviewer identified one remaining false-green class: the frozen verifier replayed `ACCEPTANCE_TRANSCRIPT.jsonl` but did not prove that the scored transcript was the transcript named by `CAMPAIGN_RECEIPT.json` or that each scored response was the compact projection of the corresponding immutable provider record.
+Reviewer `#5291654361` identified the remaining false-green after candidate `cf32f627d4fdb35110871c92e46a94f39bf6feae`: the integrity checker bound the scored transcript to promoted `raw.answer` fields, but did not independently derive those fields from the preserved HTTP provider response or recompute the promoted request-body digest from the preserved provider request body.
 
-This is closed without changing or rerunning the acceptance campaign:
+The repair closes that causal class without changing or rerunning the acceptance campaign:
 
-- `scripts/dw04-evidence-integrity.py` hashes the exact transcript bytes and requires equality with `CAMPAIGN_RECEIPT.json.transcript_sha256`.
-- It requires exactly 36 scored records and 36 raw provider records, identical slot ordering, 36 unique provider request IDs and exact equality with the receipt's ordered request-ID inventory.
-- For every slot it reconstructs the executor's durable compact response projection from `ACCEPTANCE_PROVIDER_RAW.jsonl` and requires exact equality with the response scored in `ACCEPTANCE_TRANSCRIPT.jsonl`.
-- A causal negative control mutates only one scored verdict while leaving provider raw evidence and receipt untouched and requires that comparison to go RED.
-- `scripts/arkus-verify-exact-sha.sh` executes this integrity checker before the frozen DW-04 verifier, so normal exact-SHA validation cannot declare DW-04 GREEN without proving the provider-evidence binding.
+- `scripts/dw04-evidence-integrity.py` still hashes the exact transcript bytes and requires equality with `CAMPAIGN_RECEIPT.json.transcript_sha256`.
+- It still requires exactly 36 scored records and 36 raw provider records, identical slot ordering, 36 unique provider request IDs and exact equality with the receipt's ordered request-ID inventory.
+- For every raw record it now canonical-serializes `raw.provider_request_body`, recomputes SHA-256 exactly as the frozen adapter did, and requires equality with promoted `provider_request_body_sha256`; it also binds the raw request model to the promoted requested model.
+- For every raw record it now binds `raw.provider_response.id/model/provider/usage` to the promoted response ID, request ID, resolved model, resolved provider and usage fields.
+- It parses `raw.provider_response.choices[0].message.content` as JSON and requires exact structural equality with `raw.answer`; the existing compact projection comparison then requires that same answer to equal the scored transcript response.
+- Causal negatives now cover all three unilateral corruption classes: scored-answer-only, provider-response-only, and provider-request-body-only. Each must go RED while the other preserved evidence remains untouched.
+- `scripts/arkus-verify-exact-sha.sh` executes this integrity checker before the frozen DW-04 verifier, so normal exact-SHA validation cannot declare DW-04 GREEN without proving these bindings.
 
-No campaign answer, oracle, scorer, route, receipt, raw provider record or trial result was modified by this repair.
+The canonical exact-SHA verifier was executed by GitHub Actions on repair commit `db3872a88bfc732681ac0df7ccfa73302d96211c` in run `35867998599`; the `Freeze exact-SHA validation` job completed `success` with the repaired checker. The handoff-lint failure on that intermediate commit was expected because the PR body still named the prior frozen candidate and is corrected in the final handoff.
+
+No campaign answer, oracle, scorer, CTX/DW route, receipt, raw provider record or `TRIAL_RESULT` was modified by this repair, and no provider/model execution was rerun.
 
 ## Worker conclusion
 
-The bounded central claim of WP-DW-04 is established on the frozen six-task universe: the repaired DW route preserves agent correctness relative to CTX for every designated paired execution while exceeding the contractual source-context reduction threshold. The post-review integrity repair additionally binds that scored PASS causally to the immutable provider evidence. This does not claim universal model superiority or universal cost reduction.
+The bounded central claim of WP-DW-04 is established on the frozen six-task universe: the repaired DW route preserves agent correctness relative to CTX for every designated paired execution while exceeding the contractual source-context reduction threshold. The evidence-integrity repair now binds that scored PASS through the promoted adapter projection back to the preserved provider request body and provider HTTP response. This does not claim universal model superiority or universal cost reduction.
 
 Candidate is CLEAN and ready for independent Reviewer. Do not merge or unlock DW-05 without Reviewer PASS.
