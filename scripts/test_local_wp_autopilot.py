@@ -46,7 +46,8 @@ class RoutingTests(unittest.TestCase):
     def test_review_ready_must_match_current_validation_context(self):
         root = Path(__file__).resolve().parents[1]
         sha = "a" * 40
-        pr = {"number": 123, "head": {"sha": sha}, "body": "WP: WP-H1-03\nClass: FOUNDATIONAL\n"}
+        pr = {"number": 123, "head": {"sha": sha}, "body": "WP: WP-H1-03\nClass: FOUNDATIONAL\n",
+              "state": "open", "draft": False, "merged": False}
         context = module.validation_context_module(root).resolve_context(pr, sha)
         digest = context["context_digest"]
         row = {"state": "REVIEW_READY", "target sha": sha,
@@ -58,6 +59,8 @@ class RoutingTests(unittest.TestCase):
         changed = dict(pr, body="WP: WP-H1-03\nClass: NON-FOUNDATIONAL\n")
         self.assertFalse(module.ready_context_matches(root, changed, row))
         self.assertFalse(module.ready_context_matches(root, pr, dict(row, key="stale")))
+        self.assertFalse(module.ready_context_matches(root, dict(pr, draft=True), row))
+        self.assertFalse(module.ready_context_matches(root, dict(pr, state="closed"), row))
 
     def test_markdown_verdict_fields(self):
         body = "## **Reviewer verdict:** `FAIL`\n**Reviewed candidate SHA:** `" + "a" * 40 + "`"
@@ -127,6 +130,16 @@ class RoutingTests(unittest.TestCase):
         with patch.object(module.subprocess, "run", return_value=type("Result", (), {"returncode": 0})()), \
              patch.object(module, "run", side_effect=fake_git):
             module.validate_docsync(Path("."), pr, row)
+
+    def test_next_wp_refreshes_main_after_merge(self):
+        pr = {"number": 123, "merged_at": "2026-01-01T00:00:00Z"}
+        row = {"state": "DOCSYNC_COMPLETE", "next wp": "H1-03"}
+        with patch.object(module, "markers", return_value=[row]), \
+             patch.object(module, "validate_docsync") as validate, \
+             patch.object(module, "run", return_value="") as run:
+            self.assertEqual(module.next_from_merged_pr(Path("."), pr), "H1-03")
+            run.assert_called_once_with("git", "fetch", "origin", "main", cwd=Path("."))
+            validate.assert_called_once_with(Path("."), pr, row)
 
     def test_public_comment_cannot_authorize_continuation(self):
         sha = "a" * 40

@@ -161,7 +161,7 @@ def validation_context_module(root: Path) -> Any:
 
 
 def ready_context_matches(root: Path, pr: dict[str, Any], row: dict[str, str] | None) -> bool:
-    if not row:
+    if not row or pr.get("state") != "open" or pr.get("draft") is not False or pr.get("merged"):
         return False
     sha = (pr.get("head") or {}).get("sha", "").lower()
     try:
@@ -237,6 +237,9 @@ def next_from_merged_pr(root: Path, pr: dict[str, Any]) -> str | None:
     row = latest_marker(markers(pr["number"]), "DOCSYNC_COMPLETE")
     if not row:
         raise StopFlow(f"PR #{pr['number']} merged but lacks DOCSYNC_COMPLETE")
+    # The successful Reviewer can merge and DocSync while this process keeps
+    # running. Refresh main before checking the key's local ancestry.
+    run("git", "fetch", "origin", "main", cwd=root)
     validate_docsync(root, pr, row)
     raw = row.get("next wp", "")
     if raw.upper() == "NONE":
@@ -674,6 +677,8 @@ async def main_async(args: argparse.Namespace) -> None:
                     await codex_role(root, state, "docsync", f"Finaliza DocSync del PR #{pr['number']} de {wp}. Confirma PASS y merge exacto en GitHub. Sigue PRODUCT_SHA_CLOSURE.md y $update-handoff: cero commits por defecto si ninguna autoridad documental cambia; si cambia, una reconciliación acotada. Emite DOCSYNC_COMPLETE con Next WP válido. No cambies implementación.", "gpt-6-luna", "high")
                     await wait_for_state(pr["number"], lambda p, m: bool(latest_marker(m, "DOCSYNC_COMPLETE")))
                     continue
+                if current.get("state") != "open":
+                    raise StopFlow(f"PR #{pr['number']} is closed without merge; no role may continue")
                 frozen = fields(current.get("body") or "").get("frozen candidate sha", "").lower()
                 if not SHA_RE.fullmatch(frozen) or frozen != current["head"]["sha"].lower():
                     raise StopFlow(f"PR #{pr['number']} has no coherent frozen SHA; Worker must repair handoff")
