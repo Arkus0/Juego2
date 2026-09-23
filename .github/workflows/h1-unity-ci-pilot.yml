@@ -1,0 +1,155 @@
+name: H1 Unity CI Pilot
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-unity-ci-pilot.yml'
+      - 'Docs/workpacks/H1/WP-H1-UNITY-CI.md'
+      - 'Docs/evidence/WP-H1-UNITY-CI/**'
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: Exact repository SHA to execute in Unity
+        required: true
+        default: d86a08e644f542e9515f5e54fd4061f61e251c70
+        type: string
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: h1-unity-ci-pilot-${{ github.event.pull_request.number || inputs.target_sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  unity-effective:
+    name: Unity 6000.3.24f1 effective EditMode
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'worker/h1-unity-ci'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      H1_02_ACCEPTED_SHA: d86a08e644f542e9515f5e54fd4061f61e251c70
+      TARGET_SHA: ${{ inputs.target_sha || 'd86a08e644f542e9515f5e54fd4061f61e251c70' }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Validate pilot target and credential presence
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target_sha must be an exact 40-character SHA'; exit 2; }
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            test "${TARGET_SHA}" = "${H1_02_ACCEPTED_SHA}" || { echo '::error::PR pilot is pinned to the accepted H1-02 oracle SHA'; exit 2; }
+          fi
+          missing=0
+          for name in UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact Unity oracle candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact clean checkout and pinned project version
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+
+      # First pilot is deliberately cache-free: prove a clean cloud import before
+      # optimizing runner time or allowing exact-input receipt reuse.
+      - name: Run effective Unity EditMode suite
+        uses: game-ci/unity-test-runner@32e57712352b500e17974b245a6dce9e11a73213
+        with:
+          projectPath: Unity/ArkusUnity
+          testMode: editmode
+          coverageEnabled: false
+          artifactsPath: artifacts
+          checkName: H1 Unity CI Pilot EditMode
+          cliVersion: v0.1.69
+
+      - name: Reconcile result with accepted H1-02 oracle
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          roots = []
+          for path in Path('artifacts').rglob('*.xml'):
+              try:
+                  root = ET.parse(path).getroot()
+              except ET.ParseError:
+                  continue
+              if root.tag == 'test-run':
+                  roots.append((path, root))
+
+          if not roots:
+              raise SystemExit('no Unity test-run XML found under artifacts/')
+
+          matching = []
+          for path, root in roots:
+              total = int(root.attrib.get('total', root.attrib.get('testcasecount', '-1')))
+              passed = int(root.attrib.get('passed', '-1'))
+              failed = int(root.attrib.get('failed', '-1'))
+              result = root.attrib.get('result', '')
+              if total == 5 and passed == 5 and failed == 0 and result.lower() == 'passed':
+                  matching.append(path)
+
+          if len(matching) != 1:
+              rendered = ', '.join(str(p) for p, _ in roots)
+              raise SystemExit(f'expected exactly one 5/5 Passed EditMode result; candidates: {rendered}')
+
+          print(f'H1_UNITY_CI_ORACLE_GREEN result={matching[0]} total=5 passed=5 failed=0')
+          PY
+
+      - name: Verify tracked source stayed unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Write exact-SHA pilot receipt
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > H1_UNITY_CI_RECEIPT.txt <<EOF
+          H1_UNITY_CI_RECEIPT_V1
+          Oracle WP: WP-H1-02
+          Candidate SHA: ${TARGET_SHA}
+          Unity project: Unity/ArkusUnity
+          Expected editor: 6000.3.24f1 (4e7b9b5b6244)
+          Test mode: EditMode
+          Expected result: 5/5 Passed
+          Execution substrate: github-actions-ubuntu-24.04 + GameCI
+          GameCI test-runner commit: 32e57712352b500e17974b245a6dce9e11a73213
+          GameCI CLI: v0.1.69
+          Library cache: DISABLED_FOR_CLEAN_PILOT
+          Result: GREEN
+          EOF
+          cat H1_UNITY_CI_RECEIPT.txt
+
+      - name: Upload effective Unity evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: h1-unity-ci-${{ env.TARGET_SHA }}
+          path: |
+            artifacts
+            H1_UNITY_CI_RECEIPT.txt
+          if-no-files-found: warn
+          retention-days: 30
