@@ -4,17 +4,22 @@
   "calibration_oracle_commit": "88c05db465a3abb9196c1ba8c9f60c42d5506453",
   "context_path": "Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json",
   "route": "CTX_ONLY",
-  "provider_adapter": "scripts/dw04-openai-adapter.py",
+  "provider_adapter": "scripts/dw04-openrouter-adapter.py",
   "model_config": {
-    "provider": "openai-responses",
-    "model": "gpt-5.6-luna",
-    "version": "api-model-id:gpt-5.6-luna",
-    "temperature": null,
-    "thinking": "none",
+    "provider": "openrouter-chat-completions",
+    "model": "deepseek/deepseek-v4.1-flash",
+    "version": "openrouter-model-id:deepseek/deepseek-v4.1-flash",
+    "temperature": 0,
+    "thinking": null,
     "tool_policy": "none",
     "execution_budget": {"max_output_tokens": 1200, "timeout_seconds": 120},
     "run_policy": "exactly-two-designated-ctx-runs-per-calibration-task-no-semantic-retry",
-    "provider_options": {"endpoint": "https://api.openai.com/v1/responses", "store": false, "structured_output": "dw04_answer_v1"}
+    "provider_options": {
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "store": false,
+      "structured_output": "dw04_answer_v1",
+      "routing": {"order":["deepseek"],"allow_fallbacks":false,"require_parameters":true}
+    }
   },
   "system_prompt": "You are executing a frozen repository context-evaluation task. The supplied context fragments are the only semantic authority for this run: do not use memory, outside knowledge, web search, tools, or unstated assumptions. The task's response contract is formatting vocabulary only, not an assertion that any allowed blocker, verdict or evidence identifier is true for this task. Return only the canonical structured answer. The facts object must contain exactly the fact keys named by the response contract and every fact value must be a string. blockers and evidence are arrays using only identifiers allowed by the response contract. verdict must use one allowed verdict. Optional prose is forbidden.",
   "tasks": {
