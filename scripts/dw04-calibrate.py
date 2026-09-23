@@ -105,22 +105,23 @@ def main():
                   "repository/PR/candidate/run identity required")
     trial.require(args.candidate_sha == trial.git("rev-parse", "HEAD").decode().strip(),
                   "calibration candidate SHA differs from exact checkout")
+    trial.require(args.protocol_commit == args.candidate_sha,
+                  "calibration protocol commit must equal the exact campaign candidate")
 
     output = pathlib.Path(args.output)
     trial.require(not output.exists(), "calibration output already exists; no overwrite/rerun")
 
     pre, _ = trial.frozen_file(args.pre_commit, trial.PRE)
-    oracles, _ = trial.frozen_file(args.protocol_commit, trial.CAL_ORACLES)
     protocol, _ = trial.frozen_file(args.protocol_commit, CAL_PROTOCOL)
     context, _ = trial.frozen_file(args.protocol_commit, CAL_CONTEXT)
-    trial.ancestor(args.pre_commit, args.protocol_commit)
+    oracle_commit = protocol["calibration_oracle_commit"]
+    trial.ancestor(args.pre_commit, oracle_commit)
+    trial.ancestor(oracle_commit, args.protocol_commit)
+    oracles, _ = trial.frozen_file(oracle_commit, trial.CAL_ORACLES)
     trial.precheck(pre, pre["baseline_sha"])
 
     trial.require(protocol["schema"] == "dw04-calibration-protocol-v1", "calibration protocol schema")
     trial.require(protocol["precalibration_commit"] == args.pre_commit, "protocol pre-calibration identity")
-    trial.require(protocol["calibration_oracle_commit"] == oracles["precalibration_commit"] or
-                  protocol["calibration_oracle_commit"] == "88c05db465a3abb9196c1ba8c9f60c42d5506453",
-                  "protocol calibration-oracle identity")
     trial.require(oracles["precalibration_commit"] == args.pre_commit and oracles["route"] == "CTX_ONLY",
                   "calibration oracle lineage/route")
     trial.require(context["precalibration_commit"] == args.pre_commit and context["route"] == "CTX",
@@ -138,7 +139,7 @@ def main():
     result = {
         "schema": "dw04-calibration-results-v1",
         "precalibration_commit": args.pre_commit,
-        "calibration_oracle_commit": protocol["calibration_oracle_commit"],
+        "calibration_oracle_commit": oracle_commit,
         "calibration_protocol_commit": args.protocol_commit,
         "campaign": {
             "campaign_id": args.campaign_id,
