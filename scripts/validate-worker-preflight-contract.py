@@ -23,6 +23,24 @@ SURFACES = {
     "plan": Path("Docs/engineering/OPERATIONAL_HARDENING_BATCHES.md"),
 }
 
+LOCKED_RESTORE = "dotnet restore Juego2.sln --locked-mode"
+
+
+def _has_executable_command(text: str, command: str) -> bool:
+    """Require the command as executable shell/YAML-run content, not a text decoy.
+
+    Batch A's regression contract is intentionally strict here: the current executors run
+    restore as a standalone shell line. Keeping the literal only in a comment, echo, prose,
+    variable or other non-executed text must not satisfy the guard.
+    """
+    for raw in text.splitlines():
+        stripped = raw.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if stripped == command or stripped == f"run: {command}":
+            return True
+    return False
+
 
 def validate_texts(texts: dict[str, str]) -> list[str]:
     errors: list[str] = []
@@ -38,7 +56,6 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
     local_required = [
         "WORKER_PREFLIGHT_DELEGATION_REQUIRED",
         "WORKER_PREFLIGHT_GREEN",
-        "dotnet restore Juego2.sln --locked-mode",
         "dotnet build Juego2.sln",
         "dotnet test Juego2.sln",
         "validate-worker-preflight-context.py --self-test",
@@ -46,6 +63,8 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
     for token in local_required:
         if token not in local:
             errors.append(f"local preflight missing {token!r}")
+    if not _has_executable_command(local, LOCKED_RESTORE):
+        errors.append("local preflight must execute locked restore")
 
     workflow_required = [
         "pull_request:",
@@ -53,7 +72,6 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
         "ref: ${{ github.event.pull_request.head.sha }}",
         "global-json-file: global.json",
         "validate-worker-preflight-context.py",
-        "dotnet restore Juego2.sln --locked-mode",
         "dotnet build Juego2.sln --no-restore -c Release",
         "dotnet test Juego2.sln --no-build --no-restore -c Release",
         "Simulate chat Worker without resolvable exact SDK",
@@ -65,9 +83,11 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
     for token in workflow_required:
         if token not in workflow:
             errors.append(f"delegated workflow missing {token!r}")
+    if not _has_executable_command(workflow, LOCKED_RESTORE):
+        errors.append("delegated workflow must execute locked restore")
 
-    if "dotnet restore Juego2.sln --locked-mode" not in main_safety:
-        errors.append("Main Safety must restore Juego2.sln with --locked-mode")
+    if not _has_executable_command(main_safety, LOCKED_RESTORE):
+        errors.append("Main Safety must execute locked restore")
 
     for name, text in (
         ("implement", implement),
@@ -103,9 +123,28 @@ def validate_texts(texts: dict[str, str]) -> list[str]:
 
 def self_test() -> None:
     base = {
-        "local": "WORKER_PREFLIGHT_DELEGATION_REQUIRED WORKER_PREFLIGHT_GREEN dotnet restore Juego2.sln --locked-mode dotnet build Juego2.sln dotnet test Juego2.sln validate-worker-preflight-context.py --self-test",
-        "workflow": "pull_request: worker-preflight-pr-${{ github.event.pull_request.number }} ref: ${{ github.event.pull_request.head.sha }} global-json-file: global.json validate-worker-preflight-context.py dotnet restore Juego2.sln --locked-mode dotnet build Juego2.sln --no-restore -c Release dotnet test Juego2.sln --no-build --no-restore -c Release Simulate chat Worker without resolvable exact SDK SIMULATED_CHAT_WORKER_DELEGATION_GREEN gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\" WORKER_PREFLIGHT_DELEGATED_GREEN Workflow run ID:",
-        "main_safety": "dotnet restore Juego2.sln --locked-mode",
+        "local": """WORKER_PREFLIGHT_DELEGATION_REQUIRED
+WORKER_PREFLIGHT_GREEN
+dotnet restore Juego2.sln --locked-mode
+dotnet build Juego2.sln
+dotnet test Juego2.sln
+validate-worker-preflight-context.py --self-test
+""",
+        "workflow": """pull_request:
+worker-preflight-pr-${{ github.event.pull_request.number }}
+ref: ${{ github.event.pull_request.head.sha }}
+global-json-file: global.json
+validate-worker-preflight-context.py
+dotnet restore Juego2.sln --locked-mode
+dotnet build Juego2.sln --no-restore -c Release
+dotnet test Juego2.sln --no-build --no-restore -c Release
+Simulate chat Worker without resolvable exact SDK
+SIMULATED_CHAT_WORKER_DELEGATION_GREEN
+gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\"
+WORKER_PREFLIGHT_DELEGATED_GREEN
+Workflow run ID:
+""",
+        "main_safety": "dotnet restore Juego2.sln --locked-mode\n",
         "implement": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
         "repair": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
         "protocol": "WORKER_PREFLIGHT_GREEN WORKER_PREFLIGHT_DELEGATED_GREEN grandfathered",
@@ -115,10 +154,10 @@ def self_test() -> None:
 
     mutations = [
         ("local", "WORKER_PREFLIGHT_DELEGATION_REQUIRED", ""),
-        ("local", "dotnet restore Juego2.sln --locked-mode", "dotnet restore Juego2.sln"),
+        ("local", LOCKED_RESTORE, "dotnet restore Juego2.sln"),
         ("workflow", "ref: ${{ github.event.pull_request.head.sha }}", "ref: main"),
-        ("workflow", "dotnet restore Juego2.sln --locked-mode", "dotnet restore Juego2.sln"),
-        ("main_safety", "dotnet restore Juego2.sln --locked-mode", "dotnet restore Juego2.sln"),
+        ("workflow", LOCKED_RESTORE, "dotnet restore Juego2.sln"),
+        ("main_safety", LOCKED_RESTORE, "dotnet restore Juego2.sln"),
         ("workflow", "SIMULATED_CHAT_WORKER_DELEGATION_GREEN", ""),
         ("workflow", "gh api \"repos/${PREFLIGHT_REPOSITORY}/pulls/${PREFLIGHT_PR}\"", ""),
         ("protocol", "WORKER_PREFLIGHT_DELEGATED_GREEN", ""),
@@ -129,6 +168,16 @@ def self_test() -> None:
         broken[name] = broken[name].replace(old, new)
         if not validate_texts(broken):
             raise AssertionError(f"self-test failed to reject mutation {name}:{old}")
+
+    for name in ("local", "workflow", "main_safety"):
+        for decoy in (
+            f"# {LOCKED_RESTORE}\ndotnet restore Juego2.sln",
+            f"echo '{LOCKED_RESTORE}'\ndotnet restore Juego2.sln",
+        ):
+            broken = dict(base)
+            broken[name] = broken[name].replace(LOCKED_RESTORE, decoy)
+            if not validate_texts(broken):
+                raise AssertionError(f"self-test accepted non-executable locked-restore decoy in {name}")
 
     broken = dict(base)
     broken["protocol"] += " GitHub Actions run is not a substitute for this Worker-environment gate"
