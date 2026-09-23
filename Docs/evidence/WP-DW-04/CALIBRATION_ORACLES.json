@@ -1,0 +1,23 @@
+{
+  "schema": "dw04-calibration-oracles-v1",
+  "precalibration_commit": "ad570738613c992963668be5abd89bfdeb26b7d6",
+  "route": "CTX_ONLY",
+  "tasks": {
+    "C-CITY-01": {
+      "oracle": {"facts":{"importance":"A","spatial_depth":"S4","interior":"I3"},"blockers":[],"verdict":"REPORT","evidence":["CITY02:§4:loc.casco.bar"]},
+      "source_loci": ["Docs/production/CITY_LOCATION_PROGRAMME.md#§4:loc.casco.bar"]
+    },
+    "C-CITY-02": {
+      "oracle": {"facts":{"importance":"A","spatial_depth":"S1","interior":"I0"},"blockers":["deep_interior_unpromised"],"verdict":"REJECT","evidence":["CITY02:§4:loc.entrada.arrival"]},
+      "source_loci": ["Docs/production/CITY_LOCATION_PROGRAMME.md#§4:loc.entrada.arrival"]
+    },
+    "C-PA-01": {
+      "oracle": {"facts":{"fixture":"NC-01","player_trigger_required":"NO","actor_decision_without_player":"REQUIRED"},"blockers":["player_trigger_fake_agency"],"verdict":"REJECT","evidence":["PA02:§9:NC-01"]},
+      "source_loci": ["Docs/research/living-world/results/PA-02.md#§9:NC-01"]
+    },
+    "C-PA-02": {
+      "oracle": {"facts":{"fixture":"NC-01","A_to_B_implies_B_to_A":"NO","B_to_A_stays_LOW":"YES"},"blockers":["directional_edge_mirroring"],"verdict":"REJECT","evidence":["PA03:§8:NC-01"]},
+      "source_loci": ["Docs/research/living-world/results/PA-03.md#§8:NC-01"]
+    }
+  }
+}

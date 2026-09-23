@@ -1,0 +1,31 @@
+{
+  "schema": "dw04-source-oracles-v1",
+  "precalibration_commit": "ad570738613c992963668be5abd89bfdeb26b7d6",
+  "authority": "accepted source rows and fixture passages at baseline SHA; never model or retrieval outputs",
+  "tasks": {
+    "A-CITY-01": {
+      "oracle": {"facts":{"importance":"C","spatial_depth":"S3","interior":"I0"},"blockers":["importance_mismatch","interior_mismatch"],"verdict":"REJECT","evidence":["CITY02:§4:loc.casco.shared_court"]},
+      "required_context": [{"source_path":"Docs/production/CITY_LOCATION_PROGRAMME.md","literal":"| `loc.casco.shared_court` | Casco Viejo | passage + shared court / stair relation |"}]
+    },
+    "A-CITY-02": {
+      "oracle": {"facts":{"importance":"B","spatial_depth":"S1","interior":"I0","x6_access":"AX6","x6_cart_authorized":"NO","x6_bicycle_authorized":"NO"},"blockers":["x6_capacity_invented"],"verdict":"REJECT","evidence":["CITY02:§4:loc.puerto.landing","CITY01:§5.3:X6","CITY01:§4.3:AX6"]},
+      "required_context": [{"source_path":"Docs/production/CITY_LOCATION_PROGRAMME.md","literal":"| `loc.puerto.landing` | Puerto Fluvial | X6/X7 landing"},{"source_path":"Docs/production/CITY_MOBILITY_TOPOLOGY.md","literal":"| `X6` | `W.LANDING ↔ O.PUERTO_UP` | **State 1 only**"},{"source_path":"Docs/production/CITY_MOBILITY_TOPOLOGY.md","literal":"`AX6` — State-1 ferry: pedestrian/porter/carryable load only"}]
+    },
+    "A-CITY-03": {
+      "oracle": {"facts":{"importance":"A","spatial_depth":"S3","interior":"I2","access_layers":"public + staff/service + private records layer"},"blockers":[],"verdict":"REPORT","evidence":["CITY02:§4:loc.plaza.ayuntamiento"]},
+      "required_context": [{"source_path":"Docs/production/CITY_LOCATION_PROGRAMME.md","literal":"| `loc.plaza.ayuntamiento` | Plaza y Ayuntamiento | town hall / civic office |"}]
+    },
+    "A-PA-01": {
+      "oracle": {"facts":{"actor_visible_stale_label":"REJECT","automatic_truth_belief_sync":"REJECT","nc02_behavior_neutral":"REQUIRED"},"blockers":["privileged_metadata_leak","automatic_truth_sync"],"verdict":"REJECT","evidence":["PA04:§11:actor-visible isTrue/isFalse/isStale","PA04:§11:automatic truth→belief synchronization","PA04:§13:NC-02"]},
+      "required_context": [{"source_path":"Docs/research/living-world/results/PA-04.md","literal":"actor-visible `isTrue/isFalse/isStale` | **REJECT**"},{"source_path":"Docs/research/living-world/results/PA-04.md","literal":"automatic truth→belief synchronization | **REJECT**"},{"source_path":"Docs/research/living-world/results/PA-04.md","literal":"actor-safe query result = unchanged"}]
+    },
+    "A-PA-02": {
+      "oracle": {"facts":{"recursive_hidden_lineage":"REJECT","nc02_invariance":"REQUIRED","receiver_epistemic_owner":"PA-04"},"blockers":["hidden_lineage_as_epistemic_evidence"],"verdict":"REJECT","evidence":["PA05:§6:Recursive hidden lineage embedded in ActorBelief","PA05-FIXTURES:§6:NC-02","PA05-FIXTURES:§1:ownership"]},
+      "required_context": [{"source_path":"Docs/research/living-world/results/PA-05.md","literal":"Recursive hidden lineage embedded in ActorBelief | `REJECT`"},{"source_path":"Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md","literal":"## 6. NC-02 — HIDDEN_LINEAGE_EPISTEMIC_INVARIANCE"},{"source_path":"Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md","literal":"PA-04 RECEIVER EPISTEMIC BOUNDARY"}]
+    },
+    "A-PA-03": {
+      "oracle": {"facts":{"DL-11":"REJECT","DL-12":"REJECT","DL-13":"LATER","DL-14":"REJECT"},"blockers":[],"verdict":"REPORT","evidence":["PA01:§3:DL-11..DL-14"]},
+      "required_context": [{"source_path":"Docs/research/living-world/results/PA-01.md","literal":"| DL-11 | exact physical off-screen path simulation | **REJECT**"},{"source_path":"Docs/research/living-world/results/PA-01.md","literal":"| DL-12 | unique executable 24h script for every visible citizen | **REJECT**"},{"source_path":"Docs/research/living-world/results/PA-01.md","literal":"| DL-13 | exact static capacity/travel checker architecture | **LATER**"},{"source_path":"Docs/research/living-world/results/PA-01.md","literal":"| DL-14 | donor M9/M10/`WorldState`/schema/API ownership | **REJECT**"}]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+name: DW-04 Instrument Validation
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/dw04-*.py'
+      - 'tools/Arkus.Dw04.Retrieval/**'
+      - 'Docs/evidence/WP-DW-04/**'
+      - '.github/workflows/dw04-instrument-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  instrument:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Verify pre-run universe, source oracles and scorer
+        run: |
+          python3 scripts/dw04-trial.py precheck --pre-commit ad570738613c992963668be5abd89bfdeb26b7d6
+          python3 scripts/dw04-trial.py selftest
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('.')
+          for name in ('CALIBRATION_ORACLES.json', 'ACCEPTANCE_SOURCE_ORACLES.json'):
+              data = json.loads((root/'Docs/evidence/WP-DW-04'/name).read_text())
+              for task in data['tasks'].values():
+                  for item in task.get('required_context', []):
+                      assert item['literal'] in (root/item['source_path']).read_text(), item
+          for path in (root/'scripts').glob('dw04-*.py'):
+              compile(path.read_text(), str(path), 'exec')
+          PY
+      - name: Compile real DW query adapter with pinned SDK
+        run: dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj -c Release
