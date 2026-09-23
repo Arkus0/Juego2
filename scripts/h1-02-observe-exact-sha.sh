@@ -5,11 +5,16 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EXPECTED_SHA="${1:-${CANDIDATE_SHA:-}}"
 cd "${ROOT}"
 
+candidate_dirty_status() {
+  git status --porcelain --untracked-files=all | \
+    grep -Ev '^\?\? (VALIDATION_CONTEXT\.json|validation\.log|EXECUTION_RECEIPT\.txt|artifacts/observed/.*)$' || true
+}
+
 actual="$(git rev-parse HEAD)"
 if [[ -z "${EXPECTED_SHA}" ]]; then EXPECTED_SHA="${actual}"; fi
 [[ "${EXPECTED_SHA}" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "Invalid expected SHA: ${EXPECTED_SHA}" >&2; exit 2; }
 [[ "${actual}" == "${EXPECTED_SHA}" ]] || { echo "SHA mismatch: expected ${EXPECTED_SHA}, observed ${actual}" >&2; exit 2; }
-[[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean before H1-02 observation" >&2; exit 2; }
+[[ -z "$(candidate_dirty_status)" ]] || { echo "Candidate is not clean before H1-02 observation" >&2; candidate_dirty_status >&2; exit 2; }
 
 test -f Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
 test -f Unity/ArkusUnity/Packages/manifest.json
@@ -55,7 +60,7 @@ PY
   required="remote-static=GREEN; causal-negative-controls=GREEN; h0-locked-restore=GREEN; h0-release-build=GREEN; local-unity-evidence=GREEN; editmode=GREEN; effective-inventory=GREEN; clean-second-import=GREEN; dependency-legal-observation=GREEN"
 fi
 
-[[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "Candidate is not clean after H1-02 observation" >&2; exit 2; }
+[[ -z "$(candidate_dirty_status)" ]] || { echo "Candidate is not clean after H1-02 observation" >&2; candidate_dirty_status >&2; exit 2; }
 
 cat <<EOF
 EXECUTION_RECEIPT_V1
