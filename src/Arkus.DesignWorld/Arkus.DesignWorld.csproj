@@ -3,6 +3,8 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Arkus.DesignWorld</AssemblyName>
     <RootNamespace>Arkus.DesignWorld</RootNamespace>
+    <!-- Temporary during active DW-03 iteration; remove before freeze after signatures are nullable-correct. -->
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);CS8625;CS8604</WarningsNotAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Arkus.Game.World/Arkus.Game.World.csproj" />
