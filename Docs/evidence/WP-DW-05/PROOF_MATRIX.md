@@ -1,9 +1,9 @@
 # WP-DW-05 — Foundational proof matrix
 
-FOUNDATIONAL_PROOF_VERDICT: READY  
-UNRESOLVED_PROOF_OBLIGATIONS: 0  
-KNOWN_UNDETECTED_DEFECT_CLASSES: 0  
-TRUST_BOUNDARY: Accepted generic DW fact/relation/provenance/projection seams plus the reached H0 kernel dependency chain `Arkus.Game.World -> Arkus.Game.Core`; the neutral probe fixture, predecessor-residual reconciliation and bounded H2 planning input are inside claim. Substantive CITY/PA truth, arbitrary future domains, runtime/Unity realization, external packaging and normal documented .NET/Git/CI primitives remain outside or trusted as declared below.  
+FOUNDATIONAL_PROOF_VERDICT: READY
+UNRESOLVED_PROOF_OBLIGATIONS: 0
+KNOWN_UNDETECTED_DEFECT_CLASSES: 0
+TRUST_BOUNDARY: Accepted generic DW fact/relation/provenance/projection seams plus the reached H0 kernel dependency chain `Arkus.Game.World -> Arkus.Game.Core`; the neutral probe fixture, predecessor-residual reconciliation and bounded H2 planning input are inside claim. Substantive CITY/PA truth, arbitrary future domains, runtime/Unity realization, external packaging and normal documented .NET/Git/CI primitives remain outside or trusted as declared below.
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 
 `READY` here means the Worker has implemented executable coverage for every declared DW-05 proof class and has no known uncovered in-claim defect class. It is not an independent Reviewer PASS.
