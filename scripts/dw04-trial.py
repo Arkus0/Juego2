@@ -78,6 +78,8 @@ def precheck(pre, source_commit):
         require(path.startswith("Docs/") and ".." not in pathlib.PurePosixPath(path).parts, "authority path escapes repository")
         actual = git("rev-parse", f"{source_commit}:{path}").decode().strip()
         require(actual == expected, f"accepted authority blob changed: {path}")
+        current = git("rev-parse", f"HEAD:{path}").decode().strip()
+        require(current == expected, f"candidate substituted accepted authority bytes: {path}")
     for task in tasks:
         require(task["kind"] in ("worker", "reviewer") and task["anchors"], "task kind/anchors")
         for anchor in task["anchors"]:
@@ -156,6 +158,20 @@ def decide(pair_rows, structural, savings):
     if any(not row["CTX"]["pass"] or not row["DW"]["pass"] for row in pair_rows):
         return "INCONCLUSIVE"
     return "PASS" if savings >= 0.30 else "FAIL"
+
+
+def check_request(request, config, slot, prompt, system_prompt, seed):
+    common = {"provider", "model", "version", "temperature", "thinking", "tool_policy",
+              "execution_budget", "run_policy", "provider_options"}
+    require(set(config) == common, "model/configuration freeze has undeclared or missing dimensions")
+    require(set(request) == common | {"task_prompt", "system_prompt", "slot", "context_fragments", "seed"},
+            "provider request has undeclared or missing configuration")
+    for field in common:
+        require(request.get(field) == config.get(field), f"paired model/configuration/run policy drift: {field}")
+    require(request["seed"] == seed, "matched seed/run identity mismatch")
+    require(request["task_prompt"] == prompt and request["system_prompt"] == system_prompt,
+            "system/task prompt drift")
+    require(request["slot"] == slot, "provider request slot drift")
 
 
 def context_check(freeze, assembly, pre, selected):
@@ -266,17 +282,8 @@ def audit(freeze, transcript, pre, pre_commit, freeze_commit, freeze_digest):
         require(record.get("request") and record.get("response"), "missing actual request/response")
         request = record["request"]
         expected_request = freeze["model_config"]
-        common_fields = {"provider", "model", "version", "temperature", "thinking", "tool_policy",
-                         "execution_budget", "run_policy", "provider_options"}
-        require(set(expected_request) == common_fields, "model/configuration freeze has undeclared or missing dimensions")
-        require(set(request) == common_fields | {"task_prompt", "system_prompt", "slot", "context_fragments", "seed"},
-                "provider request has undeclared or missing configuration")
-        for field in common_fields:
-            require(request.get(field) == expected_request.get(field), f"paired model/configuration/run policy drift: {field}")
-        require(request["seed"] == freeze["pair_seeds"][pair], "matched seed/run identity mismatch")
-        require(request.get("task_prompt") == freeze["tasks"][task]["prompt"], "task prompt drift")
-        require(request.get("system_prompt") == freeze["system_prompt"], "system prompt drift")
-        require(request.get("slot") == slot, "provider request slot drift")
+        check_request(request, expected_request, slot, freeze["tasks"][task]["prompt"],
+                      freeze["system_prompt"], freeze["pair_seeds"][pair])
         context = request.get("context_fragments")
         require(isinstance(context, list) and context, "no auditable context fragments")
         require(context == assembly["contexts"][task][route], "context changed after frozen assembly")
@@ -317,6 +324,20 @@ def selftest():
     assert decide([pair(True, True)] * 18, False, 0.8) == "FAIL"
     assert decide([pair(True, True)] * 18, True, 0.29) == "FAIL"
     assert decide([pair(True, True)] * 18, True, 0.30) == "PASS"
+    config = {key: key for key in ("provider", "model", "version", "temperature", "thinking",
+                                   "tool_policy", "execution_budget", "run_policy", "provider_options")}
+    slot = {"task": "A-CITY-01", "pair": "R1", "route": "CTX"}
+    request = {**config, "task_prompt": "prompt", "system_prompt": "system", "slot": slot,
+               "context_fragments": [], "seed": None}
+    check_request(request, config, slot, "prompt", "system", None)
+    for field in config:
+        changed = {**request, field: "different"}
+        try:
+            check_request(changed, config, slot, "prompt", "system", None)
+        except ProtocolError:
+            pass
+        else:
+            raise AssertionError("unnoticed configuration drift: " + field)
     print("DW04 scorer/slot causal controls: GREEN")
 
 
