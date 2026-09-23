@@ -6,6 +6,8 @@ Implement exactly one explicitly authorized Juego2 workpack.
 
 Read `AGENTS.md`, the exact WP, relevant accepted predecessor contracts, and `Docs/engineering/PRODUCT_SHA_CLOSURE.md`. The latter is the binding operational amendment for Action cadence, same-SHA closure and DocSync cost. Material acceptance/proof requirements from the WP and engineering standards remain unchanged.
 
+Accepted predecessor capsules remain governed by `Docs/engineering/CONTEXT_CAPSULE_V1.md`: they are navigation only; stale/lossy/contradictory capsule context escalates to the exact authoritative source.
+
 For H1 work that requires Unity/Windows/local execution, also follow `Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md`. Remote-first reasoning does not remove mandatory real Unity evidence when the WP requires it.
 
 ## Flow
