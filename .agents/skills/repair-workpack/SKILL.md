@@ -1,65 +1,36 @@
 # repair-workpack
 
-Repair exactly one explicitly identified Juego2 workpack after an independent Reviewer FAIL.
+Repair exactly one explicitly identified Juego2 workpack after an independent Reviewer material FAIL.
 
-This is a **fresh Worker role**, never a continuation of the Reviewer session that emitted FAIL.
+This is a fresh Worker role. It never inherits Reviewer authority.
 
-## Trigger
+## Authority
 
-Use this skill for requests such as:
+Read the exact WP, latest independent review, relevant accepted predecessor contract, `AGENTS.md`, and `Docs/engineering/PRODUCT_SHA_CLOSURE.md`. The amendment governs Action cadence, same-SHA protocol repair and DocSync cost; it does not weaken the material blocker or WP acceptance criteria.
 
-- `Corrige el FAIL de H1-02`
-- `Repair WP-H1-02`
-- `Fresh repair Worker CITY-04`
+For H1 work requiring Unity/local execution, also follow `Docs/engineering/H1_REMOTE_LOCAL_EXECUTION.md` and rerun local evidence only when the repair can materially invalidate it.
 
-Resolve the exact WP ID and canonical PR from live GitHub state. Do not infer a different WP.
+## Flow
 
-## Context bootstrap
+1. Reconstruct the canonical PR, latest reviewed SHA and latest independent verdict from live GitHub.
+2. Distinguish **material FAIL** from `PROTOCOL_FIX` / `REVIEW_BLOCKED`. Do not edit product code for a pure lifecycle/metadata defect.
+3. For a material FAIL, return the PR to Draft + ACTIVE and repair the causal blocker class, not just the reviewer's literal example.
+4. Preserve accepted predecessor guarantees and previously closed blocker classes unless the new repair contradicts them.
+5. Run only tests/evidence affected by the repair plus the exact WP gates needed to show the candidate as a whole still satisfies its claim. Avoid unrelated re-proof.
+6. During Draft, **Arkus Main Safety** is the normal hosted .NET preflight. A same-PR, same-SHA Main Safety GREEN satisfies the hosted preflight requirement when local pinned .NET is unavailable. The dedicated Worker Candidate Preflight workflow is manual fallback only.
+7. Finish all repository/evidence bytes, stop writers and select the final exact HEAD as `PRODUCT_SHA`.
+8. Obtain exact-SHA preflight evidence, then perform one strict Worker pre-review against the complete repaired candidate.
+9. If that pre-review finds a material blocker, repair it and repeat only from the new material SHA. If it finds only same-SHA metadata defects, repair those without another product campaign.
+10. Persist CLEAN outside Git bytes, reconcile handoff once, freeze the same `PRODUCT_SHA`, mark Ready, and let `Arkus Candidate Validation` perform the final WP-specific freeze verification.
+11. STOP for a fresh independent Reviewer.
 
-Start with `Docs/engineering/CONTEXT_BOOTSTRAP_V1.md` and the `repair_worker` profile in `Docs/engineering/context-bootstrap-profiles.json`. The profile narrows only the initial pack. Full ROADMAP/proof/architecture context is loaded when the FAIL, exact WP, direct predecessor state or cross-track gate makes it material. After CTX-02 adoption, `Docs/engineering/CONTEXT_CAPSULE_V1.md` governs validated accepted-contract capsules that may navigate unchanged accepted predecessor guarantees, but any capsule mismatch or FAIL that may reopen/touch that predecessor escalates to the exact authoritative sources. Stale/missing compact context always escalates; it never supplies a repair assumption.
+## Protocol-only repair
 
-After CTX-03 adoption, terminal closure and mechanical outcome classification follow `Docs/engineering/CONTEXT_ENVELOPE_V1.md`. Its deterministic epilogue below is sufficient for normal repairs; load the full protocol only when an envelope/classification dispute is material.
+If the Reviewer or automation identifies only malformed/stale handoff metadata while the exact `PRODUCT_SHA` and material evidence remain trustworthy:
 
-## Preconditions
+- do not create a code/evidence commit;
+- do not rerun Main Safety, Unity or WP product tests;
+- do not repeat semantic Worker pre-review;
+- correct all metadata in one pass and perform at most one deliberate Ready/recheck.
 
-- Read `AGENTS.md`, `Docs/engineering/WORKER_REVIEW_PROTOCOL.md`, the exact WP, the original Worker evidence, and the latest independent Reviewer FAIL bound to an exact reviewed candidate SHA, as required by the repair profile.
-- Reconstruct current `main`, the canonical implementation PR/branch, current PR HEAD, frozen/reviewed SHA fields, `fail_cycle`, dependency state and any later accepted predecessor changes.
-- Use live GitHub state (`gh` in a local session, or an equivalent authenticated GitHub surface). A local Git checkout alone is not sufficient to reconstruct review state.
-- Verify there is exactly one canonical open implementation PR for the WP. If ownership is ambiguous, STOP rather than guessing.
-- Verify the latest independent verdict is actually FAIL/`REPAIR_REQUIRED` for this WP. A mechanical `REVIEW_BLOCKED` or `INFRA_ERROR` is **not** an independent Reviewer FAIL and does not create a semantic repair cycle by itself.
-- **Batch A Worker-preflight adoption:** if this repair cycle first enters `DRAFT + ACTIVE` after the operational-hardening Batch A PR has merged to `main`, exact-candidate Worker preflight evidence is mandatory on the clean repaired candidate immediately before strict Worker pre-review. Prefer `scripts/worker-preflight.sh` when this Worker environment can execute the exact SDK from `global.json`; a valid local result must name the exact candidate SHA and end `WORKER_PREFLIGHT_GREEN`. If it cannot and the script reports `WORKER_PREFLIGHT_DELEGATION_REQUIRED`, use the repository-owned `Worker Candidate Preflight` pull-request run for the canonical PR and exact repaired SHA. Its durable receipt must identify `Arkus0/Juego2`, this PR, this exact SHA and its run ID and end `WORKER_PREFLIGHT_DELEGATED_GREEN`; re-read the live PR HEAD before consuming it. Runs from another PR/repository/SHA and stale prior-candidate runs are invalid. Missing both a valid local result and a valid delegated receipt is `NOT_READY`; lack of local .NET alone is not. A repair cycle already active, frozen or in review before adoption is grandfathered and is not reopened solely for this check.
-
-## Workflow
-
-1. Identify the violated criterion, evidence, exact reviewed candidate SHA and minimal causal correction boundary from the independent FAIL.
-2. Confirm whether the finding belongs to the current WP or concretely reopens an accepted predecessor. Do not silently repair a different ownership boundary; a capsule cannot settle a concrete reopen question by itself.
-3. Return the canonical PR to Draft + ACTIVE and preserve Worker history, prior reviewed SHA, `fail_cycle` and existing evidence.
-4. Check out/update the canonical repair branch. Do not create a competing implementation PR unless the protocol explicitly requires a migration; if migrated, mark the old PR superseded and preserve history.
-5. Refresh `PREDECESSOR_CONTRACT_CHECK` if dependency/accepted predecessor state changed since the failed candidate. After CTX-02 adoption, unchanged accepted boundaries may start from valid capsules; any predecessor-related FAIL or contradiction requires authoritative escalation.
-6. Reproduce or otherwise validate the Reviewer's blocker before changing the candidate when feasible.
-7. Repair the **causal defect boundary**, not merely the reported example. Stay inside Allowed scope and do not opportunistically advance later WPs.
-8. Run affected positive tests, causal negative-conformance/defect-injection controls, exact local Unity evidence when required, and any canonical validation needed by the WP.
-9. Update repository evidence truthfully and preserve superseded/failing evidence where history requires it. Do not persist a final `CLEAN` record yet.
-10. Finish and commit/push **all** repaired repository/evidence bytes while the PR is still Draft + ACTIVE. After CTX-03 the final clean pre-review record is intentionally outside repository bytes so recording it cannot invalidate the candidate it describes.
-11. Stop writers, read the exact resulting 40-character HEAD and, for cycles governed by Batch A, obtain exact-candidate Worker-preflight GREEN before strict pre-review: run `scripts/worker-preflight.sh` locally when the exact SDK is executable here and require `WORKER_PREFLIGHT_GREEN`; otherwise verify the `Worker Candidate Preflight` pull-request run for this canonical PR has a durable `WORKER_PREFLIGHT_DELEGATED_GREEN` receipt bound to this same SHA/run ID and that the live PR HEAD still equals it. Preserve the local output or delegated run/receipt in pre-review evidence. Then rerun the **complete mandatory Worker pre-review against that exact HEAD and the full repaired baseline→candidate diff**. Any implementation/evidence mutation after this point invalidates cleanliness and any local/delegated Worker-preflight evidence for the older SHA.
-12. If the pre-review finds a blocker, return to step 7, mutate only while Draft + ACTIVE, then commit/push and rerun the complete pre-review on the new HEAD. For Batch A-governed cycles, obtain a fresh exact-SHA local result or delegated receipt for that new candidate first; never reuse the prior run.
-13. Only when the exact HEAD is clean, create a durable GitHub PR issue comment containing at minimum `WORKER_PRE_REVIEW: CLEAN`, `Candidate SHA: <exact HEAD>`, findings-fixed count and evidence pointers. This comment is the final CLEAN evidence and does not alter repository bytes.
-14. With writers still stopped, use `scripts/derive-worker-review-metadata.py --pre-review-evidence <issue-comment URL>` to generate the derivable canonical Ready fields while preserving lineage, then validate the PR body with the canonical handoff lint.
-15. Freeze that same exact HEAD, set `FROZEN_FOR_REVIEW` / `Branch frozen: YES`, mark the PR Ready and stop repository/evidence writes.
-16. Classify mechanical results before consuming another Reviewer round: registered causal `FAIL` returns to Worker repair; `REVIEW_BLOCKED` means repair/derive lifecycle metadata and rerun; `INFRA_ERROR` means diagnose/rerun infrastructure without calling the WP defective; `NOT_APPLICABLE` is neutral. An unregistered red verifier cannot by itself count as WP FAIL.
-17. Observe the durable Automation V2 `REVIEW_READY` marker for the exact frozen SHA. After CTX-03 adoption, normal closure is automatic and retry-safe: `REVIEW_READY_CLOSED` may be emitted by the original marker event or by a later same-SHA Candidate Validation completion that reuses the already-durable marker after metadata/gate repair. No duplicate REVIEW_READY marker is required. If automatic closure is not yet adopted for the current transition, perform the equivalent final live HEAD read after the marker without mutating repository bytes.
-18. Only after terminal closure may the Worker report the repaired candidate ready for a **fresh independent Reviewer**. Then STOP. Never self-review, merge, DocSync or start the next WP from this repair context.
-
-## Local Unity rule
-
-For `LOCAL_UNITY_REQUIRED` or `HYBRID` WPs, required effective Unity evidence must be rerun on the repaired candidate when the fix can affect that evidence. Remote-only repair may end as `READY_FOR_LOCAL_VALIDATION`, never a false PASS-ready handoff.
-
-## GitHub CLI rule for local sessions
-
-When running locally, prefer authenticated `gh` for PR/review/check state and `git` for repository bytes/history. Before any mutation, verify:
-
-```text
-gh repo view --json nameWithOwner
-```
-
-resolves to `Arkus0/Juego2`, then identify the canonical PR and branch from live GitHub state. Never paste or store GitHub passwords/tokens in repository files or prompts.
+Any new Git commit is material and creates a new `PRODUCT_SHA`; GitHub-side comments/body/check changes do not.
