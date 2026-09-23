@@ -21,7 +21,10 @@ def response_contract(p,oracle,t):
 def check_calibration(f,p):
     cc=f["calibration_commit"]; ancestor(f["calibration_oracle_commit"],cc); ancestor(cc,f["freeze_parent"]); req(blob(cc,CAL)==f["calibration_receipt_blob"]==blob("HEAD",CAL),"calibration receipt drift")
     r=load(cc,CAL); cp=load(r["calibration_protocol_commit"],"Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json"); o=load(f["calibration_oracle_commit"],CAL_ORACLES); ctx=load(r["calibration_protocol_commit"],"Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json")
-    req(r["readiness"]=="READY" and len(r["runs"])==8 and not r["invalid_attempts"],"calibration not READY"); req(r["model_config"]==cp["model_config"]==p["model_config"],"acceptance model/config differs from READY calibration")
+    req(r["readiness"]=="READY" and len(r["runs"])==8 and not r["invalid_attempts"],"calibration not READY"); req(r["model_config"]==cp["model_config"],"READY calibration model/config drift")
+    for key in ("provider","model","version","temperature","thinking","tool_policy","execution_budget","provider_options"):
+        req(r["model_config"][key]==p["model_config"][key],f"acceptance effective model/config differs from READY calibration: {key}")
+    req(p["model_config"]["run_policy"]=="acceptance-no-replacement; objective invalid is terminal evidence; semantic misses are never rerun","acceptance run policy drift")
     pre=load(f["precalibration_commit"],PRE); expected=[{"task":t,"run":i,"route":"CTX"} for t in pre["calibration_policy"]["run_order"] for i in (1,2)]; req([x["slot"] for x in r["runs"]]==expected,"calibration slot drift")
     for x in r["runs"]:
         t=x["slot"]["task"]; task=cp["tasks"][t]; req(x["resolved_provider"]=="OpenAI" and x["provider_request_id"],"calibration provider identity missing"); trial.check_request(x["request"],p["model_config"],x["slot"],task["semantic_question"],task["response_contract"],cp["system_prompt"],None); req(x["request"]["context_fragments"]==ctx["contexts"][t],"calibration context drift"); req(trial.score(o["tasks"][t]["oracle"],x["answer"])["pass"],f"calibration miss: {t}")

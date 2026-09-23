@@ -137,8 +137,11 @@ cases = [
     (['city', 'loc.casco.shared_court'], 'Docs/production/CITY_LOCATION_PROGRAMME.md', 'SourceRow'),
     (['city', 'loc.puerto.landing'], 'Docs/production/CITY_LOCATION_PROGRAMME.md', 'SourceRow'),
     (['pa-disposition', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
-    (['pa-fixture', 'pa04', 'NC-02'], 'Docs/research/living-world/results/PA-04.md', 'MaterialText'),
-    (['pa-fixture', 'pa05', 'NC-02'], 'Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md', 'MaterialText'),
+    (['pa-disposition', 'pa01', 'DL-12'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
+    (['pa-disposition', 'pa01', 'DL-13'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
+    (['pa-disposition', 'pa01', 'DL-14'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),
+    (['pa-fixture', 'pa04', 'NC-02'], 'Docs/research/living-world/results/PA-04.md', 'SourceKey'),
+    (['pa-fixture', 'pa05', 'NC-02'], 'Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md', 'SourceKey'),
 ]
 for query, expected_path, material_field in cases:
     command = ['dotnet', 'run', '--project', 'tools/Arkus.Dw04.Retrieval', '-c', 'Release', '--no-build', '--', root, *query]
@@ -148,6 +151,9 @@ for query, expected_path, material_field in cases:
     result = json.loads(first)
     assert result['Provenance']['SourcePath'] == expected_path, query
     assert result[material_field], query
+    if query[0] == 'pa-disposition':
+        expected = {'DL-11':'REJECT','DL-12':'REJECT','DL-13':'LATER','DL-14':'REJECT'}[query[2]]
+        assert expected in result['MaterialText'], (query, result)
 print('DW-04 accepted typed-query/source-open replay: GREEN')
 PY
 
