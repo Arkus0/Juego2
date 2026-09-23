@@ -8,7 +8,7 @@ using Arkus.DesignWorld;
 // Read-only adapter over accepted DW-02/03 production query providers. No oracle
 // or expected answer is imported into this route; it returns material + provenance.
 if (args.Length < 3)
-    throw new ArgumentException("Usage: <repository-root> city <id> | pa-fixture <paId> <key> | pa-finding <paId> <key>");
+    throw new ArgumentException("Usage: <repository-root> city <id> | pa-fixture <paId> <key> | pa-finding <paId> <key> | pa-disposition <paId> <key>");
 
 var root = Path.GetFullPath(args[0]);
 var jsonOptions = new JsonSerializerOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
@@ -39,16 +39,18 @@ if (args[1] == "city" && args.Length == 3)
     return;
 }
 
-if ((args[1] == "pa-fixture" || args[1] == "pa-finding") && args.Length == 4)
+if ((args[1] == "pa-fixture" || args[1] == "pa-finding" || args[1] == "pa-disposition") && args.Length == 4)
 {
     var sources = new PaAcceptedCorpusSources(
         Read(PaProjectionManifest.Pa01Path), Read(PaProjectionManifest.Pa02Path),
         Read(PaProjectionManifest.Pa03Path), Read(PaProjectionManifest.Pa04Path),
         Read(PaProjectionManifest.Pa05Path), Read(PaProjectionManifest.Pa05FixturesPath));
     var dataset = new PaDesignWorldProvider().BuildAndValidate(sources);
-    PaCorpusQueryRecord row = args[1] == "pa-fixture"
-        ? dataset.Queries.Fixture(args[2], args[3])
-        : dataset.Queries.ByPa(args[2], "finding").Single(x => x.SourceKey == args[3]);
+    PaCorpusQueryRecord row;
+    if (args[1] == "pa-fixture")
+        row = dataset.Queries.Fixture(args[2], args[3]);
+    else
+        row = dataset.Queries.ByPa(args[2], args[1].Substring("pa-".Length)).Single(x => x.SourceKey == args[3]);
     Console.WriteLine(JsonSerializer.Serialize(new
     {
         row.FactId, row.PaId, row.RecordKind, row.SourceKey,
