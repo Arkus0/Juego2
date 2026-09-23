@@ -6,7 +6,7 @@ Effective pre-calibration universe remains `9cbed950a3469897cf286c9a90624c240701
 
 ## Durable owner authorization
 
-The repository owner explicitly authorized completing DW-04 here without an intermediate Reviewer round and authorized additional **pre-acceptance calibration-only** iterations needed to repair already-declared calibratable instrument dimensions, provided that:
+The repository owner explicitly authorized completing DW-04 here without an intermediate Reviewer round and authorized additional **pre-acceptance calibration-only** iterations needed to repair already-declared calibratable instrument dimensions in PR #150 comment `5792698702`, provided that:
 
 - every prior campaign/result remains preserved and auditable;
 - no successful prior answer is carried forward into a later calibration generation;
