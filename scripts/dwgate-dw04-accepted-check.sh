@@ -24,7 +24,9 @@ python3 scripts/dw04-evidence-integrity.py
 
 # Re-run the accepted DW-04 verifier at its own frozen historical candidate.
 # Its chronology checks are intentionally exact-candidate checks and must not
-# be weakened merely because DW-GATE is a later descendant.
+# be weakened merely because DW-GATE is a later descendant. The historical
+# verifier uses the retrieval helper with --no-build, so compile that helper
+# from the historical source inside the disposable worktree first.
 tmp="$(mktemp -d)"
 cleanup() {
   git worktree remove --force "${tmp}/accepted" >/dev/null 2>&1 || true
@@ -36,6 +38,7 @@ git worktree add --detach "${tmp}/accepted" "${accepted_sha}" >/dev/null
 (
   cd "${tmp}/accepted"
   python3 scripts/dw04-evidence-integrity.py
+  DOTNET_NOLOGO=1 dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
   bash scripts/dw04-verify-exact-sha.sh "${accepted_sha}"
 )
 
