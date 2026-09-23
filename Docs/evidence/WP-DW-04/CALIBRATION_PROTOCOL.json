@@ -5,7 +5,7 @@
   "context_path": "Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json",
   "prior_invalid_attempts": [],
   "restart_generation": 2,
-  "restart_authorization": "PR#150-owner-plan-amendment",
+  "restart_authorization": "PR#150-comment-5792698702",
   "superseded_calibration_evidence": [
     "Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json",
     "Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json",
