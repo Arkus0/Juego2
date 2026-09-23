@@ -150,10 +150,10 @@ def context_plan():
                 plan_fragment("ctx-table-pa01-dl14", pa1, "source_excerpt", "| DL-14 |"),
             ],
             "DW": [
-                plan_fragment("dw-query-pa01-dl11", pa1, "dw_query", "DL-11", ["pa-disposition","pa01","DL-11"]),
-                plan_fragment("dw-query-pa01-dl12", pa1, "dw_query", "DL-12", ["pa-disposition","pa01","DL-12"]),
-                plan_fragment("dw-query-pa01-dl13", pa1, "dw_query", "DL-13", ["pa-disposition","pa01","DL-13"]),
-                plan_fragment("dw-query-pa01-dl14", pa1, "dw_query", "DL-14", ["pa-disposition","pa01","DL-14"]),
+                plan_fragment("dw-query-pa01-dl11", pa1, "dw_query", "DL-11", ["pa-finding","pa01","DL-11"]),
+                plan_fragment("dw-query-pa01-dl12", pa1, "dw_query", "DL-12", ["pa-finding","pa01","DL-12"]),
+                plan_fragment("dw-query-pa01-dl13", pa1, "dw_query", "DL-13", ["pa-finding","pa01","DL-13"]),
+                plan_fragment("dw-query-pa01-dl14", pa1, "dw_query", "DL-14", ["pa-finding","pa01","DL-14"]),
             ],
         },
     }
