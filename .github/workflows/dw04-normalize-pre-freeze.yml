@@ -1,0 +1,55 @@
+name: DW-04 Normalize Pre-freeze
+on:
+  pull_request:
+    types: [edited]
+permissions:
+  contents: write
+  pull-requests: read
+jobs:
+  normalize:
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 normalize: PRE_FREEZE')
+    runs-on: ubuntu-24.04
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+      - name: Normalize acceptance run policy audit and observer
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p=Path('scripts/dw04-acceptance-audit.py')
+          s=p.read_text()
+          old='req(r["model_config"]==cp["model_config"]==p["model_config"],"acceptance model/config differs from READY calibration")'
+          new='''req(r["model_config"]==cp["model_config"],"READY calibration model/config drift")\n    for key in ("provider","model","version","temperature","thinking","tool_policy","execution_budget","provider_options"):\n        req(r["model_config"][key]==p["model_config"][key],f"acceptance effective model/config differs from READY calibration: {key}")\n    req(p["model_config"]["run_policy"]=="acceptance-no-replacement; objective invalid is terminal evidence; semantic misses are never rerun","acceptance run policy drift")'''
+          assert s.count(old)==1, 'audit calibration equality guard drift'
+          p.write_text(s.replace(old,new))
+
+          p=Path('scripts/dw04-observe-exact-sha.sh')
+          s=p.read_text()
+          old="""    (['pa-disposition', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),\n    (['pa-fixture', 'pa04', 'NC-02'], 'Docs/research/living-world/results/PA-04.md', 'MaterialText'),\n    (['pa-fixture', 'pa05', 'NC-02'], 'Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md', 'MaterialText'),"""
+          new="""    (['pa-disposition', 'pa01', 'DL-11'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),\n    (['pa-disposition', 'pa01', 'DL-12'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),\n    (['pa-disposition', 'pa01', 'DL-13'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),\n    (['pa-disposition', 'pa01', 'DL-14'], 'Docs/research/living-world/results/PA-01.md', 'MaterialText'),\n    (['pa-fixture', 'pa04', 'NC-02'], 'Docs/research/living-world/results/PA-04.md', 'SourceKey'),\n    (['pa-fixture', 'pa05', 'NC-02'], 'Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md', 'SourceKey'),"""
+          assert s.count(old)==1, 'observer compact navigation cases drift'
+          s=s.replace(old,new)
+          old2="""    assert result[material_field], query\nprint('DW-04 accepted typed-query/source-open replay: GREEN')"""
+          new2="""    assert result[material_field], query\n    if query[0] == 'pa-disposition':\n        expected = {'DL-11':'REJECT','DL-12':'REJECT','DL-13':'LATER','DL-14':'REJECT'}[query[2]]\n        assert expected in result['MaterialText'], (query, result)\nprint('DW-04 accepted typed-query/source-open replay: GREEN')"""
+          assert s.count(old2)==1, 'observer material assertion drift'
+          p.write_text(s.replace(old2,new2))
+          PY
+          python3 -m py_compile scripts/dw04-acceptance-audit.py
+          bash -n scripts/dw04-observe-exact-sha.sh
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/dw04-acceptance-audit.py scripts/dw04-observe-exact-sha.sh
+          git commit -m 'dw04: separate acceptance run policy and compact observer'
+          git push origin "HEAD:${HEAD_BRANCH}"
