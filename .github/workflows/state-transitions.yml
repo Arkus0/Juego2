@@ -24,7 +24,7 @@ jobs:
     if: >-
       github.event_name == 'workflow_run' &&
       github.event.workflow_run.event == 'pull_request' &&
-      (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout process oracle
@@ -39,10 +39,27 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ github.event.workflow_run.id }}
           RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
           PR: ${{ github.event.workflow_run.pull_requests[0].number }}
         shell: bash
         run: |
           set -euo pipefail
+
+          # CTX_DIRECT_REVIEW_READY_GATE_BEGIN
+          direct_candidate_validation_gate() {
+            local run_conclusion="$1"
+            local handoff_job="$2"
+            local context_job="$3"
+            local freeze_job="$4"
+            local non_foundational="$5"
+            [[ "${non_foundational}" == "true" || "${non_foundational}" == "false" ]] &&
+              [[ "${run_conclusion}" == "success" ]] &&
+              [[ "${handoff_job}" == "success" ]] &&
+              [[ "${context_job}" == "success" ]] &&
+              [[ "${freeze_job}" == "success" ]]
+          }
+          # CTX_DIRECT_REVIEW_READY_GATE_END
+
           [[ -n "${PR:-}" ]] || exit 0
 
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" > pr.json
@@ -89,10 +106,8 @@ jobs:
           handoff_job="$(jq -r '[.jobs[] | select(.name == "Worker handoff lint")] | last | .conclusion // "missing"' run-jobs.json)"
           context_job="$(jq -r '[.jobs[] | select(.name == "Validation context binding")] | last | .conclusion // "missing"' run-jobs.json)"
           freeze_job="$(jq -r '[.jobs[] | select(.name == "Freeze exact-SHA validation")] | last | .conclusion // "missing"' run-jobs.json)"
-          [[ "${handoff_job}" == "success" ]] || exit 0
-          [[ "${context_job}" == "success" ]] || exit 0
-          if [[ "${non_foundational}" != "true" ]]; then
-            [[ "${freeze_job}" == "success" ]] || exit 0
+          if ! direct_candidate_validation_gate "${RUN_CONCLUSION}" "${handoff_job}" "${context_job}" "${freeze_job}" "${non_foundational}"; then
+            exit 0
           fi
 
           gh api -H 'Accept: application/vnd.github+json' \
@@ -109,11 +124,7 @@ jobs:
           if gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments?per_page=100" --paginate --jq '.[].body' | grep -Fq "Key: ${key}"; then
             exit 0
           fi
-          if [[ "${non_foundational}" == "true" ]]; then
-            detail="context-bound Worker handoff is mechanically coherent under the accepted non-foundational proof class. Start a fresh independent Reviewer."
-          else
-            detail="context-bound Worker handoff and required exact-SHA validation are green. Start a fresh independent Reviewer."
-          fi
+          detail="context-bound Worker handoff and exact-SHA validation source are green. Start a fresh independent Reviewer."
           body=$(cat <<EOF
           ARKUS_AUTOMATION_V2
           State: REVIEW_READY
@@ -167,6 +178,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
+          # CTX_DIRECT_PASS_GATE_BEGIN
+          direct_candidate_validation_gate() {
+            local run_conclusion="$1"
+            local handoff_job="$2"
+            local context_job="$3"
+            local freeze_job="$4"
+            local non_foundational="$5"
+            [[ "${non_foundational}" == "true" || "${non_foundational}" == "false" ]] &&
+              [[ "${run_conclusion}" == "success" ]] &&
+              [[ "${handoff_job}" == "success" ]] &&
+              [[ "${context_job}" == "success" ]] &&
+              [[ "${freeze_job}" == "success" ]]
+          }
+          # CTX_DIRECT_PASS_GATE_END
 
           read -r verdict reviewed_sha < <(python3 - <<'PY'
           import os, re
@@ -289,9 +315,9 @@ jobs:
             handoff_job="$(jq -r '[.jobs[] | select(.name == "Worker handoff lint")] | last | .conclusion // "missing"' validation-jobs.json)"
             context_job="$(jq -r '[.jobs[] | select(.name == "Validation context binding")] | last | .conclusion // "missing"' validation-jobs.json)"
             freeze_job="$(jq -r '[.jobs[] | select(.name == "Freeze exact-SHA validation")] | last | .conclusion // "missing"' validation-jobs.json)"
-            [[ "${handoff_job}" == "success" && "${context_job}" == "success" ]] || { echo "::error::Context-bound handoff/context jobs are not GREEN"; exit 2; }
-            if [[ "${non_foundational}" != "true" ]]; then
-              [[ "${freeze_job}" == "success" && "${run_conclusion}" == "success" ]] || { echo "::error::Required foundational freeze is not GREEN"; exit 2; }
+            if ! direct_candidate_validation_gate "${run_conclusion}" "${handoff_job}" "${context_job}" "${freeze_job}" "${non_foundational}"; then
+              echo "::error::Candidate Validation source is not fully GREEN"
+              exit 2
             fi
           else
             [[ "${run_conclusion}" == "success" ]] || { echo "::error::Receipt reuse run is not successful"; exit 2; }
