@@ -38,8 +38,6 @@ for path in \
   test -f "${path}"
 done
 
-# DW-04 consumes accepted authority and predecessors. It may add trial tooling,
-# but it may not mutate accepted CITY/PA truth or DW-00..03 production semantics.
 git diff --exit-code "${BASELINE_SHA}" "${actual}" -- \
   Docs/production/CITY_LOCATION_PROGRAMME.md \
   Docs/production/CITY_MOBILITY_TOPOLOGY.md \
@@ -60,13 +58,12 @@ PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-trial.py selftest
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-openai-adapter.py --self-test
 PYTHONDONTWRITEBYTECODE=1 python3 - <<'PY'
 import json
-import subprocess
 from pathlib import Path
 root = Path('.')
-pre = '9cbed950a3469897cf286c9a90624c240701528f'
+pre_id = '9cbed950a3469897cf286c9a90624c240701528f'
 for name in ('CALIBRATION_ORACLES.json', 'ACCEPTANCE_SOURCE_ORACLES.json', 'CALIBRATION_CONTEXT.json', 'CALIBRATION_PROTOCOL.json'):
     data = json.loads((root / 'Docs/evidence/WP-DW-04' / name).read_text(encoding='utf-8'))
-    assert data['precalibration_commit'] == pre, name
+    assert data['precalibration_commit'] == pre_id, name
 for name in ('CALIBRATION_ORACLES.json', 'ACCEPTANCE_SOURCE_ORACLES.json'):
     data = json.loads((root / 'Docs/evidence/WP-DW-04' / name).read_text(encoding='utf-8'))
     for task in data['tasks'].values():
@@ -74,24 +71,28 @@ for name in ('CALIBRATION_ORACLES.json', 'ACCEPTANCE_SOURCE_ORACLES.json'):
             source = (root / item['source_path']).read_text(encoding='utf-8')
             assert item['literal'] in source, (name, item)
 context = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json').read_text(encoding='utf-8'))
-predata = json.loads((root / 'Docs/evidence/WP-DW-04/PRECALIBRATION_FREEZE.json').read_text(encoding='utf-8'))
-assert context['baseline_sha'] == predata['baseline_sha']
+pre = json.loads((root / 'Docs/evidence/WP-DW-04/PRECALIBRATION_FREEZE.json').read_text(encoding='utf-8'))
+assert context['baseline_sha'] == pre['baseline_sha']
 for task, fragments in context['contexts'].items():
-    assert task in predata['calibration_policy']['run_order']
+    assert task in pre['calibration_policy']['run_order']
     for fragment in fragments:
         source_path = fragment['source_path']
-        assert predata['authority_blobs'][source_path] == fragment['source_blob']
+        assert pre['authority_blobs'][source_path] == fragment['source_blob']
         source = (root / source_path).read_text(encoding='utf-8')
         assert fragment['text'] in source, (task, fragment['id'])
 protocol = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json').read_text(encoding='utf-8'))
-assert set(protocol['tasks']) == set(predata['calibration_policy']['run_order'])
+assert set(protocol['tasks']) == set(pre['calibration_policy']['run_order'])
 assert protocol['model_config']['provider'] == 'openai-responses'
 assert protocol['model_config']['model'] == 'gpt-5.6-luna'
 assert protocol['model_config']['thinking'] == 'none'
 assert protocol['model_config']['tool_policy'] == 'none'
-for task in predata['eligible_tasks']:
-    if task['partition'] == 'calibration':
-        assert protocol['tasks'][task['id']]['prompt'].startswith(task['question'])
+questions = {task['id']: task['question'] for task in pre['eligible_tasks'] if task['partition'] == 'calibration'}
+for task_id, task in protocol['tasks'].items():
+    assert task['semantic_question'] == questions[task_id]
+    rc = task['response_contract']
+    assert set(rc) == {'fact_keys','allowed_blockers','allowed_verdicts','evidence_ids'}
+    assert rc['fact_keys'] and rc['allowed_verdicts'] and rc['evidence_ids']
+    assert set(rc['allowed_verdicts']).issubset({'REPORT','REJECT'})
 for path in sorted((root / 'scripts').glob('dw04-*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
 print('DW-04 frozen universe/oracles/CTX/provider protocol: GREEN')
