@@ -1,6 +1,7 @@
 # WP-DW-03 — Frozen query suite v1
 
 Suite ID: `dw03-pa-query-suite-v1`
+FROZEN_QUERY_SUITE: `dw03-pa-query-suite-v1`
 Frozen before implementation verdict. Expected membership is derived independently from the pinned accepted PA authorities, never from projected/query output.
 
 ## Q1 — Daily-life rejected/deferred meaning survives compact projection
