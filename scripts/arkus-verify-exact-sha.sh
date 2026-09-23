@@ -120,6 +120,7 @@ resolve_wp() {
 case "$(resolve_wp)" in
   WP-DW-04)
     python3 scripts/dw04-evidence-integrity.py
+    dotnet build tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj --configuration Release -m:1 --disable-build-servers
     exec bash scripts/dw04-verify-exact-sha.sh "$@"
     ;;
   WP-DW-03)
