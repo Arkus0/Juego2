@@ -1,10 +1,12 @@
 # WP-DW-04 — Structured-context quality and token trial
 
-Status: PLANNED / NOT_STARTED
+Status: COMPLETE / ACCEPTED
 Class: FOUNDATIONAL
 EXECUTION_REQUIREMENT: REMOTE_OK
 Depends on: `WP-DW-03` PASS + merge + DocSync; `WP-CTX-03` PASS + merge + DocSync
 Blocks: `WP-DW-05`
+
+Acceptance: frozen candidate `c9e5e26e5780b05fe26c99c4a98a59d63ad269e5`; independent PASS review `#5291762220`; PR `#150`; merge `f4a2f145101bc735388b682b20a7913cd720cd33`; final fully GREEN exact-SHA validation Actions run `35868280099`.
 
 ## Objective and central claim
 

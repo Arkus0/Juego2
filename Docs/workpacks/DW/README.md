@@ -1,6 +1,6 @@
 # DW — Design World Second-Consumer Validation
 
-Status: ACTIVE / `WP-DW-03` COMPLETE
+Status: ACTIVE / `WP-DW-04` COMPLETE
 Class: FOUNDATIONAL VALIDATION TRACK
 Binding architecture: `Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md`
 Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
@@ -20,7 +20,9 @@ Accepted plan evidence:
 
 `WP-DW-03` is **COMPLETE**. Frozen candidate `db8b85b4fe77af99cdb5ebf58626a31107c238b3` passed independent review `#5287315277` in PR `#143`, final fully GREEN exact-SHA validation run `35822685114` was GREEN, and the accepted candidate merged as `10bbbb0cb64bcfab476281c089812332af136bb1`. Post-PASS reconciliation is `Docs/evidence/WP-DW-03/DOCSYNC.md`.
 
-Next default workpack: `WP-DW-04 — Structured-context quality and token trial` (`REMOTE_OK`), dependency-valid because DW-03 and CTX-03 are accepted, but `NOT_STARTED` until a human explicitly starts its Worker.
+`WP-DW-04` is **COMPLETE**. Frozen candidate `c9e5e26e5780b05fe26c99c4a98a59d63ad269e5` passed independent review `#5291762220` in PR `#150`, final fully GREEN exact-SHA validation run `35868280099` was GREEN, and the accepted candidate merged as `f4a2f145101bc735388b682b20a7913cd720cd33`. Post-PASS reconciliation is `Docs/evidence/WP-DW-04/DOCSYNC.md`.
+
+Next default workpack: `WP-DW-05 — Generic-boundary stress and H2 impact assessment` (`REMOTE_OK`), dependency-valid because DW-04 is accepted, but `NOT_STARTED` until a human explicitly starts its Worker.
 
 No later `WP-DW-*` implementation Worker is active or implicitly authorized by this DocSync.
 
@@ -81,7 +83,7 @@ The PA and CTX prerequisites are cross-track evidence prerequisites only. DW doe
 | 2 | `WP-DW-01` ✅ | a bounded accepted CITY slice can produce causal mechanical FAILs without CITY semantics entering H0 | `REMOTE_OK` |
 | 3 | `WP-DW-02` ✅ | the CITY projection is useful for real deterministic queries/content-shape measurements with complete provenance | `REMOTE_OK` |
 | 4 | `WP-DW-03` ✅ | accepted PA findings/evidence/dispositions/fixtures can be projected and queried without lossy composition | `REMOTE_OK` |
-| 5 | `WP-DW-04` | structured retrieval can reduce context on a pre-tuning frozen task universe while paired same-config agents preserve required task/review facts, blockers and verdicts under deterministic scoring | `REMOTE_OK` |
+| 5 | `WP-DW-04` ✅ | structured retrieval can reduce context on a pre-tuning frozen task universe while paired same-config agents preserve required task/review facts, blockers and verdicts under deterministic scoring | `REMOTE_OK` |
 | 6 | `WP-DW-05` | the combined CITY+PA evidence supports a truthful generic-boundary assessment and closes/routes residuals without hidden H0 changes | `REMOTE_OK` |
 | 7 | `WP-DW-GATE` | composed second-consumer readiness and explicit H2 planning consequence | `REMOTE_OK` |
 
@@ -182,4 +184,4 @@ Every workpack below owns a subset of these risks explicitly.
 
 ## Start rule
 
-The DW programme plan is accepted after PR `#117` PASS + merge + DocSync, `WP-DW-00` is accepted after PR `#126` PASS + merge + DocSync, `WP-DW-01` is accepted after PR `#136` PASS + merge + DocSync, `WP-DW-02` is accepted after PR `#139` PASS + merge + DocSync, and `WP-DW-03` is accepted after PR `#143` PASS + merge + DocSync. `WP-DW-04 — Structured-context quality and token trial` is the sole default next DW workpack and remains `NOT_STARTED` until a human explicitly starts its Worker. No later DW workpack is implicitly authorized. H1, PA and CTX continue under their own accepted DAGs.
+The DW programme plan is accepted after PR `#117` PASS + merge + DocSync, `WP-DW-00` is accepted after PR `#126` PASS + merge + DocSync, `WP-DW-01` is accepted after PR `#136` PASS + merge + DocSync, `WP-DW-02` is accepted after PR `#139` PASS + merge + DocSync, `WP-DW-03` is accepted after PR `#143` PASS + merge + DocSync, and `WP-DW-04` is accepted after PR `#150` PASS + merge + DocSync. `WP-DW-05 — Generic-boundary stress and H2 impact assessment` is the sole default next DW workpack and remains `NOT_STARTED` until a human explicitly starts its Worker. No later DW workpack is implicitly authorized. H1, PA and CTX continue under their own accepted DAGs.

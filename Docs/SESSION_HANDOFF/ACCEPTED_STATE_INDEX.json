@@ -3,7 +3,7 @@
   "authority": "DERIVED_NAVIGATION_ONLY",
   "freshness_contract": "docsync-first-parent-v1",
   "projection_phase": "DOCSYNC_PERSISTED",
-  "generated_from_main_sha": "10bbbb0cb64bcfab476281c089812332af136bb1",
+  "generated_from_main_sha": "f4a2f145101bc735388b682b20a7913cd720cd33",
   "generated_on": "2026-09-23",
   "stale_rule": "Mutable main-derived hints are live-usable only when projection_phase is DOCSYNC_PERSISTED and generated_from_main_sha exactly equals the first parent of current live main. A CANDIDATE projection is always stale for live use. Any later main commit makes a persisted projection stale.",
   "tracks": {
@@ -12,12 +12,11 @@
     "CITY": {"accepted_state_hint":"THROUGH_WP-CITY-03_ON_ACCEPTED_SPINE","accepted_workpacks_hint":["WP-CITY-00","WP-CITY-01","WP-CITY-02","WP-CITY-05","WP-CITY-06","WP-CITY-03"],"next_contract_hint":"WP-CITY-04","accepted_dependency_hint":{"satisfied":["WP-CITY-03 PASS + merge + DocSync"],"not_accepted_on_generated_main":["WP-H1-08 PASS + merge + DocSync"],"source":"Docs/workpacks/CITY/WP-CITY-04.md"},"sources":["Docs/workpacks/README.md","Docs/workpacks/CITY/WP-CITY-04.md"]},
     "PA": {"accepted_state_hint":"THROUGH_WP-PA-05","accepted_workpacks_hint":["WP-PA-01","WP-PA-02","WP-PA-03","WP-PA-04","WP-PA-05"],"next_contract_hint":"WP-PA-06","sources":["Docs/workpacks/README.md","Docs/workpacks/PA/WP-PA-06.md"]},
     "CTX": {"accepted_state_hint":"THROUGH_WP-CTX-03","accepted_workpacks_hint":["WP-CTX-01","WP-CTX-02","WP-CTX-03"],"next_contract_hint":null,"sources":["Docs/workpacks/CTX/README.md","Docs/workpacks/CTX/WP-CTX-01.md","Docs/workpacks/CTX/WP-CTX-02.md","Docs/workpacks/CTX/WP-CTX-03.md","Docs/evidence/CTX-03/DOCSYNC.md","Docs/engineering/CONTEXT_CAPSULE_V1.md","Docs/workpacks/README.md"]},
-    "DW": {"accepted_state_hint":"THROUGH_WP-DW-03","accepted_workpacks_hint":["WP-DW-00","WP-DW-01","WP-DW-02","WP-DW-03"],"next_contract_hint":"WP-DW-04","sources":["Docs/workpacks/DW/README.md","Docs/workpacks/DW/WP-DW-00.md","Docs/workpacks/DW/WP-DW-01.md","Docs/workpacks/DW/WP-DW-02.md","Docs/workpacks/DW/WP-DW-03.md","Docs/workpacks/DW/WP-DW-04.md","Docs/evidence/WP-DW-00/DOCSYNC.md","Docs/evidence/WP-DW-01/DOCSYNC.md","Docs/evidence/WP-DW-02/DOCSYNC.md","Docs/evidence/WP-DW-03/DOCSYNC.md","Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md","Docs/workpacks/README.md","Docs/ROADMAP.md"]}
+    "DW": {"accepted_state_hint":"THROUGH_WP-DW-04","accepted_workpacks_hint":["WP-DW-00","WP-DW-01","WP-DW-02","WP-DW-03","WP-DW-04"],"next_contract_hint":"WP-DW-05","sources":["Docs/workpacks/DW/README.md","Docs/workpacks/DW/WP-DW-00.md","Docs/workpacks/DW/WP-DW-01.md","Docs/workpacks/DW/WP-DW-02.md","Docs/workpacks/DW/WP-DW-03.md","Docs/workpacks/DW/WP-DW-04.md","Docs/workpacks/DW/WP-DW-05.md","Docs/evidence/WP-DW-00/DOCSYNC.md","Docs/evidence/WP-DW-01/DOCSYNC.md","Docs/evidence/WP-DW-02/DOCSYNC.md","Docs/evidence/WP-DW-03/DOCSYNC.md","Docs/evidence/WP-DW-04/DOCSYNC.md","Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md","Docs/workpacks/README.md","Docs/ROADMAP.md"]}
   },
   "cross_track_contract_hints": [
     {"consumer":"WP-CITY-04","requires":["WP-CITY-03 PASS + merge + DocSync","WP-H1-08 PASS + merge + DocSync"],"source":"Docs/workpacks/CITY/WP-CITY-04.md"},
     {"consumer":"WP-CITY-07","requires":["WP-CITY-04 PASS","WP-H1-GATE PASS + merge + DocSync"],"source":"Docs/workpacks/README.md"},
-    {"consumer":"WP-DW-04","requires":["WP-DW-03 PASS + merge + DocSync","WP-CTX-03 PASS + merge + DocSync"],"source":"Docs/workpacks/DW/WP-DW-04.md"},
     {"consumer":"final H2 public/external-boundary acceptance","requires":["accepted WP-DW-GATE evidence OR explicit reviewed H2 disposition of the accepted DW interlock","WP-H1-GATE remains the independent Unity/gameplay prerequisite"],"source":"Docs/ROADMAP.md"}
   ]
 }
