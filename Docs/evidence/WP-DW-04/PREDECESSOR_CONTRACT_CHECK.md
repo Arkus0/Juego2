@@ -1,4 +1,4 @@
-# DW-04 predecessor contract check — before implementation
+# PREDECESSOR_CONTRACT_CHECK — DW-04 before implementation
 
 Baseline: `main@82369fdb69e33e3492b41c4aaa7f1ae9aaed18af`. Direct dependencies are accepted and DocSync-complete: DW-03 candidate `db8b85b4fe77af99cdb5ebf58626a31107c238b3`, independent PASS `#5287315277`, merge `10bbbb0cb64bcfab476281c089812332af136bb1`; CTX-03 candidate `8851f3a295c848be5724d5d9b796e00d2037d6e8`, independent PASS `#5277502546`, merge `d2cf7145b4ec83c3935286f2d9faeabbcd032148`.
 
