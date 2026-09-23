@@ -86,7 +86,11 @@ jobs:
             exit 20
           }
 
-          campaign_id="github-actions:${GITHUB_REPOSITORY}:pr${PR_NUMBER}:sha${TARGET_SHA}:run${GITHUB_RUN_ID}:calibration"
+          protocol='Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json'
+          model="$(jq -r '.model_config.model' "${protocol}")"
+          provider_order="$(jq -c '.model_config.provider_options.routing.order' "${protocol}")"
+          restart_generation="$(jq -r '.restart_generation // 0' "${protocol}")"
+          campaign_id="github-actions:${GITHUB_REPOSITORY}:pr${PR_NUMBER}:sha${TARGET_SHA}:run${GITHUB_RUN_ID}:calibration-r${restart_generation}"
           echo "DW04_CAMPAIGN_ID=${campaign_id}" >> "${GITHUB_ENV}"
           mkdir -p artifacts/observed/dw04-calibration
           jq -n \
@@ -97,12 +101,13 @@ jobs:
             --arg candidate_sha "${TARGET_SHA}" \
             --arg run_id "${GITHUB_RUN_ID}" \
             --arg run_attempt "${GITHUB_RUN_ATTEMPT}" \
-            --arg model 'deepseek/deepseek-v4.1-flash' \
-            --arg provider 'OpenRouter -> DeepInfra serving DeepSeek V4.1 Flash (fallback disabled)' \
-            '{schema:$schema,campaign_id:$campaign_id,repository:$repository,pr_number:$pr_number,candidate_sha:$candidate_sha,github_run_id:$run_id,github_run_attempt:$run_attempt,phase:"CALIBRATION",state:"CLAIMED_BEFORE_PROVIDER_CALLS",model:$model,provider_route:$provider}' \
+            --arg model "${model}" \
+            --arg provider_order "${provider_order}" \
+            --arg restart_generation "${restart_generation}" \
+            '{schema:$schema,campaign_id:$campaign_id,repository:$repository,pr_number:$pr_number,candidate_sha:$candidate_sha,github_run_id:$run_id,github_run_attempt:$run_attempt,phase:"CALIBRATION",state:"CLAIMED_BEFORE_PROVIDER_CALLS",model:$model,provider_order:$provider_order,restart_generation:($restart_generation|tonumber)}' \
             > artifacts/observed/dw04-calibration/CAMPAIGN_START_RECEIPT.json
 
-          summary="DW-04 CTX-only calibration campaign claimed before provider calls. PR #${PR_NUMBER}; exact candidate ${TARGET_SHA}; workflow run ${GITHUB_RUN_ID}; campaign ${campaign_id}; model deepseek/deepseek-v4.1-flash via pinned DeepInfra serving provider on OpenRouter. A second calibration campaign on this SHA must fail closed."
+          summary="DW-04 CTX-only calibration campaign claimed before provider calls. PR #${PR_NUMBER}; exact candidate ${TARGET_SHA}; workflow run ${GITHUB_RUN_ID}; campaign ${campaign_id}; model ${model}; provider order ${provider_order}; restart generation ${restart_generation}. A second calibration campaign on this SHA must fail closed."
           jq -n \
             --arg name 'DW-04 calibration campaign start' \
             --arg head_sha "${TARGET_SHA}" \
@@ -134,7 +139,8 @@ jobs:
         run: |
           set -euo pipefail
           grep -Fq '"readiness": "READY"' artifacts/observed/dw04-calibration/CALIBRATION_RESULTS.json
-          summary="Eight frozen CTX-only DeepSeek V4.1 Flash calibration slots are complete and all passed the pre-frozen oracles. The retained C-CITY-01/R1 invalid attempt remains accounted before its single replacement. Exact candidate ${TARGET_SHA}; workflow run ${GITHUB_RUN_ID}; campaign ${DW04_CAMPAIGN_ID}."
+          model="$(jq -r '.model_config.model' artifacts/observed/dw04-calibration/CALIBRATION_RESULTS.json)"
+          summary="Eight frozen CTX-only calibration slots are complete and all passed the pre-frozen oracles under ${model}. Exact candidate ${TARGET_SHA}; workflow run ${GITHUB_RUN_ID}; campaign ${DW04_CAMPAIGN_ID}. Superseded campaigns remain historical evidence and contribute no slot to this READY result."
           jq -n \
             --arg name 'DW-04 calibration result' \
             --arg head_sha "${TARGET_SHA}" \

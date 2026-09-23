@@ -27,7 +27,9 @@ for path in \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_02.md \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_03.md \
   Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_04.md \
+  Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_05.md \
   Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json \
+  Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json \
   Docs/evidence/WP-DW-04/CALIBRATION_ORACLES.json \
   Docs/evidence/WP-DW-04/ACCEPTANCE_SOURCE_ORACLES.json \
   Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json \
@@ -36,7 +38,7 @@ for path in \
   Docs/evidence/WP-DW-04/WORKER_PLAN.md \
   scripts/dw04-trial.py \
   scripts/dw04-calibrate.py \
-  scripts/dw04-openrouter-adapter.py \
+  scripts/dw04-openrouter-luna-adapter.py \
   tools/Arkus.Dw04.Retrieval/Arkus.Dw04.Retrieval.csproj \
   tools/Arkus.Dw04.Retrieval/Program.cs; do
   test -f "${path}"
@@ -60,7 +62,7 @@ git diff --exit-code "${BASELINE_SHA}" "${actual}" -- \
 
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-trial.py precheck --pre-commit "${PRECALIBRATION_COMMIT}"
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-trial.py selftest
-PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-openrouter-adapter.py --self-test
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/dw04-openrouter-luna-adapter.py --self-test
 PYTHONDONTWRITEBYTECODE=1 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -87,23 +89,38 @@ for task, fragments in context['contexts'].items():
         assert fragment['text'] in source, (task, fragment['id'])
 protocol = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json').read_text(encoding='utf-8'))
 assert set(protocol['tasks']) == set(pre['calibration_policy']['run_order'])
-assert protocol['prior_invalid_attempts'] == ['Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json']
+assert protocol['prior_invalid_attempts'] == []
+assert protocol['restart_generation'] == 1
+assert protocol['restart_authorization'] == 'PR#150-comment-5792478254'
+assert protocol['provider_adapter'] == 'scripts/dw04-openrouter-luna-adapter.py'
+assert protocol['superseded_calibration_evidence'] == [
+    'Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json',
+    'Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json',
+    'Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_05.md',
+]
 config = protocol['model_config']
-assert protocol['provider_adapter'] == 'scripts/dw04-openrouter-adapter.py'
 assert config['provider'] == 'openrouter-chat-completions'
-assert config['model'] == 'deepseek/deepseek-v4.1-flash'
-assert config['version'] == 'openrouter-model-id:deepseek/deepseek-v4.1-flash'
-assert config['temperature'] == 0
+assert config['model'] == 'openai/gpt-5.6-luna-20260709'
+assert config['version'] == 'openrouter-model-id:openai/gpt-5.6-luna-20260709'
+assert config['temperature'] is None
 assert config['thinking'] is None
 assert config['tool_policy'] == 'none'
 assert config['provider_options']['endpoint'] == 'https://openrouter.ai/api/v1/chat/completions'
-assert config['provider_options']['routing'] == {'order':['deepinfra'],'allow_fallbacks':False,'require_parameters':True}
-invalid = json.loads((root / protocol['prior_invalid_attempts'][0]).read_text(encoding='utf-8'))
+assert config['provider_options']['structured_output'] == 'dw04_answer_v1'
+assert config['provider_options']['routing'] == {'order':['openai'],'allow_fallbacks':False,'require_parameters':True}
+invalid = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json').read_text(encoding='utf-8'))
 assert invalid['slot'] == {'task':'C-CITY-01','run':1,'route':'CTX'}
 assert invalid['attempt'] == 1 and invalid['classification'] == 'RUN_INVALID_PRE_ANSWER'
 assert invalid['scorable_structured_answer'] is False and invalid['semantic_result_observed'] is False
 assert invalid['provider_request_id'] is None
 assert invalid['workflow_run_id'] == 35840654094 and invalid['artifact_id'] == 10740668694
+closed = json.loads((root / 'Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json').read_text(encoding='utf-8'))
+assert closed['workflow_run_id'] == 35842779697 and closed['artifact_id'] == 10742271293
+assert closed['artifact_zip_sha256'] == '7a83e642ea5e86a92e0e274b90e3f80320bf8b842dbd942e56e750db060513cb'
+assert closed['readiness'] == 'NOT_READY' and closed['carry_forward_into_restart'] is False
+assert len(closed['scorable_runs']) == 2 and all(x['matches_frozen_oracle'] for x in closed['scorable_runs'])
+assert [x['attempt'] for x in closed['invalid_attempts']] == [1, 2]
+assert all(x['slot'] == {'task':'C-PA-01','run':1,'route':'CTX'} and x['scorable_structured_answer'] is False for x in closed['invalid_attempts'])
 questions = {task['id']: task['question'] for task in pre['eligible_tasks'] if task['partition'] == 'calibration'}
 contracts = []
 for task_id, task in protocol['tasks'].items():
@@ -116,7 +133,7 @@ for task_id, task in protocol['tasks'].items():
 assert len(set(contracts)) == 1, 'task-specific response vocabulary would leak expected semantics'
 for path in sorted((root / 'scripts').glob('dw04-*.py')):
     compile(path.read_text(encoding='utf-8'), str(path), 'exec')
-print('DW-04 frozen universe/oracles/CTX/OpenRouter-DeepInfra protocol: GREEN')
+print('DW-04 frozen universe/oracles/CTX/OpenRouter-Luna restart protocol: GREEN')
 PY
 
 DOTNET_NOLOGO=1 dotnet restore Juego2.sln --locked-mode -m:1 --disable-build-servers
@@ -158,8 +175,9 @@ Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-worker-or-local-shell}
 Canonical command: scripts/dw04-observe-exact-sha.sh ${actual}
 Instrument/universe/oracles: GREEN
 Semantically-sufficient CTX calibration freeze: GREEN
-Retained objective invalid attempt accounting: GREEN (run 35840654094; C-CITY-01/R1 attempt 1 consumed)
-Real-provider adapter contract: GREEN (OpenRouter / DeepSeek V4.1 Flash / pinned DeepInfra serving provider)
+Superseded DeepSeek campaign evidence: GREEN (runs 35840654094 and 35842779697 retained; no carry-forward)
+Owner-authorized calibration restart boundary: GREEN (PR #150 comment 5792478254)
+Real-provider adapter contract: GREEN (OpenRouter / exact GPT-5.6 Luna 20260709 / pinned OpenAI serving provider)
 Accepted-authority immutability: GREEN
 Locked restore/build/regression: GREEN
 Typed retrieval determinism/source replay: GREEN

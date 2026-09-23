@@ -3,22 +3,29 @@
   "precalibration_commit": "9cbed950a3469897cf286c9a90624c240701528f",
   "calibration_oracle_commit": "88c05db465a3abb9196c1ba8c9f60c42d5506453",
   "context_path": "Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json",
-  "prior_invalid_attempts": ["Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json"],
+  "prior_invalid_attempts": [],
+  "restart_generation": 1,
+  "restart_authorization": "PR#150-comment-5792478254",
+  "superseded_calibration_evidence": [
+    "Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json",
+    "Docs/evidence/WP-DW-04/CALIBRATION_DEEPSEEK_CLOSED.json",
+    "Docs/evidence/WP-DW-04/PRECALIBRATION_AMENDMENT_05.md"
+  ],
   "route": "CTX_ONLY",
-  "provider_adapter": "scripts/dw04-openrouter-adapter.py",
+  "provider_adapter": "scripts/dw04-openrouter-luna-adapter.py",
   "model_config": {
     "provider": "openrouter-chat-completions",
-    "model": "deepseek/deepseek-v4.1-flash",
-    "version": "openrouter-model-id:deepseek/deepseek-v4.1-flash",
-    "temperature": 0,
+    "model": "openai/gpt-5.6-luna-20260709",
+    "version": "openrouter-model-id:openai/gpt-5.6-luna-20260709",
+    "temperature": null,
     "thinking": null,
     "tool_policy": "none",
     "execution_budget": {"max_output_tokens": 1200, "timeout_seconds": 120},
-    "run_policy": "exactly-two-designated-ctx-runs-per-calibration-task-no-semantic-retry; one retained objective-invalid replacement maximum per designated slot",
+    "run_policy": "owner-authorized-full-calibration-restart; exactly-two-designated-ctx-runs-per-calibration-task; no-semantic-retry; one-objective-invalid-replacement-maximum-per-restarted-slot",
     "provider_options": {
       "endpoint": "https://openrouter.ai/api/v1/chat/completions",
       "structured_output": "dw04_answer_v1",
-      "routing": {"order":["deepinfra"],"allow_fallbacks":false,"require_parameters":true}
+      "routing": {"order":["openai"],"allow_fallbacks":false,"require_parameters":true}
     }
   },
   "system_prompt": "You are executing a frozen repository context-evaluation task. The supplied context fragments are the only semantic authority for this run: do not use memory, outside knowledge, web search, tools, or unstated assumptions. The task's response contract is formatting vocabulary only, not an assertion that any allowed blocker, verdict or evidence identifier is true for this task. Return only the canonical structured answer. The facts object must contain exactly the fact keys named by the response contract and every fact value must be a string. blockers and evidence are arrays using only identifiers allowed by the response contract. verdict must use one allowed verdict. Optional prose is forbidden.",
@@ -40,6 +47,6 @@
       "response_contract": {"fact_keys":["fixture","A_to_B_implies_B_to_A","B_to_A_stays_LOW"],"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
     }
   },
-  "invalid_run_policy": "A designated slot may have at most one retained objective invalid attempt and one replacement before a scorable structured answer. Semantic oracle misses are never retryable. CALIBRATION_INVALID_ATTEMPT_01 is the already-consumed invalid allowance for C-CITY-01 run 1.",
-  "readiness": "All eight designated CTX slots must end with one scorable replacement/original answer that passes the pre-frozen calibration oracle. Any retained invalid attempt remains evidence and does not count as a semantic result."
+  "invalid_run_policy": "The owner-authorized Luna restart begins all eight designated CTX slots from a fresh attempt 1. Each restarted slot may have at most one objective provider/transport invalid attempt and one replacement before a scorable structured answer. Semantic oracle misses are never retryable. All superseded DeepSeek attempts remain evidence but are excluded from Luna readiness and cannot be carried forward as successful slots.",
+  "readiness": "All eight restarted Luna CTX slots must end with one scorable original/replacement answer that passes the pre-frozen calibration oracle. Any objective invalid attempt remains evidence and does not count as a semantic result."
 }
