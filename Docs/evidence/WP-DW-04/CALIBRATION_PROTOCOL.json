@@ -16,7 +16,6 @@
     "run_policy": "exactly-two-designated-ctx-runs-per-calibration-task-no-semantic-retry",
     "provider_options": {
       "endpoint": "https://openrouter.ai/api/v1/chat/completions",
-      "store": false,
       "structured_output": "dw04_answer_v1",
       "routing": {"order":["deepseek"],"allow_fallbacks":false,"require_parameters":true}
     }
