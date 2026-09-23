@@ -22,6 +22,14 @@ Next default workpack: `WP-H1-03 — Unity host policy + project workspace autho
 H1 now has three accepted implementation WPs. No later H1 implementation WP is active or implicitly authorized by this DocSync. `WP-H1-03A` remains blocked until `WP-H1-03` is accepted.
 The sequence contains 13 claim-owned implementation workpacks plus `WP-H1-GATE`.
 
+## CTX↔DW selective-adoption note
+
+Planned cross-track `WP-CTX-DW-GATE` does **not** block `WP-H1-03` or `WP-H1-03A`. Those authority/lifecycle workpacks continue on the existing H1 chain and are expected to use CTX plus authoritative H1/H0 sources, with DW normally `NOT_MATERIAL` unless concrete evidence says otherwise.
+
+If the CTX↔DW gate is accepted, first material H1 observations are planned at `H1-04` (catalogue/identity + first real-source adoption) and `H1-06` (asset/prefab relationships), without changing either product claim. `H1-GATE` should then use the accepted selective route for its planned fresh-agent trial where DW is material. Deterministic H1 evidence remains the oracle.
+
+Detailed planning input: `Docs/workpacks/H1/CTX_DW_ADOPTION_PLAN.md`.
+
 ## Outcome
 
 H1 ends only when Arkus can drive a representative Juego2 slice through public contracts into a deterministic, inspectable, repairable and rebuildable Unity projection without making Unity canonical authority.
