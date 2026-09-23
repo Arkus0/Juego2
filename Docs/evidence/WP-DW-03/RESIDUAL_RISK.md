@@ -13,6 +13,7 @@ PREDECESSOR_REOPEN_CONDITION_TRIGGERED: NO
 4. **Trusted primitives.** Git blob identity, cryptographic hashes, filesystem/source reads and inherited Design World normalization are trusted infrastructure.
 5. **No context-efficiency claim.** The existence of a compact deterministic index does not prove token savings, model quality or optimal agent retrieval. Those measurements belong to DW-04.
 6. **No runtime claim.** Research fixtures and projected PA semantics do not prove Unity/runtime implementation, persistence, performance or final H0 architecture.
+7. **Single reviewed v1 domain.** The current accepted corpus has one projected domain, `living-world`. `ByDomain` is exact for that reviewed universe and returns empty for unknown domains; a future second domain requires explicit reviewed extension rather than implicit classification.
 
 These are explicit boundaries, not known false-green classes inside the declared DW-03 guarantee.
 
@@ -25,6 +26,24 @@ These are explicit boundaries, not known false-green classes inside the declared
 ### Can a disposition or negative finding be lost while IDs/counts still look plausible?
 
 **No.** Exact material/disposition fields and disposition flags are compared source-side. Controls remove an entire disposition surface, weaken one disposition behind the same identity, and remove a hard negative/failure-mode record; all are semantic RED even with a self-consistent generic projection.
+
+### Can the projection be perfect while the effective query drops required records?
+
+**No for every contractual query dimension.** `IndependentSourceQueryOracle` reconstructs expected query membership directly from accepted PA markdown without consuming `PaCorpusQueryService`, query output, projected counts, the production parser or the production manifest as expected-set authority. The suite compares exact memberships for all disposition flags, domain, all five failure families, every accepted fixture resolution/fixture-linked finding set and every accepted evidence class/evidence-linked finding set.
+
+A focused query-only defect injection removes all PA-04 rejected results while retaining plausible PA-01 and PA-03 reject results. The projection and `PaSourceCorpusOracle` remain GREEN, but query conformance is RED on the missing PA-04 IDs. A second omission removes one PA-05 fixture only from the domain result and is also RED. Therefore the proof no longer depends on a projection defect to detect query loss.
+
+### Can an unexpected extra query member stay GREEN?
+
+**No.** Query membership is compared as an exact multiset, not `Contains`/non-empty samples. Injecting one `npc-agency` record into the `daily-life` failure-family result produces an explicit unexpected-member RED. Duplicate occurrence would likewise appear as an unexpected multiset member.
+
+### Does exact membership still allow query records with altered material, provenance or relations?
+
+**No on the implemented query path.** Every returned query record is matched to its immutable projection fact for type, PA/kind/domain/failure-family/source key, full material text, exact provenance tuple, exact relation multiset and resolved disposition text. Separately, `PaSourceCorpusOracle` independently proves that those projection facts match accepted source-side content/provenance/relations. Query output therefore cannot substitute its own material oracle.
+
+### Is `domain` merely documented rather than implemented?
+
+**No.** `PaCorpusQueryService.ByDomain` is part of the effective query surface, `PaCorpusQueryRecord` exposes the typed `Domain`, and `ByDomain("living-world")` is required to equal the complete independent source-side v1 universe. The frozen Q1–Q8 document is not retroactively rewritten; domain is an explicit contract-owned supplemental exact-set proof.
 
 ### Can a relation change and auto-confirm producer + generic validator?
 
@@ -44,11 +63,11 @@ These are explicit boundaries, not known false-green classes inside the declared
 
 ### Can the frozen suite cover only the easy cases?
 
-**No.** The suite was frozen before implementation verdict and traverses all five PA families plus findings, dispositions, evidence, fixtures, invariants/failure families and negative/rejected/deferred material. The causal controls target every required loss class rather than only positive lookup paths.
+**No.** The Q1–Q8 suite was frozen before implementation verdict and remains unchanged as the frozen selection. Its previous representative assertions are now surrounded by a source-derived exact-set oracle covering the full owned disposition/family/fixture/evidence classes, while the missing contract-owned domain dimension is implemented and proved separately rather than silently ignored.
 
 ### Can a downstream consumer retrieve the material information DW-03 claims without rereading the entire PA corpus?
 
-**Yes for the declared structured guarantee.** Query records expose complete adopted material text, exact disposition, typed relations and source-open provenance, and the compact index is deterministic. A consumer still returns to the accepted source when it needs intentionally unmodeled narrative; this preserves rather than erases the authority boundary.
+**Yes for the declared structured guarantee.** Query records expose complete adopted material text, exact disposition, typed relations, domain/failure-family classification and source-open provenance, and the compact index is deterministic. A consumer still returns to the accepted source when it needs intentionally unmodeled narrative; this preserves rather than erases the authority boundary.
 
 ### Is DW-03 claiming work that actually belongs to DW-04?
 
@@ -67,4 +86,4 @@ These are explicit boundaries, not known false-green classes inside the declared
 
 ## Audit conclusion
 
-After source-universe, schema, content, negative-knowledge, relation, provenance, determinism, compactness, future-extension and wiring attacks, no known in-boundary defect class remains undetected by the repository-backed proof suite. Lifecycle freeze and independent Reviewer acceptance remain required; this document does not self-accept the workpack.
+After source-universe, schema, content, negative-knowledge, exact query membership, query-only omission/extra injection, domain, relation, provenance, determinism, compactness, future-extension and wiring attacks, no known in-boundary defect class remains undetected by the repository-backed proof suite. Lifecycle freeze and independent Reviewer acceptance remain required; this document does not self-accept the workpack.
