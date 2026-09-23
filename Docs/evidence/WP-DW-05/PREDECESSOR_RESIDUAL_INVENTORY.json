@@ -1,0 +1,116 @@
+{
+  "schema": "dw05-predecessor-residual-inventory-v1",
+  "baseline_sha": "18d4aa33be526c65a53796aa305a56fe8df15d12",
+  "clauses": [
+    {
+      "source": "Docs/workpacks/DW/WP-DW-00.md",
+      "anchor": "This contract does not prove real CITY semantic correctness/completeness, PA losslessness, context savings, Unity drift or external repository consumption.",
+      "limitation_id": "city-semantic-completeness"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-00.md",
+      "anchor": "This contract does not prove real CITY semantic correctness/completeness, PA losslessness, context savings, Unity drift or external repository consumption.",
+      "limitation_id": "pa-losslessness"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-00.md",
+      "anchor": "This contract does not prove real CITY semantic correctness/completeness, PA losslessness, context savings, Unity drift or external repository consumption.",
+      "limitation_id": "context-quality-generalization"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-00.md",
+      "anchor": "This contract does not prove real CITY semantic correctness/completeness, PA losslessness, context savings, Unity drift or external repository consumption.",
+      "limitation_id": "design-unity-drift"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-00.md",
+      "anchor": "This contract does not prove real CITY semantic correctness/completeness, PA losslessness, context savings, Unity drift or external repository consumption.",
+      "limitation_id": "external-repository-consumption"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-01.md",
+      "anchor": "Passing two invariants does not prove full CITY projection completeness, useful production queries, content cost, retained geometry or Unity conformance.",
+      "limitation_id": "city-semantic-completeness"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-01.md",
+      "anchor": "Passing two invariants does not prove full CITY projection completeness, useful production queries, content cost, retained geometry or Unity conformance.",
+      "limitation_id": "production-cost-effort"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-01.md",
+      "anchor": "Passing two invariants does not prove full CITY projection completeness, useful production queries, content cost, retained geometry or Unity conformance.",
+      "limitation_id": "retained-geometry-unity-conformance"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-02.md",
+      "anchor": "The report describes design-implied content shape, not actual Quaternius coverage, asset-production effort or Unity state.",
+      "limitation_id": "content-catalogue-coverage"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-02.md",
+      "anchor": "The report describes design-implied content shape, not actual Quaternius coverage, asset-production effort or Unity state.",
+      "limitation_id": "production-cost-effort"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-02.md",
+      "anchor": "The report describes design-implied content shape, not actual Quaternius coverage, asset-production effort or Unity state.",
+      "limitation_id": "retained-geometry-unity-conformance"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-03.md",
+      "anchor": "A faithful PA-01..05 projection does not prove future PA research can always use the same schema unchanged, nor that an LLM using compact retrieval will maintain quality.",
+      "limitation_id": "future-pa-schema-pressure"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-03.md",
+      "anchor": "A faithful PA-01..05 projection does not prove future PA research can always use the same schema unchanged, nor that an LLM using compact retrieval will maintain quality.",
+      "limitation_id": "context-quality-generalization"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-04.md",
+      "anchor": "The fixture suite cannot prove all future agents/tasks improve, and a 30% median reduction is not a universal promise.",
+      "limitation_id": "context-quality-generalization"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-04.md",
+      "anchor": "Three matched pairs per task are a bounded fail-closed conformance check, not a statistically powered estimate of model performance.",
+      "limitation_id": "model-variance-statistical-power"
+    },
+    {
+      "source": "Docs/workpacks/DW/WP-DW-04.md",
+      "anchor": "The claim remains bounded to the frozen acceptance suite, model/configuration and run policy actually executed.",
+      "limitation_id": "arbitrary-domain-universality"
+    },
+    {
+      "source": "Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md",
+      "anchor": "accepted-design ↔ normalized Unity observation drift;",
+      "limitation_id": "design-unity-drift"
+    },
+    {
+      "source": "Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md",
+      "anchor": "generated art/content briefs from accepted design queries;",
+      "limitation_id": "generated-art-briefs"
+    },
+    {
+      "source": "Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md",
+      "anchor": "source-catalogue coverage and content-production planning;",
+      "limitation_id": "content-catalogue-coverage"
+    },
+    {
+      "source": "Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md",
+      "anchor": "replay-backed deterministic QA fixtures;",
+      "limitation_id": "replay-qa"
+    },
+    {
+      "source": "Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md",
+      "anchor": "narrative knowledge-boundary checks where the knowledge model has an independently reviewed oracle;",
+      "limitation_id": "narrative-knowledge-checks"
+    },
+    {
+      "source": "Docs/engineering/DW_DESIGN_WORLD_ARCHITECTURE.md",
+      "anchor": "DW itself does **not** prove package/version distribution to a fresh external repository; that remains the existing H2 planning question.",
+      "limitation_id": "external-repository-consumption"
+    }
+  ]
+}
