@@ -1,0 +1,58 @@
+name: DW-04 Frozen Selector Uniqueness Scan
+
+on:
+  pull_request:
+    types: [edited]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  scan:
+    if: >-
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body || '', 'DW04 selector scan')
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Count every frozen source selector
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, pathlib, sys
+          plan=json.loads(pathlib.Path('Docs/evidence/WP-DW-04/ACCEPTANCE_CONTEXT_PLAN.json').read_text())
+          bad=[]
+          for task,routes in plan['context_plan'].items():
+              for route,items in routes.items():
+                  for item in items:
+                      ex=item.get('extract')
+                      if not ex:
+                          continue
+                      text=pathlib.Path(item['source_path']).read_text()
+                      if ex['mode']=='line_contains':
+                          matches=[line for line in text.splitlines() if ex['needle'] in line]
+                          count=len(matches)
+                          print(f"{task}/{route}/{item['id']} line_contains count={count} needle={ex['needle']!r}")
+                          if count != 1:
+                              bad.append((task,route,item['id'],count,ex['needle'],matches[:5]))
+                      elif ex['mode']=='between':
+                          sc=text.count(ex['start']); ec=text.count(ex['end'])
+                          print(f"{task}/{route}/{item['id']} between start_count={sc} end_count={ec}")
+                          if sc != 1 or ec != 1 or text.find(ex['end'],text.find(ex['start'])+len(ex['start'])) < 0:
+                              bad.append((task,route,item['id'],(sc,ec),ex['start'],[]))
+                      else:
+                          bad.append((task,route,item['id'],'unsupported',ex,[]))
+          if bad:
+              print('\nNON_UNIQUE_OR_INVALID_SELECTORS:')
+              for row in bad:
+                  print(repr(row))
+              sys.exit(3)
+          print('DW04_ALL_FROZEN_SOURCE_SELECTORS_UNIQUE')
+          PY
