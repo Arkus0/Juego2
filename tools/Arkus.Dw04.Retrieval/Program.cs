@@ -44,7 +44,16 @@ if ((args[1] == "pa-fixture" || args[1] == "pa-finding" || args[1] == "pa-dispos
     };
     if (args[1] == "pa-disposition")
     {
-        Console.WriteLine(JsonSerializer.Serialize(new { row.FactId, row.PaId, row.RecordKind, row.SourceKey, row.MaterialText, Provenance = CompactPaProvenance(row.Provenance) }, jsonOptions));
+        // DW-04 consumes the canonical disposition token separately from explanatory qualification.
+        // The accepted MaterialText remains source-derived inside DW-03, but exposing it as one free-form
+        // answer value caused the model to copy "REJECT as requirement" instead of canonical "REJECT".
+        var parts = row.MaterialText.Trim().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) throw new InvalidDataException("PA disposition has no canonical token");
+        var disposition = parts[0];
+        if (disposition != disposition.ToUpperInvariant() || disposition.Any(c => !(char.IsUpper(c) || char.IsDigit(c) || c == '_')))
+            throw new InvalidDataException("PA disposition canonical token is not uppercase token-shaped");
+        var qualification = parts.Length == 2 ? parts[1] : "";
+        Console.WriteLine(JsonSerializer.Serialize(new { row.FactId, row.PaId, row.RecordKind, row.SourceKey, Disposition = disposition, Qualification = qualification, Provenance = CompactPaProvenance(row.Provenance) }, jsonOptions));
         return;
     }
     Console.WriteLine(JsonSerializer.Serialize(new { row.FactId, row.PaId, row.RecordKind, row.SourceKey, Provenance = CompactPaProvenance(row.Provenance) }, jsonOptions));
