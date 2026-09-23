@@ -1,0 +1,41 @@
+{
+  "schema": "dw04-precalibration-v1",
+  "baseline_sha": "82369fdb69e33e3492b41c4aaa7f1ae9aaed18af",
+  "authority": "accepted source files only; this catalogue is a task universe, never an answer oracle",
+  "authority_blobs": {
+    "Docs/production/CITY_LOCATION_PROGRAMME.md": "89e00433969ba4cf71dd69945f78221c5e20c36a",
+    "Docs/production/CITY_MOBILITY_TOPOLOGY.md": "c8f99c7790e6cee79c0371886056e0441cb1a602",
+    "Docs/research/living-world/results/PA-01.md": "40e854e4bc2e49630c1f49a6001eb5e60896f3ae",
+    "Docs/research/living-world/results/PA-02.md": "ce05c64f8bb0cf1f2a0090d35fa1f32757fdd33d",
+    "Docs/research/living-world/results/PA-03.md": "f2c553e01fb00a4ef2da88e9bc76f644436f0dfe",
+    "Docs/research/living-world/results/PA-04.md": "d065241d5dd4ed663dd686fa288e6d8a43e1dc46",
+    "Docs/research/living-world/results/PA-05.md": "d38e8b6261876b28d297893f96150f9f527d7270",
+    "Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md": "3cfb1b431acd9ffb8e1e1098e195367abd96d553"
+  },
+  "partition_rule": "Exactly the listed C-* task identities are calibration. Exactly the listed A-* identities are the untouched acceptance pool. Identity and partition never change because of observations. No calibration task may become an acceptance task.",
+  "acceptance_selection_rule": "After CTX-only calibration readiness, select lexicographically the first three A-CITY-* and first three A-PA-* identities from this frozen untouched pool: exactly six; A-*-04 are reserves and cannot replace a selected task because of result. Only a reviewed source-truth contradiction or mechanical unscorability independent of model outcome can amend selection before acceptance under the WP rule.",
+  "calibration_policy": {
+    "route": "CTX only; neither acceptance task prompts nor DW retrieval may execute during calibration",
+    "run_order": ["C-CITY-01", "C-PA-01", "C-CITY-02", "C-PA-02"],
+    "runs_per_task": 2,
+    "proof_budget": "Exactly eight designated calibration model calls; only objectively invalid calls may be retried once each if a transport/provider error occurred before a scorable structured answer, with the original invalid receipt retained.",
+    "readiness": "All eight designated CTX runs yield a parseable canonical structured answer, satisfy the predeclared calibration fact/blocker/verdict oracle, and record model configuration and input usage if reported. A semantic miss prevents acceptance freeze; no selective run extension.",
+    "calibratable": ["provider/model/version and configuration", "nonsemantic prompt/output formatting", "execution budget", "canonical answer schema formatting", "bounded objective transport retry policy"],
+    "immutable": ["source truth", "task identity and semantic question", "acceptance selection rule", "CTX baseline meaning", "DW retrieval meaning", "30 percent median injected source-byte reduction", "100 percent paired correctness"]
+  },
+  "oracle_construction": "Before calibration calls, freeze calibration expected canonical values by directly reading the pinned accepted source anchors. After calibration readiness and before any acceptance call, freeze every selected acceptance task's prompt, expected canonical fact ID/value, causal blocker ID, verdict token and evidence ID from these exact accepted anchors; never infer expected claims from CTX/DW output. The accepted source and its Git blob plus exact section/row or fixture key must be attached to each expected item. Scorer semantics and all run/configuration/route policies are frozen in the same pre-result TASK_SELECTION_FREEZE.",
+  "eligible_tasks": [
+    {"id":"C-CITY-01","partition":"calibration","kind":"worker","question":"Identify the accepted importance, depth and interior commitment of loc.casco.bar.","anchors":["Docs/production/CITY_LOCATION_PROGRAMME.md#§4:loc.casco.bar"]},
+    {"id":"C-CITY-02","partition":"calibration","kind":"reviewer","question":"Does the bus arrival threshold promise a deep enterable interior? Give the accepted classifications.","anchors":["Docs/production/CITY_LOCATION_PROGRAMME.md#§4:loc.entrada.arrival"]},
+    {"id":"C-PA-01","partition":"calibration","kind":"reviewer","question":"Does PA-02 permit actor initiative to be manufactured by a schedule? Identify the relevant negative fixture.","anchors":["Docs/research/living-world/results/PA-02.md#§9:NC-01"]},
+    {"id":"C-PA-02","partition":"calibration","kind":"reviewer","question":"Review an assumption that an A-to-B relationship edge implies the reverse B-to-A edge; recover the PA-03 NC-01 asymmetry control.","anchors":["Docs/research/living-world/results/PA-03.md#§8:NC-01"]},
+    {"id":"A-CITY-01","partition":"acceptance_pool","kind":"reviewer","question":"Review a proposal classifying loc.casco.shared_court as a primary A anchor with an enclosed I2 interior; recover its accepted importance, depth, interior and causal contradiction.","anchors":["Docs/production/CITY_LOCATION_PROGRAMME.md#§4:loc.casco.shared_court"]},
+    {"id":"A-CITY-02","partition":"acceptance_pool","kind":"reviewer","question":"Review a proposal that the Puerto landing grants a road-capable cart and bicycle crossing via X6 in State 1. Recover the CITY-02 place classifications, inherited CITY-01 crossing/access rule and blocker.","anchors":["Docs/production/CITY_LOCATION_PROGRAMME.md#§4:loc.puerto.landing","Docs/production/CITY_MOBILITY_TOPOLOGY.md#§4:X6"]},
+    {"id":"A-CITY-03","partition":"acceptance_pool","kind":"worker","question":"Recover the town hall's accepted A-D, S, enclosed-interior and access-layer commitments for a place brief.","anchors":["Docs/production/CITY_LOCATION_PROGRAMME.md#§4:loc.plaza.ayuntamiento"]},
+    {"id":"A-CITY-04","partition":"acceptance_pool","kind":"reviewer","question":"Review a proposal counting the arrival stop as a deep hero interior.","anchors":["Docs/production/CITY_LOCATION_PROGRAMME.md#§4:loc.entrada.arrival"]},
+    {"id":"A-PA-01","partition":"acceptance_pool","kind":"reviewer","question":"Review a proposed actor-visible isStale flag and automatic truth-to-belief synchronization; recover PA-04 dispositions and the NC-02 privileged-metadata fixture consequence.","anchors":["Docs/research/living-world/results/PA-04.md#§11:actor-visible isTrue/isFalse/isStale","Docs/research/living-world/results/PA-04.md#§11:automatic truth→belief synchronization","Docs/research/living-world/results/PA-04.md#§13:NC-02"]},
+    {"id":"A-PA-02","partition":"acceptance_pool","kind":"reviewer","question":"Review recursive engine lineage in ActorBelief as receiver evidence; recover PA-05 rejection, fixture NC-02 and receiver-ownership consequence.","anchors":["Docs/research/living-world/results/PA-05.md#§6:Recursive hidden lineage embedded in ActorBelief","Docs/evidence/WP-PA-05/TRANSFER_AND_FIXTURES.md#§6:NC-02"]},
+    {"id":"A-PA-03","partition":"acceptance_pool","kind":"worker","question":"Recover the exact negative/deferred dispositions of PA-01 DL-11 through DL-14 and explain what remains unpromised.","anchors":["Docs/research/living-world/results/PA-01.md#§3:DL-11..DL-14"]},
+    {"id":"A-PA-04","partition":"acceptance_pool","kind":"reviewer","question":"Review treating PA-04 missing actor knowledge as false instead of UNKNOWN.","anchors":["Docs/research/living-world/results/PA-04.md#§11:UNKNOWN for missing actor knowledge"]}
+  ]
+}
