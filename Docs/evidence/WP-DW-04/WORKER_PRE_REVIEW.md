@@ -1,42 +1,50 @@
-# DW-04 strict Worker pre-review — provisional blocking audit
+# DW-04 strict Worker pre-review — final repaired candidate
 
-WORKER_PRE_REVIEW: NOT_READY
-FOUNDATIONAL_PROOF_VERDICT: NOT_READY
-TRUST_BOUNDARY: accepted Git/source blobs and accepted DW providers; actual OpenRouter request-response identity must be externally auditable
-PROOF_BUDGET_VERDICT: OWNER_AMENDED_PRE_ACCEPTANCE
+WORKER_PRE_REVIEW: CLEAN
+FOUNDATIONAL_PROOF_VERDICT: PASS_CANDIDATE
+CANDIDATE_CAMPAIGN_SHA: 25272a8f9ce1631dbe3b9586c3af7dc12f02b3b1
+REPAIRED_FREEZE: 1032343542f09d969a3eabe81734fe53b5cc3ec2
+CANONICAL_CAMPAIGN_RUN: 35861322561
+CANONICAL_CAMPAIGN_ARTIFACT: 10750049310
+CANONICAL_CAMPAIGN_ARTIFACT_DIGEST: sha256:60878580a4d77fb7781ae29bb9a3eda96a5cfe3a63a6f3f2958f572e70594ad1
 
-## Causal challenges already closed before restarted calibration
+## Campaign history and non-adaptation
 
-- **Adaptive corpus selection:** RED via independently enumerated source-anchored twelve-task catalogue, immutable pre-result partition and deterministic first-three-per-domain acceptance selection.
-- **Calibration/acceptance contamination:** calibration IDs are disjoint from the eight-task acceptance pool; only the four `C-*` tasks can run during CTX-only calibration; no calibration task may replace an acceptance task.
-- **Question/oracle mismatch:** PA-02 calibration wording was corrected before provider execution and the amendment remains in Git history; expected facts/blocker/verdict did not change.
-- **Model answer as oracle:** calibration and acceptance source oracles predate all provider calls and are derived from pinned accepted CITY/PA bytes.
-- **Response vocabulary leaking expected answer:** calibration tasks share one union blocker/verdict/evidence formatting vocabulary; the external oracle is unavailable to the adapter.
-- **DeepSeek evidence erasure:** run `35840654094` is retained as `CALIBRATION_INVALID_ATTEMPT_01.json`; run `35842779697` is retained as `CALIBRATION_DEEPSEEK_CLOSED.json` and GitHub artifact `10742271293`. The latter contains two scorable correct C-CITY-01 answers followed by two objective invalid C-PA-01 attempts. None can satisfy a Luna restart slot.
-- **Adaptive third retry:** DeepSeek is closed rather than granting C-PA-01 a third attempt. Owner authorization in PR #150 comment `5792478254` permits one complete calibration restart from eight fresh slots under a new frozen calibratable provider/model protocol.
-- **Provider/model drift:** restarted route is exact `openai/gpt-5.6-luna-20260709` through OpenRouter, pinned to the `openai` serving provider with fallback disabled and `require_parameters=true`. Unsupported temperature control is omitted; tools and explicit reasoning overrides remain absent; schema, budget and timeout remain frozen.
-- **Provider simulation:** active Luna adapter performs a real authenticated OpenRouter HTTP request and records provider request id, resolved model/provider, usage and raw structured response. Campaign execution requires `OPENROUTER_API_KEY` and a durable GitHub campaign identity claimed before provider calls.
-- **Provider adapter substitution:** acceptance executor freezes and hashes the actual adapter script path, not merely the Python interpreter, and provider requests include the frozen response contract.
-- **2/3 or majority-vote false PASS:** decision controls make any CTX-pass/DW-fail a FAIL; shared instability remains INCONCLUSIVE; PASS requires all 36 designated acceptance answers correct.
-- **Context-cost vanity win:** deterministic audit recalculates injected UTF-8 source bytes; provider token accounting is supplemental. Structural source completeness is independently required, so a smaller broken route cannot PASS.
-- **CTX strawman inflation:** contexts may use only task anchors; full unrelated documents are forbidden. Calibration CITY contexts include the table header needed to interpret A–D/S/Interior plus the exact row.
-- **DW self-confirmation:** acceptance structural audit replays the real DW-02/03 typed query executable and checks source provenance/fallback against independent source literals.
-- **Second favorable campaign on one candidate:** each campaign is exact-PR+SHA gated and creates a durable GitHub check-run start marker before provider calls; a second campaign on that exact SHA is fail-closed.
-- **Frozen request shape drift:** scorer verifies model/configuration, task prompt, separate response contract, system prompt, slot, context and matched-run identity.
+Campaign 01 remains immutable terminal FAIL evidence (`196012fb809bca68448ef0ad6d468115acb36ac5`, run `35853858468`, artifact `10746802865`). None of its 36 answers was rescored into a PASS, carried forward, selectively rerun or counted in the repaired generation.
 
-## Deliberately not claimed yet
+The repaired generation executed all 36 acceptance slots afresh under the same six task identities, accepted source truth/oracles, semantic questions, CTX baseline semantics, Luna/OpenAI effective provider/model configuration, R1/R2/R3 ordering, 100% correctness rule, >=30% median source-byte reduction threshold, no-replacement policy and fail-closed CTX-pass/DW-fail decision rule.
 
-DeepSeek calibration did not reach readiness and is closed. No acceptance task has executed. The owner-authorized Luna restart has not yet executed. Therefore none of the following is yet evidence-backed:
+## Causal repair classes
 
-- eight-slot Luna CTX calibration readiness;
-- final six-task `TASK_SELECTION_FREEZE`;
-- post-freeze CTX/DW `CONTEXT_ASSEMBLY`;
-- 18 matched pairs / 36 acceptance executions;
-- semantic preservation result;
-- >=30% median injected-source-byte reduction;
-- final acceptance campaign uniqueness/inventory;
-- final causal-negative matrix and circuit-breaker audit.
+- PA disposition retrieval separates the canonical uppercase `Disposition` token from explanatory `Qualification`, closing the repeated Campaign-01 A-PA-03 `REJECT as requirement/authority` failure class without changing accepted PA truth.
+- Previously unconstrained result fields use structural domains (`access_code`, `pa_id`, `disposition`) so canonical identifiers cannot be replaced by prose while expected task values remain outside the adapter.
+- Required frozen evidence remains mandatory. Additional evidence can no longer fail solely by cardinality when it comes from the already-frozen authoritative vocabulary. Facts, causal blockers and verdict remain exact.
+- Calibration requests are validated against the frozen calibration run policy; acceptance requests remain validated against their frozen no-replacement run policy. Effective model/provider dimensions remain equal across the comparison.
 
-The repository secret `OPENROUTER_API_KEY` is configured. The Luna campaign marker must remain absent until canonical exact-SHA observation is GREEN for the restart protocol candidate.
+## Final campaign evidence
 
-Missing restarted calibration and acceptance evidence prevents CLEAN pre-review, frozen candidate metadata and REVIEW_READY. Keep PR #150 Draft and keep DW-05 blocked.
+- Fresh provider/model executions: 36/36.
+- Unique provider request IDs: 36/36.
+- Resolved provider: OpenAI for every execution.
+- Replacement calls: 0.
+- Deterministic final audit: `PASS`.
+- Matched pairs: 18/18 `CTX-pass + DW-pass`; therefore all 36 individual executions satisfy the frozen oracle.
+- Structural completeness: GREEN.
+- Median injected source bytes: CTX `2258.5`, DW `1380.5`.
+- Contractual median source-byte reduction: `38.875%` (threshold `>=30%`).
+- Provider diagnostics: median prompt tokens CTX `1500`, DW `1425` (~5.0% reduction); total prompt tokens CTX `29019`, DW `26541` (~8.54% reduction).
+- Observed campaign cost is effectively flat/slightly higher for DW, therefore no cost-saving claim is made.
+
+Canonical campaign outputs are persisted at:
+
+- `Docs/evidence/WP-DW-04/ACCEPTANCE_TRANSCRIPT.jsonl`
+- `Docs/evidence/WP-DW-04/ACCEPTANCE_PROVIDER_RAW.jsonl`
+- `Docs/evidence/WP-DW-04/CAMPAIGN_START_RECEIPT.json`
+- `Docs/evidence/WP-DW-04/CAMPAIGN_RECEIPT.json`
+- `Docs/evidence/WP-DW-04/TRIAL_RESULT.json`
+
+## Worker conclusion
+
+The bounded central claim of WP-DW-04 is established on the frozen six-task universe: the repaired DW route preserves agent correctness relative to CTX for every designated paired execution while exceeding the contractual source-context reduction threshold. This does not claim universal model superiority or universal cost reduction.
+
+Candidate is CLEAN and ready for independent Reviewer. Do not merge or unlock DW-05 without Reviewer PASS.
