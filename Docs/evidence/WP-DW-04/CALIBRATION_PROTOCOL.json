@@ -3,6 +3,7 @@
   "precalibration_commit": "9cbed950a3469897cf286c9a90624c240701528f",
   "calibration_oracle_commit": "88c05db465a3abb9196c1ba8c9f60c42d5506453",
   "context_path": "Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json",
+  "prior_invalid_attempts": ["Docs/evidence/WP-DW-04/CALIBRATION_INVALID_ATTEMPT_01.json"],
   "route": "CTX_ONLY",
   "provider_adapter": "scripts/dw04-openrouter-adapter.py",
   "model_config": {
@@ -13,11 +14,11 @@
     "thinking": null,
     "tool_policy": "none",
     "execution_budget": {"max_output_tokens": 1200, "timeout_seconds": 120},
-    "run_policy": "exactly-two-designated-ctx-runs-per-calibration-task-no-semantic-retry",
+    "run_policy": "exactly-two-designated-ctx-runs-per-calibration-task-no-semantic-retry; one retained objective-invalid replacement maximum per designated slot",
     "provider_options": {
       "endpoint": "https://openrouter.ai/api/v1/chat/completions",
       "structured_output": "dw04_answer_v1",
-      "routing": {"order":["deepseek"],"allow_fallbacks":false,"require_parameters":true}
+      "routing": {"order":["deepinfra"],"allow_fallbacks":false,"require_parameters":true}
     }
   },
   "system_prompt": "You are executing a frozen repository context-evaluation task. The supplied context fragments are the only semantic authority for this run: do not use memory, outside knowledge, web search, tools, or unstated assumptions. The task's response contract is formatting vocabulary only, not an assertion that any allowed blocker, verdict or evidence identifier is true for this task. Return only the canonical structured answer. The facts object must contain exactly the fact keys named by the response contract and every fact value must be a string. blockers and evidence are arrays using only identifiers allowed by the response contract. verdict must use one allowed verdict. Optional prose is forbidden.",
@@ -39,6 +40,6 @@
       "response_contract": {"fact_keys":["fixture","A_to_B_implies_B_to_A","B_to_A_stays_LOW"],"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]}
     }
   },
-  "invalid_run_policy": "Only an objective transport/provider failure that yields no parseable structured answer may be retried once for that exact slot. The original invalid record must be retained. A scorable semantic oracle miss is never retryable.",
-  "readiness": "All eight designated CTX runs must be scorable and pass the pre-frozen calibration oracles under this exact protocol before TASK_SELECTION_FREEZE may be created."
+  "invalid_run_policy": "A designated slot may have at most one retained objective invalid attempt and one replacement before a scorable structured answer. Semantic oracle misses are never retryable. CALIBRATION_INVALID_ATTEMPT_01 is the already-consumed invalid allowance for C-CITY-01 run 1.",
+  "readiness": "All eight designated CTX slots must end with one scorable replacement/original answer that passes the pre-frozen calibration oracle. Any retained invalid attempt remains evidence and does not count as a semantic result."
 }
