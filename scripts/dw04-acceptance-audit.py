@@ -15,11 +15,25 @@ def ancestor(a,b):
     try: subprocess.check_call(["git","merge-base","--is-ancestor",a,b],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e: raise ProtocolError(f"chronology violation: {a} !<= {b}") from e
 def response_contract(p,oracle,t):
-    task=p["tasks"][t]; facts=oracle["tasks"][t]["oracle"]["facts"]
+    task=p["tasks"][t]; vocab=p["response_vocabulary"]; facts=oracle["tasks"][t]["oracle"]["facts"]
     req(set(task["fact_value_types"])==set(facts),f"fact type surface drift: {t}")
-    req(set(task["allowed_blockers"])==set(oracle["tasks"][t]["oracle"]["blockers"]),f"task blocker surface drift: {t}")
-    req(set(task["evidence_ids"])==set(oracle["tasks"][t]["oracle"]["evidence"]),f"task evidence surface drift: {t}")
-    return {"fact_keys":list(facts),"fact_value_types":task["fact_value_types"],"allowed_blockers":task["allowed_blockers"],"allowed_verdicts":p["response_vocabulary"]["allowed_verdicts"],"evidence_ids":task["evidence_ids"]}
+    return {"fact_keys":list(facts),"fact_value_types":task["fact_value_types"],"allowed_blockers":vocab["allowed_blockers"],"allowed_verdicts":vocab["allowed_verdicts"],"evidence_ids":vocab["evidence_ids"]}
+def score_acceptance(oracle,answer):
+    """Score exact claims while allowing additional frozen-authority evidence identifiers."""
+    req(set(oracle)=={"facts","blockers","verdict","evidence"},"frozen oracle shape")
+    if not isinstance(answer,dict): return {"pass":False,"errors":["missing structured answer"]}
+    errors=[]; facts=answer.get("facts")
+    if not isinstance(facts,dict): errors.append("facts shape")
+    else:
+        for key,expected in oracle["facts"].items():
+            if key not in facts or facts[key]!=expected: errors.append("fact:"+key)
+        for key in set(facts)-set(oracle["facts"]): errors.append("unfrozen fact:"+key)
+    blockers=answer.get("blockers")
+    if not isinstance(blockers,list) or len(blockers)!=len(set(map(str,blockers))) or set(map(str,blockers))!=set(oracle["blockers"]): errors.append("blockers mismatch")
+    evidence=answer.get("evidence")
+    if not isinstance(evidence,list) or len(evidence)!=len(set(map(str,evidence))) or not set(oracle["evidence"]).issubset(set(map(str,evidence))): errors.append("evidence mismatch")
+    if answer.get("verdict")!=oracle["verdict"]: errors.append("verdict mismatch")
+    return {"pass":not errors,"errors":errors}
 def check_calibration(f,p):
     cc=f["calibration_commit"]; ancestor(f["calibration_oracle_commit"],cc); ancestor(cc,f["freeze_parent"]); req(blob(cc,CAL)==f["calibration_receipt_blob"]==blob("HEAD",CAL),"calibration receipt drift")
     r=load(cc,CAL); cp=load(r["calibration_protocol_commit"],"Docs/evidence/WP-DW-04/CALIBRATION_PROTOCOL.json"); o=load(f["calibration_oracle_commit"],CAL_ORACLES); ctx=load(r["calibration_protocol_commit"],"Docs/evidence/WP-DW-04/CALIBRATION_CONTEXT.json")
@@ -46,14 +60,14 @@ def check_structure(f,p,plan,assembly_commit):
 def audit(fc,transcript):
     f=load(fc,FREEZE); f["freeze_commit"]=fc; f["freeze_blob"]=blob(fc,FREEZE); req(f["schema"]=="dw04-acceptance-freeze-v3","freeze schema"); req(blob(fc,PROTOCOL)==f["protocol_blob"]==blob("HEAD",PROTOCOL),"protocol drift"); req(blob(fc,PLAN)==f["context_plan_blob"]==blob("HEAD",PLAN),"plan drift"); p=load(fc,PROTOCOL); plan=load(fc,PLAN)
     req(p["selected"]==plan["selected"]==f["selected"]==["A-CITY-01","A-CITY-02","A-CITY-03","A-PA-01","A-PA-02","A-PA-03"],"selection drift")
-    req(p.get("canonical_executor")=="scripts/dw04-acceptance-execute.py" and p.get("canonical_workflow")==".github/workflows/dw04-campaign.yml","canonical route drift");
+    req(p.get("canonical_executor")=="scripts/dw04-acceptance-execute.py" and p.get("canonical_workflow")==".github/workflows/dw04-campaign.yml","canonical route drift"); req(p.get("evidence_scoring_policy")=="required-frozen-evidence-subset; additional globally-frozen evidence allowed; blockers remain exact","evidence scoring policy drift")
     for path,key in (("scripts/dw04-trial.py","scorer"),("scripts/dw04-acceptance-assemble.py","assembler"),("scripts/dw04-acceptance-execute.py","executor"),("scripts/dw04-acceptance-audit.py","audit"),("scripts/dw04-openrouter-luna-adapter.py","adapter"),("tools/Arkus.Dw04.Retrieval/Program.cs","retrieval"),(".github/workflows/dw04-assemble.yml","assembly_workflow"),(".github/workflows/dw04-campaign.yml","workflow"),("scripts/dw04-verify-exact-sha.sh","verifier")): req(blob(fc,path)==p["script_blobs"][key]==blob("HEAD",path),f"{key} blob drift")
     pre=load(f["precalibration_commit"],PRE); req(trial.precheck(pre,pre["baseline_sha"])==f["selected"],"selection rule drift"); req(blob(f["acceptance_oracle_commit"],SOURCE_ORACLES)==f["acceptance_oracle_blob"]==blob("HEAD",SOURCE_ORACLES),"source oracle drift"); so=load(f["acceptance_oracle_commit"],SOURCE_ORACLES)
     req(p["slots"]==trial.make_slots(f["selected"]) and p["correctness"]=="all_36" and p["context_reduction_min"]==0.30,"proof policy drift"); check_calibration(f,p)
     req(len(transcript)==36 and [x["slot"] for x in transcript]==p["slots"],"execution count/order drift"); acs={x["assembly_commit"] for x in transcript}; req(len(acs)==1,"assembly inventory drift"); ac=next(iter(acs)); assembly=check_structure(f,p,plan,ac)
     pairs={}; ctxb=[]; dwb=[]; ids=[]
     for rec in transcript:
-        s=rec["slot"]; t=s["task"]; route=s["route"]; task=p["tasks"][t]; rc=response_contract(p,so,t); request=rec["request"]; trial.check_request(request,p["model_config"],s,task["prompt"],rc,p["system_prompt"],p["pair_seeds"][s["pair"]]); req(request["context_fragments"]==assembly["contexts"][t][route],"effective context drift"); b=sum(len(x["text"].encode()) for x in request["context_fragments"]); req(rec["injected_source_bytes"]==b,"byte accounting drift"); (ctxb if route=="CTX" else dwb).append(b); resp=rec["response"]; req(resp.get("provider_request_id") and resp.get("resolved_provider")=="OpenAI" and resp.get("model")==p["model_config"]["model"],"provider/model drift"); ids.append(resp["provider_request_id"]); pairs.setdefault((t,s["pair"]),{})[route]=trial.score(so["tasks"][t]["oracle"],resp.get("raw",{}).get("answer"))
+        s=rec["slot"]; t=s["task"]; route=s["route"]; task=p["tasks"][t]; rc=response_contract(p,so,t); request=rec["request"]; trial.check_request(request,p["model_config"],s,task["prompt"],rc,p["system_prompt"],p["pair_seeds"][s["pair"]]); req(request["context_fragments"]==assembly["contexts"][t][route],"effective context drift"); b=sum(len(x["text"].encode()) for x in request["context_fragments"]); req(rec["injected_source_bytes"]==b,"byte accounting drift"); (ctxb if route=="CTX" else dwb).append(b); resp=rec["response"]; req(resp.get("provider_request_id") and resp.get("resolved_provider")=="OpenAI" and resp.get("model")==p["model_config"]["model"],"provider/model drift"); ids.append(resp["provider_request_id"]); pairs.setdefault((t,s["pair"]),{})[route]=score_acceptance(so["tasks"][t]["oracle"],resp.get("raw",{}).get("answer"))
     req(len(set(ids))==36,"provider request IDs not unique"); rows=[{"task":t,"pair":r,"CTX":v["CTX"],"DW":v["DW"]} for (t,r),v in sorted(pairs.items())]; req(len(rows)==18,"pair completeness"); mc=statistics.median(ctxb); md=statistics.median(dwb); saving=1-md/mc if mc else 0; disposition=trial.decide(rows,True,saving); return {"disposition":disposition,"pairs":rows,"median_ctx_bytes":mc,"median_dw_bytes":md,"saving":saving,"structural":True,"provider_request_count":len(ids),"assembly_commit":ac,"freeze_commit":fc}
 def main():
     q=argparse.ArgumentParser(); q.add_argument("--freeze-commit",required=True); q.add_argument("--transcript",required=True); a=q.parse_args(); rows=[json.loads(x) for x in pathlib.Path(a.transcript).read_text().splitlines() if x.strip()]; print(json.dumps(audit(a.freeze_commit,rows),ensure_ascii=False,indent=2))
