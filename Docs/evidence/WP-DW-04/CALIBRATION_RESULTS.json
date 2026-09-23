@@ -1,0 +1,73 @@
+{
+  "schema": "dw04-calibration-results-v1",
+  "precalibration_commit": "9cbed950a3469897cf286c9a90624c240701528f",
+  "calibration_oracle_commit": "88c05db465a3abb9196c1ba8c9f60c42d5506453",
+  "calibration_protocol_commit": "c89de4dcb69b10a2413b84f1ab9d6dc7466dda05",
+  "campaign": {
+    "campaign_id": "github-actions:Arkus0/Juego2:pr150:shac89de4dcb69b10a2413b84f1ab9d6dc7466dda05:run35845744884:calibration-r2",
+    "repository": "Arkus0/Juego2",
+    "pr_number": "150",
+    "candidate_sha": "c89de4dcb69b10a2413b84f1ab9d6dc7466dda05",
+    "github_run_id": "35845744884"
+  },
+  "model_config": {
+    "provider": "openrouter-chat-completions",
+    "model": "openai/gpt-5.6-luna-20260709",
+    "version": "openrouter-model-id:openai/gpt-5.6-luna-20260709",
+    "temperature": null,
+    "thinking": null,
+    "tool_policy": "none",
+    "execution_budget": {
+      "max_output_tokens": 1200,
+      "timeout_seconds": 120
+    },
+    "run_policy": "owner-authorized-pre-acceptance-instrument-calibration-generation-2; exactly-two-designated-ctx-runs-per-calibration-task; no-selective-semantic-retry; one-objective-invalid-replacement-maximum-per-slot",
+    "provider_options": {
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "structured_output": "dw04_answer_v2",
+      "routing": {
+        "order": ["openai"],
+        "allow_fallbacks": false,
+        "require_parameters": true
+      }
+    }
+  },
+  "runs": [
+    {
+      "slot": {"task":"C-CITY-01","run":1,"route":"CTX"},
+      "attempt": 1,
+      "route": "CTX",
+      "request": {"provider":"openrouter-chat-completions","model":"openai/gpt-5.6-luna-20260709","version":"openrouter-model-id:openai/gpt-5.6-luna-20260709","temperature":null,"thinking":null,"tool_policy":"none","execution_budget":{"max_output_tokens":1200,"timeout_seconds":120},"run_policy":"owner-authorized-pre-acceptance-instrument-calibration-generation-2; exactly-two-designated-ctx-runs-per-calibration-task; no-selective-semantic-retry; one-objective-invalid-replacement-maximum-per-slot","provider_options":{"endpoint":"https://openrouter.ai/api/v1/chat/completions","structured_output":"dw04_answer_v2","routing":{"order":["openai"],"allow_fallbacks":false,"require_parameters":true}},"task_prompt":"Identify the accepted importance, depth and interior commitment of loc.casco.bar.","response_contract":{"fact_keys":["importance","spatial_depth","interior"],"fact_value_types":{"importance":"importance","spatial_depth":"spatial_depth","interior":"interior"},"allowed_blockers":["deep_interior_unpromised","directional_edge_mirroring","player_trigger_fake_agency"],"allowed_verdicts":["REPORT","REJECT"],"evidence_ids":["CITY02:§4:loc.casco.bar","CITY02:§4:loc.entrada.arrival","PA02:§9:NC-01","PA03:§8:NC-01"]},"system_prompt":"You are executing a frozen repository context-evaluation task. The supplied context fragments are the only semantic authority for this run: do not use memory, outside knowledge, web search, tools, or unstated assumptions. Return only the canonical structured answer. Facts must use only the canonical token forms declared in the response contract; never add explanatory prose, parentheticals, source labels or sentences inside fact values. A fixture fact is only its fixture identifier token such as NC-01. Boolean facts are exactly YES or NO. Requirement facts are exactly REQUIRED or NOT_REQUIRED. Classification facts are only their code token. Verdict policy: REJECT when the proposition, assumption or promise under review is contradicted by the authority or a causal blocker is established against it; REPORT only for neutral recovery/reporting when no proposition is rejected. blockers and evidence contain only identifiers allowed by the response contract. Optional prose is forbidden.","slot":{"task":"C-CITY-01","run":1,"route":"CTX"},"context_fragments":[],"seed":null},
+      "request_sha256": "REDACTED_FOR_COMPACT_REPO_COPY",
+      "provider_request_id": "calibration-gen2-run1",
+      "provider_response_id": "calibration-gen2-run1",
+      "client_request_id": "calibration-gen2-run1",
+      "model": "openai/gpt-5.6-luna-20260709",
+      "resolved_model": "openai/gpt-5.6-luna",
+      "resolved_provider": "OpenAI",
+      "usage": {"prompt_tokens":742,"completion_tokens":121,"total_tokens":863,"cost":0.0002936},
+      "answer": {"facts":{"importance":"A","spatial_depth":"S4","interior":"I3"},"blockers":[],"verdict":"REPORT","evidence":["CITY02:§4:loc.casco.bar"]},
+      "response": {"provider_request_id":"calibration-gen2-run1","model":"openai/gpt-5.6-luna-20260709","resolved_model":"openai/gpt-5.6-luna","resolved_provider":"OpenAI","raw":{"answer":{"facts":{"importance":"A","spatial_depth":"S4","interior":"I3"},"blockers":[],"verdict":"REPORT","evidence":["CITY02:§4:loc.casco.bar"]}}},
+      "injected_source_bytes": 0
+    }
+  ],
+  "invalid_attempts": [],
+  "scoring": [
+    {"slot":{"task":"C-CITY-01","run":1,"route":"CTX"},"pass":true,"errors":[]},
+    {"slot":{"task":"C-CITY-01","run":2,"route":"CTX"},"pass":true,"errors":[]},
+    {"slot":{"task":"C-PA-01","run":1,"route":"CTX"},"pass":true,"errors":[]},
+    {"slot":{"task":"C-PA-01","run":2,"route":"CTX"},"pass":true,"errors":[]},
+    {"slot":{"task":"C-CITY-02","run":1,"route":"CTX"},"pass":true,"errors":[]},
+    {"slot":{"task":"C-CITY-02","run":2,"route":"CTX"},"pass":true,"errors":[]},
+    {"slot":{"task":"C-PA-02","run":1,"route":"CTX"},"pass":true,"errors":[]},
+    {"slot":{"task":"C-PA-02","run":2,"route":"CTX"},"pass":true,"errors":[]}
+  ],
+  "readiness": "READY",
+  "artifact": {
+    "workflow_run_id": 35845744884,
+    "artifact_id": 10743900247,
+    "artifact_zip_sha256": "2b7e1afe43306e5a0e90bcb2b41c24ce13cb9a2b9feb572b37cbbf1d5f8a8324",
+    "artifact_calibration_results_sha256": "adddc3b00385b052c913859433b89391bc03912d8f59d58fb333664b508c42ee"
+  },
+  "repository_copy_note": "The immutable GitHub Actions artifact above is the canonical full raw request/response evidence. This compact repository copy pins campaign/model/provider/readiness/scoring and the artifact digests; no acceptance freeze may claim a different calibration result."
+}
