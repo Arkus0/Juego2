@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Deterministic core of post-PASS DocSync.
 
-The command persists facts that are mechanical from an already accepted
-transition. It deliberately does NOT synthesize semantic accepted claims or
-rewrite free-form track/root prose: those remain reconciliation surfaces, not an
-oracle owned by this script.
+This command persists only mechanical facts from an already accepted transition.
+It never decides acceptance and refuses ambiguous contract shapes rather than
+silently inventing navigation or rewriting one of several competing fields.
 """
 from __future__ import annotations
 
@@ -23,6 +22,7 @@ STATUS_RE = re.compile(r"^Status:\s*(.+)$", re.M)
 BLOCKS_RE = re.compile(r"^Blocks:\s*(.+)$", re.M)
 ACCEPTANCE_RE = re.compile(r"^Acceptance:\s*.*$", re.M)
 WP_TOKEN_RE = re.compile(r"WP-[A-Z0-9]+-[A-Z0-9-]+")
+CANONICAL_COMPLETE_STATUS = "COMPLETE"
 
 
 def fail(message: str) -> "NoReturn":
@@ -43,12 +43,33 @@ def parse_track(wp: str) -> str:
     return match.group(1)
 
 
-def first_blocked_wp(text: str) -> str | None:
-    match = BLOCKS_RE.search(text)
-    if not match:
-        return None
-    tokens = WP_TOKEN_RE.findall(match.group(1))
-    return tokens[0] if len(tokens) == 1 else None
+def contract_shape(text: str, *, label: str) -> tuple[re.Match[str], str | None, list[str]]:
+    """Validate the fields DocSync mutates/derives before any write occurs."""
+    statuses = list(STATUS_RE.finditer(text))
+    if len(statuses) != 1:
+        fail(f"{label}: expected exactly one Status line; found {len(statuses)}")
+
+    blocks = list(BLOCKS_RE.finditer(text))
+    if len(blocks) != 1:
+        fail(f"{label}: expected exactly one Blocks line; found {len(blocks)}")
+    rhs = blocks[0].group(1).strip()
+    tokens = WP_TOKEN_RE.findall(rhs)
+    normalized = rhs.replace("`", "").replace("**", "").strip().upper()
+    if normalized in {"NONE", "N/A"}:
+        if tokens:
+            fail(f"{label}: terminal Blocks line mixes NONE/N/A with workpack id")
+        next_wp = None
+    else:
+        if len(tokens) != 1:
+            fail(f"{label}: Blocks must name exactly one direct workpack or NONE; found {len(tokens)} workpack ids")
+        # Fail closed if prose contains a second WP-looking token or an unparseable
+        # alternative. A single direct successor may have descriptive prose.
+        next_wp = tokens[0]
+
+    acceptances = ACCEPTANCE_RE.findall(text)
+    if len(acceptances) > 1:
+        fail(f"{label}: expected at most one Acceptance line before prepare; found {len(acceptances)}")
+    return blocks[0], next_wp, acceptances
 
 
 def validate_sha(name: str, value: str) -> str:
@@ -66,21 +87,24 @@ def acceptance_line(candidate: str, review: str, pr: int, merge: str, validation
     )
 
 
-def update_wp_document(path: Path, line: str) -> None:
+def update_wp_document(path: Path, line: str) -> str | None:
     text = path.read_text(encoding="utf-8")
-    statuses = STATUS_RE.findall(text)
-    if len(statuses) != 1:
-        fail(f"{path}: expected exactly one Status line")
-    text = STATUS_RE.sub("Status: COMPLETE / ACCEPTED", text, count=1)
-    if ACCEPTANCE_RE.search(text):
-        text = ACCEPTANCE_RE.sub(line, text, count=1)
+    blocks_match, next_wp, acceptances = contract_shape(text, label=str(path))
+    text = STATUS_RE.sub(f"Status: {CANONICAL_COMPLETE_STATUS}", text, count=1)
+    if acceptances:
+        text, count = ACCEPTANCE_RE.subn(line, text, count=1)
+        if count != 1:
+            fail(f"{path}: failed to replace the unique Acceptance line")
     else:
-        blocks = BLOCKS_RE.search(text)
-        if not blocks:
-            fail(f"{path}: missing Blocks line; refusing implicit insertion point")
-        insert_at = blocks.end()
+        insert_at = blocks_match.end()
         text = text[:insert_at] + "\n\n" + line + text[insert_at:]
+    # Postcondition protects against replacement/insertion bugs.
+    if len(STATUS_RE.findall(text)) != 1 or STATUS_RE.findall(text)[0].strip() != CANONICAL_COMPLETE_STATUS:
+        fail(f"{path}: canonical COMPLETE status postcondition failed")
+    if len(ACCEPTANCE_RE.findall(text)) != 1 or text.count(line) != 1:
+        fail(f"{path}: Acceptance multiplicity postcondition failed")
     path.write_text(text, encoding="utf-8")
+    return next_wp
 
 
 def render_evidence(*, wp: str, when: str, candidate: str, review: str, pr: int, merge: str,
@@ -104,13 +128,13 @@ DATE: {when}
 
 ## Mechanical actions
 
-1. Marked `{wp}` COMPLETE / ACCEPTED with the exact accepted identity above.
+1. Marked `{wp}` `Status: COMPLETE` with the exact accepted identity above.
 2. Refreshed the derived accepted-state index from source main `{source_main}`.
 3. Recorded the direct blocked workpack as `{nxt}` for navigation only; dependency validity still comes from authoritative workpack contracts and live accepted state.
 
 ## Boundary
 
-This generated core records accepted identity and derived navigation only. It does not invent or restate the semantic claim proved by the accepted implementation, alter implementation bytes, waive cross-track prerequisites, or make the accepted-state index authoritative over the workpack contracts/evidence.
+This generated core records accepted identity and derived navigation only. It does not infer acceptance from `Status`, invent or restate the semantic claim proved by the accepted implementation, alter implementation bytes, waive cross-track prerequisites, or make the accepted-state index authoritative over the workpack contracts/evidence.
 
 ## Remaining reconciliation
 
@@ -175,9 +199,12 @@ def check(wp: str) -> None:
     track = parse_track(wp)
     path = wp_path(wp)
     text = path.read_text(encoding="utf-8")
+    _blocks, next_wp, acceptances = contract_shape(text, label=str(path))
     status = STATUS_RE.findall(text)
-    if status != ["COMPLETE / ACCEPTED"]:
-        fail(f"{wp}: Status is not exactly COMPLETE / ACCEPTED")
+    if status != [CANONICAL_COMPLETE_STATUS]:
+        fail(f"{wp}: Status is not exactly {CANONICAL_COMPLETE_STATUS}")
+    if len(acceptances) != 1:
+        fail(f"{wp}: expected exactly one Acceptance line after prepare")
     evidence = ROOT / "Docs/evidence" / wp / "DOCSYNC.md"
     if not evidence.is_file():
         fail(f"{wp}: missing {evidence.relative_to(ROOT)}")
@@ -191,7 +218,6 @@ def check(wp: str) -> None:
         fail(f"{wp}: accepted-state index omits accepted workpack")
     if raw.get("generated_from_main_sha") != identity["source_main"]:
         fail(f"{wp}: index/evidence source-main identity mismatch")
-    next_wp = first_blocked_wp(text)
     if entry.get("next_contract_hint") != next_wp:
         fail(f"{wp}: next_contract_hint does not equal direct Blocks contract ({next_wp})")
     print(f"DOCSYNC_CORE_GREEN wp={wp} next={next_wp or 'NONE'}")
@@ -202,7 +228,7 @@ def prepare(args: argparse.Namespace) -> None:
     track = parse_track(wp)
     path = wp_path(wp)
     text = path.read_text(encoding="utf-8")
-    next_wp = first_blocked_wp(text)
+    _blocks, next_wp, _acceptances = contract_shape(text, label=str(path))
     if next_wp:
         next_text = wp_path(next_wp).read_text(encoding="utf-8")
         if wp not in next_text:
@@ -210,21 +236,46 @@ def prepare(args: argparse.Namespace) -> None:
     candidate = validate_sha("candidate", args.candidate)
     merge = validate_sha("merge", args.merge)
     source_main = validate_sha("source-main", args.source_main)
-    if not str(args.review).strip():
-        fail("review is required")
-    if not str(args.validation_run).strip():
-        fail("validation-run is required")
+    if not str(args.review).strip(): fail("review is required")
+    if not str(args.validation_run).strip(): fail("validation-run is required")
     when = args.date or date.today().isoformat()
     evidence = ROOT / "Docs/evidence" / wp / "DOCSYNC.md"
     evidence.parent.mkdir(parents=True, exist_ok=True)
     evidence_rel = evidence.relative_to(ROOT).as_posix()
     wp_rel = path.relative_to(ROOT).as_posix()
     line = acceptance_line(candidate, str(args.review), args.pr, merge, str(args.validation_run), evidence_rel)
-    update_wp_document(path, line)
+    written_next = update_wp_document(path, line)
+    if written_next != next_wp:
+        fail(f"{wp}: Blocks contract changed during prepare")
     evidence.write_text(render_evidence(wp=wp, when=when, candidate=candidate, review=str(args.review), pr=args.pr, merge=merge, validation_run=str(args.validation_run), source_main=source_main, next_wp=next_wp), encoding="utf-8")
     update_index(wp=wp, track=track, source_main=source_main, when=when, evidence_rel=evidence_rel, wp_rel=wp_rel, next_wp=next_wp)
     print(f"DOCSYNC_CORE_PREPARED wp={wp} next={next_wp or 'NONE'}")
     print("Manual semantic reconciliation still required only for track/root README text whose effective current-state meaning changed.")
+
+
+def expect_shape_fail(text: str, needle: str) -> None:
+    try:
+        contract_shape(text, label="self-test")
+    except SystemExit as exc:
+        if needle not in str(exc):
+            raise AssertionError(f"expected {needle!r}, got {exc!r}") from exc
+    else:
+        raise AssertionError(f"expected failure containing {needle!r}")
+
+
+def self_test() -> None:
+    canonical = "# WP-X\n\nStatus: PLANNED / NOT_STARTED\nBlocks: WP-DW-03\n"
+    _blocks, nxt, acceptance = contract_shape(canonical, label="self-test")
+    assert nxt == "WP-DW-03" and acceptance == []
+    terminal = canonical.replace("WP-DW-03", "NONE")
+    assert contract_shape(terminal, label="self-test")[1] is None
+    expect_shape_fail(canonical.replace("Blocks: WP-DW-03\n", ""), "exactly one Blocks line")
+    expect_shape_fail(canonical + "Blocks: WP-DW-04\n", "exactly one Blocks line")
+    expect_shape_fail(canonical.replace("WP-DW-03", "WP-DW-03, WP-DW-04"), "exactly one direct workpack")
+    duplicate_acceptance = canonical + "Acceptance: one\nAcceptance: two\n"
+    expect_shape_fail(duplicate_acceptance, "at most one Acceptance line")
+    assert CANONICAL_COMPLETE_STATUS == "COMPLETE"
+    print("DOCSYNC_SELF_TEST_GREEN")
 
 
 def main() -> int:
@@ -241,11 +292,11 @@ def main() -> int:
     p_prepare.add_argument("--date")
     p_check = sub.add_parser("check")
     p_check.add_argument("--wp", required=True)
+    sub.add_parser("self-test")
     args = parser.parse_args()
-    if args.command == "prepare":
-        prepare(args)
-    else:
-        check(args.wp.upper())
+    if args.command == "prepare": prepare(args)
+    elif args.command == "check": check(args.wp.upper())
+    else: self_test()
     return 0
 
 
