@@ -1,63 +1,91 @@
-# PRODUCT_SHA and non-material closure
+# PRODUCT_SHA / Flow Simplification V2
 
-Status: binding anti-loop clarification for Automation V2 after merge to `main`.
+Status: binding operational amendment after merge to `main`.
 
-## Problem
+This amendment changes orchestration cost and protocol classification only. It does not weaken workpack acceptance criteria, exact-SHA product identity, independent Reviewer judgment, required Unity/local evidence, or causal proof obligations.
 
-The repository historically used one exact Git SHA for both product/proof identity and every final handoff step. PR-body reconciliation can therefore trigger `pull_request.edited`, which starts Candidate Validation again even though no repository byte changed. A mechanically red handoff could force the Worker to repeat an already-green exact-SHA product verifier, then rewrite metadata again, producing a protocol loop whose cost is unrelated to product change.
+## 1. Material identity
 
-This clarification preserves exact-SHA integrity while separating immutable candidate execution from mutable closure metadata.
+`PRODUCT_SHA` is the exact frozen Git commit whose product/evidence bytes are under review. Existing `Candidate HEAD SHA` / `Frozen candidate SHA` fields represent the same identity; no new mandatory PR-body field is required.
 
-## PRODUCT_SHA
+Any Git commit after freeze changes `PRODUCT_SHA` and invalidates product validation, Worker pre-review and Reviewer verdict for the prior SHA.
 
-For an implementation/repair cycle, `PRODUCT_SHA` is the exact Git commit that the Worker freezes for independent review. In the existing handoff schema it is the value carried by `Candidate HEAD SHA` and `Frozen candidate SHA`; no new required PR-body field is introduced by this hotfix.
+A PR-body edit, issue/review comment, label, check/status update or Automation marker creates no Git commit. Such GitHub-side closure metadata is `NON_MATERIAL_CLOSURE` when it does not change effective WP, process class or proof class. It cannot invalidate already-green immutable product execution for the same `PRODUCT_SHA`.
 
-`PRODUCT_SHA` remains strict:
+## 2. GitHub Actions budget
 
-- it must be an exact 40-character Git SHA;
-- it must equal the live PR HEAD at freeze/review;
-- any Git commit after freeze creates a new product candidate and invalidates prior candidate validation, Worker pre-review, `REVIEW_READY`, and any Reviewer verdict for the previous SHA;
-- changing effective `WP`, `PROCESS_ONLY`, or accepted proof class changes the validation context and forbids reuse even when Git HEAD is unchanged.
+GitHub Actions exists primarily to provide execution substrates unavailable to a chat Worker, especially pinned .NET/Unity/toolchain execution. It is not a protocol state machine that must re-prove the product after every metadata mutation.
 
-## Non-material closure
+Normal budget:
 
-A change is `NON_MATERIAL_CLOSURE` only when all of the following are true:
+- While a PR is **Draft + ACTIVE**, one automatic heavy hosted battery is allowed per material push: **Arkus Main Safety**.
+- `Arkus Main Safety` GREEN for the canonical PR and exact `PRODUCT_SHA` is the normal hosted Worker-preflight evidence when the Worker cannot run the pinned SDK locally.
+- The dedicated **Worker Candidate Preflight** workflow is explicit/on-demand fallback only. It must not run automatically on ordinary PR activity.
+- **Arkus Candidate Validation** is a freeze-time gate. Draft pushes do not run its product observation/verifier. It runs when a non-draft candidate is opened/updated or marked Ready, and manual observation remains explicit.
+- `pull_request.edited` never triggers expensive product validation. Editing handoff prose or exact-SHA metadata is not a product mutation.
+- If same-SHA metadata needs correction after a failed closure attempt, finish all corrections first, then perform at most one deliberate Ready transition/recheck. Do not iterate edit -> Actions -> edit -> Actions.
 
-1. no Git commit is created and live PR HEAD remains the same `PRODUCT_SHA`;
-2. effective WP, process mode and proof class remain unchanged;
-3. the change is limited to GitHub-side lifecycle metadata such as PR body handoff fields, issue comments, check/status records, review-ready markers or equivalent closure bookkeeping;
-4. current mechanical handoff validation is rerun against the live metadata and exact `PRODUCT_SHA`;
-5. any reused product validation comes from an immutable prior run whose exact-SHA verify job is GREEN and whose recorded validation context matches the current context exactly.
+A workflow may still fail closed when SHA/WP/classification no longer match. That is integrity, not permission to rerun unrelated product tests.
 
-A non-material closure correction does **not** invalidate the exact-SHA product execution or require another semantic Worker pre-review. It must not be represented by a repository commit. If a repository/evidence byte must change, the correction is material and the normal new-SHA cycle applies.
+## 3. Worker closeout
 
-## Candidate Validation behavior
+For a normal implementation/repair cycle:
 
-For a Ready PR-body `edited` event, Candidate Validation still reruns the cheap live gates (`Worker handoff lint` and validation-context binding). The expensive `Freeze exact-SHA validation` job may reuse prior immutable exact-SHA validation only when it can prove all of the following:
+1. Work in Draft.
+2. Let Main Safety cover hosted restore/build/test on each material push. Run additional WP-specific/local/Unity evidence only when the WP actually requires it.
+3. Finish all repository/evidence bytes.
+4. Select exact `PRODUCT_SHA`.
+5. Require either local `WORKER_PREFLIGHT_GREEN` or a same-PR, same-SHA Main Safety GREEN. A manual dedicated preflight may substitute when explicitly requested.
+6. Perform one strict Worker pre-review against that exact SHA.
+7. Persist CLEAN outside repository bytes, reconcile the handoff once, mark Ready, and stop writing.
+8. Candidate Validation performs the final WP-specific exact-SHA freeze verification once.
 
-- source workflow is `Arkus Candidate Validation`;
-- source run targets the same exact `PRODUCT_SHA`;
-- source `Freeze exact-SHA validation` job concluded `success`;
-- source `Validation context binding` job concluded `success`;
-- source `VALIDATION_CONTEXT.json` still matches the current PR + SHA + WP + process/proof class;
-- when an `EXECUTION_RECEIPT_V1` is present, its WP and candidate SHA match the current request.
+A protocol-only correction on unchanged `PRODUCT_SHA` does not require another semantic Worker pre-review or another Main Safety run. Only the affected metadata gate is repaired/rechecked.
 
-The source workflow does not need an overall `success` conclusion: it may have been red solely because the old mutable handoff metadata was invalid. The immutable product verify job is the reusable fact; the current run independently rechecks the mutable handoff.
+## 4. Reviewer classification
 
-If no qualifying source exists, Candidate Validation runs the full verifier exactly as before.
+Independent Reviewer verdicts are about the material claim.
 
-## Reviewer boundary
+- `PASS`: the material workpack claim is sufficiently demonstrated.
+- `FAIL`: a material/causal blocker in code, evidence, acceptance proof, required execution, scope or an integrity defect that makes the reviewed product identity/evidence untrustworthy.
+- `PROTOCOL_FIX` / `REVIEW_BLOCKED`: administrative or lifecycle metadata is malformed/stale but the exact `PRODUCT_SHA` and material evidence remain identifiable and unchanged.
 
-Independent review remains exact-SHA and is not weakened. A Reviewer must review `PRODUCT_SHA`, and any Git commit invalidates that verdict.
+A pure protocol defect must not be promoted into semantic `FAIL` merely because a checker is red. Fix it without reopening product implementation or rerunning expensive execution unless the fix changes Git bytes or makes prior evidence untrustworthy.
 
-Mechanical closure defects should be caught before a Reviewer is started. Fixing only `NON_MATERIAL_CLOSURE` metadata on the same `PRODUCT_SHA` is not a new product candidate and must not create a new semantic review cycle. A protocol defect is a material Reviewer blocker when it breaks candidate identity, provenance, acceptance evidence, role independence, or another integrity guarantee—not merely because derivable GitHub metadata required same-SHA reconciliation.
+## 5. DocSync budget
 
-## Intent
+DocSync is **delta reconciliation, not a second review**.
 
-The invariant is now:
+Default after PASS/merge is **zero-commit DocSync**:
 
-`product/proof bytes changed -> new PRODUCT_SHA -> full validation + pre-review + independent review`
+- reconstruct the accepted PR/review/merge identity and dependency-valid next action;
+- if no authoritative document's accepted meaning changed, do not edit repository files;
+- emit `DOCSYNC_COMPLETE` using live accepted state and stop.
 
-`only GitHub closure metadata changed -> same PRODUCT_SHA -> cheap live gates + proven reuse -> continue closure`
+Create a DocSync commit only when the accepted transition actually changes authoritative durable meaning that future work needs, for example a roadmap gate, a workpack/track status consumed as authority, an architecture decision, or an accepted contract capsule whose represented contract changed.
 
-This is an anti-loop rule, not a relaxation of exact-SHA review.
+Derived navigation (`ACCEPTED_STATE_INDEX.json`, compact handoff summaries, capsules unchanged by the accepted contract) is not required to be rewritten after every merge. Staleness in a non-authoritative navigation cache causes later escalation to live/authoritative sources; it does not block acceptance or force a ceremonial commit.
+
+When a DocSync commit is genuinely required:
+
+- make one bounded reconciliation pass;
+- touch only docs whose effective accepted meaning changed;
+- run only validators applicable to the files actually changed;
+- do not rerun product tests for documentation-only changes;
+- do not restart because unrelated `main` advanced unless that movement materially conflicts with the exact docs being changed.
+
+## 6. Anti-loop invariant
+
+The process must never create work solely to prove that the work created by the process did not change the product.
+
+For unchanged `PRODUCT_SHA`:
+
+`product GREEN -> metadata correction -> metadata recheck -> review`
+
+is valid.
+
+`product GREEN -> metadata correction -> full product rerun -> new closure metadata -> another full rerun`
+
+is a protocol bug.
+
+Where older operational text conflicts with this amendment on Action cadence, same-SHA metadata invalidation, Reviewer classification of protocol-only defects, or mandatory per-PASS DocSync churn, this amendment governs. Material acceptance/proof requirements remain unchanged.
