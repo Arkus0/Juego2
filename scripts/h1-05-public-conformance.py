@@ -194,6 +194,10 @@ def run():
         journal_before = success(reference, "authoring.journal.read", {})
         first = projection(reference, "unity.host.projection.materialize")
         require(first["active"] and first["current"] and len(first["nodes"]) == 4, "Initial effective scene is incomplete")
+        parents = {node["objectId"]: node["parentObjectId"] for node in first["nodes"]}
+        require(parents == {"plaza.potes": "", "market.potes": "plaza.potes",
+                            "bar.potes": "market.potes", "workshop.potes": "market.potes"},
+                "Effective Unity hierarchy ignored canonical containment")
         require(first["inputDigest"] == plan["inputDigest"], "Materialization used another canonical plan")
         second = projection(reference, "unity.host.projection.materialize")
         require(second["generationId"] == first["generationId"] and second["graphDigest"] == first["graphDigest"], "Same input caused semantic or generation churn")
@@ -215,6 +219,7 @@ def run():
         require(manifest() == prior_manifest, "Failed stage replaced the active manifest")
         stale = projection(reference, "unity.host.projection.observe")
         require(stale["active"] and not stale["current"] and stale["generationId"] == first["generationId"], "Stale generation was presented as current")
+        update_anchor, update_journal = anchor(reference), success(reference, "authoring.journal.read", {})
         updated = projection(reference, "unity.host.projection.materialize")
         require(updated["current"] and updated["inputDigest"] == expected_new_plan["inputDigest"] and updated["generationId"] != first["generationId"], "Update failed to publish new generation")
         require(next(node for node in updated["nodes"] if node["objectId"] == "bar.potes")["positionMm"]["x"] == 1750,
@@ -222,11 +227,14 @@ def run():
         bar = next(node for node in updated["nodes"] if node["objectId"] == "bar.potes")
         require(bar["rotationMilliDegrees"]["y"] == 90000 and bar["scalePpm"]["x"] == 1250000,
                 "Rotation or scale was not observed under the Unity local convention")
+        require(anchor(reference) == update_anchor and success(reference, "authoring.journal.read", {}) == update_journal,
+                "Update projection changed canonical state or journal")
 
         mutate(reference, "h1-05.delete", [
             {"kind": "remove-extension", "owner": "arkus.unity-binding", "schemaVersion": 1, "subjectId": "workshop.potes"},
             {"kind": "remove-object", "id": "workshop.potes"},
         ])
+        deletion_anchor, deletion_journal = anchor(reference), success(reference, "authoring.journal.read", {})
         deleted = projection(reference, "unity.host.projection.materialize")
         require(deleted["current"] and len(deleted["nodes"]) == 3 and all(node["objectId"] != "workshop.potes" for node in deleted["nodes"]),
                 "Deletion did not converge")
@@ -237,6 +245,8 @@ def run():
         recreated = projection(reference, "unity.host.projection.materialize")
         require(recreated["current"] and recreated["graphDigest"] == deletion_digest and recreated["generationId"] != deleted["generationId"],
                 "Deleting generated output did not reconstruct the same normalized graph")
+        require(anchor(reference) == deletion_anchor and success(reference, "authoring.journal.read", {}) == deletion_journal,
+                "Delete/recreate projection changed canonical state or journal")
         scene_file = managed_scene_path(manifest())
         original_scene = scene_file.read_bytes()
         scene_text = original_scene.decode("utf-8")

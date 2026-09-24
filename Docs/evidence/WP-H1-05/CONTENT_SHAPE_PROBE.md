@@ -1,0 +1,7 @@
+# WP-H1-05 representative content-shape probe
+
+The approved Juego2 target is represented by a bounded Potes plaza/market/bar/workshop slice. The canonical object graph has plaza → market → bar/workshop, including siblings, three levels, an update and deletion. A non-containment `faces` link from bar to plaza exercises H1-01 derived canonical dependencies. Each effective visual node instantiates the approved H1-04 Quaternius `Wall_Plaster_Window_Wide_Flat.fbx` model prefab; names describe proof roles only. No CITY/keeper production scene or substitute art is authored.
+
+The source facade demonstrates that the mapping preserves one canonical object ID per marker even when a prefab contributes internal GameObjects. Local position, Y rotation and nonuniform scale survive save/reload and fresh batch observation under the H1-01 Unity local left-handed, Y-up, Z-forward convention. Deleting workshop removes exactly one canonical/managed marker; deleting the generated scene and rebuilding gives the same normalized graph digest.
+
+Classification: no current-WP omission remains after the effective catalogue and marker checks. The canonical `faces` link is an H0/H1-01 reference, not a scene-parent edge; creating a Unity component for it would belong to a later component adapter. Source prefab visual fidelity, production plaza geometry, Cantabrian adaptation, materials/animation, broad art conversion and CITY content are named future/out-of-boundary work. No concrete predecessor reopen condition fired.
