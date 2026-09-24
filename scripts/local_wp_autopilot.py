@@ -219,6 +219,8 @@ def assert_pr_checkout(root: Path, pr: dict[str, Any]) -> None:
     local_branch = run("git", "branch", "--show-current", cwd=root)
     if local_sha != head["sha"].lower() or local_branch != head["ref"]:
         raise StopFlow(f"PR #{pr['number']} local checkout is not its exact head branch/SHA; switch to the canonical branch before adoption")
+    if run("git", "status", "--porcelain", cwd=root):
+        raise StopFlow(f"PR #{pr['number']} local checkout has uncommitted bytes outside its exact head SHA")
 
 
 def validate_docsync(root: Path, pr: dict[str, Any], row: dict[str, str]) -> None:

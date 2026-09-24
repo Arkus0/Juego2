@@ -91,13 +91,16 @@ class RoutingTests(unittest.TestCase):
         sha = "a" * 40
         pr = {"number": 123, "head": {"sha": sha, "ref": "codex/h1-03",
                                      "repo": {"full_name": module.REPO}}}
-        with patch.object(module, "run", side_effect=[sha, "codex/h1-03"]):
+        with patch.object(module, "run", side_effect=[sha, "codex/h1-03", ""]):
             module.assert_pr_checkout(Path("."), pr)
         with patch.object(module, "run", side_effect=[sha, "main"]), \
              self.assertRaisesRegex(module.StopFlow, "exact head branch"):
             module.assert_pr_checkout(Path("."), pr)
         with patch.object(module, "run", side_effect=["b" * 40, "codex/h1-03"]), \
              self.assertRaisesRegex(module.StopFlow, "exact head branch"):
+            module.assert_pr_checkout(Path("."), pr)
+        with patch.object(module, "run", side_effect=[sha, "codex/h1-03", " M file.cs"]), \
+             self.assertRaisesRegex(module.StopFlow, "uncommitted bytes"):
             module.assert_pr_checkout(Path("."), pr)
 
     def test_docsync_marker_requires_canonical_key_and_wp(self):
