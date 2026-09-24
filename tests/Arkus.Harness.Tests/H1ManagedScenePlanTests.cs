@@ -25,6 +25,8 @@ namespace Arkus.Harness.Tests
             Assert.Equal("market.potes", first.Nodes.Single(node => node.ObjectId == "bar.potes").ParentObjectId);
             Assert.Equal("market.potes", first.Nodes.Single(node => node.ObjectId == "workshop.potes").ParentObjectId);
             Assert.Equal(1250, first.Nodes.Single(node => node.ObjectId == "bar.potes").PositionMm.X);
+            Assert.Equal(90000, first.Nodes.Single(node => node.ObjectId == "bar.potes").RotationMilliDegrees.Y);
+            Assert.Equal(1250000, first.Nodes.Single(node => node.ObjectId == "bar.potes").ScalePpm.X);
             Assert.Equal("quaternius.medieval.prefab.wall-plaster-window-wide-flat", first.Nodes.Single(node => node.ObjectId == "bar.potes").SourceLogicalId);
 
             var deleted = H1ManagedScenePlan.Build(Fixture(2, includeWorkshop: false), catalogue);
@@ -103,8 +105,8 @@ namespace Arkus.Harness.Tests
                 {
                     ["coordinateConvention"] = UnityBindingProducer.CoordinateConvention,
                     ["positionMm"] = Vector(x, 0, 0),
-                    ["rotationMilliDegrees"] = Vector(0, 0, 0),
-                    ["scalePpm"] = Vector(1000000, 1000000, 1000000)
+                    ["rotationMilliDegrees"] = Vector(0, link == null ? 0 : 90000, 0),
+                    ["scalePpm"] = Vector(link == null ? 1000000 : 1250000, 1000000, 1000000)
                 },
                 ["components"] = components
             };

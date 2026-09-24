@@ -38,6 +38,7 @@ namespace Arkus.H1.Editor
 
             try
             {
+                ValidatePlan(request.plan);
                 var observation = request.mode == "materialize"
                     ? Materialize(request.plan) : ObserveActive();
                 return JsonUtility.ToJson(new ProjectionReply
@@ -71,7 +72,6 @@ namespace Arkus.H1.Editor
 
         private static ProjectionObservation Materialize(ProjectionPlan plan)
         {
-            ValidatePlan(plan);
             var previous = ReadManifest();
             if (previous != null && previous.inputDigest == plan.inputDigest)
             {

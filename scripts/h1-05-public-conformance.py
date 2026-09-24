@@ -111,14 +111,15 @@ def binding(x, link=None):
     components = []
     if link:
         components.append({"kind": "canonical-link", "relation": "faces", "targetObjectId": link})
+    facade = link is not None
     return {
         "schemaId": "arkus.unity-binding@1", "targetSceneId": SCENE,
         "source": {"kind": "prefab", "logicalId": PREFAB},
         "transform": {
             "coordinateConvention": CONVENTION,
             "positionMm": {"x": x, "y": 0, "z": 0},
-            "rotationMilliDegrees": {"x": 0, "y": 0, "z": 0},
-            "scalePpm": {"x": 1000000, "y": 1000000, "z": 1000000},
+            "rotationMilliDegrees": {"x": 0, "y": 90000 if facade else 0, "z": 0},
+            "scalePpm": {"x": 1250000 if facade else 1000000, "y": 1000000, "z": 1000000},
         },
         "components": components,
     }
@@ -218,6 +219,9 @@ def run():
         require(updated["current"] and updated["inputDigest"] == expected_new_plan["inputDigest"] and updated["generationId"] != first["generationId"], "Update failed to publish new generation")
         require(next(node for node in updated["nodes"] if node["objectId"] == "bar.potes")["positionMm"]["x"] == 1750,
                 "Updated Transform was not observed")
+        bar = next(node for node in updated["nodes"] if node["objectId"] == "bar.potes")
+        require(bar["rotationMilliDegrees"]["y"] == 90000 and bar["scalePpm"]["x"] == 1250000,
+                "Rotation or scale was not observed under the Unity local convention")
 
         mutate(reference, "h1-05.delete", [
             {"kind": "remove-extension", "owner": "arkus.unity-binding", "schemaVersion": 1, "subjectId": "workshop.potes"},
