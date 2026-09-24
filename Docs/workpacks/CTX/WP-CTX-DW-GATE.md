@@ -1,11 +1,15 @@
 # WP-CTX-DW-GATE — CTX↔DW discoverability and selective-adoption gate
 
-Status: PLANNED / NOT_STARTED
+Status: COMPLETE / ACCEPTED
 Class: NON-PRODUCT-FOUNDATIONAL / CROSS-TRACK PROCESS-ARCHITECTURE GATE
 EXECUTION_REQUIREMENT: REMOTE_OK
 Depends on: accepted `WP-CTX-03` + accepted `WP-DW-GATE`
 Does not block: `WP-H1-03`, `WP-H1-03A`
 Adoption consequence: authorizes selective CTX↔DW routing for later H1 work and supplies a reviewed planning input to H2; it does not authorize general DW adoption.
+
+Acceptance: exact candidate `7912383c806171aea101907c05a3b008bc7a5e3b`; independent PASS review `#5298141688`; PR `#165`; implementation merge `8b7b7715c7365acfb94670b179f21668a0562534`.
+
+Post-PASS reconciliation: `Docs/evidence/WP-CTX-DW-GATE/DOCSYNC.md`.
 
 ## Objective and central claim
 
@@ -117,7 +121,6 @@ The map may be refined by evidence without rewriting H1 product semantics.
 ## Inherited guarantees
 
 From CTX:
-
 - compact/index/capsule surfaces are navigation/projection, not authority;
 - role boot sets are minimum starting packs, not maximum context ceilings;
 - stale, missing, contradictory or materially ambiguous compact context forces authoritative reads;
