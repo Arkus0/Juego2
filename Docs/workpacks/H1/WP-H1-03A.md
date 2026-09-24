@@ -1,10 +1,12 @@
 # WP-H1-03A — Public Unity Editor execution seam + lifecycle
 
-Status: PLANNED / NOT_STARTED
+Status: COMPLETE / ACCEPTED
 Class: FOUNDATIONAL PROCESS BOUNDARY
 EXECUTION_REQUIREMENT: HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE
 Depends on: `WP-H1-03` PASS
 Blocks: `WP-H1-04`
+
+Acceptance: frozen candidate `24d24526487af0d32e69799960f4251e44f0b5ad`; PR `#176`; independent PASS review `#5303016012`; merge `90428b803948820663abfebaa3fe21eb37596247`; Arkus Candidate Validation `35985858123` GREEN; H1-03A Unity Lifecycle `35985225199` GREEN; Arkus Main Safety `35985225228` GREEN; post-acceptance DocSync `Docs/evidence/WP-H1-03A/DOCSYNC.md`.
 
 ## Execution interpretation
 
@@ -108,4 +110,4 @@ Reopen HK07A/HK07B only if an admitted composed capability cannot preserve its n
 
 ## PASS consequence / next dependency
 
-PASS freezes the only H1 public host-to-Editor topology and unblocks `WP-H1-04`. Every later Editor-bound public capability must consume this seam; changing the topology requires an explicit reviewed ADR/compatibility cycle.
+Accepted H1-03A freezes the only H1 public host-to-Editor topology and unblocks `WP-H1-04`. Every later Editor-bound public capability must consume this seam; changing the topology requires an explicit reviewed ADR/compatibility cycle.
