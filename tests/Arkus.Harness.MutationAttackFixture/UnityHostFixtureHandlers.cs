@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Arkus.Harness.Protocol;
 using Arkus.Harness.Runtime;
 
 namespace Arkus.Harness.H1HostPolicyFixture
