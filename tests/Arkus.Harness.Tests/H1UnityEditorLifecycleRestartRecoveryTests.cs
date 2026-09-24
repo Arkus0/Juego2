@@ -6,6 +6,8 @@ using System.IO;
 using System.Threading;
 using Arkus.H1.UnityHost;
 using Arkus.Harness.H1LeaseCrashFixture;
+using Arkus.Harness.Projection;
+using Arkus.Harness.Protocol;
 using Arkus.Harness.Runtime;
 using Xunit;
 
@@ -124,6 +126,21 @@ namespace Arkus.Harness.Tests
                 using (var blockedAdmission = new FileH1UnityProjectLease(profile).TryAcquire())
                 {
                     Assert.Null(blockedAdmission);
+                }
+
+                using (var restartedHost = ProductionH1UnityHost.Create())
+                {
+                    var busy = restartedHost.InvokeAsync(
+                        new NeutralProjectionRequest(
+                            "restart-busy-" + Guid.NewGuid().ToString("N"),
+                            ProjectProfileInspectExecutor.Key.Name,
+                            new ContractVersionRange(1, 0, 0),
+                            new Dictionary<string, object?>(StringComparer.Ordinal),
+                            1000),
+                        CancellationToken.None).GetAwaiter().GetResult();
+                    Assert.False(busy.Success);
+                    Assert.NotNull(busy.Error);
+                    Assert.Equal(H1UnityEditorExecutionCoordinator.BusyCode, busy.Error!.MachineCode);
                 }
 
                 File.WriteAllText(releasePath, "release");
