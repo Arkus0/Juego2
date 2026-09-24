@@ -56,7 +56,7 @@ Execution environment: canonical static evidence verifier (hosted or local)
 Canonical command: scripts/h1-06-verify-exact-sha.sh ${actual}
 Candidate clean before: YES
 Candidate clean after: YES
-Required gates: exact-SHA=GREEN; committed-evidence-shape=GREEN; frozen-handoff=GREEN; physical-local-Unity=EXTERNAL_EXACT_SHA_RECEIPT; hosted-Main-Safety=EXTERNAL_EXACT_SHA_RECEIPT
+Required gates: exact-SHA=GREEN; committed-evidence-shape=GREEN; frozen-handoff=SEPARATE_CONTEXT_GATE; physical-local-Unity=EXTERNAL_EXACT_SHA_RECEIPT; hosted-Main-Safety=EXTERNAL_EXACT_SHA_RECEIPT
 Result: GREEN
 Evidence: Docs/evidence/WP-H1-06/; exact-SHA physical-local Unity and Main Safety receipts on PR #195
 EOF
