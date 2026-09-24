@@ -68,6 +68,22 @@ class ShortQuotaResumeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(original.await_count, 1)
         wait.assert_not_awaited()
 
+    async def test_rechecks_durable_reviewer_verdict_after_wait(self):
+        original = AsyncMock(side_effect=module.autopilot.StopFlow("quota exit"))
+        wait = AsyncMock()
+        prompt = ("Reviewer independiente NUEVO del PR #185 / H1-04. "
+                  "Autopilot review ID: " + "b" * 32)
+        with patch.object(module, "ORIGINAL_CODEX_ROLE", original), \
+             patch.object(module, "_failed_role_quota_decision", AsyncMock(return_value=("wait_short", 2000))), \
+             patch.object(module, "_role_side_effect_already_complete", side_effect=[False, True]) as completed, \
+             patch.object(module, "_wait_for_short_reset", wait):
+            result = await module.remote_codex_role(
+                Path("."), Path("state"), "reviewer", prompt, "gpt-6-sol", "xhigh")
+        self.assertEqual(result, "")
+        self.assertEqual(original.await_count, 1)
+        self.assertEqual(completed.call_count, 2)
+        wait.assert_awaited_once_with(2000, "H1-04", 185)
+
     async def test_worker_failure_snapshots_before_short_retry(self):
         original = AsyncMock(side_effect=[module.autopilot.StopFlow("quota exit"), "ok"])
         with patch.object(module, "ORIGINAL_CODEX_ROLE", original), \
