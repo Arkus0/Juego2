@@ -30,7 +30,6 @@
     <ProjectReference Include="../../src/Arkus.Harness.Projection/Arkus.Harness.Projection.csproj" />
     <ProjectReference Include="../../src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
     <ProjectReference Include="../../src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
-    <ProjectReference Include="../Arkus.Harness.H1HostPolicyFixture/Arkus.Harness.H1HostPolicyFixture.csproj" />
     <ProjectReference Include="../Arkus.Harness.MutationAttackFixture/Arkus.Harness.MutationAttackFixture.csproj" />
   </ItemGroup>
 </Project>
