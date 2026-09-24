@@ -63,17 +63,15 @@ namespace Arkus.H1.Editor
                 if (PrefabUtility.InstantiatePrefab(variant, scene) == null || !EditorSceneManager.SaveScene(scene, scenePath))
                     throw new InvalidDataException("nested-proof.scene-save-failed");
                 var observed = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single).GetRootGameObjects().Single();
-                var nestedObserved = observed.transform.Find("NestedProp");
+                var nestedObserved = observed.transform.childCount == 1 ? observed.transform.GetChild(0) : null;
                 if (nestedObserved == null ||
                     AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(nestedObserved.gameObject)) != nestedPath)
                     throw new InvalidDataException("nested-proof.nested-link-missing-after-reload");
                 H1SceneProjection.ValidateSourceRelationships(observed, parentAsset, parentPath);
 
-                var brokenRoot = PrefabUtility.InstantiatePrefab(parentAsset) as GameObject;
-                if (brokenRoot == null) throw new InvalidDataException("nested-proof.broken-instance-missing");
-                var brokenChild = brokenRoot.transform.Find("NestedProp");
-                if (brokenChild == null) throw new InvalidDataException("nested-proof.broken-child-missing");
-                PrefabUtility.UnpackPrefabInstance(brokenChild.gameObject, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                var brokenRoot = new GameObject("ParentWall");
+                var brokenChild = new GameObject("nested");
+                brokenChild.transform.SetParent(brokenRoot.transform, false);
                 Save(brokenRoot, flattenedPath);
                 UnityEngine.Object.DestroyImmediate(brokenRoot);
                 var flattened = AssetDatabase.LoadAssetAtPath<GameObject>(flattenedPath);
