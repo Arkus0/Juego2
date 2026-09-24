@@ -29,7 +29,7 @@ namespace Arkus.Harness.Tests
             var decoded = executor.DecodeResult(envelope);
 
             Assert.True(decoded.Success);
-            var result = decoded.Result!;
+            var result = decoded.Data!;
             Assert.Equal(invocationId, result["invocationId"]);
             Assert.Equal(H1UnityLaunchProfile.FixedEntryPoint, result["entryPoint"]);
             Assert.Equal(profile.Platform, result["platform"]);
@@ -58,9 +58,9 @@ namespace Arkus.Harness.Tests
                 });
 
             Assert.True(status.Success);
-            Assert.Equal(invocationId, status.Result!["invocationId"]);
-            Assert.Equal("completed", status.Result["status"]);
-            Assert.Equal("success", status.Result["outcomeCode"]);
+            Assert.Equal(invocationId, status.Data!["invocationId"]);
+            Assert.Equal("completed", status.Data["status"]);
+            Assert.Equal("success", status.Data["outcomeCode"]);
         }
 
         private sealed class MemoryLedger : IH1UnityInvocationLedger
