@@ -17,7 +17,6 @@ on:
 
 permissions:
   contents: read
-  checks: write
 
 concurrency:
   group: h1-unity-ci-pilot-${{ github.event.pull_request.number || inputs.target_sha || github.sha }}
@@ -32,6 +31,8 @@ jobs:
     env:
       H1_02_ACCEPTED_SHA: d86a08e644f542e9515f5e54fd4061f61e251c70
       TARGET_SHA: ${{ inputs.target_sha || 'd86a08e644f542e9515f5e54fd4061f61e251c70' }}
+      GAME_CI_VERSION: v0.1.69
+      GAME_CI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
       UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -68,18 +69,39 @@ jobs:
           grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
           grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
 
+      - name: Install exact GameCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          GAME_CI_BIN="${RUNNER_TEMP}/game-ci-${GAME_CI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${GAME_CI_VERSION}/game-ci-linux-x64" \
+            --output "${GAME_CI_BIN}"
+          printf '%s  %s\n' "${GAME_CI_LINUX_X64_SHA256}" "${GAME_CI_BIN}" | sha256sum --check --strict
+          chmod +x "${GAME_CI_BIN}"
+          "${GAME_CI_BIN}" --version
+          echo "GAME_CI_BIN=${GAME_CI_BIN}" >> "${GITHUB_ENV}"
+
       # First pilot is deliberately cache-free: prove a clean cloud import before
       # optimizing runner time or allowing exact-input receipt reuse.
-      # Coverage is explicitly disabled for parity with the bounded H1-02 oracle.
-      - name: Run effective Unity EditMode suite
-        uses: game-ci/unity-test-runner@32e57712352b500e17974b245a6dce9e11a73213
-        with:
-          projectPath: Unity/ArkusUnity
-          testMode: editmode
-          coverageEnabled: false
-          artifactsPath: artifacts
-          checkName: H1 Unity CI Pilot EditMode
-          cliVersion: v0.1.69
+      # The pinned unity-test-runner wrapper emits an unsupported --no-coverageEnabled
+      # flag against CLI v0.1.69, so invoke that exact CLI binary directly and pass
+      # its supported boolean form. This keeps coverage genuinely disabled.
+      - name: Run effective Unity EditMode suite with coverage disabled
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${GAME_CI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --coverageEnabled false \
+            --artifactsPath=artifacts \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
 
       - name: Reconcile result with accepted H1-02 oracle
         shell: bash
@@ -215,9 +237,9 @@ jobs:
           Test mode: EditMode
           Expected result: 5/5 Passed
           Coverage: DISABLED
-          Execution substrate: github-actions-ubuntu-24.04 + GameCI
-          GameCI test-runner commit: 32e57712352b500e17974b245a6dce9e11a73213
-          GameCI CLI: v0.1.69
+          Execution substrate: github-actions-ubuntu-24.04 + GameCI CLI
+          GameCI CLI: ${GAME_CI_VERSION}
+          GameCI CLI linux-x64 SHA256: ${GAME_CI_LINUX_X64_SHA256}
           Library cache: DISABLED_FOR_CLEAN_PILOT
           GameCI package drift: EXACT_KNOWN_PLATFORM_INJECTION_RECONCILED_AND_RESTORED
           Final tracked tree: IDENTICAL_TO_TARGET_SHA
