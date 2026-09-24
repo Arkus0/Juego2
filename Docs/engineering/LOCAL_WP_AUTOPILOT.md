@@ -6,7 +6,7 @@ Version: 0.1 — 2026-09-23
 
 This is an owner-authorized, **prospective** local driver. It becomes available only after the process PR that introduces it receives a fresh independent PASS, merges, and completes DocSync. It does not take over a running/frozen PR or retroactively alter any existing review. Until then, `AGENTS.md`, `WORKER_REVIEW_PROTOCOL.md`, and Automation V2 continue to govern current candidates.
 
-The driver is not a semantic authority. Live GitHub PR/head/review/check/marker state, exact WP contracts, repository code/tests, and the independent Reviewer remain authoritative. A local log or a Luna classification cannot create PASS. The driver never writes a PASS, merges a PR, edits implementation, or chooses a different WP against a `DOCSYNC_COMPLETE` handoff. Existing GitHub Actions own the mechanical transitions and exact-SHA merge.
+The driver is not a semantic authority. Live GitHub PR/head/review/check/marker state, exact WP contracts, repository code/tests, and the independent Reviewer remain authoritative. A local log or a Luna classification cannot create PASS. The driver never writes a PASS, edits implementation, or chooses a different WP against a `DOCSYNC_COMPLETE` handoff. After a valid exact-SHA PASS, the controller may perform the mechanical PR merge itself only with GitHub's expected-head SHA bound to the frozen candidate; if GitHub Actions already merged first, the controller verifies that the resulting `merge_commit_sha` contains that frozen candidate as a real parent before DocSync. Existing GitHub Actions remain allowed to perform their accepted exact-SHA merge path, but neither path may accept a merge of a different candidate.
 
 ## Invocation
 
