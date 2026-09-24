@@ -16,8 +16,15 @@ Observed GitHub-hosted evidence before the reviewer repair:
 - effective EditMode result: `5/5` passed
 - deterministic GameCI drift was limited to `Unity/ArkusUnity/Packages/manifest.json` and `Unity/ArkusUnity/Packages/packages-lock.json`, reconciled against the known package injection, then restored
 - final tracked tree after restoration: clean
+- coverage was enabled by the action default, which is why reviewer #5296184999 required an explicit disabled-coverage repair
 
-Reviewer #5296184999 found that the implementation was technically bounded but the workpack contract still classified every tracked mutation as isolation FAIL. The repair makes the two-path, exact-delta, restore-to-target exception explicit and sets GameCI `coverageEnabled: false` for parity with H1-02. A fresh GREEN run of the repaired candidate is required before independent acceptance.
+Reviewer repair history:
+
+- the workpack now makes the two-path, exact-delta, restore-to-target isolation exception explicit;
+- repair run #7 / `35936312446` correctly passed `coverageEnabled: false` to the pinned `unity-test-runner` action, but the action translated it to `--no-coverageEnabled`; GameCI CLI `v0.1.69` rejected that argument before Unity launched, so that RED is classified as wrapper/CLI incompatibility rather than product evidence;
+- the current repair invokes the exact GameCI CLI `v0.1.69` Linux x64 release binary directly, verifies SHA-256 `d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329`, and supplies the supported `--coverageEnabled false` boolean form.
+
+A fresh GREEN run of the current repaired candidate is required before independent acceptance.
 
 The authoritative execution evidence is the GitHub Actions artifact emitted by `H1 Unity CI Pilot`; this README records the state and interpretation but does not replace the artifact or exact-SHA receipt.
 
