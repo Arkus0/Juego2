@@ -19,9 +19,17 @@ class RoutingTests(unittest.TestCase):
     def test_wp_id_is_strict(self):
         self.assertEqual(module.normalize_wp("WP-H1-03"), "H1-03")
         self.assertEqual(module.normalize_wp("dw-05"), "DW-05")
-        for bad in ("", "../H1-03", "H1-03;echo", "H1_03"):
+        self.assertEqual(module.normalize_wp("WP-CTX-DW-GATE"), "CTX-DW-GATE")
+        self.assertEqual(module.normalize_wp("ctx-dw-h1-02"), "CTX-DW-H1-02")
+        for bad in ("", "../H1-03", "H1-03;echo", "H1_03", "H1"):
             with self.assertRaises(module.StopFlow):
                 module.normalize_wp(bad)
+
+    def test_multi_segment_wp_resolves_to_repo_identity(self):
+        root = Path(__file__).resolve().parents[1]
+        self.assertEqual(module.wp_path(root, "CTX-DW-GATE").name, "WP-CTX-DW-GATE.md")
+        self.assertEqual(module.wp_path(root, "CTX-DW-H1-01").name, "WP-CTX-DW-H1-01.md")
+        self.assertEqual(module.wp_path(root, "CTX-DW-H1-02").name, "WP-CTX-DW-H1-02.md")
 
     def test_quota_general_wins_and_unknown_fails_closed(self):
         limits = {"rateLimitsByLimitId": {"codex": {
@@ -71,7 +79,11 @@ class RoutingTests(unittest.TestCase):
     def test_dependency_precheck_is_bounded(self):
         self.assertEqual(module.dependency_wps("Depends on: `WP-H1-01` PASS, `WP-H1-02` PASS"),
                          ["H1-01", "H1-02"])
-        with patch.object(module, "canonical_pr", side_effect=[{"merged_at": "date", "number": 1}, {"merged_at": None}]), \
+        self.assertEqual(module.dependency_wps(
+            "Depends on: `WP-CTX-DW-GATE` PASS + `WP-CTX-DW-H1-01` COMPLETE"),
+            ["CTX-DW-GATE", "CTX-DW-H1-01"])
+        with patch.object(module, "wp_path", return_value=Path("WP.md")), \
+             patch.object(module, "canonical_pr", side_effect=[{"merged_at": "date", "number": 1}, {"merged_at": None}]), \
              patch.object(module, "accepted_main_doc", return_value=True), \
              patch.object(module, "markers", return_value=[]), \
              self.assertRaisesRegex(module.StopFlow, "H1-02 is not merged"):
@@ -239,6 +251,29 @@ class RoutingTests(unittest.TestCase):
         with patch.object(module, "gh_pages", side_effect=[[row], []]), \
              self.assertRaisesRegex(module.StopFlow, "manual/untagged"):
             module.reviewed_verdicts(123)
+
+    def test_review_turn_rejects_matching_id_with_wrong_sha(self):
+        frozen, wrong = "a" * 40, "b" * 40
+        review_id = "1" * 32
+        current = {"state": "open", "merged": False, "head": {"sha": frozen}}
+        verdicts = [{"id": review_id, "sha": wrong, "verdict": "FAIL", "at": "2026-01-01T00:00:00Z"}]
+        with self.assertRaisesRegex(module.StopFlow, "names SHA"):
+            module.review_turn_completion(123, current, review_id, frozen, verdicts)
+
+    def test_review_turn_rejects_moved_head_even_with_matching_verdict(self):
+        frozen, moved = "a" * 40, "b" * 40
+        review_id = "1" * 32
+        current = {"state": "open", "merged": False, "head": {"sha": moved}}
+        verdicts = [{"id": review_id, "sha": frozen, "verdict": "FAIL", "at": "2026-01-01T00:00:00Z"}]
+        with self.assertRaisesRegex(module.StopFlow, "candidate moved during Reviewer turn"):
+            module.review_turn_completion(123, current, review_id, frozen, verdicts)
+
+    def test_review_turn_allows_exact_sha_merge(self):
+        frozen = "a" * 40
+        review_id = "1" * 32
+        current = {"state": "closed", "merged": True, "head": {"sha": frozen}}
+        verdict = {"id": review_id, "sha": frozen, "verdict": "PASS", "at": "2026-01-01T00:00:00Z"}
+        self.assertEqual(module.review_turn_completion(123, current, review_id, frozen, [verdict]), verdict)
 
     def test_material_fail_only_same_sha_appeal_can_supersede(self):
         sha = "a" * 40
