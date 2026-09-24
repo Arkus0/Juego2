@@ -1,0 +1,218 @@
+name: H1-03 Unity Host Policy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-03-unity-validation.yml'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/**'
+      - 'src/Arkus.Harness.Projection/**'
+      - 'tests/Arkus.Harness.Tests/H1UnityHostPolicyTests.cs'
+      - 'Docs/evidence/WP-H1-03/**'
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: Exact WP-H1-03 candidate SHA to execute in Unity
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-03-unity-${{ github.event.pull_request.number || inputs.target_sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  unity-effective:
+    name: H1-03 effective Unity admission
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'worker/h1-03-unity-host-policy'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.target_sha }}
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Validate exact target and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact'; exit 2; }
+          missing=0
+          for name in UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact H1-03 candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify clean checkout and pinned Unity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+
+      - name: Install exact GameCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+
+      - name: Run effective Unity EditMode policy suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --coverageEnabled false \
+            --artifactsPath=artifacts \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+
+      - name: Reconcile H1-03 causal Unity oracle
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          runs = []
+          for path in Path('artifacts').rglob('*.xml'):
+              try:
+                  root = ET.parse(path).getroot()
+              except ET.ParseError:
+                  continue
+              if root.tag == 'test-run':
+                  runs.append((path, root))
+          if len(runs) != 1:
+              raise SystemExit(f'expected exactly one Unity test-run XML, found {[str(p) for p,_ in runs]}')
+
+          path, root = runs[0]
+          failed = int(root.attrib.get('failed', '-1'))
+          total = int(root.attrib.get('total', root.attrib.get('testcasecount', '-1')))
+          if failed != 0 or root.attrib.get('result', '').lower() != 'passed' or total < 8:
+              raise SystemExit(f'Unity suite not green: total={total} failed={failed} result={root.attrib.get("result")}')
+
+          cases = []
+          for case in root.iter('test-case'):
+              identity = case.attrib.get('fullname') or case.attrib.get('name') or ''
+              cases.append((identity, case.attrib.get('result', '')))
+          required = [
+              'BootstrappedAuthorityResolvesPotesResourceInsideReviewedManagedRoot',
+              'AmbientAuthorityShapedSelectorsAreNotLogicalResources',
+              'ExternalReversibleEffectStaysInsideManagedRootAndRestoresWorkspace',
+          ]
+          for method in required:
+              matches = [(name, result) for name, result in cases if method in name]
+              if not matches:
+                  raise SystemExit(f'missing required H1-03 Unity probe {method}')
+              if any(result.lower() != 'passed' for _, result in matches):
+                  raise SystemExit(f'H1-03 Unity probe not fully passed: {matches}')
+
+          print(f'H1_03_UNITY_POLICY_ORACLE_GREEN result={path} total={total} failed=0')
+          PY
+
+      - name: Reconcile deterministic GameCI package injection and restore tracked tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          target = os.environ['TARGET_SHA']
+          manifest_path = Path('Unity/ArkusUnity/Packages/manifest.json')
+          lock_path = Path('Unity/ArkusUnity/Packages/packages-lock.json')
+          allowed_paths = {str(manifest_path), str(lock_path)}
+          status = subprocess.check_output(['git','status','--porcelain','--untracked-files=no'], text=True).splitlines()
+          changed = {line[3:] for line in status if len(line) >= 4}
+          if changed != allowed_paths:
+              raise SystemExit(f'unexpected tracked Unity drift: {sorted(changed)}')
+
+          def baseline(path):
+              return json.loads(subprocess.check_output(['git','show',f'{target}:{path.as_posix()}'], text=True))
+
+          expected_manifest = baseline(manifest_path)
+          expected_manifest['dependencies'].update({
+              'com.unity.sdk.linux-arm64':'1.1.0',
+              'com.unity.sdk.linux-x86_64':'1.1.0',
+              'com.unity.toolchain.linux-x86_64-linux':'1.1.0',
+          })
+          if json.loads(manifest_path.read_text()) != expected_manifest:
+              raise SystemExit('manifest drift is not the accepted GameCI injection')
+
+          expected_lock = baseline(lock_path)
+          expected_lock['dependencies'].update({
+              'com.unity.sdk.linux-arm64': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
+              'com.unity.sdk.linux-x86_64': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
+              'com.unity.sysroot.base': {'version':'1.1.0','depth':1,'source':'registry','dependencies':{},'url':'https://packages.unity.com'},
+              'com.unity.toolchain.linux-x86_64-linux': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
+          })
+          if json.loads(lock_path.read_text()) != expected_lock:
+              raise SystemExit('packages-lock drift is not the accepted GameCI injection')
+          print('GAMECI_PACKAGE_DRIFT_RECONCILED paths=manifest.json,packages-lock.json')
+          PY
+          git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json
+          git diff --quiet "${TARGET_SHA}" --
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Write exact-SHA H1-03 receipt
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > H1_03_UNITY_RECEIPT.txt <<EOF
+          H1_03_UNITY_RECEIPT_V1
+          Workpack: WP-H1-03
+          Candidate SHA: ${TARGET_SHA}
+          Policy: arkus.unity-host-policy@1
+          Project identity: arkus.unity-project@1:ArkusUnity
+          Managed root: Assets/Arkus
+          Effective editor: 6000.3.24f1 (4e7b9b5b6244)
+          Execution substrate: github-actions-ubuntu-24.04 + GameCI CLI ${PINNED_GAMECI_VERSION}
+          Probe: logical Potes resource read + ExternalReversible managed-root write/restore
+          Ambient authority: raw/path/URL/runtime-type shaped selectors not admitted as logical resources
+          GameCI package drift: EXACT_KNOWN_PLATFORM_INJECTION_RECONCILED_AND_RESTORED
+          Final tracked tree: IDENTICAL_TO_TARGET_SHA
+          Result: GREEN
+          EOF
+          cat H1_03_UNITY_RECEIPT.txt
+
+      - name: Upload H1-03 Unity evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: h1-03-unity-${{ env.TARGET_SHA }}
+          path: |
+            artifacts
+            H1_03_UNITY_RECEIPT.txt
+          if-no-files-found: warn
+          retention-days: 30

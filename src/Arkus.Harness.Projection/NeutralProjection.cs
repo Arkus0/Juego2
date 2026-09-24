@@ -223,15 +223,16 @@ namespace Arkus.Harness.Projection
     }
 
     /// <summary>
-    /// Generic projection of one composed canonical runtime. The composed inventory remains the only
-    /// capability/schema authority. HK09A host-capability admission is enforced here, below every
-    /// transport adapter, before the inventory can be exposed or dispatched. The gate bounds
-    /// cancellation and timeout to admission; once the synchronous canonical dispatcher starts,
-    /// its truthful success/error outcome always wins.
+    /// Generic projection of one composed canonical runtime. The public constructor is permanently
+    /// the accepted HK09A H0 boundary. The internal H1 constructor accepts only the opaque result of
+    /// arkus.unity-host-policy@1; transports still consume this same projection type and therefore
+    /// cannot mint adapter-only Unity authority. The opaque admission is retained so the next H1
+    /// invocation-envelope layer receives the exact workspace/grants that authorized this surface.
     /// </summary>
     public sealed class NeutralProjectionService : IDisposable
     {
         private readonly ComposedContract _contract;
+        private readonly H1AdmittedUnityContract? _h1Admission;
         private readonly SemaphoreSlim _dispatchGate = new SemaphoreSlim(1, 1);
         private bool _disposed;
 
@@ -239,9 +240,18 @@ namespace Arkus.Harness.Projection
         {
             _contract = H0HostCapabilityPolicy.Enforce(
                 contract ?? throw new ArgumentNullException(nameof(contract)));
+            _h1Admission = null;
+        }
+
+        internal NeutralProjectionService(H1AdmittedUnityContract admission)
+        {
+            _h1Admission = admission ?? throw new ArgumentNullException(nameof(admission));
+            _contract = _h1Admission.Contract;
         }
 
         public IReadOnlyList<CapabilityDefinition> Capabilities => _contract.Definitions;
+
+        internal H1AdmittedUnityContract? H1Admission => _h1Admission;
 
         public async Task<NeutralProjectionOutcome> InvokeAsync(
             NeutralProjectionRequest request,
