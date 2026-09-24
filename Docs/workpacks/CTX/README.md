@@ -22,7 +22,7 @@ Accepted plan evidence:
 
 A saving that increases guessing, stale-state risk, hidden assumptions, Reviewer dependence on Worker prose, or omitted proof is a regression.
 
-## Sequence
+## Standalone CTX sequence — COMPLETE
 
 ```text
 WP-CTX-01  Role-specific bootstrap + derived accepted-state navigation
@@ -34,7 +34,7 @@ WP-CTX-03  Structured evidence / DocSync / history separation + measured closure
 
 All three are PROCESS_ONLY. None may change product/runtime semantics, accepted workpack meaning, or the Worker → fresh independent Reviewer boundary.
 
-`NON-PRODUCT-FOUNDATIONAL` means CTX does not invoke the product `FOUNDATIONAL_PROOF_STANDARD.md` merely by existing. It does **not** mean a lighter handoff: every CTX WP still follows the normal Worker pre-review → exact frozen candidate SHA → fresh independent Reviewer → PASS/FAIL → merge → DocSync lifecycle.
+`NON-PRODUCT-FOUNDATIONAL` means CTX does not invoke the product `FOUNDATIONAL_PROOF_STANDARD.md` merely by existing. It does **not** mean a lighter causal standard: compact context cannot become authoritative merely because it is convenient.
 
 ## Why this split
 
@@ -57,7 +57,7 @@ Combining all three would make one Reviewer validate context routing, semantic c
 - history may leave normal bootstrap, but accepted evidence is never deleted merely to save tokens;
 - H1's accepted context-poor local executor remains a bounded mechanical executor and is not generalized into a context-poor Worker/Reviewer.
 
-## Adoption
+## Accepted standalone adoption
 
 `WP-CTX-01 — Role-specific bootstrap + accepted-state navigation` is **COMPLETE** on repaired frozen candidate `ea92e4eab36566ab3d0367fef64fefc0b2b0ff39` (independent PASS review `#5273801466`, PR `#110`, implementation merge `fbd3e5526e760efc89f54e7c12a274af10d4765f`). Its accepted `docsync-first-parent-v1` contract keeps the derived accepted-state projection non-authoritative and stale-detected.
 
@@ -65,16 +65,50 @@ Combining all three would make one Reviewer validate context routing, semantic c
 
 `WP-CTX-03 — Structured evidence, quality-preserving context envelope, DocSync and history separation` is **COMPLETE** on final circuit-breaker candidate `8851f3a295c848be5724d5d9b796e00d2037d6e8` (independent PASS review `#5277502546`, PR `#121`, implementation merge `d2cf7145b4ec83c3935286f2d9faeabbcd032148`). Its accepted effective-read-set oracle derives repository-backed mandatory context from profile/route authority, caller omission cannot silently shrink that universe, and new unclassified read surfaces/classes fail closed.
 
-The reviewed CTX-01 → CTX-02 → CTX-03 programme is **COMPLETE**. There is no next standalone CTX compression/process workpack. CTX does not semantically block H1/CITY/PA; the CTX-03 side prerequisite used by DW is accepted.
+The reviewed CTX-01 → CTX-02 → CTX-03 compression programme is **COMPLETE**. There is no further standalone CTX compression WP planned.
 
-## Post-program CTX↔DW composition
+## CTX↔DW composition — GATE ACCEPTED
 
-After accepted `WP-DW-GATE`, a separate cross-track `WP-CTX-DW-GATE` may test the composition of CTX as control/routing plane and DW as selective structured knowledge plane. This does not reopen CTX-01..03 and does not imply general DW adoption.
+`WP-CTX-DW-GATE — CTX↔DW discoverability and selective-adoption gate` is **COMPLETE / ACCEPTED** on candidate `7912383c806171aea101907c05a3b008bc7a5e3b`, independent PASS review `#5298141688`, PR `#165`, implementation merge `8b7b7715c7365acfb94670b179f21668a0562534`.
 
 The composition principle is: **all material information must be discoverable from CTX, but not all material information belongs in DW**. For represented semantic facts, authoritative source > derived DW projection > CTX summary/navigation. For routing/process, accepted CTX effective-read-set, mandatory-read and escalation rules remain authoritative; DW only advises materiality and can never shrink those obligations. A material contradiction forces source-open/rebuild/fail-closed handling.
 
-`WP-CTX-DW-GATE` explicitly does not block H1-03/H1-03A. It also does not assume H1 projection semantics that DW-GATE never proved. H1-04 remains source-first and establishes the real Quaternius/catalogue authority; only after H1-04 PASS may a separate non-product CTX↔DW owner build and independently validate an H1 projection with source-universe completeness, provenance, staleness and deterministic rebuild controls. H1-05 is the first eligible real consumer of that projection when current/material, and H1-06 is the second distinct asset/prefab observation. If the projection is absent or stale, H1 continues through CTX→authoritative sources rather than blocking.
+The Gate intentionally did **not** create a real H1 projection because H1-04 had not yet accepted the Quaternius/catalogue universe from which that projection must be derived.
 
-The required fresh public-client AI-agent trial owned by `WP-H1-GATE` remains pure: it uses the H1 public bootstrap/discovery/schemas and is not pre-seeded with Juego2-private CTX/DW knowledge. CTX↔DW agent composition, if measured, is a separate observation and cannot repair or substitute H1-GATE public discoverability.
+## H1 CTX↔DW adoption sequence
 
-Detailed H1 integration is recorded in `Docs/workpacks/H1/CTX_DW_ADOPTION_PLAN.md`; future H2 planning input is recorded separately under `Docs/workpacks/H2/CTX_DW_PLANNING_INPUT.md`.
+The two missing H1 implementation/adoption boundaries are now explicit workpacks:
+
+```text
+H1-04 PASS — establishes accepted source/catalogue authority
+    ↓
+WP-CTX-DW-H1-01 — H1 projection bootstrap + lifecycle
+    ↓
+H1-05 — first eligible real consumer / managed-scene shape
+    ↓
+H1-06 — second distinct real consumer / asset-prefab shape
+    ↓
+WP-CTX-DW-H1-02 — selective-adoption validation + H1-07+ disposition
+```
+
+### `WP-CTX-DW-H1-01`
+
+Runs only after H1-04 PASS. It owns the real H1→DW projection lifecycle: independently enumerated source universe, versioned adapter/schema, completeness, source-open provenance, staleness, deterministic rebuild, corruption controls and routing admission. It does not own H1 product semantics and does not block H1-05+; if unavailable, CTX routes directly to authority.
+
+### `WP-CTX-DW-H1-02`
+
+Runs after accepted H1-05 and H1-06 observations. It validates whether the projection is actually useful across two materially different real consumer shapes without hiding blockers or mandatory reads, then publishes bounded `USE / OPTIONAL / NOT_MATERIAL` guidance for H1-07+.
+
+It must consume accepted H1-05/H1-06 evidence rather than creating shadow duplicate Workers merely to produce nicer adoption metrics.
+
+Neither H1 CTX↔DW WP is allowed to contaminate the mandatory fresh public-client trial owned by `WP-H1-GATE`.
+
+Detailed H1 integration remains recorded in `Docs/workpacks/H1/CTX_DW_ADOPTION_PLAN.md`.
+
+## Future H2 trigger — do not pre-author yet
+
+Future H2 planning must explicitly decide whether CTX/DW becomes part of any public/external **knowledge portability** boundary. If the accepted H2 plan needs such a claim, it must author a separate `CTX-DW-H2-*` workpack then, against the real H2 consumer/public boundary.
+
+Do not create that WP now: H1-05/H1-06 and `WP-CTX-DW-H1-02` have not yet produced the evidence needed to know what H2 should preserve, change or reject.
+
+Current H2 planning input is `Docs/workpacks/H2/CTX_DW_PLANNING_INPUT.md`.

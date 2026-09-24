@@ -21,6 +21,22 @@ DW → NOT_MATERIAL unless concrete evidence says otherwise
 
 Correct DW abstention is preferred to loading a design corpus that has no causal role in host/workspace or Editor lifecycle correctness.
 
+The two real H1 adoption boundaries are now explicit contracts:
+
+```text
+H1-04 PASS
+    ↓
+WP-CTX-DW-H1-01 — H1 projection bootstrap + lifecycle
+    ↓
+H1-05 — first eligible real consumer
+    ↓
+H1-06 — second distinct consumer shape
+    ↓
+WP-CTX-DW-H1-02 — selective-adoption validation + H1-07+ disposition
+```
+
+Neither CTX↔DW H1 workpack blocks H1 product progress. In a strictly sequential owner flow it is recommended to run them at the points above; if unavailable, H1 falls back to authoritative sources.
+
 ## Authority split
 
 CTX and DW do not sit in one universal authority ladder.
@@ -54,11 +70,11 @@ CTX
 
 H1-04 may consult pre-existing DW information only if independently material, but no `USE` classification may pretend that DW already contains the catalogue/source universe H1-04 is creating. The H1-04 product oracle remains its deterministic Unity/catalogue evidence. CTX↔DW does not change that claim.
 
-## Post-H1-04 non-product projection lifecycle
+## `WP-CTX-DW-H1-01` — post-H1-04 projection lifecycle
 
-After H1-04 PASS and acceptance, CTX↔DW may project that accepted universe into DW in a separate non-product step. This step is owned by the CTX↔DW adoption/projection boundary, not by the H1-04 product Worker and not by shared H0/DW kernel semantics.
+After H1-04 PASS and acceptance, `WP-CTX-DW-H1-01` projects that accepted universe into DW as a separate non-product step. It is owned by the CTX↔DW adoption/projection boundary, not by the H1-04 product Worker and not by shared H0/DW kernel semantics.
 
-Before any later H1 task may classify this projection as `USE`, the projection step must establish:
+Before any later H1 task may classify this projection as `USE`, `WP-CTX-DW-H1-01` must establish:
 
 - **independent source universe:** enumerate the accepted H1-04 source-adoption and catalogue/identity authority/evidence independently of the DW output;
 - **projection owner/adapter/schema:** map that universe into generic DW facts/relations/provenance while keeping H1/domain meaning consumer-owned;
@@ -84,9 +100,17 @@ H1-06 is the second planned observation point because source-asset, prefab and m
 
 A useful H1-05 observation is not enough to assume H1-06 usefulness; route by claim evidence and current projection state.
 
+## `WP-CTX-DW-H1-02` — selective-adoption validation
+
+After H1-05 and H1-06 have each produced accepted product evidence, `WP-CTX-DW-H1-02` consumes those real observations and decides what the H1-07+ routing defaults should be.
+
+It must not create duplicate shadow Workers or replay H1-05/H1-06 solely to manufacture adoption metrics. It evaluates accepted artifacts from the two materially different consumer shapes, preserves blocker/source discoverability, verifies source-open provenance and records bounded context/cognitive-load effects.
+
+Its valid outcome may be selective: some H1 claims can be `USE`, others `OPTIONAL`, and others `NOT_MATERIAL`. It may not force broad DW adoption merely because the projection exists.
+
 ## Later H1
 
-From H1-07 onward, CTX classifies DW as `USE`, `OPTIONAL` or `NOT_MATERIAL` for the active claim.
+From H1-07 onward, CTX classifies DW as `USE`, `OPTIONAL` or `NOT_MATERIAL` for the active claim, informed by `WP-CTX-DW-H1-02` once accepted.
 
 The classification is routing advice only. It cannot shrink CTX mandatory reads, and a Worker or Reviewer may always open deeper authoritative sources.
 
@@ -121,7 +145,7 @@ CTX↔DW may be observed separately as a composition/usability probe, including 
 - cannot repair a failure of public discovery/schemas;
 - cannot justify a private path or internal Juego2 knowledge in the mandatory trial.
 
-If a future H2/public-product plan chooses to publish and version CTX/DW as part of an external consumer boundary, that is a separate reviewed portability claim. It does not retroactively redefine H1-GATE.
+If a future H2/public-product plan chooses to publish and version CTX/DW as part of an external consumer boundary, that is a separate reviewed portability claim. The H2 planner must author the appropriate `CTX-DW-H2-*` workpack at that time; do not pre-author it before the H1 adoption evidence exists.
 
 ## Non-claims
 
@@ -129,7 +153,8 @@ This plan does not:
 
 - add a dependency edge from CTX↔DW to H1-03 or H1-03A;
 - make H1-04 depend on a pre-existing H1 catalogue projection;
-- block H1-05/H1-06 if the optional projection lifecycle is unavailable;
+- block H1-05/H1-06 if `WP-CTX-DW-H1-01` is unavailable;
+- make H1-07+ product progress depend on `WP-CTX-DW-H1-02`;
 - change H1 architecture, Unity authority or workpack acceptance criteria;
 - assert that DW is useful for every H1 claim;
 - authorize domain knowledge to become H0/H1/DW-kernel generic semantics;
