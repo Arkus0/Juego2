@@ -1,0 +1,80 @@
+{
+  "schema": "arkus.accepted-contract-capsule@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "capsule_id": "WP-PA-06",
+  "track": "PA",
+  "content_mode": "structured_disposition",
+  "accepted_identity": {
+    "reviewed_candidate_sha": "9ce17952e257587c0dcec5dc4b854170365545ca",
+    "merge_sha": "fdfec568844bc0d006959c3cd207795544eca33d",
+    "review_id": "5300025658"
+  },
+  "identity_source": {
+    "path": "Docs/workpacks/PA/WP-PA-06.md",
+    "git_blob_sha": "8f5155b99ddd9cb32af582b498b951d9e2442be9"
+  },
+  "authoritative_sources": [
+    {
+      "path": "Docs/research/living-world/results/PA-06.md",
+      "git_blob_sha": "ed3701e1f2f586fc7e9f0723d4dbe1ab22e499fc",
+      "kind": "canonical_research_result"
+    }
+  ],
+  "consumer_hints": ["WP-PA-07", "WP-PA-08", "WP-PA-09", "WP-PA-10", "WP-PA-11", "WP-PA-12", "WP-PA-13", "WP-DW-03", "H4", "H7"],
+  "exported_guarantees": [
+    {"id": "selected-actor-accessible-experience", "statement": "A memory candidate must arise from an experience accessible to that actor; privileged world/event history is not sufficient.", "source_pointer": "PA-06 / Selection and access model"},
+    {"id": "causal-time-selection", "statement": "Retention decisions use only actor-accessible checkpoint state and a predeclared selection policy; future-only divergence cannot retroactively change an earlier decision.", "source_pointer": "PA-06 / 3.1 and NC-06"},
+    {"id": "finite-selected-memory-surface", "statement": "Each actor has a finite selected-memory semantic capacity independent of lifetime and distinct-event count; saturation uses deterministic pressure rather than unbounded overflow.", "source_pointer": "PA-06 / 3.2 and NC-05"},
+    {"id": "bounded-active-reason", "statement": "Active consequence reasons cannot escape the finite model through an unlimited side list; they remain bounded in memory or in an explicitly bounded owner-controlled representation.", "source_pointer": "PA-06 / 3.2"},
+    {"id": "bounded-causal-witness", "statement": "Selected memory preserves a bounded causal witness sufficient to explain a later consequence without complete biography replay.", "source_pointer": "PA-06 / causal continuity"},
+    {"id": "declared-decision-consumer", "statement": "Memory may affect a later decision only through an explicitly declared action-family consumer while PA-02 retains choice authority.", "source_pointer": "PA-06 / 3.3 and CF-01"},
+    {"id": "current-state-owner-separation", "statement": "Memory may preserve historical reasons but does not own canonical truth, current belief, directed relationship values or ongoing domain obligations.", "source_pointer": "PA-06 / ownership table"},
+    {"id": "access-invariant-player-offscreen", "statement": "Player-caused and off-screen experiences use the same actor-access and selection rules; hidden lineage alone cannot alter actor output.", "source_pointer": "PA-06 / NC-04"},
+    {"id": "causal-continuity-through-compaction", "statement": "When a consequence remains active, compaction or save/load preserves its necessary bounded reason or an owner-controlled equivalent.", "source_pointer": "PA-06 / CF-02"},
+    {"id": "recovery-preserves-causal-history", "statement": "Recovery changes relevance through causal state changes rather than universal amnesia or automatic reset.", "source_pointer": "PA-06 / CF-03"}
+  ],
+  "exclusions_nonclaims": [
+    {"id": "no-memory-truth-belief-relationship-authority", "statement": "Memory is not a second mutable truth, present-belief, relationship or obligation store.", "source_pointer": "PA-06 / ownership table"},
+    {"id": "no-unbounded-biography-or-side-list", "statement": "Neither distinct salient episodes nor active-reason exceptions may create an unbounded autobiographical side store.", "source_pointer": "PA-06 / 3.2"},
+    {"id": "no-hidden-lineage-knowledge", "statement": "Privileged hidden event or rumour lineage is not actor memory unless legitimately experienced or acquired.", "source_pointer": "PA-06 / NC-04"},
+    {"id": "no-memory-forced-choice", "statement": "Memory does not force an actor choice or globally search actors and targets; the declared decision owner consumes eligible memory inputs.", "source_pointer": "PA-06 / CF-01"},
+    {"id": "no-runtime-budget-claim", "statement": "PA-06 does not establish exact numeric capacity, TTL, storage schema, save footprint, lookup latency or population-scale performance.", "source_pointer": "PA-06 / deferred proof"}
+  ],
+  "reopen_conditions": [
+    "A concrete consumer requires complete biography replay to explain a claimed memory consequence.",
+    "A later implementation can grow selected memory or active-reason state without a finite bound for distinct valid candidates.",
+    "A selection result can change when only future or privileged information changes while checkpoint-available state is fixed.",
+    "A later consumer duplicates or mutates current truth, belief, relationship or obligation authority."
+  ],
+  "escalate_if": [
+    "A consumer needs exact selection/ranking details beyond the exported semantic guarantees.",
+    "A disposition would be reclassified, especially REJECT or LATER rows.",
+    "A proposed consumer needs exact retention, capacity, decay, storage, save, lookup or performance values.",
+    "Live accepted identity or canonical PA-06 source bytes contradict this capsule."
+  ],
+  "disposition_source": {
+    "path": "Docs/research/living-world/results/PA-06.md",
+    "git_blob_sha": "ed3701e1f2f586fc7e9f0723d4dbe1ab22e499fc",
+    "section": "## 5. Mechanism dispositions",
+    "key_column": 0,
+    "status_column": 1
+  },
+  "dispositions": [
+    {"source_key": "Actor-access-gated experience candidate", "status": "ADOPT"},
+    {"source_key": "Causal-time selection from declared dimensions/consumer classes", "status": "ADOPT"},
+    {"source_key": "Finite per-actor selected-memory budget + deterministic pressure policy", "status": "ADOPT"},
+    {"source_key": "Salience by stake, relevance, novelty and declared consumer class", "status": "ADOPT"},
+    {"source_key": "Bounded actor-safe causal witness", "status": "ADOPT"},
+    {"source_key": "Declared action-family memory consumer", "status": "ADOPT"},
+    {"source_key": "Repeated-experience grouping and summary", "status": "ADOPT"},
+    {"source_key": "Distinct detail loss, relevance decay and state repair", "status": "ADOPT"},
+    {"source_key": "Active-effect reason pin or owner-controlled equivalent", "status": "ADOPT, bounded"},
+    {"source_key": "Unbounded overflow/active-reason side list", "status": "REJECT"},
+    {"source_key": "Direct memory writes to current belief/relationship values", "status": "REJECT"},
+    {"source_key": "Every WorldEvent/transfer becomes permanent biography", "status": "REJECT"},
+    {"source_key": "Hidden event or rumour lineage as actor memory", "status": "REJECT"},
+    {"source_key": "Global one-size-fits-all salience, TTL or slot constants", "status": "LATER / empirical"},
+    {"source_key": "Final storage schema, compaction/index algorithm and CPU budget", "status": "LATER / H4-H7"}
+  ],
+  "mandatory_source_reads": []
+}
