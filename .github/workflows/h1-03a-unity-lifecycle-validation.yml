@@ -92,9 +92,9 @@ jobs:
           mkdir -p "${EVIDENCE_ROOT}"
           python3 - <<'PY'
           import base64
-          import pathlib
+          from pathlib import Path
 
-          root = pathlib.Path('.h1-03a-effective')
+          root = Path('.h1-03a-effective')
           profile = 'arkus.h1-unity-launch-profile@1'
           project = 'arkus.unity-project@1:ArkusUnity'
           editor_version = '6000.3.24f1'
@@ -102,9 +102,9 @@ jobs:
           entry = 'Arkus.H1.Editor.H1EditorWorker.Run'
 
           def b64(value):
-              return base64.b64encode(value.encode('utf-8')).decode('ascii')
+              return base64.b64encode(value.encode()).decode()
 
-          def write(name, invocation, capability, executor, payload, *, profile_id=profile):
+          def write(name, invocation, capability, executor, payload, profile_id=profile):
               directory = root / name
               directory.mkdir(parents=True, exist_ok=True)
               fields = [
@@ -119,12 +119,12 @@ jobs:
                   'editorRevision=' + b64(editor_revision),
                   'entryPoint=' + b64(entry),
               ]
-              (directory / 'invocation.env').write_text('\n'.join(fields) + '\n', encoding='utf-8')
+              (directory / 'invocation.env').write_text('\n'.join(fields) + '\n')
 
           write('inspect-a', 'h1u-effective-inspect-a', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect')
           write('inspect-b', 'h1u-effective-inspect-b', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect')
           write('hierarchy', 'h1u-effective-hierarchy', 'unity.host.hierarchy-probe.inspect@1.0', 'arkus.h1.worker.hierarchy-probe.inspect@1', 'hierarchy-probe:v1|root=diagnostic-root|child=diagnostic-child|component=Transform|active=true')
-          write('bad-profile', 'h1u-effective-bad-profile', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect', profile_id='arkus.invalid-profile@1')
+          write('bad-profile', 'h1u-effective-bad-profile', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect', 'arkus.invalid-profile@1')
           write('timeout', 'h1u-effective-timeout', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect')
           PY
 
@@ -138,7 +138,8 @@ jobs:
               --engine=unity \
               --target-platform StandaloneLinux64 \
               --build-method Arkus.H1.Editor.H1EditorWorker.Run \
-              --custom-parameters "-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/${name}/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/${name}/result.env"
+              --manualExit \
+              --customParameters="-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/${name}/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/${name}/result.env"
           }
           run_worker inspect-a
           run_worker inspect-b
@@ -150,9 +151,10 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           import base64
-          import pathlib
+          from pathlib import Path
 
-          root = pathlib.Path('.h1-03a-effective')
+          root = Path('.h1-03a-effective')
+          encoded = {'invocation','capability','executor','profile','project','editorVersion','editorRevision','payload'}
           expected = {
               'schema': 'arkus.h1-unity-result@1',
               'profile': 'arkus.h1-unity-launch-profile@1',
@@ -161,27 +163,23 @@ jobs:
               'editorRevision': '4e7b9b5b6244',
               'mainThread': 'true',
           }
-          encoded = {'invocation', 'capability', 'executor', 'profile', 'project', 'editorVersion', 'editorRevision', 'payload'}
+          required = {'schema','invocation','capability','executor','profile','project','editorVersion','editorRevision','mainThread','payload'}
 
           def read(name):
               path = root / name / 'result.env'
               if not path.is_file():
                   raise SystemExit(f'missing effective result: {path}')
               fields = {}
-              for line in path.read_text(encoding='utf-8').splitlines():
+              for line in path.read_text().splitlines():
                   key, sep, value = line.partition('=')
                   if not sep or key in fields:
                       raise SystemExit(f'malformed result field in {path}')
                   fields[key] = value
-              if set(fields) != {'schema','invocation','capability','executor','profile','project','editorVersion','editorRevision','mainThread','payload'}:
+              if set(fields) != required:
                   raise SystemExit(f'unexpected result shape: {sorted(fields)}')
-              decoded = dict(fields)
               for key in encoded:
-                  if key == 'schema':
-                      continue
-                  if key in decoded and key != 'mainThread':
-                      decoded[key] = base64.b64decode(decoded[key], validate=True).decode('utf-8')
-              return decoded
+                  fields[key] = base64.b64decode(fields[key], validate=True).decode()
+              return fields
 
           first = read('inspect-a')
           second = read('inspect-b')
@@ -195,10 +193,7 @@ jobs:
           comparable = ('capability','executor','profile','project','editorVersion','editorRevision','mainThread','payload')
           if tuple(first[k] for k in comparable) != tuple(second[k] for k in comparable):
               raise SystemExit('fresh project-profile workers returned different normalized results')
-          if first['payload'] != 'inspect':
-              raise SystemExit('project-profile payload mismatch')
-          expected_hierarchy = 'hierarchy-probe:v1|root=diagnostic-root|child=diagnostic-child|component=Transform|active=true'
-          if hierarchy['payload'] != expected_hierarchy:
+          if hierarchy['payload'] != 'hierarchy-probe:v1|root=diagnostic-root|child=diagnostic-child|component=Transform|active=true':
               raise SystemExit('real Unity hierarchy-shaped diagnostic probe drifted')
           print('H1_03A_EFFECTIVE_MAIN_THREAD_GREEN fresh=2 hierarchy=GREEN')
           PY
@@ -212,13 +207,11 @@ jobs:
             --engine=unity \
             --target-platform StandaloneLinux64 \
             --build-method Arkus.H1.Editor.H1EditorWorker.Run \
-            --custom-parameters "-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/bad-profile/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/bad-profile/result.env"
+            --manualExit \
+            --customParameters="-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/bad-profile/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/bad-profile/result.env"
           rc=$?
           set -e
-          if [[ "${rc}" -eq 0 ]]; then
-            echo '::error::wrong-profile worker falsely exited successfully'
-            exit 1
-          fi
+          test "${rc}" -ne 0 || { echo '::error::wrong-profile worker falsely exited successfully'; exit 1; }
           test ! -f "${EVIDENCE_ROOT}/bad-profile/result.env"
           printf 'NONZERO_EDITOR_EXIT_GREEN rc=%s\n' "${rc}" | tee "${EVIDENCE_ROOT}/nonzero.txt"
 
@@ -232,13 +225,11 @@ jobs:
               --engine=unity \
               --target-platform StandaloneLinux64 \
               --build-method Arkus.H1.Editor.H1EditorWorker.Run \
-              --custom-parameters "-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/timeout/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/timeout/result.env"
+              --manualExit \
+              --customParameters="-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/timeout/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/timeout/result.env"
           rc=$?
           set -e
-          case "${rc}" in
-            124|130|137) ;;
-            *) echo "::error::expected bounded timeout, got rc=${rc}"; exit 1 ;;
-          esac
+          case "${rc}" in 124|130|137) ;; *) echo "::error::expected bounded timeout, got rc=${rc}"; exit 1 ;; esac
           test ! -f "${EVIDENCE_ROOT}/timeout/result.env"
           printf 'EXTERNAL_TIMEOUT_GREEN rc=%s result=ABSENT\n' "${rc}" | tee "${EVIDENCE_ROOT}/timeout.txt"
 
@@ -250,11 +241,11 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           path = Path('.h1-03a-effective/corrupt-result.env')
-          text = path.read_text(encoding='utf-8')
+          text = path.read_text()
           if 'mainThread=true\n' not in text:
               raise SystemExit('source real result lacks mainThread proof')
-          path.write_text(text.replace('mainThread=true\n', 'mainThread=not-a-bool\n'), encoding='utf-8')
-          fields = dict(line.split('=', 1) for line in path.read_text(encoding='utf-8').splitlines())
+          path.write_text(text.replace('mainThread=true\n', 'mainThread=not-a-bool\n'))
+          fields = dict(line.split('=', 1) for line in path.read_text().splitlines())
           if fields.get('mainThread') in ('true', 'false'):
               raise SystemExit('corruption mutation failed')
           print('REAL_RESULT_CORRUPTION_CREATED_AND_REJECTABLE')
@@ -269,40 +260,33 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import json
-          import os
-          import subprocess
+          import json, os, subprocess
           from pathlib import Path
-
           target = os.environ['TARGET_SHA']
-          manifest_path = Path('Unity/ArkusUnity/Packages/manifest.json')
-          lock_path = Path('Unity/ArkusUnity/Packages/packages-lock.json')
-          allowed_paths = {str(manifest_path), str(lock_path)}
-          status = subprocess.check_output(['git','status','--porcelain','--untracked-files=no'], text=True).splitlines()
-          changed = {line[3:] for line in status if len(line) >= 4}
-          if changed != allowed_paths:
+          manifest = Path('Unity/ArkusUnity/Packages/manifest.json')
+          lock = Path('Unity/ArkusUnity/Packages/packages-lock.json')
+          allowed = {str(manifest), str(lock)}
+          changed = {line[3:] for line in subprocess.check_output(['git','status','--porcelain','--untracked-files=no'], text=True).splitlines() if len(line) >= 4}
+          if changed != allowed:
               raise SystemExit(f'unexpected tracked Unity drift: {sorted(changed)}')
-
           def baseline(path):
               return json.loads(subprocess.check_output(['git','show',f'{target}:{path.as_posix()}'], text=True))
-
-          expected_manifest = baseline(manifest_path)
+          expected_manifest = baseline(manifest)
           expected_manifest['dependencies'].update({
               'com.unity.sdk.linux-arm64':'1.1.0',
               'com.unity.sdk.linux-x86_64':'1.1.0',
               'com.unity.toolchain.linux-x86_64-linux':'1.1.0',
           })
-          if json.loads(manifest_path.read_text()) != expected_manifest:
+          if json.loads(manifest.read_text()) != expected_manifest:
               raise SystemExit('manifest drift is not the accepted GameCI injection')
-
-          expected_lock = baseline(lock_path)
+          expected_lock = baseline(lock)
           expected_lock['dependencies'].update({
               'com.unity.sdk.linux-arm64': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
               'com.unity.sdk.linux-x86_64': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
               'com.unity.sysroot.base': {'version':'1.1.0','depth':1,'source':'registry','dependencies':{},'url':'https://packages.unity.com'},
               'com.unity.toolchain.linux-x86_64-linux': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
           })
-          if json.loads(lock_path.read_text()) != expected_lock:
+          if json.loads(lock.read_text()) != expected_lock:
               raise SystemExit('packages-lock drift is not the accepted GameCI injection')
           print('GAMECI_PACKAGE_DRIFT_RECONCILED paths=manifest.json,packages-lock.json')
           PY
