@@ -1,6 +1,6 @@
 # H1 — Engine Bridge Foundation: Unity First
 
-Status: ACTIVE / `WP-H1-00` + `WP-H1-01` + `WP-H1-02` + `WP-H1-03` + `WP-H1-03A` + `WP-H1-04` COMPLETE
+Status: ACTIVE / `WP-H1-00` + `WP-H1-01` + `WP-H1-02` + `WP-H1-03` + `WP-H1-03A` + `WP-H1-04` + `WP-H1-05` COMPLETE
 Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`
 Reconciled integration base: `7fe44840076eba05f1b67a7633cd33fc67b9023d` (CITY programme v2 PASS, merge and DocSync)
 Binding architecture: `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md`
@@ -23,11 +23,13 @@ Plan DocSync: `DOCSYNC_COMPLETE`
 
 `WP-H1-04` is **COMPLETE**. Frozen candidate `8c6ffd61d17e832ed5b9f900e8c0f7d4e85bf5f5` passed independent review `#5306149043` in PR `#185`; Candidate Validation `36014058711` and Arkus Main Safety `36013455983` were GREEN on that exact SHA, physical-local Unity/Source receipt `#5816178621` was GREEN, and the accepted candidate merged as `4f172f7aa9e7c4a0909be046d095eac5477ad765`. Binding DocSync: `Docs/evidence/WP-H1-04/DOCSYNC.md`.
 
+`WP-H1-05` is **COMPLETE**. Accepted candidate `186224fbc3f53eb9c47ae528a56dcf3514af163f` passed independent product review `#5308430565` in PR `#192`; Arkus Main Safety `36038109465` was GREEN and the exact-SHA hosted verifier plus validation-context jobs were GREEN within Candidate Validation `36038109560`. The aggregate Candidate Validation failure was stale handoff metadata from the superseded candidate. Owner process-waiver comment `#5819709475` explicitly waived the fresh physical-local Unity receipt / Worker-handoff refreeze for this repair iteration without claiming a new local execution. The accepted candidate merged as `7039adecac4e6e07d899247759d9b3c9fd3c2dae`. Binding DocSync: `Docs/evidence/WP-H1-05/DOCSYNC.md`.
+
 `WP-H1-UNITY-CI` is **COMPLETE / ACCEPTED** as process infrastructure. Exact candidate `b49b081a92b088d7b0fd9adce4bd5f26a3b6c1bf` passed independent review `#5299167558`, merged as `6898250be985ab5d805bbdb129e30c9c6f1f4cdf`, and its accepted run `35936805407` proved the bounded GitHub-hosted Unity substrate. Binding DocSync: `Docs/evidence/WP-H1-UNITY-CI/DOCSYNC.md`.
 
-Next default workpack: `WP-H1-05 — Managed scene projection + generational publication` (`EFFECTIVE_UNITY / SOURCE_OR_VISUAL_DEPENDENT_AS_CLAIM_REQUIRES`), dependency-valid but `NOT_STARTED` until a human starts its Worker.
+Next default workpack: `WP-H1-06 — Asset/prefab realization + managed derivatives` (`EFFECTIVE_UNITY / SOURCE_DEPENDENT`), dependency-valid but `NOT_STARTED` until a human starts its Worker.
 
-H1 now has six accepted implementation WPs plus accepted remote-Unity process infrastructure. No later H1 implementation WP is active or implicitly authorized by this DocSync. `WP-H1-05` is dependency-valid from accepted H1-04 but remains `NOT_STARTED` until explicitly started.
+H1 now has seven accepted implementation WPs plus accepted remote-Unity process infrastructure. No later H1 implementation WP is active or implicitly authorized by this DocSync. `WP-H1-06` is dependency-valid from accepted H1-05 but remains `NOT_STARTED` until explicitly started.
 The sequence contains 13 claim-owned implementation workpacks plus `WP-H1-GATE`.
 
 ## Effective Unity execution policy
@@ -52,11 +54,11 @@ The accepted H1-02/GameCI drift exception is bounded to its reviewed substrate a
 
 ## CTX↔DW selective-adoption note
 
-Accepted cross-track `WP-CTX-DW-GATE` does **not** block H1 product work. H1-03/H1-03A authority/lifecycle continue on their accepted chain, and accepted H1-04 now establishes the real-source plus catalogue/identity authority.
+Accepted cross-track `WP-CTX-DW-GATE` does **not** block H1 product work. H1-03/H1-03A authority/lifecycle continue on their accepted chain, and accepted H1-04 establishes the real-source plus catalogue/identity authority.
 
-Because H1-04 is accepted, a separate non-product CTX↔DW projection owner may now derive an H1 DW projection, with an independently enumerated source universe, completeness oracle, exact provenance, stale detection and deterministic rebuild. No H1 product workpack waits for this projection: when unavailable or stale, CTX routes directly to authority.
+Because H1-04 is accepted, a separate non-product CTX↔DW projection owner may derive an H1 DW projection, with an independently enumerated source universe, completeness oracle, exact provenance, stale detection and deterministic rebuild. No H1 product workpack waits for this projection: when unavailable or stale, CTX routes directly to authority.
 
-`H1-05` is the first eligible real H1 consumer of that projection when it is current and materially useful; `H1-06` is the second planned observation for the different asset/prefab relation shape. DW routing advice cannot shrink CTX mandatory reads or escalation requirements.
+Accepted `H1-05` is the first real H1 scene-projection consumer on this spine; `H1-06` is the next planned materially distinct asset/prefab observation. DW routing advice cannot shrink CTX mandatory reads or escalation requirements.
 
 The required `H1-GATE` fresh independent public-client AI-agent trial remains on its accepted public launch-profile/MCP discovery/schema bootstrap and is not pre-seeded with Juego2-private CTX/DW knowledge. Any CTX↔DW fresh-agent composition probe is separate and cannot substitute for or repair H1-GATE public discoverability.
 
@@ -94,7 +96,7 @@ WP-HK-GATE
  H1-GATE -. keeper authorization .----> CITY-07 (after CITY-04)
 ```
 
-`H1-00`, `H1-01`, `H1-02`, `H1-03`, `H1-03A` and `H1-04` are accepted predecessor truth. `H1-05` is now the next default dependency-valid workpack. No H1-05 implementation is implicitly authorized by DocSync; it begins only when a human explicitly starts its Worker.
+`H1-00`, `H1-01`, `H1-02`, `H1-03`, `H1-03A`, `H1-04` and `H1-05` are accepted predecessor truth. `H1-06` is now the next default dependency-valid workpack. No H1-06 implementation is implicitly authorized by DocSync; it begins only when a human explicitly starts its Worker.
 
 The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox falsification and may consume H1-08; CITY-07 owns keeper realization after the Gate; CITY-08 later owns keeper-slice authoring efficiency/reuse. H1 consumes CITY-00 geography only as representative shape pressure and never selects the CITY-03 seed.
 
@@ -108,7 +110,7 @@ The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox fal
 | 4 | `WP-H1-03` ✅ | explicit project-scoped Unity host authority below transports | `HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE` |
 | 5 | `WP-H1-03A` ✅ | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE` |
 | 6 | `WP-H1-04` ✅ | effective Unity catalogue/logical-native identity + first Quaternius Source adoption | `EFFECTIVE_UNITY / SOURCE_DEPENDENT` |
-| 7 | `WP-H1-05` | deterministic managed scene graph and generational publication | `EFFECTIVE_UNITY / SOURCE_OR_VISUAL_DEPENDENT_AS_CLAIM_REQUIRES` |
+| 7 | `WP-H1-05` ✅ | deterministic managed scene graph and generational publication | `EFFECTIVE_UNITY / SOURCE_OR_VISUAL_DEPENDENT_AS_CLAIM_REQUIRES` |
 | 8 | `WP-H1-06` | source-asset/prefab resolution plus managed prefab derivatives | `EFFECTIVE_UNITY / SOURCE_DEPENDENT` |
 | 9 | `WP-H1-07` | allowlisted component schema, inspection and realization | `EFFECTIVE_UNITY / CLASSIFY_BY_CLAIM` |
 | 10 | `WP-H1-08` | Unity-owned validation and stable diagnostics | `HYBRID / CLASSIFY_BY_CLAIM` |
