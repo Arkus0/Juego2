@@ -9,36 +9,19 @@ using Arkus.Harness.Runtime;
 
 namespace Arkus.Harness.Projection
 {
-    /// <summary>
-    /// Transport-neutral request envelope. Framing adapters map their own correlation and deadline
-    /// representation into this type; canonical arguments remain the exact portable data consumed by
-    /// the accepted composed dispatcher.
-    /// </summary>
     public sealed class NeutralProjectionRequest
     {
         public const string ProjectionVersion = "arkus.neutral-projection@1";
 
-        public NeutralProjectionRequest(
-            string requestId,
-            string capabilityName,
-            ContractVersionRange acceptedVersions,
-            IReadOnlyDictionary<string, object?> arguments,
-            int? timeoutMilliseconds = null)
+        public NeutralProjectionRequest(string requestId, string capabilityName, ContractVersionRange acceptedVersions, IReadOnlyDictionary<string, object?> arguments, int? timeoutMilliseconds = null)
         {
-            if (string.IsNullOrWhiteSpace(requestId))
-                throw new ArgumentException("A non-empty request correlation ID is required.", nameof(requestId));
-            if (string.IsNullOrWhiteSpace(capabilityName))
-                throw new ArgumentException("A non-empty canonical capability name is required.", nameof(capabilityName));
-            if (timeoutMilliseconds.HasValue && timeoutMilliseconds.Value < 0)
-                throw new ArgumentOutOfRangeException(nameof(timeoutMilliseconds));
-
+            if (string.IsNullOrWhiteSpace(requestId)) throw new ArgumentException("A non-empty request correlation ID is required.", nameof(requestId));
+            if (string.IsNullOrWhiteSpace(capabilityName)) throw new ArgumentException("A non-empty canonical capability name is required.", nameof(capabilityName));
+            if (timeoutMilliseconds.HasValue && timeoutMilliseconds.Value < 0) throw new ArgumentOutOfRangeException(nameof(timeoutMilliseconds));
             RequestId = requestId;
             CapabilityName = capabilityName;
             AcceptedVersions = acceptedVersions ?? throw new ArgumentNullException(nameof(acceptedVersions));
-            Arguments = arguments == null
-                ? throw new ArgumentNullException(nameof(arguments))
-                : new ReadOnlyDictionary<string, object?>(
-                    new Dictionary<string, object?>(arguments, StringComparer.Ordinal));
+            Arguments = arguments == null ? throw new ArgumentNullException(nameof(arguments)) : new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(arguments, StringComparer.Ordinal));
             TimeoutMilliseconds = timeoutMilliseconds;
         }
 
@@ -66,31 +49,14 @@ namespace Arkus.Harness.Projection
             });
         }
 
-        internal static IReadOnlyDictionary<string, object?> ReadOnly(Dictionary<string, object?> source) =>
-            new ReadOnlyDictionary<string, object?>(source);
+        internal static IReadOnlyDictionary<string, object?> ReadOnly(Dictionary<string, object?> source) => new ReadOnlyDictionary<string, object?>(source);
     }
 
-    public enum NeutralProjectionFailureKind
-    {
-        None = 0,
-        Canonical = 1,
-        Cancelled = 2,
-        TimedOut = 3,
-        Resource = 4
-    }
+    public enum NeutralProjectionFailureKind { None = 0, Canonical = 1, Cancelled = 2, TimedOut = 3, Resource = 4 }
 
-    /// <summary>
-    /// One transport-neutral outcome. Canonical failures preserve the accepted canonical error
-    /// byte-for-byte as portable data; admission cancellation/timeout use stable projection errors.
-    /// </summary>
     public sealed class NeutralProjectionOutcome
     {
-        private NeutralProjectionOutcome(
-            string requestId,
-            string capabilityName,
-            IReadOnlyDictionary<string, object?>? result,
-            StructuredError? error,
-            NeutralProjectionFailureKind failureKind)
+        private NeutralProjectionOutcome(string requestId, string capabilityName, IReadOnlyDictionary<string, object?>? result, StructuredError? error, NeutralProjectionFailureKind failureKind)
         {
             RequestId = requestId ?? throw new ArgumentNullException(nameof(requestId));
             CapabilityName = capabilityName ?? throw new ArgumentNullException(nameof(capabilityName));
@@ -106,62 +72,18 @@ namespace Arkus.Harness.Projection
         public StructuredError? Error { get; }
         public NeutralProjectionFailureKind FailureKind { get; }
 
-        public static NeutralProjectionOutcome FromCanonical(
-            NeutralProjectionRequest request,
-            CapabilityInvocationResult result)
+        public static NeutralProjectionOutcome FromCanonical(NeutralProjectionRequest request, CapabilityInvocationResult result)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
             if (result == null) throw new ArgumentNullException(nameof(result));
-
             return result.Success
-                ? new NeutralProjectionOutcome(
-                    request.RequestId,
-                    request.CapabilityName,
-                    result.Data ?? throw new InvalidOperationException("Canonical success had no result."),
-                    null,
-                    NeutralProjectionFailureKind.None)
-                : new NeutralProjectionOutcome(
-                    request.RequestId,
-                    request.CapabilityName,
-                    null,
-                    result.Error ?? throw new InvalidOperationException("Canonical failure had no structured error."),
-                    NeutralProjectionFailureKind.Canonical);
+                ? new NeutralProjectionOutcome(request.RequestId, request.CapabilityName, result.Data ?? throw new InvalidOperationException("Canonical success had no result."), null, NeutralProjectionFailureKind.None)
+                : new NeutralProjectionOutcome(request.RequestId, request.CapabilityName, null, result.Error ?? throw new InvalidOperationException("Canonical failure had no structured error."), NeutralProjectionFailureKind.Canonical);
         }
 
-        internal static NeutralProjectionOutcome Cancelled(NeutralProjectionRequest request)
-        {
-            return Failure(
-                request,
-                NeutralProjectionFailureKind.Cancelled,
-                "projection.cancelled",
-                "The request was cancelled before canonical dispatch began.",
-                true,
-                "Retry with a live cancellation scope; canonical state was not invoked by this request.");
-        }
-
-        internal static NeutralProjectionOutcome TimedOut(NeutralProjectionRequest request)
-        {
-            return Failure(
-                request,
-                NeutralProjectionFailureKind.TimedOut,
-                "projection.timeout",
-                "The request deadline expired before canonical dispatch began.",
-                true,
-                "Retry with a sufficient admission timeout; canonical state was not invoked by this request.");
-        }
-
-        internal static NeutralProjectionOutcome ResourceRejected(
-            NeutralProjectionRequest request,
-            StructuredError error)
-        {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-            return new NeutralProjectionOutcome(
-                request.RequestId,
-                request.CapabilityName,
-                null,
-                error ?? throw new ArgumentNullException(nameof(error)),
-                NeutralProjectionFailureKind.Resource);
-        }
+        internal static NeutralProjectionOutcome Cancelled(NeutralProjectionRequest request) => Failure(request, NeutralProjectionFailureKind.Cancelled, "projection.cancelled", "The request was cancelled before canonical dispatch began.", true, "Retry with a live cancellation scope; canonical state was not invoked by this request.");
+        internal static NeutralProjectionOutcome TimedOut(NeutralProjectionRequest request) => Failure(request, NeutralProjectionFailureKind.TimedOut, "projection.timeout", "The request deadline expired before canonical dispatch began.", true, "Retry with a sufficient admission timeout; canonical state was not invoked by this request.");
+        internal static NeutralProjectionOutcome ResourceRejected(NeutralProjectionRequest request, StructuredError error) => new NeutralProjectionOutcome(request.RequestId, request.CapabilityName, null, error ?? throw new ArgumentNullException(nameof(error)), NeutralProjectionFailureKind.Resource);
 
         public IReadOnlyDictionary<string, object?> ToData()
         {
@@ -172,42 +94,17 @@ namespace Arkus.Harness.Projection
                 ["capability"] = CapabilityName,
                 ["status"] = Success ? "success" : "error"
             };
-
-            if (Success)
-            {
-                data["result"] = Result;
-            }
+            if (Success) data["result"] = Result;
             else
             {
                 data["failureKind"] = FailureToken(FailureKind);
                 data["error"] = Error?.ToData();
             }
-
             return NeutralProjectionRequest.ReadOnly(data);
         }
 
-        private static NeutralProjectionOutcome Failure(
-            NeutralProjectionRequest request,
-            NeutralProjectionFailureKind kind,
-            string code,
-            string message,
-            bool retryable,
-            string repairHint)
-        {
-            return new NeutralProjectionOutcome(
-                request.RequestId,
-                request.CapabilityName,
-                null,
-                new StructuredError(
-                    code,
-                    message,
-                    "$",
-                    new ReadOnlyDictionary<string, object?>(
-                        new Dictionary<string, object?>(StringComparer.Ordinal)),
-                    retryable,
-                    repairHint),
-                kind);
-        }
+        private static NeutralProjectionOutcome Failure(NeutralProjectionRequest request, NeutralProjectionFailureKind kind, string code, string message, bool retryable, string repairHint) =>
+            new NeutralProjectionOutcome(request.RequestId, request.CapabilityName, null, new StructuredError(code, message, "$", new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)), retryable, repairHint), kind);
 
         private static string FailureToken(NeutralProjectionFailureKind kind)
         {
@@ -222,13 +119,6 @@ namespace Arkus.Harness.Projection
         }
     }
 
-    /// <summary>
-    /// Generic projection of one composed canonical runtime. The public constructor is permanently
-    /// the accepted HK09A H0 boundary. The internal H1 constructor accepts only the opaque result of
-    /// arkus.unity-host-policy@1; transports still consume this same projection type and therefore
-    /// cannot mint adapter-only Unity authority. The opaque admission is retained so the next H1
-    /// invocation-envelope layer receives the exact workspace/grants that authorized this surface.
-    /// </summary>
     public sealed class NeutralProjectionService : IDisposable
     {
         private readonly ComposedContract _contract;
@@ -238,8 +128,7 @@ namespace Arkus.Harness.Projection
 
         public NeutralProjectionService(ComposedContract contract)
         {
-            _contract = H0HostCapabilityPolicy.Enforce(
-                contract ?? throw new ArgumentNullException(nameof(contract)));
+            _contract = H0HostCapabilityPolicy.Enforce(contract ?? throw new ArgumentNullException(nameof(contract)));
             _h1Admission = null;
         }
 
@@ -250,24 +139,16 @@ namespace Arkus.Harness.Projection
         }
 
         public IReadOnlyList<CapabilityDefinition> Capabilities => _contract.Definitions;
-
         internal H1AdmittedUnityContract? H1Admission => _h1Admission;
 
-        public async Task<NeutralProjectionOutcome> InvokeAsync(
-            NeutralProjectionRequest request,
-            CancellationToken cancellationToken = default)
+        public async Task<NeutralProjectionOutcome> InvokeAsync(NeutralProjectionRequest request, CancellationToken cancellationToken = default)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
             ThrowIfDisposed();
-
             var resourceError = H0ResourcePolicy.Validate(request);
-            if (resourceError != null)
-                return NeutralProjectionOutcome.ResourceRejected(request, resourceError);
-
-            if (cancellationToken.IsCancellationRequested)
-                return NeutralProjectionOutcome.Cancelled(request);
-            if (request.TimeoutMilliseconds == 0)
-                return NeutralProjectionOutcome.TimedOut(request);
+            if (resourceError != null) return NeutralProjectionOutcome.ResourceRejected(request, resourceError);
+            if (cancellationToken.IsCancellationRequested) return NeutralProjectionOutcome.Cancelled(request);
+            if (request.TimeoutMilliseconds == 0) return NeutralProjectionOutcome.TimedOut(request);
 
             bool entered;
             try
@@ -280,21 +161,13 @@ namespace Arkus.Harness.Projection
             {
                 return NeutralProjectionOutcome.Cancelled(request);
             }
-
-            if (!entered)
-                return NeutralProjectionOutcome.TimedOut(request);
+            if (!entered) return NeutralProjectionOutcome.TimedOut(request);
 
             try
             {
-                if (cancellationToken.IsCancellationRequested)
-                    return NeutralProjectionOutcome.Cancelled(request);
-
-                var budget = InvocationResourceBudget.Start(cancellationToken);
-                var result = _contract.Dispatch(
-                    request.CapabilityName,
-                    request.AcceptedVersions,
-                    request.Arguments,
-                    budget);
+                if (cancellationToken.IsCancellationRequested) return NeutralProjectionOutcome.Cancelled(request);
+                var budget = CreateExecutionBudget(request, cancellationToken);
+                var result = _contract.Dispatch(request.CapabilityName, request.AcceptedVersions, request.Arguments, budget);
                 return NeutralProjectionOutcome.FromCanonical(request, result);
             }
             finally
@@ -308,6 +181,26 @@ namespace Arkus.Harness.Projection
             if (_disposed) return;
             _dispatchGate.Dispose();
             _disposed = true;
+        }
+
+        private InvocationResourceBudget CreateExecutionBudget(NeutralProjectionRequest request, CancellationToken cancellationToken)
+        {
+            if (!IsAdmittedUnityHostRequest(request)) return InvocationResourceBudget.Start(cancellationToken);
+            var maximum = H1UnityOperationCeilings.MaximumExecutionMilliseconds;
+            if (request.TimeoutMilliseconds.HasValue) maximum = Math.Min(maximum, Math.Max(1, request.TimeoutMilliseconds.Value));
+            return InvocationResourceBudget.StartBounded(cancellationToken, maximum, H1UnityOperationCeilings.SchemaId);
+        }
+
+        private bool IsAdmittedUnityHostRequest(NeutralProjectionRequest request)
+        {
+            if (_h1Admission == null) return false;
+            foreach (var definition in _contract.Definitions)
+            {
+                if (string.Equals(definition.Key.Name, request.CapabilityName, StringComparison.Ordinal) &&
+                    request.AcceptedVersions.Accepts(definition.Key.Version) &&
+                    string.Equals(definition.Provider.ProviderId, H1UnityHostCapabilityPolicy.HostProviderId, StringComparison.Ordinal)) return true;
+            }
+            return false;
         }
 
         private async Task<bool> WaitWithoutTimeout(CancellationToken cancellationToken)
@@ -330,7 +223,6 @@ namespace Arkus.Harness.Projection
             Identity = identity ?? throw new ArgumentNullException(nameof(identity));
             Message = message ?? throw new ArgumentNullException(nameof(message));
         }
-
         public string Code { get; }
         public string Identity { get; }
         public string Message { get; }
@@ -338,53 +230,22 @@ namespace Arkus.Harness.Projection
 
     public static class NeutralProjectionCompleteness
     {
-        public static IReadOnlyList<ProjectionCompletenessIssue> Compare(
-            IEnumerable<CapabilityDefinition> canonicalInventory,
-            IEnumerable<CapabilityKey> projectedCapabilities)
+        public static IReadOnlyList<ProjectionCompletenessIssue> Compare(IEnumerable<CapabilityDefinition> canonicalInventory, IEnumerable<CapabilityKey> projectedCapabilities)
         {
             if (canonicalInventory == null) throw new ArgumentNullException(nameof(canonicalInventory));
             if (projectedCapabilities == null) throw new ArgumentNullException(nameof(projectedCapabilities));
-
             var canonical = new HashSet<CapabilityKey>();
-            foreach (var definition in canonicalInventory)
-                canonical.Add((definition ?? throw new ArgumentException("Canonical inventory contains null.", nameof(canonicalInventory))).Key);
-
+            foreach (var definition in canonicalInventory) canonical.Add((definition ?? throw new ArgumentException("Canonical inventory contains null.", nameof(canonicalInventory))).Key);
             var projected = new HashSet<CapabilityKey>();
             var issues = new List<ProjectionCompletenessIssue>();
             foreach (var key in projectedCapabilities)
             {
-                if (key == null)
-                    throw new ArgumentException("Projected capability inventory contains null.", nameof(projectedCapabilities));
-                if (!projected.Add(key))
-                    issues.Add(new ProjectionCompletenessIssue(
-                        "projection.duplicate_capability",
-                        key.ToString(),
-                        "Projection emitted the same canonical capability more than once."));
+                if (key == null) throw new ArgumentException("Projected capability inventory contains null.", nameof(projectedCapabilities));
+                if (!projected.Add(key)) issues.Add(new ProjectionCompletenessIssue("projection.duplicate_capability", key.ToString(), "Projection emitted the same canonical capability more than once."));
             }
-
-            foreach (var key in canonical)
-            {
-                if (!projected.Contains(key))
-                    issues.Add(new ProjectionCompletenessIssue(
-                        "projection.omitted_capability",
-                        key.ToString(),
-                        "Projection omitted a capability from the composed canonical inventory."));
-            }
-
-            foreach (var key in projected)
-            {
-                if (!canonical.Contains(key))
-                    issues.Add(new ProjectionCompletenessIssue(
-                        "projection.extra_capability",
-                        key.ToString(),
-                        "Projection invented a capability outside the composed canonical inventory."));
-            }
-
-            issues.Sort((left, right) =>
-            {
-                var identity = StringComparer.Ordinal.Compare(left.Identity, right.Identity);
-                return identity != 0 ? identity : StringComparer.Ordinal.Compare(left.Code, right.Code);
-            });
+            foreach (var key in canonical) if (!projected.Contains(key)) issues.Add(new ProjectionCompletenessIssue("projection.omitted_capability", key.ToString(), "Projection omitted a capability from the composed canonical inventory."));
+            foreach (var key in projected) if (!canonical.Contains(key)) issues.Add(new ProjectionCompletenessIssue("projection.extra_capability", key.ToString(), "Projection invented a capability outside the composed canonical inventory."));
+            issues.Sort((left, right) => { var identity = StringComparer.Ordinal.Compare(left.Identity, right.Identity); return identity != 0 ? identity : StringComparer.Ordinal.Compare(left.Code, right.Code); });
             return issues.AsReadOnly();
         }
 
@@ -397,16 +258,12 @@ namespace Arkus.Harness.Projection
         }
     }
 
-    /// <summary>The single production local host composition used by every executable adapter.</summary>
     public static class ProductionHarnessHost
     {
         public const string InitialWorldId = "world.arkus.session";
-
         public static NeutralProjectionService Create()
         {
-            var contract = CanonicalWorldContract.ComposeEmptyPortableSession(
-                InitialWorldId,
-                new[] { UnityAuthoringProvider.CreateContribution() });
+            var contract = CanonicalWorldContract.ComposeEmptyPortableSession(InitialWorldId, new[] { UnityAuthoringProvider.CreateContribution() });
             return new NeutralProjectionService(contract);
         }
     }

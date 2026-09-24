@@ -9,6 +9,9 @@ artifacts/
 __pycache__/
 *.py[cod]
 
+# H1 effective-validation scratch evidence (never product state).
+/.h1-03a-effective/
+
 # Unity H1 retained project: generated/editor-local state only.
 Unity/ArkusUnity/[Ll]ibrary/
 Unity/ArkusUnity/[Tt]emp/

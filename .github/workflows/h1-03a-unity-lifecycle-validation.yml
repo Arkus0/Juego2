@@ -1,0 +1,743 @@
+name: H1-03A Unity Lifecycle
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-03a-unity-lifecycle-validation.yml'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/**'
+      - 'tools/Arkus.H1.UnityHost/**'
+      - 'src/Arkus.Harness.Cli/**'
+      - 'src/Arkus.Harness.Mcp/**'
+      - 'src/Arkus.Harness.Projection/**'
+      - 'tests/Arkus.Harness.Tests/H1UnityEditorLifecycle*.cs'
+      - 'Docs/evidence/WP-H1-03A/**'
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: Exact WP-H1-03A candidate SHA to execute in Unity
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-03a-unity-${{ github.event.pull_request.number || inputs.target_sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  unity-effective:
+    name: H1-03A effective Unity lifecycle
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'worker/h1-03a-editor-lifecycle'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.target_sha }}
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_COMMIT: 75c5dcf81523f31b3cca9d7cd16228a2b53de9a8
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      PINNED_UNITY_IMAGE: unityci/editor:ubuntu-6000.3.24f1-linux-il2cpp-3@sha256:0884a94ace0ce762a4f5d7d2424f71bf59f4319267716f22695acfb49c0b1ff5
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      EVIDENCE_ROOT: .h1-03a-effective
+    steps:
+      - name: Validate exact target and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact'; exit 2; }
+          missing=0
+          for name in UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact H1-03A candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Setup .NET from global.json
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+
+      - name: Verify clean checkout and pinned Unity contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          grep -Fq 'public const string FixedEntryPoint = "Arkus.H1.Editor.H1EditorWorker.Run";' tools/Arkus.H1.UnityHost/H1UnityLifecycle.cs
+          grep -Fq 'private const string EntryPoint = "Arkus.H1.Editor.H1EditorWorker.Run";' Unity/ArkusUnity/Assets/Arkus/H1/Editor/H1EditorWorker.cs
+          grep -Fq 'info.ArgumentList.Add("-quit");' tools/Arkus.H1.UnityHost/H1UnityProcessInfrastructure.cs
+
+      - name: Build and falsify H1 lifecycle remotely before Unity
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore Juego2.sln --locked-mode
+          dotnet build Juego2.sln --no-restore -c Release
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            -c Release \
+            --no-build \
+            --no-restore \
+            --filter 'FullyQualifiedName~H1UnityEditorLifecycle' \
+            --logger 'console;verbosity=normal'
+
+      - name: Install exact GameCI CLI, Unity image, and return scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+
+          UNITY_LICENSE_HOME="${RUNNER_TEMP}/h1-03a-unity-home"
+          RETURN_STEPS_DIR="${RUNNER_TEMP}/h1-03a-gameci-steps"
+          rm -rf "${UNITY_LICENSE_HOME}" "${RETURN_STEPS_DIR}"
+          mkdir -p "${UNITY_LICENSE_HOME}" "${RETURN_STEPS_DIR}"
+          chmod 0777 "${UNITY_LICENSE_HOME}"
+          for script in return_license.sh resolve_unity_path.sh licensing_method.sh; do
+            curl --fail --location --silent --show-error \
+              "https://raw.githubusercontent.com/game-ci/cli/${PINNED_GAMECI_COMMIT}/dist/platforms/ubuntu/steps/${script}" \
+              --output "${RETURN_STEPS_DIR}/${script}"
+          done
+
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+          echo "UNITY_LICENSE_HOME=${UNITY_LICENSE_HOME}" >> "${GITHUB_ENV}"
+          echo "RETURN_STEPS_DIR=${RETURN_STEPS_DIR}" >> "${GITHUB_ENV}"
+
+          docker pull "${PINNED_UNITY_IMAGE}"
+          actual_digest="$(docker image inspect --format '{{index .RepoDigests 0}}' "${PINNED_UNITY_IMAGE}")"
+          case "${actual_digest}" in
+            *'@sha256:0884a94ace0ce762a4f5d7d2424f71bf59f4319267716f22695acfb49c0b1ff5') ;;
+            *) echo "::error::unexpected Unity image digest ${actual_digest}"; exit 2 ;;
+          esac
+
+      - name: Prepare bounded negative worker envelopes
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "${EVIDENCE_ROOT}"
+          mkdir -p "${EVIDENCE_ROOT}/bad-profile" "${EVIDENCE_ROOT}/timeout" "${EVIDENCE_ROOT}/public-host"
+          python3 - <<'PY'
+          import base64
+          from pathlib import Path
+
+          root = Path('.h1-03a-effective')
+          profile = 'arkus.h1-unity-launch-profile@1'
+          project = 'arkus.unity-project@1:ArkusUnity'
+          editor_version = '6000.3.24f1'
+          editor_revision = '4e7b9b5b6244'
+          entry = 'Arkus.H1.Editor.H1EditorWorker.Run'
+
+          def b64(value):
+              return base64.b64encode(value.encode()).decode()
+
+          def write(name, invocation, profile_id=profile):
+              fields = [
+                  'schema=arkus.h1-unity-invocation@1',
+                  'invocation=' + b64(invocation),
+                  'capability=' + b64('unity.host.project-profile.inspect@1.0'),
+                  'executor=' + b64('arkus.h1.worker.project-profile.inspect@1'),
+                  'payload=' + b64('inspect'),
+                  'profile=' + b64(profile_id),
+                  'project=' + b64(project),
+                  'editorVersion=' + b64(editor_version),
+                  'editorRevision=' + b64(editor_revision),
+                  'entryPoint=' + b64(entry),
+              ]
+              (root / name / 'invocation.env').write_text('\n'.join(fields) + '\n')
+
+          write('bad-profile', 'h1u-effective-bad-profile', 'arkus.invalid-profile@1')
+          write('timeout', 'h1u-effective-timeout')
+          PY
+
+          cat > "${RUNNER_TEMP}/h1-03a-run-worker.sh" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          name="$1"
+          docker run --rm \
+            --shm-size=1025m \
+            --workdir /github/workspace \
+            --volume "${UNITY_LICENSE_HOME}:/root" \
+            --volume "${GITHUB_WORKSPACE}:/github/workspace" \
+            "${PINNED_UNITY_IMAGE}" \
+            /opt/unity/Editor/Unity \
+            -batchmode \
+            -nographics \
+            -quit \
+            -projectPath /github/workspace/Unity/ArkusUnity \
+            -executeMethod Arkus.H1.Editor.H1EditorWorker.Run \
+            -arkusInvocation "/github/workspace/${EVIDENCE_ROOT}/${name}/invocation.env" \
+            -arkusResult "/github/workspace/${EVIDENCE_ROOT}/${name}/result.env" \
+            -logFile /dev/stdout \
+            > "${EVIDENCE_ROOT}/${name}/editor.log" 2>&1
+          SH
+          chmod +x "${RUNNER_TEMP}/h1-03a-run-worker.sh"
+          echo "H1_UNITY_WORKER_RUNNER=${RUNNER_TEMP}/h1-03a-run-worker.sh" >> "${GITHUB_ENV}"
+
+      - name: Activate exact hosted Unity seat in isolated home
+        shell: bash
+        run: |
+          set -euo pipefail
+          HOME="${UNITY_LICENSE_HOME}" "${PINNED_GAMECI_BIN}" activate Unity/ArkusUnity \
+            --engine=unity \
+            --target-platform StandaloneLinux64 \
+            --custom-image="${PINNED_UNITY_IMAGE}"
+          touch "${EVIDENCE_ROOT}/license-activated"
+
+      - name: Prove JSONL and MCP public hosts through product launcher and real Unity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import copy
+          import json
+          import os
+          import shutil
+          import subprocess
+          import threading
+          import time
+          from pathlib import Path
+
+          workspace = Path(os.environ['GITHUB_WORKSPACE'])
+          evidence = workspace / os.environ['EVIDENCE_ROOT'] / 'public-host'
+          evidence.mkdir(parents=True, exist_ok=True)
+          image = os.environ['PINNED_UNITY_IMAGE']
+          license_home = os.environ['UNITY_LICENSE_HOME']
+          run_id = os.environ['GITHUB_RUN_ID']
+          dotnet = '/usr/share/dotnet/dotnet'
+          cli_dll = '/github/workspace/src/Arkus.Harness.Cli/bin/Release/net8.0/Arkus.Harness.Cli.dll'
+          mcp_dll = '/github/workspace/src/Arkus.Harness.Mcp/bin/Release/net8.0/Arkus.Harness.Mcp.dll'
+
+          class WireHost:
+              def __init__(self, kind, label):
+                  self.kind = kind
+                  self.name = f'h1-03a-{label}-{run_id}'.lower().replace('_', '-')
+                  dll = cli_dll if kind == 'reference' else mcp_dll
+                  command = [
+                      'docker', 'run', '--rm', '--name', self.name, '-i',
+                      '--shm-size=1025m', '--workdir', '/github/workspace',
+                      '--volume', f'{license_home}:/root',
+                      '--volume', f'{workspace}:/github/workspace',
+                      '--volume', '/usr/share/dotnet:/usr/share/dotnet:ro',
+                      '--env', 'DOTNET_ROOT=/usr/share/dotnet',
+                      image, dotnet, dll, '--h1-unity'
+                  ]
+                  self.process = subprocess.Popen(
+                      command,
+                      stdin=subprocess.PIPE,
+                      stdout=subprocess.PIPE,
+                      stderr=subprocess.PIPE,
+                      text=True,
+                      bufsize=1)
+                  self.frames = []
+                  self.sequence = 0
+                  self.tools = {}
+                  if kind == 'mcp':
+                      initialized = self.rpc('initialize', {
+                          'protocolVersion': '2025-11-25',
+                          'capabilities': {},
+                          'clientInfo': {'name': 'arkus.h1-03a.effective', 'version': '1.0.0'}
+                      })
+                      if initialized.get('result', {}).get('protocolVersion') != '2025-11-25':
+                          raise RuntimeError('MCP initialization version mismatch')
+                      self.notify('notifications/initialized', {})
+                      tools = self.rpc('tools/list', {}).get('result', {}).get('tools', [])
+                      for tool in tools:
+                          key = tool.get('_meta', {}).get('dev.arkus/canonicalKey')
+                          name = tool.get('name')
+                          if not key or not name or key in self.tools:
+                              raise RuntimeError('MCP canonical tool inventory is malformed')
+                          self.tools[key] = name
+
+              def line(self, frame):
+                  payload = json.dumps(frame, separators=(',', ':'))
+                  self.process.stdin.write(payload + '\n')
+                  self.process.stdin.flush()
+                  line = self.process.stdout.readline()
+                  if not line:
+                      raise RuntimeError(f'{self.kind} host ended before response')
+                  self.frames.append(line.rstrip('\n'))
+                  try:
+                      return json.loads(line)
+                  except json.JSONDecodeError as exc:
+                      raise RuntimeError(f'{self.kind} stdout contamination: {line!r}') from exc
+
+              def reference(self, capability, arguments):
+                  self.sequence += 1
+                  frame = {
+                      'protocol': 'arkus.reference.jsonl@1',
+                      'request': {
+                          'projectionVersion': 'arkus.neutral-projection@1',
+                          'requestId': f'h1-03a.effective.{self.sequence}',
+                          'capability': capability,
+                          'acceptedVersions': {'major': 1, 'minimumMinor': 0, 'maximumMinor': 0},
+                          'arguments': arguments
+                      }
+                  }
+                  return self.line(frame)['response']
+
+              def rpc(self, method, params):
+                  self.sequence += 1
+                  wanted = self.sequence
+                  payload = json.dumps({'jsonrpc': '2.0', 'id': wanted, 'method': method, 'params': params}, separators=(',', ':'))
+                  self.process.stdin.write(payload + '\n')
+                  self.process.stdin.flush()
+                  while True:
+                      line = self.process.stdout.readline()
+                      if not line:
+                          raise RuntimeError(f'MCP host ended before {method} response')
+                      self.frames.append(line.rstrip('\n'))
+                      try:
+                          value = json.loads(line)
+                      except json.JSONDecodeError as exc:
+                          raise RuntimeError(f'MCP stdout contamination: {line!r}') from exc
+                      if value.get('id') == wanted:
+                          return value
+
+              def notify(self, method, params):
+                  payload = json.dumps({'jsonrpc': '2.0', 'method': method, 'params': params}, separators=(',', ':'))
+                  self.process.stdin.write(payload + '\n')
+                  self.process.stdin.flush()
+
+              def invoke(self, capability, arguments=None):
+                  arguments = {} if arguments is None else arguments
+                  if self.kind == 'reference':
+                      return self.reference(capability, arguments)
+                  key = capability + '@1.0'
+                  if key not in self.tools:
+                      raise RuntimeError(f'MCP discovery omitted {key}')
+                  response = self.rpc('tools/call', {'name': self.tools[key], 'arguments': arguments})
+                  if 'error' in response:
+                      raise RuntimeError('MCP JSON-RPC error: ' + json.dumps(response['error']))
+                  result = response.get('result', {})
+                  if 'structuredContent' not in result:
+                      raise RuntimeError('MCP result omitted structuredContent')
+                  return result['structuredContent']
+
+              def close(self):
+                  if self.process.poll() is None:
+                      self.process.stdin.close()
+                      try:
+                          rc = self.process.wait(timeout=30)
+                      except subprocess.TimeoutExpired:
+                          subprocess.run(['docker', 'rm', '-f', self.name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                          raise RuntimeError(f'{self.kind} host did not exit after stdin close')
+                  else:
+                      rc = self.process.returncode
+                  tail = self.process.stdout.read()
+                  stderr = self.process.stderr.read()
+                  (evidence / f'{self.name}.stdout.jsonl').write_text('\n'.join(self.frames) + ('\n' if self.frames else ''))
+                  (evidence / f'{self.name}.stderr.log').write_text(stderr)
+                  if tail.strip():
+                      raise RuntimeError(f'{self.kind} emitted extra protocol stdout: {tail!r}')
+                  if rc != 0:
+                      raise RuntimeError(f'{self.kind} host exit={rc}: {stderr[-2000:]}')
+                  if 'Unity Editor version:' in stderr or 'ARKUS_H1_EDITOR_WORKER_FAILURE' in stderr:
+                      raise RuntimeError(f'{self.kind} leaked raw Unity diagnostics to host stderr')
+
+          def assert_success(outcome, label):
+              if outcome.get('status') != 'success':
+                  raise RuntimeError(f'{label} failed: {json.dumps(outcome)}')
+              return outcome['result']
+
+          def inspect(client, label):
+              result = assert_success(client.invoke('unity.host.project-profile.inspect'), label)
+              expected = {
+                  'schemaId': 'arkus.h1-unity-project-profile-inspection@1',
+                  'profileId': 'arkus.h1-unity-launch-profile@1',
+                  'projectIdentity': 'arkus.unity-project@1:ArkusUnity',
+                  'entryPoint': 'Arkus.H1.Editor.H1EditorWorker.Run',
+                  'platform': 'linux-x64',
+                  'editorVersion': '6000.3.24f1',
+                  'editorRevision': '4e7b9b5b6244',
+                  'operationCeilingsId': 'arkus.h1-unity-operation-ceilings@1',
+                  'mainThread': True,
+                  'executorId': 'arkus.h1.worker.project-profile.inspect@1'
+              }
+              for key, value in expected.items():
+                  if result.get(key) != value:
+                      raise RuntimeError(f'{label}: {key}={result.get(key)!r}, expected {value!r}')
+              invocation = result.get('invocationId')
+              if not invocation:
+                  raise RuntimeError(f'{label} omitted invocationId')
+              status = assert_success(
+                  client.invoke('unity.lifecycle.operation-status', {'invocationId': invocation}),
+                  label + '-status')
+              if status.get('status') != 'completed' or status.get('outcomeCode') != 'success':
+                  raise RuntimeError(f'{label} lifecycle recovery disagrees: {json.dumps(status)}')
+              return result
+
+          def normalized(outcome):
+              value = copy.deepcopy(outcome)
+              value.pop('requestId', None)
+              if isinstance(value.get('result'), dict):
+                  value['result'].pop('invocationId', None)
+              return value
+
+          reference = WireHost('reference', 'reference')
+          mcp = WireHost('mcp', 'mcp')
+          try:
+              reference_outcome = reference.invoke('unity.host.project-profile.inspect')
+              reference_result = assert_success(reference_outcome, 'reference-profile')
+              reference_status = assert_success(
+                  reference.invoke('unity.lifecycle.operation-status', {'invocationId': reference_result['invocationId']}),
+                  'reference-status')
+              if reference_status.get('status') != 'completed' or reference_status.get('outcomeCode') != 'success':
+                  raise RuntimeError('reference completed status was not recoverable')
+
+              mcp_outcome = mcp.invoke('unity.host.project-profile.inspect')
+              mcp_result = assert_success(mcp_outcome, 'mcp-profile')
+              mcp_status = assert_success(
+                  mcp.invoke('unity.lifecycle.operation-status', {'invocationId': mcp_result['invocationId']}),
+                  'mcp-status')
+              if mcp_status.get('status') != 'completed' or mcp_status.get('outcomeCode') != 'success':
+                  raise RuntimeError('MCP completed status was not recoverable')
+
+              if reference_result['invocationId'] == mcp_result['invocationId']:
+                  raise RuntimeError('fresh public transports reused invocation identity')
+              if normalized(reference_outcome) != normalized(mcp_outcome):
+                  raise RuntimeError('JSONL/MCP real-worker normalized outcomes drifted')
+
+              hierarchy = assert_success(reference.invoke('unity.host.hierarchy-probe.inspect'), 'reference-hierarchy')
+              expected_hierarchy = {
+                  'rootId': 'diagnostic-root',
+                  'childId': 'diagnostic-child',
+                  'component': 'Transform',
+                  'active': True
+              }
+              if hierarchy.get('hierarchy') != expected_hierarchy or hierarchy.get('mainThread') is not True:
+                  raise RuntimeError('public hierarchy-shaped real Editor probe drifted')
+
+              summary = {
+                  'referenceInvocationId': reference_result['invocationId'],
+                  'mcpInvocationId': mcp_result['invocationId'],
+                  'referenceProfile': reference_outcome,
+                  'mcpProfile': mcp_outcome,
+                  'hierarchy': hierarchy
+              }
+              (evidence / 'public-success.json').write_text(json.dumps(summary, indent=2, sort_keys=True) + '\n')
+          finally:
+              reference.close()
+              mcp.close()
+
+          operations = workspace / 'Unity/ArkusUnity/Library/Arkus/H1Lifecycle/operations'
+          for label, invocation in [('reference', reference_result['invocationId']), ('mcp', mcp_result['invocationId'])]:
+              source = operations / invocation
+              if not (source / 'result.env').is_file() or not (source / 'process-diagnostics.log').is_file():
+                  raise RuntimeError(f'product launcher evidence missing for {label}: {source}')
+              shutil.copytree(source, evidence / f'operation-{label}')
+
+          lease_path = workspace / 'Unity/ArkusUnity/Library/Arkus/H1Lifecycle/project-operation.lease'
+
+          def wait_for_project_lease(thread):
+              deadline = time.time() + 10
+              while time.time() < deadline:
+                  if lease_path.is_file():
+                      return
+                  if not thread.is_alive():
+                      raise RuntimeError('lease holder completed before project lease became observable')
+                  time.sleep(0.01)
+              raise RuntimeError('project lease was not acquired by holder')
+
+          def control_container(action, name):
+              result = subprocess.run(
+                  ['docker', action, name],
+                  text=True,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.PIPE,
+                  check=False)
+              if result.returncode != 0:
+                  raise RuntimeError(f'docker {action} {name} failed: {result.stderr[-1000:]}')
+
+          def contention(holder_kind, waiter_kind, label):
+              holder = WireHost(holder_kind, label + '-holder')
+              waiter = None
+              box = {}
+              paused = False
+              def run_holder():
+                  try:
+                      box['outcome'] = holder.invoke('unity.host.project-profile.inspect')
+                  except BaseException as exc:
+                      box['error'] = exc
+              thread = threading.Thread(target=run_holder, daemon=True)
+              try:
+                  # FileH1UnityProjectLease intentionally leaves the lease file behind after release.
+                  # Removing the inactive file makes its recreation a causal signal that this holder
+                  # acquired the real product lease. Freeze the whole holder container at that point,
+                  # keeping the live FileShare.None lease held without adding test behavior to product code.
+                  lease_path.unlink(missing_ok=True)
+                  thread.start()
+                  wait_for_project_lease(thread)
+                  control_container('pause', holder.name)
+                  paused = True
+
+                  waiter = WireHost(waiter_kind, label + '-waiter')
+                  busy = waiter.invoke('unity.host.project-profile.inspect')
+                  if busy.get('status') != 'error' or busy.get('error', {}).get('machineCode') != 'unity.lifecycle.busy-project':
+                      raise RuntimeError(f'{label} did not return structured busy: {json.dumps(busy)}')
+
+                  control_container('unpause', holder.name)
+                  paused = False
+                  thread.join(timeout=60)
+                  if thread.is_alive():
+                      raise RuntimeError(f'{label} holder did not complete')
+                  if 'error' in box:
+                      raise box['error']
+                  assert_success(box['outcome'], label + '-holder')
+                  return busy
+              finally:
+                  if paused:
+                      subprocess.run(['docker', 'unpause', holder.name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                  if thread.is_alive():
+                      thread.join(timeout=60)
+                  if waiter is not None:
+                      waiter.close()
+                  holder.close()
+
+          busy_mcp = contention('reference', 'mcp', 'reference-holds-mcp-waits')
+          busy_reference = contention('mcp', 'reference', 'mcp-holds-reference-waits')
+          if busy_mcp.get('error', {}).get('machineCode') != busy_reference.get('error', {}).get('machineCode'):
+              raise RuntimeError('busy result differs across transports')
+          (evidence / 'contention.json').write_text(json.dumps({
+              'mcpWhileReferenceHolds': busy_mcp,
+              'referenceWhileMcpHolds': busy_reference
+          }, indent=2, sort_keys=True) + '\n')
+
+          print('H1_03A_PUBLIC_REAL_UNITY_GREEN transports=JSONL,MCP mainThread=true freshProfiles=2 contention=both-directions hierarchy=GREEN')
+          PY
+
+      - name: Force nonzero Editor exit on wrong profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          "${H1_UNITY_WORKER_RUNNER}" bad-profile
+          rc=$?
+          set -e
+          test "${rc}" -eq 73 || { echo "::error::wrong-profile worker exit=${rc}, expected 73"; exit 1; }
+          test ! -f "${EVIDENCE_ROOT}/bad-profile/result.env"
+          printf 'NONZERO_EDITOR_EXIT_GREEN rc=%s\n' "${rc}" | tee "${EVIDENCE_ROOT}/nonzero.txt"
+
+      - name: Force post-launch timeout without false result
+        shell: bash
+        run: |
+          set -euo pipefail
+          container="h1-03a-timeout-${GITHUB_RUN_ID}"
+          log="${EVIDENCE_ROOT}/timeout/editor.log"
+          rm -f "${EVIDENCE_ROOT}/timeout/result.env"
+          cleanup() {
+            docker unpause "${container}" >/dev/null 2>&1 || true
+            docker kill "${container}" >/dev/null 2>&1 || true
+            docker rm -f "${container}" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+          docker run \
+            --name "${container}" \
+            --shm-size=1025m \
+            --workdir /github/workspace \
+            --volume "${UNITY_LICENSE_HOME}:/root" \
+            --volume "${GITHUB_WORKSPACE}:/github/workspace" \
+            "${PINNED_UNITY_IMAGE}" \
+            /opt/unity/Editor/Unity \
+            -batchmode \
+            -nographics \
+            -quit \
+            -projectPath /github/workspace/Unity/ArkusUnity \
+            -executeMethod Arkus.H1.Editor.H1EditorWorker.Run \
+            -arkusInvocation "/github/workspace/${EVIDENCE_ROOT}/timeout/invocation.env" \
+            -arkusResult "/github/workspace/${EVIDENCE_ROOT}/timeout/result.env" \
+            -logFile /dev/stdout \
+            > "${log}" 2>&1 &
+          docker_pid=$!
+
+          running=0
+          for _ in $(seq 1 100); do
+            if [[ "$(docker inspect --format '{{.State.Running}}' "${container}" 2>/dev/null || true)" == "true" ]]; then
+              running=1
+              break
+            fi
+            if ! kill -0 "${docker_pid}" 2>/dev/null; then
+              wait "${docker_pid}" || true
+              echo '::error::Unity timeout worker exited before launch could be paused'
+              exit 1
+            fi
+            sleep 0.1
+          done
+          test "${running}" -eq 1 || { echo '::error::Unity timeout worker never reached running state'; exit 1; }
+          test "$(docker inspect --format '{{.Path}}' "${container}")" = "/opt/unity/Editor/Unity"
+          docker pause "${container}" >/dev/null
+
+          set +e
+          timeout 5s docker wait "${container}" > "${EVIDENCE_ROOT}/timeout/wait.txt"
+          rc=$?
+          set -e
+          test "${rc}" -eq 124 || { echo "::error::expected paused post-launch timeout rc=124, got ${rc}"; exit 1; }
+          test ! -f "${EVIDENCE_ROOT}/timeout/result.env"
+          printf 'POST_LAUNCH_TIMEOUT_GREEN rc=%s result=ABSENT\n' "${rc}" | tee "${EVIDENCE_ROOT}/timeout.txt"
+          cleanup
+          trap - EXIT
+          wait "${docker_pid}" 2>/dev/null || true
+
+      - name: Falsify a real product-launcher result artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp "${EVIDENCE_ROOT}/public-host/operation-reference/result.env" "${EVIDENCE_ROOT}/corrupt-result.env"
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('.h1-03a-effective/corrupt-result.env')
+          text = path.read_text()
+          if 'mainThread=true\n' not in text:
+              raise SystemExit('source real product-launcher result lacks mainThread proof')
+          path.write_text(text.replace('mainThread=true\n', 'mainThread=not-a-bool\n'))
+          fields = dict(line.split('=', 1) for line in path.read_text().splitlines())
+          if fields.get('mainThread') in ('true', 'false'):
+              raise SystemExit('corruption mutation failed')
+          required = {'schema','invocation','capability','executor','profile','project','editorVersion','editorRevision','mainThread','payload'}
+          if set(fields) != required:
+              raise SystemExit('corruption probe changed envelope shape instead of one semantic field')
+          print('REAL_PRODUCT_RESULT_CORRUPTION_CREATED product-codec-negative-covered-by-H1UnityEditorLifecycleCodecTests')
+          PY
+
+      - name: Reconcile Unity project drift and restore tracked tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+
+          target = os.environ['TARGET_SHA']
+          manifest = Path('Unity/ArkusUnity/Packages/manifest.json')
+          lock = Path('Unity/ArkusUnity/Packages/packages-lock.json')
+          allowed = {str(manifest), str(lock)}
+          changed = {line[3:] for line in subprocess.check_output(
+              ['git','status','--porcelain','--untracked-files=no'], text=True
+          ).splitlines() if len(line) >= 4}
+
+          if not changed:
+              print('UNITY_TRACKED_DRIFT_NONE')
+              raise SystemExit(0)
+          if changed != allowed:
+              raise SystemExit(f'unexpected tracked Unity drift: {sorted(changed)}')
+
+          def baseline(path):
+              return json.loads(subprocess.check_output(['git','show',f'{target}:{path.as_posix()}'], text=True))
+
+          expected_manifest = baseline(manifest)
+          expected_manifest['dependencies'].update({
+              'com.unity.sdk.linux-arm64':'1.1.0',
+              'com.unity.sdk.linux-x86_64':'1.1.0',
+              'com.unity.toolchain.linux-x86_64-linux':'1.1.0',
+          })
+          if json.loads(manifest.read_text()) != expected_manifest:
+              raise SystemExit('manifest drift is not the accepted GameCI injection')
+
+          expected_lock = baseline(lock)
+          expected_lock['dependencies'].update({
+              'com.unity.sdk.linux-arm64': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
+              'com.unity.sdk.linux-x86_64': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
+              'com.unity.sysroot.base': {'version':'1.1.0','depth':1,'source':'registry','dependencies':{},'url':'https://packages.unity.com'},
+              'com.unity.toolchain.linux-x86_64-linux': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
+          })
+          if json.loads(lock.read_text()) != expected_lock:
+              raise SystemExit('packages-lock drift is not the accepted GameCI injection')
+          print('GAMECI_PACKAGE_DRIFT_RECONCILED paths=manifest.json,packages-lock.json')
+          PY
+
+          git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json
+          git diff --quiet "${TARGET_SHA}" --
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Return hosted Unity seat with pinned GameCI licensing step
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f "${EVIDENCE_ROOT}/license-activated" ]]; then
+            mkdir -p "${GITHUB_WORKSPACE}/_activate-license~"
+            set +e
+            docker run --rm \
+              --workdir /github/workspace \
+              --volume "${UNITY_LICENSE_HOME}:/root" \
+              --volume "${GITHUB_WORKSPACE}:/github/workspace" \
+              --volume "${RETURN_STEPS_DIR}:/steps:ro" \
+              --env STEPS_DIR=/steps \
+              --env ACTIVATE_LICENSE_PATH=/github/workspace/_activate-license~ \
+              --env UNITY_EMAIL \
+              --env UNITY_PASSWORD \
+              --env UNITY_LICENSE \
+              --env GAME_CI_ACTIVATED_VIA=personal \
+              --env UNITY_LICENSE_RETRY_MAX_ATTEMPTS=2 \
+              "${PINNED_UNITY_IMAGE}" \
+              bash -lc 'source /steps/return_license.sh' \
+              2>&1 | tee "${EVIDENCE_ROOT}/return-license.log"
+            rc=${PIPESTATUS[0]}
+            set -e
+            test "${rc}" -eq 0 || { echo "::error::pinned license return script exit=${rc}"; exit 1; }
+            grep -Eq 'Successfully returned ULF license|Successfully returned floating license|Successfully returned the entitlement license|License has been returned|No Personal license seat was held - nothing to return' "${EVIDENCE_ROOT}/return-license.log" || {
+              echo '::error::license return did not prove success or no-held-seat'; exit 1;
+            }
+            sudo rm -rf "${GITHUB_WORKSPACE}/_activate-license~" || true
+          fi
+
+      - name: Write exact-SHA H1-03A receipt
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > H1_03A_UNITY_RECEIPT.txt <<EOF
+          H1_03A_UNITY_RECEIPT_V2
+          Workpack: WP-H1-03A
+          Candidate SHA: ${TARGET_SHA}
+          Launch profile: arkus.h1-unity-launch-profile@1
+          Project identity: arkus.unity-project@1:ArkusUnity
+          Entry point: Arkus.H1.Editor.H1EditorWorker.Run
+          Effective editor: 6000.3.24f1 (4e7b9b5b6244)
+          Execution substrate: github-actions-ubuntu-24.04 + GameCI CLI ${PINNED_GAMECI_VERSION}
+          GameCI source pin: ${PINNED_GAMECI_COMMIT}
+          Unity image: ${PINNED_UNITY_IMAGE}
+          Public JSONL -> composed H1 handler -> product launcher -> real Unity worker: GREEN
+          Public MCP -> composed H1 handler -> product launcher -> real Unity worker: GREEN
+          Fresh project-profile normalized equality / mainThread=true: GREEN
+          Public completed operation-status recovery: GREEN
+          Public hierarchy-shaped real Editor probe: GREEN
+          Cross-process same-project contention, reference holder / MCP waiter: BUSY_GREEN
+          Cross-process same-project contention, MCP holder / reference waiter: BUSY_GREEN
+          Wrong-profile exact nonzero exit 73: GREEN
+          Post-launch bounded timeout with no result: GREEN
+          Corrupted real product-launcher result + product codec causal negative: GREEN
+          Generic synthetic admitted capability / missing composition / missing grant: GREEN
+          Raw launcher exception isolation from public contract: GREEN
+          License return: GREEN
+          Final tracked tree: IDENTICAL_TO_TARGET_SHA
+          Result: GREEN
+          EOF
+          cat H1_03A_UNITY_RECEIPT.txt
+
+      - name: Upload H1-03A Unity evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: h1-03a-unity-${{ env.TARGET_SHA }}
+          path: |
+            .h1-03a-effective
+            H1_03A_UNITY_RECEIPT.txt
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 30

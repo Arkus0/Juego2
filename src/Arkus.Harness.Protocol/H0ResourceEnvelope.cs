@@ -11,11 +11,6 @@ using System.Threading;
 
 namespace Arkus.Harness.Protocol
 {
-    /// <summary>
-    /// The measured H0 resource envelope. Canonical limits are chosen below the frozen
-    /// arkus.reference.jsonl@1 framing ceiling so successfully framed requests reach the same
-    /// transport-neutral admission policy used by MCP and future projections.
-    /// </summary>
     public static class H0ResourceEnvelope
     {
         public const string SchemaId = "arkus.h0-resource-envelope@1";
@@ -52,10 +47,7 @@ namespace Arkus.Harness.Protocol
                     ["maximumRelationsPerResource"] = MaximumRelationsPerResource,
                     ["maximumSessionTransactions"] = MaximumSessionTransactions
                 }),
-                ["query"] = ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["maximumPageSize"] = MaximumPageSize
-                }),
+                ["query"] = ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal) { ["maximumPageSize"] = MaximumPageSize }),
                 ["world"] = ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["maximumCanonicalBytes"] = MaximumCanonicalWorldBytes,
@@ -76,39 +68,21 @@ namespace Arkus.Harness.Protocol
             });
         }
 
-        private static IReadOnlyDictionary<string, object?> ReadOnly(
-            IDictionary<string, object?> source)
-        {
-            return new ReadOnlyDictionary<string, object?>(
-                new Dictionary<string, object?>(source, StringComparer.Ordinal));
-        }
+        private static IReadOnlyDictionary<string, object?> ReadOnly(IDictionary<string, object?> source) =>
+            new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(source, StringComparer.Ordinal));
     }
 
     public static class H0ResourceDiagnostics
     {
-        public static StructuredError Exceeded(
-            string machineCode,
-            string message,
-            string path,
-            string dimension,
-            long limit,
-            long observed,
-            string repairHint)
+        public static StructuredError Exceeded(string machineCode, string message, string path, string dimension, long limit, long observed, string repairHint)
         {
-            return new StructuredError(
-                machineCode,
-                message,
-                path,
-                new ReadOnlyDictionary<string, object?>(
-                    new Dictionary<string, object?>(StringComparer.Ordinal)
-                    {
-                        ["resourceEnvelope"] = H0ResourceEnvelope.SchemaId,
-                        ["dimension"] = dimension,
-                        ["limit"] = limit,
-                        ["observed"] = observed
-                    }),
-                false,
-                repairHint);
+            return new StructuredError(machineCode, message, path, new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["resourceEnvelope"] = H0ResourceEnvelope.SchemaId,
+                ["dimension"] = dimension,
+                ["limit"] = limit,
+                ["observed"] = observed
+            }), false, repairHint);
         }
 
         public static StructuredError ExecutionExceeded(string boundary)
@@ -129,38 +103,58 @@ namespace Arkus.Harness.Protocol
                 "resource.execution_cancelled",
                 "The operation was cancelled before authoritative publication.",
                 "$",
-                new ReadOnlyDictionary<string, object?>(
-                    new Dictionary<string, object?>(StringComparer.Ordinal)
-                    {
-                        ["resourceEnvelope"] = H0ResourceEnvelope.SchemaId,
-                        ["boundary"] = boundary
-                    }),
+                new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["resourceEnvelope"] = H0ResourceEnvelope.SchemaId,
+                    ["boundary"] = boundary
+                }),
                 true,
                 "Retry with a live request scope; no canonical publication occurred at " + boundary + ".");
         }
 
-        public static StructuredError PublicationInterrupted(string boundary)
+        internal static StructuredError BoundedExecutionExceeded(string boundary, string resourceEnvelope, int maximumExecutionMilliseconds)
         {
             return new StructuredError(
-                "resource.persistence_interrupted",
-                "Persistence was interrupted after staging and before authoritative aggregate publication.",
+                "resource.execution_budget_exceeded",
+                "The operation exhausted its fixed execution budget before a trustworthy lifecycle result was accepted.",
                 "$",
-                new ReadOnlyDictionary<string, object?>(
-                    new Dictionary<string, object?>(StringComparer.Ordinal)
-                    {
-                        ["resourceEnvelope"] = H0ResourceEnvelope.SchemaId,
-                        ["boundary"] = boundary
-                    }),
+                new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["resourceEnvelope"] = resourceEnvelope,
+                    ["dimension"] = "executionMilliseconds",
+                    ["limit"] = maximumExecutionMilliseconds,
+                    ["observed"] = (long)maximumExecutionMilliseconds + 1L,
+                    ["boundary"] = boundary
+                }),
+                false,
+                "Reduce the bounded Editor operation or retry after checking lifecycle status.");
+        }
+
+        internal static StructuredError BoundedExecutionCancelled(string boundary, string resourceEnvelope)
+        {
+            return new StructuredError(
+                "resource.execution_cancelled",
+                "The bounded Editor operation was cancelled.",
+                "$",
+                new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["resourceEnvelope"] = resourceEnvelope,
+                    ["boundary"] = boundary
+                }),
                 true,
-                "Retry the same idempotent request; the previous canonical aggregate and evidence remain authoritative.");
+                "Check the operation lifecycle status before retrying the Editor operation.");
+        }
+
+        public static StructuredError PublicationInterrupted(string boundary)
+        {
+            return new StructuredError("resource.persistence_interrupted", "Persistence was interrupted after staging and before authoritative aggregate publication.", "$", new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["resourceEnvelope"] = H0ResourceEnvelope.SchemaId,
+                ["boundary"] = boundary
+            }), true, "Retry the same idempotent request; the previous canonical aggregate and evidence remain authoritative.");
         }
     }
 
-    /// <summary>
-    /// One cooperative execution budget. Mutation/rebase/replay authorities check it at their
-    /// accepted aggregate publication boundary. A committed publication always wins over a later
-    /// cancellation so the public outcome cannot falsely claim that authoritative state was absent.
-    /// </summary>
     public sealed class InvocationResourceBudget
     {
         private readonly CancellationToken _cancellationToken;
@@ -168,78 +162,51 @@ namespace Arkus.Harness.Protocol
         private readonly Func<long> _timestamp;
         private readonly Func<string, bool>? _publicationPermit;
         private readonly bool _authoritativePublication;
+        private readonly string _resourceEnvelope;
+        private readonly int _maximumExecutionMilliseconds;
+        private readonly bool _h0Canonical;
         private bool _publicationCommitted;
 
-        private InvocationResourceBudget(
-            CancellationToken cancellationToken,
-            long deadlineTimestamp,
-            Func<long> timestamp,
-            Func<string, bool>? publicationPermit,
-            bool authoritativePublication)
+        private InvocationResourceBudget(CancellationToken cancellationToken, long deadlineTimestamp, Func<long> timestamp, Func<string, bool>? publicationPermit, bool authoritativePublication, string resourceEnvelope, int maximumExecutionMilliseconds, bool h0Canonical)
         {
             _cancellationToken = cancellationToken;
             _deadlineTimestamp = deadlineTimestamp;
             _timestamp = timestamp ?? throw new ArgumentNullException(nameof(timestamp));
             _publicationPermit = publicationPermit;
             _authoritativePublication = authoritativePublication;
+            _resourceEnvelope = resourceEnvelope ?? throw new ArgumentNullException(nameof(resourceEnvelope));
+            _maximumExecutionMilliseconds = maximumExecutionMilliseconds;
+            _h0Canonical = h0Canonical;
         }
 
         public bool PublicationCommitted => _publicationCommitted;
 
-        public static InvocationResourceBudget Start(CancellationToken cancellationToken = default)
+        public static InvocationResourceBudget Start(CancellationToken cancellationToken = default) =>
+            StartBounded(cancellationToken, H0ResourceEnvelope.MaximumExecutionMilliseconds, H0ResourceEnvelope.SchemaId, true);
+
+        internal static InvocationResourceBudget StartBounded(CancellationToken cancellationToken, int maximumExecutionMilliseconds, string resourceEnvelope, bool h0Canonical = false)
         {
+            if (maximumExecutionMilliseconds <= 0) throw new ArgumentOutOfRangeException(nameof(maximumExecutionMilliseconds));
+            if (string.IsNullOrWhiteSpace(resourceEnvelope)) throw new ArgumentException("A resource-envelope identity is required.", nameof(resourceEnvelope));
             var now = System.Diagnostics.Stopwatch.GetTimestamp();
-            var duration = (long)Math.Ceiling(
-                H0ResourceEnvelope.MaximumExecutionMilliseconds *
-                (double)System.Diagnostics.Stopwatch.Frequency / 1000d);
-            return new InvocationResourceBudget(
-                cancellationToken,
-                checked(now + duration),
-                System.Diagnostics.Stopwatch.GetTimestamp,
-                null,
-                true);
+            var duration = (long)Math.Ceiling(maximumExecutionMilliseconds * (double)System.Diagnostics.Stopwatch.Frequency / 1000d);
+            return new InvocationResourceBudget(cancellationToken, checked(now + duration), System.Diagnostics.Stopwatch.GetTimestamp, null, true, resourceEnvelope, maximumExecutionMilliseconds, h0Canonical);
         }
 
-        internal static InvocationResourceBudget Unlimited()
-        {
-            return new InvocationResourceBudget(
-                CancellationToken.None,
-                long.MaxValue,
-                () => 0L,
-                null,
-                true);
-        }
+        internal static InvocationResourceBudget Unlimited() =>
+            new InvocationResourceBudget(CancellationToken.None, long.MaxValue, () => 0L, null, true, H0ResourceEnvelope.SchemaId, int.MaxValue, true);
 
         internal static InvocationResourceBudget InterruptedAtPublication(string boundary)
         {
             if (string.IsNullOrWhiteSpace(boundary)) throw new ArgumentException("Publication boundary is required.", nameof(boundary));
-            return new InvocationResourceBudget(
-                CancellationToken.None,
-                long.MaxValue,
-                () => 0L,
-                candidate => !string.Equals(candidate, boundary, StringComparison.Ordinal),
-                true);
+            return new InvocationResourceBudget(CancellationToken.None, long.MaxValue, () => 0L, candidate => !string.Equals(candidate, boundary, StringComparison.Ordinal), true, H0ResourceEnvelope.SchemaId, H0ResourceEnvelope.MaximumExecutionMilliseconds, true);
         }
 
-        internal static InvocationResourceBudget ExpiredForTesting()
-        {
-            return new InvocationResourceBudget(
-                CancellationToken.None,
-                0L,
-                () => 1L,
-                null,
-                true);
-        }
+        internal static InvocationResourceBudget ExpiredForTesting() =>
+            new InvocationResourceBudget(CancellationToken.None, 0L, () => 1L, null, true, H0ResourceEnvelope.SchemaId, H0ResourceEnvelope.MaximumExecutionMilliseconds, true);
 
-        internal InvocationResourceBudget ForStaging()
-        {
-            return new InvocationResourceBudget(
-                _cancellationToken,
-                _deadlineTimestamp,
-                _timestamp,
-                null,
-                false);
-        }
+        internal InvocationResourceBudget ForStaging() =>
+            new InvocationResourceBudget(_cancellationToken, _deadlineTimestamp, _timestamp, null, false, _resourceEnvelope, _maximumExecutionMilliseconds, _h0Canonical);
 
         public bool TryContinue(string boundary, out StructuredError? error)
         {
@@ -248,19 +215,20 @@ namespace Arkus.Harness.Protocol
                 error = null;
                 return true;
             }
-
             if (_cancellationToken.IsCancellationRequested)
             {
-                error = H0ResourceDiagnostics.ExecutionCancelled(boundary);
+                error = _h0Canonical
+                    ? H0ResourceDiagnostics.ExecutionCancelled(boundary)
+                    : H0ResourceDiagnostics.BoundedExecutionCancelled(boundary, _resourceEnvelope);
                 return false;
             }
-
             if (_timestamp() > _deadlineTimestamp)
             {
-                error = H0ResourceDiagnostics.ExecutionExceeded(boundary);
+                error = _h0Canonical
+                    ? H0ResourceDiagnostics.ExecutionExceeded(boundary)
+                    : H0ResourceDiagnostics.BoundedExecutionExceeded(boundary, _resourceEnvelope, _maximumExecutionMilliseconds);
                 return false;
             }
-
             error = null;
             return true;
         }
@@ -274,7 +242,6 @@ namespace Arkus.Harness.Protocol
                 error = H0ResourceDiagnostics.PublicationInterrupted(boundary);
                 return false;
             }
-
             return true;
         }
 

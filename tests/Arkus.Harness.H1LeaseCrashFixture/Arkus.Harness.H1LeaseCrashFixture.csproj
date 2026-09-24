@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Arkus.Harness.H1LeaseCrashFixture</AssemblyName>
+    <RootNamespace>Arkus.Harness.H1LeaseCrashFixture</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../tools/Arkus.H1.UnityHost/Arkus.H1.UnityHost.csproj" />
+  </ItemGroup>
+</Project>

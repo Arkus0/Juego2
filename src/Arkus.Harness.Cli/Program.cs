@@ -22,6 +22,14 @@ namespace Arkus.Harness.Cli
                     }
                 }
 
+                if (args.Length == 1 && string.Equals(args[0], "--h1-unity", StringComparison.Ordinal))
+                {
+                    return H1ReferenceTransportHost.Run(
+                        Console.OpenStandardInput(),
+                        Console.OpenStandardOutput(),
+                        Console.Error);
+                }
+
                 return ReferenceTransportHost.Run(
                     args,
                     Console.OpenStandardInput(),
