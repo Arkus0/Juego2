@@ -57,6 +57,29 @@ def normalize_wp(value: str) -> str:
     return match.group(1)
 
 
+def resolve_assets_root(repo_root: Path, value: str) -> Path:
+    if any(ord(char) < 32 for char in value):
+        raise ConsoleError("La ruta de assets contiene caracteres de control")
+    assets_root = Path(value).expanduser().resolve()
+    if not assets_root.is_dir():
+        raise ConsoleError(f"La carpeta externa de assets no existe: {assets_root}")
+    try:
+        next(assets_root.iterdir(), None)
+    except OSError as exc:
+        raise ConsoleError(f"La carpeta externa de assets no es legible: {assets_root}") from exc
+    repo_root = repo_root.resolve()
+    if (assets_root == repo_root or repo_root in assets_root.parents or
+            assets_root in repo_root.parents):
+        raise ConsoleError("La carpeta externa de assets debe estar fuera del checkout de Juego2")
+    return assets_root
+
+
+def autopilot_command(root: Path, assets_root: Path, wp: str) -> list[str]:
+    return [sys.executable, str(root / "scripts" / "local_wp_autopilot_remote.py"),
+            "--root", str(root), "--assets-root", str(assets_root),
+            "--wp", normalize_wp(wp), "--one-wp"]
+
+
 def child_env(control_dir: Path, campaign_id: str, supervisor_url: str) -> dict[str, str]:
     env = os.environ.copy()
     for name in TOKEN_ENV:
@@ -105,11 +128,13 @@ def parse_next(log_text: str) -> str | None:
 
 
 class RemoteConsole:
-    def __init__(self, root: Path, control_dir: Path, token: str, chat_id: int) -> None:
+    def __init__(self, root: Path, control_dir: Path, token: str, chat_id: int,
+                 assets_root: Path | None = None) -> None:
         self.root = root
         self.control_dir = control_dir
         self.token = token
         self.chat_id = chat_id
+        self.assets_root = assets_root
         self.offset: int | None = None
         self.proc: subprocess.Popen | None = None
         self.log_handle = None
@@ -212,14 +237,15 @@ class RemoteConsole:
         if self.proc is not None:
             raise ConsoleError("Ya hay un WP en ejecución")
         wp = normalize_wp(wp)
+        if self.assets_root is None:
+            raise ConsoleError("No hay una carpeta externa de assets configurada")
         campaign_id = uuid.uuid4().hex
         supervisor_url = self._ensure_ipc()
         logs = self.control_dir / "logs"
         logs.mkdir(parents=True, exist_ok=True)
         log_path = logs / f"{int(time.time())}-{wp}.log"
         handle = log_path.open("w", encoding="utf-8")
-        cmd = [sys.executable, str(self.root / "scripts" / "local_wp_autopilot_remote.py"),
-               "--root", str(self.root), "--wp", wp, "--one-wp"]
+        cmd = autopilot_command(self.root, self.assets_root, wp)
         self.proc = subprocess.Popen(cmd, cwd=self.root,
                                      env=child_env(self.control_dir, campaign_id, supervisor_url),
                                      stdin=subprocess.DEVNULL, stdout=handle,
@@ -521,6 +547,8 @@ class RemoteConsole:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".")
+    parser.add_argument("--assets-root", required=True,
+                        help="external source-assets directory exposed to every Codex role")
     parser.add_argument("--control-dir", default=str(Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Arkus" / "Juego2" / "remote-control"))
     args = parser.parse_args()
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
@@ -533,7 +561,9 @@ def main() -> int:
         print("REMOTE_CONSOLE_STOP: --root is not a Juego2 checkout", file=sys.stderr)
         return 2
     try:
-        RemoteConsole(root, Path(args.control_dir).resolve(), token, int(raw_chat)).run()
+        assets_root = resolve_assets_root(root, args.assets_root)
+        RemoteConsole(root, Path(args.control_dir).resolve(), token, int(raw_chat),
+                      assets_root).run()
     except (ConsoleError, OSError, KeyboardInterrupt) as exc:
         print(f"REMOTE_CONSOLE_STOP: {exc}", file=sys.stderr)
         return 2

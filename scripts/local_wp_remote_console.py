@@ -30,8 +30,9 @@ for _name in dir(_core):
 
 
 class RemoteConsole(_core.RemoteConsole):
-    def __init__(self, root: Path, control_dir: Path, token: str, chat_id: int) -> None:
-        super().__init__(root, control_dir, token, chat_id)
+    def __init__(self, root: Path, control_dir: Path, token: str, chat_id: int,
+                 assets_root: Path | None = None) -> None:
+        super().__init__(root, control_dir, token, chat_id, assets_root)
         self._decision_snapshots: dict[str, dict] = {}
 
     def launch(self, wp: str) -> None:

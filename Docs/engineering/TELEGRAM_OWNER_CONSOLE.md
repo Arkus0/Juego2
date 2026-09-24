@@ -26,10 +26,12 @@ Reviewer verdicts, acceptance criteria, exact-SHA integrity, mandatory evidence,
 The workstation runs:
 
 ```powershell
-python scripts/local_wp_remote_console.py --root .
+python scripts/local_wp_remote_console.py --root . --assets-root C:\Juego2-Assets
 ```
 
 The supervisor is idle when no campaign is active. Codex does not need to be open in a visible interactive session: the existing autopilot launches fresh `codex exec` roles itself.
+
+The supervisor resolves and validates `--assets-root` before accepting commands. Every fresh role receives that directory as a Codex additional workspace root plus explicit context that it is external, non-canonical source input whose upstream bytes are read-only unless the exact workpack authorizes a bounded local change. A missing, unreadable or checkout-internal assets root fails closed before a campaign starts.
 
 The supervisor is the only Telegram `getUpdates` consumer while this mode is active. `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are local supervisor configuration. The token is stripped from every autopilot/Codex child environment. Do not run the legacy GitHub-hosted long-poller concurrently with this console.
 
