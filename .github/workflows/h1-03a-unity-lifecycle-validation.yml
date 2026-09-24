@@ -442,26 +442,33 @@ jobs:
                   raise RuntimeError(f'product launcher evidence missing for {label}: {source}')
               shutil.copytree(source, evidence / f'operation-{label}')
 
-          def wait_for_unity(container_name, thread):
-              deadline = time.time() + 30
+          lease_path = workspace / 'Unity/ArkusUnity/Library/Arkus/H1Lifecycle/project-operation.lease'
+
+          def wait_for_project_lease(thread):
+              deadline = time.time() + 10
               while time.time() < deadline:
-                  if not thread.is_alive():
-                      raise RuntimeError('lease holder completed before concurrent probe could observe Unity')
-                  top = subprocess.run(
-                      ['docker', 'top', container_name, '-eo', 'args'],
-                      text=True,
-                      stdout=subprocess.PIPE,
-                      stderr=subprocess.PIPE,
-                      check=False)
-                  if top.returncode == 0 and 'Arkus.H1.Editor.H1EditorWorker.Run' in top.stdout:
+                  if lease_path.is_file():
                       return
-                  time.sleep(0.1)
-              raise RuntimeError('did not observe holder Unity process under project lease')
+                  if not thread.is_alive():
+                      raise RuntimeError('lease holder completed before project lease became observable')
+                  time.sleep(0.01)
+              raise RuntimeError('project lease was not acquired by holder')
+
+          def control_container(action, name):
+              result = subprocess.run(
+                  ['docker', action, name],
+                  text=True,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.PIPE,
+                  check=False)
+              if result.returncode != 0:
+                  raise RuntimeError(f'docker {action} {name} failed: {result.stderr[-1000:]}')
 
           def contention(holder_kind, waiter_kind, label):
               holder = WireHost(holder_kind, label + '-holder')
-              waiter = WireHost(waiter_kind, label + '-waiter')
+              waiter = None
               box = {}
+              paused = False
               def run_holder():
                   try:
                       box['outcome'] = holder.invoke('unity.host.project-profile.inspect')
@@ -469,12 +476,24 @@ jobs:
                       box['error'] = exc
               thread = threading.Thread(target=run_holder, daemon=True)
               try:
+                  # FileH1UnityProjectLease intentionally leaves the lease file behind after release.
+                  # Removing the inactive file makes its recreation a causal signal that this holder
+                  # acquired the real product lease. Freeze the whole holder container at that point,
+                  # keeping the live FileShare.None lease held without adding test behavior to product code.
+                  lease_path.unlink(missing_ok=True)
                   thread.start()
-                  wait_for_unity(holder.name, thread)
+                  wait_for_project_lease(thread)
+                  control_container('pause', holder.name)
+                  paused = True
+
+                  waiter = WireHost(waiter_kind, label + '-waiter')
                   busy = waiter.invoke('unity.host.project-profile.inspect')
                   if busy.get('status') != 'error' or busy.get('error', {}).get('machineCode') != 'unity.lifecycle.busy-project':
                       raise RuntimeError(f'{label} did not return structured busy: {json.dumps(busy)}')
-                  thread.join(timeout=40)
+
+                  control_container('unpause', holder.name)
+                  paused = False
+                  thread.join(timeout=60)
                   if thread.is_alive():
                       raise RuntimeError(f'{label} holder did not complete')
                   if 'error' in box:
@@ -482,8 +501,13 @@ jobs:
                   assert_success(box['outcome'], label + '-holder')
                   return busy
               finally:
+                  if paused:
+                      subprocess.run(['docker', 'unpause', holder.name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                  if thread.is_alive():
+                      thread.join(timeout=60)
+                  if waiter is not None:
+                      waiter.close()
                   holder.close()
-                  waiter.close()
 
           busy_mcp = contention('reference', 'mcp', 'reference-holds-mcp-waits')
           busy_reference = contention('mcp', 'reference', 'mcp-holds-reference-waits')
