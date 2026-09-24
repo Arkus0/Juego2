@@ -4,6 +4,7 @@
 import argparse
 import json
 import os
+import re
 import subprocess
 from pathlib import Path
 
@@ -178,6 +179,59 @@ def managed_scene_path(record):
     return actual
 
 
+def inject_unmanaged_root_child(scene_text):
+    object_id = 910000001
+    transform_id = 910000002
+    require(f"&{object_id}" not in scene_text and f"fileID: {object_id}" not in scene_text,
+            "Unmanaged-member object ID collides with generated scene")
+    require(f"&{transform_id}" not in scene_text and f"fileID: {transform_id}" not in scene_text,
+            "Unmanaged-member transform ID collides with generated scene")
+    root_start = scene_text.index("  m_Name: Arkus Managed Root")
+    transform_start = scene_text.index("--- !u!4 &", root_start)
+    transform_end = scene_text.index("--- !u!", transform_start + 1)
+    root_transform = scene_text[transform_start:transform_end]
+    match = re.match(r"--- !u!4 &(-?\d+)\n", root_transform)
+    require(match is not None, "Managed root transform has no parseable file ID")
+    root_transform_id = match.group(1)
+    children_header = "  m_Children:\n"
+    require(children_header in root_transform, "Managed root transform has no child list")
+    root_transform = root_transform.replace(
+        children_header, children_header + f"  - {{fileID: {transform_id}}}\n", 1)
+    extra = f"""--- !u!1 &{object_id}
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: {transform_id}}}
+  m_Layer: 0
+  m_Name: Reviewer Unmanaged Member
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &{transform_id}
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: {object_id}}}
+  serializedVersion: 2
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {{fileID: {root_transform_id}}}
+  m_LocalEulerAnglesHint: {{x: 0, y: 0, z: 0}}
+"""
+    return scene_text[:transform_start] + root_transform + scene_text[transform_end:] + extra
+
+
 def comparable(response):
     return {key: value for key, value in response.items() if key != "requestId"}
 
@@ -255,6 +309,17 @@ def run():
         scene_file = managed_scene_path(manifest())
         original_scene = scene_file.read_bytes()
         scene_text = original_scene.decode("utf-8")
+
+        scene_file.write_text(inject_unmanaged_root_child(scene_text), encoding="utf-8")
+        try:
+            outcome = reference.invoke("unity.host.projection.observe", {"sceneLogicalId": SCENE})
+            require(outcome["status"] == "error" and outcome["error"]["machineCode"] == "projection.unmanaged-scene-member",
+                    "Unmarked effective scene member was presented as current")
+        finally:
+            scene_file.write_bytes(original_scene)
+        require(projection(reference, "unity.host.projection.observe")["graphDigest"] == deletion_digest,
+                "Restored unmanaged-member fixture did not return GREEN")
+
         for old, replacement, expected_code in (
             ("canonicalObjectId: bar.potes", "canonicalObjectId: market.potes", "projection.duplicate-or-invalid-marker"),
             ("canonicalObjectId: bar.potes", "canonicalObjectId: ", "projection.duplicate-or-invalid-marker"),
