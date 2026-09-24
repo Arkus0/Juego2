@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Arkus.Harness.H1HostPolicyFixture;
 using Arkus.Harness.Projection;
 using Arkus.Harness.Protocol;
 using Arkus.Harness.Runtime;
@@ -64,9 +65,7 @@ namespace Arkus.Harness.Tests
         public void LyingEffectOrResourceMetadataIsRejectedBeforeHandlerInvocation()
         {
             UnityHostFixtureHandler.InvocationCount = 0;
-            var irreversible = Copy(
-                TouchDefinition(),
-                sideEffect: SideEffectClass.ExternalIrreversible);
+            var irreversible = Copy(TouchDefinition(), sideEffect: SideEffectClass.ExternalIrreversible);
             var contract = Compose(HostContribution(irreversible));
 
             var issues = H1UnityHostCapabilityPolicy.Validate(
@@ -110,7 +109,6 @@ namespace Arkus.Harness.Tests
                 contract,
                 UnityProjectWorkspaceAuthority.ForArkusUnityProject(),
                 new[] { Grant("unity.host.inspect", UnityHostTimeClass.BoundedRead) });
-
             Assert.Contains(issues, issue => issue.Code == H1UnityHostCapabilityPolicy.AmbientAuthorityCode);
 
             var endpoint = new JsonSchemaDocument(SchemaNode.Object(
@@ -147,14 +145,9 @@ namespace Arkus.Harness.Tests
                 ContractVersionRange.Exact(new ContractVersion(1, 0)),
                 Hk01TestFixtures.EmptyRequest()));
             var potesRead = await projection.InvokeAsync(Request(
-                "potes-read",
-                "unity.host.inspect",
-                "asset.potes.market-stall"));
+                "potes-read", "unity.host.inspect", "asset.potes.market-stall"));
             var potesEffect = await projection.InvokeAsync(Request(
-                "potes-effect",
-                "unity.host.touch",
-                "asset.potes.market-stall",
-                "apply"));
+                "potes-effect", "unity.host.touch", "asset.potes.market-stall", "apply"));
 
             Assert.True(ordinary.Success);
             Assert.True(potesRead.Success);
@@ -303,38 +296,6 @@ namespace Arkus.Harness.Tests
                 capability,
                 ContractVersionRange.Exact(new ContractVersion(1, 0)),
                 arguments);
-        }
-    }
-
-    [PublicCapabilityRoute("arkus.unity-host", "unity.host.inspect", "1.0")]
-    public sealed class UnityHostFixtureHandler : ICanonicalCapabilityHandler
-    {
-        public static int InvocationCount { get; set; }
-
-        public CapabilityInvocationResult Invoke(
-            CapabilityInvocationContext context,
-            IReadOnlyDictionary<string, object?> request)
-        {
-            InvocationCount++;
-            return CapabilityInvocationResult.Succeeded(new Dictionary<string, object?>(StringComparer.Ordinal)
-            {
-                ["value"] = "ok"
-            });
-        }
-    }
-
-    [PublicCapabilityRoute("arkus.unity-host", "unity.host.touch", "1.0")]
-    public sealed class UnityHostTouchFixtureHandler : ICanonicalCapabilityHandler
-    {
-        public CapabilityInvocationResult Invoke(
-            CapabilityInvocationContext context,
-            IReadOnlyDictionary<string, object?> request)
-        {
-            UnityHostFixtureHandler.InvocationCount++;
-            return CapabilityInvocationResult.Succeeded(new Dictionary<string, object?>(StringComparer.Ordinal)
-            {
-                ["value"] = "ok"
-            });
         }
     }
 }
