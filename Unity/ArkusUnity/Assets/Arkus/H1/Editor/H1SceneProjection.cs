@@ -236,6 +236,7 @@ namespace Arkus.H1.Editor
                 !Equal(Quantize(root.transform.localScale, 1000000), new ProjectionVector { x = 1000000, y = 1000000, z = 1000000 }) ||
                 Quaternion.Angle(root.transform.localRotation, Quaternion.identity) > 0.02f)
                 throw new InvalidDataException("projection.root-transform-drift");
+            ValidateEffectiveMembership(roots[0], generationId);
             var markers = roots[0].GetComponentsInChildren<H1ManagedMarker>(true);
             var seen = new HashSet<string>(StringComparer.Ordinal);
             var nodes = new List<ProjectionObservedNode>();
@@ -268,6 +269,29 @@ namespace Arkus.H1.Editor
                 catalogueFingerprint = catalogueFingerprint,
                 graphDigest = GraphDigest(nodes), nodes = nodes.ToArray()
             };
+        }
+
+        private static void ValidateEffectiveMembership(GameObject root, string generationId)
+        {
+            foreach (var transform in root.GetComponentsInChildren<Transform>(true))
+            {
+                var candidate = transform.gameObject;
+                if (candidate == root) continue;
+                var marker = candidate.GetComponent<H1ManagedMarker>();
+                if (marker != null) continue;
+
+                // Unmarked GameObjects are legitimate only when they are unchanged internals of
+                // a prefab instance whose effective instance root is one of our managed objects.
+                // Added scene objects/overrides must never disappear from normalized observation.
+                if (!PrefabUtility.IsPartOfPrefabInstance(candidate) || PrefabUtility.IsAddedGameObjectOverride(candidate))
+                    throw new InvalidDataException("projection.unmanaged-scene-member");
+                var prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(candidate);
+                var owner = prefabRoot == null ? null : prefabRoot.GetComponent<H1ManagedMarker>();
+                if (owner == null || owner.schemaId != H1ManagedMarker.SchemaId || owner.role != "object" ||
+                    owner.sceneLogicalId != SceneId || owner.generationId != generationId ||
+                    string.IsNullOrEmpty(owner.canonicalObjectId))
+                    throw new InvalidDataException("projection.unmanaged-scene-member");
+            }
         }
 
         private static bool SameGraph(ProjectionPlan plan, ProjectionObservation observation)
