@@ -1,10 +1,14 @@
 # WP-PA-06 — Memory & Consequences research
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_RESEARCH**  
 Depends on: `WP-PA-05` PASS + merge + DocSync  
 Blocks: `WP-PA-07` only
+
+Accepted candidate: `092b3169b627da38ac66dde3f0c0856df4603423`
+Independent review: **PASS**, review `#5299946163`
+Merged: PR `#170`, merge commit `fe0ec7d1b030b49c3ce699878a07798a4fea2cc7` on 2026-09-24
 
 ## Objective
 

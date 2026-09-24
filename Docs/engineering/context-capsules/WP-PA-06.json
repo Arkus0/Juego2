@@ -1,0 +1,74 @@
+{
+  "schema": "arkus.accepted-contract-capsule@1",
+  "authority": "NON_AUTHORITATIVE_NAVIGATION_ONLY",
+  "capsule_id": "WP-PA-06",
+  "track": "PA",
+  "content_mode": "structured_disposition",
+  "accepted_identity": {
+    "reviewed_candidate_sha": "092b3169b627da38ac66dde3f0c0856df4603423",
+    "merge_sha": "fe0ec7d1b030b49c3ce699878a07798a4fea2cc7",
+    "review_id": "5299946163"
+  },
+  "identity_source": {
+    "path": "Docs/workpacks/PA/WP-PA-06.md",
+    "git_blob_sha": "5065e2e2179dd215f3db36b8f4c93448089a11fa"
+  },
+  "authoritative_sources": [
+    {
+      "path": "Docs/research/living-world/results/PA-06.md",
+      "git_blob_sha": "b9fc6016642aeff6fdfcdbde09cdbc3529ef4c03",
+      "kind": "canonical_research_result"
+    }
+  ],
+  "consumer_hints": ["WP-PA-07", "WP-PA-08", "WP-PA-09", "WP-PA-10", "WP-PA-11", "WP-PA-12", "WP-PA-13", "WP-DW-03", "H4", "H7"],
+  "exported_guarantees": [
+    {"id": "selected-actor-accessible-experience", "statement": "A memory candidate must arise from an experience accessible to that actor; privileged world/event history is not sufficient.", "source_pointer": "PA-06 / Selection and access model"},
+    {"id": "bounded-causal-witness", "statement": "Selected memory preserves a bounded causal witness sufficient to explain a later consequence without requiring complete biography replay.", "source_pointer": "PA-06 / Causal continuity"},
+    {"id": "declared-decision-consumer", "statement": "Memory may affect a later decision only through an explicitly declared action-family consumer while the existing actor-owned decision system retains choice authority.", "source_pointer": "PA-06 / Decision consumer and CF-01"},
+    {"id": "routine-experience-boundedness", "statement": "Repeated ordinary experiences are grouped, summarized or forgotten so that routine life does not create one durable record per event.", "source_pointer": "PA-06 / Boundedness and NC-01"},
+    {"id": "current-state-owner-separation", "statement": "Memory may preserve historical reasons but does not own canonical truth, current belief, directed relationship values or ongoing domain obligations.", "source_pointer": "PA-06 / Ownership table"},
+    {"id": "access-invariant-player-offscreen", "statement": "Player-caused and off-screen experiences follow the same actor-access and selection rules as other experiences; hidden lineage alone cannot alter actor output.", "source_pointer": "PA-06 / NC-04 and player/off-screen invariance"},
+    {"id": "causal-continuity-through-compaction", "statement": "When a consequence remains active, compaction or save/load preserves its necessary reason or an owner-controlled equivalent.", "source_pointer": "PA-06 / CF-02"},
+    {"id": "recovery-preserves-causal-history", "statement": "Recovery changes the relevance of experience through causal state changes and does not impose universal amnesia or automatic restoration of the starting town.", "source_pointer": "PA-06 / CF-03 and severe experience/recovery"}
+  ],
+  "exclusions_nonclaims": [
+    {"id": "no-memory-truth-belief-relationship-authority", "statement": "Memory is not a second mutable truth, present-belief, relationship or obligation store and cannot directly overwrite those owners.", "source_pointer": "PA-06 / Ownership table and mechanism dispositions"},
+    {"id": "no-per-event-biography", "statement": "Every world event or information transfer does not become a permanent autobiographical record.", "source_pointer": "PA-06 / Mechanism dispositions"},
+    {"id": "no-hidden-lineage-knowledge", "statement": "Privileged hidden event or rumour lineage is not actor memory unless the actor legitimately experienced or acquired it.", "source_pointer": "PA-06 / NC-04"},
+    {"id": "no-memory-forced-choice", "statement": "The memory system does not force an actor choice or globally search actors and targets; the declared decision owner consumes eligible memory inputs.", "source_pointer": "PA-06 / Ownership table and CF-01"},
+    {"id": "no-runtime-budget-claim", "statement": "The research does not establish exact retention windows, storage schema, compaction algorithm, save footprint, lookup latency or population-scale performance.", "source_pointer": "PA-06 / Deferred proof"}
+  ],
+  "reopen_conditions": [
+    "Concrete accepted evidence shows that the selected actor-accessible witness cannot explain the declared later decision without complete biography replay.",
+    "A later consumer demonstrates that the recommendation duplicates or mutates current truth, belief, relationship or obligation authority.",
+    "A concrete effective path allows hidden lineage or inaccessible events to alter actor memory or output despite actor-visible inputs being fixed."
+  ],
+  "escalate_if": [
+    "A consumer needs exact selection, ranking, causal-witness or scenario nuance beyond the exported guarantees.",
+    "A disposition would be reclassified, especially a REJECT or LATER / empirical row.",
+    "A proposed consumer requires exact retention, decay, compaction, storage, save, lookup or performance values.",
+    "Live accepted identity or canonical PA-06 source bytes contradict this capsule."
+  ],
+  "disposition_source": {
+    "path": "Docs/research/living-world/results/PA-06.md",
+    "git_blob_sha": "b9fc6016642aeff6fdfcdbde09cdbc3529ef4c03",
+    "section": "## 5. Mechanism dispositions",
+    "key_column": 0,
+    "status_column": 1
+  },
+  "dispositions": [
+    {"source_key": "Actor-access-gated experience candidate", "status": "ADOPT"},
+    {"source_key": "Salience by stake, relevance, novelty and future consumer", "status": "ADOPT"},
+    {"source_key": "Bounded actor-safe causal witness", "status": "ADOPT"},
+    {"source_key": "Declared action-family memory consumer", "status": "ADOPT"},
+    {"source_key": "Repeated-experience grouping and summary", "status": "ADOPT"},
+    {"source_key": "Distinct detail loss, relevance decay and state repair", "status": "ADOPT"},
+    {"source_key": "Active-effect reason pin or owner-controlled equivalent", "status": "ADOPT"},
+    {"source_key": "Direct memory writes to current belief/relationship values", "status": "REJECT"},
+    {"source_key": "Every WorldEvent/transfer becomes permanent biography", "status": "REJECT"},
+    {"source_key": "Hidden event or rumour lineage as actor memory", "status": "REJECT"},
+    {"source_key": "Global one-size-fits-all salience, TTL or slot constants", "status": "LATER / empirical"},
+    {"source_key": "Final storage schema, compaction/index algorithm and CPU budget", "status": "LATER / H4-H7"}
+  ],
+  "mandatory_source_reads": []
+}

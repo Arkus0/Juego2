@@ -57,7 +57,7 @@ The accepted PA spine is:
 
 ```text
 PA-01 -> PA-02 -> PA-03 -> PA-04 -> PA-05
-     -> PA-06 -> PA-07 -> PA-08 -> PA-09
+     -> PA-06 ✅ -> PA-07 -> PA-08 -> PA-09
      -> PA-10 -> PA-11 -> PA-12 -> PA-13 -> PA-14
 ```
 
@@ -65,7 +65,7 @@ The PA programme plan is **ACCEPTED** on candidate `95fc0f5935561fd61a20221f993e
 
 `WP-PA-01..05` are `REMOTE_HARVEST`: they are cheap Juego→Juego2 adoption/revalidation gates for already independently reviewed donor research, **not a restart of PA-01..05 research**. That harvest phase is now complete. `WP-PA-06..13` are `REMOTE_RESEARCH`. `WP-PA-14` is deliberately deferred until PA-01..13 have passed **and the future H2 playable-shell phase has reached its accepted closure/gate**; the future H2 plan owns that gate's exact ID/name.
 
-PA research can inform later H2+ design but cannot claim runtime/Unity proof or silently alter H0/H1/CITY contracts. The next executable PA workpack is `WP-PA-06 — Memory & Consequences research`, which remains `NOT_STARTED` until a human explicitly starts its Worker.
+PA research can inform later H2+ design but cannot claim runtime/Unity proof or silently alter H0/H1/CITY contracts. The next executable PA workpack is `WP-PA-07 — Work, Businesses & Material Dependencies research`.
 
 ## Process-efficiency track
 
