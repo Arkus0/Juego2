@@ -66,7 +66,7 @@ def _consume_note() -> str:
 
 
 def _env_for_role(role: str) -> dict[str, str]:
-    env = ORIGINAL_CLEAN_ENV()
+    env = dict(ORIGINAL_CLEAN_ENV())
     if role in {"worker", "repair"}:
         env["ARKUS_REMOTE_ROLE"] = role
         return env
