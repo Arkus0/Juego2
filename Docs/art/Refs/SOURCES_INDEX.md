@@ -15,3 +15,4 @@ Purpose: fill `Docs/art/Refs/` without committing large binaries or non-free gam
 | Props / street life | `06_Props_Streetlife/SOURCES.md` |
 | Style targets (games) | `07_Style_Targets/SOURCES.md` |
 | Anti-refs | `08_Anti_Refs/SOURCES.md` |
+| Alt Liébana register (Bible §13) | `09_Alt_Liebana/SOURCES.md` — curation pending |

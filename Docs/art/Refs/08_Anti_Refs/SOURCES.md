@@ -9,3 +9,5 @@
 | AR-05 | Photoreal PS3/PS5 | Pipeline cost |
 | AR-06 | Palms / tropical | Vegetation veto |
 | AR-07 | Combat anims as village default | Animation §12 |
+| AR-08 | Imported-Orient skin (pagodas, torii, street lanterns, hanzi façades, gi as everyday wear) | Replaces Liébana identity; violates CITY-06 §11 and Bible §13 |
+| AR-09 | Ambient magic VFX (glow, auras, particle mysticism) | Breaks grounded register; Bible §13.4 |

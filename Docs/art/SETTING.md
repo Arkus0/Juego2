@@ -13,7 +13,7 @@ The playable home town is a **fictionalized Potes in Liébana** (Cantabria):
 - **Not** a 1:1 rebuild of real Potes
 - **Not** primarily a coastal Castro-style harbour town
 
-Visual bible v0.1.3+ and `Docs/art/Refs/` follow this anchor.
+Visual bible v0.1.3+ and `Docs/art/Refs/` follow this anchor. v0.2 adds the proposed alt-Liébana register (Bible §13) on top of this anchor without changing it.
 
 ## Future expansion (allowed because fiction)
 
