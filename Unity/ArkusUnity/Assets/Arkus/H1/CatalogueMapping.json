@@ -1,0 +1,2506 @@
+{
+  "schemaId": "arkus.h1-catalogue-mapping@1",
+  "projectIdentity": "arkus.unity-project@1:ArkusUnity",
+  "entries": [
+    {
+      "logicalId": "arkus.h1-04.scene.catalogueproof",
+      "kind": "scene",
+      "nativeGuid": "a2ee92fdc61575046a5298f565fa40f8",
+      "localFileId": "102900000",
+      "typeName": "UnityEditor.SceneAsset",
+      "sourceId": "arkus-harness-proof",
+      "adoptionStatus": "harness-proof",
+      "contentSha256": "735d676195eb5c0a3c4f563f6d5b1d0e6e14d144ec0de7f0d57223974702da2c"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.wall-plaster-window-wide-flat",
+      "kind": "asset",
+      "nativeGuid": "a914dbae2609f0107a8bce353d33727c",
+      "localFileId": "-986719052539725406",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8"
+    },
+    {
+      "logicalId": "quaternius.medieval.material.mi-plaster",
+      "kind": "material",
+      "nativeGuid": "75fb52ef5e0f0ad40a28c36d06ecd99c",
+      "localFileId": "2100000",
+      "typeName": "UnityEngine.Material",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "3fcfc0359d1460009858533461893c626e25ea52364ae4e85f4a6bf84fc3ce69"
+    },
+    {
+      "logicalId": "quaternius.medieval.material.wall-plaster-window-wide-flat-mi-plaster",
+      "kind": "material",
+      "nativeGuid": "963743a1121475e92497a201e301bf48",
+      "localFileId": "2100000",
+      "typeName": "UnityEngine.Material",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "source-derived",
+      "contentSha256": "e585297c2271fc83378e2eebe7f72ff9f8b66c2fc1b8a1eeb1c7abdfac5d2e29"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.wall-plaster-window-wide-flat",
+      "kind": "prefab",
+      "nativeGuid": "a914dbae2609f0107a8bce353d33727c",
+      "localFileId": "-927199367670048503",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-a-tpose",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "4996995007976980875",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-backflip",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "5119502020559517934",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-celebration",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "8358850935289043802",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-climb-down-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "2676984727341982789",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-climb-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-7760359080451054123",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-climb-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "5119089375067427328",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-climb-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "1442269360403125084",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-climb-left-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "6622226979305741504",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-climb-right-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "5530952548391809541",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-climb-up-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-2828013064107677548",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-climbledge",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-7833374897513126579",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-counter-angry",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "6332598559255570875",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-counter-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-876425364968913437",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-counter-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-7425468140943233605",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-counter-give",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "7491515920343264727",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-counter-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-3780874684900474237",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-counter-show",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-4046342374594937096",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crawl-bwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-1561723667896195828",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crawl-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "6872392944136771892",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crawl-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-8118615267600753998",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crawl-fwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-828001398184434098",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crawl-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "9219662467752540631",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crawl-left-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-887615021355293542",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crawl-right-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "186963925824351887",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-bwd-l-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-5752380478566616309",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-bwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "406034898044457711",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-bwd-r-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "9036951555999059274",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-4520702816347423135",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-7071571578307557906",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-fwd-l-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-8519216349216648414",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-fwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "4366774653929184976",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-fwd-r-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-3682208222642672957",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-7993625790543202706",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-left-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-5235980494986678550",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crouch-right-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-4728629457746597957",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-crying",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-3081254936771829754",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-dance-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "8800687838965813479",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-death01",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "3532616527226485280",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-death02",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-5936829284080135236",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-dodge-left",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "2118831675672053977",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-dodge-right",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-6578454476213118355",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-drink",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "216058766228840708",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-driving-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-6540212038565268958",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-fixing-kneeling",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "3659977189094709723",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-groundsit-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "8818961225533755180",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-groundsit-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-3387576903590151723",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-groundsit-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "1481285086630330587",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-hit-chest",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-245273357908900549",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-hit-head",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-8534173349268677819",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-hit-shoulder-l",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-2094863006182820546",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-hit-shoulder-r",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "784354149011167044",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-hit-stomach",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "1602580721735414331",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-idle-lookaround-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "7372552092560676592",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "7994627924475153551",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-idle-paper",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-1282471956924446163",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-idle-rock",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-718854632863613509",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-idle-scissors",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-9130161344255547794",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-idle-talking-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "6476497563760123848",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-idle-tired-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-8852158623778546228",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-idle-torch-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-7342238307180667810",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-interact",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-2328835098782832033",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-bwd-l-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "7232225679522964842",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-bwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-2282825991228640143",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-bwd-r-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-6934390853412931435",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-fwd-l-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "950569696911306980",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-fwd-leanl-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "653928579652092377",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-fwd-leanr-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "888758326750808651",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-fwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-8815886378510225334",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-fwd-r-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-414281033150956306",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-left-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-935233041909147455",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jog-right-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-8552390077327790317",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jump-land",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "4832780573735333345",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jump-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-3659967873887649963",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-jump-start",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-1862932125039169580",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-kick",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "5153960822238793380",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-pickup-kneeling",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-2579874000212319417",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-pickup-table",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "2857599376137209812",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-pistol-aim-down",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-5068084590534580200",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-pistol-aim-neutral",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-718454725414175808",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-pistol-aim-up",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-3042448386402017758",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-pistol-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-4708846537797790282",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-pistol-reload",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-4628965742493065687",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-pistol-shoot",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "2564068224262579217",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-punch-cross",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "1705686167135224321",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-punch-jab",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-7321412271681594418",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-punchkick-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "7876840842014726941",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-punchkick-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "364198992593912362",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-push-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-7370342500073067270",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-push-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "7385432009288409601",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-push-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "2931362099718132477",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-roll",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "3031411921458128146",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sitting-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "7860179187555574969",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sitting-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "497093190674883199",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sitting-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-6676812269523803463",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sitting-idle02-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "1933365941894633954",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sitting-idle03-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "7846788728051274861",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sitting-nodding-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "905446865234328438",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sitting-talking-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "4525242936183261023",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-spell-double-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-318339737363746647",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-spell-double-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "4277456818240358970",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-spell-double-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "99663824024054718",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-spell-double-shoot-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-4347273159659676942",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-spell-simple-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-5346644375087571879",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-spell-simple-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-4636811812070406142",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-spell-simple-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "3732886095724451988",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-spell-simple-shoot",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-5255406209399062677",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sprint-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-8264055744623247483",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sprint-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "5820064766666075180",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sprint-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-4950333804767787469",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-swim-fwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "5539243244057379418",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-swim-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "1532177651469301551",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sword-attack",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-2807887025256620907",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sword-attack-standing",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-3331068770606205437",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sword-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "4637788152132584459",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sword-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "1991665600729470974",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-sword-idle",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "8324860437086164814",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-turn90-l",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "643689632218582793",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-turn90-r",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-2171991226874025293",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-walk-formal-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "6426452042675443912",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.armature-walk-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-7003542030617561338",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-a-tpose",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800000",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-backflip",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800002",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-celebration",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800004",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-climb-down-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800006",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-climb-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800008",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-climb-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800010",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-climb-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800012",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-climb-left-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800014",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-climb-right-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800016",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-climb-up-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800018",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-climbledge",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800020",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-counter-angry",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800022",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-counter-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800024",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-counter-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800026",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-counter-give",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800028",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-counter-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800030",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-counter-show",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800032",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crawl-bwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800034",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crawl-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800036",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crawl-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800038",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crawl-fwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800040",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crawl-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800042",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crawl-left-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800044",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crawl-right-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800046",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-bwd-l-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800048",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-bwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800050",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-bwd-r-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800052",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800054",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800056",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-fwd-l-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800058",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-fwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800060",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-fwd-r-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800062",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800064",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-left-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800066",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crouch-right-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800068",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-crying",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800070",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-dance-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800072",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-death01",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800074",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-death02",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800076",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-dodge-left",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800078",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-dodge-right",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800080",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-drink",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800082",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-driving-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800084",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-fixing-kneeling",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800086",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-groundsit-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800088",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-groundsit-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800090",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-groundsit-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800092",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-hit-chest",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800094",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-hit-head",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800096",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-hit-shoulder-l",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800098",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-hit-shoulder-r",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800100",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-hit-stomach",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800102",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-idle-lookaround-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800104",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800106",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-idle-paper",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800108",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-idle-rock",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800110",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-idle-scissors",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800112",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-idle-talking-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800114",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-idle-tired-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800116",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-idle-torch-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800118",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-interact",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800120",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-bwd-l-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800122",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-bwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800124",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-bwd-r-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800126",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-fwd-l-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800128",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-fwd-leanl-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800130",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-fwd-leanr-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800132",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-fwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800134",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-fwd-r-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800136",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-left-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800138",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jog-right-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800140",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jump-land",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800142",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jump-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800144",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-jump-start",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800146",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-kick",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800148",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-pickup-kneeling",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800150",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-pickup-table",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800152",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-pistol-aim-down",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800154",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-pistol-aim-neutral",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800156",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-pistol-aim-up",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800158",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-pistol-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800160",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-pistol-reload",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800162",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-pistol-shoot",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800164",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-punch-cross",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800166",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-punch-jab",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800168",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-punchkick-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800170",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-punchkick-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800172",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-push-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800174",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-push-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800176",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-push-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800178",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-roll",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800180",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sitting-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800182",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sitting-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800184",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sitting-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800190",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sitting-idle02-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800186",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sitting-idle03-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800188",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sitting-nodding-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800192",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sitting-talking-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800194",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-spell-double-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800196",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-spell-double-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800198",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-spell-double-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800200",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-spell-double-shoot-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800202",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-spell-simple-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800204",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-spell-simple-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800206",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-spell-simple-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800208",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-spell-simple-shoot",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800210",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sprint-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800212",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sprint-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800214",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sprint-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800216",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-swim-fwd-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800218",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-swim-idle-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800220",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sword-attack",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800222",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sword-attack-standing",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800224",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sword-enter",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800226",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sword-exit",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800228",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-sword-idle",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800230",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-turn90-l",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800232",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-turn90-r",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800234",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-walk-formal-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800236",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.animation-clip.preview-armature-walk-loop",
+      "kind": "animation-clip",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "110800238",
+      "typeName": "UnityEngine.AnimationClip",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.asset.mannequin",
+      "kind": "asset",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "2675634661614555112",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "quaternius.ual1.prefab.ual1",
+      "kind": "prefab",
+      "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "localFileId": "-927199367670048503",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    },
+    {
+      "logicalId": "unity.component-schema.animator",
+      "kind": "component-schema",
+      "nativeGuid": "",
+      "localFileId": "0",
+      "typeName": "UnityEngine.Animator",
+      "sourceId": "unity-builtin",
+      "adoptionStatus": "builtin",
+      "contentSha256": ""
+    },
+    {
+      "logicalId": "unity.component-schema.meshrenderer",
+      "kind": "component-schema",
+      "nativeGuid": "",
+      "localFileId": "0",
+      "typeName": "UnityEngine.MeshRenderer",
+      "sourceId": "unity-builtin",
+      "adoptionStatus": "builtin",
+      "contentSha256": ""
+    },
+    {
+      "logicalId": "unity.component-schema.transform",
+      "kind": "component-schema",
+      "nativeGuid": "",
+      "localFileId": "0",
+      "typeName": "UnityEngine.Transform",
+      "sourceId": "unity-builtin",
+      "adoptionStatus": "builtin",
+      "contentSha256": ""
+    }
+  ]
+}

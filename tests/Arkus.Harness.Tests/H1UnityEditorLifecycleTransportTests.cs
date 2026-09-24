@@ -15,6 +15,20 @@ namespace Arkus.Harness.Tests
         private const string CanonicalKeyMetaKey = "dev.arkus/canonicalKey";
 
         [Fact]
+        public void H1_04_catalogue_public_inventory_is_visible_in_jsonl_and_mcp()
+        {
+            using var reference = new ReferenceClient();
+            using var mcp = new McpClient();
+            var discovery = Equivalent(reference, mcp, "system.describe", Empty());
+            var capabilities = Result(discovery.Reference).GetProperty("capabilities").EnumerateArray().ToArray();
+            foreach (var name in new[] { "unity.host.catalogue.query", "unity.host.catalogue.get", "unity.host.catalogue.resolve" })
+            {
+                Assert.Single(capabilities.Where(value => value.GetProperty("name").GetString() == name));
+                Assert.True(mcp.ContainsCanonicalKey(name + "@1.0"));
+            }
+        }
+
+        [Fact]
         public void H1_reference_and_mcp_share_lifecycle_discovery_and_normalized_status_outcome()
         {
             using var reference = new ReferenceClient();

@@ -413,7 +413,10 @@ namespace Arkus.H1.UnityHost
                 new IH1UnityCapabilityExecutor[]
                 {
                     new ProjectProfileInspectExecutor(),
-                    new HierarchyProbeExecutor()
+                    new HierarchyProbeExecutor(),
+                    new H1CatalogueExecutor(H1CatalogueExecutor.QueryKey, H1CatalogueExecutor.QueryExecutorId, Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath)),
+                    new H1CatalogueExecutor(H1CatalogueExecutor.GetKey, H1CatalogueExecutor.GetExecutorId, Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath)),
+                    new H1CatalogueExecutor(H1CatalogueExecutor.ResolveKey, H1CatalogueExecutor.ResolveExecutorId, Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath))
                 });
 
             var composition = ContractComposer.Compose(
@@ -421,7 +424,7 @@ namespace Arkus.H1.UnityHost
                 new[]
                 {
                     UnityAuthoringProvider.CreateContribution(),
-                    H1UnityLifecycleContract.CreateEditorHostContribution(coordinator),
+                    H1UnityLifecycleContract.CreateEditorHostContribution(coordinator, includeCatalogue: true),
                     H1UnityLifecycleContract.CreateLifecycleStatusContribution(ledger)
                 });
             if (!composition.Success || composition.Contract == null)
@@ -433,7 +436,7 @@ namespace Arkus.H1.UnityHost
             var projection = H1UnityHostCapabilityPolicy.CreateProjection(
                 composition.Contract,
                 UnityProjectWorkspaceAuthority.ForArkusUnityProject(),
-                H1UnityLifecycleContract.CreateGrants());
+                H1UnityLifecycleContract.CreateGrants(includeCatalogue: true));
             coordinator.Bind(projection);
             return projection;
         }

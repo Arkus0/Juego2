@@ -18,6 +18,9 @@ namespace Arkus.H1.Editor
         private const string EntryPoint = "Arkus.H1.Editor.H1EditorWorker.Run";
         private const string ProjectProfileExecutor = "arkus.h1.worker.project-profile.inspect@1";
         private const string HierarchyExecutor = "arkus.h1.worker.hierarchy-probe.inspect@1";
+        private const string CatalogueQueryExecutor = "arkus.h1.worker.catalogue.query@1";
+        private const string CatalogueGetExecutor = "arkus.h1.worker.catalogue.get@1";
+        private const string CatalogueResolveExecutor = "arkus.h1.worker.catalogue.resolve@1";
         private const string HierarchyPayload = "hierarchy-probe:v1|root=diagnostic-root|child=diagnostic-child|component=Transform|active=true";
 
         public static void Run()
@@ -47,6 +50,19 @@ namespace Arkus.H1.Editor
                     if (!string.Equals(payload, HierarchyPayload, StringComparison.Ordinal))
                         throw new InvalidDataException("Hierarchy worker payload mismatch.");
                     resultPayload = ExerciseHierarchyProbe();
+                }
+                else if (string.Equals(executor, CatalogueQueryExecutor, StringComparison.Ordinal) ||
+                         string.Equals(executor, CatalogueGetExecutor, StringComparison.Ordinal) ||
+                         string.Equals(executor, CatalogueResolveExecutor, StringComparison.Ordinal))
+                {
+                    // The external Arkus host owns public request semantics and mapping. The
+                    // Editor worker only observes the independently bounded effective universe.
+                    resultPayload = JsonUtility.ToJson(new CatalogueWorkerResponse
+                    {
+                        schemaId = "arkus.h1-catalogue-worker-observation@1",
+                        requestJson = payload,
+                        inventory = H1CatalogueInventory.Capture()
+                    });
                 }
                 else
                 {
@@ -183,6 +199,14 @@ namespace Arkus.H1.Editor
                 if (!(char.IsLetterOrDigit(c) || c == '-')) return false;
             }
             return true;
+        }
+
+        [Serializable]
+        private sealed class CatalogueWorkerResponse
+        {
+            public string schemaId;
+            public string requestJson;
+            public EffectiveInventory inventory;
         }
     }
 }
