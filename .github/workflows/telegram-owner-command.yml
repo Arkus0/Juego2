@@ -1,0 +1,66 @@
+name: Telegram owner command
+
+on:
+  repository_dispatch:
+    types: [arkus_owner_continue_local]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: telegram-owner-command-${{ github.event.client_payload.pr }}-${{ github.event.client_payload.target_sha }}-${{ github.event.client_payload.fail_count }}
+  cancel-in-progress: false
+
+jobs:
+  record-owner-continue:
+    if: github.repository == 'Arkus0/Juego2'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Revalidate and record exact owner authorization
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.client_payload.pr }}
+          TARGET_SHA: ${{ github.event.client_payload.target_sha }}
+          FAIL_COUNT: ${{ github.event.client_payload.fail_count }}
+          TELEGRAM_UPDATE_ID: ${{ github.event.client_payload.telegram_update_id }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          import os
+          import sys
+          from pathlib import Path
+
+          path = Path('scripts/telegram_continue_receiver.py')
+          spec = importlib.util.spec_from_file_location('arkus_tg_receiver_command', path)
+          if spec is None or spec.loader is None:
+              raise SystemExit('receiver module unavailable')
+          receiver = importlib.util.module_from_spec(spec)
+          sys.modules[spec.name] = receiver
+          spec.loader.exec_module(receiver)
+          receiver.fresh_offer = lambda created_at, now=None: True
+
+          pr = int(os.environ['PR'])
+          sha = os.environ['TARGET_SHA'].strip().lower()
+          fail_count = int(os.environ['FAIL_COUNT'])
+          status = receiver.validate_current(pr, sha, fail_count)
+          if status == 'already':
+              print('OWNER_CONTINUE already durable')
+              raise SystemExit(0)
+
+          update_id = os.environ.get('TELEGRAM_UPDATE_ID', '').strip()[:120]
+          body = (
+              'ARKUS_LOCAL_AUTOPILOT\n'
+              'State: OWNER_CONTINUE\n'
+              f'Target SHA: {sha}\n'
+              f'Fail count: {fail_count}\n'
+              f'Telegram update ID: {update_id}\n'
+              'Detail: owner private-chat button authorized unattended repairs up to but not beyond the fourth FAIL; '
+              'local-console transport has no application TTL; no PASS or proof claim.\n'
+          )
+          receiver.github(f'repos/{receiver.REPO}/issues/{pr}/comments', body=body)
+          PY
