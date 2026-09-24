@@ -191,6 +191,12 @@
           "Arkus.Harness.Runtime": "[1.0.0, )"
         }
       },
+      "arkus.harness.h1leasecrashfixture": {
+        "type": "Project",
+        "dependencies": {
+          "Arkus.H1.UnityHost": "[1.0.0, )"
+        }
+      },
       "arkus.harness.mutationattackfixture": {
         "type": "Project",
         "dependencies": {
