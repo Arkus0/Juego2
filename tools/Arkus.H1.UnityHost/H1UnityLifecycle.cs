@@ -483,28 +483,32 @@ namespace Arkus.H1.UnityHost
 
     public static class H1UnityLifecycleContract
     {
-        public static CanonicalProviderContribution CreateEditorHostContribution(H1UnityEditorExecutionCoordinator coordinator, bool includeCatalogue = false)
+        public static CanonicalProviderContribution CreateEditorHostContribution(H1UnityEditorExecutionCoordinator coordinator, bool includeCatalogue = false, bool includeProjection = false)
         {
             if (coordinator == null) throw new ArgumentNullException(nameof(coordinator));
             var profile = Definition(ProjectProfileInspectExecutor.Key, ProjectProfileSuccessSchema(), "project/profile inspection");
             var hierarchy = Definition(HierarchyProbeExecutor.Key, HierarchyProbeSuccessSchema(), "hierarchy-shaped diagnostic probe");
             return new CanonicalProviderContribution(
                 new ProviderDescriptor(H1UnityHostCapabilityPolicy.HostProviderId, ProviderKind.Scoped, H1UnityHostCapabilityPolicy.HostScope, new[] { H1UnityHostCapabilityPolicy.HostNamespace }),
-                new[] { profile, hierarchy }.Concat(includeCatalogue ? H1CatalogueContract.Definitions() : Array.Empty<CapabilityDefinition>()).ToArray(),
+                new[] { profile, hierarchy }
+                    .Concat(includeCatalogue ? H1CatalogueContract.Definitions() : Array.Empty<CapabilityDefinition>())
+                    .Concat(includeProjection ? H1ProjectionContract.EditorDefinitions() : Array.Empty<CapabilityDefinition>()).ToArray(),
                 new[]
                 {
                     CapabilityRoute.FromHandler(new ProjectProfileInspectHandler(coordinator)),
                     CapabilityRoute.FromHandler(new HierarchyProbeHandler(coordinator))
-                }.Concat(includeCatalogue ? H1CatalogueContract.Routes(coordinator) : Array.Empty<CapabilityRoute>()).ToArray());
+                }.Concat(includeCatalogue ? H1CatalogueContract.Routes(coordinator) : Array.Empty<CapabilityRoute>())
+                 .Concat(includeProjection ? H1ProjectionContract.EditorRoutes(coordinator) : Array.Empty<CapabilityRoute>()).ToArray());
         }
 
-        public static IReadOnlyList<UnityHostCapabilityGrant> CreateGrants(bool includeCatalogue = false)
+        public static IReadOnlyList<UnityHostCapabilityGrant> CreateGrants(bool includeCatalogue = false, bool includeProjection = false)
         {
             return new List<UnityHostCapabilityGrant>
             {
                 Grant(ProjectProfileInspectExecutor.Key),
                 Grant(HierarchyProbeExecutor.Key)
-            }.Concat(includeCatalogue ? H1CatalogueContract.Grants() : Array.Empty<UnityHostCapabilityGrant>()).ToList().AsReadOnly();
+            }.Concat(includeCatalogue ? H1CatalogueContract.Grants() : Array.Empty<UnityHostCapabilityGrant>())
+             .Concat(includeProjection ? H1ProjectionContract.Grants() : Array.Empty<UnityHostCapabilityGrant>()).ToList().AsReadOnly();
         }
 
         public static CanonicalProviderContribution CreateLifecycleStatusContribution(IH1UnityInvocationLedger ledger)

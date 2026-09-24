@@ -1,10 +1,8 @@
 {
-  "name": "Arkus.H1.Baseline.Editor",
-  "rootNamespace": "Arkus.H1.Editor",
-  "references": ["Arkus.H1.Projection.Runtime"],
-  "includePlatforms": [
-    "Editor"
-  ],
+  "name": "Arkus.H1.Projection.Runtime",
+  "rootNamespace": "Arkus.H1.Projection",
+  "references": [],
+  "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": false,

@@ -1,0 +1,20 @@
+{
+  "canonicalHashAndJournalUnchangedByProjection": true,
+  "deletedNodeCount": 3,
+  "deletedOutputRecreatedSameGraph": true,
+  "failedStagePreservedPriorGeneration": true,
+  "finalCatalogueFingerprint": "014d510bd8e9fe0d2754fed0075b3a81787e57a1717baed29e7e03f54295bd21",
+  "finalGraphDigest": "d03433b21f205664864018ca157410c4e2277563e76518b815cc07700eb6f068",
+  "finalInputDigest": "82ee59005d3fe7362fc44f41fb9509869730d48e79892204f7b150fcd4dd408d",
+  "initialGraphDigest": "df9889057dec9096232a73dbd19bbb66783799e731a730080044b9b81df71c69",
+  "potesNodeCount": 4,
+  "referenceAndMcpEqual": true,
+  "result": "GREEN",
+  "routes": [
+    "unity.projection.plan",
+    "unity.host.projection.materialize",
+    "unity.host.projection.observe"
+  ],
+  "sameInputGenerationStable": true,
+  "schemaId": "arkus.h1-05-public-conformance@1"
+}

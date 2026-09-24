@@ -1,0 +1,73 @@
+param([Parameter(Mandatory=$true)][string]$AssetsRoot, [string]$ExpectedSha = '')
+
+$ErrorActionPreference = 'Stop'
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+Set-Location -LiteralPath $repoRoot
+$actualSha = (git rev-parse HEAD).Trim()
+if ($actualSha -notmatch '^[0-9a-f]{40}$') { throw 'Invalid candidate SHA' }
+if ($ExpectedSha -and $ExpectedSha -ne $actualSha) { throw "Candidate SHA mismatch: $ExpectedSha != $actualSha" }
+if (git status --porcelain --untracked-files=all) { throw 'H1-05 candidate is not clean before local evidence' }
+
+$sdk = (Get-Content global.json -Raw | ConvertFrom-Json).sdk.version
+$selectedSdk = (dotnet --version).Trim()
+if ($sdk -ne $selectedSdk) { throw "Pinned .NET SDK mismatch: $selectedSdk != $sdk" }
+
+$unity = 'C:\Program Files\Unity\Hub\Editor\6000.3.24f1\Editor\Unity.exe'
+if (-not (Test-Path -LiteralPath $unity -PathType Leaf)) { throw "Pinned Unity Editor missing: $unity" }
+$version = (Get-Item -LiteralPath $unity).VersionInfo.ProductVersion
+if ($version -notlike '*6000.3.24f1_4e7b9b5b6244*') { throw "Pinned Unity revision mismatch: $version" }
+
+# Load the PowerShell 5 assembly before invoking the accepted H1-04 importer. The
+# importer verifies owner Source pins and copies only the approved project-local slice.
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+& (Join-Path $PSScriptRoot 'h1-04-import-source.ps1') -AssetsRoot $AssetsRoot
+if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw 'Approved Source import failed' }
+
+$project = Join-Path $repoRoot 'Unity/ArkusUnity'
+$scratch = Join-Path $project 'Library/Arkus/H1Projection'
+New-Item -ItemType Directory -Force -Path $scratch | Out-Null
+
+function Run-Unity([string]$method, [string]$logPath, [string]$outputPath = '') {
+    $arguments = @('-batchmode','-nographics','-quit','-projectPath',$project,'-executeMethod',$method)
+    if ($outputPath) { $arguments += @('-arkus-h1-output',$outputPath) }
+    $arguments += @('-logFile',$logPath)
+    $process = Start-Process -FilePath $unity -ArgumentList $arguments -PassThru -Wait -WindowStyle Hidden
+    if ($process.ExitCode -ne 0) {
+        Get-Content -LiteralPath $logPath -Tail 60 | Write-Output
+        throw "Unity execution failed: $method (exit $($process.ExitCode))"
+    }
+}
+
+Run-Unity 'Arkus.H1.Editor.H1CatalogueInventory.CreateProofScene' (Join-Path $scratch 'prepare-catalogue.log')
+$inventory = Join-Path $scratch 'inventory.json'
+Run-Unity 'Arkus.H1.Editor.H1CatalogueInventory.WriteInventory' (Join-Path $scratch 'inventory.log') $inventory
+
+dotnet restore Juego2.sln --locked-mode --verbosity quiet
+if ($LASTEXITCODE -ne 0) { throw 'Locked restore failed' }
+dotnet build Juego2.sln -c Release --no-restore -m:1 --disable-build-servers --verbosity quiet
+if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
+dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj -c Release --no-build --no-restore --filter 'FullyQualifiedName~H1ManagedScenePlanTests' --verbosity quiet
+if ($LASTEXITCODE -ne 0) { throw 'Focused managed-scene plan tests failed' }
+
+$public = Join-Path $scratch 'public-conformance.json'
+python scripts/h1-05-public-conformance.py --output $public
+if ($LASTEXITCODE -ne 0) { throw 'Real JSONL/MCP Unity scene conformance failed' }
+python scripts/h1-05-evidence-check.py --inventory $inventory --public $public --committed-public Docs/evidence/WP-H1-05/PUBLIC_CONFORMANCE.json
+if ($LASTEXITCODE -ne 0) { throw 'Effective H1-05 output differs from accepted catalogue or committed evidence' }
+& (Join-Path $PSScriptRoot 'h1-04-import-source.ps1') -AssetsRoot $AssetsRoot -VerifyOnly
+if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw 'External Source changed during H1-05 evidence' }
+if (git status --porcelain --untracked-files=all) { throw 'H1-05 candidate changed during local evidence' }
+
+Write-Output 'EXECUTION_RECEIPT_V1'
+Write-Output 'WP: WP-H1-05'
+Write-Output "Candidate SHA: $actualSha"
+Write-Output 'Executor role: WORKER'
+Write-Output 'Execution environment: owner workstation, physical local Unity'
+Write-Output 'OS: windows-x64'
+Write-Output "Toolchain: Unity 6000.3.24f1 (4e7b9b5b6244); .NET $selectedSdk"
+Write-Output "Canonical command: scripts/h1-05-local-evidence.ps1 -AssetsRoot <owner-configured> -ExpectedSha $actualSha"
+Write-Output 'Candidate clean before: YES'
+Write-Output 'Candidate clean after: YES'
+Write-Output 'Required gates: approved-Source=GREEN; pinned-Editor=GREEN; effective-catalogue=GREEN; locked-build=GREEN; focused-plan-tests=GREEN; effective-scene-public-conformance=GREEN; negative-controls=GREEN; committed-evidence-equality=GREEN'
+Write-Output 'Result: GREEN'
+Write-Output 'Evidence: Docs/evidence/WP-H1-05/PUBLIC_CONFORMANCE.json; Docs/evidence/WP-H1-05/PROOF_MATRIX.md'
