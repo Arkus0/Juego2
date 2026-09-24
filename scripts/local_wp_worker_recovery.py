@@ -23,8 +23,8 @@ CHECKPOINT_GUIDANCE = """
 DURABLE WORKER CHECKPOINT CONTRACT (liveness only; never PASS evidence):
 - After the bounded dependency/authority bootstrap, establish the canonical draft PR and push its branch BEFORE expensive implementation, Unity/test execution, or broad source inspection. Do not wait until the workpack is nearly complete to create the PR.
 - Once that canonical PR exists, keep using that exact PR/branch. Never create a replacement PR merely because a Worker session or quota window ends.
-- Commit and push after every coherent material block (for example adoption/provenance, implementation/API, mapping/discovery, tests, effective proof/evidence) and before any long-running/expensive operation. A WIP checkpoint may be incomplete and makes no acceptance claim.
-- Before invoking an owner-decision wait, first commit and push every coherent repository change that is already understood. Do not leave a large completed block only in the working tree while waiting for Telegram.
+- Commit locally after every coherent material block (for example adoption/provenance, implementation/API, mapping/discovery, tests, effective proof/evidence). Local WIP commits may be ahead of the PR head and make no acceptance claim.
+- Push at bounded durable milestones, and always before an owner-decision wait, before a long-running/expensive operation, and before handoff. Do not push every tiny checkpoint merely to trigger CI; the goal is durable recovery without recreating the old Actions churn.
 - Do not manufacture tiny/noise commits just to satisfy cadence. The goal is bounded loss: a killed Codex session may lose at most the current small in-progress block, not the previous material blocks.
 - Never reset, clean, discard, overwrite, or silently replace pre-existing recovery bytes. Reconcile them explicitly and preserve provenance.
 """.strip()
@@ -87,7 +87,7 @@ def recovery_prompt(wp: str, pr: dict[str, Any], checkout: RecoveryCheckout) -> 
         f"({checkout.ahead_commits} local commit(s) ahead). The checkout may intentionally "
         "contain dirty/untracked bytes from the interrupted session. Inspect and reconcile "
         "those bytes before editing; do not reset/clean/discard them. Preserve valid prior "
-        "work, promptly commit+push each coherent recovered/material block to the SAME PR, "
+        "work, promptly commit each coherent recovered/material block and push bounded durable milestones to the SAME PR, "
         "then continue the authoritative workpack. Finish through the normal REVIEW_READY "
         "handoff, or emit the protocol-required BLOCKED/HUMAN_ACTION_REQUIRED state. Do not "
         "review the PR and do not start another WP.\n\n" + CHECKPOINT_GUIDANCE
