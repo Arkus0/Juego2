@@ -54,6 +54,7 @@ namespace Arkus.H1.Editor
                 }
 
                 WriteResult(resultPath, fields, resultPayload);
+                EditorApplication.Exit(0);
             }
             catch (Exception exception)
             {
