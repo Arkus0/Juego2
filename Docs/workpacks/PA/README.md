@@ -16,7 +16,7 @@ Programme plan accepted on candidate `95fc0f5935561fd61a20221f993e2532ce513795`,
 
 `WP-PA-05` is **COMPLETE**. Candidate `99890f1af10691ef7e38f8722830dd0f66529665` passed independent review `#5281462911` in PR `#132` and merged as `31f8258cf2873e9080d9dacad2cfe956f0e2fa2e`.
 
-`WP-PA-06` is **COMPLETE**. Candidate `092b3169b627da38ac66dde3f0c0856df4603423` passed independent review `#5299946163` in PR `#170` and merged as `fe0ec7d1b030b49c3ce699878a07798a4fea2cc7`. The next executable PA workpack is `WP-PA-07`.
+`WP-PA-06` is **COMPLETE**. Candidate `9ce17952e257587c0dcec5dc4b854170365545ca` passed independent review `#5300025658` in PR `#172` and merged as `fdfec568844bc0d006959c3cd207795544eca33d`. The next executable PA workpack is `WP-PA-07`.
 
 ## Purpose
 
@@ -213,4 +213,4 @@ This avoids making the user reconstruct the canonical sequence from memory and g
 
 `WP-PA-07 — Work, Businesses & Material Dependencies research`.
 
-PA-01 through PA-05 are accepted in Juego2. The cheap donor harvest/revalidation phase is complete; PA-06 is the first genuinely new research workpack and remains `NOT_STARTED` until a human explicitly starts its Worker.
+PA-01 through PA-06 are accepted in Juego2. The cheap donor harvest/revalidation phase is complete; PA-06 is the first genuinely new research workpack and is now complete. PA-07 is the next executable remote research workpack.
