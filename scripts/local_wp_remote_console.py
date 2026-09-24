@@ -38,7 +38,7 @@ def autopilot_command(root: Path, assets_root: Path, wp: str, mode: str = "run")
         raise _core.ConsoleError(f"Modo de campaña inválido: {mode}")
     command = [
         sys.executable,
-        str(root / "scripts" / "local_wp_autopilot_process.py"),
+        str(Path(__file__).resolve().parent / "local_wp_autopilot_process.py"),
         "--root", str(root),
         "--assets-root", str(assets_root),
         "--wp", _core.normalize_wp(wp),
