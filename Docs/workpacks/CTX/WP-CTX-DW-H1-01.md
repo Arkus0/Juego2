@@ -1,10 +1,14 @@
 # WP-CTX-DW-H1-01 — H1 projection bootstrap + lifecycle
 
-Status: **PLANNED / DORMANT UNTIL PREREQUISITES**  
+Status: **COMPLETE / ACCEPTED**  
 Class: **NON-PRODUCT-FOUNDATIONAL / CROSS-TRACK PROJECTION**  
 Execution: **REMOTE_OK**  
 Depends on: accepted `WP-CTX-DW-GATE` + accepted `WP-H1-04`  
 Blocks: no H1 product workpack; enables an H1 projection to be classified `USE` when current
+
+Acceptance: exact candidate `19acc539f93b3df98bb61c55413c92c14b98318f`; independent PASS review `#5307254115`; PR `#190`; implementation merge `82522cc8fce19121f166fb5a65632eae4074c0b3`.
+
+Post-PASS reconciliation: `Docs/evidence/WP-CTX-DW-H1-01/DOCSYNC.md`.
 
 ## Objective
 
