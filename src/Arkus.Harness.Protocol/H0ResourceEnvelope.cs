@@ -85,13 +85,38 @@ namespace Arkus.Harness.Protocol
             }), false, repairHint);
         }
 
-        public static StructuredError ExecutionExceeded(string boundary) => ExecutionExceeded(boundary, H0ResourceEnvelope.SchemaId, H0ResourceEnvelope.MaximumExecutionMilliseconds, true);
+        public static StructuredError ExecutionExceeded(string boundary)
+        {
+            return Exceeded(
+                "resource.execution_budget_exceeded",
+                "The operation exhausted the H0 execution budget before authoritative publication.",
+                "$",
+                "executionMilliseconds",
+                H0ResourceEnvelope.MaximumExecutionMilliseconds,
+                H0ResourceEnvelope.MaximumExecutionMilliseconds + 1L,
+                "Reduce the bounded request shape and retry; no canonical publication occurred at " + boundary + ".");
+        }
 
-        internal static StructuredError ExecutionExceeded(string boundary, string resourceEnvelope, int maximumExecutionMilliseconds, bool h0Canonical)
+        public static StructuredError ExecutionCancelled(string boundary)
+        {
+            return new StructuredError(
+                "resource.execution_cancelled",
+                "The operation was cancelled before authoritative publication.",
+                "$",
+                new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["resourceEnvelope"] = H0ResourceEnvelope.SchemaId,
+                    ["boundary"] = boundary
+                }),
+                true,
+                "Retry with a live request scope; no canonical publication occurred at " + boundary + ".");
+        }
+
+        internal static StructuredError BoundedExecutionExceeded(string boundary, string resourceEnvelope, int maximumExecutionMilliseconds)
         {
             return new StructuredError(
                 "resource.execution_budget_exceeded",
-                h0Canonical ? "The operation exhausted the H0 execution budget before authoritative publication." : "The operation exhausted its fixed execution budget before a trustworthy lifecycle result was accepted.",
+                "The operation exhausted its fixed execution budget before a trustworthy lifecycle result was accepted.",
                 "$",
                 new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
@@ -102,16 +127,14 @@ namespace Arkus.Harness.Protocol
                     ["boundary"] = boundary
                 }),
                 false,
-                h0Canonical ? "Reduce the bounded request shape and retry; no canonical publication occurred at " + boundary + "." : "Reduce the bounded Editor operation or retry after checking lifecycle status.");
+                "Reduce the bounded Editor operation or retry after checking lifecycle status.");
         }
 
-        public static StructuredError ExecutionCancelled(string boundary) => ExecutionCancelled(boundary, H0ResourceEnvelope.SchemaId, true);
-
-        internal static StructuredError ExecutionCancelled(string boundary, string resourceEnvelope, bool h0Canonical)
+        internal static StructuredError BoundedExecutionCancelled(string boundary, string resourceEnvelope)
         {
             return new StructuredError(
                 "resource.execution_cancelled",
-                h0Canonical ? "The operation was cancelled before authoritative publication." : "The bounded Editor operation was cancelled.",
+                "The bounded Editor operation was cancelled.",
                 "$",
                 new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
@@ -119,7 +142,7 @@ namespace Arkus.Harness.Protocol
                     ["boundary"] = boundary
                 }),
                 true,
-                h0Canonical ? "Retry with a live request scope; no canonical publication occurred at " + boundary + "." : "Check the operation lifecycle status before retrying the Editor operation.");
+                "Check the operation lifecycle status before retrying the Editor operation.");
         }
 
         public static StructuredError PublicationInterrupted(string boundary)
@@ -194,12 +217,16 @@ namespace Arkus.Harness.Protocol
             }
             if (_cancellationToken.IsCancellationRequested)
             {
-                error = H0ResourceDiagnostics.ExecutionCancelled(boundary, _resourceEnvelope, _h0Canonical);
+                error = _h0Canonical
+                    ? H0ResourceDiagnostics.ExecutionCancelled(boundary)
+                    : H0ResourceDiagnostics.BoundedExecutionCancelled(boundary, _resourceEnvelope);
                 return false;
             }
             if (_timestamp() > _deadlineTimestamp)
             {
-                error = H0ResourceDiagnostics.ExecutionExceeded(boundary, _resourceEnvelope, _maximumExecutionMilliseconds, _h0Canonical);
+                error = _h0Canonical
+                    ? H0ResourceDiagnostics.ExecutionExceeded(boundary)
+                    : H0ResourceDiagnostics.BoundedExecutionExceeded(boundary, _resourceEnvelope, _maximumExecutionMilliseconds);
                 return false;
             }
             error = null;
