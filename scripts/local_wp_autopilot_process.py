@@ -2,8 +2,8 @@
 """PROCESS_ONLY state-aware remote lifecycle wrapper.
 
 /run and /work both adopt canonical GitHub state. /run advances the complete
-existing lifecycle. /work permits Worker/Repair-side progress only and stops
-before any Reviewer turn, normally at REVIEW_READY.
+existing lifecycle. /work permits only Worker/Repair Codex roles and stops
+before any Reviewer or other non-Worker/Repair reasoning turn.
 """
 
 from __future__ import annotations
@@ -136,10 +136,12 @@ def strict_reviewed_verdicts(pr: int) -> list[dict[str, str]]:
         return verdicts
 
     rows = autopilot.markers(pr)
-    ready = autopilot.latest_marker(rows, "REVIEW_READY", frozen)
+    ready_candidate = autopilot.latest_marker(rows, "REVIEW_READY", frozen)
+    ready = ready_candidate if autopilot.ready_context_matches(HERE.parent, current, ready_candidate) else None
     current_verdicts = [row for row in verdicts if row["sha"] == frozen]
     if current_verdicts and ready is None:
-        raise autopilot.StopFlow(f"PR #{pr} has an exact-current-SHA verdict without authoritative REVIEW_READY")
+        raise autopilot.StopFlow(
+            f"PR #{pr} has an exact-current-SHA verdict without current context-bound REVIEW_READY")
     if ready is not None:
         ready_at = ready.get("_created_at", "")
         for row in verdicts:
@@ -165,15 +167,22 @@ def _current_identity_from_prompt(prompt: str) -> tuple[str, int | None, str]:
     return wp, pr, sha
 
 
+def _role_boundary_kind(role: str) -> tuple[str, str]:
+    if role == "reviewer":
+        return "REVIEW_READY", ""
+    return "REVIEWER_REQUIRED", role.upper().replace("-", "_")
+
+
 async def bounded_codex_role(root: Path, state: Path, role: str, prompt: str, model: str,
                              effort: str, schema: Path | None = None,
                              assets_root: Path | None = None) -> str:
-    if WORK_ONLY and role in {"reviewer", "appeal-reviewer"}:
+    if WORK_ONLY and role not in {"worker", "repair"}:
         wp, _pr, sha = _current_identity_from_prompt(prompt)
         if not wp or not autopilot.SHA_RE.fullmatch(sha):
-            raise autopilot.StopFlow("/work reached a Reviewer boundary without exact WP/SHA identity")
-        kind = "REVIEW_READY" if role == "reviewer" else "REVIEWER_REQUIRED"
-        raise WorkBoundary(kind, wp, sha)
+            raise autopilot.StopFlow(
+                f"/work reached forbidden role {role!r} without exact WP/SHA identity")
+        kind, state_name = _role_boundary_kind(role)
+        raise WorkBoundary(kind, wp, sha, state_name)
     return await remote.remote_codex_role(root, state, role, prompt, model, effort,
                                           schema, assets_root)
 
@@ -181,6 +190,8 @@ async def bounded_codex_role(root: Path, state: Path, role: str, prompt: str, mo
 def _print_boundary(boundary: WorkBoundary) -> None:
     if boundary.kind == "CLOSED":
         print(f"WORK_BOUNDARY CLOSED WP={boundary.wp} SHA={boundary.sha or 'NONE'} STATE={boundary.state or 'CLOSED'}")
+    elif boundary.state:
+        print(f"WORK_BOUNDARY {boundary.kind} WP={boundary.wp} SHA={boundary.sha} STATE={boundary.state}")
     else:
         print(f"WORK_BOUNDARY {boundary.kind} WP={boundary.wp} SHA={boundary.sha}")
 
@@ -211,7 +222,8 @@ def _work_preflight(root: Path, wp: str) -> WorkBoundary | None:
         return None
     if latest and latest["verdict"] == "FAIL":
         # strict_reviewed_verdicts synchronously waits for durable adoption; the
-        # canonical lifecycle can now enter Repair without replaying the verdict.
+        # canonical lifecycle may now run Repair only if its non-Worker prerequisites
+        # are already durable. bounded_codex_role stops before any missing audit role.
         return None
 
     ready_candidate = autopilot.latest_marker(rows, "REVIEW_READY", frozen)
