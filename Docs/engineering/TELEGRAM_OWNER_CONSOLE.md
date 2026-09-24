@@ -1,6 +1,19 @@
-# Telegram owner console (prospective opt-in)
+# Telegram owner console (accepted opt-in)
 
-Version: 0.2 — 2026-09-24
+Version: 0.3 — 2026-09-24
+Status: ACCEPTED / DOCSYNC_COMPLETE
+
+## Acceptance
+
+- Canonical process PR: `#180`
+- Accepted candidate: `8250ca10ecfe7663a0d068698e6becf624f00852`
+- Final independent Reviewer PASS: `#5302446547`
+- Merge: `6a8ba3108d8d5b8d9529b184420e670207031128`
+- Exact-SHA validation on the accepted candidate: Arkus Candidate Validation `#1944` GREEN, Arkus Main Safety `#482` GREEN, Telegram Owner Console Validation `#4` GREEN with 19/19 offline tests.
+
+This is an accepted **opt-in** process surface. It changes no product workpack state and does not advance the H1, PA, CITY, DW or CTX execution spines.
+
+The accepted trust boundary protects owner authority from a Worker using the normal capabilities exposed to Worker/repair roles: the Worker does not receive `TELEGRAM_BOT_TOKEN`; `OWNER_CONTINUE` and bounded `OWNER_DECISION` require supervisor-only HMAC material validated by GitHub Actions; loopback IPC is non-authoritative; Reviewer roles receive no remote-control capability variables. Deliberately rewriting the repository's own GitHub Actions trust infrastructure is a repository-root compromise class, not a per-console authority claim.
 
 ## Purpose
 
