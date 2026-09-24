@@ -196,6 +196,15 @@ def _resume_candidate(root: Path, wp: str) -> tuple[dict, recovery.RecoveryCheck
     current = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{pr['number']}")
     if not recovery.is_resumable_worker_pr(current):
         return None
+    rows = autopilot.markers(current["number"])
+    if (autopilot.latest_marker(rows, "BLOCKED") or
+            autopilot.latest_marker(rows, "HUMAN_ACTION_REQUIRED")):
+        raise autopilot.StopFlow(
+            f"PR #{current['number']} has a human-action/block marker; Worker recovery is forbidden")
+    if autopilot.latest_marker(rows, "REVIEW_READY"):
+        # A ready marker means the Worker has attempted to seal a candidate. Do not
+        # reinterpret inconsistent handoff metadata as an interrupted coding turn.
+        return None
     try:
         checkout = recovery.inspect_resumable_checkout(root, current, autopilot.REPO)
     except recovery.RecoveryError as exc:
