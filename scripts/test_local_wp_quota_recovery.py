@@ -66,6 +66,13 @@ class QuotaRecoveryTests(unittest.TestCase):
             ("not_quota", None),
         )
 
+    def test_nearly_exhausted_short_window_without_reached_signal_is_not_quota(self):
+        payload = self.payload(primary_used=98, secondary_used=40)
+        self.assertEqual(
+            module.classify_after_session_failure(payload, 1000),
+            ("not_quota", None),
+        )
+
     def test_unknown_reached_shape_fails_closed(self):
         payload = self.payload(primary_used=40, secondary_used=40, reached="mystery")
         self.assertEqual(

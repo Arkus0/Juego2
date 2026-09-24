@@ -32,8 +32,10 @@ def classify_after_session_failure(payload: dict[str, Any], now: int,
     """Return stop_general, wait_short, not_quota, or unknown_reached.
 
     Long/general exhaustion always wins over a simultaneous short-window reset.
-    A short window is auto-retryable only when its reset is still in the future.
-    Unknown reached-type shapes fail closed rather than inventing a reset.
+    After an abnormal role exit, short-window auto-retry requires explicit causal
+    evidence that the short limit was reached; a low remaining percentage alone
+    is only a pre-start guard and must not relabel an unrelated process/network
+    failure as quota exhaustion. Unknown reached-type shapes fail closed.
     """
     buckets = payload.get("rateLimitsByLimitId") or {"legacy": payload.get("rateLimits")}
     if not isinstance(buckets, dict) or not buckets:
@@ -79,8 +81,7 @@ def classify_after_session_failure(payload: dict[str, Any], now: int,
         return "stop_general", None
 
     short = [window for window in windows
-             if window.minutes <= 360 and
-             (window.remaining <= threshold or window.explicitly_reached)]
+             if window.minutes <= 360 and window.explicitly_reached]
     if short:
         reset = max(window.resets_at for window in short)
         if reset <= now:

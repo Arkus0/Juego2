@@ -358,6 +358,10 @@ async def remote_main_async(args) -> None:
     state = Path(args.state).resolve()
     autopilot.require_repo(root)
     assets_root = autopilot.resolve_assets_root(root, args.assets_root)
+    # Preserve the canonical admission invariant: origin/main must be current before
+    # deciding whether this campaign resumes an existing PR or bootstraps a new one.
+    # Fetch is safe for local-ahead/dirty recovery because it does not alter worktree bytes.
+    autopilot.run("git", "fetch", "origin", "main", cwd=root)
     wp = autopilot.normalize_wp(args.wp)
     resume = _resume_candidate(root, wp)
     if resume is None:
