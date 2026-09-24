@@ -125,6 +125,19 @@ class RemoteConsole:
         telegram(self.token, "answerCallbackQuery",
                  {"callback_query_id": ident, "text": text[:190], "show_alert": alert})
 
+    def _pending_note_path(self) -> Path:
+        return self.control_dir / "pending-owner-note.txt"
+
+    def _pending_continue_path(self) -> Path:
+        return self.control_dir / "pending-owner-continue.json"
+
+    def _clear_local_pending(self) -> None:
+        for path in (self._pending_note_path(), self._pending_continue_path()):
+            try:
+                path.unlink(missing_ok=True)
+            except OSError:
+                pass
+
     def launch(self, wp: str) -> None:
         if self.proc is not None:
             raise ConsoleError("Ya hay un WP en ejecución")
@@ -160,21 +173,28 @@ class RemoteConsole:
         self.log_handle = None
         self.campaign_id = None
         self.sent_decisions.clear()
+        try:
+            self._pending_continue_path().unlink(missing_ok=True)
+        except OSError:
+            pass
         if code != 0:
             self.active = False
             self.next_wp = None
+            self._clear_local_pending()
             self.send(f"🛑 Autopilot detenido en {finished_wp}.\nEl flujo ha pedido intervención o falló un control. Revisa el aviso/GitHub; no se lanzará otro WP.")
             return
         next_wp = parse_next(text)
         if next_wp is None:
             self.active = False
             self.next_wp = None
+            self._clear_local_pending()
             self.send(f"🏁 {finished_wp} completado y el handoff no declara otro WP. Campaña finalizada.")
             return
         self.next_wp = next_wp
         if self.stop_after_wp:
             self.active = False
             self.stop_after_wp = False
+            self._clear_local_pending()
             self.send(f"⏹ {finished_wp} completado. Stop seguro aplicado antes de {next_wp}.")
             return
         if self.paused:
@@ -183,10 +203,12 @@ class RemoteConsole:
         self.launch(next_wp)
 
     def queue_note(self, note: str) -> None:
+        if not self.active:
+            raise ConsoleError("/note requiere una campaña activa")
         note = note.strip()
         if not note:
             raise ConsoleError("Uso: /note <instrucción>")
-        path = self.control_dir / "pending-owner-note.txt"
+        path = self._pending_note_path()
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(note[:4000] + "\n", encoding="utf-8")
         self.send("📝 Instrucción guardada para la próxima sesión Worker/repair fresca. No se inyecta en un Reviewer ni altera un turno ya iniciado.")
@@ -268,8 +290,19 @@ class RemoteConsole:
         self.send(f"✅ Decisión entregada al Worker de {row.get('wp') or self.current_wp}: {options[index]}")
 
     def handle_continue(self, query: dict, pr: int, sha: str, fail_count: int) -> None:
-        if self.proc is None:
+        if self.proc is None or not self.campaign_id:
             self.answer_callback(query["id"], "No hay campaña local activa para esta autorización.", True)
+            return
+        pending_path = self._pending_continue_path()
+        try:
+            pending = json.loads(pending_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            self.answer_callback(query["id"], "Esta campaña no está esperando esa autorización.", True)
+            return
+        expected = (pending.get("campaign_id"), pending.get("pr"), pending.get("sha"), pending.get("fail_count"))
+        actual = (self.campaign_id, pr, sha, fail_count)
+        if expected != actual:
+            self.answer_callback(query["id"], "Botón obsoleto: no corresponde al bloqueo activo de esta campaña.", True)
             return
         script = self.root / "scripts" / "telegram_continue_receiver.py"
         import importlib.util
@@ -290,6 +323,7 @@ class RemoteConsole:
             return
         payload = {"event_type": "arkus_owner_continue_local",
                    "client_payload": {"pr": pr, "target_sha": sha, "fail_count": fail_count,
+                                      "campaign_id": self.campaign_id,
                                       "telegram_update_id": query.get("id", "")[:120]}}
         gh("api", "--method", "POST", f"repos/{REPO}/dispatches", "--input", "-", input_json=payload)
         self.answer_callback(query["id"], "Autorización enviada. GitHub volverá a validar PR/SHA/FAIL antes de continuar.")
@@ -325,6 +359,7 @@ class RemoteConsole:
                 self.active = False
                 self.paused = False
                 self.next_wp = None
+                self._clear_local_pending()
                 self.send("⏹ Campaña detenida.")
             else:
                 self.stop_after_wp = True
@@ -364,13 +399,28 @@ class RemoteConsole:
         except ConsoleError as exc:
             self.send(f"⚠️ {exc}")
 
-    def poll_once(self) -> None:
-        params = {"timeout": 20, "limit": 100, "allowed_updates": ["message", "callback_query"]}
-        if self.offset is not None:
-            params["offset"] = self.offset
+    def _get_updates(self, *, timeout: int, offset: int | None = None) -> list[dict]:
+        params = {"timeout": timeout, "limit": 100, "allowed_updates": ["message", "callback_query"]}
+        if offset is not None:
+            params["offset"] = offset
         updates = telegram(self.token, "getUpdates", params)
         if not isinstance(updates, list):
             raise ConsoleError("Respuesta getUpdates inválida")
+        return updates
+
+    def discard_offline_backlog(self) -> None:
+        # Commands received while the supervisor was offline are deliberately
+        # not executable later. Reboot/crash recovery is explicit by contract.
+        offset: int | None = None
+        while True:
+            updates = self._get_updates(timeout=0, offset=offset)
+            if not updates:
+                self.offset = offset
+                return
+            offset = max(int(update["update_id"]) for update in updates) + 1
+
+    def poll_once(self) -> None:
+        updates = self._get_updates(timeout=20, offset=self.offset)
         for update in updates:
             self.offset = max(self.offset or 0, int(update["update_id"]) + 1)
             self.handle_update(update)
@@ -380,7 +430,9 @@ class RemoteConsole:
         if not isinstance(webhook, dict) or webhook.get("url"):
             raise ConsoleError("El bot tiene webhook; el modo local getUpdates requiere webhook vacío")
         self.control_dir.mkdir(parents=True, exist_ok=True)
-        self.send("🟢 Arkus Telegram console online.\nNo hace falta tener una sesión Codex abierta. Usa /run <WP> para iniciar y /help para controles.")
+        self._clear_local_pending()
+        self.discard_offline_backlog()
+        self.send("🟢 Arkus Telegram console online.\nNo hace falta tener una sesión Codex abierta. Los comandos enviados mientras el supervisor estaba offline se descartan; usa /run <WP> para iniciar y /help para controles.")
         while True:
             self.check_child()
             self.advertise_decisions()
