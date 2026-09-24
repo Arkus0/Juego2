@@ -58,6 +58,18 @@ namespace Arkus.Harness.Tests
             Assert.Equal("CC0-1.0", medieval.Fields["license-id"].CanonicalValue);
             Assert.Equal("true", medieval.Fields["commercial-use"].CanonicalValue);
             Assert.Contains(dataset.Projection.Facts, fact => fact.FactType == "h1-source-slice");
+
+            var componentSchemas = dataset.Projection.Facts
+                .Where(fact => fact.FactType == "h1-catalogue-entry" &&
+                               fact.Fields["kind"].CanonicalValue == "component-schema")
+                .ToList();
+            Assert.Equal(3, componentSchemas.Count);
+            Assert.All(componentSchemas, fact =>
+            {
+                Assert.Equal(string.Empty, fact.Fields["native-guid"].CanonicalValue);
+                Assert.Equal("0", fact.Fields["local-file-id"].CanonicalValue);
+                Assert.Equal(string.Empty, fact.Fields["content-sha256"].CanonicalValue);
+            });
         }
 
         [Fact]
@@ -68,6 +80,21 @@ namespace Arkus.Harness.Tests
             var report = new H1SourceAuthorityOracle().Validate(dataset.Projection, sources);
 
             Assert.True(report.IsValid, string.Join("\n", report.Issues.Select(issue => issue.MachineCode + ":" + issue.Detail)));
+        }
+
+        [Fact]
+        public void CurrentLifecycleIsGreenForExactAcceptedAuthorityAndSchema()
+        {
+            var sources = ReadSources();
+            var dataset = new H1DesignWorldProvider().BuildAndValidate(sources);
+
+            var report = new H1ProjectionLifecycleGuard().ValidateCurrent(
+                dataset,
+                sources,
+                H1ProjectionManifest.AcceptedH104CandidateSha,
+                H1ProjectionManifest.CurrentProjectionVersion);
+
+            Assert.True(report.IsCurrent, string.Join("\n", report.Issues.Select(issue => issue.MachineCode + ":" + issue.Detail)));
         }
 
         [Fact]
@@ -102,6 +129,45 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void LifecycleRejectsChangedAcceptedH104IdentityEvenWhenBytesAreUnchanged()
+        {
+            var sources = ReadSources();
+            var dataset = new H1DesignWorldProvider().BuildAndValidate(sources);
+
+            var report = new H1ProjectionLifecycleGuard().ValidateCurrent(
+                dataset,
+                sources,
+                new string('f', 40),
+                H1ProjectionManifest.CurrentProjectionVersion);
+
+            Assert.False(report.IsCurrent);
+            Assert.Contains(report.Issues, issue => issue.MachineCode == "h1.lifecycle_accepted_authority_stale");
+        }
+
+        [Fact]
+        public void LifecycleRejectsChangedAuthorityBytesWithoutTrustingCachedProjection()
+        {
+            var sources = ReadSources();
+            var dataset = new H1DesignWorldProvider().BuildAndValidate(sources);
+            var mutatedCatalogue = Read(H1ProjectionManifest.CataloguePath).Replace(
+                "\"adoptionStatus\": \"approved-source\"",
+                "\"adoptionStatus\": \"source-derived\"",
+                StringComparison.Ordinal);
+            var changedSources = new H1AcceptedAuthoritySources(
+                mutatedCatalogue,
+                Read(H1ProjectionManifest.SourceAdoptionPath));
+
+            var report = new H1ProjectionLifecycleGuard().ValidateCurrent(
+                dataset,
+                changedSources,
+                H1ProjectionManifest.AcceptedH104CandidateSha,
+                H1ProjectionManifest.CurrentProjectionVersion);
+
+            Assert.False(report.IsCurrent);
+            Assert.Contains(report.Issues, issue => issue.MachineCode == "h1.lifecycle_source_stale");
+        }
+
+        [Fact]
         public void OmittedCatalogueFactIsRedEvenWhenGenericProjectionSelfConfirms()
         {
             var fixture = BuildFixture();
@@ -110,6 +176,7 @@ namespace Arkus.Harness.Tests
 
             AssertGenericGreen(mutated);
             AssertOracleRed(fixture.Sources, mutated.Projection, "h1.semantic_fact_missing");
+            AssertLifecycleRed(fixture.Sources, mutated.Projection, "h1.lifecycle_semantic_corruption");
         }
 
         [Fact]
@@ -127,6 +194,7 @@ namespace Arkus.Harness.Tests
 
             AssertGenericGreen(mutated);
             AssertOracleRed(fixture.Sources, mutated.Projection, "h1.semantic_content_mismatch");
+            AssertLifecycleRed(fixture.Sources, mutated.Projection, "h1.lifecycle_semantic_corruption");
         }
 
         [Fact]
@@ -142,6 +210,7 @@ namespace Arkus.Harness.Tests
 
             AssertGenericGreen(mutated);
             AssertOracleRed(fixture.Sources, mutated.Projection, "h1.semantic_relation_missing");
+            AssertLifecycleRed(fixture.Sources, mutated.Projection, "h1.lifecycle_semantic_corruption");
         }
 
         [Fact]
@@ -160,20 +229,24 @@ namespace Arkus.Harness.Tests
 
             AssertGenericGreen(mutated);
             AssertOracleRed(fixture.Sources, mutated.Projection, "h1.semantic_provenance_mismatch");
+            AssertLifecycleRed(fixture.Sources, mutated.Projection, "h1.lifecycle_semantic_corruption");
         }
 
         [Fact]
         public void ProjectionSchemaChangeMarksCachedProjectionStale()
         {
-            var dataset = new H1DesignWorldProvider().BuildAndValidate(ReadSources());
-            var universe = new StaticDesignAuthorityUniverse(dataset.Projection.FactIds);
-            var reader = new SelfConfirmingReader(dataset.Projection.Facts);
+            var sources = ReadSources();
+            var dataset = new H1DesignWorldProvider().BuildAndValidate(sources);
             var future = new DesignProjectionVersion(2, "ctx-dw-h1-01-v2");
 
-            var report = new DesignWorldProjectionValidator().Validate(dataset.Projection, universe, reader, future);
+            var report = new H1ProjectionLifecycleGuard().ValidateCurrent(
+                dataset,
+                sources,
+                H1ProjectionManifest.AcceptedH104CandidateSha,
+                future);
 
-            Assert.False(report.IsValid);
-            Assert.Contains(report.Issues, issue => issue.MachineCode == "dw.projection_version_stale");
+            Assert.False(report.IsCurrent);
+            Assert.Contains(report.Issues, issue => issue.MachineCode == "h1.lifecycle_projection_schema_stale");
         }
 
         [Fact]
@@ -224,6 +297,17 @@ namespace Arkus.Harness.Tests
         {
             var report = new H1SourceAuthorityOracle().Validate(projection, sources);
             Assert.False(report.IsValid);
+            Assert.Contains(report.Issues, issue => issue.MachineCode == machineCode);
+        }
+
+        private static void AssertLifecycleRed(H1AcceptedAuthoritySources sources, DesignWorldProjection projection, string machineCode)
+        {
+            var report = new H1ProjectionLifecycleGuard().ValidateCurrent(
+                projection,
+                sources,
+                H1ProjectionManifest.AcceptedH104CandidateSha,
+                H1ProjectionManifest.CurrentProjectionVersion);
+            Assert.False(report.IsCurrent);
             Assert.Contains(report.Issues, issue => issue.MachineCode == machineCode);
         }
 
