@@ -1,3 +1,8 @@
+---
+name: update-handoff
+description: Complete bounded post-PASS DocSync for Juego2, defaulting to zero commits unless authoritative document meaning changed.
+---
+
 # update-handoff
 
 Perform post-PASS DocSync as a **bounded delta reconciliation**, not a second review.

@@ -1,0 +1,34 @@
+name: Telegram owner continue
+
+on:
+  repository_dispatch:
+    types: [arkus_continue_request]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: telegram-continue-${{ github.event.client_payload.pr }}-${{ github.event.client_payload.target_sha }}
+  cancel-in-progress: true
+
+jobs:
+  wait-for-owner:
+    if: github.repository == 'Arkus0/Juego2'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Wait for exact owner button
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PR: ${{ github.event.client_payload.pr }}
+          TARGET_SHA: ${{ github.event.client_payload.target_sha }}
+          FAIL_COUNT: ${{ github.event.client_payload.fail_count }}
+        run: |
+          python3 scripts/telegram_continue_receiver.py \
+            --pr "$PR" --sha "$TARGET_SHA" --fail-count "$FAIL_COUNT" \
+            --max-seconds 20500

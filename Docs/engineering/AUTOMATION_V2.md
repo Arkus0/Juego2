@@ -1,14 +1,12 @@
 # Automation V2 — minimal GitHub Actions orchestration
 
-Version: 1.6 — 2026-09-21
+Version: 1.7 — 2026-09-23
 
 ## Purpose
 
 Juego2 uses GitHub Actions because the repository is public and standard hosted runners can provide practical validation compute without consuming the previous private-repository minute budget.
 
-Automation V2 is intentionally small. It automates mechanical validation and state transitions; it does **not** become the semantic authority for Arkus and it does not spawn or impersonate independent AI roles.
-
-There is no automation bootstrap, no role lease system, no dependency-routing daemon, no background Worker farm and no requirement to use a particular model/provider.
+Automation V2 is intentionally small. It automates mechanical validation and state transitions; it does **not** become the semantic authority for Arkus and it does not spawn or impersonate independent AI roles. The optional, prospectively adopted **local** driver in `LOCAL_WP_AUTOPILOT.md` may start fresh role sessions after checking these markers. It is not part of GitHub Actions, a role lease, a background Worker farm or a new proof authority. Manual role starts remain supported.
 
 ## Authority
 
@@ -22,32 +20,36 @@ The authority order remains:
 
 Workflow YAML is replaceable orchestration. It may call canonical repository entrypoints but must not redefine their proof semantics.
 
+For cadence, same-`PRODUCT_SHA` metadata closure, Reviewer protocol-only classification, direct `REVIEW_READY` handoff and zero-commit DocSync, `PRODUCT_SHA_CLOSURE.md` supersedes older descriptions in this document.
+
 ## Automated flow
 
 ```text
 Draft Worker PR
-  -> Candidate observation on every relevant PR update
+  -> Main Safety on each material push; WP-specific observation only when requested
   -> Worker fixes/reconciles evidence
-  -> Worker pre-review CLEAN
-  -> Worker obtains exact-SHA GREEN receipt where the WP requires one
+  -> Worker consumes same-PR/same-SHA Main Safety GREEN (or explicit fallback preflight)
+  -> Worker pre-review CLEAN at exact PRODUCT_SHA
   -> Worker freezes that exact SHA and marks PR Ready
   -> Worker handoff lint mechanically validates the canonical Ready handoff
-  -> Freeze handoff validates/reuses the same exact-SHA GREEN receipt where applicable
-     (full verifier runs only when no valid reusable receipt exists)
-  -> REVIEW_READY marker
-  -> human starts a fresh independent Reviewer
-  -> Reviewer emits exact-SHA PASS or FAIL
-     FAIL -> REPAIR_REQUIRED marker; human starts fresh repair Worker
+  -> Candidate Validation performs exact-SHA freeze verification
+  -> context-bound REVIEW_READY marker (terminal handoff; no closure pass)
+  -> human or opt-in local driver starts a fresh independent Reviewer
+  -> Reviewer emits exact-SHA PASS / material FAIL, or protocol-only status
+     FAIL -> REPAIR_REQUIRED marker; human or local driver starts fresh repair Worker
+     PROTOCOL_FIX -> same-SHA metadata correction; no product rerun
      PASS -> exact-SHA merge preflight -> automatic merge
           -> DOCSYNC_REQUIRED after confirmed merge for Worker-lifecycle WPs
-          -> successful Reviewer/finalizer performs documentation-only DocSync
+          -> successful Reviewer/finalizer performs bounded delta DocSync
           -> DOCSYNC_COMPLETE marker with dependency-valid Next WP
-          -> human starts the next Worker
+          -> human or local driver starts the next Worker
 ```
 
-Only the mechanical validation/state-transition parts above are automated. Worker and independent Reviewer reasoning remain explicit. Routine post-PASS DocSync may continue in the successful Reviewer session or in a dedicated finalization session, but it may never alter implementation bytes or reconsider the accepted candidate.
+GitHub Actions still automates only the mechanical validation/state-transition parts above. The optional local driver automates **session launch/routing**, not Worker/Reviewer judgment. Routine post-PASS DocSync may continue in the successful Reviewer session or in a dedicated finalization session, but it may never alter implementation bytes or reconsider the accepted candidate.
 
-Telegram is an optional control surface for these human-started reasoning sessions: high-value transitions may include a short copyable ChatGPT handoff prompt plus links to ChatGPT and the relevant PR. The prompt is convenience only and always instructs the new session to reconstruct GitHub state instead of trusting Telegram context.
+The optional `telegram-continue.yml` workflow is a narrow **owner-control bridge** activated only for a second-FAIL decision from the local driver. It uses the existing Telegram bot secrets, accepts one callback from the configured private owner chat for the exact PR/SHA/fail count, and persists `OWNER_CONTINUE` as a routing marker. It does not issue a Reviewer verdict, merge, repair, or change product semantics. The fourth FAIL has no callback path. No always-on bot listener or model API key is introduced.
+
+Telegram remains an optional handoff surface for manual role starts: high-value transitions may include a short copyable ChatGPT prompt and links to ChatGPT and the relevant PR. The prompt is convenience only and always instructs the new session to reconstruct GitHub state instead of trusting Telegram context. The opt-in local driver instead consumes the durable GitHub transition directly; only the bounded second-FAIL button changes its route.
 
 ## Workflows
 
@@ -55,7 +57,7 @@ Telegram is an optional control surface for these human-started reasoning sessio
 
 Runs PR code with a **read-only token** plus read-only Actions access for receipt reuse.
 
-- Draft PR: observation mode.
+- Draft PR: no automatic Candidate Validation; Main Safety covers material pushes. Observation is explicit.
 - Ready/non-draft PR: frozen-candidate verify/handoff mode.
 - Ready PRs also run the separate `Worker handoff lint` job.
 - Manual `workflow_dispatch`: exact SHA + explicit observation/verify mode.

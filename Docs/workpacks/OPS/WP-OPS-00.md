@@ -4,6 +4,8 @@ Status: PLANNED
 Class: PROCESS_ONLY  
 Depends on: none
 
+Historical note (2026-09-23): this pre-Automation-V2 activation sketch refers to old Work/mobile and marker names. It is **not** authorization to replace the currently accepted Automation V2 or to call those obsolete acceptance items complete. The optional prospective local session driver is specified separately in `Docs/engineering/LOCAL_WP_AUTOPILOT.md`; any future execution of OPS-00 first needs an explicit re-scope against current GitHub and protocol state.
+
 ## Objective
 
 Activate and acceptance-test the repository-independent operating flow already versioned in Juego2: GitHub handoff enforcement, Work/mobile transition automation, Codex/Claude adapters and low-noise Telegram notifications.

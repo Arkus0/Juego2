@@ -1,3 +1,8 @@
+---
+name: implement-workpack
+description: Implement one explicitly requested Juego2 workpack as its Worker, including live GitHub reconstruction, evidence, pre-review and exact-SHA freeze; never perform independent review.
+---
+
 # implement-workpack
 
 Implement exactly one explicitly authorized Juego2 workpack.

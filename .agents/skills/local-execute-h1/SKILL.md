@@ -1,3 +1,8 @@
+---
+name: local-execute-h1
+description: Execute a predeclared bounded H1 Unity local-evidence contract on the workstation without taking over Worker or Reviewer ownership.
+---
+
 # local-execute-h1
 
 Execute only a predeclared H1 local execution contract on the Unity workstation.

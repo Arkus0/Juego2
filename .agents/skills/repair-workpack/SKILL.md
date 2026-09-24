@@ -1,3 +1,8 @@
+---
+name: repair-workpack
+description: Repair one Juego2 workpack after an independent exact-SHA FAIL as a fresh Worker; preserve the canonical PR/history and hand off to a new Reviewer.
+---
+
 # repair-workpack
 
 Repair exactly one explicitly identified Juego2 workpack after an independent Reviewer material FAIL.

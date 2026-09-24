@@ -1,3 +1,8 @@
+---
+name: validate-workpack
+description: Independently review one frozen Juego2 workpack candidate at its exact SHA from a fresh session; classify material PASS or FAIL versus protocol-only blocks without repairing implementation.
+---
+
 # validate-workpack
 
 Independently review one frozen Juego2 candidate. Do not edit implementation.

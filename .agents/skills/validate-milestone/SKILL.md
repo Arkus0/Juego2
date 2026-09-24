@@ -1,3 +1,8 @@
+---
+name: validate-milestone
+description: Validate a Juego2 milestone or gate from accepted repository state and exact constituent evidence.
+---
+
 # validate-milestone
 
 Validate a milestone/gate from accepted repository state.
