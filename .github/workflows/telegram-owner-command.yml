@@ -1,0 +1,196 @@
+name: Telegram owner command
+
+on:
+  repository_dispatch:
+    types: [arkus_owner_continue_local, arkus_owner_decision_local]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: telegram-owner-command-${{ github.event.action }}-${{ github.event.client_payload.pr }}-${{ github.event.client_payload.target_sha }}-${{ github.event.client_payload.campaign_id }}-${{ github.event.client_payload.fail_count }}-${{ github.event.client_payload.decision_id }}
+  cancel-in-progress: false
+
+jobs:
+  record-owner-continue:
+    if: github.repository == 'Arkus0/Juego2' && github.event.action == 'arkus_owner_continue_local'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Authenticate supervisor, revalidate and record exact owner authorization
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          PR: ${{ github.event.client_payload.pr }}
+          TARGET_SHA: ${{ github.event.client_payload.target_sha }}
+          FAIL_COUNT: ${{ github.event.client_payload.fail_count }}
+          CAMPAIGN_ID: ${{ github.event.client_payload.campaign_id }}
+          TELEGRAM_UPDATE_ID: ${{ github.event.client_payload.telegram_update_id }}
+          OWNER_PROOF_VERSION: ${{ github.event.client_payload.owner_proof_version }}
+          OWNER_PROOF: ${{ github.event.client_payload.owner_proof }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          auth_path = Path('scripts/owner_control_auth.py')
+          auth_spec = importlib.util.spec_from_file_location('arkus_owner_control_auth', auth_path)
+          if auth_spec is None or auth_spec.loader is None:
+              raise SystemExit('owner auth module unavailable')
+          auth = importlib.util.module_from_spec(auth_spec)
+          sys.modules[auth_spec.name] = auth
+          auth_spec.loader.exec_module(auth)
+
+          receiver_path = Path('scripts/telegram_continue_receiver.py')
+          receiver_spec = importlib.util.spec_from_file_location('arkus_tg_receiver_command', receiver_path)
+          if receiver_spec is None or receiver_spec.loader is None:
+              raise SystemExit('receiver module unavailable')
+          receiver = importlib.util.module_from_spec(receiver_spec)
+          sys.modules[receiver_spec.name] = receiver
+          receiver_spec.loader.exec_module(receiver)
+          receiver.fresh_offer = lambda created_at, now=None: True
+
+          pr = int(os.environ['PR'])
+          sha = os.environ['TARGET_SHA'].strip().lower()
+          fail_count = int(os.environ['FAIL_COUNT'])
+          campaign = os.environ.get('CAMPAIGN_ID', '').strip().lower()
+          update_id = os.environ.get('TELEGRAM_UPDATE_ID', '').strip()[:120]
+          proof = os.environ.get('OWNER_PROOF', '').strip().lower()
+          version = os.environ.get('OWNER_PROOF_VERSION', '').strip()
+          secret = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+
+          if version != '1' or not re.fullmatch(r'[0-9a-f]{32}', campaign):
+              raise SystemExit('invalid owner proof envelope')
+          if not auth.verify_owner_continue(secret, proof, pr, sha, fail_count, campaign, update_id):
+              raise SystemExit('repository_dispatch lacks a valid supervisor-only owner proof')
+
+          status = receiver.validate_current(pr, sha, fail_count)
+          if status == 'already':
+              print('OWNER_CONTINUE already durable')
+              raise SystemExit(0)
+
+          body = (
+              'ARKUS_LOCAL_AUTOPILOT\n'
+              'State: OWNER_CONTINUE\n'
+              f'Target SHA: {sha}\n'
+              f'Fail count: {fail_count}\n'
+              f'Campaign ID: {campaign}\n'
+              f'Telegram update ID: {update_id}\n'
+              'Authority proof: supervisor-HMAC-v1\n'
+              'Detail: owner private-chat button authorized unattended repairs up to but not beyond the fourth FAIL; '
+              'local-console transport has no application TTL; no PASS or proof claim.\n'
+          )
+          receiver.github(f'repos/{receiver.REPO}/issues/{pr}/comments', body=body)
+          PY
+
+  record-owner-decision:
+    if: github.repository == 'Arkus0/Juego2' && github.event.action == 'arkus_owner_decision_local'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Authenticate and attest exact owner choice
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          PR: ${{ github.event.client_payload.pr }}
+          TARGET_SHA: ${{ github.event.client_payload.target_sha }}
+          CAMPAIGN_ID: ${{ github.event.client_payload.campaign_id }}
+          DECISION_ID: ${{ github.event.client_payload.decision_id }}
+          REQUEST_DIGEST: ${{ github.event.client_payload.request_digest }}
+          CHOICE: ${{ github.event.client_payload.choice }}
+          SELECTED_DIGEST: ${{ github.event.client_payload.selected_digest }}
+          TELEGRAM_UPDATE_ID: ${{ github.event.client_payload.telegram_update_id }}
+          OWNER_PROOF_VERSION: ${{ github.event.client_payload.owner_proof_version }}
+          OWNER_PROOF: ${{ github.event.client_payload.owner_proof }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          auth_path = Path('scripts/owner_control_auth.py')
+          auth_spec = importlib.util.spec_from_file_location('arkus_owner_control_auth_decision', auth_path)
+          if auth_spec is None or auth_spec.loader is None:
+              raise SystemExit('owner auth module unavailable')
+          auth = importlib.util.module_from_spec(auth_spec)
+          sys.modules[auth_spec.name] = auth
+          auth_spec.loader.exec_module(auth)
+
+          receiver_path = Path('scripts/telegram_continue_receiver.py')
+          receiver_spec = importlib.util.spec_from_file_location('arkus_tg_receiver_decision', receiver_path)
+          if receiver_spec is None or receiver_spec.loader is None:
+              raise SystemExit('receiver module unavailable')
+          receiver = importlib.util.module_from_spec(receiver_spec)
+          sys.modules[receiver_spec.name] = receiver
+          receiver_spec.loader.exec_module(receiver)
+
+          pr = int(os.environ['PR'])
+          sha = os.environ['TARGET_SHA'].strip().lower()
+          campaign = os.environ.get('CAMPAIGN_ID', '').strip().lower()
+          decision_id = os.environ.get('DECISION_ID', '').strip().lower()
+          request_digest = os.environ.get('REQUEST_DIGEST', '').strip().lower()
+          choice = int(os.environ['CHOICE'])
+          selected_digest = os.environ.get('SELECTED_DIGEST', '').strip().lower()
+          update_id = os.environ.get('TELEGRAM_UPDATE_ID', '').strip()[:120]
+          proof = os.environ.get('OWNER_PROOF', '').strip().lower()
+          version = os.environ.get('OWNER_PROOF_VERSION', '').strip()
+          secret = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+
+          if (version != '1' or not re.fullmatch(r'[0-9a-f]{32}', campaign) or
+                  not re.fullmatch(r'[0-9a-f]{32}', decision_id) or
+                  not re.fullmatch(r'[0-9a-f]{64}', request_digest) or
+                  not re.fullmatch(r'[0-9a-f]{64}', selected_digest)):
+              raise SystemExit('invalid owner decision proof envelope')
+          if not auth.verify_owner_decision(
+                  secret, proof, pr, sha, campaign, decision_id, request_digest,
+                  choice, selected_digest, update_id):
+              raise SystemExit('repository_dispatch lacks a valid supervisor-only owner decision proof')
+
+          current = receiver.github(f'repos/{receiver.REPO}/pulls/{pr}')
+          if (current.get('state') != 'open' or current.get('merged') or current.get('draft') or
+                  current.get('head', {}).get('sha', '').lower() != sha):
+              raise SystemExit('owner decision PR/SHA is no longer current')
+
+          raw = receiver.github(f'repos/{receiver.REPO}/issues/{pr}/comments?per_page=100')
+          comments = receiver.flatten_comments(raw)
+          for item in comments:
+              if (item.get('user') or {}).get('login') != 'github-actions[bot]':
+                  continue
+              fields = receiver.verdict_fields(item.get('body') or '')
+              if (fields.get('state') == 'OWNER_DECISION' and
+                      fields.get('target sha') == sha and
+                      fields.get('campaign id') == campaign and
+                      fields.get('decision id') == decision_id and
+                      fields.get('request digest') == request_digest and
+                      fields.get('choice') == str(choice) and
+                      fields.get('selected digest') == selected_digest):
+                  print('OWNER_DECISION already durable')
+                  raise SystemExit(0)
+
+          body = (
+              'ARKUS_LOCAL_AUTOPILOT\n'
+              'State: OWNER_DECISION\n'
+              f'Target SHA: {sha}\n'
+              f'Campaign ID: {campaign}\n'
+              f'Decision ID: {decision_id}\n'
+              f'Request digest: {request_digest}\n'
+              f'Choice: {choice}\n'
+              f'Selected digest: {selected_digest}\n'
+              f'Telegram update ID: {update_id}\n'
+              'Authority proof: supervisor-HMAC-v1\n'
+              'Detail: private-owner Telegram choice authenticated by the supervisor and exact-SHA GitHub Action; '
+              'this is a bounded preference only and conveys no Reviewer verdict, proof waiver or merge authority.\n'
+          )
+          receiver.github(f'repos/{receiver.REPO}/issues/{pr}/comments', body=body)
+          PY
