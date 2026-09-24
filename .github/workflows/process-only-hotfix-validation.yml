@@ -1,0 +1,51 @@
+name: Arkus PROCESS_ONLY Hotfix Validation
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/local_wp_remote_console.py'
+      - 'scripts/local_wp_autopilot_process.py'
+      - 'scripts/request_owner_decision.py'
+      - 'scripts/reviewer_verdict_adoption.py'
+      - 'scripts/test_owner_decision_timeout.py'
+      - 'scripts/test_process_only_hotfix.py'
+      - '.github/workflows/reviewer-verdict-adoption.yml'
+      - '.github/workflows/process-only-hotfix-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  process-only-tests:
+    name: PROCESS_ONLY console/autopilot/recovery
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+
+      - name: Compile process scripts
+        run: |
+          python3 -m py_compile \
+            scripts/local_wp_remote_console.py \
+            scripts/local_wp_autopilot_process.py \
+            scripts/request_owner_decision.py \
+            scripts/reviewer_verdict_adoption.py \
+            scripts/test_owner_decision_timeout.py \
+            scripts/test_process_only_hotfix.py
+
+      - name: Existing local autopilot suite
+        run: python3 scripts/test_local_wp_autopilot.py
+
+      - name: Existing local remote console suite
+        run: python3 scripts/test_local_wp_remote_console.py
+
+      - name: Existing Worker recovery suite
+        run: python3 scripts/test_local_wp_worker_recovery.py
+
+      - name: Owner decision timeout regression
+        run: python3 scripts/test_owner_decision_timeout.py
+
+      - name: PROCESS_ONLY hotfix regressions
+        run: python3 scripts/test_process_only_hotfix.py
