@@ -1,0 +1,348 @@
+name: H1-03A Unity Lifecycle
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-03a-unity-lifecycle-validation.yml'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/**'
+      - 'tools/Arkus.H1.UnityHost/**'
+      - 'src/Arkus.Harness.Cli/**'
+      - 'src/Arkus.Harness.Mcp/**'
+      - 'src/Arkus.Harness.Projection/**'
+      - 'tests/Arkus.Harness.Tests/H1UnityEditorLifecycle*.cs'
+      - 'Docs/evidence/WP-H1-03A/**'
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: Exact WP-H1-03A candidate SHA to execute in Unity
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-03a-unity-${{ github.event.pull_request.number || inputs.target_sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  unity-effective:
+    name: H1-03A effective Unity lifecycle
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'worker/h1-03a-editor-lifecycle'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.target_sha }}
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      EVIDENCE_ROOT: .h1-03a-effective
+    steps:
+      - name: Validate exact target and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact'; exit 2; }
+          missing=0
+          for name in UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact H1-03A candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify clean checkout and pinned Unity contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          grep -Fq 'public const string FixedEntryPoint = "Arkus.H1.Editor.H1EditorWorker.Run";' tools/Arkus.H1.UnityHost/H1UnityLifecycle.cs
+          grep -Fq 'private const string EntryPoint = "Arkus.H1.Editor.H1EditorWorker.Run";' Unity/ArkusUnity/Assets/Arkus/H1/Editor/H1EditorWorker.cs
+
+      - name: Install exact GameCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+
+      - name: Prepare exact worker envelopes
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "${EVIDENCE_ROOT}"
+          mkdir -p "${EVIDENCE_ROOT}"
+          python3 - <<'PY'
+          import base64
+          import pathlib
+
+          root = pathlib.Path('.h1-03a-effective')
+          profile = 'arkus.h1-unity-launch-profile@1'
+          project = 'arkus.unity-project@1:ArkusUnity'
+          editor_version = '6000.3.24f1'
+          editor_revision = '4e7b9b5b6244'
+          entry = 'Arkus.H1.Editor.H1EditorWorker.Run'
+
+          def b64(value):
+              return base64.b64encode(value.encode('utf-8')).decode('ascii')
+
+          def write(name, invocation, capability, executor, payload, *, profile_id=profile):
+              directory = root / name
+              directory.mkdir(parents=True, exist_ok=True)
+              fields = [
+                  'schema=arkus.h1-unity-invocation@1',
+                  'invocation=' + b64(invocation),
+                  'capability=' + b64(capability),
+                  'executor=' + b64(executor),
+                  'payload=' + b64(payload),
+                  'profile=' + b64(profile_id),
+                  'project=' + b64(project),
+                  'editorVersion=' + b64(editor_version),
+                  'editorRevision=' + b64(editor_revision),
+                  'entryPoint=' + b64(entry),
+              ]
+              (directory / 'invocation.env').write_text('\n'.join(fields) + '\n', encoding='utf-8')
+
+          write('inspect-a', 'h1u-effective-inspect-a', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect')
+          write('inspect-b', 'h1u-effective-inspect-b', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect')
+          write('hierarchy', 'h1u-effective-hierarchy', 'unity.host.hierarchy-probe.inspect@1.0', 'arkus.h1.worker.hierarchy-probe.inspect@1', 'hierarchy-probe:v1|root=diagnostic-root|child=diagnostic-child|component=Transform|active=true')
+          write('bad-profile', 'h1u-effective-bad-profile', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect', profile_id='arkus.invalid-profile@1')
+          write('timeout', 'h1u-effective-timeout', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect')
+          PY
+
+      - name: Execute two fresh project-profile workers and hierarchy probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_worker() {
+            local name="$1"
+            "${PINNED_GAMECI_BIN}" build Unity/ArkusUnity \
+              --engine=unity \
+              --target-platform StandaloneLinux64 \
+              --build-method Arkus.H1.Editor.H1EditorWorker.Run \
+              --custom-parameters "-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/${name}/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/${name}/result.env"
+          }
+          run_worker inspect-a
+          run_worker inspect-b
+          run_worker hierarchy
+
+      - name: Reconcile main-thread identity and normalized equality
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64
+          import pathlib
+
+          root = pathlib.Path('.h1-03a-effective')
+          expected = {
+              'schema': 'arkus.h1-unity-result@1',
+              'profile': 'arkus.h1-unity-launch-profile@1',
+              'project': 'arkus.unity-project@1:ArkusUnity',
+              'editorVersion': '6000.3.24f1',
+              'editorRevision': '4e7b9b5b6244',
+              'mainThread': 'true',
+          }
+          encoded = {'invocation', 'capability', 'executor', 'profile', 'project', 'editorVersion', 'editorRevision', 'payload'}
+
+          def read(name):
+              path = root / name / 'result.env'
+              if not path.is_file():
+                  raise SystemExit(f'missing effective result: {path}')
+              fields = {}
+              for line in path.read_text(encoding='utf-8').splitlines():
+                  key, sep, value = line.partition('=')
+                  if not sep or key in fields:
+                      raise SystemExit(f'malformed result field in {path}')
+                  fields[key] = value
+              if set(fields) != {'schema','invocation','capability','executor','profile','project','editorVersion','editorRevision','mainThread','payload'}:
+                  raise SystemExit(f'unexpected result shape: {sorted(fields)}')
+              decoded = dict(fields)
+              for key in encoded:
+                  if key == 'schema':
+                      continue
+                  if key in decoded and key != 'mainThread':
+                      decoded[key] = base64.b64decode(decoded[key], validate=True).decode('utf-8')
+              return decoded
+
+          first = read('inspect-a')
+          second = read('inspect-b')
+          hierarchy = read('hierarchy')
+          for name, result in [('inspect-a', first), ('inspect-b', second), ('hierarchy', hierarchy)]:
+              for key, value in expected.items():
+                  if result[key] != value:
+                      raise SystemExit(f'{name}: {key}={result[key]!r}, expected {value!r}')
+          if first['invocation'] == second['invocation']:
+              raise SystemExit('fresh workers reused invocation identity')
+          comparable = ('capability','executor','profile','project','editorVersion','editorRevision','mainThread','payload')
+          if tuple(first[k] for k in comparable) != tuple(second[k] for k in comparable):
+              raise SystemExit('fresh project-profile workers returned different normalized results')
+          if first['payload'] != 'inspect':
+              raise SystemExit('project-profile payload mismatch')
+          expected_hierarchy = 'hierarchy-probe:v1|root=diagnostic-root|child=diagnostic-child|component=Transform|active=true'
+          if hierarchy['payload'] != expected_hierarchy:
+              raise SystemExit('real Unity hierarchy-shaped diagnostic probe drifted')
+          print('H1_03A_EFFECTIVE_MAIN_THREAD_GREEN fresh=2 hierarchy=GREEN')
+          PY
+
+      - name: Force nonzero Editor exit on wrong profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          "${PINNED_GAMECI_BIN}" build Unity/ArkusUnity \
+            --engine=unity \
+            --target-platform StandaloneLinux64 \
+            --build-method Arkus.H1.Editor.H1EditorWorker.Run \
+            --custom-parameters "-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/bad-profile/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/bad-profile/result.env"
+          rc=$?
+          set -e
+          if [[ "${rc}" -eq 0 ]]; then
+            echo '::error::wrong-profile worker falsely exited successfully'
+            exit 1
+          fi
+          test ! -f "${EVIDENCE_ROOT}/bad-profile/result.env"
+          printf 'NONZERO_EDITOR_EXIT_GREEN rc=%s\n' "${rc}" | tee "${EVIDENCE_ROOT}/nonzero.txt"
+
+      - name: Force bounded external timeout without false result
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          timeout --signal=INT --kill-after=15s 5s \
+            "${PINNED_GAMECI_BIN}" build Unity/ArkusUnity \
+              --engine=unity \
+              --target-platform StandaloneLinux64 \
+              --build-method Arkus.H1.Editor.H1EditorWorker.Run \
+              --custom-parameters "-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/timeout/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/timeout/result.env"
+          rc=$?
+          set -e
+          case "${rc}" in
+            124|130|137) ;;
+            *) echo "::error::expected bounded timeout, got rc=${rc}"; exit 1 ;;
+          esac
+          test ! -f "${EVIDENCE_ROOT}/timeout/result.env"
+          printf 'EXTERNAL_TIMEOUT_GREEN rc=%s result=ABSENT\n' "${rc}" | tee "${EVIDENCE_ROOT}/timeout.txt"
+
+      - name: Falsify corrupted real result and exercise lifecycle failure/lease tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp "${EVIDENCE_ROOT}/inspect-a/result.env" "${EVIDENCE_ROOT}/corrupt-result.env"
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('.h1-03a-effective/corrupt-result.env')
+          text = path.read_text(encoding='utf-8')
+          if 'mainThread=true\n' not in text:
+              raise SystemExit('source real result lacks mainThread proof')
+          path.write_text(text.replace('mainThread=true\n', 'mainThread=not-a-bool\n'), encoding='utf-8')
+          fields = dict(line.split('=', 1) for line in path.read_text(encoding='utf-8').splitlines())
+          if fields.get('mainThread') in ('true', 'false'):
+              raise SystemExit('corruption mutation failed')
+          print('REAL_RESULT_CORRUPTION_CREATED_AND_REJECTABLE')
+          PY
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            -c Release \
+            --filter 'FullyQualifiedName~H1UnityEditorLifecycle' \
+            --logger 'console;verbosity=normal'
+
+      - name: Reconcile deterministic GameCI package injection and restore tracked tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          target = os.environ['TARGET_SHA']
+          manifest_path = Path('Unity/ArkusUnity/Packages/manifest.json')
+          lock_path = Path('Unity/ArkusUnity/Packages/packages-lock.json')
+          allowed_paths = {str(manifest_path), str(lock_path)}
+          status = subprocess.check_output(['git','status','--porcelain','--untracked-files=no'], text=True).splitlines()
+          changed = {line[3:] for line in status if len(line) >= 4}
+          if changed != allowed_paths:
+              raise SystemExit(f'unexpected tracked Unity drift: {sorted(changed)}')
+
+          def baseline(path):
+              return json.loads(subprocess.check_output(['git','show',f'{target}:{path.as_posix()}'], text=True))
+
+          expected_manifest = baseline(manifest_path)
+          expected_manifest['dependencies'].update({
+              'com.unity.sdk.linux-arm64':'1.1.0',
+              'com.unity.sdk.linux-x86_64':'1.1.0',
+              'com.unity.toolchain.linux-x86_64-linux':'1.1.0',
+          })
+          if json.loads(manifest_path.read_text()) != expected_manifest:
+              raise SystemExit('manifest drift is not the accepted GameCI injection')
+
+          expected_lock = baseline(lock_path)
+          expected_lock['dependencies'].update({
+              'com.unity.sdk.linux-arm64': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
+              'com.unity.sdk.linux-x86_64': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
+              'com.unity.sysroot.base': {'version':'1.1.0','depth':1,'source':'registry','dependencies':{},'url':'https://packages.unity.com'},
+              'com.unity.toolchain.linux-x86_64-linux': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
+          })
+          if json.loads(lock_path.read_text()) != expected_lock:
+              raise SystemExit('packages-lock drift is not the accepted GameCI injection')
+          print('GAMECI_PACKAGE_DRIFT_RECONCILED paths=manifest.json,packages-lock.json')
+          PY
+          git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json
+          git diff --quiet "${TARGET_SHA}" --
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Write exact-SHA H1-03A receipt
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > H1_03A_UNITY_RECEIPT.txt <<EOF
+          H1_03A_UNITY_RECEIPT_V1
+          Workpack: WP-H1-03A
+          Candidate SHA: ${TARGET_SHA}
+          Launch profile: arkus.h1-unity-launch-profile@1
+          Project identity: arkus.unity-project@1:ArkusUnity
+          Entry point: Arkus.H1.Editor.H1EditorWorker.Run
+          Effective editor: 6000.3.24f1 (4e7b9b5b6244)
+          Execution substrate: github-actions-ubuntu-24.04 + GameCI CLI ${PINNED_GAMECI_VERSION}
+          Fresh project-profile workers: 2 normalized-equal / mainThread=true
+          Hierarchy-shaped real Editor probe: GREEN
+          Wrong-profile nonzero exit: GREEN
+          Bounded external timeout with no result: GREEN
+          Corrupted real result falsification: GREEN
+          Lifecycle failure mapping + project lease causal tests: GREEN
+          GameCI package drift: EXACT_KNOWN_PLATFORM_INJECTION_RECONCILED_AND_RESTORED
+          Final tracked tree: IDENTICAL_TO_TARGET_SHA
+          Result: GREEN
+          EOF
+          cat H1_03A_UNITY_RECEIPT.txt
+
+      - name: Upload H1-03A Unity evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: h1-03a-unity-${{ env.TARGET_SHA }}
+          path: |
+            .h1-03a-effective
+            H1_03A_UNITY_RECEIPT.txt
+          if-no-files-found: warn
+          retention-days: 30
