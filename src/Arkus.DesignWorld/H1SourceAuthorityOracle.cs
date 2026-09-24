@@ -345,7 +345,7 @@ namespace Arkus.DesignWorld
 
             private static string Required(IReadOnlyDictionary<string, string> values, string name, string path)
             {
-                if (!values.TryGetValue(name, out var value) || string.IsNullOrEmpty(value))
+                if (!values.TryGetValue(name, out var value))
                     throw Source("h1.oracle_field_missing", name, path, "Required authority field '" + name + "' is missing.");
                 return value;
             }
