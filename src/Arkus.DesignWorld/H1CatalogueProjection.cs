@@ -84,7 +84,8 @@ namespace Arkus.DesignWorld
         public static IReadOnlyList<H1ProjectionSourceDescriptor> Sources => ManifestSources;
         public static IReadOnlyList<string> AdoptedEntityTypes => Types;
         public static IReadOnlyList<string> AdoptedRelations => Relations;
-        public static DesignProjectionVersion CurrentProjectionVersion => new DesignProjectionVersion(1, "ctx-dw-h1-01-v1");
+        public static DesignProjectionVersion CurrentProjectionVersion =>
+            new DesignProjectionVersion(1, "ctx-dw-h1-01-v1");
     }
 
     public sealed class H1AcceptedAuthoritySources
@@ -93,11 +94,12 @@ namespace Arkus.DesignWorld
 
         public H1AcceptedAuthoritySources(string catalogueMappingJson, string sourceAdoptionJson)
         {
-            _sources = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(StringComparer.Ordinal)
-            {
-                [H1ProjectionManifest.CataloguePath] = Require(catalogueMappingJson, nameof(catalogueMappingJson)),
-                [H1ProjectionManifest.SourceAdoptionPath] = Require(sourceAdoptionJson, nameof(sourceAdoptionJson))
-            });
+            _sources = new ReadOnlyDictionary<string, string>(
+                new Dictionary<string, string>(StringComparer.Ordinal)
+                {
+                    [H1ProjectionManifest.CataloguePath] = Require(catalogueMappingJson, nameof(catalogueMappingJson)),
+                    [H1ProjectionManifest.SourceAdoptionPath] = Require(sourceAdoptionJson, nameof(sourceAdoptionJson))
+                });
         }
 
         internal string Read(string path)
@@ -170,8 +172,10 @@ namespace Arkus.DesignWorld
             var generic = new DesignWorldProjectionValidator().Validate(projection, universe, reader, version);
             if (!generic.IsValid)
             {
-                var first = generic.Issues.OrderBy(issue => issue.FactId, StringComparer.Ordinal)
-                    .ThenBy(issue => issue.MachineCode, StringComparer.Ordinal).First();
+                var first = generic.Issues
+                    .OrderBy(issue => issue.FactId, StringComparer.Ordinal)
+                    .ThenBy(issue => issue.MachineCode, StringComparer.Ordinal)
+                    .First();
                 throw new H1CatalogueProjectionException(
                     "h1.generic_projection_invalid", first.FactId,
                     "fresh H1 projection must satisfy accepted generic Design World guarantees",
@@ -249,7 +253,8 @@ namespace Arkus.DesignWorld
                     throw new H1CatalogueProjectionException(
                         "h1.accepted_source_blob_mismatch", descriptor.SourcePath,
                         "the derived H1 projection is pinned to exact independently accepted H1-04 authority bytes",
-                        "Accepted source blob changed from " + descriptor.AcceptedBlobSha + " to " + actual + "; rebuild requires explicit review of the new H1 authority.",
+                        "Accepted source blob changed from " + descriptor.AcceptedBlobSha + " to " + actual +
+                        "; rebuild requires explicit review of the new H1 authority.",
                         descriptor.SourcePath);
                 }
             }
@@ -261,11 +266,23 @@ namespace Arkus.DesignWorld
             var adoption = sources.Read(H1ProjectionManifest.SourceAdoptionPath);
             var records = new List<H1RecordDefinition>();
 
-            var catalogueRoot = RequireSingle(CatalogueRootPattern, catalogue, "h1.catalogue_root_shape", H1ProjectionManifest.CataloguePath);
-            RequireEqual(H1ProjectionManifest.CatalogueSchemaId, catalogueRoot.Groups["schema"].Value, "h1.catalogue_schema_stale", H1ProjectionManifest.CataloguePath);
-            RequireEqual(H1ProjectionManifest.ProjectIdentity, catalogueRoot.Groups["project"].Value, "h1.project_identity_stale", H1ProjectionManifest.CataloguePath);
+            var catalogueRoot = RequireSingle(
+                CatalogueRootPattern, catalogue, "h1.catalogue_root_shape", H1ProjectionManifest.CataloguePath);
+            RequireEqual(
+                H1ProjectionManifest.CatalogueSchemaId,
+                catalogueRoot.Groups["schema"].Value,
+                "h1.catalogue_schema_stale",
+                H1ProjectionManifest.CataloguePath);
+            RequireEqual(
+                H1ProjectionManifest.ProjectIdentity,
+                catalogueRoot.Groups["project"].Value,
+                "h1.project_identity_stale",
+                H1ProjectionManifest.CataloguePath);
             records.Add(new H1RecordDefinition(
-                "h1.catalogue", "h1-catalogue", H1ProjectionManifest.CataloguePath, catalogueRoot.Value,
+                "h1.catalogue",
+                "h1-catalogue",
+                H1ProjectionManifest.CataloguePath,
+                catalogueRoot.Value,
                 Fields(
                     "schema-id", catalogueRoot.Groups["schema"].Value,
                     "project-identity", catalogueRoot.Groups["project"].Value,
@@ -273,11 +290,23 @@ namespace Arkus.DesignWorld
                     "accepted-blob-sha", H1ProjectionManifest.CatalogueBlobSha,
                     "adapter-id", H1ProjectionManifest.AdapterId)));
 
-            var adoptionRoot = RequireSingle(AdoptionRootPattern, adoption, "h1.source_adoption_root_shape", H1ProjectionManifest.SourceAdoptionPath);
-            RequireEqual(H1ProjectionManifest.SourceAdoptionSchemaId, adoptionRoot.Groups["schema"].Value, "h1.source_adoption_schema_stale", H1ProjectionManifest.SourceAdoptionPath);
-            RequireEqual(H1ProjectionManifest.DistributionMode, adoptionRoot.Groups["mode"].Value, "h1.distribution_mode_stale", H1ProjectionManifest.SourceAdoptionPath);
+            var adoptionRoot = RequireSingle(
+                AdoptionRootPattern, adoption, "h1.source_adoption_root_shape", H1ProjectionManifest.SourceAdoptionPath);
+            RequireEqual(
+                H1ProjectionManifest.SourceAdoptionSchemaId,
+                adoptionRoot.Groups["schema"].Value,
+                "h1.source_adoption_schema_stale",
+                H1ProjectionManifest.SourceAdoptionPath);
+            RequireEqual(
+                H1ProjectionManifest.DistributionMode,
+                adoptionRoot.Groups["mode"].Value,
+                "h1.distribution_mode_stale",
+                H1ProjectionManifest.SourceAdoptionPath);
             records.Add(new H1RecordDefinition(
-                "h1.source-adoption", "h1-source-adoption", H1ProjectionManifest.SourceAdoptionPath, adoptionRoot.Value,
+                "h1.source-adoption",
+                "h1-source-adoption",
+                H1ProjectionManifest.SourceAdoptionPath,
+                adoptionRoot.Value,
                 Fields(
                     "schema-id", adoptionRoot.Groups["schema"].Value,
                     "distribution-mode", adoptionRoot.Groups["mode"].Value,
@@ -285,15 +314,42 @@ namespace Arkus.DesignWorld
                     "accepted-blob-sha", H1ProjectionManifest.SourceAdoptionBlobSha,
                     "adapter-id", H1ProjectionManifest.AdapterId)));
 
+            var sourceIds = ParseSources(adoption, records);
+            ParseCatalogue(catalogue, sourceIds, records);
+            ParseSlices(adoption, sourceIds, records);
+            return records;
+        }
+
+        private static HashSet<string> ParseSources(string adoption, ICollection<H1RecordDefinition> records)
+        {
+            var matches = SourcePattern.Matches(adoption).Cast<Match>().ToList();
+            var declared = Regex.Matches(adoption, @"""originUrl""\s*:").Count;
+            if (matches.Count == 0 || matches.Count != declared)
+            {
+                throw Shape(
+                    "h1.source_universe_incomplete",
+                    H1ProjectionManifest.SourceAdoptionPath,
+                    "Adapter parsed " + matches.Count.ToString(CultureInfo.InvariantCulture) +
+                    " of " + declared.ToString(CultureInfo.InvariantCulture) + " declared source records.");
+            }
+
             var sourceIds = new HashSet<string>(StringComparer.Ordinal);
-            var sourceMatches = SourcePattern.Matches(adoption).Cast<Match>().ToList();
-            if (sourceMatches.Count == 0) throw Shape("h1.source_universe_empty", H1ProjectionManifest.SourceAdoptionPath, "No accepted H1-04 source adoption records were found.");
-            foreach (var match in sourceMatches)
+            foreach (var match in matches)
             {
                 var sourceId = match.Groups["sourceId"].Value;
-                if (!sourceIds.Add(sourceId)) throw Shape("h1.source_identity_duplicate", H1ProjectionManifest.SourceAdoptionPath, "Duplicate accepted sourceId '" + sourceId + "'.");
+                if (!sourceIds.Add(sourceId))
+                {
+                    throw Shape(
+                        "h1.source_identity_duplicate",
+                        H1ProjectionManifest.SourceAdoptionPath,
+                        "Duplicate accepted sourceId '" + sourceId + "'.");
+                }
+
                 records.Add(new H1RecordDefinition(
-                    SourceFactId(sourceId), "h1-source", H1ProjectionManifest.SourceAdoptionPath, match.Value,
+                    SourceFactId(sourceId),
+                    "h1-source",
+                    H1ProjectionManifest.SourceAdoptionPath,
+                    match.Value,
                     Fields(
                         "source-id", sourceId,
                         "origin-url", match.Groups["originUrl"].Value,
@@ -304,43 +360,114 @@ namespace Arkus.DesignWorld
                         "notice-requirement", match.Groups["noticeRequirement"].Value),
                     new[] { new DesignRelation("declared-in", "h1.source-adoption") }));
             }
+            return sourceIds;
+        }
 
-            var entryMatches = CatalogueEntryPattern.Matches(catalogue).Cast<Match>().ToList();
-            if (entryMatches.Count == 0) throw Shape("h1.catalogue_universe_empty", H1ProjectionManifest.CataloguePath, "No accepted H1-04 catalogue entries were found.");
+        private static void ParseCatalogue(
+            string catalogue,
+            ISet<string> sourceIds,
+            ICollection<H1RecordDefinition> records)
+        {
+            var matches = CatalogueEntryPattern.Matches(catalogue).Cast<Match>().ToList();
+            var declared = Regex.Matches(catalogue, @"""logicalId""\s*:").Count;
+            if (matches.Count == 0 || matches.Count != declared)
+            {
+                throw Shape(
+                    "h1.catalogue_universe_incomplete",
+                    H1ProjectionManifest.CataloguePath,
+                    "Adapter parsed " + matches.Count.ToString(CultureInfo.InvariantCulture) +
+                    " of " + declared.ToString(CultureInfo.InvariantCulture) + " declared catalogue entries.");
+            }
+
             var logicalIds = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var match in entryMatches)
+            foreach (var match in matches)
             {
                 var logicalId = match.Groups["logicalId"].Value;
-                if (!logicalIds.Add(logicalId)) throw Shape("h1.catalogue_identity_duplicate", H1ProjectionManifest.CataloguePath, "Duplicate logicalId '" + logicalId + "'.");
+                if (!logicalIds.Add(logicalId))
+                {
+                    throw Shape(
+                        "h1.catalogue_identity_duplicate",
+                        H1ProjectionManifest.CataloguePath,
+                        "Duplicate logicalId '" + logicalId + "'.");
+                }
+
+                var kind = match.Groups["kind"].Value;
+                var nativeGuid = match.Groups["nativeGuid"].Value;
+                var localFileId = match.Groups["localFileId"].Value;
+                var contentSha = match.Groups["contentSha256"].Value;
+                ValidateLocator(logicalId, kind, nativeGuid, localFileId, contentSha);
+
                 var sourceId = match.Groups["sourceId"].Value;
-                var relations = new List<DesignRelation> { new DesignRelation("declared-in", "h1.catalogue") };
-                if (sourceIds.Contains(sourceId)) relations.Add(new DesignRelation("adopted-from-source", SourceFactId(sourceId)));
+                var relations = new List<DesignRelation>
+                {
+                    new DesignRelation("declared-in", "h1.catalogue")
+                };
+                if (sourceIds.Contains(sourceId))
+                {
+                    relations.Add(new DesignRelation("adopted-from-source", SourceFactId(sourceId)));
+                }
+
                 records.Add(new H1RecordDefinition(
-                    logicalId, "h1-catalogue-entry", H1ProjectionManifest.CataloguePath, match.Value,
+                    logicalId,
+                    "h1-catalogue-entry",
+                    H1ProjectionManifest.CataloguePath,
+                    match.Value,
                     Fields(
                         "logical-id", logicalId,
-                        "kind", match.Groups["kind"].Value,
-                        "native-guid", match.Groups["nativeGuid"].Value,
-                        "local-file-id", match.Groups["localFileId"].Value,
+                        "kind", kind,
+                        "native-guid", nativeGuid,
+                        "local-file-id", localFileId,
                         "type-name", match.Groups["typeName"].Value,
                         "source-id", sourceId,
                         "adoption-status", match.Groups["adoptionStatus"].Value,
-                        "content-sha256", match.Groups["contentSha256"].Value),
+                        "content-sha256", contentSha),
                     relations));
             }
+        }
 
-            var sliceMatches = SlicePattern.Matches(adoption).Cast<Match>().ToList();
-            if (sliceMatches.Count == 0) throw Shape("h1.source_slice_universe_empty", H1ProjectionManifest.SourceAdoptionPath, "No accepted H1-04 source slices were found.");
+        private static void ParseSlices(
+            string adoption,
+            ISet<string> sourceIds,
+            ICollection<H1RecordDefinition> records)
+        {
+            var matches = SlicePattern.Matches(adoption).Cast<Match>().ToList();
+            var declared = Regex.Matches(adoption, @"""assetPath""\s*:").Count;
+            if (matches.Count == 0 || matches.Count != declared)
+            {
+                throw Shape(
+                    "h1.source_slice_universe_incomplete",
+                    H1ProjectionManifest.SourceAdoptionPath,
+                    "Adapter parsed " + matches.Count.ToString(CultureInfo.InvariantCulture) +
+                    " of " + declared.ToString(CultureInfo.InvariantCulture) + " declared source slices.");
+            }
+
             var sliceIds = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var match in sliceMatches)
+            foreach (var match in matches)
             {
                 var assetPath = match.Groups["assetPath"].Value;
                 var factId = SliceFactId(assetPath);
-                if (!sliceIds.Add(factId)) throw Shape("h1.source_slice_identity_duplicate", H1ProjectionManifest.SourceAdoptionPath, "Duplicate accepted source slice identity for '" + assetPath + "'.");
+                if (!sliceIds.Add(factId))
+                {
+                    throw Shape(
+                        "h1.source_slice_identity_duplicate",
+                        H1ProjectionManifest.SourceAdoptionPath,
+                        "Duplicate accepted source slice identity for '" + assetPath + "'.");
+                }
+
                 var sourceId = match.Groups["sourceId"].Value;
-                if (!sourceIds.Contains(sourceId)) throw Shape("h1.source_slice_orphan", H1ProjectionManifest.SourceAdoptionPath, "Source slice references undeclared sourceId '" + sourceId + "'.");
+                if (!sourceIds.Contains(sourceId))
+                {
+                    throw Shape(
+                        "h1.source_slice_orphan",
+                        H1ProjectionManifest.SourceAdoptionPath,
+                        "Source slice references undeclared sourceId '" + sourceId + "'.");
+                }
+
                 records.Add(new H1RecordDefinition(
-                    factId, "h1-source-slice", H1ProjectionManifest.SourceAdoptionPath, match.Value,
+                    factId,
+                    "h1-source-slice",
+                    H1ProjectionManifest.SourceAdoptionPath,
+                    match.Value,
                     Fields(
                         "asset-path", assetPath,
                         "source-id", sourceId,
@@ -352,35 +479,88 @@ namespace Arkus.DesignWorld
                         new DesignRelation("adopted-from-source", SourceFactId(sourceId))
                     }));
             }
+        }
 
-            return records;
+        private static void ValidateLocator(
+            string logicalId,
+            string kind,
+            string nativeGuid,
+            string localFileId,
+            string contentSha)
+        {
+            if (StringComparer.Ordinal.Equals(kind, "component-schema"))
+            {
+                if (nativeGuid.Length != 0 ||
+                    !StringComparer.Ordinal.Equals(localFileId, "0") ||
+                    contentSha.Length != 0)
+                {
+                    throw Shape(
+                        "h1.component_schema_locator_stale",
+                        H1ProjectionManifest.CataloguePath,
+                        "Component-schema entry '" + logicalId +
+                        "' must retain empty GUID/content and localFileId 0.");
+                }
+                return;
+            }
+
+            if (nativeGuid.Length != 32 || contentSha.Length != 64)
+            {
+                throw Shape(
+                    "h1.native_locator_stale",
+                    H1ProjectionManifest.CataloguePath,
+                    "Asset-like entry '" + logicalId + "' lost its reviewed native locator or content fingerprint.");
+            }
         }
 
         internal static string SourceFactId(string sourceId) => "h1.source." + sourceId;
-        internal static string SliceFactId(string assetPath) => "h1.slice." + DesignWorldEncoding.Sha256Hex(assetPath).Substring(0, 24);
+
+        internal static string SliceFactId(string assetPath) =>
+            "h1.slice." + DesignWorldEncoding.Sha256Hex(assetPath).Substring(0, 24);
 
         private static SortedDictionary<string, DesignValue> Fields(params string[] values)
         {
-            if (values.Length % 2 != 0) throw new ArgumentException("Fields require name/value pairs.", nameof(values));
+            if (values.Length % 2 != 0)
+            {
+                throw new ArgumentException("Fields require name/value pairs.", nameof(values));
+            }
+
             var result = new SortedDictionary<string, DesignValue>(StringComparer.Ordinal);
-            for (var index = 0; index < values.Length; index += 2) result.Add(values[index], DesignValue.String(values[index + 1]));
+            for (var index = 0; index < values.Length; index += 2)
+            {
+                result.Add(values[index], DesignValue.String(values[index + 1]));
+            }
             return result;
         }
 
         private static Match RequireSingle(Regex pattern, string source, string code, string path)
         {
             var matches = pattern.Matches(source).Cast<Match>().ToList();
-            if (matches.Count != 1) throw Shape(code, path, "Expected exactly one reviewed root shape but found " + matches.Count.ToString(CultureInfo.InvariantCulture) + ".");
+            if (matches.Count != 1)
+            {
+                throw Shape(
+                    code,
+                    path,
+                    "Expected exactly one reviewed root shape but found " +
+                    matches.Count.ToString(CultureInfo.InvariantCulture) + ".");
+            }
             return matches[0];
         }
 
         private static void RequireEqual(string expected, string actual, string code, string path)
         {
-            if (!StringComparer.Ordinal.Equals(expected, actual)) throw Shape(code, path, "Expected '" + expected + "' but found '" + actual + "'.");
+            if (!StringComparer.Ordinal.Equals(expected, actual))
+            {
+                throw Shape(code, path, "Expected '" + expected + "' but found '" + actual + "'.");
+            }
         }
 
         private static H1CatalogueProjectionException Shape(string code, string path, string detail) =>
-            new H1CatalogueProjectionException(code, path, "accepted H1-04 authority shape must remain exact until explicitly re-adopted", detail, path);
+            new H1CatalogueProjectionException(
+                code,
+                path,
+                "accepted H1-04 authority shape must remain exact until explicitly re-adopted",
+                detail,
+                path);
     }
 
     internal sealed class H1MultiSourceAuthorityReader : IDesignAuthorityReader
@@ -388,12 +568,16 @@ namespace Arkus.DesignWorld
         private readonly IReadOnlyDictionary<string, DesignFact> _facts;
         private readonly IReadOnlyDictionary<string, SourceState> _sources;
 
-        public H1MultiSourceAuthorityReader(IEnumerable<H1RecordDefinition> definitions, H1AcceptedAuthoritySources sources)
+        public H1MultiSourceAuthorityReader(
+            IEnumerable<H1RecordDefinition> definitions,
+            H1AcceptedAuthoritySources sources)
         {
             var states = new Dictionary<string, SourceState>(StringComparer.Ordinal);
             foreach (var descriptor in H1ProjectionManifest.Sources)
             {
-                states.Add(descriptor.SourcePath, new SourceState(descriptor.AuthorityId, sources.Read(descriptor.SourcePath)));
+                states.Add(
+                    descriptor.SourcePath,
+                    new SourceState(descriptor.AuthorityId, sources.Read(descriptor.SourcePath)));
             }
             _sources = new ReadOnlyDictionary<string, SourceState>(states);
 
@@ -403,35 +587,51 @@ namespace Arkus.DesignWorld
                 if (facts.ContainsKey(definition.FactId))
                 {
                     throw new H1CatalogueProjectionException(
-                        "h1.identity_duplicate", definition.FactId,
+                        "h1.identity_duplicate",
+                        definition.FactId,
                         "every projected H1 record identity must be unique",
-                        "Adapter produced a duplicate projected identity.", definition.SourcePath);
+                        "Adapter produced a duplicate projected identity.",
+                        definition.SourcePath);
                 }
+
                 if (!states.TryGetValue(definition.SourcePath, out var state))
                 {
                     throw new H1CatalogueProjectionException(
-                        "h1.source_unreviewed", definition.FactId,
+                        "h1.source_unreviewed",
+                        definition.FactId,
                         "H1 adapter may project only frozen accepted H1-04 authority sources",
-                        "Record points at an undeclared authority path.", definition.SourcePath);
+                        "Record points at an undeclared authority path.",
+                        definition.SourcePath);
                 }
+
                 var occurrences = H1ProjectionText.CountOccurrences(state.Text, definition.SourceAnchor);
                 if (occurrences != 1)
                 {
                     throw new H1CatalogueProjectionException(
-                        occurrences == 0 ? "h1.provenance_anchor_missing" : "h1.provenance_anchor_ambiguous",
+                        occurrences == 0
+                            ? "h1.provenance_anchor_missing"
+                            : "h1.provenance_anchor_ambiguous",
                         definition.FactId,
                         "every projected H1 record must source-open to one unique accepted authority anchor",
-                        "Source anchor occurrence count is " + occurrences.ToString(CultureInfo.InvariantCulture) + ".",
+                        "Source anchor occurrence count is " +
+                        occurrences.ToString(CultureInfo.InvariantCulture) + ".",
                         definition.SourcePath);
                 }
+
                 var anchor = new DesignAuthorityAnchor(
                     state.AuthorityId,
                     definition.SourcePath,
                     definition.SourceAnchor,
                     state.SourceDigest,
                     DesignWorldEncoding.Sha256Hex(definition.SourceAnchor));
-                facts.Add(definition.FactId, new DesignFact(
-                    definition.FactId, definition.FactType, definition.Fields, definition.Relations, anchor));
+                facts.Add(
+                    definition.FactId,
+                    new DesignFact(
+                        definition.FactId,
+                        definition.FactType,
+                        definition.Fields,
+                        definition.Relations,
+                        anchor));
             }
             _facts = new ReadOnlyDictionary<string, DesignFact>(facts);
         }
@@ -440,7 +640,9 @@ namespace Arkus.DesignWorld
         {
             if (!_facts.TryGetValue(factId, out var fact))
             {
-                return DesignAuthorityReadResult.Failure(DesignAuthorityResolutionStatus.Missing, "No H1 authority record exists for the independently required identity.");
+                return DesignAuthorityReadResult.Failure(
+                    DesignAuthorityResolutionStatus.Missing,
+                    "No H1 authority record exists for the independently required identity.");
             }
             return DesignAuthorityReadResult.Found(fact);
         }
@@ -448,13 +650,26 @@ namespace Arkus.DesignWorld
         public DesignAuthorityResolutionStatus Resolve(DesignAuthorityAnchor anchor)
         {
             if (anchor == null) throw new ArgumentNullException(nameof(anchor));
-            if (!_sources.TryGetValue(anchor.SourcePath, out var state)) return DesignAuthorityResolutionStatus.Missing;
-            if (!StringComparer.Ordinal.Equals(anchor.AuthorityId, state.AuthorityId)) return DesignAuthorityResolutionStatus.Missing;
+            if (!_sources.TryGetValue(anchor.SourcePath, out var state))
+            {
+                return DesignAuthorityResolutionStatus.Missing;
+            }
+
+            if (!StringComparer.Ordinal.Equals(anchor.AuthorityId, state.AuthorityId))
+            {
+                return DesignAuthorityResolutionStatus.Missing;
+            }
+
             var count = H1ProjectionText.CountOccurrences(state.Text, anchor.Anchor);
             if (count == 0) return DesignAuthorityResolutionStatus.Missing;
             if (count > 1) return DesignAuthorityResolutionStatus.Ambiguous;
             if (!StringComparer.Ordinal.Equals(anchor.SourceDigest, state.SourceDigest) ||
-                !StringComparer.Ordinal.Equals(anchor.AnchorDigest, DesignWorldEncoding.Sha256Hex(anchor.Anchor))) return DesignAuthorityResolutionStatus.Stale;
+                !StringComparer.Ordinal.Equals(
+                    anchor.AnchorDigest,
+                    DesignWorldEncoding.Sha256Hex(anchor.Anchor)))
+            {
+                return DesignAuthorityResolutionStatus.Stale;
+            }
             return DesignAuthorityResolutionStatus.Found;
         }
 
@@ -493,7 +708,8 @@ namespace Arkus.DesignWorld
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
             var content = Encoding.UTF8.GetBytes(text);
-            var header = Encoding.UTF8.GetBytes("blob " + content.Length.ToString(CultureInfo.InvariantCulture) + "\0");
+            var header = Encoding.UTF8.GetBytes(
+                "blob " + content.Length.ToString(CultureInfo.InvariantCulture) + "\0");
             var bytes = new byte[header.Length + content.Length];
             Buffer.BlockCopy(header, 0, bytes, 0, header.Length);
             Buffer.BlockCopy(content, 0, bytes, header.Length, content.Length);
@@ -501,7 +717,10 @@ namespace Arkus.DesignWorld
             {
                 var hash = sha.ComputeHash(bytes);
                 var builder = new StringBuilder(hash.Length * 2);
-                for (var index = 0; index < hash.Length; index++) builder.Append(hash[index].ToString("x2", CultureInfo.InvariantCulture));
+                for (var index = 0; index < hash.Length; index++)
+                {
+                    builder.Append(hash[index].ToString("x2", CultureInfo.InvariantCulture));
+                }
                 return builder.ToString();
             }
         }
