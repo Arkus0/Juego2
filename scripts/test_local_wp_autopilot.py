@@ -270,6 +270,7 @@ class RoutingTests(unittest.TestCase):
         self.assertEqual(module.effort_for_worker("Class: FOUNDATIONAL AUTHORITY"), "xhigh")
         self.assertEqual(module.effort_for_worker("Class: PROCESS_ONLY"), "high")
         self.assertEqual(module.effort_for_worker("Class: PROCESS_ONLY\nForbidden: architecture work"), "high")
+        self.assertEqual(module.effort_for_worker("Class: **RESEARCH / NON-FOUNDATIONAL**"), "high")
 
     def test_circuit_breaker_is_checked_on_first_and_third_fail(self):
         audit = {"classification": "valid", "same_foundational_defect_class": False,

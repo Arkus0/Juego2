@@ -557,7 +557,10 @@ def assert_dependencies(root: Path, wp_text: str) -> None:
 def effort_for_worker(wp_text: str) -> str:
     # Class, not incidental prose in Forbidden scope, selects the quality-first default.
     klass = re.search(r"^Class:\s*(.+)$", wp_text, re.MULTILINE | re.IGNORECASE)
-    return "xhigh" if klass and re.search(r"FOUNDATIONAL|ARCHITECTURE|COMPLETENESS", klass.group(1), re.IGNORECASE) else "high"
+    if not klass:
+        return "high"
+    positive_class = re.sub(r"\bNON[-_ ]?FOUNDATIONAL\b", "", klass.group(1), flags=re.IGNORECASE)
+    return "xhigh" if re.search(r"FOUNDATIONAL|ARCHITECTURE|COMPLETENESS", positive_class, re.IGNORECASE) else "high"
 
 
 def prepare_new_wp(root: Path) -> None:
