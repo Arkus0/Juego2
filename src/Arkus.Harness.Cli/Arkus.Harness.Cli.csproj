@@ -8,5 +8,6 @@
   <ItemGroup>
     <ProjectReference Include="../Arkus.Harness.Projection/Arkus.Harness.Projection.csproj" />
     <ProjectReference Include="../Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
+    <ProjectReference Include="../../tools/Arkus.H1.UnityHost/Arkus.H1.UnityHost.csproj" />
   </ItemGroup>
 </Project>
