@@ -5,6 +5,10 @@ on:
     paths:
       - 'scripts/local_wp_remote_console.py'
       - 'scripts/local_wp_autopilot_process.py'
+      - 'scripts/local_wp_autopilot_remote.py'
+      - 'scripts/local_wp_autopilot_remote_base.py'
+      - 'scripts/local_wp_quota_recovery.py'
+      - 'scripts/test_local_wp_short_quota_guard.py'
       - 'scripts/request_owner_decision.py'
       - 'scripts/reviewer_verdict_adoption.py'
       - 'scripts/test_owner_decision_timeout.py'
@@ -30,6 +34,10 @@ jobs:
           python3 -m py_compile \
             scripts/local_wp_remote_console.py \
             scripts/local_wp_autopilot_process.py \
+            scripts/local_wp_autopilot_remote.py \
+            scripts/local_wp_autopilot_remote_base.py \
+            scripts/local_wp_quota_recovery.py \
+            scripts/test_local_wp_short_quota_guard.py \
             scripts/request_owner_decision.py \
             scripts/reviewer_verdict_adoption.py \
             scripts/test_owner_decision_timeout.py \
@@ -43,6 +51,9 @@ jobs:
 
       - name: Existing Worker recovery suite
         run: python3 scripts/test_local_wp_worker_recovery.py
+
+      - name: Short quota liveness regression
+        run: python3 scripts/test_local_wp_short_quota_guard.py
 
       - name: Owner decision timeout regression
         run: python3 scripts/test_owner_decision_timeout.py
