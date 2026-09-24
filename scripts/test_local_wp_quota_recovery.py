@@ -38,6 +38,13 @@ class QuotaRecoveryTests(unittest.TestCase):
             ("wait_short", 2000),
         )
 
+    def test_explicit_short_reached_survives_rounded_percentage(self):
+        payload = self.payload(primary_used=96, secondary_used=40, reached="primary")
+        self.assertEqual(
+            module.classify_after_session_failure(payload, 1000),
+            ("wait_short", 2000),
+        )
+
     def test_general_floor_wins_over_simultaneous_short_limit(self):
         payload = self.payload(primary_used=100, secondary_used=98, reached="primary")
         self.assertEqual(
