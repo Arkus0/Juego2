@@ -340,11 +340,14 @@ namespace Arkus.H1.UnityHost
         public static NeutralProjectionService Create()
         {
             var profile = H1UnityLaunchProfile.ForCurrentHost();
-            var ledger = new FileH1UnityInvocationLedger(profile);
+            var projectLease = new FileH1UnityProjectLease(profile);
+            var ledger = new RestartRecoveringH1UnityInvocationLedger(
+                new FileH1UnityInvocationLedger(profile),
+                projectLease);
             var coordinator = new H1UnityEditorExecutionCoordinator(
                 profile,
                 new FixedH1UnityEditorProcessLauncher(),
-                new FileH1UnityProjectLease(profile),
+                projectLease,
                 ledger,
                 new IH1UnityCapabilityExecutor[]
                 {
