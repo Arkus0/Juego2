@@ -1,0 +1,134 @@
+{
+  "schema": "ctx-dw-gate-generic-projection-v1",
+  "adapter": "ctx-dw-gate-h1-adapter-v1",
+  "projection_schema": "ctx-dw-gate-generic-projection-v1",
+  "source": {
+    "path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+    "sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683"
+  },
+  "facts": [
+    {
+      "fact_id": "asset:market-managed-variant#asset_type",
+      "subject": "asset:market-managed-variant",
+      "field": "asset_type",
+      "value": "prefab",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "asset:market-managed-variant"
+      }
+    },
+    {
+      "fact_id": "asset:market-managed-variant#logical_id",
+      "subject": "asset:market-managed-variant",
+      "field": "logical_id",
+      "value": "juego.market.variant",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "asset:market-managed-variant"
+      }
+    },
+    {
+      "fact_id": "asset:market-managed-variant#management",
+      "subject": "asset:market-managed-variant",
+      "field": "management",
+      "value": "bridge-managed",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "asset:market-managed-variant"
+      }
+    },
+    {
+      "fact_id": "catalogue:market-material#adoption_status",
+      "subject": "catalogue:market-material",
+      "field": "adoption_status",
+      "value": "approved",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "catalogue:market-material"
+      }
+    },
+    {
+      "fact_id": "catalogue:market-material#asset_type",
+      "subject": "catalogue:market-material",
+      "field": "asset_type",
+      "value": "material",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "catalogue:market-material"
+      }
+    },
+    {
+      "fact_id": "catalogue:market-material#logical_id",
+      "subject": "catalogue:market-material",
+      "field": "logical_id",
+      "value": "qsrc.market.material",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "catalogue:market-material"
+      }
+    },
+    {
+      "fact_id": "catalogue:market-prefab#adoption_status",
+      "subject": "catalogue:market-prefab",
+      "field": "adoption_status",
+      "value": "approved",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "catalogue:market-prefab"
+      }
+    },
+    {
+      "fact_id": "catalogue:market-prefab#asset_type",
+      "subject": "catalogue:market-prefab",
+      "field": "asset_type",
+      "value": "prefab",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "catalogue:market-prefab"
+      }
+    },
+    {
+      "fact_id": "catalogue:market-prefab#logical_id",
+      "subject": "catalogue:market-prefab",
+      "field": "logical_id",
+      "value": "qsrc.market.prefab",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "catalogue:market-prefab"
+      }
+    }
+  ],
+  "relations": [
+    {
+      "relation_id": "relation:managed-variant-derived-from",
+      "type": "derived-from",
+      "source": "asset:market-managed-variant",
+      "target": "catalogue:market-prefab",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "relation:managed-variant-derived-from"
+      }
+    },
+    {
+      "relation_id": "relation:market-prefab-uses-material",
+      "type": "uses-material",
+      "source": "catalogue:market-prefab",
+      "target": "catalogue:market-material",
+      "provenance": {
+        "source_path": "Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json",
+        "source_sha256": "4460f9784854d1f8afaf95cd3364dd2afb4d6df39d2b5942fcb0def821020683",
+        "source_record_id": "relation:market-prefab-uses-material"
+      }
+    }
+  ]
+}

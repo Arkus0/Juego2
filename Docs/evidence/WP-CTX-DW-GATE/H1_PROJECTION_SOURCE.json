@@ -1,0 +1,47 @@
+{
+  "schema": "ctx-dw-gate-h1-source-v1",
+  "projection_schema": "ctx-dw-gate-generic-projection-v1",
+  "records": [
+    {
+      "id": "catalogue:market-prefab",
+      "kind": "catalogue-entry",
+      "fields": {
+        "logical_id": "qsrc.market.prefab",
+        "asset_type": "prefab",
+        "adoption_status": "approved"
+      }
+    },
+    {
+      "id": "catalogue:market-material",
+      "kind": "catalogue-entry",
+      "fields": {
+        "logical_id": "qsrc.market.material",
+        "asset_type": "material",
+        "adoption_status": "approved"
+      }
+    },
+    {
+      "id": "asset:market-managed-variant",
+      "kind": "managed-derivative",
+      "fields": {
+        "logical_id": "juego.market.variant",
+        "asset_type": "prefab",
+        "management": "bridge-managed"
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "relation:market-prefab-uses-material",
+      "type": "uses-material",
+      "source": "catalogue:market-prefab",
+      "target": "catalogue:market-material"
+    },
+    {
+      "id": "relation:managed-variant-derived-from",
+      "type": "derived-from",
+      "source": "asset:market-managed-variant",
+      "target": "catalogue:market-prefab"
+    }
+  ]
+}

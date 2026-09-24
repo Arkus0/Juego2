@@ -17,10 +17,44 @@ Plan DocSync: `DOCSYNC_COMPLETE`
 
 `WP-H1-02` is **COMPLETE**. Frozen candidate `d86a08e644f542e9515f5e54fd4061f61e251c70` completed valid Unity Round 4 evidence and exact-SHA validation `35888922206` GREEN in PR `#152`. Final independent review `#5293810284` raised two further adversarial checker-evasion hardenings; owner acceptance override comment `#5798755634` classified those as non-material overdefense for H1-02 acceptance and authorized the exact candidate, which merged as `faa42a3d58ab26b0dc2547f9b6b7fc49a604219d`.
 
-Next default workpack: `WP-H1-03 — Unity host policy + project workspace authority` (`HYBRID`), dependency-valid but `NOT_STARTED` until a human starts its Worker.
+`WP-H1-UNITY-CI` is **COMPLETE / ACCEPTED** as process infrastructure. Exact candidate `b49b081a92b088d7b0fd9adce4bd5f26a3b6c1bf` passed independent review `#5299167558`, merged as `6898250be985ab5d805bbdb129e30c9c6f1f4cdf`, and its accepted run `35936805407` proved the bounded GitHub-hosted Unity substrate. Binding DocSync: `Docs/evidence/WP-H1-UNITY-CI/DOCSYNC.md`.
 
-H1 now has three accepted implementation WPs. No later H1 implementation WP is active or implicitly authorized by this DocSync. `WP-H1-03A` remains blocked until `WP-H1-03` is accepted.
+Next default workpack: `WP-H1-03 — Unity host policy + project workspace authority` (`HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE`), dependency-valid but `NOT_STARTED` until a human starts its Worker.
+
+H1 now has three accepted implementation WPs plus accepted remote-Unity process infrastructure. No later H1 implementation WP is active or implicitly authorized by this DocSync. `WP-H1-03A` remains blocked until `WP-H1-03` is accepted.
 The sequence contains 13 claim-owned implementation workpacks plus `WP-H1-GATE`.
+
+## Effective Unity execution policy
+
+H1 distinguishes **effective Unity evidence** from **physical-local execution**.
+
+Accepted `WP-H1-UNITY-CI` proves that a workpack may use GitHub-hosted Unity when all evidence needed for its claim is machine-verifiable and the runner has every required lawful input. `LOCAL_UNITY_REQUIRED` therefore continues to mean that a real pinned Unity execution is required; it does **not** by itself mean the owner's physical PC is mandatory.
+
+A physical/local Unity session remains required whenever the active claim materially depends on any of the following:
+
+- human visual or interactive inspection;
+- scene, material, animation, GPU or appearance judgment that is not replaced by an accepted machine oracle;
+- peripherals or other physical-machine state;
+- source assets or licensed/private bytes that currently exist only on the owner's machine and have not been lawfully and securely made available to the hosted runner;
+- any other local-state fact that the hosted substrate cannot truthfully reproduce.
+
+Conversely, a WP must not demand the owner's PC merely because older planning text says “local” if the actual acceptance claim is fully machine-verifiable on the accepted hosted substrate.
+
+Under the current contracts, **H1-03 and H1-03A are explicitly GitHub-hosted eligible**: both need real pinned Unity execution, but neither requires Quaternius Source assets, scene appearance judgment or interactive authoring. From **H1-04 onward**, execution must be classified by the exact claim and input availability. In particular, if the accepted Quaternius Source slice needed by H1-04+ exists only on the owner's PC, those source-dependent proofs remain local until an independently reviewed lawful/secure hosted-input path exists.
+
+The accepted H1-02/GameCI drift exception is bounded to its reviewed substrate and does not silently authorize broader package/source mutation in later WPs.
+
+## CTX↔DW selective-adoption note
+
+Accepted cross-track `WP-CTX-DW-GATE` does **not** block `WP-H1-03` or `WP-H1-03A`. Those authority/lifecycle workpacks continue on the existing H1 chain and are expected to use CTX plus authoritative H1/H0 sources, with DW normally `NOT_MATERIAL` unless concrete evidence says otherwise.
+
+The plan does not assume that DW already contains H1 catalogue/Quaternius knowledge. `H1-04` remains source-first and establishes the accepted real-source plus catalogue/identity authority. Only after H1-04 PASS may a separate non-product CTX↔DW projection owner derive an H1 DW projection, with an independently enumerated source universe, completeness oracle, exact provenance, stale detection and deterministic rebuild. No H1 product workpack waits for this projection: when unavailable or stale, CTX routes directly to authority.
+
+`H1-05` is the first eligible real H1 consumer of that projection when it is current and materially useful; `H1-06` is the second planned observation for the different asset/prefab relation shape. DW routing advice cannot shrink CTX mandatory reads or escalation requirements.
+
+The required `H1-GATE` fresh independent public-client AI-agent trial remains on its accepted public launch-profile/MCP discovery/schema bootstrap and is not pre-seeded with Juego2-private CTX/DW knowledge. Any CTX↔DW fresh-agent composition probe is separate and cannot substitute for or repair H1-GATE public discoverability.
+
+Detailed planning input: `Docs/workpacks/H1/CTX_DW_ADOPTION_PLAN.md`.
 
 ## Outcome
 
@@ -31,6 +65,8 @@ H1 ends only when Arkus can drive a representative Juego2 slice through public c
 The first H1 workpack that needs game-representative art is `WP-H1-04`. At that point the exact human-approved **Quaternius Source** distribution/slice is adopted under `DEPENDENCY_IP_POLICY.md` and becomes the default real-art baseline for H1-04 through H1-GATE.
 
 This does **not** mean H1 must finish the art before the bridge works. H1 uses Quaternius Source as-is wherever practical. Harness-only synthetic fixtures remain allowed for bridge mechanics/negative controls, but H1 does not fabricate substitute production art simply to postpone using the real source. `WP-H1-11` broadens the already-adopted source into the representative real-asset conformance slice; it is no longer the first adoption point.
+
+If the required approved Quaternius bytes are only present on the owner's PC, a source-dependent H1 proof is legitimately local until those exact bytes have an accepted lawful/secure path to the hosted runner. The remote-Unity policy removes unnecessary machine dependence; it does not pretend private/local asset availability away.
 
 The downstream product strategy is source-first: after H1-GATE, H2 builds the first playable/demo with maximum practical direct Quaternius reuse, then H2/ART/CITY production creates separately identified Juego2-derived assets only where concrete needs demand Cantabrian adaptation, clothing, missing objects, variants or missing animations. Those later art derivatives preserve provenance and do not become Arkus semantic authority.
 
@@ -62,18 +98,20 @@ The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox fal
 |---:|---|---|---|
 | 1 | `WP-H1-00` ✅ | engine-neutral projection state machine and reference materializer | `REMOTE_OK` |
 | 2 | `WP-H1-01` ✅ | Unity scoped authoring producer and automatic dependency derivation | `REMOTE_OK` |
-| 3 | `WP-H1-02` ✅ | pinned reproducible Unity project/toolchain/package baseline | `LOCAL_UNITY_REQUIRED` |
-| 4 | `WP-H1-03` | explicit project-scoped Unity host authority below transports | `HYBRID` |
-| 5 | `WP-H1-03A` | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID` |
-| 6 | `WP-H1-04` | effective Unity catalogue/logical-native identity + first Quaternius Source adoption | `LOCAL_UNITY_REQUIRED` |
-| 7 | `WP-H1-05` | deterministic managed scene graph and generational publication | `LOCAL_UNITY_REQUIRED` |
-| 8 | `WP-H1-06` | source-asset/prefab resolution plus managed prefab derivatives | `LOCAL_UNITY_REQUIRED` |
-| 9 | `WP-H1-07` | allowlisted component schema, inspection and realization | `LOCAL_UNITY_REQUIRED` |
-| 10 | `WP-H1-08` | Unity-owned validation and stable diagnostics | `HYBRID` |
-| 11 | `WP-H1-09` | deterministic drift plus explicit Unity-to-canonical proposals | `LOCAL_UNITY_REQUIRED` |
-| 12 | `WP-H1-10` | project checkpoint and clean Unity reconstruction preserving H0 | `HYBRID` |
-| 13 | `WP-H1-11` | broad real-asset/rig/material/animation conformance over accepted Quaternius Source | `LOCAL_UNITY_REQUIRED` |
-| 14 | `WP-H1-GATE` | composed Unity bridge/parity readiness | `HYBRID` |
+| 3 | `WP-H1-02` ✅ | pinned reproducible Unity project/toolchain/package baseline | `EFFECTIVE_UNITY` (accepted local oracle; hosted pilot now accepted) |
+| 4 | `WP-H1-03` | explicit project-scoped Unity host authority below transports | `HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE` |
+| 5 | `WP-H1-03A` | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE` |
+| 6 | `WP-H1-04` | effective Unity catalogue/logical-native identity + first Quaternius Source adoption | `EFFECTIVE_UNITY / SOURCE_DEPENDENT` |
+| 7 | `WP-H1-05` | deterministic managed scene graph and generational publication | `EFFECTIVE_UNITY / SOURCE_OR_VISUAL_DEPENDENT_AS_CLAIM_REQUIRES` |
+| 8 | `WP-H1-06` | source-asset/prefab resolution plus managed prefab derivatives | `EFFECTIVE_UNITY / SOURCE_DEPENDENT` |
+| 9 | `WP-H1-07` | allowlisted component schema, inspection and realization | `EFFECTIVE_UNITY / CLASSIFY_BY_CLAIM` |
+| 10 | `WP-H1-08` | Unity-owned validation and stable diagnostics | `HYBRID / CLASSIFY_BY_CLAIM` |
+| 11 | `WP-H1-09` | deterministic drift plus explicit Unity-to-canonical proposals | `EFFECTIVE_UNITY / CLASSIFY_BY_CLAIM` |
+| 12 | `WP-H1-10` | project checkpoint and clean Unity reconstruction preserving H0 | `HYBRID / CLASSIFY_BY_CLAIM` |
+| 13 | `WP-H1-11` | broad real-asset/rig/material/animation conformance over accepted Quaternius Source | `EFFECTIVE_UNITY / SOURCE_AND_POSSIBLY_VISUAL_DEPENDENT` |
+| 14 | `WP-H1-GATE` | composed Unity bridge/parity readiness | `HYBRID / CLASSIFY_BY_CLAIM` |
+
+`EFFECTIVE_UNITY` means a real pinned Unity execution is mandatory. Hosted versus physical-local is selected from the actual evidence/input needs above, not from the historical label alone.
 
 ## Split review
 
@@ -104,7 +142,9 @@ H1 consumes H0 canonical identity/hash, complete inspection, plan/dry-run/atomic
 - deterministic proof is the default;
 - each public/authorable semantic change gets a bounded approved Juego2 content-shape probe;
 - Unity-required evidence records exact editor/package/platform fingerprints;
-- missing local Unity evidence cannot be called PASS;
+- missing **effective Unity** evidence cannot be called PASS when the WP owns an effective-Unity claim;
+- physical-local execution is required only when the claim materially depends on visual/interactive/physical-local state or on required source bytes unavailable to the hosted runner;
+- accepted GitHub-hosted Unity may satisfy machine-verifiable effective-Unity evidence when all required inputs are lawfully and reproducibly available there;
 - no full H0 AI trial or complete H0 replay/transport suite is repeated per WP;
 - every Editor-bound public operation enters canonical composition and consumes the single H1-03A execution seam; private scripts/menus or adapter-only routes are not acceptance evidence;
 - from H1-04 onward, positive game-representative art probes use the accepted Quaternius Source baseline where that source supplies the needed shape; synthetic repository fixtures remain valid for harness-only mechanics and causal negative controls;

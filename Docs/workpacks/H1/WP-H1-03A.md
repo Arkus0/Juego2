@@ -2,9 +2,19 @@
 
 Status: PLANNED / NOT_STARTED
 Class: FOUNDATIONAL PROCESS BOUNDARY
-EXECUTION_REQUIREMENT: HYBRID
+EXECUTION_REQUIREMENT: HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE
 Depends on: `WP-H1-03` PASS
 Blocks: `WP-H1-04`
+
+## Execution interpretation
+
+`HYBRID` means remote contract/process tests plus effective pinned Unity worker evidence. After accepted `WP-H1-UNITY-CI`, that effective Unity evidence may run on the reviewed GitHub-hosted Unity substrate when the claim is fully machine-verifiable and does not require human visual inspection, interactive authoring, peripherals, private local source bytes or other physical/local-machine state.
+
+The current H1-03A contract is eligible for that hosted path. Its acceptance oracle is process/lifecycle truth: launch, main-thread execution, normalized result equality, lease contention, cancellation, crash/timeout/result-corruption handling and restart recovery. It does not require Quaternius Source assets, scene appearance judgment or interactive Editor work. A physical owner PC is therefore **not** an acceptance prerequisite for H1-03A under the current contract.
+
+This does not turn GitHub Actions into a product remote-editor topology and does not generalize later H1 claims that depend on local-only Quaternius source bytes or human visual/interactive evidence.
+
+Binding process record: `Docs/evidence/WP-H1-UNITY-CI/DOCSYNC.md`.
 
 ## Objective and central claim
 
@@ -37,7 +47,7 @@ H0 canonical operation semantics, generic MCP/JSONL projection correctness, Unit
 
 ## Allowed scope
 
-H1 host bootstrap/profile, project-operation lease, fixed Unity batch launcher, internal invocation/result envelope and ledger, Editor main-thread entry point, process/lifecycle diagnostics, lasting public project/profile inspection and operation-status capabilities, remote test double plus exact local Unity evidence.
+H1 host bootstrap/profile, project-operation lease, fixed Unity batch launcher, internal invocation/result envelope and ledger, Editor main-thread entry point, process/lifecycle diagnostics, lasting public project/profile inspection and operation-status capabilities, remote test double plus exact effective Unity evidence. For the current claim, the effective Unity evidence may use the accepted GitHub-hosted execution substrate.
 
 ## Forbidden scope
 
@@ -64,7 +74,7 @@ Reference and MCP both enter `arkus.neutral-projection@1`, H1 host-policy admiss
 
 ## Deterministic proof / evidence
 
-Remote tests exercise profile binding, composition, launcher substitution, lease/cancellation/result mapping, host-restart status recovery and reference↔MCP normalized conformance. Local evidence uses the exact H1-02 editor to launch two fresh workers, proves main-thread execution and normalized equality, forces nonzero exit, timeout, result corruption and concurrent lease contention, and records the exact launch/profile fingerprints without exposing them as caller authority.
+Remote tests exercise profile binding, composition, launcher substitution, lease/cancellation/result mapping, host-restart status recovery and reference↔MCP normalized conformance. Effective Unity evidence uses the exact H1-02 editor to launch two fresh workers, proves main-thread execution and normalized equality, forces nonzero exit, timeout, result corruption and concurrent lease contention, and records the exact launch/profile fingerprints without exposing them as caller authority. Under the accepted remote-Unity policy, this evidence may execute on GitHub-hosted Unity because every asserted outcome is machine-verifiable and no third-party game-asset or visual oracle is required.
 
 ## Causal negative-conformance classes
 
@@ -82,15 +92,15 @@ Remote tests exercise profile binding, composition, launcher substitution, lease
 
 ## Content-shape probe
 
-Required because this WP adds public process/lifecycle semantics. Carry the H1-00 approved hierarchy-shaped diagnostic context through a test-scoped admitted invocation and the real project-inspection lifecycle to challenge envelope size, anchors, structured failures and restart/status behavior. It authorizes no catalogue or scene behavior and is not a substitute for later effective content proofs.
+Required because this WP adds public process/lifecycle semantics. Carry the H1-00 approved hierarchy-shaped diagnostic context through a test-scoped admitted invocation and the real project-inspection lifecycle to challenge envelope size, anchors, structured failures and restart/status behavior. It authorizes no catalogue or scene behavior and is not a substitute for later effective content proofs. It does not require the H1-04 Quaternius Source adoption.
 
 ## Dependency / IP implications
 
-Consumes only the exact editor/packages accepted by H1-02. No IPC framework, daemon, hosted service or additional dependency may be adopted without its own reviewed record.
+Consumes only the exact editor/packages accepted by H1-02. No IPC framework, daemon, hosted service or additional dependency may be adopted without its own reviewed record. No third-party game-asset source is required by this workpack.
 
 ## Residual risks
 
-Batch-per-operation startup latency, editor licensing/availability, OS process failure, power loss, hostile plugins, multi-host concurrency and remote/editor-farm execution remain outside this WP. Feature-specific reconciliation remains with H1-05/H1-10.
+Batch-per-operation startup latency, editor licensing/availability, OS process failure, power loss, hostile plugins and multi-host concurrency remain outside this WP. A CI runner is only an evidence substrate; long-lived remote/editor-farm product execution remains outside scope. Feature-specific reconciliation remains with H1-05/H1-10.
 
 ## Exact predecessor reopen condition
 
