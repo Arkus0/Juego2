@@ -1,13 +1,13 @@
 # WP-PA-06 — Memory causal fixtures
 
 Date: 2026-09-24
-Status: candidate research-level acceptance surface; no runtime execution claimed
+Status: post-PASS repair candidate; research-level acceptance surface; no runtime execution claimed
 
 These fixtures specify observable semantic outcomes for later H4/H7 consumers. A paired run clones every non-target input: actor, candidate set, goal, opportunity, current world truth, PA-04 belief, PA-03 relationship, PA-05 delivery, authored rule, seed and tie-break order. `Memory` below is an actor-accessible selected experience, never a second truth, belief or relationship store. A pass requires the named outcome, not merely that an implementation could allow it.
 
 ## CF-01 — Selected past help changes a later autonomous choice
 
-At day 1 the player and Manolo jointly help Antonio recover a dropped work parcel in a witnessed, resolved interaction. Antonio directly experiences both contributions. Manolo's voluntary help is unusual and relevant to Antonio's later `ASK_SHIFT_COVER` partner choice. The parcel and immediate work delay are gone by day 3. PA-03 directed trust/affinity, PA-04 beliefs, obligations, role, schedule, candidate eligibility, seed and all other inputs are frozen equal in both day-3 runs; no quest script chooses Antonio's action.
+At day 1 the player and Manolo jointly help Antonio recover a dropped work parcel in a witnessed, resolved interaction. Antonio directly experiences both contributions. Under the predeclared selection policy, Manolo's voluntary help is unusual and belongs to a cooperation/reliability consumer class that can be retained without knowing which later opportunity will occur. The parcel and immediate work delay are gone by day 3. PA-03 directed trust/affinity, PA-04 beliefs, obligations, role, schedule, candidate eligibility, seed and all other inputs are frozen equal in both day-3 runs; no quest script chooses Antonio's action.
 
 The fixture fixes a tie-free action-family rule: Antonio's present goal selects `ASK_SHIFT_COVER`; both candidates are eligible; absent a relevant selected help witness the fixed ordinary ranking puts Paco ahead of Manolo. For this action family only, a selected personally experienced act of reliable help by an eligible candidate is a declared reason to rank that candidate ahead of the ordinary order. The rule does not assign trust, compel Manolo to accept, or choose the action family for Antonio. The day-1 witness is the only changed input between paired day-3 evaluations.
 
@@ -19,7 +19,7 @@ Selected-memory run: one actor-accessible day-1 help witness concerning Manolo
                      Antonio asks Manolo.
 ```
 
-The player directly carries/returns the parcel while Manolo volunteers time. The selected witness names each only to the extent Antonio observed their role. Thus the fixture is player-caused and the day-3 choice has a person-specific memory reason, without silently changing PA-03 relationship state. The no-memory run differs only by removing that selected witness. The decision trace must name the eligible alternatives, declared `ASK_SHIFT_COVER` consumer, day-1 experienced help, actor access cause, and why it changes the choice. If the result requires changing trust, candidate order, a hidden player quest flag or authored selection, this fixture fails.
+The player directly carries/returns the parcel while Manolo volunteers time. The selected witness names each only to the extent Antonio observed their role. Thus the fixture is player-caused and the day-3 choice has a person-specific memory reason, without silently changing PA-03 relationship state. The no-memory run differs only by removing that selected witness. The decision trace must name the eligible alternatives, declared `ASK_SHIFT_COVER` consumer, day-1 experienced help, actor access cause, causal selection checkpoint/reason, and why it changes the choice. If the result requires changing trust, candidate order, a hidden player quest flag, authored selection or knowledge of the actual day-3 opportunity at the day-1 checkpoint, this fixture fails.
 
 The same causal path can support a player-targeted later decision when the player is an eligible participant; no player-only memory channel is permitted. A mere altered dialogue line with the same choice fails.
 
@@ -57,6 +57,42 @@ Run A: the player repeatedly blocks a service after visible feedback, and Antoni
 
 Run B: from an equivalent initial state, the player instead helps restore service, provides restitution and ceases disruption. Authorized owners resolve material state and any relationship/obligation effects. Antonio's later decision may change because those causes changed current state and memory relevance. A bounded witness may still explain prior caution, but memory cannot indefinitely force Run A's choice after the reasons have genuinely been resolved. Neither run uses `playerWantsChaos` or automatically resets to the initial town. This compares persistent harm with causal repair; exact severity and retention windows remain empirical.
 
+## NC-05 — Distinct salient experiences still have a finite total bound
+
+Configure any finite selected-memory semantic capacity `K` chosen by the future implementation. Give Antonio more than `K` actor-accessible experiences that are deliberately **distinct rather than repeat-groupable**: different participants, subjects and relevance classes, each initially eligible under the same declared policy, with no hidden duplicates and no trivial-event shortcut. At the pressure checkpoint, none may be made invisible merely by moving it to an unbounded overflow/history list owned by PA-06.
+
+Required:
+
+```text
+selected-memory surface <= K
+pressure outcome is deterministic/seedable under the declared policy
+at least one over-capacity candidate is retired, demoted, merged or summarized
+no unbounded PA-06 overflow side list appears because the candidates are distinct
+active effect reasons, if any, remain explainable only through bounded memory capacity
+or an explicitly bounded representation owned by the active effect's real owner
+```
+
+A system that passes NC-01 by grouping repeated greetings but stores one permanent witness for every unique salient episode fails NC-05. A system that calls all over-capacity records “active reasons” to escape the cap also fails. The exact value of `K`, weighting and replacement algorithm remain empirical H4/H7 choices; the existence of a finite bound and deterministic saturation behavior do not.
+
+## NC-06 — Selection cannot read the future
+
+Create two histories, A and B, identical through the end of day 1: same Antonio state, actor-accessible help experience from Manolo, current goals/roles/relationships/beliefs, declared selection policy, consumer classes, seed and selection checkpoint. The histories diverge **only after** that checkpoint:
+
+- A later produces the day-3 `ASK_SHIFT_COVER` opportunity from CF-01.
+- B later produces an unrelated opportunity for which the day-1 help will not be consumed.
+
+At the day-1 selection checkpoint, A and B must produce the **same** retain/reject/promotion decision and the same causal selection reason. The selector may know that reliable help belongs to a declared cooperation/reliability consumer class; it may not know whether `ASK_SHIFT_COVER` will actually occur in A rather than B.
+
+Required:
+
+```text
+same prefix through checkpoint -> same selection result at checkpoint
+future-only divergence -> cannot alter the already-made day-1 selection decision
+no privileged replay may resurrect a rejected day-1 episode because A later needs it
+```
+
+A later legitimate actor-accessible reminder, new report or new related experience may create a new candidate prospectively, with its own provenance and checkpoint. For this control, no such reminder exists. If A retains the help only because the implementation can see the future shift-cover decision while B drops it, PA-06 fails as post-hoc fixture fitting.
+
 ## Failure criteria across the set
 
-The research claim fails if any future realization requires complete biography replay for a later choice; one record per trivial event; decorative memories without material choice effect; actor memory from inaccessible events/hidden lineage; memory assignment to PA-04 or PA-03 current state; silent loss of the last reason for an active consequence; unbounded off-screen inflation; uniform expiry that erases severe active causes; or eternal grievance despite genuine repair. A future H4/H7 implementation must execute corresponding causal controls and measure actual save/CPU budgets; these documents alone are not execution receipts.
+The research claim fails if any future realization requires complete biography replay for a later choice; one record per trivial event; unbounded growth from distinct salient episodes; post-hoc retention selected with knowledge of a later opportunity; an unbounded overflow/active-reason side list; decorative memories without material choice effect; actor memory from inaccessible events/hidden lineage; memory assignment to PA-04 or PA-03 current state; silent loss of the last reason for an active consequence; unbounded off-screen inflation; uniform expiry that erases severe active causes; or eternal grievance despite genuine repair. A future H4/H7 implementation must execute corresponding causal controls and measure actual save/CPU budgets; these documents alone are not execution receipts.
