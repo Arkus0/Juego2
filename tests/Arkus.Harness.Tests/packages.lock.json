@@ -55,9 +55,7 @@
         "type": "Transitive",
         "resolved": "10.8.3",
         "contentHash": "K0B05oApxmviWalNHPMBBcRC7erKiDATz3ENNR/jqTR9JwIwLRefgDhj2jCRwL1aca99pXUe0qyQC73/xIuZig==",
-        "dependencies": {
-          "System.Text.Json": "10.0.10"
-        }
+        "dependencies": { "System.Text.Json": "10.0.10" }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "Transitive",
@@ -77,9 +75,7 @@
         "type": "Transitive",
         "resolved": "17.14.1",
         "contentHash": "xTP1W6Mi6SWmuxd3a+jj9G9UoC850WGwZUps1Wah9r1ZxgXhdJfj1QqDLJkFjHDCvN42qDL2Ps5KjQYWUU0zcQ==",
-        "dependencies": {
-          "System.Reflection.Metadata": "8.0.0"
-        }
+        "dependencies": { "System.Reflection.Metadata": "8.0.0" }
       },
       "Microsoft.TestPlatform.TestHost": {
         "type": "Transitive",
@@ -119,9 +115,7 @@
         "type": "Transitive",
         "resolved": "8.0.0",
         "contentHash": "ptvgrFh7PvWI8bcVqG5rsA/weWM09EnthFHR5SCnS6IN+P4mj6rE1lBDC4U8HL9/57htKAqy4KQ3bBj84cfYyQ==",
-        "dependencies": {
-          "System.Collections.Immutable": "8.0.0"
-        }
+        "dependencies": { "System.Collections.Immutable": "8.0.0" }
       },
       "System.Text.Encodings.Web": {
         "type": "Transitive",
@@ -146,27 +140,19 @@
         "type": "Transitive",
         "resolved": "2.9.3",
         "contentHash": "kf3si0YTn2a8J8eZNb+zFpwfoyvIrQ7ivNk5ZYA5yuYk1bEtMe4DxJ2CF/qsRgmEnDr7MnW1mxylBaHTZ4qErA==",
-        "dependencies": {
-          "xunit.abstractions": "2.0.3"
-        }
+        "dependencies": { "xunit.abstractions": "2.0.3" }
       },
       "xunit.extensibility.execution": {
         "type": "Transitive",
         "resolved": "2.9.3",
         "contentHash": "yMb6vMESlSrE3Wfj7V6cjQ3S4TXdXpRqYeNEI3zsX31uTsGMJjEw6oD5F5u1cHnMptjhEECnmZSsPxB6ChZHDQ==",
-        "dependencies": {
-          "xunit.extensibility.core": "[2.9.3]"
-        }
+        "dependencies": { "xunit.extensibility.core": "[2.9.3]" }
       },
       "arkus.designworld": {
         "type": "Project",
-        "dependencies": {
-          "Arkus.Game.World": "[1.0.0, )"
-        }
+        "dependencies": { "Arkus.Game.World": "[1.0.0, )" }
       },
-      "arkus.enginebridge": {
-        "type": "Project"
-      },
+      "arkus.enginebridge": { "type": "Project" },
       "arkus.enginebridge.unityauthoring": {
         "type": "Project",
         "dependencies": {
@@ -183,9 +169,7 @@
           "Arkus.Harness.Protocol": "[1.0.0, )"
         }
       },
-      "arkus.game.core": {
-        "type": "Project"
-      },
+      "arkus.game.core": { "type": "Project" },
       "arkus.game.validation": {
         "type": "Project",
         "dependencies": {
@@ -196,8 +180,15 @@
       },
       "arkus.game.world": {
         "type": "Project",
+        "dependencies": { "Arkus.Game.Core": "[1.0.0, )" }
+      },
+      "arkus.h1.unityhost": {
+        "type": "Project",
         "dependencies": {
-          "Arkus.Game.Core": "[1.0.0, )"
+          "Arkus.EngineBridge.UnityAuthoring": "[1.0.0, )",
+          "Arkus.Harness.Projection": "[1.0.0, )",
+          "Arkus.Harness.Protocol": "[1.0.0, )",
+          "Arkus.Harness.Runtime": "[1.0.0, )"
         }
       },
       "arkus.harness.mutationattackfixture": {
@@ -216,9 +207,7 @@
           "Arkus.Harness.Runtime": "[1.0.0, )"
         }
       },
-      "arkus.harness.protocol": {
-        "type": "Project"
-      },
+      "arkus.harness.protocol": { "type": "Project" },
       "arkus.harness.runtime": {
         "type": "Project",
         "dependencies": {
