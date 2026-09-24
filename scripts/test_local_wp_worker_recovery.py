@@ -142,8 +142,9 @@ class RecoveryTests(unittest.TestCase):
         self.assertIn("canonical DRAFT PR", bootstrap)
         self.assertIn("Stop this bootstrap role immediately", bootstrap)
         self.assertIn("Do not start material implementation", bootstrap)
-        self.assertIn("Commit and push after every coherent material block", guidance)
-        self.assertIn("Before invoking an owner-decision wait", guidance)
+        self.assertIn("Commit locally after every coherent material block", guidance)
+        self.assertIn("Do not push every tiny checkpoint", guidance)
+        self.assertIn("always before an owner-decision wait", guidance)
         sha = "a" * 40
         checkout = module.RecoveryCheckout(185, "worker/h1-04", sha, sha, 0, "")
         prompt = module.recovery_prompt("H1-04", self.pr(sha), checkout)
