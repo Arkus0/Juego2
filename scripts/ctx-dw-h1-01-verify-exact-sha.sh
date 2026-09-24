@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${ROOT}"
+
+actual="$(git rev-parse HEAD)"
+expected="${1:-${CANDIDATE_SHA:-${actual}}}"
+[[ "${expected}" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "Invalid candidate SHA: ${expected}" >&2; exit 2; }
+[[ "${actual}" == "${expected}" ]] || { echo "Candidate SHA mismatch: expected ${expected}, observed ${actual}" >&2; exit 2; }
+
+candidate_dirty_status() {
+  git status --porcelain --untracked-files=all | \
+    grep -Ev '^\?\? (VALIDATION_CONTEXT\.json|validation\.log|EXECUTION_RECEIPT\.txt|artifacts/observed/.*)$' || true
+}
+[[ -z "$(candidate_dirty_status)" ]] || { echo "CTX-DW-H1-01 candidate is not clean before verification" >&2; candidate_dirty_status >&2; exit 2; }
+
+for required in \
+  Docs/evidence/WP-CTX-DW-H1-01/PREDECESSOR_CONTRACT_CHECK.md \
+  Docs/evidence/WP-CTX-DW-H1-01/LIFECYCLE.md \
+  Docs/evidence/WP-CTX-DW-H1-01/PROOF_MATRIX.md \
+  src/Arkus.DesignWorld/H1CatalogueProjection.cs \
+  src/Arkus.DesignWorld/H1SourceAuthorityOracle.cs \
+  tests/Arkus.Harness.Tests/CtxDwH101ProjectionLifecycleTests.cs \
+  Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json \
+  Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json; do
+  test -f "${required}" || { echo "Missing CTX-DW-H1-01 verification input: ${required}" >&2; exit 2; }
+done
+
+catalogue_blob="$(git hash-object Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json)"
+adoption_blob="$(git hash-object Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json)"
+[[ "${catalogue_blob}" == "922dbdffbe2f0a622acc2e153ca8b181427f6ce6" ]] || { echo "Frozen H1-04 catalogue blob mismatch: ${catalogue_blob}" >&2; exit 1; }
+[[ "${adoption_blob}" == "664e83e25269f345a248ce43410a28ed0a670750" ]] || { echo "Frozen H1-04 source-adoption blob mismatch: ${adoption_blob}" >&2; exit 1; }
+
+grep -Fq 'AcceptedH104CandidateSha = "8c6ffd61d17e832ed5b9f900e8c0f7d4e85bf5f5"' src/Arkus.DesignWorld/H1CatalogueProjection.cs
+grep -Fq 'AdapterId = "ctx-dw-h1-01-adapter-v1"' src/Arkus.DesignWorld/H1CatalogueProjection.cs
+grep -Fq 'LifecycleId = "ctx-dw-h1-01-lifecycle-v1"' src/Arkus.DesignWorld/H1CatalogueProjection.cs
+grep -Fq 'new DesignProjectionVersion(1, "ctx-dw-h1-01-v1")' src/Arkus.DesignWorld/H1CatalogueProjection.cs
+
+dotnet restore Juego2.sln --locked-mode
+dotnet build Juego2.sln --no-restore -c Release -m:1 --disable-build-servers
+dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj --no-build --no-restore -c Release \
+  --filter 'FullyQualifiedName~CtxDwH101ProjectionLifecycleTests'
+
+# H1 meaning must remain adapter-owned, never promoted into the generic DW/H0 kernel.
+! grep -Eqi 'quaternius|h1-catalogue|h1-source' src/Arkus.DesignWorld/DesignWorldContracts.cs src/Arkus.DesignWorld/DesignWorldProjection.cs
+
+# The next H1 product work remains source-authoritative and cannot be blocked by this optional projection.
+grep -Fq 'Depends on: `WP-H1-04` PASS' Docs/workpacks/H1/WP-H1-05.md
+! grep -Fq 'Depends on: `WP-CTX-DW-H1-01`' Docs/workpacks/H1/WP-H1-05.md
+grep -Fq 'Canonical state remains authoritative' Docs/workpacks/H1/WP-H1-05.md
+
+# Durable proof/evidence contracts must describe a complete fail-closed lifecycle.
+grep -Fq 'PREDECESSOR_CONTRACT_CHECK: PASS' Docs/evidence/WP-CTX-DW-H1-01/PREDECESSOR_CONTRACT_CHECK.md
+grep -Fq 'LIFECYCLE_VERDICT: READY' Docs/evidence/WP-CTX-DW-H1-01/LIFECYCLE.md
+grep -Fq 'PROOF_MATRIX_VERDICT: READY' Docs/evidence/WP-CTX-DW-H1-01/PROOF_MATRIX.md
+grep -Fq 'UNRESOLVED_PROOF_OBLIGATIONS: 0' Docs/evidence/WP-CTX-DW-H1-01/PROOF_MATRIX.md
+
+if [[ -n "${PR_BODY:-}" ]]; then
+  printf '%s\n' "${PR_BODY}" | grep -Eq "^Candidate HEAD SHA:[[:space:]]*\`?${actual}\`?[[:space:]]*$"
+  printf '%s\n' "${PR_BODY}" | grep -Eq "^Frozen candidate SHA:[[:space:]]*\`?${actual}\`?[[:space:]]*$"
+  printf '%s\n' "${PR_BODY}" | grep -Eq '^Worker pre-review:[[:space:]]*CLEAN[[:space:]]*$'
+  printf '%s\n' "${PR_BODY}" | grep -Eq '^Branch frozen:[[:space:]]*YES[[:space:]]*$'
+fi
+
+[[ -z "$(candidate_dirty_status)" ]] || { echo "CTX-DW-H1-01 candidate changed during verification" >&2; candidate_dirty_status >&2; exit 2; }
+
+cat <<EOF
+EXECUTION_RECEIPT_V1
+WP: WP-CTX-DW-H1-01
+Candidate SHA: ${actual}
+Executor role: ${ARKUS_EXECUTOR_ROLE:-WORKER}
+Execution environment: ${ARKUS_EXECUTION_SUBSTRATE:-canonical-dotnet-shell}
+Canonical command: scripts/ctx-dw-h1-01-verify-exact-sha.sh ${actual}
+Accepted H1-04 candidate: 8c6ffd61d17e832ed5b9f900e8c0f7d4e85bf5f5
+Catalogue blob: ${catalogue_blob}
+Source-adoption blob: ${adoption_blob}
+Adapter: ctx-dw-h1-01-adapter-v1
+Projection schema: ctx-dw-h1-01-v1
+Lifecycle: ctx-dw-h1-01-lifecycle-v1
+Required gates: exact-checkout=GREEN; frozen-h1-authority=GREEN; locked-restore=GREEN; release-build=GREEN; focused-lifecycle-and-negative-tests=GREEN; generic-kernel-boundary=GREEN; h1-05-authority-fallback=GREEN; durable-proof=GREEN; frozen-metadata=GREEN
+Result: GREEN
+Evidence: Docs/evidence/WP-CTX-DW-H1-01
+EOF
