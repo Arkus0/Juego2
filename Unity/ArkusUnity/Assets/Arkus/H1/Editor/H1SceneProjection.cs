@@ -38,6 +38,7 @@ namespace Arkus.H1.Editor
 
             try
             {
+                ValidateCatalogueSnapshot();
                 ValidatePlan(request.plan);
                 var observation = request.mode == "materialize"
                     ? Materialize(request.plan) : ObserveActive();
@@ -163,6 +164,19 @@ namespace Arkus.H1.Editor
             foreach (var node in plan.nodes)
                 if (node.parentObjectId.Length != 0 && !seen.Contains(node.parentObjectId))
                     throw new InvalidDataException("projection.unbound-parent");
+        }
+
+        private static void ValidateCatalogueSnapshot()
+        {
+            var repositoryRoot = Path.GetFullPath(Path.Combine(H1Bootstrap.ProjectRoot(), "..", ".."));
+            var expectedPath = Path.Combine(repositoryRoot, "Docs", "evidence", "WP-H1-04", "EFFECTIVE_INVENTORY.json");
+            if (!File.Exists(expectedPath)) throw new InvalidDataException("projection.catalogue-snapshot-missing");
+            var accepted = JsonUtility.FromJson<EffectiveInventory>(File.ReadAllText(expectedPath));
+            if (accepted == null || accepted.schemaId != H1CatalogueInventory.Schema || accepted.rows == null)
+                throw new InvalidDataException("projection.catalogue-snapshot-invalid");
+            var effective = H1CatalogueInventory.Capture();
+            if (JsonUtility.ToJson(accepted) != JsonUtility.ToJson(effective))
+                throw new InvalidDataException("projection.catalogue-snapshot-stale");
         }
 
         private static UnityEngine.Object ResolveSource(ProjectionNode node)
