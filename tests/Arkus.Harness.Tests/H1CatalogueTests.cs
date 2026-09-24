@@ -43,6 +43,10 @@ namespace Arkus.Harness.Tests
             inventory.Rows[0].ContentSha256 = new string('f', 64);
             mapping.Entries[0].ContentSha256 = new string('f', 64);
             Assert.Equal("catalogue.adoption-missing", Assert.Throws<H1CatalogueException>(() => Build(inventory, mapping)).Code);
+
+            var substitutedAdoption = adoption.Replace("45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8", new string('f', 64));
+            Assert.Equal("catalogue.adoption-missing", Assert.Throws<H1CatalogueException>(() =>
+                H1CatalogueSnapshot.Build(JsonSerializer.Serialize(inventory, Json), JsonSerializer.Serialize(mapping, Json), substitutedAdoption)).Code);
         }
 
         [Fact]

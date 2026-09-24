@@ -299,14 +299,24 @@ namespace Arkus.H1.UnityHost
                     throw Error("catalogue.adoption-missing", "Approved Source distribution/version/license identity is ambiguous or missing.");
             }
             if (expected.Count != 0) throw Error("catalogue.adoption-missing", "An approved Quaternius Source distribution is absent.");
-            var paths = new HashSet<string>(StringComparer.Ordinal);
+            var expectedSlices = new Dictionary<string, (string source, string status, string hash)>(StringComparer.Ordinal)
+            {
+                ["Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8"),
+                ["Assets/Arkus/H1/SourceSlice/MI_Plaster.mat"] =
+                    ("quaternius-medieval-source", "approved-source", "3fcfc0359d1460009858533461893c626e25ea52364ae4e85f4a6bf84fc3ce69"),
+                ["Assets/Arkus/H1/SourceSlice/FacadeImportedMaterial.mat"] =
+                    ("quaternius-medieval-source", "source-derived", "e585297c2271fc83378e2eebe7f72ff9f8b66c2fc1b8a1eeb1c7abdfac5d2e29"),
+                ["Assets/Arkus/H1/SourceSlice/UAL1.fbx"] =
+                    ("quaternius-ual1-source", "approved-source", "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842")
+            };
             foreach (var slice in adoption.Slices)
             {
-                if (slice == null || !paths.Add(slice.AssetPath) || !slice.AssetPath.StartsWith("Assets/Arkus/H1/SourceSlice/", StringComparison.Ordinal) ||
-                    slice.ContentSha256.Length != 64 || (slice.SourceId != "quaternius-medieval-source" && slice.SourceId != "quaternius-ual1-source") ||
-                    (slice.AdoptionStatus != "approved-source" && slice.AdoptionStatus != "source-derived"))
+                if (slice == null || !expectedSlices.Remove(slice.AssetPath, out var pinned) ||
+                    slice.SourceId != pinned.source || slice.AdoptionStatus != pinned.status || slice.ContentSha256 != pinned.hash)
                     throw Error("catalogue.adoption-missing", "Approved Source slice identity is incomplete or duplicated.");
             }
+            if (expectedSlices.Count != 0) throw Error("catalogue.adoption-missing", "An approved Source slice is absent.");
         }
 
         private static void ValidateAdoption(H1CatalogueMappingRow mapped, H1CatalogueEffectiveRow observed, H1CatalogueAdoption adoption)
