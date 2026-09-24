@@ -56,6 +56,19 @@ namespace Arkus.Harness.Runtime
                 routes);
         }
 
+        /// <summary>
+        /// Builds the complete base contribution over one empty portable session without applying a
+        /// host admission policy. Higher layers may compose this contribution and must then apply their
+        /// own accepted admission policy before exposing the resulting contract.
+        /// </summary>
+        public static CanonicalProviderContribution CreateEmptyPortableSessionContribution(string worldId)
+        {
+            if (worldId == null) throw new ArgumentNullException(nameof(worldId));
+            var initial = new WorldState(new WorldId(worldId), 0, Array.Empty<WorldObject>());
+            var session = new PortableWorldAuthoringSession(initial);
+            return CreateContribution(new WorldInspectionService(session), session);
+        }
+
         public static ComposedContract Compose(IWorldInspectionService inspection)
         {
             return Compose(inspection, new UnavailableWorldMutationService(), null);
