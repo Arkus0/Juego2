@@ -24,7 +24,9 @@ from pathlib import Path
 from typing import Any, Self
 
 REPO = "Arkus0/Juego2"
-WP_RE = re.compile(r"^(?:WP-)?([A-Z][A-Z0-9]*-[0-9A-Z]+)$")
+WP_TOKEN = r"[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+"
+WP_RE = re.compile(rf"^(?:WP-)?({WP_TOKEN})$")
+WP_REF_RE = re.compile(rf"\bWP-({WP_TOKEN})\b")
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 REVIEW_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 TOKEN_ENV = ("OPENAI_API_KEY", "OPENROUTER_API_KEY", "ANTHROPIC_API_KEY",
@@ -521,7 +523,7 @@ def dependency_wps(wp_text: str) -> list[str]:
     line = re.search(r"^Depends on:\s*(.+)$", wp_text, re.MULTILINE | re.IGNORECASE)
     if not line:
         raise StopFlow("WP lacks a machine-readable Depends on line")
-    return list(dict.fromkeys(re.findall(r"WP-([A-Z][A-Z0-9]*-[0-9A-Z]+)", line.group(1).upper())))
+    return list(dict.fromkeys(WP_REF_RE.findall(line.group(1).upper())))
 
 
 def accepted_main_doc(root: Path, dependency: str) -> bool:
@@ -538,11 +540,12 @@ def accepted_main_doc(root: Path, dependency: str) -> bool:
 def assert_dependencies(root: Path, wp_text: str) -> None:
     line = re.search(r"^Depends on:\s*(.+)$", wp_text, re.MULTILINE | re.IGNORECASE)
     assert line is not None
-    remainder = re.sub(r"`?WP-[A-Z][A-Z0-9]*-[0-9A-Z]+`?", "", line.group(1).upper())
+    remainder = WP_REF_RE.sub("", line.group(1).upper())
     remainder = re.sub(r"\b(PASS|MERGE|DOCSYNC|COMPLETE|NONE|AND)\b|[+;,`\s✅]", "", remainder)
     if remainder:
         raise StopFlow(f"Non-WP prerequisite needs explicit verification: {line.group(1).strip()}")
     for dependency in dependency_wps(wp_text):
+        wp_path(root, dependency)
         pr = canonical_pr(dependency)
         if not pr or not pr.get("merged_at"):
             raise StopFlow(f"Dependency {dependency} is not merged")
@@ -616,6 +619,26 @@ def reviewed_verdicts(pr: int) -> list[dict[str, str]]:
             if not prior or row["at"] < prior["at"]:
                 by_id[review_id] = row
     return sorted(by_id.values(), key=lambda row: row["at"])
+
+
+def review_turn_completion(pr: int, current: dict[str, Any], review_id: str,
+                           expected_sha: str, verdicts: list[dict[str, str]]) -> dict[str, str] | None:
+    if not REVIEW_ID_RE.fullmatch(review_id) or not SHA_RE.fullmatch(expected_sha):
+        raise StopFlow(f"PR #{pr} Reviewer turn has invalid expected identity")
+    head = ((current.get("head") or {}).get("sha") or "").lower()
+    if head != expected_sha:
+        raise StopFlow(f"PR #{pr} candidate moved during Reviewer turn: expected {expected_sha}, got {head or 'missing'}")
+    if current.get("state") != "open" and not current.get("merged"):
+        raise StopFlow(f"PR #{pr} was closed during Reviewer turn without exact-SHA merge")
+    matching = [row for row in verdicts if row["id"] == review_id]
+    if not matching:
+        return None
+    if len(matching) != 1:
+        raise StopFlow(f"PR #{pr} has multiple verdict records for Reviewer ID {review_id}")
+    verdict = matching[0]
+    if verdict["sha"] != expected_sha:
+        raise StopFlow(f"PR #{pr} Reviewer ID {review_id} names SHA {verdict['sha']}, expected {expected_sha}")
+    return verdict
 
 
 def reviewed_fails(pr: int) -> list[dict[str, str]]:
@@ -854,9 +877,14 @@ async def main_async(args: argparse.Namespace) -> None:
                             f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']}, SHA {frozen}. Hubo FAIL previo y auditoría de posible sobredefensa. Reconstruye el contrato sin confiar en la auditoría; si el FAIL es inválido, deja PASS exact-SHA razonado que lo supersede; si es válido, mantén FAIL. Publica un solo veredicto en GitHub con líneas literales 'Reviewer verdict: PASS' o 'Reviewer verdict: FAIL', 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. No edites ni repares.",
                             "gpt-6-sol", "xhigh")
                         appeal_sha = ""
-                        await wait_for_state(pr["number"], lambda p, m, review_id=review_id, pr_number=pr["number"]:
-                                             any(row["id"] == review_id for row in reviewed_verdicts(pr_number)))
-                        appeal_verdict = next(row for row in reviewed_verdicts(pr["number"]) if row["id"] == review_id)
+                        appeal_pr, _ = await wait_for_state(
+                            pr["number"],
+                            lambda p, m, review_id=review_id, pr_number=pr["number"], frozen=frozen:
+                                review_turn_completion(pr_number, p, review_id, frozen,
+                                                       reviewed_verdicts(pr_number)) is not None)
+                        appeal_verdict = review_turn_completion(
+                            pr["number"], appeal_pr, review_id, frozen, reviewed_verdicts(pr["number"]))
+                        assert appeal_verdict is not None
                         if appeal_verdict["verdict"] == "FAIL":
                             appeal_rejected_sha = frozen
                             second_fail_detail = "Un Reviewer Sol independiente sostuvo el FAIL que Luna consideró posible sobredefensa. Pulsa continuar para otra reparación; cuarto FAIL exige PC."
@@ -876,8 +904,11 @@ async def main_async(args: argparse.Namespace) -> None:
                     review_id = uuid.uuid4().hex
                     await quota_before_reasoning(app, wp, pr["number"])
                     await codex_role(root, state, "reviewer", f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']} / {wp}, SHA {frozen}. No recibes contexto del Worker. Sigue PRODUCT_SHA_CLOSURE.md: usa CI exact-SHA para hechos mecánicos; usa PROTOCOL_FIX/REVIEW_BLOCKED, no FAIL, para metadata pura. Publica una sola revisión o comentario en GitHub con líneas literales 'Reviewer verdict: PASS|FAIL|PROTOCOL_FIX|REVIEW_BLOCKED' (elige un valor, sin barras), 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. Si PASS, finaliza merge y DocSync documental según protocolo. No repares implementación.", "gpt-6-sol", "xhigh")
-                    await wait_for_state(pr["number"], lambda p, m, review_id=review_id, pr_number=pr["number"]:
-                                         any(row["id"] == review_id for row in reviewed_verdicts(pr_number)))
+                    await wait_for_state(
+                        pr["number"],
+                        lambda p, m, review_id=review_id, pr_number=pr["number"], frozen=frozen:
+                            review_turn_completion(pr_number, p, review_id, frozen,
+                                                   reviewed_verdicts(pr_number)) is not None)
                     continue
                 raise StopFlow(f"PR #{pr['number']} is neither REVIEW_READY nor REPAIR_REQUIRED for frozen SHA")
             if wp and not args.one_wp:
