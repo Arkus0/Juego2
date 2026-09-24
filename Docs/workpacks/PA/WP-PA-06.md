@@ -1,10 +1,16 @@
 # WP-PA-06 — Memory & Consequences research
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_RESEARCH**  
 Depends on: `WP-PA-05` PASS + merge + DocSync  
 Blocks: `WP-PA-07` only
+
+Accepted corrected candidate: `9ce17952e257587c0dcec5dc4b854170365545ca`  
+Independent correction review: **PASS**, review `#5300025658`  
+Correction PR: `#172`  
+Correction merge: `fdfec568844bc0d006959c3cd207795544eca33d` on 2026-09-24  
+Original research PR: `#170`, original candidate `092b3169b627da38ac66dde3f0c0856df4603423`, merge `fe0ec7d1b030b49c3ce699878a07798a4fea2cc7`; post-PASS owner audit found and #172 repaired the aggregate-boundedness and post-hoc-selection gaps before PA-07 consumption.
 
 ## Objective
 
@@ -43,6 +49,8 @@ Determine what an actor must remember for past events to alter later behaviour w
 A later autonomous decision can be causally changed by a selected past experience for an explainable reason without requiring complete biography replay.
 
 Negative gates: memory cannot become a second truth store, automatically mirror every event, or directly overwrite relationship/belief state it does not own.
+
+The accepted correction additionally closes two material classes before downstream consumption: the **total selected-memory surface is finitely bounded even for many distinct salient candidates**, and retention/selection at a checkpoint is **causal in time**, so later fixture needs or privileged future information cannot retroactively decide what was retained.
 
 ## Deferred proof
 
