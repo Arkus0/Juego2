@@ -40,11 +40,7 @@ namespace Arkus.Harness.Projection
         public const string EditorVersion = "6000.3.24f1";
         public const string EditorRevision = "4e7b9b5b6244";
 
-        private H1UnityLaunchProfile(
-            string executablePath,
-            string platform,
-            string repositoryRoot,
-            string projectRoot)
+        private H1UnityLaunchProfile(string executablePath, string platform, string repositoryRoot, string projectRoot)
         {
             ExecutablePath = executablePath;
             Platform = platform;
@@ -69,7 +65,6 @@ namespace Arkus.Harness.Projection
             var projectRoot = Path.GetFullPath(Path.Combine(repositoryRoot, UnityProjectWorkspaceAuthority.ProjectRoot));
             string executable;
             string platform;
-
             if (Path.DirectorySeparatorChar == '\\')
             {
                 executable = @"C:\Program Files\Unity\Hub\Editor\6000.3.24f1\Editor\Unity.exe";
@@ -85,7 +80,6 @@ namespace Arkus.Harness.Projection
                 executable = "/opt/unity/Editor/Unity";
                 platform = "linux-x64";
             }
-
             return new H1UnityLaunchProfile(executable, platform, repositoryRoot, projectRoot);
         }
 
@@ -109,12 +103,7 @@ namespace Arkus.Harness.Projection
 
     public sealed class H1UnityInvocationEnvelope
     {
-        public H1UnityInvocationEnvelope(
-            string invocationId,
-            string capability,
-            string executorId,
-            string payload,
-            H1UnityLaunchProfile profile)
+        public H1UnityInvocationEnvelope(string invocationId, string capability, string executorId, string payload, H1UnityLaunchProfile profile)
         {
             InvocationId = Require(invocationId, nameof(invocationId));
             Capability = Require(capability, nameof(capability));
@@ -144,16 +133,7 @@ namespace Arkus.Harness.Projection
 
     public sealed class H1UnityResultEnvelope
     {
-        public H1UnityResultEnvelope(
-            string invocationId,
-            string capability,
-            string executorId,
-            string profileId,
-            string projectIdentity,
-            string editorVersion,
-            string editorRevision,
-            bool mainThread,
-            string payload)
+        public H1UnityResultEnvelope(string invocationId, string capability, string executorId, string profileId, string projectIdentity, string editorVersion, string editorRevision, bool mainThread, string payload)
         {
             InvocationId = invocationId ?? throw new ArgumentNullException(nameof(invocationId));
             Capability = capability ?? throw new ArgumentNullException(nameof(capability));
@@ -178,24 +158,11 @@ namespace Arkus.Harness.Projection
         public string Payload { get; }
     }
 
-    public enum H1UnityWorkerLaunchKind
-    {
-        Completed = 0,
-        NonZeroExit = 1,
-        TimedOut = 2,
-        Cancelled = 3,
-        MissingResult = 4,
-        CorruptResult = 5,
-        StartFailure = 6
-    }
+    public enum H1UnityWorkerLaunchKind { Completed = 0, NonZeroExit = 1, TimedOut = 2, Cancelled = 3, MissingResult = 4, CorruptResult = 5, StartFailure = 6 }
 
     public sealed class H1UnityWorkerLaunchResult
     {
-        private H1UnityWorkerLaunchResult(
-            H1UnityWorkerLaunchKind kind,
-            H1UnityResultEnvelope? result,
-            int? exitCode,
-            bool terminationConfirmed)
+        private H1UnityWorkerLaunchResult(H1UnityWorkerLaunchKind kind, H1UnityResultEnvelope? result, int? exitCode, bool terminationConfirmed)
         {
             Kind = kind;
             Result = result;
@@ -207,22 +174,14 @@ namespace Arkus.Harness.Projection
         public H1UnityResultEnvelope? Result { get; }
         public int? ExitCode { get; }
         public bool TerminationConfirmed { get; }
-
-        public static H1UnityWorkerLaunchResult Completed(H1UnityResultEnvelope result) =>
-            new H1UnityWorkerLaunchResult(H1UnityWorkerLaunchKind.Completed, result ?? throw new ArgumentNullException(nameof(result)), 0, true);
-
+        public static H1UnityWorkerLaunchResult Completed(H1UnityResultEnvelope result) => new H1UnityWorkerLaunchResult(H1UnityWorkerLaunchKind.Completed, result ?? throw new ArgumentNullException(nameof(result)), 0, true);
         public static H1UnityWorkerLaunchResult Failure(H1UnityWorkerLaunchKind kind, int? exitCode = null, bool terminationConfirmed = true) =>
-            kind == H1UnityWorkerLaunchKind.Completed
-                ? throw new ArgumentException("Use Completed for a successful worker result.", nameof(kind))
-                : new H1UnityWorkerLaunchResult(kind, null, exitCode, terminationConfirmed);
+            kind == H1UnityWorkerLaunchKind.Completed ? throw new ArgumentException("Use Completed for a successful worker result.", nameof(kind)) : new H1UnityWorkerLaunchResult(kind, null, exitCode, terminationConfirmed);
     }
 
     public interface IH1UnityEditorWorkerLauncher
     {
-        H1UnityWorkerLaunchResult Launch(
-            H1UnityInvocationEnvelope invocation,
-            H1UnityLaunchProfile profile,
-            InvocationResourceBudget executionBudget);
+        H1UnityWorkerLaunchResult Launch(H1UnityInvocationEnvelope invocation, H1UnityLaunchProfile profile, InvocationResourceBudget executionBudget);
     }
 
     public interface IH1UnityCapabilityExecutor
@@ -233,34 +192,19 @@ namespace Arkus.Harness.Projection
         CapabilityInvocationResult DecodeResult(H1UnityResultEnvelope result);
     }
 
-    public interface IH1UnityProjectLease
-    {
-        IDisposable? TryAcquire();
-    }
+    public interface IH1UnityProjectLease { IDisposable? TryAcquire(); }
 
-    public enum H1UnityInvocationStatus
-    {
-        Running = 0,
-        Completed = 1,
-        Failed = 2,
-        Interrupted = 3,
-        Indeterminate = 4
-    }
+    public enum H1UnityInvocationStatus { Running = 0, Completed = 1, Failed = 2, Interrupted = 3, Indeterminate = 4 }
 
     public sealed class H1UnityInvocationRecord
     {
-        public H1UnityInvocationRecord(
-            string invocationId,
-            string capability,
-            H1UnityInvocationStatus status,
-            string outcomeCode)
+        public H1UnityInvocationRecord(string invocationId, string capability, H1UnityInvocationStatus status, string outcomeCode)
         {
             InvocationId = invocationId ?? throw new ArgumentNullException(nameof(invocationId));
             Capability = capability ?? throw new ArgumentNullException(nameof(capability));
             Status = status;
             OutcomeCode = outcomeCode ?? throw new ArgumentNullException(nameof(outcomeCode));
         }
-
         public string InvocationId { get; }
         public string Capability { get; }
         public H1UnityInvocationStatus Status { get; }
@@ -276,7 +220,6 @@ namespace Arkus.Harness.Projection
     public sealed class FileH1UnityInvocationLedger : IH1UnityInvocationLedger
     {
         private readonly string _directory;
-
         public FileH1UnityInvocationLedger(H1UnityLaunchProfile profile)
         {
             if (profile == null) throw new ArgumentNullException(nameof(profile));
@@ -286,21 +229,18 @@ namespace Arkus.Harness.Projection
         public void Record(H1UnityInvocationRecord record)
         {
             if (record == null) throw new ArgumentNullException(nameof(record));
-            if (!IsSafeInvocationId(record.InvocationId))
-                throw new ArgumentException("Invocation IDs must be bounded host-generated identifiers.", nameof(record));
-
+            if (!IsSafeInvocationId(record.InvocationId)) throw new ArgumentException("Invocation IDs must be bounded host-generated identifiers.", nameof(record));
             Directory.CreateDirectory(_directory);
             var path = Path.Combine(_directory, record.InvocationId + ".ledger");
             var temp = path + ".tmp-" + Guid.NewGuid().ToString("N");
-            var lines = new[]
+            File.WriteAllLines(temp, new[]
             {
                 "schema=arkus.h1-unity-ledger@1",
                 "invocation=" + Encode(record.InvocationId),
                 "capability=" + Encode(record.Capability),
                 "status=" + record.Status.ToString(),
                 "outcome=" + Encode(record.OutcomeCode)
-            };
-            File.WriteAllLines(temp, lines);
+            });
             if (File.Exists(path)) File.Delete(path);
             File.Move(temp, path);
             BoundLedger();
@@ -312,7 +252,6 @@ namespace Arkus.Harness.Projection
             if (!IsSafeInvocationId(invocationId)) return false;
             var path = Path.Combine(_directory, invocationId + ".ledger");
             if (!File.Exists(path)) return false;
-
             try
             {
                 var fields = Parse(File.ReadAllLines(path));
@@ -324,24 +263,16 @@ namespace Arkus.Harness.Projection
                 record = new H1UnityInvocationRecord(invocationId, Decode(encodedCapability), status, Decode(encodedOutcome));
                 return true;
             }
-            catch (IOException)
-            {
-                return false;
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
+            catch (IOException) { return false; }
+            catch (FormatException) { return false; }
         }
 
         private void BoundLedger()
         {
-            var directory = new DirectoryInfo(_directory);
-            var files = directory.GetFiles("*.ledger");
+            var files = new DirectoryInfo(_directory).GetFiles("*.ledger");
             if (files.Length <= H1UnityOperationCeilings.MaximumLedgerEntries) return;
             Array.Sort(files, (left, right) => left.LastWriteTimeUtc.CompareTo(right.LastWriteTimeUtc));
-            var remove = files.Length - H1UnityOperationCeilings.MaximumLedgerEntries;
-            for (var index = 0; index < remove; index++) files[index].Delete();
+            for (var index = 0; index < files.Length - H1UnityOperationCeilings.MaximumLedgerEntries; index++) files[index].Delete();
         }
 
         private static bool IsSafeInvocationId(string? value)
@@ -366,7 +297,6 @@ namespace Arkus.Harness.Projection
             }
             return fields;
         }
-
         private static string Encode(string value) => Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(value));
         private static string Decode(string value) => System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(value));
     }
@@ -374,24 +304,16 @@ namespace Arkus.Harness.Projection
     public sealed class FileH1UnityProjectLease : IH1UnityProjectLease
     {
         private readonly string _path;
-
         public FileH1UnityProjectLease(H1UnityLaunchProfile profile)
         {
             if (profile == null) throw new ArgumentNullException(nameof(profile));
             _path = Path.Combine(profile.ProjectRoot, "Library", "Arkus", "H1Lifecycle", "project-operation.lease");
         }
-
         public IDisposable? TryAcquire()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path) ?? throw new InvalidOperationException("Lease path has no directory."));
-            try
-            {
-                return new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-            }
-            catch (IOException)
-            {
-                return null;
-            }
+            try { return new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            catch (IOException) { return null; }
         }
     }
 
@@ -415,25 +337,18 @@ namespace Arkus.Harness.Projection
         private readonly IReadOnlyDictionary<CapabilityKey, IH1UnityCapabilityExecutor> _executors;
         private H1AdmittedUnityContract? _admission;
 
-        public H1UnityEditorExecutionCoordinator(
-            H1UnityLaunchProfile profile,
-            IH1UnityEditorWorkerLauncher launcher,
-            IH1UnityProjectLease lease,
-            IH1UnityInvocationLedger ledger,
-            IEnumerable<IH1UnityCapabilityExecutor> executors)
+        public H1UnityEditorExecutionCoordinator(H1UnityLaunchProfile profile, IH1UnityEditorWorkerLauncher launcher, IH1UnityProjectLease lease, IH1UnityInvocationLedger ledger, IEnumerable<IH1UnityCapabilityExecutor> executors)
         {
             _profile = profile ?? throw new ArgumentNullException(nameof(profile));
             _launcher = launcher ?? throw new ArgumentNullException(nameof(launcher));
             _lease = lease ?? throw new ArgumentNullException(nameof(lease));
             _ledger = ledger ?? throw new ArgumentNullException(nameof(ledger));
             if (executors == null) throw new ArgumentNullException(nameof(executors));
-
             var snapshot = new Dictionary<CapabilityKey, IH1UnityCapabilityExecutor>();
             foreach (var executor in executors)
             {
                 if (executor == null) throw new ArgumentException("Worker executors may not contain null entries.", nameof(executors));
-                if (!snapshot.TryAdd(executor.Capability, executor))
-                    throw new ArgumentException("Each Editor-bound capability must have exactly one typed worker executor.", nameof(executors));
+                if (!snapshot.TryAdd(executor.Capability, executor)) throw new ArgumentException("Each Editor-bound capability must have exactly one typed worker executor.", nameof(executors));
             }
             _executors = new ReadOnlyDictionary<CapabilityKey, IH1UnityCapabilityExecutor>(snapshot);
         }
@@ -445,114 +360,53 @@ namespace Arkus.Harness.Projection
         {
             if (projection == null) throw new ArgumentNullException(nameof(projection));
             var admission = projection.H1Admission ?? throw new InvalidOperationException("H1 Unity lifecycle requires an admitted H1 projection.");
-            if (!string.Equals(admission.Workspace.Identity, _profile.ProjectIdentity, StringComparison.Ordinal) ||
-                !string.Equals(admission.Workspace.Root, UnityProjectWorkspaceAuthority.ProjectRoot, StringComparison.Ordinal))
-            {
+            if (!string.Equals(admission.Workspace.Identity, _profile.ProjectIdentity, StringComparison.Ordinal) || !string.Equals(admission.Workspace.Root, UnityProjectWorkspaceAuthority.ProjectRoot, StringComparison.Ordinal))
                 throw new InvalidOperationException(BootstrapIncompleteCode + ": launch profile disagrees with the admitted project workspace.");
-            }
-
             var admitted = new HashSet<CapabilityKey>();
             foreach (var definition in admission.Contract.Definitions)
-            {
-                if (string.Equals(definition.Provider.ProviderId, H1UnityHostCapabilityPolicy.HostProviderId, StringComparison.Ordinal))
-                    admitted.Add(definition.Key);
-            }
-
+                if (string.Equals(definition.Provider.ProviderId, H1UnityHostCapabilityPolicy.HostProviderId, StringComparison.Ordinal)) admitted.Add(definition.Key);
             foreach (var capability in admitted)
-            {
-                if (!_executors.ContainsKey(capability))
-                    throw new InvalidOperationException(BootstrapIncompleteCode + ": missing worker executor for " + capability + ".");
-            }
+                if (!_executors.ContainsKey(capability)) throw new InvalidOperationException(BootstrapIncompleteCode + ": missing worker executor for " + capability + ".");
             foreach (var capability in _executors.Keys)
-            {
-                if (!admitted.Contains(capability))
-                    throw new InvalidOperationException(BootstrapIncompleteCode + ": orphan worker executor for " + capability + ".");
-            }
-
+                if (!admitted.Contains(capability)) throw new InvalidOperationException(BootstrapIncompleteCode + ": orphan worker executor for " + capability + ".");
             _admission = admission;
         }
 
-        public CapabilityInvocationResult Invoke(
-            CapabilityInvocationContext context,
-            IReadOnlyDictionary<string, object?> request)
+        public CapabilityInvocationResult Invoke(CapabilityInvocationContext context, IReadOnlyDictionary<string, object?> request)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (request == null) throw new ArgumentNullException(nameof(request));
-            if (_admission == null)
-                return Failure(BootstrapIncompleteCode, "The H1 Unity lifecycle has not been bound to the admitted composition.", false);
-            if (!_executors.TryGetValue(context.Definition.Key, out var executor))
-                return Failure(BootstrapIncompleteCode, "No typed Unity worker executor is paired with the composed handler.", false);
-
-            if (!context.ResourceBudget.TryContinue("h1-unity-prelaunch", out var prelaunchError))
-                return CapabilityInvocationResult.Failed(prelaunchError!);
-
+            if (_admission == null) return Failure(BootstrapIncompleteCode, "The H1 Unity lifecycle has not been bound to the admitted composition.", false);
+            if (!_executors.TryGetValue(context.Definition.Key, out var executor)) return Failure(BootstrapIncompleteCode, "No typed Unity worker executor is paired with the composed handler.", false);
+            if (!context.ResourceBudget.TryContinue("h1-unity-prelaunch", out var prelaunchError)) return CapabilityInvocationResult.Failed(prelaunchError!);
             var lease = _lease.TryAcquire();
-            if (lease == null)
-                return Failure(BusyCode, "The reviewed Unity project already has an active Editor operation.", true);
-
+            if (lease == null) return Failure(BusyCode, "The reviewed Unity project already has an active Editor operation.", true);
             using (lease)
             {
-                if (!context.ResourceBudget.TryContinue("h1-unity-after-lease", out prelaunchError))
-                    return CapabilityInvocationResult.Failed(prelaunchError!);
-
+                if (!context.ResourceBudget.TryContinue("h1-unity-after-lease", out prelaunchError)) return CapabilityInvocationResult.Failed(prelaunchError!);
                 string payload;
-                try
-                {
-                    payload = executor.EncodeRequest(request);
-                }
-                catch (Exception)
-                {
-                    return Failure(CorruptResultCode, "The typed worker request encoder rejected the canonical request.", false);
-                }
-
-                if (System.Text.Encoding.UTF8.GetByteCount(payload) > H1UnityOperationCeilings.MaximumPayloadBytes)
-                    return Failure("unity.lifecycle.payload-too-large", "The internal worker payload exceeded the fixed H1 operation ceiling.", false);
-
+                try { payload = executor.EncodeRequest(request); }
+                catch (Exception) { return Failure(CorruptResultCode, "The typed worker request encoder rejected the canonical request.", false); }
+                if (System.Text.Encoding.UTF8.GetByteCount(payload) > H1UnityOperationCeilings.MaximumPayloadBytes) return Failure("unity.lifecycle.payload-too-large", "The internal worker payload exceeded the fixed H1 operation ceiling.", false);
                 var invocationId = CreateInvocationId();
-                var envelope = new H1UnityInvocationEnvelope(
-                    invocationId,
-                    context.Definition.Key.ToString(),
-                    executor.ExecutorId,
-                    payload,
-                    _profile);
+                var envelope = new H1UnityInvocationEnvelope(invocationId, context.Definition.Key.ToString(), executor.ExecutorId, payload, _profile);
                 _ledger.Record(new H1UnityInvocationRecord(invocationId, envelope.Capability, H1UnityInvocationStatus.Running, "running"));
-
                 H1UnityWorkerLaunchResult launch;
-                try
-                {
-                    launch = _launcher.Launch(envelope, _profile, context.ResourceBudget);
-                }
+                try { launch = _launcher.Launch(envelope, _profile, context.ResourceBudget); }
                 catch (Exception)
                 {
                     _ledger.Record(new H1UnityInvocationRecord(invocationId, envelope.Capability, H1UnityInvocationStatus.Indeterminate, IndeterminateCode));
                     return Failure(IndeterminateCode, "The Unity worker launcher failed without a trustworthy result.", true, invocationId);
                 }
-
-                if (launch.Kind != H1UnityWorkerLaunchKind.Completed)
-                    return MapLaunchFailure(envelope, launch);
-
+                if (launch.Kind != H1UnityWorkerLaunchKind.Completed) return MapLaunchFailure(envelope, launch);
                 var result = launch.Result;
-                if (result == null)
-                    return RecordAndFail(envelope, H1UnityInvocationStatus.Indeterminate, MissingResultCode, "The Unity worker exited without a result envelope.", true);
-                if (!Matches(envelope, result))
-                    return RecordAndFail(envelope, H1UnityInvocationStatus.Indeterminate, WrongIdentityCode, "The Unity result does not match the invocation/profile identity.", false);
-                if (!result.MainThread)
-                    return RecordAndFail(envelope, H1UnityInvocationStatus.Failed, OffMainThreadCode, "The Unity worker did not execute the Editor-bound plan on the Editor main thread.", false);
-
+                if (result == null) return RecordAndFail(envelope, H1UnityInvocationStatus.Indeterminate, MissingResultCode, "The Unity worker exited without a result envelope.", true);
+                if (!Matches(envelope, result)) return RecordAndFail(envelope, H1UnityInvocationStatus.Indeterminate, WrongIdentityCode, "The Unity result does not match the invocation/profile identity.", false);
+                if (!result.MainThread) return RecordAndFail(envelope, H1UnityInvocationStatus.Failed, OffMainThreadCode, "The Unity worker did not execute the Editor-bound plan on the Editor main thread.", false);
                 CapabilityInvocationResult decoded;
-                try
-                {
-                    decoded = executor.DecodeResult(result);
-                }
-                catch (Exception)
-                {
-                    return RecordAndFail(envelope, H1UnityInvocationStatus.Indeterminate, CorruptResultCode, "The typed worker result decoder rejected the result envelope.", false);
-                }
-
-                if (decoded.Success)
-                    _ledger.Record(new H1UnityInvocationRecord(invocationId, envelope.Capability, H1UnityInvocationStatus.Completed, "success"));
-                else
-                    _ledger.Record(new H1UnityInvocationRecord(invocationId, envelope.Capability, H1UnityInvocationStatus.Failed, decoded.Error?.Code ?? "structured-error"));
+                try { decoded = executor.DecodeResult(result); }
+                catch (Exception) { return RecordAndFail(envelope, H1UnityInvocationStatus.Indeterminate, CorruptResultCode, "The typed worker result decoder rejected the result envelope.", false); }
+                _ledger.Record(new H1UnityInvocationRecord(invocationId, envelope.Capability, decoded.Success ? H1UnityInvocationStatus.Completed : H1UnityInvocationStatus.Failed, decoded.Success ? "success" : decoded.Error?.MachineCode ?? "structured-error"));
                 return decoded;
             }
         }
@@ -565,23 +419,9 @@ namespace Arkus.Harness.Projection
                 case H1UnityWorkerLaunchKind.StartFailure:
                     return RecordAndFail(envelope, H1UnityInvocationStatus.Indeterminate, CrashCode, "The Unity Editor worker failed before a trustworthy result was accepted.", true);
                 case H1UnityWorkerLaunchKind.TimedOut:
-                    return RecordAndFail(
-                        envelope,
-                        launch.TerminationConfirmed ? H1UnityInvocationStatus.Interrupted : H1UnityInvocationStatus.Indeterminate,
-                        launch.TerminationConfirmed ? TimeoutCode : IndeterminateCode,
-                        launch.TerminationConfirmed
-                            ? "The Unity Editor worker exceeded the fixed operation deadline and was terminated."
-                            : "The Unity Editor worker exceeded the deadline and termination could not be proven.",
-                        true);
+                    return RecordAndFail(envelope, launch.TerminationConfirmed ? H1UnityInvocationStatus.Interrupted : H1UnityInvocationStatus.Indeterminate, launch.TerminationConfirmed ? TimeoutCode : IndeterminateCode, launch.TerminationConfirmed ? "The Unity Editor worker exceeded the fixed operation deadline and was terminated." : "The Unity Editor worker exceeded the deadline and termination could not be proven.", true);
                 case H1UnityWorkerLaunchKind.Cancelled:
-                    return RecordAndFail(
-                        envelope,
-                        launch.TerminationConfirmed ? H1UnityInvocationStatus.Interrupted : H1UnityInvocationStatus.Indeterminate,
-                        launch.TerminationConfirmed ? InterruptedCode : IndeterminateCode,
-                        launch.TerminationConfirmed
-                            ? "The launched Unity Editor worker was interrupted by cancellation."
-                            : "Cancellation occurred after launch and worker termination could not be proven.",
-                        true);
+                    return RecordAndFail(envelope, launch.TerminationConfirmed ? H1UnityInvocationStatus.Interrupted : H1UnityInvocationStatus.Indeterminate, launch.TerminationConfirmed ? InterruptedCode : IndeterminateCode, launch.TerminationConfirmed ? "The launched Unity Editor worker was interrupted by cancellation." : "Cancellation occurred after launch and worker termination could not be proven.", true);
                 case H1UnityWorkerLaunchKind.MissingResult:
                     return RecordAndFail(envelope, H1UnityInvocationStatus.Indeterminate, MissingResultCode, "The Unity Editor worker produced no result envelope.", true);
                 case H1UnityWorkerLaunchKind.CorruptResult:
@@ -591,82 +431,51 @@ namespace Arkus.Harness.Projection
             }
         }
 
-        private CapabilityInvocationResult RecordAndFail(
-            H1UnityInvocationEnvelope envelope,
-            H1UnityInvocationStatus status,
-            string code,
-            string message,
-            bool retryable)
+        private CapabilityInvocationResult RecordAndFail(H1UnityInvocationEnvelope envelope, H1UnityInvocationStatus status, string code, string message, bool retryable)
         {
             _ledger.Record(new H1UnityInvocationRecord(envelope.InvocationId, envelope.Capability, status, code));
             return Failure(code, message, retryable, envelope.InvocationId);
         }
 
-        private bool Matches(H1UnityInvocationEnvelope invocation, H1UnityResultEnvelope result)
+        private bool Matches(H1UnityInvocationEnvelope invocation, H1UnityResultEnvelope result) =>
+            string.Equals(result.InvocationId, invocation.InvocationId, StringComparison.Ordinal) && string.Equals(result.Capability, invocation.Capability, StringComparison.Ordinal) && string.Equals(result.ExecutorId, invocation.ExecutorId, StringComparison.Ordinal) && string.Equals(result.ProfileId, _profile.Id, StringComparison.Ordinal) && string.Equals(result.ProjectIdentity, _profile.ProjectIdentity, StringComparison.Ordinal) && string.Equals(result.EditorVersion, _profile.EffectiveEditorVersion, StringComparison.Ordinal) && string.Equals(result.EditorRevision, _profile.EffectiveEditorRevision, StringComparison.Ordinal);
+
+        private static CapabilityInvocationResult Failure(string code, string message, bool retryable, string? invocationId = null)
         {
-            return string.Equals(result.InvocationId, invocation.InvocationId, StringComparison.Ordinal) &&
-                string.Equals(result.Capability, invocation.Capability, StringComparison.Ordinal) &&
-                string.Equals(result.ExecutorId, invocation.ExecutorId, StringComparison.Ordinal) &&
-                string.Equals(result.ProfileId, _profile.Id, StringComparison.Ordinal) &&
-                string.Equals(result.ProjectIdentity, _profile.ProjectIdentity, StringComparison.Ordinal) &&
-                string.Equals(result.EditorVersion, _profile.EffectiveEditorVersion, StringComparison.Ordinal) &&
-                string.Equals(result.EditorRevision, _profile.EffectiveEditorRevision, StringComparison.Ordinal);
+            var details = new Dictionary<string, object?>(StringComparer.Ordinal);
+            if (invocationId != null) details["invocationId"] = invocationId;
+            return CapabilityInvocationResult.Failed(new StructuredError(code, message, "$", new ReadOnlyDictionary<string, object?>(details), retryable, retryable ? "Query unity.lifecycle.operation-status with the invocation identity before retrying." : "Repair the host/worker contract mismatch before retrying."));
         }
 
-        private static CapabilityInvocationResult Failure(
-            string code,
-            string message,
-            bool retryable,
-            string? invocationId = null)
-        {
-            var context = new Dictionary<string, object?>(StringComparer.Ordinal);
-            if (invocationId != null) context["invocationId"] = invocationId;
-            return CapabilityInvocationResult.Failed(new StructuredError(
-                code,
-                message,
-                "$",
-                new ReadOnlyDictionary<string, object?>(context),
-                retryable,
-                retryable
-                    ? "Query unity.lifecycle.operation-status with the invocation identity before retrying."
-                    : "Repair the host/worker contract mismatch before retrying."));
-        }
-
-        private static string CreateInvocationId() =>
-            "h1u-" + DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N");
+        private static string CreateInvocationId() => "h1u-" + DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N");
     }
 
     public sealed class H1UnityProjectProfileInspectExecutor : IH1UnityCapabilityExecutor
     {
         public static readonly CapabilityKey Key = new CapabilityKey("unity.host.project-profile.inspect", new ContractVersion(1, 0));
         public const string WorkerExecutorId = "arkus.h1.worker.project-profile.inspect@1";
-
         public CapabilityKey Capability => Key;
         public string ExecutorId => WorkerExecutorId;
-
         public string EncodeRequest(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
             if (request.Count != 0) throw new InvalidOperationException("Project/profile inspection accepts no public authority selectors.");
             return "inspect";
         }
-
         public CapabilityInvocationResult DecodeResult(H1UnityResultEnvelope result)
         {
             if (result == null) throw new ArgumentNullException(nameof(result));
-            if (!string.Equals(result.Payload, "inspect", StringComparison.Ordinal))
-                throw new FormatException("Unexpected inspection payload.");
-            return CapabilityInvocationResult.Succeeded(new ReadOnlyDictionary<string, object?>(
-                new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["schemaId"] = "arkus.h1-unity-project-profile-inspection@1",
-                    ["profileId"] = result.ProfileId,
-                    ["projectIdentity"] = result.ProjectIdentity,
-                    ["editorVersion"] = result.EditorVersion,
-                    ["editorRevision"] = result.EditorRevision,
-                    ["mainThread"] = result.MainThread,
-                    ["executorId"] = result.ExecutorId
-                }));
+            if (!string.Equals(result.Payload, "inspect", StringComparison.Ordinal)) throw new FormatException("Unexpected inspection payload.");
+            return CapabilityInvocationResult.Succeeded(new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["schemaId"] = "arkus.h1-unity-project-profile-inspection@1",
+                ["profileId"] = result.ProfileId,
+                ["projectIdentity"] = result.ProjectIdentity,
+                ["editorVersion"] = result.EditorVersion,
+                ["editorRevision"] = result.EditorRevision,
+                ["mainThread"] = result.MainThread,
+                ["executorId"] = result.ExecutorId
+            }));
         }
     }
 
@@ -674,52 +483,29 @@ namespace Arkus.Harness.Projection
     public sealed class H1UnityProjectProfileInspectHandler : ICanonicalCapabilityHandler
     {
         private readonly H1UnityEditorExecutionCoordinator _coordinator;
-
-        public H1UnityProjectProfileInspectHandler(H1UnityEditorExecutionCoordinator coordinator)
-        {
-            _coordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator));
-        }
-
-        public CapabilityInvocationResult Invoke(CapabilityInvocationContext context, IReadOnlyDictionary<string, object?> request) =>
-            _coordinator.Invoke(context, request);
+        public H1UnityProjectProfileInspectHandler(H1UnityEditorExecutionCoordinator coordinator) { _coordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator)); }
+        public CapabilityInvocationResult Invoke(CapabilityInvocationContext context, IReadOnlyDictionary<string, object?> request) => _coordinator.Invoke(context, request);
     }
 
     [PublicCapabilityRoute("arkus.unity-lifecycle", "unity.lifecycle.operation-status", "1.0")]
     public sealed class H1UnityOperationStatusHandler : ICanonicalCapabilityHandler
     {
         private readonly IH1UnityInvocationLedger _ledger;
-
-        public H1UnityOperationStatusHandler(IH1UnityInvocationLedger ledger)
-        {
-            _ledger = ledger ?? throw new ArgumentNullException(nameof(ledger));
-        }
-
+        public H1UnityOperationStatusHandler(IH1UnityInvocationLedger ledger) { _ledger = ledger ?? throw new ArgumentNullException(nameof(ledger)); }
         public CapabilityInvocationResult Invoke(CapabilityInvocationContext context, IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            if (!request.TryGetValue("invocationId", out var raw) || !(raw is string invocationId) ||
-                !_ledger.TryRead(invocationId, out var record) || record == null)
+            if (!request.TryGetValue("invocationId", out var raw) || !(raw is string invocationId) || !_ledger.TryRead(invocationId, out var record) || record == null)
+                return CapabilityInvocationResult.Failed(new StructuredError("unity.lifecycle.unknown-invocation", "No bounded lifecycle record exists for the supplied invocation identity.", "$.invocationId", new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)), false, "Use the invocation identity returned by a structured H1 lifecycle outcome."));
+            return CapabilityInvocationResult.Succeeded(new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
             {
-                return CapabilityInvocationResult.Failed(new StructuredError(
-                    "unity.lifecycle.unknown-invocation",
-                    "No bounded lifecycle record exists for the supplied invocation identity.",
-                    "$.invocationId",
-                    new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)),
-                    false,
-                    "Use the invocation identity returned by a structured H1 lifecycle outcome."));
-            }
-
-            return CapabilityInvocationResult.Succeeded(new ReadOnlyDictionary<string, object?>(
-                new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["schemaId"] = "arkus.h1-unity-operation-status@1",
-                    ["invocationId"] = record.InvocationId,
-                    ["capability"] = record.Capability,
-                    ["status"] = StatusToken(record.Status),
-                    ["outcomeCode"] = record.OutcomeCode
-                }));
+                ["schemaId"] = "arkus.h1-unity-operation-status@1",
+                ["invocationId"] = record.InvocationId,
+                ["capability"] = record.Capability,
+                ["status"] = StatusToken(record.Status),
+                ["outcomeCode"] = record.OutcomeCode
+            }));
         }
-
         private static string StatusToken(H1UnityInvocationStatus status)
         {
             switch (status)
@@ -739,111 +525,38 @@ namespace Arkus.Harness.Projection
         public static CanonicalProviderContribution CreateEditorHostContribution(H1UnityEditorExecutionCoordinator coordinator)
         {
             if (coordinator == null) throw new ArgumentNullException(nameof(coordinator));
-            var definition = new CapabilityDefinition(
-                H1UnityProjectProfileInspectExecutor.Key,
-                new ProviderMetadata(
-                    H1UnityHostCapabilityPolicy.HostProviderId,
-                    ProviderKind.Scoped,
-                    H1UnityHostCapabilityPolicy.HostScope,
-                    H1UnityHostCapabilityPolicy.HostNamespace),
-                CanonicalContractSchemas.EmptyObject(),
-                InspectionSuccessSchema(),
-                CanonicalContractSchemas.StructuredError(),
-                SideEffectClass.ReadOnly,
-                DeterminismClass.EnvironmentDependent,
-                new[] { "h1-unity-profile-bound", "project-operation-lease-available" },
-                new[] { "unity-main-thread-observation-returned" },
-                new ConcurrencySemantics(ConcurrencyClass.Serialized),
-                new IdempotencySemantics(IdempotencyClass.Idempotent),
-                new BatchingSemantics(BatchingClass.Unsupported),
-                new RepairSemantics(true, true),
-                new PolicySemantics(
-                    PrivilegeClass.Authoring,
-                    TransactionRequirement.None,
-                    ProvenanceRequirement.Required),
-                new CostSemantics(1, "one short-lived Unity Editor inspection worker"));
-
-            return new CanonicalProviderContribution(
-                new ProviderDescriptor(
-                    H1UnityHostCapabilityPolicy.HostProviderId,
-                    ProviderKind.Scoped,
-                    H1UnityHostCapabilityPolicy.HostScope,
-                    new[] { H1UnityHostCapabilityPolicy.HostNamespace }),
-                new[] { definition },
-                new[] { CapabilityRoute.FromHandler(new H1UnityProjectProfileInspectHandler(coordinator)) });
+            var definition = new CapabilityDefinition(H1UnityProjectProfileInspectExecutor.Key, new ProviderMetadata(H1UnityHostCapabilityPolicy.HostProviderId, ProviderKind.Scoped, H1UnityHostCapabilityPolicy.HostScope, H1UnityHostCapabilityPolicy.HostNamespace), CanonicalContractSchemas.EmptyObject(), InspectionSuccessSchema(), CanonicalContractSchemas.StructuredError(), SideEffectClass.ReadOnly, DeterminismClass.EnvironmentDependent, new[] { "h1-unity-profile-bound", "project-operation-lease-available" }, new[] { "unity-main-thread-observation-returned" }, new ConcurrencySemantics(ConcurrencyClass.Serialized), new IdempotencySemantics(IdempotencyClass.Idempotent), new BatchingSemantics(BatchingClass.Unsupported), new RepairSemantics(true, true), new PolicySemantics(PrivilegeClass.Authoring, TransactionRequirement.None, ProvenanceRequirement.Required), new CostSemantics(1, "one short-lived Unity Editor inspection worker"));
+            return new CanonicalProviderContribution(new ProviderDescriptor(H1UnityHostCapabilityPolicy.HostProviderId, ProviderKind.Scoped, H1UnityHostCapabilityPolicy.HostScope, new[] { H1UnityHostCapabilityPolicy.HostNamespace }), new[] { definition }, new[] { CapabilityRoute.FromHandler(new H1UnityProjectProfileInspectHandler(coordinator)) });
         }
 
-        public static UnityHostCapabilityGrant CreateInspectionGrant() =>
-            new UnityHostCapabilityGrant(
-                H1UnityProjectProfileInspectExecutor.Key,
-                UnityProjectWorkspaceAuthority.ProjectSettingsRootId,
-                "ref.arkus.unity-host.project-metadata",
-                UnityHostResourceClass.ProjectMetadata,
-                UnityHostTimeClass.BoundedRead);
+        public static UnityHostCapabilityGrant CreateInspectionGrant() => new UnityHostCapabilityGrant(H1UnityProjectProfileInspectExecutor.Key, UnityProjectWorkspaceAuthority.ProjectSettingsRootId, "ref.arkus.unity-host.project-metadata", UnityHostResourceClass.ProjectMetadata, UnityHostTimeClass.BoundedRead);
 
         public static CanonicalProviderContribution CreateLifecycleStatusContribution(IH1UnityInvocationLedger ledger)
         {
             if (ledger == null) throw new ArgumentNullException(nameof(ledger));
             var key = new CapabilityKey("unity.lifecycle.operation-status", new ContractVersion(1, 0));
-            var definition = new CapabilityDefinition(
-                key,
-                new ProviderMetadata("arkus.unity-lifecycle", ProviderKind.Scoped, "unity-lifecycle", "unity.lifecycle"),
-                new JsonSchemaDocument(SchemaNode.Object(
-                    new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
-                    {
-                        ["invocationId"] = SchemaNode.String()
-                    },
-                    new[] { "invocationId" })),
-                OperationStatusSuccessSchema(),
-                CanonicalContractSchemas.StructuredError(),
-                SideEffectClass.ReadOnly,
-                DeterminismClass.EnvironmentDependent,
-                Array.Empty<string>(),
-                new[] { "bounded-ledger-status-returned" },
-                new ConcurrencySemantics(ConcurrencyClass.ParallelSafe),
-                new IdempotencySemantics(IdempotencyClass.Idempotent),
-                new BatchingSemantics(BatchingClass.Unsupported),
-                new RepairSemantics(false, true),
-                new PolicySemantics(
-                    PrivilegeClass.PublicRead,
-                    TransactionRequirement.ReadOnlyEnvelope,
-                    ProvenanceRequirement.Required),
-                new CostSemantics(1, "bounded project-local lifecycle ledger lookup"));
-
-            return new CanonicalProviderContribution(
-                new ProviderDescriptor("arkus.unity-lifecycle", ProviderKind.Scoped, "unity-lifecycle", new[] { "unity.lifecycle" }),
-                new[] { definition },
-                new[] { CapabilityRoute.FromHandler(new H1UnityOperationStatusHandler(ledger)) });
+            var definition = new CapabilityDefinition(key, new ProviderMetadata("arkus.unity-lifecycle", ProviderKind.Scoped, "unity-lifecycle", "unity.lifecycle"), new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal) { ["invocationId"] = SchemaNode.String() }, new[] { "invocationId" })), OperationStatusSuccessSchema(), CanonicalContractSchemas.StructuredError(), SideEffectClass.ReadOnly, DeterminismClass.EnvironmentDependent, Array.Empty<string>(), new[] { "bounded-ledger-status-returned" }, new ConcurrencySemantics(ConcurrencyClass.ParallelSafe), new IdempotencySemantics(IdempotencyClass.Idempotent), new BatchingSemantics(BatchingClass.Unsupported), new RepairSemantics(false, true), new PolicySemantics(PrivilegeClass.PublicRead, TransactionRequirement.ReadOnlyEnvelope, ProvenanceRequirement.Required), new CostSemantics(1, "bounded project-local lifecycle ledger lookup"));
+            return new CanonicalProviderContribution(new ProviderDescriptor("arkus.unity-lifecycle", ProviderKind.Scoped, "unity-lifecycle", new[] { "unity.lifecycle" }), new[] { definition }, new[] { CapabilityRoute.FromHandler(new H1UnityOperationStatusHandler(ledger)) });
         }
 
-        private static JsonSchemaDocument InspectionSuccessSchema()
+        private static JsonSchemaDocument InspectionSuccessSchema() => new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {
-            return new JsonSchemaDocument(SchemaNode.Object(
-                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
-                {
-                    ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-unity-project-profile-inspection@1" }),
-                    ["profileId"] = SchemaNode.String(new[] { H1UnityLaunchProfile.ProfileId }),
-                    ["projectIdentity"] = SchemaNode.String(new[] { UnityProjectWorkspaceAuthority.ProjectIdentity }),
-                    ["editorVersion"] = SchemaNode.String(new[] { H1UnityLaunchProfile.EditorVersion }),
-                    ["editorRevision"] = SchemaNode.String(new[] { H1UnityLaunchProfile.EditorRevision }),
-                    ["mainThread"] = SchemaNode.Boolean(),
-                    ["executorId"] = SchemaNode.String(new[] { H1UnityProjectProfileInspectExecutor.WorkerExecutorId })
-                },
-                new[] { "schemaId", "profileId", "projectIdentity", "editorVersion", "editorRevision", "mainThread", "executorId" }));
-        }
+            ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-unity-project-profile-inspection@1" }),
+            ["profileId"] = SchemaNode.String(new[] { H1UnityLaunchProfile.ProfileId }),
+            ["projectIdentity"] = SchemaNode.String(new[] { UnityProjectWorkspaceAuthority.ProjectIdentity }),
+            ["editorVersion"] = SchemaNode.String(new[] { H1UnityLaunchProfile.EditorVersion }),
+            ["editorRevision"] = SchemaNode.String(new[] { H1UnityLaunchProfile.EditorRevision }),
+            ["mainThread"] = SchemaNode.Boolean(),
+            ["executorId"] = SchemaNode.String(new[] { H1UnityProjectProfileInspectExecutor.WorkerExecutorId })
+        }, new[] { "schemaId", "profileId", "projectIdentity", "editorVersion", "editorRevision", "mainThread", "executorId" }));
 
-        private static JsonSchemaDocument OperationStatusSuccessSchema()
+        private static JsonSchemaDocument OperationStatusSuccessSchema() => new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {
-            return new JsonSchemaDocument(SchemaNode.Object(
-                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
-                {
-                    ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-unity-operation-status@1" }),
-                    ["invocationId"] = SchemaNode.String(),
-                    ["capability"] = SchemaNode.String(),
-                    ["status"] = SchemaNode.String(new[] { "running", "completed", "failed", "interrupted", "indeterminate" }),
-                    ["outcomeCode"] = SchemaNode.String()
-                },
-                new[] { "schemaId", "invocationId", "capability", "status", "outcomeCode" }));
-        }
+            ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-unity-operation-status@1" }),
+            ["invocationId"] = SchemaNode.String(),
+            ["capability"] = SchemaNode.String(),
+            ["status"] = SchemaNode.String(new[] { "running", "completed", "failed", "interrupted", "indeterminate" }),
+            ["outcomeCode"] = SchemaNode.String()
+        }, new[] { "schemaId", "invocationId", "capability", "status", "outcomeCode" }));
     }
 }
