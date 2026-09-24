@@ -1,0 +1,17 @@
+{
+    "schemaId": "arkus.h1-04-unity-mutation-proof@1",
+    "editorVersion": "6000.3.24f1",
+    "projectIdentity": "arkus.unity-project@1:ArkusUnity",
+    "baselineCount": 250,
+    "movedCount": 250,
+    "copiedCount": 252,
+    "deletedCount": 248,
+    "restoredCount": 250,
+    "originalGuid": "a914dbae2609f0107a8bce353d33727c",
+    "movedGuid": "a914dbae2609f0107a8bce353d33727c",
+    "copiedGuid": "3479a1110f5b45e459a22e8915ee0aae",
+    "restoredGuid": "a914dbae2609f0107a8bce353d33727c",
+    "baselineInventorySha256": "c339019e00153074096622699cfd696c43580defaeda48032e2ad11f8425c0bc",
+    "restoredInventorySha256": "c339019e00153074096622699cfd696c43580defaeda48032e2ad11f8425c0bc",
+    "result": "GREEN"
+}

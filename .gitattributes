@@ -1,0 +1,5 @@
+Unity/ArkusUnity/Assets/Arkus/H1/CatalogueProof/*.unity text eol=lf
+Unity/ArkusUnity/Packages/manifest.json text eol=lf
+Unity/ArkusUnity/Packages/packages-lock.json text eol=lf
+Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt text eol=lf
+scripts/*.sh text eol=lf

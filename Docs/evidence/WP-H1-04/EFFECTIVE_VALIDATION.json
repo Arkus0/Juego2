@@ -1,0 +1,30 @@
+{
+  "adoptedDistributionSha256": {
+    "quaternius-medieval-source": "b9d757dd2608a5cee4d9ee1e8183f6cb4cad9d27480841a905180def9c7d8b10",
+    "quaternius-ual1-source": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+  },
+  "catalogueFingerprint": "014d510bd8e9fe0d2754fed0075b3a81787e57a1717baed29e7e03f54295bd21",
+  "editorRevision": "4e7b9b5b6244",
+  "editorVersion": "6000.3.24f1",
+  "entriesByKind": {
+    "animation-clip": 240,
+    "asset": 2,
+    "component-schema": 3,
+    "material": 2,
+    "prefab": 2,
+    "scene": 1
+  },
+  "incompatibleSourceDiagnostic": "catalogue.incompatible-reference",
+  "inventoryCount": 250,
+  "inventoryNormalizedSha256": "c339019e00153074096622699cfd696c43580defaeda48032e2ad11f8425c0bc",
+  "nativeMoveCopyDeleteReimport": "GREEN",
+  "packageLockSha256": "ee3c294655c0db9731252e6ff5e9661daf9b0b8c311124cc47117e946ec5f864",
+  "packageManifestSha256": "ac32363f1409c3a816ae8eec208c839dbb85ef7d8b2f139c63b93b6a15271ca2",
+  "platform": "windows-x64",
+  "projectIdentity": "arkus.unity-project@1:ArkusUnity",
+  "projectVersionSha256": "7a43a06dfe51c4e3933c5a7848320925ce96e667f8c7736557d13a02007e9860",
+  "publicJsonlMcpConformance": "GREEN",
+  "result": "GREEN",
+  "schemaId": "arkus.h1-04-effective-validation@1",
+  "sourcePrefabResolved": "quaternius.medieval.prefab.wall-plaster-window-wide-flat"
+}

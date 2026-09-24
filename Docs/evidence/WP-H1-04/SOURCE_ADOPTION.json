@@ -1,0 +1,50 @@
+{
+  "schemaId": "arkus.h1-04-source-adoption@1",
+  "distributionMode": "external-readonly-local-source",
+  "sources": [
+    {
+      "sourceId": "quaternius-medieval-source",
+      "originUrl": "https://quaternius.com/packs/medievalvillagemegakit.html",
+      "distributionSha256": "b9d757dd2608a5cee4d9ee1e8183f6cb4cad9d27480841a905180def9c7d8b10",
+      "licenseId": "CC0-1.0",
+      "licenseSha256": "7310dfa8512d7ca12b6591329fda4adab7e8b9cdbe04c7d7061c2fe5c7dc38ee",
+      "commercialUse": true,
+      "noticeRequirement": "none-required"
+    },
+    {
+      "sourceId": "quaternius-ual1-source",
+      "originUrl": "https://quaternius.com/packs/universalanimationlibrary.html",
+      "distributionSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+      "licenseId": "CC0-1.0",
+      "licenseSha256": "6d01f55c6e4c49a2c9963e147e561945ae2c83958c8ca667d90a6bffdbfac061",
+      "commercialUse": true,
+      "noticeRequirement": "none-required"
+    }
+  ],
+  "slices": [
+    {
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8"
+    },
+    {
+      "assetPath": "Assets/Arkus/H1/SourceSlice/MI_Plaster.mat",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "3fcfc0359d1460009858533461893c626e25ea52364ae4e85f4a6bf84fc3ce69"
+    },
+    {
+      "assetPath": "Assets/Arkus/H1/SourceSlice/FacadeImportedMaterial.mat",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "source-derived",
+      "contentSha256": "e585297c2271fc83378e2eebe7f72ff9f8b66c2fc1b8a1eeb1c7abdfac5d2e29"
+    },
+    {
+      "assetPath": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+      "sourceId": "quaternius-ual1-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    }
+  ]
+}
