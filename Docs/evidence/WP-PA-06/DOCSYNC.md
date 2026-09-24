@@ -2,21 +2,22 @@
 
 State: **COMPLETE**
 
-Accepted candidate / PRODUCT_SHA: `092b3169b627da38ac66dde3f0c0856df4603423`
+Accepted candidate / PRODUCT_SHA: `9ce17952e257587c0dcec5dc4b854170365545ca`
 
-Independent Reviewer: PASS, review `#5299946163`
+Independent Reviewer: PASS, review `#5300025658`
 
-Research PR: `#170`
+Research PR: `#172`
 
-Research merge: `fe0ec7d1b030b49c3ce699878a07798a4fea2cc7`
+Research merge: `fdfec568844bc0d006959c3cd207795544eca33d`
 
 ## Reconciliation
 
-- Marked the canonical PA-06 workpack COMPLETE and rebound its result to the exact accepted review and merge.
-- Added the navigation-only accepted PA-06 capsule, preserving all twelve canonical disposition keys and statuses; registered its canonical disposition selector and index entry.
-- Normalized the disposition table's header label for the canonical parser; disposition keys/statuses and research meaning are unchanged.
+- Marked the canonical PA-06 workpack COMPLETE and rebound its result to the repaired exact accepted review and merge.
+- Added the navigation-only accepted PA-06 capsule, preserving all fifteen canonical disposition keys and statuses; registered its canonical disposition selector and index entry.
+- Normalized the disposition table's header label for the canonical parser without changing any disposition semantics.
+- Carried the repaired boundedness and anti-post-hoc guarantees into the accepted capsule: finite per-actor semantic capacity, deterministic pressure, no unbounded overflow/active-reason escape, causal-time selection and future-divergence invariance.
 - Advanced the PA track's completion and next-workpack pointers to `WP-PA-07`.
-- Kept the accepted research recommendation, fixtures and deferred proof boundary unchanged. No runtime, Unity or product implementation was changed.
+- Kept runtime/numeric proof deferred. No Unity or product implementation was changed.
 
 ## Validation
 
