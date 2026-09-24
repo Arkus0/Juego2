@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Arkus.Game.Authoring;
+using Arkus.Game.World;
 using Arkus.Harness.H1HostPolicyFixture;
 using Arkus.Harness.Projection;
 using Arkus.Harness.Protocol;
@@ -15,13 +17,18 @@ namespace Arkus.Harness.Tests
         private const string ResourceNamespace = "ref.arkus.unity-host.asset";
 
         [Fact]
-        public async Task H1ProfilePreservesOrdinaryH0CanonicalMutationAlongsideUnityRead()
+        public async Task H1ProfilePreservesRealH0CanonicalMutationAlongsideUnityRead()
         {
-            H0MutationFixtureHandler.InvocationCount = 0;
+            var initial = Hk02TestFixtures.MicroWorld();
+            var session = new TransactionalWorldAuthoringSession(initial);
+            var beforeHash = CanonicalWorldStateCodec.ComputeContentHash(session.Current);
+
             var composition = ContractComposer.Compose(
-                BaseContract.CreateContribution(),
-                new[] { H0MutationContribution(), UnityReadContribution() });
-            Assert.True(composition.Success, string.Join("; ", composition.Issues.Select(issue => issue.Code + ":" + issue.Message)));
+                CanonicalWorldContract.CreateContribution(new WorldInspectionService(session), session),
+                new[] { UnityReadContribution() });
+            Assert.True(
+                composition.Success,
+                string.Join("; ", composition.Issues.Select(issue => issue.Code + ":" + issue.Message)));
 
             using var projection = H1UnityHostCapabilityPolicy.CreateProjection(
                 composition.Contract!,
@@ -36,11 +43,15 @@ namespace Arkus.Harness.Tests
                         UnityHostTimeClass.BoundedRead)
                 });
 
+            var mutationRequest = Hk04TransactionalMutationTests.Request(
+                initial,
+                "h1-host-policy.real-h0-mutation",
+                Hk04TransactionalMutationTests.PutObject("node.peer", "fixture.h1-compatible"));
             var mutation = await projection.InvokeAsync(new NeutralProjectionRequest(
                 "h0-mutation",
-                "h0.fixture.mutate",
+                WorldMutationContract.ApplyName,
                 ContractVersionRange.Exact(new ContractVersion(1, 0)),
-                new Dictionary<string, object?>(StringComparer.Ordinal)));
+                mutationRequest));
             var unityRead = await projection.InvokeAsync(new NeutralProjectionRequest(
                 "unity-read",
                 "unity.host.inspect",
@@ -50,37 +61,12 @@ namespace Arkus.Harness.Tests
                     ["resource"] = "asset.potes.market-stall"
                 }));
 
-            Assert.True(mutation.Success);
+            Assert.True(mutation.Success, mutation.Error == null ? "unknown mutation failure" : mutation.Error.MachineCode);
             Assert.True(unityRead.Success);
-            Assert.Equal(1, H0MutationFixtureHandler.InvocationCount);
-        }
-
-        private static CanonicalProviderContribution H0MutationContribution()
-        {
-            var definition = new CapabilityDefinition(
-                new CapabilityKey("h0.fixture.mutate", new ContractVersion(1, 0)),
-                new ProviderMetadata("fixture.h0", ProviderKind.Scoped, "h0-fixture", "h0.fixture"),
-                new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal))),
-                SuccessSchema(),
-                CanonicalContractSchemas.StructuredError(),
-                SideEffectClass.CanonicalMutation,
-                DeterminismClass.Deterministic,
-                new[] { "canonical-state-available" },
-                new[] { "canonical-mutation-dispatched" },
-                new ConcurrencySemantics(ConcurrencyClass.Serialized),
-                new IdempotencySemantics(IdempotencyClass.Idempotent),
-                new BatchingSemantics(BatchingClass.Unsupported),
-                new RepairSemantics(true, true),
-                new PolicySemantics(
-                    PrivilegeClass.Authoring,
-                    TransactionRequirement.CanonicalTransaction,
-                    ProvenanceRequirement.Required),
-                new CostSemantics(1));
-
-            return new CanonicalProviderContribution(
-                new ProviderDescriptor("fixture.h0", ProviderKind.Scoped, "h0-fixture", new[] { "h0.fixture" }),
-                new[] { definition },
-                new[] { CapabilityRoute.FromHandler(new H0MutationFixtureHandler()) });
+            Assert.Equal(initial.Revision + 1, session.Current.Revision);
+            Assert.NotEqual(beforeHash, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
+            Assert.Contains(session.Current.Objects, item =>
+                item.Id.Value == "node.peer" && item.TypeId.Value == "fixture.h1-compatible");
         }
 
         private static CanonicalProviderContribution UnityReadContribution()
