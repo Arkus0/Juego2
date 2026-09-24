@@ -179,7 +179,9 @@ namespace Arkus.Harness.Projection
             UnityProjectWorkspaceAuthority workspace,
             IEnumerable<UnityHostCapabilityGrant> grants)
         {
-            var issues = Validate(contract, workspace, grants);
+            if (grants == null) throw new ArgumentNullException(nameof(grants));
+            var grantSnapshot = SnapshotGrants(grants);
+            var issues = Validate(contract, workspace, grantSnapshot);
             if (issues.Count != 0)
             {
                 var first = issues[0];
@@ -188,7 +190,21 @@ namespace Arkus.Harness.Projection
                     " (" + first.Code + "): " + first.Message);
             }
 
-            return new NeutralProjectionService(new H1AdmittedUnityContract(contract, workspace));
+            return new NeutralProjectionService(
+                new H1AdmittedUnityContract(contract, workspace, grantSnapshot));
+        }
+
+        private static IReadOnlyList<UnityHostCapabilityGrant> SnapshotGrants(
+            IEnumerable<UnityHostCapabilityGrant> grants)
+        {
+            var snapshot = new List<UnityHostCapabilityGrant>();
+            foreach (var grant in grants)
+            {
+                snapshot.Add(grant ?? throw new ArgumentException(
+                    "H1 grants may not contain null entries.", nameof(grants)));
+            }
+
+            return snapshot.AsReadOnly();
         }
 
         private static void ValidateUnityHostDefinition(
@@ -367,15 +383,38 @@ namespace Arkus.Harness.Projection
         }
     }
 
+    /// <summary>
+    /// Opaque result of one successful H1 admission. The exact bootstrapped workspace and reviewed
+    /// per-capability grants travel with the composed contract so H1-03A can build the fixed
+    /// project-bound invocation envelope from the same admission decision instead of reconstructing
+    /// authority from transport data or a second registry.
+    /// </summary>
     internal sealed class H1AdmittedUnityContract
     {
-        internal H1AdmittedUnityContract(ComposedContract contract, UnityProjectWorkspaceAuthority workspace)
+        private readonly IReadOnlyDictionary<CapabilityKey, UnityHostCapabilityGrant> _grants;
+
+        internal H1AdmittedUnityContract(
+            ComposedContract contract,
+            UnityProjectWorkspaceAuthority workspace,
+            IEnumerable<UnityHostCapabilityGrant> grants)
         {
             Contract = contract ?? throw new ArgumentNullException(nameof(contract));
             Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
+            if (grants == null) throw new ArgumentNullException(nameof(grants));
+
+            var snapshot = new Dictionary<CapabilityKey, UnityHostCapabilityGrant>();
+            foreach (var grant in grants)
+            {
+                if (grant == null)
+                    throw new ArgumentException("H1 grants may not contain null entries.", nameof(grants));
+                snapshot.Add(grant.Capability, grant);
+            }
+
+            _grants = new ReadOnlyDictionary<CapabilityKey, UnityHostCapabilityGrant>(snapshot);
         }
 
         internal ComposedContract Contract { get; }
         internal UnityProjectWorkspaceAuthority Workspace { get; }
+        internal IReadOnlyDictionary<CapabilityKey, UnityHostCapabilityGrant> Grants => _grants;
     }
 }
