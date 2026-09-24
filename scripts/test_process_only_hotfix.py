@@ -34,8 +34,8 @@ REVIEW_ID = "1" * 32
 CAMPAIGN = "c" * 32
 
 
-def pr_body(sha: str = SHA, fail_cycle: int = 0) -> str:
-    return (
+def pr_body(sha: str = SHA, fail_cycle: int = 0, class_value: str = "") -> str:
+    body = (
         "WP: `WP-H1-05`\n"
         "Worker state: `FROZEN_FOR_REVIEW`\n"
         f"Candidate HEAD SHA: `{sha}`\n"
@@ -46,6 +46,20 @@ def pr_body(sha: str = SHA, fail_cycle: int = 0) -> str:
         "Reviewer verdict: `PENDING`\n"
         f"fail_cycle: `{fail_cycle}`\n"
     )
+    if class_value:
+        body += f"Class: `{class_value}`\n"
+    return body
+
+
+def pr_record(*, body: str | None = None, sha: str = SHA) -> dict:
+    return {
+        "number": 192,
+        "state": "open",
+        "merged": False,
+        "draft": False,
+        "head": {"sha": sha},
+        "body": body if body is not None else pr_body(sha),
+    }
 
 
 def review_item(verdict: str = "FAIL", sha: str = SHA, review_id: str = REVIEW_ID,
@@ -62,12 +76,41 @@ def review_item(verdict: str = "FAIL", sha: str = SHA, review_id: str = REVIEW_I
     }
 
 
-def ready_comment(sha: str = SHA, at: str = "2026-09-24T17:59:00Z") -> dict:
+def ready_comment(pr: dict | None = None, sha: str = SHA,
+                  at: str = "2026-09-24T17:59:00Z") -> dict:
+    current = pr or pr_record(sha=sha)
+    context = process.autopilot.validation_context_module(HERE.parent).resolve_context(current, sha)
+    digest = context["context_digest"]
+    return {
+        "user": {"login": "github-actions[bot]"},
+        "created_at": at,
+        "body": (
+            "ARKUS_AUTOMATION_V2\n"
+            "State: REVIEW_READY\n"
+            f"Key: review-ready:{current['number']}:{sha}:{digest}\n"
+            f"Target SHA: {sha}\n"
+            f"Validation Context Digest: {digest}\n"
+            f"Effective WP: {context['wp']}\n"
+            f"Process Only: {context['process_only']}\n"
+            f"Non Foundational: {context['non_foundational']}\n"
+        ),
+    }
+
+
+def minimal_ready_comment(sha: str = SHA, at: str = "2026-09-24T17:59:00Z") -> dict:
     return {
         "user": {"login": "github-actions[bot]"},
         "created_at": at,
         "body": f"ARKUS_AUTOMATION_V2\nState: REVIEW_READY\nTarget SHA: {sha}\n",
     }
+
+
+def ready_marker(pr: dict | None = None, sha: str = SHA,
+                 at: str = "2026-09-24T17:59:00Z") -> dict[str, str]:
+    item = ready_comment(pr, sha, at)
+    row = process.autopilot.fields(item["body"])
+    row["_created_at"] = at
+    return row
 
 
 def adoption_comment(verdict: str = "FAIL", cycle: int = 1) -> dict:
@@ -203,19 +246,16 @@ class ReviewerAdoptionRegressionTests(unittest.TestCase):
             adoption.authoritative_verdicts([], [first, second])
 
     def test_wrong_sha_adoption_is_rejected(self):
-        current = {"state": "open", "merged": False, "draft": False,
-                   "head": {"sha": SHA}, "body": pr_body()}
+        current = pr_record()
         with patch.object(adoption, "gh_json", return_value=current), \
-             patch.object(adoption, "gh_pages", side_effect=[[review_item(sha=WRONG_SHA)], [ready_comment()]]), \
+             patch.object(adoption, "gh_pages", side_effect=[[review_item(sha=WRONG_SHA)], [ready_comment(current)]]), \
              self.assertRaisesRegex(adoption.AdoptionError, "wrong SHA"):
             adoption.adopt(192, SHA, REVIEW_ID, "FAIL")
 
     def test_h1_05_pr_192_pending_body_adopts_exact_sha_fail(self):
-        current = {"state": "open", "merged": False, "draft": False,
-                   "head": {"sha": SHA}, "body": pr_body()}
+        current = pr_record()
         verdict = {"id": REVIEW_ID, "sha": SHA, "verdict": "FAIL", "at": "2026-09-24T18:00:00Z"}
-        ready = {"state": "REVIEW_READY", "target sha": SHA,
-                 "_created_at": "2026-09-24T17:59:00Z"}
+        ready = ready_marker(current)
         with patch.object(process, "_authoritative_verdicts", return_value=[verdict]), \
              patch.object(process.autopilot, "gh_json", return_value=current), \
              patch.object(process.autopilot, "markers", return_value=[ready]), \
@@ -226,12 +266,37 @@ class ReviewerAdoptionRegressionTests(unittest.TestCase):
         ensure.assert_called_once_with(192, verdict)
         self.assertIn("Reviewer verdict: `PENDING`", current["body"])
 
+    def test_minimal_ready_marker_cannot_authorize_controller_adoption(self):
+        current = pr_record()
+        verdict = {"id": REVIEW_ID, "sha": SHA, "verdict": "FAIL", "at": "2026-09-24T18:00:00Z"}
+        minimal = {"state": "REVIEW_READY", "target sha": SHA,
+                   "_created_at": "2026-09-24T17:59:00Z"}
+        with patch.object(process, "_authoritative_verdicts", return_value=[verdict]), \
+             patch.object(process.autopilot, "gh_json", return_value=current), \
+             patch.object(process.autopilot, "markers", return_value=[minimal]), \
+             self.assertRaisesRegex(process.autopilot.StopFlow, "context-bound"):
+            process.strict_reviewed_verdicts(192)
+
+    def test_stale_context_ready_cannot_authorize_action_adoption(self):
+        original = pr_record(body=pr_body(class_value="FOUNDATIONAL"))
+        stale_ready = ready_comment(original)
+        changed = pr_record(body=pr_body(class_value="NON-FOUNDATIONAL"))
+        with patch.object(adoption, "gh_json", return_value=changed), \
+             patch.object(adoption, "gh_pages", side_effect=[[review_item()], [stale_ready]]), \
+             self.assertRaisesRegex(adoption.AdoptionError, "context-bound"):
+            adoption.adopt(192, SHA, REVIEW_ID, "FAIL")
+
+    def test_minimal_ready_cannot_authorize_action_adoption(self):
+        current = pr_record()
+        with patch.object(adoption, "gh_json", return_value=current), \
+             patch.object(adoption, "gh_pages", side_effect=[[review_item()], [minimal_ready_comment()]]), \
+             self.assertRaisesRegex(adoption.AdoptionError, "context-bound"):
+            adoption.adopt(192, SHA, REVIEW_ID, "FAIL")
+
     def test_wrong_sha_in_current_review_ready_cycle_fails_closed(self):
-        current = {"state": "open", "merged": False, "draft": False,
-                   "head": {"sha": SHA}, "body": pr_body()}
+        current = pr_record()
         wrong = {"id": REVIEW_ID, "sha": WRONG_SHA, "verdict": "FAIL", "at": "2026-09-24T18:00:00Z"}
-        ready = {"state": "REVIEW_READY", "target sha": SHA,
-                 "_created_at": "2026-09-24T17:59:00Z"}
+        ready = ready_marker(current)
         with patch.object(process, "_authoritative_verdicts", return_value=[wrong]), \
              patch.object(process.autopilot, "gh_json", return_value=current), \
              patch.object(process.autopilot, "markers", return_value=[ready]), \
@@ -239,10 +304,9 @@ class ReviewerAdoptionRegressionTests(unittest.TestCase):
             process.strict_reviewed_verdicts(192)
 
     def test_same_fail_adoption_is_idempotent_and_does_not_increment_twice(self):
-        current0 = {"state": "open", "merged": False, "draft": False,
-                    "head": {"sha": SHA}, "body": pr_body(fail_cycle=0)}
+        current0 = pr_record(body=pr_body(fail_cycle=0))
         reviews = [review_item()]
-        comments0 = [ready_comment()]
+        comments0 = [ready_comment(current0)]
         with patch.object(adoption, "gh_json", return_value=current0), \
              patch.object(adoption, "gh_pages", side_effect=[reviews, comments0]), \
              patch.object(adoption, "post_comment") as post, \
@@ -252,8 +316,8 @@ class ReviewerAdoptionRegressionTests(unittest.TestCase):
         self.assertEqual(post.call_count, 2)  # adoption ledger + REPAIR_REQUIRED
         self.assertIn("fail_cycle: `1`", update.call_args.args[1])
 
-        current1 = dict(current0, body=pr_body(fail_cycle=1))
-        comments1 = [ready_comment(), adoption_comment(), repair_comment()]
+        current1 = pr_record(body=pr_body(fail_cycle=1))
+        comments1 = [ready_comment(current1), adoption_comment(), repair_comment()]
         with patch.object(adoption, "gh_json", return_value=current1), \
              patch.object(adoption, "gh_pages", side_effect=[reviews, comments1]), \
              patch.object(adoption, "post_comment") as post, \
@@ -265,16 +329,22 @@ class ReviewerAdoptionRegressionTests(unittest.TestCase):
 
 
 class WorkRunRoutingTests(unittest.IsolatedAsyncioTestCase):
-    async def test_work_never_invokes_reviewer(self):
+    async def test_work_allows_only_worker_and_repair_roles(self):
         old = process.WORK_ONLY
         process.WORK_ONLY = True
         try:
-            with patch.object(process, "_current_identity_from_prompt", return_value=("H1-05", 192, SHA)), \
-                 patch.object(process.remote, "remote_codex_role", new=AsyncMock()) as delegate:
-                with self.assertRaises(process.WorkBoundary) as stopped:
-                    await process.bounded_codex_role(Path("."), Path("."), "reviewer", "prompt", "model", "high")
-            self.assertEqual(stopped.exception.kind, "REVIEW_READY")
-            delegate.assert_not_awaited()
+            for role in ("reviewer", "appeal-reviewer", "fail-audit", "protocol-fix", "docsync"):
+                delegate = AsyncMock()
+                with patch.object(process, "_current_identity_from_prompt", return_value=("H1-05", 192, SHA)), \
+                     patch.object(process.remote, "remote_codex_role", new=delegate):
+                    with self.assertRaises(process.WorkBoundary) as stopped:
+                        await process.bounded_codex_role(Path("."), Path("."), role, "prompt", "model", "high")
+                if role == "reviewer":
+                    self.assertEqual(stopped.exception.kind, "REVIEW_READY")
+                else:
+                    self.assertEqual(stopped.exception.kind, "REVIEWER_REQUIRED")
+                    self.assertEqual(stopped.exception.state, role.upper().replace("-", "_"))
+                delegate.assert_not_awaited()
         finally:
             process.WORK_ONLY = old
 
@@ -290,7 +360,7 @@ class WorkRunRoutingTests(unittest.IsolatedAsyncioTestCase):
         finally:
             process.WORK_ONLY = old
 
-    async def test_work_on_repair_required_executes_repair(self):
+    async def test_work_on_repair_required_executes_repair_role_when_prerequisites_are_done(self):
         old = process.WORK_ONLY
         process.WORK_ONLY = True
         try:
@@ -299,6 +369,50 @@ class WorkRunRoutingTests(unittest.IsolatedAsyncioTestCase):
                 result = await process.bounded_codex_role(Path("."), Path("."), "repair", "prompt", "model", "high")
             self.assertEqual(result, "repaired")
             self.assertEqual(delegate.await_args.args[2], "repair")
+        finally:
+            process.WORK_ONLY = old
+
+    async def test_real_repair_required_path_stops_before_missing_fail_audit(self):
+        class DummyApp:
+            async def __aenter__(self): return self
+            async def __aexit__(self, *_args): return None
+            async def assert_models(self): return None
+            async def guard(self): return "run", None
+
+        current = pr_record()
+        verdict = {"id": REVIEW_ID, "sha": SHA, "verdict": "FAIL", "at": "2026-09-24T18:00:00Z"}
+        repair = {"state": "REPAIR_REQUIRED", "target sha": SHA}
+        args = argparse.Namespace(
+            dry_run=False, wp="H1-05", root=".", state=".", assets_root=None,
+            adopt=True, one_wp=True, next=False,
+        )
+        old = process.WORK_ONLY
+        process.WORK_ONLY = True
+        try:
+            delegate = AsyncMock()
+            with tempfile.TemporaryDirectory() as tmp:
+                wp_file = Path(tmp) / "WP-H1-05.md"
+                wp_file.write_text("Depends on: none\n", encoding="utf-8")
+                with patch.object(process.autopilot, "require_repo"), \
+                     patch.object(process.autopilot, "resolve_assets_root", return_value=None), \
+                     patch.object(process.autopilot, "run", return_value=""), \
+                     patch.object(process.autopilot, "canonical_pr", return_value=current), \
+                     patch.object(process.autopilot, "wp_path", return_value=wp_file), \
+                     patch.object(process.autopilot, "assert_dependencies"), \
+                     patch.object(process.autopilot, "assert_pr_checkout"), \
+                     patch.object(process.autopilot, "gh_json", return_value=current), \
+                     patch.object(process.autopilot, "markers", return_value=[repair]), \
+                     patch.object(process.autopilot, "local_markers", return_value=[]), \
+                     patch.object(process.autopilot, "reviewed_verdicts", return_value=[verdict]), \
+                     patch.object(process.autopilot, "assert_verdict_sequence"), \
+                     patch.object(process.autopilot, "AppServer", DummyApp), \
+                     patch.object(process.autopilot, "codex_role", new=process.bounded_codex_role), \
+                     patch.object(process.remote, "remote_codex_role", new=delegate):
+                    with self.assertRaises(process.WorkBoundary) as stopped:
+                        await process.autopilot.main_async(args)
+            self.assertEqual(stopped.exception.kind, "REVIEWER_REQUIRED")
+            self.assertEqual(stopped.exception.state, "FAIL_AUDIT")
+            delegate.assert_not_awaited()
         finally:
             process.WORK_ONLY = old
 
