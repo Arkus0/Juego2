@@ -230,8 +230,12 @@ namespace Arkus.H1.Editor
             if (roots.Length != 1) throw new InvalidDataException("projection.root-count");
             var root = roots[0].GetComponent<H1ManagedMarker>();
             if (root == null || root.schemaId != H1ManagedMarker.SchemaId || root.role != "root" || root.sceneLogicalId != SceneId ||
-                root.generationId != generationId || root.canonicalObjectId != "")
+                root.generationId != generationId || root.canonicalObjectId != "" || root.sourceLogicalId != "")
                 throw new InvalidDataException("projection.root-marker-invalid");
+            if (!Equal(Quantize(root.transform.localPosition, 1000), new ProjectionVector()) ||
+                !Equal(Quantize(root.transform.localScale, 1000000), new ProjectionVector { x = 1000000, y = 1000000, z = 1000000 }) ||
+                Quaternion.Angle(root.transform.localRotation, Quaternion.identity) > 0.02f)
+                throw new InvalidDataException("projection.root-transform-drift");
             var markers = roots[0].GetComponentsInChildren<H1ManagedMarker>(true);
             var seen = new HashSet<string>(StringComparer.Ordinal);
             var nodes = new List<ProjectionObservedNode>();

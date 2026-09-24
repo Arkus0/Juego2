@@ -269,6 +269,23 @@ def run():
                 scene_file.write_bytes(original_scene)
             require(projection(reference, "unity.host.projection.observe")["graphDigest"] == deletion_digest,
                     "Restored marker fixture did not return GREEN")
+        root_start = scene_text.index("  m_Name: Arkus Managed Root")
+        transform_start = scene_text.index("--- !u!4 &", root_start)
+        transform_end = scene_text.index("--- !u!", transform_start + 1)
+        root_transform = scene_text[transform_start:transform_end]
+        origin = "m_LocalPosition: {x: 0, y: 0, z: 0}"
+        require(root_transform.count(origin) == 1, "Managed root transform control has no unique origin")
+        scene_file.write_text(scene_text[:transform_start] +
+                              root_transform.replace(origin, "m_LocalPosition: {x: 1, y: 0, z: 0}", 1) +
+                              scene_text[transform_end:], encoding="utf-8")
+        try:
+            outcome = reference.invoke("unity.host.projection.observe", {"sceneLogicalId": SCENE})
+            require(outcome["status"] == "error" and outcome["error"]["machineCode"] == "projection.root-transform-drift",
+                    "Shifted managed root was presented as current")
+        finally:
+            scene_file.write_bytes(original_scene)
+        require(projection(reference, "unity.host.projection.observe")["graphDigest"] == deletion_digest,
+                "Restored root transform did not return GREEN")
         final_anchor = anchor(reference)
         final_journal = success(reference, "authoring.journal.read", {})
     finally:
