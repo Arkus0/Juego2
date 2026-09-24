@@ -5,6 +5,8 @@ Date: 2026-09-24
 
 This amendment changes only the liveness policy for bounded **soft owner preferences** requested by Worker/repair roles through `scripts/request_owner_decision.py`.
 
+This is pure `PROCESS_ONLY` maintenance and publishes no Worker-lifecycle handoff or workpack-routing state.
+
 ## Rule
 
 A soft owner-preference request waits at most **180 seconds** for a valid bot-attested owner choice.
