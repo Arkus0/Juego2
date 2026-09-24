@@ -4,7 +4,10 @@
 A Worker/repair Worker may create the request, but cannot authenticate its own
 answer. Loopback IPC is only a liveness hint: the accepted choice must also be
 attested by github-actions[bot] after GitHub verifies the supervisor-only HMAC
-for the exact campaign/request/PR/SHA/choice tuple.
+for the exact campaign/request/PR/SHA/choice tuple. Soft owner-preference waits
+are bounded to 180 seconds; after that, the request is closed locally and the
+same Worker is explicitly delegated to choose among the already-declared valid
+options.
 """
 
 from __future__ import annotations
@@ -29,6 +32,8 @@ REPO = "Arkus0/Juego2"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 WP_RE = re.compile(r"^(?:WP-)?([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+)$")
 SUPERVISOR_RE = re.compile(r"^http://127\.0\.0\.1:[1-9][0-9]{0,4}$")
+OWNER_DECISION_TIMEOUT_SECONDS = 180.0
+OWNER_TIMEOUT_DELEGATION = "El usuario indica que elijas la opción que creas más conveniente."
 
 
 class DecisionError(Exception):
@@ -169,7 +174,8 @@ def normalize_wp(value: str) -> str:
 
 
 def request_decision(question: str, options: list[str], *, wp: str, pr: int | None,
-                     sha: str | None, detail: str, poll_seconds: float = 1.0) -> str:
+                     sha: str | None, detail: str, poll_seconds: float = 1.0,
+                     timeout_seconds: float = OWNER_DECISION_TIMEOUT_SECONDS) -> str:
     control, campaign, supervisor = _context()
     question = question.strip()
     detail = detail.strip()
@@ -180,6 +186,8 @@ def request_decision(question: str, options: list[str], *, wp: str, pr: int | No
         raise DecisionError("Owner decision requires exactly 2 or 3 non-empty options (max 240 chars each)")
     if len(set(options)) != len(options):
         raise DecisionError("Owner decision options must be distinct")
+    if timeout_seconds <= 0:
+        raise DecisionError("Owner decision timeout must be positive")
     wp = normalize_wp(wp)
     if pr is None or pr < 1:
         raise DecisionError("Authenticated owner decisions require an exact positive PR")
@@ -210,9 +218,11 @@ def request_decision(question: str, options: list[str], *, wp: str, pr: int | No
         "options": options,
         "pid": os.getpid(),
         "response_transport": "github-actions-bot-attestation",
+        "owner_timeout_seconds": int(timeout_seconds),
     }
     _atomic_json(request_path, payload)
     print(f"OWNER_DECISION_PENDING: {decision_id}", file=sys.stderr, flush=True)
+    deadline = time.monotonic() + timeout_seconds
 
     try:
         while True:
@@ -228,9 +238,17 @@ def request_decision(question: str, options: list[str], *, wp: str, pr: int | No
                 payload["selected_index"] = choice
                 _atomic_json(request_path, payload)
                 return options[choice]
+            if time.monotonic() >= deadline:
+                payload["abandoned_at"] = datetime.now(timezone.utc).isoformat()
+                payload["abandon_reason"] = "owner-timeout-delegated-to-worker"
+                payload["delegation_instruction"] = OWNER_TIMEOUT_DELEGATION
+                _atomic_json(request_path, payload)
+                print(f"OWNER_DECISION_TIMEOUT: {decision_id}", file=sys.stderr, flush=True)
+                return OWNER_TIMEOUT_DELEGATION
             time.sleep(max(0.2, poll_seconds))
     except KeyboardInterrupt as exc:
         payload["abandoned_at"] = datetime.now(timezone.utc).isoformat()
+        payload["abandon_reason"] = "interrupted"
         _atomic_json(request_path, payload)
         raise DecisionError("Owner decision wait interrupted") from exc
 
