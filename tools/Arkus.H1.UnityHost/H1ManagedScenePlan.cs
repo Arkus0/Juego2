@@ -82,6 +82,17 @@ namespace Arkus.H1.UnityHost
                 }
                 if (sourceKind != "prefab" && sourceKind != "asset")
                     throw Error("projection.source-kind", "Only admitted prefab or mesh asset sources may be materialized.");
+                foreach (var raw in (IReadOnlyList<object?>)inspected["catalogueDependencies"]!)
+                {
+                    var reference = (IReadOnlyDictionary<string, object?>)raw!;
+                    var kind = (string)reference["kind"]!;
+                    if (kind == "scene") continue; // the fixed generated scene is owned by this WP
+                    try { catalogue.Get((string)reference["logicalId"]!, kind, true); }
+                    catch (H1CatalogueException exception)
+                    {
+                        throw Error("projection.reference-unavailable", exception.Code + ": " + exception.Message);
+                    }
+                }
                 var transform = (IReadOnlyDictionary<string, object?>)binding["transform"]!;
                 nodes.Add(new H1ManagedSceneNode
                 {
