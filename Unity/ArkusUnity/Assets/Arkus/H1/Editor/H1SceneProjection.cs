@@ -54,13 +54,17 @@ namespace Arkus.H1.Editor
                 Debug.LogError("ARKUS_H1_PROJECTION_FAILURE:" + exception.GetType().Name + ":" + exception.Message);
                 // A failed stage never claims success. The active pointer is re-read after failure,
                 // so a published effect cannot be falsely described as the old generation.
+                ProjectionObservation active;
+                try { active = ObserveActive(); }
+                catch (Exception) { active = EmptyObservation(); }
                 return JsonUtility.ToJson(new ProjectionReply
                 {
                     schemaId = "arkus.h1-projection-worker-result@1",
                     sceneLogicalId = SceneId,
                     expectedInputDigest = request.plan.inputDigest,
-                    errorCode = exception is InvalidDataException ? "projection.invalid-effective-state" : "projection.editor-failure",
-                    observation = ObserveActive()
+                    errorCode = exception is InvalidDataException && exception.Message.StartsWith("projection.", StringComparison.Ordinal)
+                        ? exception.Message : "projection.editor-failure",
+                    observation = active
                 });
             }
         }
@@ -183,13 +187,15 @@ namespace Arkus.H1.Editor
         private static ProjectionObservation ObserveActive()
         {
             var manifest = ReadManifest();
-            return manifest == null ? new ProjectionObservation
-            {
-                schemaId = ObservationSchema, sceneLogicalId = SceneId, active = false,
-                generationId = "", inputDigest = "", canonicalHash = "", catalogueFingerprint = "",
-                graphDigest = "", nodes = new ProjectionObservedNode[0]
-            } : ObserveManifest(manifest);
+            return manifest == null ? EmptyObservation() : ObserveManifest(manifest);
         }
+
+        private static ProjectionObservation EmptyObservation() => new ProjectionObservation
+        {
+            schemaId = ObservationSchema, sceneLogicalId = SceneId, active = false,
+            generationId = "", inputDigest = "", canonicalHash = "", catalogueFingerprint = "",
+            graphDigest = "", nodes = new ProjectionObservedNode[0]
+        };
 
         private static ProjectionObservation ObserveManifest(ProjectionManifest manifest)
         {
@@ -220,6 +226,7 @@ namespace Arkus.H1.Editor
                 if (marker == root) continue;
                 if (marker.schemaId != H1ManagedMarker.SchemaId || marker.role != "object" ||
                     marker.sceneLogicalId != SceneId || marker.generationId != generationId ||
+                    string.IsNullOrEmpty(marker.canonicalObjectId) ||
                     !seen.Add(marker.canonicalObjectId))
                     throw new InvalidDataException("projection.duplicate-or-invalid-marker");
                 var parent = marker.transform.parent == null ? null : marker.transform.parent.GetComponent<H1ManagedMarker>();

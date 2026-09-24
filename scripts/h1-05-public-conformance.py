@@ -210,7 +210,7 @@ def run():
             failed = reference.invoke("unity.host.projection.materialize", {"sceneLogicalId": SCENE})
         finally:
             FAULT.unlink(missing_ok=True)
-        require(failed["status"] == "error" and failed["error"]["machineCode"].startswith("projection."), "Forced staging interruption returned success")
+        require(failed["status"] == "error" and failed["error"]["machineCode"] == "projection.forced-prepublication-failure", "Forced staging interruption returned success")
         require(manifest() == prior_manifest, "Failed stage replaced the active manifest")
         stale = projection(reference, "unity.host.projection.observe")
         require(stale["active"] and not stale["current"] and stale["generationId"] == first["generationId"], "Stale generation was presented as current")
@@ -233,6 +233,23 @@ def run():
         recreated = projection(reference, "unity.host.projection.materialize")
         require(recreated["current"] and recreated["graphDigest"] == deletion_digest and recreated["generationId"] != deleted["generationId"],
                 "Deleting generated output did not reconstruct the same normalized graph")
+        scene_file = managed_scene_path(manifest())
+        original_scene = scene_file.read_bytes()
+        scene_text = original_scene.decode("utf-8")
+        for old, replacement, expected_code in (
+            ("canonicalObjectId: bar.potes", "canonicalObjectId: market.potes", "projection.duplicate-or-invalid-marker"),
+            ("canonicalObjectId: bar.potes", "canonicalObjectId: ", "projection.duplicate-or-invalid-marker"),
+        ):
+            require(scene_text.count(old) == 1, "Managed scene defect control has no unique marker target")
+            scene_file.write_text(scene_text.replace(old, replacement, 1), encoding="utf-8")
+            try:
+                outcome = reference.invoke("unity.host.projection.observe", {"sceneLogicalId": SCENE})
+                require(outcome["status"] == "error" and outcome["error"]["machineCode"] == expected_code,
+                        f"Marker defect was not rejected for {expected_code}")
+            finally:
+                scene_file.write_bytes(original_scene)
+            require(projection(reference, "unity.host.projection.observe")["graphDigest"] == deletion_digest,
+                    "Restored marker fixture did not return GREEN")
         final_anchor = anchor(reference)
         final_journal = success(reference, "authoring.journal.read", {})
     finally:
