@@ -14,7 +14,13 @@ import zipfile
 from pathlib import Path
 
 ARCHIVE_SHA = "b9d757dd2608a5cee4d9ee1e8183f6cb4cad9d27480841a905180def9c7d8b10"
-CATEGORIES = ("wall", "roof", "door", "window", "prop")
+CATEGORY_TERMS = {
+    "wall": ("wall",),
+    "roof": ("roof", "thatch"),
+    "door": ("door", "gate"),
+    "window": ("window",),
+    "prop": ("prop", "barrel", "crate", "cart", "bench", "table", "lamp", "sign", "well", "fence"),
+}
 GUID_RE = re.compile(rb"guid:\s*([0-9a-fA-F]{32})")
 
 
@@ -33,14 +39,18 @@ def run(archive):
     with zipfile.ZipFile(archive) as zf:
         names = sorted(info.filename for info in zf.infolist() if not info.is_dir())
         candidates = {}
-        for category in CATEGORIES:
-            rows = [name for name in names if category in name.lower() and name.lower().endswith((".prefab", ".fbx"))]
+        for category, terms in CATEGORY_TERMS.items():
+            rows = [
+                name for name in names
+                if any(term in name.lower() for term in terms)
+                and name.lower().endswith((".prefab", ".fbx"))
+            ]
             require(rows, f"Approved archive has no {category} prefab/FBX candidate")
             candidates[category] = rows[:12]
 
         prefab_relations = []
         selected_prefabs = []
-        for category in CATEGORIES:
+        for category in CATEGORY_TERMS:
             selected_prefabs.extend(name for name in candidates[category] if name.lower().endswith(".prefab"))
         for name in sorted(set(selected_prefabs))[:40]:
             data = zf.read(name)
@@ -51,6 +61,7 @@ def run(archive):
         "schemaId": "arkus.h1-06-content-shape-probe@1",
         "archiveSha256": ARCHIVE_SHA,
         "classification": "exploratory-omission-detector-not-adoption",
+        "categoryTerms": {key: list(value) for key, value in CATEGORY_TERMS.items()},
         "categories": candidates,
         "prefabDependencyShape": prefab_relations,
         "allRepresentativeCategoriesPresent": True,
