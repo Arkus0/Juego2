@@ -41,8 +41,9 @@ namespace Arkus.H1.UnityHost
             var seen = new HashSet<string>(StringComparer.Ordinal);
             foreach (var extension in state.Extensions)
             {
-                if (extension.Owner != UnityBindingProducer.ExtensionOwner ||
-                    extension.SchemaVersion != UnityBindingProducer.ExtensionSchemaVersion) continue;
+                if (extension.Owner != UnityBindingProducer.ExtensionOwner) continue;
+                if (extension.SchemaVersion != UnityBindingProducer.ExtensionSchemaVersion)
+                    throw Error("projection.binding-version", "A Unity binding has an unsupported authored schema version.");
                 if (!extension.SubjectId.HasValue || !objects.TryGetValue(extension.SubjectId.Value.Value, out var subject))
                     throw Error("projection.subject-missing", "A Unity binding must belong to an existing canonical object.");
                 if (!seen.Add(subject.Id.Value)) throw Error("projection.duplicate-binding", "One canonical object has duplicate Unity bindings.");

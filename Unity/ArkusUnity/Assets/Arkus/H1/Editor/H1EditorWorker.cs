@@ -21,6 +21,8 @@ namespace Arkus.H1.Editor
         private const string CatalogueQueryExecutor = "arkus.h1.worker.catalogue.query@1";
         private const string CatalogueGetExecutor = "arkus.h1.worker.catalogue.get@1";
         private const string CatalogueResolveExecutor = "arkus.h1.worker.catalogue.resolve@1";
+        private const string ProjectionMaterializeExecutor = "arkus.h1.worker.projection.materialize@1";
+        private const string ProjectionObserveExecutor = "arkus.h1.worker.projection.observe@1";
         private const string HierarchyPayload = "hierarchy-probe:v1|root=diagnostic-root|child=diagnostic-child|component=Transform|active=true";
 
         public static void Run()
@@ -63,6 +65,11 @@ namespace Arkus.H1.Editor
                         requestJson = payload,
                         inventory = H1CatalogueInventory.Capture()
                     });
+                }
+                else if (string.Equals(executor, ProjectionMaterializeExecutor, StringComparison.Ordinal) ||
+                         string.Equals(executor, ProjectionObserveExecutor, StringComparison.Ordinal))
+                {
+                    resultPayload = H1SceneProjection.Execute(payload);
                 }
                 else
                 {
