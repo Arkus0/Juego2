@@ -3,11 +3,12 @@
 
 Run this idle supervisor on the workstation. It is the single Telegram
 getUpdates consumer and can start a bounded WP campaign, report status, pause or
-stop at the next WP boundary, queue an owner note for the next Worker-side role,
+stop at the next WP boundary, queue one owner note for the next Worker-side role,
 and route exact owner-decision buttons back to a blocked Worker.
 
-The bot token stays in this supervisor process and is stripped from all Codex /
-autopilot child environments.
+The Telegram token and owner-response authority stay in this supervisor process.
+Children receive neither Telegram secrets nor a write-capable owner-response
+channel. Decisions and notes are exposed through read-only loopback IPC.
 """
 
 from __future__ import annotations
@@ -18,12 +19,17 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import time
 import uuid
 from datetime import datetime, timezone
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.error import URLError
+from urllib.parse import parse_qs, urlparse
 from urllib.request import Request, urlopen
+
+import owner_control_auth as owner_auth
 
 REPO = "Arkus0/Juego2"
 WP_RE = re.compile(r"^(?:WP-)?([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+)$")
@@ -51,12 +57,13 @@ def normalize_wp(value: str) -> str:
     return match.group(1)
 
 
-def child_env(control_dir: Path, campaign_id: str) -> dict[str, str]:
+def child_env(control_dir: Path, campaign_id: str, supervisor_url: str) -> dict[str, str]:
     env = os.environ.copy()
     for name in TOKEN_ENV:
         env.pop(name, None)
     env["ARKUS_REMOTE_CONTROL_DIR"] = str(control_dir)
     env["ARKUS_REMOTE_CAMPAIGN_ID"] = campaign_id
+    env["ARKUS_REMOTE_SUPERVISOR_URL"] = supervisor_url
     return env
 
 
@@ -114,6 +121,11 @@ class RemoteConsole:
         self.paused = False
         self.stop_after_wp = False
         self.sent_decisions: set[str] = set()
+        self.owner_decisions: dict[str, dict] = {}
+        self.pending_owner_note: str | None = None
+        self._ipc_server: ThreadingHTTPServer | None = None
+        self._ipc_thread: threading.Thread | None = None
+        self.supervisor_url: str | None = None
 
     def send(self, text: str, reply_markup: dict | None = None) -> None:
         payload = {"chat_id": self.chat_id, "text": text[:4000], "disable_web_page_preview": True}
@@ -125,31 +137,91 @@ class RemoteConsole:
         telegram(self.token, "answerCallbackQuery",
                  {"callback_query_id": ident, "text": text[:190], "show_alert": alert})
 
-    def _pending_note_path(self) -> Path:
-        return self.control_dir / "pending-owner-note.txt"
-
     def _pending_continue_path(self) -> Path:
         return self.control_dir / "pending-owner-continue.json"
 
+    def _ipc_payload(self, path: str, query: dict[str, list[str]]) -> tuple[int, dict]:
+        campaign = (query.get("campaign_id") or [""])[0]
+        if not self.campaign_id or campaign != self.campaign_id:
+            return 409, {"status": "wrong-campaign"}
+        if path == "/v1/note":
+            note = self.pending_owner_note or ""
+            self.pending_owner_note = None
+            return 200, {"status": "ok", "campaign_id": campaign, "note": note}
+        if path == "/v1/decision":
+            decision_id = (query.get("decision_id") or [""])[0]
+            if not re.fullmatch(r"[0-9a-f]{32}", decision_id):
+                return 400, {"status": "invalid-decision"}
+            response = self.owner_decisions.get(decision_id)
+            if response is None:
+                return 200, {"status": "pending", "campaign_id": campaign, "decision_id": decision_id}
+            return 200, dict(response, status="answered")
+        return 404, {"status": "not-found"}
+
+    def _ensure_ipc(self) -> str:
+        if self._ipc_server is not None and self.supervisor_url:
+            return self.supervisor_url
+        console = self
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self) -> None:
+                parsed = urlparse(self.path)
+                status, payload = console._ipc_payload(parsed.path, parse_qs(parsed.query))
+                body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+                self.send_response(status)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def do_POST(self) -> None:
+                self.send_error(405, "read-only supervisor IPC")
+
+            def do_PUT(self) -> None:
+                self.send_error(405, "read-only supervisor IPC")
+
+            def log_message(self, _format: str, *args) -> None:
+                del args
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        server.daemon_threads = True
+        thread = threading.Thread(target=server.serve_forever, name="arkus-owner-ipc", daemon=True)
+        thread.start()
+        self._ipc_server = server
+        self._ipc_thread = thread
+        self.supervisor_url = f"http://127.0.0.1:{server.server_port}"
+        return self.supervisor_url
+
+    def _close_ipc(self) -> None:
+        if self._ipc_server is not None:
+            self._ipc_server.shutdown()
+            self._ipc_server.server_close()
+        self._ipc_server = None
+        self._ipc_thread = None
+        self.supervisor_url = None
+
     def _clear_local_pending(self) -> None:
-        for path in (self._pending_note_path(), self._pending_continue_path()):
-            try:
-                path.unlink(missing_ok=True)
-            except OSError:
-                pass
+        self.pending_owner_note = None
+        self.owner_decisions.clear()
+        try:
+            self._pending_continue_path().unlink(missing_ok=True)
+        except OSError:
+            pass
 
     def launch(self, wp: str) -> None:
         if self.proc is not None:
             raise ConsoleError("Ya hay un WP en ejecución")
         wp = normalize_wp(wp)
         campaign_id = uuid.uuid4().hex
+        supervisor_url = self._ensure_ipc()
         logs = self.control_dir / "logs"
         logs.mkdir(parents=True, exist_ok=True)
         log_path = logs / f"{int(time.time())}-{wp}.log"
         handle = log_path.open("w", encoding="utf-8")
         cmd = [sys.executable, str(self.root / "scripts" / "local_wp_autopilot_remote.py"),
                "--root", str(self.root), "--wp", wp, "--one-wp"]
-        self.proc = subprocess.Popen(cmd, cwd=self.root, env=child_env(self.control_dir, campaign_id),
+        self.proc = subprocess.Popen(cmd, cwd=self.root,
+                                     env=child_env(self.control_dir, campaign_id, supervisor_url),
                                      stdin=subprocess.DEVNULL, stdout=handle,
                                      stderr=subprocess.STDOUT, text=True)
         self.log_handle = handle
@@ -159,6 +231,7 @@ class RemoteConsole:
         self.active = True
         self.next_wp = None
         self.sent_decisions.clear()
+        self.owner_decisions.clear()
         self.send(f"▶️ Campaña Arkus iniciada\nWP actual: {wp}\nEl Reviewer seguirá siendo una sesión fresca e independiente.")
 
     def check_child(self) -> None:
@@ -173,6 +246,7 @@ class RemoteConsole:
         self.log_handle = None
         self.campaign_id = None
         self.sent_decisions.clear()
+        self.owner_decisions.clear()
         try:
             self._pending_continue_path().unlink(missing_ok=True)
         except OSError:
@@ -208,10 +282,8 @@ class RemoteConsole:
         note = note.strip()
         if not note:
             raise ConsoleError("Uso: /note <instrucción>")
-        path = self._pending_note_path()
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(note[:4000] + "\n", encoding="utf-8")
-        self.send("📝 Instrucción guardada para la próxima sesión Worker/repair fresca. No se inyecta en un Reviewer ni altera un turno ya iniciado.")
+        self.pending_owner_note = note[:4000]
+        self.send("📝 Instrucción guardada en el supervisor para la próxima sesión Worker/repair fresca. No se inyecta en un Reviewer ni altera un turno ya iniciado.")
 
     def status(self) -> str:
         if self.proc is not None:
@@ -222,7 +294,7 @@ class RemoteConsole:
         return "⏹ Autopilot parado"
 
     def pending_decision_count(self) -> int:
-        return sum(1 for item in self._decision_requests() if not self._response_path(item["decision_id"]).exists())
+        return sum(1 for item in self._decision_requests() if item["decision_id"] not in self.owner_decisions)
 
     def _decision_requests(self) -> list[dict]:
         directory = self.control_dir / "decisions"
@@ -240,9 +312,6 @@ class RemoteConsole:
                 continue
             rows.append(row)
         return rows
-
-    def _response_path(self, decision_id: str) -> Path:
-        return self.control_dir / "decisions" / f"{decision_id}.response.json"
 
     def advertise_decisions(self) -> None:
         if self.proc is None or not self.campaign_id:
@@ -264,7 +333,7 @@ class RemoteConsole:
             message = f"🟠 Decisión del owner — {subject}\n{row.get('question', '')}"
             if detail:
                 message += f"\n\n{detail[:900]}"
-            message += "\n\nEsta decisión no caduca mientras el controlador local siga siendo el owner del turno."
+            message += "\n\nLa respuesta sólo existirá dentro del supervisor; el Worker no puede escribirla en el canal IPC."
             self.send(message, {"inline_keyboard": keyboard})
             self.sent_decisions.add(ident)
 
@@ -285,9 +354,9 @@ class RemoteConsole:
         response = {"version": 1, "decision_id": decision_id, "campaign_id": self.campaign_id,
                     "choice": index, "selected": options[index],
                     "answered_at": datetime.now(timezone.utc).isoformat()}
-        atomic_json(self._response_path(decision_id), response)
+        self.owner_decisions[decision_id] = response
         self.answer_callback(query["id"], f"Elegido: {options[index]}")
-        self.send(f"✅ Decisión entregada al Worker de {row.get('wp') or self.current_wp}: {options[index]}")
+        self.send(f"✅ Decisión autenticada en el supervisor para el Worker de {row.get('wp') or self.current_wp}: {options[index]}")
 
     def handle_continue(self, query: dict, pr: int, sha: str, fail_count: int) -> None:
         if self.proc is None or not self.campaign_id:
@@ -321,12 +390,20 @@ class RemoteConsole:
         if status == "already":
             self.answer_callback(query["id"], "Ya estaba autorizado.")
             return
+        update_id = str(query.get("id", "")).strip()[:120]
+        try:
+            proof = owner_auth.sign_owner_continue(self.token, pr, sha, fail_count,
+                                                   self.campaign_id, update_id)
+        except owner_auth.OwnerProofError as exc:
+            raise ConsoleError(f"No se pudo acuñar la prueba supervisor-only: {exc}") from exc
         payload = {"event_type": "arkus_owner_continue_local",
                    "client_payload": {"pr": pr, "target_sha": sha, "fail_count": fail_count,
                                       "campaign_id": self.campaign_id,
-                                      "telegram_update_id": query.get("id", "")[:120]}}
+                                      "telegram_update_id": update_id,
+                                      "owner_proof_version": 1,
+                                      "owner_proof": proof}}
         gh("api", "--method", "POST", f"repos/{REPO}/dispatches", "--input", "-", input_json=payload)
-        self.answer_callback(query["id"], "Autorización enviada. GitHub volverá a validar PR/SHA/FAIL antes de continuar.")
+        self.answer_callback(query["id"], "Autorización autenticada enviada. GitHub validará origen + PR/SHA/FAIL/campaña antes de continuar.")
 
     def command(self, text: str) -> None:
         parts = text.strip().split(maxsplit=1)
@@ -370,7 +447,7 @@ class RemoteConsole:
         elif command == "/note":
             self.queue_note(arg)
         elif command in {"/help", "/ayuda"}:
-            self.send("Comandos Arkus:\n/run H1-04 — iniciar campaña\n/status — estado\n/pause — pausar antes del siguiente WP\n/resume — continuar\n/stop — terminar de forma segura tras el WP actual\n/note texto — instrucción para el próximo Worker/repair fresco")
+            self.send("Comandos Arkus:\n/run H1-04 — iniciar campaña\n/status — estado\n/pause — pausar antes del siguiente WP\n/resume — continuar\n/stop — terminar de forma segura tras el WP actual\n/note texto — instrucción autenticada por el supervisor para el próximo Worker/repair fresco")
         else:
             raise ConsoleError("Comando no reconocido. Usa /help")
 
@@ -409,8 +486,6 @@ class RemoteConsole:
         return updates
 
     def discard_offline_backlog(self) -> None:
-        # Commands received while the supervisor was offline are deliberately
-        # not executable later. Reboot/crash recovery is explicit by contract.
         offset: int | None = None
         while True:
             updates = self._get_updates(timeout=0, offset=offset)
@@ -431,12 +506,16 @@ class RemoteConsole:
             raise ConsoleError("El bot tiene webhook; el modo local getUpdates requiere webhook vacío")
         self.control_dir.mkdir(parents=True, exist_ok=True)
         self._clear_local_pending()
+        self._ensure_ipc()
         self.discard_offline_backlog()
         self.send("🟢 Arkus Telegram console online.\nNo hace falta tener una sesión Codex abierta. Los comandos enviados mientras el supervisor estaba offline se descartan; usa /run <WP> para iniciar y /help para controles.")
-        while True:
-            self.check_child()
-            self.advertise_decisions()
-            self.poll_once()
+        try:
+            while True:
+                self.check_child()
+                self.advertise_decisions()
+                self.poll_once()
+        finally:
+            self._close_ipc()
 
 
 def main() -> int:

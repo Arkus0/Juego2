@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Request one bounded owner decision from the local Telegram remote console.
+"""Request one bounded owner decision from the local Telegram supervisor.
 
-This helper never talks to Telegram or GitHub directly. A Worker/repair Worker
-invokes it only when the remote adapter has explicitly granted Worker-side
-control capability. It writes one durable local request, waits without an
-application-level timeout, and prints the exact owner-selected option.
+A Worker/repair Worker may create the request, but cannot create the response.
+The response is held by the supervisor process and exposed only through its
+read-only loopback IPC endpoint; shared *.response.json files are never trusted.
 """
 
 from __future__ import annotations
@@ -18,9 +17,13 @@ import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 WP_RE = re.compile(r"^(?:WP-)?([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+)$")
+SUPERVISOR_RE = re.compile(r"^http://127\.0\.0\.1:[1-9][0-9]{0,4}$")
 
 
 class DecisionError(Exception):
@@ -34,15 +37,36 @@ def _atomic_json(path: Path, payload: dict) -> None:
     os.replace(tmp, path)
 
 
-def _control_dir() -> Path:
+def _context() -> tuple[Path, str, str]:
     raw = os.environ.get("ARKUS_REMOTE_CONTROL_DIR", "").strip()
     campaign = os.environ.get("ARKUS_REMOTE_CAMPAIGN_ID", "").strip()
     role = os.environ.get("ARKUS_REMOTE_ROLE", "").strip().lower()
+    supervisor = os.environ.get("ARKUS_REMOTE_SUPERVISOR_URL", "").strip().rstrip("/")
     if role not in {"worker", "repair"}:
         raise DecisionError("Telegram owner decisions are available only to Worker/repair sessions")
     if not raw or not re.fullmatch(r"[0-9a-f]{32}", campaign):
         raise DecisionError("Telegram owner control is not active for this Worker session")
-    return Path(raw).resolve()
+    if not SUPERVISOR_RE.fullmatch(supervisor):
+        raise DecisionError("Authenticated owner supervisor IPC is unavailable")
+    return Path(raw).resolve(), campaign, supervisor
+
+
+def _owner_response(supervisor: str, campaign: str, decision_id: str) -> dict | None:
+    url = f"{supervisor}/v1/decision?" + urlencode({"campaign_id": campaign, "decision_id": decision_id})
+    try:
+        with urlopen(url, timeout=5) as response:
+            payload = json.load(response)
+    except HTTPError as exc:
+        raise DecisionError(f"Owner supervisor rejected decision query ({exc.code})") from exc
+    except (OSError, URLError, ValueError) as exc:
+        raise DecisionError("Owner supervisor IPC unavailable") from exc
+    if not isinstance(payload, dict) or payload.get("campaign_id") != campaign or payload.get("decision_id") != decision_id:
+        raise DecisionError("Owner supervisor response identity mismatch")
+    if payload.get("status") == "pending":
+        return None
+    if payload.get("status") != "answered":
+        raise DecisionError("Owner supervisor returned invalid decision state")
+    return payload
 
 
 def normalize_wp(value: str) -> str:
@@ -54,8 +78,7 @@ def normalize_wp(value: str) -> str:
 
 def request_decision(question: str, options: list[str], *, wp: str, pr: int | None,
                      sha: str | None, detail: str, poll_seconds: float = 1.0) -> str:
-    control = _control_dir()
-    campaign = os.environ["ARKUS_REMOTE_CAMPAIGN_ID"].strip()
+    control, campaign, supervisor = _context()
     question = question.strip()
     detail = detail.strip()
     options = [item.strip() for item in options]
@@ -75,9 +98,8 @@ def request_decision(question: str, options: list[str], *, wp: str, pr: int | No
 
     decision_id = uuid.uuid4().hex
     request_path = control / "decisions" / f"{decision_id}.json"
-    response_path = control / "decisions" / f"{decision_id}.response.json"
     payload = {
-        "version": 1,
+        "version": 2,
         "decision_id": decision_id,
         "campaign_id": campaign,
         "created_at": datetime.now(timezone.utc).isoformat(),
@@ -88,22 +110,20 @@ def request_decision(question: str, options: list[str], *, wp: str, pr: int | No
         "detail": detail[:1200],
         "options": options,
         "pid": os.getpid(),
+        "response_transport": "supervisor-ipc-read-only",
     }
     _atomic_json(request_path, payload)
     print(f"OWNER_DECISION_PENDING: {decision_id}", file=sys.stderr, flush=True)
 
     try:
         while True:
-            if response_path.exists():
-                try:
-                    response = json.loads(response_path.read_text(encoding="utf-8"))
-                except (OSError, json.JSONDecodeError) as exc:
-                    raise DecisionError("Owner decision response is malformed") from exc
-                if response.get("decision_id") != decision_id or response.get("campaign_id") != campaign:
-                    raise DecisionError("Owner decision response identity mismatch")
+            response = _owner_response(supervisor, campaign, decision_id)
+            if response is not None:
                 choice = response.get("choice")
                 if type(choice) is not int or not 0 <= choice < len(options):
                     raise DecisionError("Owner decision response has invalid choice")
+                if response.get("selected") != options[choice]:
+                    raise DecisionError("Owner decision selected value mismatch")
                 payload["completed_at"] = datetime.now(timezone.utc).isoformat()
                 payload["selected_index"] = choice
                 _atomic_json(request_path, payload)
