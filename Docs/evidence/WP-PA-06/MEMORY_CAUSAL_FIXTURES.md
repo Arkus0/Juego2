@@ -9,11 +9,13 @@ These fixtures specify observable semantic outcomes for later H4/H7 consumers. A
 
 At day 1 the player and Manolo jointly help Antonio recover a dropped work parcel in a witnessed, resolved interaction. Antonio directly experiences both contributions. Manolo's voluntary help is unusual and relevant to Antonio's later `ASK_SHIFT_COVER` partner choice. The parcel and immediate work delay are gone by day 3. PA-03 directed trust/affinity, PA-04 beliefs, obligations, role, schedule, candidate eligibility, seed and all other inputs are frozen equal in both day-3 runs; no quest script chooses Antonio's action.
 
+The fixture fixes a tie-free action-family rule: Antonio's present goal selects `ASK_SHIFT_COVER`; both candidates are eligible; absent a relevant selected help witness the fixed ordinary ranking puts Paco ahead of Manolo. For this action family only, a selected personally experienced act of reliable help by an eligible candidate is a declared reason to rank that candidate ahead of the ordinary order. The rule does not assign trust, compel Manolo to accept, or choose the action family for Antonio. The day-1 witness is the only changed input between paired day-3 evaluations.
+
 ```text
 Day 3 common: Antonio needs shift cover; Manolo and Paco are eligible.
-No-memory control: Antonio asks Paco under the declared fixed decision rule.
+No-memory control: Antonio asks Paco under the declared ordinary ranking.
 Selected-memory run: one actor-accessible day-1 help witness concerning Manolo
-                     is supplied as a declared action-family input;
+                     is supplied as the declared help-ranking input;
                      Antonio asks Manolo.
 ```
 
