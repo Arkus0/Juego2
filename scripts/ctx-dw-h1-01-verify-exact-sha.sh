@@ -22,6 +22,7 @@ for required in \
   src/Arkus.DesignWorld/H1CatalogueProjection.cs \
   src/Arkus.DesignWorld/H1SourceAuthorityOracle.cs \
   tests/Arkus.Harness.Tests/CtxDwH101ProjectionLifecycleTests.cs \
+  tests/Arkus.Harness.Tests/CtxDwH101ProjectionIdentityTests.cs \
   Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json \
   Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json; do
   test -f "${required}" || { echo "Missing CTX-DW-H1-01 verification input: ${required}" >&2; exit 2; }
@@ -37,10 +38,23 @@ grep -Fq 'AdapterId = "ctx-dw-h1-01-adapter-v1"' src/Arkus.DesignWorld/H1Catalog
 grep -Fq 'LifecycleId = "ctx-dw-h1-01-lifecycle-v1"' src/Arkus.DesignWorld/H1CatalogueProjection.cs
 grep -Fq 'new DesignProjectionVersion(1, "ctx-dw-h1-01-v1")' src/Arkus.DesignWorld/H1CatalogueProjection.cs
 
+identity_probe="${ROOT}/artifacts/observed/ctx-dw-h1-01-projection-identity.txt"
+rm -f "${identity_probe}"
+mkdir -p "$(dirname "${identity_probe}")"
+export CTX_DW_H1_01_IDENTITY_OUTPUT="${identity_probe}"
+
 dotnet restore Juego2.sln --locked-mode
 dotnet build Juego2.sln --no-restore -c Release -m:1 --disable-build-servers
 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj --no-build --no-restore -c Release \
-  --filter 'FullyQualifiedName~CtxDwH101ProjectionLifecycleTests'
+  --filter 'FullyQualifiedName~CtxDwH101ProjectionLifecycleTests|FullyQualifiedName~CtxDwH101ProjectionIdentityTests'
+
+test -s "${identity_probe}" || { echo "Projection identity probe was not materialized by the focused rebuild test" >&2; exit 1; }
+projection_digest="$(sed -n 's/^Projection\.Digest=//p' "${identity_probe}")"
+projection_identity="$(sed -n 's/^ProjectionIdentity=//p' "${identity_probe}")"
+reverse_projection_identity="$(sed -n 's/^ReverseProjectionIdentity=//p' "${identity_probe}")"
+[[ "${projection_digest}" =~ ^[0-9a-f]{64}$ ]] || { echo "Invalid computed projection digest: ${projection_digest}" >&2; exit 1; }
+[[ "${projection_identity}" == "ctx-dw-h1-01-adapter-v1:${projection_digest}" ]] || { echo "Computed ProjectionIdentity does not bind adapter to digest" >&2; exit 1; }
+[[ "${reverse_projection_identity}" == "${projection_identity}" ]] || { echo "Reverse enumeration changed concrete ProjectionIdentity" >&2; exit 1; }
 
 # H1 meaning must remain adapter-owned, never promoted into the generic DW/H0 kernel.
 ! grep -Eqi 'quaternius|h1-catalogue|h1-source' src/Arkus.DesignWorld/DesignWorldContracts.cs src/Arkus.DesignWorld/DesignWorldProjection.cs
@@ -78,7 +92,10 @@ Source-adoption blob: ${adoption_blob}
 Adapter: ctx-dw-h1-01-adapter-v1
 Projection schema: ctx-dw-h1-01-v1
 Lifecycle: ctx-dw-h1-01-lifecycle-v1
-Required gates: exact-checkout=GREEN; frozen-h1-authority=GREEN; locked-restore=GREEN; release-build=GREEN; focused-lifecycle-and-negative-tests=GREEN; generic-kernel-boundary=GREEN; h1-05-authority-fallback=GREEN; durable-proof=GREEN; frozen-metadata=GREEN
+Projection digest: ${projection_digest}
+Projection identity: ${projection_identity}
+Reverse projection identity: ${reverse_projection_identity}
+Required gates: exact-checkout=GREEN; frozen-h1-authority=GREEN; locked-restore=GREEN; release-build=GREEN; focused-lifecycle-and-negative-tests=GREEN; concrete-projection-identity=GREEN; generic-kernel-boundary=GREEN; h1-05-authority-fallback=GREEN; durable-proof=GREEN; frozen-metadata=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-CTX-DW-H1-01
 EOF
