@@ -1,8 +1,8 @@
 # WP-PA-06 — PREDECESSOR_CONTRACT_CHECK
 
-Workpack: `WP-PA-06`  
-Worker baseline: `main@f220a049da0df5e08e74d962a57d97dea4c56320`  
-Date: 2026-09-24  
+Workpack: `WP-PA-06`
+Worker baseline: `main@f220a049da0df5e08e74d962a57d97dea4c56320`
+Date: 2026-09-24
 Status: COMPLETE before PA-06 result/fixture implementation
 
 ## Accepted identity and source escalation

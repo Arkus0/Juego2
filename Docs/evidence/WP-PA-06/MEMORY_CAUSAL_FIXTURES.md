@@ -1,6 +1,6 @@
 # WP-PA-06 — Memory causal fixtures
 
-Date: 2026-09-24  
+Date: 2026-09-24
 Status: candidate research-level acceptance surface; no runtime execution claimed
 
 These fixtures specify observable semantic outcomes for later H4/H7 consumers. A paired run clones every non-target input: actor, candidate set, goal, opportunity, current world truth, PA-04 belief, PA-03 relationship, PA-05 delivery, authored rule, seed and tie-break order. `Memory` below is an actor-accessible selected experience, never a second truth, belief or relationship store. A pass requires the named outcome, not merely that an implementation could allow it.

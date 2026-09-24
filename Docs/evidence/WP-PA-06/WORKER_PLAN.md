@@ -1,9 +1,9 @@
 # WP-PA-06 — Worker plan
 
-Workpack: `Docs/workpacks/PA/WP-PA-06.md`  
-Execution: `REMOTE_RESEARCH`  
-Baseline: `main@f220a049da0df5e08e74d962a57d97dea4c56320`  
-Branch: `pa/wp-pa-06-memory-research`  
+Workpack: `Docs/workpacks/PA/WP-PA-06.md`
+Execution: `REMOTE_RESEARCH`
+Baseline: `main@f220a049da0df5e08e74d962a57d97dea4c56320`
+Branch: `pa/wp-pa-06-memory-research`
 Date: 2026-09-24
 
 The mandatory `PREDECESSOR_CONTRACT_CHECK` was persisted in its own first branch commit, before any PA-06 result or fixture write: `Docs/evidence/WP-PA-06/PREDECESSOR_CONTRACT_CHECK.md`. It uses the direct accepted PA-05 identity and exact PA-02..05 source semantics because the current global capsule audit reports an unrelated HK-GATE source fingerprint mismatch.

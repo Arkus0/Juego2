@@ -1,9 +1,9 @@
 # WP-PA-06 — Worker handoff navigation
 
-Workpack: `WP-PA-06 — Memory & Consequences research`  
-Execution: `REMOTE_RESEARCH`  
-Baseline: `main@f220a049da0df5e08e74d962a57d97dea4c56320`  
-Branch: `pa/wp-pa-06-memory-research`  
+Workpack: `WP-PA-06 — Memory & Consequences research`
+Execution: `REMOTE_RESEARCH`
+Baseline: `main@f220a049da0df5e08e74d962a57d97dea4c56320`
+Branch: `pa/wp-pa-06-memory-research`
 Date: 2026-09-24
 
 The live canonical PR body and external exact-SHA Worker pre-review comment own final candidate identity and freeze metadata. This repository file does not embed its own eventual commit SHA.
