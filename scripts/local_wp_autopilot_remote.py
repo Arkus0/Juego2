@@ -261,6 +261,9 @@ async def remote_codex_role(root: Path, state: Path, role: str, prompt: str, mod
                     return ""
                 wp, pr = _role_identity(prompt)
                 await _wait_for_short_reset(reset, wp, pr)
+                if _role_side_effect_already_complete(role, prompt):
+                    print(f"{role} durable side effect appeared during short-quota wait; no duplicate role launch", flush=True)
+                    return ""
                 attempt_prompt = prompt + "\n\n" + SHORT_QUOTA_RETRY_GUIDANCE
     finally:
         autopilot.clean_env = previous_clean_env
