@@ -74,15 +74,24 @@ class RemoteConsole(_core.RemoteConsole):
                 "options": list(options),
             }
             self._decision_snapshots[ident] = snapshot
+
             keyboard = []
+            option_lines = []
             for index, option in enumerate(options):
                 callback = f"arkus:decision:{ident}:{index}"
-                keyboard.append([{"text": f"{index + 1}️⃣ {option[:48]}", "callback_data": callback}])
+                option_number = index + 1
+                option_lines.append(f"{option_number}. {option}")
+                keyboard.append([{
+                    "text": f"{option_number}️⃣ Elegir opción {option_number}",
+                    "callback_data": callback,
+                }])
+
             subject = row.get("wp") or self.current_wp or "WP"
             detail = str(row.get("detail") or "").strip()
             message = f"🟠 Decisión del owner — {subject}\n{row.get('question', '')}"
             if detail:
                 message += f"\n\n{detail[:900]}"
+            message += "\n\nOpciones:\n" + "\n".join(option_lines)
             message += (
                 "\n\nLa elección se vinculará a esta solicitud exacta y sólo será válida "
                 "cuando GitHub Actions autentique el HMAC del supervisor."
