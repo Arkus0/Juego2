@@ -47,6 +47,45 @@ def clean_env() -> dict[str, str]:
     return env
 
 
+def resolve_assets_root(repo_root: Path, value: str | None) -> Path | None:
+    if not value:
+        return None
+    if any(ord(char) < 32 for char in value):
+        raise StopFlow("External assets root contains control characters")
+    assets_root = Path(value).expanduser().resolve()
+    if not assets_root.is_dir():
+        raise StopFlow(f"External assets root is not a readable directory: {assets_root}")
+    try:
+        next(assets_root.iterdir(), None)
+    except OSError as exc:
+        raise StopFlow(f"External assets root is not readable: {assets_root}") from exc
+    repo_root = repo_root.resolve()
+    if (assets_root == repo_root or repo_root in assets_root.parents or
+            assets_root in repo_root.parents):
+        raise StopFlow("External assets root must remain outside the Juego2 checkout")
+    return assets_root
+
+
+def codex_exec_command(root: Path, output: Path, prompt: str, model: str, effort: str,
+                       schema: Path | None = None, assets_root: Path | None = None) -> list[str]:
+    cmd = ["codex", "exec", "--json", "--ignore-user-config", "--cd", str(root), "--model", model,
+           "--config", f'model_reasoning_effort="{effort}"',
+           "--config", 'approval_policy="never"',
+           "--sandbox", "danger-full-access", "--output-last-message", str(output)]
+    if assets_root is not None:
+        cmd += ["--add-dir", str(assets_root)]
+        prompt += (
+            "\n\nLOCAL EXTERNAL ASSET ROOT (owner-configured): " + str(assets_root) +
+            "\nThis directory is an external source input, not repository or canonical state. "
+            "Treat its upstream bytes as read-only unless the exact authoritative workpack "
+            "explicitly authorizes a bounded local change."
+        )
+    if schema:
+        cmd += ["--output-schema", str(schema)]
+    cmd.append(prompt)
+    return cmd
+
+
 def run(*args: str, cwd: Path | None = None, input_data: str | None = None) -> str:
     result = subprocess.run(args, cwd=cwd, env=clean_env(), text=True,
                             encoding="utf-8", errors="replace", input=input_data,
@@ -572,18 +611,12 @@ def prepare_new_wp(root: Path) -> None:
 
 
 async def codex_role(root: Path, state: Path, role: str, prompt: str, model: str, effort: str,
-                     schema: Path | None = None) -> str:
+                     schema: Path | None = None, assets_root: Path | None = None) -> str:
     state.mkdir(parents=True, exist_ok=True)
     stamp = f"{int(time.time())}-{role}"
     output = state / f"{stamp}.txt"
     log = state / f"{stamp}.jsonl"
-    cmd = ["codex", "exec", "--json", "--ignore-user-config", "--cd", str(root), "--model", model,
-           "--config", f'model_reasoning_effort="{effort}"',
-           "--config", 'approval_policy="never"',
-           "--sandbox", "danger-full-access", "--output-last-message", str(output)]
-    if schema:
-        cmd += ["--output-schema", str(schema)]
-    cmd.append(prompt)
+    cmd = codex_exec_command(root, output, prompt, model, effort, schema, assets_root)
     with log.open("w", encoding="utf-8") as fh:
         proc = await asyncio.create_subprocess_exec(*cmd, stdin=asyncio.subprocess.DEVNULL, stdout=fh,
             stderr=asyncio.subprocess.STDOUT, env=clean_env())
@@ -732,6 +765,7 @@ async def main_async(args: argparse.Namespace) -> None:
     root = Path(args.root).resolve()
     state = Path(args.state).resolve()
     require_repo(root)
+    assets_root = resolve_assets_root(root, args.assets_root)
     run("git", "fetch", "origin", "main", cwd=root)
     if not args.dry_run and run("git", "status", "--porcelain", cwd=root):
         raise StopFlow("Working tree is dirty; refusing autonomous role launch")
@@ -759,7 +793,7 @@ async def main_async(args: argparse.Namespace) -> None:
                 assert_pr_checkout(root, pr)
             if args.dry_run:
                 decision, reset = await app.guard()
-                print(f"Would route {wp}; PR={pr['number'] if pr else 'new'}; worker effort={effort_for_worker(wp_text)}; quota={decision}; reset={reset}")
+                print(f"Would route {wp}; PR={pr['number'] if pr else 'new'}; worker effort={effort_for_worker(wp_text)}; quota={decision}; reset={reset}; assets={assets_root or 'NONE'}")
                 return
             appeal_sha = ""
             appeal_rejected_sha = ""
@@ -768,7 +802,7 @@ async def main_async(args: argparse.Namespace) -> None:
                 if pr is None:
                     await quota_before_reasoning(app, wp, None)
                     await codex_role(root, state, "worker", f"$implement-workpack Worker {wp}. Sigue PRODUCT_SHA_CLOSURE.md: usa Main Safety same-PR/same-SHA como preflight normal y evita reejecuciones redundantes. Este controlador iniciará un Reviewer fresco solo tras REVIEW_READY. No revises ni inicies otro WP.",
-                                     "gpt-6-sol", effort_for_worker(wp_text))
+                                     "gpt-6-sol", effort_for_worker(wp_text), assets_root=assets_root)
                     pr = canonical_pr(wp)
                     if not pr or pr["state"] != "open":
                         raise StopFlow(f"Worker ended without a canonical open PR for {wp}")
@@ -796,7 +830,7 @@ async def main_async(args: argparse.Namespace) -> None:
                         count += 1
                         break
                     await quota_before_reasoning(app, wp, pr["number"])
-                    await codex_role(root, state, "docsync", f"Finaliza DocSync del PR #{pr['number']} de {wp}. Confirma PASS y merge exacto en GitHub. Sigue PRODUCT_SHA_CLOSURE.md y $update-handoff: cero commits por defecto si ninguna autoridad documental cambia; si cambia, una reconciliación acotada. Emite DOCSYNC_COMPLETE con Next WP válido. No cambies implementación.", "gpt-6-luna", "high")
+                    await codex_role(root, state, "docsync", f"Finaliza DocSync del PR #{pr['number']} de {wp}. Confirma PASS y merge exacto en GitHub. Sigue PRODUCT_SHA_CLOSURE.md y $update-handoff: cero commits por defecto si ninguna autoridad documental cambia; si cambia, una reconciliación acotada. Emite DOCSYNC_COMPLETE con Next WP válido. No cambies implementación.", "gpt-6-luna", "high", assets_root=assets_root)
                     await wait_for_state(pr["number"], lambda p, m: bool(latest_marker(m, "DOCSYNC_COMPLETE")))
                     continue
                 if current.get("state") != "open":
@@ -834,7 +868,7 @@ async def main_async(args: argparse.Namespace) -> None:
                         run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
                         await codex_role(root, state, "protocol-fix",
                             f"Corrige solo los defectos de metadata/lifecycle PROTOCOL_FIX del Reviewer ID {latest_current_verdict['id']} en PR #{pr['number']} / {wp}. Mantén PRODUCT_SHA {frozen}; no hagas git commit ni cambies implementación/evidencia. Sigue PRODUCT_SHA_CLOSURE.md: reusa producto GREEN y solicita como máximo una nueva evaluación Ready. Si el SHA material cambia o el bloqueo no es metadata pura, detente sin fingir corrección. No actúes como Reviewer.",
-                            "gpt-6-sol", "high")
+                            "gpt-6-sol", "high", assets_root=assets_root)
                         new_pr, _ = await wait_for_state(pr["number"], lambda p, m, frozen=frozen, after=latest_current_verdict["at"]:
                                                          p["head"]["sha"].lower() != frozen or
                                                          bool((row := latest_marker(m, "REVIEW_READY", frozen)) and
@@ -875,7 +909,7 @@ async def main_async(args: argparse.Namespace) -> None:
                         await quota_before_reasoning(app, wp, pr["number"])
                         result = await codex_role(root, state, "fail-audit",
                             f"Audita el FAIL material #{len(fails)} del PR #{pr['number']} / {wp} contra GitHub y contratos exactos. Decide si el último es defecto real, sobredefensa/duplicación de garantía aceptada, o incierto. Incluso al primer FAIL, detecta inmediatamente una prueba de completitud autocircular/autorreductora. En cada FAIL detecta también clase fundacional repetida y expansión de maquinaria de prueba sin progreso. No edites ni emitas veredicto. Responde al esquema JSON.",
-                            "gpt-6-luna", "xhigh", schema)
+                            "gpt-6-luna", "xhigh", schema, assets_root=assets_root)
                         audit = json.loads(result)
                         if not all(isinstance(audit.get(key), str) and audit[key].strip()
                                    for key in ("criterion", "evidence", "minimal_next_action")):
@@ -906,7 +940,7 @@ async def main_async(args: argparse.Namespace) -> None:
                         run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
                         await codex_role(root, state, "appeal-reviewer",
                             f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']}, SHA {frozen}. Hubo FAIL previo y auditoría de posible sobredefensa. Reconstruye el contrato sin confiar en la auditoría; si el FAIL es inválido, deja PASS exact-SHA razonado que lo supersede; si es válido, mantén FAIL. Publica un solo veredicto en GitHub con líneas literales 'Reviewer verdict: PASS' o 'Reviewer verdict: FAIL', 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. No edites, no repares y no mergees; el controlador hará el merge exact-SHA tras un PASS.",
-                            "gpt-6-sol", "xhigh")
+                            "gpt-6-sol", "xhigh", assets_root=assets_root)
                         appeal_sha = ""
                         appeal_pr, _ = await wait_for_state(
                             pr["number"],
@@ -926,7 +960,7 @@ async def main_async(args: argparse.Namespace) -> None:
                         await wait_for_owner_continue(pr["number"], frozen, len(fails))
                         continue
                     await quota_before_reasoning(app, wp, pr["number"])
-                    await codex_role(root, state, "repair", f"$repair-workpack Corrige el FAIL material de {wp}. PR canónico #{pr['number']}; conserva historia, revalida, pre-review y congela SHA nuevo. Sigue PRODUCT_SHA_CLOSURE.md: no repitas ejecución same-SHA por metadata. No actúes como Reviewer.", "gpt-6-sol", effort_for_worker(wp_text))
+                    await codex_role(root, state, "repair", f"$repair-workpack Corrige el FAIL material de {wp}. PR canónico #{pr['number']}; conserva historia, revalida, pre-review y congela SHA nuevo. Sigue PRODUCT_SHA_CLOSURE.md: no repitas ejecución same-SHA por metadata. No actúes como Reviewer.", "gpt-6-sol", effort_for_worker(wp_text), assets_root=assets_root)
                     await wait_for_state(pr["number"], lambda p, m, frozen=frozen:
                                          p["head"]["sha"].lower() != frozen and
                                          ready_context_matches(root, p, latest_marker(m, "REVIEW_READY", p["head"]["sha"].lower())))
@@ -934,7 +968,7 @@ async def main_async(args: argparse.Namespace) -> None:
                 if ready:
                     review_id = uuid.uuid4().hex
                     await quota_before_reasoning(app, wp, pr["number"])
-                    await codex_role(root, state, "reviewer", f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']} / {wp}, SHA {frozen}. No recibes contexto del Worker. Sigue PRODUCT_SHA_CLOSURE.md: usa CI exact-SHA para hechos mecánicos; usa PROTOCOL_FIX/REVIEW_BLOCKED, no FAIL, para metadata pura. Publica una sola revisión o comentario en GitHub con líneas literales 'Reviewer verdict: PASS|FAIL|PROTOCOL_FIX|REVIEW_BLOCKED' (elige un valor, sin barras), 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. Si PASS, no mergees ni hagas DocSync; el controlador hará el merge exact-SHA. No repares implementación.", "gpt-6-sol", "xhigh")
+                    await codex_role(root, state, "reviewer", f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']} / {wp}, SHA {frozen}. No recibes contexto del Worker. Sigue PRODUCT_SHA_CLOSURE.md: usa CI exact-SHA para hechos mecánicos; usa PROTOCOL_FIX/REVIEW_BLOCKED, no FAIL, para metadata pura. Publica una sola revisión o comentario en GitHub con líneas literales 'Reviewer verdict: PASS|FAIL|PROTOCOL_FIX|REVIEW_BLOCKED' (elige un valor, sin barras), 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. Si PASS, no mergees ni hagas DocSync; el controlador hará el merge exact-SHA. No repares implementación.", "gpt-6-sol", "xhigh", assets_root=assets_root)
                     await wait_for_state(
                         pr["number"],
                         lambda p, m, review_id=review_id, pr_number=pr["number"], frozen=frozen:
@@ -952,6 +986,7 @@ async def main_async(args: argparse.Namespace) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".")
+    parser.add_argument("--assets-root", help="external source-assets directory exposed to every Codex role")
     parser.add_argument("--state", default=str(Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Arkus" / "Juego2" / "autopilot"))
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--wp")

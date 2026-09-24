@@ -107,7 +107,8 @@ def _env_for_role(role: str) -> dict[str, str]:
 
 
 async def remote_codex_role(root: Path, state: Path, role: str, prompt: str, model: str,
-                            effort: str, schema: Path | None = None) -> str:
+                            effort: str, schema: Path | None = None,
+                            assets_root: Path | None = None) -> str:
     if role in {"worker", "repair"}:
         note = _consume_note()
         if note:
@@ -117,7 +118,8 @@ async def remote_codex_role(root: Path, state: Path, role: str, prompt: str, mod
     previous_clean_env = autopilot.clean_env
     autopilot.clean_env = lambda: _env_for_role(role)
     try:
-        return await ORIGINAL_CODEX_ROLE(root, state, role, prompt, model, effort, schema)
+        return await ORIGINAL_CODEX_ROLE(root, state, role, prompt, model, effort, schema,
+                                         assets_root)
     finally:
         autopilot.clean_env = previous_clean_env
 

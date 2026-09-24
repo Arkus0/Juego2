@@ -12,10 +12,12 @@ The driver is not a semantic authority. Live GitHub PR/head/review/check/marker 
 
 Use a **dedicated clean local Git worktree** with `origin` set to `Arkus0/Juego2`, `gh` authenticated as repository owner `Arkus0`, and Codex CLI logged in via **ChatGPT subscription**. No OpenAI/OpenRouter/other model API key is used or needed. The driver rejects any Codex account type except `chatgpt`, ignores user model-provider configuration and removes common model API-key variables from its child environment. Telegram uses the already configured repository workflow/secrets; its bot token never enters the local driver.
 
+For source-dependent work, pass the separately stored source directory with `--assets-root`. The driver validates that it exists outside the checkout, registers it with each `codex exec` role through `--add-dir`, and states its external/read-only authority boundary in the role prompt. Omitting the option remains valid for workpacks that require no local external source.
+
 ```powershell
-python scripts/local_wp_autopilot.py --root . --wp PA-06 --dry-run
-python scripts/local_wp_autopilot.py --root . --wp PA-06 --one-wp
-python scripts/local_wp_autopilot.py --root . --next
+python scripts/local_wp_autopilot.py --root . --assets-root C:\Juego2-Assets --wp PA-06 --dry-run
+python scripts/local_wp_autopilot.py --root . --assets-root C:\Juego2-Assets --wp PA-06 --one-wp
+python scripts/local_wp_autopilot.py --root . --assets-root C:\Juego2-Assets --next
 ```
 
 The first two commands are the owner-selected pilot **after this process PR's independent PASS, merge and DocSync**: inspect the read-only route, then complete one explicitly selected dependency-valid WP with `--one-wp`. `WP-PA-06` is the next executable PA research workpack and does not require Unity; PA-07 may follow only after PA-06 PASS, merge and DocSync. The latest cross-track DocSync handoff says `NONE`, so `--next` currently stops rather than inferring a WP from an unrelated track; use explicit `--wp PA-06` for the first run. After PA-06's own merged `DOCSYNC_COMPLETE` names a dependency-valid successor, the normal third command continues automatically while quota permits. Do not adopt an unrelated active H1 candidate as part of this pilot. `--adopt` is an explicit recovery switch for an existing open PR **only after its current Worker/Reviewer has stopped**; it does not relax one-active-Worker ownership. Adoption and every subsequent role require a clean local checkout on the canonical same-repository PR branch at its exact live HEAD; the controller does not silently switch branches or relaunch over an untagged manual verdict. A dirty worktree, ambiguous WP/PR, missing marker, invalid SHA, missing auth/quota data, unavailable model/effort, or local CLI/GitHub failure stops the driver and requests attention. The default local state directory takes an OS-released single-process lock; using a different `--state` is not a safe way to start another owner of the same worktree.

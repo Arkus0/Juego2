@@ -19,10 +19,11 @@ $config = Join-Path $env:LOCALAPPDATA "Arkus\Juego2\console-launcher"
 $tokenFile = Join-Path $config "telegram-token.dpapi"
 $chatFile = Join-Path $config "telegram-chat-id.txt"
 $repoFile = Join-Path $config "repo-path.txt"
+$assetsFile = Join-Path $config "assets-path.txt"
 New-Item -ItemType Directory -Force -Path $config | Out-Null
 
 if ($ResetConfig) {
-    Remove-Item -Force -ErrorAction SilentlyContinue $tokenFile,$chatFile,$repoFile
+    Remove-Item -Force -ErrorAction SilentlyContinue $tokenFile,$chatFile,$repoFile,$assetsFile
     Write-Host "Configuracion local eliminada."
 }
 
@@ -47,6 +48,38 @@ if (-not $repo) {
     Set-Content $repoFile $repo -Encoding UTF8
 }
 Write-Host "Repo: $repo"
+
+$assets = $null
+if (Test-Path $assetsFile) {
+    $savedAssets = (Get-Content $assetsFile -Raw).Trim()
+    if ($savedAssets -and (Test-Path -LiteralPath $savedAssets -PathType Container)) {
+        $assets = (Resolve-Path -LiteralPath $savedAssets).Path
+    }
+}
+if (-not $assets) {
+    $siblingAssets = Join-Path (Split-Path -Parent $repo) "Juego2-Assets"
+    if (Test-Path -LiteralPath $siblingAssets -PathType Container) {
+        $assets = (Resolve-Path -LiteralPath $siblingAssets).Path
+    } else {
+        $enteredAssets = (Read-Host "Ruta local de Juego2-Assets").Trim().Trim('"')
+        if (-not (Test-Path -LiteralPath $enteredAssets -PathType Container)) {
+            Fail "Esa ruta no es una carpeta de assets legible."
+        }
+        $assets = (Resolve-Path -LiteralPath $enteredAssets).Path
+    }
+    Set-Content $assetsFile $assets -Encoding UTF8
+}
+if ($assets.Equals($repo, [StringComparison]::OrdinalIgnoreCase) -or
+    $assets.StartsWith($repo.TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase) -or
+    $repo.StartsWith($assets.TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) {
+    Fail "Juego2-Assets debe permanecer fuera del checkout de Juego2."
+}
+try {
+    $null = Get-ChildItem -LiteralPath $assets -Force -ErrorAction Stop | Select-Object -First 1
+} catch {
+    Fail "No puedo leer la carpeta de assets: $assets"
+}
+Write-Host "Assets: $assets"
 
 foreach ($tool in @("git.exe","gh.exe","codex.exe")) {
     if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) { Fail "No encuentro $tool en PATH." }
@@ -121,7 +154,7 @@ try {
     Push-Location $repo
     $args = @()
     $args += $pythonPrefix
-    $args += @("scripts\local_wp_remote_console.py","--root",".")
+    $args += @("scripts\local_wp_remote_console.py","--root",".","--assets-root",$assets)
     & $pythonExe @args
     $code = $LASTEXITCODE
 } finally {

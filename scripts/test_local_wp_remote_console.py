@@ -35,6 +35,29 @@ decision = load("request_owner_decision_test", "request_owner_decision.py")
 
 
 class RemoteConsoleTests(unittest.TestCase):
+    def test_assets_root_is_validated_outside_checkout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            repo = base / "Juego2-Console"
+            assets = base / "Juego2-Assets"
+            nested = repo / "Assets"
+            repo.mkdir()
+            assets.mkdir()
+            nested.mkdir()
+            self.assertEqual(module.resolve_assets_root(repo, str(assets)), assets.resolve())
+            with self.assertRaisesRegex(module.ConsoleError, "fuera"):
+                module.resolve_assets_root(repo, str(nested))
+            with self.assertRaisesRegex(module.ConsoleError, "fuera"):
+                module.resolve_assets_root(repo, str(base))
+
+    def test_autopilot_command_passes_assets_root(self):
+        root = Path("C:/Juego2-Console")
+        assets = Path("C:/Juego2-Assets")
+        command = module.autopilot_command(root, assets, "H1-04")
+        index = command.index("--assets-root")
+        self.assertEqual(command[index + 1], str(assets))
+        self.assertEqual(command[-3:], ["--wp", "H1-04", "--one-wp"])
+
     def test_only_exact_private_owner_is_authorized(self):
         update = {"message": {"chat": {"type": "private", "id": 42},
                               "from": {"id": 42}, "text": "/status"}}

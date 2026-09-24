@@ -2,6 +2,7 @@
 """Pure tests for local routing; no Codex turns, GitHub writes, or Telegram."""
 
 import importlib.util
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -16,6 +17,36 @@ spec.loader.exec_module(module)
 
 
 class RoutingTests(unittest.TestCase):
+    def test_external_assets_root_is_separate_and_readable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            repo = base / "Juego2-Console"
+            assets = base / "Juego2-Assets"
+            repo.mkdir()
+            assets.mkdir()
+            (repo / "Assets").mkdir()
+            (assets / "License_Source.txt").write_text("fixture", encoding="utf-8")
+            self.assertEqual(module.resolve_assets_root(repo, str(assets)), assets.resolve())
+            self.assertIsNone(module.resolve_assets_root(repo, None))
+            with self.assertRaisesRegex(module.StopFlow, "outside"):
+                module.resolve_assets_root(repo, str(repo / "Assets"))
+            with self.assertRaisesRegex(module.StopFlow, "outside"):
+                module.resolve_assets_root(repo, str(base))
+            with self.assertRaisesRegex(module.StopFlow, "readable directory"):
+                module.resolve_assets_root(repo, str(base / "missing"))
+
+    def test_codex_command_registers_and_explains_external_assets_root(self):
+        root = Path("C:/Juego2-Console")
+        assets = Path("C:/Juego2-Assets")
+        command = module.codex_exec_command(
+            root, root / "last.txt", "Worker H1-04", "gpt-6-sol", "xhigh",
+            assets_root=assets)
+        index = command.index("--add-dir")
+        self.assertEqual(command[index + 1], str(assets))
+        self.assertIn(str(assets), command[-1])
+        self.assertIn("external source input", command[-1])
+        self.assertIn("read-only", command[-1])
+
     def test_wp_id_is_strict(self):
         self.assertEqual(module.normalize_wp("WP-H1-03"), "H1-03")
         self.assertEqual(module.normalize_wp("dw-05"), "DW-05")
