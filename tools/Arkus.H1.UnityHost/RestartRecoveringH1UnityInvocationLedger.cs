@@ -4,10 +4,11 @@ namespace Arkus.H1.UnityHost
 {
     /// <summary>
     /// Reclassifies a persisted Running record only when this host can acquire the reviewed
-    /// project-operation lease. A live operation keeps that lease, so status queries cannot turn
-    /// an actually running invocation into an indeterminate one. If the previous host died, the
-    /// lease is released by the OS and a lingering Running record has no trustworthy accepted
-    /// result, so Indeterminate is the conservative restart truth.
+    /// project-operation lease. The launch lease is inherited by the Unity child process, so a
+    /// host crash cannot release exclusion while that previously launched worker remains alive.
+    /// Once the worker has exited, a restarted host can acquire the lease and conservatively turn
+    /// a still-Running record into Indeterminate. Final states win because the ledger is re-read
+    /// under the lease before any recovery write.
     /// </summary>
     public sealed class RestartRecoveringH1UnityInvocationLedger : IH1UnityInvocationLedger
     {
@@ -34,8 +35,6 @@ namespace Arkus.H1.UnityHost
 
             using (recoveryLease)
             {
-                // Re-read under the lease. The original owner may have completed between the first
-                // read and our acquisition, in which case its final lifecycle state wins.
                 if (!_inner.TryRead(invocationId, out var latest) || latest == null)
                 {
                     record = null;

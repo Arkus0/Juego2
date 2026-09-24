@@ -31,6 +31,7 @@
     <ProjectReference Include="../../src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
     <ProjectReference Include="../../src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
     <ProjectReference Include="../../tools/Arkus.H1.UnityHost/Arkus.H1.UnityHost.csproj" />
+    <ProjectReference Include="../Arkus.Harness.H1LeaseCrashFixture/Arkus.Harness.H1LeaseCrashFixture.csproj" />
     <ProjectReference Include="../Arkus.Harness.MutationAttackFixture/Arkus.Harness.MutationAttackFixture.csproj" />
   </ItemGroup>
 </Project>

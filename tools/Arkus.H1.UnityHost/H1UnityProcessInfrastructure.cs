@@ -94,11 +94,18 @@ namespace Arkus.H1.UnityHost
             Directory.CreateDirectory(Path.GetDirectoryName(_path) ?? throw new InvalidOperationException("Lease path has no directory."));
             try
             {
-                var stream = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                // Inheritable is the ownership transfer: the exclusive OS handle is acquired before
+                // Process.Start and is inherited by the Unity child. If the .NET host dies, the
+                // child's copy continues holding the same FileShare.None exclusion until Unity exits.
+                var stream = new FileStream(
+                    _path,
+                    FileMode.OpenOrCreate,
+                    FileAccess.ReadWrite,
+                    FileShare.None | FileShare.Inheritable);
                 stream.SetLength(0);
                 using (var writer = new StreamWriter(stream, new UTF8Encoding(false), 1024, true))
                 {
-                    writer.Write("arkus.h1-unity-project-lease@1\n");
+                    writer.Write("arkus.h1-unity-project-lease@2\n");
                     writer.Write(Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
                     writer.Flush();
                 }
@@ -214,7 +221,6 @@ namespace Arkus.H1.UnityHost
             var diagnosticsPath = Path.Combine(operationDirectory, "process-diagnostics.log");
             H1UnityEnvelopeCodec.WriteInvocation(invocationPath, invocation);
             if (File.Exists(resultPath)) File.Delete(resultPath);
-
             using var process = new Process();
             process.StartInfo = CreateStartInfo(profile, invocationPath, resultPath, unityLogPath);
             var stdout = new BoundedTextCapture(DiagnosticCaptureChars);
