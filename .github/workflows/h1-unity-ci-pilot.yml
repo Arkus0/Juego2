@@ -31,8 +31,8 @@ jobs:
     env:
       H1_02_ACCEPTED_SHA: d86a08e644f542e9515f5e54fd4061f61e251c70
       TARGET_SHA: ${{ inputs.target_sha || 'd86a08e644f542e9515f5e54fd4061f61e251c70' }}
-      GAME_CI_VERSION: v0.1.69
-      GAME_CI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
       UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -73,14 +73,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          GAME_CI_BIN="${RUNNER_TEMP}/game-ci-${GAME_CI_VERSION}-linux-x64"
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
           curl --fail --location --silent --show-error \
-            "https://github.com/game-ci/cli/releases/download/${GAME_CI_VERSION}/game-ci-linux-x64" \
-            --output "${GAME_CI_BIN}"
-          printf '%s  %s\n' "${GAME_CI_LINUX_X64_SHA256}" "${GAME_CI_BIN}" | sha256sum --check --strict
-          chmod +x "${GAME_CI_BIN}"
-          "${GAME_CI_BIN}" --version
-          echo "GAME_CI_BIN=${GAME_CI_BIN}" >> "${GITHUB_ENV}"
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
 
       # First pilot is deliberately cache-free: prove a clean cloud import before
       # optimizing runner time or allowing exact-input receipt reuse.
@@ -91,7 +90,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          "${GAME_CI_BIN}" test \
+          "${PINNED_GAMECI_BIN}" test \
             --docker \
             --dockerShmSize=1025m \
             --engine=unity \
@@ -238,8 +237,8 @@ jobs:
           Expected result: 5/5 Passed
           Coverage: DISABLED
           Execution substrate: github-actions-ubuntu-24.04 + GameCI CLI
-          GameCI CLI: ${GAME_CI_VERSION}
-          GameCI CLI linux-x64 SHA256: ${GAME_CI_LINUX_X64_SHA256}
+          GameCI CLI: ${PINNED_GAMECI_VERSION}
+          GameCI CLI linux-x64 SHA256: ${PINNED_GAMECI_LINUX_X64_SHA256}
           Library cache: DISABLED_FOR_CLEAN_PILOT
           GameCI package drift: EXACT_KNOWN_PLATFORM_INJECTION_RECONCILED_AND_RESTORED
           Final tracked tree: IDENTICAL_TO_TARGET_SHA
