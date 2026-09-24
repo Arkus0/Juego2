@@ -12,5 +12,6 @@
     <ProjectReference Include="../../src/Arkus.EngineBridge.UnityAuthoring/Arkus.EngineBridge.UnityAuthoring.csproj" />
     <ProjectReference Include="../../src/Arkus.Game.World/Arkus.Game.World.csproj" />
     <ProjectReference Include="../../src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj" />
+    <ProjectReference Include="../../src/Arkus.Game.Validation/Arkus.Game.Validation.csproj" />
   </ItemGroup>
 </Project>

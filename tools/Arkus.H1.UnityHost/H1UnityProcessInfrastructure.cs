@@ -6,6 +6,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Arkus.EngineBridge.UnityAuthoring;
+using Arkus.Game.Authoring;
+using Arkus.Game.World;
 using Arkus.Harness.Projection;
 using Arkus.Harness.Protocol;
 using Arkus.Harness.Runtime;
@@ -401,6 +403,9 @@ namespace Arkus.H1.UnityHost
         public static NeutralProjectionService Create()
         {
             var profile = H1UnityLaunchProfile.ForCurrentHost();
+            var world = new PortableWorldAuthoringSession(new WorldState(
+                new WorldId(ProductionHarnessHost.InitialWorldId), 0, Array.Empty<WorldObject>()));
+            var worldReader = new ReadOnlyWorldStateView(world);
             var projectLease = new FileH1UnityProjectLease(profile);
             var ledger = new RestartRecoveringH1UnityInvocationLedger(
                 new FileH1UnityInvocationLedger(profile),
@@ -416,15 +421,18 @@ namespace Arkus.H1.UnityHost
                     new HierarchyProbeExecutor(),
                     new H1CatalogueExecutor(H1CatalogueExecutor.QueryKey, H1CatalogueExecutor.QueryExecutorId, Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath), Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath)),
                     new H1CatalogueExecutor(H1CatalogueExecutor.GetKey, H1CatalogueExecutor.GetExecutorId, Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath), Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath)),
-                    new H1CatalogueExecutor(H1CatalogueExecutor.ResolveKey, H1CatalogueExecutor.ResolveExecutorId, Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath), Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath))
+                    new H1CatalogueExecutor(H1CatalogueExecutor.ResolveKey, H1CatalogueExecutor.ResolveExecutorId, Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath), Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath)),
+                    new H1ManagedSceneExecutor(H1ManagedSceneExecutor.MaterializeKey, H1ManagedSceneExecutor.MaterializeExecutorId, worldReader, profile),
+                    new H1ManagedSceneExecutor(H1ManagedSceneExecutor.ObserveKey, H1ManagedSceneExecutor.ObserveExecutorId, worldReader, profile)
                 });
 
             var composition = ContractComposer.Compose(
-                CanonicalWorldContract.CreateEmptyPortableSessionContribution(ProductionHarnessHost.InitialWorldId),
+                CanonicalWorldContract.CreateContribution(new WorldInspectionService(world), world),
                 new[]
                 {
                     UnityAuthoringProvider.CreateContribution(),
-                    H1UnityLifecycleContract.CreateEditorHostContribution(coordinator, includeCatalogue: true),
+                    H1ProjectionContract.PlanContribution(worldReader, profile),
+                    H1UnityLifecycleContract.CreateEditorHostContribution(coordinator, includeCatalogue: true, includeProjection: true),
                     H1UnityLifecycleContract.CreateLifecycleStatusContribution(ledger)
                 });
             if (!composition.Success || composition.Contract == null)
@@ -436,7 +444,7 @@ namespace Arkus.H1.UnityHost
             var projection = H1UnityHostCapabilityPolicy.CreateProjection(
                 composition.Contract,
                 UnityProjectWorkspaceAuthority.ForArkusUnityProject(),
-                H1UnityLifecycleContract.CreateGrants(includeCatalogue: true));
+                H1UnityLifecycleContract.CreateGrants(includeCatalogue: true, includeProjection: true));
             coordinator.Bind(projection);
             return projection;
         }
