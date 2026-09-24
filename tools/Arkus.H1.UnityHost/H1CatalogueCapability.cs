@@ -20,11 +20,13 @@ namespace Arkus.H1.UnityHost
         public const string ResolveExecutorId = "arkus.h1.worker.catalogue.resolve@1";
 
         private readonly string _mappingPath;
-        public H1CatalogueExecutor(CapabilityKey capability, string executorId, string mappingPath)
+        private readonly string _adoptionPath;
+        public H1CatalogueExecutor(CapabilityKey capability, string executorId, string mappingPath, string adoptionPath)
         {
             Capability = capability ?? throw new ArgumentNullException(nameof(capability));
             ExecutorId = executorId ?? throw new ArgumentNullException(nameof(executorId));
             _mappingPath = mappingPath ?? throw new ArgumentNullException(nameof(mappingPath));
+            _adoptionPath = adoptionPath ?? throw new ArgumentNullException(nameof(adoptionPath));
         }
         public CapabilityKey Capability { get; }
         public string ExecutorId { get; }
@@ -44,7 +46,8 @@ namespace Arkus.H1.UnityHost
                 var requestJson = root.GetProperty("requestJson").GetString() ?? throw new JsonException("Missing echoed request.");
                 var inventoryJson = root.GetProperty("inventory").GetRawText();
                 if (!File.Exists(_mappingPath)) throw new H1CatalogueException("catalogue.mapping-missing", "The reviewed catalogue mapping is missing.");
-                var snapshot = H1CatalogueSnapshot.Build(inventoryJson, File.ReadAllText(_mappingPath));
+                if (!File.Exists(_adoptionPath)) throw new H1CatalogueException("catalogue.adoption-missing", "The approved Quaternius Source adoption record is missing.");
+                var snapshot = H1CatalogueSnapshot.Build(inventoryJson, File.ReadAllText(_mappingPath), File.ReadAllText(_adoptionPath));
                 using var request = JsonDocument.Parse(requestJson);
                 IReadOnlyDictionary<string, object?> data;
                 if (Capability.Equals(QueryKey))
@@ -168,8 +171,9 @@ namespace Arkus.H1.UnityHost
             ["adoptionStatus"] = SchemaNode.String(), ["compatible"] = SchemaNode.Boolean(),
             ["path"] = SchemaNode.String(), ["nativeGuid"] = SchemaNode.String(),
             ["localFileId"] = SchemaNode.String(), ["contentSha256"] = SchemaNode.String(),
-            ["dependencies"] = SchemaNode.Array(SchemaNode.String())
-        }, new[] { "schemaId", "logicalId", "kind", "name", "typeName", "dimensions", "sourceId", "adoptionStatus", "compatible", "path", "nativeGuid", "localFileId", "contentSha256", "dependencies" });
+            ["dependencies"] = SchemaNode.Array(SchemaNode.String()),
+            ["schemaFields"] = SchemaNode.Array(SchemaNode.String())
+        }, new[] { "schemaId", "logicalId", "kind", "name", "typeName", "dimensions", "sourceId", "adoptionStatus", "compatible", "path", "nativeGuid", "localFileId", "contentSha256", "dependencies", "schemaFields" });
 
         private static JsonSchemaDocument QuerySuccess() => new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {

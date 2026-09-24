@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$AssetsRoot)
+param([Parameter(Mandatory=$true)][string]$AssetsRoot, [switch]$VerifyOnly)
 
 $ErrorActionPreference = 'Stop'
 $project = Join-Path $PSScriptRoot '../Unity/ArkusUnity'
@@ -18,6 +18,11 @@ Assert-Hash (Join-Path $village 'License_Source.txt') '7310dfa8512d7ca12b6591329
 Assert-Hash (Join-Path $village 'FBX (Unity)/Wall_Plaster_Window_Wide_Flat.fbx') '45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8'
 Assert-Hash (Join-Path $animation 'License.txt') '6d01f55c6e4c49a2c9963e147e561945ae2c83958c8ca667d90a6bffdbfac061'
 Assert-Hash (Join-Path $animation 'Unity/UAL1.fbx') '0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842'
+
+if ($VerifyOnly) {
+    Write-Output 'H1-04 approved external Source fingerprints verified; no source or project bytes written.'
+    return
+}
 
 New-Item -ItemType Directory -Force -Path $target | Out-Null
 $facade = Join-Path $target 'Wall_Plaster_Window_Wide_Flat.fbx'

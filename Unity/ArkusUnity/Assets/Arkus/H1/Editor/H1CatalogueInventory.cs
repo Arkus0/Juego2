@@ -67,6 +67,7 @@ namespace Arkus.H1.Editor
                         typeName = asset.GetType().FullName,
                         dimensions = Dimensions(asset),
                         contentSha256 = contentSha256,
+                        schemaFields = new string[0],
                         dependencies = dependencies,
                         compatible = Compatible(asset)
                     });
@@ -82,7 +83,8 @@ namespace Arkus.H1.Editor
                 {
                     kind = "component-schema", path = "type:" + name, nativeGuid = "", localFileId = "0",
                     name = matches[0].Name, typeName = name,
-                    dimensions = "public-serialized-component", dependencies = new string[0], compatible = true
+                    dimensions = "public-serialized-component", dependencies = new string[0],
+                    schemaFields = SerializedFields(matches[0]), compatible = true
                 });
             }
 
@@ -151,6 +153,29 @@ namespace Arkus.H1.Editor
             return slash < 0 ? "" : path.Substring(0, slash);
         }
 
+        private static string[] SerializedFields(Type componentType)
+        {
+            GameObject probe = null;
+            try
+            {
+                probe = new GameObject("arkus-component-schema-probe");
+                var component = componentType == typeof(Transform) ? probe.transform : probe.AddComponent(componentType);
+                var serialized = new SerializedObject(component);
+                var iterator = serialized.GetIterator();
+                var fields = new List<string>();
+                while (iterator.NextVisible(true))
+                {
+                    fields.Add(iterator.propertyPath + ":" + iterator.propertyType);
+                    if (fields.Count > 256) throw new InvalidDataException("catalogue.component-schema-bound-exceeded:" + componentType.FullName);
+                }
+                return fields.Distinct(StringComparer.Ordinal).OrderBy(value => value, StringComparer.Ordinal).ToArray();
+            }
+            finally
+            {
+                if (probe != null) UnityEngine.Object.DestroyImmediate(probe);
+            }
+        }
+
         private static string Dimensions(UnityEngine.Object asset)
         {
             if (asset is Mesh mesh) return "vertices=" + mesh.vertexCount;
@@ -163,6 +188,20 @@ namespace Arkus.H1.Editor
         private static bool Compatible(UnityEngine.Object asset)
         {
             if (asset is Material material) return material.shader != null && !string.Equals(material.shader.name, "Hidden/InternalErrorShader", StringComparison.Ordinal);
+            if (asset is GameObject prefab)
+            {
+                foreach (var renderer in prefab.GetComponentsInChildren<Renderer>(true))
+                {
+                    foreach (var boundMaterial in renderer.sharedMaterials)
+                    {
+                        if (boundMaterial == null || boundMaterial.shader == null ||
+                            string.Equals(boundMaterial.shader.name, "Hidden/InternalErrorShader", StringComparison.Ordinal)) return false;
+                    }
+                    if (renderer is SkinnedMeshRenderer skinned && skinned.sharedMesh == null) return false;
+                }
+                foreach (var meshFilter in prefab.GetComponentsInChildren<MeshFilter>(true))
+                    if (meshFilter.sharedMesh == null) return false;
+            }
             return true;
         }
     }
@@ -187,6 +226,7 @@ namespace Arkus.H1.Editor
         public string typeName;
         public string dimensions;
         public string contentSha256;
+        public string[] schemaFields;
         public string[] dependencies;
         public bool compatible;
     }

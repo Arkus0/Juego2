@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using Arkus.H1.UnityHost;
+using Arkus.Game.World;
 using Arkus.Harness.Projection;
 using Xunit;
 
@@ -11,6 +13,37 @@ namespace Arkus.Harness.Tests
     public sealed class H1CatalogueTests
     {
         private static readonly JsonSerializerOptions Json = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+        [Fact]
+        public void Committed_effective_unity_inventory_matches_mapping_and_does_not_enter_world_hash()
+        {
+            var root = H1UnityLaunchProfile.ForCurrentHost().RepositoryRoot;
+            var world = new WorldState(new WorldId("world.h1-04-catalogue"), 0, Array.Empty<WorldObject>());
+            var before = CanonicalWorldStateCodec.ComputeContentHash(world);
+            var snapshot = H1CatalogueSnapshot.Build(
+                File.ReadAllText(Path.Combine(root, "Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json")),
+                File.ReadAllText(Path.Combine(root, H1CatalogueSnapshot.MappingRelativePath)),
+                File.ReadAllText(Path.Combine(root, H1CatalogueSnapshot.AdoptionRelativePath)));
+            Assert.Equal(250, snapshot.Entries.Count);
+            Assert.Equal(240, snapshot.Entries.Count(entry => entry.Kind == "animation-clip"));
+            Assert.Equal("014d510bd8e9fe0d2754fed0075b3a81787e57a1717baed29e7e03f54295bd21", snapshot.Fingerprint);
+            Assert.Equal(before, CanonicalWorldStateCodec.ComputeContentHash(world));
+        }
+
+        [Fact]
+        public void Missing_license_identity_or_substitute_source_bytes_cannot_present_as_approved()
+        {
+            var (inventory, mapping) = Fixture();
+            var adoption = File.ReadAllText(Path.Combine(H1UnityLaunchProfile.ForCurrentHost().RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath));
+            var effectiveJson = JsonSerializer.Serialize(inventory, Json);
+            var mappingJson = JsonSerializer.Serialize(mapping, Json);
+            Assert.Equal("catalogue.adoption-missing", Assert.Throws<H1CatalogueException>(() =>
+                H1CatalogueSnapshot.Build(effectiveJson, mappingJson, adoption.Replace("CC0-1.0", "unknown-license"))).Code);
+
+            inventory.Rows[0].ContentSha256 = new string('f', 64);
+            mapping.Entries[0].ContentSha256 = new string('f', 64);
+            Assert.Equal("catalogue.adoption-missing", Assert.Throws<H1CatalogueException>(() => Build(inventory, mapping)).Code);
+        }
 
         [Fact]
         public void Effective_universe_reconciles_to_stable_logical_ids_and_deterministic_bounded_pages()
@@ -96,14 +129,15 @@ namespace Arkus.Harness.Tests
         }
 
         private static H1CatalogueSnapshot Build(H1CatalogueEffectiveInventory inventory, H1CatalogueMapping mapping) =>
-            H1CatalogueSnapshot.Build(JsonSerializer.Serialize(inventory, Json), JsonSerializer.Serialize(mapping, Json));
+            H1CatalogueSnapshot.Build(JsonSerializer.Serialize(inventory, Json), JsonSerializer.Serialize(mapping, Json),
+                File.ReadAllText(Path.Combine(H1UnityLaunchProfile.ForCurrentHost().RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath)));
 
         private static (H1CatalogueEffectiveInventory, H1CatalogueMapping) Fixture()
         {
             var rows = new List<H1CatalogueEffectiveRow>
             {
-                Row("prefab", "Assets/Arkus/H1/SourceSlice/Wall.fbx", new string('b', 32), "2", "Wall", "UnityEngine.GameObject", new string('b', 64), true),
-                Row("material", "Assets/Arkus/H1/SourceSlice/MI_Plaster.mat", new string('c', 32), "3", "Plaster", "UnityEngine.Material", new string('c', 64), false),
+                Row("prefab", "Assets/Arkus/H1/SourceSlice/Wall.fbx", new string('b', 32), "2", "Wall", "UnityEngine.GameObject", "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8", true),
+                Row("material", "Assets/Arkus/H1/SourceSlice/MI_Plaster.mat", new string('c', 32), "3", "Plaster", "UnityEngine.Material", "3fcfc0359d1460009858533461893c626e25ea52364ae4e85f4a6bf84fc3ce69", false),
                 Row("scene", "Assets/Arkus/H1/CatalogueProof/Proof.unity", new string('d', 32), "4", "Proof", "UnityEditor.SceneAsset", new string('d', 64), true)
             };
             foreach (var type in new[] { "UnityEngine.Animator", "UnityEngine.MeshRenderer", "UnityEngine.Transform" })
@@ -135,7 +169,9 @@ namespace Arkus.Harness.Tests
             {
                 Kind = kind, Path = path, NativeGuid = guid, LocalFileId = fileId,
                 Name = name, TypeName = type, Dimensions = "effective", ContentSha256 = sha,
-                Dependencies = Array.Empty<string>(), Compatible = compatible
+                Dependencies = Array.Empty<string>(),
+                SchemaFields = kind == "component-schema" ? new[] { "m_Enabled:Boolean" } : Array.Empty<string>(),
+                Compatible = compatible
             };
 
         private static H1CatalogueMappingRow Map(H1CatalogueEffectiveRow row, string logicalId, string sourceId, string status) =>

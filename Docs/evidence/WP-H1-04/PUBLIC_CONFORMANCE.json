@@ -1,0 +1,15 @@
+{
+  "catalogueFingerprint": "014d510bd8e9fe0d2754fed0075b3a81787e57a1717baed29e7e03f54295bd21",
+  "compatibleSourceMaterial": "quaternius.medieval.material.wall-plaster-window-wide-flat-mi-plaster",
+  "discoveredCapabilities": 3,
+  "effectiveCount": 250,
+  "firstPageCount": 5,
+  "incompatibleSourceDiagnostic": "catalogue.incompatible-reference",
+  "pageSize": 5,
+  "referenceAndMcpEqual": true,
+  "result": "GREEN",
+  "schemaId": "arkus.h1-04-public-conformance@1",
+  "secondPageCount": 5,
+  "snapshotToken": 5863767410647008,
+  "sourcePrefabResolved": "quaternius.medieval.prefab.wall-plaster-window-wide-flat"
+}

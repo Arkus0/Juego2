@@ -36,6 +36,7 @@ namespace Arkus.H1.UnityHost
         public string TypeName { get; set; } = "";
         public string Dimensions { get; set; } = "";
         public string ContentSha256 { get; set; } = "";
+        public string[] SchemaFields { get; set; } = Array.Empty<string>();
         public string[] Dependencies { get; set; } = Array.Empty<string>();
         public bool Compatible { get; set; }
     }
@@ -59,6 +60,33 @@ namespace Arkus.H1.UnityHost
         public string ContentSha256 { get; set; } = "";
     }
 
+    public sealed class H1CatalogueAdoption
+    {
+        public string SchemaId { get; set; } = "";
+        public string DistributionMode { get; set; } = "";
+        public List<H1CatalogueAdoptedSource> Sources { get; set; } = new List<H1CatalogueAdoptedSource>();
+        public List<H1CatalogueAdoptedSlice> Slices { get; set; } = new List<H1CatalogueAdoptedSlice>();
+    }
+
+    public sealed class H1CatalogueAdoptedSource
+    {
+        public string SourceId { get; set; } = "";
+        public string OriginUrl { get; set; } = "";
+        public string DistributionSha256 { get; set; } = "";
+        public string LicenseId { get; set; } = "";
+        public string LicenseSha256 { get; set; } = "";
+        public bool CommercialUse { get; set; }
+        public string NoticeRequirement { get; set; } = "";
+    }
+
+    public sealed class H1CatalogueAdoptedSlice
+    {
+        public string AssetPath { get; set; } = "";
+        public string SourceId { get; set; } = "";
+        public string AdoptionStatus { get; set; } = "";
+        public string ContentSha256 { get; set; } = "";
+    }
+
     public sealed class H1CatalogueEntry
     {
         public string LogicalId { get; init; } = "";
@@ -74,6 +102,7 @@ namespace Arkus.H1.UnityHost
         public string LocalFileId { get; init; } = "";
         public string ContentSha256 { get; init; } = "";
         public IReadOnlyList<string> Dependencies { get; init; } = Array.Empty<string>();
+        public IReadOnlyList<string> SchemaFields { get; init; } = Array.Empty<string>();
 
         public IReadOnlyDictionary<string, object?> ToData() => new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
         {
@@ -84,7 +113,8 @@ namespace Arkus.H1.UnityHost
             ["compatible"] = Compatible, ["path"] = Path,
             ["nativeGuid"] = NativeGuid, ["localFileId"] = LocalFileId,
             ["contentSha256"] = ContentSha256,
-            ["dependencies"] = Dependencies.Cast<object?>().ToArray()
+            ["dependencies"] = Dependencies.Cast<object?>().ToArray(),
+            ["schemaFields"] = SchemaFields.Cast<object?>().ToArray()
         });
     }
 
@@ -96,6 +126,7 @@ namespace Arkus.H1.UnityHost
         public const int MaximumEntries = 512;
         public const int MaximumPageSize = 64;
         public const string MappingRelativePath = "Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json";
+        public const string AdoptionRelativePath = "Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json";
 
         private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
@@ -123,16 +154,19 @@ namespace Arkus.H1.UnityHost
         public string Fingerprint { get; }
         public long SnapshotToken => long.Parse(Fingerprint.Substring(0, 15), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
-        public static H1CatalogueSnapshot Build(string effectiveJson, string mappingJson)
+        public static H1CatalogueSnapshot Build(string effectiveJson, string mappingJson, string adoptionJson)
         {
             H1CatalogueEffectiveInventory effective;
             H1CatalogueMapping mapping;
+            H1CatalogueAdoption adoption;
             try
             {
                 effective = JsonSerializer.Deserialize<H1CatalogueEffectiveInventory>(effectiveJson, JsonOptions) ?? throw new JsonException();
                 mapping = JsonSerializer.Deserialize<H1CatalogueMapping>(mappingJson, JsonOptions) ?? throw new JsonException();
+                adoption = JsonSerializer.Deserialize<H1CatalogueAdoption>(adoptionJson, JsonOptions) ?? throw new JsonException();
             }
-            catch (JsonException) { throw Error("catalogue.invalid-document", "Effective inventory or mapping is not valid versioned JSON."); }
+            catch (JsonException) { throw Error("catalogue.invalid-document", "Effective inventory, mapping or Source adoption record is not valid versioned JSON."); }
+            ValidateAdoptionRecord(adoption);
             if (effective.SchemaId != InventorySchema || mapping.SchemaId != MappingSchema ||
                 effective.ProjectIdentity != UnityProjectWorkspaceAuthority.ProjectIdentity ||
                 mapping.ProjectIdentity != effective.ProjectIdentity ||
@@ -167,7 +201,7 @@ namespace Arkus.H1.UnityHost
                     throw Error("catalogue.stale-mapping", "A mapped native identity is missing from effective Unity inventory: " + row.LogicalId);
                 if (row.TypeName != found.TypeName || row.ContentSha256 != found.ContentSha256)
                     throw Error("catalogue.incompatible-mapping", "A mapped source type or content fingerprint changed: " + row.LogicalId);
-                ValidateAdoption(row, found);
+                ValidateAdoption(row, found, adoption);
                 entries.Add(new H1CatalogueEntry
                 {
                     LogicalId = row.LogicalId, Kind = row.Kind, Name = found.Name,
@@ -176,7 +210,8 @@ namespace Arkus.H1.UnityHost
                     Compatible = found.Compatible, Path = found.Path,
                     NativeGuid = found.NativeGuid, LocalFileId = found.LocalFileId,
                     ContentSha256 = found.ContentSha256,
-                    Dependencies = Array.AsReadOnly(found.Dependencies.OrderBy(value => value, StringComparer.Ordinal).ToArray())
+                    Dependencies = Array.AsReadOnly(found.Dependencies.OrderBy(value => value, StringComparer.Ordinal).ToArray()),
+                    SchemaFields = Array.AsReadOnly(found.SchemaFields.OrderBy(value => value, StringComparer.Ordinal).ToArray())
                 });
             }
             if (mappedNative.Count != byNative.Count)
@@ -223,11 +258,12 @@ namespace Arkus.H1.UnityHost
         private static void ValidateEffective(H1CatalogueEffectiveRow row)
         {
             if (row == null || !Kinds.Contains(row.Kind) || row.Dependencies == null ||
-                row.Name == null || row.Dimensions == null || row.TypeName == null)
+                row.Name == null || row.Dimensions == null || row.TypeName == null || row.SchemaFields == null)
                 throw Error("catalogue.invalid-effective-entry", "Effective Unity emitted a malformed admitted entry.");
             if (row.Kind == "component-schema")
             {
-                if (!ComponentTypes.Contains(row.TypeName) || row.Path != "type:" + row.TypeName || row.NativeGuid != "" || row.LocalFileId != "0" || row.ContentSha256 != "")
+                if (!ComponentTypes.Contains(row.TypeName) || row.Path != "type:" + row.TypeName || row.NativeGuid != "" || row.LocalFileId != "0" || row.ContentSha256 != "" ||
+                    row.SchemaFields.Length == 0 || row.SchemaFields.Length > 256 || row.SchemaFields.Distinct(StringComparer.Ordinal).Count() != row.SchemaFields.Length)
                     throw Error("catalogue.invalid-component-schema", "The component schema locator is outside the reviewed TypeCache slice.");
                 return;
             }
@@ -236,11 +272,44 @@ namespace Arkus.H1.UnityHost
             if (parent != "Assets/Arkus/H1/SourceSlice" && parent != "Assets/Arkus/H1/CatalogueProof")
                 throw Error("catalogue.scope-escape", "Effective entry is outside the reviewed immediate-file roots.");
             if (row.NativeGuid.Length != 32 || !long.TryParse(row.LocalFileId, NumberStyles.Integer, CultureInfo.InvariantCulture, out _) ||
-                row.ContentSha256.Length != 64)
+                row.ContentSha256.Length != 64 || row.SchemaFields.Length != 0)
                 throw Error("catalogue.native-identity-missing", "Effective asset has no complete Unity locator or content fingerprint.");
         }
 
-        private static void ValidateAdoption(H1CatalogueMappingRow mapped, H1CatalogueEffectiveRow observed)
+        private static void ValidateAdoptionRecord(H1CatalogueAdoption adoption)
+        {
+            if (adoption.SchemaId != "arkus.h1-04-source-adoption@1" ||
+                adoption.DistributionMode != "external-readonly-local-source" ||
+                adoption.Sources == null || adoption.Slices == null || adoption.Sources.Count != 2 || adoption.Slices.Count == 0)
+                throw Error("catalogue.adoption-missing", "The versioned external Source adoption record is missing or incomplete.");
+            var expected = new Dictionary<string, (string url, string distribution, string license)>(StringComparer.Ordinal)
+            {
+                ["quaternius-medieval-source"] = ("https://quaternius.com/packs/medievalvillagemegakit.html",
+                    "b9d757dd2608a5cee4d9ee1e8183f6cb4cad9d27480841a905180def9c7d8b10",
+                    "7310dfa8512d7ca12b6591329fda4adab7e8b9cdbe04c7d7061c2fe5c7dc38ee"),
+                ["quaternius-ual1-source"] = ("https://quaternius.com/packs/universalanimationlibrary.html",
+                    "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+                    "6d01f55c6e4c49a2c9963e147e561945ae2c83958c8ca667d90a6bffdbfac061")
+            };
+            foreach (var source in adoption.Sources)
+            {
+                if (source == null || !expected.Remove(source.SourceId, out var pinned) || source.OriginUrl != pinned.url ||
+                    source.DistributionSha256 != pinned.distribution || source.LicenseId != "CC0-1.0" ||
+                    source.LicenseSha256 != pinned.license || !source.CommercialUse || source.NoticeRequirement != "none-required")
+                    throw Error("catalogue.adoption-missing", "Approved Source distribution/version/license identity is ambiguous or missing.");
+            }
+            if (expected.Count != 0) throw Error("catalogue.adoption-missing", "An approved Quaternius Source distribution is absent.");
+            var paths = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var slice in adoption.Slices)
+            {
+                if (slice == null || !paths.Add(slice.AssetPath) || !slice.AssetPath.StartsWith("Assets/Arkus/H1/SourceSlice/", StringComparison.Ordinal) ||
+                    slice.ContentSha256.Length != 64 || (slice.SourceId != "quaternius-medieval-source" && slice.SourceId != "quaternius-ual1-source") ||
+                    (slice.AdoptionStatus != "approved-source" && slice.AdoptionStatus != "source-derived"))
+                    throw Error("catalogue.adoption-missing", "Approved Source slice identity is incomplete or duplicated.");
+            }
+        }
+
+        private static void ValidateAdoption(H1CatalogueMappingRow mapped, H1CatalogueEffectiveRow observed, H1CatalogueAdoption adoption)
         {
             var source = observed.Path.StartsWith("Assets/Arkus/H1/SourceSlice/", StringComparison.Ordinal);
             if (mapped.Kind == "component-schema")
@@ -255,11 +324,9 @@ namespace Arkus.H1.UnityHost
             }
             else
             {
-                var expectedSource = observed.Path.EndsWith("UAL1.fbx", StringComparison.Ordinal)
-                    ? "quaternius-ual1-source" : "quaternius-medieval-source";
-                var expectedStatus = observed.Path.EndsWith("FacadeImportedMaterial.mat", StringComparison.Ordinal)
-                    ? "source-derived" : "approved-source";
-                if (mapped.SourceId != expectedSource || mapped.AdoptionStatus != expectedStatus)
+                var matches = adoption.Slices.Where(slice => slice.ContentSha256 == observed.ContentSha256 &&
+                    slice.SourceId == mapped.SourceId && slice.AdoptionStatus == mapped.AdoptionStatus).ToArray();
+                if (matches.Length != 1)
                     throw Error("catalogue.adoption-missing", "Game-representative source identity or approval status is missing or ambiguous.");
             }
         }
@@ -277,6 +344,7 @@ namespace Arkus.H1.UnityHost
                     entry.SourceId, entry.AdoptionStatus, entry.Compatible ? "true" : "false", entry.Path,
                     entry.NativeGuid, entry.LocalFileId, entry.ContentSha256 }) Append(builder, value);
                 foreach (var dependency in entry.Dependencies) Append(builder, dependency);
+                foreach (var field in entry.SchemaFields) Append(builder, field);
                 Append(builder, "<end>");
             }
             return Convert.ToHexString(sha.ComputeHash(Encoding.UTF8.GetBytes(builder.ToString()))).ToLowerInvariant();

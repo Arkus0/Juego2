@@ -1,0 +1,4053 @@
+{
+    "schemaId": "arkus.h1-catalogue-effective-inventory@1",
+    "projectIdentity": "arkus.unity-project@1:ArkusUnity",
+    "editorVersion": "6000.3.24f1",
+    "rows": [
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-1282471956924446163",
+            "name": "Armature|Idle_Paper",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.13333344;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-1561723667896195828",
+            "name": "Armature|Crawl_Bwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-1862932125039169580",
+            "name": "Armature|Jump_Start",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-2094863006182820546",
+            "name": "Armature|Hit_Shoulder_L",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.533333361;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-2171991226874025293",
+            "name": "Armature|Turn90_R",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-2282825991228640143",
+            "name": "Armature|Jog_Bwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-2328835098782832033",
+            "name": "Armature|Interact",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-245273357908900549",
+            "name": "Armature|Hit_Chest",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.333333343;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-2579874000212319417",
+            "name": "Armature|PickUp_Kneeling",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-2807887025256620907",
+            "name": "Armature|Sword_Attack",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.53333342;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-2828013064107677548",
+            "name": "Armature|Climb_Up_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-3042448386402017758",
+            "name": "Armature|Pistol_Aim_Up",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.166666672;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-3081254936771829754",
+            "name": "Armature|Crying",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.83333349;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-318339737363746647",
+            "name": "Armature|Spell_Double_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-3331068770606205437",
+            "name": "Armature|Sword_Attack_Standing",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.53333342;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-3387576903590151723",
+            "name": "Armature|GroundSit_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.16666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-3659967873887649963",
+            "name": "Armature|Jump_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-3682208222642672957",
+            "name": "Armature|Crouch_Fwd_R_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-3780874684900474237",
+            "name": "Armature|Counter_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-4046342374594937096",
+            "name": "Armature|Counter_Show",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-414281033150956306",
+            "name": "Armature|Jog_Fwd_R_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-4347273159659676942",
+            "name": "Armature|Spell_Double_Shoot_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.266666681;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-4520702816347423135",
+            "name": "Armature|Crouch_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.8333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-4628965742493065687",
+            "name": "Armature|Pistol_Reload",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-4636811812070406142",
+            "name": "Armature|Spell_Simple_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.433333367;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-4708846537797790282",
+            "name": "Armature|Pistol_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-4728629457746597957",
+            "name": "Armature|Crouch_Right_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-4950333804767787469",
+            "name": "Armature|Sprint_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-5068084590534580200",
+            "name": "Armature|Pistol_Aim_Down",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.166666672;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-5235980494986678550",
+            "name": "Armature|Crouch_Left_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-5255406209399062677",
+            "name": "Armature|Spell_Simple_Shoot",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.5;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-5346644375087571879",
+            "name": "Armature|Spell_Simple_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.533333361;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-5752380478566616309",
+            "name": "Armature|Crouch_Bwd_L_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-5936829284080135236",
+            "name": "Armature|Death02",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.4666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-6540212038565268958",
+            "name": "Armature|Driving_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-6578454476213118355",
+            "name": "Armature|Dodge_Right",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-6676812269523803463",
+            "name": "Armature|Sitting_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-6934390853412931435",
+            "name": "Armature|Jog_Bwd_R_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-7003542030617561338",
+            "name": "Armature|Walk_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-7071571578307557906",
+            "name": "Armature|Crouch_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.8333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-718454725414175808",
+            "name": "Armature|Pistol_Aim_Neutral",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.166666672;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-718854632863613509",
+            "name": "Armature|Idle_Rock",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.13333344;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-7321412271681594418",
+            "name": "Armature|Punch_Jab",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.866666734;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-7342238307180667810",
+            "name": "Armature|Idle_Torch_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-7370342500073067270",
+            "name": "Armature|Push_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-7425468140943233605",
+            "name": "Armature|Counter_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.16666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-7760359080451054123",
+            "name": "Armature|Climb_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.4666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-7833374897513126579",
+            "name": "Armature|ClimbLedge",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-7993625790543202706",
+            "name": "Armature|Crouch_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-8118615267600753998",
+            "name": "Armature|Crawl_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-8264055744623247483",
+            "name": "Armature|Sprint_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.866666734;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-828001398184434098",
+            "name": "Armature|Crawl_Fwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.16666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-8519216349216648414",
+            "name": "Armature|Crouch_Fwd_L_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-8534173349268677819",
+            "name": "Armature|Hit_Head",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.433333367;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-8552390077327790317",
+            "name": "Armature|Jog_Right_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-876425364968913437",
+            "name": "Armature|Counter_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.16666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-8815886378510225334",
+            "name": "Armature|Jog_Fwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-8852158623778546228",
+            "name": "Armature|Idle_Tired_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.30000019;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-887615021355293542",
+            "name": "Armature|Crawl_Left_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-9130161344255547794",
+            "name": "Armature|Idle_Scissors",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.13333344;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-935233041909147455",
+            "name": "Armature|Jog_Left_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800000",
+            "name": "__preview__Armature|A_TPose",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800002",
+            "name": "__preview__Armature|BackFlip",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800004",
+            "name": "__preview__Armature|Celebration",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800006",
+            "name": "__preview__Armature|Climb_Down_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800008",
+            "name": "__preview__Armature|Climb_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.4666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800010",
+            "name": "__preview__Armature|Climb_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.4666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800012",
+            "name": "__preview__Armature|Climb_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800014",
+            "name": "__preview__Armature|Climb_Left_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.866666734;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800016",
+            "name": "__preview__Armature|Climb_Right_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.866666734;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800018",
+            "name": "__preview__Armature|Climb_Up_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800020",
+            "name": "__preview__Armature|ClimbLedge",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800022",
+            "name": "__preview__Armature|Counter_Angry",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800024",
+            "name": "__preview__Armature|Counter_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.16666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800026",
+            "name": "__preview__Armature|Counter_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.16666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800028",
+            "name": "__preview__Armature|Counter_Give",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.366667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800030",
+            "name": "__preview__Armature|Counter_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800032",
+            "name": "__preview__Armature|Counter_Show",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800034",
+            "name": "__preview__Armature|Crawl_Bwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800036",
+            "name": "__preview__Armature|Crawl_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.13333344;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800038",
+            "name": "__preview__Armature|Crawl_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800040",
+            "name": "__preview__Armature|Crawl_Fwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.16666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800042",
+            "name": "__preview__Armature|Crawl_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.33333349;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800044",
+            "name": "__preview__Armature|Crawl_Left_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800046",
+            "name": "__preview__Armature|Crawl_Right_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800048",
+            "name": "__preview__Armature|Crouch_Bwd_L_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800050",
+            "name": "__preview__Armature|Crouch_Bwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800052",
+            "name": "__preview__Armature|Crouch_Bwd_R_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.36666679;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800054",
+            "name": "__preview__Armature|Crouch_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.8333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800056",
+            "name": "__preview__Armature|Crouch_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.8333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800058",
+            "name": "__preview__Armature|Crouch_Fwd_L_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800060",
+            "name": "__preview__Armature|Crouch_Fwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800062",
+            "name": "__preview__Armature|Crouch_Fwd_R_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800064",
+            "name": "__preview__Armature|Crouch_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800066",
+            "name": "__preview__Armature|Crouch_Left_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800068",
+            "name": "__preview__Armature|Crouch_Right_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800070",
+            "name": "__preview__Armature|Crying",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.83333349;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800072",
+            "name": "__preview__Armature|Dance_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800074",
+            "name": "__preview__Armature|Death01",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.4;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800076",
+            "name": "__preview__Armature|Death02",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.4666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800078",
+            "name": "__preview__Armature|Dodge_Left",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800080",
+            "name": "__preview__Armature|Dodge_Right",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800082",
+            "name": "__preview__Armature|Drink",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.00000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800084",
+            "name": "__preview__Armature|Driving_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800086",
+            "name": "__preview__Armature|Fixing_Kneeling",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=5.20000029;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800088",
+            "name": "__preview__Armature|GroundSit_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800090",
+            "name": "__preview__Armature|GroundSit_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.16666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800092",
+            "name": "__preview__Armature|GroundSit_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800094",
+            "name": "__preview__Armature|Hit_Chest",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.333333343;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800096",
+            "name": "__preview__Armature|Hit_Head",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.433333367;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800098",
+            "name": "__preview__Armature|Hit_Shoulder_L",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.533333361;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800100",
+            "name": "__preview__Armature|Hit_Shoulder_R",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.5;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800102",
+            "name": "__preview__Armature|Hit_Stomach",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800104",
+            "name": "__preview__Armature|Idle_LookAround_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.60000038;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800106",
+            "name": "__preview__Armature|Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800108",
+            "name": "__preview__Armature|Idle_Paper",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.13333344;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800110",
+            "name": "__preview__Armature|Idle_Rock",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.13333344;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800112",
+            "name": "__preview__Armature|Idle_Scissors",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.13333344;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800114",
+            "name": "__preview__Armature|Idle_Talking_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800116",
+            "name": "__preview__Armature|Idle_Tired_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.30000019;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800118",
+            "name": "__preview__Armature|Idle_Torch_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800120",
+            "name": "__preview__Armature|Interact",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800122",
+            "name": "__preview__Armature|Jog_Bwd_L_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800124",
+            "name": "__preview__Armature|Jog_Bwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800126",
+            "name": "__preview__Armature|Jog_Bwd_R_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800128",
+            "name": "__preview__Armature|Jog_Fwd_L_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800130",
+            "name": "__preview__Armature|Jog_Fwd_LeanL_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800132",
+            "name": "__preview__Armature|Jog_Fwd_LeanR_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800134",
+            "name": "__preview__Armature|Jog_Fwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800136",
+            "name": "__preview__Armature|Jog_Fwd_R_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800138",
+            "name": "__preview__Armature|Jog_Left_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800140",
+            "name": "__preview__Armature|Jog_Right_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800142",
+            "name": "__preview__Armature|Jump_Land",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800144",
+            "name": "__preview__Armature|Jump_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800146",
+            "name": "__preview__Armature|Jump_Start",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800148",
+            "name": "__preview__Armature|Kick",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.1;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800150",
+            "name": "__preview__Armature|PickUp_Kneeling",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800152",
+            "name": "__preview__Armature|PickUp_Table",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.8333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800154",
+            "name": "__preview__Armature|Pistol_Aim_Down",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.166666672;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800156",
+            "name": "__preview__Armature|Pistol_Aim_Neutral",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.166666672;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800158",
+            "name": "__preview__Armature|Pistol_Aim_Up",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.166666672;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800160",
+            "name": "__preview__Armature|Pistol_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800162",
+            "name": "__preview__Armature|Pistol_Reload",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800164",
+            "name": "__preview__Armature|Pistol_Shoot",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800166",
+            "name": "__preview__Armature|Punch_Cross",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800168",
+            "name": "__preview__Armature|Punch_Jab",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.866666734;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800170",
+            "name": "__preview__Armature|PunchKick_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800172",
+            "name": "__preview__Armature|PunchKick_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800174",
+            "name": "__preview__Armature|Push_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800176",
+            "name": "__preview__Armature|Push_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800178",
+            "name": "__preview__Armature|Push_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800180",
+            "name": "__preview__Armature|Roll",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.4666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800182",
+            "name": "__preview__Armature|Sitting_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800184",
+            "name": "__preview__Armature|Sitting_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.03333342;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800186",
+            "name": "__preview__Armature|Sitting_Idle02_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800188",
+            "name": "__preview__Armature|Sitting_Idle03_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.166667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800190",
+            "name": "__preview__Armature|Sitting_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800192",
+            "name": "__preview__Armature|Sitting_Nodding_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800194",
+            "name": "__preview__Armature|Sitting_Talking_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800196",
+            "name": "__preview__Armature|Spell_Double_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800198",
+            "name": "__preview__Armature|Spell_Double_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800200",
+            "name": "__preview__Armature|Spell_Double_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.10000014;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800202",
+            "name": "__preview__Armature|Spell_Double_Shoot_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.266666681;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800204",
+            "name": "__preview__Armature|Spell_Simple_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.533333361;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800206",
+            "name": "__preview__Armature|Spell_Simple_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.433333367;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800208",
+            "name": "__preview__Armature|Spell_Simple_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.10000014;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800210",
+            "name": "__preview__Armature|Spell_Simple_Shoot",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.5;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800212",
+            "name": "__preview__Armature|Sprint_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.866666734;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800214",
+            "name": "__preview__Armature|Sprint_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800216",
+            "name": "__preview__Armature|Sprint_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800218",
+            "name": "__preview__Armature|Swim_Fwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800220",
+            "name": "__preview__Armature|Swim_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.33333349;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800222",
+            "name": "__preview__Armature|Sword_Attack",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.53333342;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800224",
+            "name": "__preview__Armature|Sword_Attack_Standing",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.53333342;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800226",
+            "name": "__preview__Armature|Sword_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800228",
+            "name": "__preview__Armature|Sword_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800230",
+            "name": "__preview__Armature|Sword_Idle",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800232",
+            "name": "__preview__Armature|Turn90_L",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800234",
+            "name": "__preview__Armature|Turn90_R",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800236",
+            "name": "__preview__Armature|Walk_Formal_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "110800238",
+            "name": "__preview__Armature|Walk_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "1442269360403125084",
+            "name": "Armature|Climb_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "1481285086630330587",
+            "name": "Armature|GroundSit_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "1532177651469301551",
+            "name": "Armature|Swim_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.33333349;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "1602580721735414331",
+            "name": "Armature|Hit_Stomach",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "1705686167135224321",
+            "name": "Armature|Punch_Cross",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "186963925824351887",
+            "name": "Armature|Crawl_Right_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "1933365941894633954",
+            "name": "Armature|Sitting_Idle02_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "1991665600729470974",
+            "name": "Armature|Sword_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "2118831675672053977",
+            "name": "Armature|Dodge_Left",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "216058766228840708",
+            "name": "Armature|Drink",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=3.00000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "2564068224262579217",
+            "name": "Armature|Pistol_Shoot",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "2676984727341982789",
+            "name": "Armature|Climb_Down_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "2857599376137209812",
+            "name": "Armature|PickUp_Table",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.8333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "2931362099718132477",
+            "name": "Armature|Push_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "3031411921458128146",
+            "name": "Armature|Roll",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.4666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "3532616527226485280",
+            "name": "Armature|Death01",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.4;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "364198992593912362",
+            "name": "Armature|PunchKick_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "3659977189094709723",
+            "name": "Armature|Fixing_Kneeling",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=5.20000029;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "3732886095724451988",
+            "name": "Armature|Spell_Simple_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.10000014;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "406034898044457711",
+            "name": "Armature|Crouch_Bwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "4277456818240358970",
+            "name": "Armature|Spell_Double_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "4366774653929184976",
+            "name": "Armature|Crouch_Fwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "4525242936183261023",
+            "name": "Armature|Sitting_Talking_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "4637788152132584459",
+            "name": "Armature|Sword_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "4832780573735333345",
+            "name": "Armature|Jump_Land",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.26666677;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "497093190674883199",
+            "name": "Armature|Sitting_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.03333342;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "4996995007976980875",
+            "name": "Armature|A_TPose",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "5119089375067427328",
+            "name": "Armature|Climb_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.4666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "5119502020559517934",
+            "name": "Armature|BackFlip",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "5153960822238793380",
+            "name": "Armature|Kick",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.1;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "5530952548391809541",
+            "name": "Armature|Climb_Right_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.866666734;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "5539243244057379418",
+            "name": "Armature|Swim_Fwd_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "5820064766666075180",
+            "name": "Armature|Sprint_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "6332598559255570875",
+            "name": "Armature|Counter_Angry",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "6426452042675443912",
+            "name": "Armature|Walk_Formal_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.33333337;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "643689632218582793",
+            "name": "Armature|Turn90_L",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "6476497563760123848",
+            "name": "Armature|Idle_Talking_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "653928579652092377",
+            "name": "Armature|Jog_Fwd_LeanL_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "6622226979305741504",
+            "name": "Armature|Climb_Left_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.866666734;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "6872392944136771892",
+            "name": "Armature|Crawl_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.13333344;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "7232225679522964842",
+            "name": "Armature|Jog_Bwd_L_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "7372552092560676592",
+            "name": "Armature|Idle_LookAround_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.60000038;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "7385432009288409601",
+            "name": "Armature|Push_Exit",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.2;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "7491515920343264727",
+            "name": "Armature|Counter_Give",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.366667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "784354149011167044",
+            "name": "Armature|Hit_Shoulder_R",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.5;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "7846788728051274861",
+            "name": "Armature|Sitting_Idle03_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4.166667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "7860179187555574969",
+            "name": "Armature|Sitting_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.30000007;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "7876840842014726941",
+            "name": "Armature|PunchKick_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.6666667;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "7994627924475153551",
+            "name": "Armature|Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "8324860437086164814",
+            "name": "Armature|Sword_Idle",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1.66666675;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "8358850935289043802",
+            "name": "Armature|Celebration",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=4;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "8800687838965813479",
+            "name": "Armature|Dance_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=1;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "8818961225533755180",
+            "name": "Armature|GroundSit_Enter",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.50000024;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "888758326750808651",
+            "name": "Armature|Jog_Fwd_LeanR_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "9036951555999059274",
+            "name": "Armature|Crouch_Bwd_R_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.36666679;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "905446865234328438",
+            "name": "Armature|Sitting_Nodding_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "9219662467752540631",
+            "name": "Armature|Crawl_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.33333349;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "950569696911306980",
+            "name": "Armature|Jog_Fwd_L_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=0.9333334;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "animation-clip",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "99663824024054718",
+            "name": "Armature|Spell_Double_Idle_Loop",
+            "typeName": "UnityEngine.AnimationClip",
+            "dimensions": "seconds=2.10000014;fps=30",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "asset",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "2675634661614555112",
+            "name": "Mannequin",
+            "typeName": "UnityEngine.Mesh",
+            "dimensions": "vertices=8462",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "asset",
+            "path": "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx",
+            "nativeGuid": "a914dbae2609f0107a8bce353d33727c",
+            "localFileId": "-986719052539725406",
+            "name": "Wall_Plaster_Window_Wide_Flat",
+            "typeName": "UnityEngine.Mesh",
+            "dimensions": "vertices=120",
+            "contentSha256": "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/Wall_Plaster_Window_Wide_Flat-MI_Brick.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/Wall_Plaster_Window_Wide_Flat-MI_Plaster.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/Wall_Plaster_Window_Wide_Flat-MI_WoodTrim.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "component-schema",
+            "path": "type:UnityEngine.Animator",
+            "nativeGuid": "",
+            "localFileId": "0",
+            "name": "Animator",
+            "typeName": "UnityEngine.Animator",
+            "dimensions": "public-serialized-component",
+            "contentSha256": "",
+            "schemaFields": [
+                "m_AllowConstantClipSamplingOptimization:Boolean",
+                "m_AnimatePhysics:Boolean",
+                "m_ApplyRootMotion:Boolean",
+                "m_Avatar:ObjectReference",
+                "m_Controller:ObjectReference",
+                "m_CullingMode:Enum",
+                "m_HasTransformHierarchy:Boolean",
+                "m_KeepAnimatorStateOnDisable:Boolean",
+                "m_LinearVelocityBlending:Boolean",
+                "m_StabilizeFeet:Boolean",
+                "m_UpdateMode:Enum",
+                "m_WarningMessage:String",
+                "m_WriteDefaultValuesOnDisable:Boolean"
+            ],
+            "dependencies": [],
+            "compatible": true
+        },
+        {
+            "kind": "component-schema",
+            "path": "type:UnityEngine.MeshRenderer",
+            "nativeGuid": "",
+            "localFileId": "0",
+            "name": "MeshRenderer",
+            "typeName": "UnityEngine.MeshRenderer",
+            "dimensions": "public-serialized-component",
+            "contentSha256": "",
+            "schemaFields": [
+                "m_AutoUVMaxAngle:Float",
+                "m_AutoUVMaxDistance:Float",
+                "m_CastShadows:Enum",
+                "m_DynamicOccludee:Boolean",
+                "m_ForceMeshLod:Integer",
+                "m_IgnoreNormalsForChartDetection:Boolean",
+                "m_ImportantGI:Boolean",
+                "m_LightProbeUsage:Integer",
+                "m_LightProbeVolumeOverride:ObjectReference",
+                "m_LightmapParameters:ObjectReference",
+                "m_MaskInteraction:Enum",
+                "m_Materials.Array.data[0]:ObjectReference",
+                "m_Materials.Array.size:ArraySize",
+                "m_Materials:Generic",
+                "m_MeshLodSelectionBias:Float",
+                "m_MinimumChartSize:Integer",
+                "m_MotionVectors:Enum",
+                "m_PreserveUVs:Boolean",
+                "m_ProbeAnchor:ObjectReference",
+                "m_RayTraceProcedural:Boolean",
+                "m_RayTracingAccelStructBuildFlags:Integer",
+                "m_RayTracingAccelStructBuildFlagsOverride:Boolean",
+                "m_RayTracingMode:Integer",
+                "m_ReceiveGI:Integer",
+                "m_ReceiveShadows:Boolean",
+                "m_ReflectionProbeUsage:Integer",
+                "m_RendererPriority:Integer",
+                "m_RenderingLayerMask:Integer",
+                "m_ScaleInLightmap:Float",
+                "m_SmallMeshCulling:Boolean",
+                "m_StaticShadowCaster:Boolean",
+                "m_StitchLightmapSeams:Boolean"
+            ],
+            "dependencies": [],
+            "compatible": true
+        },
+        {
+            "kind": "component-schema",
+            "path": "type:UnityEngine.Transform",
+            "nativeGuid": "",
+            "localFileId": "0",
+            "name": "Transform",
+            "typeName": "UnityEngine.Transform",
+            "dimensions": "public-serialized-component",
+            "contentSha256": "",
+            "schemaFields": [
+                "m_ConstrainProportionsScale:Boolean",
+                "m_LocalPosition.x:Float",
+                "m_LocalPosition.y:Float",
+                "m_LocalPosition.z:Float",
+                "m_LocalPosition:Vector3",
+                "m_LocalRotation.w:Float",
+                "m_LocalRotation.x:Float",
+                "m_LocalRotation.y:Float",
+                "m_LocalRotation.z:Float",
+                "m_LocalRotation:Quaternion",
+                "m_LocalScale.x:Float",
+                "m_LocalScale.y:Float",
+                "m_LocalScale.z:Float",
+                "m_LocalScale:Vector3"
+            ],
+            "dependencies": [],
+            "compatible": true
+        },
+        {
+            "kind": "material",
+            "path": "Assets/Arkus/H1/SourceSlice/MI_Plaster.mat",
+            "nativeGuid": "75fb52ef5e0f0ad40a28c36d06ecd99c",
+            "localFileId": "2100000",
+            "name": "MI_Plaster",
+            "typeName": "UnityEngine.Material",
+            "dimensions": "shader=Hidden/InternalErrorShader",
+            "contentSha256": "3fcfc0359d1460009858533461893c626e25ea52364ae4e85f4a6bf84fc3ce69",
+            "schemaFields": [],
+            "dependencies": [],
+            "compatible": false
+        },
+        {
+            "kind": "material",
+            "path": "Assets/Arkus/H1/SourceSlice/FacadeImportedMaterial.mat",
+            "nativeGuid": "963743a1121475e92497a201e301bf48",
+            "localFileId": "2100000",
+            "name": "Wall_Plaster_Window_Wide_Flat-MI_Plaster",
+            "typeName": "UnityEngine.Material",
+            "dimensions": "shader=Standard",
+            "contentSha256": "e585297c2271fc83378e2eebe7f72ff9f8b66c2fc1b8a1eeb1c7abdfac5d2e29",
+            "schemaFields": [],
+            "dependencies": [],
+            "compatible": true
+        },
+        {
+            "kind": "prefab",
+            "path": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+            "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",
+            "localFileId": "-927199367670048503",
+            "name": "UAL1",
+            "typeName": "UnityEngine.GameObject",
+            "dimensions": "prefabType=Model",
+            "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Joints.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/UAL1-M_Main.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "prefab",
+            "path": "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx",
+            "nativeGuid": "a914dbae2609f0107a8bce353d33727c",
+            "localFileId": "-927199367670048503",
+            "name": "Wall_Plaster_Window_Wide_Flat",
+            "typeName": "UnityEngine.GameObject",
+            "dimensions": "prefabType=Model",
+            "contentSha256": "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8",
+            "schemaFields": [],
+            "dependencies": [
+                "Assets/Arkus/H1/SourceSlice/Materials/Wall_Plaster_Window_Wide_Flat-MI_Brick.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/Wall_Plaster_Window_Wide_Flat-MI_Plaster.mat",
+                "Assets/Arkus/H1/SourceSlice/Materials/Wall_Plaster_Window_Wide_Flat-MI_WoodTrim.mat"
+            ],
+            "compatible": true
+        },
+        {
+            "kind": "scene",
+            "path": "Assets/Arkus/H1/CatalogueProof/CatalogueProof.unity",
+            "nativeGuid": "a2ee92fdc61575046a5298f565fa40f8",
+            "localFileId": "102900000",
+            "name": "CatalogueProof",
+            "typeName": "UnityEditor.SceneAsset",
+            "dimensions": "unity-scene",
+            "contentSha256": "735d676195eb5c0a3c4f563f6d5b1d0e6e14d144ec0de7f0d57223974702da2c",
+            "schemaFields": [],
+            "dependencies": [],
+            "compatible": true
+        }
+    ]
+}
