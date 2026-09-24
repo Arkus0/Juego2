@@ -132,6 +132,10 @@ Important discoveries may be authored, systemic or hybrid. Martial arts/kung-fu/
 11. **No pre-gate production:** REMOTE planning cannot smuggle Unity construction, asset adoption or runtime semantics ahead of the exact gates named by each LOCAL WP; CITY-04's H1-08 greybox exception does not authorize keeper realization or gameplay.
 12. **Bridge neutrality:** CITY consumes accepted Arkus/Unity capabilities; it does not invent bridge semantics to make a scene plan pass.
 
+## Proposed: play-design layer (`WP-CITY-09`)
+
+**PROPOSED, not accepted.** `Docs/workpacks/CITY/WP-CITY-09.md` + `Docs/production/CITY_PLAY_DESIGN.md` propose an explicit owner for player experience of space (loops, earned shortcuts, detours, landmarks, pacing, comfort, stages, events, composed views), to be consumed by CITY-04 before greybox. Until accepted, the execution chain above is unchanged.
+
 ## Current next workpack
 
 `WP-CITY-04 — LOCAL retained-seed greybox + traversal validation`.

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 992 982" font-family="Helvetica,Arial,sans-serif" font-size="11">
+<rect width="992" height="982" fill="#EFEDE7"/>
+<text x="20" y="24" font-size="15" font-weight="bold" fill="#3A332C">CITY-03 seed — play-design layer (PROPOSED, indicative positions)</text>
+<polygon points="40.0,712.0 328.0,776.0 760.0,673.6 888.0,449.6 808.0,216.0 584.0,56.0 328.0,97.6 40.0,344.0" fill="#DCD6CA" stroke="#7E7568" stroke-width="1.5"/>
+<polygon points="40.0,545.6 104.0,552.0 168.0,596.8 232.0,654.4 296.0,667.2 408.0,664.0 552.0,654.4 696.0,648.0 760.0,641.6 760.0,673.6 696.0,686.4 552.0,702.4 408.0,715.2 296.0,718.4 232.0,705.6 168.0,657.6 104.0,616.0 40.0,596.8" fill="#3F5A5E" opacity="0.85"/>
+<polygon points="40.0,545.6 104.0,488.0 168.0,430.4 232.0,366.4 296.0,302.4 353.6,232.0 385.6,164.8 449.6,97.6 488.0,71.6 424.0,82.0 420.8,104.0 392.0,142.4 366.4,180.8 328.0,244.8 264.0,328.0 200.0,392.0 129.6,456.0 40.0,507.2" fill="#3F5A5E" opacity="0.85"/>
+<polygon points="273.6,625.6 248.0,728.0 228.8,721.6 254.4,619.2" fill="#A79F92" stroke="#5C4433"/>
+<polygon points="393.6,175.0 387.2,130.2 396.8,129.0 403.2,173.8" fill="#A79F92" stroke="#5C4433" stroke-dasharray="3 2"/>
+<polygon points="385.6,376.0 411.2,376.0 411.2,328.0 385.6,328.0" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="385.6" y="323.2" fill="#5C4433" font-size="9">F01 bar</text>
+<polygon points="577.6,308.8 635.2,308.8 635.2,238.4 577.6,238.4" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="577.6" y="233.6" fill="#5C4433" font-size="9">F02 ayto</text>
+<polygon points="705.6,276.8 737.6,276.8 737.6,219.2 705.6,219.2" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="705.6" y="214.4" fill="#5C4433" font-size="9">F03 tienda</text>
+<polygon points="302.4,392.0 324.8,392.0 324.8,347.2 302.4,347.2" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="302.4" y="342.4" fill="#5C4433" font-size="9">F04</text>
+<polygon points="417.6,443.2 440.0,443.2 440.0,404.8 417.6,404.8" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="417.6" y="400.0" fill="#5C4433" font-size="9">F05</text>
+<polygon points="507.2,321.6 545.6,321.6 545.6,270.4 507.2,270.4" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="507.2" y="265.6" fill="#5C4433" font-size="9">F06</text>
+<polygon points="648.0,283.2 673.6,283.2 673.6,232.0 648.0,232.0" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="648.0" y="227.2" fill="#5C4433" font-size="9">F07</text>
+<polygon points="264.0,510.4 286.4,510.4 286.4,468.8 264.0,468.8" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="264.0" y="464.0" fill="#5C4433" font-size="9">F08</text>
+<polygon points="526.4,408.0 584.0,408.0 584.0,353.6 526.4,353.6" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="526.4" y="348.8" fill="#5C4433" font-size="9">S01 mercado</text>
+<polygon points="328.0,344.0 369.6,344.0 369.6,302.4 328.0,302.4" fill="#C9C3B6" stroke="#7E7568" stroke-width="0.8"/>
+<text x="328.0" y="297.6" fill="#5C4433" font-size="9">S03 corte</text>
+<polyline points="728.0,296.0 584.0,334.4" fill="none" stroke="#5C4433" stroke-width="2.5"/>
+<polyline points="584.0,334.4 360.0,408.0" fill="none" stroke="#5C4433" stroke-width="2.5"/>
+<polyline points="360.0,408.0 104.0,520.0" fill="none" stroke="#5C4433" stroke-width="2.5"/>
+<polyline points="360.0,408.0 264.0,622.4" fill="none" stroke="#5C4433" stroke-width="2.5"/>
+<polyline points="360.0,408.0 398.4,174.4" fill="none" stroke="#5C4433" stroke-width="2.5"/>
+<polyline points="264.0,622.4 238.4,724.8" fill="none" stroke="#5C4433" stroke-width="2.5"/>
+<polyline points="398.4,174.4 392.0,129.6" fill="none" stroke="#5C4433" stroke-width="2.5"/>
+<circle cx="104.0" cy="520.0" r="4" fill="#3A332C"/>
+<text x="110.4" y="532.8" fill="#3A332C" font-size="9">W.LANDING</text>
+<circle cx="264.0" cy="622.4" r="4" fill="#3A332C"/>
+<text x="270.4" y="635.2" fill="#3A332C" font-size="9">W.X1</text>
+<circle cx="238.4" cy="724.8" r="4" fill="#3A332C"/>
+<text x="244.8" y="737.6" fill="#3A332C" font-size="9">O.X1</text>
+<circle cx="360.0" cy="408.0" r="4" fill="#3A332C"/>
+<text x="366.4" y="420.8" fill="#3A332C" font-size="9">W.CASCO</text>
+<circle cx="398.4" cy="174.4" r="4" fill="#3A332C"/>
+<text x="404.8" y="187.2" fill="#3A332C" font-size="9">W.X5</text>
+<circle cx="392.0" cy="129.6" r="4" fill="#3A332C"/>
+<text x="398.4" y="142.4" fill="#3A332C" font-size="9">E.X5</text>
+<circle cx="584.0" cy="334.4" r="4" fill="#3A332C"/>
+<text x="590.4" y="347.2" fill="#3A332C" font-size="9">W.PLAZA</text>
+<circle cx="728.0" cy="296.0" r="4" fill="#3A332C"/>
+<text x="734.4" y="308.8" fill="#3A332C" font-size="9">W.SHOP</text>
+<polyline points="110.4,536.0 168.0,580.8 232.0,638.4 296.0,651.2 408.0,648.0 552.0,638.4 696.0,632.0" fill="none" stroke="#C24B34" stroke-width="3" stroke-dasharray="7 4"/>
+<text x="408.0" y="632.0" fill="#C24B34" font-weight="bold">P2 paseo del río</text>
+<polyline points="552.0,638.4 555.2,520.0 555.2,408.0" fill="none" stroke="#C24B34" stroke-width="3" stroke-dasharray="7 4"/>
+<text x="561.6" y="504.0" fill="#C24B34" font-weight="bold">P2 escaleras del mercado</text>
+<polyline points="385.6,270.4 481.6,251.2 577.6,296.0" fill="none" stroke="#C24B34" stroke-width="3" stroke-dasharray="7 4"/>
+<text x="417.6" y="232.0" fill="#C24B34" font-weight="bold">P3 pasadizo</text>
+<polyline points="225.6,481.6 180.8,564.8" fill="none" stroke="#6F79B8" stroke-width="3"/>
+<text x="206.4" y="532.8" fill="#6F79B8" font-weight="bold" font-size="10">P3 atajo de bajada</text>
+<text x="206.4" y="548.8" fill="#6F79B8" font-size="9">(una dirección)</text>
+<polygon points="283.2,760.0 360.0,760.0 360.0,734.4 283.2,734.4" fill="#E8B26A" stroke="#5C4433"/>
+<text x="283.2" y="779.2" fill="#5C4433" font-weight="bold">P5 bolera + postal del pueblo</text>
+<rect x="599.4" y="266.6" width="14" height="14" fill="#D4A437" stroke="#3A332C" stroke-width="1.5"/>
+<text x="619.2" y="248.0" fill="#3A332C" font-weight="bold">P1 TORRE (hito)</text>
+<circle cx="257.6" cy="676.8" r="6" fill="none" stroke="#3E5A57" stroke-width="2"/>
+<text x="267.2" y="686.4" fill="#3E5A57" font-size="9">escenario: puente</text>
+<circle cx="555.2" cy="366.4" r="6" fill="none" stroke="#3E5A57" stroke-width="2"/>
+<text x="564.8" y="376.0" fill="#3E5A57" font-size="9">escenario: plaza</text>
+<circle cx="200.0" cy="443.2" r="6" fill="none" stroke="#3E5A57" stroke-width="2"/>
+<text x="209.6" y="452.8" fill="#3E5A57" font-size="9">escenario: Cuesta</text>
+<circle cx="315.2" cy="475.2" r="6" fill="none" stroke="#3E5A57" stroke-width="2"/>
+<text x="324.8" y="484.8" fill="#3E5A57" font-size="9">mirador</text>
+<text x="65.6" y="264.0" fill="#7E7568" font-size="12" font-style="italic" font-weight="bold">ENSANCHE</text>
+<text x="584.0" y="136.0" fill="#7E7568" font-size="12" font-style="italic" font-weight="bold">CUÑA — casco / plaza</text>
+<text x="456.0" y="753.6" fill="#7E7568" font-size="12" font-style="italic" font-weight="bold">ORILLA SUR</text>
+<text x="664.0" y="670.4" fill="#EFEDE7" font-size="12" font-style="italic" font-weight="bold">Río</text>
+<text x="174.4" y="353.6" fill="#3F5A5E" font-size="12" font-style="italic" font-weight="bold">Arroyo</text>
+<polyline points="257.6,648.0 606.4,273.6" fill="none" stroke="#D4A437" stroke-width="1" stroke-dasharray="2 3"/>
+<polyline points="110.4,507.2 606.4,273.6" fill="none" stroke="#D4A437" stroke-width="1" stroke-dasharray="2 3"/>
+<polyline points="398.4,187.2 606.4,273.6" fill="none" stroke="#D4A437" stroke-width="1" stroke-dasharray="2 3"/>
+<polyline points="846.4,424.0 606.4,273.6" fill="none" stroke="#D4A437" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="20" y1="852" x2="46" y2="852" stroke="#5C4433" stroke-width="3" stroke-dasharray="none"/>
+<text x="56" y="856" fill="#3A332C">Existing accepted CITY-01 edges (schematic straight lines)</text>
+<line x1="20" y1="874" x2="46" y2="874" stroke="#C24B34" stroke-width="3" stroke-dasharray="7 4"/>
+<text x="56" y="878" fill="#3A332C">Proposed new public routes / loops (P2, P3)</text>
+<line x1="20" y1="896" x2="46" y2="896" stroke="#6F79B8" stroke-width="3" stroke-dasharray="none"/>
+<text x="56" y="900" fill="#3A332C">Proposed one-way shortcut, unlocked from below (P3)</text>
+<line x1="20" y1="918" x2="46" y2="918" stroke="#D4A437" stroke-width="3" stroke-dasharray="2 3"/>
+<text x="56" y="922" fill="#3A332C">Proposed sightlines to the landmark (P1)</text>
+<circle cx="32" cy="940" r="6" fill="none" stroke="#3E5A57" stroke-width="2"/>
+<text x="56" y="944" fill="#3A332C">Proposed staged spaces (P5)</text>
+<text x="20" y="968" fill="#5C4433" font-size="10">Coordinates: CITY-03 seed-local metres (U right, V up). Water, envelope, sites and anchors are exact CITY-03 planning geometry; all P-items are indicative proposals.</text>
+</svg>
