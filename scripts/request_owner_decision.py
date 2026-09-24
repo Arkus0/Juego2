@@ -2,9 +2,9 @@
 """Request one bounded owner decision from the local Telegram remote console.
 
 This helper never talks to Telegram or GitHub directly. A Worker/repair Worker
-invokes it only when ARKUS_REMOTE_CONTROL_DIR is present. It writes one durable
-local request, waits without an application-level timeout, and prints the exact
-owner-selected option. Reviewer independence is intentionally outside scope.
+invokes it only when the remote adapter has explicitly granted Worker-side
+control capability. It writes one durable local request, waits without an
+application-level timeout, and prints the exact owner-selected option.
 """
 
 from __future__ import annotations
@@ -37,6 +37,9 @@ def _atomic_json(path: Path, payload: dict) -> None:
 def _control_dir() -> Path:
     raw = os.environ.get("ARKUS_REMOTE_CONTROL_DIR", "").strip()
     campaign = os.environ.get("ARKUS_REMOTE_CAMPAIGN_ID", "").strip()
+    role = os.environ.get("ARKUS_REMOTE_ROLE", "").strip().lower()
+    if role not in {"worker", "repair"}:
+        raise DecisionError("Telegram owner decisions are available only to Worker/repair sessions")
     if not raw or not re.fullmatch(r"[0-9a-f]{32}", campaign):
         raise DecisionError("Telegram owner control is not active for this Worker session")
     return Path(raw).resolve()
