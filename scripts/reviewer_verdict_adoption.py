@@ -10,9 +10,12 @@ and records the missing process transition idempotently.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
+from pathlib import Path
 import re
 import subprocess
+import sys
 from typing import Any
 
 REPO = "Arkus0/Juego2"
@@ -23,6 +26,20 @@ VERDICTS = {"PASS", "FAIL", "PROTOCOL_FIX", "REVIEW_BLOCKED"}
 
 class AdoptionError(Exception):
     pass
+
+
+def _load_validation_context():
+    path = Path(__file__).with_name("validation-context.py")
+    spec = importlib.util.spec_from_file_location("arkus_reviewer_adoption_validation_context", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("canonical validation-context resolver unavailable")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+validation_context = _load_validation_context()
 
 
 def gh_json(*args: str) -> Any:
@@ -107,7 +124,26 @@ def marker_fields(body: str) -> dict[str, str]:
     return result
 
 
-def current_review_ready(comments: list[dict[str, Any]], sha: str, before: str) -> dict[str, Any] | None:
+def review_ready_context_matches(pr: dict[str, Any], item: dict[str, Any], sha: str) -> bool:
+    fields = marker_fields(item.get("body") or "")
+    try:
+        context = validation_context.resolve_context(pr, sha)
+    except (OSError, ValueError, AttributeError, KeyError) as exc:
+        raise AdoptionError(f"validation context invalid: {exc}") from exc
+    digest = context["context_digest"]
+    return (
+        fields.get("state") == "REVIEW_READY" and
+        fields.get("target sha", "").lower() == sha and
+        fields.get("key") == f"review-ready:{pr['number']}:{sha}:{digest}" and
+        fields.get("validation context digest", "").lower() == digest and
+        fields.get("effective wp") == context["wp"] and
+        fields.get("process only", "").lower() == context["process_only"] and
+        fields.get("non foundational", "").lower() == context["non_foundational"]
+    )
+
+
+def current_review_ready(comments: list[dict[str, Any]], pr: dict[str, Any], sha: str,
+                         before: str) -> dict[str, Any] | None:
     candidates = []
     for item in comments:
         if (item.get("user") or {}).get("login") != "github-actions[bot]":
@@ -115,9 +151,8 @@ def current_review_ready(comments: list[dict[str, Any]], sha: str, before: str) 
         body = item.get("body") or ""
         if "ARKUS_AUTOMATION_V2" not in body:
             continue
-        fields = marker_fields(body)
-        if (fields.get("state") == "REVIEW_READY" and fields.get("target sha", "").lower() == sha and
-                (item.get("created_at") or "") <= before):
+        if ((item.get("created_at") or "") <= before and
+                review_ready_context_matches(pr, item, sha)):
             candidates.append(item)
     return max(candidates, key=lambda item: item.get("created_at") or "") if candidates else None
 
@@ -225,9 +260,9 @@ def adopt(pr_number: int, target_sha: str, review_id: str, expected_verdict: str
         raise AdoptionError(f"Reviewer ID {review_id} names wrong SHA {verdict['sha']}")
     if verdict["verdict"] != expected_verdict:
         raise AdoptionError(f"Reviewer ID {review_id} verdict conflict: {verdict['verdict']}")
-    ready = current_review_ready(comments, target_sha, verdict["at"])
+    ready = current_review_ready(comments, pr, target_sha, verdict["at"])
     if ready is None:
-        raise AdoptionError("no authoritative REVIEW_READY marker predates the Reviewer verdict")
+        raise AdoptionError("no current context-bound authoritative REVIEW_READY marker predates the Reviewer verdict")
     ready_at = ready.get("created_at") or ""
     for row in verdicts:
         if row["at"] >= ready_at and row["sha"] != target_sha:
