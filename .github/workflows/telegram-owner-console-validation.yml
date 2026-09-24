@@ -1,0 +1,33 @@
+name: Telegram Owner Console Validation
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/local_wp_remote_console.py'
+      - 'scripts/local_wp_autopilot_remote.py'
+      - 'scripts/request_owner_decision.py'
+      - 'scripts/test_local_wp_remote_console.py'
+      - '.github/workflows/telegram-owner-console-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-transport-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+        with:
+          python-version: '3.12'
+      - name: Compile remote-control scripts
+        run: |
+          python -m py_compile \
+            scripts/local_wp_remote_console.py \
+            scripts/local_wp_autopilot_remote.py \
+            scripts/request_owner_decision.py \
+            scripts/test_local_wp_remote_console.py
+      - name: Run offline owner-console tests
+        run: python scripts/test_local_wp_remote_console.py
