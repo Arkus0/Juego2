@@ -12,4 +12,6 @@ It must exercise the pinned Unity Editor `6000.3.24f1 (4e7b9b5b6244)` through th
 - the real filesystem project lease rejects a second independent same-project holder;
 - only the accepted deterministic GameCI package delta may occur, after which the tracked tree is restored exactly to the candidate SHA.
 
+The frozen-candidate verifier is registered as `scripts/h1-03a-verify-exact-sha.sh`. It re-runs the locked restore, Release build and focused remote lifecycle suite at the frozen SHA; the effective Unity claim remains separate exact-SHA evidence from this workflow and is not simulated or duplicated by the generic freeze verifier.
+
 `.h1-03a-effective/` is validation scratch state only. It is ignored by Git so GameCI semantic-version probing cannot mistake evidence files for product drift.
