@@ -12,6 +12,7 @@ on:
       - 'scripts/local_wp_quota_recovery.py'
       - 'scripts/request_owner_decision.py'
       - 'scripts/test_local_wp_remote_console.py'
+      - 'scripts/test_local_wp_decision_ui.py'
       - 'scripts/test_local_wp_autopilot.py'
       - 'scripts/test_local_wp_worker_recovery.py'
       - 'scripts/test_local_wp_quota_recovery.py'
@@ -46,6 +47,7 @@ jobs:
             scripts/request_owner_decision.py \
             scripts/test_local_wp_autopilot.py \
             scripts/test_local_wp_remote_console.py \
+            scripts/test_local_wp_decision_ui.py \
             scripts/test_local_wp_worker_recovery.py \
             scripts/test_local_wp_quota_recovery.py \
             scripts/test_local_wp_quota_resume.py
@@ -59,3 +61,5 @@ jobs:
         run: python scripts/test_local_wp_quota_resume.py
       - name: Run offline owner-console tests
         run: python scripts/test_local_wp_remote_console.py
+      - name: Run owner-decision presentation regression test
+        run: python scripts/test_local_wp_decision_ui.py
