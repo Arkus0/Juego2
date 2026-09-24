@@ -6,7 +6,9 @@ Class: PRODUCT / GAME-SPACE DESIGN (NON-FOUNDATIONAL)
 
 This document does not modify any accepted CITY document. Where a proposal needs an accepted owner to change, it says which one and why. It authorizes no Unity work, gameplay, Living World semantics or asset adoption.
 
-Figure: `Docs/production/figures/city_seed_play_layer.svg` (exact CITY-03 geometry + indicative proposals).
+Figures:
+- `Docs/production/figures/city_seed_play_layer.svg`: exact CITY-03 geometry + indicative proposals.
+- `Docs/production/figures/city_seed_fabric.svg`: the same seed with illustrative villa fabric (closed blocks) and the non-playable envelope beyond.
 
 ---
 
@@ -125,6 +127,19 @@ This layer reserves footprints, stage points and closure points. Schedules and r
 
 **PD-15 Hometown attachment.** Recurrence builds affection: fixed NPC posts (the old man on the same bench), shop owners who greet you, visible change after your actions (SCN-11 substrate), seasons. Spaces reserve those posts.
 
+### Town-ness
+
+**PD-16 Villa, not aldea.** The town must read as a dense Cantabrian *villa* (market town with urban pretensions), not a scattered hamlet. The accepted seed names only 8 programmed frontages (F01–F08); the ordinary fabric around them (`fam.casco.houses`, `fam.plaza.arcades`, `fam.calle.mixed_frontages`) is committed but not quantified, and **that fabric is what makes it read as a town**. Rules:
+
+- **Closed blocks (manzanas), not detached houses.** In casco, plaza and Calle Mayor, buildings share party walls and form continuous street walls; the inside of the block holds patios, huertos and corrals. Hypothesis: ≥85% of public frontage length in the core is built wall; gaps are deliberate (a passage, a court gate, a view).
+- **Narrow lots, many doors.** Lot frontage 5.5–9.5 m, so a 60 m street shows 7–10 doors. The rhythm of doors, balconies and signs is what says "town". Illustrative fill of the seed at this grain gives **≈280 houses** in the playable envelope (~46% of dry land built). CITY-00's coarser estimate (≈140 at ~90 m² footprints) is the same fabric counted at a bigger lot size.
+- **Height gradient.** 3–4 storeys around the plaza and Calle Mayor (with soportales and solanas), 2–3 at the edges, 1–2 on the far bank. Height varies ±1 storey every 2–3 lots so roofs step, never a flat cornice line.
+- **Villa signifiers across the full city** (not all in the seed): church with belfry, tower house/town hall, arcaded plaza, covered market, casino or cultural circle, small cinema, music kiosk, pharmacy, bank branch, bus stop/station, school or instituto, Guardia Civil post, Ensanche blocks with glazed *galerías*. These are what separate a *villa* from an *aldea*; CITY-02 should check that its programme covers them.
+- **The town continues past the edge.** The soft envelope (CITY-03 §8) must show continuous roofscape on every seam: Ensanche blocks across the Arroyo, Barrio Alto climbing the slope, Calle Mayor continuing, Orilla-sur/Puerto sheds downstream. The player should never see the town "end" from inside the seed.
+- **Production unit = block, not house.** 280 houses are affordable because they are authored as a small set of reviewed façade-bay assemblies (CITY-05 composition ladder) instanced along block perimeters, not 280 unique buildings. Only F01–F08 and landmarks are bespoke.
+
+*Check (CITY-04):* built-frontage ratio per represented street; door count per 50 m; storey histogram; skyline screenshot from bridge, plaza and landing showing no visible "end of town".
+
 ---
 
 ## 4. Application to the seed
@@ -198,6 +213,7 @@ A small widening at the top of the Cuesta overlooking the confluence and the pas
 | Dead ends without payoff | 4–5 | 0 |
 | L1 landmark | none | Torre |
 | Designed stages | 0 | 8 types placed |
+| Ordinary fabric in the playable seed | unquantified (8 named slots) | ≈280 houses in closed blocks (illustrative), continuous street walls |
 | Composed postcards | 0 | 5 |
 | Casco↔Plaza public routes | 1 (W05) | 3 (W05, Pasadizo, Paseo+Escaleras) |
 | New water crossings | — | **0** |
