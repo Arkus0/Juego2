@@ -1,5 +1,7 @@
 # WP-CTX-DW-H1-01 PREDECESSOR_CONTRACT_CHECK
 
+PREDECESSOR_CONTRACT_CHECK: PASS
+
 Worker baseline: `c87e6fb69b2b0bba3608cb3f77073779580aae8d` (`main`, 2026-09-24).
 
 ## Accepted predecessors and authority
