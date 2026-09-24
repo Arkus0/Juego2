@@ -269,11 +269,35 @@ class RoutingTests(unittest.TestCase):
             module.review_turn_completion(123, current, review_id, frozen, verdicts)
 
     def test_review_turn_allows_exact_sha_merge(self):
-        frozen = "a" * 40
+        frozen, merge_commit = "a" * 40, "c" * 40
         review_id = "1" * 32
-        current = {"state": "closed", "merged": True, "head": {"sha": frozen}}
+        current = {"state": "closed", "merged": True, "head": {"sha": frozen},
+                   "merge_commit_sha": merge_commit}
         verdict = {"id": review_id, "sha": frozen, "verdict": "PASS", "at": "2026-01-01T00:00:00Z"}
-        self.assertEqual(module.review_turn_completion(123, current, review_id, frozen, [verdict]), verdict)
+        with patch.object(module, "gh_json", return_value={"parents": [{"sha": "d" * 40}, {"sha": frozen}]}):
+            self.assertEqual(module.review_turn_completion(123, current, review_id, frozen, [verdict]), verdict)
+
+    def test_review_turn_rejects_wrong_merge_even_if_head_restored(self):
+        frozen, wrong, merge_commit = "a" * 40, "b" * 40, "c" * 40
+        review_id = "1" * 32
+        current = {"state": "closed", "merged": True, "head": {"sha": frozen},
+                   "merge_commit_sha": merge_commit}
+        verdict = {"id": review_id, "sha": frozen, "verdict": "PASS", "at": "2026-01-01T00:00:00Z"}
+        merged_wrong = {"parents": [{"sha": "d" * 40}, {"sha": wrong}]}
+        with patch.object(module, "gh_json", return_value=merged_wrong), \
+             self.assertRaisesRegex(module.StopFlow, "did not merge frozen SHA"):
+            module.review_turn_completion(123, current, review_id, frozen, [verdict])
+
+    def test_controller_merge_pins_frozen_sha(self):
+        frozen, merge_commit = "a" * 40, "c" * 40
+        before = {"state": "open", "merged": False, "head": {"sha": frozen}}
+        after = {"state": "closed", "merged": True, "head": {"sha": frozen},
+                 "merge_commit_sha": merge_commit}
+        commit = {"parents": [{"sha": "d" * 40}, {"sha": frozen}]}
+        with patch.object(module, "gh_json", side_effect=[before, {"merged": True}, after, commit]) as gh:
+            self.assertEqual(module.merge_exact_sha(123, frozen), after)
+            gh.assert_any_call("api", "--method", "PUT", "repos/Arkus0/Juego2/pulls/123/merge",
+                               "-f", f"sha={frozen}", "-f", "merge_method=merge")
 
     def test_material_fail_only_same_sha_appeal_can_supersede(self):
         sha = "a" * 40

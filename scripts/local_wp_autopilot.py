@@ -267,8 +267,7 @@ def next_from_merged_pr(root: Path, pr: dict[str, Any]) -> str | None:
     row = latest_marker(markers(pr["number"]), "DOCSYNC_COMPLETE")
     if not row:
         raise StopFlow(f"PR #{pr['number']} merged but lacks DOCSYNC_COMPLETE")
-    # The successful Reviewer can merge and DocSync while this process keeps
-    # running. Refresh main before checking the key's local ancestry.
+    # The controller owns exact-SHA merge; DocSync may complete while this process keeps running.
     run("git", "fetch", "origin", "main", cwd=root)
     validate_docsync(root, pr, row)
     raw = row.get("next wp", "")
@@ -621,6 +620,36 @@ def reviewed_verdicts(pr: int) -> list[dict[str, str]]:
     return sorted(by_id.values(), key=lambda row: row["at"])
 
 
+def assert_exact_sha_merge(pr: int, current: dict[str, Any], expected_sha: str) -> None:
+    if not SHA_RE.fullmatch(expected_sha) or not current.get("merged"):
+        raise StopFlow(f"PR #{pr} lacks a completed exact-SHA merge")
+    merge_commit = (current.get("merge_commit_sha") or "").lower()
+    if not SHA_RE.fullmatch(merge_commit):
+        raise StopFlow(f"PR #{pr} lacks a merge commit for exact-SHA verification")
+    commit = gh_json("api", f"repos/{REPO}/commits/{merge_commit}")
+    parents = {(row.get("sha") or "").lower() for row in (commit.get("parents") or [])}
+    if expected_sha not in parents:
+        raise StopFlow(f"PR #{pr} merge commit {merge_commit} did not merge frozen SHA {expected_sha}")
+
+
+def merge_exact_sha(pr: int, expected_sha: str) -> dict[str, Any]:
+    if not SHA_RE.fullmatch(expected_sha):
+        raise StopFlow(f"PR #{pr} controller merge has invalid frozen SHA")
+    current = gh_json("api", f"repos/{REPO}/pulls/{pr}")
+    head = ((current.get("head") or {}).get("sha") or "").lower()
+    if current.get("state") != "open" or current.get("merged"):
+        raise StopFlow(f"PR #{pr} changed state before controller exact-SHA merge")
+    if head != expected_sha:
+        raise StopFlow(f"PR #{pr} candidate moved before controller merge: expected {expected_sha}, got {head or 'missing'}")
+    result = gh_json("api", "--method", "PUT", f"repos/{REPO}/pulls/{pr}/merge",
+                     "-f", f"sha={expected_sha}", "-f", "merge_method=merge")
+    if not result.get("merged"):
+        raise StopFlow(f"PR #{pr} exact-SHA merge was rejected: {result.get('message') or 'unknown reason'}")
+    merged = gh_json("api", f"repos/{REPO}/pulls/{pr}")
+    assert_exact_sha_merge(pr, merged, expected_sha)
+    return merged
+
+
 def review_turn_completion(pr: int, current: dict[str, Any], review_id: str,
                            expected_sha: str, verdicts: list[dict[str, str]]) -> dict[str, str] | None:
     if not REVIEW_ID_RE.fullmatch(review_id) or not SHA_RE.fullmatch(expected_sha):
@@ -628,7 +657,9 @@ def review_turn_completion(pr: int, current: dict[str, Any], review_id: str,
     head = ((current.get("head") or {}).get("sha") or "").lower()
     if head != expected_sha:
         raise StopFlow(f"PR #{pr} candidate moved during Reviewer turn: expected {expected_sha}, got {head or 'missing'}")
-    if current.get("state") != "open" and not current.get("merged"):
+    if current.get("merged"):
+        assert_exact_sha_merge(pr, current, expected_sha)
+    elif current.get("state") != "open":
         raise StopFlow(f"PR #{pr} was closed during Reviewer turn without exact-SHA merge")
     matching = [row for row in verdicts if row["id"] == review_id]
     if not matching:
@@ -756,9 +787,9 @@ async def main_async(args: argparse.Namespace) -> None:
                     accepted = next((row for row in reversed(merged_verdicts)
                                      if row["sha"] == frozen_merged), None)
                     if (not SHA_RE.fullmatch(frozen_merged) or
-                        frozen_merged != current["head"]["sha"].lower() or
                         not accepted or accepted["verdict"] != "PASS"):
                         raise StopFlow(f"Merged PR #{pr['number']} lacks an exact frozen-SHA independent PASS; DocSync blocked")
+                    assert_exact_sha_merge(pr["number"], current, frozen_merged)
                     completed = latest_marker(rows, "DOCSYNC_COMPLETE")
                     if completed:
                         wp = next_from_merged_pr(root, current)
@@ -812,7 +843,7 @@ async def main_async(args: argparse.Namespace) -> None:
                             raise StopFlow(f"PR #{pr['number']} protocol-only correction changed PRODUCT_SHA")
                         continue
                 if latest_current_verdict and latest_current_verdict["verdict"] == "PASS":
-                    await wait_for_state(pr["number"], lambda p, m: bool(p.get("merged")))
+                    merge_exact_sha(pr["number"], frozen)
                     continue
                 if latest_current_verdict and latest_current_verdict["verdict"] == "FAIL" and not repair:
                     await wait_for_state(pr["number"], lambda p, m, frozen=frozen: bool(latest_marker(m, "REPAIR_REQUIRED", frozen)))
@@ -874,7 +905,7 @@ async def main_async(args: argparse.Namespace) -> None:
                                 "Detail: one independent same-SHA appeal is starting; restart must not repeat it.\n")
                         run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
                         await codex_role(root, state, "appeal-reviewer",
-                            f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']}, SHA {frozen}. Hubo FAIL previo y auditoría de posible sobredefensa. Reconstruye el contrato sin confiar en la auditoría; si el FAIL es inválido, deja PASS exact-SHA razonado que lo supersede; si es válido, mantén FAIL. Publica un solo veredicto en GitHub con líneas literales 'Reviewer verdict: PASS' o 'Reviewer verdict: FAIL', 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. No edites ni repares.",
+                            f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']}, SHA {frozen}. Hubo FAIL previo y auditoría de posible sobredefensa. Reconstruye el contrato sin confiar en la auditoría; si el FAIL es inválido, deja PASS exact-SHA razonado que lo supersede; si es válido, mantén FAIL. Publica un solo veredicto en GitHub con líneas literales 'Reviewer verdict: PASS' o 'Reviewer verdict: FAIL', 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. No edites, no repares y no mergees; el controlador hará el merge exact-SHA tras un PASS.",
                             "gpt-6-sol", "xhigh")
                         appeal_sha = ""
                         appeal_pr, _ = await wait_for_state(
@@ -903,7 +934,7 @@ async def main_async(args: argparse.Namespace) -> None:
                 if ready:
                     review_id = uuid.uuid4().hex
                     await quota_before_reasoning(app, wp, pr["number"])
-                    await codex_role(root, state, "reviewer", f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']} / {wp}, SHA {frozen}. No recibes contexto del Worker. Sigue PRODUCT_SHA_CLOSURE.md: usa CI exact-SHA para hechos mecánicos; usa PROTOCOL_FIX/REVIEW_BLOCKED, no FAIL, para metadata pura. Publica una sola revisión o comentario en GitHub con líneas literales 'Reviewer verdict: PASS|FAIL|PROTOCOL_FIX|REVIEW_BLOCKED' (elige un valor, sin barras), 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. Si PASS, finaliza merge y DocSync documental según protocolo. No repares implementación.", "gpt-6-sol", "xhigh")
+                    await codex_role(root, state, "reviewer", f"$validate-workpack Reviewer independiente NUEVO del PR #{pr['number']} / {wp}, SHA {frozen}. No recibes contexto del Worker. Sigue PRODUCT_SHA_CLOSURE.md: usa CI exact-SHA para hechos mecánicos; usa PROTOCOL_FIX/REVIEW_BLOCKED, no FAIL, para metadata pura. Publica una sola revisión o comentario en GitHub con líneas literales 'Reviewer verdict: PASS|FAIL|PROTOCOL_FIX|REVIEW_BLOCKED' (elige un valor, sin barras), 'Reviewed candidate SHA: {frozen}' y 'Autopilot review ID: {review_id}'. Si PASS, no mergees ni hagas DocSync; el controlador hará el merge exact-SHA. No repares implementación.", "gpt-6-sol", "xhigh")
                     await wait_for_state(
                         pr["number"],
                         lambda p, m, review_id=review_id, pr_number=pr["number"], frozen=frozen:
