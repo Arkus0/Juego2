@@ -141,7 +141,7 @@ async def remote_codex_role(root: Path, state: Path, role: str, prompt: str, mod
         try:
             return await ORIGINAL_CODEX_ROLE(root, state, role, prompt, model, effort, schema,
                                              assets_root)
-        except autopilot.StopFlow:
+        except (autopilot.StopFlow, OSError):
             if role in {"worker", "repair"}:
                 _best_effort_snapshot(root, state, f"{role}-session-failed")
             raise
@@ -280,6 +280,12 @@ async def remote_main_async(args) -> None:
         raise autopilot.StopFlow(
             f"Interrupted Worker recovery did not preserve canonical PR #{current['number']} for {wp}")
     survivor = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{survivor['number']}")
+    survivor_rows = autopilot.markers(survivor["number"])
+    if (autopilot.latest_marker(survivor_rows, "BLOCKED") or
+            autopilot.latest_marker(survivor_rows, "HUMAN_ACTION_REQUIRED")):
+        _best_effort_snapshot(root, state, "worker-returned-blocked")
+        raise autopilot.StopFlow(
+            f"PR #{survivor['number']} Worker returned with a human-action/block marker")
     if recovery.is_resumable_worker_pr(survivor):
         try:
             after = recovery.inspect_resumable_checkout(root, survivor, autopilot.REPO)
