@@ -1,0 +1,413 @@
+#!/usr/bin/env python3
+"""Owner-only Telegram console for the local Juego2 WP autopilot.
+
+Run this idle supervisor on the workstation. It is the single Telegram
+getUpdates consumer and can start a bounded WP campaign, report status, pause or
+stop at the next WP boundary, queue an owner note for the next Worker-side role,
+and route exact owner-decision buttons back to a blocked Worker.
+
+The bot token stays in this supervisor process and is stripped from all Codex /
+autopilot child environments.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+import uuid
+from datetime import datetime, timezone
+from pathlib import Path
+from urllib.error import URLError
+from urllib.request import Request, urlopen
+
+REPO = "Arkus0/Juego2"
+WP_RE = re.compile(r"^(?:WP-)?([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+)$")
+CONTINUE_RE = re.compile(r"^arkus:continue:([1-9][0-9]*):([0-9a-f]{40}):([23])$")
+DECISION_RE = re.compile(r"^arkus:decision:([0-9a-f]{32}):([0-2])$")
+NEXT_RE = re.compile(r"Stopped after 1 completed WP\(s\); next=([A-Z][A-Z0-9-]*|NONE)")
+TOKEN_ENV = ("TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID")
+
+
+class ConsoleError(Exception):
+    pass
+
+
+def atomic_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def normalize_wp(value: str) -> str:
+    match = WP_RE.fullmatch(value.strip().upper())
+    if not match:
+        raise ConsoleError(f"WP inválido: {value!r}")
+    return match.group(1)
+
+
+def child_env(control_dir: Path, campaign_id: str) -> dict[str, str]:
+    env = os.environ.copy()
+    for name in TOKEN_ENV:
+        env.pop(name, None)
+    env["ARKUS_REMOTE_CONTROL_DIR"] = str(control_dir)
+    env["ARKUS_REMOTE_CAMPAIGN_ID"] = campaign_id
+    return env
+
+
+def telegram(token: str, method: str, payload: dict):
+    request = Request(f"https://api.telegram.org/bot{token}/{method}",
+                      data=json.dumps(payload).encode("utf-8"),
+                      headers={"Content-Type": "application/json"})
+    try:
+        with urlopen(request, timeout=45) as response:
+            data = json.load(response)
+    except (OSError, URLError, ValueError):
+        raise ConsoleError(f"Telegram {method} failed") from None
+    if not data.get("ok"):
+        raise ConsoleError(f"Telegram {method} rejected the request")
+    return data.get("result")
+
+
+def gh(*args: str, input_json: dict | None = None) -> dict | list | None:
+    cmd = ["gh", *args]
+    result = subprocess.run(cmd, input=(json.dumps(input_json) if input_json is not None else None),
+                            capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
+    if result.returncode:
+        raise ConsoleError(f"gh failed ({result.returncode}): {result.stderr[-300:]}")
+    return json.loads(result.stdout) if result.stdout.strip() else None
+
+
+def private_owner(update: dict, chat_id: int) -> bool:
+    message = update.get("message") or (update.get("callback_query") or {}).get("message") or {}
+    chat = message.get("chat") or {}
+    sender = (update.get("callback_query") or {}).get("from") or message.get("from") or {}
+    return chat.get("type") == "private" and chat.get("id") == chat_id and sender.get("id") == chat_id
+
+
+def parse_next(log_text: str) -> str | None:
+    matches = NEXT_RE.findall(log_text)
+    if not matches:
+        return None
+    return None if matches[-1] == "NONE" else normalize_wp(matches[-1])
+
+
+class RemoteConsole:
+    def __init__(self, root: Path, control_dir: Path, token: str, chat_id: int) -> None:
+        self.root = root
+        self.control_dir = control_dir
+        self.token = token
+        self.chat_id = chat_id
+        self.offset: int | None = None
+        self.proc: subprocess.Popen | None = None
+        self.log_handle = None
+        self.log_path: Path | None = None
+        self.current_wp: str | None = None
+        self.next_wp: str | None = None
+        self.campaign_id: str | None = None
+        self.active = False
+        self.paused = False
+        self.stop_after_wp = False
+        self.sent_decisions: set[str] = set()
+
+    def send(self, text: str, reply_markup: dict | None = None) -> None:
+        payload = {"chat_id": self.chat_id, "text": text[:4000], "disable_web_page_preview": True}
+        if reply_markup:
+            payload["reply_markup"] = reply_markup
+        telegram(self.token, "sendMessage", payload)
+
+    def answer_callback(self, ident: str, text: str, alert: bool = False) -> None:
+        telegram(self.token, "answerCallbackQuery",
+                 {"callback_query_id": ident, "text": text[:190], "show_alert": alert})
+
+    def launch(self, wp: str) -> None:
+        if self.proc is not None:
+            raise ConsoleError("Ya hay un WP en ejecución")
+        wp = normalize_wp(wp)
+        campaign_id = uuid.uuid4().hex
+        logs = self.control_dir / "logs"
+        logs.mkdir(parents=True, exist_ok=True)
+        log_path = logs / f"{int(time.time())}-{wp}.log"
+        handle = log_path.open("w", encoding="utf-8")
+        cmd = [sys.executable, str(self.root / "scripts" / "local_wp_autopilot_remote.py"),
+               "--root", str(self.root), "--wp", wp, "--one-wp"]
+        self.proc = subprocess.Popen(cmd, cwd=self.root, env=child_env(self.control_dir, campaign_id),
+                                     stdin=subprocess.DEVNULL, stdout=handle,
+                                     stderr=subprocess.STDOUT, text=True)
+        self.log_handle = handle
+        self.log_path = log_path
+        self.current_wp = wp
+        self.campaign_id = campaign_id
+        self.active = True
+        self.next_wp = None
+        self.sent_decisions.clear()
+        self.send(f"▶️ Campaña Arkus iniciada\nWP actual: {wp}\nEl Reviewer seguirá siendo una sesión fresca e independiente.")
+
+    def check_child(self) -> None:
+        if self.proc is None or self.proc.poll() is None:
+            return
+        code = self.proc.returncode
+        if self.log_handle:
+            self.log_handle.close()
+        text = self.log_path.read_text(encoding="utf-8", errors="replace") if self.log_path else ""
+        finished_wp = self.current_wp or "?"
+        self.proc = None
+        self.log_handle = None
+        self.campaign_id = None
+        self.sent_decisions.clear()
+        if code != 0:
+            self.active = False
+            self.next_wp = None
+            self.send(f"🛑 Autopilot detenido en {finished_wp}.\nEl flujo ha pedido intervención o falló un control. Revisa el aviso/GitHub; no se lanzará otro WP.")
+            return
+        next_wp = parse_next(text)
+        if next_wp is None:
+            self.active = False
+            self.next_wp = None
+            self.send(f"🏁 {finished_wp} completado y el handoff no declara otro WP. Campaña finalizada.")
+            return
+        self.next_wp = next_wp
+        if self.stop_after_wp:
+            self.active = False
+            self.stop_after_wp = False
+            self.send(f"⏹ {finished_wp} completado. Stop seguro aplicado antes de {next_wp}.")
+            return
+        if self.paused:
+            self.send(f"⏸ {finished_wp} completado. Pausado antes de {next_wp}. Usa /resume para seguir.")
+            return
+        self.launch(next_wp)
+
+    def queue_note(self, note: str) -> None:
+        note = note.strip()
+        if not note:
+            raise ConsoleError("Uso: /note <instrucción>")
+        path = self.control_dir / "pending-owner-note.txt"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(note[:4000] + "\n", encoding="utf-8")
+        self.send("📝 Instrucción guardada para la próxima sesión Worker/repair fresca. No se inyecta en un Reviewer ni altera un turno ya iniciado.")
+
+    def status(self) -> str:
+        if self.proc is not None:
+            mode = "pausa al terminar este WP" if self.paused else ("stop al terminar este WP" if self.stop_after_wp else "ejecutando")
+            return f"⚙️ Autopilot: {mode}\nWP: {self.current_wp}\nDecisiones pendientes: {self.pending_decision_count()}"
+        if self.active and self.paused and self.next_wp:
+            return f"⏸ Autopilot pausado\nSiguiente WP: {self.next_wp}"
+        return "⏹ Autopilot parado"
+
+    def pending_decision_count(self) -> int:
+        return sum(1 for item in self._decision_requests() if not self._response_path(item["decision_id"]).exists())
+
+    def _decision_requests(self) -> list[dict]:
+        directory = self.control_dir / "decisions"
+        if not directory.exists():
+            return []
+        rows = []
+        for path in sorted(directory.glob("*.json")):
+            if path.name.endswith(".response.json"):
+                continue
+            try:
+                row = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            if row.get("completed_at") or row.get("abandoned_at"):
+                continue
+            rows.append(row)
+        return rows
+
+    def _response_path(self, decision_id: str) -> Path:
+        return self.control_dir / "decisions" / f"{decision_id}.response.json"
+
+    def advertise_decisions(self) -> None:
+        if self.proc is None or not self.campaign_id:
+            return
+        for row in self._decision_requests():
+            ident = row.get("decision_id", "")
+            if ident in self.sent_decisions or row.get("campaign_id") != self.campaign_id:
+                continue
+            options = row.get("options") or []
+            if (not re.fullmatch(r"[0-9a-f]{32}", ident) or not isinstance(options, list) or
+                    not (2 <= len(options) <= 3)):
+                continue
+            keyboard = []
+            for index, option in enumerate(options):
+                callback = f"arkus:decision:{ident}:{index}"
+                keyboard.append([{"text": f"{index + 1}️⃣ {str(option)[:48]}", "callback_data": callback}])
+            subject = row.get("wp") or self.current_wp or "WP"
+            detail = (row.get("detail") or "").strip()
+            message = f"🟠 Decisión del owner — {subject}\n{row.get('question', '')}"
+            if detail:
+                message += f"\n\n{detail[:900]}"
+            message += "\n\nEsta decisión no caduca mientras el controlador local siga siendo el owner del turno."
+            self.send(message, {"inline_keyboard": keyboard})
+            self.sent_decisions.add(ident)
+
+    def handle_decision(self, query: dict, decision_id: str, index: int) -> None:
+        request_path = self.control_dir / "decisions" / f"{decision_id}.json"
+        if not request_path.exists() or self.proc is None or not self.campaign_id:
+            self.answer_callback(query["id"], "La decisión ya no pertenece a una campaña activa.", True)
+            return
+        try:
+            row = json.loads(request_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            self.answer_callback(query["id"], "Solicitud local inválida.", True)
+            return
+        options = row.get("options") or []
+        if row.get("campaign_id") != self.campaign_id or row.get("completed_at") or not 0 <= index < len(options):
+            self.answer_callback(query["id"], "Solicitud obsoleta o inválida.", True)
+            return
+        response = {"version": 1, "decision_id": decision_id, "campaign_id": self.campaign_id,
+                    "choice": index, "selected": options[index],
+                    "answered_at": datetime.now(timezone.utc).isoformat()}
+        atomic_json(self._response_path(decision_id), response)
+        self.answer_callback(query["id"], f"Elegido: {options[index]}")
+        self.send(f"✅ Decisión entregada al Worker de {row.get('wp') or self.current_wp}: {options[index]}")
+
+    def handle_continue(self, query: dict, pr: int, sha: str, fail_count: int) -> None:
+        if self.proc is None:
+            self.answer_callback(query["id"], "No hay campaña local activa para esta autorización.", True)
+            return
+        script = self.root / "scripts" / "telegram_continue_receiver.py"
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("arkus_tg_receiver_local", script)
+        if spec is None or spec.loader is None:
+            raise ConsoleError("No se puede cargar telegram_continue_receiver.py")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        module.fresh_offer = lambda created_at, now=None: True
+        try:
+            status = module.validate_current(pr, sha, fail_count)
+        except module.ReceiverError as exc:
+            self.answer_callback(query["id"], f"Ya no es válido: {exc}", True)
+            return
+        if status == "already":
+            self.answer_callback(query["id"], "Ya estaba autorizado.")
+            return
+        payload = {"event_type": "arkus_owner_continue_local",
+                   "client_payload": {"pr": pr, "target_sha": sha, "fail_count": fail_count,
+                                      "telegram_update_id": query.get("id", "")[:120]}}
+        gh("api", "--method", "POST", f"repos/{REPO}/dispatches", "--input", "-", input_json=payload)
+        self.answer_callback(query["id"], "Autorización enviada. GitHub volverá a validar PR/SHA/FAIL antes de continuar.")
+
+    def command(self, text: str) -> None:
+        parts = text.strip().split(maxsplit=1)
+        command = parts[0].lower() if parts else ""
+        arg = parts[1] if len(parts) > 1 else ""
+        if command in {"/run", "/start"}:
+            if self.proc is not None or self.active:
+                raise ConsoleError("Ya existe una campaña activa")
+            self.paused = False
+            self.stop_after_wp = False
+            self.launch(normalize_wp(arg))
+        elif command == "/pause":
+            if not self.active:
+                raise ConsoleError("No hay campaña activa")
+            self.paused = True
+            self.send("⏸ Pausa solicitada. Por seguridad no corto un agente a mitad de turno: se aplicará antes del siguiente WP.")
+        elif command == "/resume":
+            if self.proc is not None:
+                self.paused = False
+                self.send("▶️ Pausa cancelada; el WP actual sigue ejecutándose.")
+            elif self.active and self.paused and self.next_wp:
+                self.paused = False
+                self.launch(self.next_wp)
+            else:
+                raise ConsoleError("No hay una campaña pausada que reanudar")
+        elif command == "/stop":
+            if not self.active:
+                raise ConsoleError("No hay campaña activa")
+            if self.proc is None:
+                self.active = False
+                self.paused = False
+                self.next_wp = None
+                self.send("⏹ Campaña detenida.")
+            else:
+                self.stop_after_wp = True
+                self.paused = False
+                self.send("⏹ Stop seguro solicitado. Terminará el WP actual y no arrancará otro. No se mata un Worker/Reviewer a mitad de turno.")
+        elif command == "/status":
+            self.send(self.status())
+        elif command == "/note":
+            self.queue_note(arg)
+        elif command in {"/help", "/ayuda"}:
+            self.send("Comandos Arkus:\n/run H1-04 — iniciar campaña\n/status — estado\n/pause — pausar antes del siguiente WP\n/resume — continuar\n/stop — terminar de forma segura tras el WP actual\n/note texto — instrucción para el próximo Worker/repair fresco")
+        else:
+            raise ConsoleError("Comando no reconocido. Usa /help")
+
+    def handle_update(self, update: dict) -> None:
+        if not private_owner(update, self.chat_id):
+            return
+        query = update.get("callback_query") or {}
+        if query:
+            data = query.get("data") or ""
+            match = DECISION_RE.fullmatch(data)
+            if match:
+                self.handle_decision(query, match.group(1), int(match.group(2)))
+                return
+            match = CONTINUE_RE.fullmatch(data)
+            if match:
+                self.handle_continue(query, int(match.group(1)), match.group(2), int(match.group(3)))
+                return
+            self.answer_callback(query.get("id", ""), "Control obsoleto o no reconocido.", True)
+            return
+        message = update.get("message") or {}
+        text = message.get("text") or ""
+        if not text.startswith("/"):
+            return
+        try:
+            self.command(text)
+        except ConsoleError as exc:
+            self.send(f"⚠️ {exc}")
+
+    def poll_once(self) -> None:
+        params = {"timeout": 20, "limit": 100, "allowed_updates": ["message", "callback_query"]}
+        if self.offset is not None:
+            params["offset"] = self.offset
+        updates = telegram(self.token, "getUpdates", params)
+        if not isinstance(updates, list):
+            raise ConsoleError("Respuesta getUpdates inválida")
+        for update in updates:
+            self.offset = max(self.offset or 0, int(update["update_id"]) + 1)
+            self.handle_update(update)
+
+    def run(self) -> None:
+        webhook = telegram(self.token, "getWebhookInfo", {})
+        if not isinstance(webhook, dict) or webhook.get("url"):
+            raise ConsoleError("El bot tiene webhook; el modo local getUpdates requiere webhook vacío")
+        self.control_dir.mkdir(parents=True, exist_ok=True)
+        self.send("🟢 Arkus Telegram console online.\nNo hace falta tener una sesión Codex abierta. Usa /run <WP> para iniciar y /help para controles.")
+        while True:
+            self.check_child()
+            self.advertise_decisions()
+            self.poll_once()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", default=".")
+    parser.add_argument("--control-dir", default=str(Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Arkus" / "Juego2" / "remote-control"))
+    args = parser.parse_args()
+    token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+    raw_chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+    if not token or not raw_chat.isdecimal():
+        print("REMOTE_CONSOLE_STOP: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID local configuration missing", file=sys.stderr)
+        return 2
+    root = Path(args.root).resolve()
+    if not (root / "scripts" / "local_wp_autopilot.py").exists():
+        print("REMOTE_CONSOLE_STOP: --root is not a Juego2 checkout", file=sys.stderr)
+        return 2
+    try:
+        RemoteConsole(root, Path(args.control_dir).resolve(), token, int(raw_chat)).run()
+    except (ConsoleError, OSError, KeyboardInterrupt) as exc:
+        print(f"REMOTE_CONSOLE_STOP: {exc}", file=sys.stderr)
+        return 2
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
