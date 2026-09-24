@@ -29,6 +29,7 @@ namespace Arkus.H1.UnityHost
             _world = world ?? throw new ArgumentNullException(nameof(world));
             _profile = profile ?? throw new ArgumentNullException(nameof(profile));
         }
+
         public CapabilityKey Capability { get; }
         public string ExecutorId { get; }
 
@@ -57,11 +58,14 @@ namespace Arkus.H1.UnityHost
                     throw new JsonException("Projection reply identity is wrong.");
                 if (reply.ErrorCode.Length != 0)
                     return Failure(reply.ErrorCode, "Unity rejected the staged managed-scene projection.");
+
                 var observation = reply.Observation;
                 if (observation.SchemaId != "arkus.h1-managed-scene-observation@1" ||
                     observation.SceneLogicalId != H1ManagedScenePlan.SceneId ||
-                    observation.Nodes == null || observation.Nodes.Length > H1ManagedScenePlan.MaximumObjects)
+                    observation.Nodes == null || observation.Nodes.Length > H1ManagedScenePlan.MaximumObjects ||
+                    observation.Nodes.Any(node => node == null || node.Relationships == null || node.Relationships.Length > 512))
                     throw new JsonException("Projection observation is malformed.");
+
                 var currentHash = Arkus.Game.World.CanonicalWorldStateCodec.ComputeContentHash(_world.Current);
                 var current = observation.Active && observation.InputDigest == expected.InputDigest &&
                     observation.CanonicalHash == expected.CanonicalHash &&
@@ -72,6 +76,7 @@ namespace Arkus.H1.UnityHost
                     if (!current || observation.Nodes.Length != expected.Nodes.Length || !SameGraph(expected.Nodes, observation.Nodes))
                         return Failure("projection.observation-mismatch", "Effective scene observation does not equal the canonical projection plan.");
                 }
+
                 var data = new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["schemaId"] = observation.SchemaId,
@@ -83,14 +88,8 @@ namespace Arkus.H1.UnityHost
                     ["canonicalHash"] = observation.CanonicalHash,
                     ["catalogueFingerprint"] = observation.CatalogueFingerprint,
                     ["graphDigest"] = observation.GraphDigest,
-                    ["nodes"] = observation.Nodes.Select(node => (object?)new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
-                    {
-                        ["objectId"] = node.ObjectId, ["parentObjectId"] = node.ParentObjectId,
-                        ["sourceLogicalId"] = node.SourceLogicalId,
-                        ["positionMm"] = VectorData(node.PositionMm),
-                        ["rotationMilliDegrees"] = VectorData(node.RotationMilliDegrees),
-                        ["scalePpm"] = VectorData(node.ScalePpm)
-                    })).ToArray()
+                    ["realizationDigest"] = observation.RealizationDigest,
+                    ["nodes"] = observation.Nodes.Select(node => (object?)NodeData(node)).ToArray()
                 };
                 return CapabilityInvocationResult.Succeeded(new ReadOnlyDictionary<string, object?>(data));
             }
@@ -99,6 +98,40 @@ namespace Arkus.H1.UnityHost
                 return Failure("projection.corrupt-observation", "Unity returned a malformed projection observation.");
             }
             finally { _pendingPlan = null; }
+        }
+
+        private static IReadOnlyDictionary<string, object?> NodeData(H1ObservedSceneNode node)
+        {
+            return new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["objectId"] = node.ObjectId,
+                ["parentObjectId"] = node.ParentObjectId,
+                ["sourceLogicalId"] = node.SourceLogicalId,
+                ["sourceKind"] = node.SourceKind,
+                ["sourcePath"] = node.SourcePath,
+                ["sourceGuid"] = node.SourceGuid,
+                ["sourceLocalFileId"] = node.SourceLocalFileId,
+                ["sourceContentSha256"] = node.SourceContentSha256,
+                ["realizationKind"] = node.RealizationKind,
+                ["realizedPath"] = node.RealizedPath,
+                ["realizedGuid"] = node.RealizedGuid,
+                ["realizedLocalFileId"] = node.RealizedLocalFileId,
+                ["prefabGenerationId"] = node.PrefabGenerationId,
+                ["relationshipDigest"] = node.RelationshipDigest,
+                ["relationships"] = node.Relationships.Select(row => (object?)new ReadOnlyDictionary<string, object?>(
+                    new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["kind"] = row.Kind,
+                        ["relativeObjectPath"] = row.RelativeObjectPath,
+                        ["assetPath"] = row.AssetPath,
+                        ["assetGuid"] = row.AssetGuid,
+                        ["localFileId"] = row.LocalFileId,
+                        ["typeName"] = row.TypeName
+                    })).ToArray(),
+                ["positionMm"] = VectorData(node.PositionMm),
+                ["rotationMilliDegrees"] = VectorData(node.RotationMilliDegrees),
+                ["scalePpm"] = VectorData(node.ScalePpm)
+            });
         }
 
         private static bool SameGraph(IReadOnlyList<H1ManagedSceneNode> expected, IReadOnlyList<H1ObservedSceneNode> actual)
@@ -147,6 +180,7 @@ namespace Arkus.H1.UnityHost
         public string CanonicalHash { get; set; } = "";
         public string CatalogueFingerprint { get; set; } = "";
         public string GraphDigest { get; set; } = "";
+        public string RealizationDigest { get; set; } = "";
         public H1ObservedSceneNode[] Nodes { get; set; } = Array.Empty<H1ObservedSceneNode>();
     }
 
@@ -155,9 +189,31 @@ namespace Arkus.H1.UnityHost
         public string ObjectId { get; set; } = "";
         public string ParentObjectId { get; set; } = "";
         public string SourceLogicalId { get; set; } = "";
+        public string SourceKind { get; set; } = "";
+        public string SourcePath { get; set; } = "";
+        public string SourceGuid { get; set; } = "";
+        public string SourceLocalFileId { get; set; } = "";
+        public string SourceContentSha256 { get; set; } = "";
+        public string RealizationKind { get; set; } = "";
+        public string RealizedPath { get; set; } = "";
+        public string RealizedGuid { get; set; } = "";
+        public string RealizedLocalFileId { get; set; } = "";
+        public string PrefabGenerationId { get; set; } = "";
+        public string RelationshipDigest { get; set; } = "";
+        public H1ObservedPrefabRelationship[] Relationships { get; set; } = Array.Empty<H1ObservedPrefabRelationship>();
         public H1ProjectionVector PositionMm { get; set; } = new H1ProjectionVector();
         public H1ProjectionVector RotationMilliDegrees { get; set; } = new H1ProjectionVector();
         public H1ProjectionVector ScalePpm { get; set; } = new H1ProjectionVector();
+    }
+
+    public sealed class H1ObservedPrefabRelationship
+    {
+        public string Kind { get; set; } = "";
+        public string RelativeObjectPath { get; set; } = "";
+        public string AssetPath { get; set; } = "";
+        public string AssetGuid { get; set; } = "";
+        public string LocalFileId { get; set; } = "";
+        public string TypeName { get; set; } = "";
     }
 
     [PublicCapabilityRoute("arkus.unity-projection", "unity.projection.plan", "1.0")]
@@ -166,6 +222,7 @@ namespace Arkus.H1.UnityHost
         private readonly IWorldStateSource _world;
         private readonly H1UnityLaunchProfile _profile;
         public H1ManagedScenePlanHandler(IWorldStateSource world, H1UnityLaunchProfile profile) { _world = world; _profile = profile; }
+
         public CapabilityInvocationResult Invoke(CapabilityInvocationContext context, IReadOnlyDictionary<string, object?> request)
         {
             try
@@ -226,7 +283,7 @@ namespace Arkus.H1.UnityHost
                 return H1ManagedScenePlan.Build(world.Current, snapshot);
             }
             catch (IOException exception) { throw new H1ProjectionException("projection.catalogue-unavailable", exception.Message); }
-            catch (H1CatalogueException exception) { throw new H1ProjectionException("projection.catalogue-unavailable", exception.Code + ": " + exception.Message); }
+            catch (H1CatalogueException exception) { throw new H1ProjectionException(MapCatalogueFailure(exception.Code), exception.Code + ": " + exception.Message); }
         }
 
         public static void RequireScene(IReadOnlyDictionary<string, object?> request)
@@ -234,6 +291,14 @@ namespace Arkus.H1.UnityHost
             if (request == null || !request.TryGetValue("sceneLogicalId", out var raw) ||
                 raw is not string scene || scene != H1ManagedScenePlan.SceneId)
                 throw new H1ProjectionException("projection.scene-out-of-scope", "Only the fixed reviewed managed scene is admitted.");
+        }
+
+        public static string MapCatalogueFailure(string code)
+        {
+            if (code == "catalogue.missing-reference") return "projection.source-missing";
+            if (code == "catalogue.incompatible-reference") return "projection.source-wrong-type";
+            if (code == "catalogue.stale-mapping" || code == "catalogue.incompatible-mapping") return "projection.source-rebound";
+            return "projection.catalogue-unavailable";
         }
 
         public static CanonicalProviderContribution PlanContribution(IWorldStateSource world, H1UnityLaunchProfile profile)
@@ -255,8 +320,8 @@ namespace Arkus.H1.UnityHost
 
         public static IReadOnlyList<CapabilityDefinition> EditorDefinitions() => new[]
         {
-            EditorDefinition(H1ManagedSceneExecutor.MaterializeKey, SideEffectClass.ExternalReversible, ObservationSuccess(), "staged managed-scene publication"),
-            EditorDefinition(H1ManagedSceneExecutor.ObserveKey, SideEffectClass.ReadOnly, ObservationSuccess(), "normalized effective managed-scene observation")
+            EditorDefinition(H1ManagedSceneExecutor.MaterializeKey, SideEffectClass.ExternalReversible, ObservationSuccess(), "staged managed-scene publication and managed prefab realization"),
+            EditorDefinition(H1ManagedSceneExecutor.ObserveKey, SideEffectClass.ReadOnly, ObservationSuccess(), "normalized effective managed-scene and prefab observation")
         };
 
         public static IReadOnlyList<CapabilityRoute> EditorRoutes(H1UnityEditorExecutionCoordinator coordinator) => new[]
@@ -280,7 +345,7 @@ namespace Arkus.H1.UnityHost
                 Request(), success, CanonicalContractSchemas.StructuredError(),
                 effect, DeterminismClass.EnvironmentDependent,
                 new[] { "fixed-managed-scene", "canonical-and-catalogue-inputs-bound" },
-                new[] { "effective-scene-observed", "canonical-state-unchanged" },
+                new[] { "effective-scene-and-prefab-realization-observed", "canonical-state-unchanged" },
                 new ConcurrencySemantics(ConcurrencyClass.Serialized), new IdempotencySemantics(IdempotencyClass.Idempotent),
                 new BatchingSemantics(BatchingClass.Unsupported), new RepairSemantics(true, true),
                 new PolicySemantics(PrivilegeClass.Authoring, TransactionRequirement.None, ProvenanceRequirement.Required),
@@ -310,6 +375,30 @@ namespace Arkus.H1.UnityHost
         private static SchemaNode Vector() => SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         { ["x"] = SchemaNode.Integer(), ["y"] = SchemaNode.Integer(), ["z"] = SchemaNode.Integer() }, new[] { "x", "y", "z" });
 
+        private static SchemaNode Relationship() => SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+        {
+            ["kind"] = SchemaNode.String(new[] { "variant-base", "nested-prefab", "mesh-reference", "material-reference", "animation-clip-reference" }),
+            ["relativeObjectPath"] = SchemaNode.String(), ["assetPath"] = SchemaNode.String(),
+            ["assetGuid"] = SchemaNode.String(), ["localFileId"] = SchemaNode.String(), ["typeName"] = SchemaNode.String()
+        }, new[] { "kind", "relativeObjectPath", "assetPath", "assetGuid", "localFileId", "typeName" });
+
+        private static SchemaNode ObservedNode() => SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+        {
+            ["objectId"] = SchemaNode.String(), ["parentObjectId"] = SchemaNode.String(), ["sourceLogicalId"] = SchemaNode.String(),
+            ["sourceKind"] = SchemaNode.String(new[] { "prefab", "asset" }), ["sourcePath"] = SchemaNode.String(), ["sourceGuid"] = SchemaNode.String(),
+            ["sourceLocalFileId"] = SchemaNode.String(), ["sourceContentSha256"] = SchemaNode.String(),
+            ["realizationKind"] = SchemaNode.String(new[] { "managed-prefab-variant", "source-asset" }),
+            ["realizedPath"] = SchemaNode.String(), ["realizedGuid"] = SchemaNode.String(), ["realizedLocalFileId"] = SchemaNode.String(),
+            ["prefabGenerationId"] = SchemaNode.String(), ["relationshipDigest"] = SchemaNode.String(),
+            ["relationships"] = SchemaNode.Array(Relationship()),
+            ["positionMm"] = Vector(), ["rotationMilliDegrees"] = Vector(), ["scalePpm"] = Vector()
+        }, new[]
+        {
+            "objectId", "parentObjectId", "sourceLogicalId", "sourceKind", "sourcePath", "sourceGuid", "sourceLocalFileId", "sourceContentSha256",
+            "realizationKind", "realizedPath", "realizedGuid", "realizedLocalFileId", "prefabGenerationId", "relationshipDigest", "relationships",
+            "positionMm", "rotationMilliDegrees", "scalePpm"
+        });
+
         private static JsonSchemaDocument ObservationSuccess() => new JsonSchemaDocument(SchemaNode.Object(
             new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
             {
@@ -317,13 +406,8 @@ namespace Arkus.H1.UnityHost
                 ["sceneLogicalId"] = SchemaNode.String(), ["active"] = SchemaNode.Boolean(), ["current"] = SchemaNode.Boolean(),
                 ["generationId"] = SchemaNode.String(), ["inputDigest"] = SchemaNode.String(),
                 ["canonicalHash"] = SchemaNode.String(), ["catalogueFingerprint"] = SchemaNode.String(),
-                ["graphDigest"] = SchemaNode.String(),
-                ["nodes"] = SchemaNode.Array(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
-                {
-                    ["objectId"] = SchemaNode.String(), ["parentObjectId"] = SchemaNode.String(),
-                    ["sourceLogicalId"] = SchemaNode.String(), ["positionMm"] = Vector(),
-                    ["rotationMilliDegrees"] = Vector(), ["scalePpm"] = Vector()
-                }, new[] { "objectId", "parentObjectId", "sourceLogicalId", "positionMm", "rotationMilliDegrees", "scalePpm" }))
-            }, new[] { "schemaId", "sceneLogicalId", "active", "current", "generationId", "inputDigest", "canonicalHash", "catalogueFingerprint", "graphDigest", "nodes" }));
+                ["graphDigest"] = SchemaNode.String(), ["realizationDigest"] = SchemaNode.String(),
+                ["nodes"] = SchemaNode.Array(ObservedNode())
+            }, new[] { "schemaId", "sceneLogicalId", "active", "current", "generationId", "inputDigest", "canonicalHash", "catalogueFingerprint", "graphDigest", "realizationDigest", "nodes" }));
     }
 }
