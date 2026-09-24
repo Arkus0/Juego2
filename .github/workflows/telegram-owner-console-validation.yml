@@ -8,9 +8,11 @@ on:
       - 'scripts/local_wp_remote_console_core.py'
       - 'scripts/local_wp_autopilot.py'
       - 'scripts/local_wp_autopilot_remote.py'
+      - 'scripts/local_wp_worker_recovery.py'
       - 'scripts/request_owner_decision.py'
       - 'scripts/test_local_wp_remote_console.py'
       - 'scripts/test_local_wp_autopilot.py'
+      - 'scripts/test_local_wp_worker_recovery.py'
       - 'scripts/launchers/windows/Arkus-Console.ps1'
       - '.github/workflows/telegram-owner-command.yml'
       - '.github/workflows/telegram-owner-console-validation.yml'
@@ -36,10 +38,14 @@ jobs:
             scripts/local_wp_remote_console.py \
             scripts/local_wp_remote_console_core.py \
             scripts/local_wp_autopilot_remote.py \
+            scripts/local_wp_worker_recovery.py \
             scripts/request_owner_decision.py \
             scripts/test_local_wp_autopilot.py \
-            scripts/test_local_wp_remote_console.py
+            scripts/test_local_wp_remote_console.py \
+            scripts/test_local_wp_worker_recovery.py
       - name: Run offline autopilot tests
         run: python scripts/test_local_wp_autopilot.py
+      - name: Run offline Worker recovery tests
+        run: python scripts/test_local_wp_worker_recovery.py
       - name: Run offline owner-console tests
         run: python scripts/test_local_wp_remote_console.py
