@@ -58,7 +58,8 @@ namespace Arkus.H1.UnityHost
                 ["platform"] = Platform,
                 ["editorVersion"] = EffectiveEditorVersion,
                 ["editorRevision"] = EffectiveEditorRevision,
-                ["operationCeilingsId"] = OperationCeilingsId
+                ["operationCeilingsId"] = OperationCeilingsId,
+                ["operationCeilings"] = H1UnityOperationCeilings.ToData()
             });
         }
 
@@ -376,13 +377,19 @@ namespace Arkus.H1.UnityHost
         {
             if (result == null) throw new ArgumentNullException(nameof(result));
             if (!string.Equals(result.Payload, "inspect", StringComparison.Ordinal)) throw new FormatException("Unexpected inspection payload.");
+            var publicProfile = H1UnityLaunchProfile.ForCurrentHost().ToPublicData();
             return CapabilityInvocationResult.Succeeded(ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
             {
                 ["schemaId"] = "arkus.h1-unity-project-profile-inspection@1",
+                ["invocationId"] = result.InvocationId,
                 ["profileId"] = result.ProfileId,
                 ["projectIdentity"] = result.ProjectIdentity,
+                ["entryPoint"] = publicProfile["entryPoint"],
+                ["platform"] = publicProfile["platform"],
                 ["editorVersion"] = result.EditorVersion,
                 ["editorRevision"] = result.EditorRevision,
+                ["operationCeilingsId"] = publicProfile["operationCeilingsId"],
+                ["operationCeilings"] = publicProfile["operationCeilings"],
                 ["mainThread"] = result.MainThread,
                 ["executorId"] = result.ExecutorId
             }));
@@ -417,6 +424,7 @@ namespace Arkus.H1.UnityHost
             return CapabilityInvocationResult.Succeeded(new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
             {
                 ["schemaId"] = "arkus.h1-unity-hierarchy-probe@1",
+                ["invocationId"] = result.InvocationId,
                 ["hierarchy"] = hierarchy,
                 ["mainThread"] = result.MainThread
             }));
@@ -549,17 +557,23 @@ namespace Arkus.H1.UnityHost
         private static JsonSchemaDocument ProjectProfileSuccessSchema() => new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {
             ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-unity-project-profile-inspection@1" }),
+            ["invocationId"] = SchemaNode.String(),
             ["profileId"] = SchemaNode.String(new[] { H1UnityLaunchProfile.ProfileId }),
             ["projectIdentity"] = SchemaNode.String(new[] { UnityProjectWorkspaceAuthority.ProjectIdentity }),
+            ["entryPoint"] = SchemaNode.String(new[] { H1UnityLaunchProfile.FixedEntryPoint }),
+            ["platform"] = SchemaNode.String(new[] { "windows-x64", "macos", "linux-x64" }),
             ["editorVersion"] = SchemaNode.String(new[] { H1UnityLaunchProfile.EditorVersion }),
             ["editorRevision"] = SchemaNode.String(new[] { H1UnityLaunchProfile.EditorRevision }),
+            ["operationCeilingsId"] = SchemaNode.String(new[] { H1UnityOperationCeilings.SchemaId }),
+            ["operationCeilings"] = OperationCeilingsSchema(),
             ["mainThread"] = SchemaNode.Boolean(),
             ["executorId"] = SchemaNode.String(new[] { ProjectProfileInspectExecutor.WorkerExecutorId })
-        }, new[] { "schemaId", "profileId", "projectIdentity", "editorVersion", "editorRevision", "mainThread", "executorId" }));
+        }, new[] { "schemaId", "invocationId", "profileId", "projectIdentity", "entryPoint", "platform", "editorVersion", "editorRevision", "operationCeilingsId", "operationCeilings", "mainThread", "executorId" }));
 
         private static JsonSchemaDocument HierarchyProbeSuccessSchema() => new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {
             ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-unity-hierarchy-probe@1" }),
+            ["invocationId"] = SchemaNode.String(),
             ["hierarchy"] = SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
             {
                 ["rootId"] = SchemaNode.String(new[] { "diagnostic-root" }),
@@ -568,7 +582,16 @@ namespace Arkus.H1.UnityHost
                 ["active"] = SchemaNode.Boolean()
             }, new[] { "rootId", "childId", "component", "active" }),
             ["mainThread"] = SchemaNode.Boolean()
-        }, new[] { "schemaId", "hierarchy", "mainThread" }));
+        }, new[] { "schemaId", "invocationId", "hierarchy", "mainThread" }));
+
+        private static SchemaNode OperationCeilingsSchema() => SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+        {
+            ["schemaId"] = SchemaNode.String(new[] { H1UnityOperationCeilings.SchemaId }),
+            ["maximumExecutionMilliseconds"] = SchemaNode.Integer(),
+            ["maximumLedgerEntries"] = SchemaNode.Integer(),
+            ["maximumPayloadBytes"] = SchemaNode.Integer(),
+            ["h0EnvelopeUnchanged"] = SchemaNode.String(new[] { H0ResourceEnvelope.SchemaId })
+        }, new[] { "schemaId", "maximumExecutionMilliseconds", "maximumLedgerEntries", "maximumPayloadBytes", "h0EnvelopeUnchanged" });
 
         private static JsonSchemaDocument OperationStatusSuccessSchema() => new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {
