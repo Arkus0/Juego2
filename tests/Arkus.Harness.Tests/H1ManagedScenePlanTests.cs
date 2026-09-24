@@ -36,7 +36,7 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void Unbound_parent_and_unavailable_catalogue_source_fail_before_publication()
+        public void Missing_wrong_type_and_unbound_parent_fail_with_stable_projection_diagnostics()
         {
             var catalogue = Catalogue();
             var unbound = new WorldState(new WorldId("world.potes"), 0,
@@ -50,7 +50,12 @@ namespace Arkus.Harness.Tests
             var missing = new WorldState(new WorldId("world.potes"), 0,
                 new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
                 new[] { Binding("plaza.potes", 0, "prefab.absent") });
-            Assert.Equal("projection.source-unavailable", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(missing, catalogue)).Code);
+            Assert.Equal("projection.source-missing", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(missing, catalogue)).Code);
+
+            var wrongType = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[] { Binding("plaza.potes", 0, "quaternius.medieval.asset.wall-plaster-window-wide-flat") });
+            Assert.Equal("projection.source-wrong-type", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(wrongType, catalogue)).Code);
 
             var unsupported = new WorldState(new WorldId("world.potes"), 0,
                 new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
