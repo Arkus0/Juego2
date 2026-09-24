@@ -81,7 +81,9 @@
           "Arkus.Harness.Protocol": "[1.0.0, )"
         }
       },
-      "arkus.game.core": { "type": "Project" },
+      "arkus.game.core": {
+        "type": "Project"
+      },
       "arkus.game.validation": {
         "type": "Project",
         "dependencies": {
@@ -92,12 +94,17 @@
       },
       "arkus.game.world": {
         "type": "Project",
-        "dependencies": { "Arkus.Game.Core": "[1.0.0, )" }
+        "dependencies": {
+          "Arkus.Game.Core": "[1.0.0, )"
+        }
       },
       "arkus.h1.unityhost": {
         "type": "Project",
         "dependencies": {
           "Arkus.EngineBridge.UnityAuthoring": "[1.0.0, )",
+          "Arkus.Game.Authoring": "[1.0.0, )",
+          "Arkus.Game.Validation": "[1.0.0, )",
+          "Arkus.Game.World": "[1.0.0, )",
           "Arkus.Harness.Projection": "[1.0.0, )",
           "Arkus.Harness.Protocol": "[1.0.0, )",
           "Arkus.Harness.Runtime": "[1.0.0, )"
@@ -111,7 +118,9 @@
           "Arkus.Harness.Runtime": "[1.0.0, )"
         }
       },
-      "arkus.harness.protocol": { "type": "Project" },
+      "arkus.harness.protocol": {
+        "type": "Project"
+      },
       "arkus.harness.runtime": {
         "type": "Project",
         "dependencies": {

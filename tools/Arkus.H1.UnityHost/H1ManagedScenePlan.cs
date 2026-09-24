@@ -68,6 +68,12 @@ namespace Arkus.H1.UnityHost
                 var binding = (IReadOnlyDictionary<string, object?>)inspected["binding"]!;
                 if ((string)binding["targetSceneId"]! != SceneId)
                     throw Error("projection.scene-out-of-scope", "The binding targets a scene outside the fixed managed scene.");
+                foreach (var raw in (IReadOnlyList<object?>)binding["components"]!)
+                {
+                    var component = (IReadOnlyDictionary<string, object?>)raw!;
+                    if ((string)component["kind"]! != "canonical-link")
+                        throw Error("projection.component-not-owned", "Renderer and Animator binding effects require a later component adapter; this scene projection cannot silently ignore them.");
+                }
                 var source = (IReadOnlyDictionary<string, object?>)binding["source"]!;
                 var sourceKind = (string)source["kind"]!;
                 var sourceId = (string)source["logicalId"]!;

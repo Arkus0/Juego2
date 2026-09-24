@@ -49,6 +49,11 @@ namespace Arkus.Harness.Tests
                 new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
                 new[] { Binding("plaza.potes", 0, "prefab.absent") });
             Assert.Equal("projection.source-unavailable", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(missing, catalogue)).Code);
+
+            var unsupported = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[] { Binding("plaza.potes", 0, renderer: true) });
+            Assert.Equal("projection.component-not-owned", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(unsupported, catalogue)).Code);
         }
 
         private static WorldState Fixture(long revision, bool includeWorkshop)
@@ -72,7 +77,7 @@ namespace Arkus.Harness.Tests
             return new WorldState(new WorldId("world.potes"), revision, objects, extensions);
         }
 
-        private static WorldExtensionData Binding(string subject, long x, string sourceId = "quaternius.medieval.prefab.wall-plaster-window-wide-flat", string? link = null)
+        private static WorldExtensionData Binding(string subject, long x, string sourceId = "quaternius.medieval.prefab.wall-plaster-window-wide-flat", string? link = null, bool renderer = false)
         {
             var components = new List<object?>();
             var references = new List<WorldReference>();
@@ -84,6 +89,11 @@ namespace Arkus.Harness.Tests
                 });
                 references.Add(new WorldReference(new WorldReferenceKind("faces"), new WorldObjectId(link)));
             }
+            if (renderer)
+                components.Add(new Dictionary<string, object?>
+                {
+                    ["kind"] = "renderer", ["materialId"] = "quaternius.medieval.material.wall-plaster-window-wide-flat-mi-plaster"
+                });
             var binding = new Dictionary<string, object?>
             {
                 ["schemaId"] = UnityBindingProducer.BindingSchemaId,
