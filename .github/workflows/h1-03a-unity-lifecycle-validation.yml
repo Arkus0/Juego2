@@ -36,6 +36,7 @@ jobs:
       TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.target_sha }}
       PINNED_GAMECI_VERSION: v0.1.69
       PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      PINNED_UNITY_IMAGE: unityci/editor:ubuntu-6000.3.24f1-linux-il2cpp-3@sha256:0884a94ace0ce762a4f5d7d2424f71bf59f4319267716f22695acfb49c0b1ff5
       UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -61,6 +62,11 @@ jobs:
           ref: ${{ env.TARGET_SHA }}
           fetch-depth: 0
 
+      - name: Setup .NET from global.json
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+
       - name: Verify clean checkout and pinned Unity contract
         shell: bash
         run: |
@@ -71,8 +77,9 @@ jobs:
           grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
           grep -Fq 'public const string FixedEntryPoint = "Arkus.H1.Editor.H1EditorWorker.Run";' tools/Arkus.H1.UnityHost/H1UnityLifecycle.cs
           grep -Fq 'private const string EntryPoint = "Arkus.H1.Editor.H1EditorWorker.Run";' Unity/ArkusUnity/Assets/Arkus/H1/Editor/H1EditorWorker.cs
+          grep -Fq 'info.ArgumentList.Add("-quit");' tools/Arkus.H1.UnityHost/H1UnityProcessInfrastructure.cs
 
-      - name: Install exact GameCI CLI
+      - name: Install exact GameCI CLI and image
         shell: bash
         run: |
           set -euo pipefail
@@ -83,6 +90,12 @@ jobs:
           printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
           chmod +x "${PINNED_GAMECI_BIN}"
           echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+          docker pull "${PINNED_UNITY_IMAGE}"
+          actual_digest="$(docker image inspect --format '{{index .RepoDigests 0}}' "${PINNED_UNITY_IMAGE}")"
+          case "${actual_digest}" in
+            *'@sha256:0884a94ace0ce762a4f5d7d2424f71bf59f4319267716f22695acfb49c0b1ff5') ;;
+            *) echo "::error::unexpected Unity image digest ${actual_digest}"; exit 2 ;;
+          esac
 
       - name: Prepare exact worker envelopes
         shell: bash
@@ -128,22 +141,47 @@ jobs:
           write('timeout', 'h1u-effective-timeout', 'unity.host.project-profile.inspect@1.0', 'arkus.h1.worker.project-profile.inspect@1', 'inspect')
           PY
 
+          cat > "${RUNNER_TEMP}/h1-03a-run-worker.sh" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          name="$1"
+          docker run --rm \
+            --shm-size=1025m \
+            --workdir /github/workspace \
+            --volume "${HOME}:/root:z" \
+            --volume "${GITHUB_WORKSPACE}:/github/workspace:z" \
+            "${PINNED_UNITY_IMAGE}" \
+            /opt/unity/Editor/Unity \
+            -batchmode \
+            -nographics \
+            -quit \
+            -projectPath /github/workspace/Unity/ArkusUnity \
+            -executeMethod Arkus.H1.Editor.H1EditorWorker.Run \
+            -arkusInvocation "/github/workspace/${EVIDENCE_ROOT}/${name}/invocation.env" \
+            -arkusResult "/github/workspace/${EVIDENCE_ROOT}/${name}/result.env" \
+            -logFile /dev/stdout \
+            > "${EVIDENCE_ROOT}/${name}/editor.log" 2>&1
+          SH
+          chmod +x "${RUNNER_TEMP}/h1-03a-run-worker.sh"
+          echo "H1_UNITY_WORKER_RUNNER=${RUNNER_TEMP}/h1-03a-run-worker.sh" >> "${GITHUB_ENV}"
+
+      - name: Activate exact hosted Unity seat
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${PINNED_GAMECI_BIN}" activate Unity/ArkusUnity \
+            --engine=unity \
+            --target-platform StandaloneLinux64 \
+            --custom-image="${PINNED_UNITY_IMAGE}"
+          touch "${EVIDENCE_ROOT}/license-activated"
+
       - name: Execute two fresh project-profile workers and hierarchy probe
         shell: bash
         run: |
           set -euo pipefail
-          run_worker() {
-            local name="$1"
-            "${PINNED_GAMECI_BIN}" build Unity/ArkusUnity \
-              --engine=unity \
-              --target-platform StandaloneLinux64 \
-              --build-method Arkus.H1.Editor.H1EditorWorker.Run \
-              --manualExit \
-              --customParameters="-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/${name}/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/${name}/result.env"
-          }
-          run_worker inspect-a
-          run_worker inspect-b
-          run_worker hierarchy
+          "${H1_UNITY_WORKER_RUNNER}" inspect-a
+          "${H1_UNITY_WORKER_RUNNER}" inspect-b
+          "${H1_UNITY_WORKER_RUNNER}" hierarchy
 
       - name: Reconcile main-thread identity and normalized equality
         shell: bash
@@ -203,37 +241,74 @@ jobs:
         run: |
           set -euo pipefail
           set +e
-          "${PINNED_GAMECI_BIN}" build Unity/ArkusUnity \
-            --engine=unity \
-            --target-platform StandaloneLinux64 \
-            --build-method Arkus.H1.Editor.H1EditorWorker.Run \
-            --manualExit \
-            --customParameters="-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/bad-profile/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/bad-profile/result.env"
+          "${H1_UNITY_WORKER_RUNNER}" bad-profile
           rc=$?
           set -e
-          test "${rc}" -ne 0 || { echo '::error::wrong-profile worker falsely exited successfully'; exit 1; }
+          test "${rc}" -eq 73 || { echo "::error::wrong-profile worker exit=${rc}, expected 73"; exit 1; }
           test ! -f "${EVIDENCE_ROOT}/bad-profile/result.env"
           printf 'NONZERO_EDITOR_EXIT_GREEN rc=%s\n' "${rc}" | tee "${EVIDENCE_ROOT}/nonzero.txt"
 
-      - name: Force bounded external timeout without false result
+      - name: Force post-launch timeout without false result
         shell: bash
         run: |
           set -euo pipefail
+          container="h1-03a-timeout-${GITHUB_RUN_ID}"
+          log="${EVIDENCE_ROOT}/timeout/editor.log"
+          rm -f "${EVIDENCE_ROOT}/timeout/result.env"
+          cleanup() {
+            docker unpause "${container}" >/dev/null 2>&1 || true
+            docker kill "${container}" >/dev/null 2>&1 || true
+            docker rm -f "${container}" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+          docker run \
+            --name "${container}" \
+            --shm-size=1025m \
+            --workdir /github/workspace \
+            --volume "${HOME}:/root:z" \
+            --volume "${GITHUB_WORKSPACE}:/github/workspace:z" \
+            "${PINNED_UNITY_IMAGE}" \
+            /opt/unity/Editor/Unity \
+            -batchmode \
+            -nographics \
+            -quit \
+            -projectPath /github/workspace/Unity/ArkusUnity \
+            -executeMethod Arkus.H1.Editor.H1EditorWorker.Run \
+            -arkusInvocation "/github/workspace/${EVIDENCE_ROOT}/timeout/invocation.env" \
+            -arkusResult "/github/workspace/${EVIDENCE_ROOT}/timeout/result.env" \
+            -logFile /dev/stdout \
+            > "${log}" 2>&1 &
+          docker_pid=$!
+
+          running=0
+          for _ in $(seq 1 100); do
+            if [[ "$(docker inspect --format '{{.State.Running}}' "${container}" 2>/dev/null || true)" == "true" ]]; then
+              running=1
+              break
+            fi
+            if ! kill -0 "${docker_pid}" 2>/dev/null; then
+              wait "${docker_pid}" || true
+              echo '::error::Unity timeout worker exited before launch could be paused'
+              exit 1
+            fi
+            sleep 0.1
+          done
+          test "${running}" -eq 1 || { echo '::error::Unity timeout worker never reached running state'; exit 1; }
+          test "$(docker inspect --format '{{.Path}}' "${container}")" = "/opt/unity/Editor/Unity"
+          docker pause "${container}" >/dev/null
+
           set +e
-          timeout --signal=INT --kill-after=15s 5s \
-            "${PINNED_GAMECI_BIN}" build Unity/ArkusUnity \
-              --engine=unity \
-              --target-platform StandaloneLinux64 \
-              --build-method Arkus.H1.Editor.H1EditorWorker.Run \
-              --manualExit \
-              --customParameters="-arkusInvocation /github/workspace/${EVIDENCE_ROOT}/timeout/invocation.env -arkusResult /github/workspace/${EVIDENCE_ROOT}/timeout/result.env"
+          timeout 5s docker wait "${container}" > "${EVIDENCE_ROOT}/timeout/wait.txt"
           rc=$?
           set -e
-          case "${rc}" in 124|130|137) ;; *) echo "::error::expected bounded timeout, got rc=${rc}"; exit 1 ;; esac
+          test "${rc}" -eq 124 || { echo "::error::expected paused post-launch timeout rc=124, got ${rc}"; exit 1; }
           test ! -f "${EVIDENCE_ROOT}/timeout/result.env"
-          printf 'EXTERNAL_TIMEOUT_GREEN rc=%s result=ABSENT\n' "${rc}" | tee "${EVIDENCE_ROOT}/timeout.txt"
+          printf 'POST_LAUNCH_TIMEOUT_GREEN rc=%s result=ABSENT\n' "${rc}" | tee "${EVIDENCE_ROOT}/timeout.txt"
+          cleanup
+          trap - EXIT
+          wait "${docker_pid}" 2>/dev/null || true
 
-      - name: Falsify corrupted real result and exercise lifecycle failure/lease tests
+      - name: Falsify corrupted real result and exercise lifecycle/lease causal tests
         shell: bash
         run: |
           set -euo pipefail
@@ -248,29 +323,40 @@ jobs:
           fields = dict(line.split('=', 1) for line in path.read_text().splitlines())
           if fields.get('mainThread') in ('true', 'false'):
               raise SystemExit('corruption mutation failed')
-          print('REAL_RESULT_CORRUPTION_CREATED_AND_REJECTABLE')
+          print('REAL_RESULT_CORRUPTION_CREATED')
           PY
+          dotnet restore tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj --locked-mode
           dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
             -c Release \
+            --no-restore \
             --filter 'FullyQualifiedName~H1UnityEditorLifecycle' \
             --logger 'console;verbosity=normal'
 
-      - name: Reconcile deterministic GameCI package injection and restore tracked tree
+      - name: Reconcile Unity project drift and restore tracked tree
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           import json, os, subprocess
           from pathlib import Path
+
           target = os.environ['TARGET_SHA']
           manifest = Path('Unity/ArkusUnity/Packages/manifest.json')
           lock = Path('Unity/ArkusUnity/Packages/packages-lock.json')
           allowed = {str(manifest), str(lock)}
-          changed = {line[3:] for line in subprocess.check_output(['git','status','--porcelain','--untracked-files=no'], text=True).splitlines() if len(line) >= 4}
+          changed = {line[3:] for line in subprocess.check_output(
+              ['git','status','--porcelain','--untracked-files=no'], text=True
+          ).splitlines() if len(line) >= 4}
+
+          if not changed:
+              print('UNITY_TRACKED_DRIFT_NONE')
+              raise SystemExit(0)
           if changed != allowed:
               raise SystemExit(f'unexpected tracked Unity drift: {sorted(changed)}')
+
           def baseline(path):
               return json.loads(subprocess.check_output(['git','show',f'{target}:{path.as_posix()}'], text=True))
+
           expected_manifest = baseline(manifest)
           expected_manifest['dependencies'].update({
               'com.unity.sdk.linux-arm64':'1.1.0',
@@ -279,6 +365,7 @@ jobs:
           })
           if json.loads(manifest.read_text()) != expected_manifest:
               raise SystemExit('manifest drift is not the accepted GameCI injection')
+
           expected_lock = baseline(lock)
           expected_lock['dependencies'].update({
               'com.unity.sdk.linux-arm64': {'version':'1.1.0','depth':0,'source':'registry','dependencies':{'com.unity.sysroot.base':'1.1.0'},'url':'https://packages.unity.com'},
@@ -290,6 +377,7 @@ jobs:
               raise SystemExit('packages-lock drift is not the accepted GameCI injection')
           print('GAMECI_PACKAGE_DRIFT_RECONCILED paths=manifest.json,packages-lock.json')
           PY
+
           git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json
           git diff --quiet "${TARGET_SHA}" --
           test -z "$(git status --porcelain --untracked-files=no)"
@@ -308,17 +396,29 @@ jobs:
           Entry point: Arkus.H1.Editor.H1EditorWorker.Run
           Effective editor: 6000.3.24f1 (4e7b9b5b6244)
           Execution substrate: github-actions-ubuntu-24.04 + GameCI CLI ${PINNED_GAMECI_VERSION}
+          Unity image: ${PINNED_UNITY_IMAGE}
           Fresh project-profile workers: 2 normalized-equal / mainThread=true
           Hierarchy-shaped real Editor probe: GREEN
-          Wrong-profile nonzero exit: GREEN
-          Bounded external timeout with no result: GREEN
-          Corrupted real result falsification: GREEN
-          Lifecycle failure mapping + project lease causal tests: GREEN
-          GameCI package drift: EXACT_KNOWN_PLATFORM_INJECTION_RECONCILED_AND_RESTORED
+          Wrong-profile exact nonzero exit 73: GREEN
+          Post-launch bounded timeout with no result: GREEN
+          Corrupted real result + lifecycle parser/mapping tests: GREEN
+          File project lease causal tests: GREEN
           Final tracked tree: IDENTICAL_TO_TARGET_SHA
           Result: GREEN
           EOF
           cat H1_03A_UNITY_RECEIPT.txt
+
+      - name: Return hosted Unity seat
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f "${EVIDENCE_ROOT}/license-activated" ]]; then
+            "${PINNED_GAMECI_BIN}" return-license Unity/ArkusUnity \
+              --engine=unity \
+              --target-platform StandaloneLinux64 \
+              --custom-image="${PINNED_UNITY_IMAGE}"
+          fi
 
       - name: Upload H1-03A Unity evidence
         if: always()
@@ -328,5 +428,6 @@ jobs:
           path: |
             .h1-03a-effective
             H1_03A_UNITY_RECEIPT.txt
+          include-hidden-files: true
           if-no-files-found: warn
           retention-days: 30
