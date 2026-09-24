@@ -224,7 +224,7 @@ namespace Arkus.DesignWorld
             RegexOptions.CultureInvariant);
 
         private static readonly Regex CatalogueEntryPattern = new Regex(
-            @"\{\s*""logicalId""\s*:\s*""(?<logicalId>[^""]+)""\s*,\s*""kind""\s*:\s*""(?<kind>[^""]+)""\s*,\s*""nativeGuid""\s*:\s*""(?<nativeGuid>[^""]+)""\s*,\s*""localFileId""\s*:\s*""(?<localFileId>[^""]+)""\s*,\s*""typeName""\s*:\s*""(?<typeName>[^""]+)""\s*,\s*""sourceId""\s*:\s*""(?<sourceId>[^""]+)""\s*,\s*""adoptionStatus""\s*:\s*""(?<adoptionStatus>[^""]+)""\s*,\s*""contentSha256""\s*:\s*""(?<contentSha256>[0-9a-f]{64})""\s*\}",
+            @"\{\s*""logicalId""\s*:\s*""(?<logicalId>[^""]+)""\s*,\s*""kind""\s*:\s*""(?<kind>[^""]+)""\s*,\s*""nativeGuid""\s*:\s*""(?<nativeGuid>[^""]*)""\s*,\s*""localFileId""\s*:\s*""(?<localFileId>[^""]+)""\s*,\s*""typeName""\s*:\s*""(?<typeName>[^""]+)""\s*,\s*""sourceId""\s*:\s*""(?<sourceId>[^""]+)""\s*,\s*""adoptionStatus""\s*:\s*""(?<adoptionStatus>[^""]+)""\s*,\s*""contentSha256""\s*:\s*""(?<contentSha256>(?:[0-9a-f]{64})?)""\s*\}",
             RegexOptions.CultureInvariant | RegexOptions.Singleline);
 
         private static readonly Regex AdoptionRootPattern = new Regex(
