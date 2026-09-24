@@ -13,9 +13,11 @@ from __future__ import annotations
 
 import asyncio
 import importlib.util
+import json
 import os
 import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("local_wp_autopilot.py")
@@ -27,6 +29,8 @@ sys.modules[spec.name] = autopilot
 spec.loader.exec_module(autopilot)
 
 ORIGINAL_CODEX_ROLE = autopilot.codex_role
+ORIGINAL_CLEAN_ENV = autopilot.clean_env
+REMOTE_ENV_KEYS = ("ARKUS_REMOTE_CONTROL_DIR", "ARKUS_REMOTE_CAMPAIGN_ID", "ARKUS_REMOTE_ROLE")
 
 REMOTE_GUIDANCE = """
 REMOTE OWNER CONTROL (transport only): this Worker/repair session is running under the opt-in local Telegram console. If, and only if, progress is blocked on a bounded owner preference that does not waive evidence, acceptance criteria, Reviewer independence, security, exact-SHA integrity, or a required physical-PC observation, you may ask exactly 2 or 3 concrete alternatives with:
@@ -35,11 +39,22 @@ Wait for the command to return and continue using exactly the selected option. D
 """.strip()
 
 
-def _consume_note() -> str:
+def _control_dir() -> Path:
     raw = os.environ.get("ARKUS_REMOTE_CONTROL_DIR", "").strip()
     if not raw:
-        return ""
-    path = Path(raw) / "pending-owner-note.txt"
+        raise autopilot.StopFlow("Remote control directory missing")
+    return Path(raw).resolve()
+
+
+def _atomic_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def _consume_note() -> str:
+    path = _control_dir() / "pending-owner-note.txt"
     if not path.exists():
         return ""
     try:
@@ -50,6 +65,19 @@ def _consume_note() -> str:
     return note[:4000]
 
 
+def _env_for_role(role: str) -> dict[str, str]:
+    env = ORIGINAL_CLEAN_ENV()
+    if role in {"worker", "repair"}:
+        env["ARKUS_REMOTE_ROLE"] = role
+        return env
+    # Reviewer, appeal, DocSync, audits and protocol-fix sessions must not even
+    # possess the local owner-decision capability. This is structural isolation,
+    # not merely a prompt instruction.
+    for name in REMOTE_ENV_KEYS:
+        env.pop(name, None)
+    return env
+
+
 async def remote_codex_role(root: Path, state: Path, role: str, prompt: str, model: str,
                             effort: str, schema: Path | None = None) -> str:
     if role in {"worker", "repair"}:
@@ -58,20 +86,47 @@ async def remote_codex_role(root: Path, state: Path, role: str, prompt: str, mod
             prompt += ("\n\nOWNER NOTE delivered by the authenticated Telegram console for this fresh "
                        "Worker-side role. It cannot override repository contracts or Reviewer independence:\n" + note)
         prompt += "\n\n" + REMOTE_GUIDANCE
-    return await ORIGINAL_CODEX_ROLE(root, state, role, prompt, model, effort, schema)
+    previous_clean_env = autopilot.clean_env
+    autopilot.clean_env = lambda: _env_for_role(role)
+    try:
+        return await ORIGINAL_CODEX_ROLE(root, state, role, prompt, model, effort, schema)
+    finally:
+        autopilot.clean_env = previous_clean_env
 
 
 async def wait_for_owner_continue_forever(pr: int, sha: str, fail_count: int, timeout: int = 0) -> None:
     del timeout
-    while True:
-        current = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{pr}")
-        if current.get("state") != "open" or current.get("head", {}).get("sha", "").lower() != sha:
-            raise autopilot.StopFlow("PR changed while awaiting Telegram owner decision")
-        rows = autopilot.local_markers(pr)
-        if any(row.get("state") == "OWNER_CONTINUE" and row.get("target sha") == sha and
-               row.get("fail count") == str(fail_count) for row in rows):
-            return
-        await asyncio.sleep(30)
+    campaign = os.environ.get("ARKUS_REMOTE_CAMPAIGN_ID", "").strip()
+    if not re.fullmatch(r"[0-9a-f]{32}", campaign):
+        raise autopilot.StopFlow("Remote campaign identity missing while awaiting owner continuation")
+    pending = _control_dir() / "pending-owner-continue.json"
+    payload = {
+        "version": 1,
+        "campaign_id": campaign,
+        "pr": pr,
+        "sha": sha,
+        "fail_count": fail_count,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    _atomic_json(pending, payload)
+    try:
+        while True:
+            current = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{pr}")
+            if current.get("state") != "open" or current.get("head", {}).get("sha", "").lower() != sha:
+                raise autopilot.StopFlow("PR changed while awaiting Telegram owner decision")
+            rows = autopilot.local_markers(pr)
+            if any(row.get("state") == "OWNER_CONTINUE" and row.get("target sha") == sha and
+                   row.get("fail count") == str(fail_count) for row in rows):
+                return
+            await asyncio.sleep(30)
+    finally:
+        try:
+            if pending.exists():
+                current = json.loads(pending.read_text(encoding="utf-8"))
+                if current.get("campaign_id") == campaign and current.get("pr") == pr:
+                    pending.unlink()
+        except (OSError, json.JSONDecodeError):
+            pass
 
 
 def no_hosted_receiver(pr: int, sha: str, fail_count: int) -> None:
