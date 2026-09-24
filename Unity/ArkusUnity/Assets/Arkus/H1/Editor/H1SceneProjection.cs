@@ -119,7 +119,7 @@ namespace Arkus.H1.Editor
                 var parent = node.parentObjectId.Length == 0 ? root : created[node.parentObjectId];
                 instance.transform.SetParent(parent.transform, false);
                 instance.transform.localPosition = new Vector3(Unit(node.positionMm.x, 1000), Unit(node.positionMm.y, 1000), Unit(node.positionMm.z, 1000));
-                instance.transform.localEulerAngles = new Vector3(Unit(node.rotationMilliDegrees.x, 1000), Unit(node.rotationMilliDegrees.y, 1000), Unit(node.rotationMilliDegrees.z, 1000));
+                instance.transform.localEulerAngles = new Vector3(Unit(Normalize(node.rotationMilliDegrees.x), 1000), Unit(Normalize(node.rotationMilliDegrees.y), 1000), Unit(Normalize(node.rotationMilliDegrees.z), 1000));
                 instance.transform.localScale = new Vector3(Unit(node.scalePpm.x, 1000000), Unit(node.scalePpm.y, 1000000), Unit(node.scalePpm.z, 1000000));
             }
             if (!EditorSceneManager.SaveScene(scene, scenePath, false))
@@ -276,17 +276,20 @@ namespace Arkus.H1.Editor
                 var right = observation.nodes[index];
                 if (left.objectId != right.objectId || left.parentObjectId != right.parentObjectId ||
                     left.sourceLogicalId != right.sourceLogicalId ||
-                    !Equal(left.positionMm, right.positionMm) || !Equal(left.scalePpm, right.scalePpm) ||
-                    !EqualRotation(left.rotationMilliDegrees, right.rotationMilliDegrees)) return false;
+                    !Equal(left.positionMm, right.positionMm) || !Equal(left.scalePpm, right.scalePpm)) return false;
+                var effective = Quaternion.Euler(
+                    Unit(right.rotationMilliDegrees.x, 1000), Unit(right.rotationMilliDegrees.y, 1000), Unit(right.rotationMilliDegrees.z, 1000));
+                var authored = Quaternion.Euler(
+                    Unit(Normalize(left.rotationMilliDegrees.x), 1000),
+                    Unit(Normalize(left.rotationMilliDegrees.y), 1000),
+                    Unit(Normalize(left.rotationMilliDegrees.z), 1000));
+                if (Quaternion.Angle(authored, effective) > 0.02f) return false;
             }
             return true;
         }
 
         private static bool Equal(ProjectionVector left, ProjectionVector right) =>
             left.x == right.x && left.y == right.y && left.z == right.z;
-
-        private static bool EqualRotation(ProjectionVector left, ProjectionVector right) =>
-            Normalize(left.x) == Normalize(right.x) && Normalize(left.y) == Normalize(right.y) && Normalize(left.z) == Normalize(right.z);
 
         private static long Normalize(long value) { var result = value % 360000; return result < 0 ? result + 360000 : result; }
 

@@ -110,7 +110,6 @@ namespace Arkus.H1.UnityHost
                     expected[i].ParentObjectId != ordered[i].ParentObjectId ||
                     expected[i].SourceLogicalId != ordered[i].SourceLogicalId ||
                     !Equal(expected[i].PositionMm, ordered[i].PositionMm) ||
-                    !EqualRotation(expected[i].RotationMilliDegrees, ordered[i].RotationMilliDegrees) ||
                     !Equal(expected[i].ScalePpm, ordered[i].ScalePpm)) return false;
             }
             return true;
@@ -118,11 +117,6 @@ namespace Arkus.H1.UnityHost
 
         private static bool Equal(H1ProjectionVector left, H1ProjectionVector right) =>
             left.X == right.X && left.Y == right.Y && left.Z == right.Z;
-
-        private static bool EqualRotation(H1ProjectionVector left, H1ProjectionVector right) =>
-            Normalize(left.X) == Normalize(right.X) && Normalize(left.Y) == Normalize(right.Y) && Normalize(left.Z) == Normalize(right.Z);
-
-        private static long Normalize(long value) { var result = value % 360000; return result < 0 ? result + 360000 : result; }
 
         private static IReadOnlyDictionary<string, object?> VectorData(H1ProjectionVector value) =>
             new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)

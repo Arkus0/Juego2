@@ -112,13 +112,15 @@ def binding(x, link=None):
     if link:
         components.append({"kind": "canonical-link", "relation": "faces", "targetObjectId": link})
     facade = link is not None
+    rotation = ({"x": 45000, "y": 30000, "z": 15000} if x == -800 else
+                {"x": 0, "y": 90000 if facade else 0, "z": 0})
     return {
         "schemaId": "arkus.unity-binding@1", "targetSceneId": SCENE,
         "source": {"kind": "prefab", "logicalId": PREFAB},
         "transform": {
             "coordinateConvention": CONVENTION,
             "positionMm": {"x": x, "y": 0, "z": 0},
-            "rotationMilliDegrees": {"x": 0, "y": 90000 if facade else 0, "z": 0},
+            "rotationMilliDegrees": rotation,
             "scalePpm": {"x": 1250000 if facade else 1000000, "y": 1000000, "z": 1000000},
         },
         "components": components,
@@ -199,6 +201,9 @@ def run():
                             "bar.potes": "market.potes", "workshop.potes": "market.potes"},
                 "Effective Unity hierarchy ignored canonical containment")
         require(first["inputDigest"] == plan["inputDigest"], "Materialization used another canonical plan")
+        workshop = next(node for node in first["nodes"] if node["objectId"] == "workshop.potes")
+        require(all(workshop["rotationMilliDegrees"][axis] != 0 for axis in ("x", "y", "z")),
+                "Three-axis local rotation was not observed from the reloaded scene")
         second = projection(reference, "unity.host.projection.materialize")
         require(second["generationId"] == first["generationId"] and second["graphDigest"] == first["graphDigest"], "Same input caused semantic or generation churn")
         observed = projection(reference, "unity.host.projection.observe")
