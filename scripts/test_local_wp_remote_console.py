@@ -8,10 +8,12 @@ import json
 import os
 import sys
 import tempfile
+import threading
 import unittest
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.error import HTTPError
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
 from unittest.mock import patch
 
@@ -99,13 +101,24 @@ class RemoteConsoleTests(unittest.TestCase):
         self.assertFalse(auth.verify_owner_continue(secret, forged, *args))
         self.assertFalse(auth.verify_owner_continue(secret, "0" * 64, *args))
 
+    def test_worker_cannot_forge_owner_decision_without_supervisor_secret(self):
+        secret = "telegram-supervisor-secret"
+        selected_digest = auth.decision_selected_digest("B")
+        args = (123, "b" * 40, "c" * 32, "d" * 32, "e" * 64, 1,
+                selected_digest, "callback-888")
+        proof = auth.sign_owner_decision(secret, *args)
+        self.assertTrue(auth.verify_owner_decision(secret, proof, *args))
+        forged = auth.sign_owner_decision("worker-does-not-have-real-secret", *args)
+        self.assertFalse(auth.verify_owner_decision(secret, forged, *args))
+        self.assertFalse(auth.verify_owner_decision(secret, "0" * 64, *args))
+
     def test_continue_button_requires_exact_active_local_wait(self):
         with tempfile.TemporaryDirectory() as tmp:
             console = module.RemoteConsole(Path(tmp), Path(tmp) / "control", "token", 42)
             console.proc = object()
             console.campaign_id = "a" * 32
             query = {"id": "callback"}
-            with patch.object(console, "answer_callback") as answer, patch.object(module, "gh") as gh_call:
+            with patch.object(console, "answer_callback") as answer, patch.object(module._core, "gh") as gh_call:
                 console.handle_continue(query, 123, "b" * 40, 2)
             gh_call.assert_not_called()
             self.assertIn("no está esperando", answer.call_args.args[1])
@@ -114,19 +127,19 @@ class RemoteConsoleTests(unittest.TestCase):
                        "sha": "b" * 40, "fail_count": 2}
             console._pending_continue_path().parent.mkdir(parents=True, exist_ok=True)
             console._pending_continue_path().write_text(json.dumps(pending), encoding="utf-8")
-            with patch.object(console, "answer_callback") as answer, patch.object(module, "gh") as gh_call:
+            with patch.object(console, "answer_callback") as answer, patch.object(module._core, "gh") as gh_call:
                 console.handle_continue(query, 123, "b" * 40, 2)
             gh_call.assert_not_called()
             self.assertIn("obsoleto", answer.call_args.args[1])
 
-    def test_supervisor_ipc_is_read_only_and_holds_decision_authority(self):
+    def test_supervisor_ipc_is_read_only_and_holds_decision_hint(self):
         with tempfile.TemporaryDirectory() as tmp:
             console = module.RemoteConsole(Path(tmp), Path(tmp) / "control", "token", 42)
             console.campaign_id = "a" * 32
             console.pending_owner_note = "owner-only note"
             decision_id = "b" * 32
             console.owner_decisions[decision_id] = {
-                "version": 1, "campaign_id": console.campaign_id, "decision_id": decision_id,
+                "version": 2, "campaign_id": console.campaign_id, "decision_id": decision_id,
                 "choice": 1, "selected": "B", "answered_at": "now",
             }
             base = console._ensure_ipc()
@@ -156,12 +169,148 @@ class RemoteConsoleTests(unittest.TestCase):
             forged.write_text(json.dumps({"decision_id": decision_id, "campaign_id": "a" * 32,
                                           "choice": 1, "selected": "B"}), encoding="utf-8")
             pending = {"status": "pending", "campaign_id": "a" * 32, "decision_id": decision_id}
+
             class FakeResponse:
                 def __enter__(self): return self
                 def __exit__(self, *_args): return False
                 def read(self): return json.dumps(pending).encode()
+
             with patch.object(decision, "urlopen", return_value=FakeResponse()):
                 self.assertIsNone(decision._owner_response("http://127.0.0.1:12345", "a" * 32, decision_id))
+
+    def test_worker_endpoint_substitution_cannot_mint_owner_choice(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            control = Path(tmp)
+            campaign = "a" * 32
+            hits = {"count": 0}
+
+            class FakeOwner(BaseHTTPRequestHandler):
+                def do_GET(self):
+                    parsed = urlparse(self.path)
+                    decision_id = (parse_qs(parsed.query).get("decision_id") or [""])[0]
+                    request_path = control / "decisions" / f"{decision_id}.json"
+                    row = json.loads(request_path.read_text(encoding="utf-8"))
+                    hits["count"] += 1
+                    payload = {"status": "answered", "campaign_id": campaign,
+                               "decision_id": decision_id, "choice": 0,
+                               "selected": row["options"][0]}
+                    body = json.dumps(payload).encode()
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+
+                def log_message(self, _format, *args):
+                    del args
+
+            server = ThreadingHTTPServer(("127.0.0.1", 0), FakeOwner)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            env = {
+                "ARKUS_REMOTE_CONTROL_DIR": tmp,
+                "ARKUS_REMOTE_CAMPAIGN_ID": campaign,
+                "ARKUS_REMOTE_SUPERVISOR_URL": f"http://127.0.0.1:{server.server_port}",
+                "ARKUS_REMOTE_ROLE": "worker",
+            }
+            try:
+                with patch.dict(os.environ, env, clear=True), \
+                     patch.object(decision, "_github_owner_attestation", side_effect=[None, 1]), \
+                     patch.object(decision.time, "sleep", return_value=None):
+                    selected = decision.request_decision(
+                        "Choose", ["FAKE-ENDPOINT", "ATTESTED"], wp="H1-04", pr=123,
+                        sha="b" * 40, detail="endpoint substitution falsification", poll_seconds=0)
+                self.assertEqual(selected, "ATTESTED")
+                self.assertGreaterEqual(hits["count"], 2)
+            finally:
+                server.shutdown()
+                server.server_close()
+
+    def test_only_github_actions_bot_attestation_can_select(self):
+        campaign = "a" * 32
+        decision_id = "b" * 32
+        sha = "c" * 40
+        options = ["A", "B"]
+        digest = auth.decision_request_digest(
+            campaign, decision_id, "H1-04", 123, sha, "Choose", "detail", options)
+        body = (
+            "ARKUS_LOCAL_AUTOPILOT\n"
+            "State: OWNER_DECISION\n"
+            f"Target SHA: {sha}\n"
+            f"Campaign ID: {campaign}\n"
+            f"Decision ID: {decision_id}\n"
+            f"Request digest: {digest}\n"
+            "Choice: 1\n"
+            f"Selected digest: {auth.decision_selected_digest('B')}\n"
+            "Authority proof: supervisor-HMAC-v1\n"
+        )
+        forged = {"user": {"login": "Arkus0", "type": "User"}, "body": body}
+        with patch.object(decision, "_github_comments", return_value=[forged]):
+            self.assertIsNone(decision._github_owner_attestation(
+                123, sha, campaign, decision_id, digest, options))
+        attested = {"user": {"login": "github-actions[bot]", "type": "Bot"}, "body": body}
+        with patch.object(decision, "_github_comments", return_value=[forged, attested]):
+            self.assertEqual(decision._github_owner_attestation(
+                123, sha, campaign, decision_id, digest, options), 1)
+
+    def test_decision_click_is_hmac_bound_to_immutable_advertised_request(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            control = Path(tmp) / "control"
+            console = module.RemoteConsole(Path(tmp), control, "supervisor-secret", 42)
+            console.proc = object()
+            console.current_wp = "H1-04"
+            console.campaign_id = "a" * 32
+            decision_id = "b" * 32
+            sha = "c" * 40
+            options = ["A", "B"]
+            digest = auth.decision_request_digest(
+                console.campaign_id, decision_id, "H1-04", 123, sha, "Choose", "detail", options)
+            row = {"version": 3, "decision_id": decision_id, "campaign_id": console.campaign_id,
+                   "request_digest": digest, "wp": "H1-04", "pr": 123, "sha": sha,
+                   "question": "Choose", "detail": "detail", "options": options}
+            path = control / "decisions" / f"{decision_id}.json"
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps(row), encoding="utf-8")
+            with patch.object(console, "send"):
+                console.advertise_decisions()
+            tampered = dict(row, options=["A", "WORKER-TAMPER"])
+            path.write_text(json.dumps(tampered), encoding="utf-8")
+            with patch.object(console, "answer_callback") as answer, patch.object(module._core, "gh") as gh_call:
+                console.handle_decision({"id": "callback-owner"}, decision_id, 1)
+            gh_call.assert_not_called()
+            self.assertIn("cambió", answer.call_args.args[1])
+
+    def test_valid_decision_click_dispatches_supervisor_hmac(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            control = Path(tmp) / "control"
+            secret = "supervisor-secret"
+            console = module.RemoteConsole(Path(tmp), control, secret, 42)
+            console.proc = object()
+            console.current_wp = "H1-04"
+            console.campaign_id = "a" * 32
+            decision_id = "b" * 32
+            sha = "c" * 40
+            options = ["A", "B"]
+            digest = auth.decision_request_digest(
+                console.campaign_id, decision_id, "H1-04", 123, sha, "Choose", "detail", options)
+            row = {"version": 3, "decision_id": decision_id, "campaign_id": console.campaign_id,
+                   "request_digest": digest, "wp": "H1-04", "pr": 123, "sha": sha,
+                   "question": "Choose", "detail": "detail", "options": options}
+            path = control / "decisions" / f"{decision_id}.json"
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps(row), encoding="utf-8")
+            with patch.object(console, "send"):
+                console.advertise_decisions()
+            with patch.object(console, "send"), patch.object(console, "answer_callback"), \
+                 patch.object(module._core, "gh") as gh_call:
+                console.handle_decision({"id": "callback-owner"}, decision_id, 1)
+            payload = gh_call.call_args.kwargs["input_json"]
+            client = payload["client_payload"]
+            self.assertEqual(payload["event_type"], "arkus_owner_decision_local")
+            self.assertTrue(auth.verify_owner_decision(
+                secret, client["owner_proof"], client["pr"], client["target_sha"],
+                client["campaign_id"], client["decision_id"], client["request_digest"],
+                client["choice"], client["selected_digest"], client["telegram_update_id"]))
 
     def test_worker_note_file_is_not_an_owner_note(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -182,7 +331,7 @@ class RemoteConsoleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             console = module.RemoteConsole(Path(tmp), Path(tmp) / "control", "token", 42)
             batches = [[{"update_id": 7, "message": {"text": "/run H1-04"}}], []]
-            with patch.object(module, "telegram", side_effect=batches), \
+            with patch.object(module._core, "telegram", side_effect=batches), \
                  patch.object(console, "handle_update") as handler:
                 console.discard_offline_backlog()
             handler.assert_not_called()

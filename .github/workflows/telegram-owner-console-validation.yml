@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/owner_control_auth.py'
       - 'scripts/local_wp_remote_console.py'
+      - 'scripts/local_wp_remote_console_core.py'
       - 'scripts/local_wp_autopilot_remote.py'
       - 'scripts/request_owner_decision.py'
       - 'scripts/test_local_wp_remote_console.py'
@@ -29,6 +30,7 @@ jobs:
           python -m py_compile \
             scripts/owner_control_auth.py \
             scripts/local_wp_remote_console.py \
+            scripts/local_wp_remote_console_core.py \
             scripts/local_wp_autopilot_remote.py \
             scripts/request_owner_decision.py \
             scripts/test_local_wp_remote_console.py

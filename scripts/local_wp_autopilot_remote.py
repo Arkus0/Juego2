@@ -6,8 +6,9 @@ transport policies when a trusted local Telegram console owns the run:
 - owner decision waits have no application TTL while the local controller lives;
 - the GitHub-hosted Telegram long-poller is disabled to avoid two getUpdates
   consumers for the same bot.
-It also exposes bounded owner preference reads to Worker/repair sessions through
-read-only supervisor IPC. Telegram secrets never enter child environments.
+It also exposes bounded owner preference reads to Worker/repair sessions. Local
+IPC is a liveness hint for decisions; accepted choices require a supervisor-HMAC
+GitHub Actions attestation. Telegram secrets never enter child environments.
 """
 
 from __future__ import annotations
@@ -39,8 +40,8 @@ REMOTE_ENV_KEYS = ("ARKUS_REMOTE_CONTROL_DIR", "ARKUS_REMOTE_CAMPAIGN_ID",
 
 REMOTE_GUIDANCE = """
 REMOTE OWNER CONTROL (transport only): this Worker/repair session is running under the opt-in local Telegram console. If, and only if, progress is blocked on a bounded owner preference that does not waive evidence, acceptance criteria, Reviewer independence, security, exact-SHA integrity, or a required physical-PC observation, you may ask exactly 2 or 3 concrete alternatives with:
-  python scripts/request_owner_decision.py --wp <WP> [--pr <PR>] [--sha <HEAD_SHA>] --question "..." --option "..." --option "..." [--option "..."] --detail "why owner preference is needed"
-Wait for the command to return and continue using exactly the selected option. Do not use this mechanism for architectural uncertainty that requires a human investigation, unavailable mandatory evidence, fourth FAIL, REVIEW_BLOCKED, or any condition that the accepted protocol says must stop; those remain BLOCKED/HUMAN_ACTION_REQUIRED. Never ask the owner to choose a Reviewer verdict.
+  python scripts/request_owner_decision.py --wp <WP> --pr <PR> --sha <HEAD_SHA> --question "..." --option "..." --option "..." [--option "..."] --detail "why owner preference is needed"
+Wait for the command to return and continue using exactly the selected option. The helper accepts a choice only after github-actions[bot] attests a supervisor-only HMAC for the exact campaign/request/PR/SHA/choice. Do not use this mechanism for architectural uncertainty that requires a human investigation, unavailable mandatory evidence, fourth FAIL, REVIEW_BLOCKED, or any condition that the accepted protocol says must stop; those remain BLOCKED/HUMAN_ACTION_REQUIRED. Never ask the owner to choose a Reviewer verdict.
 """.strip()
 
 

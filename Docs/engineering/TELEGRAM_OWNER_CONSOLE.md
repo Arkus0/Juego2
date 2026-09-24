@@ -1,6 +1,6 @@
 # Telegram owner console (prospective opt-in)
 
-Version: 0.1 — 2026-09-24
+Version: 0.2 — 2026-09-24
 
 ## Purpose
 
@@ -18,7 +18,7 @@ python scripts/local_wp_remote_console.py --root .
 
 The supervisor is idle when no campaign is active. Codex does not need to be open in a visible interactive session: the existing autopilot launches fresh `codex exec` roles itself.
 
-The supervisor is the only Telegram `getUpdates` consumer while this mode is active. `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are local supervisor configuration. The token is stripped from every autopilot/Codex child environment; child roles communicate with the supervisor only through the local control directory. Do not run the legacy GitHub-hosted long-poller concurrently with this console.
+The supervisor is the only Telegram `getUpdates` consumer while this mode is active. `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are local supervisor configuration. The token is stripped from every autopilot/Codex child environment. Do not run the legacy GitHub-hosted long-poller concurrently with this console.
 
 Supported private-owner commands:
 
@@ -31,7 +31,11 @@ Supported private-owner commands:
 
 ## Soft owner decision versus hard stop
 
-A Worker/repair Worker may use `scripts/request_owner_decision.py` only for a real owner preference that can be represented by two or three bounded alternatives and does not weaken proof or policy. The helper blocks that same Worker turn and the supervisor sends Telegram buttons. There is no application-level decision TTL while the local console and campaign remain alive; the choice is written to the exact request ID and returned to that same waiting process.
+A Worker/repair Worker may use `scripts/request_owner_decision.py` only for a real owner preference that can be represented by two or three bounded alternatives and does not weaken proof or policy. The request must bind the current PR and exact HEAD SHA (`--pr` + `--sha`). The helper blocks that same Worker turn without an application TTL while the local console and campaign remain alive.
+
+The loopback `/v1/decision` response is only a liveness hint. It is not owner authority. When the owner presses a Telegram choice, the supervisor freezes the exact advertised request, HMAC-signs `{PR, SHA, campaign, decision_id, request_digest, choice, selected_digest, Telegram callback id}` with `TELEGRAM_BOT_TOKEN`, and dispatches a short GitHub Action. The Action verifies the supervisor-only HMAC, rechecks the exact open PR/HEAD SHA, and writes an `OWNER_DECISION` marker as `github-actions[bot]`. The Worker helper accepts the option only when that exact bot-authored attestation exists. A Worker-controlled replacement endpoint on another `127.0.0.1` port therefore cannot mint an owner choice.
+
+The request digest also prevents a Worker from changing the question/options after Telegram displayed them and then reusing the owner's callback index for different semantics.
 
 Examples of a soft decision: choose between two in-scope presentation/layout variants, choose which dependency-valid next implementation variant to prefer when both satisfy the WP, or select a bounded owner preference explicitly left open by the contract.
 
@@ -39,7 +43,7 @@ Examples that must remain a hard stop: required physical observation unavailable
 
 ## Second-FAIL continue
 
-In local-console mode the existing exact PR/SHA/fail-count Telegram button remains the UI, but the local supervisor receives the callback and asks a short GitHub Action to revalidate the exact PR/SHA/fail count and write the durable bot-authored `OWNER_CONTINUE` marker. The GitHub-hosted ~5h40 long-poller is not started. The local transport deliberately removes only the transport TTL; the existing fourth-FAIL ceiling, exact frozen SHA checks and owner-private-chat checks remain.
+In local-console mode the existing exact PR/SHA/fail-count Telegram button remains the UI. The local supervisor HMAC-signs the owner click with `TELEGRAM_BOT_TOKEN`; a short GitHub Action verifies that proof plus campaign binding before writing the durable bot-authored `OWNER_CONTINUE` marker. The GitHub-hosted ~5h40 long-poller is not started. The local transport deliberately removes only the transport TTL; the existing fourth-FAIL ceiling, exact frozen SHA checks and owner-private-chat checks remain.
 
 ## Limits
 

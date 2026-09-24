@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Request one bounded owner decision from the local Telegram supervisor.
 
-A Worker/repair Worker may create the request, but cannot create the response.
-The response is held by the supervisor process and exposed only through its
-read-only loopback IPC endpoint; shared *.response.json files are never trusted.
+A Worker/repair Worker may create the request, but cannot authenticate its own
+answer. Loopback IPC is only a liveness hint: the accepted choice must also be
+attested by github-actions[bot] after GitHub verifies the supervisor-only HMAC
+for the exact campaign/request/PR/SHA/choice tuple.
 """
 
 from __future__ import annotations
@@ -12,6 +13,7 @@ import argparse
 import json
 import os
 import re
+import ssl
 import sys
 import time
 import uuid
@@ -19,8 +21,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
-from urllib.request import urlopen
+from urllib.request import HTTPSHandler, ProxyHandler, Request, build_opener, urlopen
 
+import owner_control_auth as owner_auth
+
+REPO = "Arkus0/Juego2"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 WP_RE = re.compile(r"^(?:WP-)?([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+)$")
 SUPERVISOR_RE = re.compile(r"^http://127\.0\.0\.1:[1-9][0-9]{0,4}$")
@@ -52,6 +57,7 @@ def _context() -> tuple[Path, str, str]:
 
 
 def _owner_response(supervisor: str, campaign: str, decision_id: str) -> dict | None:
+    """Read the local supervisor response as a non-authoritative liveness hint."""
     url = f"{supervisor}/v1/decision?" + urlencode({"campaign_id": campaign, "decision_id": decision_id})
     try:
         with urlopen(url, timeout=5) as response:
@@ -67,6 +73,92 @@ def _owner_response(supervisor: str, campaign: str, decision_id: str) -> dict | 
     if payload.get("status") != "answered":
         raise DecisionError("Owner supervisor returned invalid decision state")
     return payload
+
+
+def _github_page(url: str) -> tuple[list[dict], str]:
+    context = ssl.create_default_context()
+    opener = build_opener(ProxyHandler({}), HTTPSHandler(context=context))
+    request = Request(url, headers={
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "Arkus-local-owner-decision",
+        "X-GitHub-Api-Version": "2022-11-28",
+    })
+    try:
+        with opener.open(request, timeout=10) as response:
+            payload = json.load(response)
+            link = response.headers.get("Link", "")
+    except (OSError, URLError, ValueError) as exc:
+        raise DecisionError("GitHub owner-decision attestation unavailable") from exc
+    if not isinstance(payload, list):
+        raise DecisionError("GitHub owner-decision attestation malformed")
+    return payload, link
+
+
+def _github_comments(pr: int) -> list[dict]:
+    base = f"https://api.github.com/repos/{REPO}/issues/{pr}/comments?per_page=100"
+    first, link = _github_page(base)
+    match = re.search(r'<([^>]+)>;\s*rel="last"', link)
+    if not match or match.group(1) == base:
+        return first
+    last, _ = _github_page(match.group(1))
+    return last
+
+
+def _marker_fields(body: str) -> dict[str, str]:
+    fields: dict[str, str] = {}
+    for raw in body.splitlines():
+        if ":" not in raw:
+            continue
+        key, value = raw.split(":", 1)
+        fields[key.strip().lower()] = value.strip()
+    return fields
+
+
+def _github_owner_attestation(pr: int, sha: str, campaign: str, decision_id: str,
+                              request_digest: str, options: list[str]) -> int | None:
+    for comment in reversed(_github_comments(pr)):
+        user = comment.get("user") or {}
+        if user.get("login") != "github-actions[bot]" or user.get("type") != "Bot":
+            continue
+        body = comment.get("body") or ""
+        if "ARKUS_LOCAL_AUTOPILOT" not in body.splitlines():
+            continue
+        fields = _marker_fields(body)
+        if (fields.get("state") != "OWNER_DECISION" or
+                fields.get("target sha", "").lower() != sha or
+                fields.get("campaign id", "").lower() != campaign or
+                fields.get("decision id", "").lower() != decision_id or
+                fields.get("request digest", "").lower() != request_digest or
+                fields.get("authority proof") != "supervisor-HMAC-v1"):
+            continue
+        try:
+            choice = int(fields.get("choice", ""))
+        except ValueError:
+            continue
+        if not 0 <= choice < len(options):
+            continue
+        try:
+            selected_digest = owner_auth.decision_selected_digest(options[choice])
+        except owner_auth.OwnerProofError:
+            continue
+        if fields.get("selected digest", "").lower() != selected_digest:
+            continue
+        return choice
+    return None
+
+
+def _verified_owner_response(supervisor: str, campaign: str, decision_id: str, pr: int,
+                             sha: str, request_digest: str, options: list[str]) -> dict | None:
+    # A substituted loopback endpoint may claim any answer. That claim is never
+    # authority; only the bot-authored GitHub attestation can select the option.
+    try:
+        _owner_response(supervisor, campaign, decision_id)
+    except DecisionError:
+        pass
+    choice = _github_owner_attestation(pr, sha, campaign, decision_id, request_digest, options)
+    if choice is None:
+        return None
+    return {"choice": choice, "selected": options[choice]}
 
 
 def normalize_wp(value: str) -> str:
@@ -89,41 +181,49 @@ def request_decision(question: str, options: list[str], *, wp: str, pr: int | No
     if len(set(options)) != len(options):
         raise DecisionError("Owner decision options must be distinct")
     wp = normalize_wp(wp)
-    if pr is not None and pr < 1:
-        raise DecisionError("PR must be a positive integer")
-    if sha is not None:
-        sha = sha.lower()
-        if not SHA_RE.fullmatch(sha):
-            raise DecisionError("SHA must be an exact 40-hex commit")
+    if pr is None or pr < 1:
+        raise DecisionError("Authenticated owner decisions require an exact positive PR")
+    if sha is None:
+        raise DecisionError("Authenticated owner decisions require the exact PR HEAD SHA")
+    sha = sha.lower()
+    if not SHA_RE.fullmatch(sha):
+        raise DecisionError("SHA must be an exact 40-hex commit")
 
     decision_id = uuid.uuid4().hex
+    try:
+        request_digest = owner_auth.decision_request_digest(
+            campaign, decision_id, wp, pr, sha, question, detail, options)
+    except owner_auth.OwnerProofError as exc:
+        raise DecisionError(str(exc)) from exc
     request_path = control / "decisions" / f"{decision_id}.json"
     payload = {
-        "version": 2,
+        "version": 3,
         "decision_id": decision_id,
         "campaign_id": campaign,
+        "request_digest": request_digest,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "wp": wp,
         "pr": pr,
         "sha": sha,
         "question": question,
-        "detail": detail[:1200],
+        "detail": detail,
         "options": options,
         "pid": os.getpid(),
-        "response_transport": "supervisor-ipc-read-only",
+        "response_transport": "github-actions-bot-attestation",
     }
     _atomic_json(request_path, payload)
     print(f"OWNER_DECISION_PENDING: {decision_id}", file=sys.stderr, flush=True)
 
     try:
         while True:
-            response = _owner_response(supervisor, campaign, decision_id)
+            response = _verified_owner_response(
+                supervisor, campaign, decision_id, pr, sha, request_digest, options)
             if response is not None:
                 choice = response.get("choice")
                 if type(choice) is not int or not 0 <= choice < len(options):
-                    raise DecisionError("Owner decision response has invalid choice")
+                    raise DecisionError("Owner decision attestation has invalid choice")
                 if response.get("selected") != options[choice]:
-                    raise DecisionError("Owner decision selected value mismatch")
+                    raise DecisionError("Owner decision attestation selected value mismatch")
                 payload["completed_at"] = datetime.now(timezone.utc).isoformat()
                 payload["selected_index"] = choice
                 _atomic_json(request_path, payload)
@@ -140,8 +240,8 @@ def main() -> int:
     parser.add_argument("--question", required=True)
     parser.add_argument("--option", action="append", required=True, dest="options")
     parser.add_argument("--wp", required=True)
-    parser.add_argument("--pr", type=int)
-    parser.add_argument("--sha")
+    parser.add_argument("--pr", type=int, required=True)
+    parser.add_argument("--sha", required=True)
     parser.add_argument("--detail", default="")
     args = parser.parse_args()
     try:
