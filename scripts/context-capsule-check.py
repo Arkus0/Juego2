@@ -21,6 +21,11 @@ _IMPL.CANONICAL_PA_DISPOSITION_SELECTORS["WP-PA-05"] = {
     "key_column": 0,
     "status_column": 1,
 }
+_IMPL.CANONICAL_PA_DISPOSITION_SELECTORS["WP-PA-06"] = {
+    "section": "## 5. Mechanism dispositions",
+    "key_column": 0,
+    "status_column": 1,
+}
 
 for _name in dir(_IMPL):
     if not _name.startswith("__"):

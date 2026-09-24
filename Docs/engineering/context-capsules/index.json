@@ -22,6 +22,7 @@
     {"capsule_id": "WP-PA-02", "path": "Docs/engineering/context-capsules/WP-PA-02.json", "near_term_consumers": ["WP-PA-04+"]},
     {"capsule_id": "WP-PA-03", "path": "Docs/engineering/context-capsules/WP-PA-03.json", "near_term_consumers": ["WP-PA-04+"]},
     {"capsule_id": "WP-PA-04", "path": "Docs/engineering/context-capsules/WP-PA-04.json", "near_term_consumers": ["WP-PA-05+"]},
-    {"capsule_id": "WP-PA-05", "path": "Docs/engineering/context-capsules/WP-PA-05.json", "near_term_consumers": ["WP-PA-06+"]}
+    {"capsule_id": "WP-PA-05", "path": "Docs/engineering/context-capsules/WP-PA-05.json", "near_term_consumers": ["WP-PA-06+"]},
+    {"capsule_id": "WP-PA-06", "path": "Docs/engineering/context-capsules/WP-PA-06.json", "near_term_consumers": ["WP-PA-07+"]}
   ]
 }
