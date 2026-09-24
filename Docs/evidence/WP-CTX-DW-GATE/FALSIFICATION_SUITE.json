@@ -1,0 +1,94 @@
+{
+  "schema": "ctx-dw-gate-falsification-v3",
+  "purpose": "Bounded deterministic falsification. Fixtures declare stimuli and expected outcomes, never contradiction truth, authority contents, lifecycle truth, blocker contents, context-unit counts, or precomputed materiality for structural routing probes.",
+  "cases": [
+    {
+      "id": "01-hidden-materiality",
+      "kind": "hidden-materiality",
+      "ctx": {"active_workpack": "WP-H1-05", "compact_visible_sources": ["Docs/workpacks/H1/WP-H1-05.md"]},
+      "dw": {"advice": "NOT_MATERIAL"},
+      "expected": {"dw_status": "NOT_MATERIAL", "materiality_advice": "NOT_MATERIAL", "dw_loaded": false, "dw_admitted": false, "must_open": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": ["dependency-not-accepted:WP-H1-04"]}
+    },
+    {
+      "id": "02-ctx-dw-contradiction",
+      "kind": "ctx-dw-contradiction",
+      "ctx": {
+        "compact_visible_sources": ["Docs/workpacks/H1/WP-H1-05.md"],
+        "compare_with_compact": {
+          "query": {"kind": "fact", "subject": "catalogue:market-prefab", "field": "logical_id"},
+          "mutation": {"op": "replace-fact-value", "query": {"kind": "fact", "subject": "catalogue:market-prefab", "field": "logical_id"}, "value": "ctx-mutated.market.prefab"}
+        }
+      },
+      "dw": {"advice": "USE", "query": {"kind": "fact", "subject": "catalogue:market-prefab", "field": "logical_id"}},
+      "expected": {"dw_status": "CONTRADICTION_SOURCE_OPEN", "materiality_advice": "USE", "dw_loaded": true, "dw_admitted": false, "contradiction_detected": true, "must_open": ["Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json", "Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": []},
+      "without_contradiction_expected": {"dw_status": "USE", "materiality_advice": "USE", "dw_loaded": true, "dw_admitted": true, "contradiction_detected": false, "must_open": ["Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json", "Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": []}
+    },
+    {
+      "id": "03-stale-dw",
+      "kind": "stale-dw",
+      "ctx": {"active_workpack": "WP-H1-05", "compact_visible_sources": ["Docs/workpacks/H1/WP-H1-05.md"]},
+      "dw": {"advice": "USE", "projection_mutation": "stale-source-fingerprint", "query": {"kind": "fact", "subject": "catalogue:market-prefab", "field": "logical_id"}},
+      "expected": {"dw_status": "USE_REJECTED_LIFECYCLE", "materiality_advice": "USE", "dw_loaded": false, "dw_admitted": false, "must_open": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": ["dependency-not-accepted:WP-H1-04"]}
+    },
+    {
+      "id": "04-dw-abstention",
+      "kind": "dw-abstention",
+      "ctx": {"compact_visible_sources": ["Docs/workpacks/H1/WP-H1-03A.md", "Docs/workpacks/H1/WP-H1-03.md"]},
+      "dw": {"advice": "NOT_MATERIAL"},
+      "expected": {"dw_status": "NOT_MATERIAL", "materiality_advice": "NOT_MATERIAL", "dw_loaded": false, "dw_admitted": false, "must_open": ["Docs/workpacks/H1/WP-H1-03.md", "Docs/workpacks/H1/WP-H1-03A.md"], "must_discover_blockers": []}
+    },
+    {
+      "id": "05-material-dw",
+      "kind": "material-dw",
+      "ctx": {"compact_visible_sources": ["Docs/workpacks/H1/WP-H1-05.md"]},
+      "dw": {"advice": "USE"},
+      "material_variants": [
+        {"id": "catalogue-identity", "query": {"kind": "fact", "subject": "catalogue:market-prefab", "field": "logical_id"}},
+        {"id": "asset-prefab-relation", "query": {"kind": "relation", "type": "derived-from", "source": "asset:market-managed-variant"}}
+      ],
+      "expected": {"dw_status": "USE", "materiality_advice": "USE", "dw_loaded": true, "dw_admitted": true, "must_open": ["Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json", "Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": []}
+    },
+    {
+      "id": "06-negative-claim",
+      "kind": "negative-claim",
+      "ctx": {"compact_visible_sources": ["Docs/workpacks/H1/WP-H1-05.md"]},
+      "dw": {"advice": "OPTIONAL"},
+      "negative_variants": [
+        {"id": "false-absence-refuted", "claim": {"negative": true, "query": {"kind": "fact", "subject": "catalogue:market-material", "field": "logical_id"}}, "expect_counterexample": true, "expected": {"dw_status": "OPTIONAL", "materiality_advice": "OPTIONAL", "dw_loaded": false, "dw_admitted": false, "negative_claim_status": "REFUTED_BY_AUTHORITY", "claim_closed": false, "must_open": ["Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json", "Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": []}},
+        {"id": "true-absence-confirmed", "claim": {"negative": true, "query": {"kind": "fact", "subject": "catalogue:missing-entry", "field": "logical_id"}}, "expect_counterexample": false, "expected": {"dw_status": "OPTIONAL", "materiality_advice": "OPTIONAL", "dw_loaded": false, "dw_admitted": false, "negative_claim_status": "CONFIRMED_BY_AUTHORITY", "claim_closed": true, "must_open": ["Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json", "Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": []}}
+      ]
+    },
+    {
+      "id": "07-domain-leakage-differential",
+      "kind": "domain-leakage-differential",
+      "ctx": {"compact_visible_sources": ["Docs/workpacks/H1/WP-H1-05.md"]},
+      "dw": {},
+      "routing_signal": {"semantic": {"decision_critical": true, "structured_lookup": false}, "surface": {"domain_label": "CITY", "free_text": "allocated required-role finding disposition"}},
+      "alpha_renamed_signal": {"semantic": {"decision_critical": true, "structured_lookup": false}, "surface": {"domain_label": "OMEGA", "free_text": "frobnicated role-x signal-y outcome-z"}},
+      "expected": {"dw_status": "OPTIONAL", "materiality_advice": "OPTIONAL", "dw_loaded": false, "dw_admitted": false, "must_open": ["Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": []}
+    },
+    {
+      "id": "08-false-positive",
+      "kind": "false-positive",
+      "ctx": {"compact_visible_sources": ["Docs/workpacks/H1/WP-H1-03A.md"]},
+      "dw": {},
+      "routing_signal": {"semantic": {"decision_critical": false, "structured_lookup": false}, "surface": {"domain_label": "opaque", "free_text": "diagnostic: CITY PA Quaternius finding disposition required-role allocated prefab"}},
+      "expected": {"dw_status": "NOT_MATERIAL", "materiality_advice": "NOT_MATERIAL", "dw_loaded": false, "dw_admitted": false, "must_open": ["Docs/workpacks/H1/WP-H1-03A.md"], "must_discover_blockers": []}
+    },
+    {
+      "id": "09-h1-projection-bootstrap",
+      "kind": "h1-projection-bootstrap",
+      "ctx": {"compact_visible_sources": ["Docs/workpacks/H1/WP-H1-05.md"]},
+      "dw": {"advice": "USE", "projection_mutation": "empty", "query": {"kind": "fact", "subject": "catalogue:market-prefab", "field": "logical_id"}},
+      "expected": {"dw_status": "USE_REJECTED_LIFECYCLE", "materiality_advice": "USE", "dw_loaded": false, "dw_admitted": false, "must_open": ["Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": []},
+      "after_rebuild_expected": {"dw_status": "USE", "materiality_advice": "USE", "dw_loaded": true, "dw_admitted": true, "must_open": ["Docs/evidence/WP-CTX-DW-GATE/H1_PROJECTION_SOURCE.json", "Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": []}
+    },
+    {
+      "id": "10-routing-authority-conflict",
+      "kind": "routing-authority-conflict",
+      "ctx": {"active_workpack": "WP-H1-05", "compact_visible_sources": ["Docs/workpacks/H1/WP-H1-05.md"]},
+      "dw": {"advice": "NOT_MATERIAL"},
+      "expected": {"dw_status": "NOT_MATERIAL", "materiality_advice": "NOT_MATERIAL", "dw_loaded": false, "dw_admitted": false, "must_open": ["Docs/workpacks/H1/WP-H1-04.md", "Docs/workpacks/H1/WP-H1-05.md"], "must_discover_blockers": ["dependency-not-accepted:WP-H1-04"]}
+    }
+  ]
+}
