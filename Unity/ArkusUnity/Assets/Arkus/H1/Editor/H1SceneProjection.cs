@@ -414,6 +414,7 @@ namespace Arkus.H1.Editor
                 if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(derivative, out string derivativeGuid, out long derivativeFileId))
                     throw new InvalidDataException("projection.prefab-derivative-identity-missing");
                 var relationships = CollectRelationships(owner, source, lineage.sourcePath);
+                ValidateSourceRelationships(owner, source, lineage.sourcePath, relationships);
                 return new RealizationObservation
                 {
                     sourceKind = "prefab", sourcePath = lineage.sourcePath, sourceGuid = lineage.sourceGuid,
@@ -469,6 +470,24 @@ namespace Arkus.H1.Editor
             if (rows.Count > MaximumRelationships)
                 throw new InvalidDataException("projection.prefab-relationship-limit");
             return rows.Values.OrderBy(RelationshipKey, StringComparer.Ordinal).ToArray();
+        }
+
+        // Compare evaluated references, not only AssetDatabase's transitive dependencies:
+        // a flattened nested instance can still inherit the source asset's dependency set.
+        internal static void ValidateSourceRelationships(GameObject realized, GameObject source, string sourcePath)
+        {
+            ValidateSourceRelationships(realized, source, sourcePath, CollectRelationships(realized, source, sourcePath));
+        }
+
+        private static void ValidateSourceRelationships(GameObject realized, GameObject source, string sourcePath, PrefabRelationship[] realizedRows)
+        {
+            var observed = new HashSet<string>(realizedRows.Select(RelationshipKey), StringComparer.Ordinal);
+            foreach (var row in CollectRelationships(source, source, sourcePath))
+            {
+                if (row.kind == "variant-base" || observed.Contains(RelationshipKey(row))) continue;
+                throw new InvalidDataException(row.kind == "nested-prefab"
+                    ? "projection.prefab-nested-lineage-missing" : "projection.prefab-source-reference-missing");
+            }
         }
 
         private static void AddRelationship(IDictionary<string, PrefabRelationship> rows, string kind, string relativePath, UnityEngine.Object asset)

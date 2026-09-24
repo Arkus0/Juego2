@@ -31,7 +31,9 @@ function Run-Unity([string]$method, [string]$logPath, [string]$outputPath = '') 
     $arguments = @('-batchmode','-nographics','-quit','-projectPath',$project,'-executeMethod',$method)
     if ($outputPath) { $arguments += @('-arkus-h1-output',$outputPath) }
     $arguments += @('-logFile',$logPath)
-    $process = Start-Process -FilePath $unity -ArgumentList $arguments -PassThru -Wait -WindowStyle Hidden
+    $process = Start-Process -FilePath $unity -ArgumentList $arguments -PassThru -WindowStyle Hidden
+    # Unity's Roslyn compiler server may outlive the Editor. Wait for the Editor itself.
+    $process.WaitForExit()
     if ($process.ExitCode -ne 0) {
         Get-Content -LiteralPath $logPath -Tail 80 | Write-Output
         throw "Unity execution failed: $method (exit $($process.ExitCode))"
@@ -42,6 +44,15 @@ function Run-Unity([string]$method, [string]$logPath, [string]$outputPath = '') 
 Run-Unity 'Arkus.H1.Editor.H1CatalogueInventory.CreateProofScene' (Join-Path $scratch 'prepare-catalogue.log')
 $inventory = Join-Path $scratch 'inventory.json'
 Run-Unity 'Arkus.H1.Editor.H1CatalogueInventory.WriteInventory' (Join-Path $scratch 'inventory.log') $inventory
+
+# A harness-only nested prefab fixture exercises the relationship collector through
+# save/reload, then confirms that flattening the nested child turns the guard red.
+$nested = Join-Path $scratch 'nested-conformance.json'
+Run-Unity 'Arkus.H1.Editor.H1PrefabNestedConformance.Run' (Join-Path $scratch 'nested.log') $nested
+$nestedResult = Get-Content -LiteralPath $nested -Raw | ConvertFrom-Json
+if ($nestedResult.result -ne 'GREEN' -or $nestedResult.negative -ne 'projection.prefab-nested-lineage-missing') {
+    throw 'Nested prefab conformance result is incomplete'
+}
 
 # Exploratory shape probe reads the exact already-approved archive only. It does not import
 # or adopt the additional wall/roof/door/window/prop candidates it observes.
@@ -76,6 +87,6 @@ Write-Output "Toolchain: Unity 6000.3.24f1 (4e7b9b5b6244); .NET $selectedSdk"
 Write-Output "Canonical command: scripts/h1-06-local-evidence.ps1 -AssetsRoot <owner-configured> -ExpectedSha $actualSha"
 Write-Output 'Candidate clean before: YES'
 Write-Output 'Candidate clean after: YES'
-Write-Output 'Required gates: approved-Source=GREEN; pinned-Editor=GREEN; effective-catalogue=GREEN; content-shape-probe=GREEN; locked-build=GREEN; focused-plan-tests=GREEN; effective-prefab-public-conformance=GREEN; source-immutability=GREEN; missing-wrong-type-rebound-controls=GREEN; delete-rebuild-normalization=GREEN'
+Write-Output 'Required gates: approved-Source=GREEN; pinned-Editor=GREEN; effective-catalogue=GREEN; nested-prefab-save-reload-and-flattened-control=GREEN; content-shape-probe=GREEN; locked-build=GREEN; focused-plan-tests=GREEN; effective-prefab-public-conformance=GREEN; source-immutability=GREEN; missing-wrong-type-rebound-controls=GREEN; delete-rebuild-normalization=GREEN'
 Write-Output 'Result: GREEN'
-Write-Output "Scratch evidence: $public; $contentShape; $inventory"
+Write-Output "Scratch evidence: $public; $nested; $contentShape; $inventory"
