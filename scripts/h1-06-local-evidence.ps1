@@ -44,6 +44,11 @@ function Run-Unity([string]$method, [string]$logPath, [string]$outputPath = '') 
 Run-Unity 'Arkus.H1.Editor.H1CatalogueInventory.CreateProofScene' (Join-Path $scratch 'prepare-catalogue.log')
 $inventory = Join-Path $scratch 'inventory.json'
 Run-Unity 'Arkus.H1.Editor.H1CatalogueInventory.WriteInventory' (Join-Path $scratch 'inventory.log') $inventory
+$effectiveInventory = Get-Content -LiteralPath $inventory -Raw | ConvertFrom-Json
+if ($effectiveInventory.projectIdentity -ne 'arkus.unity-project@1:ArkusUnity' -or
+    $effectiveInventory.editorVersion -ne '6000.3.24f1') {
+    throw 'Effective Unity project/editor identity mismatch'
+}
 
 # A harness-only nested prefab fixture exercises the relationship collector through
 # save/reload, then confirms that flattening the nested child turns the guard red.
@@ -84,6 +89,9 @@ Write-Output 'Executor role: WORKER'
 Write-Output 'Execution environment: owner workstation, physical local Unity'
 Write-Output 'OS: windows-x64'
 Write-Output "Toolchain: Unity 6000.3.24f1 (4e7b9b5b6244); .NET $selectedSdk"
+Write-Output 'Project identity: arkus.unity-project@1:ArkusUnity'
+Write-Output "Package manifest SHA-256: $((Get-FileHash -LiteralPath (Join-Path $project 'Packages/manifest.json') -Algorithm SHA256).Hash.ToLowerInvariant())"
+Write-Output "Package lock SHA-256: $((Get-FileHash -LiteralPath (Join-Path $project 'Packages/packages-lock.json') -Algorithm SHA256).Hash.ToLowerInvariant())"
 Write-Output "Canonical command: scripts/h1-06-local-evidence.ps1 -AssetsRoot <owner-configured> -ExpectedSha $actualSha"
 Write-Output 'Candidate clean before: YES'
 Write-Output 'Candidate clean after: YES'

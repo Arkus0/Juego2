@@ -1,10 +1,10 @@
 # WP-H1-06 content-shape probe
 
-Status: **OBSERVED ON PRE-EVIDENCE SHA `f0b874d64cd2e4ef7d79a52d1a118ac23e3840c9`; FINAL SHA RECHECK PENDING**
+Status: **OBSERVED ON IMPLEMENTATION SHA `1404da8b312b86046a036fde0f5fc179b466f7d0`; FINAL SHA RECHECK PENDING**
 
 The physical-local command inspected the owner-local archive at its accepted SHA-256. It found at least 12 discoverable prefab/FBX candidates in each required category: wall, roof, door, window and prop. The bounded report includes the first 12 sorted candidates per category and 40 representative `.prefab` dependency rows. Each sampled prefab had one to three Unity GUID references; two sampled wall corner prefabs had three. These are archive-shape observations, not proof that every listed source has been adopted or effectively imported.
 
-The accepted wall/window FBX used by the public H1-06 conformance run retained its mesh and material references through a managed prefab variant. The archive also contains distinct roof, door and prop prefabs with dependency-shaped references. This is an **H1-06 omission check**: the implementation must preserve observed source/variant and dependency relationships, including nested prefab relationships where present. The current accepted H1-04 project-local slice is narrower than the archive. Broader prefab import, component/property fidelity and production art adaptation are **named future/residual decisions**, not H1-06 source adoption. No concrete H1-04/H1-05 predecessor contradiction was observed; no CITY/H2 production is authorized.
+The accepted wall/window FBX used by the public H1-06 conformance run retained its mesh and material references through a managed prefab variant. The archive also contains distinct roof, door and prop prefabs with dependency-shaped references. This is an **H1-06 omission check**: the implementation must preserve observed source/variant and dependency relationships, including nested prefab relationships where present. A separate harness-only nested fixture now proves the save/reload and flattening control on that specific mechanism. The current accepted H1-04 project-local slice is narrower than the archive. Broader prefab import, component/property fidelity and production art adaptation are **named future/residual decisions**, not H1-06 source adoption. No concrete H1-04/H1-05 predecessor contradiction was observed; no CITY/H2 production is authorized.
 
 ## Exact source boundary
 
