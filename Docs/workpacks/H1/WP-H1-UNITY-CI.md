@@ -1,10 +1,12 @@
 # WP-H1-UNITY-CI — GitHub-hosted Unity execution pilot
 
-Status: PILOT / NOT ADOPTED
+Status: COMPLETE / ACCEPTED
 Class: PROCESS_INFRASTRUCTURE / NON-PRODUCT
 Execution: GITHUB_HOSTED_UNITY
 Blocks: nothing
 Blocked by: nothing beyond the already accepted H1-02 oracle
+Acceptance: exact candidate `b49b081a92b088d7b0fd9adce4bd5f26a3b6c1bf`; independent PASS review `#5299167558`; PR `#166`; implementation merge `6898250be985ab5d805bbdb129e30c9c6f1f4cdf`.
+Post-PASS reconciliation: `Docs/evidence/WP-H1-UNITY-CI/DOCSYNC.md`.
 
 ## Objective
 
@@ -34,7 +36,7 @@ The cloud pilot must not weaken or rewrite that oracle to obtain GREEN.
 
 ## Pilot execution
 
-`.github/workflows/h1-unity-ci-pilot.yml` executes only the already accepted H1-02 SHA for the PR pilot. A later manual dispatch may target another exact SHA only after this pilot is reviewed.
+`.github/workflows/h1-unity-ci-pilot.yml` executes only the already accepted H1-02 SHA for the PR pilot. Manual dispatch may target another exact SHA only under the accepted bounded execution policy recorded by the post-PASS DocSync; the consuming workpack remains responsible for its own exact-SHA oracle and proof requirements.
 
 The first run intentionally disables the Unity `Library` cache. This makes the first observation a clean import/execution test rather than a cache-reuse test.
 
@@ -106,9 +108,9 @@ Do not repair H1-02 product semantics merely to make the cloud pilot green.
 
 ## Adoption consequence
 
-PASS authorizes a separate, explicit process change making GitHub-hosted Unity an optional effective execution substrate for later H1 workpacks when their claims do not require human visual inspection or physical/local-machine state.
+PASS authorized a separate, explicit process change making GitHub-hosted Unity an optional effective execution substrate for later H1 workpacks when their claims do not require human visual inspection or physical/local-machine state. The post-PASS DocSync linked above enacts that bounded process change.
 
-PASS does **not**:
+This acceptance does **not**:
 
 - make Unity run on every commit;
 - add this lane to Main Safety;
@@ -116,4 +118,4 @@ PASS does **not**:
 - prove PlayMode, standalone builds, graphics fidelity, scene appearance, animation appearance, GPU behavior or interactive authoring;
 - eliminate local/visual Unity execution when a later claim materially requires it.
 
-After PASS, the next optimization may add a `Library` cache and exact-input receipt reuse, but only after the clean pilot remains the baseline oracle.
+After PASS, a later optimization may add a `Library` cache and exact-input receipt reuse, but only after the clean pilot remains the baseline oracle.
