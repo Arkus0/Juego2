@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Arkus.EngineBridge.UnityAuthoring;
 using Arkus.H1.UnityHost;
@@ -109,7 +111,7 @@ namespace Arkus.Harness.Tests
                 var definitions = new List<CapabilityDefinition>(editor.Definitions) { SyntheticDefinition() };
                 var routes = new List<CapabilityRoute>(editor.Routes)
                 {
-                    CapabilityRoute.FromHandler(new SyntheticHandler(coordinator))
+                    CreateSyntheticRoute(coordinator)
                 };
                 editorContribution = new CanonicalProviderContribution(editor.Descriptor, definitions, routes);
             }
@@ -122,6 +124,61 @@ namespace Arkus.Harness.Tests
                     editorContribution,
                     H1UnityLifecycleContract.CreateLifecycleStatusContribution(ledger)
                 });
+        }
+
+        private static CapabilityRoute CreateSyntheticRoute(H1UnityEditorExecutionCoordinator coordinator)
+        {
+            var assembly = AssemblyBuilder.DefineDynamicAssembly(
+                new AssemblyName("Arkus.H1.DynamicSynthetic." + Guid.NewGuid().ToString("N")),
+                AssemblyBuilderAccess.Run);
+            var module = assembly.DefineDynamicModule("main");
+            var type = module.DefineType(
+                "SyntheticHandler",
+                TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class);
+            type.AddInterfaceImplementation(typeof(ICanonicalCapabilityHandler));
+
+            var routeAttributeConstructor = typeof(PublicCapabilityRouteAttribute).GetConstructor(
+                new[] { typeof(string), typeof(string), typeof(string) })!;
+            type.SetCustomAttribute(new CustomAttributeBuilder(
+                routeAttributeConstructor,
+                new object[] { H1UnityHostCapabilityPolicy.HostProviderId, SyntheticKey.Name, "1.0" }));
+
+            var coordinatorField = type.DefineField(
+                "_coordinator",
+                typeof(H1UnityEditorExecutionCoordinator),
+                FieldAttributes.Private | FieldAttributes.InitOnly);
+            var constructor = type.DefineConstructor(
+                MethodAttributes.Public,
+                CallingConventions.Standard,
+                new[] { typeof(H1UnityEditorExecutionCoordinator) });
+            var constructorIl = constructor.GetILGenerator();
+            constructorIl.Emit(OpCodes.Ldarg_0);
+            constructorIl.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes)!);
+            constructorIl.Emit(OpCodes.Ldarg_0);
+            constructorIl.Emit(OpCodes.Ldarg_1);
+            constructorIl.Emit(OpCodes.Stfld, coordinatorField);
+            constructorIl.Emit(OpCodes.Ret);
+
+            var interfaceMethod = typeof(ICanonicalCapabilityHandler).GetMethod(nameof(ICanonicalCapabilityHandler.Invoke))!;
+            var invoke = type.DefineMethod(
+                nameof(ICanonicalCapabilityHandler.Invoke),
+                MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Final,
+                typeof(CapabilityInvocationResult),
+                new[] { typeof(CapabilityInvocationContext), typeof(IReadOnlyDictionary<string, object?>) });
+            var invokeIl = invoke.GetILGenerator();
+            invokeIl.Emit(OpCodes.Ldarg_0);
+            invokeIl.Emit(OpCodes.Ldfld, coordinatorField);
+            invokeIl.Emit(OpCodes.Ldarg_1);
+            invokeIl.Emit(OpCodes.Ldarg_2);
+            invokeIl.Emit(OpCodes.Callvirt, typeof(H1UnityEditorExecutionCoordinator).GetMethod(
+                nameof(H1UnityEditorExecutionCoordinator.Invoke),
+                new[] { typeof(CapabilityInvocationContext), typeof(IReadOnlyDictionary<string, object?>) })!);
+            invokeIl.Emit(OpCodes.Ret);
+            type.DefineMethodOverride(invoke, interfaceMethod);
+
+            var handlerType = type.CreateType()!;
+            var handler = (ICanonicalCapabilityHandler)Activator.CreateInstance(handlerType, coordinator)!;
+            return CapabilityRoute.FromHandler(handler);
         }
 
         private static CapabilityDefinition SyntheticDefinition() =>
@@ -179,15 +236,6 @@ namespace Arkus.Harness.Tests
                 invocation.EditorRevision,
                 true,
                 invocation.Payload);
-
-        [PublicCapabilityRoute(H1UnityHostCapabilityPolicy.HostProviderId, "unity.host.synthetic.inspect", "1.0")]
-        private sealed class SyntheticHandler : ICanonicalCapabilityHandler
-        {
-            private readonly H1UnityEditorExecutionCoordinator _coordinator;
-            public SyntheticHandler(H1UnityEditorExecutionCoordinator coordinator) => _coordinator = coordinator;
-            public CapabilityInvocationResult Invoke(CapabilityInvocationContext context, IReadOnlyDictionary<string, object?> request) =>
-                _coordinator.Invoke(context, request);
-        }
 
         private sealed class SyntheticExecutor : IH1UnityCapabilityExecutor
         {
