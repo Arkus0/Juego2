@@ -17,10 +17,12 @@ LIFECYCLE_VERDICT: READY
 - Adapter: `ctx-dw-h1-01-adapter-v1`
 - Projection schema: `ctx-dw-h1-01-v1`
 - Lifecycle contract: `ctx-dw-h1-01-lifecycle-v1`
+- Projection.Digest: `516f51930124e0e77e6f767af0c8074c8384723c809c0bd50571ff44d80b1858`
+- ProjectionIdentity: `ctx-dw-h1-01-adapter-v1:516f51930124e0e77e6f767af0c8074c8384723c809c0bd50571ff44d80b1858`
 - Current lifecycle identity:
   `ctx-dw-h1-01-lifecycle-v1|adapter=ctx-dw-h1-01-adapter-v1|projection=ctx-dw-h1-01-v1|h104=8c6ffd61d17e832ed5b9f900e8c0f7d4e85bf5f5|catalogue=922dbdffbe2f0a622acc2e153ca8b181427f6ce6|adoption=664e83e25269f345a248ce43410a28ed0a670750`
 
-The runtime content identity is `ctx-dw-h1-01-adapter-v1:<DesignWorldProjection.Digest>`. The lifecycle identity above names the frozen authority inputs and semantic adapter/schema version from which that deterministic digest is rebuilt; it is therefore stable across enumeration order and changes whenever an accepted authority blob or projection contract changes.
+The concrete content identity above is the value produced by a deterministic rebuild from the two frozen accepted H1-04 authority blobs. `Projection.Digest` is already the SHA-256 of `DesignWorldProjection.NormalizedRepresentation`, so a second normalized-representation hash would duplicate the same binding rather than strengthen it. The exact-SHA verifier reconstructs the projection and requires both the computed digest and adapter-qualified identity to equal these published values.
 
 ## BUILD
 
@@ -39,7 +41,7 @@ The independent oracle does not consume production parser records, projection-de
 
 ## USE
 
-CTX may admit this H1 projection as derived navigation only after a fresh BUILD + VALIDATE under the current lifecycle identity. Source-open authority remains H1-04; a returned DW fact is navigation context, not a product-authoritative replacement for the catalogue/source documents.
+CTX may admit this H1 projection as derived navigation only after a fresh BUILD + VALIDATE under the current lifecycle identity and only when the rebuilt projection identity is exactly `ctx-dw-h1-01-adapter-v1:516f51930124e0e77e6f767af0c8074c8384723c809c0bd50571ff44d80b1858`. Source-open authority remains H1-04; a returned DW fact is navigation context, not a product-authoritative replacement for the catalogue/source documents.
 
 ## STALE / CORRUPT
 
@@ -48,6 +50,7 @@ The projection is RED and must be rebuilt or bypassed when any of the following 
 - either accepted authority blob differs;
 - H1 schema/project/distribution identity differs;
 - projection schema/version differs;
+- the rebuilt projection digest or `ProjectionIdentity` differs from the concrete values published above;
 - an independently expected fact is absent or unexpected;
 - any material projected field differs or is missing/extra;
 - a relation is missing, extra or points at another target;
@@ -58,7 +61,7 @@ A source change is not silently accepted by rebuilding against new bytes: it fir
 
 ## Deterministic rebuild
 
-The focused lifecycle suite builds the same accepted authority twice with opposite adapter enumeration order and requires byte-identical normalized representation, projection digest and runtime projection identity.
+The focused identity/lifecycle suite builds the same accepted authority twice with opposite adapter enumeration order and requires byte-identical normalized representation, projection digest and runtime projection identity. Both enumeration orders must produce the exact published identity `ctx-dw-h1-01-adapter-v1:516f51930124e0e77e6f767af0c8074c8384723c809c0bd50571ff44d80b1858`; the exact-SHA verifier also contains a causal tamper control proving that a unilateral different published expectation is RED.
 
 ## Optional-infrastructure boundary
 
