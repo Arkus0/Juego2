@@ -3,6 +3,7 @@ using Xunit;
 
 namespace Arkus.Harness.Tests
 {
+    [Collection(H1UnityEditorLifecycleProjectLeaseCollection.Name)]
     public sealed class H1UnityEditorLifecycleCausalTests
     {
         [Fact]

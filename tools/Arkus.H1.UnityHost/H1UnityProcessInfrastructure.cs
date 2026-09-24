@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using Arkus.EngineBridge.UnityAuthoring;
 using Arkus.Harness.Projection;
@@ -81,6 +82,10 @@ namespace Arkus.H1.UnityHost
 
     public sealed class FileH1UnityProjectLease : IH1UnityProjectLease
     {
+        private const uint HandleFlagInherit = 0x00000001;
+        private const int FGetFd = 1;
+        private const int FSetFd = 2;
+        private const int FdCloseOnExec = 1;
         private readonly string _path;
 
         public FileH1UnityProjectLease(H1UnityLaunchProfile profile)
@@ -92,31 +97,81 @@ namespace Arkus.H1.UnityHost
         public IDisposable? TryAcquire()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path) ?? throw new InvalidOperationException("Lease path has no directory."));
+
+            FileStream stream;
             try
             {
-                // Inheritable is the ownership transfer: the exclusive OS handle is acquired before
-                // Process.Start and is inherited by the Unity child. If the .NET host dies, the
-                // child's copy continues holding the same FileShare.None exclusion until Unity exits.
-                var stream = new FileStream(
-                    _path,
-                    FileMode.OpenOrCreate,
-                    FileAccess.ReadWrite,
-                    FileShare.None | FileShare.Inheritable);
+                // Keep the original FileShare.None contract intact: on Unix this is what makes the
+                // runtime request an exclusive advisory lock, and on Windows it denies competing opens.
+                stream = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException)
+            {
+                return null;
+            }
+
+            try
+            {
+                // The already-exclusive OS handle, not a PID or timeout, is the ownership token.
+                // Make that same handle survive Process.Start so the Unity child keeps exclusion if
+                // its parent host dies. The final child close then releases the operation naturally.
+                MakeHandleInheritable(stream);
                 stream.SetLength(0);
                 using (var writer = new StreamWriter(stream, new UTF8Encoding(false), 1024, true))
                 {
-                    writer.Write("arkus.h1-unity-project-lease@2\n");
+                    writer.Write("arkus.h1-unity-project-lease@1\n");
                     writer.Write(Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
                     writer.Flush();
                 }
                 stream.Flush(true);
                 return stream;
             }
-            catch (IOException)
+            catch
             {
-                return null;
+                stream.Dispose();
+                throw;
             }
         }
+
+        private static void MakeHandleInheritable(FileStream stream)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (!SetHandleInformation(stream.SafeFileHandle.DangerousGetHandle(), HandleFlagInherit, HandleFlagInherit))
+                {
+                    throw NativeIOException("Unable to make the H1 Unity project lease handle inheritable.");
+                }
+                return;
+            }
+
+            var rawHandle = stream.SafeFileHandle.DangerousGetHandle().ToInt64();
+            if (rawHandle < 0 || rawHandle > int.MaxValue)
+            {
+                throw new IOException("The H1 Unity project lease file descriptor is outside the supported native range.");
+            }
+
+            var descriptor = (int)rawHandle;
+            var flags = Fcntl(descriptor, FGetFd, 0);
+            if (flags < 0)
+            {
+                throw NativeIOException("Unable to inspect the H1 Unity project lease file descriptor flags.");
+            }
+            if ((flags & FdCloseOnExec) == 0) return;
+            if (Fcntl(descriptor, FSetFd, flags & ~FdCloseOnExec) < 0)
+            {
+                throw NativeIOException("Unable to make the H1 Unity project lease file descriptor inheritable.");
+            }
+        }
+
+        private static IOException NativeIOException(string message) =>
+            new IOException(message, new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()));
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetHandleInformation(IntPtr handle, uint mask, uint flags);
+
+        [DllImport("libc", EntryPoint = "fcntl", SetLastError = true)]
+        private static extern int Fcntl(int descriptor, int command, int argument);
     }
 
     public static class H1UnityEnvelopeCodec
