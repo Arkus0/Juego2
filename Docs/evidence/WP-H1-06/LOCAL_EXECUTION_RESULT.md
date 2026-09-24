@@ -21,3 +21,11 @@ The complete canonical command ran GREEN on clean implementation SHA `1404da8b31
 This observation is still pre-evidence SHA. The final evidence-bearing SHA requires one complete read-only rerun and a durable exact-SHA receipt before pre-review/freeze.
 
 The later strict Worker challenge also made the nested fixture invoke the actual `H1SceneProjection.ObserveRealization` path on the saved/reloaded variant and require a normalized `nested-prefab` row. Its focused Unity run returned `productPath: ObserveRealization:nested-prefab-row` and retained the flattened-child negative result. The final exact-SHA command includes this stronger fixture gate.
+
+## Complete physical observation before evidence reconciliation
+
+The full canonical command ran GREEN from a clean checkout at `b1af5c4cf16cf42273095529102f8ca7a1e635fb` on the owner workstation (Windows x64), with Unity `6000.3.24f1 (4e7b9b5b6244)`, .NET `8.0.425`, project `arkus.unity-project@1:ArkusUnity`, package manifest SHA-256 `ac32363f1409c3a816ae8eec208c839dbb85ef7d8b2f139c63b93b6a15271ca2`, and package lock SHA-256 `ee3c294655c0db9731252e6ff5e9661daf9b0b8c311124cc47117e946ec5f864`.
+
+The nested fixture returned `GREEN` with `ObserveRealization:nested-prefab-row` after save/reload and `projection.prefab-nested-lineage-missing` after flattening. The accepted Source/content-shape check found all five representative categories. Locked Release build and all three focused .NET tests passed. Public conformance returned four realized Quaternius nodes; exact source identity and content stayed unchanged; missing, wrong-type and rebound diagnostics matched; same-input realization, canonical hash/journal invariance, and derivative delete/rebuild relationship convergence passed. Initial and rebuilt graph digest: `df9889057dec9096232a73dbd19bbb66783799e731a730080044b9b81df71c69`. Initial realization digest: `c9a1ff0cb8794b409d97da456a9b475de09a6f8b68fa27fc5e748df0b2220ff0`. The candidate remained clean after execution.
+
+This tracked reconciliation changes the candidate SHA. The complete command must run once more, read-only, at the evidence-bearing SHA, with its exact receipt persisted on PR #195 before freeze.
