@@ -41,11 +41,12 @@ The first run intentionally disables the Unity `Library` cache. This makes the f
 Pinned execution inputs:
 
 - GitHub-hosted `ubuntu-24.04` runner;
-- `game-ci/unity-test-runner` pinned by commit `32e57712352b500e17974b245a6dce9e11a73213`;
-- GameCI CLI `v0.1.69`;
+- GameCI CLI `v0.1.69`, Linux x64 release binary SHA-256 `d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329`;
 - project version read from the checked-out `ProjectVersion.txt`;
-- `testMode: editmode`;
+- `testPlatforms: editmode`;
 - `coverageEnabled: false` for parity with the bounded H1-02 oracle.
+
+The workflow invokes the pinned GameCI CLI directly rather than routing this boolean through `game-ci/unity-test-runner@32e57712352b500e17974b245a6dce9e11a73213`. That wrapper translates `coverageEnabled: false` into `--no-coverageEnabled`, which GameCI CLI `v0.1.69` rejects. Direct invocation uses the CLI's supported `--coverageEnabled false` form, preserving the same GameCI Docker execution path while making the disabled-coverage requirement effective instead of declarative.
 
 ## Bounded GameCI package-metadata exception
 
@@ -64,7 +65,7 @@ That exception is valid only when the workflow proves all of the following in th
 6. both files are restored from the exact target SHA after reconciliation; and
 7. the tracked working tree is then identical to the target SHA before evidence is accepted.
 
-This is not permission for product/source drift and does not generalize to later GameCI versions, package deltas, paths, or workpacks. A changed action/CLI or changed package injection requires a new explicit review rather than silently widening the exception.
+This is not permission for product/source drift and does not generalize to later GameCI versions, package deltas, paths, or workpacks. A changed CLI binary/hash or changed package injection requires a new explicit review rather than silently widening the exception.
 
 ## License boundary
 
@@ -86,8 +87,9 @@ The pilot may be called PASS only if one GitHub-hosted execution against the fro
 2. effective Unity editor test reports the pinned `6000.3.24f1` version;
 3. the existing EditMode suite executes in Unity and returns exactly `5/5` passed with zero failures;
 4. the effective tests still prove Force Text, Visible Meta Files, Built-in render pipeline, package lock presence, and visible-meta coverage because those are the accepted H1-02 tests, not duplicated workflow assertions;
-5. tracked repository state remains unchanged by execution except for the bounded transient GameCI package-metadata exception above, whose exact two-path delta must be reconciled and restored so the final tracked tree is identical to the frozen target SHA;
-6. test artifacts and an exact-SHA pilot receipt are retained by Actions.
+5. coverage is effectively disabled for the cloud execution;
+6. tracked repository state remains unchanged by execution except for the bounded transient GameCI package-metadata exception above, whose exact two-path delta must be reconciled and restored so the final tracked tree is identical to the frozen target SHA;
+7. test artifacts and an exact-SHA pilot receipt are retained by Actions.
 
 ## FAIL / INCONCLUSIVE
 
@@ -96,6 +98,7 @@ Classify causally:
 - missing/invalid Unity credentials or unavailable Personal activation: `SETUP_BLOCKED`, not product FAIL;
 - GameCI image/tooling cannot execute the pinned Unity patch: infrastructure FAIL;
 - Unity launches but the accepted five tests do not all pass: substantive portability FAIL;
+- coverage is enabled despite the pinned disabled setting: execution-contract FAIL;
 - result cannot be bound to the exact H1-02 SHA: evidence FAIL;
 - any tracked mutation outside the bounded two-path exception, any mismatch from its exact known package delta, or any failure to restore a tracked tree identical to the target SHA: isolation FAIL.
 
