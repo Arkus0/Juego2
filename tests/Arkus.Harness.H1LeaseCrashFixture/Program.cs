@@ -32,7 +32,7 @@ namespace Arkus.Harness.H1LeaseCrashFixture
 
             new FileH1UnityInvocationLedger(profile).Record(new H1UnityInvocationRecord(
                 invocationId,
-                ProjectProfileInspectExecutor.Key.ToString(),
+                "unity.host.project-profile.inspect@1.0",
                 H1UnityInvocationStatus.Running,
                 "running"));
 
