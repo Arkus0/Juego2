@@ -145,6 +145,26 @@ namespace Arkus.CITY.Editor
             Debug.Log("CITY04_CAPTURE_GREEN folder=" + evidence);
         }
 
+        [MenuItem("Arkus/CITY-04/Inspect imported geometry")]
+        public static void InspectProjection()
+        {
+            EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            foreach (string wanted in new[] { "Exact dry land visual", "Authorized bank-aware", "mask.rio", "mask.arroyo", "X1 permanent", "X5 low-water" })
+            {
+                foreach (var go in UnityEngine.Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
+                {
+                    if (!go.name.StartsWith(wanted, StringComparison.Ordinal)) continue;
+                    foreach (var renderer in go.GetComponentsInChildren<Renderer>())
+                        Debug.Log("CITY04_GEOMETRY " + wanted + " world_bounds=" + renderer.bounds +
+                                  " material=" + (renderer.sharedMaterial == null ? "NONE" : renderer.sharedMaterial.name) +
+                                  " enabled=" + renderer.enabled);
+                    foreach (var filter in go.GetComponentsInChildren<MeshFilter>())
+                        Debug.Log("CITY04_MESH " + wanted + " local_bounds=" + filter.sharedMesh.bounds +
+                                  " transform=" + filter.transform.localToWorldMatrix);
+                }
+            }
+        }
+
         private static void CaptureView(string path, Vector3 from, Vector3 target, bool overhead)
         {
             var go = new GameObject("Temporary capture camera");
