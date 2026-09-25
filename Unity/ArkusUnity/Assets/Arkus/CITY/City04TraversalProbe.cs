@@ -10,6 +10,7 @@ namespace Arkus.CITY
         public GameObject X5Crossing;
         public GameObject RouteABarrier;
         public GameObject BusyMarkers;
+        public GameObject ProxyActor;
 
         private CharacterController controller;
         private float pitch;
@@ -18,6 +19,9 @@ namespace Arkus.CITY
         private bool routeABlocked;
         private bool busy;
         private float legStart;
+        private Vector2[] proxyRoute;
+        private int proxyNext;
+        private string lastStart = "free walk";
 
         private static readonly Vector2[] Stops =
         {
@@ -44,6 +48,7 @@ namespace Arkus.CITY
                     controller.enabled = true;
                     verticalSpeed = 0;
                     legStart = Time.time;
+                    lastStart = new[] { "O.X1", "W.X1", "W.CASCO", "F01", "W.PLAZA", "W.SHOP", "W.LANDING", "W.X5", "E.X5" }[i];
                 }
             }
 
@@ -69,6 +74,14 @@ namespace Arkus.CITY
                 if (BusyMarkers != null) BusyMarkers.SetActive(busy);
             }
             if (Input.GetKeyDown(KeyCode.T)) legStart = Time.time;
+            if (Input.GetKeyDown(KeyCode.L))
+                Debug.Log("CITY04_HUMAN_LEG start=" + lastStart + " end_U=" + transform.position.x.ToString("F2") +
+                          " end_V=" + transform.position.z.ToString("F2") + " elapsed_s=" + (Time.time - legStart).ToString("F1") +
+                          " X5=" + (x5Available ? "AVAILABLE" : "CLOSED") +
+                          " micro_A=" + (routeABlocked ? "BLOCKED" : "OPEN"));
+            if (Input.GetKeyDown(KeyCode.Z)) StartProxy("casco.micro.A");
+            if (Input.GetKeyDown(KeyCode.X)) StartProxy("casco.micro.B");
+            UpdateProxy();
 
             if (Input.GetMouseButton(1))
             {
@@ -86,13 +99,44 @@ namespace Arkus.CITY
 
         private void OnGUI()
         {
-            GUI.Box(new Rect(10, 10, 530, 110),
+            GUI.Box(new Rect(10, 10, 600, 135),
                 "CITY-04 physical probe — greybox only\n" +
-                "WASD move, right mouse look, Shift faster; 1-9 anchor starts, T timer reset\n" +
+                "WASD move, right mouse look, Shift faster; 1-9 anchor starts, T timer reset, L log leg\n" +
                 "G X5 low-water crossing: " + (x5Available ? "AVAILABLE" : "CLOSED") +
                 "   B micro.A: " + (routeABlocked ? "BLOCKED" : "OPEN") +
                 "   Q market: " + (busy ? "BUSY" : "QUIET") +
+                "\nZ proxy micro.A, X proxy micro.B (spatial follow marker only)" +
                 "\nElapsed leg: " + (Time.time - legStart).ToString("F1") + " s");
+        }
+
+        private void StartProxy(string routeId)
+        {
+            if (ProxyActor == null) return;
+            foreach (var route in City04Layout.ROUTES)
+            {
+                if (route.Id != routeId) continue;
+                proxyRoute = route.Points;
+                proxyNext = 1;
+                ProxyActor.transform.position = new Vector3(proxyRoute[0].x,
+                    GroundHeight(proxyRoute[0]) + 0.85f, proxyRoute[0].y);
+                ProxyActor.SetActive(true);
+                Debug.Log("CITY04_PROXY_START route=" + routeId);
+                return;
+            }
+        }
+
+        private void UpdateProxy()
+        {
+            if (ProxyActor == null || proxyRoute == null || proxyNext >= proxyRoute.Length) return;
+            Vector2 point = proxyRoute[proxyNext];
+            Vector3 goal = new Vector3(point.x, GroundHeight(point) + 0.85f, point.y);
+            ProxyActor.transform.position = Vector3.MoveTowards(ProxyActor.transform.position, goal, Time.deltaTime);
+            if (Vector3.Distance(ProxyActor.transform.position, goal) < 0.01f)
+            {
+                proxyNext++;
+                if (proxyNext == proxyRoute.Length)
+                    Debug.Log("CITY04_PROXY_FINISH");
+            }
         }
 
         public static float GroundHeight(Vector2 p)

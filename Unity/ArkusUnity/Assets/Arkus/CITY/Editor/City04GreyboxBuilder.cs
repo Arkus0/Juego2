@@ -120,6 +120,10 @@ namespace Arkus.CITY.Editor
             probe.X5Crossing = x5;
             probe.RouteABarrier = barrier;
             probe.BusyMarkers = busyMarkers;
+            var proxy = Box("Follow/search spatial proxy (Z/X)", At(new Vector2(73, 30), 0.85f),
+                new Vector3(0.6f, 1.7f, 0.6f), marker, false);
+            proxy.SetActive(false);
+            probe.ProxyActor = proxy;
 
             if (!EditorSceneManager.SaveScene(scene, ScenePath))
                 throw new InvalidOperationException("CITY-04 scene save failed");
