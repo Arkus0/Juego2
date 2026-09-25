@@ -12,8 +12,8 @@ using UnityEngine.SceneManagement;
 
 namespace Arkus.H1.Editor
 {
-    // Harness-only fixture: prove evaluated nested links survive save/reload and a
-    // flattened child cannot be hidden by transitive AssetDatabase dependencies.
+    // Harness-only fixture: prove evaluated nested links survive save/reload, preserve
+    // duplicate-sibling multiplicity, and cannot be hidden by transitive dependencies.
     public static class H1PrefabNestedConformance
     {
         private const string Root = "Assets/Arkus/H1/ManagedPrefabs/H1NestedProof";
@@ -53,8 +53,13 @@ namespace Arkus.H1.Editor
 
                 var parentRoot = new GameObject("ParentWall");
                 var nestedInstance = PrefabUtility.InstantiatePrefab(nestedAsset) as GameObject;
-                if (nestedInstance == null) throw new InvalidDataException("nested-proof.source-instance-missing");
+                var nestedTwin = PrefabUtility.InstantiatePrefab(nestedAsset) as GameObject;
+                if (nestedInstance == null || nestedTwin == null)
+                    throw new InvalidDataException("nested-proof.source-instance-missing");
+                nestedInstance.name = "SameNested";
+                nestedTwin.name = "SameNested";
                 nestedInstance.transform.SetParent(parentRoot.transform, false);
+                nestedTwin.transform.SetParent(parentRoot.transform, false);
                 Save(parentRoot, parentPath);
                 UnityEngine.Object.DestroyImmediate(parentRoot);
                 var parentAsset = AssetDatabase.LoadAssetAtPath<GameObject>(parentPath);
@@ -82,19 +87,55 @@ namespace Arkus.H1.Editor
                 if (PrefabUtility.InstantiatePrefab(variant, scene) == null || !EditorSceneManager.SaveScene(scene, scenePath))
                     throw new InvalidDataException("nested-proof.scene-save-failed");
                 var observed = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single).GetRootGameObjects().Single();
-                var nestedObserved = observed.transform.childCount == 1 ? observed.transform.GetChild(0) : null;
-                if (nestedObserved == null ||
-                    AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(nestedObserved.gameObject)) != nestedPath)
+                if (observed.transform.childCount != 2)
+                    throw new InvalidDataException("nested-proof.duplicate-sibling-count-lost-after-reload");
+                var nestedObserved = observed.transform.Cast<Transform>().ToArray();
+                if (nestedObserved.Any(child => child.name != "SameNested" ||
+                    AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(child.gameObject)) != nestedPath))
                     throw new InvalidDataException("nested-proof.nested-link-missing-after-reload");
                 H1SceneProjection.ValidateSourceRelationships(observed, parentAsset, parentPath);
-                var observe = typeof(H1SceneProjection).GetMethod("ObserveRealization", BindingFlags.NonPublic | BindingFlags.Static);
-                if (observe == null) throw new InvalidDataException("nested-proof.product-observer-missing");
+
+                var projectionType = typeof(H1SceneProjection);
+                var observe = projectionType.GetMethod("ObserveRealization", BindingFlags.NonPublic | BindingFlags.Static);
+                var collect = projectionType.GetMethod("CollectRelationships", BindingFlags.NonPublic | BindingFlags.Static);
+                var digest = projectionType.GetMethod("RelationshipDigest", BindingFlags.NonPublic | BindingFlags.Static);
+                if (observe == null || collect == null || digest == null)
+                    throw new InvalidDataException("nested-proof.product-observer-missing");
                 var productObservation = observe.Invoke(null, new object[] { observed, Logical });
                 var relationshipField = productObservation.GetType().GetField("relationships");
+                var digestField = productObservation.GetType().GetField("relationshipDigest");
                 var productRows = relationshipField == null ? null : relationshipField.GetValue(productObservation) as Array;
-                if (productRows == null || !productRows.Cast<object>().Any(row =>
-                    (string)row.GetType().GetField("kind").GetValue(row) == "nested-prefab"))
-                    throw new InvalidDataException("nested-proof.product-observation-omitted-nested-link");
+                var positiveDigest = digestField == null ? null : digestField.GetValue(productObservation) as string;
+                if (productRows == null || productRows.Cast<object>().Count(row =>
+                    (string)row.GetType().GetField("kind").GetValue(row) == "nested-prefab") != 2)
+                    throw new InvalidDataException("nested-proof.product-observation-lost-duplicate-multiplicity");
+                if (string.IsNullOrEmpty(positiveDigest))
+                    throw new InvalidDataException("nested-proof.product-relationship-digest-missing");
+
+                // Remove exactly one of two same-name nested siblings from the managed scene instance.
+                // Unity records the deletion as a removed-GameObject Prefab override; save/reload must
+                // retain that one-sibling loss while the surviving sibling keeps the same dependency.
+                UnityEngine.Object.DestroyImmediate(observed.transform.GetChild(1).gameObject);
+                if (!EditorSceneManager.SaveScene(observed.scene, scenePath))
+                    throw new InvalidDataException("nested-proof.loss-scene-save-failed");
+                observed = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single).GetRootGameObjects().Single();
+                if (observed.transform.childCount != 1 || observed.transform.GetChild(0).name != "SameNested")
+                    throw new InvalidDataException("nested-proof.loss-control-not-preserved-after-reload");
+
+                var brokenRows = collect.Invoke(null, new object[] { observed, parentAsset, parentPath }) as Array;
+                var brokenDigest = brokenRows == null ? null : digest.Invoke(null, new object[] { brokenRows }) as string;
+                if (string.IsNullOrEmpty(brokenDigest) || brokenDigest == positiveDigest)
+                    throw new InvalidDataException("nested-proof.duplicate-sibling-loss-digest-false-green");
+                try
+                {
+                    observe.Invoke(null, new object[] { observed, Logical });
+                    throw new InvalidDataException("nested-proof.duplicate-sibling-loss-false-green");
+                }
+                catch (TargetInvocationException error)
+                {
+                    var inner = error.InnerException as InvalidDataException;
+                    if (inner == null || inner.Message != "projection.prefab-nested-lineage-missing") throw;
+                }
 
                 var brokenRoot = new GameObject("ParentWall");
                 var brokenChild = new GameObject("nested");
@@ -121,9 +162,9 @@ namespace Arkus.H1.Editor
                 {
                     schemaId = "arkus.h1-06-nested-prefab-conformance@1",
                     result = "GREEN",
-                    positive = "nested-prefab-link-preserved-after-save-reload",
-                    productPath = "ObserveRealization:nested-prefab-row",
-                    negative = "projection.prefab-nested-lineage-missing",
+                    positive = "two-same-name-nested-prefab-links-preserved-after-save-reload",
+                    productPath = "ObserveRealization:nested-prefab-multiplicity-and-digest",
+                    negative = "one-of-two-same-name-siblings-removed:projection.prefab-nested-lineage-missing",
                     fixtureRoot = Root
                 }, true), new UTF8Encoding(false));
             }
