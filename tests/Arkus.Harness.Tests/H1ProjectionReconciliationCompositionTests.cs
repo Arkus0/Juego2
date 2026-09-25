@@ -37,9 +37,6 @@ namespace Arkus.Harness.Tests
             Assert.NotNull(proposal.MutationRequest);
             Assert.Equal(new[] { "facade" }, proposal.ObjectIds);
 
-            // Establish real same-lineage history after the Unity observation. The concurrent writer is
-            // deliberately outside the projected H1 scope, so recovery must preserve both intents rather
-            // than silently overwrite the newer canonical revision.
             var session = new PortableWorldAuthoringSession(original);
             var contract = CanonicalWorldContract.Compose(new WorldInspectionService(session), session);
             Hk04TransactionalMutationTests.Success(
@@ -84,9 +81,6 @@ namespace Arkus.Harness.Tests
             var rebuiltFacade = rebuilt.Nodes.Single(value => value.ObjectId == "facade");
             Assert.Equal(editedFacade.PositionMm.Z, rebuiltFacade.PositionMm.Z);
 
-            // This observation is the semantic result a successful H1-05 rematerialization must expose.
-            // The effective Unity gate separately proves the actual materialize -> observe leg; here the
-            // accepted H0 result itself is what drives the rebuilt plan and parity oracle.
             var rematerialized = Observation(rebuilt, rebuilt.Nodes.Select(Observed).ToArray());
             var parity = H1ProjectionReconciliation.Compare(rebuilt, rematerialized);
             Assert.True(parity.Parity);
@@ -194,7 +188,7 @@ namespace Arkus.Harness.Tests
                 RealizationDigest = H1ManagedScenePlan.Sha("realization"),
                 Nodes = nodes.OrderBy(value => value.ObjectId, StringComparer.Ordinal).ToArray(),
                 UnmanagedPaths = Array.Empty<string>(),
-                Diagnostics = Array.Empty<H1ProjectionReconciliationDiagnostic>(),
+                Diagnostics = Array.Empty<H1ProjectionObservationDiagnostic>(),
                 ManagedDigest = H1ProjectionReconciliation.ManagedDigest(nodes)
             };
         }
