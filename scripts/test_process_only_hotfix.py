@@ -27,6 +27,7 @@ def load(name: str, filename: str):
 console_module = load("process_hotfix_console_test", "local_wp_remote_console.py")
 process = load("process_hotfix_autopilot_test", "local_wp_autopilot_process.py")
 adoption = load("process_hotfix_adoption_test", "reviewer_verdict_adoption.py")
+safe = load("process_hotfix_safe_output_test", "arkus_safe_output.py")
 
 SHA = "a" * 40
 WRONG_SHA = "b" * 40
@@ -64,14 +65,21 @@ def pr_record(*, body: str | None = None, sha: str = SHA) -> dict:
 
 def review_item(verdict: str = "FAIL", sha: str = SHA, review_id: str = REVIEW_ID,
                 actor: str = "Arkus0", at: str = "2026-09-24T18:00:00Z") -> dict:
+    intent = safe.render_review(
+        wp="WP-H1-05", pr=192, candidate_sha=sha,
+        verdict=verdict, review_id=review_id,
+    )
     return {
         "user": {"login": actor},
         "created_at": at,
         "submitted_at": at,
+        "commit_id": sha,
+        "pull_request_url": "https://api.github.com/repos/Arkus0/Juego2/pulls/192",
         "body": (
             f"Reviewer verdict: {verdict}\n"
             f"Reviewed candidate SHA: {sha}\n"
             f"Autopilot review ID: {review_id}\n"
+            f"{intent}\n"
         ),
     }
 
@@ -239,11 +247,12 @@ class ReviewerAdoptionRegressionTests(unittest.TestCase):
 
     def test_invalid_authority_and_conflicting_verdicts_fail_closed(self):
         with self.assertRaisesRegex(adoption.AdoptionError, "invalid authority"):
-            adoption.authoritative_verdicts([], [review_item(actor="mallory")])
+            adoption.authoritative_verdicts([review_item(actor="mallory")], [])
         first = review_item("FAIL")
         second = review_item("PASS", at="2026-09-24T18:01:00Z")
-        with self.assertRaisesRegex(adoption.AdoptionError, "contradictory"):
-            adoption.authoritative_verdicts([], [first, second])
+        with patch.object(adoption, "gh_json", return_value=pr_record()), \
+             self.assertRaisesRegex(adoption.AdoptionError, "contradictory"):
+            adoption.authoritative_verdicts([first, second], [])
 
     def test_wrong_sha_adoption_is_rejected(self):
         current = pr_record()
