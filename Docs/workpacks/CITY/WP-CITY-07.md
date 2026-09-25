@@ -12,6 +12,16 @@ Turn the CITY-04 validated greybox into the first structurally keeper piece of t
 
 Keeper realization is separate from the Arkus authoring-efficiency proof so each has a reviewable causal boundary.
 
+## Remaining CITY compression amendment
+
+Binding planning amendment: `Docs/workpacks/CITY/CITY_REMAINING_COMPRESSION_AMENDMENT.md`.
+
+CITY-07 owns only keeper-realization fidelity: preserving the CITY-04 validated structure, selectively replacing greybox with accepted assets/compositions, realizing at least one representative street/building/interior chain against accepted CITY constraints, keeping retained-versus-temporary intent explicit, and surfacing/routing missing or incompatible dependencies without inventing CITY-local bridge semantics.
+
+CITY-02/03/05/06 constraints, CITY-04's physical verdict, H1-GATE bridge/catalogue/materialization/component/validation/rebuild guarantees, and accepted asset/source identity are `CONSUMED / INTEGRATION_ONLY`. CITY-07 may inspect those mechanisms where needed for the keeper verdict but must not become another generic bridge-conformance campaign.
+
+A direct keeper-fidelity failure is CITY-07-owned. A concrete contradiction of accepted CITY/H1/catalogue/asset guarantees routes to the causal predecessor and may block completion until repaired there. Runner/tooling/workflow/capture/logging/checkout failures are `EVIDENCE_OR_INFRA_BLOCKED`, not permission to widen CITY-07.
+
 ## Work
 
 - preserve the validated CITY-04 street/bridge/route structure unless a measured defect is formally routed back to its owner;
@@ -37,6 +47,8 @@ Keeper realization is separate from the Arkus authoring-efficiency proof so each
 - Temporary visual assets may remain, but retained urban structure/composition intent is explicit.
 - Unity realization does not become semantic authority over CITY or Arkus contracts.
 - No Living World semantics are claimed or implemented merely to make the district look alive.
+
+Per the compression amendment, these acceptance criteria remain unchanged. Low-level bridge/catalogue correctness is consumed from accepted H1 owners unless effective keeper evidence concretely contradicts it; CITY-07 does not duplicate their proof merely because the mechanisms participate in realization.
 
 ## Definition of Done
 
