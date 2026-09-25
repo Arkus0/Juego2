@@ -59,8 +59,8 @@ adoption_blob="$(git hash-object Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json)"
 [[ "${catalogue_blob}" == "922dbdffbe2f0a622acc2e153ca8b181427f6ce6" ]] || { echo "Frozen H1-04 catalogue blob mismatch: ${catalogue_blob}" >&2; exit 1; }
 [[ "${adoption_blob}" == "664e83e25269f345a248ce43410a28ed0a670750" ]] || { echo "Frozen H1-04 source-adoption blob mismatch: ${adoption_blob}" >&2; exit 1; }
 
-grep -Fq "- Projection.Digest: \`${PROJECTION_DIGEST}\`" Docs/evidence/WP-CTX-DW-H1-01/LIFECYCLE.md
-grep -Fq "- ProjectionIdentity: \`${PROJECTION_IDENTITY}\`" Docs/evidence/WP-CTX-DW-H1-01/LIFECYCLE.md
+grep -Fq -- "- Projection.Digest: \`${PROJECTION_DIGEST}\`" Docs/evidence/WP-CTX-DW-H1-01/LIFECYCLE.md
+grep -Fq -- "- ProjectionIdentity: \`${PROJECTION_IDENTITY}\`" Docs/evidence/WP-CTX-DW-H1-01/LIFECYCLE.md
 grep -Fq 'AcceptedH104CandidateSha = "8c6ffd61d17e832ed5b9f900e8c0f7d4e85bf5f5"' src/Arkus.DesignWorld/H1CatalogueProjection.cs
 grep -Fq 'new DesignProjectionVersion(1, "ctx-dw-h1-01-v1")' src/Arkus.DesignWorld/H1CatalogueProjection.cs
 
