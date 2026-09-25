@@ -72,7 +72,7 @@ namespace Arkus.Harness.Tests
 
             var report = H1ProjectionReconciliation.Compare(plan, effectiveObservation);
             Assert.False(report.Parity);
-            Assert.Equal("catalogue-drift", report.State);
+            Assert.Equal("missing-dependency", report.State);
             var drift = Assert.Single(report.Items);
             Assert.Equal(H1ProjectionDriftClass.CatalogueDrift, drift.Classification);
             Assert.Equal("$scene", drift.ObjectId);
