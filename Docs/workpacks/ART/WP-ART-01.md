@@ -7,6 +7,16 @@ Depends on: `WP-ART-00` accepted direction + `WP-CITY-04` PASS + `WP-H1-04` acce
 Blocks: `WP-CITY-07` keeper realization  
 Does not block: remaining H1 infrastructure work or `WP-H1-GATE`
 
+## Binding contracts
+
+This canonical workpack must be read together with the following ART-01 contracts; once accepted, they are **binding**, not optional design notes:
+
+- `Docs/workpacks/ART/ART_01_ASSEMBLY_GRAMMAR_AMENDMENT.md`;
+- `Docs/workpacks/ART/ART_ENVIRONMENT_ASSEMBLY_GRAMMAR.md`;
+- `Docs/workpacks/ART/ART_01_DIMENSIONAL_PROFILE.md`.
+
+The assembly amendment carries the required pre-production paintovers/overpaints, layered building/street assembly evidence, neutral-material checkpoint and rapid bounded-iteration protocol. The environment grammar and dimensional profile define the connection and metric vocabulary consumed by the benchmark. A Worker following only this file is still required to consume those contracts.
+
 ## Objective
 
 Turn the exact adopted Quaternius Source baseline plus the accepted Juego2 visual direction into a **bounded production-ready environment kit** that is sufficient to realize the first retained CITY-07 chain without the visible failure mode observed in the disposable Astra test: primitive boxes/planes carrying facade, roof or prop assets as decoration while being presented as if they were finished architecture.
@@ -24,6 +34,7 @@ Consume without reopening:
 - `Docs/engineering/DEPENDENCY_IP_POLICY.md` for any new external pack or source;
 - accepted CITY-02/03/05/06 structure and the CITY-04 measured seed;
 - `Docs/workpacks/CITY/CITY_07_GAME_SPACE_REALIZATION_AMENDMENT.md` for the distinction between disposable greybox geometry and keeper third-person game-space;
+- the binding ART-01 contracts listed above;
 - PR `#228` only as **non-canonical design input** until its P1/P8/P9 amendments are independently reviewed, merged and DocSynced.
 
 ART-01 must not redefine CITY topology, place/access semantics, H1 bridge contracts or Arkus canonical authority.
@@ -105,6 +116,8 @@ Define and enforce three presentation states for environment realization:
 
 An authoring agent must **not** convert `COVERAGE_BLOCKED` into apparent success by creating a large box/plane and attaching windows, roofs, signs or textures to it while reporting the result as keeper-ready.
 
+`PROXY_VISUAL` and `COVERAGE_BLOCKED` are valid **truthful diagnostic/iteration states**, but they are not ART-01 readiness success states for any required benchmark element. If a required benchmark need ends in either state, ART-01 remains blocked/not-ready until that need is resolved or the proper causal owner changes the requirement.
+
 Unity-native geometry is not banned. It is acceptable when intentionally authored as retained geometry and it satisfies the same silhouette, depth, junction, ground-contact and material criteria as the rest of the kit. What is forbidden is silent substitution of crude proxy geometry for missing production structure.
 
 ### 5. Representative visual benchmark
@@ -139,7 +152,9 @@ The smoke test must distinguish:
 - a deliberate proxy result;
 - a truthful coverage failure.
 
-A tool choosing the last two states is acceptable evidence. A tool silently returning a proxy-looking scene as keeper-ready is a FAIL.
+Choosing `PROXY_VISUAL` or `COVERAGE_BLOCKED` is acceptable as **honest negative evidence during execution** and is preferable to faking success. It does **not** satisfy the required benchmark. ART-01 PASS requires the frozen representative benchmark, including every required retained need in that benchmark, to end `KEEPER_READY`.
+
+A tool silently returning a proxy-looking scene as keeper-ready is a FAIL.
 
 ## Visual acceptance oracle
 
@@ -154,7 +169,7 @@ At minimum the reviewer checks:
 5. **Composition** — corners, setbacks, local volumes, retaining/steps and prop placement create a readable authored place rather than an asset showroom.
 6. **Visual-bible fit** — the retained result does not default to the vetoed alpine/fantasy/sunny-Mediterranean read.
 7. **Human scale** — door, street, facade and public-space proportions still read correctly with a human-sized proxy in third person.
-8. **No silent proxy** — any primitive-looking placeholder that remains is explicitly marked `PROXY_VISUAL` and is excluded from the keeper claim.
+8. **No silent proxy** — any primitive-looking placeholder observed during iteration is explicitly marked `PROXY_VISUAL` and excluded from the keeper claim; the frozen required benchmark cannot PASS while a required element remains in that state.
 
 A supplementary untextured/neutral-material inspection may be used to judge massing and facade depth. It is diagnostic, not a requirement to ship an alternate material setup.
 
@@ -168,20 +183,22 @@ A supplementary untextured/neutral-material inspection may be used to judge mass
 - effective Unity benchmark captures from third-person scale;
 - neutral/massing diagnostic captures if used;
 - agent/fresh-author smoke-test evidence;
-- visible-proxy/fallback state evidence (`KEEPER_READY`, `PROXY_VISUAL`, `COVERAGE_BLOCKED`);
-- residual gap ledger for ART-02 or later production.
+- visible-proxy/fallback state evidence (`KEEPER_READY`, `PROXY_VISUAL`, `COVERAGE_BLOCKED`), with the frozen required benchmark explicitly recorded as `KEEPER_READY` for PASS;
+- residual gap ledger for ART-02 or later production, excluding unresolved needs required by the ART-01 benchmark itself.
 
 ## Acceptance
 
 PASS only if all are true:
 
-- the actual retained-chain demand is covered by admitted source/derived assets or fails explicitly as `COVERAGE_BLOCKED` rather than being visually faked;
+- every mandatory retained-chain need exercised by the representative benchmark is covered by admitted source/derived assets plus the required assembly/connection/metric vocabulary and the frozen benchmark is explicitly `KEEPER_READY`;
+- any `PROXY_VISUAL` or `COVERAGE_BLOCKED` outcome is treated as truthful non-pass evidence for the affected required need, never as readiness success;
 - retained pieces and derivatives have truthful provenance and stable identity;
 - the benchmark can be authored at human third-person scale without visible box/plane fallback masquerading as keeper architecture;
 - the representative building threshold has intentional massing, opening depth, roof integration and ground contact appropriate to the accepted stylized target;
 - street/ground/edge and bounded nature/prop treatment no longer read as raw CITY-04 blockout transcription;
 - the result obeys `VISUAL_BIBLE` vetoes and reads as Juego2 / fictional Potes-Liébana rather than generic Quaternius Medieval Village;
-- a fresh author/agent can distinguish keeper-capable composition from proxy/coverage failure using the reviewed metadata;
+- a fresh author/agent can distinguish keeper-capable composition from proxy/coverage failure using the reviewed metadata and can actually produce the required benchmark as `KEEPER_READY`;
+- the binding paintover, assembly-grammar and dimensional-profile evidence is present;
 - no CITY route/place/access/boundary semantic is changed by art production;
 - no new external source bypasses `DEPENDENCY_IP_POLICY`;
 - no H1 bridge semantic is redefined to make the art pass.
@@ -190,6 +207,7 @@ PASS only if all are true:
 
 FAIL if any of these occurs:
 
+- a mandatory benchmark need remains `PROXY_VISUAL` or `COVERAGE_BLOCKED` at the frozen candidate, even when that state is reported honestly;
 - a visible keeper building is fundamentally a primitive cuboid/plane with facade/roof/opening assets attached as decoration because the kit lacked the necessary structural pieces;
 - a missing corner, opening, roof junction, threshold or ground-contact solution is hidden by texture/material polish instead of being covered or declared blocked;
 - alpine half-timber/chalet or fantasy language survives as the default keeper read merely because it came from Quaternius;
@@ -197,6 +215,7 @@ FAIL if any of these occurs:
 - source/derivative provenance becomes ambiguous;
 - a new third-party pack is used without exact adoption review;
 - ART-01 changes CITY topology/programme/access semantics;
+- the binding paintover/assembly/dimensional contracts are skipped;
 - or the benchmark is judged only from a top-down/editor view without human-scale inspection.
 
 ## Relationship to CITY-07
@@ -205,14 +224,14 @@ ART-01 supplies the **keeper-capable visual vocabulary**; CITY-07 owns the actua
 
 ART-01 must not author the CITY-07 keeper in advance. CITY-07 must not compensate for an inadequate art kit by silently promoting visible proxy geometry into the keeper.
 
-`WP-CITY-07` therefore starts only after both `WP-H1-GATE` and ART-01 have passed. If ART-01 exposes an unresolved `COVERAGE_BLOCKED` item required by the chosen representative chain, CITY-07 remains blocked for that chain until the gap is closed or the proper owner changes the requirement.
+`WP-CITY-07` therefore starts only after both `WP-H1-GATE` and ART-01 have passed. ART-01 cannot pass while a required representative-chain need is unresolved as `COVERAGE_BLOCKED` or `PROXY_VISUAL`; such a state keeps CITY-07 blocked for that chain until the gap is closed or the proper owner changes the requirement.
 
 ## Relationship to H2 / ART-02
 
 ART-01 is **not** final visual polish and does not require the whole town or whole Quaternius distribution to be production-ready. ART-02 still owns first-playable visual closure after the keeper slice exists.
 
-However, H2 planning must consume the no-silent-proxy contract established here: H2 cannot treat primitive fallback disguised with assets as successful AI world authoring. H2 may expand the kit and composition semantics where its reviewed plan requires broader world authoring, but it must not postpone this defect until the end of H2.
+However, H2 planning must consume the no-silent-proxy contract established here: H2 cannot treat primitive fallback disguised with assets as successful AI world authoring. For any future required H2 world-authoring gate benchmark, `PROXY_VISUAL` and `COVERAGE_BLOCKED` are truthful failure/blocking outcomes, not alternative PASS states; the required benchmark must reach `KEEPER_READY`. H2 may expand the kit and composition semantics where its reviewed plan requires broader world authoring, but it must not postpone this defect until the end of H2.
 
 ## Definition of Done
 
-A reviewed, provenance-safe, Cantabrian-compatible environment vocabulary exists for the first retained chain; a fresh author can use it to produce a truthful keeper-ready building/street composition in Unity or explicitly report coverage failure; and CITY-07 no longer has to choose between raw Quaternius Medieval Village shapes and visible greybox-with-assets fallback.
+A reviewed, provenance-safe, Cantabrian-compatible environment vocabulary exists for the first retained chain; the binding visual-target/assembly/dimensional contracts are satisfied; and a fresh author can use the kit to produce the required building/street benchmark as `KEEPER_READY` in Unity. If the author can only return `PROXY_VISUAL` or `COVERAGE_BLOCKED` for a mandatory benchmark need, that is valuable truthful evidence but the WP is **not done** and CITY-07 remains blocked.
