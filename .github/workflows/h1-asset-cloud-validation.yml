@@ -1,0 +1,508 @@
+name: H1 Asset Cloud Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-asset-cloud-validation.yml'
+      - 'Tools/AssetVault/**'
+      - 'Docs/workpacks/H1/WP-H1-ASSET-CLOUD.md'
+      - 'Docs/evidence/WP-H1-ASSET-CLOUD/**'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/Tests/Editor/H1AssetCloudTests.cs'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/Tests/Editor/H1AssetCloudTests.cs.meta'
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: Exact public Juego2 candidate SHA to execute
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-asset-cloud-${{ github.event.pull_request.number || inputs.target_sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  asset-cloud-effective:
+    name: Private H1 source -> GitHub-hosted Unity
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'worker/h1-asset-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.target_sha }}
+      PINNED_ASSET_VAULT_SHA: ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      ASSET_VAULT_TOKEN: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+    steps:
+      - name: Validate exact target and credential presence
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact lowercase 40-hex'; exit 2; }
+          [[ "${PINNED_ASSET_VAULT_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::pinned vault SHA is invalid'; exit 2; }
+          missing=0
+          for name in ASSET_VAULT_TOKEN UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact public candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact clean public checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          printf '/_asset_vault/\n/artifacts/\n' >> .git/info/exclude
+
+      - name: Checkout exact private H1 asset baseline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Arkus0/Juego2-assets
+          ref: ${{ env.PINNED_ASSET_VAULT_SHA }}
+          token: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+          fetch-depth: 1
+          lfs: true
+          path: _asset_vault
+
+      - name: Prove exact private vault checkout and isolate it from public status
+        shell: bash
+        run: |
+          set -euo pipefail
+          VAULT_SHA="$(git -C _asset_vault rev-parse HEAD)"
+          test "${VAULT_SHA}" = "${PINNED_ASSET_VAULT_SHA}" || {
+            echo "::error::private vault HEAD mismatch expected=${PINNED_ASSET_VAULT_SHA} observed=${VAULT_SHA}"
+            exit 2
+          }
+          echo "ASSET_VAULT_SHA=${VAULT_SHA}" >> "${GITHUB_ENV}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test -z "$(git -C _asset_vault status --porcelain --untracked-files=all)"
+          echo "H1_ASSET_VAULT_SHA_GREEN ${VAULT_SHA}"
+
+      - name: Verify private baseline against accepted H1-04 authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/h1-asset-cloud
+          python3 Tools/AssetVault/verify_h1_asset_vault.py \
+            --public-root . \
+            --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${ASSET_VAULT_SHA}" \
+            --receipt artifacts/h1-asset-cloud/H1_ASSET_CLOUD_RECEIPT.json
+
+      - name: Prove private-vault failures are fail-closed
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expect_red() {
+            local label="$1"
+            shift
+            set +e
+            "$@" >"${RUNNER_TEMP}/${label}.out" 2>"${RUNNER_TEMP}/${label}.err"
+            local code=$?
+            set -e
+            if [[ ${code} -eq 0 ]]; then
+              echo "::error::negative control unexpectedly passed: ${label}"
+              exit 3
+            fi
+            grep -q 'H1_ASSET_VAULT_RED' "${RUNNER_TEMP}/${label}.err" || {
+              echo "::error::negative control did not fail through canonical vault barrier: ${label}"
+              cat "${RUNNER_TEMP}/${label}.err"
+              exit 3
+            }
+            echo "NEGATIVE_CONTROL_GREEN ${label} exit=${code}"
+          }
+
+          verifier=(python3 Tools/AssetVault/verify_h1_asset_vault.py --public-root . --vault-root _asset_vault --candidate-sha "${TARGET_SHA}" --vault-sha "${ASSET_VAULT_SHA}")
+
+          cp _asset_vault/h1/source-slice/MI_Plaster.mat "${RUNNER_TEMP}/MI_Plaster.mat.backup"
+          printf '\nasset-cloud-negative-control\n' >> _asset_vault/h1/source-slice/MI_Plaster.mat
+          expect_red changed_source_byte "${verifier[@]}"
+          cp "${RUNNER_TEMP}/MI_Plaster.mat.backup" _asset_vault/h1/source-slice/MI_Plaster.mat
+
+          cp _asset_vault/h1/source-slice/MI_Plaster.mat.meta "${RUNNER_TEMP}/MI_Plaster.mat.meta.backup"
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('_asset_vault/h1/source-slice/MI_Plaster.mat.meta')
+          t = p.read_text(encoding='utf-8')
+          t = t.replace('guid: 75fb52ef5e0f0ad40a28c36d06ecd99c', 'guid: 00000000000000000000000000000000')
+          p.write_text(t, encoding='utf-8')
+          PY
+          expect_red rebound_unity_guid "${verifier[@]}"
+          cp "${RUNNER_TEMP}/MI_Plaster.mat.meta.backup" _asset_vault/h1/source-slice/MI_Plaster.mat.meta
+
+          mv _asset_vault/h1/distributions/quaternius-medieval-source.payload "${RUNNER_TEMP}/quaternius-medieval-source.payload"
+          expect_red missing_distribution "${verifier[@]}"
+          mv "${RUNNER_TEMP}/quaternius-medieval-source.payload" _asset_vault/h1/distributions/quaternius-medieval-source.payload
+
+          cp _asset_vault/h1/H1_SOURCE_SLICE_MANIFEST.json "${RUNNER_TEMP}/H1_SOURCE_SLICE_MANIFEST.json.backup"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('_asset_vault/h1/H1_SOURCE_SLICE_MANIFEST.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          data['sourceDistributions'][0]['sourceId'] = 'unapproved-source'
+          p.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+          PY
+          expect_red rebound_source_id "${verifier[@]}"
+          cp "${RUNNER_TEMP}/H1_SOURCE_SLICE_MANIFEST.json.backup" _asset_vault/h1/H1_SOURCE_SLICE_MANIFEST.json
+
+          test -z "$(git -C _asset_vault status --porcelain --untracked-files=all)"
+
+      - name: Mount exact accepted SourceSlice for Unity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Tools/AssetVault/verify_h1_asset_vault.py \
+            --public-root . \
+            --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${ASSET_VAULT_SHA}" \
+            --mount
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/UAL1.fbx.meta
+
+      - name: Install exact GameCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+
+      - name: Execute effective Unity EditMode suite with mounted private source
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --coverageEnabled false \
+            --artifactsPath=artifacts/h1-asset-cloud/unity \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+
+      - name: Derive closed Unity receipt from ephemeral raw result
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Tools/AssetVault/derive_h1_unity_receipt.py \
+            --xml artifacts/h1-asset-cloud/unity/editmode-results.xml \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${ASSET_VAULT_SHA}" \
+            --receipt artifacts/h1-asset-cloud/H1_ASSET_CLOUD_UNITY_RECEIPT.json
+
+      - name: Prove Unity receipt cannot be minted without exact probe evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expect_unity_receipt_red() {
+            local label="$1"
+            local xml="$2"
+            set +e
+            python3 Tools/AssetVault/derive_h1_unity_receipt.py \
+              --xml "${xml}" \
+              --candidate-sha "${TARGET_SHA}" \
+              --vault-sha "${ASSET_VAULT_SHA}" \
+              --receipt "${RUNNER_TEMP}/${label}.json" \
+              >"${RUNNER_TEMP}/${label}.out" 2>"${RUNNER_TEMP}/${label}.err"
+            local code=$?
+            set -e
+            if [[ ${code} -eq 0 ]]; then
+              echo "::error::Unity receipt negative control unexpectedly passed: ${label}"
+              exit 3
+            fi
+            grep -q 'H1_ASSET_UNITY_RECEIPT_RED' "${RUNNER_TEMP}/${label}.err"
+            test ! -e "${RUNNER_TEMP}/${label}.json"
+            echo "UNITY_RECEIPT_NEGATIVE_GREEN ${label} exit=${code}"
+          }
+
+          cp artifacts/h1-asset-cloud/unity/editmode-results.xml "${RUNNER_TEMP}/wrong-probe.xml"
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path(__import__('os').environ['RUNNER_TEMP']) / 'wrong-probe.xml'
+          text = p.read_text(encoding='utf-8')
+          text = text.replace(
+              'Arkus.H1.Editor.Tests.H1AssetCloudTests.PrivateVaultMount_RecreatesAcceptedH104UnityIdentities',
+              'Arkus.H1.Editor.Tests.H1AssetCloudTests.UnapprovedProbe',
+          )
+          p.write_text(text, encoding='utf-8')
+          PY
+          expect_unity_receipt_red wrong_probe "${RUNNER_TEMP}/wrong-probe.xml"
+
+          cp artifacts/h1-asset-cloud/unity/editmode-results.xml "${RUNNER_TEMP}/failed-probe.xml"
+          python3 - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'failed-probe.xml'
+          tree = ET.parse(p)
+          wanted = 'Arkus.H1.Editor.Tests.H1AssetCloudTests.PrivateVaultMount_RecreatesAcceptedH104UnityIdentities'
+          for node in tree.getroot().iter('test-case'):
+              if node.attrib.get('fullname') == wanted:
+                  node.set('result', 'Failed')
+          tree.write(p, encoding='utf-8', xml_declaration=True)
+          PY
+          expect_unity_receipt_red failed_probe "${RUNNER_TEMP}/failed-probe.xml"
+
+      - name: Stage and prove closed retained public evidence surface
+        id: retained_evidence_gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          PUBLIC_EVIDENCE=artifacts/h1-asset-cloud-public
+          rm -rf "${PUBLIC_EVIDENCE}"
+          mkdir -p "${PUBLIC_EVIDENCE}"
+          cp artifacts/h1-asset-cloud/H1_ASSET_CLOUD_RECEIPT.json "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_RECEIPT.json"
+          cp artifacts/h1-asset-cloud/H1_ASSET_CLOUD_UNITY_RECEIPT.json "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_UNITY_RECEIPT.json"
+
+          validator=(
+            python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}"
+            --candidate-sha "${TARGET_SHA}"
+            --vault-sha "${ASSET_VAULT_SHA}"
+            --workflow .github/workflows/h1-asset-cloud-validation.yml
+          )
+          "${validator[@]}"
+
+          cp "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_RECEIPT.json" "${RUNNER_TEMP}/asset-receipt.clean.json"
+          cp "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_UNITY_RECEIPT.json" "${RUNNER_TEMP}/unity-receipt.clean.json"
+
+          restore_receipts() {
+            cp "${RUNNER_TEMP}/asset-receipt.clean.json" "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_RECEIPT.json"
+            cp "${RUNNER_TEMP}/unity-receipt.clean.json" "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_UNITY_RECEIPT.json"
+            rm -f "${PUBLIC_EVIDENCE}/unexpected-third-file.txt"
+          }
+
+          expect_evidence_red() {
+            local label="$1"
+            shift
+            set +e
+            "$@" >"${RUNNER_TEMP}/${label}.out" 2>"${RUNNER_TEMP}/${label}.err"
+            local code=$?
+            set -e
+            if [[ ${code} -eq 0 ]]; then
+              echo "::error::retained-evidence negative control unexpectedly passed: ${label}"
+              exit 3
+            fi
+            grep -q 'H1_ASSET_EVIDENCE_RED' "${RUNNER_TEMP}/${label}.err"
+            echo "RETAINED_EVIDENCE_NEGATIVE_GREEN ${label} exit=${code}"
+          }
+
+          printf 'forbidden third retained file\n' > "${PUBLIC_EVIDENCE}/unexpected-third-file.txt"
+          expect_evidence_red third_file "${validator[@]}"
+          restore_receipts
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['unexpectedKey'] = True
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+          PY
+          expect_evidence_red unexpected_key "${validator[@]}"
+          restore_receipts
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['payload'] = 'arbitrary-free-text-channel-from-unity-would-be-forbidden'
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+          PY
+          expect_evidence_red free_text_payload "${validator[@]}"
+          restore_receipts
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['candidateSha'] = '0' * 40
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+          PY
+          expect_evidence_red changed_candidate_sha "${validator[@]}"
+          restore_receipts
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['assetVaultSha'] = '0' * 40
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+          PY
+          expect_evidence_red changed_vault_sha "${validator[@]}"
+          restore_receipts
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['requiredProbe'] = 'UNAPPROVED_PROBE'
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+          PY
+          expect_evidence_red changed_probe_enum "${validator[@]}"
+          restore_receipts
+
+          cp .github/workflows/h1-asset-cloud-validation.yml "${RUNNER_TEMP}/bad-uploader.yml"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'bad-uploader.yml'
+          text = p.read_text(encoding='utf-8')
+          old = '            artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json\n          if-no-files-found: error'
+          new = '            artifacts/h1-asset-cloud/unity/editmode-results.xml\n          if-no-files-found: error'
+          if old not in text:
+              raise SystemExit('canonical uploader block not found for negative control')
+          p.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+          bad_uploader_validator=(
+            python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}"
+            --candidate-sha "${TARGET_SHA}"
+            --vault-sha "${ASSET_VAULT_SHA}"
+            --workflow "${RUNNER_TEMP}/bad-uploader.yml"
+          )
+          expect_evidence_red raw_xml_uploader_path "${bad_uploader_validator[@]}"
+
+          restore_receipts
+          "${validator[@]}"
+          echo 'H1_ASSET_CLOSED_SURFACE_NEGATIVES_GREEN count=7'
+
+      - name: Delete ephemeral raw Unity and GameCI evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf artifacts/h1-asset-cloud/unity
+          test ! -e artifacts/h1-asset-cloud/unity/editmode-results.xml
+          echo 'H1_ASSET_EPHEMERAL_UNITY_EVIDENCE_REMOVED'
+
+      - name: Reconcile deterministic GameCI package injection
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo chown "$(id -u):$(id -g)" \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          target = os.environ['TARGET_SHA']
+          manifest_path = Path('Unity/ArkusUnity/Packages/manifest.json')
+          lock_path = Path('Unity/ArkusUnity/Packages/packages-lock.json')
+          allowed_paths = {str(manifest_path), str(lock_path)}
+
+          status = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'], text=True).splitlines()
+          changed = {line[3:] for line in status if len(line) >= 4}
+          if changed != allowed_paths:
+              raise SystemExit(f'unexpected tracked Unity drift: {sorted(changed)}')
+
+          def baseline_json(path: Path):
+              raw = subprocess.check_output(['git', 'show', f'{target}:{path.as_posix()}'], text=True)
+              return json.loads(raw)
+
+          baseline_manifest = baseline_json(manifest_path)
+          current_manifest = json.loads(manifest_path.read_text())
+          expected_manifest = json.loads(json.dumps(baseline_manifest))
+          expected_manifest['dependencies'].update({
+              'com.unity.sdk.linux-arm64': '1.1.0',
+              'com.unity.sdk.linux-x86_64': '1.1.0',
+              'com.unity.toolchain.linux-x86_64-linux': '1.1.0',
+          })
+          if current_manifest != expected_manifest:
+              raise SystemExit('manifest drift is not the accepted GameCI Linux platform-package injection')
+
+          baseline_lock = baseline_json(lock_path)
+          current_lock = json.loads(lock_path.read_text())
+          expected_lock = json.loads(json.dumps(baseline_lock))
+          expected_lock['dependencies'].update({
+              'com.unity.sdk.linux-arm64': {'version': '1.1.0', 'depth': 0, 'source': 'registry', 'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
+              'com.unity.sdk.linux-x86_64': {'version': '1.1.0', 'depth': 0, 'source': 'registry', 'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
+              'com.unity.sysroot.base': {'version': '1.1.0', 'depth': 1, 'source': 'registry', 'dependencies': {}, 'url': 'https://packages.unity.com'},
+              'com.unity.toolchain.linux-x86_64-linux': {'version': '1.1.0', 'depth': 0, 'source': 'registry', 'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
+          })
+          if current_lock != expected_lock:
+              raise SystemExit('packages-lock drift is not the accepted GameCI Linux platform-package injection')
+
+          print('GAMECI_PACKAGE_DRIFT_RECONCILED paths=manifest.json,packages-lock.json')
+          PY
+
+          git restore --source="${TARGET_SHA}" -- \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json
+
+      - name: Remove private mount and prove public exact-SHA isolation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -d .git ]]; then
+            echo 'H1_ASSET_CLOUD_CLEANUP_NO_CHECKOUT'
+            exit 0
+          fi
+
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta
+
+          sudo chown "$(id -u):$(id -g)" \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          git restore --source="${TARGET_SHA}" -- \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json || true
+
+          rm -rf _asset_vault
+
+          if ! git diff --quiet "${TARGET_SHA}" -- .; then
+            echo '::error::tracked public tree differs from exact candidate after cleanup'
+            git status --short
+            git diff "${TARGET_SHA}" -- .
+            exit 3
+          fi
+          test -z "$(git status --porcelain --untracked-files=all)"
+          echo 'H1_ASSET_CLOUD_ISOLATION_GREEN public tree restored to exact candidate'
+
+      - name: Upload retained public-safe exact-SHA evidence only
+        if: ${{ success() && steps.retained_evidence_gate.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: h1-asset-cloud-${{ env.TARGET_SHA }}
+          path: |
+            artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_RECEIPT.json
+            artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 30
