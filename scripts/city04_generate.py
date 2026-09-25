@@ -62,10 +62,10 @@ def write_obj(name, geom, elevation):
     count = 0
     for tri in triangles(geom):
         for u, v in tri:
-            # Unity's OBJ importer reverses the OBJ Z axis. Negate V here so
-            # the imported scene still has x=U, z=V in the planning frame.
-            lines.append(f"v {u:.6f} {elevation(u, v):.6f} {-v:.6f}")
-        # OBJ Z is negated; Unity importer restores both the axis and winding.
+            # This Unity OBJ importer reverses OBJ X while keeping OBJ Z.
+            # Supply (-U,V) so the imported world coordinates are (U,V).
+            lines.append(f"v {-u:.6f} {elevation(u, v):.6f} {v:.6f}")
+        # This is a 180-degree rotation from the prior mesh and preserves winding.
         ax, ay = tri[0]
         bx, by = tri[1]
         cx, cy = tri[2]
