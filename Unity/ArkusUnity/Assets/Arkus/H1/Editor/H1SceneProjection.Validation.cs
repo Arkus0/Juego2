@@ -376,7 +376,8 @@ namespace Arkus.H1.Editor
         // One shared structural gate is invoked by both validate-proposed and the effective
         // materialization entrypoint. It is therefore impossible for those paths to drift into
         // separate precondition lists: a plan rejected here never reaches staging, and a token
-        // consumed by effective materialization is checked by this same method again.
+        // consumed by effective materialization is checked by this same method again. The token
+        // retains the original payload because JsonUtility loses absent/null string wire identity.
         private static void ValidateEffectiveMaterializationPreconditions(ProjectionPlan plan, string payload)
         {
             // JsonUtility normalizes an omitted/null string to the empty root marker. Check the
