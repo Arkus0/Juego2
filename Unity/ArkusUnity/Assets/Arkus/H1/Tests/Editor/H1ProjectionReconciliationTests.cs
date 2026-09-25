@@ -56,6 +56,7 @@ namespace Arkus.H1.Editor.Tests
             var renderer = facade.GetComponent<MeshRenderer>();
             Assert.That(renderer, Is.Not.Null);
             renderer.sharedMaterial = materialB.asset;
+            facade.AddComponent<BoxCollider>();
 
             var extra = UnityEngine.Object.Instantiate(facade, root.transform, false);
             extra.name = "extra.facade";
@@ -88,6 +89,12 @@ namespace Arkus.H1.Editor.Tests
                 value.EndsWith("/Loose Unmanaged", StringComparison.Ordinal)), Is.True,
                 "an unmanaged scene root must remain explicit drift rather than collapsing to managed parity");
             Assert.That(reconciled.observation.diagnostics.Select(value => value.code), Does.Contain("projection.unmanaged-scene-member"));
+            Assert.That(reconciled.observation.diagnostics.Select(value => value.code), Does.Contain("projection.unsupported-managed-component"),
+                "a component added directly to a managed object must be observable even when no accepted H1 adapter owns it");
+            Assert.That(reconciled.observation.diagnostics.Select(value => value.code), Does.Contain("projection.reconciliation-node-unreadable"),
+                "unsupported effective managed state must force the canonical ambiguity signal used by the H1-09 oracle");
+            Assert.That(reconciled.observation.diagnostics.Select(value => value.code), Does.Not.Contain("projection.component-reference-content-drift"),
+                "accepted material bytes must not be misclassified as content drift");
             Assert.That(reconciled.observation.manifestGraphDigest, Is.Not.EqualTo(reconciled.observation.graphDigest));
 
             var rematerialized = ExecuteStrict("materialize", plan);
@@ -103,6 +110,7 @@ namespace Arkus.H1.Editor.Tests
                 "rematerialization must remove added managed state and restore the missing canonical workshop");
             Assert.That(repaired.observation.unmanagedPaths, Is.Empty, "rematerialization must remove unmanaged drift from the managed scene scope");
             Assert.That(repaired.observation.diagnostics.Select(value => value.code), Does.Not.Contain("projection.unmanaged-scene-member"));
+            Assert.That(repaired.observation.diagnostics.Select(value => value.code), Does.Not.Contain("projection.unsupported-managed-component"));
             Assert.That(repaired.observation.graphDigest, Is.EqualTo(repaired.observation.manifestGraphDigest));
             Assert.That(repaired.observation.realizationDigest, Is.EqualTo(repaired.observation.manifestRealizationDigest));
 
