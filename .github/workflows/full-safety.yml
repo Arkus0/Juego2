@@ -3,6 +3,13 @@ name: Arkus Full Safety
 on:
   push:
     branches: [main]
+  pull_request:
+    paths:
+      - '.github/workflows/full-safety.yml'
+      - '.github/workflows/main-safety.yml'
+      - '.github/workflows/h1-dotnet-safety.yml'
+      - 'scripts/test-suite.py'
+      - 'tests/test-suite-classification.json'
   workflow_dispatch:
 
 permissions:
