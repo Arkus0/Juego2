@@ -63,7 +63,6 @@ namespace Arkus.H1.Editor.Tests
 
             UnityEngine.Object.DestroyImmediate(workshop);
             var unmanaged = new GameObject("Loose Unmanaged");
-            unmanaged.transform.SetParent(root.transform, false);
 
             Assert.That(EditorSceneManager.SaveScene(SceneManager.GetActiveScene()), Is.True);
             AssetDatabase.SaveAssets();
@@ -85,7 +84,9 @@ namespace Arkus.H1.Editor.Tests
             Assert.That(facadeObserved.positionMm.x, Is.EqualTo(plan.nodes.Single(value => value.objectId == "facade.potes").positionMm.x + 500));
             Assert.That(facadeObserved.componentRows, Does.Contain(
                 RendererSchema + "|enabled=true|material=" + materialB.path + "|" + materialB.guid + "|" + materialB.fileId));
-            Assert.That(reconciled.observation.unmanagedPaths, Does.Contain("Loose Unmanaged"));
+            Assert.That(reconciled.observation.unmanagedPaths.Any(value =>
+                value.EndsWith("/Loose Unmanaged", StringComparison.Ordinal)), Is.True,
+                "an unmanaged scene root must remain explicit drift rather than collapsing to managed parity");
             Assert.That(reconciled.observation.diagnostics.Select(value => value.code), Does.Contain("projection.unmanaged-scene-member"));
             Assert.That(reconciled.observation.manifestGraphDigest, Is.Not.EqualTo(reconciled.observation.graphDigest));
 
