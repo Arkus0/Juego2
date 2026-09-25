@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
 using Arkus.H1.UnityHost;
@@ -112,7 +114,7 @@ namespace Arkus.Harness.Tests
                 PackageFingerprint = Hash('4'),
                 EditorFingerprint = Hash('5')
             };
-            environment.Digest = H1ProjectEnvironmentProbe.ShaText(string.Join("\n", new[]
+            environment.Digest = Sha(string.Join("\n", new[]
             {
                 "project=" + environment.ProjectIdentity,
                 "bridge=" + environment.BridgeFingerprint,
@@ -125,6 +127,7 @@ namespace Arkus.Harness.Tests
             return environment;
         }
 
+        private static string Sha(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
         private static string Hash(char value) => new string(value, 64);
         private static IReadOnlyDictionary<string, object?> Success(CapabilityInvocationResult result)
         {
