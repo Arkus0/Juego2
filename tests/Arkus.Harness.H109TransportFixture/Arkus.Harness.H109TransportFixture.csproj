@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Arkus.Harness.H109TransportFixture</AssemblyName>
+    <RootNamespace>Arkus.Harness.H109TransportFixture</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Arkus.Harness.Cli/Arkus.Harness.Cli.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Mcp/Arkus.Harness.Mcp.csproj" />
+    <ProjectReference Include="../../src/Arkus.EngineBridge.UnityAuthoring/Arkus.EngineBridge.UnityAuthoring.csproj" />
+    <ProjectReference Include="../../src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj" />
+    <ProjectReference Include="../../src/Arkus.Game.World/Arkus.Game.World.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Projection/Arkus.Harness.Projection.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
+    <ProjectReference Include="../../tools/Arkus.H1.UnityHost/Arkus.H1.UnityHost.csproj" />
+  </ItemGroup>
+</Project>
