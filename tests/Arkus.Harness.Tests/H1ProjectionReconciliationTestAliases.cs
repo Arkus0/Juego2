@@ -1,1 +1,0 @@
-global using H1ProjectionReconciliationDiagnostic = Arkus.H1.UnityHost.H1ProjectionObservationDiagnostic;
