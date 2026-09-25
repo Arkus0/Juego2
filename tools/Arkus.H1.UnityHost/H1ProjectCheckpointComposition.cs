@@ -59,7 +59,26 @@ namespace Arkus.H1.UnityHost
             var grants = H1ProjectionReconciliationComposition.CreateGrants()
                 .Concat(H1ProjectCheckpointContract.CleanRebuildGrants());
             if (includeCheckpointHandlers)
-                grants = grants.Concat(H1ProjectCheckpointContract.ProjectCheckpointGrants());
+            {
+                // The public checkpoint request is selected by the already-reviewed managed-scene
+                // logical reference. The checkpoint root itself is fixed host metadata and is never
+                // selected by request data.
+                grants = grants.Concat(new[]
+                {
+                    new UnityHostCapabilityGrant(
+                        H1ProjectCheckpointContract.CaptureKey,
+                        UnityProjectWorkspaceAuthority.ProjectSettingsRootId,
+                        H1ProjectionContract.ReferenceNamespace,
+                        UnityHostResourceClass.ProjectMetadata,
+                        UnityHostTimeClass.BoundedEditorEffect),
+                    new UnityHostCapabilityGrant(
+                        H1ProjectCheckpointContract.CurrentKey,
+                        UnityProjectWorkspaceAuthority.ProjectSettingsRootId,
+                        H1ProjectionContract.ReferenceNamespace,
+                        UnityHostResourceClass.ProjectMetadata,
+                        UnityHostTimeClass.BoundedRead)
+                });
+            }
             return grants.ToArray();
         }
     }
