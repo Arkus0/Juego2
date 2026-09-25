@@ -151,9 +151,13 @@ class RemoteConsole(_core.RemoteConsole):
                 row.get("version") != 1 or
                 not re.fullmatch(r"[0-9a-f]{32}", str(row.get("campaign_id") or "")) or
                 row.get("mode") not in {"run", "work"} or
-                row.get("status") not in {"STARTING", "RUNNING", "PAUSED_RECOVERABLE", "HARD_BLOCKER", "PAUSED", "DETACHED"}):
+                row.get("status") not in {"STARTING", "RUNNING", "PAUSED_RECOVERABLE", "HARD_BLOCKER", "PAUSED", "DETACHED", "COMPLETE", "ABANDONED"}):
             self.campaign_status = "HARD_BLOCKER"
             self.campaign_reason = "Campaign JSON no autenticado o malformado; no se reanuda automáticamente"
+            return
+        if row["status"] in {"COMPLETE", "ABANDONED"}:
+            self.campaign_status = "IDLE"
+            self.campaign_reason = ""
             return
         try:
             self.current_wp = _core.normalize_wp(str(row.get("wp") or ""))
@@ -343,19 +347,46 @@ class RemoteConsole(_core.RemoteConsole):
                 row.get("fail_count") not in {2, 3}):
             return None
         script = self.root / "scripts" / "telegram_continue_receiver.py"
+        if not script.is_file():
+            return None
         spec = importlib.util.spec_from_file_location("arkus_tg_receiver_recovery", script)
         if spec is None or spec.loader is None:
             return None
         receiver = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = receiver
-        spec.loader.exec_module(receiver)
-        receiver.fresh_offer = lambda created_at, now=None: True
+        try:
+            spec.loader.exec_module(receiver)
+        except OSError:
+            return None
+        receiver.core.fresh_offer = lambda created_at, now=None: True
         try:
             if receiver.validate_current(row["pr"], row["sha"], row["fail_count"]) == "already":
                 return None
-        except receiver.ReceiverError:
+        except receiver.core.ReceiverError:
             return None
         return row
+
+    def reconcile_detached(self) -> None:
+        """Observe a former child after supervisor restart before relaunching."""
+        if self.campaign_status != "DETACHED" or self.proc is not None:
+            return
+        if self._pid_alive(self.detached_pid) or self._controller_busy():
+            return
+        try:
+            log = (self.log_path.read_text(encoding="utf-8", errors="replace")
+                   if self.log_path else "")
+        except OSError:
+            log = ""
+        disposition = child_disposition(log, 2)
+        self.campaign_status = ("HARD_BLOCKER" if disposition == Disposition.HARD
+                                else "PAUSED_RECOVERABLE")
+        self.campaign_reason = next((line.partition(": ")[2] for line in reversed(log.splitlines())
+                                     if line.startswith("REMOTE_AUTOPILOT_STOP: ")),
+                                    "Work plane anterior terminado durante el reinicio")
+        self.detached_pid = None
+        self._persist_campaign()
+        if self.campaign_status == "PAUSED_RECOVERABLE" and not self.paused and not self.stop_after_wp:
+            self.launch(self.current_wp, self.command_mode, resume=True)
 
     def launch(self, wp: str, mode: str | None = None, *, resume: bool = False) -> None:
         if self.proc is not None:
@@ -799,11 +830,7 @@ class RemoteConsole(_core.RemoteConsole):
             while True:
                 try:
                     self.check_child()
-                    if (self.campaign_status == "DETACHED" and
-                            not self._pid_alive(self.detached_pid) and not self._controller_busy()):
-                        self.campaign_status = "PAUSED_RECOVERABLE"
-                        self._persist_campaign()
-                        self.launch(self.current_wp, self.command_mode, resume=True)
+                    self.reconcile_detached()
                     self.advertise_decisions()
                     self.poll_once()
                 except Exception as exc:

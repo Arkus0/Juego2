@@ -30,10 +30,22 @@ adoption = load("arkus_recovery_adoption_test", "reviewer_verdict_adoption.py")
 process = load("arkus_recovery_process_test", "local_wp_autopilot_process.py")
 remote = load("arkus_recovery_remote_test", "local_wp_autopilot_remote.py")
 decision_helper = load("arkus_recovery_decision_test", "request_owner_decision.py")
+continue_receiver = load("arkus_recovery_continue_receiver_test", "telegram_continue_receiver.py")
 
 SHA = "a" * 40
 CAMPAIGN = "b" * 32
 DECISION = "c" * 32
+
+
+def reviewer_review(review_id: str, *, sha: str = SHA,
+                    at: str = "2026-09-25T04:00:00Z", verdict: str = "FAIL") -> dict:
+    intent = adoption.safe.render_review(wp="WP-H1-06", pr=195,
+        candidate_sha=sha, verdict=verdict, review_id=review_id)
+    return {"user": {"login": "Arkus0"}, "created_at": at, "submitted_at": at,
+            "commit_id": sha,
+            "pull_request_url": "https://api.github.com/repos/Arkus0/Juego2/pulls/195",
+            "body": f"Reviewer verdict: {verdict}\nReviewed candidate SHA: {sha}\n"
+                    f"Autopilot review ID: {review_id}\n{intent}\n"}
 
 
 class GitHubFixture:
@@ -244,6 +256,70 @@ class RecoveryPolicyTests(unittest.TestCase):
             self.assertEqual(handle.call_count, 2)
             self.assertEqual(console.offset, 3)
 
+    def test_detached_child_reconciles_terminal_log_before_any_relaunch(self):
+        for result, expected_launch, expected_status in (
+                ("HARD_BLOCKER", False, "HARD_BLOCKER"),
+                ("PAUSED_RECOVERABLE", True, "PAUSED_RECOVERABLE")):
+            with self.subTest(result=result), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                control = root / "control"
+                log = control / "prior.log"
+                log.parent.mkdir(parents=True)
+                log.write_text(f"WORK_PLANE_RESULT: {result}\n", encoding="utf-8")
+                campaign_file(control, status="RUNNING", pid=123,
+                              log_path=str(log))
+                console = console_module.RemoteConsole(root, control, "secret", 42)
+                with patch.object(console_module._core, "gh", side_effect=GitHubFixture()), \
+                     patch.object(console, "_pid_alive", side_effect=[True, False]), \
+                     patch.object(console, "_controller_busy", return_value=False), \
+                     patch.object(console, "launch") as launch:
+                    console.restore_campaign()
+                    self.assertEqual(console.campaign_status, "DETACHED")
+                    console.reconcile_detached()
+                self.assertEqual(console.campaign_status, expected_status)
+                self.assertEqual(launch.call_count, int(expected_launch))
+                if expected_launch:
+                    self.assertEqual(launch.call_args.kwargs, {"resume": True})
+
+    def test_terminal_campaign_does_not_reopen_as_blocker_after_restart(self):
+        for status in ("COMPLETE", "ABANDONED"):
+            with self.subTest(status=status), tempfile.TemporaryDirectory() as temp:
+                control = Path(temp) / "control"
+                campaign_file(control, status=status)
+                console = console_module.RemoteConsole(Path(temp), control, "secret", 42)
+                with patch.object(console_module._core, "gh") as github, \
+                     patch.object(console, "launch") as launch:
+                    console.restore_campaign()
+                self.assertFalse(console.active)
+                self.assertEqual(console.campaign_status, "IDLE")
+                github.assert_not_called()
+                launch.assert_not_called()
+
+    def test_old_continue_offer_remains_usable_only_through_local_owner_path(self):
+        current = {"number": 195, "state": "open", "merged": False, "draft": False,
+                   "head": {"sha": SHA},
+                   "body": f"WP: WP-H1-06\nFrozen candidate SHA: {SHA}\n"}
+        offer = {"user": {"login": "Arkus0"}, "created_at": "2020-01-01T00:00:00Z",
+                 "body": f"ARKUS_LOCAL_AUTOPILOT\nState: SECOND_FAIL_OFFERED\n"
+                         f"Target SHA: {SHA}\nFail count: 2\n"}
+        reviews = [reviewer_review("e" * 32, sha="d" * 40), reviewer_review("f" * 32)]
+
+        def github(path):
+            if path.endswith("pulls/195"):
+                return current
+            if "issues/195/comments" in path:
+                return [[offer]]
+            if "pulls/195/reviews" in path:
+                return [reviews]
+            raise AssertionError(path)
+
+        with patch.object(continue_receiver.core, "github", side_effect=github), \
+             self.assertRaisesRegex(continue_receiver.core.ReceiverError, "stale"):
+            continue_receiver.validate_current(195, SHA, 2)
+        with patch.object(continue_receiver.core, "github", side_effect=github), \
+             patch.object(continue_receiver.core, "fresh_offer", return_value=True):
+            self.assertEqual(continue_receiver.validate_current(195, SHA, 2), "ready")
+
     def test_work_plane_failure_is_durable_and_status_remains_available(self):
         with tempfile.TemporaryDirectory() as temp:
             control = Path(temp) / "control"
@@ -266,29 +342,29 @@ class RecoveryPolicyTests(unittest.TestCase):
                              "HARD_BLOCKER")
 
     def test_exact_sha_and_reviewer_authority_remain_fail_closed(self):
-        body = (f"Reviewer verdict: FAIL\nReviewed candidate SHA: {SHA}\n"
-                f"Autopilot review ID: {'f' * 32}\n")
-        owner = {"user": {"login": "Arkus0"}, "body": body, "created_at": "2026-09-25T04:00:00Z"}
+        owner = reviewer_review("f" * 32)
         with self.assertRaises(adoption.AdoptionError):
-            adoption.authoritative_verdicts([], [dict(owner, user={"login": "other"})])
+            adoption.authoritative_verdicts([dict(owner, user={"login": "other"})], [])
         with self.assertRaises(adoption.AdoptionError):
-            adoption.authoritative_verdicts([], [owner, dict(owner, body=body.replace("FAIL", "PASS"))])
+            adoption.authoritative_verdicts([], [owner])
+        with patch.object(adoption, "gh_json", return_value={"body": "WP: WP-H1-06\n"}), \
+             self.assertRaises(adoption.AdoptionError):
+            adoption.authoritative_verdicts([owner, reviewer_review("f" * 32, verdict="PASS")], [])
 
     def test_existing_bot_repair_transition_never_increments_fail_cycle_again(self):
         review_id = "f" * 32
         at = "2026-09-25T04:00:00Z"
         body = f"WP: WP-H1-06\nReviewer verdict: PENDING\nfail_cycle: 2\nFrozen candidate SHA: {SHA}\n"
         pr = {"number": 195, "state": "open", "head": {"sha": SHA}, "body": body}
-        verdict = {"user": {"login": "Arkus0"}, "created_at": at,
-                   "body": f"Reviewer verdict: FAIL\nReviewed candidate SHA: {SHA}\nAutopilot review ID: {review_id}\n"}
+        verdict = reviewer_review(review_id, at=at)
         repair = {"user": {"login": "github-actions[bot]"},
                   "created_at": "2026-09-25T04:01:00Z",
                   "body": f"ARKUS_AUTOMATION_V2\nState: REPAIR_REQUIRED\nTarget SHA: {SHA}\n"}
-        comments = [verdict, repair]
+        comments = [repair]
         posted = []
 
         def pages(path):
-            return [] if "/reviews" in path else comments
+            return [verdict] if "/reviews" in path else comments
 
         def post(_pr, text):
             posted.append(text)
@@ -312,15 +388,13 @@ class RecoveryPolicyTests(unittest.TestCase):
         body = f"WP: WP-H1-06\nfail_cycle: 1\nFrozen candidate SHA: {SHA}\n"
         pr = {"number": 195, "state": "open", "head": {"sha": SHA}, "body": body}
         comments = [
-            {"user": {"login": "Arkus0"}, "created_at": "2026-09-25T04:00:00Z",
-             "body": f"Reviewer verdict: FAIL\nReviewed candidate SHA: {SHA}\nAutopilot review ID: {review_id}\n"},
             {"user": {"login": "github-actions[bot]"}, "created_at": "2026-09-25T04:01:00Z",
              "body": f"ARKUS_LOCAL_AUTOPILOT\nState: REVIEW_VERDICT_ADOPTED\nTarget SHA: {SHA}\nReview ID: {review_id}\nVerdict: FAIL\nFail cycle: 2\n"},
             {"user": {"login": "github-actions[bot]"}, "created_at": "2026-09-25T04:01:01Z",
              "body": f"ARKUS_AUTOMATION_V2\nState: REPAIR_REQUIRED\nTarget SHA: {SHA}\n"},
         ]
         with patch.object(adoption, "gh_json", return_value=pr), \
-             patch.object(adoption, "gh_pages", side_effect=lambda path: [] if "/reviews" in path else comments), \
+             patch.object(adoption, "gh_pages", side_effect=lambda path: [reviewer_review(review_id)] if "/reviews" in path else comments), \
              patch.object(adoption, "validate_pr", return_value=body), \
              patch.object(adoption, "current_review_ready", return_value={"created_at": "2026-09-25T03:59:00Z"}), \
              patch.object(adoption, "post_comment") as post, \
@@ -336,15 +410,13 @@ class RecoveryPolicyTests(unittest.TestCase):
         body = f"WP: WP-H1-06\nfail_cycle: 1\nFrozen candidate SHA: {SHA}\n"
         pr = {"number": 195, "state": "open", "head": {"sha": SHA}, "body": body}
         comments = [
-            {"user": {"login": "Arkus0"}, "created_at": "2026-09-25T03:00:00Z",
-             "body": f"Reviewer verdict: FAIL\nReviewed candidate SHA: {'d' * 40}\nAutopilot review ID: {earlier_id}\n"},
-            {"user": {"login": "Arkus0"}, "created_at": "2026-09-25T04:00:00Z",
-             "body": f"Reviewer verdict: FAIL\nReviewed candidate SHA: {SHA}\nAutopilot review ID: {current_id}\n"},
             {"user": {"login": "github-actions[bot]"}, "created_at": "2026-09-25T04:01:00Z",
              "body": f"ARKUS_AUTOMATION_V2\nState: REPAIR_REQUIRED\nTarget SHA: {SHA}\n"},
         ]
         with patch.object(adoption, "gh_json", return_value=pr), \
-             patch.object(adoption, "gh_pages", side_effect=lambda path: [] if "/reviews" in path else comments), \
+             patch.object(adoption, "gh_pages", side_effect=lambda path: [
+                 reviewer_review(earlier_id, sha="d" * 40, at="2026-09-25T03:00:00Z"),
+                 reviewer_review(current_id)] if "/reviews" in path else comments), \
              patch.object(adoption, "validate_pr", return_value=body), \
              patch.object(adoption, "current_review_ready", return_value={"created_at": "2026-09-25T03:59:00Z"}), \
              patch.object(adoption, "post_comment"), \
@@ -429,17 +501,22 @@ class RecoveryPolicyTests(unittest.TestCase):
         with patch.object(decision_helper, "_github_comments", return_value=comments), \
              self.assertRaises(decision_helper.DecisionError):
             decision_helper._github_owner_attestation(195, SHA, CAMPAIGN, DECISION, digest, options)
+        wrong_identity = dict(comments[0], body=comments[0]["body"].replace(
+            f"Target SHA: {SHA}", f"Target SHA: {'d' * 40}"))
+        with patch.object(decision_helper, "_github_comments", return_value=[wrong_identity]), \
+             self.assertRaises(decision_helper.DecisionError):
+            decision_helper._github_owner_attestation(195, SHA, CAMPAIGN, DECISION, digest, options)
 
     def test_pending_pr_body_verdict_reconciles_from_exact_github_review(self):
         review_id = "f" * 32
         current = {"number": 195, "state": "open", "merged": False,
                    "head": {"sha": SHA},
                    "body": f"WP: WP-H1-06\nFrozen candidate SHA: {SHA}\nReviewer verdict: PENDING\n"}
-        comment = {"user": {"login": "Arkus0"}, "created_at": "2026-09-25T04:00:00Z",
-                   "body": f"Reviewer verdict: FAIL\nReviewed candidate SHA: {SHA}\nAutopilot review ID: {review_id}\n"}
+        review = reviewer_review(review_id)
         ready = {"state": "REVIEW_READY", "target sha": SHA,
                  "_created_at": "2026-09-25T03:59:00Z"}
-        with patch.object(process, "_raw_review_items", return_value=([], [comment])), \
+        with patch.object(process, "_raw_review_items", return_value=([review], [])), \
+             patch.object(process.adoption, "gh_json", return_value=current), \
              patch.object(process.autopilot, "gh_json", return_value=current), \
              patch.object(process.autopilot, "markers", return_value=[ready]), \
              patch.object(process.autopilot, "local_markers", return_value=[]), \

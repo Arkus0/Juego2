@@ -409,10 +409,10 @@ class RemoteConsole:
         module = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = module
         spec.loader.exec_module(module)
-        module.fresh_offer = lambda created_at, now=None: True
+        module.core.fresh_offer = lambda created_at, now=None: True
         try:
             status = module.validate_current(pr, sha, fail_count)
-        except module.ReceiverError as exc:
+        except module.core.ReceiverError as exc:
             self.answer_callback(query["id"], f"Ya no es válido: {exc}", True)
             return
         if status == "already":

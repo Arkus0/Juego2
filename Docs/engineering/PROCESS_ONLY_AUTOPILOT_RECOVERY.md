@@ -14,6 +14,6 @@ The work plane may stop while the Telegram owner console stays alive. The consol
 
 `/resume` on an unresolved HARD_BLOCKER reports that the same SHA is still blocked. It does not waive the blocker. An owner can abandon the stopped campaign with `/abandon`; while a role is running, that command requests a stop at the next safe boundary. A restart does not turn a HARD_BLOCKER into permission to run another Reviewer or repair.
 
-The H1-06 circuit-breaker case is an offline process regression only. It asserts that the WP remains stopped while the console can show, reannounce and accept a valid pending decision, answer `/status`, and later accept `/resume`, `/abandon` and another command. It does not repair PR #195 or assert acceptance of H1-06.
+The H1-06 circuit-breaker case is an offline process regression only. It asserts that the WP remains stopped while the console can show, reannounce and accept a valid pending decision, answer `/status`, and later accept `/resume`, `/abandon` and another command. It does not change the accepted H1-06 proof or reopen merged PR #195.
 
-The exact Reviewer identity, owner authority, one canonical PR, idempotent `fail_cycle`, no duplicate reasoning roles after durable completion, and accepted product gates remain binding. A missing or contradictory authoritative source still fails closed.
+The exact Reviewer identity, `ARKUS_INTENT_V1` GitHub PR-review authority, owner authority, one canonical PR, idempotent `fail_cycle`, no duplicate reasoning roles after durable completion, and accepted product gates remain binding. A missing or contradictory authoritative source still fails closed.

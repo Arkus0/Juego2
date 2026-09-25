@@ -131,11 +131,12 @@ def _github_owner_attestation(pr: int, sha: str, campaign: str, decision_id: str
             continue
         fields = _marker_fields(body)
         if (fields.get("state") != "OWNER_DECISION" or
-                fields.get("target sha", "").lower() != sha or
                 fields.get("campaign id", "").lower() != campaign or
-                fields.get("decision id", "").lower() != decision_id or
-                fields.get("request digest", "").lower() != request_digest):
+                fields.get("decision id", "").lower() != decision_id):
             continue
+        if (fields.get("target sha", "").lower() != sha or
+                fields.get("request digest", "").lower() != request_digest):
+            raise DecisionError("Owner decision attestation contradicts exact request identity")
         if fields.get("authority proof") != "supervisor-HMAC-v1":
             raise DecisionError("Owner decision attestation has invalid authority proof")
         try:
