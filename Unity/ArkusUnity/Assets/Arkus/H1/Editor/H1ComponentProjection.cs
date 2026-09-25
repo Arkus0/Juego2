@@ -6,7 +6,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using Arkus.H1.Projection;
 using UnityEditor;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace Arkus.H1.Editor
@@ -21,7 +20,6 @@ namespace Arkus.H1.Editor
         internal const string AnimatorSchema = "arkus.h1.component.animator@1";
         internal const string CanonicalLinkSchema = H1CanonicalLinkMarker.SchemaId;
         internal const string InventorySchema = "arkus.h1-component-adapter-inventory@1";
-        private const string ControllersRoot = "Assets/Arkus/H1/ManagedScenes/controllers";
 
         // Declared portable schemas are independent from effective adapter enumeration.
         private static readonly ComponentSchemaDescriptor[] DeclaredDescriptors =
@@ -281,39 +279,28 @@ namespace Arkus.H1.Editor
                 animator.applyRootMotion = false;
                 animator.updateMode = AnimatorUpdateMode.Normal;
                 animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
-                if (!AssetDatabase.IsValidFolder(ControllersRoot))
-                {
-                    if (!AssetDatabase.IsValidFolder("Assets/Arkus/H1/ManagedScenes")) AssetDatabase.CreateFolder("Assets/Arkus/H1", "ManagedScenes");
-                    AssetDatabase.CreateFolder("Assets/Arkus/H1/ManagedScenes", "controllers");
-                }
-                var identity = Sha(objectId + "|" + StableAssetIdentity(clip)).Substring(0, 24);
-                var path = ControllersRoot + "/" + identity + ".controller";
-                var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(path);
-                if (controller == null)
-                {
-                    controller = AnimatorController.CreateAnimatorControllerAtPath(path);
-                    var state = controller.layers[0].stateMachine.AddState("h1-clip");
-                    state.motion = clip;
-                    controller.layers[0].stateMachine.defaultState = state;
-                    EditorUtility.SetDirty(controller);
-                    AssetDatabase.SaveAssets();
-                }
-                else
-                {
-                    var motions = controller.animationClips.Distinct().ToArray();
-                    if (motions.Length != 1 || motions[0] != clip) throw new InvalidDataException("projection.component-controller-drift");
-                }
-                animator.runtimeAnimatorController = controller;
+                animator.runtimeAnimatorController = null;
+
+                // H1-07 proves exact catalogue-reference fidelity, not runtime playback. The accepted
+                // UAL1 probe currently imports as a Legacy clip, which Unity correctly refuses inside
+                // an AnimatorController. Persist the exact source AnimationClip reference on the
+                // existing H1 ownership boundary so save/reload can prove it without cloning or
+                // mutating third-party source content.
+                var ownership = owner.GetComponent<H1ComponentOwnershipMarker>();
+                if (ownership == null) ownership = owner.AddComponent<H1ComponentOwnershipMarker>();
+                ownership.schemaId = H1ComponentOwnershipMarker.SchemaId;
+                ownership.animatorClipReference = clip;
                 return "";
             }
             public string Observe(GameObject owner)
             {
                 var animator = owner.GetComponent<Animator>();
-                if (animator == null || animator.runtimeAnimatorController == null) throw new InvalidDataException("projection.component-target-missing");
-                var clips = animator.runtimeAnimatorController.animationClips.Distinct().ToArray();
-                if (clips.Length != 1) throw new InvalidDataException("projection.component-animation-cardinality");
+                var ownership = owner.GetComponent<H1ComponentOwnershipMarker>();
+                if (animator == null || ownership == null || ownership.schemaId != H1ComponentOwnershipMarker.SchemaId ||
+                    !ownership.animatorClip || ownership.animatorClipReference == null)
+                    throw new InvalidDataException("projection.component-reference-unresolved");
                 return SchemaId + "|applyRootMotion=" + animator.applyRootMotion.ToString().ToLowerInvariant() +
-                    "|updateMode=" + animator.updateMode + "|cullingMode=" + animator.cullingMode + "|clip=" + StableAssetIdentity(clips[0]);
+                    "|updateMode=" + animator.updateMode + "|cullingMode=" + animator.cullingMode + "|clip=" + StableAssetIdentity(ownership.animatorClipReference);
             }
         }
 
