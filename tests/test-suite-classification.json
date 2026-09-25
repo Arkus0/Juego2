@@ -33,10 +33,10 @@
     ],
     "FULL_HARNESS_DEEP": [
       "Hk01CanonicalContractTestsScopedDiscovery",
-      "Hk01PortabilityCompatibilityRepairTests",
+      "Hk01SelfAttackTestsPortabilityCompatibility",
       "Hk01SelfAttackTests",
       "Hk01SelfAttackTestsAdditional",
-      "Hk02SelfAttackSemanticSurfaceTests",
+      "Hk02SelfAttackTestsSemanticSurface",
       "Hk02SelfAttackTests",
       "Hk03SelfAttackTests",
       "Hk04SelfAttackTests",
