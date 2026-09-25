@@ -176,8 +176,13 @@ namespace Arkus.CITY.Editor
             RequireSurface("X1", new Vector2(46, -48), "X1 permanent");
             RequireSurface("X5 available", new Vector2(91, 115), "X5 low-water");
             RequireSurface("Río void", new Vector2(110, -52), null);
-            RequireSurface("Arroyo void", new Vector2(50, 54), null);
-            Debug.Log("CITY04_PHYSICAL_CUTS_GREEN: three dry components, X1 and active X5 collision, water voids");
+            RequireSurface("Arroyo void", new Vector2(55, 64), null);
+            GameObject x5 = GameObject.Find("X5 low-water-only crossing (G)");
+            if (x5 == null) throw new InvalidOperationException("X5 scene object missing");
+            foreach (var collider in x5.GetComponentsInChildren<Collider>()) collider.enabled = false;
+            Physics.SyncTransforms();
+            RequireSurface("X5 closed", new Vector2(91, 115), null);
+            Debug.Log("CITY04_PHYSICAL_CUTS_GREEN: three dry components, X1 and active X5 collision, X5 closure, water voids");
         }
 
         private static void RequireSurface(string label, Vector2 point, string expectedRoot)
