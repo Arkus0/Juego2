@@ -35,6 +35,7 @@ from urllib.request import urlopen
 
 import local_wp_quota_recovery as quota_recovery
 import local_wp_worker_recovery as recovery
+from local_wp_recovery_policy import active_blocker
 
 SCRIPT = Path(__file__).with_name("local_wp_autopilot.py")
 spec = importlib.util.spec_from_file_location("arkus_local_wp_autopilot", SCRIPT)
@@ -193,8 +194,7 @@ def _worker_side_effect_already_complete(role: str, prompt: str) -> bool:
         return False
     current = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{pr}")
     rows = autopilot.markers(pr)
-    if (autopilot.latest_marker(rows, "BLOCKED") or
-            autopilot.latest_marker(rows, "HUMAN_ACTION_REQUIRED")):
+    if active_blocker(rows, ((current.get("head") or {}).get("sha") or "").lower()):
         return True
     head = ((current.get("head") or {}).get("sha") or "").lower()
     ready = autopilot.latest_marker(rows, "REVIEW_READY", head) if head else None
@@ -207,6 +207,30 @@ def _role_side_effect_already_complete(role: str, prompt: str) -> bool:
     try:
         if role in {"reviewer", "appeal-reviewer"}:
             return _review_already_published(prompt)
+        if role == "fail-audit":
+            pr_match = re.search(r"\bPR\s*#([1-9][0-9]*)", prompt, re.IGNORECASE)
+            count_match = re.search(r"FAIL material #([1-3])", prompt, re.IGNORECASE)
+            if not pr_match or not count_match:
+                return False
+            pr = int(pr_match.group(1))
+            current = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{pr}")
+            sha = autopilot.fields(current.get("body") or "").get("frozen candidate sha", "").lower()
+            return any(row.get("state") == "FAIL_AUDIT_COMPLETE" and
+                       row.get("target sha") == sha and row.get("fail count") == count_match.group(1)
+                       for row in autopilot.local_markers(pr))
+        if role == "protocol-fix":
+            pr_match = re.search(r"\bPR\s*#([1-9][0-9]*)", prompt, re.IGNORECASE)
+            sha_match = re.search(r"PRODUCT_SHA\s+([0-9a-f]{40})", prompt, re.IGNORECASE)
+            if not pr_match or not sha_match:
+                return False
+            pr = int(pr_match.group(1))
+            sha = sha_match.group(1).lower()
+            current = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{pr}")
+            if ((current.get("head") or {}).get("sha") or "").lower() != sha:
+                return False
+            rows = autopilot.markers(pr)
+            ready = autopilot.latest_marker(rows, "REVIEW_READY", sha)
+            return bool(ready and autopilot.ready_context_matches(Path.cwd(), current, ready))
         if role == "docsync":
             return _docsync_already_complete(prompt)
         if role in {"worker", "repair"}:
@@ -424,8 +448,7 @@ async def remote_main_async(args) -> None:
             f"Interrupted Worker recovery did not preserve canonical PR #{current['number']} for {wp}")
     survivor = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{survivor['number']}")
     survivor_rows = autopilot.markers(survivor["number"])
-    if (autopilot.latest_marker(survivor_rows, "BLOCKED") or
-            autopilot.latest_marker(survivor_rows, "HUMAN_ACTION_REQUIRED")):
+    if active_blocker(survivor_rows, ((survivor.get("head") or {}).get("sha") or "").lower()):
         _best_effort_snapshot(root, state, "worker-returned-blocked")
         raise autopilot.StopFlow(
             f"PR #{survivor['number']} Worker returned with a human-action/block marker")

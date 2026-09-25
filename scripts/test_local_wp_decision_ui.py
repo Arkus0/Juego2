@@ -32,6 +32,7 @@ class DecisionPresentationTests(unittest.TestCase):
             control = Path(tmp) / "control"
             console = module.RemoteConsole(Path(tmp), control, "supervisor-secret", 42)
             console.proc = object()
+            console.active = True
             console.current_wp = "H1-05"
             console.campaign_id = "a" * 32
 
@@ -61,7 +62,10 @@ class DecisionPresentationTests(unittest.TestCase):
             path.parent.mkdir(parents=True)
             path.write_text(json.dumps(row), encoding="utf-8")
 
-            with patch.object(console, "send") as send:
+            def github(*args, **_kwargs):
+                return {"number": 123, "state": "open", "body": "WP: WP-H1-05\n",
+                        "head": {"sha": sha}} if "pulls/123" in args[-1] else [[]]
+            with patch.object(console, "send") as send, patch.object(module._core, "gh", side_effect=github):
                 console.advertise_decisions()
 
             send.assert_called_once()

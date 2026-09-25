@@ -121,6 +121,7 @@ def _marker_fields(body: str) -> dict[str, str]:
 
 def _github_owner_attestation(pr: int, sha: str, campaign: str, decision_id: str,
                               request_digest: str, options: list[str]) -> int | None:
+    choices: set[int] = set()
     for comment in reversed(_github_comments(pr)):
         user = comment.get("user") or {}
         if user.get("login") != "github-actions[bot]" or user.get("type") != "Bot":
@@ -133,23 +134,26 @@ def _github_owner_attestation(pr: int, sha: str, campaign: str, decision_id: str
                 fields.get("target sha", "").lower() != sha or
                 fields.get("campaign id", "").lower() != campaign or
                 fields.get("decision id", "").lower() != decision_id or
-                fields.get("request digest", "").lower() != request_digest or
-                fields.get("authority proof") != "supervisor-HMAC-v1"):
+                fields.get("request digest", "").lower() != request_digest):
             continue
+        if fields.get("authority proof") != "supervisor-HMAC-v1":
+            raise DecisionError("Owner decision attestation has invalid authority proof")
         try:
             choice = int(fields.get("choice", ""))
-        except ValueError:
-            continue
+        except ValueError as exc:
+            raise DecisionError("Owner decision attestation has invalid choice") from exc
         if not 0 <= choice < len(options):
-            continue
+            raise DecisionError("Owner decision attestation choice is out of range")
         try:
             selected_digest = owner_auth.decision_selected_digest(options[choice])
-        except owner_auth.OwnerProofError:
-            continue
+        except owner_auth.OwnerProofError as exc:
+            raise DecisionError("Owner decision attestation selected option is invalid") from exc
         if fields.get("selected digest", "").lower() != selected_digest:
-            continue
-        return choice
-    return None
+            raise DecisionError("Owner decision attestation selected digest mismatch")
+        choices.add(choice)
+    if len(choices) > 1:
+        raise DecisionError("Contradictory authoritative owner decisions for one request")
+    return next(iter(choices)) if choices else None
 
 
 def _verified_owner_response(supervisor: str, campaign: str, decision_id: str, pr: int,
@@ -171,6 +175,37 @@ def normalize_wp(value: str) -> str:
     if not match:
         raise DecisionError(f"Invalid WP id: {value!r}")
     return match.group(1)
+
+
+def _reusable_request(control: Path, campaign: str, wp: str, pr: int, sha: str,
+                      question: str, detail: str, options: list[str]) -> tuple[str, str] | None:
+    """Resume the same unanswered request after a Worker or supervisor restart."""
+    directory = control / "decisions"
+    if not directory.is_dir():
+        return None
+    found: list[tuple[str, str]] = []
+    for path in directory.glob("*.json"):
+        if path.name.endswith(".response.json"):
+            continue
+        try:
+            row = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        ident = row.get("decision_id")
+        if (not isinstance(ident, str) or not re.fullmatch(r"[0-9a-f]{32}", ident) or
+                row.get("campaign_id") != campaign or row.get("wp") != wp or
+                row.get("pr") != pr or row.get("sha") != sha or
+                row.get("question") != question or row.get("detail") != detail or
+                row.get("options") != options or row.get("completed_at") or
+                row.get("abandoned_at")):
+            continue
+        digest = owner_auth.decision_request_digest(
+            campaign, ident, wp, pr, sha, question, detail, options)
+        if row.get("request_digest") == digest:
+            found.append((ident, digest))
+    if len(found) > 1:
+        raise DecisionError("Multiple pending owner requests for the same exact campaign context")
+    return found[0] if found else None
 
 
 def request_decision(question: str, options: list[str], *, wp: str, pr: int | None,
@@ -197,9 +232,10 @@ def request_decision(question: str, options: list[str], *, wp: str, pr: int | No
     if not SHA_RE.fullmatch(sha):
         raise DecisionError("SHA must be an exact 40-hex commit")
 
-    decision_id = uuid.uuid4().hex
     try:
-        request_digest = owner_auth.decision_request_digest(
+        reusable = _reusable_request(control, campaign, wp, pr, sha, question, detail, options)
+        decision_id = reusable[0] if reusable else uuid.uuid4().hex
+        request_digest = reusable[1] if reusable else owner_auth.decision_request_digest(
             campaign, decision_id, wp, pr, sha, question, detail, options)
     except owner_auth.OwnerProofError as exc:
         raise DecisionError(str(exc)) from exc
@@ -220,7 +256,8 @@ def request_decision(question: str, options: list[str], *, wp: str, pr: int | No
         "response_transport": "github-actions-bot-attestation",
         "owner_timeout_seconds": int(timeout_seconds),
     }
-    _atomic_json(request_path, payload)
+    if reusable is None:
+        _atomic_json(request_path, payload)
     print(f"OWNER_DECISION_PENDING: {decision_id}", file=sys.stderr, flush=True)
     deadline = time.monotonic() + timeout_seconds
 

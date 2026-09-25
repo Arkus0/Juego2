@@ -23,6 +23,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Self
 
+from local_wp_recovery_policy import active_blocker
+
 REPO = "Arkus0/Juego2"
 WP_TOKEN = r"[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+"
 WP_RE = re.compile(rf"^(?:WP-)?({WP_TOKEN})$")
@@ -806,13 +808,13 @@ async def main_async(args: argparse.Namespace) -> None:
                     pr = canonical_pr(wp)
                     if not pr or pr["state"] != "open":
                         raise StopFlow(f"Worker ended without a canonical open PR for {wp}")
-                    await wait_for_state(pr["number"], lambda p, m: ready_context_matches(root, p, latest_marker(m, "REVIEW_READY", p["head"]["sha"].lower())) or bool(latest_marker(m, "BLOCKED")))
+                    await wait_for_state(pr["number"], lambda p, m: ready_context_matches(root, p, latest_marker(m, "REVIEW_READY", p["head"]["sha"].lower())) or bool(active_blocker(m, p["head"]["sha"].lower())))
                     continue
                 current = gh_json("api", f"repos/{REPO}/pulls/{pr['number']}")
                 rows = markers(pr["number"])
                 if not current.get("merged") and current.get("state") == "open":
                     assert_pr_checkout(root, current)
-                if latest_marker(rows, "BLOCKED") or latest_marker(rows, "HUMAN_ACTION_REQUIRED"):
+                if active_blocker(rows, ((current.get("head") or {}).get("sha") or "").lower()):
                     raise StopFlow(f"PR #{pr['number']} has a human-action/block marker")
                 if current.get("merged"):
                     frozen_merged = fields(current.get("body") or "").get("frozen candidate sha", "").lower()
@@ -859,13 +861,12 @@ async def main_async(args: argparse.Namespace) -> None:
                         started = any(row.get("state") == "PROTOCOL_FIX_STARTED" and
                                       row.get("target sha") == frozen and
                                       row.get("review id") == latest_current_verdict["id"] for row in local_rows)
-                        if started:
-                            raise StopFlow(f"PR #{pr['number']} protocol correction started without new REVIEW_READY; PC reconciliation required")
                         await quota_before_reasoning(app, wp, pr["number"])
-                        body = ("ARKUS_LOCAL_AUTOPILOT\nState: PROTOCOL_FIX_STARTED\n"
-                                f"Target SHA: {frozen}\nReview ID: {latest_current_verdict['id']}\n"
-                                "Detail: metadata-only correction; no product commit, semantic FAIL or proof rerun.\n")
-                        run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
+                        if not started:
+                            body = ("ARKUS_LOCAL_AUTOPILOT\nState: PROTOCOL_FIX_STARTED\n"
+                                    f"Target SHA: {frozen}\nReview ID: {latest_current_verdict['id']}\n"
+                                    "Detail: metadata-only correction; no product commit, semantic FAIL or proof rerun.\n")
+                            run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
                         await codex_role(root, state, "protocol-fix",
                             f"Corrige solo los defectos de metadata/lifecycle PROTOCOL_FIX del Reviewer ID {latest_current_verdict['id']} en PR #{pr['number']} / {wp}. Mantén PRODUCT_SHA {frozen}; no hagas git commit ni cambies implementación/evidencia. Sigue PRODUCT_SHA_CLOSURE.md: reusa producto GREEN y solicita como máximo una nueva evaluación Ready. Si el SHA material cambia o el bloqueo no es metadata pura, detente sin fingir corrección. No actúes como Reviewer.",
                             "gpt-6-sol", "high", assets_root=assets_root)
@@ -910,14 +911,20 @@ async def main_async(args: argparse.Namespace) -> None:
                         result = await codex_role(root, state, "fail-audit",
                             f"Audita el FAIL material #{len(fails)} del PR #{pr['number']} / {wp} contra GitHub y contratos exactos. Decide si el último es defecto real, sobredefensa/duplicación de garantía aceptada, o incierto. Incluso al primer FAIL, detecta inmediatamente una prueba de completitud autocircular/autorreductora. En cada FAIL detecta también clase fundacional repetida y expansión de maquinaria de prueba sin progreso. No edites ni emitas veredicto. Responde al esquema JSON.",
                             "gpt-6-luna", "xhigh", schema, assets_root=assets_root)
-                        audit = json.loads(result)
+                        completed_rows = local_markers(pr["number"])
+                        completed_audit = next((row for row in reversed(completed_rows)
+                            if row.get("state") == "FAIL_AUDIT_COMPLETE" and
+                               row.get("target sha") == frozen and
+                               row.get("fail count") == str(len(fails))), None)
+                        audit = json.loads(completed_audit["audit json"] if completed_audit else result)
                         if not all(isinstance(audit.get(key), str) and audit[key].strip()
                                    for key in ("criterion", "evidence", "minimal_next_action")):
                             raise StopFlow("FAIL audit lacks a concrete criterion, evidence or next action")
-                        body = ("ARKUS_LOCAL_AUTOPILOT\nState: FAIL_AUDIT_COMPLETE\n"
-                                f"Target SHA: {frozen}\nFail count: {len(fails)}\n"
-                                f"Audit JSON: {json.dumps(audit, ensure_ascii=False, separators=(',', ':'))}\n")
-                        run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
+                        if not completed_audit:
+                            body = ("ARKUS_LOCAL_AUTOPILOT\nState: FAIL_AUDIT_COMPLETE\n"
+                                    f"Target SHA: {frozen}\nFail count: {len(fails)}\n"
+                                    f"Audit JSON: {json.dumps(audit, ensure_ascii=False, separators=(',', ':'))}\n")
+                            run("gh", "api", "--method", "POST", f"repos/{REPO}/issues/{pr['number']}/comments", "-f", f"body={body}")
                     policy = audit_policy(audit, len(fails))
                     if policy == "circuit_breaker":
                         notify("BLOCKED", f"Circuit breaker de prueba/arquitectura: {audit['evidence']}", wp, pr["number"])

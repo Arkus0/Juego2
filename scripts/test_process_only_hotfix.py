@@ -167,6 +167,7 @@ class TelegramDecisionRegressionTests(unittest.TestCase):
             decisions.mkdir(parents=True)
             console = console_module.RemoteConsole(Path(tmp), control, "token", 42)
             console.proc = object()
+            console.active = True
             console.current_wp = "H1-05"
             console.campaign_id = CAMPAIGN
 
@@ -183,10 +184,14 @@ class TelegramDecisionRegressionTests(unittest.TestCase):
                 (decisions / f"{row['decision_id']}.json").write_text(json.dumps(row), encoding="utf-8")
             (decisions / f"{'6' * 32}.response.json").write_text("{}", encoding="utf-8")
 
-            self.assertEqual(console.pending_decision_count(), 1)
-            self.assertIn("Decisiones pendientes válidas: 1", console.status())
-            with patch.object(console, "send") as send:
-                console.advertise_decisions()
+            def github(*args, **_kwargs):
+                return ({"number": 192, "state": "open", "body": "WP: WP-H1-05\n",
+                         "head": {"sha": SHA}} if "pulls/192" in args[-1] else [[]])
+            with patch.object(console_module._core, "gh", side_effect=github):
+                self.assertEqual(console.pending_decision_count(), 1)
+                self.assertIn("Decisiones pendientes válidas: 1", console.status())
+                with patch.object(console, "send") as send:
+                    console.advertise_decisions()
             self.assertEqual(send.call_count, 1)
             self.assertEqual(console.sent_decisions, {"1" * 32})
 

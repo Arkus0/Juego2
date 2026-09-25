@@ -18,6 +18,8 @@ import time
 from pathlib import Path
 from typing import Any
 
+from local_wp_recovery_policy import Disposition, classify_failure
+
 HERE = Path(__file__).parent
 
 
@@ -84,7 +86,7 @@ def _adoption_complete(pr: int, verdict: dict[str, str]) -> bool:
     if not cycle.isdecimal() or int(cycle) < 1:
         raise autopilot.StopFlow(f"PR #{pr} FAIL adoption ledger has invalid fail_cycle")
     comments = autopilot.gh_pages(f"repos/{autopilot.REPO}/issues/{pr}/comments?per_page=100")
-    if not adoption.repair_marker_exists(comments, verdict["sha"]):
+    if not adoption.repair_marker_after_verdict(comments, verdict["sha"], verdict["at"]):
         return False
     current = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{pr}")
     try:
@@ -302,6 +304,18 @@ def _configure_remote() -> None:
     autopilot.reviewed_verdicts = strict_reviewed_verdicts
 
 
+async def _run_with_retries(args: argparse.Namespace) -> None:
+    """Reconstruct from GitHub on every retry; never replay an in-memory frontier."""
+    for attempt in range(3):
+        try:
+            await process_main_async(args)
+            return
+        except (autopilot.StopFlow, OSError, json.JSONDecodeError, adoption.AdoptionError) as exc:
+            if classify_failure(exc) != Disposition.RETRY or attempt == 2:
+                raise
+            await asyncio.sleep((attempt + 1) * 2)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".")
@@ -321,21 +335,26 @@ def main() -> int:
     try:
         _configure_remote()
         if args.dry_run:
-            asyncio.run(process_main_async(args))
+            asyncio.run(_run_with_retries(args))
         else:
             with autopilot.one_controller(Path(args.state).resolve()):
-                asyncio.run(process_main_async(args))
+                asyncio.run(_run_with_retries(args))
     except WorkBoundary as boundary:
         _print_boundary(boundary)
+        print("WORK_PLANE_RESULT: RECOVERABLE", flush=True)
         return 0
     except (autopilot.StopFlow, OSError, json.JSONDecodeError, adoption.AdoptionError) as exc:
-        if not args.dry_run and not getattr(exc, "notified", False):
+        disposition = classify_failure(exc)
+        if not args.dry_run and disposition == Disposition.HARD and not getattr(exc, "notified", False):
             try:
                 autopilot.notify("HUMAN_ACTION_REQUIRED", f"Controlador local detenido: {exc}", args.wp or "")
             except (autopilot.StopFlow, OSError):
                 pass
         print(f"REMOTE_AUTOPILOT_STOP: {exc}", file=sys.stderr)
+        final = Disposition.PAUSE if disposition == Disposition.RETRY else disposition
+        print(f"WORK_PLANE_RESULT: {final.value}", flush=True)
         return 2
+    print("WORK_PLANE_RESULT: RECOVERABLE", flush=True)
     return 0
 
 

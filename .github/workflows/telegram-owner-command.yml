@@ -172,11 +172,12 @@ jobs:
                       fields.get('target sha') == sha and
                       fields.get('campaign id') == campaign and
                       fields.get('decision id') == decision_id and
-                      fields.get('request digest') == request_digest and
-                      fields.get('choice') == str(choice) and
-                      fields.get('selected digest') == selected_digest):
-                  print('OWNER_DECISION already durable')
-                  raise SystemExit(0)
+                      fields.get('request digest') == request_digest):
+                  if (fields.get('choice') == str(choice) and
+                          fields.get('selected digest') == selected_digest):
+                      print('OWNER_DECISION already durable')
+                      raise SystemExit(0)
+                  raise SystemExit('contradictory owner decision for the same request')
 
           body = (
               'ARKUS_LOCAL_AUTOPILOT\n'

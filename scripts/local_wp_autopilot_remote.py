@@ -93,8 +93,7 @@ async def _run_canonical_adopted(args: argparse.Namespace) -> None:
             frozen = autopilot.fields(current.get("body") or "").get("frozen candidate sha", "").lower()
             if autopilot.SHA_RE.fullmatch(frozen) and frozen == head:
                 def transitioned(candidate: dict, rows: list[dict[str, str]]) -> bool:
-                    if (autopilot.latest_marker(rows, "BLOCKED") or
-                            autopilot.latest_marker(rows, "HUMAN_ACTION_REQUIRED") or
+                    if (active_blocker(rows, frozen) or
                             autopilot.latest_marker(rows, "REPAIR_REQUIRED", frozen)):
                         return True
                     ready = autopilot.latest_marker(rows, "REVIEW_READY", frozen)
@@ -104,8 +103,7 @@ async def _run_canonical_adopted(args: argparse.Namespace) -> None:
                 if not transitioned(current, rows):
                     current, rows = await autopilot.wait_for_state(
                         pr["number"], transitioned)
-                if (autopilot.latest_marker(rows, "BLOCKED") or
-                        autopilot.latest_marker(rows, "HUMAN_ACTION_REQUIRED")):
+                if active_blocker(rows, frozen):
                     raise autopilot.StopFlow(
                         f"PR #{pr['number']} became blocked while awaiting post-Worker handoff")
 

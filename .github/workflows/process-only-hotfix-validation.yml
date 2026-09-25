@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'scripts/local_wp_remote_console.py'
+      - 'scripts/local_wp_remote_console_core.py'
+      - 'scripts/local_wp_recovery_policy.py'
+      - 'scripts/local_wp_autopilot.py'
       - 'scripts/local_wp_autopilot_process.py'
       - 'scripts/local_wp_autopilot_remote.py'
       - 'scripts/local_wp_autopilot_remote_base.py'
@@ -13,6 +16,7 @@ on:
       - 'scripts/reviewer_verdict_adoption.py'
       - 'scripts/test_owner_decision_timeout.py'
       - 'scripts/test_process_only_hotfix.py'
+      - 'scripts/test_local_wp_recovery_policy.py'
       - '.github/workflows/reviewer-verdict-adoption.yml'
       - '.github/workflows/process-only-hotfix-validation.yml'
 
@@ -33,6 +37,9 @@ jobs:
         run: |
           python3 -m py_compile \
             scripts/local_wp_remote_console.py \
+            scripts/local_wp_remote_console_core.py \
+            scripts/local_wp_recovery_policy.py \
+            scripts/local_wp_autopilot.py \
             scripts/local_wp_autopilot_process.py \
             scripts/local_wp_autopilot_remote.py \
             scripts/local_wp_autopilot_remote_base.py \
@@ -41,7 +48,11 @@ jobs:
             scripts/request_owner_decision.py \
             scripts/reviewer_verdict_adoption.py \
             scripts/test_owner_decision_timeout.py \
-            scripts/test_process_only_hotfix.py
+            scripts/test_process_only_hotfix.py \
+            scripts/test_local_wp_recovery_policy.py
+
+      - name: Recovery and H1-06 incident regressions
+        run: python3 scripts/test_local_wp_recovery_policy.py
 
       - name: Existing local autopilot suite
         run: python3 scripts/test_local_wp_autopilot.py
