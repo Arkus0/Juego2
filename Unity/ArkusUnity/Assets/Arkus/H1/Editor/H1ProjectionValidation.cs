@@ -65,8 +65,8 @@ namespace Arkus.H1.Editor
         internal H1ValidationResult Result { get; }
     }
 
-    // H1-08 owns composition and deterministic Unity diagnostics. Causal validity remains in
-    // H1-04/05/06/07 validators; this registry only gives those checks stable phase/actionability.
+    // H1-08 owns only composition, stable Unity diagnostic identity and one genuinely new finite-
+    // transform check. The actions registered here delegate causal validity to H1-04/05/06/07.
     public static class H1ProjectionValidation
     {
         public const string ResultSchema = "arkus.h1-unity-validation-result@1";
@@ -83,12 +83,15 @@ namespace Arkus.H1.Editor
             Descriptor("unity.plan.component", Preflight, 50),
             Descriptor("unity.plan.hierarchy", Preflight, 60),
             Descriptor("unity.scene.finite-transform", PostMaterialization, 110),
-            Descriptor("unity.scene.effective-observation", PostMaterialization, 120),
-            Descriptor("unity.scene.managed-marker", PostMaterialization, 121),
-            Descriptor("unity.scene.prefab-link", PostMaterialization, 122),
-            Descriptor("unity.scene.component", PostMaterialization, 123),
-            Descriptor("unity.scene.plan-observation", PostMaterialization, 130)
+            Descriptor("unity.scene.managed-marker", PostMaterialization, 120),
+            Descriptor("unity.scene.prefab-link", PostMaterialization, 130),
+            Descriptor("unity.scene.component", PostMaterialization, 140),
+            Descriptor("unity.scene.effective-observation", PostMaterialization, 150),
+            Descriptor("unity.scene.plan-observation", PostMaterialization, 160)
         };
+
+        private static readonly IReadOnlyDictionary<string, H1ValidationInvariantDescriptor> RegisteredById =
+            Registered.ToDictionary(value => value.invariantId, value => value, StringComparer.Ordinal);
 
         public static H1ValidationInvariantDescriptor[] Inventory()
         {
@@ -148,6 +151,7 @@ namespace Arkus.H1.Editor
                 .OrderBy(value => OrderOf(value.InvariantId, phaseInventory))
                 .ThenBy(value => value.InvariantId, StringComparer.Ordinal)
                 .ThenBy(value => value.CanonicalResource, StringComparer.Ordinal)
+                .ThenBy(value => value.LogicalAsset, StringComparer.Ordinal)
                 .ThenBy(value => value.ManagedPath, StringComparer.Ordinal))
             {
                 if (!phaseInventory.ContainsKey(check.InvariantId))
@@ -159,12 +163,11 @@ namespace Arkus.H1.Editor
                 }
                 catch (InvalidDataException error) when (IsProjectionCode(error.Message))
                 {
-                    var invariantId = MapInvariant(error.Message, check.InvariantId, phase);
                     diagnostics.Add(new H1ValidationDiagnostic
                     {
                         code = error.Message,
                         severity = "error",
-                        invariantId = invariantId,
+                        invariantId = check.InvariantId,
                         phase = phase,
                         canonicalResource = check.CanonicalResource,
                         logicalAsset = check.LogicalAsset,
@@ -208,27 +211,16 @@ namespace Arkus.H1.Editor
         private static bool IsProjectionCode(string value) =>
             !string.IsNullOrEmpty(value) && value.StartsWith("projection.", StringComparison.Ordinal);
 
-        private static string MapInvariant(string code, string fallback, string phase)
-        {
-            if (phase != PostMaterialization) return fallback;
-            if (code.IndexOf("marker", StringComparison.Ordinal) >= 0 || code == "projection.root-count")
-                return "unity.scene.managed-marker";
-            if (code.IndexOf("prefab", StringComparison.Ordinal) >= 0 || code.IndexOf("lineage", StringComparison.Ordinal) >= 0)
-                return "unity.scene.prefab-link";
-            if (code.IndexOf("component", StringComparison.Ordinal) >= 0)
-                return "unity.scene.component";
-            return fallback;
-        }
-
         private static int CompareDiagnostics(H1ValidationDiagnostic left, H1ValidationDiagnostic right)
         {
-            var byOrder = OrderOf(left.invariantId, Registered.ToDictionary(value => value.invariantId, value => value, StringComparer.Ordinal))
-                .CompareTo(OrderOf(right.invariantId, Registered.ToDictionary(value => value.invariantId, value => value, StringComparer.Ordinal)));
+            var byOrder = OrderOf(left.invariantId, RegisteredById).CompareTo(OrderOf(right.invariantId, RegisteredById));
             if (byOrder != 0) return byOrder;
             var byCode = StringComparer.Ordinal.Compare(left.code, right.code);
             if (byCode != 0) return byCode;
             var byResource = StringComparer.Ordinal.Compare(left.canonicalResource, right.canonicalResource);
             if (byResource != 0) return byResource;
+            var byAsset = StringComparer.Ordinal.Compare(left.logicalAsset, right.logicalAsset);
+            if (byAsset != 0) return byAsset;
             var byPath = StringComparer.Ordinal.Compare(left.managedPath, right.managedPath);
             if (byPath != 0) return byPath;
             return StringComparer.Ordinal.Compare(left.context, right.context);
