@@ -15,7 +15,7 @@ namespace Arkus.H1.Editor
 {
     // All paths and the publication pointer are fixed by this bridge, never chosen by a request.
     // A scene is staged, saved, reloaded and observed before the one active pointer changes.
-    public static class H1SceneProjection
+    public static partial class H1SceneProjection
     {
         private const string Root = "Assets/Arkus/H1/ManagedScenes";
         private const string Generations = Root + "/generations";
@@ -28,7 +28,7 @@ namespace Arkus.H1.Editor
         private const int MaximumRelationships = 512;
         private const int MaximumComponents = 16;
 
-        public static string Execute(string payload)
+        private static string ExecuteLegacy(string payload)
         {
             var request = JsonUtility.FromJson<ProjectionRequest>(payload);
             if (request == null || request.schemaId != "arkus.h1-projection-worker-request@1" ||
@@ -73,15 +73,22 @@ namespace Arkus.H1.Editor
             }
         }
 
-        private static ProjectionObservation Materialize(ProjectionPlan plan)
+        private static ProjectionObservation Materialize(ProjectionPlan plan, out H1ValidationResult postflight)
         {
+            postflight = null;
             var previous = ReadManifest();
             if (previous != null && previous.inputDigest == plan.inputDigest)
             {
                 try
                 {
                     var existing = ObserveManifest(previous);
-                    if (SameGraph(plan, existing) && SameRealization(plan, existing)) return existing;
+                    if (SameGraph(plan, existing) && SameRealization(plan, existing))
+                    {
+                        ProjectionObservation verified;
+                        postflight = RunPostflight(plan, previous.scenePath, previous.generationId, existing, true, out verified);
+                        if (!postflight.valid) throw new H1ValidationFailureException(postflight);
+                        return verified;
+                    }
                 }
                 catch (InvalidDataException) { }
             }
@@ -131,13 +138,13 @@ namespace Arkus.H1.Editor
             foreach (var node in plan.nodes)
                 ApplyComponents(node, created[node.objectId], created);
 
+            InjectNonFiniteTransformForH108(created);
             if (!EditorSceneManager.SaveScene(scene, scenePath, false)) throw new IOException("projection.scene-save-failed");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            ValidateSourceBytes(plan);
-            var staged = ObserveScene(scenePath, generationId, plan.inputDigest, plan.canonicalHash, plan.catalogueFingerprint);
-            if (!SameGraph(plan, staged) || !SameRealization(plan, staged))
-                throw new InvalidDataException("projection.stage-observation-mismatch");
+            ProjectionObservation staged;
+            postflight = RunPostflight(plan, scenePath, generationId, null, true, out staged);
+            if (!postflight.valid) throw new H1ValidationFailureException(postflight);
 
             var fault = Path.Combine(H1Bootstrap.ProjectRoot(), "Library", "Arkus", "H1Projection", "fail-before-publish");
             if (File.Exists(fault)) throw new InvalidDataException("projection.forced-prepublication-failure");
