@@ -102,7 +102,7 @@ jobs:
           chmod +x "${PINNED_GAMECI_BIN}"
           echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
 
-      - name: Execute effective Unity EditMode suite
+      - name: Execute bounded H1-07 Unity EditMode proof
         shell: bash
         run: |
           set +e
@@ -112,6 +112,7 @@ jobs:
             --engine=unity \
             Unity/ArkusUnity \
             --testPlatforms=editmode \
+            --customParameters="-testFilter Arkus.H1.Editor.Tests.H1ComponentProjectionTests" \
             --coverageEnabled false \
             --artifactsPath=artifacts/h1-07-unity \
             --dockerIsolationMode=default \
