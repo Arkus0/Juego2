@@ -15,11 +15,6 @@ on:
         description: Exact public Juego2 candidate SHA to execute
         required: true
         type: string
-      asset_vault_ref:
-        description: Exact Juego2-assets SHA (preferred) or bootstrap ref
-        required: true
-        default: main
-        type: string
 
 permissions:
   contents: read
@@ -36,7 +31,7 @@ jobs:
     timeout-minutes: 55
     env:
       TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.target_sha }}
-      ASSET_VAULT_REF: ${{ inputs.asset_vault_ref || 'main' }}
+      PINNED_ASSET_VAULT_SHA: ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6
       PINNED_GAMECI_VERSION: v0.1.69
       PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
       ASSET_VAULT_TOKEN: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
@@ -50,6 +45,7 @@ jobs:
         run: |
           set -euo pipefail
           [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact lowercase 40-hex'; exit 2; }
+          [[ "${PINNED_ASSET_VAULT_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::pinned vault SHA is invalid'; exit 2; }
           missing=0
           for name in ASSET_VAULT_TOKEN UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
             if [[ -z "${!name:-}" ]]; then
@@ -74,27 +70,30 @@ jobs:
           grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
           grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
 
-      - name: Checkout private H1 asset vault
+      - name: Checkout exact private H1 asset baseline
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Arkus0/Juego2-assets
-          ref: ${{ env.ASSET_VAULT_REF }}
+          ref: ${{ env.PINNED_ASSET_VAULT_SHA }}
           token: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
           fetch-depth: 1
           lfs: true
           path: _asset_vault
 
-      - name: Freeze effective vault SHA and hide private checkout from public status
+      - name: Prove exact private vault checkout and isolate it from public status
         shell: bash
         run: |
           set -euo pipefail
           VAULT_SHA="$(git -C _asset_vault rev-parse HEAD)"
-          [[ "${VAULT_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::could not resolve exact vault SHA'; exit 2; }
+          test "${VAULT_SHA}" = "${PINNED_ASSET_VAULT_SHA}" || {
+            echo "::error::private vault HEAD mismatch expected=${PINNED_ASSET_VAULT_SHA} observed=${VAULT_SHA}"
+            exit 2
+          }
           echo "ASSET_VAULT_SHA=${VAULT_SHA}" >> "${GITHUB_ENV}"
           printf '/_asset_vault/\n' >> .git/info/exclude
           test -z "$(git status --porcelain --untracked-files=all)"
           test -z "$(git -C _asset_vault status --porcelain --untracked-files=all)"
-          echo "Resolved private H1 asset vault at ${VAULT_SHA}"
+          echo "H1_ASSET_VAULT_SHA_GREEN ${VAULT_SHA}"
 
       - name: Verify private baseline against accepted H1-04 authority
         shell: bash
@@ -134,13 +133,11 @@ jobs:
 
           verifier=(python3 Tools/AssetVault/verify_h1_asset_vault.py --public-root . --vault-root _asset_vault --candidate-sha "${TARGET_SHA}" --vault-sha "${ASSET_VAULT_SHA}")
 
-          # 1. Changed source byte.
           cp _asset_vault/h1/source-slice/MI_Plaster.mat "${RUNNER_TEMP}/MI_Plaster.mat.backup"
           printf '\nasset-cloud-negative-control\n' >> _asset_vault/h1/source-slice/MI_Plaster.mat
           expect_red changed_source_byte "${verifier[@]}"
           cp "${RUNNER_TEMP}/MI_Plaster.mat.backup" _asset_vault/h1/source-slice/MI_Plaster.mat
 
-          # 2. Rebound Unity GUID.
           cp _asset_vault/h1/source-slice/MI_Plaster.mat.meta "${RUNNER_TEMP}/MI_Plaster.mat.meta.backup"
           python3 - <<'PY'
           from pathlib import Path
@@ -152,12 +149,10 @@ jobs:
           expect_red rebound_unity_guid "${verifier[@]}"
           cp "${RUNNER_TEMP}/MI_Plaster.mat.meta.backup" _asset_vault/h1/source-slice/MI_Plaster.mat.meta
 
-          # 3. Missing accepted distribution payload without duplicating the large file.
           mv _asset_vault/h1/distributions/quaternius-medieval-source.payload "${RUNNER_TEMP}/quaternius-medieval-source.payload"
           expect_red missing_distribution "${verifier[@]}"
           mv "${RUNNER_TEMP}/quaternius-medieval-source.payload" _asset_vault/h1/distributions/quaternius-medieval-source.payload
 
-          # 4. Manifest source-authority widening/rebinding.
           cp _asset_vault/h1/H1_SOURCE_SLICE_MANIFEST.json "${RUNNER_TEMP}/H1_SOURCE_SLICE_MANIFEST.json.backup"
           python3 - <<'PY'
           import json
@@ -241,6 +236,27 @@ jobs:
           print(f'H1_ASSET_CLOUD_UNITY_GREEN test={wanted} result={result} file={path}')
           PY
 
+      - name: Prove public evidence allowlist and leak rejection
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Tools/AssetVault/scan_h1_public_evidence.py artifacts/h1-asset-cloud
+
+          cp _asset_vault/h1/source-slice/MI_Plaster.mat artifacts/h1-asset-cloud/unity/private-leak.xml
+          set +e
+          python3 Tools/AssetVault/scan_h1_public_evidence.py artifacts/h1-asset-cloud \
+            >"${RUNNER_TEMP}/leak-scan.out" 2>"${RUNNER_TEMP}/leak-scan.err"
+          code=$?
+          set -e
+          if [[ ${code} -eq 0 ]]; then
+            echo '::error::public evidence leak negative control unexpectedly passed'
+            exit 3
+          fi
+          grep -q 'H1_ASSET_EVIDENCE_RED' "${RUNNER_TEMP}/leak-scan.err"
+          rm -f artifacts/h1-asset-cloud/unity/private-leak.xml
+          python3 Tools/AssetVault/scan_h1_public_evidence.py artifacts/h1-asset-cloud
+          echo 'H1_ASSET_LEAK_NEGATIVE_GREEN'
+
       - name: Reconcile deterministic GameCI package injection
         shell: bash
         run: |
@@ -256,9 +272,7 @@ jobs:
           lock_path = Path('Unity/ArkusUnity/Packages/packages-lock.json')
           allowed_paths = {str(manifest_path), str(lock_path)}
 
-          status = subprocess.check_output(
-              ['git', 'status', '--porcelain', '--untracked-files=no'], text=True
-          ).splitlines()
+          status = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'], text=True).splitlines()
           changed = {line[3:] for line in status if len(line) >= 4}
           if changed != allowed_paths:
               raise SystemExit(f'unexpected tracked Unity drift: {sorted(changed)}')
@@ -282,18 +296,10 @@ jobs:
           current_lock = json.loads(lock_path.read_text())
           expected_lock = json.loads(json.dumps(baseline_lock))
           expected_lock['dependencies'].update({
-              'com.unity.sdk.linux-arm64': {
-                  'version': '1.1.0', 'depth': 0, 'source': 'registry',
-                  'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
-              'com.unity.sdk.linux-x86_64': {
-                  'version': '1.1.0', 'depth': 0, 'source': 'registry',
-                  'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
-              'com.unity.sysroot.base': {
-                  'version': '1.1.0', 'depth': 1, 'source': 'registry',
-                  'dependencies': {}, 'url': 'https://packages.unity.com'},
-              'com.unity.toolchain.linux-x86_64-linux': {
-                  'version': '1.1.0', 'depth': 0, 'source': 'registry',
-                  'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
+              'com.unity.sdk.linux-arm64': {'version': '1.1.0', 'depth': 0, 'source': 'registry', 'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
+              'com.unity.sdk.linux-x86_64': {'version': '1.1.0', 'depth': 0, 'source': 'registry', 'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
+              'com.unity.sysroot.base': {'version': '1.1.0', 'depth': 1, 'source': 'registry', 'dependencies': {}, 'url': 'https://packages.unity.com'},
+              'com.unity.toolchain.linux-x86_64-linux': {'version': '1.1.0', 'depth': 0, 'source': 'registry', 'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
           })
           if current_lock != expected_lock:
               raise SystemExit('packages-lock drift is not the accepted GameCI Linux platform-package injection')
@@ -315,7 +321,7 @@ jobs:
 
           git restore --source="${TARGET_SHA}" -- \
             Unity/ArkusUnity/Packages/manifest.json \
-            Unity/ArkusUnity/Packages/packages-lock.json
+            Unity/ArkusUnity/Packages/packages-lock.json || true
 
           rm -rf _asset_vault
 
