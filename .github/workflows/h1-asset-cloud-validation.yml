@@ -7,6 +7,7 @@ on:
       - '.github/workflows/h1-asset-cloud-validation.yml'
       - 'Tools/AssetVault/**'
       - 'Docs/workpacks/H1/WP-H1-ASSET-CLOUD.md'
+      - 'Docs/evidence/WP-H1-ASSET-CLOUD/**'
       - 'Unity/ArkusUnity/Assets/Arkus/H1/Tests/Editor/H1AssetCloudTests.cs'
       - 'Unity/ArkusUnity/Assets/Arkus/H1/Tests/Editor/H1AssetCloudTests.cs.meta'
   workflow_dispatch:
@@ -69,6 +70,7 @@ jobs:
           test -z "$(git status --porcelain --untracked-files=all)"
           grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
           grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          printf '/_asset_vault/\n/artifacts/\n' >> .git/info/exclude
 
       - name: Checkout exact private H1 asset baseline
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -90,7 +92,6 @@ jobs:
             exit 2
           }
           echo "ASSET_VAULT_SHA=${VAULT_SHA}" >> "${GITHUB_ENV}"
-          printf '/_asset_vault/\n' >> .git/info/exclude
           test -z "$(git status --porcelain --untracked-files=all)"
           test -z "$(git -C _asset_vault status --porcelain --untracked-files=all)"
           echo "H1_ASSET_VAULT_SHA_GREEN ${VAULT_SHA}"
@@ -236,15 +237,21 @@ jobs:
           print(f'H1_ASSET_CLOUD_UNITY_GREEN test={wanted} result={result} file={path}')
           PY
 
-      - name: Prove public evidence allowlist and leak rejection
+      - name: Stage and prove retained public evidence allowlist
         shell: bash
         run: |
           set -euo pipefail
-          python3 Tools/AssetVault/scan_h1_public_evidence.py artifacts/h1-asset-cloud
+          PUBLIC_EVIDENCE=artifacts/h1-asset-cloud-public
+          rm -rf "${PUBLIC_EVIDENCE}"
+          mkdir -p "${PUBLIC_EVIDENCE}/unity"
+          cp artifacts/h1-asset-cloud/H1_ASSET_CLOUD_RECEIPT.json "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_RECEIPT.json"
+          cp artifacts/h1-asset-cloud/unity/editmode-results.xml "${PUBLIC_EVIDENCE}/unity/editmode-results.xml"
 
-          cp _asset_vault/h1/source-slice/MI_Plaster.mat artifacts/h1-asset-cloud/unity/private-leak.xml
+          python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}"
+
+          cp _asset_vault/h1/source-slice/MI_Plaster.mat "${PUBLIC_EVIDENCE}/unity/private-leak.xml"
           set +e
-          python3 Tools/AssetVault/scan_h1_public_evidence.py artifacts/h1-asset-cloud \
+          python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}" \
             >"${RUNNER_TEMP}/leak-scan.out" 2>"${RUNNER_TEMP}/leak-scan.err"
           code=$?
           set -e
@@ -253,14 +260,17 @@ jobs:
             exit 3
           fi
           grep -q 'H1_ASSET_EVIDENCE_RED' "${RUNNER_TEMP}/leak-scan.err"
-          rm -f artifacts/h1-asset-cloud/unity/private-leak.xml
-          python3 Tools/AssetVault/scan_h1_public_evidence.py artifacts/h1-asset-cloud
+          rm -f "${PUBLIC_EVIDENCE}/unity/private-leak.xml"
+          python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}"
           echo 'H1_ASSET_LEAK_NEGATIVE_GREEN'
 
       - name: Reconcile deterministic GameCI package injection
         shell: bash
         run: |
           set -euo pipefail
+          sudo chown "$(id -u):$(id -g)" \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
           python3 - <<'PY'
           import json
           import os
@@ -316,9 +326,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice
-          rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta
+          if [[ ! -d .git ]]; then
+            echo 'H1_ASSET_CLOUD_CLEANUP_NO_CHECKOUT'
+            exit 0
+          fi
 
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta
+
+          sudo chown "$(id -u):$(id -g)" \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
           git restore --source="${TARGET_SHA}" -- \
             Unity/ArkusUnity/Packages/manifest.json \
             Unity/ArkusUnity/Packages/packages-lock.json || true
@@ -334,13 +352,13 @@ jobs:
           test -z "$(git status --porcelain --untracked-files=all)"
           echo 'H1_ASSET_CLOUD_ISOLATION_GREEN public tree restored to exact candidate'
 
-      - name: Upload public-safe exact-SHA evidence only
+      - name: Upload retained public-safe exact-SHA evidence only
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: h1-asset-cloud-${{ env.TARGET_SHA }}
           path: |
-            artifacts/h1-asset-cloud/H1_ASSET_CLOUD_RECEIPT.json
-            artifacts/h1-asset-cloud/unity/**/*.xml
+            artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_RECEIPT.json
+            artifacts/h1-asset-cloud-public/unity/editmode-results.xml
           if-no-files-found: warn
           retention-days: 30
