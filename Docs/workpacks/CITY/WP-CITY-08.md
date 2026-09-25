@@ -10,6 +10,16 @@ Blocks: none automatically; informs later product implementation/expansion gates
 
 Prove on the realized keeper slice that accepted Arkus public authoring surfaces materially reduce environment-authoring cost through constrained discovery, composition, application, inspection and reuse. This WP validates the workflow; it does not invent bridge/catalogue/canonical semantics.
 
+## Remaining CITY compression amendment
+
+Binding planning amendment: `Docs/workpacks/CITY/CITY_REMAINING_COMPRESSION_AMENDMENT.md`.
+
+CITY-08 owns only the CITY-specific authoring-efficiency/reuse claim over the CITY-07 keeper slice: a fresh capable agent performs one bounded public-surface authoring/correction/reuse flow, preserves keeper and CITY-05/06 constraints, records observable first-assembly versus reuse/variant effort, and demonstrates a real reduction rather than asserting one.
+
+Generic public discovery/dispatch/authority, plan/dry-run/apply/inspect/validation semantics, catalogue/dependency behavior and bridge correctness are `CONSUMED / INTEGRATION_ONLY` from accepted H0/H1 prerequisites. They still participate in the trial; CITY-08 must not rebuild or broadly re-prove them.
+
+The fresh bounded CITY authoring trial remains required because the keeper-specific usability/economics claim is new. A direct failure of that claim is CITY-08-owned. A concrete contradiction of accepted authoring/bridge/catalogue mechanics routes upstream and may block completion until repaired there. Runner/tooling/workflow/capture/logging/checkout failures are `EVIDENCE_OR_INFRA_BLOCKED` and do not justify CITY-local infrastructure.
+
 ## Required independent authoring proof
 
 A fresh capable agent, operating through accepted public surfaces rather than source inspection or hidden Unity registries, must be able to perform a bounded flow such as:
@@ -26,6 +36,8 @@ inspect accepted seed + parcel/place constraints
 ```
 
 The exact public capabilities and authority boundaries come from accepted H1/H2 architecture at execution time, not from this WP.
+
+Per the compression amendment, this trial is the oracle for CITY-specific usability, constraint preservation and reuse cost. It is not a second generic H1-GATE and must not spawn replacement discovery, transaction, validation, catalogue or bridge machinery.
 
 ## Work
 
@@ -55,6 +67,8 @@ The exact public capabilities and authority boundaries come from accepted H1/H2 
 - The proof preserves CITY-07 keeper structure and CITY-05/06 constraints.
 - Existing Living World/research/planning tracks are not retroactively blocked by this WP.
 - No new canonical/bridge/catalogue semantics are introduced to make the proof pass.
+
+Per the compression amendment, all acceptance criteria remain unchanged. Evidence that generic accepted H0/H1 machinery is broken routes to that causal owner; evidence that the CITY-specific fresh-agent workflow fails to preserve constraints or fails to demonstrate genuine reuse benefit remains CITY-08-owned.
 
 ## Definition of Done
 
