@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace Arkus.H1.Editor.Tests
 {
@@ -136,6 +138,7 @@ namespace Arkus.H1.Editor.Tests
             var attemptedPlan = BuildValidPlan("non-finite", 1);
             attemptedPlan.nodes[0].positionMm.x = 2500;
             attemptedPlan.inputDigest = HashText("non-finite-attempt");
+            LogAssert.Expect(LogType.Error, new Regex("transform\\.localPosition assign attempt.*NaN"));
             var rejected = Execute("materialize", attemptedPlan);
 
             Assert.That(rejected.errorCode, Is.EqualTo("projection.non-finite-transform"));
