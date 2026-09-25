@@ -31,6 +31,9 @@ REVIEW_A = "1" * 32
 REVIEW_B = "2" * 32
 AT_A = "2026-09-25T10:00:00Z"
 AT_B = "2026-09-25T10:01:00Z"
+AT_PROTOCOL_STARTED = "2026-09-25T10:00:01Z"
+AT_READY_OLD = "2026-09-25T09:59:59Z"
+AT_READY_NEW = "2026-09-25T10:00:02Z"
 
 
 def pr_record(fail_cycle: int = 0) -> dict:
@@ -139,18 +142,38 @@ class DurableReasoningRetryTests(unittest.IsolatedAsyncioTestCase):
                 raise ConnectionError("connection reset after durable role completion")
 
         def local_markers(_pr: int):
+            rows = []
+            if role == "protocol-fix":
+                # The canonical flow publishes this before launching protocol-fix.
+                rows.append({
+                    "state": "PROTOCOL_FIX_STARTED",
+                    "target sha": SHA,
+                    "review id": REVIEW_A,
+                    "_created_at": AT_PROTOCOL_STARTED,
+                })
             if role == "fail-audit" and durable["done"]:
-                return [{
+                rows.append({
                     "state": "FAIL_AUDIT_COMPLETE",
                     "target sha": SHA,
                     "fail count": "1",
-                }]
-            return []
+                })
+            return rows
 
         def markers(_pr: int):
-            if role == "protocol-fix" and durable["done"]:
-                return [{"state": "REVIEW_READY", "target sha": SHA}]
-            return []
+            if role != "protocol-fix":
+                return []
+            rows = [{
+                "state": "REVIEW_READY",
+                "target sha": SHA,
+                "_created_at": AT_READY_OLD,
+            }]
+            if durable["done"]:
+                rows.append({
+                    "state": "REVIEW_READY",
+                    "target sha": SHA,
+                    "_created_at": AT_READY_NEW,
+                })
+            return rows
 
         def latest_marker(rows, state, sha=None):
             for row in reversed(rows):
@@ -160,6 +183,16 @@ class DurableReasoningRetryTests(unittest.IsolatedAsyncioTestCase):
                     continue
                 return row
             return None
+
+        def reviewed_verdicts(_pr: int):
+            if role != "protocol-fix":
+                return []
+            return [{
+                "id": REVIEW_A,
+                "sha": SHA,
+                "verdict": "PROTOCOL_FIX",
+                "at": AT_A,
+            }]
 
         original = AsyncMock(side_effect=reasoning)
         old_work_only = process.WORK_ONLY
@@ -171,6 +204,7 @@ class DurableReasoningRetryTests(unittest.IsolatedAsyncioTestCase):
                  patch.object(process.autopilot, "local_markers", side_effect=local_markers), \
                  patch.object(process.autopilot, "markers", side_effect=markers), \
                  patch.object(process.autopilot, "latest_marker", side_effect=latest_marker), \
+                 patch.object(process.autopilot, "reviewed_verdicts", side_effect=reviewed_verdicts), \
                  patch.object(process.autopilot, "ready_context_matches", side_effect=lambda _root, _pr, marker: bool(marker)), \
                  patch.object(process.asyncio, "sleep", new=AsyncMock()):
                 await process._run_with_retries(argparse.Namespace())
@@ -186,10 +220,11 @@ class DurableReasoningRetryTests(unittest.IsolatedAsyncioTestCase):
             f"PR #192\nFAIL material #1\nSHA {SHA}",
         )
 
-    async def test_global_retry_does_not_duplicate_completed_protocol_fix(self):
+    async def test_global_retry_protocol_fix_ignores_old_ready_then_reuses_new_cycle_ready(self):
         await self._exercise_retry(
             "protocol-fix",
-            f"PR #192\nPRODUCT_SHA {SHA}\nSHA {SHA}",
+            f"Corrige PROTOCOL_FIX del Reviewer ID {REVIEW_A} en PR #192.\n"
+            f"PRODUCT_SHA {SHA}\nSHA {SHA}",
         )
 
 
