@@ -195,6 +195,12 @@ namespace Arkus.H1.Editor
         internal static void ValidateFiniteTransforms(string scenePath)
         {
             if (string.IsNullOrEmpty(scenePath)) throw new InvalidDataException("projection.active-scene-missing");
+
+            // Bounded H1-08 fault injection: exercise the real postflight invariant/publication barrier
+            // without relying on Unity accepting an invalid Transform assignment (Unity rejects NaN writes).
+            var fault = Path.Combine(H1Bootstrap.ProjectRoot(), "Library", "Arkus", "H1Projection", "inject-non-finite-transform");
+            if (File.Exists(fault)) throw new InvalidDataException("projection.non-finite-transform");
+
             var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
             foreach (var root in scene.GetRootGameObjects())
             foreach (var transform in root.GetComponentsInChildren<Transform>(true))
