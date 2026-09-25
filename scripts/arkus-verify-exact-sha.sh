@@ -9,6 +9,10 @@ resolve_wp() {
     printf '%s\n' "${ARKUS_WP}"
     return
   fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-CTX-DW-H1-02`?[[:space:]]*$'; then
+    printf '%s\n' 'WP-CTX-DW-H1-02'
+    return
+  fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-CTX-DW-H1-01`?[[:space:]]*$'; then
     printf '%s\n' 'WP-CTX-DW-H1-01'
     return
@@ -166,6 +170,9 @@ case "$(resolve_wp)" in
     ;;
   WP-H1-04)
     exec bash scripts/h1-04-verify-exact-sha.sh "$@"
+    ;;
+  WP-CTX-DW-H1-02)
+    exec bash scripts/ctx-dw-h1-02-verify-exact-sha.sh "$@"
     ;;
   WP-CTX-DW-H1-01)
     exec bash scripts/ctx-dw-h1-01-verify-exact-sha.sh "$@"
