@@ -46,7 +46,7 @@ header.top h1 small{display:block;font-family:var(--body);font-weight:400;font-s
 .chip i{width:9px;height:9px;border-radius:2px;display:inline-block;border:1px solid currentColor;opacity:.45}
 .chip[aria-pressed="true"] i{opacity:1;background:currentColor}
 .chip:focus-visible,.zoom button:focus-visible,.beat:focus-visible{outline:2px solid var(--warm);outline-offset:2px}
-.chip.c-route{color:#d9d2c0}.chip.c-place{color:var(--warm)}.chip.c-view{color:#9fc2c6}.chip.c-prop{color:var(--blue)}.chip.c-chain{color:#f07a5c}.chip.c-fog{color:#9aa4a2}.chip.c-secret{color:#9fd3c7}.chip.c-fill{color:#c9c3b6}
+.chip.c-route{color:#d9d2c0}.chip.c-place{color:var(--warm)}.chip.c-view{color:#9fc2c6}.chip.c-prop{color:var(--blue)}.chip.c-chain{color:#f07a5c}.chip.c-fog{color:#9aa4a2}.chip.c-secret{color:#9fd3c7}.chip.c-p9{color:#e6a3c9}.chip.c-fill{color:#c9c3b6}
 .zoom{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:4px;z-index:3}
 .zoom button{width:32px;height:32px;background:rgba(23,28,29,.9);border:1px solid var(--line);color:var(--text);font:600 16px/1 var(--mono);border-radius:3px;cursor:pointer}
 #mini{position:absolute;right:10px;top:10px;left:auto;bottom:auto;width:150px;height:150px;border:1px solid var(--line);border-radius:3px;z-index:3;cursor:pointer;background:#101415}
@@ -103,6 +103,7 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
         <button class="chip c-place" data-layer="places" aria-pressed="true"><i></i>Lugares</button>
         <button class="chip c-chain" data-layer="chain" aria-pressed="true"><i></i>Eslabón CITY-07</button>
         <button class="chip c-prop" data-layer="props" aria-pressed="true"><i></i>Propuestas P1–P8</button>
+        <button class="chip c-p9" data-layer="p9" aria-pressed="false"><i></i>Variante P9 · más lugares</button>
         <button class="chip c-secret" data-layer="secrets" aria-pressed="true"><i></i>Secretos</button>
         <button class="chip c-view" data-layer="views" aria-pressed="false"><i></i>Vistas</button>
         <button class="chip c-fog" data-layer="fog" aria-pressed="true"><i></i>Niebla</button>
@@ -159,12 +160,22 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
       </section>
 
       <section class="card">
+        <div class="eyebrow">Variante Kamurocho · activa la capa P9</div>
+        <h2>Más sitios donde entrar</h2>
+        <p>Doce fachadas cerradas pasan a ser locales pequeños (I1 sugerido: sala pública más servicio): taberna, barbería, orujería, horno, quesería, botica, café-billar, fonda, herrero, tintorería, estanco y ultramarinos. Ninguno toca el rincón de CITY-08.</p>
+        <div class="amend"><span class="tag" style="color:#e6a3c9;border-color:#6b3f58">Locales abiertos</span><span id="k-count">3 → 15</span></div>
+        <div class="amend"><span class="tag" style="color:#e6a3c9;border-color:#6b3f58">Calle con algo abierto a ≤25 m</span><span id="k-metric">…</span></div>
+        <p>Necesita enmienda a <b>CITY-02</b> (programa de lugares) y <b>CITY-06</b> (profundidad). Cinco de ellos están en callejas P8 y también dependen de esa enmienda. Sin enmiendas, abrirlos sería door inflation.</p>
+      </section>
+
+      <section class="card">
         <div class="eyebrow">Abrir ya, en paralelo (fuera del alcance de CITY-07)</div>
         <h2>Enmiendas que dan el “mapa de juego”</h2>
         <div class="amend"><span class="tag">P1 → CITY-05</span><span><b>La torre</b> en F02. Es el hito L1 que se ve desde el puente, el vado y la calle comercial. Sin enmienda, el Ayuntamiento se queda en fachada cívica sin altura de hito.</span></div>
         <div class="amend"><span class="tag">P4 → CITY-03</span><span><b>Remates de costura</b> en W.LANDING (vista a la confluencia, banco) y O.X1 (el pueblo enmarcado desde la otra orilla).</span></div>
         <div class="amend"><span class="tag">P6 → CITY-03</span><span><b>Mirador de la Cuesta</b>: ensanche con vista a la confluencia. Sin enmienda, solo cabe un rellano dentro de la banda de W06.</span></div>
         <div class="amend"><span class="tag">P8 → CITY-01 + 03</span><span><b>Callejas del interior.</b> Sin ellas, la mitad de la cuña se queda en manzanas que se ven pero no se pisan.</span></div>
+        <div class="amend"><span class="tag">P9 → CITY-02 + 06</span><span><b>Más locales abiertos</b> (variante Kamurocho). Es el cambio que más densidad de juego da por metro de calle.</span></div>
         <div class="amend"><span class="tag no">P2 P3 P5</span><span>Paseo con escaleras, pasaje cubierto y bolera. Crean aristas o sitios nuevos (CITY-01/02). Mejor no abrirlos antes de ver la demo.</span></div>
         <h3>El resto de la semilla en CITY-07</h3>
         <p>Pasada ligera sobre todo lo demás, con cada cambio material en el <i>ledger</i> de impacto. El rincón de CITY-08 se realiza con activos reales, pero sin sobrepulirlo.</p>
@@ -284,6 +295,20 @@ const BEATS=[
  {at:[92,52],t:"Dentro del bar",d:"Sala pública, barra y la capa semiprivada al fondo. Son los tres accesos de I3."},
 ];
 const CHAIN=[[42,-64],[46,-48],[50,-32],[56,-18],[62,-6],[68,8],[74,22],[80,35],[83,41],[88,43.4],[91,46.5],[92,52]];
+const P9=[
+ {id:"P9.taberna",at:[60,-10],name:"Taberna del Puente",what:"Chatos y raciones junto al puente. Es la primera parada al cruzar el río."},
+ {id:"P9.barberia",at:[70,14],name:"Barbería",what:"Sillón, espejo y conversación. Buen sitio para enterarse de las cosas del pueblo."},
+ {id:"P9.orujeria",at:[58,28],name:"Orujería del alambique",what:"Alambique y orujo de Liébana. Es un oficio de temporada."},
+ {id:"P9.horno",at:[116,25],name:"Horno de pan",what:"Tahona en la plazuela del Horno. Huele desde la calleja.",p8:1},
+ {id:"P9.queseria",at:[112,48],name:"Quesería",what:"Quesucos y picón en la subida a la Plaza."},
+ {id:"P9.botica",at:[108,38],name:"Botica",what:"Mostrador y rebotica. Un sitio con clientela fija."},
+ {id:"P9.cafe",at:[125,57],name:"Café-billar",what:"Mesa de billar, cartas y la radio. Queda abierto de noche."},
+ {id:"P9.fonda",at:[158,50],name:"Fonda de la Plaza",what:"Da de comer al forastero y tiene cuartos arriba (solo la planta baja pública)."},
+ {id:"P9.herrero",at:[165,15],name:"Taller del herrero",what:"Fragua abierta a la calleja de los Tintes. Es trabajo visible.",p8:1},
+ {id:"P9.tinte",at:[176,33],name:"Tintorería",what:"Tinas y ropa colgada en el Rincón del Tinte.",p8:1},
+ {id:"P9.estanco",at:[178,100],name:"Estanco-quiosco",what:"Prensa, sellos y tabaco en la Calleja Alta.",p8:1},
+ {id:"P9.ultramarinos",at:[40,95],name:"Ultramarinos del Ensanche",what:"Colmado de barrio al otro lado del vado. Solo se llega con aguas bajas.",p8:1},
+];
 const SECRETS=[
  {id:"sec.riada",at:[48,-36],name:"Marcas de riada",st:"CITY-07",text:"En el estribo del Puente Viejo hay muescas talladas con alturas de crecidas. Explican por qué el vado X5 solo existe con aguas bajas.",c7:"Superficie autorada (AUTHORED_SPATIAL_NOW). Fechas y relatos los decide un dueño posterior."},
  {id:"disc.bar.secondary_layer",at:[96,58],name:"El patio de atrás del bar",st:"aceptado",text:"Por la rendija del callejón de servicio se ven el patio trasero y una escalera. La sala pública no es todo el edificio.",c7:"Oportunidad ya aceptada en CITY-06. Se ve, pero no se entra."},
@@ -479,7 +504,7 @@ const MARKET=[];const HUERTAS=[];const DECOR=[];
 const box=document.getElementById("mapbox"),base=document.getElementById("base"),over=document.getElementById("over"),mini=document.getElementById("mini");
 const bx=base.getContext("2d"),ox=over.getContext("2d"),mx=mini.getContext("2d");
 let W=0,H=0,DPR=1;const cam={x:-35,y:-100,z:3};
-const layers={routes:true,places:true,chain:true,props:true,views:false,fog:true,filler:true,secrets:true};
+const layers={routes:true,places:true,chain:true,props:true,views:false,fog:true,filler:true,secrets:true,p9:false};
 try{const s=JSON.parse(localStorage.getItem("c07map.layers")||"null");if(s)Object.assign(layers,s);}catch(e){}layers.filler=true;
 let TERR=null;const K=.5,KX=.2; // oblique height factor
 function fit(){const r=box.getBoundingClientRect();const w=r.width,h=r.height;const z=Math.min(w/250,h/290);cam.x=-32;cam.y=-110;cam.z=Math.max(1.2,z);}
@@ -559,6 +584,7 @@ function draw(){
  if(layers.places)drawIcons(c);
  if(layers.props)drawPropBadges(c);
  if(layers.secrets)drawSecrets(c);
+ if(layers.p9)drawP9(c);
  drawMini();updateScale();
 }
 function strokeRibbon(c,r,extra){const n=r.pts.length;for(let i=1;i<n;i++){const t=i/(n-1);c.lineWidth=r.w0+(r.w1-r.w0)*t+extra;path(c,[r.pts[i-1],r.pts[i]],false);c.stroke();}}
@@ -577,7 +603,7 @@ function drawBuilding(c,b){const pal=b.slot==="F01"?{w:"#d9cbb0",r:"#5a3a2c"}:b.
    const L=Math.hypot(nx,ny);nx/=L;ny/=L;if(-nx*KX+ny*K<=0.02)continue;const f=(.8-.22*nx)*vary;
    c.fillStyle=hex(pal.w,f);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(d[0],d[1]);c.lineTo(d[0]+h*KX,d[1]-h*K);c.lineTo(a[0]+h*KX,a[1]-h*K);c.closePath();c.fill();
    // windows
-   if(h>4&&cam.z>2.2){c.fillStyle=b.slot==="F01"?"rgba(232,178,106,.95)":"rgba(40,44,44,.55)";const len=Math.hypot(d[0]-a[0],d[1]-a[1]);const nW=Math.max(1,Math.floor(len/3));const fl=Math.max(1,Math.floor(h/3));
+   if(h>4&&cam.z>2.2){c.fillStyle=(b.slot==="F01"||(b.p9&&layers.p9))?"rgba(232,178,106,.95)":"rgba(40,44,44,.55)";const len=Math.hypot(d[0]-a[0],d[1]-a[1]);const nW=Math.max(1,Math.floor(len/3));const fl=Math.max(1,Math.floor(h/3));
      for(let k=0;k<nW;k++)for(let s=0;s<fl;s++){if(ny<.3)continue;const t=(k+.5)/nW;const hh=s*3+1.6;const x=a[0]+(d[0]-a[0])*t+hh*KX,y=a[1]+(d[1]-a[1])*t-hh*K;c.fillRect(x-.35,y-.55,.7,.9);}}}
  // roof: gable along long axis
  const top=P.map(p=>[p[0]+h*KX,p[1]-h*K]);const l01=Math.hypot(top[1][0]-top[0][0],top[1][1]-top[0][1]),l12=Math.hypot(top[2][0]-top[1][0],top[2][1]-top[1][1]);
@@ -675,6 +701,8 @@ function drawIcons(c){Object.entries(PLACES).forEach(([id,pl])=>{const poly=SLOT
  if(cam.z>2.6){c.font=`500 10.5px ${getComputedStyle(document.body).getPropertyValue("--mono")}`;c.textAlign="center";c.lineWidth=3;c.strokeStyle="rgba(20,26,27,.9)";const ly=pl.icon?y+9:y;c.strokeText(id,x,ly);c.fillStyle="#e8b26a";c.fillText(id,x,ly);}});}
 function drawPropBadges(c){PROPS.forEach(p=>{const hh=p.id==="P1"?42:0;const [x,y]=uvS(p.at,hh);const t=p.id.replace("b","");c.save();c.font=`600 10.5px ${getComputedStyle(document.body).getPropertyValue("--mono")}`;const w=c.measureText(t).width+10;
  c.fillStyle="rgba(32,36,58,.95)";c.strokeStyle="#8d96d4";c.lineWidth=1.2;c.setLineDash([3,2]);c.beginPath();c.roundRect?c.roundRect(x-w/2,y-20,w,15,3):c.rect(x-w/2,y-20,w,15);c.fill();c.stroke();c.setLineDash([]);c.fillStyle="#c8cdf5";c.textAlign="center";c.textBaseline="middle";c.fillText(t,x,y-12.5);c.restore();});}
+function drawP9(c){P9.forEach(q=>{if(!q.b)return;const [x,y]=uvS(q.at,q.b.h+2);const r=cam.z>3?10:8;badge(c,x,y-r-2,r,"#e6a3c9","rgba(44,30,40,.95)");c.save();c.translate(x,y-r-2);c.strokeStyle="#f6dcea";c.lineWidth=1.5;c.beginPath();c.moveTo(-3.5,4.5);c.lineTo(-3.5,-1);c.arc(0,-1,3.5,Math.PI,0);c.lineTo(3.5,4.5);c.stroke();c.restore();
+ if(cam.z>3.2){c.font=`500 10.5px ${getComputedStyle(document.body).getPropertyValue("--body")}`;c.textAlign="center";c.lineWidth=3;c.strokeStyle="rgba(20,26,27,.9)";c.strokeText(q.name,x,y+9);c.fillStyle="#f6dcea";c.fillText(q.name,x,y+9);}});}
 function drawSecrets(c){SECRETS.forEach(sc=>{const [x,y]=uvS(sc.at);const col=sc.st==="P8"?"#8d96d4":sc.st==="aceptado"?"#e8b26a":"#9fd3c7";c.save();c.translate(x,y);c.rotate(Math.PI/4);c.fillStyle="rgba(20,32,32,.92)";c.fillRect(-6.5,-6.5,13,13);c.strokeStyle=col;c.lineWidth=1.6;c.strokeRect(-6.5,-6.5,13,13);c.restore();
  c.fillStyle=col;c.font=`700 11px ${getComputedStyle(document.body).getPropertyValue("--mono")}`;c.textAlign="center";c.textBaseline="middle";c.fillText("?",x,y+.5);});}
 function updateScale(){const px=50*cam.z;document.getElementById("scalebar").style.width=px+"px";}
@@ -703,6 +731,7 @@ let focusBeat=-1;
 // ---------- hit testing ----------
 function hitTest(uv){
  const tol=Math.max(2,8/cam.z);
+ if(layers.p9)for(const q of P9){if(q.b&&(pip(uv,q.b.poly)||Math.hypot(uv[0]-q.at[0],uv[1]-q.at[1])<Math.max(3,8/cam.z)))return {kind:"p9",id:q.id,item:{name:q.name,tags:["propuesta P9","I1 sugerido","público + servicio"],owner:q.p8?"CITY-02 + CITY-06 (+P8)":"CITY-02 + CITY-06",text:q.what,c7:q.p8?"Solo existe si también se aprueba la calleja P8 donde está.":"Local nuevo en una fachada I0 existente. Hace falta que CITY-02 lo programe y CITY-06 le dé profundidad; si no, es door inflation."},shape:{poly:q.b.poly}};}
  if(layers.secrets)for(const sc of SECRETS){if(Math.hypot(uv[0]-sc.at[0],uv[1]-sc.at[1])<Math.max(3,9/cam.z))return {kind:"secret",item:{name:sc.name,id:sc.id,tags:[sc.st==="P8"?"necesita P8":sc.st==="aceptado"?"ya aceptado":"CITY-07 puede"]},shape:null,sc};}
  for(const p of PROPS){if(!layers.props)break;const d=Math.hypot(uv[0]-p.at[0],uv[1]-p.at[1]);if(d<Math.max(5,10/cam.z))return {kind:"prop",item:p,shape:null};}
  for(const [id,poly] of Object.entries(SLOTS))if(pip(uv,poly))return {kind:"place",id,item:PLACES[id],shape:{poly}};
@@ -750,6 +779,12 @@ const ol=document.getElementById("beats");BEATS.forEach((b,i)=>{const li=documen
 
 // ---------- boot ----------
 genWorld();TERR=terrainImage();
+P9.forEach(q=>{let best=null,bd=1e9;B.forEach(b=>{if(b.slot||!b.inside||b.h<=0||b.p9)return;const c=centroid(b.poly);const d=Math.hypot(c[0]-q.at[0],c[1]-q.at[1]);if(d<bd){bd=d;best=b;}});if(best&&bd<16){best.p9=q;q.b=best;q.at=centroid(best.poly);}});
+(function(){const open0=["F01","F02","F03"].map(id=>centroid(SLOTS[id]));const open1=open0.concat(P9.filter(q=>q.b).map(q=>q.at));
+ const pts=[];ROUTES.forEach(r=>{for(let i=1;i<r.pts.length;i++){const a=r.pts[i-1],b=r.pts[i],L=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let t=0;t<L;t+=2)pts.push([a[0]+(b[0]-a[0])*t/L,a[1]+(b[1]-a[1])*t/L]);}});
+ const f=o=>Math.round(100*pts.filter(p=>o.some(q=>Math.hypot(p[0]-q[0],p[1]-q[1])<=25)).length/pts.length);
+ const el=document.getElementById("k-metric");if(el)el.textContent=`${f(open0)} % → ${f(open1)} %`;
+ const n=document.getElementById("k-count");if(n)n.textContent=`3 → ${3+P9.filter(q=>q.b).length}`;})();
 new ResizeObserver(()=>{const had=W;resize();if(!had){fit();draw();}}).observe(box);
 resize();fit();draw();requestAnimationFrame(overlay);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>schedule());

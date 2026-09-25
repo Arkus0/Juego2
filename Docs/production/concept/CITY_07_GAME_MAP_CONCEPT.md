@@ -6,7 +6,7 @@ Date: 2026-09-25
 Scope: input for the future `WP-CITY-07` Worker and for owner decisions on amendments. It is not a WP deliverable and does not change any CITY, H1, ART or PA contract.
 
 Interactive map: [`city07_game_map.html`](city07_game_map.html) (open in a browser; pan/zoom, layers, click for details).  
-Snapshots: [`city07_map_overview.png`](city07_map_overview.png), [`city07_map_casco.png`](city07_map_casco.png).
+Snapshots: [`city07_map_overview.png`](city07_map_overview.png), [`city07_map_casco.png`](city07_map_casco.png), [`city07_map_p9.png`](city07_map_p9.png).
 
 ## 1. Why this exists
 
@@ -102,6 +102,31 @@ Discovery is spatial truth, not collectibles (CITY-06 §8, §12). The player lea
 
 No building receives a hidden room and no route is laundered through service/private space.
 
+## 5b. Variant P9 — "Kamurocho density" (more enterable places)
+
+Snapshot: [`city07_map_p9.png`](city07_map_p9.png). Toggle the `Variante P9` layer in the map.
+
+The biggest gap versus dense game districts such as Yakuza's Kamurocho is not geometry but **things to do per metre of street**: the accepted seed opens only F01 bar, F02 ayuntamiento and F03 shop. P9 promotes twelve existing street-front `I0` façades to small places (suggested `I1`: public room + service), all grounded in a Liébana market town:
+
+| ID | Place | Depends on P8 |
+|---|---|---|
+| `P9.taberna` | Taberna del Puente | no |
+| `P9.barberia` | Barbería | no |
+| `P9.orujeria` | Orujería del alambique | no |
+| `P9.queseria` | Quesería | no |
+| `P9.botica` | Botica | no |
+| `P9.cafe` | Café-billar | no |
+| `P9.fonda` | Fonda de la Plaza (ground floor public) | no |
+| `P9.horno` | Horno de pan | P8b/P8f square |
+| `P9.herrero` | Taller del herrero | P8a |
+| `P9.tinte` | Tintorería | P8a square |
+| `P9.estanco` | Estanco-quiosco | P8c |
+| `P9.ultramarinos` | Ultramarinos del Ensanche | P8e (reachable only with X5 open) |
+
+Metric computed in the map over all drawn public routes (2 m samples): share of street within 25 m of an enterable place goes from **27 % (accepted seed)** to **71 % (with P9)**; enterable places go from 3 to 15. None touches the CITY-08 reserved slice.
+
+Authority: **CITY-02** (new programmed places) + **CITY-06** (depth allocation, family reuse; `if.retail_shallow` / `if.social_house`-like families). Without those amendments, opening these façades would be CITY-06 §12 *door inflation*. Runtime content (owners, hours, stock, conversations) stays with PA owners.
+
 ## 6. Recommended CITY-07 representative chain
 
 `O.X1 → X1 → W12 (S02 bridgehead) → W.CASCO square → casco.micro.B → F01 bar (public / service / semi-private)`
@@ -120,9 +145,10 @@ Rationale: ends in the only hero interior (I3); richest lawful level change, rev
 
 1. **P1 → CITY-05**: accept the civic tower as L1 landmark.
 2. **P8 → CITY-01 + CITY-03**: accept the lanes, dirt paths and small squares (or a subset) as represented edges before CITY-07, so the demo is not half unreachable blocks.
-3. **P4 / P6 → CITY-03**: seam payoffs and Cuesta mirador.
-4. Keep P2 / P3 / P5 closed until the asset-rich demo has been played.
-5. If P8 is adopted, add its new segments to the CITY-07 asset-rich demo campaign defined by `CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md` (timings, route choice, quiet/busy, discovery readability).
+3. **P9 → CITY-02 + CITY-06**: promote street-front façades to small enterable places (the main lever for game density).
+4. **P4 / P6 → CITY-03**: seam payoffs and Cuesta mirador.
+5. Keep P2 / P3 / P5 closed until the asset-rich demo has been played.
+6. If P8 is adopted, add its new segments to the CITY-07 asset-rich demo campaign defined by `CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md` (timings, route choice, quiet/busy, discovery readability).
 
 ## 8. Current state and limits
 
