@@ -1,10 +1,17 @@
 # WP-CITY-04 — LOCAL retained-seed greybox scene handoff
 
-Status: **ACTIVE WORKER / DRAFT PR #221; REVISED ACCEPTANCE BINDING**
+Status: **COMPLETE / ACCEPTED**
 Class: PRODUCT / LOCAL ENGINE VALIDATION (NON-FOUNDATIONAL)  
 Mode: **LOCAL / UNITY**  
 Depends on: `WP-CITY-03` PASS + `WP-H1-08` PASS
 Blocks: `WP-CITY-07` only
+
+Accepted candidate: `67ad23036447bcbf89ccca80497dc51883834acf`  
+Canonical PR: `#221`  
+Reviewer PASS: `#5321575359`  
+Implementation merge: `64fc9102cee40229360f647e223ac951fec26eaa`  
+Owner acceptance: `2026-09-25`  
+DocSync: `Docs/evidence/WP-CITY-04/DOCSYNC.md`
 
 ## Contract continuity
 
@@ -61,6 +68,12 @@ The thirteen CITY-03 spatial proxy setups and nine traversal families remain req
 - The scene opens in the pinned Unity Editor and provides a walkable local probe and inspectable captures.
 - The handoff explicitly lists scale, density, route choice, travel times, sightlines, thresholds, quiet/busy contrast and continuation as **unvalidated** until CITY-07's demo verdict.
 - No geometry is treated as keeper solely because it exists in Unity.
+
+## Accepted result
+
+CITY-04 passed as a **technical scene handoff**. Durable evidence records `CITY04_BUILD_GREEN`, `CITY04_PHYSICAL_CUTS_GREEN` and `CITY04_CAPTURE_GREEN`; the accepted retained seed, dry components, X1, conditional X5 state/closure and representative water cuts are technically represented and checked. Four inspectable captures and the local traversal probe are retained.
+
+This acceptance does **not** constitute a human spatial verdict. Scale, density, route choice, travel times, sightlines, thresholds, quiet/busy contrast and continuation remain mandatory CITY-07 validation obligations on the asset-rich keeper candidate. CITY-08 owns the later post-authoring human regression.
 
 ## Failure response
 
