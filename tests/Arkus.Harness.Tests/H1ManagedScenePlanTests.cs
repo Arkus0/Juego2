@@ -5,7 +5,6 @@ using System.Linq;
 using Arkus.EngineBridge.UnityAuthoring;
 using Arkus.Game.World;
 using Arkus.H1.UnityHost;
-using Arkus.Harness.Projection;
 using Xunit;
 
 namespace Arkus.Harness.Tests
@@ -13,7 +12,7 @@ namespace Arkus.Harness.Tests
     public sealed class H1ManagedScenePlanTests
     {
         [Fact]
-        public void Potes_hierarchy_uses_canonical_containment_and_normalized_binding_transforms()
+        public void Potes_hierarchy_uses_canonical_containment_normalized_transforms_and_allowlisted_components()
         {
             var catalogue = Catalogue();
             var baseline = Fixture(1, includeWorkshop: true);
@@ -24,10 +23,15 @@ namespace Arkus.Harness.Tests
             Assert.Equal("plaza.potes", first.Nodes.Single(node => node.ObjectId == "market.potes").ParentObjectId);
             Assert.Equal("market.potes", first.Nodes.Single(node => node.ObjectId == "bar.potes").ParentObjectId);
             Assert.Equal("market.potes", first.Nodes.Single(node => node.ObjectId == "workshop.potes").ParentObjectId);
-            Assert.Equal(1250, first.Nodes.Single(node => node.ObjectId == "bar.potes").PositionMm.X);
-            Assert.Equal(90000, first.Nodes.Single(node => node.ObjectId == "bar.potes").RotationMilliDegrees.Y);
-            Assert.Equal(1250000, first.Nodes.Single(node => node.ObjectId == "bar.potes").ScalePpm.X);
-            Assert.Equal("quaternius.medieval.prefab.wall-plaster-window-wide-flat", first.Nodes.Single(node => node.ObjectId == "bar.potes").SourceLogicalId);
+            var bar = first.Nodes.Single(node => node.ObjectId == "bar.potes");
+            Assert.Equal(1250, bar.PositionMm.X);
+            Assert.Equal(90000, bar.RotationMilliDegrees.Y);
+            Assert.Equal(1250000, bar.ScalePpm.X);
+            Assert.Equal("quaternius.medieval.prefab.wall-plaster-window-wide-flat", bar.SourceLogicalId);
+            Assert.Equal(H1ComponentSchemas.Required, bar.Components.Select(component => component.SchemaId).OrderBy(value => value, StringComparer.Ordinal));
+            Assert.Equal("plaza.potes", bar.Components.Single(component => component.SchemaId == H1ComponentSchemas.CanonicalLink).TargetObjectId);
+            Assert.Equal("quaternius.medieval.material.wall-plaster-window-wide-flat-mi-plaster", bar.Components.Single(component => component.SchemaId == H1ComponentSchemas.MeshRenderer).ReferenceLogicalId);
+            Assert.Equal("quaternius.ual1.animation-clip.armature-a-tpose", bar.Components.Single(component => component.SchemaId == H1ComponentSchemas.Animator).ReferenceLogicalId);
 
             var deleted = H1ManagedScenePlan.Build(Fixture(2, includeWorkshop: false), catalogue);
             Assert.Equal(3, deleted.Nodes.Length);
@@ -50,17 +54,13 @@ namespace Arkus.Harness.Tests
             var remappedCatalogue = H1CatalogueSnapshot.Build(effective, mapping.Replace(original, remapped, StringComparison.Ordinal), adoption);
             var world = Fixture(7, includeWorkshop: true);
             var accepted = H1ManagedScenePlan.Build(world, acceptedCatalogue);
-            var changed = H1ManagedScenePlan.Build(world, remappedCatalogue);
-
             Assert.Equal(CanonicalWorldStateCodec.ComputeContentHash(world), accepted.CanonicalHash);
-            Assert.Equal(accepted.CanonicalHash, changed.CanonicalHash);
-            Assert.NotEqual(accepted.CatalogueFingerprint, changed.CatalogueFingerprint);
-            Assert.NotEqual(accepted.InputDigest, changed.InputDigest);
-            Assert.Equal(accepted.Nodes.Select(node => node.SourceLogicalId), changed.Nodes.Select(node => node.SourceLogicalId));
+            Assert.Equal(original, accepted.Nodes.Single(node => node.ObjectId == "bar.potes").Components.Single(component => component.SchemaId == H1ComponentSchemas.Animator).ReferenceLogicalId);
+            Assert.Equal("projection.component-reference-missing", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(world, remappedCatalogue)).Code);
         }
 
         [Fact]
-        public void Missing_wrong_type_and_unbound_parent_fail_with_stable_projection_diagnostics()
+        public void Missing_wrong_type_unbound_parent_and_component_references_fail_closed()
         {
             var catalogue = Catalogue();
             var unbound = new WorldState(new WorldId("world.potes"), 0,
@@ -81,10 +81,16 @@ namespace Arkus.Harness.Tests
                 new[] { Binding("plaza.potes", 0, "quaternius.medieval.asset.wall-plaster-window-wide-flat") });
             Assert.Equal("projection.source-wrong-type", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(wrongType, catalogue)).Code);
 
-            var unsupported = new WorldState(new WorldId("world.potes"), 0,
+            var renderer = new WorldState(new WorldId("world.potes"), 0,
                 new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
                 new[] { Binding("plaza.potes", 0, renderer: true) });
-            Assert.Equal("projection.component-not-owned", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(unsupported, catalogue)).Code);
+            var rendererPlan = H1ManagedScenePlan.Build(renderer, catalogue);
+            Assert.Contains(rendererPlan.Nodes[0].Components, component => component.SchemaId == H1ComponentSchemas.MeshRenderer);
+
+            var missingCanonicalTarget = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[] { Binding("plaza.potes", 0, link: "ghost.potes") });
+            Assert.Equal("projection.canonical-target-missing", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(missingCanonicalTarget, catalogue)).Code);
         }
 
         private static WorldState Fixture(long revision, bool includeWorkshop)
@@ -98,7 +104,7 @@ namespace Arkus.Harness.Tests
             var extensions = new List<WorldExtensionData>
             {
                 Binding("plaza.potes", 0), Binding("market.potes", 500),
-                Binding("bar.potes", 1250, "quaternius.medieval.prefab.wall-plaster-window-wide-flat", "plaza.potes")
+                Binding("bar.potes", 1250, "quaternius.medieval.prefab.wall-plaster-window-wide-flat", "plaza.potes", renderer: true, animator: true)
             };
             if (includeWorkshop)
             {
@@ -108,23 +114,19 @@ namespace Arkus.Harness.Tests
             return new WorldState(new WorldId("world.potes"), revision, objects, extensions);
         }
 
-        private static WorldExtensionData Binding(string subject, long x, string sourceId = "quaternius.medieval.prefab.wall-plaster-window-wide-flat", string? link = null, bool renderer = false)
+        private static WorldExtensionData Binding(string subject, long x, string sourceId = "quaternius.medieval.prefab.wall-plaster-window-wide-flat", string? link = null, bool renderer = false, bool animator = false)
         {
             var components = new List<object?>();
             var references = new List<WorldReference>();
             if (link != null)
             {
-                components.Add(new Dictionary<string, object?>
-                {
-                    ["kind"] = "canonical-link", ["relation"] = "faces", ["targetObjectId"] = link
-                });
+                components.Add(new Dictionary<string, object?> { ["kind"] = "canonical-link", ["relation"] = "faces", ["targetObjectId"] = link });
                 references.Add(new WorldReference(new WorldReferenceKind("faces"), new WorldObjectId(link)));
             }
             if (renderer)
-                components.Add(new Dictionary<string, object?>
-                {
-                    ["kind"] = "renderer", ["materialId"] = "quaternius.medieval.material.wall-plaster-window-wide-flat-mi-plaster"
-                });
+                components.Add(new Dictionary<string, object?> { ["kind"] = "renderer", ["materialId"] = "quaternius.medieval.material.wall-plaster-window-wide-flat-mi-plaster" });
+            if (animator)
+                components.Add(new Dictionary<string, object?> { ["kind"] = "animator", ["clipId"] = "quaternius.ual1.animation-clip.armature-a-tpose" });
             var binding = new Dictionary<string, object?>
             {
                 ["schemaId"] = UnityBindingProducer.BindingSchemaId,
@@ -133,24 +135,22 @@ namespace Arkus.Harness.Tests
                 ["transform"] = new Dictionary<string, object?>
                 {
                     ["coordinateConvention"] = UnityBindingProducer.CoordinateConvention,
-                    ["positionMm"] = Vector(x, 0, 0),
-                    ["rotationMilliDegrees"] = Vector(0, link == null ? 0 : 90000, 0),
+                    ["positionMm"] = Vector(x, 0, 0), ["rotationMilliDegrees"] = Vector(0, link == null ? 0 : 90000, 0),
                     ["scalePpm"] = Vector(link == null ? 1000000 : 1250000, 1000000, 1000000)
                 },
                 ["components"] = components
             };
-            var compiled = UnityBindingProducer.Compile(new Dictionary<string, object?>
+            var compiled = UnityBindingProducer.Compile(new Dictionary<string, object?> { ["subjectId"] = subject, ["binding"] = binding });
+            var compiledReferences = ((IReadOnlyList<object?>)compiled["dependencies"]!).Select(raw =>
             {
-                ["subjectId"] = subject, ["binding"] = binding
-            });
+                var row = (IReadOnlyDictionary<string, object?>)raw!;
+                return new WorldReference(new WorldReferenceKind((string)row["kind"]!), new WorldObjectId((string)row["targetId"]!));
+            }).ToArray();
             return new WorldExtensionData(UnityBindingProducer.ExtensionOwner, UnityBindingProducer.ExtensionSchemaVersion,
-                Convert.FromBase64String((string)compiled["payloadBase64"]!), new WorldObjectId(subject), references);
+                Convert.FromBase64String((string)compiled["payloadBase64"]!), new WorldObjectId(subject), compiledReferences);
         }
 
-        private static Dictionary<string, object?> Vector(long x, long y, long z) => new Dictionary<string, object?>
-        {
-            ["x"] = x, ["y"] = y, ["z"] = z
-        };
+        private static Dictionary<string, object?> Vector(long x, long y, long z) => new Dictionary<string, object?> { ["x"] = x, ["y"] = y, ["z"] = z };
 
         private static H1CatalogueSnapshot Catalogue()
         {
