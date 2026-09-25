@@ -22,6 +22,45 @@ namespace Arkus.H1.Editor
         private const string GeneratedRoot = "Assets/Arkus/H1/ManagedPrefabs/generations/" + Generation;
         private const string Logical = "fixture.nested-parent";
 
+        // Mutate an ignored, bridge-managed derivative between public materialize calls.
+        // The public proof then exercises the real reuse -> stage -> publish recovery path.
+        public static void InjectExtraMaterial()
+        {
+            H1Bootstrap.RequirePinnedEditor();
+            var args = Environment.GetCommandLineArgs();
+            var index = Array.IndexOf(args, "-arkus-h1-input");
+            if (index < 0 || index + 1 >= args.Length)
+                throw new InvalidDataException("nested-proof.drift-input-missing");
+            var requestPath = Path.GetFullPath(args[index + 1]);
+            var request = JsonUtility.FromJson<DriftRequest>(File.ReadAllText(requestPath));
+            if (request == null || string.IsNullOrEmpty(request.derivativePath) ||
+                !request.derivativePath.StartsWith("Assets/Arkus/H1/ManagedPrefabs/generations/", StringComparison.Ordinal) ||
+                request.derivativePath.Contains("..") ||
+                PrefabUtility.GetPrefabAssetType(AssetDatabase.LoadAssetAtPath<GameObject>(request.derivativePath)) != PrefabAssetType.Variant)
+                throw new InvalidDataException("nested-proof.drift-derivative-invalid");
+
+            var root = PrefabUtility.LoadPrefabContents(request.derivativePath);
+            try
+            {
+                var renderer = root.GetComponentsInChildren<MeshRenderer>(true)
+                    .FirstOrDefault(candidate => candidate.sharedMaterials.Any(material => material != null));
+                if (renderer == null) throw new InvalidDataException("nested-proof.drift-material-missing");
+                var materials = renderer.sharedMaterials;
+                var materialToRepeat = materials.First(material => material != null);
+                renderer.sharedMaterials = materials.Concat(new[] { materialToRepeat }).ToArray();
+                bool saved;
+                PrefabUtility.SaveAsPrefabAsset(root, request.derivativePath, out saved);
+                if (!saved) throw new InvalidDataException("nested-proof.drift-save-failed");
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("H106_STALE_EXTRA_RELATION_INJECTED:" + request.derivativePath);
+        }
+
         public static void Run()
         {
             H1Bootstrap.RequirePinnedEditor();
@@ -260,6 +299,11 @@ namespace Arkus.H1.Editor
             public string extraNegative;
             public string recovery;
             public string fixtureRoot;
+        }
+
+        [Serializable] private sealed class DriftRequest
+        {
+            public string derivativePath;
         }
     }
 }

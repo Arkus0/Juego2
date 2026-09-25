@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,6 +24,8 @@ SOURCE_GUID = "a914dbae2609f0107a8bce353d33727c"
 SOURCE_LOCAL_ID = "-927199367670048503"
 SOURCE_SHA = "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8"
 MANAGED_PREFIX = "Assets/Arkus/H1/ManagedPrefabs/generations/"
+UNITY = Path(r"C:\Program Files\Unity\Hub\Editor\6000.3.24f1\Editor\Unity.exe")
+SCRATCH = PROJECT / "Library/Arkus/H1PrefabRealization"
 
 
 def load_h105():
@@ -40,6 +43,27 @@ require = h105.require
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def inject_stale_extra_relation(derivative_path):
+    require(derivative_path.startswith(MANAGED_PREFIX), "Drift target escaped the managed derivative root")
+    asset = PROJECT / derivative_path
+    require(asset.is_file(), "Managed derivative is missing before drift injection")
+    before = sha(asset)
+    SCRATCH.mkdir(parents=True, exist_ok=True)
+    request = SCRATCH / "stale-extra-request.json"
+    log = SCRATCH / "stale-extra-injection.log"
+    request.write_text(json.dumps({"derivativePath": derivative_path}), encoding="utf-8")
+    log.unlink(missing_ok=True)
+    process = subprocess.run([
+        str(UNITY), "-batchmode", "-nographics", "-quit", "-projectPath", str(PROJECT),
+        "-executeMethod", "Arkus.H1.Editor.H1PrefabNestedConformance.InjectExtraMaterial",
+        "-arkus-h1-input", str(request), "-logFile", str(log),
+    ], timeout=180, check=False)
+    require(process.returncode == 0 and
+            f"H106_STALE_EXTRA_RELATION_INJECTED:{derivative_path}" in log.read_text(encoding="utf-8"),
+            f"Unity could not inject stale managed derivative relation; inspect {log}")
+    require(sha(asset) != before, "Stale derivative fixture left the asset unchanged")
 
 
 def normalized(node):
@@ -150,7 +174,19 @@ def run():
         require({node["objectId"]: normalized(node) for node in second["nodes"]} == profile,
                 "Same input caused prefab realization churn")
 
-        paths = sorted({PROJECT / node["realizedPath"] for node in first["nodes"]})
+        # A valid deterministic derivative is now made stale without touching its lineage or source.
+        # Materialize must reject reuse, rebuild the derivative, stage and publish clean relationships.
+        inject_stale_extra_relation(first["nodes"][0]["realizedPath"])
+        recovered = h105.projection(reference, "unity.host.projection.materialize")
+        require(recovered["generationId"] != second["generationId"],
+                "Stale extra-bearing derivative was reused without staging a new scene")
+        require({node["objectId"]: normalized(node) for node in recovered["nodes"]} == profile,
+                "Stale extra-bearing derivative was adopted instead of rebuilt from source")
+        observed_recovery = h105.projection(reference, "unity.host.projection.observe")
+        require(observed_recovery["current"] and observed_recovery["generationId"] == recovered["generationId"],
+                "Recovered derivative was not published as the active current generation")
+
+        paths = sorted({PROJECT / node["realizedPath"] for node in recovered["nodes"]})
         require(paths, "No managed prefab derivative was observed")
         for path in paths:
             require(path.is_file(), f"Managed derivative is missing: {path}")
@@ -160,7 +196,7 @@ def run():
         rebuilt = h105.projection(reference, "unity.host.projection.materialize")
         rebuilt_profile = {node["objectId"]: normalized(node) for node in rebuilt["nodes"]}
         require(rebuilt_profile == profile, "Deleting managed derivatives did not reproduce the same normalized prefab relationships")
-        require(rebuilt["generationId"] != first["generationId"], "Deleted managed derivative was not causally rebuilt")
+        require(rebuilt["generationId"] != recovered["generationId"], "Deleted managed derivative was not causally rebuilt")
         require(h105.anchor(reference) == canonical_before and h105.success(reference, "authoring.journal.read", {}) == journal_before,
                 "Prefab materialization/rebuild changed canonical world state or journal")
     finally:
@@ -182,6 +218,8 @@ def run():
         "sourceUnchanged": True,
         "nodeCount": 4,
         "sameInputRealizationStable": True,
+        "staleExtraDerivativeRejectedAndRebuilt": True,
+        "staleExtraRecoveryPublished": True,
         "deletedDerivativeRebuiltSameNormalizedRelationships": True,
         "managedDerivativeRoot": MANAGED_PREFIX,
         "missingDiagnostic": "projection.source-missing",

@@ -450,6 +450,9 @@ namespace Arkus.H1.Editor
             AddRelationship(rows, "variant-base", "", originalSource);
             foreach (var transform in owner.GetComponentsInChildren<Transform>(true))
             {
+                // A canonical child is a separate scene node with its own prefab realization.
+                // Its source relationships must not become extra relationships of this parent.
+                if (BelongsToNestedManagedObject(owner.transform, transform)) continue;
                 var candidate = transform.gameObject;
                 var relative = RelativePath(owner.transform, transform);
                 if (candidate != owner && PrefabUtility.IsAnyPrefabInstanceRoot(candidate))
@@ -471,6 +474,13 @@ namespace Arkus.H1.Editor
             if (rows.Count > MaximumRelationships)
                 throw new InvalidDataException("projection.prefab-relationship-limit");
             return NormalizeRelationships(rows);
+        }
+
+        private static bool BelongsToNestedManagedObject(Transform owner, Transform candidate)
+        {
+            for (var current = candidate; current != null && current != owner; current = current.parent)
+                if (current.GetComponent<H1ManagedMarker>() != null) return true;
+            return false;
         }
 
         // "variant-base" is a managed-wrapper/lineage invariant. Every other normalized row is

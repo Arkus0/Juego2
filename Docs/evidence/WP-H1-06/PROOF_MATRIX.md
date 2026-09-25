@@ -1,12 +1,12 @@
 # WP-H1-06 proof matrix
 
-Status: **REMOTE REPAIR IMPLEMENTED AFTER SECOND INDEPENDENT RELATIONSHIP-FIDELITY FAIL; EXACT-SHA PHYSICAL-LOCAL RECEIPT REQUIRED BEFORE FREEZE**
+Status: **SECOND REPAIR INTEGRATION CORRECTED AFTER PHYSICAL UNITY FALSE RED; FINAL EXACT-SHA PHYSICAL-LOCAL RECEIPT REQUIRED BEFORE FREEZE**
 
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
 FOUNDATIONAL_PROOF_VERDICT: READY (subject to the final exact-SHA physical-local receipt before freeze)
 UNRESOLVED_PROOF_OBLIGATIONS: 0 within the tested H1-06 relationship claim after remote repair
 KNOWN_UNDETECTED_DEFECT_CLASSES: 0 within the declared H1-06 relationship universe after closing both inequality directions
-TRUST_BOUNDARY: accepted H1-04 Quaternius Source slice and catalogue, accepted H1-05 scene publication, pinned Unity Editor/project/package graph, and H1-06 managed prefab realization through the public projection path; one synthetic nested-prefab fixture is used only as a causal falsifier of the generic relationship equality rule.
+TRUST_BOUNDARY: accepted H1-04 Quaternius Source slice and catalogue, accepted H1-05 scene publication, pinned Unity Editor/project/package graph, and H1-06 managed prefab realization through the public projection path; one synthetic nested-prefab fixture is used only as a causal falsifier of the generic relationship equality rule. A real Quaternius public-path control exercises an extra relationship in an existing managed derivative and its reuse/rebuild/stage/publish recovery.
 
 ## Foundational circuit-breaker audit
 
@@ -34,6 +34,8 @@ The source-derived multiset is the remainder of H1-06's declared observed relati
 
 `CollectRelationships` produces the normalized rows used by observation/digest. `ValidateSourceRelationships` filters only the wrapper `variant-base` row and compares those same normalized source-derived rows as an exact multiset. `RelationshipDigest` orders by the same `RelationshipKey`, so validation and convergence do not maintain divergent definitions of relationship identity.
 
+For a scene instance, `CollectRelationships` stops at each descendant `H1ManagedMarker`: that descendant is a separate canonical scene node whose prefab source relationships are observed and validated under its own node. It still traverses every unmarked prefab internal under the current node. This boundary is needed for the accepted four-node Quaternius scene: counting `bar.potes` and `workshop.potes` as extra relationships of their parent `market.potes` made exact equality reject a valid projection. The physical run on clean `96775f1daaab3252362c5fac36dfd76122493316` exposed that false red. The corrected public-path trial passed on the working repair, including the nested canonical children, before the final exact-SHA receipt.
+
 The exact oracle also runs inside `ValidateDerivativeAsset`. Therefore `RealizeDerivative` cannot reuse a deterministic pre-existing derivative merely because path/type/lineage are valid: any missing or extra source-derived row makes validation fail, the existing derivative is deleted, and the bridge rebuilds it from the unchanged source before staging/publication. Stale generated-state drift is repaired rather than adopted as new truth.
 
 ## Causal controls
@@ -46,16 +48,18 @@ The single harness fixture uses two same-name sibling instances of one nested pr
 4. rebuild the same managed path cleanly from unchanged source: validation is GREEN and the relationship digest converges to the original positive digest;
 5. the previously accepted flattened-child negative remains RED.
 
+The public Quaternius control additionally mutates one existing deterministic managed variant by adding one material-reference occurrence without changing source or lineage. The next public `unity.host.projection.materialize` must reject reuse, rebuild the derivative, stage a new scene, publish it, and return the original normalized relationship profile. A subsequent public observe must report the recovered generation as current; delete/rebuild must still converge. This tests the second FAIL's actual reuse-to-publication path, not only the standalone equality predicate.
+
 This is one falsifier of equality in both directions, not a fixture matrix per relationship kind.
 
-Earlier physical-local GREEN receipts, including repair SHA `e1e34da7d9625309bcdcd8c09d6f4296dcd84c73`, are historical evidence for superseded candidates only. This second repair changes production code and the Unity fixture; it requires one complete physical-local execution on the final exact SHA before Worker freeze/Ready. No independent PASS is claimed here.
+Earlier physical-local GREEN receipts, including repair SHA `e1e34da7d9625309bcdcd8c09d6f4296dcd84c73`, are historical evidence for superseded candidates only. The complete run on `96775f1daaab3252362c5fac36dfd76122493316` reached the public Quaternius proof and failed with `projection.prefab-source-reference-unexpected` because canonical child nodes were counted in their parent's relationship multiset. That result is preserved as a failed integration observation, not a GREEN receipt. The corrected second repair changes production code and public proof; it requires one complete physical-local execution on the final clean exact SHA before Worker freeze/Ready. No independent PASS is claimed here.
 
 | Claim | Mechanism | Causal/negative control | Current state |
 |---|---|---|---|
 | Accepted source prefab is read-only | `H1SceneProjection.ResolveSource`, exact source path/GUID/local-file-id/content SHA, before/after source hashing | local proof re-verifies H1-04 owner Source pins after all materialization/rebuild activity | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
 | Prefab source relationship is not flattened | source instance is saved as a Unity `PrefabAssetType.Variant`; `H1ManagedPrefabLineage` records exact source identity; normalized observation requires `variant-base` | regular/flattened asset cannot satisfy Variant + exact source dependency + lineage checks; flattened harness control remains RED | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
-| Source-derived relationship multiset is exact | one normalized `RelationshipKey` and multiplicity-preserving rows cover nested prefab, mesh, material and animation references; `ValidateSourceRelationships` requires equality after excluding only `variant-base` | same two-sibling fixture proves source=2/realized=1 RED and source=2/realized=3 RED; clean rebuild returns source=2/realized=2 GREEN and original digest | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
-| Existing managed derivative drift cannot be adopted | `ValidateDerivativeAsset` invokes the same exact relationship oracle before `RealizeDerivative` reuses an existing deterministic derivative | extra-bearing derivative fails validation and is rebuilt rather than returned for stage/publish | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
+| Source-derived relationship multiset is exact per canonical node | one normalized `RelationshipKey` and multiplicity-preserving rows cover nested prefab, mesh, material and animation references; `ValidateSourceRelationships` requires equality after excluding only `variant-base`; separate marked canonical child subtrees are evaluated under their own nodes | same two-sibling fixture proves source=2/realized=1 RED and source=2/realized=3 RED; four-node Quaternius public proof requires valid parent/child scene topology GREEN | LOCAL TRIAL GREEN; FINAL EXACT-SHA RECEIPT PENDING |
+| Existing managed derivative drift cannot be adopted | `ValidateDerivativeAsset` invokes the same exact relationship oracle before `RealizeDerivative` reuses an existing deterministic derivative | public Quaternius proof adds an extra material reference to an existing variant, then requires materialize to rebuild, stage and publish the original normalized profile | LOCAL TRIAL GREEN; FINAL EXACT-SHA RECEIPT PENDING |
 | Relationship validation and digest share identity semantics | `CollectRelationships` + `NormalizeRelationships` + `RelationshipKey` feed exact comparison and `RelationshipDigest`; duplicates are retained | both under-count and over-count controls must change raw relationship digest; recovery must restore it | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
 | Managed derivatives cannot escape bridge ownership | deterministic path `Assets/Arkus/H1/ManagedPrefabs/generations/<generation>/<source-identity>.prefab` | observation rejects derivative outside exact generation root with `projection.prefab-derivative-scope-escape` | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
 | Managed derivative has stable bridge identity and source lineage | prefab generation ID derives from projection input/catalogue fingerprint; derivative path derives from generation + source identity; lineage marker binds logical/native/content source | clean rebuild at same managed identity must reproduce normalized source-derived multiset/digest | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
