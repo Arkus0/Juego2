@@ -4,7 +4,7 @@ Status: **CONDITIONAL / NOT AN ACCEPTANCE VERDICT**. This handoff becomes CITY-0
 
 ## Scene and evidence identity
 
-- Current CITY-04 branch/head: `worker/city-04` at `61b98e1aa907331d7948def15e6db592495419d1`.
+- CITY-04 scene/probe evidence base: `worker/city-04` commit `61b98e1aa907331d7948def15e6db592495419d1`; this handoff is a later documentation addition on the same Draft PR.
 - Accepted CITY-03 source: `Docs/production/CITY_PRODUCT_SEED.md`, blob `3186b80d173cd20f961f33d5a28bf447b2c6971d`.
 - Unity: pinned Editor `6000.3.24f1`; open `Unity/ArkusUnity/Assets/Arkus/CITY/City04Greybox.unity`.
 - Technical construction: `Unity/ArkusUnity/Assets/Arkus/CITY/City04Layout.json`, generated C# and OBJ meshes, `City04GreyboxBuilder.cs`, and local `City04TraversalProbe.cs`.
