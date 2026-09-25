@@ -1,0 +1,200 @@
+name: H1 Asset Cloud Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-asset-cloud-validation.yml'
+      - 'Tools/AssetVault/**'
+      - 'Docs/workpacks/H1/WP-H1-ASSET-CLOUD.md'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/Tests/Editor/H1AssetCloudTests.cs'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/Tests/Editor/H1AssetCloudTests.cs.meta'
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: Exact public Juego2 candidate SHA to execute
+        required: true
+        type: string
+      asset_vault_ref:
+        description: Exact Juego2-assets SHA (preferred) or bootstrap ref
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-asset-cloud-${{ github.event.pull_request.number || inputs.target_sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  asset-cloud-effective:
+    name: Private H1 source -> GitHub-hosted Unity
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'worker/h1-asset-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || inputs.target_sha }}
+      ASSET_VAULT_REF: ${{ inputs.asset_vault_ref || 'main' }}
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      ASSET_VAULT_TOKEN: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+    steps:
+      - name: Validate exact target and credential presence
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact lowercase 40-hex'; exit 2; }
+          missing=0
+          for name in ASSET_VAULT_TOKEN UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact public candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact clean public checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+
+      - name: Checkout private H1 asset vault
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Arkus0/Juego2-assets
+          ref: ${{ env.ASSET_VAULT_REF }}
+          token: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+          fetch-depth: 1
+          lfs: true
+          path: _asset_vault
+
+      - name: Freeze effective vault SHA and hide private checkout from public status
+        shell: bash
+        run: |
+          set -euo pipefail
+          VAULT_SHA="$(git -C _asset_vault rev-parse HEAD)"
+          [[ "${VAULT_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::could not resolve exact vault SHA'; exit 2; }
+          echo "ASSET_VAULT_SHA=${VAULT_SHA}" >> "${GITHUB_ENV}"
+          printf '/_asset_vault/\n' >> .git/info/exclude
+          test -z "$(git status --porcelain --untracked-files=all)"
+          echo "Resolved private H1 asset vault at ${VAULT_SHA}"
+
+      - name: Verify H1-04 authority and mount private source slice
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/h1-asset-cloud
+          python3 Tools/AssetVault/verify_h1_asset_vault.py \
+            --public-root . \
+            --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${ASSET_VAULT_SHA}" \
+            --mount \
+            --receipt artifacts/h1-asset-cloud/H1_ASSET_CLOUD_RECEIPT.json
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/UAL1.fbx.meta
+
+      - name: Install exact GameCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+
+      - name: Execute effective Unity EditMode suite with mounted private source
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --coverageEnabled false \
+            --artifactsPath=artifacts/h1-asset-cloud/unity \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+
+      - name: Require the asset-cloud Unity identity probe to pass
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          wanted = 'H1AssetCloudTests.PrivateVaultMount_RecreatesAcceptedH104UnityIdentities'
+          matches = []
+          for path in Path('artifacts/h1-asset-cloud/unity').rglob('*.xml'):
+              try:
+                  root = ET.parse(path).getroot()
+              except ET.ParseError:
+                  continue
+              for node in root.iter('test-case'):
+                  full = node.attrib.get('fullname') or node.attrib.get('name') or ''
+                  if full.endswith(wanted):
+                      matches.append((path, node.attrib.get('result', '')))
+
+          if len(matches) != 1:
+              raise SystemExit(f'expected exactly one {wanted} result, got {matches}')
+          path, result = matches[0]
+          if result.lower() != 'passed':
+              raise SystemExit(f'{wanted} did not pass: result={result} file={path}')
+          print(f'H1_ASSET_CLOUD_UNITY_GREEN test={wanted} result={result} file={path}')
+          PY
+
+      - name: Reconcile known GameCI package injection and remove private mount
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice
+          rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta
+
+          git restore --source="${TARGET_SHA}" -- \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json || true
+
+          rm -rf _asset_vault
+
+          git diff --quiet "${TARGET_SHA}" -- || {
+            echo '::error::tracked public tree differs from exact candidate after cleanup'
+            git status --short
+            git diff -- "${TARGET_SHA}"
+            exit 3
+          }
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Upload public-safe exact-SHA evidence only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: h1-asset-cloud-${{ env.TARGET_SHA }}
+          path: |
+            artifacts/h1-asset-cloud/H1_ASSET_CLOUD_RECEIPT.json
+            artifacts/h1-asset-cloud/unity/**/*.xml
+          if-no-files-found: warn
+          retention-days: 30
