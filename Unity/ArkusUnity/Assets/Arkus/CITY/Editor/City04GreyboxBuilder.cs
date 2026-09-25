@@ -48,10 +48,10 @@ namespace Arkus.CITY.Editor
 
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             RenderSettings.ambientMode = AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(0.75f, 0.76f, 0.78f);
+            RenderSettings.ambientLight = new Color(0.34f, 0.35f, 0.36f);
             var sun = new GameObject("Greybox daylight").AddComponent<Light>();
             sun.type = LightType.Directional;
-            sun.intensity = 1.3f;
+            sun.intensity = 0.7f;
             sun.transform.rotation = Quaternion.Euler(55, -35, 0);
 
             MeshObject("Exact dry land visual — three components", "land_visual", land, false);
@@ -90,7 +90,7 @@ namespace Arkus.CITY.Editor
             busyMarkers.SetActive(false);
 
             var barrier = Box("micro.A temporary closure (B)", At(new Vector2(83, 37), 0.8f),
-                new Vector3(3.3f, 1.6f, 0.3f), threshold, true);
+                new Vector3(0.3f, 1.6f, 3.3f), threshold, true);
             barrier.SetActive(false);
 
             // Non-colliding D/S0 silhouettes hint at later city without adding playable edges.
@@ -163,6 +163,37 @@ namespace Arkus.CITY.Editor
                                   " transform=" + filter.transform.localToWorldMatrix);
                 }
             }
+        }
+
+        [MenuItem("Arkus/CITY-04/Check physical collider cuts")]
+        public static void CheckPhysicalCuts()
+        {
+            EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            Physics.SyncTransforms();
+            RequireSurface("Wedge", new Vector2(120, 20), "Authorized bank-aware");
+            RequireSurface("Orilla-sur", new Vector2(55, -68), "Authorized bank-aware");
+            RequireSurface("Ensanche", new Vector2(80, 125), "Authorized bank-aware");
+            RequireSurface("X1", new Vector2(46, -48), "X1 permanent");
+            RequireSurface("X5 available", new Vector2(91, 115), "X5 low-water");
+            RequireSurface("Río void", new Vector2(110, -52), null);
+            RequireSurface("Arroyo void", new Vector2(50, 54), null);
+            Debug.Log("CITY04_PHYSICAL_CUTS_GREEN: three dry components, X1 and active X5 collision, water voids");
+        }
+
+        private static void RequireSurface(string label, Vector2 point, string expectedRoot)
+        {
+            RaycastHit[] hits = Physics.RaycastAll(new Vector3(point.x, 50, point.y), Vector3.down, 100);
+            bool matched = false;
+            foreach (var hit in hits)
+            {
+                string root = hit.collider.transform.root.name;
+                if (expectedRoot != null && root.StartsWith(expectedRoot, StringComparison.Ordinal)) matched = true;
+                if (expectedRoot == null && !root.StartsWith("CITY-04 human traversal", StringComparison.Ordinal))
+                    throw new InvalidOperationException(label + " unexpectedly collides with " + root);
+            }
+            if (expectedRoot != null && !matched)
+                throw new InvalidOperationException(label + " missing expected collision: " + expectedRoot);
+            Debug.Log("CITY04_CUT " + label + " expected=" + (expectedRoot ?? "VOID") + " hits=" + hits.Length);
         }
 
         private static void CaptureView(string path, Vector3 from, Vector3 target, bool overhead)
