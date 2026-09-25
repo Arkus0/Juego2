@@ -37,7 +37,7 @@ namespace Arkus.Harness.Tests
                 "extra|Arkus Managed Root/LooseLamp|unmanaged",
                 "extra|extra|managed",
                 "changed|facade|managed"
-            }, report.Items.Select(Token).OrderBy(value => value, StringComparer.Ordinal).ToArray());
+            }, report.Items.Select(Token).ToArray());
             Assert.Contains(report.Items.Single(value => value.ObjectId == "facade").Fields, value => value == "transform");
 
             var withDifferentUnmanaged = Observation(plan, facade, extra);
@@ -141,7 +141,7 @@ namespace Arkus.Harness.Tests
             var stalePlan = staleContract.Dispatch(WorldMutationContract.PlanName, Exact(), proposal.MutationRequest!);
             Assert.False(stalePlan.Success);
             Assert.NotNull(stalePlan.Error);
-            Assert.Contains(stalePlan.Error!.MachineCode, new[] { "mutation.stale_revision", "mutation.stale_hash" });
+            Assert.Contains(stalePlan.Error!.MachineCode, new[] { "world.change.stale_revision", "world.change.stale_hash" });
             Assert.Empty(staleSession.Current.Extensions);
 
             var freshSession = new PortableWorldAuthoringSession(original);
