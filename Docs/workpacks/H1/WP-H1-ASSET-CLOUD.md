@@ -2,6 +2,7 @@
 
 Status: IMPLEMENTING
 Class: PROCESS_INFRASTRUCTURE / NON-PRODUCT
+Mode: PROCESS_ONLY
 EXECUTION_REQUIREMENT: GITHUB_HOSTED_UNITY
 Depends on: `WP-H1-UNITY-CI` PASS and accepted `WP-H1-04` source baseline
 Blocks: no product semantics; enables remote execution of H1-06 through H1-GATE when claims are machine-verifiable
