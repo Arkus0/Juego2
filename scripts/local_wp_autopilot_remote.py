@@ -82,7 +82,7 @@ _ORIGINAL_RUN_CANONICAL_ADOPTED = _run_canonical_adopted
 
 async def _run_canonical_adopted(args: argparse.Namespace) -> None:
     """Wait for the durable post-freeze transition before canonical adoption."""
-    root = Path(args.root).resolve()
+    root = Path(getattr(args, "root", ".")).resolve()
     wp = autopilot.normalize_wp(args.wp) if args.wp else None
     if wp:
         pr = autopilot.canonical_pr(wp)
