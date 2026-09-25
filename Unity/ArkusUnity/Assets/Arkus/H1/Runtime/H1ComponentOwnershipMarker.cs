@@ -11,6 +11,6 @@ namespace Arkus.H1.Projection
         public string rendererRelativePath = "";
         public bool animatorClip;
         public string animatorRelativePath = "";
-        public AnimationClip animatorClipReference;
+        public UnityEngine.Object animatorClipReference;
     }
 }
