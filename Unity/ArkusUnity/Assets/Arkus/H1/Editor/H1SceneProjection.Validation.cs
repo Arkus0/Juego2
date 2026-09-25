@@ -31,14 +31,15 @@ namespace Arkus.H1.Editor
             {
                 if (request.mode == "materialize" || request.mode == "validate-proposed")
                 {
-                    var preflight = RunPreflight(request.plan);
+                    ValidatedProjectionPlan validatedPlan;
+                    var preflight = RunPreflight(request.plan, out validatedPlan);
                     if (!preflight.valid)
                         return ValidationReply(request.plan, FirstValidationCode(preflight), SafeObserveActive(), preflight);
                     if (request.mode == "validate-proposed")
                         return ValidationReply(request.plan, "", SafeObserveActive(), preflight);
 
                     H1ValidationResult postflight;
-                    var observation = Materialize(request.plan, out postflight);
+                    var observation = Materialize(validatedPlan, out postflight);
                     return ValidationReply(request.plan, "", observation, postflight);
                 }
 
@@ -64,6 +65,13 @@ namespace Arkus.H1.Editor
         {
             H1ValidationResult ignored;
             return Materialize(plan, out ignored);
+        }
+
+        private static ProjectionObservation Materialize(ValidatedProjectionPlan validated, out H1ValidationResult postflight)
+        {
+            if (validated == null || validated.Plan == null)
+                throw new InvalidOperationException("H1 materialization requires a successful public preflight token.");
+            return Materialize(validated.Plan, out postflight);
         }
 
         private static string InvalidRequestReply(string code, ProjectionPlan plan = null)
@@ -121,7 +129,25 @@ namespace Arkus.H1.Editor
             catch (Exception) { return EmptyObservation(); }
         }
 
-        private static H1ValidationResult RunPreflight(ProjectionPlan plan)
+        private static H1ValidationResult RunPreflight(ProjectionPlan plan, out ValidatedProjectionPlan validatedPlan)
+        {
+            ValidatedProjectionPlan accepted = null;
+            var result = H1ProjectionValidation.GuardExpectedInvalidity(
+                H1ProjectionValidation.Preflight,
+                "proposed",
+                plan == null ? "" : plan.inputDigest,
+                "unity.plan.node-shape",
+                SceneId,
+                "",
+                Root,
+                "repair the materialization preconditions before staging",
+                () => RunPreflightCore(plan));
+            if (result.valid) accepted = new ValidatedProjectionPlan(plan);
+            validatedPlan = accepted;
+            return result;
+        }
+
+        private static H1ValidationResult RunPreflightCore(ProjectionPlan plan)
         {
             var checks = new List<H1ValidationCheck>
             {
@@ -130,7 +156,7 @@ namespace Arkus.H1.Editor
                 H1ProjectionValidation.Check("unity.component.adapter-inventory", SceneId, "", "Assets/Arkus/H1",
                     "repair the declared/effective H1 component adapter inventory", () => H1ComponentProjection.CaptureInventory()),
                 H1ProjectionValidation.Check("unity.plan.node-shape", SceneId, "", Root,
-                    "repair canonical node identity/shape", () => ValidatePlanShapeForH108(plan))
+                    "repair structural preconditions consumed by effective materialization", () => ValidateMaterializationShape(plan))
             };
 
             foreach (var node in plan.nodes.Where(value => value != null).OrderBy(value => value.objectId ?? "", StringComparer.Ordinal))
@@ -162,17 +188,30 @@ namespace Arkus.H1.Editor
 
         private static H1ValidationResult RunCurrentValidation(out ProjectionObservation observation)
         {
-            var manifest = ReadManifest();
-            if (manifest == null)
-            {
-                observation = EmptyObservation();
-                return H1ProjectionValidation.Run(H1ProjectionValidation.PostMaterialization, "current", "", new[]
+            ProjectionObservation current = EmptyObservation();
+            var result = H1ProjectionValidation.GuardExpectedInvalidity(
+                H1ProjectionValidation.PostMaterialization,
+                "current",
+                "",
+                "unity.scene.effective-observation",
+                SceneId,
+                "",
+                ManifestPath,
+                "repair the active manifest/current managed generation",
+                () =>
                 {
-                    H1ProjectionValidation.Check("unity.scene.finite-transform", SceneId, "", Root,
-                        "materialize a managed generation before validating current state", () => { throw new InvalidDataException("projection.active-scene-missing"); })
+                    var manifest = ReadManifest();
+                    if (manifest == null || string.IsNullOrEmpty(manifest.scenePath) ||
+                        !File.Exists(Path.Combine(H1Bootstrap.ProjectRoot(), manifest.scenePath)))
+                        throw new InvalidDataException("projection.active-scene-missing");
+                    return RunCurrentValidationCore(manifest, out current);
                 });
-            }
+            observation = current ?? EmptyObservation();
+            return result;
+        }
 
+        private static H1ValidationResult RunCurrentValidationCore(ProjectionManifest manifest, out ProjectionObservation observation)
+        {
             var current = default(ProjectionObservation);
             var transformsFinite = true;
             var checks = new List<H1ValidationCheck>
@@ -333,13 +372,16 @@ namespace Arkus.H1.Editor
             return false;
         }
 
-        private static void ValidatePlanShapeForH108(ProjectionPlan plan)
+        // This is the sole structural gate that can mint a ValidatedProjectionPlan. Both
+        // validate-proposed and effective materialization traverse it, so materialization cannot
+        // consume a structural assumption that public preflight has not first accepted.
+        private static void ValidateMaterializationShape(ProjectionPlan plan)
         {
             var seen = new HashSet<string>(StringComparer.Ordinal);
             foreach (var node in plan.nodes)
             {
                 if (node == null || string.IsNullOrEmpty(node.objectId) || !seen.Add(node.objectId) ||
-                    string.IsNullOrEmpty(node.sourceLogicalId) || !IsHash(node.sourceContentSha256) ||
+                    node.parentObjectId == null || string.IsNullOrEmpty(node.sourceLogicalId) || !IsHash(node.sourceContentSha256) ||
                     node.positionMm == null || node.rotationMilliDegrees == null || node.scalePpm == null ||
                     node.components == null || node.components.Length == 0 || node.components.Length > MaximumComponents ||
                     (node.sourceKind != "prefab" && node.sourceKind != "asset"))
@@ -393,6 +435,12 @@ namespace Arkus.H1.Editor
         {
             // H1-08 fault injection is consumed by ValidateFiniteTransforms as a synthetic sample.
             // Do not write NaN into Unity Transform state: Unity sanitizes/rejects that assignment.
+        }
+
+        private sealed class ValidatedProjectionPlan
+        {
+            internal ValidatedProjectionPlan(ProjectionPlan plan) { Plan = plan; }
+            internal ProjectionPlan Plan { get; }
         }
 
         [Serializable]
