@@ -119,6 +119,67 @@ namespace Arkus.H1.Editor.Tests
             Assert.That(repairedFacade.positionMm.x, Is.EqualTo(canonicalFacade.positionMm.x));
             Assert.That(repairedFacade.componentRows, Does.Contain(
                 RendererSchema + "|enabled=true|material=" + materialA.path + "|" + materialA.guid + "|" + materialA.fileId));
+
+            CapturePositiveReferencedContentDrift(plan, materialA);
+        }
+
+        private static void CapturePositiveReferencedContentDrift(ProjectionPlan plan, AssetIdentity material)
+        {
+            var fullPath = Path.GetFullPath(Path.Combine(Application.dataPath, "..", material.path));
+            var originalBytes = File.ReadAllBytes(fullPath);
+            Assert.That(HashBytes(originalBytes), Is.EqualTo(material.sha256), "positive content-drift probe must begin from the accepted referenced bytes");
+
+            try
+            {
+                material.asset.enableInstancing = !material.asset.enableInstancing;
+                EditorUtility.SetDirty(material.asset);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.ImportAsset(material.path, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+                AssetDatabase.Refresh();
+
+                var mutated = AcceptedMaterial(AcceptedMaterialAGuid, AcceptedMaterialLocalFileId);
+                Assert.That(mutated.path, Is.EqualTo(material.path));
+                Assert.That(mutated.guid, Is.EqualTo(material.guid));
+                Assert.That(mutated.fileId, Is.EqualTo(material.fileId));
+                Assert.That(mutated.sha256, Is.Not.EqualTo(material.sha256),
+                    "positive content-drift control must alter effective referenced bytes without changing path/GUID/local-file-id");
+
+                var raw = ExecuteReconciliationRaw();
+                var drifted = ParseReconciliation(raw);
+                Assert.That(drifted.errorCode, Is.Empty, raw);
+                Assert.That(drifted.observation, Is.Not.Null, raw);
+                Assert.That(drifted.observation.inputDigest, Is.EqualTo(plan.inputDigest));
+                Assert.That(drifted.observation.canonicalHash, Is.EqualTo(plan.canonicalHash));
+                Assert.That(drifted.observation.catalogueFingerprint, Is.EqualTo(plan.catalogueFingerprint));
+                var codes = drifted.observation.diagnostics.Select(value => value.code).ToArray();
+                Assert.That(codes, Does.Contain("projection.component-reference-content-drift"),
+                    "same-identity referenced content mutation must be detected by the real reconciliation observer");
+                Assert.That(codes, Does.Contain("projection.reconciliation-node-unreadable"),
+                    "referenced content drift must carry the canonical ambiguity/no-importability signal");
+
+                var directory = CompositionDirectory();
+                Directory.CreateDirectory(directory);
+                File.WriteAllText(Path.Combine(directory, "content-drift-worker-reply.json"), raw);
+            }
+            finally
+            {
+                File.WriteAllBytes(fullPath, originalBytes);
+                AssetDatabase.ImportAsset(material.path, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+                AssetDatabase.Refresh();
+            }
+
+            var restored = AcceptedMaterial(AcceptedMaterialAGuid, AcceptedMaterialLocalFileId);
+            Assert.That(restored.path, Is.EqualTo(material.path));
+            Assert.That(restored.guid, Is.EqualTo(material.guid));
+            Assert.That(restored.fileId, Is.EqualTo(material.fileId));
+            Assert.That(restored.sha256, Is.EqualTo(material.sha256), "positive content-drift probe must restore the exact accepted referenced bytes");
+
+            var clean = ExecuteReconciliation();
+            Assert.That(clean.errorCode, Is.Empty);
+            Assert.That(clean.observation.diagnostics.Select(value => value.code), Does.Not.Contain("projection.component-reference-content-drift"));
+            Assert.That(clean.observation.diagnostics.Select(value => value.code), Does.Not.Contain("projection.reconciliation-node-unreadable"));
+            Assert.That(clean.observation.graphDigest, Is.EqualTo(clean.observation.manifestGraphDigest));
+            Assert.That(clean.observation.realizationDigest, Is.EqualTo(clean.observation.manifestRealizationDigest));
         }
 
         private static ProjectionPlan BuildPlan(AssetIdentity material)
@@ -184,13 +245,19 @@ namespace Arkus.H1.Editor.Tests
             return reply;
         }
 
-        private static ReconciliationReply ExecuteReconciliation()
+        private static string ExecuteReconciliationRaw()
         {
-            var raw = H1SceneProjection.ExecuteReconciliation(JsonUtility.ToJson(new ReconciliationRequest
+            return H1SceneProjection.ExecuteReconciliation(JsonUtility.ToJson(new ReconciliationRequest
             {
                 schemaId = "arkus.h1-projection-reconciliation-worker-request@1",
                 sceneLogicalId = SceneId
             }));
+        }
+
+        private static ReconciliationReply ExecuteReconciliation() => ParseReconciliation(ExecuteReconciliationRaw());
+
+        private static ReconciliationReply ParseReconciliation(string raw)
+        {
             var reply = JsonUtility.FromJson<ReconciliationReply>(raw);
             Assert.That(reply, Is.Not.Null, raw);
             Assert.That(reply.schemaId, Is.EqualTo("arkus.h1-projection-reconciliation-worker-result@1"), raw);
@@ -230,6 +297,11 @@ namespace Arkus.H1.Editor.Tests
                 fileId = fileId.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 sha256 = HashBytes(File.ReadAllBytes(full))
             };
+        }
+
+        private static string CompositionDirectory()
+        {
+            return Path.GetFullPath(Path.Combine(Application.dataPath, "..", "H1-09-Composition"));
         }
 
         private static void DeleteGenerated()
