@@ -108,11 +108,22 @@ def authoritative_verdicts(reviews: list[dict[str, Any]], comments: list[dict[st
 
 def repair_marker_after_verdict(comments: list[dict[str, Any]], sha: str,
                                 verdict_at: str) -> bool:
-    """Match REPAIR_REQUIRED to the exact Reviewer cycle, not merely SHA/time."""
+    """Match REPAIR_REQUIRED to the exact Reviewer cycle, not merely SHA/time.
+
+    A historical keyless marker is accepted only while the authoritative evidence
+    contains exactly one Reviewer cycle for this SHA. Once the same SHA has more
+    than one review cycle, only the exact review-id-bearing key is authoritative.
+    """
     sha = sha.lower()
     review_id = _repair_review_identity.get((sha, verdict_at))
     if not review_id:
-        raise AdoptionError("repair transition lookup lacks exact Reviewer identity")
+        return False
+    same_sha_ids = {
+        candidate_id
+        for (candidate_sha, _candidate_at), candidate_id in _repair_review_identity.items()
+        if candidate_sha == sha
+    }
+    allow_legacy_keyless = same_sha_ids == {review_id}
     key_re = re.compile(
         rf"^adopted-repair-required:[1-9][0-9]*:{re.escape(sha)}:{re.escape(review_id)}$")
     for item in comments:
@@ -120,11 +131,14 @@ def repair_marker_after_verdict(comments: list[dict[str, Any]], sha: str,
             continue
         body = item.get("body") or ""
         fields = marker_fields(body)
+        key = fields.get("key", "")
+        exact_key = bool(key_re.fullmatch(key))
+        legacy_unambiguous = not key and allow_legacy_keyless
         if ("ARKUS_AUTOMATION_V2" in body and
                 fields.get("state") == "REPAIR_REQUIRED" and
                 fields.get("target sha", "").lower() == sha and
                 (item.get("created_at") or "") >= verdict_at and
-                key_re.fullmatch(fields.get("key", ""))):
+                (exact_key or legacy_unambiguous)):
             return True
     return False
 
