@@ -1,8 +1,14 @@
 # CITY greybox-to-demo validation allocation amendment
 
-Status: CANDIDATE — effective only after independent review, merge and DocSync
+Status: COMPLETE / ACCEPTED
 Class: PROCESS / WORKPACK-CONTRACT AMENDMENT
 Affected workpacks: `WP-CITY-04`, `WP-CITY-07`, `WP-CITY-08`
+Accepted candidate: `8ecb2c51abe35c4a2e157b13978e22d925161fe9`
+Canonical PR: `#226` (clean successor to auto-closed rebased PR `#224`)
+Reviewer PASS: `#5321232069`
+Owner acceptance: `2026-09-25`
+Implementation merge: `f86347ed2857940126a7489325ac8455f65b3f29`
+Base main at clean PR creation: `f562c670aa6d43301baeafd8b8cc78ca6319eaab`
 
 ## Reason for the change
 
@@ -34,10 +40,10 @@ CITY-08 retains its fresh-agent public authoring/reuse claim. After the bounded 
 
 ## Exact supersession boundary
 
-This amendment reallocates the **execution stage** of the CITY-01 §11 measurement/calibration handoff, CITY-03 §9 scenarios, CITY-03 §10 human route measurements/readability/sightlines, the current CITY-04 required human runs/timed deliverables/spatial PASS criterion, and the corresponding CITY-04/CITY-07 minimum-proof paragraphs in `CITY_REMAINING_COMPRESSION_AMENDMENT.md`. Those duties move to CITY-07 before keeper PASS, with a final demo regression in CITY-08. CITY-03 §10.2's exact boundary, water, dry-component, crossing and collision construction checks remain CITY-04 technical duties; CITY-07 judges their human readability after asset realization.
+This amendment reallocates the **execution stage** of the CITY-01 §11 measurement/calibration handoff, CITY-03 §9 scenarios, CITY-03 §10 human route measurements/readability/sightlines, the prior CITY-04 required human runs/timed deliverables/spatial PASS criterion, and the corresponding CITY-04/CITY-07 minimum-proof paragraphs in `CITY_REMAINING_COMPRESSION_AMENDMENT.md`. Those duties now belong to CITY-07 before keeper PASS, with a final demo regression in CITY-08. CITY-03 §10.2's exact boundary, water, dry-component, crossing and collision construction checks remain CITY-04 technical duties; CITY-07 judges their human readability after asset realization.
 
 The accepted `CITY_07_GAME_SPACE_REALIZATION_AMENDMENT.md` remains authoritative for local keeper-geometry freedom and impact coverage. This amendment changes **when and where the first human spatial verdict is established**, not CITY-07's authority to produce a real third-person game-space inside accepted topology/site/access semantics. Where the two amendments overlap, the final CITY-07 demo campaign discharges the applicable human/perceptual impact-ledger obligations; technical invariants remain covered by bounded recheck or invariant witness.
 
-The original CITY-01 and CITY-03 production specifications, `CITY_REMAINING_COMPRESSION_AMENDMENT.md`, and the accepted CITY-03 capsule remain historical proof sources; their CITY-04 measurement-executor wording is superseded by this reviewed amendment and must not be used alone to route current work. All other accepted CITY-00/01/02/03/05/06/09 semantics, CITY-03 polygons/masks/routes/sites/seams, route planning weights, and the dependency graph remain unchanged. Neither CITY-04 nor this amendment adds gameplay or keeper content ahead of H1-GATE. The H1-04 admitted Source slice is not broadened by this amendment; additional Quaternius imports must satisfy the applicable accepted asset boundary when CITY-07 executes.
+The original CITY-01 and CITY-03 production specifications, `CITY_REMAINING_COMPRESSION_AMENDMENT.md`, and the accepted CITY-03 capsule remain historical proof sources; their CITY-04 measurement-executor wording is superseded by this accepted amendment and must not be used alone to route current work. All other accepted CITY-00/01/02/03/05/06/09 semantics, CITY-03 polygons/masks/routes/sites/seams, route planning weights, and the dependency graph remain unchanged. Neither CITY-04 nor this amendment adds gameplay or keeper content ahead of H1-GATE. The H1-04 admitted Source slice is not broadened by this amendment; additional Quaternius imports must satisfy the applicable accepted asset boundary when CITY-07 executes.
 
-Until this amendment is independently accepted, merged and DocSynced, the existing CITY-04 contract still requires the human runs and measured table. Owner preference or a preliminary impression alone cannot be reported as a current-contract CITY-04 PASS.
+This amendment is now binding after PASS, merge and DocSync. The prior CITY-04 human-run gate is superseded; CITY-04 may PASS only its technical scene-handoff contract, while the required human spatial verdict is deferred to CITY-07 as specified above.
