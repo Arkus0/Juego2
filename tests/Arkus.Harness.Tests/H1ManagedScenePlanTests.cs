@@ -36,7 +36,31 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
-        public void Unbound_parent_and_unavailable_catalogue_source_fail_before_publication()
+        public void Catalogue_remap_changes_projection_evidence_without_changing_canonical_world_identity()
+        {
+            var root = H1UnityLaunchProfile.ForCurrentHost().RepositoryRoot;
+            var effective = File.ReadAllText(Path.Combine(root, "Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json"));
+            var mapping = File.ReadAllText(Path.Combine(root, H1CatalogueSnapshot.MappingRelativePath));
+            var adoption = File.ReadAllText(Path.Combine(root, H1CatalogueSnapshot.AdoptionRelativePath));
+            const string original = "quaternius.ual1.animation-clip.armature-a-tpose";
+            const string remapped = "quaternius.ual1.animation-clip.armature-a-tpose-remapped";
+            Assert.Equal(1, mapping.Split(original, StringSplitOptions.None).Length - 1);
+
+            var acceptedCatalogue = H1CatalogueSnapshot.Build(effective, mapping, adoption);
+            var remappedCatalogue = H1CatalogueSnapshot.Build(effective, mapping.Replace(original, remapped, StringComparison.Ordinal), adoption);
+            var world = Fixture(7, includeWorkshop: true);
+            var accepted = H1ManagedScenePlan.Build(world, acceptedCatalogue);
+            var changed = H1ManagedScenePlan.Build(world, remappedCatalogue);
+
+            Assert.Equal(CanonicalWorldStateCodec.ComputeContentHash(world), accepted.CanonicalHash);
+            Assert.Equal(accepted.CanonicalHash, changed.CanonicalHash);
+            Assert.NotEqual(accepted.CatalogueFingerprint, changed.CatalogueFingerprint);
+            Assert.NotEqual(accepted.InputDigest, changed.InputDigest);
+            Assert.Equal(accepted.Nodes.Select(node => node.SourceLogicalId), changed.Nodes.Select(node => node.SourceLogicalId));
+        }
+
+        [Fact]
+        public void Missing_wrong_type_and_unbound_parent_fail_with_stable_projection_diagnostics()
         {
             var catalogue = Catalogue();
             var unbound = new WorldState(new WorldId("world.potes"), 0,
@@ -50,7 +74,12 @@ namespace Arkus.Harness.Tests
             var missing = new WorldState(new WorldId("world.potes"), 0,
                 new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
                 new[] { Binding("plaza.potes", 0, "prefab.absent") });
-            Assert.Equal("projection.source-unavailable", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(missing, catalogue)).Code);
+            Assert.Equal("projection.source-missing", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(missing, catalogue)).Code);
+
+            var wrongType = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[] { Binding("plaza.potes", 0, "quaternius.medieval.asset.wall-plaster-window-wide-flat") });
+            Assert.Equal("projection.source-wrong-type", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(wrongType, catalogue)).Code);
 
             var unsupported = new WorldState(new WorldId("world.potes"), 0,
                 new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },

@@ -85,7 +85,7 @@ namespace Arkus.H1.UnityHost
                 }
                 catch (H1CatalogueException exception)
                 {
-                    throw Error("projection.source-unavailable", exception.Code + ": " + exception.Message);
+                    throw Error(MapSourceFailure(exception.Code), exception.Code + ": " + exception.Message);
                 }
                 if (sourceKind != "prefab" && sourceKind != "asset")
                     throw Error("projection.source-kind", "Only admitted prefab or mesh asset sources may be materialized.");
@@ -93,7 +93,7 @@ namespace Arkus.H1.UnityHost
                 {
                     var reference = (IReadOnlyDictionary<string, object?>)raw!;
                     var kind = (string)reference["kind"]!;
-                    if (kind == "scene") continue; // the fixed generated scene is owned by this WP
+                    if (kind == "scene") continue;
                     try { catalogue.Get((string)reference["logicalId"]!, kind, true); }
                     catch (H1CatalogueException exception)
                     {
@@ -139,6 +139,14 @@ namespace Arkus.H1.UnityHost
         }
 
         public static string Sha(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
+
+        private static string MapSourceFailure(string code)
+        {
+            if (code == "catalogue.missing-reference") return "projection.source-missing";
+            if (code == "catalogue.incompatible-reference") return "projection.source-wrong-type";
+            if (code == "catalogue.stale-mapping" || code == "catalogue.incompatible-mapping") return "projection.source-rebound";
+            return "projection.source-unavailable";
+        }
 
         private static H1ProjectionVector Vector(IReadOnlyDictionary<string, object?> source) => new H1ProjectionVector
         {
