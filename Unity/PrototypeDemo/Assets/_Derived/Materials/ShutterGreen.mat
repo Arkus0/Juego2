@@ -39,7 +39,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Base_Color_Texture:
-        m_Texture: {fileID: 2800000, guid: 6615e516566f8ca42985a96f67b42185, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0b8e750bb7a24e44681d03bc68e080b8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal_Texture:
@@ -76,7 +76,7 @@ Material:
     - _QueueOffset: 0
     - _Wear: 1
     m_Colors:
-    - _Color: {r: 0.42, g: 0.62, b: 0.6, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _WearA: {r: 0.4039216, g: 0.30980393, b: 0, a: 1}
     - _WearB: {r: 0.43137258, g: 0.28235295, b: 0, a: 1}
   m_BuildTextureStacks: []
