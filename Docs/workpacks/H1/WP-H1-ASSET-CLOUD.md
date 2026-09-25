@@ -1,6 +1,6 @@
 # WP-H1-ASSET-CLOUD — Private asset vault parity for remote H1 Unity
 
-Status: IMPLEMENTING
+Status: COMPLETE / ACCEPTED
 Class: PROCESS_INFRASTRUCTURE / NON-PRODUCT
 Mode: PROCESS_ONLY
 EXECUTION_REQUIREMENT: GITHUB_HOSTED_UNITY
@@ -92,6 +92,23 @@ A missing/invalid credential is `SETUP_BLOCKED`, not product FAIL.
 - allow tracked public-tree drift after the run.
 
 Each must fail closed without weakening H1-04 or the consuming workpack.
+
+## Accepted evidence model
+
+The accepted fail-cycle-2 circuit breaker does not attempt to recognize every possible representation of private bytes. Raw Unity/GameCI output is ephemeral execution evidence only. The retained public artifact surface is closed to two derived JSON receipts containing approved identities, hashes, counters and results; raw Unity XML/log output is not an uploader input.
+
+The privacy boundary protects against accidental retention or propagation of private source material through the normal Unity/GameCI evidence path. It is not a hostile-code exfiltration boundary against deliberate malicious modification of the reviewed workflow or receipt generator itself.
+
+## Acceptance record
+
+- Frozen candidate: `e4d18002e6ca81f302daa645e306e9373debac92`.
+- Canonical implementation PR: `#201`.
+- Independent PASS review: `#5313800159`.
+- H1 Asset Cloud Validation run `36098270707`: GREEN on the exact frozen candidate.
+- Arkus Main Safety run `36098270716`: GREEN on the exact frozen candidate.
+- Candidate Validation run `36098270700`: aggregate RED only from Worker handoff lint; validation-context binding and exact-SHA freeze verification were GREEN.
+- Implementation merge: `fe6ecd5e14ef2581fd8fbe8f87166d13d02109bd`.
+- Binding DocSync: `Docs/evidence/WP-H1-ASSET-CLOUD/DOCSYNC.md`.
 
 ## PASS consequence
 
