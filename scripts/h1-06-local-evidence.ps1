@@ -62,6 +62,7 @@ if ($nestedResult.schemaId -ne 'arkus.h1-06-nested-prefab-conformance@1' -or
     $nestedResult.productPath -ne 'ObserveRealization:exact-source-derived-multiset-and-digest' -or
     $nestedResult.negative -ne 'one-of-two-same-name-siblings-removed:projection.prefab-nested-lineage-missing' -or
     $nestedResult.extraNegative -ne 'third-identical-source-derived-relation:projection.prefab-source-reference-unexpected' -or
+    $nestedResult.unresolvedNegative -ne 'transient-material-reference:projection.prefab-reference-unresolved' -or
     $nestedResult.recovery -ne 'stale-extra-derivative-rebuilt:relationship-digest-converged') {
     throw 'Exact prefab relationship multiset conformance result is incomplete'
 }
@@ -102,6 +103,6 @@ Write-Output "Package lock SHA-256: $((Get-FileHash -LiteralPath (Join-Path $pro
 Write-Output "Canonical command: scripts/h1-06-local-evidence.ps1 -AssetsRoot <owner-configured> -ExpectedSha $actualSha"
 Write-Output 'Candidate clean before: YES'
 Write-Output 'Candidate clean after: YES'
-Write-Output 'Required gates: approved-Source=GREEN; pinned-Editor=GREEN; effective-catalogue=GREEN; prefab-exact-multiset-missing-extra-recovery-and-flattened-controls=GREEN; content-shape-probe=GREEN; locked-build=GREEN; focused-plan-tests=GREEN; effective-prefab-public-conformance=GREEN; stale-extra-derivative-reuse-stage-publish=GREEN; source-immutability=GREEN; missing-wrong-type-rebound-controls=GREEN; delete-rebuild-normalization=GREEN'
+Write-Output 'Required gates: approved-Source=GREEN; pinned-Editor=GREEN; effective-catalogue=GREEN; prefab-exact-multiset-missing-extra-unresolved-recovery-and-flattened-controls=GREEN; content-shape-probe=GREEN; locked-build=GREEN; focused-plan-tests=GREEN; effective-prefab-public-conformance=GREEN; stale-extra-derivative-reuse-stage-publish=GREEN; source-immutability=GREEN; missing-wrong-type-rebound-controls=GREEN; delete-rebuild-normalization=GREEN'
 Write-Output 'Result: GREEN'
 Write-Output "Scratch evidence: $public; $nested; $contentShape; $inventory"

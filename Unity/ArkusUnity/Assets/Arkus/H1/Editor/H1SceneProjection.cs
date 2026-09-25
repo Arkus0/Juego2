@@ -521,9 +521,11 @@ namespace Arkus.H1.Editor
 
         private static void AddRelationship(ICollection<PrefabRelationship> rows, string kind, string relativePath, UnityEngine.Object asset)
         {
-            if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset, out string guid, out long fileId)) return;
+            if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset, out string guid, out long fileId))
+                throw new InvalidDataException("projection.prefab-reference-unresolved");
             var path = AssetDatabase.GetAssetPath(asset);
-            if (string.IsNullOrEmpty(path)) return;
+            if (string.IsNullOrEmpty(path))
+                throw new InvalidDataException("projection.prefab-reference-unresolved");
             rows.Add(new PrefabRelationship
             {
                 kind = kind, relativeObjectPath = relativePath, assetPath = path, assetGuid = guid,

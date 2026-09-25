@@ -134,6 +134,25 @@ namespace Arkus.H1.Editor
                 if (string.IsNullOrEmpty(positiveDigest))
                     throw new InvalidDataException("nested-proof.product-relationship-digest-missing");
 
+                // A live material reference with no stable asset identity must never disappear
+                // from the observed universe while the product path reports GREEN.
+                var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+                if (shader == null) throw new InvalidDataException("nested-proof.transient-material-shader-missing");
+                var transientMaterial = new Material(shader);
+                var transientRenderer = observed.AddComponent<MeshRenderer>();
+                try
+                {
+                    transientRenderer.sharedMaterial = transientMaterial;
+                    ExpectProductFailure(observe, observed, "projection.prefab-reference-unresolved",
+                        "nested-proof.transient-material-reference-false-green");
+                }
+                finally
+                {
+                    UnityEngine.Object.DestroyImmediate(transientRenderer);
+                    UnityEngine.Object.DestroyImmediate(transientMaterial);
+                }
+                observed = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single).GetRootGameObjects().Single();
+
                 // Under-count: remove exactly one of two same-name nested siblings from the effective realization.
                 UnityEngine.Object.DestroyImmediate(observed.transform.GetChild(1).gameObject);
                 if (!EditorSceneManager.SaveScene(observed.scene, scenePath))
@@ -194,6 +213,7 @@ namespace Arkus.H1.Editor
                     productPath = "ObserveRealization:exact-source-derived-multiset-and-digest",
                     negative = "one-of-two-same-name-siblings-removed:projection.prefab-nested-lineage-missing",
                     extraNegative = "third-identical-source-derived-relation:projection.prefab-source-reference-unexpected",
+                    unresolvedNegative = "transient-material-reference:projection.prefab-reference-unresolved",
                     recovery = "stale-extra-derivative-rebuilt:relationship-digest-converged",
                     fixtureRoot = Root
                 }, true), new UTF8Encoding(false));
@@ -297,6 +317,7 @@ namespace Arkus.H1.Editor
             public string productPath;
             public string negative;
             public string extraNegative;
+            public string unresolvedNegative;
             public string recovery;
             public string fixtureRoot;
         }
