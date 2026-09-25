@@ -93,9 +93,10 @@ jobs:
           echo "ASSET_VAULT_SHA=${VAULT_SHA}" >> "${GITHUB_ENV}"
           printf '/_asset_vault/\n' >> .git/info/exclude
           test -z "$(git status --porcelain --untracked-files=all)"
+          test -z "$(git -C _asset_vault status --porcelain --untracked-files=all)"
           echo "Resolved private H1 asset vault at ${VAULT_SHA}"
 
-      - name: Verify H1-04 authority and mount private source slice
+      - name: Verify private baseline against accepted H1-04 authority
         shell: bash
         run: |
           set -euo pipefail
@@ -105,8 +106,82 @@ jobs:
             --vault-root _asset_vault \
             --candidate-sha "${TARGET_SHA}" \
             --vault-sha "${ASSET_VAULT_SHA}" \
-            --mount \
             --receipt artifacts/h1-asset-cloud/H1_ASSET_CLOUD_RECEIPT.json
+
+      - name: Prove private-vault failures are fail-closed
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expect_red() {
+            local label="$1"
+            shift
+            set +e
+            "$@" >"${RUNNER_TEMP}/${label}.out" 2>"${RUNNER_TEMP}/${label}.err"
+            local code=$?
+            set -e
+            if [[ ${code} -eq 0 ]]; then
+              echo "::error::negative control unexpectedly passed: ${label}"
+              exit 3
+            fi
+            grep -q 'H1_ASSET_VAULT_RED' "${RUNNER_TEMP}/${label}.err" || {
+              echo "::error::negative control did not fail through canonical vault barrier: ${label}"
+              cat "${RUNNER_TEMP}/${label}.err"
+              exit 3
+            }
+            echo "NEGATIVE_CONTROL_GREEN ${label} exit=${code}"
+          }
+
+          verifier=(python3 Tools/AssetVault/verify_h1_asset_vault.py --public-root . --vault-root _asset_vault --candidate-sha "${TARGET_SHA}" --vault-sha "${ASSET_VAULT_SHA}")
+
+          # 1. Changed source byte.
+          cp _asset_vault/h1/source-slice/MI_Plaster.mat "${RUNNER_TEMP}/MI_Plaster.mat.backup"
+          printf '\nasset-cloud-negative-control\n' >> _asset_vault/h1/source-slice/MI_Plaster.mat
+          expect_red changed_source_byte "${verifier[@]}"
+          cp "${RUNNER_TEMP}/MI_Plaster.mat.backup" _asset_vault/h1/source-slice/MI_Plaster.mat
+
+          # 2. Rebound Unity GUID.
+          cp _asset_vault/h1/source-slice/MI_Plaster.mat.meta "${RUNNER_TEMP}/MI_Plaster.mat.meta.backup"
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('_asset_vault/h1/source-slice/MI_Plaster.mat.meta')
+          t = p.read_text(encoding='utf-8')
+          t = t.replace('guid: 75fb52ef5e0f0ad40a28c36d06ecd99c', 'guid: 00000000000000000000000000000000')
+          p.write_text(t, encoding='utf-8')
+          PY
+          expect_red rebound_unity_guid "${verifier[@]}"
+          cp "${RUNNER_TEMP}/MI_Plaster.mat.meta.backup" _asset_vault/h1/source-slice/MI_Plaster.mat.meta
+
+          # 3. Missing accepted distribution payload without duplicating the large file.
+          mv _asset_vault/h1/distributions/quaternius-medieval-source.payload "${RUNNER_TEMP}/quaternius-medieval-source.payload"
+          expect_red missing_distribution "${verifier[@]}"
+          mv "${RUNNER_TEMP}/quaternius-medieval-source.payload" _asset_vault/h1/distributions/quaternius-medieval-source.payload
+
+          # 4. Manifest source-authority widening/rebinding.
+          cp _asset_vault/h1/H1_SOURCE_SLICE_MANIFEST.json "${RUNNER_TEMP}/H1_SOURCE_SLICE_MANIFEST.json.backup"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('_asset_vault/h1/H1_SOURCE_SLICE_MANIFEST.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          data['sourceDistributions'][0]['sourceId'] = 'unapproved-source'
+          p.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+          PY
+          expect_red rebound_source_id "${verifier[@]}"
+          cp "${RUNNER_TEMP}/H1_SOURCE_SLICE_MANIFEST.json.backup" _asset_vault/h1/H1_SOURCE_SLICE_MANIFEST.json
+
+          test -z "$(git -C _asset_vault status --porcelain --untracked-files=all)"
+
+      - name: Mount exact accepted SourceSlice for Unity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Tools/AssetVault/verify_h1_asset_vault.py \
+            --public-root . \
+            --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${ASSET_VAULT_SHA}" \
+            --mount
           test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx
           test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/UAL1.fbx.meta
 
@@ -166,7 +241,71 @@ jobs:
           print(f'H1_ASSET_CLOUD_UNITY_GREEN test={wanted} result={result} file={path}')
           PY
 
-      - name: Reconcile known GameCI package injection and remove private mount
+      - name: Reconcile deterministic GameCI package injection
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          target = os.environ['TARGET_SHA']
+          manifest_path = Path('Unity/ArkusUnity/Packages/manifest.json')
+          lock_path = Path('Unity/ArkusUnity/Packages/packages-lock.json')
+          allowed_paths = {str(manifest_path), str(lock_path)}
+
+          status = subprocess.check_output(
+              ['git', 'status', '--porcelain', '--untracked-files=no'], text=True
+          ).splitlines()
+          changed = {line[3:] for line in status if len(line) >= 4}
+          if changed != allowed_paths:
+              raise SystemExit(f'unexpected tracked Unity drift: {sorted(changed)}')
+
+          def baseline_json(path: Path):
+              raw = subprocess.check_output(['git', 'show', f'{target}:{path.as_posix()}'], text=True)
+              return json.loads(raw)
+
+          baseline_manifest = baseline_json(manifest_path)
+          current_manifest = json.loads(manifest_path.read_text())
+          expected_manifest = json.loads(json.dumps(baseline_manifest))
+          expected_manifest['dependencies'].update({
+              'com.unity.sdk.linux-arm64': '1.1.0',
+              'com.unity.sdk.linux-x86_64': '1.1.0',
+              'com.unity.toolchain.linux-x86_64-linux': '1.1.0',
+          })
+          if current_manifest != expected_manifest:
+              raise SystemExit('manifest drift is not the accepted GameCI Linux platform-package injection')
+
+          baseline_lock = baseline_json(lock_path)
+          current_lock = json.loads(lock_path.read_text())
+          expected_lock = json.loads(json.dumps(baseline_lock))
+          expected_lock['dependencies'].update({
+              'com.unity.sdk.linux-arm64': {
+                  'version': '1.1.0', 'depth': 0, 'source': 'registry',
+                  'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
+              'com.unity.sdk.linux-x86_64': {
+                  'version': '1.1.0', 'depth': 0, 'source': 'registry',
+                  'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
+              'com.unity.sysroot.base': {
+                  'version': '1.1.0', 'depth': 1, 'source': 'registry',
+                  'dependencies': {}, 'url': 'https://packages.unity.com'},
+              'com.unity.toolchain.linux-x86_64-linux': {
+                  'version': '1.1.0', 'depth': 0, 'source': 'registry',
+                  'dependencies': {'com.unity.sysroot.base': '1.1.0'}, 'url': 'https://packages.unity.com'},
+          })
+          if current_lock != expected_lock:
+              raise SystemExit('packages-lock drift is not the accepted GameCI Linux platform-package injection')
+
+          print('GAMECI_PACKAGE_DRIFT_RECONCILED paths=manifest.json,packages-lock.json')
+          PY
+
+          git restore --source="${TARGET_SHA}" -- \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json
+
+      - name: Remove private mount and prove public exact-SHA isolation
         if: always()
         shell: bash
         run: |
@@ -176,17 +315,18 @@ jobs:
 
           git restore --source="${TARGET_SHA}" -- \
             Unity/ArkusUnity/Packages/manifest.json \
-            Unity/ArkusUnity/Packages/packages-lock.json || true
+            Unity/ArkusUnity/Packages/packages-lock.json
 
           rm -rf _asset_vault
 
-          git diff --quiet "${TARGET_SHA}" -- || {
+          if ! git diff --quiet "${TARGET_SHA}" -- .; then
             echo '::error::tracked public tree differs from exact candidate after cleanup'
             git status --short
-            git diff -- "${TARGET_SHA}"
+            git diff "${TARGET_SHA}" -- .
             exit 3
-          }
+          fi
           test -z "$(git status --porcelain --untracked-files=all)"
+          echo 'H1_ASSET_CLOUD_ISOLATION_GREEN public tree restored to exact candidate'
 
       - name: Upload public-safe exact-SHA evidence only
         if: always()
