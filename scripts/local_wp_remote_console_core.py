@@ -334,6 +334,8 @@ class RemoteConsole:
                 row = json.loads(path.read_text(encoding="utf-8"))
             except (OSError, json.JSONDecodeError):
                 continue
+            if not isinstance(row, dict):
+                continue
             if row.get("completed_at") or row.get("abandoned_at"):
                 continue
             rows.append(row)
@@ -385,7 +387,7 @@ class RemoteConsole:
         self.send(f"✅ Decisión autenticada en el supervisor para el Worker de {row.get('wp') or self.current_wp}: {options[index]}")
 
     def handle_continue(self, query: dict, pr: int, sha: str, fail_count: int) -> None:
-        if self.proc is None or not self.campaign_id:
+        if not self.active or not self.campaign_id:
             self.answer_callback(query["id"], "No hay campaña local activa para esta autorización.", True)
             return
         pending_path = self._pending_continue_path()
@@ -407,10 +409,10 @@ class RemoteConsole:
         module = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = module
         spec.loader.exec_module(module)
-        module.fresh_offer = lambda created_at, now=None: True
+        module.core.fresh_offer = lambda created_at, now=None: True
         try:
             status = module.validate_current(pr, sha, fail_count)
-        except module.ReceiverError as exc:
+        except module.core.ReceiverError as exc:
             self.answer_callback(query["id"], f"Ya no es válido: {exc}", True)
             return
         if status == "already":

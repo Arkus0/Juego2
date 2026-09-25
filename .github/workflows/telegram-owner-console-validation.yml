@@ -6,17 +6,24 @@ on:
       - 'scripts/owner_control_auth.py'
       - 'scripts/local_wp_remote_console.py'
       - 'scripts/local_wp_remote_console_core.py'
+      - 'scripts/local_wp_recovery_policy.py'
+      - 'scripts/local_wp_autopilot_process.py'
+      - 'scripts/local_wp_autopilot_remote_base.py'
       - 'scripts/local_wp_autopilot.py'
+      - 'scripts/_local_wp_autopilot_core.py'
       - 'scripts/local_wp_autopilot_remote.py'
       - 'scripts/local_wp_worker_recovery.py'
       - 'scripts/local_wp_quota_recovery.py'
       - 'scripts/request_owner_decision.py'
       - 'scripts/test_local_wp_remote_console.py'
+      - 'scripts/_test_local_wp_remote_console_core.py'
       - 'scripts/test_local_wp_decision_ui.py'
       - 'scripts/test_local_wp_autopilot.py'
       - 'scripts/test_local_wp_worker_recovery.py'
       - 'scripts/test_local_wp_quota_recovery.py'
       - 'scripts/test_local_wp_quota_resume.py'
+      - 'scripts/test_local_wp_recovery_policy.py'
+      - 'scripts/test_telegram_continue_receiver.py'
       - 'scripts/launchers/windows/Arkus-Console.ps1'
       - '.github/workflows/telegram-owner-command.yml'
       - '.github/workflows/telegram-owner-console-validation.yml'
@@ -39,18 +46,29 @@ jobs:
           python -m py_compile \
             scripts/owner_control_auth.py \
             scripts/local_wp_autopilot.py \
+            scripts/_local_wp_autopilot_core.py \
             scripts/local_wp_remote_console.py \
             scripts/local_wp_remote_console_core.py \
+            scripts/local_wp_recovery_policy.py \
+            scripts/local_wp_autopilot_process.py \
+            scripts/local_wp_autopilot_remote_base.py \
             scripts/local_wp_autopilot_remote.py \
             scripts/local_wp_worker_recovery.py \
             scripts/local_wp_quota_recovery.py \
             scripts/request_owner_decision.py \
             scripts/test_local_wp_autopilot.py \
             scripts/test_local_wp_remote_console.py \
+            scripts/_test_local_wp_remote_console_core.py \
             scripts/test_local_wp_decision_ui.py \
             scripts/test_local_wp_worker_recovery.py \
             scripts/test_local_wp_quota_recovery.py \
-            scripts/test_local_wp_quota_resume.py
+            scripts/test_local_wp_quota_resume.py \
+            scripts/test_local_wp_recovery_policy.py \
+            scripts/test_telegram_continue_receiver.py
+      - name: Run recovery policy tests
+        run: python scripts/test_local_wp_recovery_policy.py
+      - name: Run owner continuation authority tests
+        run: python scripts/test_telegram_continue_receiver.py
       - name: Run offline autopilot tests
         run: python scripts/test_local_wp_autopilot.py
       - name: Run offline Worker recovery tests

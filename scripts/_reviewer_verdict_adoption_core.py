@@ -188,6 +188,21 @@ def repair_marker_exists(comments: list[dict[str, Any]], sha: str) -> bool:
     return False
 
 
+def repair_marker_after_verdict(comments: list[dict[str, Any]], sha: str,
+                                verdict_at: str) -> bool:
+    """Detect a canonical bot transition already completed for this FAIL cycle."""
+    for item in comments:
+        if (item.get("user") or {}).get("login") != "github-actions[bot]":
+            continue
+        fields = marker_fields(item.get("body") or "")
+        if ("ARKUS_AUTOMATION_V2" in (item.get("body") or "") and
+                fields.get("state") == "REPAIR_REQUIRED" and
+                fields.get("target sha", "").lower() == sha and
+                (item.get("created_at") or "") >= verdict_at):
+            return True
+    return False
+
+
 def fail_cycle(body: str) -> int:
     raw = body_field(body, "fail_cycle", required=False)
     if raw is None:
@@ -280,7 +295,7 @@ def adopt(pr_number: int, target_sha: str, review_id: str, expected_verdict: str
             if fail_cycle(body) != target_cycle:
                 body = set_fail_cycle(body, target_cycle)
                 update_pr_body(pr_number, body)
-            if not repair_marker_exists(comments, target_sha):
+            if not repair_marker_after_verdict(comments, target_sha, verdict["at"]):
                 post_comment(pr_number,
                     "ARKUS_AUTOMATION_V2\nState: REPAIR_REQUIRED\n"
                     f"Key: adopted-repair-required:{pr_number}:{target_sha}:{review_id}\n"
@@ -296,7 +311,18 @@ def adopt(pr_number: int, target_sha: str, review_id: str, expected_verdict: str
             "Detail: authoritative exact-SHA Reviewer PASS adopted from GitHub; PR body verdict text is non-authoritative.\n")
         return {"status": "adopted", "verdict": "PASS", "fail_cycle": fail_cycle(body)}
 
-    target_cycle = fail_cycle(body) + 1
+    already_transitioned = repair_marker_after_verdict(comments, target_sha, verdict["at"])
+    current_cycle = fail_cycle(body)
+    if already_transitioned:
+        # The bot transition proves that this FAIL was consumed. Count distinct
+        # owner-authored FAIL IDs to repair a lagging body without incrementing it.
+        accepted_fails = sum(row["verdict"] == "FAIL" and row["at"] <= verdict["at"]
+                             for row in verdicts)
+        target_cycle = max(current_cycle, accepted_fails)
+        if target_cycle < 1:
+            raise AdoptionError("REPAIR_REQUIRED exists without a reconstructible FAIL cycle")
+    else:
+        target_cycle = current_cycle + 1
     # The ledger is written first. If a later write is interrupted, rerunning the
     # same request reconciles body + REPAIR_REQUIRED to this recorded target cycle
     # instead of incrementing a second time.
@@ -304,9 +330,10 @@ def adopt(pr_number: int, target_sha: str, review_id: str, expected_verdict: str
         "ARKUS_LOCAL_AUTOPILOT\nState: REVIEW_VERDICT_ADOPTED\n"
         f"Target SHA: {target_sha}\nReview ID: {review_id}\nVerdict: FAIL\nFail cycle: {target_cycle}\n"
         "Detail: authoritative exact-SHA Reviewer FAIL adopted from GitHub; idempotent repair transition follows.\n")
-    body = set_fail_cycle(body, target_cycle)
-    update_pr_body(pr_number, body)
-    if not repair_marker_exists(comments, target_sha):
+    if current_cycle != target_cycle:
+        body = set_fail_cycle(body, target_cycle)
+        update_pr_body(pr_number, body)
+    if not repair_marker_after_verdict(comments, target_sha, verdict["at"]):
         post_comment(pr_number,
             "ARKUS_AUTOMATION_V2\nState: REPAIR_REQUIRED\n"
             f"Key: adopted-repair-required:{pr_number}:{target_sha}:{review_id}\n"

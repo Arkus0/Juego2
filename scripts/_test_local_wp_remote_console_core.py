@@ -139,6 +139,7 @@ class RemoteConsoleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             console = module.RemoteConsole(Path(tmp), Path(tmp) / "control", "token", 42)
             console.proc = object()
+            console.active = True
             console.campaign_id = "a" * 32
             query = {"id": "callback"}
             with patch.object(console, "answer_callback") as answer, patch.object(module._core, "gh") as gh_call:
@@ -281,6 +282,7 @@ class RemoteConsoleTests(unittest.TestCase):
             control = Path(tmp) / "control"
             console = module.RemoteConsole(Path(tmp), control, "supervisor-secret", 42)
             console.proc = object()
+            console.active = True
             console.current_wp = "H1-04"
             console.campaign_id = "a" * 32
             decision_id = "b" * 32
@@ -294,7 +296,10 @@ class RemoteConsoleTests(unittest.TestCase):
             path = control / "decisions" / f"{decision_id}.json"
             path.parent.mkdir(parents=True)
             path.write_text(json.dumps(row), encoding="utf-8")
-            with patch.object(console, "send"):
+            def github(*args, **_kwargs):
+                return {"number": 123, "state": "open", "body": "WP: WP-H1-04\n",
+                        "head": {"sha": sha}} if "pulls/123" in args[-1] else [[]]
+            with patch.object(console, "send"), patch.object(module._core, "gh", side_effect=github):
                 console.advertise_decisions()
             tampered = dict(row, options=["A", "WORKER-TAMPER"])
             path.write_text(json.dumps(tampered), encoding="utf-8")
@@ -309,6 +314,7 @@ class RemoteConsoleTests(unittest.TestCase):
             secret = "supervisor-secret"
             console = module.RemoteConsole(Path(tmp), control, secret, 42)
             console.proc = object()
+            console.active = True
             console.current_wp = "H1-04"
             console.campaign_id = "a" * 32
             decision_id = "b" * 32
@@ -322,12 +328,16 @@ class RemoteConsoleTests(unittest.TestCase):
             path = control / "decisions" / f"{decision_id}.json"
             path.parent.mkdir(parents=True)
             path.write_text(json.dumps(row), encoding="utf-8")
-            with patch.object(console, "send"):
+            def github(*args, **_kwargs):
+                return {"number": 123, "state": "open", "body": "WP: WP-H1-04\n",
+                        "head": {"sha": sha}} if "pulls/123" in args[-1] else [[]]
+            with patch.object(console, "send"), patch.object(module._core, "gh", side_effect=github):
                 console.advertise_decisions()
             with patch.object(console, "send"), patch.object(console, "answer_callback"), \
-                 patch.object(module._core, "gh") as gh_call:
+                 patch.object(module._core, "gh", side_effect=github) as gh_call:
                 console.handle_decision({"id": "callback-owner"}, decision_id, 1)
-            payload = gh_call.call_args.kwargs["input_json"]
+            payload = next(call.kwargs["input_json"] for call in gh_call.call_args_list
+                           if "input_json" in call.kwargs)
             client = payload["client_payload"]
             self.assertEqual(payload["event_type"], "arkus_owner_decision_local")
             self.assertTrue(auth.verify_owner_decision(

@@ -77,6 +77,80 @@ def _quota_decision_with_reached(payload: dict, now: int,
 # post-reset re-check without changing the accepted lifecycle implementation.
 autopilot.quota_decision = _quota_decision_with_reached
 
+_BASE_ROLE_SIDE_EFFECT_ALREADY_COMPLETE = _role_side_effect_already_complete
+
+
+def _protocol_fix_cycle_complete(prompt: str) -> bool:
+    """Prove completion of the exact PROTOCOL_FIX review cycle in ``prompt``.
+
+    A REVIEW_READY that predates the corresponding PROTOCOL_FIX is the input to
+    that review cycle, not evidence that its metadata repair completed.  Durable
+    completion therefore needs the exact Reviewer ID, its matching
+    PROTOCOL_FIX_STARTED marker, and a context-bound REVIEW_READY created after
+    both the verdict and that start marker.
+    """
+    pr_match = re.search(r"\bPR\s*#([1-9][0-9]*)", prompt, re.IGNORECASE)
+    sha_match = re.search(r"PRODUCT_SHA\s+([0-9a-f]{40})", prompt, re.IGNORECASE)
+    review_match = re.search(r"Reviewer ID\s+([0-9a-f]{32})", prompt, re.IGNORECASE)
+    if not pr_match or not sha_match or not review_match:
+        return False
+
+    pr = int(pr_match.group(1))
+    sha = sha_match.group(1).lower()
+    review_id = review_match.group(1).lower()
+    current = autopilot.gh_json("api", f"repos/{autopilot.REPO}/pulls/{pr}")
+    if ((current.get("head") or {}).get("sha") or "").lower() != sha:
+        return False
+
+    verdict = next((row for row in autopilot.reviewed_verdicts(pr)
+                    if row.get("id", "").lower() == review_id), None)
+    if (not verdict or verdict.get("sha", "").lower() != sha or
+            verdict.get("verdict") != "PROTOCOL_FIX" or not verdict.get("at")):
+        return False
+
+    started = next((row for row in reversed(autopilot.local_markers(pr))
+                    if row.get("state") == "PROTOCOL_FIX_STARTED" and
+                    row.get("target sha", "").lower() == sha and
+                    row.get("review id", "").lower() == review_id), None)
+    if not started:
+        return False
+    started_at = started.get("_created_at", "")
+    if not started_at or started_at < verdict["at"]:
+        return False
+
+    ready = autopilot.latest_marker(autopilot.markers(pr), "REVIEW_READY", sha)
+    ready_at = (ready or {}).get("_created_at", "")
+    return bool(ready and ready_at > verdict["at"] and ready_at > started_at and
+                autopilot.ready_context_matches(Path.cwd(), current, ready))
+
+
+def _role_side_effect_already_complete(role: str, prompt: str) -> bool:
+    if role == "protocol-fix":
+        try:
+            return _protocol_fix_cycle_complete(prompt)
+        except (autopilot.StopFlow, OSError, json.JSONDecodeError):
+            return False
+    return _BASE_ROLE_SIDE_EFFECT_ALREADY_COMPLETE(role, prompt)
+
+
+_ORIGINAL_REMOTE_CODEX_ROLE = remote_codex_role
+_IDEMPOTENT_REASONING_ROLES = {"fail-audit", "protocol-fix"}
+
+
+async def remote_codex_role(root: Path, state: Path, role: str, prompt: str, model: str,
+                            effort: str, schema: Path | None = None,
+                            assets_root: Path | None = None) -> str:
+    """Do not relaunch a reasoning role whose exact durable effect already exists."""
+    if role in _IDEMPOTENT_REASONING_ROLES and _role_side_effect_already_complete(role, prompt):
+        print(
+            f"{role} durable side effect already exists before role launch; no duplicate reasoning",
+            flush=True,
+        )
+        return ""
+    return await _ORIGINAL_REMOTE_CODEX_ROLE(
+        root, state, role, prompt, model, effort, schema, assets_root)
+
+
 _ORIGINAL_RUN_CANONICAL_ADOPTED = _run_canonical_adopted
 
 
@@ -93,8 +167,7 @@ async def _run_canonical_adopted(args: argparse.Namespace) -> None:
             frozen = autopilot.fields(current.get("body") or "").get("frozen candidate sha", "").lower()
             if autopilot.SHA_RE.fullmatch(frozen) and frozen == head:
                 def transitioned(candidate: dict, rows: list[dict[str, str]]) -> bool:
-                    if (autopilot.latest_marker(rows, "BLOCKED") or
-                            autopilot.latest_marker(rows, "HUMAN_ACTION_REQUIRED") or
+                    if (active_blocker(rows, frozen) or
                             autopilot.latest_marker(rows, "REPAIR_REQUIRED", frozen)):
                         return True
                     ready = autopilot.latest_marker(rows, "REVIEW_READY", frozen)
@@ -104,8 +177,7 @@ async def _run_canonical_adopted(args: argparse.Namespace) -> None:
                 if not transitioned(current, rows):
                     current, rows = await autopilot.wait_for_state(
                         pr["number"], transitioned)
-                if (autopilot.latest_marker(rows, "BLOCKED") or
-                        autopilot.latest_marker(rows, "HUMAN_ACTION_REQUIRED")):
+                if active_blocker(rows, frozen):
                     raise autopilot.StopFlow(
                         f"PR #{pr['number']} became blocked while awaiting post-Worker handoff")
 

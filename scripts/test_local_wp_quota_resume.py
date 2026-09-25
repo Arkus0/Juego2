@@ -114,7 +114,7 @@ class ShortQuotaResumeTests(unittest.IsolatedAsyncioTestCase):
         snapshot.assert_called_once()
 
     async def test_canonical_handoff_forces_adopt_then_restores_flag(self):
-        args = argparse.Namespace(adopt=False)
+        args = argparse.Namespace(adopt=False, root=".", wp=None)
         seen = []
 
         async def fake_main(received):
