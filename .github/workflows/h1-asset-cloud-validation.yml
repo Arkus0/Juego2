@@ -237,7 +237,8 @@ jobs:
           print(f'H1_ASSET_CLOUD_UNITY_GREEN test={wanted} result={result} file={path}')
           PY
 
-      - name: Stage and prove retained public evidence allowlist
+      - name: Stage and prove retained public evidence barrier
+        id: retained_evidence_gate
         shell: bash
         run: |
           set -euo pipefail
@@ -247,22 +248,38 @@ jobs:
           cp artifacts/h1-asset-cloud/H1_ASSET_CLOUD_RECEIPT.json "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_RECEIPT.json"
           cp artifacts/h1-asset-cloud/unity/editmode-results.xml "${PUBLIC_EVIDENCE}/unity/editmode-results.xml"
 
-          python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}"
+          scanner=(python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}" --private-root _asset_vault)
+          "${scanner[@]}"
 
-          cp _asset_vault/h1/source-slice/MI_Plaster.mat "${PUBLIC_EVIDENCE}/unity/private-leak.xml"
+          cp "${PUBLIC_EVIDENCE}/unity/editmode-results.xml" "${RUNNER_TEMP}/editmode-results.xml.clean"
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          import xml.etree.ElementTree as ET
+
+          result = Path('artifacts/h1-asset-cloud-public/unity/editmode-results.xml')
+          private = Path('_asset_vault/h1/source-slice/MI_Plaster.mat').read_bytes()[:192]
+          tree = ET.parse(result)
+          leak = ET.SubElement(tree.getroot(), 'h1-private-leak')
+          leak.set('encoding', 'base64')
+          leak.text = base64.b64encode(private).decode('ascii')
+          tree.write(result, encoding='utf-8', xml_declaration=True)
+          PY
+
           set +e
-          python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}" \
-            >"${RUNNER_TEMP}/leak-scan.out" 2>"${RUNNER_TEMP}/leak-scan.err"
+          "${scanner[@]}" >"${RUNNER_TEMP}/leak-scan.out" 2>"${RUNNER_TEMP}/leak-scan.err"
           code=$?
           set -e
           if [[ ${code} -eq 0 ]]; then
-            echo '::error::public evidence leak negative control unexpectedly passed'
+            echo '::error::retained-path private-content negative control unexpectedly passed'
             exit 3
           fi
           grep -q 'H1_ASSET_EVIDENCE_RED' "${RUNNER_TEMP}/leak-scan.err"
-          rm -f "${PUBLIC_EVIDENCE}/unity/private-leak.xml"
-          python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}"
-          echo 'H1_ASSET_LEAK_NEGATIVE_GREEN'
+          grep -q 'private source content retained in unity/editmode-results.xml' "${RUNNER_TEMP}/leak-scan.err"
+
+          cp "${RUNNER_TEMP}/editmode-results.xml.clean" "${PUBLIC_EVIDENCE}/unity/editmode-results.xml"
+          "${scanner[@]}"
+          echo 'H1_ASSET_LEAK_NEGATIVE_GREEN retained_path=unity/editmode-results.xml encoding=base64'
 
       - name: Reconcile deterministic GameCI package injection
         shell: bash
@@ -353,12 +370,12 @@ jobs:
           echo 'H1_ASSET_CLOUD_ISOLATION_GREEN public tree restored to exact candidate'
 
       - name: Upload retained public-safe exact-SHA evidence only
-        if: always()
+        if: ${{ success() && steps.retained_evidence_gate.outcome == 'success' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: h1-asset-cloud-${{ env.TARGET_SHA }}
           path: |
             artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_RECEIPT.json
             artifacts/h1-asset-cloud-public/unity/editmode-results.xml
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 30
