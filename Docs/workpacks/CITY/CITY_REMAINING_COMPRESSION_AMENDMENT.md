@@ -1,8 +1,12 @@
 # CITY remaining-work compression amendment
 
-Status: PLANNING AMENDMENT / REVIEW CANDIDATE
+Status: COMPLETE / ACCEPTED
 Class: DOCS_ONLY / NON_PRODUCT
-Base main SHA: `b4c20c56f294233e165506e8532962034407fa18`
+Accepted candidate: `8a520017f27760b4cf23a439114af681e167144d`
+Canonical PR: `#213`
+Owner acceptance: `2026-09-25`
+Implementation merge: `049988990da8fbba32178f1143f42116df8f84b0`
+Base main at PR creation: `b4c20c56f294233e165506e8532962034407fa18`
 Scope: `WP-CITY-04`, `WP-CITY-07` and `WP-CITY-08` only.
 
 ## Purpose
