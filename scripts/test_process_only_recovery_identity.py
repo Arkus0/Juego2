@@ -24,7 +24,7 @@ def load(name: str, filename: str):
 
 
 process = load("process_recovery_identity_test", "local_wp_autopilot_process.py")
-adoption = load("process_recovery_identity_adoption_test", "reviewer_verdict_adoption.py")
+adoption = process.adoption
 
 SHA = "a" * 40
 REVIEW_A = "1" * 32
