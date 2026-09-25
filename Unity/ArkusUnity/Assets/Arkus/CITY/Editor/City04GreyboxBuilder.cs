@@ -99,6 +99,18 @@ namespace Arkus.CITY.Editor
             Scenic("Ensanche across Arroyo", new Vector2(105, 148), new Vector3(20, 7, 12));
             Scenic("Orilla-sur continuation", new Vector2(38, -81), new Vector3(20, 7, 8));
             Scenic("Puerto across water", new Vector2(-28, -42), new Vector3(16, 7, 9));
+            // Soft context is deliberately non-colliding. It suggests later
+            // streets across the cuts without adding a CITY-01 playable edge.
+            SoftGround("commercial continuation", new Vector2(257, 65), new Vector3(34, 0.2f, 57));
+            Ribbon("NON-PLAYABLE W04 commercial continuation", new Vector2(195, 70), new Vector2(255, 68), 5, road);
+            SoftGround("upper future", new Vector2(152, 167), new Vector3(32, 0.2f, 28));
+            Ribbon("NON-PLAYABLE upper visual continuation", new Vector2(150, 145), new Vector2(156, 169), 2.8f, historic);
+            SoftGround("Ensanche beyond X5", new Vector2(99, 146), new Vector3(30, 0.2f, 23));
+            Ribbon("NON-PLAYABLE Ensanche visual continuation", new Vector2(90, 122), new Vector2(100, 149), 2.5f, historic);
+            SoftGround("Orilla-sur beyond X1", new Vector2(42, -91), new Vector3(29, 0.2f, 25));
+            Ribbon("NON-PLAYABLE Orilla visual continuation", new Vector2(42, -64), new Vector2(43, -93), 2.8f, historic);
+            Box("NON-PLAYABLE water beyond confluence", new Vector3(-39, -1.7f, -20),
+                new Vector3(38, 0.05f, 36), water, false);
 
             GameObject player = new GameObject("CITY-04 human traversal probe (Play mode)");
             Vector2 start = new Vector2(80, 35);
@@ -381,6 +393,13 @@ namespace Arkus.CITY.Editor
         {
             Box("NON-PLAYABLE SCENIC " + name, At(point, size.y / 2), size, scenic, false);
             Label("future: " + name, point, 1.5f, Color.black);
+        }
+
+        private static void SoftGround(string name, Vector2 point, Vector3 size)
+        {
+            Box("NON-PLAYABLE soft ground " + name,
+                new Vector3(point.x, City04TraversalProbe.GroundHeight(point) - 0.2f, point.y),
+                size, scenic, false);
         }
     }
 }
