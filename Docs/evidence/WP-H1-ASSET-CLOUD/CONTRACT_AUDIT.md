@@ -58,6 +58,20 @@ The repair therefore:
 
 These repairs do not weaken or alter the Unity/source oracle established earlier in the run.
 
+## Repair from independent review #5313493501
+
+The review of candidate `4c0186091b08f5ec4ce801f49cecc08ca7be67c6` accepted the vault/hash/GUID/Unity/cleanup path and isolated one remaining causal blocker: scanner RED did not hard-gate the final uploader, and the retained-content oracle proved only file shape rather than private-source absence.
+
+The repair keeps that scope narrow:
+
+- the retained scanner now accepts exactly the two uploadable paths and requires the private vault as its comparison oracle;
+- it derives high-entropy raw/base64/hex/XML-escaped markers from the actual private SourceSlice/distribution payloads and rejects retained files containing those private-source markers even when the retained XML is well formed;
+- the negative control now contaminates the exact retained `unity/editmode-results.xml` path with a valid XML element carrying base64-encoded private source content, and requires the scanner to fail specifically for private content on that path;
+- the clean retained XML is restored and rescanned GREEN before cleanup;
+- the uploader is conditioned on overall success plus the explicit `retained_evidence_gate` step outcome, and missing upload files are an error rather than a warning.
+
+Therefore a RED retained-evidence barrier cannot fall through into artifact upload, and the falsification exercises the same exact path the uploader would retain.
+
 ## Reviewer falsification targets
 
 FAIL the candidate if any of the following holds after setup is available:
@@ -70,6 +84,7 @@ FAIL the candidate if any of the following holds after setup is available:
 6. Cleanup can leave tracked public-tree drift.
 7. Later H1 use depends on moving vault `main` rather than the frozen vault SHA.
 8. Raw GameCI output can bypass the retained-evidence staging boundary.
+9. A retained-evidence scanner failure can still reach the artifact uploader.
 
-WORKER_PRE_REVIEW_FINDINGS_FIXED: 4  
-WORKER_PRE_REVIEW_EVIDENCE: pinned private baseline + local H1 vault GREEN + run 36094543131 Unity 12/12 + exact-SHA workflow + fail-closed negative controls + retained-artifact leak gate + root-safe cleanup
+WORKER_PRE_REVIEW_FINDINGS_FIXED: 5  
+WORKER_PRE_REVIEW_EVIDENCE: pinned private baseline + local H1 vault GREEN + run 36094543131 Unity 12/12 + exact-SHA workflow + fail-closed source controls + content-aware retained-path leak gate + upload success precondition + root-safe cleanup
