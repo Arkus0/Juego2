@@ -12,7 +12,7 @@ namespace Arkus.H1.Editor
 {
     public static partial class H1SceneProjection
     {
-        internal static string ExecuteReconciliation(string payload)
+        public static string ExecuteReconciliation(string payload)
         {
             ReconciliationRequest request;
             try
