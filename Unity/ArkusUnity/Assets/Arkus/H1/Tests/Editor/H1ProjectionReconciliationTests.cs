@@ -34,7 +34,7 @@ namespace Arkus.H1.Editor.Tests
         public void TearDown() => DeleteGenerated();
 
         [Test]
-        public void EffectiveScene_MixedManagedAndUnmanagedDrift_RemainsObservableWithoutStrictFalseGreen()
+        public void EffectiveScene_MixedManagedAndUnmanagedDrift_RemainsObservableAndRematerializationRestoresParity()
         {
             var materialA = AcceptedMaterial(AcceptedMaterialAGuid, AcceptedMaterialLocalFileId);
             var materialB = AcceptedMaterial(AcceptedMaterialBGuid, AcceptedMaterialLocalFileId);
@@ -88,6 +88,28 @@ namespace Arkus.H1.Editor.Tests
             Assert.That(reconciled.observation.unmanagedPaths, Does.Contain("Loose Unmanaged"));
             Assert.That(reconciled.observation.diagnostics.Select(value => value.code), Does.Contain("projection.unmanaged-scene-member"));
             Assert.That(reconciled.observation.manifestGraphDigest, Is.Not.EqualTo(reconciled.observation.graphDigest));
+
+            var rematerialized = ExecuteStrict("materialize", plan);
+            Assert.That(rematerialized.errorCode, Is.Empty, "canonical-authoritative rematerialization must repair effective drift through the accepted H1-05 path");
+            Assert.That(rematerialized.observation.active, Is.True);
+            Assert.That(rematerialized.observation.inputDigest, Is.EqualTo(plan.inputDigest));
+
+            var repaired = ExecuteReconciliation();
+            Assert.That(repaired.errorCode, Is.Empty);
+            Assert.That(repaired.observation.active, Is.True);
+            Assert.That(repaired.observation.nodes.Select(value => value.objectId).OrderBy(value => value, StringComparer.Ordinal).ToArray(),
+                Is.EqualTo(new[] { "facade.potes", "workshop.potes" }),
+                "rematerialization must remove added managed state and restore the missing canonical workshop");
+            Assert.That(repaired.observation.unmanagedPaths, Is.Empty, "rematerialization must remove unmanaged drift from the managed scene scope");
+            Assert.That(repaired.observation.diagnostics.Select(value => value.code), Does.Not.Contain("projection.unmanaged-scene-member"));
+            Assert.That(repaired.observation.graphDigest, Is.EqualTo(repaired.observation.manifestGraphDigest));
+            Assert.That(repaired.observation.realizationDigest, Is.EqualTo(repaired.observation.manifestRealizationDigest));
+
+            var repairedFacade = repaired.observation.nodes.Single(value => value.objectId == "facade.potes");
+            var canonicalFacade = plan.nodes.Single(value => value.objectId == "facade.potes");
+            Assert.That(repairedFacade.positionMm.x, Is.EqualTo(canonicalFacade.positionMm.x));
+            Assert.That(repairedFacade.componentRows, Does.Contain(
+                RendererSchema + "|enabled=true|material=" + materialA.path + "|" + materialA.guid + "|" + materialA.fileId));
         }
 
         private static ProjectionPlan BuildPlan(AssetIdentity material)
@@ -253,7 +275,8 @@ namespace Arkus.H1.Editor.Tests
         [Serializable] private sealed class ReconciliationObservation
         {
             public bool active; public string inputDigest; public string canonicalHash; public string catalogueFingerprint;
-            public string manifestGraphDigest; public string graphDigest; public ReconciliationNode[] nodes; public string[] unmanagedPaths; public ReconciliationDiagnostic[] diagnostics;
+            public string manifestGraphDigest; public string manifestRealizationDigest; public string graphDigest; public string realizationDigest;
+            public ReconciliationNode[] nodes; public string[] unmanagedPaths; public ReconciliationDiagnostic[] diagnostics;
         }
         [Serializable] private sealed class ReconciliationNode { public string objectId; public ProjectionVector positionMm; public string[] componentRows; }
         [Serializable] private sealed class ReconciliationDiagnostic { public string code; public string subject; }
