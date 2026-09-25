@@ -445,7 +445,7 @@ namespace Arkus.H1.Editor
 
         private static PrefabRelationship[] CollectRelationships(GameObject owner, GameObject originalSource, string originalSourcePath)
         {
-            var rows = new Dictionary<string, PrefabRelationship>(StringComparer.Ordinal);
+            var rows = new List<PrefabRelationship>();
             AddRelationship(rows, "variant-base", "", originalSource);
             foreach (var transform in owner.GetComponentsInChildren<Transform>(true))
             {
@@ -469,7 +469,7 @@ namespace Arkus.H1.Editor
             }
             if (rows.Count > MaximumRelationships)
                 throw new InvalidDataException("projection.prefab-relationship-limit");
-            return rows.Values.OrderBy(RelationshipKey, StringComparer.Ordinal).ToArray();
+            return rows.OrderBy(RelationshipKey, StringComparer.Ordinal).ToArray();
         }
 
         // Compare evaluated references, not only AssetDatabase's transitive dependencies:
@@ -481,26 +481,36 @@ namespace Arkus.H1.Editor
 
         private static void ValidateSourceRelationships(GameObject realized, GameObject source, string sourcePath, PrefabRelationship[] realizedRows)
         {
-            var observed = new HashSet<string>(realizedRows.Select(RelationshipKey), StringComparer.Ordinal);
+            var observed = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (var row in realizedRows)
+            {
+                var key = RelationshipKey(row);
+                observed[key] = observed.TryGetValue(key, out var count) ? count + 1 : 1;
+            }
             foreach (var row in CollectRelationships(source, source, sourcePath))
             {
-                if (row.kind == "variant-base" || observed.Contains(RelationshipKey(row))) continue;
+                if (row.kind == "variant-base") continue;
+                var key = RelationshipKey(row);
+                if (observed.TryGetValue(key, out var count) && count > 0)
+                {
+                    observed[key] = count - 1;
+                    continue;
+                }
                 throw new InvalidDataException(row.kind == "nested-prefab"
                     ? "projection.prefab-nested-lineage-missing" : "projection.prefab-source-reference-missing");
             }
         }
 
-        private static void AddRelationship(IDictionary<string, PrefabRelationship> rows, string kind, string relativePath, UnityEngine.Object asset)
+        private static void AddRelationship(ICollection<PrefabRelationship> rows, string kind, string relativePath, UnityEngine.Object asset)
         {
             if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset, out string guid, out long fileId)) return;
             var path = AssetDatabase.GetAssetPath(asset);
             if (string.IsNullOrEmpty(path)) return;
-            var row = new PrefabRelationship
+            rows.Add(new PrefabRelationship
             {
                 kind = kind, relativeObjectPath = relativePath, assetPath = path, assetGuid = guid,
                 localFileId = fileId.ToString(CultureInfo.InvariantCulture), typeName = asset.GetType().FullName ?? asset.GetType().Name
-            };
-            rows[RelationshipKey(row)] = row;
+            });
         }
 
         private static string RelativePath(Transform root, Transform target)
