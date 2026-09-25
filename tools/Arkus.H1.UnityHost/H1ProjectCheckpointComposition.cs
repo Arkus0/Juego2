@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Arkus.Game.Authoring;
 using Arkus.Game.World;
 using Arkus.Harness.Projection;
 using Arkus.Harness.Protocol;
