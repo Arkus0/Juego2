@@ -62,12 +62,14 @@ def write_obj(name, geom, elevation):
     count = 0
     for tri in triangles(geom):
         for u, v in tri:
-            lines.append(f"v {u:.6f} {elevation(u, v):.6f} {v:.6f}")
-        # x=U,z=V; reverse orientation to make the visible face point up.
+            # Unity's OBJ importer reverses the OBJ Z axis. Negate V here so
+            # the imported scene still has x=U, z=V in the planning frame.
+            lines.append(f"v {u:.6f} {elevation(u, v):.6f} {-v:.6f}")
+        # OBJ Z is negated; Unity importer restores both the axis and winding.
         ax, ay = tri[0]
         bx, by = tri[1]
         cx, cy = tri[2]
-        face = (1, 2, 3) if (bx - ax) * (cy - ay) - (by - ay) * (cx - ax) < 0 else (3, 2, 1)
+        face = (3, 2, 1) if (bx - ax) * (cy - ay) - (by - ay) * (cx - ax) < 0 else (1, 2, 3)
         lines.append("f " + " ".join(str(count + i) for i in face))
         count += 3
     path = MESHES / (name + ".obj")
