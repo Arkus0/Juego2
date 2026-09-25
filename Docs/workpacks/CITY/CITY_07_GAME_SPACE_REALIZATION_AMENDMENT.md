@@ -112,6 +112,33 @@ At minimum:
 7. show that any local geometry changes stay inside the accepted CITY-05 bands and do not mutate graph/site/access/boundary semantics;
 8. record any desirable improvement that exceeds CITY-07 authority as an owner-tagged upstream amendment need rather than implementing it silently.
 
+This representative chain is the minimum positive realization example. It is **not** sufficient evidence for material keeper changes elsewhere in the retained seed.
+
+## Differential preservation of CITY-04 physical conclusions
+
+Because CITY-07 may materially alter widths, junction shaping, slopes, retaining walls, setbacks, sightlines, threshold geometry and other local form, every material keeper geometry change must declare its possible effect on the physical conclusions inherited from CITY-04.
+
+Maintain a keeper-change impact ledger. For every material change, record:
+
+1. the changed element(s) and bounded spatial area;
+2. the CITY-04 conclusion families that could plausibly be affected;
+3. for each affected family, the bounded measurement or human inspection repeated on the keeper candidate and its result; or
+4. for each unaffected family, a concrete invariant witness showing why the conclusion cannot have changed.
+
+The impact review must at least consider CITY-04 conclusions about travel time and route choice/alternates; clear widths and crossing separation; grade/elevation/retaining treatment; sightlines and landmark/route/service readability; CITY-02 depth/access promises; CITY-05 parcel/building envelope, setback/frontage and clearance; CITY-06 thresholds/interior-exterior transitions; expansion seams and perceived continuation/scale; and quiet/busy spatial contrast where relevant.
+
+Revalidation is **differential**, not a full replay. Repeat only the measurement or inspection that the changed geometry can affect. Related edits may be batched and checked once on the final keeper candidate. If no affected conclusion is claimed, the invariant witness must be strong enough to make that claim falsifiable — for example unchanged route/path domain, unchanged measured width/grade/separation, unchanged sightline occluder domain, unchanged threshold geometry or unchanged seam geometry.
+
+Remaining inside a CITY-05 planning band is a necessary constraint but is not, by itself, proof that a CITY-04 conclusion remained true. A legal width change can still change travel behavior, a legal setback can still alter a sightline, and a legal wall/grade adjustment can still alter route readability or movement comfort.
+
+CITY-07 cannot PASS while any material keeper geometry change lacks either affected-conclusion remeasurement/reinspection or a reviewable invariant witness. If the bounded check falsifies an accepted predecessor conclusion, route it to the causal owner. If accepted semantics remain true but CITY-07's own realization caused the failure, repair it in CITY-07.
+
+### Compatibility with later asset-rich human validation
+
+`CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md` is a separate pending proposal at the time of this amendment. Until it is independently accepted, merged and DocSynced, the existing CITY-04 physical-verdict contract remains authoritative.
+
+If that later amendment becomes authoritative before CITY-07 execution, do **not** create two competing playtest systems. Its asset-rich CITY-07 scenario/timing campaign becomes the execution mechanism for the overlapping physical conclusion families on the final keeper candidate and therefore subsumes the corresponding remeasurement duties above. Keep the impact ledger as a coverage map linking each material keeper change to the later measurement/inspection that discharges it; only conclusion families not covered by that campaign still require a bounded recheck or invariant witness.
+
 This is new CITY-07 evidence. It is not a rerun of CITY-04 topology falsification or H1 bridge conformance.
 
 ## Failure routing
@@ -145,6 +172,8 @@ FAIL if CITY-07:
 - treats every CITY-04 cube/slab/surface as keeper geometry merely because the greybox passed;
 - keeps accidental stacked road/ground/collider geometry hidden beneath final assets;
 - uses polish to conceal z-fighting, duplicate traversable surfaces or collision contradiction;
+- lets a material keeper geometry change outside the representative chain escape CITY-04 conclusion-impact classification;
+- assumes an affected CITY-04 conclusion remains true solely because the changed geometry is still inside an accepted CITY-05 band;
 - changes a route, crossing, site, hard boundary, access role or elevation class without upstream authority;
 - adopts a CITY-09 structural proposal by implication;
 - turns Unity scene state into CITY semantic authority;
@@ -156,8 +185,8 @@ The remaining CITY chain becomes:
 
 ```text
 CITY-04  exact-seed greybox + physical falsification
-  -> CITY-07  semantic-faithful keeper game-space realization
+  -> CITY-07  semantic-faithful keeper game-space realization + differential preservation of affected physical conclusions
   -> CITY-08  public-authoring reuse / cost closure
 ```
 
-CITY-04 tells us whether the planned seed physically works. CITY-07 makes that valid seed worth shipping and playing in third person. CITY-08 then proves that further production over the keeper can be authored efficiently through the accepted public stack.
+CITY-04 tells us whether the planned seed physically works. CITY-07 makes that valid seed worth shipping and playing in third person while proving that its lawful local tuning did not silently invalidate the physical conclusions it inherited. CITY-08 then proves that further production over the keeper can be authored efficiently through the accepted public stack.
