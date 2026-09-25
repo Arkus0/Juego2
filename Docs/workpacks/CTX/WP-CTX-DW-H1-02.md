@@ -1,85 +1,116 @@
-# WP-CTX-DW-H1-02 — H1 selective-adoption validation
+# WP-CTX-DW-H1-02 — selective-adoption validation + H1-07+ disposition
 
-Status: **PLANNED / DORMANT UNTIL PREREQUISITES**  
+Status: **ACTIVE / IN_PROGRESS**  
 Class: **NON-PRODUCT-FOUNDATIONAL / CROSS-TRACK ADOPTION VALIDATION**  
 Execution: **REMOTE_OK**  
 Depends on: accepted `WP-CTX-DW-H1-01` + accepted `WP-H1-05` + accepted `WP-H1-06`  
-Blocks: no H1 product workpack; recommended checkpoint before H1-07 in a strictly sequential owner flow
+Blocks: no H1 product workpack; informs bounded `USE / OPTIONAL / NOT_MATERIAL` routing for `WP-H1-07+`
+
+Baseline SHA: `159b85f8352ca5df2aa5b3c714ad5dc94b76d64d`.
 
 ## Objective
 
-Validate selective CTX→DW adoption on two real and materially different H1 consumers, then publish bounded guidance for H1-07+ without turning DW into a blanket requirement or weakening CTX/source authority.
+Validate whether the accepted H1→DW projection is actually useful across the two materially different accepted H1 consumer shapes (`WP-H1-05` managed-scene publication and `WP-H1-06` asset/prefab realization) without hiding blockers, source authority or CTX-mandated reads, then publish bounded routing guidance for H1-07+.
 
-`WP-H1-05` provides the first eligible real observation around managed-scene/catalogue use. `WP-H1-06` provides the deliberately different asset/prefab relation shape. This WP consumes their accepted evidence; it does not create shadow duplicate Workers or replay those workpacks merely to manufacture metrics.
+This workpack evaluates accepted artifacts. It does **not** create duplicate shadow H1-05/H1-06 Workers, rerun physical Unity merely to manufacture context metrics, or expand the H1-04 projection to cover later product semantics.
 
-## Central question
+## Authority boundary
 
-Did the accepted H1 projection materially improve discovery/navigation for real H1 work while preserving blocker discoverability, source authority, provenance and correct abstention?
+For represented H1 catalogue/source facts:
 
-A valid answer may be selective. `USE`, `OPTIONAL` and `NOT_MATERIAL` are all legitimate outcomes by claim.
+```text
+accepted H1-04 authority
+        ↓ derived/current
+accepted WP-CTX-DW-H1-01 projection
+        ↓ selective navigation only
+CTX-routed Worker/Reviewer
+```
+
+For product truth:
+
+```text
+H1 workpack contract + accepted product evidence/code/oracle
+        > DW routing/navigation advice
+```
+
+For process/routing:
+
+```text
+accepted CTX mandatory-read / effective-read / escalation authority
+        > DW materiality advice
+```
+
+A `USE` classification never makes DW product-authoritative and never cancels an authoritative source-open or a CTX-mandated read.
 
 ## Owned guarantees
 
-- real H1-05 and H1-06 observations are evaluated against the current accepted projection identity/lifecycle;
-- any `USE` observation proves the consumed projection was current and GREEN at the time;
-- decision-critical projected facts remain source-open through provenance;
-- CTX mandatory reads/escalation cannot be cancelled by DW materiality advice;
-- at least two materially different structured query shapes are evaluated, including scene/catalogue identity and asset/prefab relation use;
-- correct DW abstention remains available where structured knowledge adds no causal value;
-- stale, contradictory or incomplete projection state routes to rebuild/source-open/fail-closed rather than being trusted;
-- context/cognitive-load benefit is measured only from real accepted artifacts and never outranks correctness or blocker discovery;
-- defects are routed to the CTX↔DW projection/routing owner unless they genuinely falsify an H1 product guarantee.
+- consume the accepted H1-05 and H1-06 artifacts as the two real observation shapes;
+- verify the exact accepted H1-01 projection lifecycle/identity is current before any `USE` admission;
+- derive routing from capabilities actually represented by that projection, not from H1/domain labels or free text;
+- distinguish full coverage (`USE`), partial navigation value (`OPTIONAL`) and no material projection value (`NOT_MATERIAL`);
+- preserve every product-evidence / mandatory-read source required by the active claim;
+- require source-open provenance for every admitted projected fact used by the observation;
+- record bounded navigation/context effects without turning token savings into product acceptance evidence;
+- publish an H1-07+ disposition that remains claim-shaped rather than a blanket H1 default;
+- keep the mandatory H1-GATE fresh public-client trial private-context free.
 
 ## Explicitly not owned
 
-- H1-05 or H1-06 product acceptance;
-- universal usefulness of DW for H1;
-- model-performance claims;
-- changes to H1-07+ product semantics;
-- the H1-GATE fresh public-client trial;
-- H2 public/external knowledge portability.
+- H1-04 source/catalogue correctness or source adoption;
+- H1-05 scene publication semantics;
+- H1-06 prefab/source-derived relationship equality;
+- H1-07 component adapter completeness or field round-trip truth;
+- expansion of the accepted H1-01 projection schema merely to improve adoption scores;
+- generic arbitrary-domain CTX↔DW portability;
+- H2 public/external knowledge portability;
+- physical Unity re-execution of accepted H1-05/H1-06.
 
 ## Work
 
-1. Collect the accepted H1-05 and H1-06 task/review artifacts needed to reconstruct their material information routes.
-2. Bind every DW observation to the exact accepted/current H1 projection identity from `WP-CTX-DW-H1-01`.
-3. Evaluate at least one managed-scene/catalogue-identity query and one source-asset/prefab-relation query.
-4. Record whether each concrete claim routed `USE`, `OPTIONAL` or `NOT_MATERIAL`, plus any authoritative source escalation.
-5. Confirm decision-critical DW facts source-open correctly and CTX mandatory reads were preserved.
-6. Compare irrelevant initial context/cognitive load against the corresponding authority-first route using repository-derived artifacts, not subjective prose alone.
-7. Exercise stale/contradictory projection handling on the same routing boundary.
-8. Publish a bounded H1-07+ adoption disposition: where DW is likely useful, where it is optional, and where abstention is the default.
-9. Record any projection/routing residuals without modifying H1 product contracts to make CTX↔DW appear successful.
+1. Freeze accepted identities for H1-01 projection lifecycle, H1-05 and H1-06.
+2. Exercise the accepted projection itself against representative catalogue/source queries used by both accepted consumer shapes.
+3. Compare projection-represented capabilities with each claim's required capability set.
+4. Preserve claim-specific mandatory authority/evidence reads independently of DW advice.
+5. Record bounded navigation byte/read effects for admitted `USE` queries.
+6. Prove `USE` becomes inadmissible when lifecycle currentness is false.
+7. Prove adding domain labels/free text or undeclared synthetic capabilities cannot manufacture `USE`.
+8. Prove partial projection coverage cannot close a product claim or hide its product oracle.
+9. Publish H1-07+ guidance for catalogue/source identity, mixed component/reference claims, component/effective-runtime claims and H1-GATE.
+10. Add exact-SHA remote verification and adversarial controls.
+
+## Classification contract
+
+For one active claim, let `R` be its declared material capability requirements and `P` the capabilities actually represented by the current accepted H1 projection.
+
+- `USE`: lifecycle is current, `R` is non-empty, and every requirement in `R` is represented by `P`. Projected answers must still source-open to accepted authority.
+- `OPTIONAL`: some but not all requirements in `R` are represented by `P`, or a would-be `USE` route loses lifecycle currentness. DW may help navigate but cannot close the claim.
+- `NOT_MATERIAL`: no material requirement in `R` is represented, or the claim is explicitly isolated from private context (the mandatory H1-GATE public-client trial).
+
+The classification does not depend on workpack name, domain label, descriptive prose, or fixture expected result.
 
 ## Acceptance
 
-PASS requires:
+PASS requires all of the following:
 
-- both distinct real consumer shapes are represented by accepted evidence rather than fixtures pretending to be H1-05/H1-06;
-- no material blocker/source read available to the authority-first route becomes undiscoverable through the selective route;
-- `USE` is observed only against a current/complete/provenance-valid projection;
-- at least one source-open path is demonstrated from a projected fact or relation used in a material decision;
-- CTX routing authority wins any conflict with DW advice;
-- stale/contradictory projection state does not remain silently usable;
-- the result is allowed to conclude selective/limited usefulness rather than forcing broad adoption;
-- H1-07+ can still proceed authority-first even if the adoption result is weak or mixed.
+- both H1-05 and H1-06 are consumed from accepted evidence, not replayed shadow executions;
+- at least one real accepted observation demonstrates useful source-open `USE` navigation and at least one demonstrates correct abstention/partial coverage;
+- `USE` is mechanically gated by the exact current H1-01 lifecycle identity;
+- H1-05 scene/publication truth and H1-06 relationship-multiset truth remain outside the projection and remain discoverable through their accepted evidence;
+- CTX/product mandatory reads are preserved for every case regardless of DW classification;
+- bounded context/navigation measurements are reported as routing evidence only, never product correctness;
+- H1-07 guidance is selective: catalogue/source/component-schema inventory may use current DW navigation, mixed component/reference claims remain partial, and effective adapter/field/runtime truth stays source/product authoritative;
+- H1-GATE's mandatory fresh public-client trial is classified `NOT_MATERIAL` for Juego2-private CTX/DW context;
+- causal controls turn RED for stale lifecycle, hidden mandatory reads, capability inflation and broad H1-label-based adoption;
+- no accepted H1 product dependency is rewritten to depend on this workpack or DW.
 
 ## Negative gates
 
-FAIL if H1-05/06 are rerun as shadow experiments solely to obtain nicer metrics, if a compact/projection route hides a blocker or mandatory read, if utility is inferred from a self-declared fixture answer, if context savings override correctness, or if the WP converts DW into a mandatory H1 dependency without causal evidence.
+FAIL if the evaluation invents duplicate H1-05/H1-06 executions, if a fixture can declare its own coverage result, if `USE` remains legal on stale lifecycle, if DW advice can remove a mandatory authority/product read, if product-only semantics are treated as projection-covered, if domain labels/free text manufacture adoption, if H1-07+ receives blanket `USE`, or if private CTX/DW context is allowed into the mandatory H1-GATE fresh-client trial.
 
-## Deliverable
+## Evidence shape
 
-Publish a reviewed adoption disposition under `Docs/evidence/WP-CTX-DW-H1-02/` that records:
-
-- exact projection identity/currentness;
-- H1-05 and H1-06 observation anchors;
-- route classifications and source escalations;
-- blocker-discoverability result;
-- bounded context/cognitive-load observations;
-- residuals/limitations;
-- default guidance for H1-07+.
+Remote deterministic evidence only: accepted predecessor identity check, one focused test over the real H1-01 projection, accepted H1-05/H1-06 claim anchors, capability-based routing cases, source-open/mandatory-read audit, bounded navigation measurements, H1-07+ disposition and adversarial controls.
 
 ## PASS consequence
 
-H1-07+ receives evidence-based routing defaults rather than blanket DW adoption. This WP also becomes an input to future H2 planning. If H2 later chooses to publish/version CTX/DW as part of an external knowledge boundary, the H2 planner must author a separate `CTX-DW-H2-*` portability workpack at that time; this WP does not predefine or pre-accept it.
+H1-07+ may consume the published claim-shaped routing defaults when convenient. H1 product progress remains independent: a missing/stale/unhelpful projection falls back to authoritative sources rather than blocking the product WP.
