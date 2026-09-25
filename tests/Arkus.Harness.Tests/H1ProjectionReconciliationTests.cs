@@ -79,7 +79,7 @@ namespace Arkus.Harness.Tests
             var canonicalHash = CanonicalWorldStateCodec.ComputeContentHash(canonical);
             var facade = Node("facade", source, materials[0], canonicalLinkTarget: "workshop");
             var workshop = Node("workshop", source, materials[0]);
-            var plan = Plan(canonicalHash, 7, facade, workshop, catalogue.Fingerprint, canonicalHashIsLiteral: true);
+            var plan = Plan(canonicalHash, 7, new[] { facade, workshop }, catalogue.Fingerprint, true);
 
             var editedFacade = Observed(facade);
             editedFacade.PositionMm.X += 400;
@@ -109,7 +109,6 @@ namespace Arkus.Harness.Tests
             Assert.Equal("attached-to", dependency["kind"]);
             Assert.Equal("workshop", dependency["targetId"]);
 
-            // Proposal compilation is observation-only: canonical state has not changed.
             Assert.Empty(canonical.Extensions);
         }
 
@@ -123,7 +122,7 @@ namespace Arkus.Harness.Tests
             var originalHash = CanonicalWorldStateCodec.ComputeContentHash(original);
             var facade = Node("facade", source, materials[0], canonicalLinkTarget: "workshop");
             var workshop = Node("workshop", source, materials[0]);
-            var expected = Plan(originalHash, original.Revision, facade, workshop, catalogue.Fingerprint, canonicalHashIsLiteral: true);
+            var expected = Plan(originalHash, original.Revision, new[] { facade, workshop }, catalogue.Fingerprint, true);
             var edited = Observed(facade);
             edited.PositionMm.Z += 100;
             edited.ComponentRows = Rows(facade, positionZ: edited.PositionMm.Z, renderer: materials[1]);
