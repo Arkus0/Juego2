@@ -7,8 +7,9 @@ Files here are design sketches. They are **not** semantic authority for any CITY
 Illustrated, game-style map of the accepted CITY-03 retained seed (`seed.confluence_civic_commercial`), open it in a browser.
 
 - Inside the hard polygon, water masks, X1/X5 overlays, anchors, W04/W05/W06/W12/W13, `casco.micro.A/B`, F01–F08 and S01–S03 come from `CITY_PRODUCT_SEED.md` §2–4.
-- Every buildable plot in the seed is filled with a closed I0 house (only F01–F03 are enterable), plus street props (fountains, lamps, benches, pots, laundry, barrels, cart, boats). These are presentation, allowed in CITY-07 as temporary/retained visual realization, and need an impact-ledger entry; they create no semantics.
-- Five new lanes `P8a–P8e` (dashed blue) open the empty interior blocks. They are **new graph edges/cycles** and require a CITY-01 + CITY-03 amendment before any Unity realization.
+- Medium density: closed I0 houses only where they front a street (one row on lanes, with gaps); walled huertas behind; street props (fountains, lamps, benches, pots, laundry, firewood, well, boats). Presentation allowed in CITY-07 with an impact-ledger entry; no semantics.
+- Lanes `P8a–P8e`, dirt paths `P8f–P8g` and four small squares (Horno, Tinte, Era alta, Mirador del Arroyo) are **new graph edges/cycles** and require a CITY-01 + CITY-03 amendment before any Unity realization.
+- 11 discovery points following CITY-06 (no secret quota, spatial truth only): 3 already accepted (`disc.bar.secondary_layer`, `disc.ayuntamiento.records_boundary`, S03 court stair), 5 CITY-07 surface/composition items (flood marks, blocked doorway, niche, river slot view, beached boat), 3 dependent on P8.
 - Trees and everything under the fog (Ensanche, Barrio Alto, Calle Mayor, Ribera, Puerto, Vega) are presentation / soft visual envelope only.
 - P1 (civic tower at F02), P4, P5 and P6 are drawn as **CITY-09 proposals**, dashed, and remain non-canonical until their named owners are amended.
 

@@ -46,7 +46,7 @@ header.top h1 small{display:block;font-family:var(--body);font-weight:400;font-s
 .chip i{width:9px;height:9px;border-radius:2px;display:inline-block;border:1px solid currentColor;opacity:.45}
 .chip[aria-pressed="true"] i{opacity:1;background:currentColor}
 .chip:focus-visible,.zoom button:focus-visible,.beat:focus-visible{outline:2px solid var(--warm);outline-offset:2px}
-.chip.c-route{color:#d9d2c0}.chip.c-place{color:var(--warm)}.chip.c-view{color:#9fc2c6}.chip.c-prop{color:var(--blue)}.chip.c-chain{color:#f07a5c}.chip.c-fog{color:#9aa4a2}.chip.c-fill{color:#c9c3b6}
+.chip.c-route{color:#d9d2c0}.chip.c-place{color:var(--warm)}.chip.c-view{color:#9fc2c6}.chip.c-prop{color:var(--blue)}.chip.c-chain{color:#f07a5c}.chip.c-fog{color:#9aa4a2}.chip.c-secret{color:#9fd3c7}.chip.c-fill{color:#c9c3b6}
 .zoom{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:4px;z-index:3}
 .zoom button{width:32px;height:32px;background:rgba(23,28,29,.9);border:1px solid var(--line);color:var(--text);font:600 16px/1 var(--mono);border-radius:3px;cursor:pointer}
 #mini{position:absolute;right:10px;top:10px;left:auto;bottom:auto;width:150px;height:150px;border:1px solid var(--line);border-radius:3px;z-index:3;cursor:pointer;background:#101415}
@@ -103,6 +103,7 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
         <button class="chip c-place" data-layer="places" aria-pressed="true"><i></i>Lugares</button>
         <button class="chip c-chain" data-layer="chain" aria-pressed="true"><i></i>Eslabón CITY-07</button>
         <button class="chip c-prop" data-layer="props" aria-pressed="true"><i></i>Propuestas P1–P8</button>
+        <button class="chip c-secret" data-layer="secrets" aria-pressed="true"><i></i>Secretos</button>
         <button class="chip c-view" data-layer="views" aria-pressed="false"><i></i>Vistas</button>
         <button class="chip c-fog" data-layer="fog" aria-pressed="true"><i></i>Niebla</button>
       </div>
@@ -143,11 +144,18 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
       </section>
 
       <section class="card">
-        <div class="eyebrow">Lo que he añadido para llenar la zona</div>
-        <h2>Un barrio lleno desde el principio</h2>
-        <div class="amend"><span class="tag" style="color:var(--warm);border-color:#6b5a3a">CITY-07</span><span><b>Todos los edificios.</b> Cada solar de la cuña, del Ensanche bajo y de la Orilla sur tiene casa. Solo F01–F03 se abren; el resto son I0 cerradas pero con puertas, ventanas y macetas.</span></div>
-        <div class="amend"><span class="tag" style="color:var(--warm);border-color:#6b5a3a">CITY-07</span><span><b>Vida en la calle.</b> Fuentes en la plaza y en la plazuela, farolas, bancos, hortensias, ropa tendida, barriles del bar, carro y cajas en el servicio de la tienda, barcas. Son objetos y no crean semántica.</span></div>
-        <div class="amend"><span class="tag">P8 → CITY-01 + 03</span><span><b>Cinco callejas nuevas</b> para que las manzanas del interior tengan fachada: Tintes, Horno, Calleja Alta, Pasadizo y Ensanche bajo. Crean bucles reales. Es la única pieza que necesita enmienda antes de construirse.</span></div>
+        <div class="eyebrow">Punto medio: menos casas, más lugares</div>
+        <h2>Huertas, sendas y secretos</h2>
+        <div class="amend"><span class="tag" style="color:var(--warm);border-color:#6b5a3a">CITY-07</span><span><b>Casas solo donde dan a la calle.</b> Una fila en las callejas, con huecos. Por detrás hay huertas con tapia de piedra en lugar de más casas. Todas las casas son cerradas salvo el bar, el Ayuntamiento y la tienda.</span></div>
+        <div class="amend"><span class="tag" style="color:var(--warm);border-color:#6b5a3a">CITY-07</span><span><b>Mobiliario.</b> Fuentes, farolas, bancos, hortensias, ropa tendida, leña, pozo, bolos y barcas.</span></div>
+        <div class="amend"><span class="tag">P8 → CITY-01 + 03</span><span><b>Caminos.</b> Cinco callejas empedradas y dos sendas de tierra, más cuatro plazuelas donde se cruzan: el Horno, el Tinte, la Era alta y el Mirador del Arroyo.</span></div>
+        <h3>11 secretos, sin cuota de tesoros</h3>
+        <p>Siguen CITY-06: lo que se descubre es el propio espacio. Por ejemplo, una capa del edificio que se ve pero no se abre, desgaste con historia o una vista escondida. No hay cofres. El color del rombo dice quién tiene que aprobarlo:</p>
+        <ul>
+          <li><b style="color:var(--warm)">Ya aceptados (3):</b> patio del bar, tablón del Ayuntamiento, escalera del patio.</li>
+          <li><b style="color:#9fd3c7">CITY-07 puede (5):</b> marcas de riada, puerta cegada, hornacina, rendija al río, barca varada.</li>
+          <li><b style="color:var(--blue)">Necesitan P8 (3):</b> pozo de la huerta, mirador del Arroyo, la Era alta.</li>
+        </ul>
       </section>
 
       <section class="card">
@@ -173,6 +181,9 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
           <div><span class="sw" style="background:#e8b26a"></span>Lugar comprometido</div>
           <div><span class="sw" style="border:1.5px dashed #8d96d4"></span>Propuesta no canónica</div>
           <div><span class="sw" style="background:#f07a5c"></span>Eslabón CITY-07</div>
+          <div><span class="sw" style="background:#7d9360;outline:1.5px solid #8e887c"></span>Huerta con tapia</div>
+          <div><span class="sw" style="background:#b7a582"></span>Senda o era de tierra</div>
+          <div><span class="sw" style="border:1.5px solid #9fd3c7;transform:rotate(45deg) scale(.55)"></span>Secreto (color según permiso)</div>
           <div><span class="sw" style="background:#2b3334"></span>Fuera de la semilla</div>
         </div>
       </section>
@@ -207,6 +218,12 @@ const SITES={S01:[[132,35],[150,40],[148,52],[130,47]],S02:STUBS[0],S03:R(70,83,
 const PLAZA=[[136,50],[150,53],[168,57],[168,65],[148,65],[136,61]];
 const CASCO_SQ=[[73,30],[84,28],[88,36],[83,41],[75,39]];
 const LANDING_SQ=[[-8,-3],[6,-5],[8,3],[-2,4]];
+const ring=(c,r,n=9)=>Array.from({length:n},(_,i)=>{const a=i/n*Math.PI*2;const k=r*(.85+.3*((i*7919)%5)/5);return [c[0]+Math.cos(a)*k,c[1]+Math.sin(a)*k*1.1];});
+const PLAZUELAS=[
+ {id:"pz.horno",name:"Plazuela del Horno",poly:ring([114,19],6.5),dirt:0},
+ {id:"pz.tinte",name:"Rincón del Tinte",poly:ring([171,27],6),dirt:0},
+ {id:"pz.era",name:"La Era alta",poly:ring([150,113],9,11),dirt:1},
+ {id:"pz.mirador",name:"Mirador del Arroyo",poly:ring([115,118],4.2),dirt:1}];
 
 // ---------- routes ----------
 const ROUTES=[
@@ -221,6 +238,8 @@ const ROUTES=[
  {id:"P8b",p8:1,pts:[[68,8],[88,12],[110,22]],w:2.8,name:"Travesía del Horno",tags:["propuesta P8","AP","E0"],fam:"st.historic_lane",text:"Une la subida del puente con la calleja de los Tintes por detrás de F05.",c7:"Arista nueva: CITY-01 + CITY-03."},
  {id:"P8c",p8:1,pts:[[183,68],[183,98],[172,112],[150,114],[128,106],[110,96],[89,86]],w:3,name:"Calleja Alta",tags:["propuesta P8","AP","E1"],fam:"st.historic_lane",text:"Recorre la bolsa vacía del norte, entre F07 y F03, por detrás del Ayuntamiento, hasta el callejón bajo W13.",c7:"Arista y ciclo nuevos: CITY-01 + CITY-03. Además da una vista trasera de la torre."},
  {id:"P8d",p8:1,pts:[[87,72],[104,70],[116,62],[121,49]],w:2.6,name:"Pasadizo del Arco",tags:["propuesta P8","AP","E0"],fam:"st.historic_lane",text:"Atajo corto entre W13 y W05 por detrás de F06.",c7:"Arista nueva: CITY-01 + CITY-03. No pasa por el patio S03."},
+ {id:"P8f",p8:1,dirt:1,pts:[[113,20],[125,28],[140,24],[155,8]],w:1.8,name:"Senda de las Huertas",tags:["propuesta P8","AF","E0"],fam:"senda de tierra entre tapias",text:"Camino de tierra entre huertas amuralladas, de la plazuela del Horno a la calleja de los Tintes.",c7:"Arista nueva: CITY-01 + CITY-03. Por la reja se ve el pozo (secreto 7)."},
+ {id:"P8g",p8:1,dirt:1,pts:[[128,106],[114,116],[99,106]],w:1.8,name:"Senda del Arroyo",tags:["propuesta P8","AF","E0"],fam:"senda de tierra",text:"Baja de la Calleja Alta al estribo del vado pasando por el mirador del Arroyo.",c7:"Arista nueva: CITY-01 + CITY-03. Sin tocar la franja no edificable de 2 m."},
  {id:"P8e",p8:1,pts:[[84,132],[60,112],[35,88],[12,64]],w:3.4,name:"Camino del Ensanche bajo",tags:["propuesta P8","AP","E0"],fam:"st.ordinary_road 4–6 m",text:"Calle de casas con huerto al otro lado del Arroyo, dentro de la semilla, desde el estribo del vado.",c7:"Arista nueva en la componente del Ensanche: CITY-01 + CITY-03. Sin X5 abierto queda aislada, y eso es correcto."},
 ];
 const CROSS=[
@@ -265,6 +284,19 @@ const BEATS=[
  {at:[92,52],t:"Dentro del bar",d:"Sala pública, barra y la capa semiprivada al fondo. Son los tres accesos de I3."},
 ];
 const CHAIN=[[42,-64],[46,-48],[50,-32],[56,-18],[62,-6],[68,8],[74,22],[80,35],[83,41],[88,43.4],[91,46.5],[92,52]];
+const SECRETS=[
+ {id:"sec.riada",at:[48,-36],name:"Marcas de riada",st:"CITY-07",text:"En el estribo del Puente Viejo hay muescas talladas con alturas de crecidas. Explican por qué el vado X5 solo existe con aguas bajas.",c7:"Superficie autorada (AUTHORED_SPATIAL_NOW). Fechas y relatos los decide un dueño posterior."},
+ {id:"disc.bar.secondary_layer",at:[96,58],name:"El patio de atrás del bar",st:"aceptado",text:"Por la rendija del callejón de servicio se ven el patio trasero y una escalera. La sala pública no es todo el edificio.",c7:"Oportunidad ya aceptada en CITY-06. Se ve, pero no se entra."},
+ {id:"disc.ayuntamiento.records_boundary",at:[157,66.5],name:"El tablón del Ayuntamiento",st:"aceptado",text:"Avisos públicos y una puerta con rejilla que deja claro que hay un archivo privado.",c7:"Oportunidad ya aceptada en CITY-06. El contenido de los papeles lo decide otro dueño."},
+ {id:"sec.court_stair",at:[77,64],name:"La escalera del patio",st:"aceptado",text:"Desde el callejón bajo se ve la escalera exterior del patio compartido S03. Es semiprivado y se lee como tal.",c7:"Relación ya aceptada en CITY-03 (lane → patio/escalera)."},
+ {id:"sec.puerta_cegada",at:[71,13],name:"La puerta cegada",st:"CITY-07",text:"Un arco tapiado con sillares de otro color en la subida del puente. Antes hubo aquí otro uso.",c7:"Desgaste arquitectónico como sustrato. La historia la escribe un dueño futuro."},
+ {id:"sec.hornacina",at:[85,28.5],name:"La hornacina",st:"CITY-07",text:"Nicho con una vela en la esquina de la plazuela del Casco. Sirve de referencia local L3 para no perderse en el bucle A/B.",c7:"Pieza de composición, sin semántica."},
+ {id:"sec.rendija",at:[59,-12],name:"La rendija al río",st:"CITY-07",text:"Un hueco estrecho entre dos casas de W12 enmarca el río y el Puente Viejo. Es una vista, no un paso.",c7:"Composición de vistas dentro de la autoridad de CITY-07."},
+ {id:"sec.pozo",at:[140,16],name:"El pozo de la huerta",st:"P8",text:"Tras la reja de una huerta amurallada hay un pozo viejo y una higuera. Se ve desde la senda, pero la huerta es privada.",c7:"Depende de la senda P8f. Solo mirada; la huerta no se abre."},
+ {id:"sec.mirador_arroyo",at:[115,118],name:"Mirador del Arroyo",st:"P8",text:"Un banco sobre el Arroyo desde donde se ven las pasaderas y el Ensanche. Buen sitio para esperar a que baje el agua.",c7:"Depende de la senda P8g."},
+ {id:"sec.era",at:[150,113],name:"La Era alta",st:"P8",text:"Explanada de tierra con un castaño y bolos apoyados. Es un espacio de juego tranquilo, detrás del Ayuntamiento.",c7:"Depende de la Calleja Alta P8c. Si pasa a ser lugar programado, también hace falta CITY-02."},
+ {id:"sec.barca",at:[-5,-2],name:"La barca varada",st:"CITY-07",text:"Una barca vieja en el desembarcadero anuncia la barca X6 que vendrá.",c7:"Objeto de remate. Si el desembarcadero se amplía, eso es P4 (CITY-03)."},
+];
 const VIEWS=[
  {from:[46,-48],to:[151.5,69.5],spread:.22,name:"Del puente a la torre"},
  {from:[0,0],to:[-45,-12],spread:.5,name:"Confluencia"},
@@ -392,7 +424,7 @@ function lineBuildings(pts,hw,cfg){
       if(!ok&&row===0)break;}
     s+=w+(cfg.gap||0)+(cfg.gapR?rnd()*cfg.gapR:0);}}}}
 function genWorld(){
- markPoly(PLAZA,.5);markPoly(CASCO_SQ,.5);markPoly(LANDING_SQ,.5);
+ markPoly(PLAZA,.5);markPoly(CASCO_SQ,.5);PLAZUELAS.forEach(z=>markPoly(z.poly,1));markPoly(LANDING_SQ,.5);
  Object.values(SLOTS).forEach(p=>markPoly(p,.8));Object.values(SITES).forEach(p=>markPoly(p,.8));STUBS.forEach(s=>markPoly(s,.6));
  markPoly(X1,1);markPoly(X5,1);
  ROUTES.forEach(r=>markLine(r.pts,Math.floor(r.w/2)));SOFT_ROADS.forEach(r=>markLine(r.pts,Math.floor(r.w/2)));
@@ -400,30 +432,28 @@ function genWorld(){
  const H={F01:10,F02:12,F03:9,F04:9,F05:9,F06:11,F07:10,F08:9};
  Object.entries(SLOTS).forEach(([id,p])=>{const c=centroid(p);B.push({poly:p.map(q=>[c[0]+(q[0]-c[0])*.93,c[1]+(q[1]-c[1])*.93]),h:H[id],slot:id,inside:true,dist:"slot"});});
  rs=11;
- const casco={w:[5.5,8.5],d:[7,10],h:[3,3],rows:3,gap:0,set:.9};
- ROUTES.forEach(r=>lineBuildings(r.pts,r.w/2,r.id==="W04"?{w:[7,10],d:[9,12],h:[3,4],rows:2,set:1}:casco));
- lineBuildings(PLAZA.concat([PLAZA[0]]),0,{w:[7,10],d:[9,12],h:[3,4],rows:2,set:1});
- lineBuildings(CASCO_SQ.concat([CASCO_SQ[0]]),0,{w:[5,8],d:[7,10],h:[3,3],rows:2,set:1});
- lineBuildings(CASCO_SQ.concat([CASCO_SQ[0]]),0,{w:[4,6],d:[6,8],h:[3,3],rows:2,set:1});
- ROUTES.forEach(r=>lineBuildings(r.pts,r.w/2,{w:[4,6],d:[6,9],h:[2,3],rows:3,set:1}));
+ const casco={w:[5.5,8.5],d:[7,10],h:[3,3],rows:2,gap:0,set:.9,gapR:4};
+ ROUTES.forEach(r=>{if(r.dirt)return;if(r.p8)lineBuildings(r.pts,r.w/2,{w:[5,8],d:[7,9],h:[2,3],rows:1,set:.9,gap:2,gapR:9});else lineBuildings(r.pts,r.w/2,r.id==="W04"?{w:[7,10],d:[9,12],h:[3,4],rows:2,set:1,gapR:2}:casco);});
+ lineBuildings(PLAZA.concat([PLAZA[0]]),0,{w:[7,10],d:[9,12],h:[3,4],rows:1,set:1});
+ lineBuildings(CASCO_SQ.concat([CASCO_SQ[0]]),0,{w:[5,8],d:[7,10],h:[3,3],rows:1,set:1});
  // soft envelope fabric
  SOFT_ROADS.forEach(r=>{if(r.ens)lineBuildings(r.pts,r.w/2,{w:[7,9],d:[7,9],h:[2,2],rows:1,set:5,gap:6,gapR:4,garden:1,dist:"ens"});});
  SOFT_ROADS.forEach(r=>{if(!r.ens)lineBuildings(r.pts,r.w/2,{w:[6,10],d:[8,12],h:[2,3],rows:2,set:1,gapR:1.5});});
  // block interiors and huertas inside the wedge (presentation only)
  rs=17;const allR=ROUTES.map(r=>r.pts);
  const nearDir=p=>{let best=1e9,dir=[1,0];allR.forEach(q=>{for(let i=1;i<q.length;i++){const d=dseg(p,q[i-1],q[i]);if(d<best){best=d;const L=Math.hypot(q[i][0]-q[i-1][0],q[i][1]-q[i-1][1]);dir=[(q[i][0]-q[i-1][0])/L,(q[i][1]-q[i-1][1])/L];}}});return [best,dir];};
- for(let pass=0;pass<2;pass++)for(let i=0;i<7000;i++){const u=-10+rnd()*250,v=-40+rnd()*180;const p=[u,v];if(!inHard(p)||u<0)continue;if(!(v>rioV(u)&&v<arrV(u)))continue;const [dr,d]=nearDir(p);
-   if(dr<45){const sz=pass?[4,5]:[6,8];tryPlace(rectAt(p,d,sz[0]+rnd()*3,sz[1]+rnd()*3),{h:(pass?6:9)+Math.floor(rnd()*2)*3,dist:district(p)});}
-   else if(pass){const w=6+rnd()*5,dp=5+rnd()*4;const poly=rectAt(p,d,w,dp);if(tryPlace(poly,{h:0}))B.pop(),HUERTAS.push(poly);}}
+ for(let i=0;i<9000;i++){const u=-10+rnd()*250,v=-40+rnd()*180;const p=[u,v];if(!inHard(p)||u<0)continue;if(!(v>rioV(u)&&v<arrV(u)))continue;const [dr,d]=nearDir(p);
+   if(dr<11&&rnd()<.35){tryPlace(rectAt(p,d,5+rnd()*3,6+rnd()*3),{h:6+Math.floor(rnd()*2)*3,dist:district(p)});}
+   else if(dr>=6&&dr<70){const w=9+rnd()*8,dp=8+rnd()*6;const poly=rectAt(p,d,w,dp);if(tryPlace(poly,{h:0}))B.pop(),HUERTAS.push(poly);}}
  // Ensanche and Orilla components inside the seed: closed houses
- rs=19;for(let i=0;i<3000;i++){const u=-20+rnd()*140,v=-80+rnd()*220;const p=[u,v];if(!inHard(p))continue;if(v>rioV(u)&&v<arrV(u))continue;const [dr,d]=nearDir(p);if(dr>30)continue;tryPlace(rectAt(p,d,6+rnd()*3,6+rnd()*3),{h:6,dist:district(p),garden:v>arrV(u)?1:0});}
+ rs=19;for(let i=0;i<900;i++){const u=-20+rnd()*140,v=-80+rnd()*220;const p=[u,v];if(!inHard(p))continue;if(v>rioV(u)&&v<arrV(u))continue;const [dr,d]=nearDir(p);if(dr>18||dr<5)continue;tryPlace(rectAt(p,d,7+rnd()*2,7+rnd()*2),{h:6,dist:district(p),garden:v>arrV(u)?1:0});}
  lineBuildings([[-30,-72],[-60,-68],[-95,-76],[-130,-84]],4,{w:[14,22],d:[10,16],h:[1,1],rows:1,set:2,gap:3,dist:"port"});
  // trees
  rs=23;for(let i=0;i<5200&&TREES.length<900;i++){const u=EXT.u0+rnd()*(EXT.u1-EXT.u0),v=EXT.v0+rnd()*(EXT.v1-EXT.v0);const p=[u,v];const h=height(u,v);
    if(occ.has(key(u,v))||wet(p))continue;
-   const ins=inHard(p);const inWedge=ins&&v>rioV(u)&&v<arrV(u)&&u>0&&Math.min(...ROUTES.map(r=>dline(p,r.pts)))>20;if(ins&&!inWedge&&!(pip(p,[[-20,55],[70,132],[100,137],[82,106],[50,60],[8,20],[-20,4]])||pip(p,[[-20,-60],[70,-80],[80,-66],[40,-58],[20,-43],[0,-30],[-20,-24]])))continue;
+   const ins=inHard(p);const inWedge=ins&&v>rioV(u)&&v<arrV(u)&&u>0&&Math.min(...ROUTES.map(r=>dline(p,r.pts)))>4;if(ins&&!inWedge&&!(pip(p,[[-20,55],[70,132],[100,137],[82,106],[50,60],[8,20],[-20,4]])||pip(p,[[-20,-60],[70,-80],[80,-66],[40,-58],[20,-43],[0,-30],[-20,-24]])))continue;
    const nearRiver=SOFT_RIVERS.some(r=>dline(p,r.pts)<r.w1/2+14);
-   const dens=h>.5&&h<1.25?.9:nearRiver?.6:inWedge?.5:ins?.35:district(p)==="ens"?.18:.12;
+   const dens=h>.5&&h<1.25?.9:nearRiver?.6:inWedge?.3:ins?.35:district(p)==="ens"?.18:.12;
    if(rnd()<dens){TREES.push({p,r:1.8+rnd()*1.6,h:4+rnd()*3});for(let k=-1;k<=1;k++)for(let j=-1;j<=1;j++)occ.add(key(u+k*2,v+j*2));}}
  [[142,56],[160,62],[146,62],[157,55],[78,62],[5,-1]].forEach(p=>TREES.push({p,r:2.2,h:6,keep:1}));
  // street furniture and life (props only)
@@ -437,6 +467,9 @@ function genWorld(){
  [[87.4,56],[87.4,57.2],[87.4,58.4]].forEach(p=>DECOR.push({k:'barrel',p}));
  [[199.5,80],[199.5,83]].forEach(p=>DECOR.push({k:'crate',p}));DECOR.push({k:'cart',p:[200,87]});
  [[-4,-15],[46,-54]].forEach(p=>DECOR.push({k:'boat',p}));
+ [[117,20],[173,25],[112,121]].forEach(p=>DECOR.push({k:'bench',p}));DECOR.push({k:'well',p:[140,16]});DECOR.push({k:'wood',p:[111,16]});DECOR.push({k:'wood',p:[168,31]});
+ [[114,17],[152,112],[170,29]].forEach(p=>TREES.push({p,r:2.6,h:7,keep:1}));
+ [[146,111],[154,116],[148,116]].forEach(p=>DECOR.push({k:'bolo',p}));DECOR.push({k:'boat2',p:[-5,-1.5]});
  // market stalls
  rs=5;MARKET.length=0;for(let i=0;i<9;i++){const u=133+rnd()*14,v=38+rnd()*10;if(pip([u,v],SITES.S01))MARKET.push([u,v,rnd()<.5]);}
 }
@@ -446,7 +479,7 @@ const MARKET=[];const HUERTAS=[];const DECOR=[];
 const box=document.getElementById("mapbox"),base=document.getElementById("base"),over=document.getElementById("over"),mini=document.getElementById("mini");
 const bx=base.getContext("2d"),ox=over.getContext("2d"),mx=mini.getContext("2d");
 let W=0,H=0,DPR=1;const cam={x:-35,y:-100,z:3};
-const layers={routes:true,places:true,chain:true,props:true,views:false,fog:true,filler:true};
+const layers={routes:true,places:true,chain:true,props:true,views:false,fog:true,filler:true,secrets:true};
 try{const s=JSON.parse(localStorage.getItem("c07map.layers")||"null");if(s)Object.assign(layers,s);}catch(e){}layers.filler=true;
 let TERR=null;const K=.5,KX=.2; // oblique height factor
 function fit(){const r=box.getBoundingClientRect();const w=r.width,h=r.height;const z=Math.min(w/250,h/290);cam.x=-32;cam.y=-110;cam.z=Math.max(1.2,z);}
@@ -467,7 +500,7 @@ function draw(){
  const [tx,ty]=XY([EXT.u1,EXT.v1]);c.imageSmoothingEnabled=true;c.drawImage(TERR,tx,ty,EXT.v1-EXT.v0,EXT.u1-EXT.u0);
  // gardens (Ensanche)
  B.forEach(b=>{if(!b.garden)return;const c0=centroid(b.poly);c.fillStyle="rgba(120,150,96,.55)";path(c,b.poly.map(p=>[c0[0]+(p[0]-c0[0])*1.9,c0[1]+(p[1]-c0[1])*1.9]));c.fill();c.strokeStyle="rgba(62,84,54,.9)";c.lineWidth=.6;c.stroke();});
- if(layers.filler)HUERTAS.forEach(q=>{c.fillStyle="rgba(125,147,96,.9)";path(c,q);c.fill();c.strokeStyle="rgba(92,68,51,.7)";c.lineWidth=.35;c.stroke();c.save();path(c,q);c.clip();c.strokeStyle="rgba(70,90,55,.55)";c.lineWidth=.3;const cc=centroid(q);for(let k=-12;k<=12;k+=1.4){path(c,[[cc[0]+k,cc[1]-12],[cc[0]+k,cc[1]+12]],false);c.stroke();}c.restore();});
+ if(layers.filler)HUERTAS.forEach(q=>{c.fillStyle="rgba(125,147,96,.9)";path(c,q);c.fill();c.strokeStyle="#8e887c";c.lineWidth=.55;c.stroke();c.save();path(c,q);c.clip();c.strokeStyle="rgba(70,90,55,.55)";c.lineWidth=.3;const cc=centroid(q);for(let k=-12;k<=12;k+=1.4){path(c,[[cc[0]+k,cc[1]-12],[cc[0]+k,cc[1]+12]],false);c.stroke();}c.restore();});
  // Vega fields
  rs=31;for(let u=380;u<465;u+=14)for(let v=-10;v<150;v+=18){if(rnd()<.3)continue;const hu=u+rnd()*2,hv=v+rnd()*2;c.fillStyle=["#6f8a58","#7d9360","#5f7d4f","#8a9a64"][Math.floor(rnd()*4)];path(c,R(hu,hu+12,hv,hv+16));c.fill();c.strokeStyle="rgba(60,70,48,.6)";c.lineWidth=.5;c.stroke();}
  // bank shoulders
@@ -486,11 +519,12 @@ function draw(){
  // roads
  const roadCol="#b8b09f",kerb="#6f685c";
  SOFT_ROADS.forEach(r=>{c.strokeStyle=kerb;c.lineWidth=r.w+.8;path(c,r.pts,false);c.stroke();});
- ROUTES.forEach(r=>{c.strokeStyle=kerb;c.lineWidth=r.w+.8;path(c,r.pts,false);c.stroke();});
+ ROUTES.forEach(r=>{c.strokeStyle=r.dirt?"#8f7d5c":kerb;c.lineWidth=r.w+.8;path(c,r.pts,false);c.stroke();});
  [PLAZA,CASCO_SQ,LANDING_SQ,STUBS[0],STUBS[1],STUBS[2],STUBS[3]].forEach(p=>{c.fillStyle=kerb;path(c,p);c.fill();c.lineWidth=1.2;c.strokeStyle=kerb;c.stroke();});
  SOFT_ROADS.forEach(r=>{c.strokeStyle=r.ens?"#a9a497":roadCol;c.lineWidth=r.w;path(c,r.pts,false);c.stroke();});
- ROUTES.forEach(r=>{c.strokeStyle=r.id==="W04"?"#aaa293":roadCol;c.lineWidth=r.w;path(c,r.pts,false);c.stroke();});
+ ROUTES.forEach(r=>{c.strokeStyle=r.dirt?"#b7a582":r.id==="W04"?"#aaa293":roadCol;c.lineWidth=r.w;path(c,r.pts,false);c.stroke();});
  [PLAZA,CASCO_SQ,LANDING_SQ].forEach(p=>{c.fillStyle="#c2baa9";path(c,p);c.fill();});
+ PLAZUELAS.forEach(z=>{c.fillStyle=z.dirt?"#b7a582":"#c2baa9";path(c,z.poly);c.fill();c.strokeStyle=z.dirt?"#8f7d5c":"#6f685c";c.lineWidth=.5;c.stroke();});
  STUBS.forEach(p=>{c.fillStyle=roadCol;path(c,p);c.fill();});
  // plaza paving pattern
  c.save();path(c,PLAZA);c.clip();c.strokeStyle="rgba(126,117,104,.35)";c.lineWidth=.25;for(let u=130;u<172;u+=2.5){path(c,[[u,40],[u,70]],false);c.stroke();}c.restore();
@@ -524,6 +558,7 @@ function draw(){
  c.setTransform(DPR,0,0,DPR,0,0);drawLabels(c);
  if(layers.places)drawIcons(c);
  if(layers.props)drawPropBadges(c);
+ if(layers.secrets)drawSecrets(c);
  drawMini();updateScale();
 }
 function strokeRibbon(c,r,extra){const n=r.pts.length;for(let i=1;i<n;i++){const t=i/(n-1);c.lineWidth=r.w0+(r.w1-r.w0)*t+extra;path(c,[r.pts[i-1],r.pts[i]],false);c.stroke();}}
@@ -579,6 +614,10 @@ function drawDecor(c,d){const [x,y]=XY(d.p);
  else if(d.k==='barrel'){c.fillStyle="#6b4b35";c.beginPath();c.arc(x,y,.45,0,7);c.fill();c.strokeStyle="#3a2c22";c.lineWidth=.08;c.stroke();}
  else if(d.k==='crate'){c.fillStyle="#9b7b55";c.fillRect(x-.6,y-.6,1.2,1.2);c.strokeStyle="#5c4433";c.lineWidth=.1;c.strokeRect(x-.6,y-.6,1.2,1.2);}
  else if(d.k==='cart'){c.fillStyle="#7a5a40";c.fillRect(x-1.4,y-.8,2.8,1.6);c.fillStyle="#2e2a26";c.beginPath();c.arc(x-1.4,y,.5,0,7);c.arc(x+1.4,y,.5,0,7);c.fill();}
+ else if(d.k==='well'){c.fillStyle="#8e887c";c.beginPath();c.arc(x,y,1.1,0,7);c.fill();c.fillStyle="#2c3a3c";c.beginPath();c.arc(x,y,.65,0,7);c.fill();c.strokeStyle="#5c4433";c.lineWidth=.2;c.beginPath();c.moveTo(x-1.1,y);c.lineTo(x-1.1+2.5*KX,y-2.5*K);c.lineTo(x+1.1+2.5*KX,y-2.5*K);c.lineTo(x+1.1,y);c.stroke();}
+ else if(d.k==='wood'){c.fillStyle="#7a5a40";for(let i=0;i<3;i++){c.beginPath();c.arc(x-.6+i*.6,y,.32,0,7);c.fill();}c.beginPath();c.arc(x-.3,y-.5,.32,0,7);c.arc(x+.3,y-.5,.32,0,7);c.fill();}
+ else if(d.k==='bolo'){c.fillStyle="#e6e1d6";c.beginPath();c.ellipse(x,y-.3,.2,.4,0,0,7);c.fill();}
+ else if(d.k==='boat2'){c.fillStyle="#6b5140";c.beginPath();c.ellipse(x,y,2.2,.8,-.4,0,7);c.fill();c.strokeStyle="#3a2c22";c.lineWidth=.15;c.stroke();}
  else if(d.k==='boat'){c.fillStyle="#5c4433";c.beginPath();c.ellipse(x,y,2.4,.9,.3,0,7);c.fill();c.fillStyle="#8a6a4d";c.beginPath();c.ellipse(x,y-.1,1.8,.55,.3,0,7);c.fill();}}
 function drawRouteMarks(c){c.lineWidth=Math.max(.35,1.1/cam.z);c.setLineDash([.1,Math.max(1.4,3.2/cam.z)]);c.lineCap="round";
  ROUTES.forEach(r=>{if(r.p8)return;c.strokeStyle=r.id.startsWith("micro")?"rgba(232,178,106,.9)":"rgba(60,48,40,.8)";c.lineWidth=Math.max(.5,2/cam.z);path(c,r.pts,false);c.stroke();});c.setLineDash([]);
@@ -613,9 +652,10 @@ function drawLabels(c){const z=cam.z;const s=Math.max(10,Math.min(16,5+z*2.2));
  label(c,"PLAZA",[152,60],{size:s+1,ls:5});
  label(c,"La Cuesta",[34,20],{size:s-2,ls:1,rot:.45});
  label(c,"Puente Viejo",[40,-50],{size:s-1,ls:1,rot:1.3});
+ if(z>2.6)PLAZUELAS.forEach(q=>label(c,q.name,centroid(q.poly),{size:Math.max(10,s-4),color:"#e9e3d6",ls:1}));
  label(c,"El Vado",[95,125],{size:s-2,ls:1});
  label(c,"Desembarcadero",[4,-8],{size:s-3,ls:1});
- if(layers.props&&z>2.4)ROUTES.forEach(r=>{if(!r.p8)return;const m=r.pts[Math.floor(r.pts.length/2)];label(c,r.name,m,{size:Math.max(10,s-4),color:"#c8cdf5",ls:1});});
+ if(layers.props&&z>2.4)ROUTES.forEach(r=>{if(!r.p8)return;const a=r.pts[Math.floor(r.pts.length/2)-1]||r.pts[0],b=r.pts[Math.floor(r.pts.length/2)];const m=[(a[0]+b[0])/2+3.5,(a[1]+b[1])/2];label(c,r.name,m,{size:Math.max(10,s-4),color:"#c8cdf5",ls:1});});
  if(layers.routes&&z>2.4)ROUTES.forEach(r=>{if(r.id.startsWith("micro")||r.p8)return;const m=r.pts[Math.floor(r.pts.length/2)];label(c,r.id,m,{font:`500 ${Math.max(10,s-4)}px ${getComputedStyle(document.body).getPropertyValue("--mono")}`,color:"#1b2021",halo:"rgba(232,226,212,.92)",ls:0});});
  if(layers.routes&&z>2.4)CROSS.forEach(r=>label(c,r.id,[(r.pts[0][0]+r.pts[1][0])/2,(r.pts[0][1]+r.pts[1][1])/2+(r.id==="X1"?6:5)],{font:`500 ${Math.max(10,s-4)}px ${getComputedStyle(document.body).getPropertyValue("--mono")}`,color:"#1b2021",halo:"rgba(232,226,212,.92)",ls:0}));
  if(z>2)SEAMS.forEach(sm_=>{const [x,y]=uvS(sm_.at);c.save();c.translate(x,y);c.fillStyle="rgba(232,178,106,.95)";c.beginPath();c.moveTo(0,-6);c.lineTo(5,0);c.lineTo(0,6);c.lineTo(-5,0);c.closePath();c.fill();c.strokeStyle="#171c1d";c.lineWidth=1.5;c.stroke();c.restore();});
@@ -635,6 +675,8 @@ function drawIcons(c){Object.entries(PLACES).forEach(([id,pl])=>{const poly=SLOT
  if(cam.z>2.6){c.font=`500 10.5px ${getComputedStyle(document.body).getPropertyValue("--mono")}`;c.textAlign="center";c.lineWidth=3;c.strokeStyle="rgba(20,26,27,.9)";const ly=pl.icon?y+9:y;c.strokeText(id,x,ly);c.fillStyle="#e8b26a";c.fillText(id,x,ly);}});}
 function drawPropBadges(c){PROPS.forEach(p=>{const hh=p.id==="P1"?42:0;const [x,y]=uvS(p.at,hh);const t=p.id.replace("b","");c.save();c.font=`600 10.5px ${getComputedStyle(document.body).getPropertyValue("--mono")}`;const w=c.measureText(t).width+10;
  c.fillStyle="rgba(32,36,58,.95)";c.strokeStyle="#8d96d4";c.lineWidth=1.2;c.setLineDash([3,2]);c.beginPath();c.roundRect?c.roundRect(x-w/2,y-20,w,15,3):c.rect(x-w/2,y-20,w,15);c.fill();c.stroke();c.setLineDash([]);c.fillStyle="#c8cdf5";c.textAlign="center";c.textBaseline="middle";c.fillText(t,x,y-12.5);c.restore();});}
+function drawSecrets(c){SECRETS.forEach(sc=>{const [x,y]=uvS(sc.at);const col=sc.st==="P8"?"#8d96d4":sc.st==="aceptado"?"#e8b26a":"#9fd3c7";c.save();c.translate(x,y);c.rotate(Math.PI/4);c.fillStyle="rgba(20,32,32,.92)";c.fillRect(-6.5,-6.5,13,13);c.strokeStyle=col;c.lineWidth=1.6;c.strokeRect(-6.5,-6.5,13,13);c.restore();
+ c.fillStyle=col;c.font=`700 11px ${getComputedStyle(document.body).getPropertyValue("--mono")}`;c.textAlign="center";c.textBaseline="middle";c.fillText("?",x,y+.5);});}
 function updateScale(){const px=50*cam.z;document.getElementById("scalebar").style.width=px+"px";}
 
 // ---------- minimap ----------
@@ -661,12 +703,14 @@ let focusBeat=-1;
 // ---------- hit testing ----------
 function hitTest(uv){
  const tol=Math.max(2,8/cam.z);
+ if(layers.secrets)for(const sc of SECRETS){if(Math.hypot(uv[0]-sc.at[0],uv[1]-sc.at[1])<Math.max(3,9/cam.z))return {kind:"secret",item:{name:sc.name,id:sc.id,tags:[sc.st==="P8"?"necesita P8":sc.st==="aceptado"?"ya aceptado":"CITY-07 puede"]},shape:null,sc};}
  for(const p of PROPS){if(!layers.props)break;const d=Math.hypot(uv[0]-p.at[0],uv[1]-p.at[1]);if(d<Math.max(5,10/cam.z))return {kind:"prop",item:p,shape:null};}
  for(const [id,poly] of Object.entries(SLOTS))if(pip(uv,poly))return {kind:"place",id,item:PLACES[id],shape:{poly}};
  for(const [id,poly] of Object.entries(SITES))if(pip(uv,poly))return {kind:"place",id,item:PLACES[id],shape:{poly}};
  for(const s of SEAMS)if(Math.hypot(uv[0]-s.at[0],uv[1]-s.at[1])<Math.max(4,9/cam.z))return {kind:"seam",item:s,shape:null};
  for(const x of CROSS)if(pip(uv,x.poly)||dline(uv,x.pts)<tol*.6)return {kind:"route",item:x,shape:{poly:x.poly}};
  for(const r of ROUTES)if(dline(uv,r.pts)<r.w/2+tol*.5)return {kind:"route",item:r,shape:{pts:r.pts}};
+ for(const z of PLAZUELAS)if(pip(uv,z.poly))return {kind:"area",item:{name:z.name,id:z.id,text:"Espacio abierto en una junta de callejas: banco, árbol y sombra.",c7:"Depende de las callejas P8 que la alimentan."},shape:{poly:z.poly}};
  if(pip(uv,PLAZA))return {kind:"area",item:{name:"Plaza",id:"W.PLAZA",text:"Ancla de la terraza cívica. El Ayuntamiento F02 da a ella, los soportales F06 la cierran y el mercado S01 ocupa el sur."},shape:{poly:PLAZA}};
  if(!inHard(uv))return {kind:"soft",item:{name:"Entorno visual",id:"fuera de la semilla",text:softName(uv)},shape:null};
  return null;}
@@ -675,7 +719,7 @@ const tip=document.getElementById("tip");
 function showTip(h,sx,sy){if(!h){tip.style.display="none";return;}const it=h.item;const id=h.id||it.id||"";tip.innerHTML=`<div class="id">${esc(id)}</div><b>${esc(it.name||"")}</b>`;tip.style.display="block";const bw=box.clientWidth;tip.style.left=Math.min(bw-270,sx+14)+"px";tip.style.top=(sy+14)+"px";}
 function esc(s){return String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));}
 const info=document.getElementById("info");
-function showInfo(h){if(!h){return;}const it=h.item;info.hidden=false;
+function showInfo(h){if(!h){return;}if(h.sc)h={id:h.sc.id,item:Object.assign({},h.item,{id:"",text:h.sc.text,c7:h.sc.c7})};const it=h.item;info.hidden=false;
  document.getElementById("i-id").textContent=(h.id?h.id+" · ":"")+(it.id&&it.id!==h.id?it.id:"");
  document.getElementById("i-name").textContent=it.name||"";
  const kv=document.getElementById("i-kv");kv.innerHTML="";(it.tags||[]).concat(it.fam?[it.fam]:[]).concat(it.owner?["dueño: "+it.owner]:[]).forEach(t=>{const s=document.createElement("span");s.textContent=t;kv.appendChild(s);});
