@@ -225,6 +225,7 @@
         "dependencies": {
           "Arkus.EngineBridge.UnityAuthoring": "[1.0.0, )",
           "Arkus.Game.Authoring": "[1.0.0, )",
+          "Arkus.Game.Validation": "[1.0.0, )",
           "Arkus.Game.World": "[1.0.0, )",
           "Arkus.H1.UnityHost": "[1.0.0, )",
           "Arkus.Harness.Cli": "[1.0.0, )",
