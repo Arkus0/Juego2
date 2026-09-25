@@ -47,6 +47,7 @@ A `USE` classification never makes DW product-authoritative and never cancels an
 - consume the accepted H1-05 and H1-06 artifacts as the two real observation shapes;
 - verify the exact accepted H1-01 projection lifecycle/identity is current before any `USE` admission;
 - derive routing from capabilities actually represented by that projection, not from H1/domain labels or free text;
+- bind each canonical claim ID to an independently verifier-owned semantic contract rather than allowing the evaluated fixture to define its own requirements or mandatory reads;
 - distinguish full coverage (`USE`), partial navigation value (`OPTIONAL`) and no material projection value (`NOT_MATERIAL`);
 - preserve every product-evidence / mandatory-read source required by the active claim;
 - require source-open provenance for every admitted projected fact used by the observation;
@@ -69,24 +70,24 @@ A `USE` classification never makes DW product-authoritative and never cancels an
 
 1. Freeze accepted identities for H1-01 projection lifecycle, H1-05 and H1-06.
 2. Exercise the accepted projection itself against representative catalogue/source queries used by both accepted consumer shapes.
-3. Compare projection-represented capabilities with each claim's required capability set.
-4. Preserve claim-specific mandatory authority/evidence reads independently of DW advice.
+3. Bind each canonical claim ID to verifier-owned capability requirements and exact accepted claim anchors outside the evaluated fixture.
+4. Preserve claim-specific mandatory authority/evidence reads from verifier-owned obligations, then audit them against reads actually executed by the route.
 5. Record bounded navigation byte/read effects for admitted `USE` queries.
 6. Prove `USE` becomes inadmissible when lifecycle currentness is false.
 7. Prove adding domain labels/free text or undeclared synthetic capabilities cannot manufacture `USE`.
 8. Prove partial projection coverage cannot close a product claim or hide its product oracle.
-9. Publish H1-07+ guidance for catalogue/source identity, mixed component/reference claims, component/effective-runtime claims and H1-GATE.
-10. Add exact-SHA remote verification and adversarial controls.
+9. Publish and mechanically verify the exact per-claim H1-07+ disposition, not only aggregate class counts.
+10. Add exact-SHA remote verification and adversarial controls, including semantic claim swapping/relabeling.
 
 ## Classification contract
 
-For one active claim, let `R` be its declared material capability requirements and `P` the capabilities actually represented by the current accepted H1 projection.
+For one canonical claim ID, let `R` be its verifier-owned material capability requirements and `P` the capabilities actually represented by the current accepted H1 projection. `R` is **not** read from `ADOPTION_CASES.json` or any expected-result field in the evaluated fixture.
 
 - `USE`: lifecycle is current, `R` is non-empty, and every requirement in `R` is represented by `P`. Projected answers must still source-open to accepted authority.
 - `OPTIONAL`: some but not all requirements in `R` are represented by `P`, or a would-be `USE` route loses lifecycle currentness. DW may help navigate but cannot close the claim.
-- `NOT_MATERIAL`: no material requirement in `R` is represented, or the claim is explicitly isolated from private context (the mandatory H1-GATE public-client trial).
+- `NOT_MATERIAL`: no material requirement in `R` is represented, or the canonical claim contract explicitly isolates the claim from private context (the mandatory H1-GATE public-client trial).
 
-The classification does not depend on workpack name, domain label, descriptive prose, or fixture expected result.
+The classification does not depend on workpack name, domain label, descriptive prose, fixture requirements, fixture mandatory-read lists or fixture expected results.
 
 ## Acceptance
 
@@ -96,20 +97,23 @@ PASS requires all of the following:
 - at least one real accepted observation demonstrates useful source-open `USE` navigation and at least one demonstrates correct abstention/partial coverage;
 - `USE` is mechanically gated by the exact current H1-01 lifecycle identity;
 - H1-05 scene/publication truth and H1-06 relationship-multiset truth remain outside the projection and remain discoverable through their accepted evidence;
-- CTX/product mandatory reads are preserved for every case regardless of DW classification;
+- canonical claim requirements and mandatory-read obligations are independent of the evaluated fixture;
+- effective reads are produced by actual claim-anchor/source-open operations and then compared against the independent mandatory-read obligation;
+- the exact eight claim IDs map to `3 USE / 2 OPTIONAL / 3 NOT_MATERIAL` with the published identity-specific disposition; aggregate `3/2/3` alone is insufficient;
+- changing or swapping fixture-declared requirements/expected results cannot redefine claim semantics and must turn the verifier RED;
 - bounded context/navigation measurements are reported as routing evidence only, never product correctness;
 - H1-07 guidance is selective: catalogue/source/component-schema inventory may use current DW navigation, mixed component/reference claims remain partial, and effective adapter/field/runtime truth stays source/product authoritative;
 - H1-GATE's mandatory fresh public-client trial is classified `NOT_MATERIAL` for Juego2-private CTX/DW context;
-- causal controls turn RED for stale lifecycle, hidden mandatory reads, capability inflation and broad H1-label-based adoption;
+- causal controls turn RED for stale lifecycle, hidden mandatory reads, capability inflation, broad H1-label-based adoption and semantic claim relabeling;
 - no accepted H1 product dependency is rewritten to depend on this workpack or DW.
 
 ## Negative gates
 
-FAIL if the evaluation invents duplicate H1-05/H1-06 executions, if a fixture can declare its own coverage result, if `USE` remains legal on stale lifecycle, if DW advice can remove a mandatory authority/product read, if product-only semantics are treated as projection-covered, if domain labels/free text manufacture adoption, if H1-07+ receives blanket `USE`, or if private CTX/DW context is allowed into the mandatory H1-GATE fresh-client trial.
+FAIL if the evaluation invents duplicate H1-05/H1-06 executions, if a fixture can declare its own coverage result or semantic requirement/mandatory-read set, if `USE` remains legal on stale lifecycle, if DW advice can remove a mandatory authority/product read, if product-only semantics are treated as projection-covered, if domain labels/free text manufacture adoption, if H1-07+ receives blanket `USE`, if exact claim identities can be semantically swapped while preserving aggregate class counts, or if private CTX/DW context is allowed into the mandatory H1-GATE fresh-client trial.
 
 ## Evidence shape
 
-Remote deterministic evidence only: accepted predecessor identity check, one focused test over the real H1-01 projection, accepted H1-05/H1-06 claim anchors, capability-based routing cases, source-open/mandatory-read audit, bounded navigation measurements, H1-07+ disposition and adversarial controls.
+Remote deterministic evidence only: accepted predecessor identity check, one focused test over the real H1-01 projection, accepted H1-05/H1-06/H1-07 claim anchors, verifier-owned canonical claim contracts, capability-based routing, actual source-open/mandatory-read audit, bounded navigation measurements, exact H1-07+ disposition and adversarial controls.
 
 ## PASS consequence
 
