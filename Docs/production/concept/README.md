@@ -2,6 +2,8 @@
 
 Files here are design sketches. They are **not** semantic authority for any CITY/H1 owner, are not WP deliverables, and create no route, crossing, site, access role or boundary.
 
+Full write-up (game possibilities, owner matrix, discovery points, recommended chain): [`CITY_07_GAME_MAP_CONCEPT.md`](CITY_07_GAME_MAP_CONCEPT.md).
+
 ## `city07_game_map.html`
 
 Illustrated, game-style map of the accepted CITY-03 retained seed (`seed.confluence_civic_commercial`), open it in a browser.
