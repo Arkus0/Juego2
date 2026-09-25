@@ -74,9 +74,15 @@ In addition to the layered assembly proof, future H2 planning should consider re
 4. preserve unaffected content;
 5. revalidate only affected dimensions/connections/clearances/sightlines;
 6. retain compact before/after checkpoints;
-7. produce a truthful final `KEEPER_READY`, `PROXY_VISUAL` or `COVERAGE_BLOCKED` result.
+7. produce `KEEPER_READY` for the required gate benchmark.
 
-A system that can only regenerate the whole zone, or that loses the shared metric/elevation relationships after a local edit, has not proved the intended world-authoring capability.
+`PROXY_VISUAL` and `COVERAGE_BLOCKED` remain valid truthful outputs when the system cannot complete the requested keeper result, but they are **non-pass outcomes** for the required proof. They demonstrate honest failure handling; they do not satisfy H2 readiness.
+
+A system that can only regenerate the whole zone, that loses the shared metric/elevation relationships after a local edit, or that ends the required proof in `PROXY_VISUAL` / `COVERAGE_BLOCKED` has not proved the intended world-authoring capability.
+
+## H2 gate implication
+
+Any future reviewed H2-GATE that consumes this proof must preserve the same fail-closed distinction as ART-01: the mandatory environment-authoring benchmark passes only at `KEEPER_READY`. Honest proxy/coverage blocking must surface clearly and keep the gate open rather than being counted as success.
 
 ## Boundary
 
