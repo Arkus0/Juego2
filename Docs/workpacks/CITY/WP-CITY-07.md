@@ -3,7 +3,7 @@
 Status: **DORMANT / NOT_STARTED**  
 Class: PRODUCT / LOCAL KEEPER GAME-SPACE REALIZATION (NON-FOUNDATIONAL)  
 Mode: **LOCAL**  
-Depends on: `WP-CITY-04` PASS + `WP-H1-GATE` PASS
+Depends on: `WP-CITY-04` PASS + `WP-H1-GATE` PASS + `WP-ART-01` PASS
 Blocks: `WP-CITY-08` only
 
 ## Objective
@@ -18,6 +18,12 @@ Keeper game-space realization is separate from the Arkus authoring-efficiency pr
 
 - `Docs/workpacks/CITY/CITY_REMAINING_COMPRESSION_AMENDMENT.md`
 - `Docs/workpacks/CITY/CITY_07_GAME_SPACE_REALIZATION_AMENDMENT.md`
+- `Docs/workpacks/CITY/CITY_07_ART_READINESS_AMENDMENT.md`
+- `Docs/workpacks/CITY/CITY_07_ELEVATION_PROFILE_AMENDMENT.md`
+
+These amendments are **binding parts of WP-CITY-07**, not optional side documents. In particular, CITY-07 may not begin keeper realization until `WP-ART-01` has passed its required `KEEPER_READY` benchmark; and the keeper candidate must consume the shared elevation-profile obligations rather than solving each building/street on unrelated local Y values.
+
+Through the ART-readiness amendment CITY-07 also consumes the accepted ART-01 construction contracts for the representative chain, including `Docs/workpacks/ART/ART_ENVIRONMENT_ASSEMBLY_GRAMMAR.md` and `Docs/workpacks/ART/ART_01_DIMENSIONAL_PROFILE.md`. CITY-07 does not take ownership of those ART contracts; it consumes them as prerequisites to keeper composition.
 
 The CITY-07 game-space amendment is the narrower, later authority for what “preserve the CITY-04 validated structure” means inside this workpack. Where the earlier compression wording could be read as requiring literal greybox geometry, the later amendment clarifies that CITY-07 preserves **semantic structure and validated constraints**, not proxy meshes, exact local surface tessellation or accidental blockout form.
 
@@ -54,6 +60,8 @@ CITY-09 structural proposals `P1–P7` remain non-canonical unless their named c
 ## Work
 
 - consume the CITY-04 physical verdict and separate **validated semantic structure** from disposable/proxy greybox representation;
+- consume the passed ART-01 keeper-capable kit, assembly grammar and dimensional profile; do not substitute `PROXY_VISUAL` or `COVERAGE_BLOCKED` content for the prerequisite readiness claim;
+- establish and maintain the shared vertical datum, anchor/control elevations, longitudinal profiles and representative cross-sections required by `CITY_07_ELEVATION_PROFILE_AMENDMENT.md`;
 - preserve accepted graph connectivity, crossings, hard envelope, route/access/elevation classes, sites/programme, access roles, expansion seams and CITY-05/06 constraints;
 - replace greybox selectively with accepted real asset/composition slices;
 - consolidate or rebuild greybox road/surface/edge assemblies where literal proxy overlap would make a poor keeper realization;
@@ -98,6 +106,9 @@ The keeper-change impact ledger still remains useful as the coverage map: link e
 - keeper-realization captures/inspection notes;
 - before/after evidence for the representative greybox → keeper game-space transformation;
 - mapping from greybox structures to retained compositions/assets, including which proxy geometry was intentionally removed/consolidated;
+- ART-01 assembly-plan/connection evidence consumed for at least one representative building and street segment;
+- shared vertical datum, anchor/control elevation sheet, required longitudinal profiles and at least three representative cross-sections from the binding elevation-profile amendment;
+- mapping from player-facing building thresholds/interior floors to the shared route/site elevation frame;
 - a bounded third-person traversal/game-space review for the representative chain;
 - keeper-change impact ledger mapping every material local geometry change to affected CITY-04 physical conclusion families plus bounded remeasurement/reinspection or an invariant witness;
 - retained-vs-temporary realization ledger;
@@ -107,16 +118,20 @@ The keeper-change impact ledger still remains useful as the coverage map: link e
 
 ## Acceptance
 
+- The declared prerequisites are satisfied: `WP-CITY-04` PASS, `WP-H1-GATE` PASS and `WP-ART-01` PASS; a truthfully blocked/proxy ART-01 benchmark does not satisfy this prerequisite.
+- All binding CITY-07 amendments listed above are consumed, including ART readiness and the shared elevation profile.
 - Keeper realization preserves accepted CITY semantics and the CITY-04 validated physical conclusions, **not necessarily literal local greybox geometry**.
 - Every material keeper geometry change in the retained seed is impact-classified against the CITY-04 physical conclusions it could affect; each affected conclusion is remeasured/reinspected on the keeper candidate, or an explicit invariant witness demonstrates why it cannot have changed.
 - Being inside accepted CITY-05 bands is necessary but is not sufficient evidence that an affected CITY-04 physical conclusion remains valid.
 - At least one representative street/building/interior chain is realized with accepted dependencies and receives a deliberate third-person game-space pass.
 - The representative keeper route reads as an authored playable environment rather than a planning diagram extruded into Unity: route, thresholds, level changes, sightlines and spatial cadence are intentionally composed within accepted constraints.
+- The representative building/street composition uses the accepted ART-01 assembly/connection/metric vocabulary rather than decorative assets attached to unresolved proxy hosts.
+- The retained district uses one coherent shared elevation frame; representative route profiles, threshold/floor relations and required cross-sections are reviewable and consistent with accepted route/elevation/access semantics.
 - Accidental greybox overlaps, coplanar road/surface stacks, duplicate traversable surfaces and duplicate collision in the representative keeper chain are removed or explicitly justified as intentional retained structure.
 - Realized street/parcel/building dimensions remain inside accepted CITY-05 bands/constraints; game-space tuning cannot weaken inherited clearances or access obligations.
 - No new graph edge, crossing, programmed place, access role, hard-envelope mutation or route/elevation-class mutation is introduced without the proper upstream owner amendment.
 - Missing/unavailable dependencies fail visibly rather than being hand-waved.
-- Temporary visual assets may remain, but retained urban structure/composition intent is explicit.
+- Temporary visual assets may remain outside the retained acceptance claim, but they cannot satisfy required keeper evidence; retained urban structure/composition intent is explicit.
 - Unity realization does not become semantic authority over CITY or Arkus contracts.
 - No Living World, combat, quest or NPC semantics are claimed or implemented merely to make the district feel active.
 
@@ -124,16 +139,19 @@ Low-level bridge/catalogue correctness is consumed from accepted H1 owners unles
 
 ## Definition of Done
 
-`CITY-08` receives a bounded keeper slice that is semantically faithful, physically coherent and intentionally composed as third-person game-space, with differential evidence closing every CITY-04 physical conclusion that material keeper changes could have affected. Remaining questions concern public authoring workflow/reuse cost, not whether the keeper should preserve accidental greybox form or whether the seed itself should be silently redesigned.
+`CITY-08` receives a bounded keeper slice that is semantically faithful, physically coherent and intentionally composed as third-person game-space, built from a passed ART-01 keeper-ready vocabulary/assembly contract and one shared district elevation frame, with differential evidence closing every CITY-04 physical conclusion that material keeper changes could have affected. Remaining questions concern public authoring workflow/reuse cost, not whether the keeper should preserve accidental greybox form, whether missing art coverage may be hidden as readiness, or whether the seed itself should be silently redesigned.
 
 ## Negative gates
 
 FAIL if:
 
+- CITY-07 begins keeper realization before `WP-ART-01` has actually passed its required `KEEPER_READY` benchmark;
+- any binding ART-readiness or elevation-profile amendment is skipped because it lives in a companion document rather than the original WP;
 - “preserve CITY-04” is interpreted as blindly copying proxy cubes, slabs or exact local blockout decomposition into the keeper;
 - polish merely hides structural overlap, z-fighting, duplicate collision or incoherent traversable surfaces;
 - a material keeper geometry change is outside the representative chain and therefore receives no CITY-04 conclusion-impact classification;
 - an affected CITY-04 conclusion is assumed preserved solely because the new dimensions remain inside a broad CITY-05 planning band;
+- buildings/streets use unrelated local elevation truths instead of the binding shared district profile;
 - game-space improvement silently creates topology, crossings, programme sites, access semantics or hard-boundary changes owned upstream;
 - a CITY-09 structural proposal is treated as accepted truth without its causal owner amendment;
 - hidden Unity-only metadata becomes CITY semantic authority;
