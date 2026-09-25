@@ -1,5 +1,8 @@
 # WP-CITY-09 — contract audit
 
+PREDECESSOR_CONTRACT_CHECK: PASS  
+WORKER_PRE_REVIEW: CLEAN
+
 Candidate branch: `worker/wp-city-09-play-design`  
 Purpose: prove that the rescued play-design package is reviewable without silently changing accepted CITY or ART authority.
 
