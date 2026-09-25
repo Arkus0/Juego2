@@ -169,18 +169,17 @@ namespace Arkus.H1.Editor
                 if (component.schemaId == H1ComponentProjection.TransformSchema) continue;
                 if (component.schemaId == H1ComponentProjection.MeshRendererSchema)
                 {
-                    H1ComponentProjection.ApplyRenderer(instance, component.referencePath, component.referenceGuid,
+                    var ownership = Ownership(instance);
+                    ownership.rendererRelativePath = H1ComponentProjection.ApplyRenderer(instance, component.referencePath, component.referenceGuid,
                         component.referenceLocalFileId, component.referenceContentSha256);
-                    var renderer = instance.GetComponent<MeshRenderer>();
-                    if (renderer == null) throw new InvalidDataException("projection.component-target-missing");
-                    renderer.enabled = true;
-                    Ownership(instance).rendererMaterial = true;
+                    ownership.rendererMaterial = true;
                 }
                 else if (component.schemaId == H1ComponentProjection.AnimatorSchema)
                 {
-                    H1ComponentProjection.ApplyAnimator(instance, node.objectId, component.referencePath, component.referenceGuid,
+                    var ownership = Ownership(instance);
+                    ownership.animatorRelativePath = H1ComponentProjection.ApplyAnimator(instance, node.objectId, component.referencePath, component.referenceGuid,
                         component.referenceLocalFileId, component.referenceContentSha256);
-                    Ownership(instance).animatorClip = true;
+                    ownership.animatorClip = true;
                 }
                 else if (component.schemaId == H1ComponentProjection.CanonicalLinkSchema)
                 {
@@ -563,10 +562,11 @@ namespace Arkus.H1.Editor
 
         private static bool H1OwnedRelationship(GameObject realized, PrefabRelationship row)
         {
-            if (row.relativeObjectPath != "") return false;
             var ownership = realized.GetComponent<H1ComponentOwnershipMarker>();
             if (ownership == null || ownership.schemaId != H1ComponentOwnershipMarker.SchemaId) return false;
-            return ownership.rendererMaterial && row.kind == "material-reference" || ownership.animatorClip && row.kind == "animation-clip-reference";
+            if (ownership.rendererMaterial && row.kind == "material-reference" && row.relativeObjectPath == ownership.rendererRelativePath) return true;
+            if (ownership.animatorClip && row.kind == "animation-clip-reference" && row.relativeObjectPath == ownership.animatorRelativePath) return true;
+            return false;
         }
 
         private static PrefabRelationship[] SourceDerivedRelationships(IEnumerable<PrefabRelationship> rows) => NormalizeRelationships(rows.Where(row => row.kind != "variant-base"));
