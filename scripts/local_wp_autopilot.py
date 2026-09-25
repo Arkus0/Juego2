@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """Safe-output front door for the local ChatGPT-subscription Arkus autopilot.
 
-The historical controller remains an implementation core.  This canonical
-entry point replaces its free-text Reviewer oracle with ARKUS_INTENT_V1 and
-injects the machine-authoritative envelope requirement into every Reviewer
-role.  Old `Reviewer verdict:` prose may remain readable to humans but is not
-consumed as authority.
+The historical controller remains an implementation core. This canonical entry
+point replaces its free-text Reviewer oracle with ARKUS_INTENT_V1 and injects
+the machine-authoritative envelope requirement into every Reviewer role.
+Legacy verdict fields may remain as an exact transport mirror for the existing
+State Transitions workflow, but they have no authority without the envelope.
 """
 
 from __future__ import annotations
 
 import importlib.util
-import json
 from pathlib import Path
 import re
 import sys
@@ -33,6 +32,12 @@ def _load(name: str, path: Path):
 core = _load("arkus_local_wp_autopilot_core", HERE / "_local_wp_autopilot_core.py")
 safe = _load("arkus_safe_output_runtime", HERE / "arkus_safe_output.py")
 _real_codex_role = core.codex_role
+
+# Preserve the tested helper API used by the existing regression suite and by
+# local tooling. Only authority-bearing seams are replaced below.
+for _name, _value in vars(core).items():
+    if not _name.startswith("__") and _name not in {"main", "reviewed_verdicts", "reviewed_fails", "codex_role"}:
+        globals().setdefault(_name, _value)
 
 
 def _canonical_wp(pr_obj: dict[str, Any]) -> str:
@@ -84,7 +89,11 @@ def reviewed_verdicts(pr: int) -> list[dict[str, str]]:
     return sorted(by_id.values(), key=lambda row: row["at"])
 
 
-def _review_prompt_contract(prompt: str) -> str:
+def reviewed_fails(pr: int) -> list[dict[str, str]]:
+    return [row for row in reviewed_verdicts(pr) if row["verdict"] == "FAIL"]
+
+
+def _review_prompt_contract(prompt: str, role: str) -> str:
     pr_match = re.search(r"PR #(\d+)", prompt)
     sha_match = re.search(r"\bSHA ([0-9a-f]{40})\b", prompt, re.IGNORECASE)
     id_match = re.search(r"Autopilot review ID:\s*([0-9a-f]{32})", prompt, re.IGNORECASE)
@@ -96,32 +105,33 @@ def _review_prompt_contract(prompt: str) -> str:
     pr_obj = core.gh_json("api", f"repos/{core.REPO}/pulls/{pr}")
     wp = _canonical_wp(pr_obj)
     campaign = safe.campaign_id(wp, pr)
-    allowed = ("PASS", "FAIL") if "appeal-reviewer" in prompt.lower() else tuple(sorted(safe.REVIEW_VERDICTS))
-    choices = []
-    for verdict in allowed:
-        choices.append(safe.render_review(wp=wp, pr=pr, candidate_sha=sha, verdict=verdict, review_id=rid))
+    allowed = ("PASS", "FAIL") if role == "appeal-reviewer" else tuple(sorted(safe.REVIEW_VERDICTS))
+    choices = [safe.render_review(wp=wp, pr=pr, candidate_sha=sha, verdict=verdict, review_id=rid)
+               for verdict in allowed]
     return (
         "\n\nSAFE-OUTPUT AUTHORITY CONTRACT (mandatory):\n"
-        "The human rationale may use normal prose, but prose and legacy `Reviewer verdict:` fields are non-authoritative. "
         "Publish the result as a GitHub PULL REQUEST REVIEW (not an issue comment) attached to the exact reviewed commit. "
-        "Include exactly one of the following ARKUS_INTENT_V1 lines verbatim, matching your chosen verdict; do not edit its identity fields.\n"
+        "Human rationale is free-form, but the machine authority is exactly one ARKUS_INTENT_V1 line. "
+        "Choose exactly one of the following lines and include it verbatim; do not edit identity fields:\n"
         + "\n".join(choices) +
-        f"\nCampaign binding: {campaign}. Any missing/duplicate/mutated envelope is rejected fail-closed."
+        "\nFor compatibility with the existing State Transitions transport, also include the legacy lines requested earlier, "
+        "but make Reviewer verdict and Reviewed candidate SHA exactly mirror the chosen intent. Those legacy lines are rejected without this envelope. "
+        f"Campaign binding: {campaign}. Missing, duplicate, stale or mutated envelopes fail closed."
     )
 
 
 async def codex_role(root: Path, state: Path, role: str, prompt: str, model: str, effort: str,
                      schema: Path | None = None, assets_root: Path | None = None) -> str:
     if role in {"reviewer", "appeal-reviewer"}:
-        prompt += _review_prompt_contract(prompt)
+        prompt += _review_prompt_contract(prompt, role)
     return await _real_codex_role(root, state, role, prompt, model, effort, schema, assets_root)
 
 
-# Patch the implementation core before entering it.  Functions defined in the
-# core resolve these globals at runtime, so merge/repair/DocSync consume only
-# broker-authorized verdicts while retaining the already-tested lifecycle.
+# Functions defined in the implementation core resolve these names at runtime.
+# Therefore merge/repair/DocSync consume only broker-authorized verdicts while
+# retaining the already-tested lifecycle implementation.
 core.reviewed_verdicts = reviewed_verdicts
-core.reviewed_fails = lambda pr: [row for row in reviewed_verdicts(pr) if row["verdict"] == "FAIL"]
+core.reviewed_fails = reviewed_fails
 core.codex_role = codex_role
 
 
