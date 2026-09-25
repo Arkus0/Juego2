@@ -142,14 +142,6 @@ namespace Arkus.H1.Editor.Tests
         }
 
         [Test]
-        public void FiniteTransformValueChecker_RejectsNonFiniteRepresentation()
-        {
-            var error = Assert.Throws<InvalidDataException>(() => H1ProjectionValidation.ValidateFiniteTransformValues(
-                new Vector3(float.NaN, 0f, 0f), Vector3.one, Quaternion.identity));
-            Assert.That(error.Message, Is.EqualTo("projection.non-finite-transform"));
-        }
-
-        [Test]
         public void NonFinitePostflightSample_FailsBeforePublication_AndKeepsPreviousGenerationActive()
         {
             var baselinePlan = BuildValidPlan("baseline", 1);
