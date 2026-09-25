@@ -1,10 +1,14 @@
 # WP-CITY-09 — Retained-seed play-design amendment package
 
-Status: **CANDIDATE — independent review required**  
+Status: **COMPLETE**  
 Class: PRODUCT / GAME-SPACE DESIGN (NON-FOUNDATIONAL)  
 Mode: **REMOTE**  
 Depends on: `WP-CITY-03` PASS  
-Blocks: **nothing directly**. This candidate does not alter accepted CITY owners or the current CITY-04 contract by itself.
+Blocks: **nothing directly**. This accepted package does not alter accepted CITY owners or the current CITY-04 contract by itself.
+
+Accepted candidate: `6d9b70928169b94c4aed3aa3ea0d07fd8199a1a3`  
+Independent review: **PASS**, review `#5312933723`  
+Merged: PR `#199`, merge commit `158004982547cf3798d9a6e9c270d34e4166b558` on 2026-09-25
 
 Inputs:
 - `Docs/production/CITY_SPATIAL_CONSTITUTION.md`
@@ -20,6 +24,7 @@ Primary output:
 
 Evidence:
 - `Docs/evidence/WP-CITY-09/CONTRACT_AUDIT.md`
+- `Docs/evidence/WP-CITY-09/DOCSYNC.md`
 
 ## Why this WP exists
 
@@ -29,7 +34,7 @@ This WP rescues that design problem without silently rewriting already accepted 
 
 ## Authority boundary
 
-This WP is an **amendment package**, not an amendment itself.
+This WP is an **accepted amendment package**, not an accepted amendment to any causal CITY owner.
 
 It may:
 - diagnose player-experience gaps in the accepted seed;
@@ -72,7 +77,7 @@ A downstream owner may later adopt all, some or none of this package through an 
 5. Separate **current-seed-valid** CITY-04 observations from **post-amendment-only** checks.
 6. Explicitly preserve the current X5 truth: in the exact retained seed, closing X5 disconnects the represented `E.X5` receiving component; CITY-04 must not invent or walk an alternate route that is outside the seed.
 7. Preserve CITY-01 route costs as planning weights / target hypotheses. Do not relabel them as NPC schedule time or measured player time.
-8. Keep ART direction out of scope. The alt-Liébana / visual-register material from closed PR #198 is not part of this candidate.
+8. Keep ART direction out of scope. The alt-Liébana / visual-register material from closed PR #198 is not part of this package.
 
 ## Deliverables
 
