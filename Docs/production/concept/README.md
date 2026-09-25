@@ -12,7 +12,8 @@ Illustrated, game-style map of the accepted CITY-03 retained seed (`seed.conflue
 - Medium density: closed I0 houses only where they front a street (one row on lanes, with gaps); walled huertas behind; street props (fountains, lamps, benches, pots, laundry, firewood, well, boats). Presentation allowed in CITY-07 with an impact-ledger entry; no semantics.
 - Lanes `P8a–P8e`, dirt paths `P8f–P8g` and four small squares (Horno, Tinte, Era alta, Mirador del Arroyo) are **new graph edges/cycles** and require a CITY-01 + CITY-03 amendment before any Unity realization.
 - 11 discovery points following CITY-06 (no secret quota, spatial truth only): 3 already accepted (`disc.bar.secondary_layer`, `disc.ayuntamiento.records_boundary`, S03 court stair), 5 CITY-07 surface/composition items (flood marks, blocked doorway, niche, river slot view, beached boat), 3 dependent on P8.
-- Optional layer `Variante P9`: twelve street-front façades promoted to small enterable places (needs CITY-02 + CITY-06); street within 25 m of an open place 27 % → 71 %.
+- Optional layer `Variante P9`: eleven small I1 places on regions F09–F19 plus the exterior tintorería S04 (needs CITY-02 + CITY-06); street within 25 m of an open place 27 % → 77 %.
+- Amendment proposals: `Docs/workpacks/CITY/CITY_P1_CIVIC_TOWER_AMENDMENT.md`, `CITY_P8_LANES_AMENDMENT.md`, `CITY_P9_PLACES_AMENDMENT.md`.
 - Trees and everything under the fog (Ensanche, Barrio Alto, Calle Mayor, Ribera, Puerto, Vega) are presentation / soft visual envelope only.
 - P1 (civic tower at F02), P4, P5 and P6 are drawn as **CITY-09 proposals**, dashed, and remain non-canonical until their named owners are amended.
 

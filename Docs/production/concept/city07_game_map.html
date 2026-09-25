@@ -162,10 +162,10 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
       <section class="card">
         <div class="eyebrow">Variante Kamurocho · activa la capa P9</div>
         <h2>Más sitios donde entrar</h2>
-        <p>Doce fachadas cerradas pasan a ser locales pequeños (I1 sugerido: sala pública más servicio): taberna, barbería, orujería, horno, quesería, botica, café-billar, fonda, herrero, tintorería, estanco y ultramarinos. Ninguno toca el rincón de CITY-08.</p>
+        <p>Once solares nuevos (F09–F19) pasan a ser locales pequeños I1, con sala pública más servicio: taberna, barbería, orujería, horno, quesería, ferretería, café-billar, fonda, herrero, estanco y ultramarinos. Se suma la tintorería como espacio exterior (S04). Ninguno toca el rincón de CITY-08.</p>
         <div class="amend"><span class="tag" style="color:#e6a3c9;border-color:#6b3f58">Locales abiertos</span><span id="k-count">3 → 15</span></div>
         <div class="amend"><span class="tag" style="color:#e6a3c9;border-color:#6b3f58">Calle con algo abierto a ≤25 m</span><span id="k-metric">…</span></div>
-        <p>Necesita enmienda a <b>CITY-02</b> (programa de lugares) y <b>CITY-06</b> (profundidad). Cinco de ellos están en callejas P8 y también dependen de esa enmienda. Sin enmiendas, abrirlos sería door inflation.</p>
+        <p>Necesita enmienda a <b>CITY-02</b> (programa de lugares) y <b>CITY-06</b> (profundidad). Seis de ellos están en callejas P8 y también dependen de esa enmienda. Sin enmiendas, abrirlos sería door inflation.</p>
       </section>
 
       <section class="card">
@@ -245,13 +245,13 @@ const ROUTES=[
  {id:"W13",pts:[[80,35],[84,44],[86,58],[87,72],[89,86],[90,97],[92,108]],w:3,name:"Callejón bajo",tags:["Q","E1","AF","1,0 min"],fam:"st.historic_lane",text:"Callejón tranquilo junto al Arroyo que lleva al vado.",c7:"Lado tranquilo del contraste. Se ve el patio S03 de lado, pero sin que parezca un atajo."},
  {id:"microA",pts:[[80,35],[84,28],[90,27],[95,31],[96,40]],w:2.8,name:"casco.micro.A",tags:["nodo W.CASCO"],fam:"detalle interno del nodo",text:"Traza A del bucle del Casco. No es una arista nueva de CITY-01.",c7:"Rama alternativa para seguir o buscar. Si se cierra A, se va por B, nunca por un espacio privado."},
  {id:"microB",pts:[[80,35],[83,41],[90,43],[96,40]],w:2.8,name:"casco.micro.B",tags:["nodo W.CASCO"],fam:"detalle interno del nodo",text:"Traza B del bucle del Casco, que pasa por delante del bar.",c7:"Paso 6 del eslabón: fachada del bar, terraza y luz cálida."},
- {id:"P8a",p8:1,pts:[[104,41],[110,22],[128,6],[155,8],[172,28],[178,50],[179,67]],w:3,name:"Calleja de los Tintes",tags:["propuesta P8","AP","E0–E1"],fam:"st.historic_lane 2,5–4 m",text:"Nueva calleja pública por la bolsa vacía entre la Plaza y el Río. Cierra un bucle Casco → Plaza → calle comercial.",c7:"Crea arista y ciclo nuevos, así que necesita enmienda CITY-01 + CITY-03 antes de construirla."},
- {id:"P8b",p8:1,pts:[[68,8],[88,12],[110,22]],w:2.8,name:"Travesía del Horno",tags:["propuesta P8","AP","E0"],fam:"st.historic_lane",text:"Une la subida del puente con la calleja de los Tintes por detrás de F05.",c7:"Arista nueva: CITY-01 + CITY-03."},
- {id:"P8c",p8:1,pts:[[183,68],[183,98],[172,112],[150,114],[128,106],[110,96],[89,86]],w:3,name:"Calleja Alta",tags:["propuesta P8","AP","E1"],fam:"st.historic_lane",text:"Recorre la bolsa vacía del norte, entre F07 y F03, por detrás del Ayuntamiento, hasta el callejón bajo W13.",c7:"Arista y ciclo nuevos: CITY-01 + CITY-03. Además da una vista trasera de la torre."},
- {id:"P8d",p8:1,pts:[[87,72],[104,70],[116,62],[121,49]],w:2.6,name:"Pasadizo del Arco",tags:["propuesta P8","AP","E0"],fam:"st.historic_lane",text:"Atajo corto entre W13 y W05 por detrás de F06.",c7:"Arista nueva: CITY-01 + CITY-03. No pasa por el patio S03."},
+ {id:"P8a",p8:1,pts:[[104,41],[108,38],[110,22],[128,6],[155,8],[172,28],[172,45],[168,57]],w:3,name:"Calleja de los Tintes",tags:["propuesta P8","AP","E0–E1"],fam:"st.historic_lane 2,5–4 m",text:"Nueva calleja pública por la bolsa vacía entre la Plaza y el Río. Cierra un bucle Casco → Horno → Tintes → Plaza. En el ledger son W18, W19 y W20.",c7:"Crea arista y ciclo nuevos, así que necesita enmienda CITY-01 + CITY-03 antes de construirla."},
+ {id:"P8b",p8:1,pts:[[68,8],[88,12],[110,22]],w:2.8,name:"Travesía del Horno",tags:["propuesta P8","AP","E0"],fam:"st.historic_lane",text:"Une la subida del puente (W12) con la plazuela del Horno. En el ledger es W21.",c7:"Arista nueva: CITY-01 + CITY-03."},
+ {id:"P8c",p8:1,pts:[[168,65],[168,93],[160,110],[150,114],[128,106],[110,96],[96,84],[88,79]],w:2.6,name:"Calleja Alta",tags:["propuesta P8","AP","E1"],fam:"st.historic_lane",text:"Sale de la Plaza entre el Ayuntamiento (F02) y F07, rodea la Era alta y baja al callejón W13. En el ledger son W22 y W23.",c7:"Arista y ciclo nuevos: CITY-01 + CITY-03. Además da una vista trasera de la torre."},
+ {id:"P8d",p8:1,pts:[[88,79],[104,72],[116,62],[121,48.5]],w:2.6,name:"Pasadizo del Arco",tags:["propuesta P8","AP","E0"],fam:"st.historic_lane",text:"Atajo corto entre W13 y W05 por detrás de F06. En el ledger es W24.",c7:"Arista nueva: CITY-01 + CITY-03. No pasa por el patio S03."},
  {id:"P8f",p8:1,dirt:1,pts:[[113,20],[125,28],[140,24],[155,8]],w:1.8,name:"Senda de las Huertas",tags:["propuesta P8","AF","E0"],fam:"senda de tierra entre tapias",text:"Camino de tierra entre huertas amuralladas, de la plazuela del Horno a la calleja de los Tintes.",c7:"Arista nueva: CITY-01 + CITY-03. Por la reja se ve el pozo (secreto 7)."},
- {id:"P8g",p8:1,dirt:1,pts:[[128,106],[114,116],[99,106]],w:1.8,name:"Senda del Arroyo",tags:["propuesta P8","AF","E0"],fam:"senda de tierra",text:"Baja de la Calleja Alta al estribo del vado pasando por el mirador del Arroyo.",c7:"Arista nueva: CITY-01 + CITY-03. Sin tocar la franja no edificable de 2 m."},
- {id:"P8e",p8:1,pts:[[84,132],[60,112],[35,88],[12,64]],w:3.4,name:"Camino del Ensanche bajo",tags:["propuesta P8","AP","E0"],fam:"st.ordinary_road 4–6 m",text:"Calle de casas con huerto al otro lado del Arroyo, dentro de la semilla, desde el estribo del vado.",c7:"Arista nueva en la componente del Ensanche: CITY-01 + CITY-03. Sin X5 abierto queda aislada, y eso es correcto."},
+ {id:"P8g",p8:1,dirt:1,pts:[[128,106],[114,116],[100,108],[92,108]],w:1.8,name:"Senda del Arroyo",tags:["propuesta P8","AF","E0"],fam:"senda de tierra",text:"Baja de la Calleja Alta al estribo del vado pasando por el mirador del Arroyo.",c7:"Arista nueva: CITY-01 + CITY-03. Sin tocar la franja no edificable de 2 m."},
+ {id:"P8e",p8:1,pts:[[90,122],[84,132],[60,112],[35,88],[12,64]],w:3.4,name:"Camino del Ensanche bajo",tags:["propuesta P8","AP","E0"],fam:"st.ordinary_road 4–6 m",text:"Calle de casas con huerto al otro lado del Arroyo, dentro de la semilla, desde el estribo del vado.",c7:"Arista nueva en la componente del Ensanche: CITY-01 + CITY-03. Sin X5 abierto queda aislada, y eso es correcto."},
 ];
 const CROSS=[
  {id:"X1",poly:X1,pts:[[50,-32],[42,-64]],name:"Puente Viejo",tags:["EW","AH","1,0 min","sin carros"],fam:"cruce permanente del Río",text:"Único corte jugable del Río en la semilla.",c7:"Pasos 1 y 2 del eslabón. El lomo del puente sirve de encuadre hacia el Casco."},
@@ -296,18 +296,18 @@ const BEATS=[
 ];
 const CHAIN=[[42,-64],[46,-48],[50,-32],[56,-18],[62,-6],[68,8],[74,22],[80,35],[83,41],[88,43.4],[91,46.5],[92,52]];
 const P9=[
- {id:"P9.taberna",at:[60,-10],name:"Taberna del Puente",what:"Chatos y raciones junto al puente. Es la primera parada al cruzar el río."},
- {id:"P9.barberia",at:[70,14],name:"Barbería",what:"Sillón, espejo y conversación. Buen sitio para enterarse de las cosas del pueblo."},
- {id:"P9.orujeria",at:[58,28],name:"Orujería del alambique",what:"Alambique y orujo de Liébana. Es un oficio de temporada."},
- {id:"P9.horno",at:[116,25],name:"Horno de pan",what:"Tahona en la plazuela del Horno. Huele desde la calleja.",p8:1},
- {id:"P9.queseria",at:[112,48],name:"Quesería",what:"Quesucos y picón en la subida a la Plaza."},
- {id:"P9.botica",at:[108,38],name:"Botica",what:"Mostrador y rebotica. Un sitio con clientela fija."},
- {id:"P9.cafe",at:[125,57],name:"Café-billar",what:"Mesa de billar, cartas y la radio. Queda abierto de noche."},
- {id:"P9.fonda",at:[158,50],name:"Fonda de la Plaza",what:"Da de comer al forastero y tiene cuartos arriba (solo la planta baja pública)."},
- {id:"P9.herrero",at:[165,15],name:"Taller del herrero",what:"Fragua abierta a la calleja de los Tintes. Es trabajo visible.",p8:1},
- {id:"P9.tinte",at:[176,33],name:"Tintorería",what:"Tinas y ropa colgada en el Rincón del Tinte.",p8:1},
- {id:"P9.estanco",at:[178,100],name:"Estanco-quiosco",what:"Prensa, sellos y tabaco en la Calleja Alta.",p8:1},
- {id:"P9.ultramarinos",at:[40,95],name:"Ultramarinos del Ensanche",what:"Colmado de barrio al otro lado del vado. Solo se llega con aguas bajas.",p8:1},
+ {id:"F09",pid:"loc.casco.taberna_puente",poly:[[68,-22.5],[71.5,-15.5],[62.5,-11],[59,-18]],name:"Taberna del Puente",what:"Chatos y raciones junto al puente. Es la primera parada al cruzar el río."},
+ {id:"F10",pid:"loc.casco.barberia",poly:[[67,12],[69.5,17.5],[61,21],[58.5,15.5]],name:"Barbería",what:"Sillón, espejo y conversación. Buen sitio para enterarse de las cosas del pueblo."},
+ {id:"F11",pid:"loc.casco.orujeria",poly:[[49.5,25],[57.5,27],[55.5,36.5],[47.5,35]],name:"Orujería del alambique",what:"Alambique y orujo de Liébana en la Cuesta. Es un oficio de temporada."},
+ {id:"F12",pid:"loc.casco.horno",poly:[[102,16],[96,13.5],[99.5,5],[106,8]],name:"Horno de pan",what:"Tahona junto a la plazuela del Horno. Huele desde la calleja.",p8:1},
+ {id:"F13",pid:"loc.casco.queseria",poly:[[110.5,56.5],[104.5,53.5],[108,45.5],[114.5,48]],name:"Quesería",what:"Quesucos y picón en la subida a la Plaza."},
+ {id:"F14",pid:"loc.casco.ferreteria",poly:[[125,63.5],[118.5,60],[123,52],[129,55.5]],name:"Ferretería",what:"Clavos, cuerdas y herramientas. Tiene clientela de oficio."},
+ {id:"F15",pid:"loc.casco.cafe_billar",poly:[[89,70],[88.5,62],[98.5,61],[99,69]],name:"Café-billar",what:"Mesa de billar, cartas y la radio. La puerta da al Pasadizo del Arco, no al callejón bajo W13, para que W13 siga tranquilo.",p8:1},
+ {id:"F16",pid:"loc.casco.fonda_tintes",poly:[[158,42.5],[158,33.5],[170,33.5],[170,42.5]],name:"Fonda de los Tintes",what:"Comedor en la planta baja para forasteros; los cuartos de arriba no se prometen.",p8:1},
+ {id:"F17",pid:"loc.casco.herreria",poly:[[144.5,5],[135.5,4.5],[136.5,-6.5],[145.5,-6]],name:"Taller del herrero",what:"Fragua abierta a la calleja de los Tintes. Es trabajo visible.",p8:1},
+ {id:"F18",pid:"loc.casco.estanco",poly:[[153.5,96.5],[156,91],[165,95],[162,100.5]],name:"Estanco-quiosco",what:"Prensa, sellos y tabaco en la Calleja Alta.",p8:1},
+ {id:"F19",pid:"loc.ensanche.ultramarinos",poly:[[54.5,81.5],[61,87.5],[50,99],[43.5,93]],name:"Ultramarinos del Ensanche",what:"Colmado de barrio al otro lado del vado. Solo se llega con aguas bajas.",p8:1},
+ {id:"S04",pid:"loc.casco.tintoreria",at:[171,27],name:"Tintorería (exterior)",what:"Tinas y ropa colgada en el Rincón del Tinte. Es un espacio exterior, sin interior.",p8:1,site:1},
 ];
 const SECRETS=[
  {id:"sec.riada",at:[48,-36],name:"Marcas de riada",st:"CITY-07",text:"En el estribo del Puente Viejo hay muescas talladas con alturas de crecidas. Explican por qué el vado X5 solo existe con aguas bajas.",c7:"Superficie autorada (AUTHORED_SPATIAL_NOW). Fechas y relatos los decide un dueño posterior."},
@@ -453,6 +453,8 @@ function genWorld(){
  Object.values(SLOTS).forEach(p=>markPoly(p,.8));Object.values(SITES).forEach(p=>markPoly(p,.8));STUBS.forEach(s=>markPoly(s,.6));
  markPoly(X1,1);markPoly(X5,1);
  ROUTES.forEach(r=>markLine(r.pts,Math.floor(r.w/2)));SOFT_ROADS.forEach(r=>markLine(r.pts,Math.floor(r.w/2)));
+ // P9 candidate slots: closed houses unless the P9 layer is on
+ P9.forEach(q=>{if(q.site){q.b={h:0,poly:[[q.at[0]-2,q.at[1]-2],[q.at[0]+2,q.at[1]-2],[q.at[0]+2,q.at[1]+2],[q.at[0]-2,q.at[1]+2]]};return;}markPoly(q.poly,.6);const c=centroid(q.poly);const b={poly:q.poly.map(p=>[c[0]+(p[0]-c[0])*.94,c[1]+(p[1]-c[1])*.94]),h:9,inside:true,dist:district(c),p9:q};B.push(b);q.b=b;q.at=c;});
  // hero slots as buildings
  const H={F01:10,F02:12,F03:9,F04:9,F05:9,F06:11,F07:10,F08:9};
  Object.entries(SLOTS).forEach(([id,p])=>{const c=centroid(p);B.push({poly:p.map(q=>[c[0]+(q[0]-c[0])*.93,c[1]+(q[1]-c[1])*.93]),h:H[id],slot:id,inside:true,dist:"slot"});});
@@ -731,7 +733,7 @@ let focusBeat=-1;
 // ---------- hit testing ----------
 function hitTest(uv){
  const tol=Math.max(2,8/cam.z);
- if(layers.p9)for(const q of P9){if(q.b&&(pip(uv,q.b.poly)||Math.hypot(uv[0]-q.at[0],uv[1]-q.at[1])<Math.max(3,8/cam.z)))return {kind:"p9",id:q.id,item:{name:q.name,tags:["propuesta P9","I1 sugerido","público + servicio"],owner:q.p8?"CITY-02 + CITY-06 (+P8)":"CITY-02 + CITY-06",text:q.what,c7:q.p8?"Solo existe si también se aprueba la calleja P8 donde está.":"Local nuevo en una fachada I0 existente. Hace falta que CITY-02 lo programe y CITY-06 le dé profundidad; si no, es door inflation."},shape:{poly:q.b.poly}};}
+ if(layers.p9)for(const q of P9){if(q.b&&(pip(uv,q.b.poly)||Math.hypot(uv[0]-q.at[0],uv[1]-q.at[1])<Math.max(3,8/cam.z)))return {kind:"p9",id:q.id+" · "+q.pid,item:{name:q.name,tags:q.site?["propuesta P9","B","S1","I0 exterior"]:["propuesta P9","B","S2","I1","público + servicio"],owner:q.p8?"CITY-02 + CITY-06 (+P8)":"CITY-02 + CITY-06",text:q.what,c7:q.p8?"Solo existe si también se aprueba la calleja P8 donde está.":"Local nuevo en una fachada I0 existente. Hace falta que CITY-02 lo programe y CITY-06 le dé profundidad; si no, es door inflation."},shape:{poly:q.b.poly}};}
  if(layers.secrets)for(const sc of SECRETS){if(Math.hypot(uv[0]-sc.at[0],uv[1]-sc.at[1])<Math.max(3,9/cam.z))return {kind:"secret",item:{name:sc.name,id:sc.id,tags:[sc.st==="P8"?"necesita P8":sc.st==="aceptado"?"ya aceptado":"CITY-07 puede"]},shape:null,sc};}
  for(const p of PROPS){if(!layers.props)break;const d=Math.hypot(uv[0]-p.at[0],uv[1]-p.at[1]);if(d<Math.max(5,10/cam.z))return {kind:"prop",item:p,shape:null};}
  for(const [id,poly] of Object.entries(SLOTS))if(pip(uv,poly))return {kind:"place",id,item:PLACES[id],shape:{poly}};
@@ -779,12 +781,11 @@ const ol=document.getElementById("beats");BEATS.forEach((b,i)=>{const li=documen
 
 // ---------- boot ----------
 genWorld();TERR=terrainImage();
-P9.forEach(q=>{let best=null,bd=1e9;B.forEach(b=>{if(b.slot||!b.inside||b.h<=0||b.p9)return;const c=centroid(b.poly);const d=Math.hypot(c[0]-q.at[0],c[1]-q.at[1]);if(d<bd){bd=d;best=b;}});if(best&&bd<16){best.p9=q;q.b=best;q.at=centroid(best.poly);}});
-(function(){const open0=["F01","F02","F03"].map(id=>centroid(SLOTS[id]));const open1=open0.concat(P9.filter(q=>q.b).map(q=>q.at));
+(function(){const open0=["F01","F02","F03"].map(id=>centroid(SLOTS[id]));const open1=open0.concat(P9.map(q=>q.at));
  const pts=[];ROUTES.forEach(r=>{for(let i=1;i<r.pts.length;i++){const a=r.pts[i-1],b=r.pts[i],L=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let t=0;t<L;t+=2)pts.push([a[0]+(b[0]-a[0])*t/L,a[1]+(b[1]-a[1])*t/L]);}});
  const f=o=>Math.round(100*pts.filter(p=>o.some(q=>Math.hypot(p[0]-q[0],p[1]-q[1])<=25)).length/pts.length);
  const el=document.getElementById("k-metric");if(el)el.textContent=`${f(open0)} % → ${f(open1)} %`;
- const n=document.getElementById("k-count");if(n)n.textContent=`3 → ${3+P9.filter(q=>q.b).length}`;})();
+ const n=document.getElementById("k-count");if(n)n.textContent=`3 → ${3+P9.length}`;})();
 new ResizeObserver(()=>{const had=W;resize();if(!had){fit();draw();}}).observe(box);
 resize();fit();draw();requestAnimationFrame(overlay);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>schedule());

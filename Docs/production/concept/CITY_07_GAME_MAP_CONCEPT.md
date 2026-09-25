@@ -106,26 +106,11 @@ No building receives a hidden room and no route is laundered through service/pri
 
 Snapshot: [`city07_map_p9.png`](city07_map_p9.png). Toggle the `Variante P9` layer in the map.
 
-The biggest gap versus dense game districts such as Yakuza's Kamurocho is not geometry but **things to do per metre of street**: the accepted seed opens only F01 bar, F02 ayuntamiento and F03 shop. P9 promotes twelve existing street-front `I0` façades to small places (suggested `I1`: public room + service), all grounded in a Liébana market town:
+The biggest gap versus dense game districts such as Yakuza's Kamurocho is not geometry but **things to do per metre of street**: the accepted seed opens only F01, F02 and F03. P9 adds eleven small I1 places on new validated frontage regions F09–F19, plus an exterior tintorería (S04): taberna, barbería, orujería, quesería, ferretería, horno, café-billar, fonda, herrería, estanco and ultramarinos. Seven of them depend on P8.
 
-| ID | Place | Depends on P8 |
-|---|---|---|
-| `P9.taberna` | Taberna del Puente | no |
-| `P9.barberia` | Barbería | no |
-| `P9.orujeria` | Orujería del alambique | no |
-| `P9.queseria` | Quesería | no |
-| `P9.botica` | Botica | no |
-| `P9.cafe` | Café-billar | no |
-| `P9.fonda` | Fonda de la Plaza (ground floor public) | no |
-| `P9.horno` | Horno de pan | P8b/P8f square |
-| `P9.herrero` | Taller del herrero | P8a |
-| `P9.tinte` | Tintorería | P8a square |
-| `P9.estanco` | Estanco-quiosco | P8c |
-| `P9.ultramarinos` | Ultramarinos del Ensanche | P8e (reachable only with X5 open) |
+Share of drawn public street within 25 m of an enterable place: **27 % → 77 %**. Enterable places: 3 → 15.
 
-Metric computed in the map over all drawn public routes (2 m samples): share of street within 25 m of an enterable place goes from **27 % (accepted seed)** to **71 % (with P9)**; enterable places go from 3 to 15. None touches the CITY-08 reserved slice.
-
-Authority: **CITY-02** (new programmed places) + **CITY-06** (depth allocation, family reuse; `if.retail_shallow` / `if.social_house`-like families). Without those amendments, opening these façades would be CITY-06 §12 *door inflation*. Runtime content (owners, hours, stock, conversations) stays with PA owners.
+Full specification: [`CITY_P9_PLACES_AMENDMENT.md`](../../workpacks/CITY/CITY_P9_PLACES_AMENDMENT.md).
 
 ## 6. Recommended CITY-07 representative chain
 
@@ -143,9 +128,9 @@ Rationale: ends in the only hero interior (I3); richest lawful level change, rev
 
 ## 7. Suggested owner actions
 
-1. **P1 → CITY-05**: accept the civic tower as L1 landmark.
-2. **P8 → CITY-01 + CITY-03**: accept the lanes, dirt paths and small squares (or a subset) as represented edges before CITY-07, so the demo is not half unreachable blocks.
-3. **P9 → CITY-02 + CITY-06**: promote street-front façades to small enterable places (the main lever for game density).
+1. **P1 → CITY-05**: accept the civic tower as L1 landmark — proposal [`CITY_P1_CIVIC_TOWER_AMENDMENT.md`](../../workpacks/CITY/CITY_P1_CIVIC_TOWER_AMENDMENT.md).
+2. **P8 → CITY-01 + CITY-03**: accept the lanes, dirt paths and small squares (or a subset) as represented edges before CITY-07, so the demo is not half unreachable blocks — proposal [`CITY_P8_LANES_AMENDMENT.md`](../../workpacks/CITY/CITY_P8_LANES_AMENDMENT.md) (edges W18–W26, E06; open sites S04–S07).
+3. **P9 → CITY-02 + CITY-06** (+ CITY-03/05 rows): small enterable places, the main lever for game density — proposal [`CITY_P9_PLACES_AMENDMENT.md`](../../workpacks/CITY/CITY_P9_PLACES_AMENDMENT.md).
 4. **P4 / P6 → CITY-03**: seam payoffs and Cuesta mirador.
 5. Keep P2 / P3 / P5 closed until the asset-rich demo has been played.
 6. If P8 is adopted, add its new segments to the CITY-07 asset-rich demo campaign defined by `CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md` (timings, route choice, quiet/busy, discovery readability).
