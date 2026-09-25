@@ -18,6 +18,12 @@ This is a composition/readiness claim after all semantic owners exist. It must n
 
 All accepted H0 work and H1-00 through H1-11. The gate consumes their evidence and re-executes only integration seams needed by the reference scenario.
 
+## Remaining-work compression amendment
+
+Binding planning amendment: `Docs/workpacks/H1/H1_REMAINING_COMPRESSION_AMENDMENT.md`.
+
+H1-GATE is a proof-only boundary. Its implementation is limited to orchestration, deterministic evidence, residual/dependency reconciliation, the fresh independent public-client AI-agent trial and gate-specific omission controls. It must add no product capability, replacement oracle or private route to make the scenario pass. Any semantic bridge gap discovered here reopens the causal predecessor; the Gate may not repair it locally.
+
 ## New guarantees owned
 
 - complete deterministic H1 reference scenario and parity verdict;
