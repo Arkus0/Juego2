@@ -12,6 +12,7 @@
     <ProjectReference Include="../../src/Arkus.Game.Authoring/Arkus.Game.Authoring.csproj" />
     <ProjectReference Include="../../src/Arkus.Game.World/Arkus.Game.World.csproj" />
     <ProjectReference Include="../../src/Arkus.Harness.Projection/Arkus.Harness.Projection.csproj" />
+    <ProjectReference Include="../../src/Arkus.Harness.Protocol/Arkus.Harness.Protocol.csproj" />
     <ProjectReference Include="../../src/Arkus.Harness.Runtime/Arkus.Harness.Runtime.csproj" />
     <ProjectReference Include="../../tools/Arkus.H1.UnityHost/Arkus.H1.UnityHost.csproj" />
   </ItemGroup>
