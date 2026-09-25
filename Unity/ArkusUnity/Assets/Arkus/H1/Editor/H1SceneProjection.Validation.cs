@@ -181,6 +181,7 @@ namespace Arkus.H1.Editor
                         if (!finiteValid) return;
                         try
                         {
+                            ValidateSourceBytes(plan);
                             current = ObserveScene(scenePath, generationId, plan.inputDigest, plan.canonicalHash, plan.catalogueFingerprint);
                         }
                         catch (InvalidDataException error) when (OwnedBySpecializedPostflight(error.Message)) { }
@@ -272,9 +273,24 @@ namespace Arkus.H1.Editor
         {
             foreach (var component in node.components)
             {
-                if (component.schemaId == H1ComponentProjection.MeshRendererSchema || component.schemaId == H1ComponentProjection.AnimatorSchema)
-                    H1ComponentProjection.ValidateReference(component.schemaId, component.referencePath, component.referenceGuid,
-                        component.referenceLocalFileId, component.referenceContentSha256);
+                if (component.schemaId != H1ComponentProjection.MeshRendererSchema && component.schemaId != H1ComponentProjection.AnimatorSchema)
+                    continue;
+                var probe = new GameObject("H1-08 preflight component probe");
+                try
+                {
+                    if (component.schemaId == H1ComponentProjection.MeshRendererSchema)
+                    {
+                        probe.AddComponent<MeshRenderer>();
+                        H1ComponentProjection.ApplyRenderer(probe, component.referencePath, component.referenceGuid,
+                            component.referenceLocalFileId, component.referenceContentSha256);
+                    }
+                    else
+                    {
+                        H1ComponentProjection.ApplyAnimator(probe, "h1-08-preflight", component.referencePath, component.referenceGuid,
+                            component.referenceLocalFileId, component.referenceContentSha256);
+                    }
+                }
+                finally { UnityEngine.Object.DestroyImmediate(probe); }
             }
         }
 
