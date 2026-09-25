@@ -17,7 +17,7 @@ namespace Arkus.Harness.Mcp
             }
             else if (args.Length == 1 && string.Equals(args[0], "--h1-unity", StringComparison.Ordinal))
             {
-                projection = ProductionH1UnityHost.Create();
+                projection = ProductionH1ProjectCheckpointHost.Create();
             }
             else
             {
