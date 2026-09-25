@@ -48,8 +48,9 @@ namespace Arkus.H1.UnityHost
             if (includeCheckpointHandlers)
             {
                 var checkpoint = H1ProjectCheckpointContract.CreateProjectCheckpointContribution(world, profile, store);
-                definitions = definitions.Concat(checkpoint.Definitions);
-                routes = routes.Concat(checkpoint.Routes);
+                var restore = H1ProjectCheckpointRestoreContract.CreateContribution(profile, store);
+                definitions = definitions.Concat(checkpoint.Definitions).Concat(restore.Definitions);
+                routes = routes.Concat(checkpoint.Routes).Concat(restore.Routes);
             }
 
             return new CanonicalProviderContribution(existing.Descriptor, definitions.ToArray(), routes.ToArray());
@@ -78,7 +79,7 @@ namespace Arkus.H1.UnityHost
                         H1ProjectionContract.ReferenceNamespace,
                         UnityHostResourceClass.ProjectMetadata,
                         UnityHostTimeClass.BoundedRead)
-                });
+                }).Concat(H1ProjectCheckpointRestoreContract.Grants());
             }
             return grants.ToArray();
         }
