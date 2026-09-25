@@ -1,0 +1,318 @@
+name: H1-10 Unity Reconstruction Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-10-unity-validation.yml'
+      - 'Docs/workpacks/H1/WP-H1-10.md'
+      - 'tools/Arkus.H1.UnityHost/**'
+      - 'src/Arkus.Harness.Cli/H1ReferenceTransportHost.cs'
+      - 'src/Arkus.Harness.Mcp/Program.cs'
+      - 'tests/Arkus.Harness.Tests/H1ProjectCheckpoint*.cs'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-10-unity-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  h1-10-effective-reconstruction:
+    name: Exact H1-10 fresh-process reconstruction
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PINNED_ASSET_VAULT_SHA: ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      ASSET_VAULT_TOKEN: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      ARKUS_H1_10_EFFECTIVE_PROOF: '1'
+      H1_10_UNITY_BASELINE_EXIT: '99'
+      H1_10_UNITY_REBUILD_EXIT: '99'
+      H1_10_UNITY_PREPUBLICATION_EXIT: '99'
+
+    steps:
+      - name: Validate exact target and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact lowercase 40-hex'; exit 2; }
+          missing=0
+          for name in ASSET_VAULT_TOKEN UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact public candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact clean public checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          printf '/_asset_vault/\n/artifacts/\n/Unity/ArkusUnity/H1-10-Reconstruction/\n/Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint/\n' >> .git/info/exclude
+          echo "H1_10_EXACT_SHA_GREEN ${TARGET_SHA}"
+
+      - name: Checkout exact private H1 asset baseline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Arkus0/Juego2-assets
+          ref: ${{ env.PINNED_ASSET_VAULT_SHA }}
+          token: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+          fetch-depth: 1
+          lfs: true
+          path: _asset_vault
+
+      - name: Verify and mount accepted H1 SourceSlice
+        shell: bash
+        run: |
+          set -euo pipefail
+          VAULT_SHA="$(git -C _asset_vault rev-parse HEAD)"
+          test "${VAULT_SHA}" = "${PINNED_ASSET_VAULT_SHA}"
+          python3 Tools/AssetVault/verify_h1_asset_vault.py \
+            --public-root . \
+            --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${VAULT_SHA}" \
+            --mount
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx
+          echo "H1_10_PRIVATE_SOURCE_GREEN ${VAULT_SHA}"
+
+      - name: Execute bounded H1-10 remote framing proofs
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARKUS_H1_10_EFFECTIVE_PROOF=0 dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1ProjectCheckpointTests"
+          echo "H1_10_REMOTE_FRAMING_GREEN ${TARGET_SHA}"
+
+      - name: Process A — seed accepted canonical state and normalized plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1ProjectCheckpointEffectiveProofTests.StageA_SeedAcceptedCanonicalArtifactsAndNormalizedPlan"
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/plan.json
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/seed.json
+          echo "H1_10_PROCESS_A_CANONICAL_GREEN ${TARGET_SHA}"
+
+      - name: Install exact GameCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+
+      - name: Unity process A — materialize effective baseline
+        shell: bash
+        run: |
+          set +e
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --customParameters="-testFilter Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.StageA_MaterializeCheckpointBaselineInFreshEditorProcess" \
+            --coverageEnabled false \
+            --artifactsPath=artifacts/h1-10-baseline \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+          code=$?
+          set -e
+          echo "H1_10_UNITY_BASELINE_EXIT=${code}" >> "${GITHUB_ENV}"
+          echo "H1_10_UNITY_BASELINE_PROCESS_EXIT ${code}"
+
+      - name: Enforce effective baseline publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${H1_10_UNITY_BASELINE_EXIT:-99}" -eq 0
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/baseline.json
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes/current.json
+
+      - name: Process A2 — publish checkpoint from effective observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1ProjectCheckpointEffectiveProofTests.StageB_CapturePublishedCheckpointFromEffectiveUnityBaseline"
+          test -f Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint/current.json
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/captured.json
+          echo "H1_10_CHECKPOINT_PUBLISHED_GREEN ${TARGET_SHA}"
+
+      - name: Effective negative — incompatible fingerprint withholds recovery artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1ProjectCheckpointEffectiveProofTests.Negative_EffectiveFingerprintMismatchDoesNotReleaseCanonicalArtifacts"
+          echo "H1_10_FINGERPRINT_BLOCK_GREEN ${TARGET_SHA}"
+
+      - name: Remove every generated Unity projection before reconstruction
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes.meta
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta
+          test ! -e Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes
+          test ! -e Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          echo 'H1_10_GENERATED_OUTPUT_REMOVED'
+
+      - name: Process B — fresh H0 session restores through accepted snapshot import only
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1ProjectCheckpointEffectiveProofTests.StageC_FreshProcessRestoresOnlyThroughAcceptedH0ImportAndWritesRebuildPlan"
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/restored-plan.json
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/restore.json
+          test ! -e Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes
+          test ! -e Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          echo "H1_10_PROCESS_B_H0_RESTORE_GREEN ${TARGET_SHA}"
+
+      - name: Unity process B — clean-output deterministic reconstruction
+        shell: bash
+        run: |
+          set +e
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --customParameters="-testFilter Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.StageB_CleanGeneratedOutputRebuildMatchesCheckpointInSecondEditorProcess" \
+            --coverageEnabled false \
+            --artifactsPath=artifacts/h1-10-rebuild \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+          code=$?
+          set -e
+          echo "H1_10_UNITY_REBUILD_EXIT=${code}" >> "${GITHUB_ENV}"
+          echo "H1_10_UNITY_REBUILD_PROCESS_EXIT ${code}"
+
+      - name: Enforce reconstructed parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${H1_10_UNITY_REBUILD_EXIT:-99}" -eq 0
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/final.json
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes/current.json
+          echo "H1_10_FRESH_RECONSTRUCTION_PARITY_GREEN ${TARGET_SHA}"
+
+      - name: Unity process C — injected failure before generated publication
+        shell: bash
+        run: |
+          set +e
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --customParameters="-testFilter Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.Negative_PrepublicationFailureDoesNotPublishGeneratedCurrent" \
+            --coverageEnabled false \
+            --artifactsPath=artifacts/h1-10-prepublication \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+          code=$?
+          set -e
+          echo "H1_10_UNITY_PREPUBLICATION_EXIT=${code}" >> "${GITHUB_ENV}"
+          echo "H1_10_UNITY_PREPUBLICATION_PROCESS_EXIT ${code}"
+
+      - name: Emit public-safe H1-10 failure summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          roots = [Path('artifacts/h1-10-baseline'), Path('artifacts/h1-10-rebuild'), Path('artifacts/h1-10-prepublication')]
+          print('H1_10_DIAGNOSTIC baseline={} rebuild={} prepublication={}'.format(
+              os.environ.get('H1_10_UNITY_BASELINE_EXIT', 'missing'),
+              os.environ.get('H1_10_UNITY_REBUILD_EXIT', 'missing'),
+              os.environ.get('H1_10_UNITY_PREPUBLICATION_EXIT', 'missing')))
+          for root in roots:
+              for path in sorted(root.rglob('*results.xml')) if root.exists() else []:
+                  try:
+                      tree = ET.parse(path)
+                  except Exception as exc:
+                      print(f'H1_10_DIAGNOSTIC xml_parse_error={type(exc).__name__}')
+                      continue
+                  failed = []
+                  for node in tree.getroot().iter('test-case'):
+                      if node.attrib.get('result') == 'Failed':
+                          failed.append(node.attrib.get('fullname') or node.attrib.get('name') or '<unnamed>')
+                  print(f'H1_10_DIAGNOSTIC file={path.name} failed_test_count={len(failed)}')
+                  for name in failed[:50]:
+                      print(f'H1_10_FAILING_TEST {name}')
+          PY
+
+      - name: Delete raw Unity evidence and private source
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf artifacts/h1-10-baseline artifacts/h1-10-rebuild artifacts/h1-10-prepublication
+          sudo rm -rf Unity/ArkusUnity/H1-10-Reconstruction
+          sudo rm -rf Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes.meta
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta
+          rm -rf _asset_vault
+          sudo chown "$(id -u):$(id -g)" \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          git restore --source="${TARGET_SHA}" -- \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          if [[ -d .git ]]; then
+            test -z "$(git status --porcelain --untracked-files=all)"
+          fi
+          echo 'H1_10_EPHEMERAL_EVIDENCE_REMOVED'
+
+      - name: Enforce all effective H1-10 Unity stages
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${H1_10_UNITY_BASELINE_EXIT:-99}" -eq 0 || { echo '::error::H1-10 baseline Unity process failed'; exit 1; }
+          test "${H1_10_UNITY_REBUILD_EXIT:-99}" -eq 0 || { echo '::error::H1-10 clean reconstruction Unity process failed'; exit 1; }
+          test "${H1_10_UNITY_PREPUBLICATION_EXIT:-99}" -eq 0 || { echo '::error::H1-10 prepublication negative failed'; exit 1; }
+          echo "H1_10_UNITY_GREEN ${TARGET_SHA}"
