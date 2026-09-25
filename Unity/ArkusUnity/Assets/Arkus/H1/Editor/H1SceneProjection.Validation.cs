@@ -71,6 +71,7 @@ namespace Arkus.H1.Editor
         {
             if (validated == null || validated.Plan == null)
                 throw new InvalidOperationException("H1 materialization requires a successful public preflight token.");
+            ValidateEffectiveMaterializationPreconditions(validated.Plan);
             return Materialize(validated.Plan, out postflight);
         }
 
@@ -156,7 +157,7 @@ namespace Arkus.H1.Editor
                 H1ProjectionValidation.Check("unity.component.adapter-inventory", SceneId, "", "Assets/Arkus/H1",
                     "repair the declared/effective H1 component adapter inventory", () => H1ComponentProjection.CaptureInventory()),
                 H1ProjectionValidation.Check("unity.plan.node-shape", SceneId, "", Root,
-                    "repair structural preconditions consumed by effective materialization", () => ValidateMaterializationShape(plan))
+                    "repair structural preconditions consumed by effective materialization", () => ValidateEffectiveMaterializationPreconditions(plan))
             };
 
             foreach (var node in plan.nodes.Where(value => value != null).OrderBy(value => value.objectId ?? "", StringComparer.Ordinal))
@@ -372,10 +373,11 @@ namespace Arkus.H1.Editor
             return false;
         }
 
-        // This is the sole structural gate that can mint a ValidatedProjectionPlan. Both
-        // validate-proposed and effective materialization traverse it, so materialization cannot
-        // consume a structural assumption that public preflight has not first accepted.
-        private static void ValidateMaterializationShape(ProjectionPlan plan)
+        // One shared structural gate is invoked by both validate-proposed and the effective
+        // materialization entrypoint. It is therefore impossible for those paths to drift into
+        // separate precondition lists: a plan rejected here never reaches staging, and a token
+        // consumed by effective materialization is checked by this same method again.
+        private static void ValidateEffectiveMaterializationPreconditions(ProjectionPlan plan)
         {
             var seen = new HashSet<string>(StringComparer.Ordinal);
             foreach (var node in plan.nodes)
