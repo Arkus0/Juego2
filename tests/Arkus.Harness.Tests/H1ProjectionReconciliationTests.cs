@@ -5,6 +5,7 @@ using System.Linq;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
 using Arkus.H1.UnityHost;
+using Arkus.Harness.Projection;
 using Arkus.Harness.Protocol;
 using Xunit;
 
