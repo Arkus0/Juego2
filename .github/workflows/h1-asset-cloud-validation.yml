@@ -404,7 +404,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf artifacts/h1-asset-cloud/unity
+          sudo rm -rf artifacts/h1-asset-cloud/unity
           test ! -e artifacts/h1-asset-cloud/unity/editmode-results.xml
           echo 'H1_ASSET_EPHEMERAL_UNITY_EVIDENCE_REMOVED'
 
