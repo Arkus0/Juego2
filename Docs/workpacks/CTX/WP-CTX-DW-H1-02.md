@@ -1,12 +1,20 @@
 # WP-CTX-DW-H1-02 — selective-adoption validation + H1-07+ disposition
 
-Status: **ACTIVE / IN_PROGRESS**  
+Status: **COMPLETE / ACCEPTED**  
 Class: **NON-PRODUCT-FOUNDATIONAL / CROSS-TRACK ADOPTION VALIDATION**  
 Execution: **REMOTE_OK**  
 Depends on: accepted `WP-CTX-DW-H1-01` + accepted `WP-H1-05` + accepted `WP-H1-06`  
 Blocks: no H1 product workpack; informs bounded `USE / OPTIONAL / NOT_MATERIAL` routing for `WP-H1-07+`
 
 Baseline SHA: `159b85f8352ca5df2aa5b3c714ad5dc94b76d64d`.
+
+Accepted candidate: `a6f9a3a82dfaed51ca4dc20a70967aa07b201cdb`  
+Canonical implementation PR: `#203`  
+Independent PASS review: `#5313739292`  
+Implementation merge: `e6b29a3bd1db8065119b5d292173e45443c247ef`  
+Arkus Candidate Validation: `#2096` / run `36098000952` GREEN  
+Arkus Main Safety: `#639` / run `36097756860` GREEN  
+Binding DocSync: `Docs/evidence/WP-CTX-DW-H1-02/DOCSYNC.md`
 
 ## Objective
 
