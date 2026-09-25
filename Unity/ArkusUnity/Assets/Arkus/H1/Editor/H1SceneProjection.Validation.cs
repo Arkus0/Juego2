@@ -13,16 +13,19 @@ namespace Arkus.H1.Editor
     {
         public static string Execute(string payload)
         {
-            var request = JsonUtility.FromJson<ProjectionRequest>(payload);
+            ProjectionRequest request;
+            try { request = JsonUtility.FromJson<ProjectionRequest>(payload); }
+            catch (Exception) { return InvalidRequestReply("projection.invalid-worker-plan"); }
+
             if (request == null || request.schemaId != "arkus.h1-projection-worker-request@1" ||
                 request.sceneLogicalId != SceneId || request.plan == null ||
                 request.plan.schemaId != "arkus.h1-managed-scene-plan@1" ||
                 request.plan.sceneLogicalId != SceneId || request.plan.nodes == null || request.plan.nodes.Length > 128 ||
                 !IsHash(request.plan.inputDigest) || !IsHash(request.plan.canonicalHash) || !IsHash(request.plan.catalogueFingerprint))
-                throw new InvalidDataException("projection.invalid-worker-plan");
+                return InvalidRequestReply("projection.invalid-worker-plan");
             if (request.mode != "materialize" && request.mode != "observe" &&
                 request.mode != "validate-proposed" && request.mode != "validate-current")
-                throw new InvalidDataException("projection.invalid-worker-mode");
+                return InvalidRequestReply("projection.invalid-worker-mode", request.plan);
 
             try
             {
@@ -63,13 +66,42 @@ namespace Arkus.H1.Editor
             return Materialize(plan, out ignored);
         }
 
+        private static string InvalidRequestReply(string code, ProjectionPlan plan = null)
+        {
+            var validation = new H1ValidationResult
+            {
+                schemaId = H1ProjectionValidation.ResultSchema,
+                inventorySchemaId = H1ProjectionValidation.InventorySchema,
+                phase = H1ProjectionValidation.Preflight,
+                scope = "request",
+                inputDigest = plan == null ? "" : plan.inputDigest ?? "",
+                valid = false,
+                executedInvariantIds = new[] { "unity.plan.node-shape" },
+                diagnostics = new[]
+                {
+                    new H1ValidationDiagnostic
+                    {
+                        code = code,
+                        severity = "error",
+                        invariantId = "unity.plan.node-shape",
+                        phase = H1ProjectionValidation.Preflight,
+                        canonicalResource = SceneId,
+                        logicalAsset = "",
+                        managedPath = Root,
+                        context = "use the versioned H1 projection request schema and a supported validation/materialization mode"
+                    }
+                }
+            };
+            return ValidationReply(plan, code, SafeObserveActive(), validation);
+        }
+
         private static string ValidationReply(ProjectionPlan plan, string errorCode, ProjectionObservation observation, H1ValidationResult validation)
         {
             return JsonUtility.ToJson(new ValidationProjectionReply
             {
                 schemaId = "arkus.h1-projection-worker-result@1",
                 sceneLogicalId = SceneId,
-                expectedInputDigest = plan.inputDigest,
+                expectedInputDigest = plan == null ? "" : plan.inputDigest ?? "",
                 errorCode = errorCode ?? "",
                 observation = observation ?? EmptyObservation(),
                 validation = validation,
@@ -91,7 +123,6 @@ namespace Arkus.H1.Editor
 
         private static H1ValidationResult RunPreflight(ProjectionPlan plan)
         {
-            var shapeValid = true;
             var checks = new List<H1ValidationCheck>
             {
                 H1ProjectionValidation.Check("unity.catalogue.snapshot", SceneId, "", "Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json",
@@ -99,11 +130,7 @@ namespace Arkus.H1.Editor
                 H1ProjectionValidation.Check("unity.component.adapter-inventory", SceneId, "", "Assets/Arkus/H1",
                     "repair the declared/effective H1 component adapter inventory", () => H1ComponentProjection.CaptureInventory()),
                 H1ProjectionValidation.Check("unity.plan.node-shape", SceneId, "", Root,
-                    "repair canonical node identity/shape", () =>
-                    {
-                        try { ValidatePlanShapeForH108(plan); }
-                        catch (InvalidDataException) { shapeValid = false; throw; }
-                    })
+                    "repair canonical node identity/shape", () => ValidatePlanShapeForH108(plan))
             };
 
             foreach (var node in plan.nodes.Where(value => value != null).OrderBy(value => value.objectId ?? "", StringComparer.Ordinal))
@@ -115,25 +142,33 @@ namespace Arkus.H1.Editor
                 checks.Add(H1ProjectionValidation.Check("unity.plan.source-binding", resource, logical, managed,
                     "repair logical source identity/path/type", () =>
                     {
-                        if (!shapeValid) return;
+                        if (!SourceCheckEligible(captured)) return;
                         ResolveSource(captured);
                     }));
                 checks.Add(H1ProjectionValidation.Check("unity.plan.component", resource, logical, Root + "/" + resource,
                     "repair component schema/field/reference", () =>
                     {
-                        if (!shapeValid) return;
+                        if (!ComponentCheckEligible(captured)) return;
                         ValidateComponents(captured);
                         ValidateComponentReferencesForH108(captured);
                     }));
             }
 
             checks.Add(H1ProjectionValidation.Check("unity.plan.hierarchy", SceneId, "", Root,
-                "repair parent or canonical component target", () =>
-                {
-                    if (!shapeValid) return;
-                    ValidatePlanHierarchyForH108(plan);
-                }));
+                "repair parent or canonical component target", () => ValidatePlanHierarchyForH108(plan)));
             return H1ProjectionValidation.Run(H1ProjectionValidation.Preflight, "proposed", plan.inputDigest, checks);
+        }
+
+        private static bool SourceCheckEligible(ProjectionNode node)
+        {
+            return node != null && (node.sourceKind == "prefab" || node.sourceKind == "asset") &&
+                !string.IsNullOrEmpty(node.sourcePath) && !string.IsNullOrEmpty(node.sourceGuid) &&
+                !string.IsNullOrEmpty(node.sourceLocalFileId) && IsHash(node.sourceContentSha256);
+        }
+
+        private static bool ComponentCheckEligible(ProjectionNode node)
+        {
+            return node != null && node.components != null && node.components.Length != 0 && node.components.Length <= MaximumComponents;
         }
 
         private static H1ValidationResult RunCurrentValidation(ProjectionPlan plan, out ProjectionObservation observation)
@@ -155,37 +190,19 @@ namespace Arkus.H1.Editor
             ProjectionObservation seed, bool comparePlan, out ProjectionObservation observation)
         {
             var current = seed;
-            var finiteValid = true;
             var checks = new List<H1ValidationCheck>
             {
                 H1ProjectionValidation.Check("unity.scene.finite-transform", SceneId, "", scenePath,
-                    "repair non-finite local transform values before publication", () =>
-                    {
-                        try { H1ProjectionValidation.ValidateFiniteTransforms(scenePath); }
-                        catch (InvalidDataException) { finiteValid = false; throw; }
-                    }),
+                    "repair non-finite local transform values before publication", () => H1ProjectionValidation.ValidateFiniteTransforms(scenePath)),
                 H1ProjectionValidation.Check("unity.scene.managed-marker", SceneId, "", scenePath,
-                    "repair managed root/object marker identity and hierarchy", () =>
-                    {
-                        if (!finiteValid) return;
-                        ValidateManagedMarkerClass(plan, scenePath, generationId);
-                    }),
+                    "repair managed root/object marker identity and hierarchy", () => ValidateManagedMarkerClass(scenePath, generationId)),
                 H1ProjectionValidation.Check("unity.scene.prefab-link", SceneId, "", scenePath,
-                    "repair prefab derivative/source lineage without mutating source", () =>
-                    {
-                        if (!finiteValid) return;
-                        ValidatePrefabClass(scenePath);
-                    }),
+                    "repair prefab derivative/source lineage without mutating source", () => ValidatePrefabClass(scenePath)),
                 H1ProjectionValidation.Check("unity.scene.component", SceneId, "", scenePath,
-                    "repair effective component field/reference realization", () =>
-                    {
-                        if (!finiteValid) return;
-                        ValidateEffectiveComponentClass(scenePath);
-                    }),
+                    "repair effective component field/reference realization", () => ValidateEffectiveComponentClass(scenePath)),
                 H1ProjectionValidation.Check("unity.scene.effective-observation", SceneId, "", scenePath,
                     "repair effective managed scene observation", () =>
                     {
-                        if (!finiteValid) return;
                         try
                         {
                             ValidateSourceBytes(plan);
@@ -210,13 +227,34 @@ namespace Arkus.H1.Editor
             return result;
         }
 
-        private static void ValidateManagedMarkerClass(ProjectionPlan plan, string scenePath, string generationId)
+        private static void ValidateManagedMarkerClass(string scenePath, string generationId)
         {
-            try
+            if (!File.Exists(Path.Combine(H1Bootstrap.ProjectRoot(), scenePath)))
+                throw new InvalidDataException("projection.active-scene-missing");
+            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            var roots = scene.GetRootGameObjects();
+            if (roots.Length != 1) throw new InvalidDataException("projection.root-count");
+            var root = roots[0].GetComponent<H1ManagedMarker>();
+            if (root == null || root.schemaId != H1ManagedMarker.SchemaId || root.role != "root" || root.sceneLogicalId != SceneId ||
+                root.generationId != generationId || root.canonicalObjectId != "" || root.sourceLogicalId != "")
+                throw new InvalidDataException("projection.root-marker-invalid");
+            if (!Equal(Quantize(root.transform.localPosition, 1000), new ProjectionVector()) ||
+                !Equal(Quantize(root.transform.localScale, 1000000), new ProjectionVector { x = 1000000, y = 1000000, z = 1000000 }) ||
+                Quaternion.Angle(root.transform.localRotation, Quaternion.identity) > 0.02f)
+                throw new InvalidDataException("projection.root-transform-drift");
+
+            ValidateEffectiveMembership(roots[0], generationId);
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var marker in roots[0].GetComponentsInChildren<H1ManagedMarker>(true))
             {
-                ObserveScene(scenePath, generationId, plan.inputDigest, plan.canonicalHash, plan.catalogueFingerprint);
+                if (marker == root) continue;
+                if (marker.schemaId != H1ManagedMarker.SchemaId || marker.role != "object" || marker.sceneLogicalId != SceneId ||
+                    marker.generationId != generationId || string.IsNullOrEmpty(marker.canonicalObjectId) || !seen.Add(marker.canonicalObjectId))
+                    throw new InvalidDataException("projection.duplicate-or-invalid-marker");
+                var parent = marker.transform.parent == null ? null : marker.transform.parent.GetComponent<H1ManagedMarker>();
+                if (parent == null || (parent != root && parent.role != "object"))
+                    throw new InvalidDataException("projection.unmanaged-parent");
             }
-            catch (InvalidDataException error) when (!OwnsPostflightCode("unity.scene.managed-marker", error.Message)) { }
         }
 
         private static void ValidatePrefabClass(string scenePath)
@@ -280,7 +318,8 @@ namespace Arkus.H1.Editor
         {
             foreach (var component in node.components)
             {
-                if (component.schemaId != H1ComponentProjection.MeshRendererSchema && component.schemaId != H1ComponentProjection.AnimatorSchema)
+                if (component == null ||
+                    (component.schemaId != H1ComponentProjection.MeshRendererSchema && component.schemaId != H1ComponentProjection.AnimatorSchema))
                     continue;
                 var probe = new GameObject("H1-08 preflight component probe");
                 try
@@ -303,13 +342,16 @@ namespace Arkus.H1.Editor
 
         private static void ValidatePlanHierarchyForH108(ProjectionPlan plan)
         {
-            var seen = new HashSet<string>(plan.nodes.Select(node => node.objectId), StringComparer.Ordinal);
+            var seen = new HashSet<string>(plan.nodes.Where(node => node != null && !string.IsNullOrEmpty(node.objectId))
+                .Select(node => node.objectId), StringComparer.Ordinal);
             foreach (var node in plan.nodes)
             {
+                if (node == null) continue;
                 if (!string.IsNullOrEmpty(node.parentObjectId) && !seen.Contains(node.parentObjectId))
                     throw new InvalidDataException("projection.unbound-parent");
+                if (node.components == null) continue;
                 foreach (var component in node.components)
-                    if (component.schemaId == H1ComponentProjection.CanonicalLinkSchema && !seen.Contains(component.targetObjectId))
+                    if (component != null && component.schemaId == H1ComponentProjection.CanonicalLinkSchema && !seen.Contains(component.targetObjectId))
                         throw new InvalidDataException("projection.component-reference-unresolved");
             }
         }
