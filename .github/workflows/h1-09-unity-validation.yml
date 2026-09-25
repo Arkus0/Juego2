@@ -209,6 +209,15 @@ jobs:
           echo "UNITY_EXIT_CODE=${code}" >> "${GITHUB_ENV}"
           echo "H1_09_UNITY_PROCESS_EXIT ${code}"
 
+      - name: Verify referenced-content drift through public H1-09 capabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${UNITY_EXIT_CODE:-99}" -eq 0
+          test -f Unity/ArkusUnity/H1-09-Composition/content-drift-worker-reply.json
+          dotnet run --project tests/Arkus.Harness.H109TransportFixture/Arkus.Harness.H109TransportFixture.csproj \
+            --configuration Release --no-build -- --content-drift-verify
+
       - name: Emit public-safe H1-09 failure summary
         if: always()
         shell: bash
