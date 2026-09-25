@@ -74,6 +74,36 @@ namespace Arkus.H1.Editor.Tests
         }
 
         [Test]
+        public void InvalidNodeShape_DoesNotSuppressIndependentHierarchyDiagnostic()
+        {
+            var plan = BuildValidPlan("local-suppression", 2);
+            plan.nodes[0].components = new ProjectionComponent[0];
+            plan.nodes[1].parentObjectId = "missing.parent";
+            plan.inputDigest = HashText("local-suppression-input");
+
+            var reply = Execute("validate-proposed", plan);
+            Assert.That(reply.validation, Is.Not.Null);
+            Assert.That(reply.validation.valid, Is.False);
+            Assert.That(reply.validation.diagnostics.Select(value => value.code), Does.Contain("projection.invalid-node"));
+            Assert.That(reply.validation.diagnostics.Select(value => value.code), Does.Contain("projection.unbound-parent"),
+                "one malformed node may suppress only checks that depend on that node, never an independent hierarchy defect");
+        }
+
+        [Test]
+        public void InvalidRequestEnvelope_ReturnsStructuredDiagnostic_NotRawException()
+        {
+            var raw = H1SceneProjection.Execute("{");
+            var reply = JsonUtility.FromJson<ProjectionReply>(raw);
+            Assert.That(reply, Is.Not.Null, raw);
+            Assert.That(reply.errorCode, Is.EqualTo("projection.invalid-worker-plan"));
+            Assert.That(reply.validation, Is.Not.Null);
+            Assert.That(reply.validation.valid, Is.False);
+            Assert.That(reply.validation.phase, Is.EqualTo(H1ProjectionValidation.Preflight));
+            Assert.That(reply.validation.diagnostics.Single().code, Is.EqualTo("projection.invalid-worker-plan"));
+            Assert.That(reply.validationInventory, Is.Not.Empty);
+        }
+
+        [Test]
         public void UnsupportedComponentSchema_ReturnsStructuredDiagnostic_NotRawUnityException()
         {
             var plan = BuildValidPlan("unsupported", 1);
