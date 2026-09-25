@@ -63,13 +63,13 @@ namespace Arkus.H1.UnityHost
                 if (observation.SchemaId != "arkus.h1-managed-scene-observation@1" ||
                     observation.SceneLogicalId != H1ManagedScenePlan.SceneId ||
                     observation.Nodes == null || observation.Nodes.Length > H1ManagedScenePlan.MaximumObjects ||
-                    observation.Nodes.Any(node => node == null || node.Relationships == null || node.Relationships.Length > 512))
+                    observation.Nodes.Any(node => node == null || node.Relationships == null || node.Relationships.Length > 512 ||
+                        node.ComponentRows == null || node.ComponentRows.Length == 0 || node.ComponentRows.Length > 16 || node.ComponentDigest.Length != 64))
                     throw new JsonException("Projection observation is malformed.");
 
                 var currentHash = Arkus.Game.World.CanonicalWorldStateCodec.ComputeContentHash(_world.Current);
                 var current = observation.Active && observation.InputDigest == expected.InputDigest &&
-                    observation.CanonicalHash == expected.CanonicalHash &&
-                    observation.CatalogueFingerprint == expected.CatalogueFingerprint &&
+                    observation.CanonicalHash == expected.CanonicalHash && observation.CatalogueFingerprint == expected.CatalogueFingerprint &&
                     currentHash == expected.CanonicalHash;
                 if (Capability.Equals(MaterializeKey))
                 {
@@ -118,16 +118,13 @@ namespace Arkus.H1.UnityHost
                 ["realizedLocalFileId"] = node.RealizedLocalFileId,
                 ["prefabGenerationId"] = node.PrefabGenerationId,
                 ["relationshipDigest"] = node.RelationshipDigest,
-                ["relationships"] = node.Relationships.Select(row => (object?)new ReadOnlyDictionary<string, object?>(
-                    new Dictionary<string, object?>(StringComparer.Ordinal)
-                    {
-                        ["kind"] = row.Kind,
-                        ["relativeObjectPath"] = row.RelativeObjectPath,
-                        ["assetPath"] = row.AssetPath,
-                        ["assetGuid"] = row.AssetGuid,
-                        ["localFileId"] = row.LocalFileId,
-                        ["typeName"] = row.TypeName
-                    })).ToArray(),
+                ["relationships"] = node.Relationships.Select(row => (object?)new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["kind"] = row.Kind, ["relativeObjectPath"] = row.RelativeObjectPath, ["assetPath"] = row.AssetPath,
+                    ["assetGuid"] = row.AssetGuid, ["localFileId"] = row.LocalFileId, ["typeName"] = row.TypeName
+                })).ToArray(),
+                ["componentDigest"] = node.ComponentDigest,
+                ["componentRows"] = node.ComponentRows.Cast<object?>().ToArray(),
                 ["positionMm"] = VectorData(node.PositionMm),
                 ["rotationMilliDegrees"] = VectorData(node.RotationMilliDegrees),
                 ["scalePpm"] = VectorData(node.ScalePpm)
@@ -139,26 +136,45 @@ namespace Arkus.H1.UnityHost
             var ordered = actual.OrderBy(node => node.ObjectId, StringComparer.Ordinal).ToArray();
             for (var i = 0; i < expected.Count; i++)
             {
-                if (expected[i].ObjectId != ordered[i].ObjectId ||
-                    expected[i].ParentObjectId != ordered[i].ParentObjectId ||
-                    expected[i].SourceLogicalId != ordered[i].SourceLogicalId ||
-                    !Equal(expected[i].PositionMm, ordered[i].PositionMm) ||
-                    !Equal(expected[i].ScalePpm, ordered[i].ScalePpm)) return false;
+                if (expected[i].ObjectId != ordered[i].ObjectId || expected[i].ParentObjectId != ordered[i].ParentObjectId ||
+                    expected[i].SourceLogicalId != ordered[i].SourceLogicalId || !Equal(expected[i].PositionMm, ordered[i].PositionMm) ||
+                    !Equal(expected[i].ScalePpm, ordered[i].ScalePpm) ||
+                    !ExpectedComponentRows(expected[i]).SequenceEqual(ordered[i].ComponentRows, StringComparer.Ordinal)) return false;
             }
             return true;
         }
 
-        private static bool Equal(H1ProjectionVector left, H1ProjectionVector right) =>
-            left.X == right.X && left.Y == right.Y && left.Z == right.Z;
+        private static string[] ExpectedComponentRows(H1ManagedSceneNode node)
+        {
+            var rows = new List<string>();
+            foreach (var component in node.Components)
+            {
+                if (component.SchemaId == H1ComponentSchemas.Transform)
+                    rows.Add(component.SchemaId + "|positionMm=" + Vec(node.PositionMm) + "|rotationMilliDegrees=" + VecNormalized(node.RotationMilliDegrees) + "|scalePpm=" + Vec(node.ScalePpm));
+                else if (component.SchemaId == H1ComponentSchemas.MeshRenderer)
+                    rows.Add(component.SchemaId + "|enabled=true|material=" + AssetIdentity(component));
+                else if (component.SchemaId == H1ComponentSchemas.Animator)
+                    rows.Add(component.SchemaId + "|applyRootMotion=false|updateMode=Normal|cullingMode=AlwaysAnimate|clip=" + AssetIdentity(component));
+                else if (component.SchemaId == H1ComponentSchemas.CanonicalLink)
+                    rows.Add(component.SchemaId + "|relation=" + component.Relation + "|target=" + component.TargetObjectId);
+                else return Array.Empty<string>();
+            }
+            rows.Sort(StringComparer.Ordinal);
+            return rows.ToArray();
+        }
 
+        private static string AssetIdentity(H1ComponentPlan component) => component.ReferencePath + "|" + component.ReferenceGuid + "|" + component.ReferenceLocalFileId;
+        private static string Vec(H1ProjectionVector value) => value.X + "," + value.Y + "," + value.Z;
+        private static string VecNormalized(H1ProjectionVector value) => Normalize(value.X) + "," + Normalize(value.Y) + "," + Normalize(value.Z);
+        private static long Normalize(long value) { var result = value % 360000; return result < 0 ? result + 360000 : result; }
+        private static bool Equal(H1ProjectionVector left, H1ProjectionVector right) => left.X == right.X && left.Y == right.Y && left.Z == right.Z;
         private static IReadOnlyDictionary<string, object?> VectorData(H1ProjectionVector value) =>
-            new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
-            { ["x"] = value.X, ["y"] = value.Y, ["z"] = value.Z });
+            new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal) { ["x"] = value.X, ["y"] = value.Y, ["z"] = value.Z });
 
         private static CapabilityInvocationResult Failure(string code, string message) =>
             CapabilityInvocationResult.Failed(new StructuredError(code, message, "$",
-                new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)),
-                false, "Inspect the active generation and retry after repairing the canonical binding or effective Unity input."));
+                new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)), false,
+                "Inspect the active generation and retry after repairing the canonical binding or effective Unity input."));
     }
 
     public sealed class H1ManagedSceneWorkerReply
@@ -201,6 +217,8 @@ namespace Arkus.H1.UnityHost
         public string PrefabGenerationId { get; set; } = "";
         public string RelationshipDigest { get; set; } = "";
         public H1ObservedPrefabRelationship[] Relationships { get; set; } = Array.Empty<H1ObservedPrefabRelationship>();
+        public string ComponentDigest { get; set; } = "";
+        public string[] ComponentRows { get; set; } = Array.Empty<string>();
         public H1ProjectionVector PositionMm { get; set; } = new H1ProjectionVector();
         public H1ProjectionVector RotationMilliDegrees { get; set; } = new H1ProjectionVector();
         public H1ProjectionVector ScalePpm { get; set; } = new H1ProjectionVector();
@@ -238,7 +256,8 @@ namespace Arkus.H1.UnityHost
                     ["canonicalHash"] = plan.CanonicalHash,
                     ["catalogueFingerprint"] = plan.CatalogueFingerprint,
                     ["inputDigest"] = plan.InputDigest,
-                    ["objectIds"] = plan.Nodes.Select(node => (object?)node.ObjectId).ToArray()
+                    ["objectIds"] = plan.Nodes.Select(node => (object?)node.ObjectId).ToArray(),
+                    ["componentSchemas"] = plan.Nodes.SelectMany(node => node.Components).Select(component => component.SchemaId).Distinct(StringComparer.Ordinal).OrderBy(value => value, StringComparer.Ordinal).Cast<object?>().ToArray()
                 }));
             }
             catch (H1ProjectionException exception)
@@ -288,8 +307,7 @@ namespace Arkus.H1.UnityHost
 
         public static void RequireScene(IReadOnlyDictionary<string, object?> request)
         {
-            if (request == null || !request.TryGetValue("sceneLogicalId", out var raw) ||
-                raw is not string scene || scene != H1ManagedScenePlan.SceneId)
+            if (request == null || !request.TryGetValue("sceneLogicalId", out var raw) || raw is not string scene || scene != H1ManagedScenePlan.SceneId)
                 throw new H1ProjectionException("projection.scene-out-of-scope", "Only the fixed reviewed managed scene is admitted.");
         }
 
@@ -305,10 +323,8 @@ namespace Arkus.H1.UnityHost
         {
             var definition = new CapabilityDefinition(PlanKey,
                 new ProviderMetadata("arkus.unity-projection", ProviderKind.Scoped, "unity-projection", "unity.projection"),
-                PlanRequest(), PlanSuccess(), CanonicalContractSchemas.StructuredError(),
-                SideEffectClass.ReadOnly, DeterminismClass.EnvironmentDependent,
-                new[] { "canonical-snapshot-and-accepted-catalogue-bound" },
-                new[] { "normalized-managed-scene-plan-returned", "canonical-state-unchanged" },
+                PlanRequest(), PlanSuccess(), CanonicalContractSchemas.StructuredError(), SideEffectClass.ReadOnly, DeterminismClass.EnvironmentDependent,
+                new[] { "canonical-snapshot-and-accepted-catalogue-bound" }, new[] { "normalized-managed-scene-plan-returned", "canonical-state-unchanged" },
                 new ConcurrencySemantics(ConcurrencyClass.Serialized), new IdempotencySemantics(IdempotencyClass.Idempotent),
                 new BatchingSemantics(BatchingClass.Unsupported), new RepairSemantics(false, true),
                 new PolicySemantics(PrivilegeClass.Authoring, TransactionRequirement.ReadOnlyEnvelope, ProvenanceRequirement.Required),
@@ -320,8 +336,8 @@ namespace Arkus.H1.UnityHost
 
         public static IReadOnlyList<CapabilityDefinition> EditorDefinitions() => new[]
         {
-            EditorDefinition(H1ManagedSceneExecutor.MaterializeKey, SideEffectClass.ExternalReversible, ObservationSuccess(), "staged managed-scene publication and managed prefab realization"),
-            EditorDefinition(H1ManagedSceneExecutor.ObserveKey, SideEffectClass.ReadOnly, ObservationSuccess(), "normalized effective managed-scene and prefab observation")
+            EditorDefinition(H1ManagedSceneExecutor.MaterializeKey, SideEffectClass.ExternalReversible, ObservationSuccess(), "staged managed-scene publication, prefab realization and allowlisted component realization"),
+            EditorDefinition(H1ManagedSceneExecutor.ObserveKey, SideEffectClass.ReadOnly, ObservationSuccess(), "normalized effective managed-scene, prefab and component observation")
         };
 
         public static IReadOnlyList<CapabilityRoute> EditorRoutes(H1UnityEditorExecutionCoordinator coordinator) => new[]
@@ -332,20 +348,16 @@ namespace Arkus.H1.UnityHost
 
         public static IReadOnlyList<UnityHostCapabilityGrant> Grants() => new[]
         {
-            new UnityHostCapabilityGrant(H1ManagedSceneExecutor.MaterializeKey, UnityProjectWorkspaceAuthority.ManagedAssetsRootId,
-                ReferenceNamespace, UnityHostResourceClass.ManagedAsset, UnityHostTimeClass.BoundedEditorEffect),
-            new UnityHostCapabilityGrant(H1ManagedSceneExecutor.ObserveKey, UnityProjectWorkspaceAuthority.ManagedAssetsRootId,
-                ReferenceNamespace, UnityHostResourceClass.ManagedAsset, UnityHostTimeClass.BoundedRead)
+            new UnityHostCapabilityGrant(H1ManagedSceneExecutor.MaterializeKey, UnityProjectWorkspaceAuthority.ManagedAssetsRootId, ReferenceNamespace, UnityHostResourceClass.ManagedAsset, UnityHostTimeClass.BoundedEditorEffect),
+            new UnityHostCapabilityGrant(H1ManagedSceneExecutor.ObserveKey, UnityProjectWorkspaceAuthority.ManagedAssetsRootId, ReferenceNamespace, UnityHostResourceClass.ManagedAsset, UnityHostTimeClass.BoundedRead)
         };
 
         private static CapabilityDefinition EditorDefinition(CapabilityKey key, SideEffectClass effect, JsonSchemaDocument success, string cost) =>
             new CapabilityDefinition(key,
-                new ProviderMetadata(H1UnityHostCapabilityPolicy.HostProviderId, ProviderKind.Scoped,
-                    H1UnityHostCapabilityPolicy.HostScope, H1UnityHostCapabilityPolicy.HostNamespace),
-                Request(), success, CanonicalContractSchemas.StructuredError(),
-                effect, DeterminismClass.EnvironmentDependent,
-                new[] { "fixed-managed-scene", "canonical-and-catalogue-inputs-bound" },
-                new[] { "effective-scene-and-prefab-realization-observed", "canonical-state-unchanged" },
+                new ProviderMetadata(H1UnityHostCapabilityPolicy.HostProviderId, ProviderKind.Scoped, H1UnityHostCapabilityPolicy.HostScope, H1UnityHostCapabilityPolicy.HostNamespace),
+                Request(), success, CanonicalContractSchemas.StructuredError(), effect, DeterminismClass.EnvironmentDependent,
+                new[] { "fixed-managed-scene", "canonical-and-catalogue-inputs-bound", "allowlisted-component-schemas-bound" },
+                new[] { "effective-scene-prefab-and-component-realization-observed", "canonical-state-unchanged" },
                 new ConcurrencySemantics(ConcurrencyClass.Serialized), new IdempotencySemantics(IdempotencyClass.Idempotent),
                 new BatchingSemantics(BatchingClass.Unsupported), new RepairSemantics(true, true),
                 new PolicySemantics(PrivilegeClass.Authoring, TransactionRequirement.None, ProvenanceRequirement.Required),
@@ -353,24 +365,18 @@ namespace Arkus.H1.UnityHost
 
         private static JsonSchemaDocument Request() => new JsonSchemaDocument(SchemaNode.Object(
             new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
-            {
-                ["sceneLogicalId"] = SchemaNode.String(format: "arkus-logical-reference", logicalReferenceNamespace: ReferenceNamespace)
-            }, new[] { "sceneLogicalId" }));
+            { ["sceneLogicalId"] = SchemaNode.String(format: "arkus-logical-reference", logicalReferenceNamespace: ReferenceNamespace) }, new[] { "sceneLogicalId" }));
 
         private static JsonSchemaDocument PlanRequest() => new JsonSchemaDocument(SchemaNode.Object(
-            new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
-            { ["sceneLogicalId"] = SchemaNode.String(new[] { H1ManagedScenePlan.SceneId }) },
-            new[] { "sceneLogicalId" }));
+            new Dictionary<string, SchemaNode>(StringComparer.Ordinal) { ["sceneLogicalId"] = SchemaNode.String(new[] { H1ManagedScenePlan.SceneId }) }, new[] { "sceneLogicalId" }));
 
         private static JsonSchemaDocument PlanSuccess() => new JsonSchemaDocument(SchemaNode.Object(
             new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
             {
-                ["schemaId"] = SchemaNode.String(new[] { H1ManagedScenePlan.Schema }),
-                ["sceneLogicalId"] = SchemaNode.String(), ["worldId"] = SchemaNode.String(),
-                ["worldRevision"] = SchemaNode.Integer(), ["canonicalHash"] = SchemaNode.String(),
-                ["catalogueFingerprint"] = SchemaNode.String(), ["inputDigest"] = SchemaNode.String(),
-                ["objectIds"] = SchemaNode.Array(SchemaNode.String())
-            }, new[] { "schemaId", "sceneLogicalId", "worldId", "worldRevision", "canonicalHash", "catalogueFingerprint", "inputDigest", "objectIds" }));
+                ["schemaId"] = SchemaNode.String(new[] { H1ManagedScenePlan.Schema }), ["sceneLogicalId"] = SchemaNode.String(), ["worldId"] = SchemaNode.String(),
+                ["worldRevision"] = SchemaNode.Integer(), ["canonicalHash"] = SchemaNode.String(), ["catalogueFingerprint"] = SchemaNode.String(),
+                ["inputDigest"] = SchemaNode.String(), ["objectIds"] = SchemaNode.Array(SchemaNode.String()), ["componentSchemas"] = SchemaNode.Array(SchemaNode.String(H1ComponentSchemas.Required))
+            }, new[] { "schemaId", "sceneLogicalId", "worldId", "worldRevision", "canonicalHash", "catalogueFingerprint", "inputDigest", "objectIds", "componentSchemas" }));
 
         private static SchemaNode Vector() => SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         { ["x"] = SchemaNode.Integer(), ["y"] = SchemaNode.Integer(), ["z"] = SchemaNode.Integer() }, new[] { "x", "y", "z" });
@@ -378,36 +384,32 @@ namespace Arkus.H1.UnityHost
         private static SchemaNode Relationship() => SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {
             ["kind"] = SchemaNode.String(new[] { "variant-base", "nested-prefab", "mesh-reference", "material-reference", "animation-clip-reference" }),
-            ["relativeObjectPath"] = SchemaNode.String(), ["assetPath"] = SchemaNode.String(),
-            ["assetGuid"] = SchemaNode.String(), ["localFileId"] = SchemaNode.String(), ["typeName"] = SchemaNode.String()
+            ["relativeObjectPath"] = SchemaNode.String(), ["assetPath"] = SchemaNode.String(), ["assetGuid"] = SchemaNode.String(), ["localFileId"] = SchemaNode.String(), ["typeName"] = SchemaNode.String()
         }, new[] { "kind", "relativeObjectPath", "assetPath", "assetGuid", "localFileId", "typeName" });
 
         private static SchemaNode ObservedNode() => SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {
             ["objectId"] = SchemaNode.String(), ["parentObjectId"] = SchemaNode.String(), ["sourceLogicalId"] = SchemaNode.String(),
             ["sourceKind"] = SchemaNode.String(new[] { "prefab", "asset" }), ["sourcePath"] = SchemaNode.String(), ["sourceGuid"] = SchemaNode.String(),
-            ["sourceLocalFileId"] = SchemaNode.String(), ["sourceContentSha256"] = SchemaNode.String(),
-            ["realizationKind"] = SchemaNode.String(new[] { "managed-prefab-variant", "source-asset" }),
-            ["realizedPath"] = SchemaNode.String(), ["realizedGuid"] = SchemaNode.String(), ["realizedLocalFileId"] = SchemaNode.String(),
-            ["prefabGenerationId"] = SchemaNode.String(), ["relationshipDigest"] = SchemaNode.String(),
-            ["relationships"] = SchemaNode.Array(Relationship()),
+            ["sourceLocalFileId"] = SchemaNode.String(), ["sourceContentSha256"] = SchemaNode.String(), ["realizationKind"] = SchemaNode.String(new[] { "managed-prefab-variant", "source-asset" }),
+            ["realizedPath"] = SchemaNode.String(), ["realizedGuid"] = SchemaNode.String(), ["realizedLocalFileId"] = SchemaNode.String(), ["prefabGenerationId"] = SchemaNode.String(),
+            ["relationshipDigest"] = SchemaNode.String(), ["relationships"] = SchemaNode.Array(Relationship()),
+            ["componentDigest"] = SchemaNode.String(), ["componentRows"] = SchemaNode.Array(SchemaNode.String()),
             ["positionMm"] = Vector(), ["rotationMilliDegrees"] = Vector(), ["scalePpm"] = Vector()
         }, new[]
         {
             "objectId", "parentObjectId", "sourceLogicalId", "sourceKind", "sourcePath", "sourceGuid", "sourceLocalFileId", "sourceContentSha256",
             "realizationKind", "realizedPath", "realizedGuid", "realizedLocalFileId", "prefabGenerationId", "relationshipDigest", "relationships",
-            "positionMm", "rotationMilliDegrees", "scalePpm"
+            "componentDigest", "componentRows", "positionMm", "rotationMilliDegrees", "scalePpm"
         });
 
         private static JsonSchemaDocument ObservationSuccess() => new JsonSchemaDocument(SchemaNode.Object(
             new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
             {
-                ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-managed-scene-observation@1" }),
-                ["sceneLogicalId"] = SchemaNode.String(), ["active"] = SchemaNode.Boolean(), ["current"] = SchemaNode.Boolean(),
-                ["generationId"] = SchemaNode.String(), ["inputDigest"] = SchemaNode.String(),
-                ["canonicalHash"] = SchemaNode.String(), ["catalogueFingerprint"] = SchemaNode.String(),
-                ["graphDigest"] = SchemaNode.String(), ["realizationDigest"] = SchemaNode.String(),
-                ["nodes"] = SchemaNode.Array(ObservedNode())
+                ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-managed-scene-observation@1" }), ["sceneLogicalId"] = SchemaNode.String(),
+                ["active"] = SchemaNode.Boolean(), ["current"] = SchemaNode.Boolean(), ["generationId"] = SchemaNode.String(), ["inputDigest"] = SchemaNode.String(),
+                ["canonicalHash"] = SchemaNode.String(), ["catalogueFingerprint"] = SchemaNode.String(), ["graphDigest"] = SchemaNode.String(),
+                ["realizationDigest"] = SchemaNode.String(), ["nodes"] = SchemaNode.Array(ObservedNode())
             }, new[] { "schemaId", "sceneLogicalId", "active", "current", "generationId", "inputDigest", "canonicalHash", "catalogueFingerprint", "graphDigest", "realizationDigest", "nodes" }));
     }
 }
