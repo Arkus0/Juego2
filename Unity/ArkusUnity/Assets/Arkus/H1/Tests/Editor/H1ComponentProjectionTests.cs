@@ -33,6 +33,12 @@ namespace Arkus.H1.Editor.Tests
         public void MultiComponentRoundTrip_SaveReloadObserveAndRebuild_IsDeterministic()
         {
             var fixture = BuildFixture("roundtrip");
+            var actorPlan = fixture.plan.nodes.Single(node => node.objectId == "actor.potes");
+            Assert.That(actorPlan.components.Select(component => component.schemaId), Is.EquivalentTo(new[]
+            {
+                AnimatorSchema, LinkSchema, RendererSchema, TransformSchema
+            }), "the independent probe must exercise every initial H1-07 schema so declared/effective shrinkage fails closed");
+
             var first = Execute("materialize", fixture.plan);
             Assert.That(first.errorCode, Is.Empty);
             Assert.That(first.observation.active, Is.True);
@@ -69,17 +75,42 @@ namespace Arkus.H1.Editor.Tests
             var activeGeneration = baseline.observation.generationId;
 
             var bad = BuildFixture("negative-attempt");
-            bad.plan.nodes[1].components = bad.plan.nodes[1].components.Concat(new[]
-            {
-                new ProjectionComponent { schemaId = "arkus.h1.component.unsupported@1", kind = "unsupported" }
-            }).ToArray();
+            bad.plan.nodes.Single(node => node.objectId == "actor.potes").components =
+                bad.plan.nodes.Single(node => node.objectId == "actor.potes").components.Concat(new[]
+                {
+                    new ProjectionComponent { schemaId = "arkus.h1.component.unsupported@1", kind = "unsupported" }
+                }).ToArray();
             bad.plan.inputDigest = HashText("negative-attempt-with-unsupported-schema");
 
             var rejected = Execute("materialize", bad.plan);
             Assert.That(rejected.errorCode, Is.EqualTo("projection.component-schema-unsupported"));
+            AssertPreviousGeneration(rejected, fixture.plan, activeGeneration);
+        }
+
+        [Test]
+        public void ReboundMaterialReference_FailsBeforePublication_AndKeepsPreviousGenerationActive()
+        {
+            var fixture = BuildFixture("reference-baseline");
+            var baseline = Execute("materialize", fixture.plan);
+            Assert.That(baseline.errorCode, Is.Empty);
+            var activeGeneration = baseline.observation.generationId;
+
+            var bad = BuildFixture("reference-attempt");
+            var renderer = bad.plan.nodes.Single(node => node.objectId == "actor.potes").components
+                .Single(component => component.schemaId == RendererSchema);
+            renderer.referenceGuid = new string('0', 32);
+            bad.plan.inputDigest = HashText("reference-attempt-with-rebound-guid");
+
+            var rejected = Execute("materialize", bad.plan);
+            Assert.That(rejected.errorCode, Is.EqualTo("projection.component-reference-rebound"));
+            AssertPreviousGeneration(rejected, fixture.plan, activeGeneration);
+        }
+
+        private static void AssertPreviousGeneration(ProjectionReply rejected, ProjectionPlan baseline, string activeGeneration)
+        {
             Assert.That(rejected.observation.active, Is.True);
             Assert.That(rejected.observation.generationId, Is.EqualTo(activeGeneration));
-            Assert.That(rejected.observation.inputDigest, Is.EqualTo(fixture.plan.inputDigest));
+            Assert.That(rejected.observation.inputDigest, Is.EqualTo(baseline.inputDigest));
         }
 
         private static Fixture BuildFixture(string salt)
