@@ -178,18 +178,52 @@ namespace Arkus.H1.Editor
             }
 
             diagnostics.Sort(CompareDiagnostics);
-            return new H1ValidationResult
+            return Result(phase, scope, inputDigest,
+                executed.OrderBy(value => OrderOf(value, phaseInventory)).ThenBy(value => value, StringComparer.Ordinal).ToArray(),
+                diagnostics.ToArray());
+        }
+
+        // Single expected-invalidity boundary for work that must happen before/around the registered
+        // checks (for example reading the active manifest). Only canonical projection.* invalidity is
+        // converted; unexpected editor/runtime exceptions remain visible to the outer editor-failure path.
+        internal static H1ValidationResult GuardExpectedInvalidity(
+            string phase,
+            string scope,
+            string inputDigest,
+            string invariantId,
+            string canonicalResource,
+            string logicalAsset,
+            string managedPath,
+            string context,
+            Func<H1ValidationResult> action)
+        {
+            if (action == null) throw new ArgumentNullException(nameof(action));
+            if (!RegisteredById.TryGetValue(invariantId ?? string.Empty, out var descriptor) || descriptor.phase != phase)
+                throw new InvalidOperationException("H1 validation boundary is not registered for phase: " + invariantId);
+
+            try
             {
-                schemaId = ResultSchema,
-                inventorySchemaId = InventorySchema,
-                phase = phase,
-                scope = scope ?? string.Empty,
-                inputDigest = inputDigest ?? string.Empty,
-                valid = diagnostics.Count == 0,
-                executedInvariantIds = executed.OrderBy(value => OrderOf(value, phaseInventory))
-                    .ThenBy(value => value, StringComparer.Ordinal).ToArray(),
-                diagnostics = diagnostics.ToArray()
-            };
+                return action();
+            }
+            catch (InvalidDataException error) when (IsProjectionCode(error.Message))
+            {
+                return Result(phase, scope, inputDigest,
+                    new[] { invariantId },
+                    new[]
+                    {
+                        new H1ValidationDiagnostic
+                        {
+                            code = error.Message,
+                            severity = "error",
+                            invariantId = invariantId,
+                            phase = phase,
+                            canonicalResource = canonicalResource ?? string.Empty,
+                            logicalAsset = logicalAsset ?? string.Empty,
+                            managedPath = managedPath ?? string.Empty,
+                            context = context ?? string.Empty
+                        }
+                    });
+            }
         }
 
         internal static void ValidateFiniteTransforms(string scenePath)
@@ -218,6 +252,28 @@ namespace Arkus.H1.Editor
         {
             if (!Finite(position) || !Finite(scale) || !Finite(rotation))
                 throw new InvalidDataException("projection.non-finite-transform");
+        }
+
+        private static H1ValidationResult Result(
+            string phase,
+            string scope,
+            string inputDigest,
+            string[] executed,
+            H1ValidationDiagnostic[] diagnostics)
+        {
+            var orderedDiagnostics = diagnostics ?? new H1ValidationDiagnostic[0];
+            Array.Sort(orderedDiagnostics, CompareDiagnostics);
+            return new H1ValidationResult
+            {
+                schemaId = ResultSchema,
+                inventorySchemaId = InventorySchema,
+                phase = phase,
+                scope = scope ?? string.Empty,
+                inputDigest = inputDigest ?? string.Empty,
+                valid = orderedDiagnostics.Length == 0,
+                executedInvariantIds = executed ?? new string[0],
+                diagnostics = orderedDiagnostics
+            };
         }
 
         private static bool Finite(Vector3 value) => Finite(value.x) && Finite(value.y) && Finite(value.z);
