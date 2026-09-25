@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import re
 import sys
+import tempfile
 
 HERE = Path(__file__).resolve().parent
 
@@ -63,6 +64,13 @@ def _safe_review_event_gate() -> None:
         event = json.load(fh)
     pr = event.get("pull_request") or {}
     review = event.get("review") or {}
+    actor = (review.get("user") or {}).get("login")
+    association = str(review.get("author_association") or "").upper()
+    if actor != "Arkus0" or association != "OWNER":
+        raise safe.SafeOutputError(
+            f"Reviewer authority requires owner-authored PR review; got actor={actor or 'missing'} association={association or 'missing'}"
+        )
+
     body = review.get("body") or ""
     pr_number = pr.get("number")
     commit_id = (review.get("commit_id") or "").lower()
@@ -84,10 +92,75 @@ def _safe_review_event_gate() -> None:
         raise safe.SafeOutputError("legacy review fields do not exactly mirror the authorized safe output")
 
 
+def _safe_review_event_self_test() -> None:
+    sha = "a" * 40
+    review_id = "b" * 32
+    body = (
+        "Reviewer verdict: FAIL\n"
+        f"Reviewed candidate SHA: {sha}\n"
+        + safe.render_review(
+            wp="WP-H1-07", pr=207, candidate_sha=sha,
+            verdict="FAIL", review_id=review_id,
+        )
+        + "\n"
+    )
+    event = {
+        "pull_request": {"number": 207, "body": "WP: WP-H1-07\n"},
+        "review": {
+            "user": {"login": "Arkus0"},
+            "author_association": "OWNER",
+            "commit_id": sha,
+            "body": body,
+        },
+    }
+    names = ("GITHUB_WORKFLOW", "GITHUB_EVENT_NAME", "GITHUB_EVENT_PATH")
+    prior = {name: os.environ.get(name) for name in names}
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            event_path = Path(tmp) / "event.json"
+            os.environ["GITHUB_WORKFLOW"] = "Arkus State Transitions"
+            os.environ["GITHUB_EVENT_NAME"] = "pull_request_review"
+            os.environ["GITHUB_EVENT_PATH"] = str(event_path)
+
+            event_path.write_text(json.dumps(event), encoding="utf-8")
+            _safe_review_event_gate()
+
+            for association in ("MEMBER", "COLLABORATOR"):
+                event["review"]["author_association"] = association
+                event["review"]["user"] = {"login": "mallory"}
+                event_path.write_text(json.dumps(event), encoding="utf-8")
+                try:
+                    _safe_review_event_gate()
+                except safe.SafeOutputError as exc:
+                    if "owner-authored" not in str(exc):
+                        raise AssertionError(f"unexpected non-owner rejection: {exc}") from exc
+                else:
+                    raise AssertionError(f"{association} pull_request_review unexpectedly authorized")
+
+            event["review"]["author_association"] = "MEMBER"
+            event["review"]["user"] = {"login": "Arkus0"}
+            event_path.write_text(json.dumps(event), encoding="utf-8")
+            try:
+                _safe_review_event_gate()
+            except safe.SafeOutputError as exc:
+                if "owner-authored" not in str(exc):
+                    raise AssertionError(f"unexpected association rejection: {exc}") from exc
+            else:
+                raise AssertionError("owner login with non-OWNER association unexpectedly authorized")
+    finally:
+        for name, value in prior.items():
+            if value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = value
+
+
 def main() -> int:
     try:
         _safe_review_event_gate()
-    except (safe.SafeOutputError, OSError, ValueError, json.JSONDecodeError) as exc:
+        if sys.argv[1:] == ["self-test"]:
+            _safe_review_event_self_test()
+    except (safe.SafeOutputError, OSError, ValueError, json.JSONDecodeError, AssertionError) as exc:
         print(f"SAFE_OUTPUT_STOP: {exc}", file=sys.stderr)
         return 2
     return core.main()
