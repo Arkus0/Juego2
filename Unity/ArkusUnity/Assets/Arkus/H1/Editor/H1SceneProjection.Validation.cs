@@ -43,7 +43,7 @@ namespace Arkus.H1.Editor
                 }
 
                 ProjectionObservation current;
-                var currentValidation = RunCurrentValidation(request.plan, out current);
+                var currentValidation = RunCurrentValidation(out current);
                 return ValidationReply(request.plan, currentValidation.valid ? "" : FirstValidationCode(currentValidation), current, currentValidation);
             }
             catch (H1ValidationFailureException validationFailure)
@@ -140,11 +140,7 @@ namespace Arkus.H1.Editor
                 var logical = captured.sourceLogicalId ?? "";
                 var managed = string.IsNullOrEmpty(captured.sourcePath) ? Root + "/" + resource : captured.sourcePath;
                 checks.Add(H1ProjectionValidation.Check("unity.plan.source-binding", resource, logical, managed,
-                    "repair logical source identity/path/type", () =>
-                    {
-                        if (!SourceCheckEligible(captured)) return;
-                        ResolveSource(captured);
-                    }));
+                    "repair logical source identity/path/type", () => ResolveSource(captured)));
                 checks.Add(H1ProjectionValidation.Check("unity.plan.component", resource, logical, Root + "/" + resource,
                     "repair component schema/field/reference", () =>
                     {
@@ -159,31 +155,58 @@ namespace Arkus.H1.Editor
             return H1ProjectionValidation.Run(H1ProjectionValidation.Preflight, "proposed", plan.inputDigest, checks);
         }
 
-        private static bool SourceCheckEligible(ProjectionNode node)
-        {
-            return node != null && (node.sourceKind == "prefab" || node.sourceKind == "asset") &&
-                !string.IsNullOrEmpty(node.sourcePath) && !string.IsNullOrEmpty(node.sourceGuid) &&
-                !string.IsNullOrEmpty(node.sourceLocalFileId) && IsHash(node.sourceContentSha256);
-        }
-
         private static bool ComponentCheckEligible(ProjectionNode node)
         {
             return node != null && node.components != null && node.components.Length != 0 && node.components.Length <= MaximumComponents;
         }
 
-        private static H1ValidationResult RunCurrentValidation(ProjectionPlan plan, out ProjectionObservation observation)
+        private static H1ValidationResult RunCurrentValidation(out ProjectionObservation observation)
         {
             var manifest = ReadManifest();
             if (manifest == null)
             {
                 observation = EmptyObservation();
-                return H1ProjectionValidation.Run(H1ProjectionValidation.PostMaterialization, "current", plan.inputDigest, new[]
+                return H1ProjectionValidation.Run(H1ProjectionValidation.PostMaterialization, "current", "", new[]
                 {
                     H1ProjectionValidation.Check("unity.scene.finite-transform", SceneId, "", Root,
                         "materialize a managed generation before validating current state", () => { throw new InvalidDataException("projection.active-scene-missing"); })
                 });
             }
-            return RunPostflight(plan, manifest.scenePath, manifest.generationId, null, false, out observation);
+
+            var current = default(ProjectionObservation);
+            var transformsFinite = true;
+            var checks = new List<H1ValidationCheck>
+            {
+                H1ProjectionValidation.Check("unity.scene.finite-transform", SceneId, "", manifest.scenePath,
+                    "repair non-finite local transform values before publication", () =>
+                    {
+                        try { H1ProjectionValidation.ValidateFiniteTransforms(manifest.scenePath); }
+                        catch (InvalidDataException) { transformsFinite = false; throw; }
+                    }),
+                H1ProjectionValidation.Check("unity.scene.managed-marker", SceneId, "", manifest.scenePath,
+                    "repair managed root/object marker identity and hierarchy", () => ValidateManagedMarkerClass(manifest.scenePath, manifest.generationId)),
+                H1ProjectionValidation.Check("unity.scene.prefab-link", SceneId, "", manifest.scenePath,
+                    "repair prefab derivative/source lineage without mutating source", () => ValidatePrefabClass(manifest.scenePath)),
+                H1ProjectionValidation.Check("unity.scene.component", SceneId, "", manifest.scenePath,
+                    "repair effective component field/reference realization", () =>
+                    {
+                        if (!transformsFinite) return;
+                        ValidateEffectiveComponentClass(manifest.scenePath);
+                    }),
+                H1ProjectionValidation.Check("unity.scene.effective-observation", SceneId, "", manifest.scenePath,
+                    "repair active manifest identity or effective managed scene drift", () =>
+                    {
+                        if (!transformsFinite) return;
+                        try { current = ObserveManifest(manifest); }
+                        catch (InvalidDataException error) when (OwnedBySpecializedPostflight(error.Message) &&
+                            error.Message != "projection.active-prefab-drift") { }
+                    })
+            };
+
+            var result = H1ProjectionValidation.Run(H1ProjectionValidation.PostMaterialization,
+                "current", manifest.inputDigest, checks);
+            observation = current ?? EmptyObservation();
+            return result;
         }
 
         private static H1ValidationResult RunPostflight(ProjectionPlan plan, string scenePath, string generationId,
@@ -368,9 +391,8 @@ namespace Arkus.H1.Editor
 
         private static void InjectNonFiniteTransformForH108(IReadOnlyDictionary<string, GameObject> created)
         {
-            var fault = Path.Combine(H1Bootstrap.ProjectRoot(), "Library", "Arkus", "H1Projection", "inject-non-finite-transform");
-            if (!File.Exists(fault) || created == null || created.Count == 0) return;
-            created.OrderBy(value => value.Key, StringComparer.Ordinal).First().Value.transform.localPosition = new Vector3(float.NaN, 0f, 0f);
+            // H1-08 fault injection is consumed by ValidateFiniteTransforms as a synthetic sample.
+            // Do not write NaN into Unity Transform state: Unity sanitizes/rejects that assignment.
         }
 
         [Serializable]
