@@ -46,7 +46,7 @@ header.top h1 small{display:block;font-family:var(--body);font-weight:400;font-s
 .chip i{width:9px;height:9px;border-radius:2px;display:inline-block;border:1px solid currentColor;opacity:.45}
 .chip[aria-pressed="true"] i{opacity:1;background:currentColor}
 .chip:focus-visible,.zoom button:focus-visible,.beat:focus-visible{outline:2px solid var(--warm);outline-offset:2px}
-.chip.c-route{color:#d9d2c0}.chip.c-place{color:var(--warm)}.chip.c-view{color:#9fc2c6}.chip.c-prop{color:var(--blue)}.chip.c-chain{color:#f07a5c}.chip.c-fog{color:#9aa4a2}
+.chip.c-route{color:#d9d2c0}.chip.c-place{color:var(--warm)}.chip.c-view{color:#9fc2c6}.chip.c-prop{color:var(--blue)}.chip.c-chain{color:#f07a5c}.chip.c-fog{color:#9aa4a2}.chip.c-fill{color:#c9c3b6}
 .zoom{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:4px;z-index:3}
 .zoom button{width:32px;height:32px;background:rgba(23,28,29,.9);border:1px solid var(--line);color:var(--text);font:600 16px/1 var(--mono);border-radius:3px;cursor:pointer}
 #mini{position:absolute;right:10px;top:10px;left:auto;bottom:auto;width:150px;height:150px;border:1px solid var(--line);border-radius:3px;z-index:3;cursor:pointer;background:#101415}
@@ -104,6 +104,7 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
         <button class="chip c-chain" data-layer="chain" aria-pressed="true"><i></i>Eslabón CITY-07</button>
         <button class="chip c-prop" data-layer="props" aria-pressed="true"><i></i>Propuestas P1–P6</button>
         <button class="chip c-view" data-layer="views" aria-pressed="false"><i></i>Vistas</button>
+        <button class="chip c-fill" data-layer="filler" aria-pressed="true"><i></i>Relleno</button>
         <button class="chip c-fog" data-layer="fog" aria-pressed="true"><i></i>Niebla</button>
       </div>
       <canvas id="mini" aria-label="Minimapa de la villa; pulsa para centrar"></canvas>
@@ -159,7 +160,7 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
           <div><span class="sw" style="background:#b8b09f"></span>Calle o callejón</div>
           <div><span class="sw" style="background:#3f5a5e"></span>Río y Arroyo</div>
           <div><span class="sw" style="background:#6a7862"></span>Orilla no edificable</div>
-          <div><span class="sw" style="background:#4a3730"></span>Tejado (tejido I0)</div>
+          <div><span class="sw" style="background:#4a3730"></span>Relleno de presentación (no comprometido)</div>
           <div><span class="sw" style="background:#e8b26a"></span>Lugar comprometido</div>
           <div><span class="sw" style="border:1.5px dashed #8d96d4"></span>Propuesta no canónica</div>
           <div><span class="sw" style="background:#f07a5c"></span>Eslabón CITY-07</div>
@@ -418,7 +419,7 @@ const MARKET=[];const HUERTAS=[];
 const box=document.getElementById("mapbox"),base=document.getElementById("base"),over=document.getElementById("over"),mini=document.getElementById("mini");
 const bx=base.getContext("2d"),ox=over.getContext("2d"),mx=mini.getContext("2d");
 let W=0,H=0,DPR=1;const cam={x:-35,y:-100,z:3};
-const layers={routes:true,places:true,chain:true,props:true,views:false,fog:true};
+const layers={routes:true,places:true,chain:true,props:true,views:false,fog:true,filler:true};
 try{const s=JSON.parse(localStorage.getItem("c07map.layers")||"null");if(s)Object.assign(layers,s);}catch(e){}
 let TERR=null;const K=.5,KX=.2; // oblique height factor
 function fit(){const r=box.getBoundingClientRect();const w=r.width,h=r.height;const z=Math.min(w/250,h/290);cam.x=-32;cam.y=-110;cam.z=Math.max(1.2,z);}
@@ -439,7 +440,7 @@ function draw(){
  const [tx,ty]=XY([EXT.u1,EXT.v1]);c.imageSmoothingEnabled=true;c.drawImage(TERR,tx,ty,EXT.v1-EXT.v0,EXT.u1-EXT.u0);
  // gardens (Ensanche)
  B.forEach(b=>{if(!b.garden)return;const c0=centroid(b.poly);c.fillStyle="rgba(120,150,96,.55)";path(c,b.poly.map(p=>[c0[0]+(p[0]-c0[0])*1.9,c0[1]+(p[1]-c0[1])*1.9]));c.fill();c.strokeStyle="rgba(62,84,54,.9)";c.lineWidth=.6;c.stroke();});
- HUERTAS.forEach(q=>{c.fillStyle="rgba(125,147,96,.9)";path(c,q);c.fill();c.strokeStyle="rgba(92,68,51,.7)";c.lineWidth=.35;c.stroke();c.save();path(c,q);c.clip();c.strokeStyle="rgba(70,90,55,.55)";c.lineWidth=.3;const cc=centroid(q);for(let k=-12;k<=12;k+=1.4){path(c,[[cc[0]+k,cc[1]-12],[cc[0]+k,cc[1]+12]],false);c.stroke();}c.restore();});
+ if(layers.filler)HUERTAS.forEach(q=>{c.fillStyle="rgba(125,147,96,.9)";path(c,q);c.fill();c.strokeStyle="rgba(92,68,51,.7)";c.lineWidth=.35;c.stroke();c.save();path(c,q);c.clip();c.strokeStyle="rgba(70,90,55,.55)";c.lineWidth=.3;const cc=centroid(q);for(let k=-12;k<=12;k+=1.4){path(c,[[cc[0]+k,cc[1]-12],[cc[0]+k,cc[1]+12]],false);c.stroke();}c.restore();});
  // Vega fields
  rs=31;for(let u=380;u<465;u+=14)for(let v=-10;v<150;v+=18){if(rnd()<.3)continue;const hu=u+rnd()*2,hv=v+rnd()*2;c.fillStyle=["#6f8a58","#7d9360","#5f7d4f","#8a9a64"][Math.floor(rnd()*4)];path(c,R(hu,hu+12,hv,hv+16));c.fill();c.strokeStyle="rgba(60,70,48,.6)";c.lineWidth=.5;c.stroke();}
  // bank shoulders
@@ -478,7 +479,7 @@ function draw(){
  drawShadows(c);
  const items=[];B.forEach(b=>{const cc=centroid(b.poly);items.push({y:-cc[0],b});});TREES.forEach(t=>items.push({y:-t.p[0],t}));MARKET.forEach(m=>items.push({y:-m[0],m}));
  items.sort((a,b)=>a.y-b.y);
- items.forEach(it=>{if(it.b)drawBuilding(c,it.b);else if(it.t)drawTree(c,it.t);else drawStall(c,it.m);});
+ items.forEach(it=>{if(!layers.filler&&((it.b&&it.b.inside&&!it.b.slot)||(it.t&&inHard(it.t.p)&&!it.t.keep)))return;if(it.b)drawBuilding(c,it.b);else if(it.t)drawTree(c,it.t);else drawStall(c,it.m);});
  // P1 tower (drawn as proposal)
  if(layers.props)drawTower(c);
  // fog outside hard polygon
@@ -504,7 +505,7 @@ function drawX1(c){c.fillStyle="rgba(20,30,32,.45)";path(c,X1.map(p=>[p[0]-.8,p[
  // arches hint
  c.strokeStyle="rgba(70,62,52,.7)";c.lineWidth=.35;for(let t=.2;t<.95;t+=.2){const a=[X1[0][0]+(X1[1][0]-X1[0][0])*t,X1[0][1]+(X1[1][1]-X1[0][1])*t],b=[X1[3][0]+(X1[2][0]-X1[3][0])*t,X1[3][1]+(X1[2][1]-X1[3][1])*t];path(c,[a,b],false);c.stroke();}}
 function drawX5(c){const a=[92,108],b=[90,122];for(let i=0;i<=6;i++){const t=i/6;const p=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];const [x,y]=XY(p);c.fillStyle="#9c9486";c.beginPath();c.ellipse(x,y,1.1,.8,0,0,7);c.fill();c.strokeStyle="#5b554b";c.lineWidth=.25;c.stroke();}}
-function drawShadows(c){c.fillStyle="rgba(15,20,20,.28)";B.forEach(b=>{const o=b.h*.22;path(c,b.poly.map(p=>[p[0]-o*.6,p[1]-o]));c.fill();});
+function drawShadows(c){c.fillStyle="rgba(15,20,20,.28)";B.forEach(b=>{if(!layers.filler&&b.inside&&!b.slot)return;const o=b.h*.22;path(c,b.poly.map(p=>[p[0]-o*.6,p[1]-o]));c.fill();});
  TREES.forEach(t=>{const [x,y]=XY(t.p);c.beginPath();c.ellipse(x+t.r*.5,y+t.r*.4,t.r*1.05,t.r*.7,0,0,7);c.fill();});}
 const PAL={casco:{w:"#c9c3b6",r:"#4a3730"},plaza:{w:"#c4beb0",r:"#4d3a32"},ens:{w:"#d1cbbf",r:"#5c4540"},port:{w:"#8e8678",r:"#5c4433"},orilla:{w:"#bdb6a8",r:"#4a3730"},ribera:{w:"#a79f92",r:"#554038"},alto:{w:"#c2bcaf",r:"#473530"},slot:{w:"#d6cfbf",r:"#4a3730"}};
 function drawBuilding(c,b){const pal=b.slot==="F01"?{w:"#d9cbb0",r:"#5a3a2c"}:b.slot==="F02"?{w:"#d4cdbd",r:"#40322c"}:PAL[b.dist]||PAL.casco;
