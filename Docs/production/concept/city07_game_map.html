@@ -102,9 +102,8 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
         <button class="chip c-route" data-layer="routes" aria-pressed="true"><i></i>Rutas</button>
         <button class="chip c-place" data-layer="places" aria-pressed="true"><i></i>Lugares</button>
         <button class="chip c-chain" data-layer="chain" aria-pressed="true"><i></i>Eslabón CITY-07</button>
-        <button class="chip c-prop" data-layer="props" aria-pressed="true"><i></i>Propuestas P1–P6</button>
+        <button class="chip c-prop" data-layer="props" aria-pressed="true"><i></i>Propuestas P1–P8</button>
         <button class="chip c-view" data-layer="views" aria-pressed="false"><i></i>Vistas</button>
-        <button class="chip c-fill" data-layer="filler" aria-pressed="true"><i></i>Relleno</button>
         <button class="chip c-fog" data-layer="fog" aria-pressed="true"><i></i>Niebla</button>
       </div>
       <canvas id="mini" aria-label="Minimapa de la villa; pulsa para centrar"></canvas>
@@ -144,11 +143,20 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
       </section>
 
       <section class="card">
+        <div class="eyebrow">Lo que he añadido para llenar la zona</div>
+        <h2>Un barrio lleno desde el principio</h2>
+        <div class="amend"><span class="tag" style="color:var(--warm);border-color:#6b5a3a">CITY-07</span><span><b>Todos los edificios.</b> Cada solar de la cuña, del Ensanche bajo y de la Orilla sur tiene casa. Solo F01–F03 se abren; el resto son I0 cerradas pero con puertas, ventanas y macetas.</span></div>
+        <div class="amend"><span class="tag" style="color:var(--warm);border-color:#6b5a3a">CITY-07</span><span><b>Vida en la calle.</b> Fuentes en la plaza y en la plazuela, farolas, bancos, hortensias, ropa tendida, barriles del bar, carro y cajas en el servicio de la tienda, barcas. Son objetos y no crean semántica.</span></div>
+        <div class="amend"><span class="tag">P8 → CITY-01 + 03</span><span><b>Cinco callejas nuevas</b> para que las manzanas del interior tengan fachada: Tintes, Horno, Calleja Alta, Pasadizo y Ensanche bajo. Crean bucles reales. Es la única pieza que necesita enmienda antes de construirse.</span></div>
+      </section>
+
+      <section class="card">
         <div class="eyebrow">Abrir ya, en paralelo (fuera del alcance de CITY-07)</div>
         <h2>Enmiendas que dan el “mapa de juego”</h2>
         <div class="amend"><span class="tag">P1 → CITY-05</span><span><b>La torre</b> en F02. Es el hito L1 que se ve desde el puente, el vado y la calle comercial. Sin enmienda, el Ayuntamiento se queda en fachada cívica sin altura de hito.</span></div>
         <div class="amend"><span class="tag">P4 → CITY-03</span><span><b>Remates de costura</b> en W.LANDING (vista a la confluencia, banco) y O.X1 (el pueblo enmarcado desde la otra orilla).</span></div>
         <div class="amend"><span class="tag">P6 → CITY-03</span><span><b>Mirador de la Cuesta</b>: ensanche con vista a la confluencia. Sin enmienda, solo cabe un rellano dentro de la banda de W06.</span></div>
+        <div class="amend"><span class="tag">P8 → CITY-01 + 03</span><span><b>Callejas del interior.</b> Sin ellas, la mitad de la cuña se queda en manzanas que se ven pero no se pisan.</span></div>
         <div class="amend"><span class="tag no">P2 P3 P5</span><span>Paseo con escaleras, pasaje cubierto y bolera. Crean aristas o sitios nuevos (CITY-01/02). Mejor no abrirlos antes de ver la demo.</span></div>
         <h3>El resto de la semilla en CITY-07</h3>
         <p>Pasada ligera sobre todo lo demás, con cada cambio material en el <i>ledger</i> de impacto. El rincón de CITY-08 se realiza con activos reales, pero sin sobrepulirlo.</p>
@@ -160,7 +168,8 @@ footer{font-size:12.5px;color:var(--faint);max-width:80ch}
           <div><span class="sw" style="background:#b8b09f"></span>Calle o callejón</div>
           <div><span class="sw" style="background:#3f5a5e"></span>Río y Arroyo</div>
           <div><span class="sw" style="background:#6a7862"></span>Orilla no edificable</div>
-          <div><span class="sw" style="background:#4a3730"></span>Relleno de presentación (no comprometido)</div>
+          <div><span class="sw" style="background:#4a3730"></span>Edificio cerrado (I0)</div>
+          <div><span class="sw" style="border:1.5px dashed #8d96d4;background:#b8b09f"></span>Calleja P8 (propuesta)</div>
           <div><span class="sw" style="background:#e8b26a"></span>Lugar comprometido</div>
           <div><span class="sw" style="border:1.5px dashed #8d96d4"></span>Propuesta no canónica</div>
           <div><span class="sw" style="background:#f07a5c"></span>Eslabón CITY-07</div>
@@ -208,6 +217,11 @@ const ROUTES=[
  {id:"W13",pts:[[80,35],[84,44],[86,58],[87,72],[89,86],[90,97],[92,108]],w:3,name:"Callejón bajo",tags:["Q","E1","AF","1,0 min"],fam:"st.historic_lane",text:"Callejón tranquilo junto al Arroyo que lleva al vado.",c7:"Lado tranquilo del contraste. Se ve el patio S03 de lado, pero sin que parezca un atajo."},
  {id:"microA",pts:[[80,35],[84,28],[90,27],[95,31],[96,40]],w:2.8,name:"casco.micro.A",tags:["nodo W.CASCO"],fam:"detalle interno del nodo",text:"Traza A del bucle del Casco. No es una arista nueva de CITY-01.",c7:"Rama alternativa para seguir o buscar. Si se cierra A, se va por B, nunca por un espacio privado."},
  {id:"microB",pts:[[80,35],[83,41],[90,43],[96,40]],w:2.8,name:"casco.micro.B",tags:["nodo W.CASCO"],fam:"detalle interno del nodo",text:"Traza B del bucle del Casco, que pasa por delante del bar.",c7:"Paso 6 del eslabón: fachada del bar, terraza y luz cálida."},
+ {id:"P8a",p8:1,pts:[[104,41],[110,22],[128,6],[155,8],[172,28],[178,50],[179,67]],w:3,name:"Calleja de los Tintes",tags:["propuesta P8","AP","E0–E1"],fam:"st.historic_lane 2,5–4 m",text:"Nueva calleja pública por la bolsa vacía entre la Plaza y el Río. Cierra un bucle Casco → Plaza → calle comercial.",c7:"Crea arista y ciclo nuevos, así que necesita enmienda CITY-01 + CITY-03 antes de construirla."},
+ {id:"P8b",p8:1,pts:[[68,8],[88,12],[110,22]],w:2.8,name:"Travesía del Horno",tags:["propuesta P8","AP","E0"],fam:"st.historic_lane",text:"Une la subida del puente con la calleja de los Tintes por detrás de F05.",c7:"Arista nueva: CITY-01 + CITY-03."},
+ {id:"P8c",p8:1,pts:[[183,68],[183,98],[172,112],[150,114],[128,106],[110,96],[89,86]],w:3,name:"Calleja Alta",tags:["propuesta P8","AP","E1"],fam:"st.historic_lane",text:"Recorre la bolsa vacía del norte, entre F07 y F03, por detrás del Ayuntamiento, hasta el callejón bajo W13.",c7:"Arista y ciclo nuevos: CITY-01 + CITY-03. Además da una vista trasera de la torre."},
+ {id:"P8d",p8:1,pts:[[87,72],[104,70],[116,62],[121,49]],w:2.6,name:"Pasadizo del Arco",tags:["propuesta P8","AP","E0"],fam:"st.historic_lane",text:"Atajo corto entre W13 y W05 por detrás de F06.",c7:"Arista nueva: CITY-01 + CITY-03. No pasa por el patio S03."},
+ {id:"P8e",p8:1,pts:[[84,132],[60,112],[35,88],[12,64]],w:3.4,name:"Camino del Ensanche bajo",tags:["propuesta P8","AP","E0"],fam:"st.ordinary_road 4–6 m",text:"Calle de casas con huerto al otro lado del Arroyo, dentro de la semilla, desde el estribo del vado.",c7:"Arista nueva en la componente del Ensanche: CITY-01 + CITY-03. Sin X5 abierto queda aislada, y eso es correcto."},
 ];
 const CROSS=[
  {id:"X1",poly:X1,pts:[[50,-32],[42,-64]],name:"Puente Viejo",tags:["EW","AH","1,0 min","sin carros"],fam:"cruce permanente del Río",text:"Único corte jugable del Río en la semilla.",c7:"Pasos 1 y 2 del eslabón. El lomo del puente sirve de encuadre hacia el Casco."},
@@ -397,10 +411,12 @@ function genWorld(){
  SOFT_ROADS.forEach(r=>{if(!r.ens)lineBuildings(r.pts,r.w/2,{w:[6,10],d:[8,12],h:[2,3],rows:2,set:1,gapR:1.5});});
  // block interiors and huertas inside the wedge (presentation only)
  rs=17;const allR=ROUTES.map(r=>r.pts);
- for(let i=0;i<5000;i++){const u=-10+rnd()*250,v=-40+rnd()*180;const p=[u,v];if(!inHard(p)||u<0)continue;if(!(v>rioV(u)&&v<arrV(u)))continue;const dr=Math.min(...allR.map(q=>dline(p,q)));
-   const a=rnd()*Math.PI;const d=[Math.cos(a),Math.sin(a)];
-   if(dr<26){tryPlace(rectAt(p,d,5+rnd()*4,6+rnd()*4),{h:6+Math.floor(rnd()*2)*3,dist:district(p)});}
-   else{const w=8+rnd()*8,dp=6+rnd()*6;const poly=rectAt(p,[1,0],w,dp);if(tryPlace(poly,{h:0,dist:"huerta",field:["#6f8a58","#7d9360","#5f7d4f","#8a9a64"][Math.floor(rnd()*4)]}))B.pop(),HUERTAS.push(poly);}}
+ const nearDir=p=>{let best=1e9,dir=[1,0];allR.forEach(q=>{for(let i=1;i<q.length;i++){const d=dseg(p,q[i-1],q[i]);if(d<best){best=d;const L=Math.hypot(q[i][0]-q[i-1][0],q[i][1]-q[i-1][1]);dir=[(q[i][0]-q[i-1][0])/L,(q[i][1]-q[i-1][1])/L];}}});return [best,dir];};
+ for(let pass=0;pass<2;pass++)for(let i=0;i<7000;i++){const u=-10+rnd()*250,v=-40+rnd()*180;const p=[u,v];if(!inHard(p)||u<0)continue;if(!(v>rioV(u)&&v<arrV(u)))continue;const [dr,d]=nearDir(p);
+   if(dr<45){const sz=pass?[4,5]:[6,8];tryPlace(rectAt(p,d,sz[0]+rnd()*3,sz[1]+rnd()*3),{h:(pass?6:9)+Math.floor(rnd()*2)*3,dist:district(p)});}
+   else if(pass){const w=6+rnd()*5,dp=5+rnd()*4;const poly=rectAt(p,d,w,dp);if(tryPlace(poly,{h:0}))B.pop(),HUERTAS.push(poly);}}
+ // Ensanche and Orilla components inside the seed: closed houses
+ rs=19;for(let i=0;i<3000;i++){const u=-20+rnd()*140,v=-80+rnd()*220;const p=[u,v];if(!inHard(p))continue;if(v>rioV(u)&&v<arrV(u))continue;const [dr,d]=nearDir(p);if(dr>30)continue;tryPlace(rectAt(p,d,6+rnd()*3,6+rnd()*3),{h:6,dist:district(p),garden:v>arrV(u)?1:0});}
  lineBuildings([[-30,-72],[-60,-68],[-95,-76],[-130,-84]],4,{w:[14,22],d:[10,16],h:[1,1],rows:1,set:2,gap:3,dist:"port"});
  // trees
  rs=23;for(let i=0;i<5200&&TREES.length<900;i++){const u=EXT.u0+rnd()*(EXT.u1-EXT.u0),v=EXT.v0+rnd()*(EXT.v1-EXT.v0);const p=[u,v];const h=height(u,v);
@@ -410,17 +426,28 @@ function genWorld(){
    const dens=h>.5&&h<1.25?.9:nearRiver?.6:inWedge?.5:ins?.35:district(p)==="ens"?.18:.12;
    if(rnd()<dens){TREES.push({p,r:1.8+rnd()*1.6,h:4+rnd()*3});for(let k=-1;k<=1;k++)for(let j=-1;j<=1;j++)occ.add(key(u+k*2,v+j*2));}}
  [[142,56],[160,62],[146,62],[157,55],[78,62],[5,-1]].forEach(p=>TREES.push({p,r:2.2,h:6,keep:1}));
+ // street furniture and life (props only)
+ rs=29;DECOR.length=0;
+ ROUTES.forEach(r=>{let acc=0,side=1;for(let i=1;i<r.pts.length;i++){const a=r.pts[i-1],b=r.pts[i];const L=Math.hypot(b[0]-a[0],b[1]-a[1]);const d=[(b[0]-a[0])/L,(b[1]-a[1])/L],n=[-d[1],d[0]];for(let s_=0;s_<L;s_+=1){acc+=1;const p=[a[0]+d[0]*s_,a[1]+d[1]*s_];
+   if(acc%16===0){side=-side;DECOR.push({k:'lamp',p:[p[0]+n[0]*(r.w/2+.3)*side,p[1]+n[1]*(r.w/2+.3)*side]});}
+   if(acc%7===0&&rnd()<.45)DECOR.push({k:'pot',p:[p[0]-n[0]*(r.w/2+.25)*side,p[1]-n[1]*(r.w/2+.25)*side],c:rnd()<.6?'#6f79b8':'#c24b34'});
+   if(r.w<4&&acc%23===0&&rnd()<.7)DECOR.push({k:'wash',a:[p[0]+n[0]*(r.w/2+.4),p[1]+n[1]*(r.w/2+.4)],b:[p[0]-n[0]*(r.w/2+.4),p[1]-n[1]*(r.w/2+.4)],p});}}});
+ [[158,61],[77,32.5]].forEach(p=>DECOR.push({k:'fount',p}));
+ [[141,57.5],[163,63.5],[165,59],[2,1.5],[-3,-.5],[84,31]].forEach(p=>DECOR.push({k:'bench',p}));
+ [[87.4,56],[87.4,57.2],[87.4,58.4]].forEach(p=>DECOR.push({k:'barrel',p}));
+ [[199.5,80],[199.5,83]].forEach(p=>DECOR.push({k:'crate',p}));DECOR.push({k:'cart',p:[200,87]});
+ [[-4,-15],[46,-54]].forEach(p=>DECOR.push({k:'boat',p}));
  // market stalls
  rs=5;MARKET.length=0;for(let i=0;i<9;i++){const u=133+rnd()*14,v=38+rnd()*10;if(pip([u,v],SITES.S01))MARKET.push([u,v,rnd()<.5]);}
 }
-const MARKET=[];const HUERTAS=[];
+const MARKET=[];const HUERTAS=[];const DECOR=[];
 
 // ---------- canvas setup ----------
 const box=document.getElementById("mapbox"),base=document.getElementById("base"),over=document.getElementById("over"),mini=document.getElementById("mini");
 const bx=base.getContext("2d"),ox=over.getContext("2d"),mx=mini.getContext("2d");
 let W=0,H=0,DPR=1;const cam={x:-35,y:-100,z:3};
 const layers={routes:true,places:true,chain:true,props:true,views:false,fog:true,filler:true};
-try{const s=JSON.parse(localStorage.getItem("c07map.layers")||"null");if(s)Object.assign(layers,s);}catch(e){}
+try{const s=JSON.parse(localStorage.getItem("c07map.layers")||"null");if(s)Object.assign(layers,s);}catch(e){}layers.filler=true;
 let TERR=null;const K=.5,KX=.2; // oblique height factor
 function fit(){const r=box.getBoundingClientRect();const w=r.width,h=r.height;const z=Math.min(w/250,h/290);cam.x=-32;cam.y=-110;cam.z=Math.max(1.2,z);}
 function resize(){const r=box.getBoundingClientRect();DPR=Math.min(2,window.devicePixelRatio||1);W=r.width;H=r.height;[base,over].forEach(c=>{c.width=Math.round(W*DPR);c.height=Math.round(H*DPR);});draw();}
@@ -477,9 +504,9 @@ function draw(){
  c.setLineDash([2,2]);c.strokeStyle="rgba(232,178,106,.8)";c.lineWidth=.6;path(c,FERRY,false);c.stroke();c.setLineDash([]);
  // market stalls, shadows, buildings, trees (depth sorted)
  drawShadows(c);
- const items=[];B.forEach(b=>{const cc=centroid(b.poly);items.push({y:-cc[0],b});});TREES.forEach(t=>items.push({y:-t.p[0],t}));MARKET.forEach(m=>items.push({y:-m[0],m}));
+ const items=[];B.forEach(b=>{const cc=centroid(b.poly);items.push({y:-cc[0],b});});TREES.forEach(t=>items.push({y:-t.p[0],t}));MARKET.forEach(m=>items.push({y:-m[0],m}));DECOR.forEach(d=>items.push({y:-(d.p[0])+.01,d}));
  items.sort((a,b)=>a.y-b.y);
- items.forEach(it=>{if(!layers.filler&&((it.b&&it.b.inside&&!it.b.slot)||(it.t&&inHard(it.t.p)&&!it.t.keep)))return;if(it.b)drawBuilding(c,it.b);else if(it.t)drawTree(c,it.t);else drawStall(c,it.m);});
+ items.forEach(it=>{if(!layers.filler&&((it.b&&it.b.inside&&!it.b.slot)||(it.t&&inHard(it.t.p)&&!it.t.keep)))return;if(it.b)drawBuilding(c,it.b);else if(it.t)drawTree(c,it.t);else if(it.d)drawDecor(c,it.d);else drawStall(c,it.m);});
  // P1 tower (drawn as proposal)
  if(layers.props)drawTower(c);
  // fog outside hard polygon
@@ -543,8 +570,20 @@ function drawTower(c){const base=R(148.5,154.5,66.5,72.5);const P=base.map(XY);c
 function drawTree(c,t){const [x0,y]=XY(t.p);const hh=t.h*.6;const yy=y-hh*K,x=x0+hh*KX;c.strokeStyle="#5c4433";c.lineWidth=.4;c.beginPath();c.moveTo(x0,y);c.lineTo(x,yy);c.stroke();
  c.fillStyle="#3e5a3a";c.beginPath();c.arc(x,yy,t.r,0,7);c.fill();c.fillStyle="rgba(120,150,96,.55)";c.beginPath();c.arc(x-t.r*.3,yy-t.r*.3,t.r*.55,0,7);c.fill();}
 function drawStall(c,m){const [x,y]=XY(m);c.fillStyle=m[2]?"#c24b34":"#6f79b8";c.fillRect(x-1.2,y-1.6,2.4,1.8);c.fillStyle="rgba(255,255,255,.35)";c.fillRect(x-1.2,y-1.6,.8,1.8);c.fillStyle="rgba(20,20,20,.3)";c.fillRect(x-1.2,y+.2,2.4,.4);}
+function drawDecor(c,d){const [x,y]=XY(d.p);
+ if(d.k==='lamp'){c.strokeStyle="#2e2a26";c.lineWidth=.22;c.beginPath();c.moveTo(x,y);c.lineTo(x+4*KX,y-4*K);c.stroke();c.fillStyle="rgba(232,178,106,.95)";c.beginPath();c.arc(x+4*KX,y-4*K,.35,0,7);c.fill();if(cam.z>3){c.fillStyle="rgba(232,178,106,.18)";c.beginPath();c.arc(x,y,1.6,0,7);c.fill();}}
+ else if(d.k==='pot'){c.fillStyle="#7e5a44";c.fillRect(x-.3,y-.5,.6,.5);c.fillStyle=d.c;c.beginPath();c.arc(x,y-.7,.45,0,7);c.fill();}
+ else if(d.k==='wash'){const [ax,ay]=XY(d.a),[bx_,by]=XY(d.b);const h=6;c.strokeStyle="rgba(60,60,60,.7)";c.lineWidth=.08;c.beginPath();c.moveTo(ax+h*KX,ay-h*K);c.lineTo(bx_+h*KX,by-h*K);c.stroke();const cols=["#e6e1d6","#6f79b8","#c24b34","#d9cbb0"];for(let i=1;i<4;i++){const t=i/4;c.fillStyle=cols[i];c.fillRect(ax+(bx_-ax)*t+h*KX-.25,ay+(by-ay)*t-h*K,.5,.7);}}
+ else if(d.k==='fount'){c.fillStyle="#8e887c";c.beginPath();c.ellipse(x,y,1.8,1.4,0,0,7);c.fill();c.fillStyle="#5f8a8f";c.beginPath();c.ellipse(x,y-.2,1.3,1,0,0,7);c.fill();c.fillStyle="#a79f92";c.fillRect(x-.25,y-1.8,.5,1.6);c.fillStyle="rgba(200,225,228,.8)";c.beginPath();c.arc(x,y-1.9,.4,0,7);c.fill();}
+ else if(d.k==='bench'){c.fillStyle="#5c4433";c.fillRect(x-1,y-.35,2,.7);c.fillStyle="#3a2c22";c.fillRect(x-1,y-.75,2,.3);}
+ else if(d.k==='barrel'){c.fillStyle="#6b4b35";c.beginPath();c.arc(x,y,.45,0,7);c.fill();c.strokeStyle="#3a2c22";c.lineWidth=.08;c.stroke();}
+ else if(d.k==='crate'){c.fillStyle="#9b7b55";c.fillRect(x-.6,y-.6,1.2,1.2);c.strokeStyle="#5c4433";c.lineWidth=.1;c.strokeRect(x-.6,y-.6,1.2,1.2);}
+ else if(d.k==='cart'){c.fillStyle="#7a5a40";c.fillRect(x-1.4,y-.8,2.8,1.6);c.fillStyle="#2e2a26";c.beginPath();c.arc(x-1.4,y,.5,0,7);c.arc(x+1.4,y,.5,0,7);c.fill();}
+ else if(d.k==='boat'){c.fillStyle="#5c4433";c.beginPath();c.ellipse(x,y,2.4,.9,.3,0,7);c.fill();c.fillStyle="#8a6a4d";c.beginPath();c.ellipse(x,y-.1,1.8,.55,.3,0,7);c.fill();}}
 function drawRouteMarks(c){c.lineWidth=Math.max(.35,1.1/cam.z);c.setLineDash([.1,Math.max(1.4,3.2/cam.z)]);c.lineCap="round";
- ROUTES.forEach(r=>{c.strokeStyle=r.id.startsWith("micro")?"rgba(232,178,106,.9)":"rgba(60,48,40,.8)";c.lineWidth=Math.max(.5,2/cam.z);path(c,r.pts,false);c.stroke();});c.setLineDash([]);}
+ ROUTES.forEach(r=>{if(r.p8)return;c.strokeStyle=r.id.startsWith("micro")?"rgba(232,178,106,.9)":"rgba(60,48,40,.8)";c.lineWidth=Math.max(.5,2/cam.z);path(c,r.pts,false);c.stroke();});c.setLineDash([]);
+ if(layers.props){c.setLineDash([Math.max(1,4/cam.z),Math.max(1,3/cam.z)]);c.strokeStyle="#8d96d4";c.lineWidth=Math.max(.4,1.8/cam.z);ROUTES.forEach(r=>{if(r.p8){path(c,r.pts,false);c.stroke();}});c.setLineDash([]);}}
+
 function drawPlaceOutlines(c){c.lineWidth=Math.max(.3,1.2/cam.z);
  Object.entries(SITES).forEach(([id,p])=>{c.strokeStyle="rgba(232,178,106,.9)";c.setLineDash([1.5,1]);path(c,p);c.stroke();c.setLineDash([]);});}
 function drawViews(c){VIEWS.forEach(v=>{const [ax,ay]=XY(v.from),[bx_,by]=XY(v.to);const ang=Math.atan2(by-ay,bx_-ax),L=Math.hypot(bx_-ax,by-ay);
@@ -576,7 +615,8 @@ function drawLabels(c){const z=cam.z;const s=Math.max(10,Math.min(16,5+z*2.2));
  label(c,"Puente Viejo",[40,-50],{size:s-1,ls:1,rot:1.3});
  label(c,"El Vado",[95,125],{size:s-2,ls:1});
  label(c,"Desembarcadero",[4,-8],{size:s-3,ls:1});
- if(layers.routes&&z>2.4)ROUTES.forEach(r=>{if(r.id.startsWith("micro"))return;const m=r.pts[Math.floor(r.pts.length/2)];label(c,r.id,m,{font:`500 ${Math.max(10,s-4)}px ${getComputedStyle(document.body).getPropertyValue("--mono")}`,color:"#1b2021",halo:"rgba(232,226,212,.92)",ls:0});});
+ if(layers.props&&z>2.4)ROUTES.forEach(r=>{if(!r.p8)return;const m=r.pts[Math.floor(r.pts.length/2)];label(c,r.name,m,{size:Math.max(10,s-4),color:"#c8cdf5",ls:1});});
+ if(layers.routes&&z>2.4)ROUTES.forEach(r=>{if(r.id.startsWith("micro")||r.p8)return;const m=r.pts[Math.floor(r.pts.length/2)];label(c,r.id,m,{font:`500 ${Math.max(10,s-4)}px ${getComputedStyle(document.body).getPropertyValue("--mono")}`,color:"#1b2021",halo:"rgba(232,226,212,.92)",ls:0});});
  if(layers.routes&&z>2.4)CROSS.forEach(r=>label(c,r.id,[(r.pts[0][0]+r.pts[1][0])/2,(r.pts[0][1]+r.pts[1][1])/2+(r.id==="X1"?6:5)],{font:`500 ${Math.max(10,s-4)}px ${getComputedStyle(document.body).getPropertyValue("--mono")}`,color:"#1b2021",halo:"rgba(232,226,212,.92)",ls:0}));
  if(z>2)SEAMS.forEach(sm_=>{const [x,y]=uvS(sm_.at);c.save();c.translate(x,y);c.fillStyle="rgba(232,178,106,.95)";c.beginPath();c.moveTo(0,-6);c.lineTo(5,0);c.lineTo(0,6);c.lineTo(-5,0);c.closePath();c.fill();c.strokeStyle="#171c1d";c.lineWidth=1.5;c.stroke();c.restore();});
 }
