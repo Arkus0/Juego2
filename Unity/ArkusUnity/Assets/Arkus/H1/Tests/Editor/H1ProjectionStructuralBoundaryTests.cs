@@ -69,6 +69,38 @@ namespace Arkus.H1.Editor.Tests
         }
 
         [Test]
+        public void Materialize_InvalidActiveManifest_IsStructuredAndDoesNotStageOrPublish()
+        {
+            var baseline = Execute("materialize", BuildValidPlan("materialize-invalid-manifest-a"));
+            Assert.That(baseline.errorCode, Is.Empty);
+            Assert.That(baseline.observation.active, Is.True);
+
+            var projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            var manifestPath = Path.Combine(projectRoot, ManagedScenes, "current.json");
+            var generationsPath = Path.Combine(projectRoot, ManagedScenes, "generations");
+            var beforeGenerationFiles = Directory.GetFiles(generationsPath, "*.unity")
+                .Select(Path.GetFileName).OrderBy(value => value, StringComparer.Ordinal).ToArray();
+            const string corruptedManifest = "{\"schemaId\":\"broken\"}";
+            File.WriteAllText(manifestPath, corruptedManifest);
+
+            var attempted = Execute("materialize", BuildValidPlan("materialize-invalid-manifest-b"));
+
+            AssertStructuredInvalid(attempted, "projection.manifest-invalid");
+            Assert.That(attempted.validation.phase, Is.EqualTo(H1ProjectionValidation.PostMaterialization));
+            Assert.That(attempted.validation.scope, Is.EqualTo("proposed-effective"));
+            Assert.That(attempted.validation.diagnostics.Any(value =>
+                value.invariantId == "unity.scene.effective-observation" && value.code == "projection.manifest-invalid"), Is.True);
+            Assert.That(attempted.errorCode, Is.Not.EqualTo("projection.editor-failure"));
+            Assert.That(File.ReadAllText(manifestPath), Is.EqualTo(corruptedManifest),
+                "failed materialization must not publish a replacement current manifest");
+
+            var afterGenerationFiles = Directory.GetFiles(generationsPath, "*.unity")
+                .Select(Path.GetFileName).OrderBy(value => value, StringComparer.Ordinal).ToArray();
+            CollectionAssert.AreEqual(beforeGenerationFiles, afterGenerationFiles,
+                "invalid active lifecycle state must fail before staging a new managed generation");
+        }
+
+        [Test]
         public void CurrentValidation_MissingManagedGeneration_IsStructuredExpectedInvalidity()
         {
             var materialized = Execute("materialize", BuildValidPlan("missing-scene"));
