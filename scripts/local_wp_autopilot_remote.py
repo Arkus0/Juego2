@@ -82,8 +82,9 @@ _ORIGINAL_RUN_CANONICAL_ADOPTED = _run_canonical_adopted
 
 async def _run_canonical_adopted(args: argparse.Namespace) -> None:
     """Wait for the durable post-freeze transition before canonical adoption."""
-    root = Path(args.root).resolve()
-    wp = autopilot.normalize_wp(args.wp) if args.wp else None
+    root = Path(getattr(args, "root", ".")).resolve()
+    raw_wp = getattr(args, "wp", None)
+    wp = autopilot.normalize_wp(raw_wp) if raw_wp else None
     if wp:
         pr = autopilot.canonical_pr(wp)
         if pr and pr.get("state") == "open" and not pr.get("merged_at"):
