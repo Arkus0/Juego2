@@ -12,7 +12,7 @@ namespace Arkus.Harness.Tests
     public sealed class CtxDwH102SelectiveAdoptionTests
     {
         [Fact]
-        public void AcceptedProjectionPublishesOnlyItsRealCapabilitiesAndCurrentSourceOpenQuery()
+        public void AcceptedProjectionPublishesOnlyItsRealCapabilitiesAndCurrentSourceOpenQueries()
         {
             var root = FindRepositoryRoot();
             var sources = ReadSources(root);
@@ -55,6 +55,7 @@ namespace Arkus.Harness.Tests
                 .OrderBy(fact => fact.FactId, StringComparer.Ordinal)
                 .ToArray();
             Assert.NotEmpty(componentSchemas);
+            Assert.All(componentSchemas, fact => Assert.Equal(H1ProjectionManifest.CataloguePath, fact.Provenance.SourcePath));
 
             var capabilities = new SortedSet<string>(StringComparer.Ordinal);
             if (dataset.Projection.Facts.Any(fact => StringComparer.Ordinal.Equals(fact.FactType, "h1-catalogue-entry")))
@@ -92,24 +93,10 @@ namespace Arkus.Harness.Tests
             var outputPath = Environment.GetEnvironmentVariable("CTX_DW_H1_02_OBSERVATION_OUTPUT");
             if (string.IsNullOrWhiteSpace(outputPath)) return;
 
-            var representativePayload = new SortedDictionary<string, object?>(StringComparer.Ordinal)
-            {
-                ["fact_id"] = representative.FactId,
-                ["fact_type"] = representative.FactType,
-                ["fields"] = representative.Fields.ToDictionary(
-                    pair => pair.Key,
-                    pair => pair.Value.CanonicalValue,
-                    StringComparer.Ordinal),
-                ["relations"] = representative.Relations.Select(relation => new SortedDictionary<string, string>(StringComparer.Ordinal)
-                {
-                    ["type"] = relation.RelationType,
-                    ["target"] = relation.TargetFactId
-                }).ToArray(),
-                ["provenance_source_path"] = representative.Provenance.SourcePath,
-                ["provenance_source_digest"] = representative.Provenance.SourceDigest,
-                ["provenance_anchor_digest"] = representative.Provenance.AnchorDigest
-            };
+            var representativePayload = FactPayload(representative);
+            var componentPayload = FactPayload(componentSchemas[0]);
             var representativeJson = JsonSerializer.Serialize(representativePayload);
+            var componentJson = JsonSerializer.Serialize(componentPayload);
             var catalogueText = File.ReadAllText(Path.Combine(
                 root,
                 H1ProjectionManifest.CataloguePath.Replace('/', Path.DirectorySeparatorChar)));
@@ -129,7 +116,9 @@ namespace Arkus.Harness.Tests
                 ["component_schema_count"] = componentSchemas.Count,
                 ["component_schema_examples"] = componentSchemas.Take(3).Select(fact => fact.FactId).ToArray(),
                 ["representative_prefab"] = representativePayload,
-                ["representative_query_bytes"] = Encoding.UTF8.GetByteCount(representativeJson),
+                ["representative_component_schema"] = componentPayload,
+                ["representative_prefab_query_bytes"] = Encoding.UTF8.GetByteCount(representativeJson),
+                ["representative_component_schema_query_bytes"] = Encoding.UTF8.GetByteCount(componentJson),
                 ["catalogue_authority_bytes"] = Encoding.UTF8.GetByteCount(catalogueText),
                 ["normalized_projection_bytes"] = Encoding.UTF8.GetByteCount(dataset.Projection.NormalizedRepresentation)
             };
@@ -141,6 +130,25 @@ namespace Arkus.Harness.Tests
                 fullPath,
                 JsonSerializer.Serialize(observation, new JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
         }
+
+        private static SortedDictionary<string, object?> FactPayload(DesignFact fact) =>
+            new SortedDictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["fact_id"] = fact.FactId,
+                ["fact_type"] = fact.FactType,
+                ["fields"] = fact.Fields.ToDictionary(
+                    pair => pair.Key,
+                    pair => pair.Value.CanonicalValue,
+                    StringComparer.Ordinal),
+                ["relations"] = fact.Relations.Select(relation => new SortedDictionary<string, string>(StringComparer.Ordinal)
+                {
+                    ["type"] = relation.RelationType,
+                    ["target"] = relation.TargetFactId
+                }).ToArray(),
+                ["provenance_source_path"] = fact.Provenance.SourcePath,
+                ["provenance_source_digest"] = fact.Provenance.SourceDigest,
+                ["provenance_anchor_digest"] = fact.Provenance.AnchorDigest
+            };
 
         private static H1AcceptedAuthoritySources ReadSources(string root) => new H1AcceptedAuthoritySources(
             Read(root, H1ProjectionManifest.CataloguePath),
