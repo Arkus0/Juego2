@@ -240,12 +240,17 @@ namespace Arkus.H1.Editor
             ISet<string> unmanaged,
             ICollection<ReconciliationDiagnostic> diagnostics)
         {
+            var acceptedInventory = ReadAcceptedReconciliationInventory(diagnostics);
             foreach (var transform in root.GetComponentsInChildren<Transform>(true))
             {
                 var candidate = transform.gameObject;
                 if (candidate == root) continue;
                 var marker = candidate.GetComponent<H1ManagedMarker>();
-                if (marker != null) continue;
+                if (marker != null)
+                {
+                    CollectManagedObjectDrift(candidate, marker, acceptedInventory, diagnostics);
+                    continue;
+                }
 
                 var admittedPrefabChild = false;
                 if (PrefabUtility.IsPartOfPrefabInstance(candidate) && !PrefabUtility.IsAddedGameObjectOverride(candidate))
@@ -262,6 +267,104 @@ namespace Arkus.H1.Editor
                 unmanaged.Add(path);
                 diagnostics.Add(Diagnostic("projection.unmanaged-scene-member", path));
             }
+        }
+
+        private static EffectiveInventory ReadAcceptedReconciliationInventory(ICollection<ReconciliationDiagnostic> diagnostics)
+        {
+            try
+            {
+                var repositoryRoot = Path.GetFullPath(Path.Combine(H1Bootstrap.ProjectRoot(), "..", ".."));
+                var path = Path.Combine(repositoryRoot, "Docs", "evidence", "WP-H1-04", "EFFECTIVE_INVENTORY.json");
+                if (!File.Exists(path)) throw new InvalidDataException("projection.catalogue-snapshot-missing");
+                var inventory = JsonUtility.FromJson<EffectiveInventory>(File.ReadAllText(path));
+                if (inventory == null || inventory.schemaId != H1CatalogueInventory.Schema || inventory.rows == null)
+                    throw new InvalidDataException("projection.catalogue-snapshot-invalid");
+                return inventory;
+            }
+            catch (Exception exception)
+            {
+                diagnostics.Add(Diagnostic(CanonicalProjectionCode(exception, "projection.catalogue-snapshot-invalid"), "$scene"));
+                diagnostics.Add(Diagnostic("projection.reconciliation-node-unreadable", "$scene"));
+                return null;
+            }
+        }
+
+        private static void CollectManagedObjectDrift(
+            GameObject owner,
+            H1ManagedMarker marker,
+            EffectiveInventory acceptedInventory,
+            ICollection<ReconciliationDiagnostic> diagnostics)
+        {
+            var objectId = string.IsNullOrEmpty(marker.canonicalObjectId) ? "$unknown" : marker.canonicalObjectId;
+            var ownership = owner.GetComponent<H1ComponentOwnershipMarker>();
+            foreach (var component in owner.GetComponentsInChildren<Component>(true))
+            {
+                if (component == null)
+                {
+                    AddAmbiguousManagedDiagnostic(diagnostics, "projection.unsupported-managed-component", objectId, objectId + ":$missing-script");
+                    continue;
+                }
+                if (BelongsToNestedManagedObject(owner.transform, component.transform)) continue;
+                if (IsAdmittedManagedComponent(owner, ownership, component)) continue;
+                var relative = RelativePath(owner.transform, component.transform);
+                if (string.IsNullOrEmpty(relative)) relative = "$self";
+                AddAmbiguousManagedDiagnostic(diagnostics, "projection.unsupported-managed-component", objectId,
+                    objectId + ":" + relative + ":" + (component.GetType().FullName ?? component.GetType().Name));
+            }
+
+            if (acceptedInventory == null || ownership == null || ownership.schemaId != H1ComponentOwnershipMarker.SchemaId) return;
+            if (ownership.rendererMaterial)
+            {
+                var renderers = owner.GetComponentsInChildren<MeshRenderer>(true)
+                    .Where(component => !BelongsToNestedManagedObject(owner.transform, component.transform)).ToArray();
+                if (renderers.Length == 1 && renderers[0].sharedMaterial != null)
+                    CheckReferenceContent("material", renderers[0].sharedMaterial, objectId, acceptedInventory, diagnostics);
+            }
+            if (ownership.animatorClip && ownership.animatorClipReference != null)
+                CheckReferenceContent("animation-clip", ownership.animatorClipReference, objectId, acceptedInventory, diagnostics);
+        }
+
+        private static bool IsAdmittedManagedComponent(GameObject owner, H1ComponentOwnershipMarker ownership, Component component)
+        {
+            if (component is Transform || component is H1ManagedMarker || component is H1ComponentOwnershipMarker ||
+                component is H1CanonicalLinkMarker || component is H1ManagedPrefabLineage) return true;
+            if (PrefabUtility.GetCorrespondingObjectFromSource(component) != null) return true;
+
+            var prefabManaged = owner.GetComponent<H1ManagedPrefabLineage>() != null;
+            if (!prefabManaged && (component is MeshFilter || component is MeshRenderer)) return true;
+            if (component is MeshRenderer && ownership != null && ownership.schemaId == H1ComponentOwnershipMarker.SchemaId && ownership.rendererMaterial) return true;
+            if (component is Animator && ownership != null && ownership.schemaId == H1ComponentOwnershipMarker.SchemaId && ownership.animatorClip) return true;
+            return false;
+        }
+
+        private static void CheckReferenceContent(
+            string kind,
+            UnityEngine.Object asset,
+            string objectId,
+            EffectiveInventory acceptedInventory,
+            ICollection<ReconciliationDiagnostic> diagnostics)
+        {
+            if (asset == null || !AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset, out string guid, out long fileId)) return;
+            var path = AssetDatabase.GetAssetPath(asset);
+            var localFileId = fileId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            var matches = acceptedInventory.rows.Where(row => row != null && row.kind == kind && row.path == path &&
+                row.nativeGuid == guid && row.localFileId == localFileId).ToArray();
+            if (matches.Length != 1) return;
+
+            var fullPath = Path.Combine(H1Bootstrap.ProjectRoot(), path);
+            var currentHash = File.Exists(fullPath) ? Sha(File.ReadAllBytes(fullPath)) : "";
+            if (currentHash == matches[0].contentSha256) return;
+            AddAmbiguousManagedDiagnostic(diagnostics, "projection.component-reference-content-drift", objectId, objectId + ":" + kind);
+        }
+
+        private static void AddAmbiguousManagedDiagnostic(
+            ICollection<ReconciliationDiagnostic> diagnostics,
+            string code,
+            string objectId,
+            string specificSubject)
+        {
+            diagnostics.Add(Diagnostic(code, specificSubject));
+            diagnostics.Add(Diagnostic("projection.reconciliation-node-unreadable", objectId));
         }
 
         private static ReconciliationObservation Observation(
