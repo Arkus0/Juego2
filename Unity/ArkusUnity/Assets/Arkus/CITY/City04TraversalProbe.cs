@@ -92,7 +92,7 @@ namespace Arkus.CITY
 
             Vector3 move = (transform.right * Input.GetAxisRaw("Horizontal") +
                             transform.forward * Input.GetAxisRaw("Vertical")).normalized;
-            float speed = Input.GetKey(KeyCode.LeftShift) ? 3.5f : 1.4f;
+            float speed = Input.GetKey(KeyCode.LeftShift) ? 5.0f : 3.5f;
             verticalSpeed = controller.isGrounded ? -0.5f : verticalSpeed - 9.81f * Time.deltaTime;
             controller.Move((move * speed + Vector3.up * verticalSpeed) * Time.deltaTime);
         }
@@ -101,7 +101,7 @@ namespace Arkus.CITY
         {
             GUI.Box(new Rect(10, 10, 600, 135),
                 "CITY-04 physical probe — greybox only\n" +
-                "WASD move, right mouse look, Shift faster; 1-9 anchor starts, T timer reset, L log leg\n" +
+                "WASD 3.5 m/s, right mouse look, Shift 5.0 m/s; 1-9 anchors, T reset, L log\n" +
                 "G X5 low-water crossing: " + (x5Available ? "AVAILABLE" : "CLOSED") +
                 "   B micro.A: " + (routeABlocked ? "BLOCKED" : "OPEN") +
                 "   Q market: " + (busy ? "BUSY" : "QUIET") +

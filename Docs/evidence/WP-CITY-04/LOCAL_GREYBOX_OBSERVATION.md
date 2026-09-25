@@ -1,6 +1,6 @@
 # CITY-04 local greybox observation — incomplete physical verdict
 
-Status: `HUMAN_ACTION_REQUIRED`; intermediate Worker evidence, not `WORKER_PRE_REVIEW: CLEAN`, `REVIEW_READY` or a retained-seed PASS/REVISE verdict.
+Status: `CONTRACT_AMENDMENT_REQUIRED`; intermediate Worker evidence, not `WORKER_PRE_REVIEW: CLEAN`, `REVIEW_READY` or a retained-seed PASS/REVISE verdict. See `OWNER_GREYBOX_FEEDBACK.md` for the 2026-09-25 human assessment and deferred timing decision.
 
 ## Input and execution identity
 
@@ -26,7 +26,7 @@ The physical cut check is a bounded machine observation of the effective Unity s
 
 The generated outer polygon is **44,817.5 m²**; Río water is **3,505.0 m²**, Arroyo water **713.6875 m²**. Dry components are Orilla-sur **3,200.0 m²**, Wedge **31,704.125 m²**, and Ensanche **5,694.6875 m²** before the accepted crossing overlays. Only X1 is permanently collidable. X5's collider is available only in its low-water probe state.
 
-The table below is **drawn centerline geometry**, not a measured walk-time table. The `1.4 m/s` column is an arithmetic reference using the probe's default nominal walking speed; it excludes human route choice, pauses, stairs, collisions, turns and perception. A human must time the represented paths in Play mode.
+The table below is **drawn centerline geometry**, not a measured walk-time table. The `1.4 m/s` column is an arithmetic reference from the original probe configuration; after owner feedback the probe defaults to 3.5 m/s. The reference excludes human route choice, pauses, stairs, collisions, turns and perception. It is not a substitute for later human timings on the real demo.
 
 | Edge | Drawn width (m) | Centerline (m) | End rise (m) | 1.4 m/s lower reference (min) | CITY-01 hypothesis (min) | Human measured (min) |
 |---|---:|---:|---:|---:|---:|---|
@@ -63,4 +63,4 @@ No observed defect is currently routed to CITY-00, CITY-02, CITY-03, CITY-05, CI
 
 Execute and record all nine human traversals in `HUMAN_TRAVERSAL_RUN_SHEET.md`, the seven segment times and relevant concatenated trips, realized clear widths/grades/bank separation and sightlines, role thresholds, route choice, quiet/busy contrast and five seam plausibility checks. Then classify actual defects, repair CITY-04-owned issues while Draft or route predecessor contradictions, give the truthful retained-seed PASS/REVISE verdict, and only then obtain exact-SHA preflight, strict Worker pre-review and normal freeze handoff.
 
-Current retained-seed verdict: **NOT ISSUED**. `CITY-07` remains blocked.
+Current retained-seed verdict: **NOT ISSUED** under the existing contract. The owner has requested deferral of full timing to the real demo; that requires an independently accepted contract amendment before the CITY-04 candidate can be frozen. `CITY-07` remains blocked by CITY-04 and H1-GATE.

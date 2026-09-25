@@ -1,8 +1,8 @@
 # CITY-04 human traversal run sheet
 
-Status: execution template only. Blank fields are missing evidence, never an implied PASS.
+Status: unexecuted timing template. The 2026-09-25 human assessment is recorded in `OWNER_GREYBOX_FEEDBACK.md`; it does not fill the runs or imply a measured PASS. Timing is deferred by the owner pending an explicit accepted contract amendment.
 
-Open `Unity/ArkusUnity/Assets/Arkus/CITY/City04Greybox.unity` in Unity `6000.3.24f1` and enter Play mode. `WASD` walks at nominal 1.4 m/s; hold right mouse to look; Shift speeds up and should **not** be used for normal timings. Keys `1`–`9` place the probe at O.X1, W.X1, W.CASCO, F01 bar, W.PLAZA, W.SHOP, W.LANDING, W.X5 and E.X5. `T` resets the leg timer; `L` writes `CITY04_HUMAN_LEG` with elapsed seconds and end coordinates to the Unity Console. `Z` starts the micro.A proxy; `X` starts micro.B; `B` blocks/opens micro.A; `G` changes X5 availability; `Q` shows/hides the busy market proxy.
+Open `Unity/ArkusUnity/Assets/Arkus/CITY/City04Greybox.unity` in Unity `6000.3.24f1` and enter Play mode. After the owner feedback, `WASD` walks at 3.5 m/s and Shift moves at 5.0 m/s; hold right mouse to look. Keys `1`–`9` place the probe at O.X1, W.X1, W.CASCO, F01 bar, W.PLAZA, W.SHOP, W.LANDING, W.X5 and E.X5. `T` resets the leg timer; `L` writes `CITY04_HUMAN_LEG` with elapsed seconds and end coordinates to the Unity Console. `Z` starts the micro.A proxy; `X` starts micro.B; `B` blocks/opens micro.A; `G` changes X5 availability; `Q` shows/hides the busy market proxy.
 
 Before each timed leg, state the start/end anchors, scenario state, whether Shift was used, and any collision or detour. Save the Console log or transcribe the `CITY04_HUMAN_LEG` line. Record the actual human observer, date, exact Git SHA and effective Unity editor/version. The proxy and markers are spatial props; they claim no NPC, market, access-policy or Living World runtime.
 
