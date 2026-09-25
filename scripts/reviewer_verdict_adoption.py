@@ -22,6 +22,7 @@ exec(compile((HERE / "_reviewer_verdict_adoption_core.py").read_text(encoding="u
              str(HERE / "_reviewer_verdict_adoption_core.py"), "exec"), globals())
 __name__ = _public_name
 _real_main = main
+_repair_review_identity: dict[tuple[str, str], str] = {}
 
 
 def _load_safe():
@@ -92,7 +93,40 @@ def authoritative_verdicts(reviews: list[dict[str, Any]], comments: list[dict[st
             raise AdoptionError(f"contradictory safe-output Reviewer ID {row['id']}")
         if not prior or row["at"] < prior["at"]:
             by_id[row["id"]] = row
-    return sorted(by_id.values(), key=lambda row: row["at"])
+
+    rows = sorted(by_id.values(), key=lambda row: row["at"])
+    _repair_review_identity.clear()
+    for row in rows:
+        identity = (row["sha"].lower(), row["at"])
+        prior_id = _repair_review_identity.get(identity)
+        if prior_id and prior_id != row["id"]:
+            raise AdoptionError(
+                f"ambiguous Reviewer identity for repair transition at {row['sha']} {row['at']}")
+        _repair_review_identity[identity] = row["id"].lower()
+    return rows
+
+
+def repair_marker_after_verdict(comments: list[dict[str, Any]], sha: str,
+                                verdict_at: str) -> bool:
+    """Match REPAIR_REQUIRED to the exact Reviewer cycle, not merely SHA/time."""
+    sha = sha.lower()
+    review_id = _repair_review_identity.get((sha, verdict_at))
+    if not review_id:
+        raise AdoptionError("repair transition lookup lacks exact Reviewer identity")
+    key_re = re.compile(
+        rf"^adopted-repair-required:[1-9][0-9]*:{re.escape(sha)}:{re.escape(review_id)}$")
+    for item in comments:
+        if (item.get("user") or {}).get("login") != "github-actions[bot]":
+            continue
+        body = item.get("body") or ""
+        fields = marker_fields(body)
+        if ("ARKUS_AUTOMATION_V2" in body and
+                fields.get("state") == "REPAIR_REQUIRED" and
+                fields.get("target sha", "").lower() == sha and
+                (item.get("created_at") or "") >= verdict_at and
+                key_re.fullmatch(fields.get("key", ""))):
+            return True
+    return False
 
 
 def main() -> int:
