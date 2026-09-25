@@ -1,0 +1,90 @@
+{
+  "schema": "ctx-dw-h1-02-adoption-cases-v1",
+  "cases": [
+    {
+      "id": "h105-catalogue-source-navigation",
+      "consumer": "WP-H1-05",
+      "anchor_path": "Docs/evidence/WP-H1-05/PROOF_MATRIX.md",
+      "anchor_text": "Effective catalogue/source is admitted before effects",
+      "requirements": ["catalogue-entry", "adopted-from-source"],
+      "mandatory_reads": [
+        "Docs/evidence/WP-H1-05/PROOF_MATRIX.md",
+        "Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json"
+      ],
+      "query": "representative_prefab",
+      "expected_classification": "USE"
+    },
+    {
+      "id": "h105-scene-publication",
+      "consumer": "WP-H1-05",
+      "anchor_path": "Docs/evidence/WP-H1-05/PROOF_MATRIX.md",
+      "anchor_text": "Only manifest-selected generation is current",
+      "requirements": ["effective-scene-membership", "active-generation-publication"],
+      "mandatory_reads": ["Docs/evidence/WP-H1-05/PROOF_MATRIX.md"],
+      "expected_classification": "NOT_MATERIAL"
+    },
+    {
+      "id": "h106-source-prefab-navigation",
+      "consumer": "WP-H1-06",
+      "anchor_path": "Docs/evidence/WP-H1-06/PROOF_MATRIX.md",
+      "anchor_text": "Accepted source prefab is read-only",
+      "requirements": ["catalogue-entry", "adopted-from-source"],
+      "mandatory_reads": [
+        "Docs/evidence/WP-H1-06/PROOF_MATRIX.md",
+        "Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json"
+      ],
+      "query": "representative_prefab",
+      "expected_classification": "USE"
+    },
+    {
+      "id": "h106-relationship-equality",
+      "consumer": "WP-H1-06",
+      "anchor_path": "Docs/evidence/WP-H1-06/PROOF_MATRIX.md",
+      "anchor_text": "Source-derived relationship multiset is exact per canonical node",
+      "requirements": ["catalogue-entry", "effective-prefab-relationship-multiset"],
+      "mandatory_reads": ["Docs/evidence/WP-H1-06/PROOF_MATRIX.md"],
+      "expected_classification": "OPTIONAL"
+    },
+    {
+      "id": "h107-component-schema-inventory",
+      "consumer": "WP-H1-07",
+      "anchor_path": "Docs/workpacks/H1/WP-H1-07.md",
+      "anchor_text": "complete initial allowlist required by the representative slice",
+      "requirements": ["component-schema-entry"],
+      "mandatory_reads": [
+        "Docs/workpacks/H1/WP-H1-07.md",
+        "Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json"
+      ],
+      "query": "representative_component_schema",
+      "expected_classification": "USE"
+    },
+    {
+      "id": "h107-component-roundtrip",
+      "consumer": "WP-H1-07",
+      "anchor_path": "Docs/workpacks/H1/WP-H1-07.md",
+      "anchor_text": "supported scalar/vector/enum/reference fields round-trip through materialize -> save/reload -> inspect",
+      "requirements": ["component-schema-entry", "effective-component-adapter", "component-field-roundtrip"],
+      "mandatory_reads": ["Docs/workpacks/H1/WP-H1-07.md"],
+      "expected_classification": "OPTIONAL"
+    },
+    {
+      "id": "h107-unsupported-field",
+      "consumer": "WP-H1-07",
+      "anchor_path": "Docs/workpacks/H1/WP-H1-07.md",
+      "anchor_text": "unsupported component/type/field/reference yields stable failure before active generation publication",
+      "requirements": ["effective-component-adapter", "component-field-roundtrip"],
+      "mandatory_reads": ["Docs/workpacks/H1/WP-H1-07.md"],
+      "expected_classification": "NOT_MATERIAL"
+    },
+    {
+      "id": "h1gate-public-client-isolation",
+      "consumer": "WP-H1-GATE",
+      "anchor_path": "Docs/workpacks/H1/CTX_DW_ADOPTION_PLAN.md",
+      "anchor_text": "mandatory fresh independent AI-agent trial",
+      "requirements": ["catalogue-entry"],
+      "mandatory_reads": ["Docs/workpacks/H1/CTX_DW_ADOPTION_PLAN.md"],
+      "public_isolation": true,
+      "expected_classification": "NOT_MATERIAL"
+    }
+  ]
+}
