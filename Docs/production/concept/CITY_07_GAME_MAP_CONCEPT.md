@@ -122,9 +122,11 @@ Rationale: ends in the only hero interior (I3); richest lawful level change, rev
 2. **P8 → CITY-01 + CITY-03**: accept the lanes, dirt paths and small squares (or a subset) as represented edges before CITY-07, so the demo is not half unreachable blocks.
 3. **P4 / P6 → CITY-03**: seam payoffs and Cuesta mirador.
 4. Keep P2 / P3 / P5 closed until the asset-rich demo has been played.
-5. Resolve PR #224 (demo-stage human validation) so CITY-07 knows whether it owns the timing campaign.
+5. If P8 is adopted, add its new segments to the CITY-07 asset-rich demo campaign defined by `CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md` (timings, route choice, quiet/busy, discovery readability).
 
-## 8. Limits
+## 8. Current state and limits
+
+- At merge base `2aefda4`: `WP-CITY-04` is accepted and `CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md` is accepted, so the human spatial campaign runs on the asset-rich CITY-07 demo. `WP-CITY-07` remains `DORMANT / NOT_STARTED` until `WP-H1-GATE` passes.
 
 - Planning geometry only; no measured widths, grades, sightlines or times.
 - Filler placement is procedural presentation, not a parcel plan.
