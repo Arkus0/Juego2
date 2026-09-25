@@ -1,9 +1,14 @@
 # CITY-07 game-space realization amendment
 
-Status: PLANNING AMENDMENT / REVIEW CANDIDATE  
+Status: COMPLETE / ACCEPTED  
 Class: DOCS_ONLY / PRODUCT-SCOPE CLARIFICATION  
 Scope: `WP-CITY-07` only  
-Base: `main@73cdbdacd3c4b4adff4cd9086b55356405c23370`
+Accepted candidate: `e291a630c16e62cf866d57826c4e7324a2657dee`  
+Canonical PR: `#223`  
+Reviewer PASS: `#5321041258`  
+Owner acceptance: `2026-09-25`  
+Implementation merge: `e75ae8f20617ac13977b835aad4fb302d405e73c`  
+Base main at PR creation: `73cdbdacd3c4b4adff4cd9086b55356405c23370`
 
 ## Purpose
 
