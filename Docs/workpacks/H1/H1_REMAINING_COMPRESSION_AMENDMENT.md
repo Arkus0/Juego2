@@ -1,8 +1,12 @@
 # H1 remaining-work compression amendment
 
-Status: PLANNING AMENDMENT / REVIEW CANDIDATE
+Status: COMPLETE / ACCEPTED
 Class: DOCS_ONLY / NON_PRODUCT
-Base main SHA: `8f7c1970cfd3533908a29b556cff199d8e7689f7`
+Accepted candidate: `46e679986e4e482a1a29f3326ff20e2522d0b409`
+Canonical PR: `#209`
+Acceptance review: `#5315077514`
+Implementation merge: `8cc921719861f5e3dc4affa6bc2c07b9c22fdb34`
+Base main at PR creation: `86afa5c0332152cce4e2a4d679696e926d9edc90`
 Scope: `WP-H1-08` through `WP-H1-GATE`; `WP-H1-07` remains unchanged.
 
 ## Purpose
