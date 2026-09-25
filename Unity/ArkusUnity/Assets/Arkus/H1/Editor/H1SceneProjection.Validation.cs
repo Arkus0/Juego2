@@ -71,8 +71,28 @@ namespace Arkus.H1.Editor
         {
             if (validated == null || validated.Plan == null)
                 throw new InvalidOperationException("H1 materialization requires a successful public preflight token.");
-            ValidateEffectiveMaterializationPreconditions(validated.Plan, validated.Payload);
-            return Materialize(validated.Plan, out postflight);
+
+            ProjectionObservation observation = null;
+            H1ValidationResult localPostflight = null;
+            var lifecycle = H1ProjectionValidation.GuardExpectedInvalidity(
+                H1ProjectionValidation.PostMaterialization,
+                "proposed-effective",
+                validated.Plan.inputDigest,
+                "unity.scene.effective-observation",
+                SceneId,
+                "",
+                ManifestPath,
+                "repair active managed state or materialization lifecycle before staging/publication",
+                () =>
+                {
+                    ValidateEffectiveMaterializationPreconditions(validated.Plan, validated.Payload);
+                    observation = Materialize(validated.Plan, out localPostflight);
+                    return localPostflight ?? throw new InvalidOperationException("H1 materialization completed without postflight validation.");
+                });
+
+            postflight = lifecycle;
+            if (!lifecycle.valid) throw new H1ValidationFailureException(lifecycle);
+            return observation;
         }
 
         private static string InvalidRequestReply(string code, ProjectionPlan plan = null)
