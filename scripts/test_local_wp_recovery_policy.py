@@ -433,21 +433,28 @@ class RecoveryPolicyTests(unittest.TestCase):
             [old], SHA, "2026-09-25T04:01:00Z"))
 
     def test_completed_roles_are_detected_before_retry(self):
+        review_id = "d" * 32
         audit = {"state": "FAIL_AUDIT_COMPLETE", "target sha": SHA, "fail count": "2",
                  "audit json": '{"classification":"valid"}'}
-        ready = {"state": "REVIEW_READY", "target sha": SHA, "_created_at": "2026-09-25T04:10:00Z"}
+        started = {"state": "PROTOCOL_FIX_STARTED", "target sha": SHA,
+                   "review id": review_id, "_created_at": "2026-09-25T04:00:01Z"}
+        ready = {"state": "REVIEW_READY", "target sha": SHA,
+                 "_created_at": "2026-09-25T04:10:00Z"}
+        protocol_verdict = {"id": review_id, "sha": SHA, "verdict": "PROTOCOL_FIX",
+                            "at": "2026-09-25T04:00:00Z"}
         pr = {"head": {"sha": SHA}, "body": f"Frozen candidate SHA: {SHA}\n", "state": "open"}
         with patch.object(remote.autopilot, "gh_json", return_value=pr), \
-             patch.object(remote.autopilot, "local_markers", return_value=[audit]), \
+             patch.object(remote.autopilot, "local_markers", return_value=[audit, started]), \
              patch.object(remote.autopilot, "markers", return_value=[ready]), \
              patch.object(remote.autopilot, "ready_context_matches", return_value=True), \
-             patch.object(remote.autopilot, "reviewed_verdicts", return_value=[{"id": "d" * 32}]):
+             patch.object(remote.autopilot, "reviewed_verdicts", return_value=[protocol_verdict]):
             self.assertTrue(remote._role_side_effect_already_complete(
                 "fail-audit", "Audita el FAIL material #2 del PR #195 / H1-06"))
             self.assertTrue(remote._role_side_effect_already_complete(
-                "protocol-fix", f"Corrige PROTOCOL_FIX del PR #195. Mantén PRODUCT_SHA {SHA}"))
+                "protocol-fix", f"Corrige PROTOCOL_FIX del Reviewer ID {review_id} en PR #195. "
+                                f"Mantén PRODUCT_SHA {SHA}"))
             self.assertTrue(remote._role_side_effect_already_complete(
-                "reviewer", f"Reviewer PR #195 Autopilot review ID: {'d' * 32}"))
+                "reviewer", f"Reviewer PR #195 Autopilot review ID: {review_id}"))
 
     def test_pending_request_reuses_identity_after_worker_restart(self):
         with tempfile.TemporaryDirectory() as temp:
