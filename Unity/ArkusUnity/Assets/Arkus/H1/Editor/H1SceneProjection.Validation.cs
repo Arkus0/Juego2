@@ -190,19 +190,29 @@ namespace Arkus.H1.Editor
             ProjectionObservation seed, bool comparePlan, out ProjectionObservation observation)
         {
             var current = seed;
+            var transformsFinite = true;
             var checks = new List<H1ValidationCheck>
             {
                 H1ProjectionValidation.Check("unity.scene.finite-transform", SceneId, "", scenePath,
-                    "repair non-finite local transform values before publication", () => H1ProjectionValidation.ValidateFiniteTransforms(scenePath)),
+                    "repair non-finite local transform values before publication", () =>
+                    {
+                        try { H1ProjectionValidation.ValidateFiniteTransforms(scenePath); }
+                        catch (InvalidDataException) { transformsFinite = false; throw; }
+                    }),
                 H1ProjectionValidation.Check("unity.scene.managed-marker", SceneId, "", scenePath,
                     "repair managed root/object marker identity and hierarchy", () => ValidateManagedMarkerClass(scenePath, generationId)),
                 H1ProjectionValidation.Check("unity.scene.prefab-link", SceneId, "", scenePath,
                     "repair prefab derivative/source lineage without mutating source", () => ValidatePrefabClass(scenePath)),
                 H1ProjectionValidation.Check("unity.scene.component", SceneId, "", scenePath,
-                    "repair effective component field/reference realization", () => ValidateEffectiveComponentClass(scenePath)),
+                    "repair effective component field/reference realization", () =>
+                    {
+                        if (!transformsFinite) return;
+                        ValidateEffectiveComponentClass(scenePath);
+                    }),
                 H1ProjectionValidation.Check("unity.scene.effective-observation", SceneId, "", scenePath,
                     "repair effective managed scene observation", () =>
                     {
+                        if (!transformsFinite) return;
                         try
                         {
                             ValidateSourceBytes(plan);
@@ -216,7 +226,7 @@ namespace Arkus.H1.Editor
                 checks.Add(H1ProjectionValidation.Check("unity.scene.plan-observation", SceneId, "", scenePath,
                     "repair effective scene so graph and realization match the proposed plan", () =>
                     {
-                        if (current == null) return;
+                        if (!transformsFinite || current == null) return;
                         if (!SameGraph(plan, current) || !SameRealization(plan, current))
                             throw new InvalidDataException("projection.stage-observation-mismatch");
                     }));
