@@ -30,17 +30,23 @@ namespace Arkus.H1.Editor.Tests
             DeleteGenerated();
         }
 
-        [Test]
-        public void MaterializationStructuralPrecondition_CannotPassPublicPreflight()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void MaterializationStructuralPrecondition_CannotPassPublicPreflight(bool omitParent)
         {
             var plan = BuildValidPlan("null-parent");
-            plan.nodes[0].parentObjectId = null;
+            var payload = RequestPayload("validate-proposed", plan);
+            const string parentField = "\"parentObjectId\":\"\"";
+            Assert.That(payload, Does.Contain(parentField));
+            payload = omitParent
+                ? payload.Replace(parentField + ",", "")
+                : payload.Replace(parentField, "\"parentObjectId\":null");
 
-            var proposed = Execute("validate-proposed", plan);
+            var proposed = ExecuteRaw(payload);
             AssertStructuredInvalid(proposed, "projection.invalid-node");
             Assert.That(proposed.validation.diagnostics.Any(value => value.invariantId == "unity.plan.node-shape"), Is.True);
 
-            var effective = Execute("materialize", plan);
+            var effective = ExecuteRaw(payload.Replace("\"mode\":\"validate-proposed\"", "\"mode\":\"materialize\""));
             AssertStructuredInvalid(effective, "projection.invalid-node");
             Assert.That(effective.errorCode, Is.Not.EqualTo("projection.editor-failure"));
             Assert.That(effective.observation.active, Is.False,
@@ -128,13 +134,22 @@ namespace Arkus.H1.Editor.Tests
 
         private static ProjectionReply Execute(string mode, ProjectionPlan plan)
         {
-            var payload = JsonUtility.ToJson(new ProjectionRequest
+            return ExecuteRaw(RequestPayload(mode, plan));
+        }
+
+        private static string RequestPayload(string mode, ProjectionPlan plan)
+        {
+            return JsonUtility.ToJson(new ProjectionRequest
             {
                 schemaId = "arkus.h1-projection-worker-request@1",
                 mode = mode,
                 sceneLogicalId = SceneId,
                 plan = plan
             });
+        }
+
+        private static ProjectionReply ExecuteRaw(string payload)
+        {
             var raw = H1SceneProjection.Execute(payload);
             var reply = JsonUtility.FromJson<ProjectionReply>(raw);
             Assert.That(reply, Is.Not.Null, raw);

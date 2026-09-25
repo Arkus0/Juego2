@@ -32,7 +32,7 @@ namespace Arkus.H1.Editor
                 if (request.mode == "materialize" || request.mode == "validate-proposed")
                 {
                     ValidatedProjectionPlan validatedPlan;
-                    var preflight = RunPreflight(request.plan, out validatedPlan);
+                    var preflight = RunPreflight(request.plan, payload, out validatedPlan);
                     if (!preflight.valid)
                         return ValidationReply(request.plan, FirstValidationCode(preflight), SafeObserveActive(), preflight);
                     if (request.mode == "validate-proposed")
@@ -71,7 +71,7 @@ namespace Arkus.H1.Editor
         {
             if (validated == null || validated.Plan == null)
                 throw new InvalidOperationException("H1 materialization requires a successful public preflight token.");
-            ValidateEffectiveMaterializationPreconditions(validated.Plan);
+            ValidateEffectiveMaterializationPreconditions(validated.Plan, validated.Payload);
             return Materialize(validated.Plan, out postflight);
         }
 
@@ -130,7 +130,7 @@ namespace Arkus.H1.Editor
             catch (Exception) { return EmptyObservation(); }
         }
 
-        private static H1ValidationResult RunPreflight(ProjectionPlan plan, out ValidatedProjectionPlan validatedPlan)
+        private static H1ValidationResult RunPreflight(ProjectionPlan plan, string payload, out ValidatedProjectionPlan validatedPlan)
         {
             ValidatedProjectionPlan accepted = null;
             var result = H1ProjectionValidation.GuardExpectedInvalidity(
@@ -142,13 +142,13 @@ namespace Arkus.H1.Editor
                 "",
                 Root,
                 "repair the materialization preconditions before staging",
-                () => RunPreflightCore(plan));
-            if (result.valid) accepted = new ValidatedProjectionPlan(plan);
+                () => RunPreflightCore(plan, payload));
+            if (result.valid) accepted = new ValidatedProjectionPlan(plan, payload);
             validatedPlan = accepted;
             return result;
         }
 
-        private static H1ValidationResult RunPreflightCore(ProjectionPlan plan)
+        private static H1ValidationResult RunPreflightCore(ProjectionPlan plan, string payload)
         {
             var checks = new List<H1ValidationCheck>
             {
@@ -157,7 +157,7 @@ namespace Arkus.H1.Editor
                 H1ProjectionValidation.Check("unity.component.adapter-inventory", SceneId, "", "Assets/Arkus/H1",
                     "repair the declared/effective H1 component adapter inventory", () => H1ComponentProjection.CaptureInventory()),
                 H1ProjectionValidation.Check("unity.plan.node-shape", SceneId, "", Root,
-                    "repair structural preconditions consumed by effective materialization", () => ValidateEffectiveMaterializationPreconditions(plan))
+                    "repair structural preconditions consumed by effective materialization", () => ValidateEffectiveMaterializationPreconditions(plan, payload))
             };
 
             foreach (var node in plan.nodes.Where(value => value != null).OrderBy(value => value.objectId ?? "", StringComparer.Ordinal))
@@ -377,8 +377,12 @@ namespace Arkus.H1.Editor
         // materialization entrypoint. It is therefore impossible for those paths to drift into
         // separate precondition lists: a plan rejected here never reaches staging, and a token
         // consumed by effective materialization is checked by this same method again.
-        private static void ValidateEffectiveMaterializationPreconditions(ProjectionPlan plan)
+        private static void ValidateEffectiveMaterializationPreconditions(ProjectionPlan plan, string payload)
         {
+            // JsonUtility normalizes an omitted/null string to the empty root marker. Check the
+            // public wire shape before that normalization can turn an invalid parent into a root.
+            if (!H1ProjectionParentWireShape.HasExplicitStringParents(payload, plan.nodes.Length))
+                throw new InvalidDataException("projection.invalid-node");
             var seen = new HashSet<string>(StringComparer.Ordinal);
             foreach (var node in plan.nodes)
             {
@@ -441,8 +445,9 @@ namespace Arkus.H1.Editor
 
         private sealed class ValidatedProjectionPlan
         {
-            internal ValidatedProjectionPlan(ProjectionPlan plan) { Plan = plan; }
+            internal ValidatedProjectionPlan(ProjectionPlan plan, string payload) { Plan = plan; Payload = payload; }
             internal ProjectionPlan Plan { get; }
+            internal string Payload { get; }
         }
 
         [Serializable]
@@ -455,6 +460,124 @@ namespace Arkus.H1.Editor
             public ProjectionObservation observation;
             public H1ValidationResult validation;
             public H1ValidationInvariantDescriptor[] validationInventory;
+        }
+    }
+
+    // JsonUtility does not preserve the distinction between an absent/null string and "".
+    // This small structural reader checks only the wire precondition needed by materialization.
+    internal static class H1ProjectionParentWireShape
+    {
+        internal static bool HasExplicitStringParents(string json, int expectedCount)
+        {
+            try
+            {
+                int planStart, planEnd, nodesStart, nodesEnd;
+                if (!Member(json, 0, "plan", out planStart, out planEnd) || json[planStart] != '{' ||
+                    !Member(json, planStart, "nodes", out nodesStart, out nodesEnd) || json[nodesStart] != '[')
+                    return false;
+
+                var cursor = nodesStart + 1;
+                var count = 0;
+                while (true)
+                {
+                    Space(json, ref cursor);
+                    if (cursor >= nodesEnd) return false;
+                    if (json[cursor] == ']') return count == expectedCount && cursor + 1 == nodesEnd;
+                    if (json[cursor] != '{') return false;
+                    int parentStart, parentEnd;
+                    if (!Member(json, cursor, "parentObjectId", out parentStart, out parentEnd) ||
+                        json[parentStart] != '"') return false;
+                    cursor = ValueEnd(json, cursor);
+                    count++;
+                    Space(json, ref cursor);
+                    if (cursor < nodesEnd && json[cursor] == ',') cursor++;
+                    else if (cursor >= nodesEnd || json[cursor] != ']') return false;
+                }
+            }
+            catch (InvalidDataException) { return false; }
+        }
+
+        private static bool Member(string json, int objectStart, string name, out int valueStart, out int valueEnd)
+        {
+            valueStart = valueEnd = 0;
+            if (string.IsNullOrEmpty(json) || objectStart >= json.Length || json[objectStart] != '{') return false;
+            var cursor = objectStart + 1;
+            var found = false;
+            while (true)
+            {
+                Space(json, ref cursor);
+                if (cursor >= json.Length) throw new InvalidDataException();
+                if (json[cursor] == '}') return found;
+                if (json[cursor] != '"') throw new InvalidDataException();
+                var keyStart = ++cursor;
+                cursor = StringEnd(json, cursor);
+                var key = json.Substring(keyStart, cursor - keyStart - 1);
+                Space(json, ref cursor);
+                if (cursor >= json.Length || json[cursor++] != ':') throw new InvalidDataException();
+                Space(json, ref cursor);
+                var start = cursor;
+                cursor = ValueEnd(json, cursor);
+                if (key == name)
+                {
+                    if (found) return false;
+                    valueStart = start;
+                    valueEnd = cursor;
+                    found = true;
+                }
+                Space(json, ref cursor);
+                if (cursor >= json.Length) throw new InvalidDataException();
+                if (json[cursor] == ',') cursor++;
+                else if (json[cursor] != '}') throw new InvalidDataException();
+            }
+        }
+
+        private static int ValueEnd(string json, int cursor)
+        {
+            if (cursor >= json.Length) throw new InvalidDataException();
+            if (json[cursor] == '"') return StringEnd(json, cursor + 1);
+            if (json[cursor] == '{' || json[cursor] == '[')
+            {
+                var close = json[cursor++] == '{' ? '}' : ']';
+                while (true)
+                {
+                    Space(json, ref cursor);
+                    if (cursor >= json.Length) throw new InvalidDataException();
+                    if (json[cursor] == close) return cursor + 1;
+                    if (close == '}')
+                    {
+                        if (json[cursor] != '"') throw new InvalidDataException();
+                        cursor = StringEnd(json, cursor + 1);
+                        Space(json, ref cursor);
+                        if (cursor >= json.Length || json[cursor++] != ':') throw new InvalidDataException();
+                        Space(json, ref cursor);
+                    }
+                    cursor = ValueEnd(json, cursor);
+                    Space(json, ref cursor);
+                    if (cursor >= json.Length) throw new InvalidDataException();
+                    if (json[cursor] == ',') cursor++;
+                    else if (json[cursor] != close) throw new InvalidDataException();
+                }
+            }
+            var start = cursor;
+            while (cursor < json.Length && json[cursor] != ',' && json[cursor] != '}' && json[cursor] != ']' &&
+                !char.IsWhiteSpace(json[cursor])) cursor++;
+            if (cursor == start) throw new InvalidDataException();
+            return cursor;
+        }
+
+        private static int StringEnd(string json, int cursor)
+        {
+            while (cursor < json.Length)
+            {
+                if (json[cursor] == '\\') cursor += 2;
+                else if (json[cursor++] == '"') return cursor;
+            }
+            throw new InvalidDataException();
+        }
+
+        private static void Space(string json, ref int cursor)
+        {
+            while (cursor < json.Length && char.IsWhiteSpace(json[cursor])) cursor++;
         }
     }
 }
