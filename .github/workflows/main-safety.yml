@@ -82,6 +82,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/arkus_safe_output.py --self-test
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-handoff.py --self-test
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validation-context.py self-test
           PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate-worker-preflight-context.py --self-test
