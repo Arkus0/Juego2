@@ -99,6 +99,6 @@ Write-Output "Package lock SHA-256: $((Get-FileHash -LiteralPath (Join-Path $pro
 Write-Output "Canonical command: scripts/h1-06-local-evidence.ps1 -AssetsRoot <owner-configured> -ExpectedSha $actualSha"
 Write-Output 'Candidate clean before: YES'
 Write-Output 'Candidate clean after: YES'
-Write-Output 'Required gates: approved-Source=GREEN; pinned-Editor=GREEN; effective-catalogue=GREEN; nested-prefab-save-reload-and-flattened-control=GREEN; content-shape-probe=GREEN; locked-build=GREEN; focused-plan-tests=GREEN; effective-prefab-public-conformance=GREEN; source-immutability=GREEN; missing-wrong-type-rebound-controls=GREEN; delete-rebuild-normalization=GREEN'
+Write-Output 'Required gates: approved-Source=GREEN; pinned-Editor=GREEN; effective-catalogue=GREEN; nested-prefab-duplicate-sibling-save-reload-loss-and-flattened-controls=GREEN; content-shape-probe=GREEN; locked-build=GREEN; focused-plan-tests=GREEN; effective-prefab-public-conformance=GREEN; source-immutability=GREEN; missing-wrong-type-rebound-controls=GREEN; delete-rebuild-normalization=GREEN'
 Write-Output 'Result: GREEN'
 Write-Output "Scratch evidence: $public; $nested; $contentShape; $inventory"

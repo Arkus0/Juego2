@@ -1,6 +1,6 @@
 # WP-H1-06 content-shape probe
 
-Status: **OBSERVED ON IMPLEMENTATION SHA `b1af5c4cf16cf42273095529102f8ca7a1e635fb`; FINAL SHA RECHECK PENDING**
+Status: **REOBSERVED ON REPAIR SHA `e1e34da7d9625309bcdcd8c09d6f4296dcd84c73`; FINAL SHA RECHECK PENDING**
 
 The physical-local command inspected the owner-local archive at its accepted SHA-256. It found at least 12 discoverable prefab/FBX candidates in each required category: wall, roof, door, window and prop. The bounded report includes the first 12 sorted candidates per category and 40 representative `.prefab` dependency rows. Each sampled prefab had one to three Unity GUID references; two sampled wall corner prefabs had three. These are archive-shape observations, not proof that every listed source has been adopted or effectively imported.
 
