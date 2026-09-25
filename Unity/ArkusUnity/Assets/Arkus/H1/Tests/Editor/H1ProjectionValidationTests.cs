@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 namespace Arkus.H1.Editor.Tests
 {
@@ -92,6 +90,26 @@ namespace Arkus.H1.Editor.Tests
         }
 
         [Test]
+        public void ProposedValidation_ComposesCanonicalSourceIdentityCheck_ForIncompleteLocatorParts()
+        {
+            foreach (var missingPart in new[] { "path", "guid", "local-file-id" })
+            {
+                var plan = BuildValidPlan("incomplete-" + missingPart, 1);
+                if (missingPart == "path") plan.nodes[0].sourcePath = "";
+                else if (missingPart == "guid") plan.nodes[0].sourceGuid = "";
+                else plan.nodes[0].sourceLocalFileId = "";
+
+                var reply = Execute("validate-proposed", plan);
+                Assert.That(reply.validation, Is.Not.Null, missingPart);
+                Assert.That(reply.validation.valid, Is.False, missingPart);
+                Assert.That(reply.validation.diagnostics.Any(value =>
+                        value.invariantId == "unity.plan.source-binding" &&
+                        (value.code == "projection.source-locator-mismatch" || value.code == "projection.source-rebound")),
+                    Is.True, missingPart + " must reach the accepted H1 source resolver rather than being skipped");
+            }
+        }
+
+        [Test]
         public void InvalidRequestEnvelope_ReturnsStructuredDiagnostic_NotRawException()
         {
             var raw = H1SceneProjection.Execute("{");
@@ -124,7 +142,15 @@ namespace Arkus.H1.Editor.Tests
         }
 
         [Test]
-        public void NonFiniteEffectiveTransform_FailsPostflightBeforePublication_AndKeepsPreviousGenerationActive()
+        public void FiniteTransformValueChecker_RejectsNonFiniteRepresentation()
+        {
+            var error = Assert.Throws<InvalidDataException>(() => H1ProjectionValidation.ValidateFiniteTransformValues(
+                new Vector3(float.NaN, 0f, 0f), Vector3.one, Quaternion.identity));
+            Assert.That(error.Message, Is.EqualTo("projection.non-finite-transform"));
+        }
+
+        [Test]
+        public void NonFinitePostflightSample_FailsBeforePublication_AndKeepsPreviousGenerationActive()
         {
             var baselinePlan = BuildValidPlan("baseline", 1);
             var baseline = Execute("materialize", baselinePlan);
@@ -133,12 +159,11 @@ namespace Arkus.H1.Editor.Tests
             var activeGeneration = baseline.observation.generationId;
 
             Directory.CreateDirectory(Path.GetDirectoryName(_faultPath));
-            File.WriteAllText(_faultPath, "H1-08 bounded postflight fault");
+            File.WriteAllText(_faultPath, "H1-08 bounded finite-check sample fault");
 
             var attemptedPlan = BuildValidPlan("non-finite", 1);
             attemptedPlan.nodes[0].positionMm.x = 2500;
             attemptedPlan.inputDigest = HashText("non-finite-attempt");
-            LogAssert.Expect(LogType.Error, new Regex("transform\\.localPosition assign attempt.*NaN"));
             var rejected = Execute("materialize", attemptedPlan);
 
             Assert.That(rejected.errorCode, Is.EqualTo("projection.non-finite-transform"));
@@ -150,6 +175,50 @@ namespace Arkus.H1.Editor.Tests
             Assert.That(rejected.observation.generationId, Is.EqualTo(activeGeneration),
                 "failed effective postflight must not receive the active-generation receipt");
             Assert.That(rejected.observation.inputDigest, Is.EqualTo(baselinePlan.inputDigest));
+        }
+
+        [Test]
+        public void CurrentValidation_UsesActiveManifestIdentity_NotCallerProposedIdentity()
+        {
+            var activePlan = BuildValidPlan("current-active", 1);
+            var materialized = Execute("materialize", activePlan);
+            Assert.That(materialized.errorCode, Is.Empty);
+
+            var callerPlan = BuildValidPlan("current-caller-b", 1);
+            var current = Execute("validate-current", callerPlan);
+
+            Assert.That(current.errorCode, Is.Empty);
+            Assert.That(current.validation, Is.Not.Null);
+            Assert.That(current.validation.valid, Is.True);
+            Assert.That(current.validation.inputDigest, Is.EqualTo(activePlan.inputDigest));
+            Assert.That(current.observation.inputDigest, Is.EqualTo(activePlan.inputDigest));
+            Assert.That(current.observation.canonicalHash, Is.EqualTo(activePlan.canonicalHash));
+            Assert.That(current.observation.catalogueFingerprint, Is.EqualTo(activePlan.catalogueFingerprint));
+            Assert.That(current.observation.inputDigest, Is.Not.EqualTo(callerPlan.inputDigest));
+        }
+
+        [TestCase("graphDigest", "projection.active-scene-drift")]
+        [TestCase("realizationDigest", "projection.active-prefab-drift")]
+        public void CurrentValidation_RejectsActiveManifestDigestDrift(string field, string expectedCode)
+        {
+            var plan = BuildValidPlan("manifest-drift-" + field, 1);
+            var materialized = Execute("materialize", plan);
+            Assert.That(materialized.errorCode, Is.Empty);
+
+            var manifestPath = Path.GetFullPath(Path.Combine(Application.dataPath, "..", ManagedScenes, "current.json"));
+            var manifest = File.ReadAllText(manifestPath);
+            var original = field == "graphDigest" ? materialized.observation.graphDigest : materialized.observation.realizationDigest;
+            var replacement = HashText("tampered-" + field);
+            Assert.That(manifest, Does.Contain("\"" + field + "\":\"" + original + "\""));
+            File.WriteAllText(manifestPath,
+                manifest.Replace("\"" + field + "\":\"" + original + "\"", "\"" + field + "\":\"" + replacement + "\""));
+
+            var current = Execute("validate-current", BuildValidPlan("unrelated-caller-" + field, 1));
+            Assert.That(current.errorCode, Is.EqualTo(expectedCode));
+            Assert.That(current.validation, Is.Not.Null);
+            Assert.That(current.validation.valid, Is.False);
+            Assert.That(current.validation.diagnostics.Any(value =>
+                value.invariantId == "unity.scene.effective-observation" && value.code == expectedCode), Is.True);
         }
 
         [Test]
