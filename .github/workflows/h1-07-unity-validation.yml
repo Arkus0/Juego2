@@ -1,0 +1,188 @@
+name: H1-07 Unity Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-07-unity-validation.yml'
+      - 'Docs/workpacks/H1/WP-H1-07.md'
+      - 'tools/Arkus.H1.UnityHost/**'
+      - 'tests/Arkus.Harness.Tests/**'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-07-unity-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  h1-07-effective-unity:
+    name: Exact H1-07 Unity round-trip validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PINNED_ASSET_VAULT_SHA: ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      ASSET_VAULT_TOKEN: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_EXIT_CODE: '99'
+
+    steps:
+      - name: Validate exact target and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact lowercase 40-hex'; exit 2; }
+          missing=0
+          for name in ASSET_VAULT_TOKEN UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact public candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact clean public checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          printf '/_asset_vault/\n/artifacts/\n' >> .git/info/exclude
+          echo "H1_07_EXACT_SHA_GREEN ${TARGET_SHA}"
+
+      - name: Checkout exact private H1 asset baseline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Arkus0/Juego2-assets
+          ref: ${{ env.PINNED_ASSET_VAULT_SHA }}
+          token: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+          fetch-depth: 1
+          lfs: true
+          path: _asset_vault
+
+      - name: Verify and mount accepted H1 SourceSlice
+        shell: bash
+        run: |
+          set -euo pipefail
+          VAULT_SHA="$(git -C _asset_vault rev-parse HEAD)"
+          test "${VAULT_SHA}" = "${PINNED_ASSET_VAULT_SHA}"
+          python3 Tools/AssetVault/verify_h1_asset_vault.py \
+            --public-root . \
+            --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${VAULT_SHA}" \
+            --mount
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/UAL1.fbx.meta
+          echo "H1_07_PRIVATE_SOURCE_GREEN ${VAULT_SHA}"
+
+      - name: Install exact GameCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+
+      - name: Execute effective Unity EditMode suite
+        shell: bash
+        run: |
+          set +e
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --coverageEnabled false \
+            --artifactsPath=artifacts/h1-07-unity \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+          code=$?
+          set -e
+          echo "UNITY_EXIT_CODE=${code}" >> "${GITHUB_ENV}"
+          echo "H1_07_UNITY_PROCESS_EXIT ${code}"
+
+      - name: Emit public-safe H1-07 failure summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          root = Path('artifacts/h1-07-unity')
+          xmls = sorted(root.rglob('*results.xml')) if root.exists() else []
+          print(f'H1_07_DIAGNOSTIC unity_exit={os.environ.get("UNITY_EXIT_CODE", "missing")} result_xml_count={len(xmls)}')
+          if not xmls:
+              print('H1_07_DIAGNOSTIC result_xml=missing; use preceding GameCI output as causal source')
+              raise SystemExit(0)
+
+          for path in xmls:
+              try:
+                  tree = ET.parse(path)
+              except Exception as exc:
+                  print(f'H1_07_DIAGNOSTIC xml_parse_error={type(exc).__name__}')
+                  continue
+              failed = []
+              for node in tree.getroot().iter('test-case'):
+                  if node.attrib.get('result') == 'Failed':
+                      name = node.attrib.get('fullname') or node.attrib.get('name') or '<unnamed>'
+                      failed.append(name)
+              print(f'H1_07_DIAGNOSTIC failed_test_count={len(failed)}')
+              for name in failed[:50]:
+                  print(f'H1_07_FAILING_TEST {name}')
+          PY
+
+      - name: Delete raw Unity evidence and private source
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf artifacts/h1-07-unity
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta
+          rm -rf _asset_vault
+          sudo chown "$(id -u):$(id -g)" \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          git restore --source="${TARGET_SHA}" -- \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          test ! -e artifacts/h1-07-unity
+          if [[ -d .git ]]; then
+            test -z "$(git status --porcelain --untracked-files=all)"
+          fi
+          echo 'H1_07_EPHEMERAL_EVIDENCE_REMOVED'
+
+      - name: Enforce effective Unity result
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${UNITY_EXIT_CODE:-99}" -eq 0 || {
+            echo "::error::H1-07 effective Unity validation failed with exit ${UNITY_EXIT_CODE:-99}"
+            exit "${UNITY_EXIT_CODE:-99}"
+          }
+          echo "H1_07_UNITY_GREEN ${TARGET_SHA}"
