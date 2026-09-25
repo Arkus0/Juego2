@@ -166,7 +166,7 @@ namespace Arkus.H1.Editor
             {
                 try
                 {
-                    ValidateDerivativeAsset(existing, derivativePath, node, prefabGenerationId);
+                    ValidateDerivativeAsset(existing, derivativePath, node, source, prefabGenerationId);
                     return existing;
                 }
                 catch (InvalidDataException)
@@ -203,11 +203,11 @@ namespace Arkus.H1.Editor
                 throw new InvalidDataException("projection.source-mutated");
             var created = AssetDatabase.LoadAssetAtPath<GameObject>(derivativePath);
             if (created == null) throw new InvalidDataException("projection.prefab-derivative-missing");
-            ValidateDerivativeAsset(created, derivativePath, node, prefabGenerationId);
+            ValidateDerivativeAsset(created, derivativePath, node, source, prefabGenerationId);
             return created;
         }
 
-        private static void ValidateDerivativeAsset(GameObject derivative, string derivativePath, ProjectionNode node, string prefabGenerationId)
+        private static void ValidateDerivativeAsset(GameObject derivative, string derivativePath, ProjectionNode node, GameObject source, string prefabGenerationId)
         {
             var expectedPrefix = PrefabGenerations + "/" + prefabGenerationId + "/";
             if (!derivativePath.StartsWith(expectedPrefix, StringComparison.Ordinal) ||
@@ -225,6 +225,7 @@ namespace Arkus.H1.Editor
                 throw new InvalidDataException("projection.prefab-source-lineage-missing");
             if (SourceHash(node) != node.sourceContentSha256)
                 throw new InvalidDataException("projection.source-rebound");
+            ValidateSourceRelationships(derivative, source, node.sourcePath);
         }
 
         private static void ValidatePlan(ProjectionPlan plan)
@@ -469,11 +470,11 @@ namespace Arkus.H1.Editor
             }
             if (rows.Count > MaximumRelationships)
                 throw new InvalidDataException("projection.prefab-relationship-limit");
-            return rows.OrderBy(RelationshipKey, StringComparer.Ordinal).ToArray();
+            return NormalizeRelationships(rows);
         }
 
-        // Compare evaluated references, not only AssetDatabase's transitive dependencies:
-        // a flattened nested instance can still inherit the source asset's dependency set.
+        // "variant-base" is a managed-wrapper/lineage invariant. Every other normalized row is
+        // source-derived and must be exactly equal, with multiplicity, to the source relationship multiset.
         internal static void ValidateSourceRelationships(GameObject realized, GameObject source, string sourcePath)
         {
             ValidateSourceRelationships(realized, source, sourcePath, CollectRelationships(realized, source, sourcePath));
@@ -481,25 +482,32 @@ namespace Arkus.H1.Editor
 
         private static void ValidateSourceRelationships(GameObject realized, GameObject source, string sourcePath, PrefabRelationship[] realizedRows)
         {
-            var observed = new Dictionary<string, int>(StringComparer.Ordinal);
-            foreach (var row in realizedRows)
+            var remaining = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (var row in SourceDerivedRelationships(realizedRows))
             {
                 var key = RelationshipKey(row);
-                observed[key] = observed.TryGetValue(key, out var count) ? count + 1 : 1;
+                remaining[key] = remaining.TryGetValue(key, out var count) ? count + 1 : 1;
             }
-            foreach (var row in CollectRelationships(source, source, sourcePath))
+
+            foreach (var row in SourceDerivedRelationships(CollectRelationships(source, source, sourcePath)))
             {
-                if (row.kind == "variant-base") continue;
                 var key = RelationshipKey(row);
-                if (observed.TryGetValue(key, out var count) && count > 0)
-                {
-                    observed[key] = count - 1;
-                    continue;
-                }
-                throw new InvalidDataException(row.kind == "nested-prefab"
-                    ? "projection.prefab-nested-lineage-missing" : "projection.prefab-source-reference-missing");
+                if (!remaining.TryGetValue(key, out var count) || count <= 0)
+                    throw new InvalidDataException(row.kind == "nested-prefab"
+                        ? "projection.prefab-nested-lineage-missing" : "projection.prefab-source-reference-missing");
+                if (count == 1) remaining.Remove(key);
+                else remaining[key] = count - 1;
             }
+
+            if (remaining.Count != 0)
+                throw new InvalidDataException("projection.prefab-source-reference-unexpected");
         }
+
+        private static PrefabRelationship[] SourceDerivedRelationships(IEnumerable<PrefabRelationship> rows) =>
+            NormalizeRelationships(rows.Where(row => row.kind != "variant-base"));
+
+        private static PrefabRelationship[] NormalizeRelationships(IEnumerable<PrefabRelationship> rows) =>
+            rows.OrderBy(RelationshipKey, StringComparer.Ordinal).ToArray();
 
         private static void AddRelationship(ICollection<PrefabRelationship> rows, string kind, string relativePath, UnityEngine.Object asset)
         {
@@ -533,7 +541,7 @@ namespace Arkus.H1.Editor
         private static string RelationshipDigest(IEnumerable<PrefabRelationship> rows)
         {
             var builder = new StringBuilder();
-            foreach (var row in rows.OrderBy(RelationshipKey, StringComparer.Ordinal))
+            foreach (var row in NormalizeRelationships(rows))
                 builder.Append(RelationshipKey(row)).Append('\n');
             return Sha(Encoding.UTF8.GetBytes(builder.ToString()));
         }

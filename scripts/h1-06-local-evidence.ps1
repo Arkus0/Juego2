@@ -50,17 +50,20 @@ if ($effectiveInventory.projectIdentity -ne 'arkus.unity-project@1:ArkusUnity' -
     throw 'Effective Unity project/editor identity mismatch'
 }
 
-# A harness-only nested prefab fixture exercises the relationship collector through
-# save/reload, then confirms that flattening the nested child turns the guard red.
+# One harness-only duplicate-sibling fixture proves the generic source-derived multiset equality
+# in both directions after save/reload: missing/under-count and extra/over-count. It then rebuilds
+# cleanly to the original relationship digest; the earlier flattened-child control remains RED.
 $nested = Join-Path $scratch 'nested-conformance.json'
 Run-Unity 'Arkus.H1.Editor.H1PrefabNestedConformance.Run' (Join-Path $scratch 'nested.log') $nested
 $nestedResult = Get-Content -LiteralPath $nested -Raw | ConvertFrom-Json
 if ($nestedResult.schemaId -ne 'arkus.h1-06-nested-prefab-conformance@1' -or
     $nestedResult.result -ne 'GREEN' -or
     $nestedResult.positive -ne 'two-same-name-nested-prefab-links-preserved-after-save-reload' -or
-    $nestedResult.productPath -ne 'ObserveRealization:nested-prefab-multiplicity-and-digest' -or
-    $nestedResult.negative -ne 'one-of-two-same-name-siblings-removed:projection.prefab-nested-lineage-missing') {
-    throw 'Nested prefab conformance result is incomplete'
+    $nestedResult.productPath -ne 'ObserveRealization:exact-source-derived-multiset-and-digest' -or
+    $nestedResult.negative -ne 'one-of-two-same-name-siblings-removed:projection.prefab-nested-lineage-missing' -or
+    $nestedResult.extraNegative -ne 'third-identical-source-derived-relation:projection.prefab-source-reference-unexpected' -or
+    $nestedResult.recovery -ne 'stale-extra-derivative-rebuilt:relationship-digest-converged') {
+    throw 'Exact prefab relationship multiset conformance result is incomplete'
 }
 
 # Exploratory shape probe reads the exact already-approved archive only. It does not import
@@ -99,6 +102,6 @@ Write-Output "Package lock SHA-256: $((Get-FileHash -LiteralPath (Join-Path $pro
 Write-Output "Canonical command: scripts/h1-06-local-evidence.ps1 -AssetsRoot <owner-configured> -ExpectedSha $actualSha"
 Write-Output 'Candidate clean before: YES'
 Write-Output 'Candidate clean after: YES'
-Write-Output 'Required gates: approved-Source=GREEN; pinned-Editor=GREEN; effective-catalogue=GREEN; nested-prefab-duplicate-sibling-save-reload-loss-and-flattened-controls=GREEN; content-shape-probe=GREEN; locked-build=GREEN; focused-plan-tests=GREEN; effective-prefab-public-conformance=GREEN; source-immutability=GREEN; missing-wrong-type-rebound-controls=GREEN; delete-rebuild-normalization=GREEN'
+Write-Output 'Required gates: approved-Source=GREEN; pinned-Editor=GREEN; effective-catalogue=GREEN; prefab-exact-multiset-missing-extra-recovery-and-flattened-controls=GREEN; content-shape-probe=GREEN; locked-build=GREEN; focused-plan-tests=GREEN; effective-prefab-public-conformance=GREEN; source-immutability=GREEN; missing-wrong-type-rebound-controls=GREEN; delete-rebuild-normalization=GREEN'
 Write-Output 'Result: GREEN'
 Write-Output "Scratch evidence: $public; $nested; $contentShape; $inventory"

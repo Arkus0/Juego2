@@ -1,40 +1,78 @@
 # WP-H1-06 proof matrix
 
-Status: **REPAIR VERIFIED PHYSICALLY AFTER INDEPENDENT FAIL; FINAL EXACT-SHA READ-ONLY RECEIPT REQUIRED BEFORE FREEZE**
+Status: **REMOTE REPAIR IMPLEMENTED AFTER SECOND INDEPENDENT RELATIONSHIP-FIDELITY FAIL; EXACT-SHA PHYSICAL-LOCAL RECEIPT REQUIRED BEFORE FREEZE**
 
 PROOF_BUDGET_VERDICT: WITHIN_BUDGET
-FOUNDATIONAL_PROOF_VERDICT: READY (subject to the final exact-SHA read-only receipt before freeze)
-UNRESOLVED_PROOF_OBLIGATIONS: 0 within the tested H1-06 claim
-KNOWN_UNDETECTED_DEFECT_CLASSES: 0 within the tested H1-06 claim
-TRUST_BOUNDARY: accepted H1-04 Quaternius Source slice and catalogue, accepted H1-05 scene publication, pinned Unity Editor/project/package graph, and H1-06 managed prefab realization through the public projection path; synthetic nested prefab fixture only for causal relationship controls.
+FOUNDATIONAL_PROOF_VERDICT: READY (subject to the final exact-SHA physical-local receipt before freeze)
+UNRESOLVED_PROOF_OBLIGATIONS: 0 within the tested H1-06 relationship claim after remote repair
+KNOWN_UNDETECTED_DEFECT_CLASSES: 0 within the declared H1-06 relationship universe after closing both inequality directions
+TRUST_BOUNDARY: accepted H1-04 Quaternius Source slice and catalogue, accepted H1-05 scene publication, pinned Unity Editor/project/package graph, and H1-06 managed prefab realization through the public projection path; one synthetic nested-prefab fixture is used only as a causal falsifier of the generic relationship equality rule.
 
-Independent review of frozen candidate `53801ae7f9990502dd5881c73717613a0fc7abe2` found a material false-green: two sibling instances of the same nested prefab with the same GameObject name collapsed to one normalized relationship because the relationship collection was keyed as a set. Removing one sibling could therefore leave source/realized comparison and the relationship/realization digest unchanged. The repair preserves relationship multiplicity as repeated normalized rows, compares source relationships as a multiset, and extends the Unity conformance fixture with two same-name sibling instances plus a one-sibling removed-override control after save/reload. The negative control also requires the raw relationship digest to change before the product observer rejects the loss with `projection.prefab-nested-lineage-missing`.
+## Foundational circuit-breaker audit
 
-This matrix does not claim independent PASS. The complete physical-local command returned GREEN on repair SHA `e1e34da7d9625309bcdcd8c09d6f4296dcd84c73` after the local evidence gate was aligned with the repaired fixture's exact result fields. That run included the two-sibling positive, one-sibling-loss negative, flattened-child negative, approved Source and content-shape checks, locked build, focused .NET tests and public Quaternius conformance. Earlier physical-local receipts remain historical evidence for superseded SHAs. Because this evidence reconciliation changes the candidate SHA, `scripts/h1-06-local-evidence.ps1` must run read-only from a clean checkout on the final exact repair SHA before Worker pre-review/freeze. The final receipt is a durable PR comment bound to that SHA.
+The two independent FAILs are not separate relation-type bugs. They are the two directions of one incomplete equality claim:
+
+- first FAIL (`53801ae7f9990502dd5881c73717613a0fc7abe2`): **missing / under-count** — source had two equal nested-prefab occurrences while realized had one; the old set-shaped representation lost multiplicity;
+- second FAIL (`5a771e8f28bf67e3fa235a88fd2ffd2d4520f5d4`, review comment `#5826423094`): **extra / over-count** — the multiplicity repair consumed every expected source occurrence from realized but did not reject leftover realized occurrences, so `source multiset ⊂ realized multiset` could still be accepted and republished.
+
+The repaired oracle therefore has one rule only:
+
+> **expected source-derived relationship multiset == effective realized source-derived relationship multiset**
+
+No nested/mesh/material/animation-specific guard is added. The normalized key already contains relationship kind, relative object path, asset path, GUID, local file ID and runtime type name, and repeated equal rows remain repeated. Exact multiset equality consequently detects missing rows, insufficient multiplicity, unexpected rows, excess multiplicity, and identity/path/type changes with the same primitive.
+
+## Relationship universe and wrapper invariants
+
+`variant-base` is deliberately **not** part of the source-derived multiset. It is a managed-wrapper/lineage invariant: H1-06 requires the derivative to be a `PrefabAssetType.Variant`, to live at the deterministic managed generation/path, to carry exact `H1ManagedPrefabLineage`, to retain the accepted source dependency, and public observation to expose the exact source `variant-base` row.
+
+The source-derived multiset is the remainder of H1-06's declared observed relationship universe:
+
+- `nested-prefab`;
+- `mesh-reference`;
+- `material-reference`;
+- `animation-clip-reference`.
+
+`CollectRelationships` produces the normalized rows used by observation/digest. `ValidateSourceRelationships` filters only the wrapper `variant-base` row and compares those same normalized source-derived rows as an exact multiset. `RelationshipDigest` orders by the same `RelationshipKey`, so validation and convergence do not maintain divergent definitions of relationship identity.
+
+The exact oracle also runs inside `ValidateDerivativeAsset`. Therefore `RealizeDerivative` cannot reuse a deterministic pre-existing derivative merely because path/type/lineage are valid: any missing or extra source-derived row makes validation fail, the existing derivative is deleted, and the bridge rebuilds it from the unchanged source before staging/publication. Stale generated-state drift is repaired rather than adopted as new truth.
+
+## Causal controls
+
+The single harness fixture uses two same-name sibling instances of one nested prefab so that equal keys exercise multiplicity directly rather than depending on relation-type enumeration:
+
+1. source=2 / realized=2 survives save/reload; public `ObserveRealization` exposes both occurrences and a relationship digest;
+2. delete one sibling, save/reload: source=2 / realized=1 changes the digest and fails with `projection.prefab-nested-lineage-missing`;
+3. rebuild the managed variant with all original rows plus one third identical source-derived occurrence, save/reload: source=2 / realized=3 changes the digest and fails with `projection.prefab-source-reference-unexpected` both through the equality oracle and product observation;
+4. rebuild the same managed path cleanly from unchanged source: validation is GREEN and the relationship digest converges to the original positive digest;
+5. the previously accepted flattened-child negative remains RED.
+
+This is one falsifier of equality in both directions, not a fixture matrix per relationship kind.
+
+Earlier physical-local GREEN receipts, including repair SHA `e1e34da7d9625309bcdcd8c09d6f4296dcd84c73`, are historical evidence for superseded candidates only. This second repair changes production code and the Unity fixture; it requires one complete physical-local execution on the final exact SHA before Worker freeze/Ready. No independent PASS is claimed here.
 
 | Claim | Mechanism | Causal/negative control | Current state |
 |---|---|---|---|
-| Accepted source prefab is read-only | `H1SceneProjection.ResolveSource`, exact source path/GUID/local-file-id/content SHA, before/after source hashing | local proof re-verifies H1-04 owner Source pins after all materialization/rebuild activity | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Prefab source relationship is not flattened | source instance is saved as a Unity `PrefabAssetType.Variant`; `H1ManagedPrefabLineage` records exact source identity; normalized observation requires `variant-base` | a regular/flattened asset cannot satisfy `PrefabAssetType.Variant` + exact source dependency + lineage checks | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Nested/source dependency shape and multiplicity remain inspectable | normalized relationship rows retain every occurrence of `nested-prefab`, mesh, material and animation references; source comparison consumes matching rows as a multiset; derivative dependencies must contain every accepted source dependency | harness source contains two sibling instances of the same nested prefab with the same GameObject name; positive observation must expose two nested rows after save/reload; deleting exactly one sibling as a removed-GameObject override must change the relationship digest and make product `ObserveRealization` fail with `projection.prefab-nested-lineage-missing`; separate flattened-child control remains RED | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Managed derivatives cannot escape bridge ownership | deterministic path `Assets/Arkus/H1/ManagedPrefabs/generations/<generation>/<source-identity>.prefab` | observation rejects any derivative path outside the exact generation root with `projection.prefab-derivative-scope-escape` | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Managed derivative has stable bridge identity and source lineage | prefab generation ID is deterministic from projection input/catalogue fingerprint; derivative path is deterministic from generation + source identity; lineage marker binds source logical/native/content identity | delete/rebuild must reproduce the same path, generation and normalized relationship profile | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Missing logical source fails closed | host plan maps `catalogue.missing-reference` to `projection.source-missing` | focused .NET regression + public local conformance with `prefab.absent` | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Wrong asset type fails closed | host plan maps `catalogue.incompatible-reference` to `projection.source-wrong-type`; Editor independently checks effective Unity type | focused regression binds prefab kind to accepted mesh logical ID | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Rebound/stale source fails closed | accepted mapping/content identity is revalidated in host and effective Editor | local proof temporarily corrupts the accepted prefab mapping content hash and requires `projection.source-rebound`, then restores exact bytes | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Catalogue remapping cannot alter canonical world identity | `CanonicalHash` is computed only from `WorldState`; catalogue fingerprint is separate input evidence | .NET regression remaps an unrelated accepted catalogue logical ID and requires equal canonical hash but different catalogue fingerprint/input digest | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Same input is semantically idempotent | existing active scene is reused only when graph and realization both match | local public proof materializes twice and requires identical generation + normalized realization | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Deleted generated derivative converges | missing derivative causes active observation to fail and a fresh staged scene/variant rebuild | local proof deletes managed derivative bytes/meta, rematerializes, and compares normalized source/relationship profile | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Canonical state/journal remain authoritative | public projection path never applies H0 canonical mutations | local proof snapshots `world.summary` and `authoring.journal.read` around materialize/rebuild and diagnostics | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
-| Representative positive shape is real Quaternius, not a primitive | exact H1-04-pinned Medieval Village archive and accepted wall/window prefab/material source are used | bounded archive probe reports wall/roof/door/window/prop candidate shape without adopting new source | REPAIR SHA GREEN; FINAL SHA RECEIPT PENDING |
+| Accepted source prefab is read-only | `H1SceneProjection.ResolveSource`, exact source path/GUID/local-file-id/content SHA, before/after source hashing | local proof re-verifies H1-04 owner Source pins after all materialization/rebuild activity | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
+| Prefab source relationship is not flattened | source instance is saved as a Unity `PrefabAssetType.Variant`; `H1ManagedPrefabLineage` records exact source identity; normalized observation requires `variant-base` | regular/flattened asset cannot satisfy Variant + exact source dependency + lineage checks; flattened harness control remains RED | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
+| Source-derived relationship multiset is exact | one normalized `RelationshipKey` and multiplicity-preserving rows cover nested prefab, mesh, material and animation references; `ValidateSourceRelationships` requires equality after excluding only `variant-base` | same two-sibling fixture proves source=2/realized=1 RED and source=2/realized=3 RED; clean rebuild returns source=2/realized=2 GREEN and original digest | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
+| Existing managed derivative drift cannot be adopted | `ValidateDerivativeAsset` invokes the same exact relationship oracle before `RealizeDerivative` reuses an existing deterministic derivative | extra-bearing derivative fails validation and is rebuilt rather than returned for stage/publish | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
+| Relationship validation and digest share identity semantics | `CollectRelationships` + `NormalizeRelationships` + `RelationshipKey` feed exact comparison and `RelationshipDigest`; duplicates are retained | both under-count and over-count controls must change raw relationship digest; recovery must restore it | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
+| Managed derivatives cannot escape bridge ownership | deterministic path `Assets/Arkus/H1/ManagedPrefabs/generations/<generation>/<source-identity>.prefab` | observation rejects derivative outside exact generation root with `projection.prefab-derivative-scope-escape` | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
+| Managed derivative has stable bridge identity and source lineage | prefab generation ID derives from projection input/catalogue fingerprint; derivative path derives from generation + source identity; lineage marker binds logical/native/content source | clean rebuild at same managed identity must reproduce normalized source-derived multiset/digest | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
+| Missing logical source fails closed | host plan maps `catalogue.missing-reference` to `projection.source-missing` | focused .NET regression + public local conformance with `prefab.absent` | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
+| Wrong asset type fails closed | host plan maps `catalogue.incompatible-reference` to `projection.source-wrong-type`; Editor independently checks effective Unity type | focused regression binds prefab kind to accepted mesh logical ID | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
+| Rebound/stale source fails closed | accepted mapping/content identity is revalidated in host and effective Editor | local proof corrupts accepted prefab mapping content hash, requires `projection.source-rebound`, then restores exact bytes | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
+| Catalogue remapping cannot alter canonical world identity | `CanonicalHash` depends only on `WorldState`; catalogue fingerprint is separate input evidence | .NET regression remaps unrelated accepted catalogue logical ID and requires equal canonical hash but different catalogue fingerprint/input digest | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
+| Same input is semantically idempotent | active scene is reused only when graph and realization both match; derivative reuse additionally requires exact source-derived multiset | public proof materializes twice and compares normalized realization | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
+| Deleted/generated derivative converges | invalid or missing derivative is rebuilt from accepted source before staging | local proof deletes managed derivative and compares normalized source/relationship profile; synthetic extra control rebuilds back to original digest | REMOTE REPAIR COMPLETE; EXACT-SHA LOCAL RECEIPT PENDING |
+| Canonical state/journal remain authoritative | public projection path never applies H0 canonical mutations | local proof snapshots `world.summary` and `authoring.journal.read` around materialize/rebuild and diagnostics | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
+| Representative positive shape is real Quaternius, not a primitive | exact H1-04-pinned Medieval Village archive and accepted wall/window prefab/material source are used | bounded archive probe reports wall/roof/door/window/prop shape without adopting new source | REMOTE UNCHANGED; EXACT-SHA LOCAL RECEIPT PENDING |
 
-## Trust boundary
+## Proof-budget boundary
 
-The H1-06 claim is bounded to the existing H1-04 catalogue/source authority and H1-05 managed-scene publication boundary. Native Unity GUIDs/local file IDs are observed locators, not canonical game identity. The stable bridge identity for a managed derivative is the deterministic managed generation/path plus exact source lineage; deleting and rebuilding may legitimately allocate a new Unity-native GUID while the normalized source/relationship identity remains equal. Relationship equality is multiplicity-sensitive: repeated equal rows are material and are included repeatedly in `relationshipDigest`.
+The circuit breaker closes the broad relationship-completeness class by replacing directional consumption with equality, not by accumulating guards. There is no new relation-specific production machinery and no additional source-adoption authority. H1-04 catalogue/source guarantees and H1-05 scene-publication guarantees remain consumed, not reopened.
 
-## Residual-risk and proof-budget audit
-
-The positive game-shaped realization is the accepted Quaternius wall/window source with effective mesh/material references. A separate ignored harness fixture tests nested-prefab mechanics because the accepted H1-04 Source slice has no nested prefab. The first independent FAIL exposed one concrete completeness gap in that fixture and comparator: duplicate equal relationship instances were collapsed. The targeted repair changes only relationship multiplicity semantics and the causal nested fixture; it does not reopen H1-04 catalogue/source authority, H1-05 publication semantics, arbitrary component fidelity, art adaptation or broader content adoption. Complex importer adaptation, arbitrary component properties, broad Cantabrian art conversion, wardrobe, vehicles, missing production props/animations and shipping delivery remain named future work outside H1-06.
+Component/property fidelity, complex importer adaptation, broad Cantabrian art conversion, wardrobe, vehicles, missing production props/animations, CITY/H2 and shipping asset delivery remain outside H1-06. Future relationship kinds are not silently covered by this claim: adding a new observed relationship kind requires an explicit H1-06-universe change rather than pretending the current proof covers arbitrary component semantics.
 
 ## Required physical-local command
 
@@ -42,4 +80,4 @@ The positive game-shaped realization is the accepted Quaternius wall/window sour
 scripts/h1-06-local-evidence.ps1 -AssetsRoot <owner-configured> -ExpectedSha <exact-40-char-head>
 ```
 
-The command must run from a clean checkout at the exact PR head, with physical local Unity `6000.3.24f1 (4e7b9b5b6244)`. Until that receipt is GREEN, this PR remains Draft and must not be frozen for Reviewer.
+The command must run once from a clean checkout at the exact final repair SHA with physical local Unity `6000.3.24f1 (4e7b9b5b6244)`. Until that receipt is GREEN, PR #195 stays Draft/ACTIVE and must not be frozen or marked Ready for independent Reviewer.
