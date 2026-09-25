@@ -12,7 +12,8 @@ using UnityEngine;
 namespace Arkus.H1.Editor
 {
     // H1-07 deliberately has no SerializedProperty/reflection mutation fallback. Each adapter
-    // names one schema and one Unity type and performs typed reads/writes only.
+    // names one schema and one Unity type and performs typed reads/writes only. TypeCache is used
+    // only to enumerate the closed adapter implementation universe for completeness proof.
     internal static class H1ComponentProjection
     {
         internal const string TransformSchema = "arkus.h1.component.transform@1";
@@ -22,31 +23,54 @@ namespace Arkus.H1.Editor
         internal const string InventorySchema = "arkus.h1-component-adapter-inventory@1";
         private const string ControllersRoot = "Assets/Arkus/H1/ManagedScenes/controllers";
 
-        // This is the declared schema side of the proof. Effective adapters are enumerated below
-        // from concrete adapter instances rather than derived from this list.
-        internal static readonly string[] DeclaredSchemas =
+        // Declared portable schemas are independent from effective adapter enumeration.
+        private static readonly ComponentSchemaDescriptor[] DeclaredDescriptors =
         {
-            AnimatorSchema, CanonicalLinkSchema, MeshRendererSchema, TransformSchema
+            Descriptor(AnimatorSchema, typeof(Animator),
+                "applyRootMotion:bool=false", "clip:catalogue-ref:animation-clip",
+                "cullingMode:enum=AlwaysAnimate", "updateMode:enum=Normal"),
+            Descriptor(CanonicalLinkSchema, typeof(H1CanonicalLinkMarker),
+                "relation:string", "targetObjectId:canonical-ref"),
+            Descriptor(MeshRendererSchema, typeof(MeshRenderer),
+                "enabled:bool=true", "material:catalogue-ref:material"),
+            Descriptor(TransformSchema, typeof(Transform),
+                "positionMm:vector3-int64", "rotationMilliDegrees:vector3-int64", "scalePpm:vector3-int64")
         };
 
-        private static readonly IH1ComponentAdapter[] EffectiveAdapters =
-        {
-            new AnimatorAdapter(), new CanonicalLinkAdapter(), new MeshRendererAdapter(), new TransformAdapter()
-        };
+        internal static readonly string[] DeclaredSchemas = DeclaredDescriptors
+            .Select(value => value.schemaId).OrderBy(value => value, StringComparer.Ordinal).ToArray();
 
         internal static ComponentInventory CaptureInventory()
         {
-            var effective = EffectiveAdapters.Select(adapter => new ComponentAdapterRow
+            var adapters = BuildEffectiveAdapters();
+            var effective = adapters.Select(adapter => new ComponentAdapterRow
             {
                 schemaId = adapter.SchemaId,
                 unityType = adapter.UnityType.FullName,
-                adapterType = adapter.GetType().FullName
+                adapterType = adapter.GetType().FullName,
+                fields = adapter.Fields.OrderBy(value => value, StringComparer.Ordinal).ToArray()
             }).OrderBy(row => row.schemaId, StringComparer.Ordinal).ToArray();
+
             if (effective.Select(row => row.schemaId).Distinct(StringComparer.Ordinal).Count() != effective.Length)
                 throw new InvalidDataException("projection.component-adapter-duplicate");
             if (!DeclaredSchemas.SequenceEqual(effective.Select(row => row.schemaId), StringComparer.Ordinal))
                 throw new InvalidDataException("projection.component-adapter-inventory-mismatch");
-            return new ComponentInventory { schemaId = InventorySchema, declaredSchemas = DeclaredSchemas.ToArray(), effectiveAdapters = effective };
+
+            foreach (var declared in DeclaredDescriptors.OrderBy(value => value.schemaId, StringComparer.Ordinal))
+            {
+                var adapter = effective.Single(value => value.schemaId == declared.schemaId);
+                if (adapter.unityType != declared.unityType || !adapter.fields.SequenceEqual(declared.fields, StringComparer.Ordinal))
+                    throw new InvalidDataException("projection.component-adapter-schema-mismatch");
+            }
+
+            var digest = DescriptorDigest(DeclaredDescriptors);
+            return new ComponentInventory
+            {
+                schemaId = InventorySchema,
+                digest = digest,
+                declaredSchemas = DeclaredDescriptors.OrderBy(value => value.schemaId, StringComparer.Ordinal).ToArray(),
+                effectiveAdapters = effective
+            };
         }
 
         internal static void ValidateSchema(string schemaId)
@@ -61,34 +85,21 @@ namespace Arkus.H1.Editor
             Get<TransformAdapter>(TransformSchema).Apply(owner, localPosition, localEulerAngles, localScale);
         }
 
-        internal static void ApplyRenderer(GameObject owner, string path, string guid, string localFileId, string contentSha256)
+        internal static string ApplyRenderer(GameObject owner, string path, string guid, string localFileId, string contentSha256)
         {
-            Get<MeshRendererAdapter>(MeshRendererSchema).Apply(owner, ResolveAsset<Material>(path, guid, localFileId, contentSha256, "material"));
+            return Get<MeshRendererAdapter>(MeshRendererSchema).Apply(owner,
+                ResolveAsset<Material>(path, guid, localFileId, contentSha256, "material"));
         }
 
-        internal static void ApplyAnimator(GameObject owner, string objectId, string path, string guid, string localFileId, string contentSha256)
+        internal static string ApplyAnimator(GameObject owner, string objectId, string path, string guid, string localFileId, string contentSha256)
         {
-            Get<AnimatorAdapter>(AnimatorSchema).Apply(owner, objectId, ResolveAsset<AnimationClip>(path, guid, localFileId, contentSha256, "animation-clip"));
+            return Get<AnimatorAdapter>(AnimatorSchema).Apply(owner, objectId,
+                ResolveAsset<AnimationClip>(path, guid, localFileId, contentSha256, "animation-clip"));
         }
 
         internal static void ApplyCanonicalLink(GameObject owner, string relation, string targetObjectId, GameObject target)
         {
             Get<CanonicalLinkAdapter>(CanonicalLinkSchema).Apply(owner, relation, targetObjectId, target);
-        }
-
-        internal static string ObserveDigest(GameObject owner)
-        {
-            CaptureInventory();
-            var rows = new List<string>();
-            rows.Add(Get<TransformAdapter>(TransformSchema).Observe(owner));
-            var renderer = owner.GetComponent<MeshRenderer>();
-            if (renderer != null) rows.Add(Get<MeshRendererAdapter>(MeshRendererSchema).Observe(owner));
-            var animator = owner.GetComponent<Animator>();
-            if (animator != null) rows.Add(Get<AnimatorAdapter>(AnimatorSchema).Observe(owner));
-            var link = owner.GetComponent<H1CanonicalLinkMarker>();
-            if (link != null) rows.Add(Get<CanonicalLinkAdapter>(CanonicalLinkSchema).Observe(owner));
-            rows.Sort(StringComparer.Ordinal);
-            return Sha(string.Join("\n", rows));
         }
 
         internal static string ObserveReference(GameObject owner, string schemaId)
@@ -100,20 +111,27 @@ namespace Arkus.H1.Editor
             return Get<TransformAdapter>(schemaId).Observe(owner);
         }
 
+        private static IH1ComponentAdapter[] BuildEffectiveAdapters()
+        {
+            var types = TypeCache.GetTypesDerivedFrom<IH1ComponentAdapter>()
+                .Where(type => !type.IsAbstract && !type.IsInterface)
+                .OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray();
+            var adapters = new List<IH1ComponentAdapter>();
+            foreach (var type in types)
+            {
+                var created = Activator.CreateInstance(type, true) as IH1ComponentAdapter;
+                if (created == null) throw new InvalidDataException("projection.component-adapter-construction-failed");
+                adapters.Add(created);
+            }
+            return adapters.ToArray();
+        }
+
         private static T Get<T>(string schemaId) where T : class, IH1ComponentAdapter
         {
             ValidateSchemaWithoutRecursion(schemaId);
-            var adapter = EffectiveAdapters.SingleOrDefault(value => value.SchemaId == schemaId) as T;
+            var adapter = BuildEffectiveAdapters().SingleOrDefault(value => value.SchemaId == schemaId) as T;
             if (adapter == null) throw new InvalidDataException("projection.component-adapter-missing");
             return adapter;
-        }
-
-        private static IH1ComponentAdapter Get(string schemaId)
-        {
-            ValidateSchemaWithoutRecursion(schemaId);
-            var matches = EffectiveAdapters.Where(value => value.SchemaId == schemaId).ToArray();
-            if (matches.Length != 1) throw new InvalidDataException("projection.component-adapter-cardinality");
-            return matches[0];
         }
 
         private static void ValidateSchemaWithoutRecursion(string schemaId)
@@ -151,6 +169,54 @@ namespace Arkus.H1.Editor
             return AssetDatabase.GetAssetPath(asset) + "|" + guid + "|" + fileId.ToString(CultureInfo.InvariantCulture);
         }
 
+        private static T ResolveSingleOwnedComponent<T>(GameObject owner) where T : Component
+        {
+            var matches = owner.GetComponentsInChildren<T>(true)
+                .Where(component => !BelongsToNestedManagedObject(owner.transform, component.transform)).ToArray();
+            if (matches.Length == 0) throw new InvalidDataException("projection.component-target-missing");
+            if (matches.Length != 1) throw new InvalidDataException("projection.component-target-cardinality");
+            return matches[0];
+        }
+
+        private static bool BelongsToNestedManagedObject(Transform owner, Transform candidate)
+        {
+            for (var current = candidate; current != null && current != owner; current = current.parent)
+                if (current.GetComponent<H1ManagedMarker>() != null) return true;
+            return false;
+        }
+
+        private static string RelativePath(Transform owner, Transform target)
+        {
+            if (owner == target) return "";
+            var names = new List<string>();
+            var current = target;
+            while (current != null && current != owner)
+            {
+                names.Add(current.name);
+                current = current.parent;
+            }
+            if (current != owner) throw new InvalidDataException("projection.component-target-outside-owner");
+            names.Reverse();
+            return string.Join("/", names.ToArray());
+        }
+
+        private static ComponentSchemaDescriptor Descriptor(string schemaId, Type unityType, params string[] fields)
+        {
+            return new ComponentSchemaDescriptor
+            {
+                schemaId = schemaId,
+                unityType = unityType.FullName,
+                fields = fields.OrderBy(value => value, StringComparer.Ordinal).ToArray()
+            };
+        }
+
+        private static string DescriptorDigest(IEnumerable<ComponentSchemaDescriptor> descriptors)
+        {
+            var rows = descriptors.OrderBy(value => value.schemaId, StringComparer.Ordinal)
+                .Select(value => value.schemaId + "|" + value.unityType + "|" + string.Join(",", value.fields));
+            return Sha(string.Join("\n", rows));
+        }
+
         private static string Sha(string value) => ShaBytes(System.Text.Encoding.UTF8.GetBytes(value));
         private static string ShaBytes(byte[] bytes)
         {
@@ -161,6 +227,7 @@ namespace Arkus.H1.Editor
         {
             string SchemaId { get; }
             Type UnityType { get; }
+            string[] Fields { get; }
             string Observe(GameObject owner);
         }
 
@@ -168,6 +235,7 @@ namespace Arkus.H1.Editor
         {
             public string SchemaId => TransformSchema;
             public Type UnityType => typeof(Transform);
+            public string[] Fields => new[] { "positionMm:vector3-int64", "rotationMilliDegrees:vector3-int64", "scalePpm:vector3-int64" };
             public void Apply(GameObject owner, Vector3 position, Vector3 euler, Vector3 scale)
             {
                 owner.transform.localPosition = position;
@@ -182,16 +250,18 @@ namespace Arkus.H1.Editor
         {
             public string SchemaId => MeshRendererSchema;
             public Type UnityType => typeof(MeshRenderer);
-            public void Apply(GameObject owner, Material material)
+            public string[] Fields => new[] { "enabled:bool=true", "material:catalogue-ref:material" };
+            public string Apply(GameObject owner, Material material)
             {
-                var renderer = owner.GetComponent<MeshRenderer>();
-                if (renderer == null) throw new InvalidDataException("projection.component-target-missing");
+                var renderer = ResolveSingleOwnedComponent<MeshRenderer>(owner);
                 renderer.sharedMaterial = material;
+                renderer.enabled = true;
+                return RelativePath(owner.transform, renderer.transform);
             }
             public string Observe(GameObject owner)
             {
-                var renderer = owner.GetComponent<MeshRenderer>();
-                if (renderer == null || renderer.sharedMaterial == null) throw new InvalidDataException("projection.component-target-missing");
+                var renderer = ResolveSingleOwnedComponent<MeshRenderer>(owner);
+                if (renderer.sharedMaterial == null) throw new InvalidDataException("projection.component-target-missing");
                 return SchemaId + "|enabled=" + renderer.enabled.ToString().ToLowerInvariant() + "|material=" + StableAssetIdentity(renderer.sharedMaterial);
             }
         }
@@ -200,7 +270,8 @@ namespace Arkus.H1.Editor
         {
             public string SchemaId => AnimatorSchema;
             public Type UnityType => typeof(Animator);
-            public void Apply(GameObject owner, string objectId, AnimationClip clip)
+            public string[] Fields => new[] { "applyRootMotion:bool=false", "clip:catalogue-ref:animation-clip", "cullingMode:enum=AlwaysAnimate", "updateMode:enum=Normal" };
+            public string Apply(GameObject owner, string objectId, AnimationClip clip)
             {
                 var animator = owner.GetComponent<Animator>();
                 if (animator == null) animator = owner.AddComponent<Animator>();
@@ -226,10 +297,11 @@ namespace Arkus.H1.Editor
                 }
                 else
                 {
-                    var motions = controller.animationClips;
+                    var motions = controller.animationClips.Distinct().ToArray();
                     if (motions.Length != 1 || motions[0] != clip) throw new InvalidDataException("projection.component-controller-drift");
                 }
                 animator.runtimeAnimatorController = controller;
+                return "";
             }
             public string Observe(GameObject owner)
             {
@@ -246,6 +318,7 @@ namespace Arkus.H1.Editor
         {
             public string SchemaId => CanonicalLinkSchema;
             public Type UnityType => typeof(H1CanonicalLinkMarker);
+            public string[] Fields => new[] { "relation:string", "targetObjectId:canonical-ref" };
             public void Apply(GameObject owner, string relation, string targetObjectId, GameObject target)
             {
                 if (string.IsNullOrEmpty(relation) || string.IsNullOrEmpty(targetObjectId) || target == null)
@@ -275,14 +348,22 @@ namespace Arkus.H1.Editor
         [Serializable] internal sealed class ComponentInventory
         {
             public string schemaId;
-            public string[] declaredSchemas;
+            public string digest;
+            public ComponentSchemaDescriptor[] declaredSchemas;
             public ComponentAdapterRow[] effectiveAdapters;
+        }
+        [Serializable] internal sealed class ComponentSchemaDescriptor
+        {
+            public string schemaId;
+            public string unityType;
+            public string[] fields;
         }
         [Serializable] internal sealed class ComponentAdapterRow
         {
             public string schemaId;
             public string unityType;
             public string adapterType;
+            public string[] fields;
         }
     }
 }
