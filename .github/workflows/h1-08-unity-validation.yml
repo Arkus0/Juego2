@@ -109,7 +109,7 @@ jobs:
             --engine=unity \
             Unity/ArkusUnity \
             --testPlatforms=editmode \
-            --customParameters="-testFilter Arkus.H1.Editor.Tests.H1ProjectionValidationTests" \
+            --customParameters="-testFilter Arkus.H1.Editor.Tests.H1ProjectionValidationTests;Arkus.H1.Editor.Tests.H1ProjectionContentShapeTests" \
             --coverageEnabled false \
             --artifactsPath=artifacts/h1-08-unity \
             --dockerIsolationMode=default \
