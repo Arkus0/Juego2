@@ -55,8 +55,11 @@ if ($effectiveInventory.projectIdentity -ne 'arkus.unity-project@1:ArkusUnity' -
 $nested = Join-Path $scratch 'nested-conformance.json'
 Run-Unity 'Arkus.H1.Editor.H1PrefabNestedConformance.Run' (Join-Path $scratch 'nested.log') $nested
 $nestedResult = Get-Content -LiteralPath $nested -Raw | ConvertFrom-Json
-if ($nestedResult.result -ne 'GREEN' -or $nestedResult.productPath -ne 'ObserveRealization:nested-prefab-row' -or
-    $nestedResult.negative -ne 'projection.prefab-nested-lineage-missing') {
+if ($nestedResult.schemaId -ne 'arkus.h1-06-nested-prefab-conformance@1' -or
+    $nestedResult.result -ne 'GREEN' -or
+    $nestedResult.positive -ne 'two-same-name-nested-prefab-links-preserved-after-save-reload' -or
+    $nestedResult.productPath -ne 'ObserveRealization:nested-prefab-multiplicity-and-digest' -or
+    $nestedResult.negative -ne 'one-of-two-same-name-siblings-removed:projection.prefab-nested-lineage-missing') {
     throw 'Nested prefab conformance result is incomplete'
 }
 
