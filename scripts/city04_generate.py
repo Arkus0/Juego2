@@ -41,9 +41,8 @@ def regions(geom):
 
 def height(u, v):
     # Temporary physical grade hypothesis. CITY-04 must measure and falsify it.
-    casco = 3.0 * math.exp(-((u - 80) ** 2 + (v - 35) ** 2) / 2500)
-    plaza = 2.0 * math.exp(-((u - 150) ** 2 + (v - 58) ** 2) / 3500)
-    return 0.015 * u + 0.025 * v + casco + plaza
+    bridgehead = 2.5 * math.exp(-((u - 46) ** 2 + (v + 48) ** 2) / 1800)
+    return 0.04 * min(u, 150) + 0.02 * v + bridgehead
 
 
 def triangles(geom, pitch=8):
@@ -161,8 +160,8 @@ def main():
     counts = {
         "land_visual": write_obj("land_visual", dry, height),
         "walkable_collision": write_obj("walkable_collision", walkable, height),
-        "rio_water": write_obj("rio_water", rio, lambda u, v: -1 + 0.006 * u),
-        "arroyo_water": write_obj("arroyo_water", arroyo, lambda u, v: -0.5 + 0.006 * u),
+        "rio_water": write_obj("rio_water", rio, lambda u, v: -1 + 0.018 * u),
+        "arroyo_water": write_obj("arroyo_water", arroyo, lambda u, v: height(u, v) - 0.35),
         "x1_crossing": write_obj("x1_crossing", x1, lambda u, v: height(u, v) + 0.15),
         "x5_crossing": write_obj("x5_crossing", x5, lambda u, v: height(u, v) + 0.15),
     }

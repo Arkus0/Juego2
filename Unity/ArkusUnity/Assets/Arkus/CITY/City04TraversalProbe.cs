@@ -141,9 +141,9 @@ namespace Arkus.CITY
 
         public static float GroundHeight(Vector2 p)
         {
-            float casco = 3f * Mathf.Exp(-((p.x - 80f) * (p.x - 80f) + (p.y - 35f) * (p.y - 35f)) / 2500f);
-            float plaza = 2f * Mathf.Exp(-((p.x - 150f) * (p.x - 150f) + (p.y - 58f) * (p.y - 58f)) / 3500f);
-            return 0.015f * p.x + 0.025f * p.y + casco + plaza;
+            float bridgehead = 2.5f * Mathf.Exp(-((p.x - 46f) * (p.x - 46f) +
+                (p.y + 48f) * (p.y + 48f)) / 1800f);
+            return 0.04f * Mathf.Min(p.x, 150f) + 0.02f * p.y + bridgehead;
         }
     }
 }
