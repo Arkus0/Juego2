@@ -77,6 +77,24 @@ def _quota_decision_with_reached(payload: dict, now: int,
 # post-reset re-check without changing the accepted lifecycle implementation.
 autopilot.quota_decision = _quota_decision_with_reached
 
+_ORIGINAL_REMOTE_CODEX_ROLE = remote_codex_role
+_IDEMPOTENT_REASONING_ROLES = {"fail-audit", "protocol-fix"}
+
+
+async def remote_codex_role(root: Path, state: Path, role: str, prompt: str, model: str,
+                            effort: str, schema: Path | None = None,
+                            assets_root: Path | None = None) -> str:
+    """Do not relaunch a reasoning role whose exact durable effect already exists."""
+    if role in _IDEMPOTENT_REASONING_ROLES and _role_side_effect_already_complete(role, prompt):
+        print(
+            f"{role} durable side effect already exists before role launch; no duplicate reasoning",
+            flush=True,
+        )
+        return ""
+    return await _ORIGINAL_REMOTE_CODEX_ROLE(
+        root, state, role, prompt, model, effort, schema, assets_root)
+
+
 _ORIGINAL_RUN_CANONICAL_ADOPTED = _run_canonical_adopted
 
 
