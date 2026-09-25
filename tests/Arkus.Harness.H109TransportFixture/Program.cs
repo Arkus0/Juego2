@@ -26,6 +26,7 @@ namespace Arkus.Harness.H109TransportFixture
             if (args[0] == "--compose-seed") return ComposedProof.Seed();
             if (args[0] == "--compose-apply") return ComposedProof.Apply();
             if (args[0] == "--compose-verify") return ComposedProof.Verify();
+            if (args[0] == "--content-drift-verify") return ComposedProof.VerifyReferencedContentDrift();
             if (args[0] != "--jsonl" && args[0] != "--mcp") return 64;
 
             using var projection = FixtureProjection.Create();
@@ -69,20 +70,21 @@ namespace Arkus.Harness.H109TransportFixture
             var directory = DirectoryPath(profile);
             var driftPath = Path.Combine(directory, "drift-worker-reply.json");
             Require(File.Exists(driftPath), "effective Unity drift reply is missing");
-            var worker = JsonSerializer.Deserialize<H1ProjectionReconciliationWorkerReply>(File.ReadAllText(driftPath), Json);
+            var driftRaw = File.ReadAllText(driftPath);
+            var worker = JsonSerializer.Deserialize<H1ProjectionReconciliationWorkerReply>(driftRaw, Json);
             Require(worker != null && worker.ErrorCode.Length == 0 && worker.Observation != null, "effective Unity drift reply is not valid");
 
             var catalogue = Catalogue(profile);
             var original = OriginalWorld(catalogue);
-            var expected = H1ManagedScenePlan.Build(original, catalogue);
-            var report = H1ProjectionReconciliation.Compare(expected, worker!.Observation!);
-            Require(!report.Parity && report.State == "engine-drift", "effective Unity edit did not produce supported engine drift");
-            var facadeDrift = report.Items.SingleOrDefault(value => value.ObjectId == "facade" && value.Classification == H1ProjectionDriftClass.Changed);
-            Require(facadeDrift != null && facadeDrift.Fields.Contains("transform", StringComparer.Ordinal), "facade transform drift is absent");
-
-            var proposal = H1ProjectionReconciliation.CompileProposal(expected, worker.Observation!, report, catalogue);
-            Require(proposal.Available && proposal.MutationRequest != null, "supported effective drift did not compile a public H0 proposal");
-            Require(proposal.ObjectIds.SequenceEqual(new[] { "facade" }, StringComparer.Ordinal), "proposal scope is not exactly facade");
+            var publicProposal = InvokePublic(original, driftRaw, "unity.host.projection.import-proposal", "h1-09.composed.import-proposal");
+            Require(Bool(publicProposal, "available"), "public import-proposal did not expose an importable supported Unity edit");
+            var mutationRequest = AsDictionary(publicProposal["mutationRequest"], "public import-proposal mutationRequest");
+            var objectIds = Strings(publicProposal["objectIds"]);
+            Require(objectIds.SequenceEqual(new[] { "facade" }, StringComparer.Ordinal), "public proposal scope is not exactly facade");
+            var publicDrift = AsDictionary(publicProposal["drift"], "public import-proposal drift");
+            Require(Text(publicDrift, "state") == "engine-drift" && !Bool(publicDrift, "parity"),
+                "public import-proposal did not carry the supported engine-drift report");
+            Console.WriteLine("H1_09_PUBLIC_IMPORT_PROPOSAL_GREEN object=facade");
 
             var session = new PortableWorldAuthoringSession(original);
             var contract = CanonicalWorldContract.Compose(new WorldInspectionService(session), session);
@@ -95,7 +97,7 @@ namespace Arkus.Harness.H109TransportFixture
             RequireSuccess(contract.Dispatch(WorldMutationContract.ApplyName, Exact(), concurrent), "concurrent canonical write");
             Require(session.Current.Revision == original.Revision + 1, "concurrent write did not advance the canonical revision");
 
-            var stale = contract.Dispatch(WorldMutationContract.PlanName, Exact(), proposal.MutationRequest!);
+            var stale = contract.Dispatch(WorldMutationContract.PlanName, Exact(), mutationRequest);
             Require(!stale.Success && stale.Error != null &&
                 (stale.Error.MachineCode == "world.change.stale_revision" || stale.Error.MachineCode == "world.change.stale_hash"),
                 "stale H1 proposal did not fail through accepted H0 CAS");
@@ -104,7 +106,7 @@ namespace Arkus.Harness.H109TransportFixture
             Require(recovery != null && Equals(recovery["disposition"], WorldConflictRecoveryContract.SameLineageReplan),
                 "stale H1 proposal did not expose same-lineage-replan");
 
-            var recovered = new Dictionary<string, object?>(proposal.MutationRequest!, StringComparer.Ordinal)
+            var recovered = new Dictionary<string, object?>(mutationRequest, StringComparer.Ordinal)
             {
                 ["expectedRevision"] = session.Current.Revision,
                 ["expectedHash"] = CanonicalWorldStateCodec.ComputeContentHash(session.Current)
@@ -117,7 +119,7 @@ namespace Arkus.Harness.H109TransportFixture
             Require(session.Current.Objects.Any(value => value.Id.Value == "observer"), "recovery overwrote the concurrent canonical writer");
 
             var rebuilt = H1ManagedScenePlan.Build(session.Current, catalogue);
-            var effectiveFacade = worker.Observation!.Nodes.Single(value => value.ObjectId == "facade");
+            var effectiveFacade = worker!.Observation!.Nodes.Single(value => value.ObjectId == "facade");
             var rebuiltFacade = rebuilt.Nodes.Single(value => value.ObjectId == "facade");
             Require(rebuiltFacade.PositionMm.X == effectiveFacade.PositionMm.X &&
                     rebuiltFacade.PositionMm.Y == effectiveFacade.PositionMm.Y &&
@@ -126,6 +128,35 @@ namespace Arkus.Harness.H109TransportFixture
             Require(rebuilt.CanonicalHash == CanonicalWorldStateCodec.ComputeContentHash(session.Current), "rebuilt H1 plan lost canonical provenance");
             Write(Path.Combine(directory, "applied-plan.json"), rebuilt);
             Console.WriteLine("H1_09_COMPOSED_APPLY_GREEN stale=" + stale.Error.MachineCode + " revision=" + rebuilt.WorldRevision + " input=" + rebuilt.InputDigest);
+            return 0;
+        }
+
+        public static int VerifyReferencedContentDrift()
+        {
+            var profile = H1UnityLaunchProfile.ForCurrentHost();
+            var path = Path.Combine(DirectoryPath(profile), "content-drift-worker-reply.json");
+            Require(File.Exists(path), "referenced-content drift worker reply is missing");
+            var payload = File.ReadAllText(path);
+            var catalogue = Catalogue(profile);
+            var original = OriginalWorld(catalogue);
+
+            var drift = InvokePublic(original, payload, "unity.host.projection.drift", "h1-09.content-drift.drift");
+            Require(Text(drift, "state") == "ambiguous" && !Bool(drift, "parity"),
+                "referenced-content drift reached false parity through the public drift capability");
+            var codes = DiagnosticCodes(drift);
+            Require(codes.Contains("projection.component-reference-content-drift", StringComparer.Ordinal),
+                "public drift report omitted projection.component-reference-content-drift");
+            Require(codes.Contains("projection.reconciliation-node-unreadable", StringComparer.Ordinal),
+                "public drift report omitted projection.reconciliation-node-unreadable");
+
+            var proposal = InvokePublic(original, payload, "unity.host.projection.import-proposal", "h1-09.content-drift.import-proposal");
+            Require(!Bool(proposal, "available"), "referenced-content drift produced an importable public proposal");
+            Require(proposal.TryGetValue("mutationRequest", out var request) && request == null,
+                "referenced-content drift produced a public H0 mutation request");
+            var proposalDrift = AsDictionary(proposal["drift"], "referenced-content public proposal drift");
+            Require(Text(proposalDrift, "state") == "ambiguous" && !Bool(proposalDrift, "parity"),
+                "public import-proposal lost referenced-content ambiguity");
+            Console.WriteLine("H1_09_REFERENCED_CONTENT_DRIFT_GREEN diagnostic=projection.component-reference-content-drift proposal=blocked");
             return 0;
         }
 
@@ -146,7 +177,7 @@ namespace Arkus.Harness.H109TransportFixture
             return 0;
         }
 
-        private static WorldState OriginalWorld(H1CatalogueSnapshot catalogue)
+        internal static WorldState OriginalWorld(H1CatalogueSnapshot catalogue)
         {
             var source = catalogue.Entries.First(value => value.Kind == "prefab");
             return new WorldState(
@@ -193,6 +224,48 @@ namespace Arkus.Harness.H109TransportFixture
                 Array.Empty<WorldReference>());
         }
 
+        private static IReadOnlyDictionary<string, object?> InvokePublic(WorldState world, string workerPayload, string capability, string requestId)
+        {
+            using var session = new PortableWorldAuthoringSession(world);
+            using var projection = FixtureProjection.Create(session, new FixedReconciliationLauncher(workerPayload));
+            var outcome = projection.InvokeAsync(new NeutralProjectionRequest(
+                requestId,
+                capability,
+                Exact(),
+                new Dictionary<string, object?>(StringComparer.Ordinal) { ["sceneLogicalId"] = H1ManagedScenePlan.SceneId }))
+                .GetAwaiter().GetResult();
+            Require(outcome.Success && outcome.Result != null,
+                "public " + capability + " failed: " + (outcome.Error == null ? "unknown" : outcome.Error.MachineCode));
+            return outcome.Result!;
+        }
+
+        private static IReadOnlyDictionary<string, object?> AsDictionary(object? value, string subject)
+        {
+            var dictionary = value as IReadOnlyDictionary<string, object?>;
+            Require(dictionary != null, subject + " is not a dictionary");
+            return dictionary!;
+        }
+
+        private static string[] Strings(object? value)
+        {
+            if (value is IEnumerable<object?> objects)
+                return objects.Select(item => Convert.ToString(item, System.Globalization.CultureInfo.InvariantCulture) ?? "").ToArray();
+            if (value is IEnumerable<string> strings) return strings.ToArray();
+            throw new InvalidOperationException("H1-09 composed proof: public string array has an unexpected shape");
+        }
+
+        private static string[] DiagnosticCodes(IReadOnlyDictionary<string, object?> report)
+        {
+            if (!report.TryGetValue("diagnostics", out var value) || !(value is IEnumerable<object?> rows))
+                throw new InvalidOperationException("H1-09 composed proof: public diagnostics have an unexpected shape");
+            return rows.Select(row => Text(AsDictionary(row, "public diagnostic"), "code")).ToArray();
+        }
+
+        private static string Text(IReadOnlyDictionary<string, object?> data, string key) =>
+            data.TryGetValue(key, out var value) ? Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture) ?? "" : "";
+        private static bool Bool(IReadOnlyDictionary<string, object?> data, string key) =>
+            data.TryGetValue(key, out var value) && value != null && Convert.ToBoolean(value, System.Globalization.CultureInfo.InvariantCulture);
+
         private static IReadOnlyDictionary<string, object?> MutationRequest(WorldState state, string key, IReadOnlyDictionary<string, object?> operation)
         {
             return new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -221,7 +294,7 @@ namespace Arkus.Harness.H109TransportFixture
             if (!condition) throw new InvalidOperationException("H1-09 composed proof: " + message);
         }
 
-        private static H1CatalogueSnapshot Catalogue(H1UnityLaunchProfile profile) => H1CatalogueSnapshot.Build(
+        internal static H1CatalogueSnapshot Catalogue(H1UnityLaunchProfile profile) => H1CatalogueSnapshot.Build(
             File.ReadAllText(Path.Combine(profile.RepositoryRoot, "Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json")),
             File.ReadAllText(Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath)),
             File.ReadAllText(Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath)));
@@ -235,14 +308,32 @@ namespace Arkus.Harness.H109TransportFixture
         public static NeutralProjectionService Create()
         {
             var profile = H1UnityLaunchProfile.ForCurrentHost();
-            var world = new PortableWorldAuthoringSession(new WorldState(
-                new WorldId("world.h1-09.transport-fixture"), 0, Array.Empty<WorldObject>()));
+            var catalogue = ComposedProof.Catalogue(profile);
+            var world = new PortableWorldAuthoringSession(ComposedProof.OriginalWorld(catalogue));
             var worldReader = new ReadOnlyWorldStateView(world);
+            return Create(profile, world, worldReader, new ValidReconciliationLauncher(worldReader, profile));
+        }
+
+        public static NeutralProjectionService Create(PortableWorldAuthoringSession world, IH1UnityEditorWorkerLauncher launcher)
+        {
+            if (world == null) throw new ArgumentNullException(nameof(world));
+            if (launcher == null) throw new ArgumentNullException(nameof(launcher));
+            var profile = H1UnityLaunchProfile.ForCurrentHost();
+            var worldReader = new ReadOnlyWorldStateView(world);
+            return Create(profile, world, worldReader, launcher);
+        }
+
+        private static NeutralProjectionService Create(
+            H1UnityLaunchProfile profile,
+            PortableWorldAuthoringSession world,
+            ReadOnlyWorldStateView worldReader,
+            IH1UnityEditorWorkerLauncher launcher)
+        {
             var lease = new FixtureLease();
             var ledger = new FixtureLedger();
             var coordinator = new H1UnityEditorExecutionCoordinator(
                 profile,
-                new ValidReconciliationLauncher(worldReader, profile),
+                launcher,
                 lease,
                 ledger,
                 new IH1UnityCapabilityExecutor[]
@@ -297,12 +388,14 @@ namespace Arkus.Harness.H109TransportFixture
             if (invocation.ExecutorId != H1ProjectionReconciliationExecutor.WorkerExecutorId)
                 return H1UnityWorkerLaunchResult.Failure(H1UnityWorkerLaunchKind.CorruptResult, 0, true);
 
-            var catalogue = H1CatalogueSnapshot.Build(
-                File.ReadAllText(Path.Combine(_profile.RepositoryRoot, "Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json")),
-                File.ReadAllText(Path.Combine(_profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath)),
-                File.ReadAllText(Path.Combine(_profile.RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath)));
+            var catalogue = ComposedProof.Catalogue(_profile);
             var plan = H1ManagedScenePlan.Build(_world.Current, catalogue);
-            var nodes = Array.Empty<H1ObservedSceneNode>();
+            var nodes = plan.Nodes.Select(Observed).ToArray();
+            var facadePlan = plan.Nodes.Single(value => value.ObjectId == "facade");
+            var facade = nodes.Single(value => value.ObjectId == "facade");
+            facade.PositionMm.X += 375;
+            facade.ComponentRows = Rows(facadePlan, facade.PositionMm);
+            facade.ComponentDigest = H1ManagedScenePlan.Sha(string.Join("\n", facade.ComponentRows));
             var observation = new H1ProjectionReconciliationObservation
             {
                 Active = true,
@@ -310,10 +403,10 @@ namespace Arkus.Harness.H109TransportFixture
                 InputDigest = plan.InputDigest,
                 CanonicalHash = plan.CanonicalHash,
                 CatalogueFingerprint = plan.CatalogueFingerprint,
-                ManifestGraphDigest = "",
-                ManifestRealizationDigest = "",
-                GraphDigest = "",
-                RealizationDigest = "",
+                ManifestGraphDigest = H1ManagedScenePlan.Sha("h1-09-valid-transport-graph"),
+                ManifestRealizationDigest = H1ManagedScenePlan.Sha("h1-09-valid-transport-realization"),
+                GraphDigest = H1ManagedScenePlan.Sha("h1-09-valid-transport-graph"),
+                RealizationDigest = H1ManagedScenePlan.Sha("h1-09-valid-transport-realization"),
                 Nodes = nodes,
                 UnmanagedPaths = Array.Empty<string>(),
                 Diagnostics = Array.Empty<H1ProjectionObservationDiagnostic>(),
@@ -326,7 +419,49 @@ namespace Arkus.Harness.H109TransportFixture
                 ErrorCode = "",
                 Observation = observation
             }, Json);
-            return H1UnityWorkerLaunchResult.Completed(new H1UnityResultEnvelope(
+            return Completed(invocation, profile, payload);
+        }
+
+        private static H1ObservedSceneNode Observed(H1ManagedSceneNode node)
+        {
+            var rows = Rows(node, node.PositionMm);
+            return new H1ObservedSceneNode
+            {
+                ObjectId = node.ObjectId,
+                ParentObjectId = node.ParentObjectId,
+                SourceLogicalId = node.SourceLogicalId,
+                SourceKind = node.SourceKind,
+                SourcePath = node.SourcePath,
+                SourceGuid = node.SourceGuid,
+                SourceLocalFileId = node.SourceLocalFileId,
+                SourceContentSha256 = node.SourceContentSha256,
+                RealizationKind = node.SourceKind == "prefab" ? "managed-prefab-variant" : "source-asset",
+                RealizedPath = node.SourcePath,
+                RealizedGuid = node.SourceGuid,
+                RealizedLocalFileId = node.SourceLocalFileId,
+                PrefabGenerationId = node.SourceKind == "prefab" ? new string('2', 32) : "",
+                RelationshipDigest = H1ManagedScenePlan.Sha("relationships-" + node.ObjectId),
+                Relationships = Array.Empty<H1ObservedPrefabRelationship>(),
+                PositionMm = Copy(node.PositionMm),
+                RotationMilliDegrees = Copy(node.RotationMilliDegrees),
+                ScalePpm = Copy(node.ScalePpm),
+                ComponentRows = rows,
+                ComponentDigest = H1ManagedScenePlan.Sha(string.Join("\n", rows))
+            };
+        }
+
+        private static string[] Rows(H1ManagedSceneNode node, H1ProjectionVector position) => new[]
+        {
+            H1ComponentSchemas.Transform + "|positionMm=" + Vec(position) + "|rotationMilliDegrees=" + VecNormalized(node.RotationMilliDegrees) + "|scalePpm=" + Vec(node.ScalePpm)
+        };
+
+        private static H1ProjectionVector Copy(H1ProjectionVector value) => new H1ProjectionVector { X = value.X, Y = value.Y, Z = value.Z };
+        private static string Vec(H1ProjectionVector value) => value.X + "," + value.Y + "," + value.Z;
+        private static string VecNormalized(H1ProjectionVector value) => Normalize(value.X) + "," + Normalize(value.Y) + "," + Normalize(value.Z);
+        private static long Normalize(long value) { var result = value % 360000; return result < 0 ? result + 360000 : result; }
+
+        private static H1UnityWorkerLaunchResult Completed(H1UnityInvocationEnvelope invocation, H1UnityLaunchProfile profile, string payload) =>
+            H1UnityWorkerLaunchResult.Completed(new H1UnityResultEnvelope(
                 invocation.InvocationId,
                 invocation.Capability,
                 invocation.ExecutorId,
@@ -336,6 +471,27 @@ namespace Arkus.Harness.H109TransportFixture
                 profile.EffectiveEditorRevision,
                 true,
                 payload));
+    }
+
+    internal sealed class FixedReconciliationLauncher : IH1UnityEditorWorkerLauncher
+    {
+        private readonly string _payload;
+        public FixedReconciliationLauncher(string payload) => _payload = payload ?? throw new ArgumentNullException(nameof(payload));
+
+        public H1UnityWorkerLaunchResult Launch(H1UnityInvocationEnvelope invocation, H1UnityLaunchProfile profile, InvocationResourceBudget executionBudget)
+        {
+            if (invocation.ExecutorId != H1ProjectionReconciliationExecutor.WorkerExecutorId)
+                return H1UnityWorkerLaunchResult.Failure(H1UnityWorkerLaunchKind.CorruptResult, 0, true);
+            return H1UnityWorkerLaunchResult.Completed(new H1UnityResultEnvelope(
+                invocation.InvocationId,
+                invocation.Capability,
+                invocation.ExecutorId,
+                profile.Id,
+                profile.ProjectIdentity,
+                profile.EffectiveEditorVersion,
+                profile.EffectiveEditorRevision,
+                true,
+                _payload));
         }
     }
 
