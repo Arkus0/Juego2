@@ -60,6 +60,7 @@ namespace Arkus.CITY.Editor
             MeshObject("mask.arroyo — no traversal", "arroyo_water", arroyo, false);
             MeshObject("X1 permanent Río crossing", "x1_crossing", bridge, true);
             GameObject x5 = MeshObject("X5 low-water-only crossing (G)", "x5_crossing", ford, true);
+            BuildOldBridgeEdges();
 
             foreach (var route in City04Layout.ROUTES)
             {
@@ -304,6 +305,26 @@ namespace Arkus.CITY.Editor
             Vector3 a = At(start, 0.08f), b = At(end, 0.08f);
             var roadPiece = Box(name, (a + b) / 2, new Vector3(width, 0.045f, (b - a).magnitude), material, false);
             roadPiece.transform.rotation = Quaternion.FromToRotation(Vector3.forward, b - a);
+        }
+
+        private static void BuildOldBridgeEdges()
+        {
+            Vector2 wedge = new Vector2(50, -32), orilla = new Vector2(42, -64);
+            Vector2 cross = new Vector2(32, -8).normalized;
+            foreach (float side in new[] { -2.7f, 2.7f })
+            {
+                Vector3 a = At(wedge + cross * side, 0.75f);
+                Vector3 b = At(orilla + cross * side, 0.75f);
+                var rail = Box("X1 temporary stone edge", (a + b) / 2,
+                    new Vector3(0.22f, 1.25f, (b - a).magnitude), bridge, true);
+                rail.transform.rotation = Quaternion.FromToRotation(Vector3.forward, b - a);
+            }
+            foreach (Vector2 head in new[] { wedge, orilla })
+            {
+                foreach (float side in new[] { -1.15f, 1.15f })
+                    Box("X1 pedestrian bollard", At(head + cross * side, 0.7f),
+                        new Vector3(0.45f, 1.4f, 0.45f), bridge, true);
+            }
         }
 
         private static void Outline(string name, Vector2[] points, Material material)
