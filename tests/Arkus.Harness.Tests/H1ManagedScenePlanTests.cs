@@ -84,6 +84,20 @@ namespace Arkus.Harness.Tests
             Assert.Equal("projection.canonical-target-unbound", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(targetNotProjected, catalogue)).Code);
         }
 
+        [Fact]
+        public void Component_adapter_source_has_no_generic_reflection_or_serialized_property_mutation_endpoint()
+        {
+            var root = H1UnityLaunchProfile.ForCurrentHost().RepositoryRoot;
+            var source = File.ReadAllText(Path.Combine(root,
+                "Unity/ArkusUnity/Assets/Arkus/H1/Editor/H1ComponentProjection.cs"));
+
+            Assert.DoesNotContain("new SerializedObject", source, StringComparison.Ordinal);
+            Assert.DoesNotContain(".FindProperty(", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("GetProperty(", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("GetField(", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("SetValue(", source, StringComparison.Ordinal);
+        }
+
         private static WorldState Fixture(long revision, bool includeWorkshop)
         {
             var objects = new List<WorldObject>
