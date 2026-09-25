@@ -110,9 +110,46 @@ not_material_count="$(summary_value classifications.NOT_MATERIAL)"
 max_query_bytes="$(summary_value max_use_query_bytes)"
 authority_bytes="$(summary_value catalogue_authority_bytes)"
 summary_projection="$(summary_value projection_identity)"
-[[ "${use_count}" -ge 1 && "${optional_count}" -ge 1 && "${not_material_count}" -ge 1 ]] || { echo "Selective class coverage collapsed" >&2; exit 1; }
+[[ "${use_count}" == "3" && "${optional_count}" == "2" && "${not_material_count}" == "3" ]] || { echo "Exact selective class distribution mismatch" >&2; exit 1; }
 [[ "${max_query_bytes}" -lt "${authority_bytes}" ]] || { echo "Selective USE query did not reduce initial bytes" >&2; exit 1; }
 [[ "${summary_projection}" == "${PROJECTION_IDENTITY}" ]] || { echo "Proof summary projection identity mismatch" >&2; exit 1; }
+
+python3 - "${summary}" <<'PY'
+import json
+import sys
+
+summary = json.load(open(sys.argv[1], encoding="utf-8"))
+expected = {
+    "h105-catalogue-source-navigation": "USE",
+    "h105-scene-publication": "NOT_MATERIAL",
+    "h106-source-prefab-navigation": "USE",
+    "h106-relationship-equality": "OPTIONAL",
+    "h107-component-schema-inventory": "USE",
+    "h107-component-roundtrip": "OPTIONAL",
+    "h107-unsupported-field": "NOT_MATERIAL",
+    "h1gate-public-client-isolation": "NOT_MATERIAL",
+}
+if summary.get("exact_claim_disposition") != expected:
+    raise SystemExit("Exact per-claim disposition mismatch")
+required_controls = {
+    "stale_lifecycle_rejects_use",
+    "capability_inflation_rejected",
+    "labels_and_free_text_cannot_change_route",
+    "broad_h1_default_would_be_detected",
+    "hidden_mandatory_read_detected",
+    "partial_projection_cannot_close_product_oracle",
+    "component_schema_does_not_imply_effective_adapter",
+    "public_client_isolation_forces_abstention",
+    "semantic_claim_swapping_rejected",
+    "expected_classification_cannot_authorize_route",
+}
+controls = summary.get("controls", {})
+failed = sorted(name for name in required_controls if controls.get(name) is not True)
+if failed:
+    raise SystemExit(f"Required adversarial controls not green: {failed}")
+if any(row.get("mandatory_missing") for row in summary.get("rows", [])):
+    raise SystemExit("Independent mandatory-read audit is not clean")
+PY
 
 if [[ -n "${PR_BODY:-}" ]]; then
   printf '%s\n' "${PR_BODY}" | grep -Eq "^Candidate HEAD SHA:[[:space:]]*\`?${actual}\`?[[:space:]]*$"
@@ -138,7 +175,7 @@ Source-adoption blob: ${adoption_blob}
 Disposition counts: USE=${use_count}; OPTIONAL=${optional_count}; NOT_MATERIAL=${not_material_count}
 Max admitted selective query bytes: ${max_query_bytes}
 Catalogue authority bytes: ${authority_bytes}
-Required gates: exact-checkout=GREEN; bounded-scope=GREEN; predecessor-identity=GREEN; frozen-h1-authority=GREEN; locked-restore=GREEN; release-build=GREEN; real-projection-observation=GREEN; stale-lifecycle-control=GREEN; source-open=GREEN; mandatory-read-preservation=GREEN; capability-inflation-control=GREEN; label-independence=GREEN; partial-product-oracle=GREEN; h1-07-selective-disposition=GREEN; h1-gate-isolation=GREEN; product-dependency-independence=GREEN; navigation-measure=GREEN; frozen-metadata=GREEN
+Required gates: exact-checkout=GREEN; bounded-scope=GREEN; predecessor-identity=GREEN; frozen-h1-authority=GREEN; locked-restore=GREEN; release-build=GREEN; real-projection-observation=GREEN; independent-claim-contract=GREEN; exact-claim-disposition=GREEN; semantic-claim-swap-negative=GREEN; expected-classification-nonauthority=GREEN; stale-lifecycle-control=GREEN; source-open=GREEN; independent-mandatory-read-audit=GREEN; capability-inflation-control=GREEN; label-independence=GREEN; partial-product-oracle=GREEN; h1-07-selective-disposition=GREEN; h1-gate-isolation=GREEN; product-dependency-independence=GREEN; navigation-measure=GREEN; frozen-metadata=GREEN
 Result: GREEN
 Evidence: Docs/evidence/WP-CTX-DW-H1-02
 EOF
