@@ -212,10 +212,40 @@
           "Arkus.Harness.Runtime": "[1.0.0, )"
         }
       },
+      "arkus.harness.cli": {
+        "type": "Project",
+        "dependencies": {
+          "Arkus.H1.UnityHost": "[1.0.0, )",
+          "Arkus.Harness.Projection": "[1.0.0, )",
+          "Arkus.Harness.Protocol": "[1.0.0, )"
+        }
+      },
+      "arkus.harness.h109transportfixture": {
+        "type": "Project",
+        "dependencies": {
+          "Arkus.EngineBridge.UnityAuthoring": "[1.0.0, )",
+          "Arkus.Game.Authoring": "[1.0.0, )",
+          "Arkus.Game.World": "[1.0.0, )",
+          "Arkus.H1.UnityHost": "[1.0.0, )",
+          "Arkus.Harness.Cli": "[1.0.0, )",
+          "Arkus.Harness.Mcp": "[1.0.0, )",
+          "Arkus.Harness.Projection": "[1.0.0, )",
+          "Arkus.Harness.Runtime": "[1.0.0, )"
+        }
+      },
       "arkus.harness.h1leasecrashfixture": {
         "type": "Project",
         "dependencies": {
           "Arkus.H1.UnityHost": "[1.0.0, )"
+        }
+      },
+      "arkus.harness.mcp": {
+        "type": "Project",
+        "dependencies": {
+          "Arkus.H1.UnityHost": "[1.0.0, )",
+          "Arkus.Harness.Projection": "[1.0.0, )",
+          "Arkus.Harness.Protocol": "[1.0.0, )",
+          "ModelContextProtocol.Core": "[2.2.0, )"
         }
       },
       "arkus.harness.mutationattackfixture": {
