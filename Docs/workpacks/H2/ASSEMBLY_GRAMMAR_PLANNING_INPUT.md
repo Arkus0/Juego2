@@ -98,13 +98,15 @@ If the author can only regenerate the whole scene to make these changes, H2 has 
 
 Future H2 planning must preserve the ART-01 distinction:
 
-- `KEEPER_READY`;
-- `PROXY_VISUAL`;
-- `COVERAGE_BLOCKED`.
+- `KEEPER_READY` — success state for a required retained world-authoring benchmark;
+- `PROXY_VISUAL` — truthful temporary/non-keeper state;
+- `COVERAGE_BLOCKED` — truthful inability to satisfy required retained coverage.
 
-A world-authoring agent must be allowed to say `COVERAGE_BLOCKED` when the kit lacks a required opening/corner/roof/threshold/ground-contact solution.
+A world-authoring agent must be allowed to say `COVERAGE_BLOCKED` when the kit lacks a required opening/corner/roof/threshold/ground-contact solution, and may expose `PROXY_VISUAL` during iteration. Those outcomes are valuable honest evidence and are preferable to fabricated success.
 
-It must not convert that state into success by constructing a cuboid and decorating it.
+They are **not alternative PASS states** for a required H2 gate benchmark. A required benchmark that ends `PROXY_VISUAL` or `COVERAGE_BLOCKED` remains blocked/failed until it reaches `KEEPER_READY` or the reviewed requirement itself changes.
+
+The agent must never convert either non-pass state into apparent success by constructing a cuboid and decorating it.
 
 ## Representative H2 proof
 
@@ -118,7 +120,9 @@ The future reviewed H2 plan should include at least one bounded test where a fre
 6. receives one localized structural instruction;
 7. edits the relevant layers without silently regenerating unaffected accepted content;
 8. revalidates affected connections/clearances/sightlines;
-9. either reaches `KEEPER_READY` or truthfully returns `PROXY_VISUAL` / `COVERAGE_BLOCKED`.
+9. reaches `KEEPER_READY` for the required benchmark.
+
+If step 9 truthfully returns `PROXY_VISUAL` or `COVERAGE_BLOCKED`, the system has demonstrated honest failure handling but has **not** passed the required world-authoring proof.
 
 The existing CITY-07 representative chain is a natural candidate fixture once its prerequisite state is authoritative.
 
@@ -128,9 +132,11 @@ If PR `#228` P1/P8/P9 proposals are later accepted, they provide useful addition
 
 H2-GATE should not pass solely because an AI can place prefabs, assign materials and produce a visually plausible screenshot.
 
-The future planner should consider a gate condition at least as strong as:
+For any **required** H2 world-authoring benchmark, gate success requires `KEEPER_READY`. `PROXY_VISUAL` and `COVERAGE_BLOCKED` remain legitimate truthful outputs for diagnostics, iteration and negative evidence, but they block that benchmark from satisfying H2-GATE.
 
-> A fresh author can create and locally revise a bounded third-person environment whose buildings, streets and thresholds are assembled through explicit support/host/meeting relations from approved assets; no required retained element is an anonymous primitive decorated to hide missing construction semantics; and any unresolved coverage is surfaced explicitly rather than presented as keeper-ready.
+The future planner should therefore use a gate condition at least as strong as:
+
+> A fresh author can create and locally revise a bounded third-person environment whose buildings, streets and thresholds are assembled through explicit support/host/meeting relations from approved assets; no required retained element is an anonymous primitive decorated to hide missing construction semantics; every required benchmark element reaches `KEEPER_READY`; and any unresolved coverage is surfaced explicitly **and blocks the gate rather than being counted as success**.
 
 ## Boundary
 
