@@ -1,7 +1,7 @@
 # CITY track — Keeper City production-space programme
 
 Status: **ACTIVE / NON-FOUNDATIONAL**  
-Version: 2.7 — 2026-09-21
+Version: 2.8 — 2026-09-25
 Repository: `Arkus0/Juego2`
 
 Accepted progress: `WP-CITY-00` is **COMPLETE**. It passed independent review on frozen candidate `f5c684461b525841487158d873a9b135008df3ab` (review `#5261672961`) and merged via PR `#65` as `69bbba2603e67cb233a3e1cc36a4173bed41cfc4`.
@@ -17,6 +17,8 @@ CITY Programme v2 is **ACCEPTED**. Candidate `87a902584f2c46b2d256f6fef26829e918
 `WP-CITY-06` is **COMPLETE**. Candidate `c73cbb19f8b152bd4b97ce3154eb18a78deaec3c` passed independent review `#5268249668` in PR `#90` and merged as `acb84ec9ba7aa94e962bf7b35d7e53c0549ba758`.
 
 `WP-CITY-03` is **COMPLETE**. Candidate `420999e9a60e7240bcfb514b3239b652f0e09a5f` passed independent review `#5268853516` in PR `#94` and merged as `a3abeaf82752bfe9dac2f594c06eb8def3b108e2`. The next CITY workpack in the spine is `WP-CITY-04`, but it remains blocked until `WP-H1-08` PASS.
+
+`WP-CITY-09` is **COMPLETE** as an auxiliary retained-seed play-design amendment package outside the execution spine. Candidate `6d9b70928169b94c4aed3aa3ea0d07fd8199a1a3` passed independent review `#5312933723` in PR `#199` and merged as `158004982547cf3798d9a6e9c270d34e4166b558`. Its P1–P7 items remain non-canonical proposals until the relevant accepted CITY owners are amended explicitly; CITY-09 does not unblock, replace or change `WP-CITY-04`.
 
 ## Purpose
 
@@ -41,6 +43,8 @@ Accepted `WP-CITY-05` now owns the reusable exterior-production grammar in `Docs
 Accepted `WP-CITY-06` now owns the reviewed interior/discovery planning grammar in `Docs/production/CITY_INTERIORS_DISCOVERY.md`: bounded I0–I3 interior realization, reusable interior families, inherited access-role preservation, district/location-family second-layer expectations, authored/systemic/hybrid discovery causality, secret-content restraint and the comparison constraints handed to CITY-03. Future PA/H3+ owner names in that grammar are conditional ownership labels, not runtime proof.
 
 Accepted `WP-CITY-03` now owns the retained keeper seed in `Docs/production/CITY_PRODUCT_SEED.md`: selected seed identity, exact hard outer envelope, exact Río/Arroyo planning masks, derived bank/no-build rules, X1/X5 crossing overlays and receiving stubs, bounded F/S site regions, retained-versus-temporary decisions, expansion seams, thirteen spatial validation scenarios and the measurement/failure-routing pack handed to CITY-04. CITY-04 may falsify that planning geometry from measured Unity evidence; it does not choose a different seed or silently redraw first bank limits.
+
+Accepted `WP-CITY-09` supplies reviewed play-design vocabulary and an owner-tagged amendment package in `Docs/production/CITY_PLAY_DESIGN_PROPOSAL.md`. The package itself is accepted as bounded design input, but it owns no new route, site, crossing, access rule, ART direction, CITY-04 required run or runtime gameplay semantic. P1–P7 become authoritative only through later explicit amendments to their causal CITY owners.
 
 CITY-00 also already names `CITY-01..04`. Those identifiers are therefore stable contracts, not free numbering slots:
 
@@ -72,6 +76,8 @@ CITY-07    LOCAL keeper realization
    ↓
 CITY-08    LOCAL Arkus authoring proof + reuse closure
 ```
+
+`WP-CITY-09` is an accepted auxiliary package **outside this execution spine**. It neither inserts a new prerequisite nor changes the dependencies of `CITY-04..08`.
 
 `CITY-01`, `CITY-02`, `CITY-05`, `CITY-06` and `CITY-03` are REMOTE planning work. `CITY-04`, `CITY-07` and `CITY-08` are gated LOCAL work. Do **not** infer sequence by sorting filenames; the graph above and each WP's dependency fields are authoritative.
 
@@ -136,4 +142,4 @@ Important discoveries may be authored, systemic or hybrid. Martial arts/kung-fu/
 
 `WP-CITY-04 — LOCAL retained-seed greybox + traversal validation`.
 
-CITY-03's dependency is satisfied, but CITY-04 remains **DORMANT/BLOCKED** until `WP-H1-08` PASS.
+CITY-03's dependency is satisfied, but CITY-04 remains **DORMANT/BLOCKED** until `WP-H1-08` PASS. `WP-CITY-09` is accepted design input only and does not change that gate.
