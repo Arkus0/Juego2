@@ -65,12 +65,12 @@ The review of candidate `4c0186091b08f5ec4ce801f49cecc08ca7be67c6` accepted the 
 The repair keeps that scope narrow:
 
 - the retained scanner now accepts exactly the two uploadable paths and requires the private vault as its comparison oracle;
-- it derives high-entropy raw/base64/hex/XML-escaped markers from the actual private SourceSlice/distribution payloads and rejects retained files containing those private-source markers even when the retained XML is well formed;
+- it fingerprints every aligned private SourceSlice/distribution block and scans retained raw/logical content for any matching private block; base64, URL-safe base64 and hex text are decoded before the same private-content oracle is applied;
 - the negative control now contaminates the exact retained `unity/editmode-results.xml` path with a valid XML element carrying base64-encoded private source content, and requires the scanner to fail specifically for private content on that path;
 - the clean retained XML is restored and rescanned GREEN before cleanup;
 - the uploader is conditioned on overall success plus the explicit `retained_evidence_gate` step outcome, and missing upload files are an error rather than a warning.
 
-Therefore a RED retained-evidence barrier cannot fall through into artifact upload, and the falsification exercises the same exact path the uploader would retain.
+The aligned 96-byte oracle guarantees detection of any contiguous private leak of at least 191 bytes regardless of leak offset, while also detecting shorter private payloads verbatim. Therefore a RED retained-evidence barrier cannot fall through into artifact upload, and the falsification exercises the same exact path the uploader would retain.
 
 ## Reviewer falsification targets
 
