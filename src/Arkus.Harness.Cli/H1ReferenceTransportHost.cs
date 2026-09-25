@@ -9,7 +9,7 @@ using Arkus.Harness.Protocol;
 
 namespace Arkus.Harness.Cli
 {
-    internal static class H1ReferenceTransportHost
+    public static class H1ReferenceTransportHost
     {
         internal static int Run(Stream input, Stream output, TextWriter diagnostics)
         {
@@ -17,8 +17,23 @@ namespace Arkus.Harness.Cli
             if (output == null) throw new ArgumentNullException(nameof(output));
             if (diagnostics == null) throw new ArgumentNullException(nameof(diagnostics));
 
-            using (var cancellation = new CancellationTokenSource())
             using (var projection = ProductionH1UnityHost.Create())
+            {
+                return RunWithProjection(input, output, diagnostics, projection);
+            }
+        }
+
+        // Projection injection is a transport seam, not an authority selector: the production entry point
+        // above still constructs the fixed ProductionH1UnityHost. Tests can drive this exact JSONL framing
+        // over an independently composed neutral projection without adding a product CLI switch.
+        public static int RunWithProjection(Stream input, Stream output, TextWriter diagnostics, NeutralProjectionService projection)
+        {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+            if (output == null) throw new ArgumentNullException(nameof(output));
+            if (diagnostics == null) throw new ArgumentNullException(nameof(diagnostics));
+            if (projection == null) throw new ArgumentNullException(nameof(projection));
+
+            using (var cancellation = new CancellationTokenSource())
             {
                 ConsoleCancelEventHandler handler = (sender, eventArgs) =>
                 {

@@ -164,6 +164,10 @@ jobs:
           sudo rm -rf artifacts/h1-07-unity
           sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice
           sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes.meta
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta
           rm -rf _asset_vault
           sudo chown "$(id -u):$(id -g)" \
             Unity/ArkusUnity/Packages/manifest.json \

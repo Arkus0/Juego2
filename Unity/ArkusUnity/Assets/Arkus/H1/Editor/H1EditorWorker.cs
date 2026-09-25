@@ -23,6 +23,7 @@ namespace Arkus.H1.Editor
         private const string CatalogueResolveExecutor = "arkus.h1.worker.catalogue.resolve@1";
         private const string ProjectionMaterializeExecutor = "arkus.h1.worker.projection.materialize@1";
         private const string ProjectionObserveExecutor = "arkus.h1.worker.projection.observe@1";
+        private const string ProjectionReconcileExecutor = "arkus.h1.worker.projection.reconcile@1";
         private const string HierarchyPayload = "hierarchy-probe:v1|root=diagnostic-root|child=diagnostic-child|component=Transform|active=true";
 
         public static void Run()
@@ -70,6 +71,10 @@ namespace Arkus.H1.Editor
                          string.Equals(executor, ProjectionObserveExecutor, StringComparison.Ordinal))
                 {
                     resultPayload = H1SceneProjection.Execute(payload);
+                }
+                else if (string.Equals(executor, ProjectionReconcileExecutor, StringComparison.Ordinal))
+                {
+                    resultPayload = H1SceneProjection.ExecuteReconciliation(payload);
                 }
                 else
                 {

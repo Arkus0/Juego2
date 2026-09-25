@@ -65,6 +65,10 @@ resolve_wp() {
     printf '%s\n' 'WP-H1-06'
     return
   fi
+  if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-H1-09`?[[:space:]]*$'; then
+    printf '%s\n' 'WP-H1-09'
+    return
+  fi
   if printf '%s\n' "${PR_BODY:-}" | grep -Eq '^WP:[[:space:]]*`?WP-H1-08`?[[:space:]]*$'; then
     printf '%s\n' 'WP-H1-08'
     return
@@ -166,6 +170,9 @@ resolve_wp() {
 }
 
 case "$(resolve_wp)" in
+  WP-H1-09)
+    exec bash scripts/h1-09-verify-exact-sha.sh "$@"
+    ;;
   WP-H1-08)
     exec bash scripts/h1-08-verify-exact-sha.sh "$@"
     ;;

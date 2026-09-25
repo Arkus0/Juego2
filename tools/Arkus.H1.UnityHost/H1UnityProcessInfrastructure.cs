@@ -423,7 +423,10 @@ namespace Arkus.H1.UnityHost
                     new H1CatalogueExecutor(H1CatalogueExecutor.GetKey, H1CatalogueExecutor.GetExecutorId, Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath), Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath)),
                     new H1CatalogueExecutor(H1CatalogueExecutor.ResolveKey, H1CatalogueExecutor.ResolveExecutorId, Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.MappingRelativePath), Path.Combine(profile.RepositoryRoot, H1CatalogueSnapshot.AdoptionRelativePath)),
                     new H1ManagedSceneExecutor(H1ManagedSceneExecutor.MaterializeKey, H1ManagedSceneExecutor.MaterializeExecutorId, worldReader, profile),
-                    new H1ManagedSceneExecutor(H1ManagedSceneExecutor.ObserveKey, H1ManagedSceneExecutor.ObserveExecutorId, worldReader, profile)
+                    new H1ManagedSceneExecutor(H1ManagedSceneExecutor.ObserveKey, H1ManagedSceneExecutor.ObserveExecutorId, worldReader, profile),
+                    new H1ProjectionReconciliationExecutor(H1ProjectionReconciliationExecutor.DriftKey, worldReader, profile),
+                    new H1ProjectionRematerializeExecutor(worldReader, profile),
+                    new H1ProjectionReconciliationExecutor(H1ProjectionReconciliationExecutor.ImportProposalKey, worldReader, profile)
                 });
 
             var composition = ContractComposer.Compose(
@@ -432,7 +435,7 @@ namespace Arkus.H1.UnityHost
                 {
                     UnityAuthoringProvider.CreateContribution(),
                     H1ProjectionContract.PlanContribution(worldReader, profile),
-                    H1UnityLifecycleContract.CreateEditorHostContribution(coordinator, includeCatalogue: true, includeProjection: true),
+                    H1ProjectionReconciliationComposition.CreateEditorHostContribution(coordinator),
                     H1UnityLifecycleContract.CreateLifecycleStatusContribution(ledger)
                 });
             if (!composition.Success || composition.Contract == null)
@@ -444,7 +447,7 @@ namespace Arkus.H1.UnityHost
             var projection = H1UnityHostCapabilityPolicy.CreateProjection(
                 composition.Contract,
                 UnityProjectWorkspaceAuthority.ForArkusUnityProject(),
-                H1UnityLifecycleContract.CreateGrants(includeCatalogue: true, includeProjection: true));
+                H1ProjectionReconciliationComposition.CreateGrants());
             coordinator.Bind(projection);
             return projection;
         }

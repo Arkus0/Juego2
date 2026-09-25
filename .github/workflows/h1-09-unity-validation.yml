@@ -1,0 +1,298 @@
+name: H1-09 Unity Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-09-unity-validation.yml'
+      - 'Docs/workpacks/H1/WP-H1-09.md'
+      - 'tools/Arkus.H1.UnityHost/**'
+      - 'src/Arkus.Harness.Cli/H1ReferenceTransportHost.cs'
+      - 'tests/Arkus.Harness.H109TransportFixture/**'
+      - 'tests/Arkus.Harness.Tests/H1ProjectionReconciliation*.cs'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-09-unity-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  h1-09-effective-unity:
+    name: Exact H1-09 Unity reconciliation validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PINNED_ASSET_VAULT_SHA: ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      ASSET_VAULT_TOKEN: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      H1_09_COMPOSE_STAGE1_EXIT: '99'
+      H1_09_COMPOSE_STAGE2_EXIT: '99'
+      UNITY_EXIT_CODE: '99'
+
+    steps:
+      - name: Validate exact target and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact lowercase 40-hex'; exit 2; }
+          missing=0
+          for name in ASSET_VAULT_TOKEN UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact public candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact clean public checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          printf '/_asset_vault/\n/artifacts/\n/Unity/ArkusUnity/H1-09-Composition/\n' >> .git/info/exclude
+          echo "H1_09_EXACT_SHA_GREEN ${TARGET_SHA}"
+
+      - name: Checkout exact private H1 asset baseline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Arkus0/Juego2-assets
+          ref: ${{ env.PINNED_ASSET_VAULT_SHA }}
+          token: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+          fetch-depth: 1
+          lfs: true
+          path: _asset_vault
+
+      - name: Verify and mount accepted H1 SourceSlice
+        shell: bash
+        run: |
+          set -euo pipefail
+          VAULT_SHA="$(git -C _asset_vault rev-parse HEAD)"
+          test "${VAULT_SHA}" = "${PINNED_ASSET_VAULT_SHA}"
+          python3 Tools/AssetVault/verify_h1_asset_vault.py \
+            --public-root . \
+            --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${VAULT_SHA}" \
+            --mount
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx
+          echo "H1_09_PRIVATE_SOURCE_GREEN ${VAULT_SHA}"
+
+      - name: Execute H1-09 H0 composition and transport proofs
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1ProjectionReconciliationCompositionTests|FullyQualifiedName~H1ProjectionReconciliationValidTransportTests|FullyQualifiedName~H1ProjectionReconciliationTransportTests"
+          echo "H1_09_DOTNET_COMPOSITION_GREEN ${TARGET_SHA}"
+
+      - name: Seed composed canonical H1 plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet run --project tests/Arkus.Harness.H109TransportFixture/Arkus.Harness.H109TransportFixture.csproj \
+            --configuration Release --no-build -- --compose-seed
+          test -f Unity/ArkusUnity/H1-09-Composition/initial-plan.json
+
+      - name: Install exact GameCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+
+      - name: Composed proof stage 1 — effective Unity edit
+        shell: bash
+        run: |
+          set +e
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --customParameters="-testFilter Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests.Stage1_MaterializeCanonicalPlan_EditEffectiveUnity_EmitPublicDriftReply" \
+            --coverageEnabled false \
+            --artifactsPath=artifacts/h1-09-composed-stage1 \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+          code=$?
+          set -e
+          echo "H1_09_COMPOSE_STAGE1_EXIT=${code}" >> "${GITHUB_ENV}"
+          echo "H1_09_COMPOSE_STAGE1_PROCESS_EXIT ${code}"
+
+      - name: Enforce composed Unity edit result
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${H1_09_COMPOSE_STAGE1_EXIT:-99}" -eq 0
+          test -f Unity/ArkusUnity/H1-09-Composition/drift-worker-reply.json
+
+      - name: Reconcile effective edit through accepted H0 stale recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet run --project tests/Arkus.Harness.H109TransportFixture/Arkus.Harness.H109TransportFixture.csproj \
+            --configuration Release --no-build -- --compose-apply
+          test -f Unity/ArkusUnity/H1-09-Composition/applied-plan.json
+
+      - name: Composed proof stage 2 — canonical rematerialization
+        shell: bash
+        run: |
+          set +e
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --customParameters="-testFilter Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests.Stage2_RematerializeAppliedH0Plan_EmitFinalEffectiveReply" \
+            --coverageEnabled false \
+            --artifactsPath=artifacts/h1-09-composed-stage2 \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+          code=$?
+          set -e
+          echo "H1_09_COMPOSE_STAGE2_EXIT=${code}" >> "${GITHUB_ENV}"
+          echo "H1_09_COMPOSE_STAGE2_PROCESS_EXIT ${code}"
+
+      - name: Enforce rematerialization and final parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${H1_09_COMPOSE_STAGE2_EXIT:-99}" -eq 0
+          test -f Unity/ArkusUnity/H1-09-Composition/final-worker-reply.json
+          dotnet run --project tests/Arkus.Harness.H109TransportFixture/Arkus.Harness.H109TransportFixture.csproj \
+            --configuration Release --no-build -- --compose-verify
+
+      - name: Execute bounded H1-09 effective drift oracle proof
+        shell: bash
+        run: |
+          set +e
+          "${PINNED_GAMECI_BIN}" test \
+            --docker \
+            --dockerShmSize=1025m \
+            --engine=unity \
+            Unity/ArkusUnity \
+            --testPlatforms=editmode \
+            --customParameters="-testFilter Arkus.H1.Editor.Tests.H1ProjectionReconciliationTests.EffectiveScene_MixedManagedAndUnmanagedDrift_RemainsObservableAndRematerializationRestoresParity" \
+            --coverageEnabled false \
+            --artifactsPath=artifacts/h1-09-unity \
+            --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+          code=$?
+          set -e
+          echo "UNITY_EXIT_CODE=${code}" >> "${GITHUB_ENV}"
+          echo "H1_09_UNITY_PROCESS_EXIT ${code}"
+
+      - name: Verify referenced-content drift through public H1-09 capabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${UNITY_EXIT_CODE:-99}" -eq 0
+          test -f Unity/ArkusUnity/H1-09-Composition/content-drift-worker-reply.json
+          dotnet run --project tests/Arkus.Harness.H109TransportFixture/Arkus.Harness.H109TransportFixture.csproj \
+            --configuration Release --no-build -- --content-drift-verify
+
+      - name: Emit public-safe H1-09 failure summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          roots = [
+              Path('artifacts/h1-09-composed-stage1'),
+              Path('artifacts/h1-09-composed-stage2'),
+              Path('artifacts/h1-09-unity'),
+          ]
+          print('H1_09_DIAGNOSTIC stage1={} stage2={} baseline={}'.format(
+              os.environ.get('H1_09_COMPOSE_STAGE1_EXIT', 'missing'),
+              os.environ.get('H1_09_COMPOSE_STAGE2_EXIT', 'missing'),
+              os.environ.get('UNITY_EXIT_CODE', 'missing')))
+          xmls = []
+          for root in roots:
+              if root.exists():
+                  xmls.extend(sorted(root.rglob('*results.xml')))
+          print(f'H1_09_DIAGNOSTIC result_xml_count={len(xmls)}')
+          if not xmls:
+              print('H1_09_DIAGNOSTIC result_xml=missing; use preceding GameCI/.NET output as causal source')
+              raise SystemExit(0)
+          for path in xmls:
+              try:
+                  tree = ET.parse(path)
+              except Exception as exc:
+                  print(f'H1_09_DIAGNOSTIC xml_parse_error={type(exc).__name__}')
+                  continue
+              failed = []
+              for node in tree.getroot().iter('test-case'):
+                  if node.attrib.get('result') == 'Failed':
+                      failed.append(node.attrib.get('fullname') or node.attrib.get('name') or '<unnamed>')
+              print(f'H1_09_DIAGNOSTIC file={path.name} failed_test_count={len(failed)}')
+              for name in failed[:50]:
+                  print(f'H1_09_FAILING_TEST {name}')
+          PY
+
+      - name: Delete raw Unity evidence and private source
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf artifacts/h1-09-composed-stage1 artifacts/h1-09-composed-stage2 artifacts/h1-09-unity
+          sudo rm -rf Unity/ArkusUnity/H1-09-Composition
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes.meta
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta
+          rm -rf _asset_vault
+          sudo chown "$(id -u):$(id -g)" \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          git restore --source="${TARGET_SHA}" -- \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          test ! -e artifacts/h1-09-unity
+          test ! -e Unity/ArkusUnity/H1-09-Composition
+          if [[ -d .git ]]; then
+            test -z "$(git status --porcelain --untracked-files=all)"
+          fi
+          echo 'H1_09_EPHEMERAL_EVIDENCE_REMOVED'
+
+      - name: Enforce effective Unity result
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${H1_09_COMPOSE_STAGE1_EXIT:-99}" -eq 0 || { echo "::error::H1-09 composed Unity edit failed"; exit 1; }
+          test "${H1_09_COMPOSE_STAGE2_EXIT:-99}" -eq 0 || { echo "::error::H1-09 composed rematerialization failed"; exit 1; }
+          test "${UNITY_EXIT_CODE:-99}" -eq 0 || { echo "::error::H1-09 effective drift oracle failed"; exit 1; }
+          echo "H1_09_UNITY_GREEN ${TARGET_SHA}"
