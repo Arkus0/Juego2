@@ -34,6 +34,8 @@ No private asset bytes are added to the public repository.
 
 `ARKUS_ASSET_VAULT_TOKEN` is a repository Actions setup secret that grants read-only access to the private asset repository. Absence of that credential is setup-blocked state, not semantic evidence against the product/workpack claim.
 
+SETUP_BLOCKED must not be interpreted as a semantic product/workpack FAIL; acceptance still requires a later exact-SHA effective run once the credential exists.
+
 ## Reviewer falsification targets
 
 FAIL the candidate if any of the following holds after setup is available:
