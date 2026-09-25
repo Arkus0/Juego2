@@ -230,6 +230,7 @@
           "Arkus.Harness.Cli": "[1.0.0, )",
           "Arkus.Harness.Mcp": "[1.0.0, )",
           "Arkus.Harness.Projection": "[1.0.0, )",
+          "Arkus.Harness.Protocol": "[1.0.0, )",
           "Arkus.Harness.Runtime": "[1.0.0, )"
         }
       },
