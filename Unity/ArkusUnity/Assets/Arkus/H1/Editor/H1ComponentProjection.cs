@@ -254,6 +254,8 @@ namespace Arkus.H1.Editor
             public string Apply(GameObject owner, Material material)
             {
                 var renderer = ResolveSingleOwnedComponent<MeshRenderer>(owner);
+                if (renderer.sharedMaterials.Length > 1)
+                    throw new InvalidDataException("projection.component-material-slot-cardinality");
                 renderer.sharedMaterial = material;
                 renderer.enabled = true;
                 return RelativePath(owner.transform, renderer.transform);
@@ -261,7 +263,8 @@ namespace Arkus.H1.Editor
             public string Observe(GameObject owner)
             {
                 var renderer = ResolveSingleOwnedComponent<MeshRenderer>(owner);
-                if (renderer.sharedMaterial == null) throw new InvalidDataException("projection.component-target-missing");
+                if (renderer.sharedMaterials.Length != 1 || renderer.sharedMaterial == null)
+                    throw new InvalidDataException("projection.component-material-slot-cardinality");
                 return SchemaId + "|enabled=" + renderer.enabled.ToString().ToLowerInvariant() + "|material=" + StableAssetIdentity(renderer.sharedMaterial);
             }
         }
