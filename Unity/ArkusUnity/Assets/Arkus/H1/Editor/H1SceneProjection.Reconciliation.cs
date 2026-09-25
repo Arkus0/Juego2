@@ -107,6 +107,7 @@ namespace Arkus.H1.Editor
                 root.generationId != manifest.generationId || root.canonicalObjectId != "" || root.sourceLogicalId != "")
                 diagnostics.Add(Diagnostic("projection.root-marker-invalid", "$scene"));
 
+            CollectSceneRootDrift(roots, rootObject, manifest.generationId, unmanaged, diagnostics);
             CollectUnmanagedReconciliationPaths(rootObject, manifest.generationId, unmanaged, diagnostics);
 
             var markers = rootObject.GetComponentsInChildren<H1ManagedMarker>(true);
@@ -205,6 +206,32 @@ namespace Arkus.H1.Editor
                 return StringComparer.Ordinal.Compare(left.parentObjectId, right.parentObjectId);
             });
             return Observation(manifest, true, nodes, unmanaged, diagnostics);
+        }
+
+        private static void CollectSceneRootDrift(
+            IEnumerable<GameObject> sceneRoots,
+            GameObject managedRoot,
+            string generationId,
+            ISet<string> unmanaged,
+            ICollection<ReconciliationDiagnostic> diagnostics)
+        {
+            foreach (var candidate in sceneRoots)
+            {
+                if (candidate == managedRoot) continue;
+                var marker = candidate.GetComponent<H1ManagedMarker>();
+                if (marker == null)
+                {
+                    var path = "$root[" + candidate.transform.GetSiblingIndex().ToString(System.Globalization.CultureInfo.InvariantCulture) + "]/" + candidate.name;
+                    unmanaged.Add(path);
+                    diagnostics.Add(Diagnostic("projection.unmanaged-scene-member", path));
+                    continue;
+                }
+
+                var subject = string.IsNullOrEmpty(marker.canonicalObjectId) ? "$scene" : marker.canonicalObjectId;
+                diagnostics.Add(Diagnostic("projection.duplicate-or-invalid-marker", subject));
+                if (marker.sceneLogicalId != SceneId || marker.generationId != generationId)
+                    diagnostics.Add(Diagnostic("projection.reconciliation-node-unreadable", subject));
+            }
         }
 
         private static void CollectUnmanagedReconciliationPaths(
