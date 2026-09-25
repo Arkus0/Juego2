@@ -1,6 +1,6 @@
 # WP-HARNESS-SAFE-OUTPUT-01 — Deterministic authority boundary
 
-Status: IMPLEMENTED_CANDIDATE
+Status: COMPLETE / ACCEPTED
 Mode: PROCESS_ONLY
 Class: FOUNDATIONAL_PROCESS_AUTHORITY
 Owner: Arkus harness
@@ -74,3 +74,17 @@ GREEN requires all of the following on one candidate SHA:
 - Telegram continuation canonical entry is the safe-output front door;
 - State Transitions cannot authorize legacy PASS/FAIL without a matching safe-output PR-review envelope;
 - no product/Unity/CTX/DW semantics change.
+
+## Accepted identity
+
+- Final accepted candidate: `580399bcc7c0ec999efb93b66515aaff790486f7`.
+- Canonical implementation PR: `#207`.
+- Predecessor review `#5314811442` correctly found the State Transitions MEMBER/COLLABORATOR authority gap on candidate `29afe30e626295283cd1c5c88a2ac8cd2933d426`.
+- Final candidate `580399bcc7c0ec999efb93b66515aaff790486f7` repaired that gap by requiring both owner login and `OWNER` association and by adding real pull-request-review negative controls for MEMBER/COLLABORATOR.
+- Review `#5314919546` raised a broader hostile-local-agent credential-isolation requirement; the owner rejected that requirement as overdefense outside this WP's bounded threat model and directed merge.
+- Implementation merge: `8f7c1970cfd3533908a29b556cff199d8e7689f7`.
+- Exact final-candidate checks were GREEN, including Arkus Main Safety run `36107865736`, Arkus Candidate Validation run `36107865734`, Arkus PROCESS_ONLY Hotfix Validation run `36107865839`, Telegram Owner Console Validation run `36107865791`, and CTX Process Envelope run `36107865821`.
+
+`DOCSYNC_COMPLETE`
+
+This acceptance does not establish hostile-code or credential-compromise isolation between local Codex roles. It establishes the deterministic authority boundary described above under the accepted harness threat model. Product, Unity, H1, CTX and DW semantics remain unchanged.
