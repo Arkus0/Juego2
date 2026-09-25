@@ -50,7 +50,7 @@ namespace Arkus.Harness.Tests
             var accepted = H1ManagedScenePlan.Build(world, H1CatalogueSnapshot.Build(effective, mapping, adoption));
             Assert.Equal(CanonicalWorldStateCodec.ComputeContentHash(world), accepted.CanonicalHash);
             var rebound = H1CatalogueSnapshot.Build(effective, mapping.Replace(original, remapped, StringComparison.Ordinal), adoption);
-            Assert.Equal("projection.component-reference-missing", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(world, rebound)).Code);
+            Assert.Equal("projection.reference-missing", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(world, rebound)).Code);
         }
 
         [Fact]
@@ -74,9 +74,14 @@ namespace Arkus.Harness.Tests
                 new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) }, new[] { Binding("plaza.potes", 0, renderer: true) });
             Assert.Contains(H1ManagedScenePlan.Build(renderer, catalogue).Nodes[0].Components, component => component.SchemaId == H1ComponentSchemas.MeshRenderer);
 
-            var missingTarget = new WorldState(new WorldId("world.potes"), 0,
-                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) }, new[] { Binding("plaza.potes", 0, link: "ghost.potes") });
-            Assert.Equal("projection.canonical-target-missing", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(missingTarget, catalogue)).Code);
+            var targetNotProjected = new WorldState(new WorldId("world.potes"), 0,
+                new[]
+                {
+                    new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")),
+                    new WorldObject(new WorldObjectId("ghost.potes"), new WorldTypeId("fixture.target"))
+                },
+                new[] { Binding("plaza.potes", 0, link: "ghost.potes") });
+            Assert.Equal("projection.canonical-target-unbound", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(targetNotProjected, catalogue)).Code);
         }
 
         private static WorldState Fixture(long revision, bool includeWorkshop)
