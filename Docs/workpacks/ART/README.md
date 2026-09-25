@@ -14,7 +14,15 @@ That threshold has now been crossed for the first retained environment kit. ART-
 
 ## `WP-ART-01` — Quaternius→Juego2 production adaptation
 
-`Docs/workpacks/ART/WP-ART-01.md` owns the bounded production vocabulary needed before CITY-07 keeper realization:
+`Docs/workpacks/ART/WP-ART-01.md` owns the bounded production vocabulary needed before CITY-07 keeper realization.
+
+Its companion construction contract is:
+
+`Docs/workpacks/ART/ART_ENVIRONMENT_ASSEMBLY_GRAMMAR.md`
+
+ART-01 must review/realize both the **pieces** and the **way those pieces connect**. Asset inventory alone is not sufficient.
+
+ART-01 therefore owns, for the first retained chain:
 
 - decide which adopted Quaternius Source assets remain as-is;
 - decide which need material/recolour/texture/mesh treatment;
@@ -22,14 +30,33 @@ That threshold has now been crossed for the first retained environment kit. ART-
 - identify missing props/architecture/nature/character/outfit/animation assets that must be created rather than forced from an unsuitable source;
 - preserve provenance and source/derivative identity;
 - record composition metadata needed to assemble the kit truthfully;
+- provide the layered environment assembly grammar for terrain/site → foundation/plinth → massing/storeys → facade host surfaces → openings/inserts → roof/top closure → thresholds/vertical transitions → street/ground edges → dressing/nature;
+- record explicit host/support/meeting relationships instead of relying on intersecting meshes by accident;
 - define `KEEPER_READY`, `PROXY_VISUAL` and `COVERAGE_BLOCKED` instead of allowing silent primitive fallback;
 - prove the representative retained chain can be composed at third-person scale without visible greybox boxes/planes masquerading as keeper architecture.
 
-The initial CITY-07 concept suggests roughly 40–60 pieces may be needed, but ART-01 acceptance is functional coverage, not an asset-count quota.
+The initial CITY-07 concept suggests roughly 40–60 pieces may be needed, but ART-01 acceptance is functional coverage, not an asset-count quota. A kit with many pieces still fails if it lacks the connections needed to form coherent walls, openings, roofs, thresholds or ground/street transitions.
 
 ART-01 may plan/triage in parallel with remaining H1 work once its own accepted inputs are available. It does **not** block `WP-H1-GATE`; it blocks `WP-CITY-07` keeper realization so the keeper is not built with the wrong vocabulary and then rebuilt later.
 
 ART-01 must not duplicate `WP-H1-04` source/licence/catalogue adoption, redesign CITY topology, or invent H1 bridge semantics.
+
+## Why the assembly grammar is explicit
+
+The disposable Astra test showed that `building exists + assets exist` is too weak a contract. A generator can satisfy it by creating a cuboid and attaching windows, a roof and a sign.
+
+The retained scene instead needs a bounded construction model:
+
+- a site/terrain datum;
+- a footprint and visible ground-contact solution;
+- massing/storey relationships;
+- typed facade/wall host surfaces;
+- openings that actually host inserted doors/windows or integrated modules;
+- a roof plan that meets and caps the supported mass coherently;
+- thresholds, steps, retaining and street/ground transitions;
+- dressing and vegetation only after the host structure is coherent.
+
+This is not a general BIM requirement. It is the minimum product grammar needed to prevent `greybox + decoration` from being mistaken for keeper architecture.
 
 ## Future `WP-ART-02` — first-playable visual closure
 
@@ -37,7 +64,7 @@ Author/execute this WP once the `WP-CITY-07` keeper slice and the future accepte
 
 Its expected ownership is visual/demo readiness of that bounded playable slice: coherent architecture/materials/nature, player-facing character presentation and clothing, missing props, animation presentation, lighting/appearance gaps and other visible defects that prevent the slice from reading as Juego2 rather than a raw technical assembly.
 
-ART-02 is **not** allowed to become the place where the known dressed-greybox failure is first fixed. ART-01 must close that readiness problem before CITY-07 keeper production; ART-02 is later closure/polish.
+ART-02 is **not** allowed to become the place where the known dressed-greybox or missing-assembly-grammar failure is first fixed. ART-01 must close that readiness problem before CITY-07 keeper production; ART-02 is later closure/polish.
 
 It must not become a substitute for H2 gameplay acceptance or CITY structural validation.
 
@@ -59,9 +86,9 @@ Planning, sourcing records and many deterministic asset-processing checks may be
 ## Relationship to H1, CITY and H2
 
 - H1 owns bridge/catalogue/realization capability and first Quaternius Source adoption.
-- ART-01 owns the keeper-capable visual/content vocabulary for the first retained chain and the no-silent-proxy readiness rule.
-- CITY owns spatial structure, keeper geometry and authoring/reuse proof; CITY-07 consumes ART-01 rather than inventing missing production art ad hoc.
-- H2 owns playable/gameplay/world-authoring closure and must preserve the ART-01 no-silent-proxy distinction when evaluating AI-authored environments.
+- ART-01 owns the keeper-capable visual/content vocabulary **and first retained assembly grammar** for the representative chain, plus the no-silent-proxy readiness rule.
+- CITY owns spatial structure, keeper geometry and authoring/reuse proof; CITY-07 consumes ART-01 rather than inventing missing production art or connection logic ad hoc.
+- H2 owns playable/gameplay/world-authoring closure and must lift the ART-01 assembly grammar into typed AI-authoring concepts wherever the reviewed H2 plan needs generative/local-edit capability.
 - ART-02 later owns bounded first-playable visual closure/polish after the keeper exists.
 
 ART work must consume accepted boundaries rather than patching around them.
