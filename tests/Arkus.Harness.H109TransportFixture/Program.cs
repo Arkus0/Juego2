@@ -226,7 +226,7 @@ namespace Arkus.Harness.H109TransportFixture
 
         private static IReadOnlyDictionary<string, object?> InvokePublic(WorldState world, string workerPayload, string capability, string requestId)
         {
-            using var session = new PortableWorldAuthoringSession(world);
+            var session = new PortableWorldAuthoringSession(world);
             using var projection = FixtureProjection.Create(session, new FixedReconciliationLauncher(workerPayload));
             var outcome = projection.InvokeAsync(new NeutralProjectionRequest(
                 requestId,
