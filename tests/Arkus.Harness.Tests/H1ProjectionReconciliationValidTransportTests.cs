@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -15,7 +16,7 @@ namespace Arkus.Harness.Tests
         private const string CanonicalKeyMetaKey = "dev.arkus/canonicalKey";
 
         [Fact]
-        public void ValidReconciliationResultIsEquivalentAcrossReferenceJsonlAndMcp()
+        public void ValidDriftAndImportProposalAreEquivalentAcrossReferenceJsonlAndMcp()
         {
             using var reference = new ReferenceClient();
             using var mcp = new McpClient();
@@ -24,21 +25,40 @@ namespace Arkus.Harness.Tests
                 ["sceneLogicalId"] = H1ManagedScenePlan.SceneId
             };
 
-            var left = reference.Invoke("unity.host.projection.drift", arguments);
-            var right = mcp.Invoke("unity.host.projection.drift", arguments);
+            var drift = Equivalent(reference, mcp, "unity.host.projection.drift", arguments);
+            Assert.Equal("success", drift.GetProperty("status").GetString());
+            var driftResult = drift.GetProperty("result");
+            Assert.Equal("arkus.h1-projection-drift-report@1", driftResult.GetProperty("schemaId").GetString());
+            Assert.Equal("engine-drift", driftResult.GetProperty("state").GetString());
+            Assert.False(driftResult.GetProperty("parity").GetBoolean());
+            var changed = Assert.Single(driftResult.GetProperty("items").EnumerateArray());
+            Assert.Equal("changed", changed.GetProperty("classification").GetString());
+            Assert.Equal("facade", changed.GetProperty("objectId").GetString());
+            Assert.Contains(changed.GetProperty("fields").EnumerateArray().Select(value => value.GetString()), value => value == "transform");
+
+            var proposal = Equivalent(reference, mcp, "unity.host.projection.import-proposal", arguments);
+            Assert.Equal("success", proposal.GetProperty("status").GetString());
+            var proposalResult = proposal.GetProperty("result");
+            Assert.Equal("arkus.h1-projection-import-proposal@1", proposalResult.GetProperty("schemaId").GetString());
+            Assert.True(proposalResult.GetProperty("available").GetBoolean());
+            Assert.Equal(new[] { "facade" }, proposalResult.GetProperty("objectIds").EnumerateArray().Select(value => value.GetString()).ToArray());
+            Assert.Equal(JsonValueKind.Object, proposalResult.GetProperty("mutationRequest").ValueKind);
+            var nestedDrift = proposalResult.GetProperty("drift");
+            Assert.Equal("engine-drift", nestedDrift.GetProperty("state").GetString());
+            Assert.False(nestedDrift.GetProperty("parity").GetBoolean());
+        }
+
+        private static JsonElement Equivalent(IClient reference, IClient mcp, string capability, object arguments)
+        {
+            var left = reference.Invoke(capability, arguments);
+            var right = mcp.Invoke(capability, arguments);
             var leftNode = (JsonObject)JsonNode.Parse(left.GetRawText())!;
             var rightNode = (JsonObject)JsonNode.Parse(right.GetRawText())!;
             leftNode.Remove("requestId");
             rightNode.Remove("requestId");
             Assert.True(JsonNode.DeepEquals(leftNode, rightNode),
-                "valid H1-09 reconciliation diverged by transport. JSONL=" + leftNode.ToJsonString() + " MCP=" + rightNode.ToJsonString());
-
-            Assert.Equal("success", left.GetProperty("status").GetString());
-            var result = left.GetProperty("result");
-            Assert.Equal("arkus.h1-projection-drift-report@1", result.GetProperty("schemaId").GetString());
-            Assert.Equal("in-sync", result.GetProperty("state").GetString());
-            Assert.True(result.GetProperty("parity").GetBoolean());
-            Assert.Empty(result.GetProperty("items").EnumerateArray());
+                "valid H1-09 outcome diverged by transport for " + capability + ". JSONL=" + leftNode.ToJsonString() + " MCP=" + rightNode.ToJsonString());
+            return left;
         }
 
         private interface IClient : IDisposable
