@@ -1,6 +1,6 @@
 # PROCESS_ONLY autopilot recovery policy
 
-Status: proposed by this PROCESS_ONLY hotfix; effective only after independent review and merge. This changes local process liveness, not any product WP, Reviewer verdict, exact-SHA proof, or H1-06 implementation.
+Status: accepted and effective. Independent PASS was recorded for candidate `bdb6e97df570913d08041ec79ac76ed6652cce53` on PR #217, then merged to `main` as `9068ac97cdddf0e09c9e8fca847b2f06851cde3c`. This changes local process liveness, not any product WP, Reviewer verdict, exact-SHA proof, or H1-06 implementation.
 
 The work plane may stop while the Telegram owner console stays alive. The console stores a supervisor-authenticated, derived `campaign.json` beside its local decision files and reconstructs the current PR/HEAD from GitHub when it restarts. A surviving controller lock or child process prevents a second work plane. A pending owner request keeps its campaign and request identity across a restart; an attested, abandoned, completed, other-campaign, or superseded request is excluded from `/status` and advertisement. The supervisor secret remains only in the owner console.
 
