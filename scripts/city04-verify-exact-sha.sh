@@ -7,17 +7,46 @@ if [[ ! "${TARGET_SHA}" =~ ^[0-9a-fA-F]{40}$ ]]; then
   exit 2
 fi
 
-test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
-test -z "$(git status --porcelain --untracked-files=all)"
+if [[ "$(git rev-parse HEAD)" != "${TARGET_SHA}" ]]; then
+  echo "CITY04_VERIFY_RED: checkout HEAD does not equal candidate SHA" >&2
+  exit 2
+fi
+
+# The candidate workflow has already proven an initially clean checkout before
+# writing VALIDATION_CONTEXT.json. From here on, reject tracked mutations while
+# allowing that workflow-owned untracked context artifact.
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "CITY04_VERIFY_RED: tracked candidate bytes changed during validation" >&2
+  exit 2
+fi
 
 expect_blob() {
   local path="$1" expected="$2"
-  test -f "${path}"
+  if [[ ! -f "${path}" ]]; then
+    echo "CITY04_VERIFY_RED: missing ${path}" >&2
+    exit 3
+  fi
   local actual
   actual="$(git hash-object "${path}")"
   if [[ "${actual}" != "${expected}" ]]; then
     echo "CITY04_VERIFY_RED: blob drift ${path}: ${actual} != ${expected}" >&2
     exit 3
+  fi
+}
+
+require_nonempty() {
+  local path="$1"
+  if [[ ! -s "${path}" ]]; then
+    echo "CITY04_VERIFY_RED: missing/empty ${path}" >&2
+    exit 4
+  fi
+}
+
+require_text() {
+  local pattern="$1" path="$2"
+  if ! grep -Fq -- "${pattern}" "${path}"; then
+    echo "CITY04_VERIFY_RED: evidence marker not found in ${path}: ${pattern}" >&2
+    exit 5
   fi
 }
 
@@ -35,17 +64,17 @@ for path in \
   Docs/evidence/WP-CITY-04/x1_to_casco.png \
   Docs/evidence/WP-CITY-04/plaza_to_casco.png \
   Docs/evidence/WP-CITY-04/landing_to_port.png; do
-  test -s "${path}"
+  require_nonempty "${path}"
 done
 
-grep -q 'TECHNICAL SCENE-HANDOFF PASS EVIDENCE' Docs/evidence/WP-CITY-04/LOCAL_GREYBOX_OBSERVATION.md
-grep -q 'CITY04_BUILD_GREEN' Docs/evidence/WP-CITY-04/LOCAL_GREYBOX_OBSERVATION.md
-grep -q 'CITY04_PHYSICAL_CUTS_GREEN' Docs/evidence/WP-CITY-04/LOCAL_GREYBOX_OBSERVATION.md
-grep -q 'CITY04_CAPTURE_GREEN' Docs/evidence/WP-CITY-04/LOCAL_GREYBOX_OBSERVATION.md
-grep -q 'FINAL CITY-04 DELIVERABLE / BINDING HANDOFF' Docs/evidence/WP-CITY-04/PROPOSED_CITY07_DEMO_HANDOFF.md
-grep -q 'SCN-01..13' Docs/evidence/WP-CITY-04/PROPOSED_CITY07_DEMO_HANDOFF.md
-grep -q 'Final human spatial verdict owner: \*\*CITY-07\*\*' Docs/evidence/WP-CITY-04/HUMAN_TRAVERSAL_RUN_SHEET.md
-grep -q 'WORKER_PRE_REVIEW: CLEAN' Docs/evidence/WP-CITY-04/WORKER_PRE_REVIEW.md
+require_text "TECHNICAL SCENE-HANDOFF PASS EVIDENCE" Docs/evidence/WP-CITY-04/LOCAL_GREYBOX_OBSERVATION.md
+require_text "CITY04_BUILD_GREEN" Docs/evidence/WP-CITY-04/LOCAL_GREYBOX_OBSERVATION.md
+require_text "CITY04_PHYSICAL_CUTS_GREEN" Docs/evidence/WP-CITY-04/LOCAL_GREYBOX_OBSERVATION.md
+require_text "CITY04_CAPTURE_GREEN" Docs/evidence/WP-CITY-04/LOCAL_GREYBOX_OBSERVATION.md
+require_text "FINAL CITY-04 DELIVERABLE / BINDING HANDOFF" Docs/evidence/WP-CITY-04/PROPOSED_CITY07_DEMO_HANDOFF.md
+require_text "SCN-01..13" Docs/evidence/WP-CITY-04/PROPOSED_CITY07_DEMO_HANDOFF.md
+require_text "Final human spatial verdict owner: **CITY-07**" Docs/evidence/WP-CITY-04/HUMAN_TRAVERSAL_RUN_SHEET.md
+require_text "WORKER_PRE_REVIEW: CLEAN" Docs/evidence/WP-CITY-04/WORKER_PRE_REVIEW.md
 
 echo "CITY04_EXACT_SHA_VALIDATION_V1"
 echo "Candidate SHA: ${TARGET_SHA}"
