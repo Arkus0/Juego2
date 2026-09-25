@@ -283,9 +283,8 @@ namespace Arkus.H1.Editor
 
                 // H1-07 proves exact catalogue-reference fidelity, not runtime playback. The accepted
                 // UAL1 probe currently imports as a Legacy clip, which Unity correctly refuses inside
-                // an AnimatorController. Persist the exact source AnimationClip reference on the
-                // existing H1 ownership boundary so save/reload can prove it without cloning or
-                // mutating third-party source content.
+                // an AnimatorController. Persist the exact source object reference on the existing H1
+                // ownership boundary so save/reload can prove it without cloning or mutating source.
                 var ownership = owner.GetComponent<H1ComponentOwnershipMarker>();
                 if (ownership == null) ownership = owner.AddComponent<H1ComponentOwnershipMarker>();
                 ownership.schemaId = H1ComponentOwnershipMarker.SchemaId;
@@ -299,8 +298,10 @@ namespace Arkus.H1.Editor
                 if (animator == null || ownership == null || ownership.schemaId != H1ComponentOwnershipMarker.SchemaId ||
                     !ownership.animatorClip || ownership.animatorClipReference == null)
                     throw new InvalidDataException("projection.component-reference-unresolved");
+                if (!(ownership.animatorClipReference is AnimationClip clip))
+                    throw new InvalidDataException("projection.component-reference-wrong-type");
                 return SchemaId + "|applyRootMotion=" + animator.applyRootMotion.ToString().ToLowerInvariant() +
-                    "|updateMode=" + animator.updateMode + "|cullingMode=" + animator.cullingMode + "|clip=" + StableAssetIdentity(ownership.animatorClipReference);
+                    "|updateMode=" + animator.updateMode + "|cullingMode=" + animator.cullingMode + "|clip=" + StableAssetIdentity(clip);
             }
         }
 
