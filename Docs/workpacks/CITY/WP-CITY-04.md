@@ -20,6 +20,16 @@ This is the first CITY WP permitted to create serious scene geometry.
 
 Greybox/blockout only unless already-adopted representative assets are explicitly within the accepted bridge/asset boundary at execution time. Unity realizes and measures the plan; it does not become the source of CITY semantics.
 
+## Remaining CITY compression amendment
+
+Binding planning amendment: `Docs/workpacks/CITY/CITY_REMAINING_COMPRESSION_AMENDMENT.md`.
+
+CITY-04 owns only the new physical-falsification claim over the exact accepted CITY-03 seed: bounded greybox realization without semantic improvisation, the required human runs and measurements, truthful physical verdicts for the existing spatial hypotheses, causal deviation routing, and the final PASS/REVISE decision on whether the structure is worth carrying into keeper realization.
+
+CITY-00/01/02/03/05/06 semantics and the accepted H1 scene/prefab/component/diagnostic machinery are `CONSUMED / INTEGRATION_ONLY`. They must be exercised where the greybox scenario depends on them, but CITY-04 must not rebuild or independently re-prove those predecessor systems.
+
+A failure directly falsifying the CITY-04 physical-falsification claim is CITY-04-owned. A concrete contradiction of an accepted predecessor routes to that owner. Runner/tooling/workflow/capture/logging/checkout failures are `EVIDENCE_OR_INFRA_BLOCKED`: they may prevent PASS until the bounded proof executes, but they do not justify speculative CITY or bridge redesign.
+
 ## Work
 
 - build only the bounded CITY-03 greybox;
@@ -68,6 +78,8 @@ At minimum:
 ## Failure response
 
 Ordinary greybox failures reopen the downstream owner that produced the falsified hypothesis. If physical evidence appears to contradict an accepted CITY-00 fact, STOP and raise a separate explicit predecessor-amendment proposal; CITY-04 cannot reinterpret CITY-00 locally.
+
+Per the compression amendment, a concrete accepted H1/bridge/catalogue contradiction likewise routes to its causal owner instead of being patched with CITY-local semantics. Non-semantic execution failure may block evidence but does not itself prove the CITY-04 design claim false.
 
 ## Definition of Done
 
