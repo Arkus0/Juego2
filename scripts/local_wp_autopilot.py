@@ -19,11 +19,14 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 
 # Execute the accepted lifecycle implementation in this exact module namespace.
-# Temporarily changing __name__ suppresses the core's script entry point while
-# preserving function.__globals__ == this module, so existing monkeypatch-based
-# regressions continue to exercise the real lifecycle rather than a facade.
+# The alias keeps dataclass/type introspection coherent while the temporary
+# __name__ suppresses the core's script entry point. Functions therefore keep
+# function.__globals__ == this module and existing monkeypatch regressions still
+# exercise the real lifecycle rather than a facade.
 _public_name = __name__
-__name__ = "_arkus_local_wp_autopilot_core_loaded"
+_core_name = "_arkus_local_wp_autopilot_core_loaded"
+sys.modules[_core_name] = sys.modules[_public_name]
+__name__ = _core_name
 exec(compile((HERE / "_local_wp_autopilot_core.py").read_text(encoding="utf-8"),
              str(HERE / "_local_wp_autopilot_core.py"), "exec"), globals())
 __name__ = _public_name
