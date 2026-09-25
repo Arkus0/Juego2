@@ -1,34 +1,49 @@
-# CITY-04 → CITY-07 proposed demo-validation handoff
+# CITY-04 → CITY-07 demo-validation handoff
 
-Status: **CONDITIONAL / NOT AN ACCEPTANCE VERDICT**. This handoff becomes CITY-04's deliverable only if process PR `#224` independently passes, merges and completes DocSync. Until then the current CITY-04 human-run and timing requirements remain binding. CITY-04 implementation PR `#221` remains Draft and is not frozen.
+Status: **FINAL CITY-04 DELIVERABLE / BINDING HANDOFF**.
 
-## Scene and evidence identity
+The allocation amendment is accepted: process PR `#226`, PASS review `#5321232069`, merge `f86347ed2857940126a7489325ac8455f65b3f29`, DocSync complete. This document therefore replaces the former conditional handoff state.
 
-- CITY-04 scene/probe evidence base: `worker/city-04` commit `61b98e1aa907331d7948def15e6db592495419d1`; this handoff is a later documentation addition on the same Draft PR.
-- Accepted CITY-03 source: `Docs/production/CITY_PRODUCT_SEED.md`, blob `3186b80d173cd20f961f33d5a28bf447b2c6971d`.
-- Unity: pinned Editor `6000.3.24f1`; open `Unity/ArkusUnity/Assets/Arkus/CITY/City04Greybox.unity`.
-- Technical construction: `Unity/ArkusUnity/Assets/Arkus/CITY/City04Layout.json`, generated C# and OBJ meshes, `City04GreyboxBuilder.cs`, and local `City04TraversalProbe.cs`.
-- Captures: `overhead.png`, `x1_to_casco.png`, `plaza_to_casco.png`, `landing_to_port.png` in this evidence directory.
-- Recorded technical observation: `LOCAL_GREYBOX_OBSERVATION.md`; direct preliminary human feedback: `OWNER_GREYBOX_FEEDBACK.md`; unexecuted timing template: `HUMAN_TRAVERSAL_RUN_SHEET.md`.
+## Scene identity
 
-## What CITY-04 has technically observed
+- Canonical CITY-04 PR/branch: `#221`, `worker/city-04`.
+- Technical scene/probe evidence base: commit `61b98e1aa907331d7948def15e6db592495419d1` and later unchanged scene/probe blobs recorded in `LOCAL_GREYBOX_OBSERVATION.md`.
+- Accepted CITY-03 source blob: `3186b80d173cd20f961f33d5a28bf447b2c6971d`.
+- Unity: pinned Editor `6000.3.24f1`; scene `Unity/ArkusUnity/Assets/Arkus/CITY/City04Greybox.unity`.
+- Captures: `overhead.png`, `x1_to_casco.png`, `plaza_to_casco.png`, `landing_to_port.png`.
 
-The generator checked the accepted seed source blob, exact outer and water polygons, three dry components, and F/S site containment. The Unity batch checks reported `CITY04_BUILD_GREEN`, `CITY04_PHYSICAL_CUTS_GREEN`, and `CITY04_CAPTURE_GREEN`: collision on the three dry components and X1, conditional X5 collision in its available state, X5 closure, and non-traversable representative Río/Arroyo cuts. Four inspectable captures were committed. The scene opened in the pinned editor, entered Play mode, and the traversal probe compiled without an observed C# error. The default probe movement changed from 1.4 to 3.5 m/s, with Shift at 5.0 m/s; this is a scene-inspection control, not a canonical player-speed decision.
+## CITY-04 result handed forward
 
-These are technical observations of the represented scene. They do not establish perceived scale, route choice, sightlines, thresholds, quiet/busy contrast, timed travel or a human spatial PASS. No CITY-07 keeper or asset claim is made here.
+CITY-04 technically observed `CITY04_BUILD_GREEN`, `CITY04_PHYSICAL_CUTS_GREEN` and `CITY04_CAPTURE_GREEN`. The represented dry components, X1, conditional X5 closure and representative Río/Arroyo non-traversability passed the bounded technical checks. The scene opens in the pinned editor and provides a usable local inspection probe.
 
-## Human impression and unresolved product questions
+This is **not** a human spatial PASS and does not establish perceived scale, route choice, travel time, sightline quality, threshold readability, quiet/busy contrast or continuation quality.
 
-The human found walking comfortable and the layout promising, but cube-only scenery too confusing to measure travel times or judge lived scale. If interpreted as the entire town, the scene felt very small and sparse. Accepted CITY-03 defines it as the first retained seed: eight F01–F08 frontage slots and five expansion seams are not the whole town. CITY-07 must still test whether a legible, asset-rich first district communicates useful scale, building density and plausible continuation. The impression is neither a pass nor a topology change request.
+## Mandatory CITY-07 human baseline
 
-## CITY-07 proof package if the amendment is accepted
+After CITY-04 PASS and H1-GATE PASS, CITY-07 must run the first complete human spatial baseline on the final asset-rich keeper candidate. It must map all CITY-03 spatial proxy setups `SCN-01..13` to evidence. They cover quiet ordinary fabric, market flow, distinct ordinary trips, route A/B, F01 social thresholds, X1, F03 service/delivery, F02 civic access, low-stakes obstruction, return to changed proxy state, authored discovery substrate, and blocked route/X5 closure.
 
-After CITY-04 PASS and H1-GATE PASS, CITY-07 must use admitted assets and a usable demo for the human test. Map every CITY-03 §9 spatial proxy setup `SCN-01..13` to evidence. These setups cover quiet ordinary fabric, market flow, two different ordinary trips, route A/B, F01 social thresholds, X1 crossing, F03 delivery/service, F02 civic access, a low-stakes obstacle, return to changed proxy state, authored discovery substrate, and blocked route/X5 closure. Proxy states are authored spatial setups, not NPC, governance, inventory, memory or discovery runtime claims.
+Run the nine traversal families carried in `HUMAN_TRAVERSAL_RUN_SHEET.md`:
 
-Run the nine human traversal families from `HUMAN_TRAVERSAL_RUN_SHEET.md` on the asset-rich demo: free crossing; proxy A; proxy B; bridge/bar/plaza trip; port seam; residential/rural seam; blocked route and alternate with X5 closure; quiet/busy contrast; and service/private threshold. The Worker must present these through controls usable by a nondeveloper. Record observer, exact demo SHA, build/editor identity, movement-speed profile, scenario states, route choices and defects. One observation may support more than one setup when the mapping is explicit.
+1. free crossing / perceived scale and route choice;
+2. proxy route A;
+3. proxy route B and S03 shortcut check;
+4. X1 ↔ F01 ↔ W.PLAZA/S01;
+5. port-landing seam;
+6. residential/rural continuation seam;
+7. blocked micro.A alternate plus X5 closure;
+8. quiet/busy contrast;
+9. service/private or semi-private threshold differentiation.
 
-Measure W04, W05, W06, W12, W13, X1 and X5 when available, plus O.X1→W.PLAZA, W.SHOP→W.LANDING and W.CASCO→E.X5 under their declared conditions. Record actual seconds and pace assumptions; compare against CITY-01 planning weights. The 1.4 m/s column in `LOCAL_GREYBOX_OBSERVATION.md` is centerline arithmetic, not human timing. No absent full-city route can be labelled measured.
+Measure W04, W05, W06, W12, W13, X1 and available X5, plus the declared concatenated trips O.X1→W.PLAZA, W.SHOP→W.LANDING and W.CASCO→E.X5. Record observer, exact demo SHA, Unity/build identity, movement profile, scenario state, actual seconds, route choice and defects. Compare the observations to CITY-01 planning hypotheses; no centerline arithmetic may be relabelled as human measurement.
 
-Judge bridge/river separation, clear widths and grades, X5 foot-only/closure readability, bank/sightline hypotheses, route choice without a map overlay, F01–F08/S01–S03 access and envelope legibility, S03 semi-private boundary, quiet/busy difference, and all five expansion seams. Issue an owner-tagged spatial **PASS / REVISE** before CITY-07 keeper PASS. A CITY-03 geometry/topology contradiction returns to CITY-03; a CITY-07 asset presentation or realization defect is repaired in CITY-07. CITY-08 performs a later human play regression after its authoring/reuse changes, repeating affected timings if movement or geometry materially changes.
+CITY-07 must also judge bridge/river separation, realized clear widths and grades, X5 foot-only/closure readability, bank/sightline hypotheses, route choice without map overlay, F01–F08/S01–S03 access/envelope legibility, S03 semi-private boundary, quiet/busy difference, scale/density and all five expansion seams.
 
-Current CITY-04 Worker verdict: **NOT_READY under the current contract; no human spatial verdict issued**. This document is a proposed transfer package, not `WORKER_PRE_REVIEW: CLEAN`, a frozen candidate, or authorization to start CITY-07.
+## Routing and verdict ownership
+
+- CITY-03 geometry/topology contradiction → route to CITY-03; do not silently move accepted anchors.
+- CITY-07 asset presentation or keeper-realization defect → repair in CITY-07.
+- Any keeper geometry change must follow CITY-07's accepted impact ledger and bounded recheck rules.
+- CITY-07 issues the owner-tagged human spatial **PASS / REVISE** before keeper PASS.
+- CITY-08 performs the post-authoring human regression and repeats only affected measurements when geometry/movement materially changes.
+
+CITY-04 authorization state after its own PASS: the bounded technical seed is valid **as CITY-07 validation input**, not as an already spatially accepted keeper layout.
