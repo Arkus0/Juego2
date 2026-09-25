@@ -196,18 +196,28 @@ namespace Arkus.H1.Editor
         {
             if (string.IsNullOrEmpty(scenePath)) throw new InvalidDataException("projection.active-scene-missing");
 
-            // Bounded H1-08 fault injection: exercise the real postflight invariant/publication barrier
-            // without relying on Unity accepting an invalid Transform assignment (Unity rejects NaN writes).
             var fault = Path.Combine(H1Bootstrap.ProjectRoot(), "Library", "Arkus", "H1Projection", "inject-non-finite-transform");
-            if (File.Exists(fault)) throw new InvalidDataException("projection.non-finite-transform");
+            var injectNonFiniteSample = File.Exists(fault);
+            var injected = false;
 
             var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
             foreach (var root in scene.GetRootGameObjects())
             foreach (var transform in root.GetComponentsInChildren<Transform>(true))
             {
-                if (!Finite(transform.localPosition) || !Finite(transform.localScale) || !Finite(transform.localRotation))
-                    throw new InvalidDataException("projection.non-finite-transform");
+                var position = transform.localPosition;
+                if (injectNonFiniteSample && !injected)
+                {
+                    position = new Vector3(float.NaN, position.y, position.z);
+                    injected = true;
+                }
+                ValidateFiniteTransformValues(position, transform.localScale, transform.localRotation);
             }
+        }
+
+        internal static void ValidateFiniteTransformValues(Vector3 position, Vector3 scale, Quaternion rotation)
+        {
+            if (!Finite(position) || !Finite(scale) || !Finite(rotation))
+                throw new InvalidDataException("projection.non-finite-transform");
         }
 
         private static bool Finite(Vector3 value) => Finite(value.x) && Finite(value.y) && Finite(value.z);
