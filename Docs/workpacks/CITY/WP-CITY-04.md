@@ -1,6 +1,6 @@
 # WP-CITY-04 — LOCAL retained-seed greybox scene handoff
 
-Status: **ACTIVE WORKER / DRAFT PR #221; REVISED ACCEPTANCE PENDING THIS AMENDMENT**
+Status: **ACTIVE WORKER / DRAFT PR #221; REVISED ACCEPTANCE BINDING**
 Class: PRODUCT / LOCAL ENGINE VALIDATION (NON-FOUNDATIONAL)  
 Mode: **LOCAL / UNITY**  
 Depends on: `WP-CITY-03` PASS + `WP-H1-08` PASS
@@ -8,11 +8,11 @@ Blocks: `WP-CITY-07` only
 
 ## Contract continuity
 
-Accepted CITY-00 and CITY-03 assign the retained-seed blockout to `CITY-04` and require real human measurements before keeper acceptance. The demo-validation amendment changes the measurement executor to `CITY-07` while keeping the accepted CITY-03 geometry and the requirement for a measured verdict.
+Accepted CITY-00 and CITY-03 assign the retained-seed blockout to `CITY-04` and require real human measurements before keeper acceptance. The accepted demo-validation amendment changes the measurement executor to `CITY-07` while keeping the accepted CITY-03 geometry and the requirement for a measured verdict.
 
 ## Demo validation allocation amendment
 
-`CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md` transfers the full human traversal, timing and perceptual spatial verdict to CITY-07's asset-rich keeper candidate, before keeper acceptance. CITY-08 records a final human play regression after its authoring trial. This amendment becomes binding only after its own independent review, merge and DocSync; until then the prior CITY-04 human-run gate remains in force.
+Accepted `CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md` transfers the full human traversal, timing and perceptual spatial verdict to CITY-07's asset-rich keeper candidate, before keeper acceptance. CITY-08 records a final human play regression after its authoring trial. The prior CITY-04 human-run gate is superseded.
 
 ## Objective
 
@@ -26,9 +26,9 @@ Greybox/blockout only unless already-adopted representative assets are explicitl
 
 ## Remaining CITY compression amendment
 
-Binding planning amendments: `Docs/workpacks/CITY/CITY_REMAINING_COMPRESSION_AMENDMENT.md` and, after acceptance, `Docs/workpacks/CITY/CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md`. The later demo-validation amendment controls the measurement executor where the earlier compression amendment assigns human spatial proof to CITY-04.
+Binding planning amendments: `Docs/workpacks/CITY/CITY_REMAINING_COMPRESSION_AMENDMENT.md` and `Docs/workpacks/CITY/CITY_GREYBOX_DEMO_VALIDATION_AMENDMENT.md`. The later demo-validation amendment controls the measurement executor where the earlier compression amendment assigns human spatial proof to CITY-04.
 
-CITY-04 owns the exact greybox scene and technical physical checks without semantic improvisation, plus causal routing for observed defects. Human scenario runs, timed measurements and the spatial PASS/REVISE move to CITY-07 under the demo-validation amendment. CITY-04 PASS is a scene-handoff result, not a human spatial verdict.
+CITY-04 owns the exact greybox scene and technical physical checks without semantic improvisation, plus causal routing for observed defects. Human scenario runs, timed measurements and the spatial PASS/REVISE belong to CITY-07 under the accepted demo-validation amendment. CITY-04 PASS is a scene-handoff result, not a human spatial verdict.
 
 CITY-00/01/02/03/05/06 semantics and the accepted H1 scene/prefab/component/diagnostic machinery are `CONSUMED / INTEGRATION_ONLY`. They must be exercised where the greybox scenario depends on them, but CITY-04 must not rebuild or independently re-prove those predecessor systems.
 
