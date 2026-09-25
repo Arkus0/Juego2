@@ -209,77 +209,204 @@ jobs:
             --containerRegistryRepository=unityci/editor \
             --containerRegistryImageVersion=3
 
-      - name: Require the asset-cloud Unity identity probe to pass
+      - name: Derive closed Unity receipt from ephemeral raw result
         shell: bash
         run: |
           set -euo pipefail
+          python3 Tools/AssetVault/derive_h1_unity_receipt.py \
+            --xml artifacts/h1-asset-cloud/unity/editmode-results.xml \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${ASSET_VAULT_SHA}" \
+            --receipt artifacts/h1-asset-cloud/H1_ASSET_CLOUD_UNITY_RECEIPT.json
+
+      - name: Prove Unity receipt cannot be minted without exact probe evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expect_unity_receipt_red() {
+            local label="$1"
+            local xml="$2"
+            set +e
+            python3 Tools/AssetVault/derive_h1_unity_receipt.py \
+              --xml "${xml}" \
+              --candidate-sha "${TARGET_SHA}" \
+              --vault-sha "${ASSET_VAULT_SHA}" \
+              --receipt "${RUNNER_TEMP}/${label}.json" \
+              >"${RUNNER_TEMP}/${label}.out" 2>"${RUNNER_TEMP}/${label}.err"
+            local code=$?
+            set -e
+            if [[ ${code} -eq 0 ]]; then
+              echo "::error::Unity receipt negative control unexpectedly passed: ${label}"
+              exit 3
+            fi
+            grep -q 'H1_ASSET_UNITY_RECEIPT_RED' "${RUNNER_TEMP}/${label}.err"
+            test ! -e "${RUNNER_TEMP}/${label}.json"
+            echo "UNITY_RECEIPT_NEGATIVE_GREEN ${label} exit=${code}"
+          }
+
+          cp artifacts/h1-asset-cloud/unity/editmode-results.xml "${RUNNER_TEMP}/wrong-probe.xml"
           python3 - <<'PY'
           from pathlib import Path
-          import xml.etree.ElementTree as ET
-
-          wanted = 'H1AssetCloudTests.PrivateVaultMount_RecreatesAcceptedH104UnityIdentities'
-          matches = []
-          for path in Path('artifacts/h1-asset-cloud/unity').rglob('*.xml'):
-              try:
-                  root = ET.parse(path).getroot()
-              except ET.ParseError:
-                  continue
-              for node in root.iter('test-case'):
-                  full = node.attrib.get('fullname') or node.attrib.get('name') or ''
-                  if full.endswith(wanted):
-                      matches.append((path, node.attrib.get('result', '')))
-
-          if len(matches) != 1:
-              raise SystemExit(f'expected exactly one {wanted} result, got {matches}')
-          path, result = matches[0]
-          if result.lower() != 'passed':
-              raise SystemExit(f'{wanted} did not pass: result={result} file={path}')
-          print(f'H1_ASSET_CLOUD_UNITY_GREEN test={wanted} result={result} file={path}')
+          p = Path(__import__('os').environ['RUNNER_TEMP']) / 'wrong-probe.xml'
+          text = p.read_text(encoding='utf-8')
+          text = text.replace(
+              'Arkus.H1.Editor.Tests.H1AssetCloudTests.PrivateVaultMount_RecreatesAcceptedH104UnityIdentities',
+              'Arkus.H1.Editor.Tests.H1AssetCloudTests.UnapprovedProbe',
+          )
+          p.write_text(text, encoding='utf-8')
           PY
+          expect_unity_receipt_red wrong_probe "${RUNNER_TEMP}/wrong-probe.xml"
 
-      - name: Stage and prove retained public evidence barrier
+          cp artifacts/h1-asset-cloud/unity/editmode-results.xml "${RUNNER_TEMP}/failed-probe.xml"
+          python3 - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'failed-probe.xml'
+          tree = ET.parse(p)
+          wanted = 'Arkus.H1.Editor.Tests.H1AssetCloudTests.PrivateVaultMount_RecreatesAcceptedH104UnityIdentities'
+          for node in tree.getroot().iter('test-case'):
+              if node.attrib.get('fullname') == wanted:
+                  node.set('result', 'Failed')
+          tree.write(p, encoding='utf-8', xml_declaration=True)
+          PY
+          expect_unity_receipt_red failed_probe "${RUNNER_TEMP}/failed-probe.xml"
+
+      - name: Stage and prove closed retained public evidence surface
         id: retained_evidence_gate
         shell: bash
         run: |
           set -euo pipefail
           PUBLIC_EVIDENCE=artifacts/h1-asset-cloud-public
           rm -rf "${PUBLIC_EVIDENCE}"
-          mkdir -p "${PUBLIC_EVIDENCE}/unity"
+          mkdir -p "${PUBLIC_EVIDENCE}"
           cp artifacts/h1-asset-cloud/H1_ASSET_CLOUD_RECEIPT.json "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_RECEIPT.json"
-          cp artifacts/h1-asset-cloud/unity/editmode-results.xml "${PUBLIC_EVIDENCE}/unity/editmode-results.xml"
+          cp artifacts/h1-asset-cloud/H1_ASSET_CLOUD_UNITY_RECEIPT.json "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_UNITY_RECEIPT.json"
 
-          scanner=(python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}" --private-root _asset_vault)
-          "${scanner[@]}"
+          validator=(
+            python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}"
+            --candidate-sha "${TARGET_SHA}"
+            --vault-sha "${ASSET_VAULT_SHA}"
+            --workflow .github/workflows/h1-asset-cloud-validation.yml
+          )
+          "${validator[@]}"
 
-          cp "${PUBLIC_EVIDENCE}/unity/editmode-results.xml" "${RUNNER_TEMP}/editmode-results.xml.clean"
+          cp "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_RECEIPT.json" "${RUNNER_TEMP}/asset-receipt.clean.json"
+          cp "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_UNITY_RECEIPT.json" "${RUNNER_TEMP}/unity-receipt.clean.json"
+
+          restore_receipts() {
+            cp "${RUNNER_TEMP}/asset-receipt.clean.json" "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_RECEIPT.json"
+            cp "${RUNNER_TEMP}/unity-receipt.clean.json" "${PUBLIC_EVIDENCE}/H1_ASSET_CLOUD_UNITY_RECEIPT.json"
+            rm -f "${PUBLIC_EVIDENCE}/unexpected-third-file.txt"
+          }
+
+          expect_evidence_red() {
+            local label="$1"
+            shift
+            set +e
+            "$@" >"${RUNNER_TEMP}/${label}.out" 2>"${RUNNER_TEMP}/${label}.err"
+            local code=$?
+            set -e
+            if [[ ${code} -eq 0 ]]; then
+              echo "::error::retained-evidence negative control unexpectedly passed: ${label}"
+              exit 3
+            fi
+            grep -q 'H1_ASSET_EVIDENCE_RED' "${RUNNER_TEMP}/${label}.err"
+            echo "RETAINED_EVIDENCE_NEGATIVE_GREEN ${label} exit=${code}"
+          }
+
+          printf 'forbidden third retained file\n' > "${PUBLIC_EVIDENCE}/unexpected-third-file.txt"
+          expect_evidence_red third_file "${validator[@]}"
+          restore_receipts
+
           python3 - <<'PY'
+          import json
           from pathlib import Path
-          import base64
-          import xml.etree.ElementTree as ET
-
-          result = Path('artifacts/h1-asset-cloud-public/unity/editmode-results.xml')
-          private = Path('_asset_vault/h1/source-slice/MI_Plaster.mat').read_bytes()[:192]
-          tree = ET.parse(result)
-          leak = ET.SubElement(tree.getroot(), 'h1-private-leak')
-          leak.set('encoding', 'base64')
-          leak.text = base64.b64encode(private).decode('ascii')
-          tree.write(result, encoding='utf-8', xml_declaration=True)
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['unexpectedKey'] = True
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
           PY
+          expect_evidence_red unexpected_key "${validator[@]}"
+          restore_receipts
 
-          set +e
-          "${scanner[@]}" >"${RUNNER_TEMP}/leak-scan.out" 2>"${RUNNER_TEMP}/leak-scan.err"
-          code=$?
-          set -e
-          if [[ ${code} -eq 0 ]]; then
-            echo '::error::retained-path private-content negative control unexpectedly passed'
-            exit 3
-          fi
-          grep -q 'H1_ASSET_EVIDENCE_RED' "${RUNNER_TEMP}/leak-scan.err"
-          grep -q 'private source content retained in unity/editmode-results.xml' "${RUNNER_TEMP}/leak-scan.err"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['payload'] = 'arbitrary-free-text-channel-from-unity-would-be-forbidden'
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+          PY
+          expect_evidence_red free_text_payload "${validator[@]}"
+          restore_receipts
 
-          cp "${RUNNER_TEMP}/editmode-results.xml.clean" "${PUBLIC_EVIDENCE}/unity/editmode-results.xml"
-          "${scanner[@]}"
-          echo 'H1_ASSET_LEAK_NEGATIVE_GREEN retained_path=unity/editmode-results.xml encoding=base64'
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['candidateSha'] = '0' * 40
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+          PY
+          expect_evidence_red changed_candidate_sha "${validator[@]}"
+          restore_receipts
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['assetVaultSha'] = '0' * 40
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+          PY
+          expect_evidence_red changed_vault_sha "${validator[@]}"
+          restore_receipts
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json')
+          data = json.loads(p.read_text())
+          data['requiredProbe'] = 'UNAPPROVED_PROBE'
+          p.write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+          PY
+          expect_evidence_red changed_probe_enum "${validator[@]}"
+          restore_receipts
+
+          cp .github/workflows/h1-asset-cloud-validation.yml "${RUNNER_TEMP}/bad-uploader.yml"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'bad-uploader.yml'
+          text = p.read_text(encoding='utf-8')
+          old = '            artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json\n          if-no-files-found: error'
+          new = '            artifacts/h1-asset-cloud/unity/editmode-results.xml\n          if-no-files-found: error'
+          if old not in text:
+              raise SystemExit('canonical uploader block not found for negative control')
+          p.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+          bad_uploader_validator=(
+            python3 Tools/AssetVault/scan_h1_public_evidence.py "${PUBLIC_EVIDENCE}"
+            --candidate-sha "${TARGET_SHA}"
+            --vault-sha "${ASSET_VAULT_SHA}"
+            --workflow "${RUNNER_TEMP}/bad-uploader.yml"
+          )
+          expect_evidence_red raw_xml_uploader_path "${bad_uploader_validator[@]}"
+
+          restore_receipts
+          "${validator[@]}"
+          echo 'H1_ASSET_CLOSED_SURFACE_NEGATIVES_GREEN count=7'
+
+      - name: Delete ephemeral raw Unity and GameCI evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf artifacts/h1-asset-cloud/unity
+          test ! -e artifacts/h1-asset-cloud/unity/editmode-results.xml
+          echo 'H1_ASSET_EPHEMERAL_UNITY_EVIDENCE_REMOVED'
 
       - name: Reconcile deterministic GameCI package injection
         shell: bash
@@ -376,6 +503,6 @@ jobs:
           name: h1-asset-cloud-${{ env.TARGET_SHA }}
           path: |
             artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_RECEIPT.json
-            artifacts/h1-asset-cloud-public/unity/editmode-results.xml
+            artifacts/h1-asset-cloud-public/H1_ASSET_CLOUD_UNITY_RECEIPT.json
           if-no-files-found: error
           retention-days: 30
