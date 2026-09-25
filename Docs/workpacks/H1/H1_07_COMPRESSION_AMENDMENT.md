@@ -1,8 +1,12 @@
 # H1-07 compression amendment
 
-Status: PLANNING AMENDMENT / REVIEW CANDIDATE
+Status: COMPLETE / ACCEPTED
 Class: DOCS_ONLY / NON_PRODUCT
-Base main SHA: `aec8c28cf7cd2452d117d18ee05a91c1da87c1e4`
+Accepted candidate: `f6be76db4a33b77a8c93ecdec4721eadd902e819`
+Canonical PR: `#211`
+Owner acceptance: `2026-09-25`
+Implementation merge: `b5d5d94704df6a4d50c0bc56d99651399bdc527f`
+Base main at PR creation: `aec8c28cf7cd2452d117d18ee05a91c1da87c1e4`
 Scope: `WP-H1-07` only.
 
 ## Purpose
