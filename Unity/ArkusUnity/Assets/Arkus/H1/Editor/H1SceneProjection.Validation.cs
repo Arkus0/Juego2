@@ -56,6 +56,12 @@ namespace Arkus.H1.Editor
             }
         }
 
+        private static ProjectionObservation Materialize(ProjectionPlan plan)
+        {
+            H1ValidationResult ignored;
+            return Materialize(plan, out ignored);
+        }
+
         private static string ValidationReply(ProjectionPlan plan, string errorCode, ProjectionObservation observation, H1ValidationResult validation)
         {
             return JsonUtility.ToJson(new ValidationProjectionReply
