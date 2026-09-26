@@ -92,6 +92,9 @@ Relay note (Gate-owned, not causal): the relay shows the model at most 14,000 ch
 
 The owner instructed the Worker to do whatever is needed to finish the Gate, and waived independent review for the predecessor correction. This second causal reopen was handled the same way, and its record says so explicitly.
 
-- PR: `#241`, frozen candidate `bfdbcc1332651f6d5537cef59625dcd36dc40278`. Record: `Docs/evidence/WP-HK-05/REOPEN_1_GRAMMAR_DIAGNOSTICS.md`.
+- PR: `#241`, frozen candidate `93cdc3b5a6f38190a4ae0b8ba13894a004babe78`, merge `5d48cb55ac2815be417dc2a910734192b6d1543c`. Record: `Docs/evidence/WP-HK-05/REOPEN_1_GRAMMAR_DIAGNOSTICS.md`.
+- Review: waived by owner instruction (record `#5846410743`). Worker pre-review: `#5846390197`.
+- Exact-SHA evidence, all GREEN: Candidate Validation `36243056710`, Main Safety `36243025358`, H1-07 `36243025401`.
+- The same PR restored the HK-05 exact-SHA route in CI, which was already RED because it required a fully clean tree.
 - A per-kind grammar violation now returns `context.operationKind`, `allowedFields`, `requiredFields` and `unexpectedFields`, plus a hint that object and extension data are separate `put-object` and `put-extension` operations. The grammar, code, message, path and schemas are unchanged.
 - The Gate repairs nothing itself. After the merge, it re-runs its deterministic validation on the new exact SHA and repeats the trial once on the final frozen SHA, with the same brief, protocol, model and route.

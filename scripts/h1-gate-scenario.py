@@ -555,6 +555,17 @@ def stage6_7_author(host):
         if node[1]:
             operation["containerId"] = node[1]
         objects.append(operation)
+    # WP-HK-05 reopen 1 (trial 2, R5): an object operation that also carries extension fields is refused before any
+    # state change with a repairable per-kind grammar diagnostic. Read-only plan; the canonical state is untouched.
+    revision, digest = anchor(host, "S06")
+    mixed = dict(objects[0], **{key: value for key, value in extensions[0].items() if key != "kind"})
+    probe = host.fail("authoring.change.plan", {"idempotencyKey": "h1-gate.grammar-probe", "expectedRevision": revision,
+                                                "expectedHash": digest, "operations": [mixed]},
+                      ["world.change.invalid_request"], "S06", "plan:grammar-probe")
+    context = probe.get("context", {})
+    require(context.get("operationKind") == "put-object" and "typeId" in context.get("allowedFields", []) and
+            sorted(context.get("unexpectedFields", [])) == sorted(key for key in extensions[0] if key != "kind"),
+            "the operation-grammar rejection does not name the allowed and unexpected fields")
     host.stage = "S07"
     applied = author(host, "S07", "h1-gate.slice.create", objects + extensions)
     journal = host.ok("authoring.journal.read", {}, "S07", "journal.read")

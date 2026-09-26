@@ -267,6 +267,15 @@ def evidence_controls(directory, candidate):
     control("materialize-refusal-generic", "C6", mutate_transcript("reference", generic_refusal),
             "S12.reference.materialize-refusal-not-actionable")
 
+    # C6: the S06 grammar-diagnostic obligation self-shrinks: the refusal loses its field context (the pre-reopen
+    # WP-HK-05 behaviour behind trial 2's R5).
+    def opaque_grammar(records):
+        for r in records:
+            if r.get("label") == "plan:grammar-probe":
+                r["outcome"]["error"]["context"] = {}
+        return records
+    control("grammar-diagnostic-opaque", "C6", mutate_transcript("mcp", opaque_grammar), "S06.mcp.grammar-diagnostic-not-repairable")
+
     # C4: the normalized parity comparison after rebuild is skipped; the stage-16 Editor capture remains.
     control("parity-skipped-capture-remains", "C4",
             mutate_transcript("reference", lambda rs: [r for r in rs if not (r.get("session") == "reference-b" and r.get("stage") == "S14" and

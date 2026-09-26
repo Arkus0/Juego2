@@ -1179,5 +1179,16 @@
       "executedBy": "workflow: verifier, negative controls, reconciliation, scope, source-byte re-verification",
       "evidence": "stage-17.json"
     }
+  ],
+  "h0Reopens": [
+    {
+      "wp": "WP-HK-05",
+      "trigger": "WP-H1-GATE trial 2 FAIL (R5)",
+      "pr": "#241",
+      "frozenCandidate": "93cdc3b5a6f38190a4ae0b8ba13894a004babe78",
+      "review": "waived by owner instruction (#5846410743)",
+      "mergeSha": "5d48cb55ac2815be417dc2a910734192b6d1543c",
+      "consumedAs": "recoverable operation-grammar diagnostics (S06/S07 authoring, AI trial)"
+    }
   ]
 }

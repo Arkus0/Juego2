@@ -208,6 +208,11 @@ def compiled_bindings(records, session):
 def check_s05_s08(f, records, session, t):
     bindings = compiled_bindings(records, session)
     f.check(len(bindings) >= 12, f"S06.{t}.compiled-slice-too-small", str(len(bindings)))
+    # WP-HK-05 reopen 1: the operation-grammar refusal must be repairable on the public wire.
+    probe = last(calls(records, "authoring.change.plan@1.0", "S06", session, label="plan:grammar-probe"))
+    context = probe["outcome"].get("error", {}).get("context", {}) if probe else {}
+    f.check(probe is not None and error_code(probe) == "world.change.invalid_request" and context.get("operationKind") == "put-object" and
+            context.get("allowedFields") and context.get("unexpectedFields"), f"S06.{t}.grammar-diagnostic-not-repairable")
     selected = set()
     for binding, _ in bindings.values():
         selected.add((binding["source"]["kind"], binding["source"]["logicalId"]))
