@@ -34,3 +34,6 @@ Unity/ArkusUnity/Recordings/
 Unity/ArkusUnity/*.csproj
 Unity/ArkusUnity/*.sln
 Unity/ArkusUnity/*.user
+
+# Local prototype builds (prototype/demo-puente-bar)
+/Builds/

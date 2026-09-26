@@ -1,0 +1,2 @@
+humanoides mirando hacia delante: 30
+al revés: 0 
