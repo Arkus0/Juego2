@@ -292,6 +292,11 @@ def check_s12(f, records, session, t, second):
     f.check("projection.source-missing" in codes and "projection.reference-missing" in codes, f"S12.{t}.preflight-diagnostics", ",".join(map(str, codes)))
     rejected = [r for r in calls(records, "unity.host.projection.materialize@1.0", "S12", session) if error_code(r)]
     f.check(len(rejected) >= 2, f"S12.{t}.invalid-materialize-not-refused")
+    # WP-H1-04 reopen 1: the refusal must carry the actionable projection code, not a generic lifecycle fault.
+    refused = sorted({error_code(r) for r in rejected})
+    f.check(refused == ["projection.reference-missing", "projection.source-missing"], f"S12.{t}.materialize-refusal-not-actionable", ",".join(map(str, refused)))
+    observe_refused = [error_code(r) for r in calls(records, "unity.host.projection.observe@1.0", "S12", session) if error_code(r)]
+    f.check(observe_refused == ["projection.source-missing"], f"S12.{t}.observe-refusal-not-actionable", ",".join(map(str, observe_refused)))
     retained = last(calls(records, "unity.host.projection.observe@1.0", "S12", session, label="observe:retained-before-rematerialize", status="success"))
     last_invalid = max((r["seq"] for r in rejected), default=None)
     f.check(retained and last_invalid is not None and retained["seq"] > last_invalid, f"S12.{t}.retention-not-observed-after-rejection")

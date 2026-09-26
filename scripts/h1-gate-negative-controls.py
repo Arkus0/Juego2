@@ -257,6 +257,16 @@ def evidence_controls(directory, candidate):
         return records
     control("restore-not-snapshot-import", "C3", mutate_transcript("reference", lineage), "S14.reference.restore-not-h0-snapshot-import")
 
+    # C6: the S12 diagnostic obligation self-shrinks: an invalid binding is refused with the generic lifecycle fault
+    # instead of the actionable projection code (the pre-reopen WP-H1-04 behaviour behind trial 1's R4).
+    def generic_refusal(records):
+        for r in records:
+            if r.get("label") == "materialize:missing-source":
+                r["outcome"]["error"]["machineCode"] = "unity.lifecycle.corrupt-result"
+        return records
+    control("materialize-refusal-generic", "C6", mutate_transcript("reference", generic_refusal),
+            "S12.reference.materialize-refusal-not-actionable")
+
     # C4: the normalized parity comparison after rebuild is skipped; the stage-16 Editor capture remains.
     control("parity-skipped-capture-remains", "C4",
             mutate_transcript("reference", lambda rs: [r for r in rs if not (r.get("session") == "reference-b" and r.get("stage") == "S14" and

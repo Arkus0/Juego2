@@ -46,10 +46,9 @@ WALK = "quaternius.ual1.animation-clip.armature-walk-loop"
 SIT = "quaternius.ual1.animation-clip.armature-sitting-idle-loop"
 MISSING_SOURCE = "quaternius.medieval.asset.h1-gate-missing-crate"
 MISSING_CLIP = "quaternius.ual1.animation-clip.h1-gate-missing-clip"
-# A materialize request over an invalid canonical binding is refused before any Editor launch. The accepted H1-09
-# transport contract reports that refusal as `unity.lifecycle.corrupt-result` (encoder rejection). The actionable
-# catalogue diagnostic comes from the public preflight `unity.projection.plan`.
-MATERIALIZE_REJECTION = ["unity.lifecycle.corrupt-result", "projection.source-missing", "projection.reference-missing"]
+# A materialize (or plan-relative observe) request over an invalid canonical binding is refused before any Editor
+# launch. Since the WP-H1-04 reopen 1 the refusal carries the same actionable projection code as the public preflight
+# `unity.projection.plan`, not the generic `unity.lifecycle.corrupt-result`.
 EDIT_NODE = "river.edge"
 EDIT_DELTA_MM = 375
 GENERATED_OUTPUT = (
@@ -693,12 +692,13 @@ def run_scenario(args):
         _, bad_source = compile_binding(host, crate, "S12", source_id=MISSING_SOURCE)
         author(host, "S12", "h1-gate.invalid.missing-source", [bad_source])
         source_plan = host.fail("unity.projection.plan", {"sceneLogicalId": SCENE}, ["projection.source-missing"], "S12", "plan:missing-source")
-        source_materialize = host.fail("unity.host.projection.materialize", {"sceneLogicalId": SCENE}, MATERIALIZE_REJECTION, "S12", "materialize:missing-source")
+        source_materialize = host.fail("unity.host.projection.materialize", {"sceneLogicalId": SCENE}, ["projection.source-missing"], "S12", "materialize:missing-source")
+        source_observe = host.fail("unity.host.projection.observe", {"sceneLogicalId": SCENE}, ["projection.source-missing"], "S12", "observe:missing-source")
         _, repaired_source = compile_binding(host, crate, "S12")
         _, bad_clip = compile_binding(host, walker, "S12", clip=MISSING_CLIP)
         author(host, "S12", "h1-gate.invalid.missing-component-reference", [repaired_source, bad_clip])
         clip_plan = host.fail("unity.projection.plan", {"sceneLogicalId": SCENE}, ["projection.reference-missing"], "S12", "plan:missing-clip")
-        clip_materialize = host.fail("unity.host.projection.materialize", {"sceneLogicalId": SCENE}, MATERIALIZE_REJECTION, "S12", "materialize:missing-clip")
+        clip_materialize = host.fail("unity.host.projection.materialize", {"sceneLogicalId": SCENE}, ["projection.reference-missing"], "S12", "materialize:missing-clip")
         _, repaired_clip = compile_binding(host, walker, "S12")
         author(host, "S12", "h1-gate.repair", [repaired_clip])
         # Observation is plan-relative, so it is refused while the canonical binding is invalid (accepted H1-05/09
@@ -713,7 +713,7 @@ def run_scenario(args):
         repaired_snapshot = host.ok("authoring.snapshot.export", {}, "S12", "snapshot.export:repaired")
         same = host.ok("authoring.diff.compare", {"base": authored_snapshot, "target": repaired_snapshot}, "S12", "diff.compare:repaired-vs-authored")
         require(same.get("sameAuthorableState") is True, "canonical repair did not return to the authored content")
-        stage("S12", {"diagnostics": [source_plan, source_materialize, clip_plan, clip_materialize],
+        stage("S12", {"diagnostics": [source_plan, source_materialize, source_observe, clip_plan, clip_materialize],
                       "retainedGeneration": summary_of(stale), "repaired": summary_of(repaired)})
 
         host.stage = "S13"
