@@ -1,6 +1,6 @@
 # WP-H1-GATE — fresh AI-agent trial history and predecessor reopen routing
 
-Gate state: **trial 4 pending on the final frozen SHA**. Trial 1 FAIL led to the WP-H1-04 reopen (merged). Trial 2 FAIL led to the WP-HK-05 reopen (merged). Trial 3 FAIL led to a Gate-owned relay-fidelity correction (see below).
+Gate state: **bounded unchanged repeats on the final frozen SHA (policy below)**. Trial 1 FAIL led to the WP-H1-04 reopen (merged). Trial 2 FAIL led to the WP-HK-05 reopen (merged). Trial 3 FAIL led to a Gate-owned relay-fidelity correction. Trial 4 FAIL came from agent diligence, not a surface gap (see below).
 
 ## Trial 1 — FAIL
 
@@ -138,3 +138,34 @@ Correction:
 - The brief, model, route, limits and verifier are unchanged.
 
 The two predecessor reopens stand on their own merits. Their diagnostics were not repairable from the published contract; the trial evidence and the deterministic S06/S12 probes show that. The retry measures the same fresh agent with the host schema presented faithfully.
+
+## Trial 4 — FAIL (agent skipped one brief step; no surface gap)
+
+| Field | Value |
+| --- | --- |
+| Candidate SHA | `2423d4d9924ce28e6f920e350f019f36e5f01c93`, with the relay declaring `strict: false` |
+| Deterministic Gate on the same SHA | run `36245115023` **GREEN** |
+| Trial run | run `36246411530` (transcript sha256 `cd0879ad…`) |
+| Model / served by | `openai/gpt-5.6-luna-20260709`; the per-turn record shows provider `OpenAI`, served model `openai/gpt-5.6-luna` |
+| Model turns | 14 of 90 (the agent stopped by itself) |
+| Agent verdict | `FAIL`, `repaired: false` (honest) |
+| Verifier | RED only on `TRIAL.no-structured-unity-diagnostic-consumed` and `TRIAL.verdict-not-pass` |
+| Hidden/private calls | none |
+
+The relay-fidelity correction was confirmed. The model now omitted optional properties: no `offset` or `expectedSnapshotToken` on first catalogue pages, and `put-object` / `put-extension` operations carried only their own fields. With nothing but public discovery, the fresh agent then completed:
+
+- catalogue paging (recovered from `catalogue.page-bound` with the context bounds);
+- three binding compiles;
+- canonical plan, dry-run and apply. It recovered from `payloadBase64 must use canonical Base64 encoding` after mis-copying a compiled payload, by recompiling.
+- `unity.projection.plan`, then `materialize` (active generation `fb65549c…`) and `observe`;
+- `drift`, which reported no diagnostics;
+- `checkpoint.capture`, then `checkpoint.restore`, which includes the clean rebuild. The rebuild graph digest equals the materialized graph digest (`b7bdf3be…`).
+
+It never attempted brief step 5 (break a reference, read the projection diagnostic, repair). So no `projection.*` / `unity.*` diagnostic was consumed, and the agent correctly declined to report PASS. No public capability refused anything on this path, and the deterministic S12 stage proves the same break/repair diagnostics on both transports. **Classification: agent diligence on one step of the brief. There is no product, predecessor or Gate-harness gap.**
+
+## Bounded repeat policy (fixed before any further trial)
+
+- Unchanged repeats run on the final frozen SHA: same brief, protocol, model, route, relay and verifier.
+- At most **two** further repeats (trials 5 and 6). Each one is recorded, whatever its result, in the PR evidence next to trials 1–4.
+- The Gate claims PASS only for a repeat that `h1-gate-verify.py trial` finds GREEN on that exact SHA. Every earlier FAIL is reported with it.
+- If neither repeat passes, the Gate stays `NOT_READY`, and the model-selection question goes back to the owner. The Worker changes nothing further on its own authority.
