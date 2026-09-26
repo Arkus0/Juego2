@@ -17,6 +17,12 @@ is a bridge effect:
 The client never launches the Unity Editor itself. Every Unity process is launched by the product's fixed launcher
 behind a public composed capability, and the transcript/ledger audit in `h1-gate-verify.py` proves it.
 
+Stage 3 reads, and never writes, the effective state that the public project inspection's own Editor process left behind:
+Unity's Package Manager registration block in that process's log (the product launcher's operation directory), the
+asmdef files of the registered package directories, and the script assemblies the Editor compiled. The resulting
+effective package/assembly universe is recorded in the transcript. The verifier checks it against universes the
+driver does not control: the frozen `packages-lock.json` and the repository's asmdef/script layout.
+
 Usage:
   h1-gate-scenario.py bootstrap --transport reference --workspace PATH --evidence DIR [launcher options]
   h1-gate-scenario.py scenario  --transport reference|mcp --workspace PATH --evidence DIR [launcher options]
@@ -58,6 +64,8 @@ GENERATED_OUTPUT = (
     "Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta",
 )
 OPERATIONS = "Unity/ArkusUnity/Library/Arkus/H1Lifecycle/operations"
+PROJECT = "Unity/ArkusUnity"
+SCRIPT_ASSEMBLIES = "Unity/ArkusUnity/Library/ScriptAssemblies"
 CHECKPOINT_ROOT = "Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint"
 
 # Gate-owned bounded non-keeper conformance assembly (H1_UNITY_PARITY_GATE.md "Representative slice"). It uses only
@@ -473,13 +481,105 @@ def ledger_audit(workspace, since):
             "resultPresent": result.is_file(),
             "resultExecutor": result_fields.get("executor", ""),
             "mainThread": result_fields.get("mainThread", ""),
-            "editorLogCaptured": loaded,
+            "editorLogRead": loaded,
             "ownedErrorLines": owned,
         })
     return rows
 
 
 # ----- stages ---------------------------------------------------------------------------------------------------------
+
+# Unity's own Package Manager registration, printed by every Editor process after package resolution, for example:
+#   [Package Manager] Registered 5 packages:
+#     Built-in packages:
+#       com.unity.test-framework@1.6.0 (location: /github/workspace/Unity/ArkusUnity/Library/PackageCache/com.unity.test-framework@0bd5c5194236)
+REGISTERED_HEADER = re.compile(r"Registered (\d+) packages:\s*$")
+REGISTERED_SECTION = re.compile(r"^  (\S.*):\s*$")
+REGISTERED_PACKAGE = re.compile(r"^    ([A-Za-z0-9._-]+)@(\S+) \(location: (.+)\)\s*$")
+
+
+def operation_directory(workspace, invocation_id):
+    root = Path(workspace) / OPERATIONS
+    matches = [directory for directory in sorted(root.iterdir()) if (directory / "invocation.env").is_file() and
+               decode_env(directory / "invocation.env").get("invocation", directory.name) == invocation_id] if root.is_dir() else []
+    require(len(matches) == 1, f"the product launcher's operation directory for {invocation_id} is not unique: {len(matches)}")
+    return matches[0]
+
+
+def registered_packages(log_text):
+    """The last complete Package Manager registration block of one Editor log."""
+    lines = log_text.splitlines()
+    block = None
+    for index, line in enumerate(lines):
+        header = REGISTERED_HEADER.search(line)
+        if not header:
+            continue
+        packages, section = [], None
+        for row in lines[index + 1:]:
+            if REGISTERED_SECTION.match(row):
+                section = REGISTERED_SECTION.match(row).group(1)
+                continue
+            match = REGISTERED_PACKAGE.match(row)
+            if not match or section is None:
+                break
+            packages.append({"name": match.group(1), "version": match.group(2), "section": section, "location": match.group(3)})
+        block = (int(header.group(1)), packages)
+    require(block is not None, "the inspection's Editor log has no Package Manager registration block")
+    return block
+
+
+def project_relative(workspace, location):
+    """Container and host paths of the same project both normalize to a project-relative path."""
+    marker = "/" + PROJECT + "/"
+    normalized = location.replace("\\", "/")
+    if marker in normalized:
+        return normalized.split(marker, 1)[1], True
+    return normalized, False
+
+
+def asmdef_rows(directory, relative_to):
+    rows = []
+    for path in sorted(directory.rglob("*.asmdef")):
+        # Unity ignores hidden folders and folders ending in `~` (for example a package's `Tests~`).
+        if any(part.startswith(".") or part.endswith("~") for part in path.relative_to(directory).parts[:-1]):
+            continue
+        definition = json.loads(path.read_text(encoding="utf-8-sig"))
+        rows.append({"path": path.relative_to(relative_to).as_posix(), "name": definition.get("name", ""),
+                     "includePlatforms": definition.get("includePlatforms", []), "excludePlatforms": definition.get("excludePlatforms", []),
+                     "defineConstraints": definition.get("defineConstraints", []),
+                     "optionalUnityReferences": definition.get("optionalUnityReferences", [])})
+    return rows
+
+
+def effective_universe(host, invocation_id):
+    """Stage 3: the effective package/assembly universe of the Editor process the public inspection launched."""
+    workspace = host.workspace
+    log = operation_directory(workspace, invocation_id) / "unity.log"
+    require(log.is_file(), f"the inspection's Editor log is absent for {invocation_id}")
+    text = log.read_text(encoding="utf-8", errors="replace")
+    declared, registered = registered_packages(text)
+    project = workspace / PROJECT
+    packages, definitions = [], []
+    for package in registered:
+        relative, inside = project_relative(workspace, package["location"])
+        present = inside and (project / relative).is_dir()
+        packages.append({"name": package["name"], "version": package["version"], "section": package["section"],
+                         "location": relative, "inProject": inside, "present": present})
+        if present:
+            for row in asmdef_rows(project / relative, project / relative):
+                definitions.append(dict(row, package=package["name"]))
+    compiled_root = workspace / SCRIPT_ASSEMBLIES
+    compiled = sorted(path.name for path in compiled_root.glob("*.dll")) if compiled_root.is_dir() else []
+    record = {"event": "effective-universe", "session": host.session, "transport": host.transport, "stage": "S03",
+              "invocationId": invocation_id, "editorLogSha256": sha(text), "registeredCount": declared,
+              "packages": sorted(packages, key=lambda row: row["name"]), "packageAssemblyDefinitions": definitions,
+              "compiledAssemblies": compiled}
+    host.transcript.write(record)
+    require(declared == len(registered) and registered, f"the Package Manager registration block is incomplete: {declared} != {len(registered)}")
+    require(compiled, "the inspection's Editor process left no compiled script assemblies")
+    return {"registeredCount": declared, "packages": {row["name"]: row["version"] for row in packages},
+            "compiledAssemblies": compiled, "universeDigest": sha(canonical_json({"packages": record["packages"], "compiled": compiled}))}
+
 
 def stage3_inspect(host):
     host.stage = "S03"
@@ -493,7 +593,7 @@ def stage3_inspect(host):
                     f"lifecycle recovery disagrees: {canonical_json(status)}")
             require(result.get("editorVersion") == "6000.3.24f1" and result.get("editorRevision") == "4e7b9b5b6244" and
                     result.get("mainThread") is True, "effective Unity editor identity or main-thread proof is wrong")
-            return result
+            return result, effective_universe(host, result["invocationId"])
         last = outcome
         error = outcome.get("error", {})
         invocation = error.get("context", {}).get("invocationId")
@@ -677,7 +777,8 @@ def run_scenario(args):
 
     host = PublicHost(args.transport, f"{args.transport}-a", launcher, workspace, transcript)
     try:
-        stage("S03", {"profile": stage3_inspect(host)})
+        profile, universe = stage3_inspect(host)
+        stage("S03", {"profile": profile, "effectiveUniverse": universe})
         keys = host.discover("S04")
         stage("S04", {"capabilityCount": len(keys), "required": REQUIRED_CAPABILITIES})
         stage("S05", stage5_catalogue(host))
@@ -810,17 +911,21 @@ def run_scenario(args):
                       "preCloseAnchor": {"revision": pre_close_revision, "hash": pre_close_hash}})
 
         fresh.stage = "S16"
-        loaded = fresh.ok("unity.host.projection.observe", {"sceneLogicalId": SCENE}, "S16", "observe:load-capture")
+        loaded = fresh.ok("unity.host.projection.observe", {"sceneLogicalId": SCENE}, "S16", "observe:load")
         require(loaded["current"] is True, "real slice did not load as the current generation")
     finally:
         fresh.close()
 
+    # Stage 16 (parity-gate amendment): the real slice loads in the fixed batch Editor worker, and the product launcher's
+    # Editor log of every Gate Unity process is read and carries no owned error line. The Gate produces no pixels: the
+    # launch profile is headless, and the supplementary rendered capture is the accepted WP-H1-11 one (bound by the
+    # verifier).
     audit = ledger_audit(workspace, started)
     owned = [row for row in audit if row["ownedErrorLines"]]
-    capture = [row for row in audit if row["capability"] == "unity.host.projection.observe@1.0" and row["editorLogCaptured"]]
-    require(capture, "no Editor capture was recorded for the loaded slice")
-    require(not owned, f"owned error diagnostics in Editor captures: {[row['ownedErrorLines'][:3] for row in owned]}")
-    stage("S16", {"loaded": summary_of(loaded), "editorCaptures": len(capture), "ownedErrorLines": 0})
+    unread = [row["invocationId"] for row in audit if not row["editorLogRead"]]
+    require(audit and not unread, f"Editor logs were not read for {unread}")
+    require(not owned, f"owned error diagnostics in Editor logs: {[row['ownedErrorLines'][:3] for row in owned]}")
+    stage("S16", {"loaded": summary_of(loaded), "editorLogsRead": len(audit), "ownedErrorLines": 0})
     (evidence / f"ledger-{args.transport}.json").write_text(json.dumps(audit, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     parity = {
@@ -831,6 +936,7 @@ def run_scenario(args):
         "checkpointEnvironmentDigest": captured["environmentDigest"],
         "bridgeContract": "arkus.neutral-projection@1",
         "unityEditor": "6000.3.24f1 (4e7b9b5b6244)",
+        "unityPackageFingerprint": sha(canonical_json(facts["stages"]["S03"]["effectiveUniverse"]["packages"])),
         "projectionPlanDigest": captured["planInputDigest"],
         "activeGenerationId": final["generationId"],
         "checkpointId": captured["checkpointId"],
@@ -872,11 +978,12 @@ def run_bootstrap(args):
     transcript = Transcript(evidence / f"transcript-bootstrap.jsonl")
     host = PublicHost(args.transport, f"{args.transport}-bootstrap", Launcher(args), workspace, transcript)
     try:
-        profile = stage3_inspect(host)
+        profile, universe = stage3_inspect(host)
         host.discover("S04")
     finally:
         host.close()
-    print(f"H1_GATE_BOOTSTRAP_GREEN editor={profile['editorVersion']} ({profile['editorRevision']})")
+    print(f"H1_GATE_BOOTSTRAP_GREEN editor={profile['editorVersion']} ({profile['editorRevision']}) "
+          f"packages={canonical_json(universe['packages'])} assemblies={','.join(universe['compiledAssemblies'])}")
 
 
 TRANSPORT_INVARIANT = [
@@ -898,7 +1005,8 @@ def run_compare(args):
             if reference["stages"][stage_id].get(key) != mcp["stages"][stage_id].get(key):
                 differences.append(f"{stage_id}.{key}")
     for key in ("canonicalWorldHash", "canonicalRevision", "bindingSchema", "catalogueSnapshotFingerprint", "bridgeContract",
-                "unityEditor", "projectionPlanDigest", "normalizedObservationGraphDigest", "normalizedObservationReconstructionDigest"):
+                "unityEditor", "unityPackageFingerprint", "projectionPlanDigest", "normalizedObservationGraphDigest",
+                "normalizedObservationReconstructionDigest"):
         if reference["parityTuple"][key] != mcp["parityTuple"][key]:
             differences.append("parity." + key)
     ref_codes = [d.get("machineCode") for d in reference["stages"]["S12"]["diagnostics"]]

@@ -207,3 +207,15 @@ The decisions were taken in the Worker session on 2026-09-26, in this order:
   - All production hosts admit the codec.
 
 The Gate's S07 now authors the slice through `documentMutation`, after requiring that the document path plans byte-identically to the payload path on both transports. The verifier checks `S07.*.document-parity-not-proven` and `S07.*.not-authored-through-documents`, and the C6 control `document-parity-dropped` proves the check is sensitive. The trial brief, protocol, model, route, relay and verifier are otherwise unchanged. The final trial runs once, on the final frozen SHA.
+
+## Owner decision after the first independent review (fail_cycle 1)
+
+Independent review `#5326742797` failed the frozen candidate `87262dd6` on two Gate-owned blockers: S03 and S16. Neither blocker concerns the trial. Trial 6 (`#5847803623`, run `36253933622`) remains on record as PASS for `87262dd6`.
+
+Any repair commit creates a new candidate SHA, and the trial must be bound to the final frozen SHA. On 2026-09-26, in the repair Worker session, the owner therefore authorized **trial 7**:
+
+- one unchanged repeat on the final repaired frozen SHA;
+- same brief, protocol, model (`openai/gpt-5.6-luna-20260709`), route, relay and verifier;
+- triggered once through the `h1-gate-ai-trial` label.
+
+Trial 7 is recorded whatever its result. The Gate claims PASS only if `h1-gate-verify.py trial` finds it GREEN on that exact SHA.

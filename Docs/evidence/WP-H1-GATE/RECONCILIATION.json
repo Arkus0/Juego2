@@ -1114,8 +1114,8 @@
     },
     {
       "stage": 3,
-      "executedBy": "driver bootstrap + each transport: public project-profile.inspect + operation-status",
-      "evidence": "transcript-bootstrap/reference/mcp"
+      "executedBy": "driver bootstrap + each transport: public project-profile.inspect + operation-status, then the effective package/assembly universe of that Editor process (Unity Package Manager registration in its log, registered package asmdefs, Library/ScriptAssemblies), checked against packages-lock.json and the repository asmdef/script layout",
+      "evidence": "transcript-bootstrap/reference/mcp (effective-universe events)"
     },
     {
       "stage": 4,
@@ -1179,8 +1179,8 @@
     },
     {
       "stage": 16,
-      "executedBy": "driver: public observe of the rebuilt real slice + Editor log capture with zero owned errors",
-      "evidence": "transcript S16 + ledger"
+      "executedBy": "driver: public observe of the rebuilt real slice + every Gate Unity process Editor log read with zero owned errors; verifier binds the accepted WP-H1-11 rendered capture by digest and its manifest coverage (parity-gate amendment v1.3)",
+      "evidence": "transcript S16 + ledger + Docs/evidence/WP-H1-11/SUPPLEMENTARY_CAPTURE.jpg"
     },
     {
       "stage": 17,

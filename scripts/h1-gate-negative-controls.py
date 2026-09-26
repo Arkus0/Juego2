@@ -85,14 +85,27 @@ def mutated_copy(source, mutate):
     return target
 
 
-def mirror_root(changes):
-    """A copy of the governing documents with `changes` applied; the verifier reads it through its root override."""
+def mirror_root(changes, binary=None):
+    """A copy of the governing documents with `changes` applied; the verifier reads it through its root override.
+
+    The Unity project contributes only what the stage-3 oracle reads (the package lock and the asmdef/asmref/script
+    layout), never mounted private source or generated projection bytes."""
     target = Path(tempfile.mkdtemp(prefix="h1-gate-root-"))
-    for relative in ("Docs/engineering", "Docs/architecture", "Docs/evidence", "Docs/workpacks/H1", ".github/workflows"):
+    for relative in ("Docs/engineering", "Docs/architecture", "Docs/evidence", "Docs/workpacks/H1", ".github/workflows",
+                     "Unity/ArkusUnity/Packages"):
         shutil.copytree(ROOT / relative, target / relative, dirs_exist_ok=True)
+    assets = ROOT / "Unity/ArkusUnity/Assets"
+    for path in assets.rglob("*"):
+        if path.is_file() and path.suffix in (".asmdef", ".asmref", ".cs"):
+            copy = target / path.relative_to(ROOT)
+            copy.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(path, copy)
     for relative, transform in changes.items():
         path = target / relative
         path.write_text(transform(path.read_text(encoding="utf-8")), encoding="utf-8")
+    for relative, transform in (binary or {}).items():
+        path = target / relative
+        path.write_bytes(transform(path.read_bytes()))
     env = dict(os.environ, H1_GATE_VERIFY_ROOT=str(target))
     return env
 
@@ -227,10 +240,58 @@ def evidence_controls(directory, candidate):
             path.write_text(json.dumps(edit(json.loads(path.read_text(encoding="utf-8")))), encoding="utf-8")
         return apply
 
-    def control(label, klass, mutation, code):
+    def control(label, klass, mutation, code, env=None):
         target = mutated_copy(directory, mutation)
-        expect_red(label, klass, ["evidence", "--dir", str(target), "--candidate-sha", candidate], code)
+        expect_red(label, klass, ["evidence", "--dir", str(target), "--candidate-sha", candidate], code, env)
         shutil.rmtree(target, ignore_errors=True)
+
+    def mutate_universe(transport, session, edit):
+        def change(records):
+            for record in records:
+                if record.get("event") == "effective-universe" and record.get("session") == session:
+                    edit(record)
+            return records
+        return mutate_transcript(transport, change)
+
+    # C1: the stage-3 enumeration of the effective package/assembly universe is removed while the inspection stays.
+    control("effective-universe-removed", "C1",
+            mutate_transcript("reference", lambda rs: [r for r in rs if not (r.get("event") == "effective-universe" and r.get("session") == "reference-a")]),
+            "S03.reference.no-effective-universe")
+
+    # C6: the enumerated package universe self-shrinks (one registered package dropped, count kept consistent).
+    def drop_package(record):
+        record["packages"] = record["packages"][1:]
+        record["registeredCount"] = len(record["packages"])
+    control("package-universe-shrinks", "C6", mutate_universe("bootstrap", "reference-bootstrap", drop_package),
+            "S03.bootstrap.package-universe-differs-from-lock")
+
+    # C6: a project assembly the repository declares is missing from the enumerated compiled universe.
+    control("project-assembly-omitted", "C6",
+            mutate_universe("mcp", "mcp-a", lambda record: record.__setitem__(
+                "compiledAssemblies", [name for name in record["compiledAssemblies"] if name != "Arkus.H1.Projection.Runtime.dll"])),
+            "S03.mcp.assembly-missing")
+
+    # C7: an assembly no asmdef or script of the effective universe declares was compiled into the Editor.
+    control("undeclared-assembly-compiled", "C7",
+            mutate_universe("reference", "reference-a", lambda record: record["compiledAssemblies"].append("Arkus.Private.Route.dll")),
+            "S03.reference.assembly-undeclared")
+
+    # C6: one Gate Unity process's Editor log was never read, so its owned-error scan cannot hold.
+    def unread(rows):
+        rows[0]["editorLogRead"] = False
+        return rows
+    control("editor-load-log-unread", "C6", mutate_ledger("mcp", unread), "S16.mcp.editor-load-log-not-read")
+
+    # C4/C6: the supplementary rendered capture is not the accepted WP-H1-11 bytes, or no longer covers the Gate slice.
+    env = mirror_root({}, {"Docs/evidence/WP-H1-11/SUPPLEMENTARY_CAPTURE.jpg": lambda data: data + b"\0"})
+    control("rendered-capture-rebound", "C4", lambda target: None, "S16.reference.rendered-capture-not-bound", env)
+
+    def drop_manifest_item(text):
+        manifest = json.loads(text)
+        manifest["items"] = [item for item in manifest["items"] if "quaternius.medieval.prefab.prop-wagon" not in item.get("catalogue", {}).values()]
+        return json.dumps(manifest)
+    env = mirror_root({"Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json": drop_manifest_item})
+    control("slice-outside-captured-manifest", "C6", lambda target: None, "S16.mcp.slice-outside-captured-manifest", env)
 
     # C1: the second same-input materialization really executed; delete its frames, keep the stage declared in facts.
     control("second-materialization-removed", "C1",
@@ -282,7 +343,8 @@ def evidence_controls(directory, candidate):
             mutate_transcript("reference", lambda rs: [r for r in rs if r.get("label") != "plan:parity-document"]),
             "S07.reference.document-parity-not-proven")
 
-    # C4: the normalized parity comparison after rebuild is skipped; the stage-16 Editor capture remains.
+    # C4: the normalized parity comparison after rebuild is skipped; the stage-16 Editor-load evidence and the bound
+    # WP-H1-11 rendered capture remain.
     control("parity-skipped-capture-remains", "C4",
             mutate_transcript("reference", lambda rs: [r for r in rs if not (r.get("session") == "reference-b" and r.get("stage") == "S14" and
                                                                               r.get("capability") in ("unity.host.projection.observe@1.0", "unity.host.checkpoint.capture@1.0"))]),

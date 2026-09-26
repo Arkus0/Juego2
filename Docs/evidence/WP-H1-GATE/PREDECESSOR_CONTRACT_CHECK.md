@@ -110,3 +110,42 @@ The Gate does not re-run per-WP negative matrices. It does not re-prove H0 suite
 - Missing gate wiring or evidence is Gate-owned, and the Gate fixes it itself. A **semantic** gap is never fixed inside the Gate. It is routed to its causal owner.
 
 Theoretical possibility, or a wish for duplicate proof, is not a reopen condition.
+
+## Repair fail_cycle 1 — predecessor check (recorded before the repair)
+
+Fresh repair Worker, owner-invoked. The prior Worker stopped at the frozen candidate `87262dd6424e1e97c52d04fc27966f6ea41767fd`. That SHA is recorded as `Transfer SHA`, and PR `#238` is back in Draft and ACTIVE. The independent review `#5326742797` failed that candidate on two Gate-owned blockers. The review reopened no predecessor and added no new class.
+
+**Live state.** `main` = `525b6f2932bfa8a3540e27624165efa08c79e402` = the merge-base, unchanged since the frozen candidate. No other open PR owns WP-H1-GATE.
+
+**Inherited guarantees relevant to the two blockers.** I read the exact sources.
+
+- **H1-02** (accepted candidate `d86a08e6…`, owner acceptance `#5798755634`, merge `faa42a3d…`).
+  - It owns the pinned editor/package baseline and the definition of the *effective* package/assembly universe: UPM registration (`Client.List`) plus `packages-lock.json`, and the Editor-compiled script assemblies (`Docs/evidence/WP-H1-02/PROOF_PLAN.md`).
+  - Its inventory was produced by H1-02's own private proof tooling (`H1Baseline`). The Gate may not call that tooling.
+- **H1-03A** (PASS `#5303016012`, merge `90428b80…`).
+  - Public `unity.host.project-profile.inspect` exercises the real Editor worker through the fixed launcher.
+  - The worker result exposes identity/profile/lifecycle only, not a package or assembly listing (`Unity/ArkusUnity/Assets/Arkus/H1/Editor/H1EditorWorker.cs`).
+  - The launcher starts every process with `-batchmode -nographics` and writes the Editor log to the operation directory (`tools/Arkus.H1.UnityHost/H1UnityProcessInfrastructure.cs:277,332-344`).
+- **H1-11** (owner PASS `#5845036679`, merge `338dd0c8…`). It owns the one supplementary rendered capture of the representative selected-item manifest:
+  - `SUPPLEMENTARY_CAPTURE.jpg`, sha256 `a5d42476…`, from run `36230271886` (`Docs/evidence/WP-H1-11/EFFECTIVE_EVIDENCE.md`);
+  - the manifest, `REPRESENTATIVE_SLICE.json`.
+
+**Newly owned by this repair (Gate-owned evidence only, no product change).**
+
+- **S03.** The Gate enumerates the effective package/assembly universe of the exact Editor process that the public inspection launched. It reads:
+  - Unity's own Package Manager registration block in that process's log (`[Package Manager] Registered N packages:`; the format was confirmed on the pinned `6000.3.24f1` in run `36230271886`);
+  - the asmdef files of the registered package directories;
+  - the Editor-compiled `Library/ScriptAssemblies`.
+
+  The verifier checks that universe against sources the driver does not control. The frozen `packages-lock.json` must match exactly (name, version and source section). The repository's own asmdef/loose-script layout, plus the registered packages' asmdefs, must match the compiled set with nothing missing and nothing undeclared. The universe must also be identical across the bootstrap, reference and MCP inspections, and the package fingerprint enters the parity tuple.
+- **S16.** The Gate is aligned with the parity-gate amendment v1.3 (PROCESS_ONLY PR `#246`, owner decision). It adds three checks to the existing load and owned-error checks:
+  - every Gate Unity process's Editor log must have been read;
+  - the rendered capture is bound by digest to the accepted H1-11 capture;
+  - every source and clip the Gate slice authors must belong to the manifest that capture rendered.
+
+**Consumed, not re-proved.** H1-02's pinned baseline, H1-03A's launcher/lifecycle and H1-11's capture are consumed as accepted. The Gate does not add a public enumeration or rendering capability. It does not call H1-02's or H1-11's private proof stages.
+
+**Reopen conditions.**
+- H1-02 reopens only if the effective registration of a public Editor process differs from the pinned lock while S01 proves the lock unchanged; that would be a baseline defect.
+- H1-03A reopens only if a public inspection launches an Editor process whose log or compiled output contradicts its reported identity.
+- A mismatch that comes from Gate wiring is Gate-owned.

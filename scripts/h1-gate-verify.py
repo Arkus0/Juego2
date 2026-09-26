@@ -77,6 +77,17 @@ WORKER_EXECUTORS = {
 }
 TRANSPORTS = ("reference", "mcp")
 
+# Stage 3: universes the driver does not control. The package lock is frozen with the candidate (stage 1 proves it is
+# unchanged); the asmdef/script layout of the repository's own Unity project is read from the candidate tree.
+PACKAGE_LOCK = "Unity/ArkusUnity/Packages/packages-lock.json"
+PROJECT_ASSETS = "Unity/ArkusUnity/Assets"
+# Stage 16 (parity-gate amendment): the supplementary rendered capture is the accepted WP-H1-11 capture, bound by the
+# digest its accepted evidence records, of the same representative selected-item manifest the Gate slice draws from.
+H1_11_CAPTURE = "Docs/evidence/WP-H1-11/SUPPLEMENTARY_CAPTURE.jpg"
+H1_11_CAPTURE_SHA256 = "a5d42476d1b74ffb1ceb7a5762669aef3353f621356f6a4dae7dbcd8e1b2c8d5"
+H1_11_EVIDENCE = "Docs/evidence/WP-H1-11/EFFECTIVE_EVIDENCE.md"
+H1_11_MANIFEST = "Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json"
+
 
 def sha(value):
     return hashlib.sha256(value.encode("utf-8") if isinstance(value, str) else value).hexdigest()
@@ -177,17 +188,101 @@ def last(rows):
 
 # ----- stage checks (transcript-derived) ---------------------------------------------------------------------------
 
-def check_s03(f, records, session, t):
+def unity_ignored(parts):
+    return any(part.startswith(".") or part.endswith("~") for part in parts)
+
+
+def editor_compatible(definition):
+    include = definition.get("includePlatforms") or []
+    exclude = definition.get("excludePlatforms") or []
+    return "Editor" in include if include else "Editor" not in exclude
+
+
+def locked_packages(root=ROOT):
+    path = root / PACKAGE_LOCK
+    if not path.is_file():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))["dependencies"]
+
+
+def project_assemblies(root=ROOT):
+    """Script assemblies the repository's Unity project must compile in the Editor: every Editor-compatible asmdef, plus
+    Unity's predefined assembly for each script outside any asmdef/asmref folder."""
+    assets = root / PROJECT_ASSETS
+    if not assets.is_dir():
+        return None
+    required, covered = set(), set()
+    for path in sorted(assets.rglob("*.asmdef")) + sorted(assets.rglob("*.asmref")):
+        if unity_ignored(path.relative_to(assets).parts[:-1]):
+            continue
+        covered.add(path.parent)
+        if path.suffix == ".asmdef":
+            definition = json.loads(path.read_text(encoding="utf-8-sig"))
+            if editor_compatible(definition):
+                required.add(definition["name"] + ".dll")
+    for script in sorted(assets.rglob("*.cs")):
+        parts = script.relative_to(assets).parts
+        if unity_ignored(parts[:-1]) or any(parent in covered for parent in script.parents):
+            continue
+        firstpass = parts[0] in ("Plugins", "Standard Assets", "Pro Standard Assets")
+        required.add("Assembly-CSharp" + ("-Editor" if "Editor" in parts[:-1] else "") + ("-firstpass" if firstpass else "") + ".dll")
+    return required
+
+
+def check_effective_universe(f, records, session, t, inspection, root=ROOT):
+    """Stage 3: the effective package/assembly universe of the Editor process that the public inspection launched."""
+    universes = [r for r in records if r.get("event") == "effective-universe" and r.get("session") == session and
+                 r.get("invocationId") == inspection["outcome"]["result"].get("invocationId") and r["seq"] > inspection["seq"]]
+    if not f.check(universes, f"S03.{t}.no-effective-universe"):
+        return None
+    universe = universes[-1]
+    packages = universe.get("packages", [])
+    names = [row["name"] for row in packages]
+    f.check(packages and universe.get("registeredCount") == len(packages) and len(set(names)) == len(names),
+            f"S03.{t}.package-registration-incomplete", f"{universe.get('registeredCount')}!={len(packages)}")
+    lock = locked_packages(root)
+    if f.check(lock is not None, "S03.package-lock-missing"):
+        effective = {row["name"]: row["version"] for row in packages}
+        frozen = {name: row.get("version") for name, row in lock.items()}
+        f.check(effective == frozen, f"S03.{t}.package-universe-differs-from-lock",
+                ",".join(sorted(f"{k}@{v}" for k, v in set(effective.items()) ^ set(frozen.items()))))
+        for row in packages:
+            source = lock.get(row["name"], {}).get("source")
+            expected = {"builtin": "Built-in packages", "registry": f"Packages from [{lock.get(row['name'], {}).get('url')}]"}.get(source)
+            f.check(expected is None or row.get("section") == expected, f"S03.{t}.package-source-differs", row["name"])
+    absent = [row["name"] for row in packages if not (row.get("inProject") and row.get("present"))]
+    f.check(not absent, f"S03.{t}.package-location-not-effective", ",".join(absent))
+
+    compiled = set(universe.get("compiledAssemblies", []))
+    project = project_assemblies(root)
+    if f.check(project is not None, "S03.project-layout-missing"):
+        required, optional = set(project), set()
+        for definition in universe.get("packageAssemblyDefinitions", []):
+            if not editor_compatible(definition):
+                continue
+            # A package asmdef behind define constraints, or a package test assembly, compiles only when its condition
+            # holds (for a test assembly: the package is `testables`); it is admitted but not required.
+            conditional = definition.get("defineConstraints") or "TestAssemblies" in (definition.get("optionalUnityReferences") or [])
+            (optional if conditional else required).add(definition["name"] + ".dll")
+        missing = sorted(required - compiled)
+        undeclared = sorted(compiled - required - optional)
+        f.check(compiled and not missing, f"S03.{t}.assembly-missing", ",".join(missing))
+        f.check(not undeclared, f"S03.{t}.assembly-undeclared", ",".join(undeclared))
+    return {"packages": sorted((row["name"], row["version"], row.get("section")) for row in packages), "compiled": sorted(compiled)}
+
+
+def check_s03(f, records, session, t, root=ROOT):
     inspect = [r for r in calls(records, "unity.host.project-profile.inspect@1.0", "S03", session) if result(r)]
     row = one(f, inspect, f"S03.{t}.no-effective-inspection")
     if not row:
-        return
+        return None
     value = result(row)
     f.check((value.get("editorVersion"), value.get("editorRevision")) == EDITOR, f"S03.{t}.editor-identity")
     f.check(value.get("mainThread") is True and value.get("entryPoint") == ENTRY_POINT, f"S03.{t}.worker-proof")
     status = [r for r in calls(records, "unity.lifecycle.operation-status@1.0", "S03", session)
               if r["arguments"].get("invocationId") == value.get("invocationId") and result(r)]
     f.check(status and result(status[-1]).get("status") == "completed", f"S03.{t}.lifecycle-recovery")
+    return check_effective_universe(f, records, session, t, row, root)
 
 
 def check_s04(f, records, session, t, required):
@@ -403,13 +498,31 @@ def check_s14(f, records, t):
     return captured
 
 
-def check_s16(f, records, ledger, t):
+def check_s16(f, records, ledger, t, root=ROOT):
     loaded = [r for r in calls(records, "unity.host.projection.observe@1.0", "S16", f"{t}-b", status="success")]
     f.check(loaded and result(loaded[-1])["current"] is True, f"S16.{t}.slice-not-loaded")
-    captures = [row for row in ledger if row["capability"] == "unity.host.projection.observe@1.0" and row["editorLogCaptured"]]
-    f.check(captures, f"S16.{t}.no-editor-capture")
+    # The load is confirmed from the product launcher's own Editor log of every Gate Unity process, not only the S16
+    # observe: each one must have been read, and none may carry an owned error line.
+    unread = [row["invocationId"] for row in ledger if not row.get("editorLogRead")]
+    f.check(ledger and not unread, f"S16.{t}.editor-load-log-not-read", ",".join(unread))
     owned = [row["invocationId"] for row in ledger if row["ownedErrorLines"]]
     f.check(not owned, f"S16.{t}.owned-error-diagnostics", ",".join(owned))
+    # The supplementary rendered capture is consumed from accepted WP-H1-11: the committed bytes must be the accepted
+    # ones, and every source/clip the Gate slice authored must come from the manifest that capture rendered.
+    capture = root / H1_11_CAPTURE
+    evidence = root / H1_11_EVIDENCE
+    f.check(capture.is_file() and sha(capture.read_bytes()) == H1_11_CAPTURE_SHA256 and evidence.is_file() and
+            H1_11_CAPTURE_SHA256 in evidence.read_text(encoding="utf-8"), f"S16.{t}.rendered-capture-not-bound")
+    manifest_path = root / H1_11_MANIFEST
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.is_file() else {"items": [], "clips": []}
+    admitted = {value for item in manifest["items"] for value in item.get("catalogue", {}).values()}
+    admitted |= {clip["logicalId"] for clip in manifest["clips"]}
+    authored = set()
+    for binding, _ in compiled_bindings(records, f"{t}-a").values():
+        authored.add(binding["source"]["logicalId"])
+        authored.update(component["clipId"] for component in binding["components"] if component["kind"] == "animator")
+    outside = sorted(authored - admitted)
+    f.check(authored and not outside, f"S16.{t}.slice-outside-captured-manifest", ",".join(outside))
 
 
 def check_ledger(f, records, ledger, t):
@@ -478,7 +591,7 @@ def verify_evidence(directory, candidate, root=ROOT):
     bootstrap = directory / "transcript-bootstrap.jsonl"
     if f.check(bootstrap.is_file(), "S03.bootstrap-transcript-missing"):
         records = load_transcript(bootstrap)
-        check_s03(f, records, "reference-bootstrap", "bootstrap")
+        bootstrap_universe = check_s03(f, records, "reference-bootstrap", "bootstrap", root)
         check_s04(f, records, "reference-bootstrap", "bootstrap", required)
         check_hosts(f, records, "reference")
 
@@ -491,7 +604,7 @@ def verify_evidence(directory, candidate, root=ROOT):
         records = load_transcript(path)
         ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
         check_hosts(f, records, t)
-        check_s03(f, records, f"{t}-a", t)
+        universe = check_s03(f, records, f"{t}-a", t, root)
         check_s04(f, records, f"{t}-a", t, required)
         check_s04(f, records, f"{t}-b", t, required)
         plan, bindings = check_s05_s08(f, records, f"{t}-a", t)
@@ -499,20 +612,22 @@ def verify_evidence(directory, candidate, root=ROOT):
         codes = check_s12(f, records, f"{t}-a", t, second)
         stale = check_s13(f, records, f"{t}-a", t)
         captured = check_s14(f, records, t)
-        check_s16(f, records, ledger, t)
+        check_s16(f, records, ledger, t, root)
         check_ledger(f, records, ledger, t)
         derived[t] = {
             "canonical": world_anchor(records, f"{t}-a"),
             "plan": plan and {k: plan.get(k) for k in ("inputDigest", "canonicalHash", "catalogueFingerprint")},
             "first": first and {k: first.get(k) for k in ("inputDigest", "canonicalHash", "graphDigest")},
-            "codes": codes, "stale": stale,
+            "codes": codes, "stale": stale, "universe": universe,
             "captured": captured and {k: captured.get(k) for k in ("canonicalHash", "revision", "planInputDigest", "observationGraphDigest", "observationReconstructionDigest")},
         }
 
     # Stage 15: equivalence recomputed from both transcripts, not taken from the driver's comparison file.
     if all(t in derived for t in TRANSPORTS):
-        for key in ("canonical", "plan", "first", "codes", "stale", "captured"):
+        for key in ("canonical", "plan", "first", "codes", "stale", "captured", "universe"):
             f.check(derived["reference"][key] == derived["mcp"][key] and derived["reference"][key] is not None, "S15.transport-divergence", key)
+        # The isolated MCP copy is taken from the bootstrap-imported project, so all three inspections see one universe.
+        f.check(bootstrap.is_file() and bootstrap_universe == derived["reference"]["universe"], "S03.universe-differs-from-bootstrap")
     equivalence = directory / "transport-equivalence.json"
     if f.check(equivalence.is_file(), "S15.equivalence-record-missing"):
         f.check(json.loads(equivalence.read_text(encoding="utf-8")).get("result") == "GREEN", "S15.equivalence-record-red")
