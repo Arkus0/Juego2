@@ -1,0 +1,14 @@
+1_orilla_sur_al_casco	47,5 fps
+2_lomo_del_puente	44,4 fps
+3_subida_w12	49,3 fps
+4_plazuela_casco	58,7 fps
+5_fachada_bar	57,3 fps
+6_plaza_torre	60,0 fps
+7_interior_bar	56,1 fps
+8_rendija_patio	58,0 fps
+9_vado_aguas_bajas	60,0 fps
+10_vado_aguas_altas	60,0 fps
+11_desembarcadero	60,0 fps
+12_calle_comercial	60,0 fps
+13_aerea	60,0 fps
+GPU: NVIDIA GeForce RTX 3060 · 1600x900

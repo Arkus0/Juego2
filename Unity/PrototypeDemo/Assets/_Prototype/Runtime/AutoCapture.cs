@@ -9,6 +9,57 @@ namespace Proto.Runtime
     {
         [System.Serializable] public struct Shot { public string name; public Vector3 pos; public Vector3 look; public bool highWater; }
         public Shot[] shots;
+        [System.Serializable] public struct Waypoint { public string name; public Vector3 pos; }
+        public Waypoint[] walk;
+
+        /// Drives the player through the chain with the real CharacterController; logs arrival, time and stalls.
+        IEnumerator Walk(string dir, OrbitCamera orbit)
+        {
+            var p = PlayerController.Instance;
+            var log = new System.Text.StringBuilder();
+            p.Respawn("Recorrido automático");
+            if (orbit) { orbit.enabled = true; orbit.SnapBehind(); }
+            yield return new WaitForSeconds(1f);
+            float total = 0, dist = 0; Vector3 last = p.transform.position;
+            int shot = 0;
+            foreach (var w in walk)
+            {
+                p.autopilot = w.pos;
+                float t = 0, stall = 0; Vector3 prev = p.transform.position;
+                bool ok = false;
+                while (t < 45f)
+                {
+                    var d = w.pos - p.transform.position; d.y = 0;
+                    if (d.magnitude < 0.7f) { ok = true; break; }
+                    if (orbit) orbit.yaw = Mathf.LerpAngle(orbit.yaw, Quaternion.LookRotation(d).eulerAngles.y, Time.deltaTime * 2f);
+                    t += Time.deltaTime; total += Time.deltaTime;
+                    dist += (p.transform.position - last).magnitude; last = p.transform.position;
+                    stall = (p.transform.position - prev).magnitude < 0.004f ? stall + Time.deltaTime : 0;
+                    prev = p.transform.position;
+                    if (stall > 3f) break;
+                    yield return null;
+                }
+                string why = "";
+                if (!ok)
+                {
+                    var dd = w.pos - p.transform.position; dd.y = 0;
+                    var o = p.transform.position + Vector3.up * 0.5f;
+                    foreach (var h in Physics.CapsuleCastAll(o, o + Vector3.up * 0.9f, 0.3f, dd.normalized, 1.2f))
+                        if (h.collider.gameObject != p.gameObject) why += $" [{h.collider.name} @{h.point.x:F1},{h.point.y:F1},{h.point.z:F1}]";
+                    why += $" pos=({p.transform.position.x:F1},{p.transform.position.z:F1})";
+                }
+                log.AppendLine($"{w.name}\t{(ok ? "OK" : "ATASCO")}\t{t:F1}s\ty={p.transform.position.y:F2}{why}");
+                if (w.name.StartsWith("*"))
+                {
+                    yield return new WaitForEndOfFrame();
+                    ScreenCapture.CaptureScreenshot(Path.Combine(dir, $"20_recorrido_{shot++}_{w.name.Trim('*')}.png"));
+                }
+                if (!ok) break;
+            }
+            p.autopilot = null;
+            log.AppendLine($"TOTAL\t{total:F1}s\t{dist:F0} m\t(andar 1,4 m/s)");
+            File.WriteAllText(Path.Combine(dir, "recorrido.txt"), log.ToString());
+        }
 
         IEnumerator Start()
         {
@@ -24,17 +75,39 @@ namespace Proto.Runtime
             yield return new WaitForEndOfFrame();
             ScreenCapture.CaptureScreenshot(Path.Combine(dir, "00_juego_inicio.png"));
             yield return new WaitForSeconds(0.5f);
+            // greet the nearest townsperson, as if the player pressed E
+            NPC nearest = null; float best = 99;
+            foreach (var n in FindObjectsByType<NPC>(FindObjectsSortMode.None))
+            {
+                float d = Vector3.Distance(n.transform.position, PlayerController.Instance.transform.position);
+                if (d < best) { best = d; nearest = n; }
+            }
+            if (nearest != null)
+            {
+                nearest.Greet();
+                yield return new WaitForSeconds(1.2f);
+                yield return new WaitForEndOfFrame();
+                ScreenCapture.CaptureScreenshot(Path.Combine(dir, "01_saludo_hola.png"));
+            }
+            var fps = new System.Text.StringBuilder();
             if (orbit) orbit.enabled = false;
             foreach (var s in shots)
             {
                 if (Ford.Instance != null && Ford.Instance.high != s.highWater) { Ford.Instance.Toggle(); yield return new WaitForSeconds(3f); }
                 cam.transform.position = s.pos;
                 cam.transform.rotation = Quaternion.LookRotation(s.look - s.pos, Vector3.up);
-                yield return new WaitForSeconds(1.2f);
+                yield return new WaitForSeconds(0.4f);
+                float t0 = Time.realtimeSinceStartup; int frames = 0;
+                while (Time.realtimeSinceStartup - t0 < 1.5f) { frames++; yield return null; }
+                fps.AppendLine($"{s.name}\t{frames / (Time.realtimeSinceStartup - t0):F1} fps");
                 yield return new WaitForEndOfFrame();
                 ScreenCapture.CaptureScreenshot(Path.Combine(dir, s.name + ".png"));
                 yield return new WaitForSeconds(0.4f);
             }
+            fps.AppendLine($"GPU: {SystemInfo.graphicsDeviceName} · {Screen.width}x{Screen.height}");
+            File.WriteAllText(Path.Combine(dir, "fps.txt"), fps.ToString());
+            if (Ford.Instance != null && Ford.Instance.high) { Ford.Instance.Toggle(); yield return new WaitForSeconds(2f); }
+            if (walk != null && walk.Length > 0) yield return Walk(dir, orbit);
             yield return new WaitForSeconds(1f);
             Application.Quit();
         }

@@ -15,6 +15,8 @@ namespace Proto.Runtime
         float speed, vy;
 
         public static PlayerController Instance { get; private set; }
+        /// Walk-test autopilot: when set, the player walks towards this point instead of reading the keyboard.
+        public Vector3? autopilot;
         public float Speed => speed;
 
         void Awake() => Instance = this;
@@ -35,6 +37,15 @@ namespace Proto.Runtime
             float y = (kb.wKey.isPressed || kb.upArrowKey.isPressed ? 1 : 0) - (kb.sKey.isPressed || kb.downArrowKey.isPressed ? 1 : 0);
             bool running = kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed;
             if (DemoHUD.Talking) { x = 0; y = 0; }
+            if (autopilot.HasValue)
+            {
+                var to = autopilot.Value - transform.position; to.y = 0;
+                var f = cam != null ? Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized : Vector3.forward;
+                var rgt = Vector3.Cross(Vector3.up, f);
+                var dn = to.normalized;
+                x = Vector3.Dot(dn, rgt); y = Vector3.Dot(dn, f);
+                running = false;
+            }
 
             Vector3 fwd = cam != null ? Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized : transform.forward;
             Vector3 right = Vector3.Cross(Vector3.up, fwd);

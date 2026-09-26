@@ -87,6 +87,14 @@ namespace Proto.Runtime
             SetSpeed();
         }
 
+        /// Same as the player pressing E next to this NPC (used by the auto-capture).
+        public void Greet()
+        {
+            talkUntil = Time.time + 3.2f;
+            DemoHUD.Line(role, hello, 3.2f);
+            if (anim != null && idleState != "Sit" && idleState != "SitTalk" && idleState != "Counter") anim.CrossFade("Talk", 0.25f);
+        }
+
         void SetSpeed() { if (anim != null) anim.SetFloat("Speed", curSpeed); }
     }
 }

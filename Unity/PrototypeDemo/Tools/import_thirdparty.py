@@ -96,7 +96,10 @@ def main() -> None:
             if not target.exists():
                 shutil.copy2(f, target)
                 n += 1
-            write_meta(target)
+            # Models get deterministic GUIDs; textures need Unity's own TextureImporter meta
+            # (a GUID-only meta makes Unity treat a PNG as a DefaultAsset).
+            if target.suffix.lower() == ".fbx":
+                write_meta(target)
         print(f"{dst_dir}: {n} new files")
 
     for src, dst in LICENSES:

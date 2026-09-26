@@ -21,9 +21,13 @@ namespace Proto.EditorTools
             }
             else if (assetPath.Contains("/Nature/") || assetPath.Contains("/Props/"))
             {
+                // these exports are in centimetres; keep materials inside the model so they can be remapped to URP
                 importer.importAnimation = false;
                 importer.animationType = ModelImporterAnimationType.None;
+                importer.globalScale = 0.01f;
+                importer.useFileScale = false;
                 importer.materialImportMode = ModelImporterMaterialImportMode.ImportViaMaterialDescription;
+                importer.materialLocation = ModelImporterMaterialLocation.InPrefab;
             }
             importer.isReadable = assetPath.Contains("/Nature/");
         }
