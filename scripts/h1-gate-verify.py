@@ -248,9 +248,23 @@ def check_s05_s08(f, records, session, t):
             prior = [r for r in calls(records, stage="S07", session=session, label=label, status="success")
                      if r["seq"] < apply["seq"] and r["arguments"] == request]
             f.check(prior, f"S07.{t}.{label.split(':')[0]}-missing-before-apply")
-        payloads = {op.get("payloadBase64") for op in request["operations"] if op["kind"] == "put-extension"}
         objects = {op["id"] for op in request["operations"] if op["kind"] == "put-object"}
-        f.check(all(mutation["payloadBase64"] in payloads for _, mutation in bindings.values()), f"S07.{t}.compiled-extension-not-applied")
+        # Each compiled binding must be applied either as its compiled payload or, since WP-HK-04 / WP-H1-01 reopen 1,
+        # as exactly the typed document the compiler returned for that subject.
+        applied = {op.get("subjectId"): op for op in request["operations"] if op["kind"] == "put-extension"}
+        compiled_documents = {r["arguments"]["subjectId"]: (result(r).get("documentMutation") or {}).get("document")
+                              for r in calls(records, "unity.binding.compile@1.0", "S06", session, status="success")}
+
+        def compiled_extension_applied(subject, mutation):
+            op = applied.get(subject)
+            if op is None:
+                return False
+            if "document" in op:
+                return compiled_documents.get(subject) is not None and op["document"] == compiled_documents[subject]
+            return op.get("payloadBase64") == mutation["payloadBase64"]
+
+        f.check(all(compiled_extension_applied(subject, mutation) for subject, (_, mutation) in bindings.items()),
+                f"S07.{t}.compiled-extension-not-applied")
         f.check(set(bindings) <= objects, f"S07.{t}.bound-object-not-authored")
     plan = last(calls(records, "unity.projection.plan@1.0", "S08", session, status="success"))
     if f.check(plan, f"S08.{t}.no-plan"):
