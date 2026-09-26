@@ -26,6 +26,8 @@ artifacts="artifacts/h1-11-${label}"
   --containerRegistryImageVersion=3
 code=$?
 echo "H1_11_UNITY_PROCESS label=${label} exit=${code}"
+# The Editor container runs as root; keep the runner user's .NET/NuGet state writable for later stages.
+sudo chown -R "$(id -u):$(id -g)" "${HOME}/.local" "${HOME}/.nuget" 2>/dev/null || true
 
 python3 - "${artifacts}" "${fullname}" "${allow_skip}" <<'PY'
 import sys

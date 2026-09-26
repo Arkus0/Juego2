@@ -70,6 +70,14 @@ jobs:
           python3 Tools/AssetVault/h1_representative_slice.py self-test
           echo "H1_11_EXACT_SHA_GREEN ${TARGET_SHA}"
 
+      - name: Prepare the .NET toolchain before any root-owned Editor container
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore Juego2.sln --locked-mode
+          dotnet build tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj --no-restore --configuration Release
+          echo "H1_11_DOTNET_READY $(dotnet --version)"
+
       - name: Checkout exact private H1 asset baseline
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:

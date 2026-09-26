@@ -91,6 +91,17 @@ namespace Arkus.Harness.Tests
             Assert.Equal(baseline.GraphDigest, Text(observed, "graphDigest"));
             Assert.Equal(plan.Nodes.Length, ((IEnumerable<object?>)observed["nodes"]!).Count());
 
+            // The normalized observation that parity relies on covers the humanoid rig: every civilian's
+            // source-derived relationships carry its skinned mesh and both skinned material references.
+            foreach (var civilian in new[] { "civilian.idle", "civilian.walk", "civilian.sit" })
+            {
+                var node = ((IEnumerable<object?>)observed["nodes"]!).Cast<IReadOnlyDictionary<string, object?>>().Single(value => Text(value, "objectId") == civilian);
+                var relationships = ((IEnumerable<object?>)node["relationships"]!).Cast<IReadOnlyDictionary<string, object?>>().ToArray();
+                Assert.Contains(relationships, row => Text(row, "kind") == "mesh-reference" && Text(row, "relativeObjectPath") == "Mannequin" &&
+                    Text(row, "assetPath") == "Assets/Arkus/H1/SourceSlice/UAL1.fbx" && Text(row, "typeName") == "UnityEngine.Mesh");
+                Assert.Equal(2, relationships.Count(row => Text(row, "kind") == "material-reference" && Text(row, "relativeObjectPath") == "Mannequin"));
+            }
+
             var environment = H1ProjectEnvironmentProbe.Capture(profile, catalogue);
             var captured = new H1ProjectCheckpointStore(profile).CaptureFromObservation(snapshot, journal, environment, plan, observed);
             Assert.Equal("ready", captured.State);

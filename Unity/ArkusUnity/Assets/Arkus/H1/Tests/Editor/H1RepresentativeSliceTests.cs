@@ -32,6 +32,7 @@ namespace Arkus.H1.Editor.Tests
         private const string RemovedNode = "crate.stack";
         private const string ReplacedAsset = SourceRoot + "/Prop_Wagon.fbx";
         private const string ReplacedNode = "wagon.street";
+        private const string RiggedNode = "civilian.walk";
         private const int CaptureWidth = 960;
         private const int CaptureHeight = 540;
 
@@ -367,6 +368,30 @@ namespace Arkus.H1.Editor.Tests
                 File.WriteAllBytes(ProjectPath(ReplacedAsset), replacedBytes);
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
                 AssetDatabase.ImportAsset(ReplacedAsset, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            }
+
+            // 3. A humanoid's skinned material is rebound inside the published generation: the rig's source-derived
+            //    mesh/material relationships must expose it on the affected canonical node.
+            var scenePath = JsonUtility.FromJson<PublishedManifest>(File.ReadAllText(ProjectPath(ManifestPath))).scenePath;
+            var sceneBytes = File.ReadAllBytes(ProjectPath(scenePath));
+            try
+            {
+                var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+                var walker = scene.GetRootGameObjects()[0].GetComponentsInChildren<H1ManagedMarker>(true).Single(marker => marker.canonicalObjectId == RiggedNode);
+                var skinned = walker.GetComponentsInChildren<SkinnedMeshRenderer>(true).Single();
+                var materials = skinned.sharedMaterials;
+                materials[0] = AssetDatabase.LoadAssetAtPath<Material>(SourceRoot + "/FacadeImportedMaterial.mat");
+                skinned.sharedMaterials = materials;
+                EditorSceneManager.MarkSceneDirty(scene);
+                Assert.That(EditorSceneManager.SaveScene(scene), Is.True);
+                var rebound = Reconcile();
+                evidence.skinnedDiagnostics = Rows(rebound);
+                Assert.That(rebound.observation.diagnostics.Any(row => row.subject == RiggedNode), Is.True, string.Join(",", evidence.skinnedDiagnostics));
+            }
+            finally
+            {
+                File.WriteAllBytes(ProjectPath(scenePath), sceneBytes);
+                AssetDatabase.ImportAsset(scenePath, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
             }
 
             // Restoring the exact accepted bytes restores a clean observation of the same published generation.
@@ -717,8 +742,9 @@ namespace Arkus.H1.Editor.Tests
         [Serializable] private sealed class NegativeEvidence
         {
             public string schemaId; public string[] removedDiagnostics; public string removedMaterializeError; public string[] replacedDiagnostics;
-            public string replacedMaterializeError; public string[] recoveredDiagnostics;
+            public string replacedMaterializeError; public string[] skinnedDiagnostics; public string[] recoveredDiagnostics;
         }
+        [Serializable] private sealed class PublishedManifest { public string scenePath; }
         [Serializable] private sealed class StageEvidence
         {
             public string schemaId; public string inputDigest; public string canonicalHash; public string catalogueFingerprint; public string graphDigest; public string realizationDigest;
