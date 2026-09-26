@@ -1,0 +1,513 @@
+# WP-PA-B2 — BATCH CAUSAL FIXTURES
+
+Status: `WORKER CANDIDATE EVIDENCE`  
+Batch: `WP-PA-B2`  
+Units: PA-10 / PA-11 / PA-12  
+Date: 2026-09-26
+
+This file is research-oracle evidence. It does not claim runtime/Unity implementation, final schemas, numeric budgets, final UX or playable tuning.
+
+## 0. Batch invariant
+
+The three units must compose as one causal town:
+
+```text
+accepted actor/player/material/institutional cause
+        ↓
+PA-10: bounded causal continuation, actor-owned decisions, explicit termination
+        ↓
+PA-11: legitimate partial traces/testimony/anomalies, never debug-truth leakage
+        ↓
+player legitimately learns some aftermath
+        ↓
+PA-09 or PA-12: later local/macro intervention changes shared conditions again
+```
+
+PA-10 may not manufacture actor agency.  
+PA-11 may not manufacture knowledge by reading engine lineage.  
+PA-12 may not manufacture citizen attitudes/actions.
+
+---
+
+# Fixture B2-F1 — NPC-originated chain → missed-event reconstruction
+
+## Purpose
+
+Closes together:
+
+- PA-10 actor-originated `>=3` causal chain;
+- bounded participant recruitment;
+- explicit termination/stable aftermath;
+- PA-11 missed-event reconstruction from two independently useful channels;
+- false/stale testimony;
+- routine anomaly;
+- no omniscient engine lineage.
+
+## Starting state
+
+- Player is absent from the relevant area.
+- Bar F01 is inside a normal operating window.
+- `bar-service-stock` is depleted enough to degrade the relevant PA-07 service opportunity.
+- Carmen legitimately encounters the shortage through her current work/service context.
+- Manolo has a bounded relevant material/service relationship to a compatible replacement opportunity.
+- Antonio will later encounter one of the changed opportunities.
+- 1,000 irrelevant decoy actors may exist elsewhere in town/world data; they have no relationship/role/location/knowledge/opportunity relation to this shortage.
+
+## Chain
+
+### Step 1 — actor-owned root
+
+Carmen encounters the degraded service condition and PA-02 selects a legitimate action: request bounded replacement help from Manolo.
+
+**Owner:** PA-02 chooses Carmen's action; PA-07 owns shortage/service truth.  
+**PA-10 role:** record this accepted action as chain root and expose bounded continuation; it did not choose the request for Carmen.
+
+### Step 2 — bounded communication/recruitment
+
+Manolo is a valid candidate because the request targets a known relevant role/opportunity. The 1,000 decoys are not scanned/added semantically merely because they exist.
+
+Manolo receives the request through normal information flow and PA-02 chooses whether to help.
+
+For the positive run he chooses to help.
+
+### Step 3 — material consequence
+
+A legitimate transfer moves compatible replacement stock from Manolo's side to Bar F01.
+
+Consequences:
+
+- Bar F01's relevant service condition can recover according to PA-07;
+- Manolo's side loses/changes a bounded material/service opportunity;
+- the moved source item/lot keeps an ordinary visible source mark in this fixture because that mark belongs to the moved material, not because PA-11 spawns a clue.
+
+### Step 4 — downstream actor consequence
+
+Antonio later encounters one of the changed opportunities and PA-02 chooses wait/substitute/use another opportunity according to current state.
+
+The exact selected action is not frozen by PA-10; the oracle requires a materially different legitimate decision opportunity caused by the prior chain.
+
+### Step 5 — termination
+
+The chain terminates once:
+
+- the replacement transfer is settled;
+- the shortage/request is no longer unresolved;
+- no pending bounded participant/resource obligation remains that legitimately continues this incident.
+
+Already-caused material state and actor history remain. Termination does not rewind the town.
+
+## PA-10 positive oracle
+
+PASS iff all are true:
+
+1. Carmen's action is actor-owned, not storyteller-assigned.
+2. At least three causal changes/actions are linked by explicit reasons.
+3. Manolo is reached through bounded relevance, not global casting.
+4. Antonio's later opportunity differs because shared state changed.
+5. Chain reaches explicit terminal/stable state.
+6. 1,000 irrelevant decoys do not alter the candidate semantics.
+
+## PA-11 missed-event reconstruction
+
+Player returns after Step 5.
+
+### Independent channel A — Carmen testimony
+
+If accessible and remembered, Carmen can truthfully report her bounded first-hand facts:
+
+- she encountered the shortage;
+- she requested help from Manolo;
+- replacement arrived if she observed that arrival.
+
+She cannot report hidden Manolo motivation/decision inputs unless legitimately learned.
+
+### Independent channel B — physical/material trace
+
+The moved source-marked replacement material remains inspectable during the accepted reconstruction window.
+
+It supports the inference that material originating from Manolo's side reached Bar F01.
+
+This channel is generated by the real material transfer. It does not depend on Carmen's testimony.
+
+### Optional channel C — routine/material anomaly
+
+If the player knows Manolo's ordinary relevant service/material pattern, temporary depletion/delay on his side is an anomaly consistent with the transfer.
+
+It suggests but does not prove the canonical cause.
+
+## False/stale testimony
+
+Antonio did not witness Steps 1–3. He arrived after recovery and formed the plausible belief that the scheduled supplier finally delivered the stock.
+
+If asked before correction, Antonio reports that belief. PA-11 MUST NOT replace it with canonical truth from PA-10 debug lineage.
+
+## Clue-loss variant
+
+If Channel B is cleared/removed legitimately:
+
+- Channel A plus a legitimate Manolo-side witness/record/routine anomaly can still support reconstruction;
+- if enough independent channels are genuinely unavailable, uncertainty is permitted;
+- PA-11 must not spawn a magical replacement clue merely to force a solution.
+
+## PA-11 positive oracle
+
+PASS iff:
+
+1. at least two independently useful legitimate channels exist in the positive run;
+2. their provenance is independent enough that one is not merely a copy of the other;
+3. false testimony remains false/partial until normal information changes it;
+4. routine anomaly is evidence, not an automatic cause reveal;
+5. debug causal lineage is never exposed as player knowledge;
+6. evidence can remain ambiguous and notebook/UI need not auto-solve it.
+
+## Hard negatives
+
+FAIL if any occurs:
+
+- storyteller assigns Carmen/Manolo/Antonio their chain roles/actions after deciding the story;
+- PA-10 globally searches/casts irrelevant population;
+- chain has no termination/stable-state condition;
+- termination restores pre-chain state by fiat;
+- PA-11 creates a clue object after the fact solely because the solution needs one;
+- Antonio testimony reads canonical truth;
+- two repetitions of Carmen's report count as two independent channels;
+- a quest marker directly identifies Manolo because debug lineage knows him.
+
+---
+
+# Fixture B2-F2 — Story reservation collision inside an active causal chain
+
+## Purpose
+
+Confirms PA-10 composes with the already accepted B1 A11B-10 story/systemic rule rather than reopening or weakening it.
+
+## Given
+
+- B2-F1 root/shortage exists legitimately.
+- An authored GameFlow beat has an exclusive bounded reservation on Carmen and the Bar F01 back-room window.
+- A chain continuation would otherwise recruit Carmen into an incompatible systemic activity during that reservation.
+
+## Required policy
+
+The positive fixture selects `DEFER` for that conflicting Carmen allocation.
+
+```text
+real shortage/request/material cause remains
+ -> conflicting Carmen continuation is deferred
+ -> GameFlow owns only the bounded reservation
+ -> terminal/abort release occurs exactly once
+ -> no forced actor command survives release
+ -> PA-02/current owners re-evaluate current state
+ -> chain may continue, replan or terminate from actual current conditions
+```
+
+Other content may lawfully use `BLOCK`, `SUBSTITUTE` or `REPLAN` where semantically justified.
+
+## PASS oracle
+
+- causal history is preserved;
+- GameFlow does not become actor/material owner;
+- no actor remains stranded after reservation release;
+- no duplicate deferred command executes automatically;
+- chain can terminate if current state no longer justifies continuation.
+
+## Negative
+
+FAIL if story resolution rewrites “the shortage/request never happened”, commands Carmen after reservation release, or permanently prevents normal owner re-evaluation.
+
+---
+
+# Fixture B2-F3 — Governance macro → micro → causal aftermath
+
+## Purpose
+
+Closes:
+
+- PA-12 real shared rule/opportunity change;
+- same policy, asymmetric actor responses;
+- third-person consequence;
+- local player intervention changes aftermath;
+- PA-10 continuation only from legitimate actor causes;
+- PA-11 off-screen legibility without a policy truth feed.
+
+## Starting state
+
+- A municipal room/public area has one bounded evening allocation window.
+- Bar F01 and the surrounding area already expose normal PA-07/08 service/activity opportunities.
+- Antonio has compatible free time and knowledge of a social activity.
+- Manolo has a conflicting obligation in part of the same window.
+- Another actor previously uses or seeks the municipal room at that time.
+
+No actor has a preassigned `supportPolicy` / `opposePolicy` role.
+
+## Macro decision
+
+Through legitimate mayoral authority, player grants the room's evening window to a recurring community card/social activity for a bounded trial and allocates one small setup/resource support.
+
+PA-12 changes only explicit institutional conditions:
+
+```text
+scope: municipal room
+window: declared evening interval
+access/use: activity permitted
+capacity: declared finite amount
+setup/resource support: available
+activation + expiry/review: explicit
+```
+
+It does NOT change private belief/relationship/action.
+
+## Actor encounters and responses
+
+### Antonio
+
+Knows of the opportunity, has compatible time and may choose to attend/join through PA-02.
+
+### Manolo
+
+Encounters the same shared rule but has a real conflicting obligation. He may decline, seek another time or attend only if current state later changes.
+
+### Displaced actor
+
+Encounters the loss/reduction of their previous room opportunity and may request an alternative, complain, adapt, organise with another actor or ignore it according to normal agency/knowledge/relationship state.
+
+The policy itself does not choose which response occurs.
+
+## Third-person evidence
+
+When player leaves the office/meeting and walks through the normal town, at least one accepted consequence is observable through ordinary play:
+
+- room occupied/used under the new access condition;
+- actors present/absent due to their own decisions;
+- changed capacity pressure at Bar F01 or nearby activity opportunity;
+- a legitimate request/complaint/support interaction;
+- a moved/setup resource or other material implementation fact.
+
+A dashboard number alone is insufficient.
+
+## Local player intervention
+
+Player later performs an ordinary accepted local action, for example helping place the setup resource or mediating a capacity dispute.
+
+That action enters PA-09/shared owners. It can change implementation/aftermath without writing a hidden `policySuccess` truth.
+
+## PA-10 seam
+
+If the displaced actor chooses to request alternative access, another actor responds, and shared capacity changes again, PA-10 may group those **already legitimate** actions/deltas into a bounded chain.
+
+It cannot script “policy backlash” and assign actors to it.
+
+## PA-11 seam
+
+If part of the aftermath occurs while player is elsewhere, the player may later learn through legitimate channels:
+
+- visible use/changed access;
+- participant/affected-actor testimony limited to their knowledge;
+- a mundane allocation notice/record if the municipal decision naturally creates one;
+- routine/place anomaly.
+
+The mayor does not get an omniscient dashboard of private motives/reactions.
+
+## PASS oracle
+
+1. One institutional decision changes a real shared opportunity for multiple actors.
+2. At least two actors can respond differently because their owned inputs differ.
+3. At least one consequence enters ordinary third-person town play.
+4. Player can alter later implementation/aftermath through an ordinary local action.
+5. PA-10 continuation starts only from legitimate actor/domain causes.
+6. PA-11 exposes only earned evidence, not policy-engine truth.
+
+## Negatives
+
+FAIL if:
+
+- policy sets `Antonio.support = true`, `Manolo.oppose = true`;
+- all consequences exist only as approval/stat modifiers;
+- every named NPC has a bespoke policy branch;
+- entering/exiting the office directly commands future NPC actions;
+- player local action only changes a hidden policy meter with no shared-state consequence;
+- mayor UI reveals private actor reaction/motive without a legitimate channel.
+
+---
+
+# Fixture B2-F4 — Repeal is not a time machine
+
+## Given
+
+B2-F3 policy remains active long enough that:
+
+- some actors attend/decline;
+- setup resources move;
+- at least one commitment/request is fulfilled or missed;
+- legitimate actor knowledge/memory/social inputs may be produced by their owners.
+
+## When
+
+Player repeals or amends the room allocation.
+
+## Then
+
+- future access/capacity follows the new current institutional rule;
+- moved resources remain where current material state says they are until acted on;
+- already-held legitimate memories/beliefs/relationships/obligations are not deleted by governance;
+- previous PA-10 chains remain historical facts even if terminal;
+- recovery/reconciliation/reallocation happens through new current actions.
+
+## Negative
+
+FAIL if repeal loads a pre-policy snapshot for every affected subsystem.
+
+---
+
+# Fixture B2-F5 — Same town, two sustained trajectories
+
+## Purpose
+
+Covers emergent transformation without ideology-mode authority.
+
+Both runs start from equivalent town/actor state and use the same municipal primitives.
+
+## Run A — broader shared provision
+
+Repeated bounded choices:
+
+- allocate more shared access windows;
+- support selected public/community service/activity capacity;
+- fulfil public commitments where materially possible;
+- locally repair/mediate implementation conflicts.
+
+Allowed later outcome:
+
+- more recurring shared opportunities;
+- different service/activity rhythms;
+- legitimately caused cooperation/obligations/relationships where normal owners produce them;
+- still-finite capacity and potential conflict.
+
+## Run B — concentrated/selective access
+
+Repeated bounded choices:
+
+- allocate scarce rooms/resources to narrower uses;
+- restrict some access/windows;
+- withdraw selected shared support;
+- locally reinforce or refuse correction after legible consequences.
+
+Allowed later outcome:
+
+- different access/activity/service ecology;
+- substitutions, disengagement, resistance, opportunism or organisation through actor-owned decisions;
+- different later causal chains/opportunities.
+
+## PASS oracle
+
+After a bounded long horizon, runs may differ materially in:
+
+- rules/access;
+- service/activity availability;
+- routines/opportunities;
+- actor cooperation/resistance where legitimately caused;
+- later events/requests.
+
+Reviewer can explain the divergence from concrete causes.
+
+No global `communalTown`, `authoritarianTown`, `clientelistTown`, `chaosTown` or equivalent is required to drive behaviour.
+
+---
+
+# Fixture B2-F6 — Clumsy player versus persistent destabiliser
+
+## Run C — isolated mistake
+
+Player makes one low/medium-severity room-allocation mistake, receives legible feedback and amends it before repeated high-impact reinforcement.
+
+Expected:
+
+- inconvenience/material/social consequence may remain;
+- correction/restitution/adaptation is possible through normal owners;
+- no self-amplifying town-wide collapse follows solely from the one mistake.
+
+## Run D — sustained pressure
+
+From equivalent start, player repeatedly removes/redirects several important shared access/capacity/resource supports after legible feedback and continues to reinforce those choices locally.
+
+Expected:
+
+- stabilising mechanisms may be consumed/overcome;
+- actors/services reorganise through normal owners;
+- town may reach a materially degraded or radically different equilibrium;
+- PA-13 may bound concurrency/propagation, but must not restore default state by fiat;
+- resulting town remains a playable altered state wherever no specific authored hard fail is required.
+
+## Negative pair
+
+- If Run C routinely cascades to systemic collapse: **FAIL — accidental stability too weak.**
+- If Run D inevitably snaps back to default despite sustained strong causes: **FAIL — transformation agency too weak.**
+
+---
+
+# Cross-unit negative matrix
+
+| Attack | Required result |
+|---|---|
+| Event manager chooses actor + action + target, then calls it emergent | **FAIL** |
+| Chain recursively escalates with no terminal/stable condition | **FAIL** |
+| Recruitment semantics depend on scanning irrelevant population | **FAIL** |
+| Important chain changes state but can never leave any legitimate perceivable/trace surface | **FAIL** |
+| PA-11 displays debug causal lineage as player knowledge | **FAIL** |
+| Witness testimony auto-corrects from canonical truth | **FAIL** |
+| Same rumour copied through three NPCs counts as three independent channels | **FAIL** |
+| PA-11 rewrites event/world state to manufacture the correct clue | **FAIL** |
+| Policy changes only a global aggregate/approval modifier | **FAIL** |
+| Policy directly sets actor belief/relationship/action | **FAIL** |
+| Named ideology/town-mode flag substitutes for concrete rules and actor state | **FAIL** |
+| Policy repeal deletes already-caused history | **FAIL** |
+| One trivial mistake causes runaway collapse without reinforcing cause | **FAIL** |
+| Strong sustained causes are invisibly neutralised to restore default town | **FAIL** |
+| Separate overhead strategy mode is declared semantically required without an accepted task that needs it | **FAIL** |
+
+---
+
+# Batch acceptance mapping
+
+## PA-10
+
+- actor-originated 3+ chain: B2-F1;
+- player-originated same lifecycle: accepted B1 player-stock chain, referenced by PA-10 result;
+- bounded recruitment: B2-F1 decoy control;
+- termination/de-escalation: B2-F1 + PA-10 counterfactual result;
+- story constraint: B2-F2;
+- later legibility output: B2-F1.
+
+## PA-11
+
+- two independent channels: B2-F1 A+B;
+- false/stale testimony: B2-F1 Antonio;
+- routine anomaly: B2-F1 C;
+- clue loss: B2-F1 variant;
+- evidence != conclusion: B2-F1 oracle;
+- trace budget: unit result + PA-13 deferral.
+
+## PA-12
+
+- macro→micro third-person loop: B2-F3;
+- asymmetric actor response: B2-F3;
+- micro action alters aftermath: B2-F3;
+- off-screen governance legibility: B2-F3 PA-11 seam;
+- repeal/history: B2-F4;
+- divergent trajectories: B2-F5;
+- accidental safety vs deliberate transformation: B2-F6;
+- mind-control/dashboard/ideology negatives: cross-unit matrix.
+
+## Batch result
+
+The fixtures demonstrate a coherent research model in which:
+
+```text
+bounded chains can be legitimately reconstructed
+AND
+high-leverage governance changes shared conditions
+WITHOUT
+stealing actor action, causal history or knowledge authority
+```
+
+`BATCH_CAUSAL_FIXTURES: PASS_CANDIDATE`
