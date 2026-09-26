@@ -1,6 +1,6 @@
 # WP-H1-GATE — fresh AI-agent trial history and predecessor reopen routing
 
-Gate state: **NOT_READY / BLOCKED_ON_PREDECESSOR_REOPEN**. Owner decision (2026-09-26): reopen WP-H1-04 before any further trial.
+Gate state: **REOPEN RESOLVED — trial 2 on the final frozen SHA**. Owner decision (2026-09-26): reopen WP-H1-04 before any further trial. The reopen is merged (see below).
 
 ## Trial 1 — FAIL
 
@@ -41,3 +41,23 @@ Model persistence (7 turns) is a contributing factor, but it does not explain th
 - The owner decided to reopen WP-H1-04 before retrying: a fresh repair Worker for the causal owner, then that owner's own independent review.
 - The Gate repairs nothing. Once the reopened predecessor is accepted and merged, the Gate merges the new base, re-runs its deterministic validation on the new exact SHA, and repeats the single hosted trial on the final frozen SHA.
 - Trial 1 stays in the record. Any later PASS is reported together with this FAIL.
+
+## WP-H1-04 reopen 1 — resolution
+
+| Field | Value |
+| --- | --- |
+| PR | `#239` |
+| Frozen candidate | `ce3ba74efae28692d886a5e11366c7849695e9f6` |
+| Merge | `4ab82fb1c0a0d8654aaa44ebc66452a3507ef347` |
+| Review | Owner waived independent review for this correction only. The waiver record is `#5846142155` and the Worker pre-review is `#5846087974`. |
+| Exact-SHA evidence | Candidate Validation `36240609178`, Main Safety `36240509832`, and H1-07 `36240509836`, H1-09 `36240509853`, H1-10 `36240509838`, H1-11 `36240509869`, all GREEN. |
+| Record | `Docs/evidence/WP-H1-04/REOPEN_1_PUBLIC_DIAGNOSTICS.md` |
+
+How each routed gap was resolved (codes, capabilities, schemas and catalogue content are unchanged):
+
+- **R1**: `catalogue.page-bound` returns `context.minimumPageSize`/`maximumPageSize` (or the offset bounds) and a paging hint. Schema numeric bounds are not expressible in H0 `SchemaNode`, and this remains a named future decision.
+- **R2**: `catalogue.stale-snapshot` returns `context.currentSnapshotToken`, `fingerprint` and `restartOffset`, with a hint on the token protocol. Every catalogue error now has its own hint, and the misdirecting mapping hint is kept only for mapping faults.
+- **R3**: `catalogue.missing-reference` on the fixed managed scene names its role (`managedProjectionTarget`, `targetFor`: `binding.targetSceneId`, `sceneLogicalId`).
+- **R4**: a pre-launch encoder refusal keeps its projection code (`projection.source-missing` / `projection.reference-missing`) instead of `unity.lifecycle.corrupt-result`. Gate S12 now requires those exact codes for materialize, and `projection.source-missing` for a plan-relative observe, on both transports.
+
+The trial brief, protocol, model and route are unchanged from trial 1, so the retry measures the repaired public surface and not a re-tuned prompt.

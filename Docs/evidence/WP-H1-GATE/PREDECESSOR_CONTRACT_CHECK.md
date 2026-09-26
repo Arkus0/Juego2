@@ -32,7 +32,7 @@ The binding planning amendment is `Docs/workpacks/H1/H1_REMAINING_COMPRESSION_AM
 | H1-03 | `6d78ebc07e48419e279d4a17b93eeb099307316b` | `#168` | PASS `#5299906832` | `b52fe8f67bb74880af8ed2d734c1293869fd9f86` |
 | H1-03A | `24d24526487af0d32e69799960f4251e44f0b5ad` | `#176` | PASS `#5303016012` | `90428b803948820663abfebaa3fe21eb37596247` |
 | H1-04 | `8c6ffd61d17e832ed5b9f900e8c0f7d4e85bf5f5` | `#185` | PASS `#5306149043` | `4f172f7aa9e7c4a0909be046d095eac5477ad765` |
-| H1-04 reopen 1 (Gate trial 1 → R1–R4) | `ce3ba74efae28692d886a5e11366c7849695e9f6` | `#239` | owner-waived review (correction only; pre-review `#5846087974`) | `__H104_MERGE__` |
+| H1-04 reopen 1 (Gate trial 1 → R1–R4) | `ce3ba74efae28692d886a5e11366c7849695e9f6` | `#239` | owner-waived review (correction only; pre-review `#5846087974`) | `4ab82fb1c0a0d8654aaa44ebc66452a3507ef347` |
 | H1-ASSET-CLOUD | `e4d18002e6ca81f302daa645e306e9373debac92` (vault `Arkus0/Juego2-assets@ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6`) | `#201` | PASS `#5313800159` | `fe6ecd5e14ef2581fd8fbe8f87166d13d02109bd` |
 | H1-05 | `186224fbc3f53eb9c47ae528a56dcf3514af163f` | `#192` | PASS `#5308430565` | `7039adecac4e6e07d899247759d9b3c9fd3c2dae` |
 | H1-06 | `96de260021fb28ff2cc7da8d2ef488be419568b3` | `#195` | PASS `#5313437809` | `6d04581bc3916b376bedc0797258097cfb22c225` |

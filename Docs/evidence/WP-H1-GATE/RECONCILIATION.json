@@ -1010,7 +1010,15 @@
       "pr": "#185",
       "verdict": "PASS #5306149043",
       "mergeSha": "4f172f7aa9e7c4a0909be046d095eac5477ad765",
-      "consumedAs": "catalogue query/resolve (S05)"
+      "consumedAs": "catalogue query/resolve (S05)",
+      "reopen": {
+        "trigger": "WP-H1-GATE trial 1 FAIL (R1-R4)",
+        "pr": "#239",
+        "frozenCandidate": "ce3ba74efae28692d886a5e11366c7849695e9f6",
+        "review": "owner-waived for this correction only (#5846142155)",
+        "mergeSha": "4ab82fb1c0a0d8654aaa44ebc66452a3507ef347",
+        "consumedAs": "recoverable catalogue and pre-launch refusal diagnostics (S05, S12, AI trial)"
+      }
     },
     {
       "wp": "WP-H1-05",
