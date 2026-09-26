@@ -9,6 +9,8 @@
   "maxModelTurns": 90,
   "maxToolResultCharsShownToModel": 14000,
   "maxOutputTokensPerTurn": 6000,
+  "toolStrict": false,
+  "toolStrictBasis": "Relay fidelity correction after trial 3: every tool is offered with strict=false, declared explicitly, so the provider cannot apply strict function calling. Strict calling makes every property required and misrepresents the host's optional properties. The brief, model, route and all other limits are unchanged.",
   "requestTimeoutSeconds": 300,
   "providerRetries": 3,
   "userKickoff": "Begin the evaluation now. The public MCP host is already running and its tools are offered to you."

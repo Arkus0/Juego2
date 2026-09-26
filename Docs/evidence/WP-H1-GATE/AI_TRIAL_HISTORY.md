@@ -1,6 +1,6 @@
 # WP-H1-GATE — fresh AI-agent trial history and predecessor reopen routing
 
-Gate state: **trial 3 pending on the final frozen SHA**. Trial 1 FAIL led to the WP-H1-04 reopen (merged). Trial 2 FAIL led to the WP-HK-05 reopen (see below).
+Gate state: **trial 4 pending on the final frozen SHA**. Trial 1 FAIL led to the WP-H1-04 reopen (merged). Trial 2 FAIL led to the WP-HK-05 reopen (merged). Trial 3 FAIL led to a Gate-owned relay-fidelity correction (see below).
 
 ## Trial 1 — FAIL
 
@@ -98,3 +98,43 @@ The owner instructed the Worker to do whatever is needed to finish the Gate, and
 - The same PR restored the HK-05 exact-SHA route in CI, which was already RED because it required a fully clean tree.
 - A per-kind grammar violation now returns `context.operationKind`, `allowedFields`, `requiredFields` and `unexpectedFields`, plus a hint that object and extension data are separate `put-object` and `put-extension` operations. The grammar, code, message, path and schemas are unchanged.
 - The Gate repairs nothing itself. After the merge, it re-runs its deterministic validation on the new exact SHA and repeats the trial once on the final frozen SHA, with the same brief, protocol, model and route.
+
+## Trial 3 — FAIL
+
+| Field | Value |
+| --- | --- |
+| Candidate SHA | `84e6eda62f71870beaffc79ed019bcb94a0ceb37`, on base `5d48cb55` with WP-H1-04 and WP-HK-05 reopen 1 |
+| Deterministic Gate on the same SHA | run `36243305078` **GREEN**: 17 stages on reference + MCP; the S06 grammar probe is repairable on both transports; 20 static and 12 effective negative controls GREEN |
+| Trial run | run `36244597630` |
+| Model / route / brief | unchanged (`openai/gpt-5.6-luna-20260709` via OpenRouter; same brief digest) |
+| Model turns | 11 (the agent stopped by itself) |
+| Agent verdict | `FAIL` |
+| Hidden/private calls | none |
+
+Both predecessor corrections reached the agent:
+
+- It recovered the catalogue through `maximumPageSize` and `currentSnapshotToken`.
+- It fixed a binding dependency assertion by itself.
+- Every operation-grammar rejection now named `allowedFields`, `requiredFields` and `unexpectedFields`, for example `put-object` unexpected `[dependencies, owner, payloadBase64, schemaVersion, subjectId]`.
+
+The agent still re-sent the same unexpected properties with empty or zero values three times, and then stopped. It reported, verbatim: "The public authoring operation schema exposes all operation fields as required, but the server rejects those fields for put-object and put-extension according to their narrower grammars."
+
+## Classification of trial 3: Gate-owned relay fidelity
+
+The host does **not** publish those fields as required: the operation item requires only `kind`, and every other property is optional. Across trials 1–3, the model supplied **every** optional property of **every** tool with a zero value:
+
+- `offset: 0` and `expectedSnapshotToken: 0` on first catalogue pages; this is also the proximate trigger of trial 1's `stale-snapshot` loop;
+- `cursor: ""` and all empty filters on `world.object.query`, which returned `world.invalid_cursor`;
+- all union properties on every mutation operation.
+
+This is the behavioural signature of strict function calling, which turns every property into a required one. It also matches the agent's own description of the schema.
+
+The relay never declared `strict`, so the model's view of optionality depended on the provider's default. Faithful presentation of the public schema is the relay's job, and the relay is Gate-owned. So this is a **Gate-owned harness defect, not a product reopen**.
+
+Correction:
+
+- `AI_TRIAL_PROTOCOL.json` now carries `toolStrict: false`, and the relay declares `strict: false` explicitly on every offered tool.
+- The relay also records the provider and served model per turn.
+- The brief, model, route, limits and verifier are unchanged.
+
+The two predecessor reopens stand on their own merits. Their diagnostics were not repairable from the published contract; the trial evidence and the deterministic S06/S12 probes show that. The retry measures the same fresh agent with the host schema presented faithfully.

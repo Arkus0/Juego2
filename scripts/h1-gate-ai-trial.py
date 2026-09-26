@@ -225,9 +225,11 @@ def main():
             if name in by_openai:
                 raise RuntimeError("tool name collision after sanitizing: " + name)
             by_openai[name] = tool
+            # `strict` is declared explicitly (protocol `toolStrict`, false): strict function calling makes every
+            # property required, which would misrepresent the host's optional properties to the model.
             tools.append({"type": "function", "function": {
                 "name": name, "description": (tool.get("description") or "")[:1000],
-                "parameters": model_parameters(tool.get("inputSchema"))}})
+                "parameters": model_parameters(tool.get("inputSchema")), "strict": bool(protocol["toolStrict"])}})
         recorder.write({"event": "discovery", "protocolVersion": initialized.get("result", {}).get("protocolVersion"),
                         "canonicalKeys": sorted(t.get("_meta", {}).get("dev.arkus/canonicalKey", "") for t in listed),
                         "offeredToolNames": sorted(by_openai), "briefSha256": sha(brief), "protocolSha256": sha(PROTOCOL.read_bytes())})
@@ -238,7 +240,7 @@ def main():
             message = response["choices"][0]["message"]
             calls = message.get("tool_calls") or []
             recorder.write({"event": "model-message", "turn": turns, "responseId": response.get("id"),
-                            "model": response.get("model"), "content": message.get("content"),
+                            "model": response.get("model"), "provider": response.get("provider"), "content": message.get("content"),
                             "toolCalls": [{"id": c["id"], "name": c["function"]["name"], "arguments": c["function"].get("arguments")} for c in calls],
                             "usage": response.get("usage")})
             assistant = {"role": "assistant", "content": message.get("content") or ""}
