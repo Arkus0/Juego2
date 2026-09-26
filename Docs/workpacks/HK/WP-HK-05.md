@@ -7,6 +7,8 @@ Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 Baseline SHA: `dbd8121411079f22a01d5cb85345e180ff41f7e2`
 Implementation PR: `#26`
 
+Reopen 1 (2026-09-26, owner-waived independent review by owner instruction): WP-H1-GATE fresh-agent trial 2 showed that operation-grammar rejections were not repairable by a fresh public client. The correction adds structured field context and a hint; the grammar, codes and schemas are unchanged. See `Docs/evidence/WP-HK-05/REOPEN_1_GRAMMAR_DIAGNOSTICS.md`.
+
 Completion:
 - Reviewed candidate SHA: `23a9fd4373a803187cd9391b1459cd48975177f6`
 - Independent Reviewer verdict: `PASS` (PR review `#5257350871`)
