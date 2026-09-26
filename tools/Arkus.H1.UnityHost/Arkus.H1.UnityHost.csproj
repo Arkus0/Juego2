@@ -4,6 +4,7 @@
     <AssemblyName>Arkus.H1.UnityHost</AssemblyName>
     <RootNamespace>Arkus.H1.UnityHost</RootNamespace>
     <IsPackable>false</IsPackable>
+    <LangVersion>11.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Arkus.Harness.Projection/Arkus.Harness.Projection.csproj" />
