@@ -1,0 +1,345 @@
+name: H1-GATE Unity Parity Validation
+
+# Orchestration only: stage semantics live in scripts/h1-gate-scenario.py (public-wire driver),
+# scripts/h1-gate-verify.py (independent transcript/ledger verifier) and scripts/h1-gate-negative-controls.py.
+# Unity is launched exclusively by the product's fixed launcher behind the public `--h1-unity` hosts, which run
+# inside the pinned Unity image (the accepted H1-03A topology). No GameCI test helper, menu or direct Editor entry.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-gate-validation.yml'
+      - 'Docs/workpacks/H1/WP-H1-GATE.md'
+      - 'Docs/evidence/WP-H1-GATE/**'
+      - 'scripts/h1-gate-*'
+
+permissions:
+  contents: read
+
+concurrency:
+  # Shared with the AI trial so that at most one hosted Unity seat is active for this PR.
+  group: h1-gate-unity-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  h1-gate:
+    name: Exact H1-GATE deterministic reference scenario
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      PINNED_ASSET_VAULT_SHA: ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_COMMIT: 75c5dcf81523f31b3cca9d7cd16228a2b53de9a8
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      PINNED_UNITY_IMAGE: unityci/editor:ubuntu-6000.3.24f1-linux-il2cpp-3@sha256:0884a94ace0ce762a4f5d7d2424f71bf59f4319267716f22695acfb49c0b1ff5
+      ASSET_VAULT_TOKEN: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+    steps:
+      - name: Validate exact target and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact lowercase 40-hex'; exit 2; }
+          missing=0
+          for name in ASSET_VAULT_TOKEN UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+          EVIDENCE="${RUNNER_TEMP}/h1-gate-evidence"
+          MCP_PROJECT="${RUNNER_TEMP}/h1-gate-mcp-project"
+          UNITY_LICENSE_HOME="${RUNNER_TEMP}/h1-gate-unity-home"
+          mkdir -p "${EVIDENCE}" "${UNITY_LICENSE_HOME}"
+          chmod 0777 "${UNITY_LICENSE_HOME}"
+          {
+            echo "EVIDENCE=${EVIDENCE}"
+            echo "MCP_PROJECT=${MCP_PROJECT}"
+            echo "UNITY_LICENSE_HOME=${UNITY_LICENSE_HOME}"
+          } >> "${GITHUB_ENV}"
+
+      - name: Checkout exact public candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Setup .NET from global.json
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+
+      - name: Checkout exact private H1 asset baseline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Arkus0/Juego2-assets
+          ref: ${{ env.PINNED_ASSET_VAULT_SHA }}
+          token: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+          fetch-depth: 1
+          lfs: true
+          path: _asset_vault
+
+      - name: Stage 1 — clean checkout, H0 baseline, exact editor, package lock and adopted content hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '/_asset_vault/\n' >> .git/info/exclude
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          grep -Fxq 'm_EditorVersionWithRevision: 6000.3.24f1 (4e7b9b5b6244)' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          git diff --quiet "${TARGET_SHA}" -- Unity/ArkusUnity/Packages/packages-lock.json Unity/ArkusUnity/Packages/manifest.json
+          VAULT_SHA="$(git -C _asset_vault rev-parse HEAD)"
+          test "${VAULT_SHA}" = "${PINNED_ASSET_VAULT_SHA}"
+          python3 Tools/AssetVault/verify_h1_asset_vault.py \
+            --public-root . \
+            --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${VAULT_SHA}" \
+            --mount > /dev/null
+          python3 Tools/AssetVault/h1_representative_slice.py check --public-root . --vault-root _asset_vault
+          python3 Tools/AssetVault/h1_representative_slice.py sources --public-root .
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          sha = os.environ['TARGET_SHA']
+          receipt = {
+              'schemaId': 'arkus.h1-gate-stage-receipt@1', 'stage': 1, 'candidateSha': sha,
+              'headSha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+              'cleanTree': True, 'editor': '6000.3.24f1 (4e7b9b5b6244)', 'packagesLockMatchesCandidate': True,
+              'vaultSha': os.environ['PINNED_ASSET_VAULT_SHA'], 'vaultVerified': True, 'result': 'GREEN',
+          }
+          Path(os.environ['EVIDENCE'], 'stage-01.json').write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
+          PY
+          echo "H1_GATE_STAGE_01_GREEN ${TARGET_SHA} vault=${VAULT_SHA}"
+
+      - name: Stage 2 — remote H0 and bridge-neutral validation (unfiltered .NET suite)
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore Juego2.sln --locked-mode
+          dotnet build Juego2.sln --no-restore -c Release
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj -c Release --no-build --no-restore \
+            --logger "trx;LogFileName=stage-02.trx" --results-directory "${RUNNER_TEMP}/stage-02"
+          python3 - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          trx = Path(os.environ['RUNNER_TEMP'], 'stage-02', 'stage-02.trx').read_text(encoding='utf-8')
+          counters = re.search(r'<Counters ([^>]*)/>', trx).group(1)
+          values = dict(re.findall(r'(\w+)="(\d+)"', counters))
+          receipt = {'schemaId': 'arkus.h1-gate-stage-receipt@1', 'stage': 2, 'candidateSha': os.environ['TARGET_SHA'],
+                     'filter': 'none', 'total': int(values['total']), 'passed': int(values['passed']), 'failed': int(values['failed']),
+                     'result': 'GREEN' if int(values['failed']) == 0 and int(values['passed']) > 0 else 'RED'}
+          Path(os.environ['EVIDENCE'], 'stage-02.json').write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
+          print('H1_GATE_STAGE_02 ' + json.dumps(receipt, sort_keys=True))
+          assert receipt['result'] == 'GREEN'
+          PY
+          # The unfiltered suite may leave host-local H1 scratch state behind; the Gate baseline starts without it.
+          rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs \
+            Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes.meta Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta \
+            Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint Unity/ArkusUnity/Library/Arkus
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Install exact GameCI CLI, Unity image and licence-return scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          RETURN_STEPS_DIR="${RUNNER_TEMP}/h1-gate-gameci-steps"
+          mkdir -p "${RETURN_STEPS_DIR}"
+          for script in return_license.sh resolve_unity_path.sh licensing_method.sh; do
+            curl --fail --location --silent --show-error \
+              "https://raw.githubusercontent.com/game-ci/cli/${PINNED_GAMECI_COMMIT}/dist/platforms/ubuntu/steps/${script}" \
+              --output "${RETURN_STEPS_DIR}/${script}"
+          done
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+          echo "RETURN_STEPS_DIR=${RETURN_STEPS_DIR}" >> "${GITHUB_ENV}"
+          docker pull "${PINNED_UNITY_IMAGE}"
+          actual_digest="$(docker image inspect --format '{{index .RepoDigests 0}}' "${PINNED_UNITY_IMAGE}")"
+          case "${actual_digest}" in
+            *'@sha256:0884a94ace0ce762a4f5d7d2424f71bf59f4319267716f22695acfb49c0b1ff5') ;;
+            *) echo "::error::unexpected Unity image digest ${actual_digest}"; exit 2 ;;
+          esac
+
+      - name: Activate exact hosted Unity seat in an isolated home
+        shell: bash
+        run: |
+          set -euo pipefail
+          HOME="${UNITY_LICENSE_HOME}" "${PINNED_GAMECI_BIN}" activate Unity/ArkusUnity \
+            --engine=unity \
+            --target-platform StandaloneLinux64 \
+            --custom-image="${PINNED_UNITY_IMAGE}"
+          touch "${RUNNER_TEMP}/h1-gate-license-activated"
+          # Activation may inject the known GameCI Linux SDK packages. The Gate runs against the exact committed
+          # package set, so restore both files and prove the tracked tree equals the candidate before any stage.
+          sudo chown "$(id -u):$(id -g)" Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json || true
+          git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json
+          git diff --quiet "${TARGET_SHA}" --
+
+      - name: Stages 3-4 — public project inspection imports the project; composed discovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo --preserve-env=TARGET_SHA,PINNED_UNITY_IMAGE,UNITY_LICENSE_HOME,GITHUB_RUN_ID \
+            python3 scripts/h1-gate-scenario.py bootstrap --transport reference \
+              --workspace "${GITHUB_WORKSPACE}" --evidence "${EVIDENCE}"
+
+      - name: Stage 15 baseline — isolated project copy for the MCP path, taken from the same imported baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf "${MCP_PROJECT}"
+          sudo rsync -a --exclude '/.git/' --exclude '/_asset_vault/' "${GITHUB_WORKSPACE}/" "${MCP_PROJECT}/"
+          test -f "${MCP_PROJECT}/Juego2.sln"
+          test -d "${MCP_PROJECT}/Unity/ArkusUnity/Library"
+          test ! -e "${MCP_PROJECT}/Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes"
+          echo "H1_GATE_ISOLATED_MCP_PROJECT ${MCP_PROJECT}"
+
+      - name: Stages 3-14, 16 — reference (JSONL) public path
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo --preserve-env=TARGET_SHA,PINNED_UNITY_IMAGE,UNITY_LICENSE_HOME,GITHUB_RUN_ID \
+            python3 scripts/h1-gate-scenario.py scenario --transport reference \
+              --workspace "${GITHUB_WORKSPACE}" --evidence "${EVIDENCE}"
+
+      - name: Stages 3-14, 16 — MCP public path in the isolated project copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo --preserve-env=TARGET_SHA,PINNED_UNITY_IMAGE,UNITY_LICENSE_HOME,GITHUB_RUN_ID \
+            python3 scripts/h1-gate-scenario.py scenario --transport mcp \
+              --workspace "${MCP_PROJECT}" --evidence "${EVIDENCE}"
+
+      - name: Stage 15 — reference and MCP semantic deltas are equivalent
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo python3 scripts/h1-gate-scenario.py compare \
+            --reference "${EVIDENCE}" --mcp "${EVIDENCE}" --output "${EVIDENCE}/transport-equivalence.json"
+
+      - name: Purchased upstream source bytes are unchanged by every Gate Unity process
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo chown -R "$(id -u):$(id -g)" "${EVIDENCE}" Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice "${MCP_PROJECT}/Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice"
+          python3 Tools/AssetVault/h1_representative_slice.py sources --public-root .
+          python3 Tools/AssetVault/h1_representative_slice.py sources --public-root "${MCP_PROJECT}"
+
+      - name: Stage 17 — reconciliation, scope, workflow and static negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/h1-gate-verify.py reconcile
+          python3 scripts/h1-gate-verify.py scope --base "${BASE_SHA}"
+          python3 scripts/h1-gate-verify.py workflow
+          python3 scripts/h1-gate-negative-controls.py static
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          receipt = {'schemaId': 'arkus.h1-gate-stage-receipt@1', 'stage': 17, 'candidateSha': os.environ['TARGET_SHA'],
+                     'reconciliation': 'GREEN', 'scope': 'GREEN', 'workflow': 'GREEN', 'negativeControls': 'GREEN',
+                     'sourceBytes': 'GREEN', 'result': 'GREEN'}
+          Path(os.environ['EVIDENCE'], 'stage-17.json').write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
+          PY
+
+      - name: Independent evidence verification and effective negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/h1-gate-verify.py evidence --dir "${EVIDENCE}" --candidate-sha "${TARGET_SHA}"
+          python3 scripts/h1-gate-negative-controls.py evidence --dir "${EVIDENCE}" --candidate-sha "${TARGET_SHA}"
+
+      - name: Emit public-safe parity tuple and stage facts
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo chown -R "$(id -u):$(id -g)" "${EVIDENCE}" 2>/dev/null || true
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          evidence = Path(os.environ['EVIDENCE'])
+          for name in sorted(evidence.glob('*.json')):
+              if name.name.startswith('facts-'):
+                  facts = json.loads(name.read_text())
+                  print(f'H1_GATE_PARITY_TUPLE {name.name} ' + json.dumps(facts.get('parityTuple'), sort_keys=True))
+                  print(f'H1_GATE_H0S {name.name} ' + json.dumps(facts.get('h0sMeasurements'), sort_keys=True))
+                  print(f'H1_GATE_STAGES {name.name} ' + ','.join(sorted(facts.get('stages', {}))) + ' result=' + str(facts.get('result')))
+              elif name.name.startswith(('stage-', 'transport-')):
+                  print(f'H1_GATE_RECEIPT {name.name} ' + json.dumps(json.loads(name.read_text()), sort_keys=True))
+          for transcript in sorted(evidence.glob('transcript-*.jsonl')):
+              for line in transcript.read_text().splitlines():
+                  record = json.loads(line)
+                  if record.get('event') == 'call' and record['outcome'].get('status') != 'success':
+                      print(f'H1_GATE_ERROR_FRAME {transcript.name} {record["stage"]} {record["label"]} ' +
+                            json.dumps(record['outcome'].get('error', record['outcome']), sort_keys=True)[:1500])
+          PY
+
+      - name: Upload public-safe Gate evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: h1-gate-evidence-${{ env.TARGET_SHA }}
+          path: ${{ env.EVIDENCE }}
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Return hosted Unity seat with pinned GameCI licensing step
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f "${RUNNER_TEMP}/h1-gate-license-activated" ]]; then
+            mkdir -p "${GITHUB_WORKSPACE}/_activate-license~"
+            set +e
+            docker run --rm \
+              --workdir /github/workspace \
+              --volume "${UNITY_LICENSE_HOME}:/root" \
+              --volume "${GITHUB_WORKSPACE}:/github/workspace" \
+              --volume "${RETURN_STEPS_DIR}:/steps:ro" \
+              --env STEPS_DIR=/steps \
+              --env ACTIVATE_LICENSE_PATH=/github/workspace/_activate-license~ \
+              --env UNITY_EMAIL \
+              --env UNITY_PASSWORD \
+              --env UNITY_LICENSE \
+              --env GAME_CI_ACTIVATED_VIA=personal \
+              --env UNITY_LICENSE_RETRY_MAX_ATTEMPTS=2 \
+              "${PINNED_UNITY_IMAGE}" \
+              bash -lc 'source /steps/return_license.sh' \
+              2>&1 | tee "${RUNNER_TEMP}/return-license.log"
+            rc=${PIPESTATUS[0]}
+            set -e
+            test "${rc}" -eq 0 || { echo "::error::pinned license return script exit=${rc}"; exit 1; }
+            grep -Eq 'Successfully returned ULF license|Successfully returned floating license|Successfully returned the entitlement license|License has been returned|No Personal license seat was held - nothing to return' "${RUNNER_TEMP}/return-license.log" || {
+              echo '::error::license return did not prove success or no-held-seat'; exit 1;
+            }
+            sudo rm -rf "${GITHUB_WORKSPACE}/_activate-license~" || true
+          fi
+
+      - name: Delete private source, generated projection and the isolated copy
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf "${MCP_PROJECT}" _asset_vault
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes.meta Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta
+          sudo rm -rf Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint
+          sudo chown -R "$(id -u):$(id -g)" Unity/ArkusUnity 2>/dev/null || true
+          git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          git status --porcelain --untracked-files=no
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo 'H1_GATE_EPHEMERAL_STATE_REMOVED'
