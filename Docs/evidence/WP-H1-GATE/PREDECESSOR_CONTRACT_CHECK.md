@@ -130,6 +130,8 @@ Fresh repair Worker, owner-invoked. The prior Worker stopped at the frozen candi
   - `SUPPLEMENTARY_CAPTURE.jpg`, sha256 `a5d42476…`, from run `36230271886` (`Docs/evidence/WP-H1-11/EFFECTIVE_EVIDENCE.md`);
   - the manifest, `REPRESENTATIVE_SLICE.json`.
 
+- **WP-H1-UNITY-CI** (PASS `#5299167558`, merge `6898250b…`). With the pinned GameCI v0.1.69 and the pinned image, exactly one tool-generated package delta is admitted in `manifest.json`/`packages-lock.json`: the known Linux platform-package injection. That delta must be reconciled exactly before restore. The rule does not widen to other deltas (`Docs/workpacks/H1/WP-H1-UNITY-CI.md`). The accepted H1-03, H1-03A and H1-ASSET-CLOUD workflows pin the same delta.
+
 **Newly owned by this repair (Gate-owned evidence only, no product change).**
 
 - **S03.** The Gate enumerates the effective package/assembly universe of the exact Editor process that the public inspection launched. It reads:
@@ -142,6 +144,15 @@ Fresh repair Worker, owner-invoked. The prior Worker stopped at the frozen candi
   - every Gate Unity process's Editor log must have been read;
   - the rendered capture is bound by digest to the accepted H1-11 capture;
   - every source and clip the Gate slice authors must belong to the manifest that capture rendered.
+
+**Finding from the first hosted run of the new S03 (run `36263502504` on `0de5983f`).**
+- The effective universe is 9 packages: the frozen 5 plus that exact injection.
+- The first version of the check compared against the working-tree lock, which the Editor had already rewritten, so it was self-referential. It went green for the wrong reason.
+- The Gate workflow had also restored the package files silently in its final cleanup, without the UNITY-CI reconciliation.
+- The fix, all Gate-owned:
+  - the oracle reads the lock and the asmdef/script layout from the candidate commit;
+  - it admits only "frozen" or "frozen + exact injection";
+  - a `drift` step reconciles the tracked files against the same exact delta before restoring them, with C1/C7 controls.
 
 **Consumed, not re-proved.** H1-02's pinned baseline, H1-03A's launcher/lifecycle and H1-11's capture are consumed as accepted. The Gate does not add a public enumeration or rendering capability. It does not call H1-02's or H1-11's private proof stages.
 

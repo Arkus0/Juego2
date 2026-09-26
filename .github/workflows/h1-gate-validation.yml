@@ -184,6 +184,8 @@ jobs:
           touch "${RUNNER_TEMP}/h1-gate-license-activated"
           # Activation may inject the known GameCI Linux SDK packages. The Gate runs against the exact committed
           # package set, so restore both files and prove the tracked tree equals the candidate before any stage.
+          # The same known injection also happens inside the Gate's own Editor processes. It is reconciled after
+          # them (`h1-gate-verify.py drift`), and stage 3 admits it explicitly in the effective package universe.
           sudo chown "$(id -u):$(id -g)" Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json || true
           git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json
           git diff --quiet "${TARGET_SHA}" --
@@ -237,6 +239,15 @@ jobs:
           sudo chown -R "$(id -u):$(id -g)" "${EVIDENCE}" Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice "${MCP_PROJECT}/Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice"
           python3 Tools/AssetVault/h1_representative_slice.py sources --public-root .
           python3 Tools/AssetVault/h1_representative_slice.py sources --public-root "${MCP_PROJECT}"
+
+      - name: Tracked Unity drift is none or exactly the known GameCI platform injection, then restore
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo chown "$(id -u):$(id -g)" Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json || true
+          python3 scripts/h1-gate-verify.py drift --candidate-sha "${TARGET_SHA}"
+          git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json
+          git diff --quiet "${TARGET_SHA}" --
 
       - name: Stage 17 — reconciliation, scope, workflow and static negative controls
         shell: bash

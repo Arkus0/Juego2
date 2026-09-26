@@ -165,9 +165,66 @@ def static_controls():
     env = mirror_root({".github/workflows/h1-gate-validation.yml":
                        lambda text: text.replace("dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj", "echo dotnet-test-declared")})
     expect_red("remote-validation-removed", "C1", ["workflow"], "WORKFLOW.stage-not-executed.S02-remote-validation", env)
+    env = mirror_root({".github/workflows/h1-gate-validation.yml":
+                       lambda text: text.replace("python3 scripts/h1-gate-verify.py drift", "true # drift declared")})
+    expect_red("tracked-drift-reconciliation-removed", "C1", ["workflow"], "WORKFLOW.stage-not-executed.tracked-drift-reconciliation", env)
+
+    # Tracked Unity drift on a real worktree of the candidate: the exact accepted GameCI injection is GREEN; an
+    # undeclared package or any other tracked path is RED.
+    drift_controls()
 
     # C5 on synthetic trial artifacts: proves verifier sensitivity before the real trial exists.
     synthetic_trial_controls()
+
+
+def drift_controls():
+    candidate = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    manifest_path = "Unity/ArkusUnity/Packages/manifest.json"
+    lock_path = "Unity/ArkusUnity/Packages/packages-lock.json"
+    injection_manifest = {"com.unity.sdk.linux-arm64": "1.1.0", "com.unity.sdk.linux-x86_64": "1.1.0",
+                          "com.unity.toolchain.linux-x86_64-linux": "1.1.0"}
+    registry = {"source": "registry", "url": "https://packages.unity.com"}
+    injection_lock = {
+        "com.unity.sdk.linux-arm64": dict(registry, version="1.1.0", depth=0, dependencies={"com.unity.sysroot.base": "1.1.0"}),
+        "com.unity.sdk.linux-x86_64": dict(registry, version="1.1.0", depth=0, dependencies={"com.unity.sysroot.base": "1.1.0"}),
+        "com.unity.sysroot.base": dict(registry, version="1.1.0", depth=1, dependencies={}),
+        "com.unity.toolchain.linux-x86_64-linux": dict(registry, version="1.1.0", depth=0, dependencies={"com.unity.sysroot.base": "1.1.0"}),
+    }
+
+    def worktree(mutate):
+        target = Path(tempfile.mkdtemp(prefix="h1-gate-drift-")) / "tree"
+        subprocess.run(["git", "worktree", "add", "--detach", str(target), candidate], cwd=ROOT, check=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        manifest = json.loads((target / manifest_path).read_text(encoding="utf-8"))
+        lock = json.loads((target / lock_path).read_text(encoding="utf-8"))
+        manifest["dependencies"].update(injection_manifest)
+        lock["dependencies"].update(copy.deepcopy(injection_lock))
+        mutate(target, manifest, lock)
+        (target / manifest_path).write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+        (target / lock_path).write_text(json.dumps(lock, indent=2) + "\n", encoding="utf-8")
+        return target
+
+    def remove(target):
+        subprocess.run(["git", "worktree", "remove", "--force", str(target)], cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    exact = worktree(lambda target, manifest, lock: None)
+    expect_green("drift-exact-gameci-injection", ["drift", "--candidate-sha", candidate, "--worktree", str(exact)])
+    remove(exact)
+
+    def extra_package(target, manifest, lock):
+        lock["dependencies"]["com.example.undeclared"] = dict(registry, version="9.9.9", depth=0, dependencies={})
+    undeclared = worktree(extra_package)
+    expect_red("undeclared-package-drift", "C7", ["drift", "--candidate-sha", candidate, "--worktree", str(undeclared)],
+               "DRIFT.not-the-known-gameci-injection")
+    remove(undeclared)
+
+    def other_path(target, manifest, lock):
+        version = target / "Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt"
+        version.write_text(version.read_text(encoding="utf-8") + "# drift\n", encoding="utf-8")
+    other = worktree(other_path)
+    expect_red("unexpected-tracked-drift", "C7", ["drift", "--candidate-sha", candidate, "--worktree", str(other)],
+               "DRIFT.unexpected-tracked-path")
+    remove(other)
 
 
 def synthetic_trial(directory, candidate, mutate=None):
@@ -264,6 +321,14 @@ def evidence_controls(directory, candidate):
         record["registeredCount"] = len(record["packages"])
     control("package-universe-shrinks", "C6", mutate_universe("bootstrap", "reference-bootstrap", drop_package),
             "S03.bootstrap.package-universe-differs-from-lock")
+
+    # C7: a package outside the frozen lock and the accepted GameCI injection is registered in the Editor process.
+    def extra_package(record):
+        record["packages"].append({"name": "com.example.undeclared", "version": "9.9.9", "section": "Packages from [https://packages.unity.com]",
+                                   "location": "Library/PackageCache/com.example.undeclared@0", "inProject": True, "present": True})
+        record["registeredCount"] = len(record["packages"])
+    control("undeclared-package-registered", "C7", mutate_universe("mcp", "mcp-a", extra_package),
+            "S03.mcp.package-universe-differs-from-lock")
 
     # C6: a project assembly the repository declares is missing from the enumerated compiled universe.
     control("project-assembly-omitted", "C6",

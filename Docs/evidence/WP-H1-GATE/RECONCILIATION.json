@@ -1114,7 +1114,7 @@
     },
     {
       "stage": 3,
-      "executedBy": "driver bootstrap + each transport: public project-profile.inspect + operation-status, then the effective package/assembly universe of that Editor process (Unity Package Manager registration in its log, registered package asmdefs, Library/ScriptAssemblies), checked against packages-lock.json and the repository asmdef/script layout",
+      "executedBy": "driver bootstrap + each transport: public project-profile.inspect + operation-status, then the effective package/assembly universe of that Editor process (Unity Package Manager registration in its log, registered package asmdefs, Library/ScriptAssemblies), checked against the candidate commit's packages-lock.json (plus only the exact accepted WP-H1-UNITY-CI GameCI platform injection) and asmdef/script layout",
       "evidence": "transcript-bootstrap/reference/mcp (effective-universe events)"
     },
     {
@@ -1184,7 +1184,7 @@
     },
     {
       "stage": 17,
-      "executedBy": "workflow: verifier, negative controls, reconciliation, scope, source-byte re-verification",
+      "executedBy": "workflow: verifier, negative controls, reconciliation, scope, source-byte re-verification, tracked Unity drift reconciled against the exact accepted GameCI injection before restore",
       "evidence": "stage-17.json"
     }
   ],

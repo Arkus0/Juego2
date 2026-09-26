@@ -16,6 +16,7 @@ Subcommands:
   scope     --base SHA                      candidate diff stays inside Gate-owned paths (no product change)
   reconcile                                 residual/dependency reconciliation against discovered sources
   trial     --dir DIR --candidate-sha SHA   fresh AI-agent trial transcript binding and public-only use
+  drift     --candidate-sha SHA [--worktree DIR]  tracked Unity drift is none or exactly the known GameCI injection
 
 Every RED names stable reason codes on stderr (`H1_GATE_VERIFY_RED <code> ...`).
 """
@@ -33,6 +34,9 @@ from pathlib import Path
 
 # Negative controls point the verifier at a mutated copy of the governing documents through this override.
 ROOT = Path(os.environ.get("H1_GATE_VERIFY_ROOT") or Path(__file__).resolve().parents[1])
+# The candidate's own Git objects. Unity rewrites the working-tree package files while it runs, so frozen candidate
+# inputs are always read from the commit, never from the working tree.
+REPO = Path(__file__).resolve().parents[1]
 PARITY_DOC = "Docs/engineering/H1_UNITY_PARITY_GATE.md"
 ADR = "Docs/architecture/ADR-H1-004-PUBLIC-EDITOR-EXECUTION-SEAM.md"
 RECONCILIATION = "Docs/evidence/WP-H1-GATE/RECONCILIATION.json"
@@ -77,10 +81,26 @@ WORKER_EXECUTORS = {
 }
 TRANSPORTS = ("reference", "mcp")
 
-# Stage 3: universes the driver does not control. The package lock is frozen with the candidate (stage 1 proves it is
-# unchanged); the asmdef/script layout of the repository's own Unity project is read from the candidate tree.
+# Stage 3: universes the driver does not control. The package lock and the asmdef/script layout of the repository's
+# own Unity project are read from the candidate commit.
+PACKAGE_MANIFEST = "Unity/ArkusUnity/Packages/manifest.json"
 PACKAGE_LOCK = "Unity/ArkusUnity/Packages/packages-lock.json"
 PROJECT_ASSETS = "Unity/ArkusUnity/Assets"
+# Accepted WP-H1-UNITY-CI isolation exception: with the pinned GameCI v0.1.69 and the pinned Unity image, the Editor adds
+# exactly these Linux platform packages to the project. The accepted H1-03, H1-03A and H1-ASSET-CLOUD workflows pin the
+# same delta. Any other package delta is RED.
+GAMECI_MANIFEST_INJECTION = {"com.unity.sdk.linux-arm64": "1.1.0", "com.unity.sdk.linux-x86_64": "1.1.0",
+                             "com.unity.toolchain.linux-x86_64-linux": "1.1.0"}
+GAMECI_LOCK_INJECTION = {
+    "com.unity.sdk.linux-arm64": {"version": "1.1.0", "depth": 0, "source": "registry",
+                                  "dependencies": {"com.unity.sysroot.base": "1.1.0"}, "url": "https://packages.unity.com"},
+    "com.unity.sdk.linux-x86_64": {"version": "1.1.0", "depth": 0, "source": "registry",
+                                   "dependencies": {"com.unity.sysroot.base": "1.1.0"}, "url": "https://packages.unity.com"},
+    "com.unity.sysroot.base": {"version": "1.1.0", "depth": 1, "source": "registry", "dependencies": {},
+                               "url": "https://packages.unity.com"},
+    "com.unity.toolchain.linux-x86_64-linux": {"version": "1.1.0", "depth": 0, "source": "registry",
+                                               "dependencies": {"com.unity.sysroot.base": "1.1.0"}, "url": "https://packages.unity.com"},
+}
 # Stage 16 (parity-gate amendment): the supplementary rendered capture is the accepted WP-H1-11 capture, bound by the
 # digest its accepted evidence records, of the same representative selected-item manifest the Gate slice draws from.
 H1_11_CAPTURE = "Docs/evidence/WP-H1-11/SUPPLEMENTARY_CAPTURE.jpg"
@@ -198,38 +218,43 @@ def editor_compatible(definition):
     return "Editor" in include if include else "Editor" not in exclude
 
 
-def locked_packages(root=ROOT):
-    path = root / PACKAGE_LOCK
-    if not path.is_file():
-        return None
-    return json.loads(path.read_text(encoding="utf-8"))["dependencies"]
+def committed_text(candidate, path, repo=REPO):
+    completed = subprocess.run(["git", "show", f"{candidate}:{path}"], cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    return completed.stdout if completed.returncode == 0 else None
 
 
-def project_assemblies(root=ROOT):
-    """Script assemblies the repository's Unity project must compile in the Editor: every Editor-compatible asmdef, plus
+def locked_packages(candidate, repo=REPO):
+    text = committed_text(candidate, PACKAGE_LOCK, repo)
+    return json.loads(text)["dependencies"] if text is not None else None
+
+
+def project_assemblies(candidate, repo=REPO):
+    """Script assemblies the candidate's Unity project must compile in the Editor: every Editor-compatible asmdef, plus
     Unity's predefined assembly for each script outside any asmdef/asmref folder."""
-    assets = root / PROJECT_ASSETS
-    if not assets.is_dir():
+    listed = subprocess.run(["git", "ls-tree", "-r", "--name-only", candidate, "--", PROJECT_ASSETS + "/"], cwd=repo,
+                            text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    if listed.returncode != 0 or not listed.stdout.strip():
         return None
+    files = [Path(line).relative_to(PROJECT_ASSETS) for line in listed.stdout.splitlines()]
     required, covered = set(), set()
-    for path in sorted(assets.rglob("*.asmdef")) + sorted(assets.rglob("*.asmref")):
-        if unity_ignored(path.relative_to(assets).parts[:-1]):
+    for path in files:
+        if path.suffix not in (".asmdef", ".asmref") or unity_ignored(path.parts[:-1]):
             continue
         covered.add(path.parent)
         if path.suffix == ".asmdef":
-            definition = json.loads(path.read_text(encoding="utf-8-sig"))
+            definition = json.loads(committed_text(candidate, f"{PROJECT_ASSETS}/{path.as_posix()}", repo).lstrip("\ufeff"))
             if editor_compatible(definition):
                 required.add(definition["name"] + ".dll")
-    for script in sorted(assets.rglob("*.cs")):
-        parts = script.relative_to(assets).parts
-        if unity_ignored(parts[:-1]) or any(parent in covered for parent in script.parents):
+    for script in files:
+        parts = script.parts
+        if script.suffix != ".cs" or unity_ignored(parts[:-1]) or any(parent in covered for parent in script.parents):
             continue
         firstpass = parts[0] in ("Plugins", "Standard Assets", "Pro Standard Assets")
         required.add("Assembly-CSharp" + ("-Editor" if "Editor" in parts[:-1] else "") + ("-firstpass" if firstpass else "") + ".dll")
     return required
 
 
-def check_effective_universe(f, records, session, t, inspection, root=ROOT):
+def check_effective_universe(f, records, session, t, inspection, candidate):
     """Stage 3: the effective package/assembly universe of the Editor process that the public inspection launched."""
     universes = [r for r in records if r.get("event") == "effective-universe" and r.get("session") == session and
                  r.get("invocationId") == inspection["outcome"]["result"].get("invocationId") and r["seq"] > inspection["seq"]]
@@ -240,21 +265,24 @@ def check_effective_universe(f, records, session, t, inspection, root=ROOT):
     names = [row["name"] for row in packages]
     f.check(packages and universe.get("registeredCount") == len(packages) and len(set(names)) == len(names),
             f"S03.{t}.package-registration-incomplete", f"{universe.get('registeredCount')}!={len(packages)}")
-    lock = locked_packages(root)
+    lock = locked_packages(candidate)
     if f.check(lock is not None, "S03.package-lock-missing"):
         effective = {row["name"]: row["version"] for row in packages}
         frozen = {name: row.get("version") for name, row in lock.items()}
-        f.check(effective == frozen, f"S03.{t}.package-universe-differs-from-lock",
-                ",".join(sorted(f"{k}@{v}" for k, v in set(effective.items()) ^ set(frozen.items()))))
+        # The frozen lock alone, or the frozen lock plus exactly the accepted GameCI platform injection.
+        admitted = [frozen, dict(frozen, **{name: row["version"] for name, row in GAMECI_LOCK_INJECTION.items()})]
+        f.check(effective in admitted, f"S03.{t}.package-universe-differs-from-lock",
+                ",".join(sorted(f"{k}@{v}" for k, v in set(effective.items()) ^ set(admitted[-1].items()))))
+        sources = dict(GAMECI_LOCK_INJECTION, **lock)
         for row in packages:
-            source = lock.get(row["name"], {}).get("source")
-            expected = {"builtin": "Built-in packages", "registry": f"Packages from [{lock.get(row['name'], {}).get('url')}]"}.get(source)
+            source = sources.get(row["name"], {}).get("source")
+            expected = {"builtin": "Built-in packages", "registry": f"Packages from [{sources.get(row['name'], {}).get('url')}]"}.get(source)
             f.check(expected is None or row.get("section") == expected, f"S03.{t}.package-source-differs", row["name"])
     absent = [row["name"] for row in packages if not (row.get("inProject") and row.get("present"))]
     f.check(not absent, f"S03.{t}.package-location-not-effective", ",".join(absent))
 
     compiled = set(universe.get("compiledAssemblies", []))
-    project = project_assemblies(root)
+    project = project_assemblies(candidate)
     if f.check(project is not None, "S03.project-layout-missing"):
         required, optional = set(project), set()
         for definition in universe.get("packageAssemblyDefinitions", []):
@@ -271,7 +299,7 @@ def check_effective_universe(f, records, session, t, inspection, root=ROOT):
     return {"packages": sorted((row["name"], row["version"], row.get("section")) for row in packages), "compiled": sorted(compiled)}
 
 
-def check_s03(f, records, session, t, root=ROOT):
+def check_s03(f, records, session, t, candidate):
     inspect = [r for r in calls(records, "unity.host.project-profile.inspect@1.0", "S03", session) if result(r)]
     row = one(f, inspect, f"S03.{t}.no-effective-inspection")
     if not row:
@@ -282,7 +310,7 @@ def check_s03(f, records, session, t, root=ROOT):
     status = [r for r in calls(records, "unity.lifecycle.operation-status@1.0", "S03", session)
               if r["arguments"].get("invocationId") == value.get("invocationId") and result(r)]
     f.check(status and result(status[-1]).get("status") == "completed", f"S03.{t}.lifecycle-recovery")
-    return check_effective_universe(f, records, session, t, row, root)
+    return check_effective_universe(f, records, session, t, row, candidate)
 
 
 def check_s04(f, records, session, t, required):
@@ -591,7 +619,7 @@ def verify_evidence(directory, candidate, root=ROOT):
     bootstrap = directory / "transcript-bootstrap.jsonl"
     if f.check(bootstrap.is_file(), "S03.bootstrap-transcript-missing"):
         records = load_transcript(bootstrap)
-        bootstrap_universe = check_s03(f, records, "reference-bootstrap", "bootstrap", root)
+        bootstrap_universe = check_s03(f, records, "reference-bootstrap", "bootstrap", candidate)
         check_s04(f, records, "reference-bootstrap", "bootstrap", required)
         check_hosts(f, records, "reference")
 
@@ -604,7 +632,7 @@ def verify_evidence(directory, candidate, root=ROOT):
         records = load_transcript(path)
         ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
         check_hosts(f, records, t)
-        universe = check_s03(f, records, f"{t}-a", t, root)
+        universe = check_s03(f, records, f"{t}-a", t, candidate)
         check_s04(f, records, f"{t}-a", t, required)
         check_s04(f, records, f"{t}-b", t, required)
         plan, bindings = check_s05_s08(f, records, f"{t}-a", t)
@@ -653,6 +681,7 @@ REQUIRED_WORKFLOW = [
     (r"h1-gate-verify\.py reconcile", "reconciliation"),
     (r"dotnet test tests/Arkus\.Harness\.Tests/Arkus\.Harness\.Tests\.csproj", "S02-remote-validation"),
     (r"verify_h1_asset_vault\.py", "S01-vault-verify"),
+    (r"h1-gate-verify\.py drift", "tracked-drift-reconciliation"),
 ]
 
 
@@ -815,6 +844,38 @@ def verify_reconcile(root=ROOT, reconciliation_path=None):
     f.finish(f"reconcile residuals={len(rows)} discovered={len(discovered)} dependencies={len(dependencies)} stages={len(stage_rows)}")
 
 
+# ----- tracked Unity drift -----------------------------------------------------------------------------------------
+
+def verify_drift(candidate, worktree=REPO):
+    """After the Gate's Unity processes: tracked drift is none, or exactly the accepted GameCI platform injection in the
+    two package files (WP-H1-UNITY-CI isolation rule). The workflow restores both files only after this is GREEN."""
+    f = Findings()
+    worktree = Path(worktree)
+    status = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=worktree, text=True)
+    changed = {line[3:] for line in status.splitlines() if len(line) >= 4}
+    allowed = {PACKAGE_MANIFEST, PACKAGE_LOCK}
+    f.check(changed <= allowed, "DRIFT.unexpected-tracked-path", ",".join(sorted(changed - allowed)))
+    disposition = "NONE"
+    for path, injection, section in ((PACKAGE_MANIFEST, GAMECI_MANIFEST_INJECTION, "dependencies"),
+                                     (PACKAGE_LOCK, GAMECI_LOCK_INJECTION, "dependencies")):
+        if path not in changed:
+            continue
+        baseline_text = committed_text(candidate, path, worktree)
+        if not f.check(baseline_text is not None, "DRIFT.candidate-file-missing", path):
+            continue
+        baseline = json.loads(baseline_text)
+        expected = json.loads(baseline_text)
+        expected[section].update(copy_json(injection))
+        current = json.loads((worktree / path).read_text(encoding="utf-8"))
+        f.check(current in (baseline, expected), "DRIFT.not-the-known-gameci-injection", path)
+        disposition = "EXACT_KNOWN_GAMECI_PLATFORM_INJECTION"
+    f.finish(f"drift candidate={candidate} disposition={disposition}")
+
+
+def copy_json(value):
+    return json.loads(json.dumps(value))
+
+
 # ----- AI trial ----------------------------------------------------------------------------------------------------
 
 def verify_trial(directory, candidate, root=ROOT):
@@ -865,6 +926,7 @@ def main():
     s = sub.add_parser("scope"); s.add_argument("--base", required=True)
     r = sub.add_parser("reconcile"); r.add_argument("--file", default=None)
     t = sub.add_parser("trial"); t.add_argument("--dir", required=True); t.add_argument("--candidate-sha", required=True)
+    d = sub.add_parser("drift"); d.add_argument("--candidate-sha", required=True); d.add_argument("--worktree", default=str(REPO))
     sub.add_parser("adr-digest")
     args = parser.parse_args()
     if args.command == "evidence":
@@ -877,6 +939,8 @@ def main():
         verify_reconcile(reconciliation_path=args.file)
     elif args.command == "trial":
         verify_trial(args.dir, args.candidate_sha)
+    elif args.command == "drift":
+        verify_drift(args.candidate_sha, args.worktree)
     elif args.command == "adr-digest":
         print(adr_role_digest()[0], adr_role_digest()[1])
 
