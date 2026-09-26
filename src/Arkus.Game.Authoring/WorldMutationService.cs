@@ -27,15 +27,25 @@ namespace Arkus.Game.Authoring
 
         private readonly object _gate = new object();
         private readonly AuthoredWorldAnchor _journalBase;
+        private readonly ExtensionDocumentCodecs _codecs;
         private AuthoringState _state;
 
         public TransactionalWorldAuthoringSession(WorldState initialState)
+            : this(initialState, null)
+        {
+        }
+
+        /// <param name="codecs">Extension document codecs admitted by the host composition; null admits none.</param>
+        public TransactionalWorldAuthoringSession(WorldState initialState, ExtensionDocumentCodecs? codecs)
         {
             if (initialState == null) throw new ArgumentNullException(nameof(initialState));
             WorldStateValidator.ValidateOrThrow(initialState);
             _journalBase = AuthoredWorldAnchor.FromState(initialState);
             _state = AuthoringState.Initial(initialState);
+            _codecs = codecs ?? ExtensionDocumentCodecs.Empty;
         }
+
+        internal ExtensionDocumentCodecs Codecs => _codecs;
 
         public WorldState Current
         {
@@ -86,7 +96,7 @@ namespace Arkus.Game.Authoring
         public CapabilityInvocationResult ValidateProposed(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            var parseError = ParseRequest(request, out var parsed);
+            var parseError = ParseRequest(request, _codecs, out var parsed);
             if (parseError != null) return parseError;
 
             var candidateError = BuildCandidate(Capture(), parsed, out _, out var validation);
@@ -96,7 +106,7 @@ namespace Arkus.Game.Authoring
         public CapabilityInvocationResult Plan(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            var parseError = ParseRequest(request, out var parsed);
+            var parseError = ParseRequest(request, _codecs, out var parsed);
             if (parseError != null) return parseError;
 
             var snapshot = Capture();
@@ -107,7 +117,7 @@ namespace Arkus.Game.Authoring
         public CapabilityInvocationResult DryRun(IReadOnlyDictionary<string, object?> request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            var parseError = ParseRequest(request, out var parsed);
+            var parseError = ParseRequest(request, _codecs, out var parsed);
             if (parseError != null) return parseError;
 
             var snapshot = Capture();
@@ -128,7 +138,7 @@ namespace Arkus.Game.Authoring
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
             if (resourceBudget == null) throw new ArgumentNullException(nameof(resourceBudget));
-            var parseError = ParseRequest(request, out var parsed);
+            var parseError = ParseRequest(request, _codecs, out var parsed);
             if (parseError != null) return parseError;
 
             lock (_gate)
@@ -510,6 +520,7 @@ namespace Arkus.Game.Authoring
 
         private static CapabilityInvocationResult? ParseRequest(
             IReadOnlyDictionary<string, object?> request,
+            ExtensionDocumentCodecs codecs,
             out ParsedMutationRequest parsed)
         {
             parsed = null!;
@@ -557,7 +568,7 @@ namespace Arkus.Game.Authoring
                     return InvalidRequest(OperationPath(index), "Each operation must be an object from the declared mutation grammar.");
                 }
 
-                var operationError = ParseOperation(operationData, index, out var operation);
+                var operationError = ParseOperation(operationData, index, codecs, out var operation);
                 if (operationError != null) return operationError;
                 operations.Add(operation!);
             }
@@ -593,6 +604,7 @@ namespace Arkus.Game.Authoring
         private static CapabilityInvocationResult? ParseOperation(
             IReadOnlyDictionary<string, object?> data,
             int index,
+            ExtensionDocumentCodecs codecs,
             out MutationOperation? operation)
         {
             operation = null;
@@ -638,29 +650,35 @@ namespace Arkus.Game.Authoring
                         return InvalidRequest(OperationPath(index) + ".owner", "Extension owner must be a stable token.");
                     if (!TryGetInteger(data, "schemaVersion", out var schemaVersion) || schemaVersion <= 0 || schemaVersion > int.MaxValue)
                         return InvalidRequest(OperationPath(index) + ".schemaVersion", "Extension schemaVersion must be a positive 32-bit integer.");
-                    if (!TryGetString(data, "payloadBase64", out var payloadText) || !TryCanonicalBase64(payloadText, out var payload))
-                        return Base64Violation(index, data.ContainsKey("payloadBase64") ? payloadText : null);
-                    if (payload.Length > H0ResourceEnvelope.MaximumExtensionPayloadBytes)
+                    var hasPayload = data.ContainsKey("payloadBase64");
+                    var hasDocument = data.ContainsKey("document");
+                    if (hasPayload == hasDocument)
+                        return PayloadSourceViolation(index, hasPayload);
+                    byte[] payload;
+                    string? subjectId;
+                    IReadOnlyList<ReferenceValue> dependencies;
+                    if (hasDocument)
                     {
-                        return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
-                            "resource.extension_payload_exceeded",
-                            "One extension payload exceeds the H0 per-resource byte limit.",
-                            OperationPath(index) + ".payloadBase64",
-                            "extensionPayloadBytes",
-                            H0ResourceEnvelope.MaximumExtensionPayloadBytes,
-                            payload.Length,
-                            "Reduce this extension payload before retrying the same coherent transaction."));
+                        var subjectError = ParseSubject(data, index, out subjectId);
+                        if (subjectError != null) return subjectError;
+                        var documentError = EncodeDocument(data, index, owner, (int)schemaVersion, subjectId, codecs, out payload, out dependencies);
+                        if (documentError != null) return documentError;
                     }
-                    string? subjectId = null;
-                    if (data.ContainsKey("subjectId"))
+                    else
                     {
-                        if (!TryStableToken(data, "subjectId", out var parsedSubject))
-                            return InvalidRequest(OperationPath(index) + ".subjectId", "subjectId must be a stable token.");
-                        subjectId = parsedSubject;
+                        // Unchanged accepted HK-04 order: payload, payload limit, subject, dependencies.
+                        if (!TryGetString(data, "payloadBase64", out var payloadText))
+                            return Base64Violation(index, null);
+                        if (!TryCanonicalBase64(payloadText, out payload))
+                            return Base64Violation(index, payloadText);
+                        var payloadLimitError = PayloadLimit(index, "payloadBase64", payload);
+                        if (payloadLimitError != null) return payloadLimitError;
+                        var subjectError = ParseSubject(data, index, out subjectId);
+                        if (subjectError != null) return subjectError;
+                        var dependencyError = ParseReferences(data, index, "dependencies", out dependencies);
+                        if (dependencyError != null) return dependencyError;
                     }
 
-                    var dependencyError = ParseReferences(data, index, "dependencies", out var dependencies);
-                    if (dependencyError != null) return dependencyError;
                     operation = MutationOperation.PutExtension(owner, (int)schemaVersion, subjectId, dependencies, payload);
                     return null;
 
@@ -1242,8 +1260,8 @@ namespace Arkus.Game.Authoring
         private static readonly string[] PutObjectRequired = { "kind", "id", "typeId" };
         private static readonly string[] RemoveObjectFields = { "kind", "id" };
         private static readonly string[] RemoveObjectRequired = { "kind", "id" };
-        private static readonly string[] PutExtensionFields = { "kind", "owner", "schemaVersion", "subjectId", "dependencies", "payloadBase64" };
-        private static readonly string[] PutExtensionRequired = { "kind", "owner", "schemaVersion", "payloadBase64" };
+        private static readonly string[] PutExtensionFields = { "kind", "owner", "schemaVersion", "subjectId", "dependencies", "payloadBase64", "document" };
+        private static readonly string[] PutExtensionRequired = { "kind", "owner", "schemaVersion" };
         private static readonly string[] RemoveExtensionFields = { "kind", "owner", "schemaVersion", "subjectId" };
         private static readonly string[] RemoveExtensionRequired = { "kind", "owner", "schemaVersion" };
 
@@ -1280,6 +1298,148 @@ namespace Arkus.Game.Authoring
         // WP-HK-05 reopen 2: a rejected extension payload names why it is not canonical Base64. The payload is an opaque
         // value produced by a tool; clients (notably model-driven ones) that retype it rather than pass it through can
         // then see the corruption instead of guessing at the envelope.
+        private static CapabilityInvocationResult? ParseSubject(IReadOnlyDictionary<string, object?> data, int index, out string? subjectId)
+        {
+            subjectId = null;
+            if (!data.ContainsKey("subjectId")) return null;
+            if (!TryStableToken(data, "subjectId", out var parsedSubject))
+                return InvalidRequest(OperationPath(index) + ".subjectId", "subjectId must be a stable token.");
+            subjectId = parsedSubject;
+            return null;
+        }
+
+        private static CapabilityInvocationResult? PayloadLimit(int index, string field, byte[] payload)
+        {
+            if (payload.Length <= H0ResourceEnvelope.MaximumExtensionPayloadBytes) return null;
+            return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
+                "resource.extension_payload_exceeded",
+                "One extension payload exceeds the H0 per-resource byte limit.",
+                OperationPath(index) + "." + field,
+                "extensionPayloadBytes",
+                H0ResourceEnvelope.MaximumExtensionPayloadBytes,
+                payload.Length,
+                "Reduce this extension payload before retrying the same coherent transaction."));
+        }
+
+        // WP-HK-04 reopen 1: a put-extension carries its payload either as canonical Base64 or as a structured document
+        // that the owner's registered codec canonicalizes inside the transaction.
+        private static CapabilityInvocationResult PayloadSourceViolation(int index, bool both)
+        {
+            return Failure(
+                "world.change.invalid_request",
+                both ? "put-extension accepts payloadBase64 or document, not both." : "put-extension requires payloadBase64 or document.",
+                OperationPath(index),
+                ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["operationKind"] = "put-extension",
+                    ["oneOfFields"] = ToObjectList(new[] { "payloadBase64", "document" })
+                }),
+                false,
+                "Send exactly one payload source: a structured document for an owner with a registered document codec, or the canonical payloadBase64 produced by the owner's tooling.");
+        }
+
+        private static CapabilityInvocationResult? EncodeDocument(
+            IReadOnlyDictionary<string, object?> data,
+            int index,
+            string owner,
+            int schemaVersion,
+            string? subjectId,
+            ExtensionDocumentCodecs codecs,
+            out byte[] payload,
+            out IReadOnlyList<ReferenceValue> dependencies)
+        {
+            payload = Array.Empty<byte>();
+            dependencies = Array.Empty<ReferenceValue>();
+            var documentPath = OperationPath(index) + ".document";
+            if (data.ContainsKey("dependencies"))
+            {
+                return Failure(
+                    "world.change.invalid_request",
+                    "Dependencies of a document-authored extension are derived by its codec and may not be supplied.",
+                    OperationPath(index) + ".dependencies",
+                    EmptyContext(),
+                    false,
+                    "Omit dependencies when sending a document; the kernel derives and records them.");
+            }
+
+            if (!(data["document"] is IReadOnlyDictionary<string, object?> document))
+                return InvalidRequest(documentPath, "document must be a JSON object.");
+
+            if (!codecs.TryGet(owner, schemaVersion, out var codec))
+            {
+                return Failure(
+                    "world.change.extension_document_unsupported",
+                    "No extension document codec is registered for this owner and schema version.",
+                    documentPath,
+                    ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["owner"] = owner,
+                        ["schemaVersion"] = (long)schemaVersion,
+                        ["supportedDocumentOwners"] = ToObjectList(codecs.Supported)
+                    }),
+                    false,
+                    "Use an owner@schemaVersion listed in supportedDocumentOwners, or send the canonical payloadBase64 produced by the owner's tooling.");
+            }
+
+            ExtensionDocumentEncoding encoded;
+            try
+            {
+                encoded = codec.Encode(subjectId, document);
+            }
+            catch (Exception)
+            {
+                return CodecFault(documentPath, owner, schemaVersion);
+            }
+
+            if (encoded == null) return CodecFault(documentPath, owner, schemaVersion);
+            if (!encoded.Success)
+            {
+                return Failure(
+                    "world.change.invalid_extension_document",
+                    encoded.Message!,
+                    documentPath + encoded.DocumentPath!.Substring(1),
+                    ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["owner"] = owner,
+                        ["schemaVersion"] = (long)schemaVersion,
+                        ["extensionMachineCode"] = encoded.MachineCode,
+                        ["extensionPath"] = encoded.DocumentPath
+                    }),
+                    false,
+                    encoded.RepairHint!);
+            }
+
+            payload = encoded.Payload!;
+            var payloadLimitError = PayloadLimit(index, "document", payload);
+            if (payloadLimitError != null) return payloadLimitError;
+
+            // Derived dependencies obey exactly the rules of caller-supplied ones.
+            var derived = new List<object?>();
+            foreach (var dependency in encoded.Dependencies) derived.Add(dependency);
+            var derivedError = ParseReferences(
+                new Dictionary<string, object?>(StringComparer.Ordinal) { ["dependencies"] = derived.AsReadOnly() },
+                index,
+                "dependencies",
+                out dependencies);
+            return derivedError == null ? null : CodecFault(documentPath, owner, schemaVersion);
+        }
+
+        private static CapabilityInvocationResult CodecFault(string documentPath, string owner, int schemaVersion)
+        {
+            return Failure(
+                "world.change.invalid_extension_document",
+                "The extension document codec did not produce a valid canonical encoding.",
+                documentPath,
+                ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["owner"] = owner,
+                    ["schemaVersion"] = (long)schemaVersion,
+                    ["extensionMachineCode"] = "extension.codec-fault"
+                }),
+                false,
+                "Treat this as an extension codec defect; send the canonical payloadBase64 instead or report the codec.");
+        }
+
         private static CapabilityInvocationResult Base64Violation(int index, string? text)
         {
             var context = new Dictionary<string, object?>(StringComparer.Ordinal);

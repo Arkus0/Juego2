@@ -354,7 +354,15 @@ namespace Arkus.Harness.Tests
 
             // "QQ==" is canonical for 0x41; "QR==" decodes to the same byte but is not its canonical encoding.
             Assert.Equal("non-canonical-padding", Reject("QR==")["reason"]);
-            Assert.Equal("missing-or-not-a-string", Reject(null)["reason"]);
+            // A non-string payload is refused earlier by the published schema; an absent payload source is the
+            // WP-HK-04 reopen 1 one-of rule (payloadBase64 or document).
+            var absent = contract.Dispatch(WorldMutationContract.PlanName, Hk04TransactionalMutationTests.ExactVersion(),
+                Hk04TransactionalMutationTests.Request(initial, "request.hk05-base64-absent", new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["kind"] = "put-extension", ["owner"] = "probe.owner", ["schemaVersion"] = 1L
+                }));
+            Assert.Equal("world.change.invalid_request", absent.Error!.MachineCode);
+            Assert.Equal("$.operations[0]", absent.Error.Path);
 
             var accepted = contract.Dispatch(WorldMutationContract.PlanName, Hk04TransactionalMutationTests.ExactVersion(),
                 Hk04TransactionalMutationTests.Request(initial, "request.hk05-base64-ok", new Dictionary<string, object?>(StringComparer.Ordinal)

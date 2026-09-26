@@ -7,6 +7,8 @@ Binding proof standard: `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md`
 Baseline SHA: `ecebd054821eeb388c3cf6ee4e389545d762b6d8`  
 Implementation PR: `#19`
 
+Reopen 1 (2026-09-26, owner-directed; independent review waived by owner decision): typed extension documents. A `put-extension` operation may carry a structured `document`, which the owner's registered codec canonicalizes inside the transaction, instead of a transcribed `payloadBase64`. State, hash, fingerprint and journal are unchanged. See `Docs/evidence/WP-HK-04/REOPEN_1_TYPED_EXTENSION_DOCUMENTS.md`.
+
 Completion:
 - Reviewed candidate SHA: `849ed68e41d674ab0d50883ccd9af394e9d2e456`
 - Independent Reviewer verdict: `PASS`
