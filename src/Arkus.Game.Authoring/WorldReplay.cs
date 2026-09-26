@@ -536,7 +536,7 @@ namespace Arkus.Game.Authoring
                         "Establish the replay base as a fresh local lineage, for example with the accepted snapshot rebase capability."));
                 }
 
-                var staged = new TransactionalWorldAuthoringSession(_session.Inner.Current);
+                var staged = new TransactionalWorldAuthoringSession(_session.Inner.Current, _codecs);
                 var stagedCommitter = CanonicalWorldMutationAuthority.Bind(staged);
                 var stagedBudget = resourceBudget.ForStaging();
                 var audit = new List<object?>();
