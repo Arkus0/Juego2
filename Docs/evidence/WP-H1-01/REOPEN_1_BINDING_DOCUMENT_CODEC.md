@@ -47,5 +47,5 @@ Reopen condition checked: effective evidence shows that the accepted public path
   - a missing subject gives `unity.binding.missing-subject`.
 - `H1UnityAuthoringTransportTests.ProductionHostsApplyTheCompiledDocumentMutationAcrossJsonlAndMcp`: the real production reference (JSONL) and MCP host processes compile, then apply the returned `documentMutation` together with its subject objects, with equivalent results.
 - Local `Arkus.Harness.Tests` passes 457/457.
-- `scripts/h1-01-observe/verify-exact-sha.sh` now tolerate exactly the Candidate Validation receipt files.
+- `scripts/h1-01-observe/verify-exact-sha.sh` and the candidate check of `scripts/h1-01-negative-conformance.sh` now tolerate exactly the Candidate Validation receipt files. They were RED in CI whatever the candidate contained. The seeded mutations still run in a disposable worktree of the committed candidate.
 - Effective public proof: the WP-H1-GATE rerun (the driver authors through `documentMutation` and asserts parity with the payload path) and the final fresh-agent trial.

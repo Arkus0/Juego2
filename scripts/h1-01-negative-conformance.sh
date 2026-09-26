@@ -4,7 +4,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT}"
 CANDIDATE="$(git rev-parse HEAD)"
-[[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo "H1-01 negative conformance requires a clean candidate" >&2; exit 2; }
+# Candidate Validation receipt files (VALIDATION_CONTEXT.json, validation.log) are tolerated, as in the exact-SHA verifiers;
+# the mutations run in a disposable worktree of the committed candidate, so they never see those files.
+[[ -z "$(git status --porcelain --untracked-files=all | grep -Ev '^\?\? (VALIDATION_CONTEXT\.json|validation\.log|EXECUTION_RECEIPT\.txt|artifacts/observed/.*)$' || true)" ]] || { echo "H1-01 negative conformance requires a clean candidate" >&2; exit 2; }
 
 TMP_ROOT="$(mktemp -d)"
 WORKTREE="${TMP_ROOT}/mutant"
