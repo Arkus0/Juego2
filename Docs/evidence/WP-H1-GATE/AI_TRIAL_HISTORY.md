@@ -1,6 +1,6 @@
 # WP-H1-GATE — fresh AI-agent trial history and predecessor reopen routing
 
-Gate state: **REOPEN RESOLVED — trial 2 on the final frozen SHA**. Owner decision (2026-09-26): reopen WP-H1-04 before any further trial. The reopen is merged (see below).
+Gate state: **trial 3 pending on the final frozen SHA**. Trial 1 FAIL led to the WP-H1-04 reopen (merged). Trial 2 FAIL led to the WP-HK-05 reopen (see below).
 
 ## Trial 1 — FAIL
 
@@ -61,3 +61,37 @@ How each routed gap was resolved (codes, capabilities, schemas and catalogue con
 - **R4**: a pre-launch encoder refusal keeps its projection code (`projection.source-missing` / `projection.reference-missing`) instead of `unity.lifecycle.corrupt-result`. Gate S12 now requires those exact codes for materialize, and `projection.source-missing` for a plan-relative observe, on both transports.
 
 The trial brief, protocol, model and route are unchanged from trial 1, so the retry measures the repaired public surface and not a re-tuned prompt.
+
+## Trial 2 — FAIL
+
+| Field | Value |
+| --- | --- |
+| Candidate SHA | `facfe0ebd3678f18ce35205c24d28714b6ae15a8`, on base `4ab82fb1` with WP-H1-04 reopen 1 |
+| Deterministic Gate on the same SHA | `H1-GATE Unity Parity Validation` run `36241021111` **GREEN**: 17 stages on reference + MCP; S12 refusals carry `projection.source-missing` / `projection.reference-missing`; verifier, 20 static and 11 effective negative controls GREEN |
+| Trial run | `H1-GATE Fresh AI-Agent Trial` run `36242209280` (transcript sha256 `9de7f9b9…`) |
+| Model / route / brief | unchanged from trial 1 (`openai/gpt-5.6-luna-20260709` via OpenRouter; same brief digest) |
+| Model turns | 14 (the agent stopped by itself) |
+| Agent verdict | `FAIL` |
+| Hidden/private calls | none |
+
+The reopened H1-04 diagnostics worked as intended:
+
+- The agent recovered from `catalogue.page-bound` using `context.maximumPageSize`.
+- It recovered from `catalogue.stale-snapshot` using `context.currentSnapshotToken`, then paged every catalogue kind.
+- It compiled bindings against the fixed managed scene without resolving it in the catalogue.
+
+The new blocker is in canonical authoring, which the H0 kernel owns. The agent authored one `put-object` that also carried the extension fields `owner`, `schemaVersion`, `subjectId`, `dependencies` and `payloadBase64`. Six plan/validate attempts returned `world.change.invalid_request` "put-object contains fields outside its declared grammar." with an empty `context`. Each time, the hint pointed back to `system.describe`. The agent reported, verbatim, that "The public operation schema reported all put-object fields as optional", and that "The detailed typed mutation grammar needed to author objects was not available in a usable form through the returned system.describe response."
+
+| # | Public-surface gap (effective evidence) | Causal owner | Why it is not Gate-owned |
+| --- | --- | --- | --- |
+| R5 | The published operation item is one flattened union of the four operation kinds: only `kind` is required, and there is no per-kind grammar, because `SchemaNode` has no `oneOf`. The per-kind grammar rejection in `WorldMutationService.ParseOperation` did not name the kind's allowed, required or offending fields. | **WP-HK-05** (validation + repairable diagnostics) | It changes H0 public diagnostic semantics. |
+
+Relay note (Gate-owned, not causal): the relay shows the model at most 14,000 characters of each tool result, while `system.describe` is about 141,000 characters. Even the full `system.describe` carries only the same flattened schema. The truncation therefore hid no per-kind grammar, and the protocol stays unchanged.
+
+## WP-HK-05 reopen 1
+
+The owner instructed the Worker to do whatever is needed to finish the Gate, and waived independent review for the predecessor correction. This second causal reopen was handled the same way, and its record says so explicitly.
+
+- PR: `#241`, frozen candidate `bfdbcc1332651f6d5537cef59625dcd36dc40278`. Record: `Docs/evidence/WP-HK-05/REOPEN_1_GRAMMAR_DIAGNOSTICS.md`.
+- A per-kind grammar violation now returns `context.operationKind`, `allowedFields`, `requiredFields` and `unexpectedFields`, plus a hint that object and extension data are separate `put-object` and `put-extension` operations. The grammar, code, message, path and schemas are unchanged.
+- The Gate repairs nothing itself. After the merge, it re-runs its deterministic validation on the new exact SHA and repeats the trial once on the final frozen SHA, with the same brief, protocol, model and route.
