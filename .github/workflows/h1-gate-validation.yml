@@ -256,9 +256,12 @@ jobs:
           PY
 
       - name: Independent evidence verification and effective negative controls
+        # Runs even after an earlier failure so that every run reports the verifier's reason codes; the job stays RED.
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
+          sudo chown -R "$(id -u):$(id -g)" "${EVIDENCE}" 2>/dev/null || true
           python3 scripts/h1-gate-verify.py evidence --dir "${EVIDENCE}" --candidate-sha "${TARGET_SHA}"
           python3 scripts/h1-gate-negative-controls.py evidence --dir "${EVIDENCE}" --candidate-sha "${TARGET_SHA}"
 

@@ -163,6 +163,21 @@ class PublicHost:
                 "clientInfo": {"name": "arkus.h1-gate.reference-scenario", "version": "1.0.0"}})
             require(initialized.get("result", {}).get("protocolVersion") == "2025-11-25", "MCP initialize version mismatch")
             self._notify("notifications/initialized", {})
+            # MCP clients can only address tools by their listed names, so the handshake lists them once. Stage 4 still
+            # records its own complete discovery (keys and schema digests) through this transport.
+            self.tools = self._list_tools()[0]
+            self.transcript.write({"event": "mcp-handshake", "session": session, "transport": transport, "toolCount": len(self.tools)})
+
+    def _list_tools(self):
+        tools = self._rpc("tools/list", {}).get("result", {}).get("tools", [])
+        names, schemas = {}, {}
+        for tool in tools:
+            key = tool.get("_meta", {}).get("dev.arkus/canonicalKey")
+            require(key and tool.get("name") and key not in names, "MCP canonical tool inventory is malformed")
+            names[key] = tool["name"]
+            definition = tool.get("_meta", {}).get("dev.arkus/canonicalDefinition", {})
+            schemas[key] = sha(canonical_json({"request": definition.get("requestSchema"), "success": definition.get("successSchema")}))
+        return names, schemas, len(tools)
 
     # ----- wire ---------------------------------------------------------------------------------------------------
     def _readline(self, what):
@@ -201,18 +216,9 @@ class PublicHost:
                        for item in capabilities}
             raw = outcome
         else:
-            response = self._rpc("tools/list", {})
-            tools = response.get("result", {}).get("tools", [])
-            self.tools = {}
-            schemas = {}
-            for tool in tools:
-                key = tool.get("_meta", {}).get("dev.arkus/canonicalKey")
-                require(key and tool.get("name") and key not in self.tools, "MCP canonical tool inventory is malformed")
-                self.tools[key] = tool["name"]
-                definition = tool.get("_meta", {}).get("dev.arkus/canonicalDefinition", {})
-                schemas[key] = sha(canonical_json({"request": definition.get("requestSchema"), "success": definition.get("successSchema")}))
+            self.tools, schemas, count = self._list_tools()
             keys = sorted(self.tools)
-            raw = {"toolCount": len(tools), "keys": keys}
+            raw = {"toolCount": count, "keys": keys}
         self.discovered = keys
         self.transcript.write({"event": "discovery", "session": self.session, "transport": self.transport, "stage": stage,
                                "keys": keys, "schemaDigests": schemas, "elapsedMs": int((time.time() - started) * 1000),
