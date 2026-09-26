@@ -307,6 +307,7 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           import base64
+          import hashlib
           import json
           from pathlib import Path
           proof = Path('Unity/ArkusUnity/H1-11-RealAssetSlice')
@@ -315,7 +316,14 @@ jobs:
               if path.exists():
                   print(f'H1_11_EVIDENCE {name} ' + json.dumps(json.loads(path.read_text(encoding="utf-8")), sort_keys=True))
           capture = proof / 'capture.jpg'
+          committed = Path('Docs/evidence/WP-H1-11/SUPPLEMENTARY_CAPTURE.jpg')
           if capture.exists():
+              # Informational only: the capture is supplementary and never the parity oracle. A rendering that differs
+              # from the committed capture is emitted so it can be inspected.
+              rendered = hashlib.sha256(capture.read_bytes()).hexdigest()
+              stored = hashlib.sha256(committed.read_bytes()).hexdigest() if committed.exists() else 'absent'
+              print(f'H1_11_CAPTURE_RENDERED sha256={rendered} committed={stored} identical={str(rendered == stored).lower()}')
+          if capture.exists() and rendered != stored:
               encoded = base64.b64encode(capture.read_bytes()).decode('ascii')
               print(f'H1_11_CAPTURE_BEGIN bytes={capture.stat().st_size}')
               for index in range(0, len(encoded), 120):

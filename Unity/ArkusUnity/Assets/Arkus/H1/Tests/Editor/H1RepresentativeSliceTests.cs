@@ -170,8 +170,24 @@ namespace Arkus.H1.Editor.Tests
             {
                 var row = mapping.entries.SingleOrDefault(entry => entry.logicalId == clip.logicalId);
                 var resolved = row == null ? null : Resolve<AnimationClip>(row.nativeGuid, row.localFileId);
-                report.clips.Add(clip.role + "=" + (resolved == null ? "<missing>" : resolved.name + "|" + resolved.length.ToString("R", CultureInfo.InvariantCulture)));
-                if (resolved == null || resolved.length <= 0f) failures.Add("clip " + clip.role + " does not resolve to a non-empty AnimationClip");
+                if (resolved == null || resolved.length <= 0f)
+                {
+                    report.clips.Add(clip.role + "=<missing>");
+                    failures.Add("clip " + clip.role + " does not resolve to a non-empty AnimationClip");
+                    continue;
+                }
+
+                // Animation shape: every transform curve of the clip targets a node of the rig derived from the source
+                // FBX bytes, and that node exists in the imported rig.
+                var owner = manifest.items.SingleOrDefault(item => item.assetPath == AssetDatabase.GetAssetPath(resolved));
+                var rig = owner == null ? null : AssetDatabase.LoadAssetAtPath<GameObject>(owner.assetPath);
+                var bound = TransformCurvePaths(resolved);
+                report.clips.Add(clip.role + "=" + resolved.name + "|" + resolved.length.ToString("R", CultureInfo.InvariantCulture) + "|transforms=" + bound.Length);
+                if (owner == null || rig == null) { failures.Add("clip " + clip.role + " is not a sub-asset of a selected item"); continue; }
+                var sourceNodes = new HashSet<string>(owner.fbx.nodes.Select(node => node.path), StringComparer.Ordinal) { string.Empty };
+                if (bound.Length < 20) failures.Add("clip " + clip.role + " animates " + bound.Length + " rig transforms");
+                foreach (var path in bound.Where(candidate => !sourceNodes.Contains(candidate) || (candidate.Length > 0 && rig.transform.Find(candidate) == null)).Take(5))
+                    failures.Add("clip " + clip.role + " animates '" + path + "', which is not a node of the source rig");
             }
 
             report.failures = failures.ToArray();
@@ -496,7 +512,14 @@ namespace Arkus.H1.Editor.Tests
                         Assert.That(instance.GetComponent<Animator>(), Is.Not.Null, node.objectId + ": animator missing after reload");
                         Assert.That(ownership != null && ownership.animatorClip && ownership.animatorClipReference is AnimationClip, Is.True, node.objectId + ": clip reference missing after reload");
                         Assert.That(Identity(ownership.animatorClipReference), Is.EqualTo(component.referenceGuid + "|" + component.referenceLocalFileId), node.objectId);
+                        // The derivative keeps the rig the clip was authored for: every animated transform resolves under
+                        // the realized Animator after reload.
+                        var bound = TransformCurvePaths((AnimationClip)ownership.animatorClipReference);
+                        Assert.That(bound.Length, Is.GreaterThanOrEqualTo(20), node.objectId + ": clip animates no rig");
+                        Assert.That(bound.Where(candidate => candidate.Length > 0 && instance.transform.Find(candidate) == null), Is.Empty,
+                            node.objectId + ": clip curves target transforms absent from the realized rig");
                         row.clip = component.referenceLogicalId;
+                        row.clipBoundTransforms = bound.Length;
                     }
                 }
             }
@@ -609,6 +632,10 @@ namespace Arkus.H1.Editor.Tests
             return guid + "|" + fileId.ToString(CultureInfo.InvariantCulture);
         }
 
+        private static string[] TransformCurvePaths(AnimationClip clip) => AnimationUtility.GetCurveBindings(clip)
+            .Where(binding => binding.type == typeof(Transform)).Select(binding => binding.path)
+            .Distinct(StringComparer.Ordinal).OrderBy(path => path, StringComparer.Ordinal).ToArray();
+
         private static string[] TreeHashes(params string[] assetRoots)
         {
             var project = ProjectRoot();
@@ -624,8 +651,9 @@ namespace Arkus.H1.Editor.Tests
         private static string[] DiscardSourceEdits()
         {
             var discarded = new List<string>();
-            foreach (var path in AssetDatabase.FindAssets(string.Empty, new[] { SourceRoot }).Select(AssetDatabase.GUIDToAssetPath)
-                         .Where(path => !AssetDatabase.IsValidFolder(path)).Distinct().OrderBy(path => path, StringComparer.Ordinal))
+            var assetPaths = AssetDatabase.FindAssets(string.Empty, new[] { SourceRoot }).Select(AssetDatabase.GUIDToAssetPath)
+                .Where(candidate => !AssetDatabase.IsValidFolder(candidate)).Distinct().OrderBy(candidate => candidate, StringComparer.Ordinal).ToArray();
+            foreach (var path in assetPaths)
             {
                 foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(path))
                 {
@@ -787,6 +815,7 @@ namespace Arkus.H1.Editor.Tests
         [Serializable] private sealed class InspectedNode
         {
             public string objectId; public string sourceKind; public int ownedTransforms; public int materialSlots; public int bones; public string renderer; public string clip;
+            public int clipBoundTransforms;
         }
         [Serializable] private sealed class CaptureEvidence
         {
