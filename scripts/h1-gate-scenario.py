@@ -495,7 +495,9 @@ def stage3_inspect(host):
 
 
 def selected_ids():
-    ids = {("scene", SCENE)}
+    # The fixed managed scene is the projection's output target, not a catalogued source. The accepted plan skips
+    # scene dependencies (H1-05), so only sources, materials and clips are resolved against the effective catalogue.
+    ids = set()
     for node in NODES:
         ids.add((node[3], node[4]))
         if node[8]:

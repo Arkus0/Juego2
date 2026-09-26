@@ -15,7 +15,7 @@ The WP requires the probe to be "identical to the deterministic reference scenar
 | at least one nested/source prefab relationship | every prefab node is realized as a managed derivative of a read-only source prefab | H1-06 lineage |
 | shared material and one allowed override | `market.crate` and `river.edge` share the single-slot renderer override | the H1-11 shared material |
 | at least one canonical-object reference | `civilian.idle` faces `door.main`; `civilian.walk` walks toward `market.cart` | canonical-link component |
-| several catalogue dependencies | 14 sources + 1 material + 3 clips + 1 scene (19 logical IDs), all resolved publicly at S05 | — |
+| several catalogue dependencies | 14 sources + 1 material + 3 clips (18 logical IDs), all resolved publicly at S05; the fixed managed scene is the projection target, not a catalogued source | — |
 | multiple allowlisted components and a three-level hierarchy | transform, mesh-renderer, animator, canonical-link; `wedge.tip → window.front → shutters.front` and `wedge.tip → market.crate → civilian.sit` | — |
 
 There is no player controller, AI, navmesh, physics behaviour, schedule, dialogue, CITY seed, route graph or keeper geometry.

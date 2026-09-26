@@ -208,7 +208,7 @@ def compiled_bindings(records, session):
 def check_s05_s08(f, records, session, t):
     bindings = compiled_bindings(records, session)
     f.check(len(bindings) >= 12, f"S06.{t}.compiled-slice-too-small", str(len(bindings)))
-    selected = {("scene", SCENE)}
+    selected = set()
     for binding, _ in bindings.values():
         selected.add((binding["source"]["kind"], binding["source"]["logicalId"]))
         for component in binding["components"]:
