@@ -55,6 +55,20 @@ A pure protocol defect must not be promoted into semantic `FAIL` merely because 
 
 Reviewer independence means independent judgment and independent attempts to falsify the claim; it does **not** require mechanically repeating an identical execution that is already durably bound to the exact reviewed SHA. The Reviewer should consume trustworthy exact-SHA CI/receipt results for mechanical facts already established and run additional targeted probes only when they add information: for example to test a causal false-green hypothesis, cover a materially unproved claim, resolve contradictory evidence, or replace evidence whose identity/provenance cannot be trusted. Re-running the same build/test/proof command solely because a new Reviewer session started is redundant work, not additional independence.
 
+### 4.1 Causal review circuit breaker — no overdefense / whack-a-mole
+
+A Reviewer may not turn successive repair cycles into an expanding hardening campaign. A new material `FAIL` is valid only when all of the following are true:
+
+1. **Existing claim:** the blocker is tied to an acceptance criterion, owned guarantee, required negative class, trust-boundary rule or other requirement that already belongs to the frozen workpack. The review must name that existing requirement.
+2. **Concrete false-green:** there is concrete evidence or a bounded reproduction showing how the current candidate can remain GREEN while that existing claim is false. A merely conceivable adjacent failure mode is not enough.
+3. **No quantifier expansion:** the blocker does not strengthen the claim from the workpack's actual boundary into a new guarantee such as broader version compatibility, stronger durability, wider platform coverage, extra content classes or a more universal completeness theorem unless the frozen contract already requires it.
+4. **Residuals stay residual:** an explicitly excluded, deferred or residual risk cannot be promoted into a blocker just because a repair makes it newly imaginable. It reopens the current WP only if concrete evidence shows the accepted in-scope guarantee itself is false or the residual was misclassified against the frozen contract.
+5. **Repair does not create new obligations:** closing one causal defect class does not by itself create an obligation to defend every neighboring variant. A later blocker must be either the same causal class demonstrably still open, a regression introduced by the repair, or a genuinely independent in-scope defect with concrete current evidence.
+
+From the **second material repair cycle onward**, every Reviewer `FAIL` must include a short `CIRCUIT_BREAKER_CHECK` stating which of the three permitted categories applies: `SAME_CAUSAL_CLASS_OPEN`, `REPAIR_REGRESSION`, or `NEW_IN_SCOPE_DEFECT`. It must also state why the finding does not require stronger scope than the frozen WP. If the Reviewer cannot make that statement truthfully, the finding is residual/future work rather than a current blocker.
+
+A Worker under this circuit breaker repairs the causal class, not an ever-growing list of examples. Once the frozen claim is sufficiently demonstrated and no qualifying in-scope falsifier survives, the correct verdict is `PASS` even though additional defensive hardening could still be imagined.
+
 ## 5. DocSync budget
 
 DocSync is **delta reconciliation, not a second review**.
@@ -91,4 +105,4 @@ is valid.
 
 is a protocol bug.
 
-Where older operational text conflicts with this amendment on Action cadence, same-SHA metadata invalidation, Reviewer execution reuse, `REVIEW_READY` terminal handoff, Reviewer classification of protocol-only defects, or mandatory per-PASS DocSync churn, this amendment governs. Material acceptance/proof requirements remain unchanged.
+Where older operational text conflicts with this amendment on Action cadence, same-SHA metadata invalidation, Reviewer execution reuse, `REVIEW_READY` terminal handoff, Reviewer classification of protocol-only defects, mandatory per-PASS DocSync churn, or causal review circuit-breaking, this amendment governs. Material acceptance/proof requirements remain unchanged.
