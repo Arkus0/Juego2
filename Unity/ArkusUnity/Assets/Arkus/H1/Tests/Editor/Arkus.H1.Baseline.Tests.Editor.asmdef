@@ -2,7 +2,8 @@
   "name": "Arkus.H1.Baseline.Tests.Editor",
   "rootNamespace": "Arkus.H1.Editor.Tests",
   "references": [
-    "Arkus.H1.Baseline.Editor"
+    "Arkus.H1.Baseline.Editor",
+    "Arkus.H1.Projection.Runtime"
   ],
   "includePlatforms": [
     "Editor"
