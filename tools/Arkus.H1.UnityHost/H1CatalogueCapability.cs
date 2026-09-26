@@ -69,8 +69,8 @@ namespace Arkus.H1.UnityHost
             catch (H1CatalogueException exception)
             {
                 return CapabilityInvocationResult.Failed(new StructuredError(exception.Code, exception.Message, "$",
-                    new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)),
-                    false, "Repair the reviewed mapping, source input or catalogue reference before materialization."));
+                    exception.Context ?? new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)),
+                    false, exception.RepairHint ?? "Repair the reviewed mapping, source input or catalogue reference before materialization."));
             }
             catch (IOException)
             {

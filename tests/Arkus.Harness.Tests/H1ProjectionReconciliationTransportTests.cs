@@ -43,9 +43,12 @@ namespace Arkus.Harness.Tests
                 var outcome = Equivalent(reference, mcp, name, outOfScope);
                 Assert.Equal("error", outcome.Reference.GetProperty("status").GetString());
                 Assert.Equal("canonical", outcome.Reference.GetProperty("failureKind").GetString());
+                // WP-H1-04 reopen (R4, triggered by the WP-H1-GATE fresh-agent trial): a structured projection
+                // precondition is reported as its own actionable code, not as a host/worker contract fault.
                 Assert.Equal(
-                    "unity.lifecycle.corrupt-result",
+                    "projection.scene-out-of-scope",
                     outcome.Reference.GetProperty("error").GetProperty("machineCode").GetString());
+                Assert.Contains("unity.projection.plan", outcome.Reference.GetProperty("error").GetProperty("repairHint").GetString());
             }
         }
 
