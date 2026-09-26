@@ -117,6 +117,15 @@ On the pre-review candidate before this evidence commit:
 
 This pre-review commit changes only Worker evidence and therefore requires the final exact candidate SHA to be re-read after commit before the PR handoff is frozen.
 
+### Protocol reconciliation after first Ready attempt
+
+The first Ready validation of candidate `2ca7578ac749235f6943fb53097cd7d64d7a32d2` exposed two lifecycle metadata omissions, not research/product findings:
+
+- `Reviewed candidate SHA` was absent from the PR handoff;
+- `WORKFLOW_MODE: PROCESS_ONLY` was absent, so the research-only batch was incorrectly routed toward a product/runtime exact-SHA verifier.
+
+Both omissions are corrected in the canonical PR handoff. This note is the only repository-byte change made for that protocol reconciliation. Because it changes the candidate identity, the resulting commit must receive a fresh exact-SHA Main Safety / Context Capsule / Candidate Validation cycle before independent review.
+
 ## 8. Residuals allowed
 
 The following remain intentionally deferred and are not B1 blockers:
