@@ -689,12 +689,15 @@ def run_scenario(args):
         author(host, "S12", "h1-gate.invalid.missing-component-reference", [repaired_source, bad_clip])
         clip_plan = host.fail("unity.projection.plan", {"sceneLogicalId": SCENE}, ["projection.reference-missing"], "S12", "plan:missing-clip")
         clip_materialize = host.fail("unity.host.projection.materialize", {"sceneLogicalId": SCENE}, MATERIALIZE_REJECTION, "S12", "materialize:missing-clip")
-        stale = host.ok("unity.host.projection.observe", {"sceneLogicalId": SCENE}, "S12", "observe:after-invalid")
+        _, repaired_clip = compile_binding(host, walker, "S12")
+        author(host, "S12", "h1-gate.repair", [repaired_clip])
+        # Observation is plan-relative, so it is refused while the canonical binding is invalid (accepted H1-05/09
+        # semantics). Immediately after the canonical repair, and before any new materialization, the effective Unity
+        # state must still be the S11 generation, unchanged and truthfully not current.
+        stale = host.ok("unity.host.projection.observe", {"sceneLogicalId": SCENE}, "S12", "observe:retained-before-rematerialize")
         require(stale["active"] is True and stale["generationId"] == second["generationId"] and stale["current"] is False and
                 stale["graphDigest"] == second["graphDigest"] and stale["realizationDigest"] == second["realizationDigest"],
                 "a rejected invalid reference changed or falsely re-labelled the active generation")
-        _, repaired_clip = compile_binding(host, walker, "S12")
-        author(host, "S12", "h1-gate.repair", [repaired_clip])
         repaired_plan = host.ok("unity.projection.plan", {"sceneLogicalId": SCENE}, "S12", "plan:repaired")
         repaired = materialize(host, "S12", "materialize:repaired", repaired_plan)
         repaired_snapshot = host.ok("authoring.snapshot.export", {}, "S12", "snapshot.export:repaired")

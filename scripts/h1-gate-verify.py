@@ -292,7 +292,9 @@ def check_s12(f, records, session, t, second):
     f.check("projection.source-missing" in codes and "projection.reference-missing" in codes, f"S12.{t}.preflight-diagnostics", ",".join(map(str, codes)))
     rejected = [r for r in calls(records, "unity.host.projection.materialize@1.0", "S12", session) if error_code(r)]
     f.check(len(rejected) >= 2, f"S12.{t}.invalid-materialize-not-refused")
-    retained = last(calls(records, "unity.host.projection.observe@1.0", "S12", session, label="observe:after-invalid", status="success"))
+    retained = last(calls(records, "unity.host.projection.observe@1.0", "S12", session, label="observe:retained-before-rematerialize", status="success"))
+    last_invalid = max((r["seq"] for r in rejected), default=None)
+    f.check(retained and last_invalid is not None and retained["seq"] > last_invalid, f"S12.{t}.retention-not-observed-after-rejection")
     if f.check(retained and second, f"S12.{t}.no-post-rejection-observation"):
         r = result(retained)
         f.check(r["generationId"] == second["generationId"] and r["current"] is False and r["graphDigest"] == second["graphDigest"],
