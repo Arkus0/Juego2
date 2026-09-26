@@ -1,10 +1,18 @@
 # WP-PA-08 — Leisure, Social Activities & Minigames research
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_RESEARCH**  
 Depends on: `WP-PA-07` PASS + merge + DocSync  
 Blocks: `WP-PA-09` only
+
+Accepted in batch: `WP-PA-B1`  
+Accepted candidate: `a60129e615d1f8bedaea7d2754a3e260469c51ca`  
+Canonical batch PR: `#237`  
+Independent PASS review: `#5325533949`  
+Batch merge: `eb716bb4edddad8c59f416fb9f415d5eaf1845f6`  
+Canonical result: `Docs/research/living-world/results/PA-08.md`  
+Binding DocSync: `Docs/evidence/WP-PA-B1/DOCSYNC.md`
 
 ## Objective
 
@@ -42,6 +50,8 @@ All outputs required by the frozen PA-08 plan, plus:
 An accepted activity model can exist in normal town life without the player, can admit player participation/interference where appropriate, consumes real world opportunity, and emits only bounded outcomes owned by normal downstream systems.
 
 Negative gate: the player launching a private score screen must not be the only way an activity exists or matters.
+
+Accepted by the PA-B1 batch evidence and independent PASS review above.
 
 ## Deferred proof
 

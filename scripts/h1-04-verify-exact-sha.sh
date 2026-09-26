@@ -18,6 +18,8 @@ for required in \
   Docs/evidence/WP-H1-04/PUBLIC_CONFORMANCE.json \
   Docs/evidence/WP-H1-04/EFFECTIVE_VALIDATION.json \
   Docs/evidence/WP-H1-04/PROOF_MATRIX.md \
+  Docs/evidence/WP-H1-04/REOPEN_1_PUBLIC_DIAGNOSTICS.md \
+  Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json \
   Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json \
   Unity/ArkusUnity/Assets/Arkus/H1/Editor/H1CatalogueInventory.cs \
   Unity/ArkusUnity/Assets/Arkus/H1/Editor/H1CatalogueMutationProof.cs \
@@ -35,6 +37,7 @@ python3 scripts/h1-04-evidence-summary.py \
   --inventory Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json \
   --mutation Docs/evidence/WP-H1-04/EFFECTIVE_MUTATION.json \
   --public Docs/evidence/WP-H1-04/PUBLIC_CONFORMANCE.json \
+  --package-revision 4f172f7aa9e7c4a0909be046d095eac5477ad765 \
   --output .h1-04-effective/static-summary.json
 python3 scripts/h1-04-evidence-check.py \
   --inventory Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json \

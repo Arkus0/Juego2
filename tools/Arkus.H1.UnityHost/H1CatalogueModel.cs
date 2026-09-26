@@ -15,7 +15,21 @@ namespace Arkus.H1.UnityHost
     public sealed class H1CatalogueException : Exception
     {
         public H1CatalogueException(string code, string message) : base(message) { Code = code; }
+
+        public H1CatalogueException(string code, string message, string repairHint, IReadOnlyDictionary<string, object?> context) : base(message)
+        {
+            Code = code;
+            RepairHint = repairHint;
+            Context = context;
+        }
+
         public string Code { get; }
+
+        /// <summary>Code-specific public repair guidance; null keeps the capability's generic catalogue hint.</summary>
+        public string? RepairHint { get; }
+
+        /// <summary>Public-safe structured facts a client needs to recover without implementation knowledge.</summary>
+        public IReadOnlyDictionary<string, object?>? Context { get; }
     }
 
     public sealed class H1CatalogueEffectiveInventory
@@ -223,12 +237,23 @@ namespace Arkus.H1.UnityHost
 
         public IReadOnlyDictionary<string, object?> Query(string kind, int pageSize, int offset, long? expectedSnapshotToken = null)
         {
-            if (pageSize < 1 || pageSize > MaximumPageSize) throw Error("catalogue.page-bound", "Page size is outside the fixed 1..64 bound.");
-            if (!string.IsNullOrEmpty(kind) && !Kinds.Contains(kind)) throw Error("catalogue.unknown-kind", "Requested catalogue kind is not admitted.");
+            if (pageSize < 1 || pageSize > MaximumPageSize)
+                throw Error("catalogue.page-bound", "Page size is outside the fixed 1..64 bound.",
+                    "Use a pageSize from 1 to 64 and page with the returned nextOffset.",
+                    Context(("minimumPageSize", 1L), ("maximumPageSize", (long)MaximumPageSize)));
+            if (!string.IsNullOrEmpty(kind) && !Kinds.Contains(kind))
+                throw Error("catalogue.unknown-kind", "Requested catalogue kind is not admitted.",
+                    "Omit kind or use one of the admitted catalogue kinds.",
+                    Context(("admittedKinds", Kinds.OrderBy(value => value, StringComparer.Ordinal).Cast<object?>().ToArray())));
             var source = Entries.Where(entry => string.IsNullOrEmpty(kind) || entry.Kind == kind).ToArray();
-            if (offset < 0 || offset > source.Length) throw Error("catalogue.page-bound", "Offset is outside the effective scoped inventory.");
+            if (offset < 0 || offset > source.Length)
+                throw Error("catalogue.page-bound", "Offset is outside the effective scoped inventory.",
+                    "Start at offset 0 and continue with the nextOffset returned by the previous page.",
+                    Context(("minimumOffset", 0L), ("maximumOffset", (long)source.Length), ("total", (long)source.Length)));
             if (expectedSnapshotToken.HasValue && expectedSnapshotToken.Value != SnapshotToken)
-                throw Error("catalogue.stale-snapshot", "A previous page belongs to a different effective catalogue snapshot.");
+                throw Error("catalogue.stale-snapshot", "A previous page belongs to a different effective catalogue snapshot.",
+                    "Omit expectedSnapshotToken on the first page. On later pages, pass the snapshotToken returned by the previous page. If the snapshot changed, restart at offset 0.",
+                    Context(("currentSnapshotToken", SnapshotToken), ("fingerprint", Fingerprint), ("restartOffset", 0L)));
             var page = source.Skip(offset).Take(pageSize).Select(entry => (object?)entry.ToData()).ToArray();
             var next = offset + page.Length;
             return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -242,12 +267,28 @@ namespace Arkus.H1.UnityHost
         public IReadOnlyDictionary<string, object?> Get(string logicalId, string kind, bool requireCompatible)
         {
             if (!CanonicalIdentityRules.IsCanonicalIdentifier(logicalId) || !Kinds.Contains(kind))
-                throw Error("catalogue.invalid-reference", "Catalogue reference has invalid logical identity or kind.");
+                throw Error("catalogue.invalid-reference", "Catalogue reference has invalid logical identity or kind.",
+                    "Use an Arkus logical ID returned by unity.host.catalogue.query together with its admitted kind.",
+                    Context(("admittedKinds", Kinds.OrderBy(value => value, StringComparer.Ordinal).Cast<object?>().ToArray())));
             if (!_byId.TryGetValue(logicalId, out var entry))
-                throw Error("catalogue.missing-reference", "The referenced Arkus logical ID is not in the effective catalogue.");
-            if (entry.Kind != kind) throw Error("catalogue.incompatible-reference", "The referenced kind disagrees with the effective entry.");
+            {
+                if (string.Equals(logicalId, H1ManagedScenePlan.SceneId, StringComparison.Ordinal))
+                    throw Error("catalogue.missing-reference", "The referenced Arkus logical ID is not in the effective catalogue.",
+                        "This ID is the fixed managed projection target scene, not a catalogued source. Use it as binding.targetSceneId and as the projection sceneLogicalId. It does not need to resolve in the catalogue.",
+                        Context(("logicalId", logicalId), ("kind", kind), ("managedProjectionTarget", true),
+                            ("targetFor", new object?[] { "binding.targetSceneId", "sceneLogicalId" })));
+                throw Error("catalogue.missing-reference", "The referenced Arkus logical ID is not in the effective catalogue.",
+                    "Page through unity.host.catalogue.query to discover the admitted logical IDs.",
+                    Context(("logicalId", logicalId), ("kind", kind)));
+            }
+            if (entry.Kind != kind)
+                throw Error("catalogue.incompatible-reference", "The referenced kind disagrees with the effective entry.",
+                    "Use the kind reported for this logical ID by unity.host.catalogue.query.",
+                    Context(("logicalId", logicalId), ("requestedKind", kind), ("effectiveKind", entry.Kind)));
             if (requireCompatible && !entry.Compatible)
-                throw Error("catalogue.incompatible-reference", "The referenced Unity entry is not compatible with the effective project.");
+                throw Error("catalogue.incompatible-reference", "The referenced Unity entry is not compatible with the effective project.",
+                    "Choose a catalogue entry that reports compatible=true.",
+                    Context(("logicalId", logicalId), ("kind", kind), ("compatible", false)));
             return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
             {
                 ["schemaId"] = "arkus.h1-catalogue-get@1", ["fingerprint"] = Fingerprint,
@@ -388,6 +429,16 @@ namespace Arkus.H1.UnityHost
 
         private static void Append(StringBuilder builder, string value) => builder.Append(value.Length.ToString(CultureInfo.InvariantCulture)).Append(':').Append(value);
         private static H1CatalogueException Error(string code, string message) => new H1CatalogueException(code, message);
+
+        private static H1CatalogueException Error(string code, string message, string repairHint, IReadOnlyDictionary<string, object?> context) =>
+            new H1CatalogueException(code, message, repairHint, context);
+
+        private static IReadOnlyDictionary<string, object?> Context(params (string Key, object? Value)[] values)
+        {
+            var context = new Dictionary<string, object?>(StringComparer.Ordinal);
+            foreach (var (key, value) in values) context[key] = value;
+            return new ReadOnlyDictionary<string, object?>(context);
+        }
         private static IReadOnlyDictionary<string, object?> ReadOnly(IDictionary<string, object?> data) =>
             new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(data, StringComparer.Ordinal));
     }

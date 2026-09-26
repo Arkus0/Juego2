@@ -1,10 +1,12 @@
 # WP-PA-B2 — Causality, legibility + governance research batch
 
-Status: **DORMANT / NOT_STARTED**  
+Status: **READY / NOT_STARTED**  
 Class: RESEARCH / `RESEARCH_BATCH`  
 Depends on: `WP-PA-B1` PASS  
 Consumes: `WP-PA-10.md`, `WP-PA-11.md`, `WP-PA-12.md` as binding unit contracts  
 Blocks: `WP-PA-B3`
+
+Dependency status: `WP-PA-B1` accepted via PR `#237`, independent PASS review `#5325533949`, merge `eb716bb4edddad8c59f416fb9f415d5eaf1845f6`, and binding DocSync `Docs/evidence/WP-PA-B1/DOCSYNC.md`. PA-B2 is dependency-valid but remains NOT_STARTED until explicitly dispatched.
 
 ## Units
 

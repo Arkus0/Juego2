@@ -1,10 +1,18 @@
 # WP-PA-07 — Work, Businesses & Material Dependencies research
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_RESEARCH**  
 Depends on: `WP-PA-06` PASS + merge + DocSync  
 Blocks: `WP-PA-08` only
+
+Accepted in batch: `WP-PA-B1`  
+Accepted candidate: `a60129e615d1f8bedaea7d2754a3e260469c51ca`  
+Canonical batch PR: `#237`  
+Independent PASS review: `#5325533949`  
+Batch merge: `eb716bb4edddad8c59f416fb9f415d5eaf1845f6`  
+Canonical result: `Docs/research/living-world/results/PA-07.md`  
+Binding DocSync: `Docs/evidence/WP-PA-B1/DOCSYNC.md`
 
 ## Objective
 
@@ -42,6 +50,8 @@ Define the smallest material/work model that makes jobs, services and businesses
 A bounded material/work change must be able to alter at least two actors' later choices through shared causal state, not a bespoke quest branch.
 
 Negative gate: reject any proposed economy complexity that cannot be tied to observable player/NPC behaviour in the intended town scale.
+
+Accepted by the PA-B1 batch evidence and independent PASS review above.
 
 ## Deferred proof
 

@@ -6,6 +6,7 @@ using System.Text.Json;
 using Arkus.H1.UnityHost;
 using Arkus.Game.World;
 using Arkus.Harness.Projection;
+using Arkus.Harness.Protocol;
 using Xunit;
 
 namespace Arkus.Harness.Tests
@@ -74,6 +75,48 @@ namespace Arkus.Harness.Tests
                 first.Get("quaternius.medieval.material.plaster", "material", true)).Code);
             Assert.Equal("catalogue.missing-reference", Assert.Throws<H1CatalogueException>(() =>
                 first.Get("quaternius.medieval.prefab.absent", "prefab", true)).Code);
+        }
+
+        [Fact]
+        public void Paging_and_reference_diagnostics_carry_the_facts_a_fresh_public_client_needs_to_recover()
+        {
+            // WP-H1-04 reopen (R1-R3), triggered by the WP-H1-GATE fresh-agent trial: a client that only has the
+            // public contract must be able to recover from paging and reference errors with no implementation knowledge.
+            var (inventory, mapping) = Fixture();
+            var snapshot = Build(inventory, mapping);
+
+            var bound = Assert.Throws<H1CatalogueException>(() => snapshot.Query("", 65, 0));
+            Assert.Equal("catalogue.page-bound", bound.Code);
+            Assert.Equal(1L, bound.Context!["minimumPageSize"]);
+            Assert.Equal((long)H1CatalogueSnapshot.MaximumPageSize, bound.Context["maximumPageSize"]);
+            Assert.Contains("1 to 64", bound.RepairHint);
+
+            var stale = Assert.Throws<H1CatalogueException>(() => snapshot.Query("", 2, 0, snapshot.SnapshotToken + 1));
+            Assert.Equal("catalogue.stale-snapshot", stale.Code);
+            Assert.Equal(snapshot.SnapshotToken, stale.Context!["currentSnapshotToken"]);
+            Assert.Equal(snapshot.Fingerprint, stale.Context["fingerprint"]);
+            Assert.Contains("Omit expectedSnapshotToken", stale.RepairHint);
+            var recovered = snapshot.Query("", 2, 0, (long)stale.Context["currentSnapshotToken"]!);
+            Assert.Equal(snapshot.SnapshotToken, recovered["snapshotToken"]);
+
+            var missing = Assert.Throws<H1CatalogueException>(() => snapshot.Get("quaternius.medieval.prefab.absent", "prefab", true));
+            Assert.Equal("catalogue.missing-reference", missing.Code);
+            Assert.False(missing.Context!.ContainsKey("managedProjectionTarget"));
+            Assert.Contains("unity.host.catalogue.query", missing.RepairHint);
+
+            // The fixed managed projection target is not a catalogued source; the diagnostic code stays the accepted
+            // missing-reference (projection planning semantics are unchanged) but names the scene's public role.
+            var target = Assert.Throws<H1CatalogueException>(() => snapshot.Get(H1ManagedScenePlan.SceneId, "scene", true));
+            Assert.Equal("catalogue.missing-reference", target.Code);
+            Assert.Equal(true, target.Context!["managedProjectionTarget"]);
+            Assert.Contains("binding.targetSceneId", target.RepairHint);
+
+            foreach (var exception in new[] { bound, stale, missing, target })
+            {
+                var error = new StructuredError(exception.Code, exception.Message, "$", exception.Context, false, exception.RepairHint).ToData();
+                Assert.Empty(PortableData.Validate(error));
+                Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(error));
+            }
         }
 
         [Fact]

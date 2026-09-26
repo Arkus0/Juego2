@@ -1,10 +1,18 @@
 # WP-PA-09 — Player Causal Agency & World Intervention research
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_RESEARCH**  
 Depends on: `WP-PA-08` PASS + merge + DocSync  
 Blocks: `WP-PA-10` only
+
+Accepted in batch: `WP-PA-B1`  
+Accepted candidate: `a60129e615d1f8bedaea7d2754a3e260469c51ca`  
+Canonical batch PR: `#237`  
+Independent PASS review: `#5325533949`  
+Batch merge: `eb716bb4edddad8c59f416fb9f415d5eaf1845f6`  
+Canonical result: `Docs/research/living-world/results/PA-09.md`  
+Binding DocSync: `Docs/evidence/WP-PA-B1/DOCSYNC.md`
 
 ## Objective
 
@@ -42,6 +50,8 @@ All frozen-plan outputs plus:
 A player can change shared state through an ordinary semantic action and later encounter downstream NPC consequences that continue without a bespoke script carrying the chain.
 
 Negative gate: reject any model where the semantically equivalent NPC action uses Living World owners but the player action bypasses them through private quest flags.
+
+Accepted by the PA-B1 batch evidence and independent PASS review above, including the bounded A11B-10 story/systemic collision oracle.
 
 ## Deferred proof
 
