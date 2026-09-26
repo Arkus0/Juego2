@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
-namespace Arkus.Game.Authoring
+namespace Arkus.Harness.Protocol
 {
     /// <summary>
     /// Engine-neutral port that lets an extension owner accept a structured JSON document inside an ordinary

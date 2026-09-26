@@ -30,7 +30,7 @@ Reopen condition checked: concrete effective evidence shows that the accepted pu
 
 ## Design
 
-- **Port (engine-agnostic, `Arkus.Game.Authoring`).**
+- **Port (engine-agnostic, in the neutral contract assembly `Arkus.Harness.Protocol`, so that the H0 kernel and scoped providers depend on it without depending on each other).**
   - `IExtensionDocumentCodec` has `Owner`, `SchemaVersion`, and `Encode(subjectId, document) → ExtensionDocumentEncoding`, which is either `Encoded(canonical bytes, derived dependencies)` or `Rejected(code, document-relative path, public message, hint)`.
   - `ExtensionDocumentCodecs` is an immutable (owner, schemaVersion) registry; duplicates are rejected.
   - H0 still never interprets payload bytes.
