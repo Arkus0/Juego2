@@ -6,7 +6,7 @@ Repository: `Arkus0/Juego2`
 
 ## Accepted state
 
-`PA-01` through `PA-06` are accepted in Juego2. Their result artefacts and prior reviews remain authoritative inputs.
+`PA-01` through `PA-13` are accepted in Juego2. PA-07..09 were accepted through `WP-PA-B1`; PA-10..12 through `WP-PA-B2`; PA-13 through `WP-PA-B3`. Their result artefacts, independent reviews and binding DocSync records remain authoritative inputs.
 
 PA answers **what behaviour/product semantics Juego2 needs and what failure modes later runtime work must prevent**. PA research does not itself prove Unity/runtime behaviour.
 
@@ -31,13 +31,13 @@ PA-01 ✅ Daily Life
  -> PA-04 ✅ Knowledge/Beliefs
  -> PA-05 ✅ Rumours
  -> PA-06 ✅ Memory & Consequences
- -> PA-B1  { PA-07 Work/Material + PA-08 Activities + PA-09 Player Agency }
- -> PA-B2  { PA-10 Events + PA-11 Legibility + PA-12 Governance }
- -> PA-B3  { PA-13 Simulation Control + H3/H4 handoff index }
- -> PA-14  Integration Review, deferred until H2-GATE
+ -> PA-B1 ✅ { PA-07 Work/Material + PA-08 Activities + PA-09 Player Agency }
+ -> PA-B2 ✅ { PA-10 Events + PA-11 Legibility + PA-12 Governance }
+ -> PA-B3 ✅ { PA-13 Simulation Control + H3/H4 handoff index }
+ -> PA-14    Integration Review — DORMANT until H2-GATE
 ```
 
-This reduces the pending remote research spine from seven review/merge/DocSync cycles before PA-14 to three, while retaining all original acceptance/negative gates.
+The three remote batches are now accepted. PA-14 remains intentionally deferred until the product has an accepted H2 closure boundary.
 
 ## Batch contracts
 
@@ -94,7 +94,7 @@ The accepted H2 plan deliberately keeps behaviour shallow:
 - H3 owns persistent actor identity, time, POIs/smart objects, schedules/routines and readable daily life.
 - H4 owns deeper Living World causality: beliefs/knowledge, relationships, memory, events, structured outcomes and runtime/save minimum.
 
-PA-B1/B2/B3 prepare those later phases but do not pull their implementation into H2.
+PA-B1/B2/B3 prepare those later phases but do not pull their implementation into H2. The accepted PA-B3 handoff additionally requires first bounded local-query/fidelity proofs in H3 where those seams exist and deeper PA-13 control/reconciliation proof in H4, with numeric thresholds deferred to representative profiling.
 
 ## Relationship to CITY/H1
 
@@ -102,4 +102,8 @@ PA does not own geography or the Unity bridge. Accepted CITY places/routes may b
 
 ## Current next PA workpack
 
-`WP-PA-B1 — Daily-life agency research batch`.
+`WP-PA-14 — Living World integration review`.
+
+PA prerequisite: SATISFIED by accepted PA-B3.  
+H2 prerequisite: **NOT YET SATISFIED**.  
+Execution status: **DORMANT / BLOCKED until accepted H2-GATE**.

@@ -104,7 +104,9 @@ namespace Arkus.Game.Authoring
                     ["schemaVersion"] = SchemaNode.Integer(),
                     ["subjectId"] = SchemaNode.String(),
                     ["dependencies"] = SchemaNode.Array(reference),
-                    ["payloadBase64"] = SchemaNode.String()
+                    ["payloadBase64"] = SchemaNode.String(),
+                    // WP-HK-04 reopen 1: structured alternative to payloadBase64, canonicalized by the owner's codec.
+                    ["document"] = SchemaNode.Object(additionalPropertiesAllowed: true)
                 },
                 new[] { "kind" });
 

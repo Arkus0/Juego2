@@ -263,7 +263,8 @@ namespace Arkus.Harness.Projection
         public const string InitialWorldId = "world.arkus.session";
         public static NeutralProjectionService Create()
         {
-            var contract = CanonicalWorldContract.ComposeEmptyPortableSession(InitialWorldId, new[] { UnityAuthoringProvider.CreateContribution() });
+            var contract = CanonicalWorldContract.ComposeEmptyPortableSession(
+                InitialWorldId, new[] { UnityAuthoringProvider.CreateContribution() }, UnityAuthoringProvider.CreateDocumentCodecs());
             return new NeutralProjectionService(contract);
         }
     }

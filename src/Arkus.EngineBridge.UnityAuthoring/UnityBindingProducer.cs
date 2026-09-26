@@ -226,6 +226,20 @@ namespace Arkus.EngineBridge.UnityAuthoring
             return result.AsReadOnly();
         }
 
+        /// <summary>
+        /// Canonical extension encoding of one binding document, shared by <c>unity.binding.compile</c> and the typed
+        /// document codec so both produce byte-identical payloads and dependencies.
+        /// </summary>
+        internal static void CanonicalizeForExtension(
+            IReadOnlyDictionary<string, object?> binding,
+            out byte[] payload,
+            out IReadOnlyList<object?> dependencies)
+        {
+            var normalized = NormalizeBinding(binding);
+            payload = Encode(normalized);
+            dependencies = CanonicalData(DeriveCanonicalDependencies(normalized));
+        }
+
         private static IReadOnlyList<CanonicalDependency> DeriveCanonicalDependencies(IReadOnlyDictionary<string, object?> normalized)
         {
             var result = new Dictionary<string, CanonicalDependency>(StringComparer.Ordinal);
@@ -349,6 +363,17 @@ namespace Arkus.EngineBridge.UnityAuthoring
                     ["subjectId"] = subjectId,
                     ["dependencies"] = CanonicalData(canonical),
                     ["payloadBase64"] = Convert.ToBase64String(payload)
+                }),
+                // WP-H1-01 reopen 1: the same extension as a typed document (WP-HK-04 reopen 1). The authoring kernel
+                // canonicalizes it with UnityBindingDocumentCodec into exactly the bytes and dependencies above, so a
+                // client never has to transcribe the opaque payload.
+                ["documentMutation"] = ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["kind"] = "put-extension",
+                    ["owner"] = ExtensionOwner,
+                    ["schemaVersion"] = ExtensionSchemaVersion,
+                    ["subjectId"] = subjectId,
+                    ["document"] = normalized
                 })
             });
         }

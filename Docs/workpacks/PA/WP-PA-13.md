@@ -1,10 +1,18 @@
 # WP-PA-13 — Simulation Control, Failure Modes & Budgets research
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_RESEARCH**  
 Depends on: `WP-PA-12` PASS + merge + DocSync  
 Blocks: `WP-PA-14` only
+
+Accepted in batch: `WP-PA-B3`  
+Accepted candidate: `f2aca89022eedee2ec8781529b7974fe2c62c71f`  
+Canonical batch PR: `#242`  
+Independent PASS review: `#5326105359`  
+Batch merge: `fb3eac98abea795b739a4016c67d899b09ba389f`  
+Canonical result: `Docs/research/living-world/results/PA-13.md`  
+Binding DocSync: `Docs/evidence/WP-PA-B3/DOCSYNC.md`
 
 ## Objective
 
@@ -83,10 +91,12 @@ It must also preserve SV-1 and SV-2 as falsifiable requirements: adding irreleva
 
 Negative gates: simulation control may not directly rewrite beliefs/relationships/goals to force a designer-approved equilibrium; a spatial/index structure may not be presented as proof of bounded work without a bound on the candidate surface it yields; ABSTRACT mode may not defer an unbounded micro-tick debt to later FULL promotion; and no guessed numeric budget may be presented as validated.
 
+Accepted by the PA-B3 batch evidence and independent PASS review above.
+
 ## Deferred proof
 
 Actual CPU/save budgets, population limits, update cadence, fidelity thresholds and tuning require instrumented runtime evidence. SV-1/SV-2 can be structurally falsified before those final budgets exist; their shipping thresholds remain empirical until representative H3/H4/H7 runtime and hardware evidence is available.
 
 ## Definition of Done
 
-PA-13 closes the remote research spine with explicit failure/cost constraints and carries SV-1/SV-2 forward into the appropriate runtime acceptance fixtures. Reviewer PASS must identify PA-14 as next but mark its H2-boundary prerequisite if unsatisfied.
+PA-13 closes the remote research spine with explicit failure/cost constraints and carries SV-1/SV-2 forward into the appropriate runtime acceptance fixtures. Reviewer PASS identifies PA-14 as next while preserving its H2-boundary prerequisite.

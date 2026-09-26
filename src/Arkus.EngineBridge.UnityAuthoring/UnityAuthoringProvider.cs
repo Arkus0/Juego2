@@ -130,6 +130,13 @@ namespace Arkus.EngineBridge.UnityAuthoring
                 new[] { "subjectId", "dependencies", "payloadBase64" }));
         }
 
+        /// <summary>
+        /// Codecs this provider admits into the authoring kernel (WP-HK-04 / WP-H1-01 reopen 1). Hosts that compose this
+        /// provider pass them to the authoring session so <c>documentMutation</c> can be applied directly.
+        /// </summary>
+        public static ExtensionDocumentCodecs CreateDocumentCodecs() =>
+            ExtensionDocumentCodecs.Create(new IExtensionDocumentCodec[] { new UnityBindingDocumentCodec() });
+
         private static JsonSchemaDocument CompileSuccessSchema()
         {
             return new JsonSchemaDocument(SchemaNode.Object(
@@ -140,13 +147,29 @@ namespace Arkus.EngineBridge.UnityAuthoring
                     ["canonicalDependencies"] = SchemaNode.Array(CanonicalDependencySchema()),
                     ["catalogueDependencies"] = SchemaNode.Array(CatalogueDependencySchema()),
                     ["payloadBase64"] = SchemaNode.String(),
-                    ["extensionMutation"] = ExtensionMutationSchema()
+                    ["extensionMutation"] = ExtensionMutationSchema(),
+                    // Additive and optional: the same extension as a typed document for authoring.change.*.
+                    ["documentMutation"] = DocumentMutationSchema()
                 },
                 new[]
                 {
                     "schemaId", "binding", "canonicalDependencies", "catalogueDependencies",
                     "payloadBase64", "extensionMutation"
                 }));
+        }
+
+        private static SchemaNode DocumentMutationSchema()
+        {
+            return SchemaNode.Object(
+                new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
+                {
+                    ["kind"] = SchemaNode.String(new[] { "put-extension" }),
+                    ["owner"] = SchemaNode.String(new[] { UnityBindingProducer.ExtensionOwner }),
+                    ["schemaVersion"] = SchemaNode.Integer(),
+                    ["subjectId"] = SchemaNode.String(),
+                    ["document"] = BindingSchema()
+                },
+                new[] { "kind", "owner", "schemaVersion", "subjectId", "document" });
         }
 
         private static JsonSchemaDocument DecodeSuccessSchema()

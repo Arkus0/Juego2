@@ -1,10 +1,18 @@
 # WP-PA-11 — Investigation, Legibility & Traces research
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_RESEARCH**  
 Depends on: `WP-PA-10` PASS + merge + DocSync  
 Blocks: `WP-PA-12` only
+
+Accepted in batch: `WP-PA-B2`  
+Accepted candidate: `6d05206884ac729e02cdcceb2edeecb43244b4bd`  
+Canonical batch PR: `#240`  
+Independent PASS review: `#5326015639`  
+Batch merge: `c886ac2712bd81718607153f9cae9394959bcdf5`  
+Canonical result: `Docs/research/living-world/results/PA-11.md`  
+Binding DocSync: `Docs/evidence/WP-PA-B2/DOCSYNC.md`
 
 ## Objective
 
@@ -41,6 +49,8 @@ Determine how the player can understand important simulation consequences that o
 A player can reconstruct a meaningful missed causal event from at least two legitimate, independently useful channels while the system preserves uncertainty and actor-specific knowledge.
 
 Negative gate: the investigation layer cannot read privileged engine lineage and simply present it as knowledge the player has not earned.
+
+Accepted by the PA-B2 batch evidence and independent PASS review above.
 
 ## Deferred proof
 
