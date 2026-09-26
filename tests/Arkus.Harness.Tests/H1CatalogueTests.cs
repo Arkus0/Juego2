@@ -24,9 +24,10 @@ namespace Arkus.Harness.Tests
                 File.ReadAllText(Path.Combine(root, "Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json")),
                 File.ReadAllText(Path.Combine(root, H1CatalogueSnapshot.MappingRelativePath)),
                 File.ReadAllText(Path.Combine(root, H1CatalogueSnapshot.AdoptionRelativePath)));
-            Assert.Equal(250, snapshot.Entries.Count);
+            Assert.Equal(274, snapshot.Entries.Count);
             Assert.Equal(240, snapshot.Entries.Count(entry => entry.Kind == "animation-clip"));
-            Assert.Equal("014d510bd8e9fe0d2754fed0075b3a81787e57a1717baed29e7e03f54295bd21", snapshot.Fingerprint);
+            Assert.Equal(14, snapshot.Entries.Count(entry => entry.Kind == "prefab" && entry.SourceId.StartsWith("quaternius-", StringComparison.Ordinal)));
+            Assert.Equal("e1e92d9878a4fea1ac9fb876d10b17a870db7ac68a669dd97ecf49b036f8c3e1", snapshot.Fingerprint);
             Assert.Equal(before, CanonicalWorldStateCodec.ComputeContentHash(world));
         }
 

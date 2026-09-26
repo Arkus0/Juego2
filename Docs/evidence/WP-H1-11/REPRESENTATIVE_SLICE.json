@@ -10,10 +10,11 @@
   },
   "importRecipe": {
     "mount": "distribution entries are copied byte-for-byte from the hash-verified adopted payload together with their original upstream Unity .meta sidecar; H1-04 slices keep their accepted vault bytes and sidecars",
-    "importSettings": "original upstream Unity .meta (ModelImporter) for distribution entries; accepted H1-04 GUID-only sidecars for H1-04 slices",
+    "importSettings": "per item (import.*): upstream ModelImporter values read from the original sidecar bytes; accepted H1-04 GUID-only sidecars use Unity's serialized ModelImporter defaults, declared as no file-unit conversion",
     "handedness": "unity-negates-fbx-x",
-    "unitScale": "fbx-UnitScaleFactor-centimetres-to-metres",
+    "unitScale": "UnityMetres = FbxUnits * globalScale * (unitConversion ? UnitScaleFactor/100 : 1)",
     "rootCollapse": "a single top-level FBX node becomes the imported prefab root; several top-level nodes become children of a root named after the file",
+    "materialSlots": "the multiset of imported slot materials equals the FBX material set of the node; Unity may order submeshes differently from FBX connection order",
     "boundsToleranceMetres": 0.0005
   },
   "items": [
@@ -61,6 +62,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "guid-only",
+        "unitConversion": false,
+        "globalScale": 1.0
       }
     },
     {
@@ -106,6 +112,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -152,6 +163,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -199,6 +215,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -245,6 +266,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -291,6 +317,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -336,6 +367,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -382,6 +418,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -428,6 +469,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -473,6 +519,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -518,6 +569,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -563,6 +619,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -608,6 +669,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
       }
     },
     {
@@ -917,6 +983,11 @@
             ]
           }
         ]
+      },
+      "import": {
+        "sidecar": "guid-only",
+        "unitConversion": false,
+        "globalScale": 1.0
       }
     }
   ],

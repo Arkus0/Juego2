@@ -37,10 +37,13 @@ namespace Arkus.Harness.Tests
         public static IReadOnlyList<NodeSpec> Nodes { get; } = new[]
         {
             new NodeSpec("corner.street", null, "prefab", "quaternius.medieval.prefab.corner-exterior-wood", Vec(0, 0, 0)),
-            new NodeSpec("facade.front", "corner.street", "prefab", "quaternius.medieval.prefab.wall-plaster-window-wide-flat", Vec(1000, 0, 0)),
-            new NodeSpec("window.front", "facade.front", "prefab", "quaternius.medieval.prefab.window-wide-flat1", Vec(0, 0, 0)),
-            new NodeSpec("shutters.front", "facade.front", "prefab", "quaternius.medieval.prefab.windowshutters-wide-flat-open", Vec(0, 0, 0)),
-            new NodeSpec("vine.front", "facade.front", "prefab", "quaternius.medieval.prefab.prop-vine1", Vec(600, 3000, 150)),
+            // The accepted H1-04 facade sidecar imports FBX file units without conversion (REPRESENTATIVE_SLICE.json
+            // import.unitConversion=false); its Unity binding states the 1% unit scale so it composes with the kit modules.
+            new NodeSpec("facade.front", "corner.street", "prefab", "quaternius.medieval.prefab.wall-plaster-window-wide-flat", Vec(1000, 0, 0),
+                scale: Vec(10000, 10000, 10000)),
+            new NodeSpec("window.front", "corner.street", "prefab", "quaternius.medieval.prefab.window-wide-flat1", Vec(1000, 0, 0)),
+            new NodeSpec("shutters.front", "window.front", "prefab", "quaternius.medieval.prefab.windowshutters-wide-flat-open", Vec(0, 0, 0)),
+            new NodeSpec("vine.front", "corner.street", "prefab", "quaternius.medieval.prefab.prop-vine1", Vec(1600, 3000, 150)),
             new NodeSpec("wall.side", "corner.street", "prefab", "quaternius.medieval.prefab.wall-plaster-straight", Vec(0, 0, -1000), yaw: 90000),
             new NodeSpec("wall.door", "corner.street", "prefab", "quaternius.medieval.prefab.wall-plaster-door-flat", Vec(3000, 0, 0)),
             new NodeSpec("door.main", "wall.door", "prefab", "quaternius.medieval.prefab.door-1-flat", Vec(535, 0, 0)),

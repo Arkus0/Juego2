@@ -19,8 +19,8 @@ namespace Arkus.Harness.Tests
             Assert.Equal(
                 new[]
                 {
-                    "922dbdffbe2f0a622acc2e153ca8b181427f6ce6",
-                    "664e83e25269f345a248ce43410a28ed0a670750"
+                    "31d5ccc9dac335a3b49f0ec3cbb5007848146626",
+                    "23e2a423c26903702e4035b600007ad35a926c58"
                 },
                 H1ProjectionManifest.Sources.Select(source => source.AcceptedBlobSha).ToArray());
             Assert.Equal("arkus.h1-catalogue-mapping@1", H1ProjectionManifest.Sources[0].SchemaId);

@@ -67,6 +67,19 @@ namespace Arkus.H1.Editor.Tests
                 if (!expectedPaths.Keys.OrderBy(value => value, StringComparer.Ordinal).SequenceEqual(observed.transformPaths, StringComparer.Ordinal))
                     failures.Add(item.assetPath + ": hierarchy " + string.Join(",", observed.transformPaths.Take(8)) + " != " + string.Join(",", expectedPaths.Keys.Take(8)));
 
+                // Import assumptions: the effective importer applies exactly the declared unit-scale settings.
+                var importer = AssetImporter.GetAtPath(item.assetPath) as ModelImporter;
+                if (importer == null) { failures.Add(item.assetPath + ": not imported by the model importer"); continue; }
+                observed.useFileScale = importer.useFileScale;
+                observed.globalScale = importer.globalScale;
+                observed.fileScale = importer.fileScale;
+                observed.animationType = importer.animationType.ToString();
+                observed.materialImportMode = importer.materialImportMode.ToString();
+                observed.materialLocation = importer.materialLocation.ToString();
+                if (importer.useFileScale != item.import.unitConversion || Math.Abs(importer.globalScale - item.import.globalScale) > 1e-4f)
+                    failures.Add(item.assetPath + ": importer unit settings useFileScale=" + importer.useFileScale + " globalScale=" +
+                        importer.globalScale.ToString("R", CultureInfo.InvariantCulture) + " differ from the declared " + item.import.sidecar + " recipe");
+
                 // Pivot/scale/axis: the model root is an identity pivot and every mesh keeps its source-relative bounds.
                 if (item.fbx.upAxis == 1)
                 {
@@ -74,7 +87,7 @@ namespace Arkus.H1.Editor.Tests
                         Quaternion.Angle(root.transform.localRotation, Quaternion.identity) > 0.01f)
                         failures.Add(item.assetPath + ": imported root is not an identity pivot");
                 }
-                var scale = item.fbx.unitScaleFactor / 100f;
+                var scale = item.import.globalScale * (item.import.unitConversion ? item.fbx.unitScaleFactor / 100f : 1f);
                 foreach (var expected in item.fbx.meshes)
                 {
                     var unityPath = expectedPaths.FirstOrDefault(pair => pair.Value == expected.node).Key;
@@ -103,26 +116,29 @@ namespace Arkus.H1.Editor.Tests
                         }
                     }
 
-                    // Material slots: every FBX material is bound, compatible and in source order.
+                    // Material slots: the imported slot multiset equals the FBX material set; every slot is bound and compatible.
                     var slots = renderer.sharedMaterials;
                     meshRow.materials = slots.Select(material => material == null ? "<missing>" : AssetDatabase.GetAssetPath(material) + "|" + material.shader.name).ToArray();
-                    if (slots.Length != expected.materials.Length) failures.Add(item.assetPath + ": material slots " + slots.Length + " != " + expected.materials.Length);
-                    for (var slot = 0; slot < Math.Min(slots.Length, expected.materials.Length); slot++)
+                    var matched = new List<string>();
+                    foreach (var material in slots)
                     {
-                        var material = slots[slot];
                         if (material == null || material.shader == null || material.shader.name == ErrorShader)
                         {
-                            failures.Add(item.assetPath + ": slot " + slot + " (" + expected.materials[slot] + ") missing or incompatible");
+                            failures.Add(item.assetPath + ": a material slot is missing or incompatible");
                             continue;
                         }
-                        if (!material.name.EndsWith(expected.materials[slot], StringComparison.Ordinal))
-                            failures.Add(item.assetPath + ": slot " + slot + " material " + material.name + " != " + expected.materials[slot]);
+                        var name = expected.materials.Where(candidate => material.name.EndsWith(candidate, StringComparison.Ordinal))
+                            .OrderByDescending(candidate => candidate.Length).FirstOrDefault();
+                        if (name == null) { failures.Add(item.assetPath + ": slot material " + material.name + " is not an FBX material of " + expected.node); continue; }
+                        matched.Add(name);
                         if (item.provenance == "distribution-entry")
                         {
-                            if (!sharedByName.TryGetValue(expected.materials[slot], out var paths)) sharedByName[expected.materials[slot]] = paths = new HashSet<string>(StringComparer.Ordinal);
+                            if (!sharedByName.TryGetValue(name, out var paths)) sharedByName[name] = paths = new HashSet<string>(StringComparer.Ordinal);
                             paths.Add(AssetDatabase.GetAssetPath(material));
                         }
                     }
+                    if (!matched.OrderBy(value => value, StringComparer.Ordinal).SequenceEqual(expected.materials.OrderBy(value => value, StringComparer.Ordinal), StringComparer.Ordinal))
+                        failures.Add(item.assetPath + ": material slots {" + string.Join(",", matched) + "} != FBX {" + string.Join(",", expected.materials) + "}");
 
                     if (renderer is SkinnedMeshRenderer skinned)
                     {
@@ -442,12 +458,29 @@ namespace Arkus.H1.Editor.Tests
                 }
             }
 
+            // Scale composition: the facade (accepted H1-04 sidecar, file units) and the kit wall module (upstream
+            // sidecar, centimetres converted) realize at the same world width once the binding states the unit scale.
+            var facadeWidth = WorldBounds(byId["facade.front"].transform).size.x;
+            var wallWidth = WorldBounds(byId["wall.door"].transform).size.x;
+            inspection.facadeWorldWidth = facadeWidth;
+            inspection.kitWallWorldWidth = wallWidth;
+            Assert.That(Math.Abs(facadeWidth - wallWidth), Is.LessThan(0.02f), "facade and kit wall do not compose at one scale");
+
             foreach (var pair in overrides)
             {
                 Assert.That(pair.Value.Count, Is.EqualTo(1), "shared catalogue material " + pair.Key + " resolved to more than one object");
                 inspection.sharedOverrides.Add(pair.Key);
             }
             return inspection;
+        }
+
+        private static Bounds WorldBounds(Transform owner)
+        {
+            var renderers = OwnedPaths(owner).Values.Select(transform => transform.GetComponent<Renderer>()).Where(renderer => renderer != null).ToArray();
+            Assert.That(renderers, Is.Not.Empty, owner.name + " has no renderer");
+            var bounds = renderers[0].bounds;
+            foreach (var renderer in renderers) bounds.Encapsulate(renderer.bounds);
+            return bounds;
         }
 
         private static void RequireCompatible(string objectId, Renderer renderer)
@@ -645,8 +678,9 @@ namespace Arkus.H1.Editor.Tests
         [Serializable] private sealed class SliceItem
         {
             public string provenance; public string sourceId; public string assetPath; public string unityGuid; public string contentSha256;
-            public SliceFbx fbx;
+            public SliceImport import; public SliceFbx fbx;
         }
+        [Serializable] private sealed class SliceImport { public string sidecar; public bool unitConversion; public float globalScale; }
         [Serializable] private sealed class SliceFbx { public float unitScaleFactor; public int upAxis; public SliceNode[] nodes; public SliceMesh[] meshes; }
         [Serializable] private sealed class SliceNode { public string path; public string type; }
         [Serializable] private sealed class SliceMesh { public string node; public SliceBounds boundsSource; public string[] materials; }
@@ -660,9 +694,17 @@ namespace Arkus.H1.Editor.Tests
             public string schemaId; public List<ImportedItem> items = new List<ImportedItem>();
             public List<string> sharedMaterials = new List<string>(); public List<string> clips = new List<string>(); public string[] failures;
         }
-        [Serializable] private sealed class ImportedItem { public string assetPath; public string guid; public string[] transformPaths; public List<ImportedMesh> meshes = new List<ImportedMesh>(); }
+        [Serializable] private sealed class ImportedItem
+        {
+            public string assetPath; public string guid; public bool useFileScale; public float globalScale; public float fileScale; public string animationType;
+            public string materialImportMode; public string materialLocation; public string[] transformPaths; public List<ImportedMesh> meshes = new List<ImportedMesh>();
+        }
         [Serializable] private sealed class ImportedMesh { public string node; public string meshName; public float[] min; public float[] max; public string[] materials; public int bones; }
-        [Serializable] private sealed class SliceInspection { public string schemaId; public List<InspectedNode> nodes = new List<InspectedNode>(); public List<string> sharedOverrides = new List<string>(); }
+        [Serializable] private sealed class SliceInspection
+        {
+            public string schemaId; public List<InspectedNode> nodes = new List<InspectedNode>(); public List<string> sharedOverrides = new List<string>();
+            public float facadeWorldWidth; public float kitWallWorldWidth;
+        }
         [Serializable] private sealed class InspectedNode
         {
             public string objectId; public string sourceKind; public int ownedTransforms; public int materialSlots; public int bones; public string renderer; public string clip;

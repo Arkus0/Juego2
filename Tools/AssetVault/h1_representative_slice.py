@@ -344,13 +344,33 @@ def item_bytes(item: dict, vault: Vault, sources: dict) -> tuple[bytes, bytes]:
     die(f"unknown provenance {provenance!r} for {item.get('assetPath')}")
 
 
+def import_settings(meta_text: str, label: str) -> dict:
+    """Explicit unit-scale import assumption derived from the Unity sidecar bytes.
+
+    Upstream Quaternius sidecars carry a full ModelImporter block; their ``useFileScale`` /
+    ``globalScale`` values are read verbatim. The accepted WP-H1-04 sidecars are GUID-only:
+    Unity then applies its serialized ModelImporter defaults, which do not convert FBX file
+    units (declared here, validated against the effective importer in Unity Stage 0).
+    """
+    if "ModelImporter:" not in meta_text:
+        return {"sidecar": "guid-only", "unitConversion": False, "globalScale": 1.0}
+    use_file_scale = re.search(r"(?m)^\s+useFileScale:\s*([01])\s*$", meta_text)
+    global_scale = re.search(r"(?m)^\s+globalScale:\s*([0-9.]+)\s*$", meta_text)
+    if not use_file_scale or not global_scale:
+        die(f"model importer sidecar has no explicit unit-scale settings: {label}")
+    return {"sidecar": "upstream-model-importer", "unitConversion": use_file_scale.group(1) == "1",
+            "globalScale": _round(float(global_scale.group(1)))}
+
+
 def derived_fields(item: dict, content: bytes, meta: bytes) -> dict:
+    meta_text = meta.decode("utf-8")
     fields = {
         "contentSha256": sha256_bytes(content),
         "metaSha256": sha256_bytes(meta),
-        "unityGuid": meta_guid(meta.decode("utf-8"), item["assetPath"] + ".meta"),
+        "unityGuid": meta_guid(meta_text, item["assetPath"] + ".meta"),
     }
     if item["assetPath"].endswith(".fbx"):
+        fields["import"] = import_settings(meta_text, item["assetPath"] + ".meta")
         fields["fbx"] = describe_fbx(content)
     return fields
 
@@ -593,6 +613,15 @@ def self_test() -> None:
     assert described["nodes"] == [{"path": "Wall", "type": "Mesh"}], described
     assert described["meshes"][0]["boundsSource"] == {"min": [-100.0, 0.0, -30.0], "max": [100.0, 312.0, 9.0]}, described
     assert described["meshes"][0]["materials"] == ["MI_WoodTrim", "MI_Plaster"], described
+    assert import_settings("fileFormatVersion: 2\nguid: " + "0" * 32 + "\n", "x") == {"sidecar": "guid-only", "unitConversion": False, "globalScale": 1.0}
+    upstream = "guid: " + "0" * 32 + "\nModelImporter:\n  meshes:\n    globalScale: 1\n    useFileScale: 1\n"
+    assert import_settings(upstream, "x") == {"sidecar": "upstream-model-importer", "unitConversion": True, "globalScale": 1.0}
+    try:
+        import_settings("guid: " + "0" * 32 + "\nModelImporter:\n  meshes: {}\n", "x")
+    except SliceError:
+        pass
+    else:
+        raise AssertionError("an importer sidecar without explicit unit-scale settings must fail closed")
     rig = _synthetic_fbx([(1, "Armature", "Null", 0), (2, "root", "LimbNode", 1), (3, "pelvis", "LimbNode", 2), (4, "Body", "Mesh", 0)],
                          {4: [0.0, 0.0, 0.0, 1.0, 1.0, 2.0]}, {})
     assert [n["path"] for n in describe_fbx(rig)["nodes"]] == ["Armature", "Armature/root", "Armature/root/pelvis", "Body"]
