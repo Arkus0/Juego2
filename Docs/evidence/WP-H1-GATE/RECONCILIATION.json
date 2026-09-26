@@ -983,8 +983,8 @@
         "trigger": "WP-H1-GATE trials 4-5; owner option 3 (typed extension documents)",
         "pr": "#245",
         "frozenCandidate": "c97ada780efe507e0f7dfd7ca3794d45cf866d0d",
-        "review": "waived by owner (__H101_WAIVER__)",
-        "mergeSha": "__H101_MERGE__",
+        "review": "waived by owner (#5847364183)",
+        "mergeSha": "525b6f2932bfa8a3540e27624165efa08c79e402",
         "consumedAs": "unity.binding.compile documentMutation + registered binding document codec (S06/S07, AI trial)"
       }
     },

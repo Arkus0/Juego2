@@ -201,7 +201,7 @@ The decisions were taken in the Worker session on 2026-09-26, in this order:
   - `put-extension` accepts a structured `document`, exclusive with `payloadBase64`.
   - The owner's registered codec, whose port is in `Arkus.Harness.Protocol`, canonicalizes it inside the transaction.
   - The result is identical to the payload form in state, hash, fingerprint and journal.
-- **WP-H1-01 reopen 1** (PR `#245`, merge `__H101_MERGE__`):
+- **WP-H1-01 reopen 1** (PR `#245`, merge `525b6f2932bfa8a3540e27624165efa08c79e402`):
   - The `arkus.unity-binding` codec reuses the compiler's own encoding.
   - `unity.binding.compile` also returns `documentMutation`.
   - All production hosts admit the codec.

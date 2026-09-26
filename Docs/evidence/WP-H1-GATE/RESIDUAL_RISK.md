@@ -40,7 +40,7 @@ No inherited residual was reclassified to hide it. Mixed items, where part is cl
 
 - WP-HK-05 reopen 2: `#243`, merge `c6d88a25`.
 - WP-HK-04 reopen 1: `#244`, merge `a6a59af9`.
-- WP-H1-01 reopen 1: `#245`, merge `__H101_MERGE__`.
+- WP-H1-01 reopen 1: `#245`, merge `525b6f2932bfa8a3540e27624165efa08c79e402`.
 
 All three were owner-directed with independent review waived. Model-driven clients author extensions as structured documents that the kernel canonicalizes, instead of transcribing opaque Base64. The result is byte-identical, and the Gate proves parity with the payload path on both transports.
 
