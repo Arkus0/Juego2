@@ -108,13 +108,18 @@ namespace Arkus.H1.Editor.Tests
                     if (mesh.name != leaf) failures.Add(item.assetPath + ": mesh name " + mesh.name + " != FBX node " + leaf);
                     var expectedMin = new[] { -expected.boundsSource.max[0] * scale, expected.boundsSource.min[1] * scale, expected.boundsSource.min[2] * scale };
                     var expectedMax = new[] { -expected.boundsSource.min[0] * scale, expected.boundsSource.max[1] * scale, expected.boundsSource.max[2] * scale };
-                    for (var axis = 0; axis < 3; axis++)
+                    if (!WithinBounds(meshRow, expectedMin, expectedMax, tolerance))
+                        failures.Add(item.assetPath + ": bounds " + Vec(meshRow.min) + ".." + Vec(meshRow.max) + " != " + Vec(expectedMin) + ".." + Vec(expectedMax));
+
+                    // The oracle must discriminate: the opposite unit convention (where it differs) may not also match.
+                    var alternative = item.import.globalScale * (!item.import.unitConversion ? item.fbx.unitScaleFactor / 100f : 1f);
+                    if (Math.Abs(alternative - scale) > 1e-6f)
                     {
-                        if (Math.Abs(meshRow.min[axis] - expectedMin[axis]) > tolerance || Math.Abs(meshRow.max[axis] - expectedMax[axis]) > tolerance)
-                        {
-                            failures.Add(item.assetPath + ": bounds " + Vec(meshRow.min) + ".." + Vec(meshRow.max) + " != " + Vec(expectedMin) + ".." + Vec(expectedMax));
-                            break;
-                        }
+                        var alternativeMin = new[] { -expected.boundsSource.max[0] * alternative, expected.boundsSource.min[1] * alternative, expected.boundsSource.min[2] * alternative };
+                        var alternativeMax = new[] { -expected.boundsSource.min[0] * alternative, expected.boundsSource.max[1] * alternative, expected.boundsSource.max[2] * alternative };
+                        if (WithinBounds(meshRow, alternativeMin, alternativeMax, tolerance))
+                            failures.Add(item.assetPath + ": unit-scale oracle does not discriminate between import conventions");
+                        observed.discriminatingUnitOracle = true;
                     }
 
                     // Material slots: the imported slot multiset equals the FBX material set; every slot is bound and compatible.
@@ -400,6 +405,7 @@ namespace Arkus.H1.Editor.Tests
             Assert.That(recovered.observation.diagnostics, Is.Empty, string.Join(",", evidence.recoveredDiagnostics));
             Assert.That(recovered.observation.graphDigest, Is.EqualTo(baseline.observation.graphDigest));
             Assert.That(recovered.observation.realizationDigest, Is.EqualTo(baseline.observation.realizationDigest));
+            File.WriteAllText(Path.Combine(ProofDirectory(), "negative-recovered-inventory.json"), JsonUtility.ToJson(H1CatalogueInventory.Capture(), true));
             File.WriteAllText(Path.Combine(ProofDirectory(), "negative.json"), JsonUtility.ToJson(evidence, true));
         }
 
@@ -497,6 +503,13 @@ namespace Arkus.H1.Editor.Tests
                 inspection.sharedOverrides.Add(pair.Key);
             }
             return inspection;
+        }
+
+        private static bool WithinBounds(ImportedMesh observed, float[] expectedMin, float[] expectedMax, float tolerance)
+        {
+            for (var axis = 0; axis < 3; axis++)
+                if (Math.Abs(observed.min[axis] - expectedMin[axis]) > tolerance || Math.Abs(observed.max[axis] - expectedMax[axis]) > tolerance) return false;
+            return true;
         }
 
         private static Bounds WorldBounds(Transform owner)
@@ -722,7 +735,8 @@ namespace Arkus.H1.Editor.Tests
         [Serializable] private sealed class ImportedItem
         {
             public string assetPath; public string guid; public bool useFileScale; public float globalScale; public float fileScale; public string animationType;
-            public string materialImportMode; public string materialLocation; public string[] transformPaths; public List<ImportedMesh> meshes = new List<ImportedMesh>();
+            public string materialImportMode; public string materialLocation; public bool discriminatingUnitOracle; public string[] transformPaths;
+            public List<ImportedMesh> meshes = new List<ImportedMesh>();
         }
         [Serializable] private sealed class ImportedMesh { public string node; public string meshName; public float[] min; public float[] max; public string[] materials; public int bones; }
         [Serializable] private sealed class SliceInspection

@@ -26,8 +26,10 @@ artifacts="artifacts/h1-11-${label}"
   --containerRegistryImageVersion=3
 code=$?
 echo "H1_11_UNITY_PROCESS label=${label} exit=${code}"
-# The Editor container runs as root; keep the runner user's .NET/NuGet state writable for later stages.
-sudo chown -R "$(id -u):$(id -g)" "${HOME}/.local" "${HOME}/.nuget" 2>/dev/null || true
+# The Editor container runs as root; hand the runner user back its .NET/NuGet state, the proof hand-off
+# directory and the mounted SourceSlice so later .NET stages can read, replace and delete them.
+sudo chown -R "$(id -u):$(id -g)" "${HOME}/.local" "${HOME}/.nuget" \
+  Unity/ArkusUnity/H1-11-RealAssetSlice Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice 2>/dev/null || true
 
 python3 - "${artifacts}" "${fullname}" "${allow_skip}" <<'PY'
 import sys

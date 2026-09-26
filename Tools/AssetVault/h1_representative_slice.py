@@ -704,6 +704,18 @@ def self_test() -> None:
         expect_red("mount over existing file", lambda: mount(public, Vault(vault_root), good))
         (vault_root / "h1/distributions/medieval.payload").write_bytes(payload.getvalue() + b"\0")
         expect_red("changed distribution byte", lambda: derive(good, Vault(vault_root), {"src": {"distributionSha256": distribution}}))
+
+        # Mounted-source immutability: exactly the admitted files with the admitted bytes.
+        assert verify_mounted_sources(public) == 11
+        mounted_wall = public / SOURCE_SLICE_RELATIVE / "Wall.fbx"
+        mounted_wall.write_bytes(wall + b"\0")
+        expect_red("bridge wrote to an upstream source file", lambda: verify_mounted_sources(public))
+        mounted_wall.write_bytes(wall)
+        (public / SOURCE_SLICE_RELATIVE / "Unadmitted.fbx").write_bytes(wall)
+        expect_red("unadmitted file in the mounted universe", lambda: verify_mounted_sources(public))
+        (public / SOURCE_SLICE_RELATIVE / "Unadmitted.fbx").unlink()
+        mounted_wall.unlink()
+        expect_red("admitted file omitted from the mounted universe", lambda: verify_mounted_sources(public))
     print("H1_11_REPRESENTATIVE_SLICE_SELF_TEST_GREEN")
 
 
@@ -745,6 +757,10 @@ def main() -> int:
             static_check(public_root, committed, catalogue_binding=False)
             derived = derive(committed, vault, adoption_sources(public_root))
             if render(derived) != render(committed):
+                for expected, observed in zip(committed["items"], derived["items"]):
+                    changed = sorted(key for key in set(expected) | set(observed) if expected.get(key) != observed.get(key))
+                    if changed:
+                        die(f"{expected.get('assetPath')}: committed {changed} differ from facts recomputed from the adopted source bytes")
                 die("committed representative manifest differs from facts recomputed from the adopted source bytes")
             print(f"H1_11_REPRESENTATIVE_SLICE_SOURCE_DERIVED_GREEN items={len(committed['items'])}")
             return 0

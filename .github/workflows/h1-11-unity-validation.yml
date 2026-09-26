@@ -104,6 +104,64 @@ jobs:
           python3 Tools/AssetVault/h1_representative_slice.py sources --public-root .
           echo "H1_11_SOURCE_RESOLVED_GREEN ${VAULT_SHA}"
 
+      - name: Negative — provenance and universe barriers on the real adopted payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          expect_red() {
+            local label="$1"; shift
+            set +e
+            "$@" >"${RUNNER_TEMP}/${label}.out" 2>"${RUNNER_TEMP}/${label}.err"
+            local code=$?
+            set -e
+            [[ ${code} -ne 0 ]] || { echo "::error::negative control unexpectedly passed: ${label}"; exit 3; }
+            grep -q 'H1_11_REPRESENTATIVE_SLICE_RED' "${RUNNER_TEMP}/${label}.err" || { cat "${RUNNER_TEMP}/${label}.err"; exit 3; }
+            echo "H1_11_NEGATIVE_CONTROL_GREEN ${label}: $(tail -n 1 "${RUNNER_TEMP}/${label}.err")"
+          }
+          scratch="${RUNNER_TEMP}/h1-11-public-copy"
+          reset() {
+            rm -rf "${scratch}"
+            mkdir -p "${scratch}/Docs/evidence/WP-H1-04" "${scratch}/Docs/evidence/WP-H1-11" "${scratch}/Unity/ArkusUnity/Assets/Arkus/H1"
+            cp Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json "${scratch}/Docs/evidence/WP-H1-04/"
+            cp Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json "${scratch}/Docs/evidence/WP-H1-11/"
+            cp Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json "${scratch}/Unity/ArkusUnity/Assets/Arkus/H1/"
+            cp -r Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice "${scratch}/Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice"
+          }
+          edit() {
+            python3 - "${scratch}" "$1" <<'PY'
+          import json, sys
+          from pathlib import Path
+          root, case = Path(sys.argv[1]), sys.argv[2]
+          manifest_path = root / 'Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json'
+          adoption_path = root / 'Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json'
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          adoption = json.loads(adoption_path.read_text(encoding='utf-8'))
+          item = next(value for value in manifest['items'] if value['assetPath'].endswith('/Wall_Plaster_Straight.fbx'))
+          if case == 'rebound-entry':
+              item['distributionEntry'] = item['distributionEntry'].replace('Wall_Plaster_Straight.fbx', 'Wall_Plaster_Straight_Base.fbx')
+          elif case == 'rebound-guid':
+              item['unityGuid'] = '0' * 32
+          elif case == 'untraced-item':
+              adoption['slices'] = [row for row in adoption['slices'] if row['assetPath'] != item['assetPath']]
+          elif case == 'silent-widening':
+              adoption['slices'].append({'assetPath': 'Assets/Arkus/H1/SourceSlice/Prop_Brick1.fbx', 'sourceId': 'quaternius-medieval-source', 'adoptionStatus': 'approved-source', 'contentSha256': 'f' * 64})
+          elif case == 'modified-upstream-byte':
+              target = root / 'Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/Wall_Plaster_Straight.fbx'
+              target.write_bytes(target.read_bytes() + b'\0')
+          manifest_path.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+          adoption_path.write_text(json.dumps(adoption, indent=2) + '\n', encoding='utf-8')
+          PY
+          }
+          tool=(python3 Tools/AssetVault/h1_representative_slice.py)
+          for case in rebound-entry rebound-guid untraced-item silent-widening; do
+            reset; edit "${case}"
+            expect_red "${case}" "${tool[@]}" check --public-root "${scratch}" --vault-root _asset_vault
+          done
+          reset; edit modified-upstream-byte
+          expect_red modified-upstream-byte "${tool[@]}" sources --public-root "${scratch}"
+          rm -rf "${scratch}"
+          echo "H1_11_PROVENANCE_BARRIER_NEGATIVES_GREEN"
+
       - name: Install exact GameCI CLI
         shell: bash
         run: |

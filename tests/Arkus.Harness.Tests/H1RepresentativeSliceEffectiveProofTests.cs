@@ -188,8 +188,8 @@ namespace Arkus.Harness.Tests
             Assert.Contains(replaced.Code, new[] { "catalogue.stale-mapping", "catalogue.incompatible-mapping" });
             Assert.Contains(".prop-wagon", replaced.Message, StringComparison.Ordinal);
 
-            // The unchanged inventory still reconciles exactly (the negative is causal, not environmental).
-            H1CatalogueSnapshot.Build(File.ReadAllText(Path.Combine(directory, "effective-inventory.json")), mapping, adoption);
+            // The same Editor process's inventory after restoring the exact bytes reconciles again (the negative is causal).
+            H1CatalogueSnapshot.Build(File.ReadAllText(Path.Combine(directory, "negative-recovered-inventory.json")), mapping, adoption);
         }
 
         [Fact]
