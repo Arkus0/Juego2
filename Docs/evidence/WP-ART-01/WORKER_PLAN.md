@@ -9,7 +9,7 @@ The final candidate must supply a bounded, provenance-safe Juego2 visual vocabul
 ## Checkpoints
 
 1. **Target / baseline** — complete: source reality check and demand matrix; ART-00/H1-04/CITY accepted inputs; selected-source pin and license adoption; effective raw/normalized Unity import audit; three frozen human-scale targets. Unity `6000.3.24f1`, `ART01_SOURCE_AUDIT_GREEN rows=32`, before/after measurements retained.
-2. **Structural** — produce ART-owned kit IDs, dimensional and host/connection metadata, a representative building plan and street plan, a bounded assembled Unity scene, and neutral-material third-person captures. Reject any opening/roof/contact/collision relation that only works by accidental overlap.
+2. **Structural** — complete before fresh-author handoff: ART-owned kit IDs and dimensional/host metadata in `KIT_COMPOSITION_MANIFEST.json`; `ASSEMBLY_PLANS.md`; effective Unity scene; retained neutral/massing captures; `UNITY_BENCHMARK_AUDIT.json` green on route/threshold/floor support and unique road collider.
 3. **Candidate** — dressed material/nature/prop and clothed-human benchmark, normal third-person captures, source/derivative provenance, fresh-author smoke test (success plus truthful proxy/blockage classifications), complete gap/handoff ledger and strict Worker pre-review. Freeze only when all mandatory elements are `KEEPER_READY` and product visual inspection is credible.
 
 Iteration between checkpoints is local and cheap under `PRODUCT_EXECUTION_POLICY.md`. Any CITY route/site/access/elevation semantic change stops and returns to its owner. Any final product/visual claim without effective local Unity evidence remains `NOT_READY`; no `REVIEW_READY` marker is asserted early.

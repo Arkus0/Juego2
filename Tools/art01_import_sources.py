@@ -132,9 +132,14 @@ def check_lock(vault: Path, existing: dict) -> list[dict]:
 
 def deterministic_meta(path: Path, relative: str) -> None:
     meta = path.with_name(path.name + ".meta")
-    if not meta.exists():
-        guid = sha(f"juego2-art01-external:{relative}".encode())[:32]
-        meta.write_text(f"fileFormatVersion: 2\nguid: {guid}\n", encoding="utf-8")
+    guid = sha(f"juego2-art01-external:{relative}".encode())[:32]
+    header = f"fileFormatVersion: 2\nguid: {guid}\n"
+    if path.suffix.lower() == ".png":
+        # Unity skips texture imports if a newly copied PNG has only the two-line
+        # generic .meta header. Declare its importer before the first refresh.
+        header += "TextureImporter:\n  serializedVersion: 13\n"
+    if not meta.exists() or meta.read_text(encoding="utf-8").strip() == f"fileFormatVersion: 2\nguid: {guid}":
+        meta.write_text(header, encoding="utf-8")
 
 
 def main() -> None:
@@ -153,7 +158,11 @@ def main() -> None:
         return
     rows = check_lock(vault, json.loads(LOCK.read_text(encoding="utf-8")))
     if args.mode == "verify":
-        print(f"ART01_SOURCE_VERIFIED files={len(rows)}")
+        for row in rows:
+            copy = DEST / row["dest"]
+            if not copy.is_file() or file_sha(copy) != row["sha256"]:
+                raise ValueError(f"Unity selected copy missing/changed: {row['dest']}")
+        print(f"ART01_SOURCE_VERIFIED files={len(rows)} copied_bytes_match=YES")
         return
     with zipfile.ZipFile(vault / MEDIEVAL_ZIP) as bundle:
         for row in rows:

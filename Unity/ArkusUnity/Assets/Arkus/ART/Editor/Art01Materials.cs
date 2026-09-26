@@ -64,22 +64,22 @@ namespace Juego2.ART.Editor
         {
             switch (id)
             {
-                case "Stone": return Create(id, "#C9C3B6", "Medieval/Textures/T_UnevenBrick_BaseColor.png");
+                case "Stone": return Create(id, "#AAA9A0", "Medieval/Textures/T_UnevenBrick_BaseColor.png");
                 case "StoneShadow": return Create(id, "#7E7568", "Medieval/Textures/T_UnevenBrick_BaseColor.png");
                 case "StoneTrim": return Create(id, "#A79F92", "Medieval/Textures/T_Brick_BaseColor.png");
-                case "Plaster": return Create(id, "#C9C3B6", "Medieval/Textures/T_Plaster_BaseColor.png");
+                case "Plaster": return Create(id, "#9F9E90", "Medieval/Textures/T_Plaster_BaseColor.png");
                 case "PlasterOchre": return Create(id, "#B8A994", "Medieval/Textures/T_Plaster_BaseColor.png");
                 case "WoodDark": return Create(id, "#5C4433", "Medieval/Textures/T_WoodTrim_BaseColor.png");
                 case "ShutterGreen": return Create(id, "#3E5A57", "Medieval/Textures/T_WoodTrim_BaseColor.png");
-                case "TileWet": return Create(id, "#574A45", "Medieval/Textures/T_RoundTiles_BaseColor.png", false, 0.25f);
+                case "TileWet": return Create(id, "#383D3E", "Medieval/Textures/T_RoundTiles_BaseColor.png", false, 0.25f);
                 case "Cobble": return Create(id, "#8A8379", "Medieval/Textures/T_RoundRocks_BaseColor.png", false, 0.22f);
                 case "Iron": return Create(id, "#373B3B", null, false, 0.28f);
                 case "Glass": return Create(id, "#40545B", null, false, 0.45f);
                 case "Water": return Create(id, "#3F5A5E", null, false, 0.48f);
-                case "GrassGround": return Create(id, "#4E7A43", "Nature/Textures/Grass.png");
+                case "GrassGround": return Create(id, "#596B5F");
                 case "Bark": return Create(id, "#A9A297", "Nature/Textures/Bark_NormalTree.png");
-                case "Leaves": return Create(id, "#77906D", "Nature/Textures/Leaves_NormalTree.png", true);
-                case "LeavesGeneric": return Create(id, "#68865D", "Nature/Textures/Leaves.png", true);
+                case "Leaves": return Create(id, "#445F4D", "Nature/Textures/Leaves_NormalTree.png", true);
+                case "LeavesGeneric": return Create(id, "#4E654C", "Nature/Textures/Leaves.png", true);
                 case "Flowers": return Create(id, "#919CC7", "Nature/Textures/Flowers.png", true);
                 case "Rock": return Create(id, "#A79F92", "Nature/Textures/Rocks_Diffuse.png");
                 case "PropWood": return Create(id, "#A89B88", "Props/Textures/T_Trim_Furniture_BaseColor.png");
@@ -92,6 +92,7 @@ namespace Juego2.ART.Editor
                 case "Coat": return Create(id, "#344F51");
                 case "Trousers": return Create(id, "#3A3530");
                 case "Shirt": return Create(id, "#D8D2C4");
+                case "Shoes": return Create(id, "#4A3222");
                 default: throw new Exception("ART01_MATERIAL_UNKNOWN " + id);
             }
         }
@@ -119,6 +120,11 @@ namespace Juego2.ART.Editor
             if (name.Contains("Regular_Male")) return Get("Skin");
             if (name.Contains("Eye")) return Get("Eye");
             if (name.Contains("Hair")) return Get("Hair");
+            if (name.Contains("Cloth_D8D2C4")) return Get("Shirt");
+            if (name.Contains("Cloth_2E4A4E")) return Get("Coat");
+            if (name.Contains("Cloth_3A3530")) return Get("Trousers");
+            if (name.Contains("Cloth_4A3222")) return Get("Shoes");
+            if (name.Contains("Skin_Regular_Male_Light")) return Get("Skin");
             throw new Exception("ART01_SOURCE_MATERIAL_UNMAPPED " + name);
         }
 

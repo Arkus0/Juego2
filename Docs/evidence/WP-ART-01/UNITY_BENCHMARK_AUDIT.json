@@ -1,0 +1,32 @@
+{
+    "schema": "juego2.art01.benchmark-audit@1",
+    "unityVersion": "6000.3.24f1",
+    "scene": "Assets/Arkus/ART/Art01Benchmark.unity",
+    "passed": true,
+    "taggedPieces": 353,
+    "streetMeshColliders": 1,
+    "dressedHumans": 3,
+    "supports": [
+        {
+            "point": "W12 road",
+            "hit": "art01.street.s02_w12_casco_microB",
+            "topY": 0.054999999701976779
+        },
+        {
+            "point": "F01 first step",
+            "hit": "art01.f01.threshold.step",
+            "topY": 0.15000000596046449
+        },
+        {
+            "point": "F01 landing",
+            "hit": "art01.f01.threshold.landing",
+            "topY": 0.30000001192092898
+        },
+        {
+            "point": "F01 interior",
+            "hit": "art01.f01.interior.floor",
+            "topY": 0.30000001192092898
+        }
+    ],
+    "violations": []
+}

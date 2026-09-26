@@ -1,6 +1,6 @@
 # ART-01 selected Quaternius source adoption
 
-This is a bounded extension of the accepted H1-04 source slice for **art authoring inputs only**. The owner supplied `C:\Juego2-Assets` read-only. `SOURCE_LOCK.json` pins each selected model/texture byte, the license files and the H1-04 Medieval Source archive SHA-256. `Tools/art01_import_sources.py verify/import` fails closed on mismatch and copies only 51 selected files into ignored `Unity/ArkusUnity/Assets/Arkus/ART/External/`; no purchased upstream file is changed or committed. Selection was driven by `DEMAND_COVERAGE_MATRIX.md`, not pack-wide import.
+This is a bounded extension of the accepted H1-04 source slice for **art authoring inputs only**. The owner supplied `C:\Juego2-Assets` read-only. `SOURCE_LOCK.json` pins each selected model/texture byte, the license files and the H1-04 Medieval Source archive SHA-256. `Tools/art01_import_sources.py import` fails closed on source mismatch and copies only 51 selected files into ignored `Unity/ArkusUnity/Assets/Arkus/ART/External/`; `verify` then confirms both source and Unity copy bytes match the lock. No purchased upstream file is changed or committed. Selection was driven by `DEMAND_COVERAGE_MATRIX.md`, not pack-wide import.
 
 | Source ID | Exact local distribution / pin | License and source URL | Use and boundary |
 |---|---|---|---|

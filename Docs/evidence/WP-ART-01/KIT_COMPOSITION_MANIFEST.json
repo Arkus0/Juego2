@@ -1,0 +1,2096 @@
+{
+  "schema": "juego2.art01.kit-composition@1",
+  "wp": "WP-ART-01",
+  "authority": "ART-owned composition companion; does not alter H0/H1/CITY contracts",
+  "unityVersion": "6000.3.24f1",
+  "sourceLockSha256": "6610fc17e406f8416ce4959f89cfc7d82fd7fda959a911090f28c086ccb463ec",
+  "metricPolicy": "Docs/workpacks/ART/ART_01_DIMENSIONAL_PROFILE.md",
+  "presentationStates": {
+    "KEEPER_READY": "admitted composition with required host/support/metric truth",
+    "PROXY_VISUAL": "deliberate visual placeholder; cannot satisfy required benchmark",
+    "COVERAGE_BLOCKED": "required composition cannot be produced from admitted kit"
+  },
+  "pieces": [
+    {
+      "id": "art01.quaternius.characters.hair_buzzed",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "SCALE_SOURCE_ONLY",
+      "provenance": {
+        "sourceId": "quaternius-base-characters-source",
+        "sourceLockDest": "Characters/Hair_Buzzed.fbx",
+        "sha256": "01c5c2ededd8b164274147ee8713a7a68cf74cd699fad6b969ce5e37c1b7b686",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.15459059178829193,
+          "y": 0.1768491268157959,
+          "z": 0.1946014016866684
+        },
+        "center": {
+          "x": -4.470348358154297e-08,
+          "y": 1.7279002666473389,
+          "z": 0.01319211721420288
+        }
+      },
+      "import": {
+        "globalScale": 1.0,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [],
+      "connections": [],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.quaternius.characters.regular_male_fullbody",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "SCALE_SOURCE_ONLY",
+      "provenance": {
+        "sourceId": "quaternius-base-characters-source",
+        "sourceLockDest": "Characters/Regular_Male_FullBody.fbx",
+        "sha256": "911b580144a40bc055948782ba721c90af919daa53f4ee33503a6ef8d70aea81",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 1.7993383407592773,
+          "y": 1.91029691696167,
+          "z": 0.41771793365478516
+        },
+        "center": {
+          "x": 5.960464477539063e-08,
+          "y": 0.8578543663024902,
+          "z": 0.04647797346115112
+        }
+      },
+      "import": {
+        "globalScale": 1.0,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [],
+      "connections": [],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.quaternius.medieval.balcony_simple_straight",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "SOURCE_REFERENCE",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Balcony_Simple_Straight.fbx",
+        "sha256": "a0bb2660fa0aac16dad2b389eac60a50c8c55ac0905036e8c2f8ad7d37f482fa",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 2.0,
+          "y": 1.2298866510391235,
+          "z": 0.2062830924987793
+        },
+        "center": {
+          "x": 5.960464477539063e-08,
+          "y": 0.5098561644554138,
+          "z": 1.0011115074157715
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [],
+      "connections": [],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.corner_exterior_brick",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "CORNER",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Corner_Exterior_Brick.fbx",
+        "sha256": "d8fdb6fbb68f62d39eb285413caf84aa2f1d32134682e8e0f5ce084822a21d82",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.5306706428527832,
+          "y": 3.0156266689300537,
+          "z": 0.575833797454834
+        },
+        "center": {
+          "x": 0.08760637044906616,
+          "y": 1.5007222890853882,
+          "z": 0.08878272771835327
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [],
+      "connections": [],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.doorframe_flat_brick",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "HOSTED_INSERT",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/DoorFrame_Flat_Brick.fbx",
+        "sha256": "8bf5d52ea650d26ab581202974bfb063172e90ac5d4b0d0c14c8ba7fd47314ac",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 1.5746073722839355,
+          "y": 2.3756587505340576,
+          "z": 0.494327187538147
+        },
+        "center": {
+          "x": 0.0009016990661621094,
+          "y": 1.1861368417739868,
+          "z": -0.04797014594078064
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [
+        "matching 2.00 m facade opening only"
+      ],
+      "connections": [
+        "FILLS matching cut host at common source pivot; never plain wall sticker"
+      ],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none; host owns structural collision",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.door_3_flat",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "HOSTED_INSERT",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Door_3_Flat.fbx",
+        "sha256": "9d6a03e8d93010780dd663a835126a53dd0596c10f35e79a57c01bdceefb0a5c",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 1.1448849439620972,
+          "y": 2.0905890464782715,
+          "z": 0.252963125705719
+        },
+        "center": {
+          "x": -0.5251554846763611,
+          "y": 1.0817725658416748,
+          "z": -0.008893907070159912
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [
+        "matching 2.00 m facade opening only"
+      ],
+      "connections": [
+        "FILLS matching cut host at common source pivot; never plain wall sticker"
+      ],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none; host owns structural collision",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.floor_roundrocks",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "SOURCE_REFERENCE",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Floor_RoundRocks.fbx",
+        "sha256": "712eb27ad682ad207ee510d2b7e6da22381fbf69c86abea8ff97a49429b4903d",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 2.0,
+          "y": 0.02000037394464016,
+          "z": 2.0
+        },
+        "center": {
+          "x": 0.0,
+          "y": -1.9650906324386597e-07,
+          "z": 0.0
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [],
+      "connections": [],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.prop_chimney",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "SOURCE_REFERENCE",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Prop_Chimney.fbx",
+        "sha256": "d132c893fbf957c92c51697de1329f0603d185849a7d0e94ec9ce5a78a0b90ed",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.945778489112854,
+          "y": 3.177875280380249,
+          "z": 1.0000001192092896
+        },
+        "center": {
+          "x": 0.027110815048217773,
+          "y": 1.5889376401901245,
+          "z": 0.0
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [],
+      "connections": [],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.roof_roundtiles_6x10",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "ROOF_SOURCE",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Roof_RoundTiles_6x10.fbx",
+        "sha256": "8128bf9f74c090a619527d8fe843018589ba048194f7865b87c56834c8a71b82",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 8.249783515930176,
+          "y": 5.672171115875244,
+          "z": 11.85218620300293
+        },
+        "center": {
+          "x": 0.0,
+          "y": 2.0539586544036865,
+          "z": 0.028512001037597656
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "art01.derived.roof.lowpitch.* only"
+      ],
+      "connections": [
+        "source geometry remeasured and recapped by named derivative"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "source steep/chalet roof cannot be used unmodified"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.roof_roundtiles_8x14",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "ROOF_SOURCE",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Roof_RoundTiles_8x14.fbx",
+        "sha256": "b55d5ea435ae75c8ed47e64d3a06c44db0c254911b15021723864f50b68e5fcc",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 9.951993942260742,
+          "y": 6.781323432922363,
+          "z": 15.70588207244873
+        },
+        "center": {
+          "x": 0.0,
+          "y": 2.6107053756713867,
+          "z": -0.024187564849853516
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "art01.derived.roof.lowpitch.* only"
+      ],
+      "connections": [
+        "source geometry remeasured and recapped by named derivative"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "source steep/chalet roof cannot be used unmodified"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.wall_unevenbrick_door_flat",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "FACADE_HOST",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Wall_UnevenBrick_Door_Flat.fbx",
+        "sha256": "75bdaf53a8f189fd50f91eeeb019db179dbb85af8f542979184a6e00c2941ee7",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 2.0,
+          "y": 3.1226887702941895,
+          "z": 0.4064817428588867
+        },
+        "center": {
+          "x": 5.960464477539063e-08,
+          "y": 1.5613443851470947,
+          "z": -0.11079445481300354
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [
+        "art01.derived.plinth.segment.v1",
+        "adjacent 2.00 m facade host"
+      ],
+      "connections": [
+        "SUPPORTED_BY plinth at y=0",
+        "MEETS adjacent host at x=±1.00 m",
+        "HOSTS named real cut opening if Door/Window variant"
+      ],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "scene-generated jambs/lintel or full wall; no competing source mesh collider",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.wall_unevenbrick_straight",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "FACADE_HOST",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Wall_UnevenBrick_Straight.fbx",
+        "sha256": "2f46c7724db0d75d10742e1f74d4c044da33f55a6f289fadbac1b5720c4f7126",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 2.0,
+          "y": 3.1226887702941895,
+          "z": 0.4064817428588867
+        },
+        "center": {
+          "x": 5.960464477539063e-08,
+          "y": 1.5613443851470947,
+          "z": -0.11079445481300354
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [
+        "art01.derived.plinth.segment.v1",
+        "adjacent 2.00 m facade host"
+      ],
+      "connections": [
+        "SUPPORTED_BY plinth at y=0",
+        "MEETS adjacent host at x=±1.00 m",
+        "HOSTS named real cut opening if Door/Window variant"
+      ],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "scene-generated jambs/lintel or full wall; no competing source mesh collider",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.wall_unevenbrick_window_thin_round",
+      "kind": "source_model",
+      "readiness": "REJECT_FOR_KEEPER",
+      "role": "FACADE_HOST",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Wall_UnevenBrick_Window_Thin_Round.fbx",
+        "sha256": "73f8daebfd0dc9878675830b0769cc2d73fd424960667edfa6a5554b5944232c",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 2.0,
+          "y": 3.1226887702941895,
+          "z": 0.4064817428588867
+        },
+        "center": {
+          "x": 5.960464477539063e-08,
+          "y": 1.5613443851470947,
+          "z": -0.11079445481300354
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [
+        "art01.derived.plinth.segment.v1",
+        "adjacent 2.00 m facade host"
+      ],
+      "connections": [
+        "SUPPORTED_BY plinth at y=0",
+        "MEETS adjacent host at x=±1.00 m",
+        "HOSTS named real cut opening if Door/Window variant"
+      ],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "scene-generated jambs/lintel or full wall; no competing source mesh collider",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "round head incompatible with rectangular retained benchmark"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.wall_unevenbrick_window_wide_flat",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "FACADE_HOST",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Wall_UnevenBrick_Window_Wide_Flat.fbx",
+        "sha256": "c3dfd037322fc759160b4424c8ca3df35a2ff25c1d19b30cddbc41cc6223b8dc",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 2.0,
+          "y": 3.1226887702941895,
+          "z": 0.4064817428588867
+        },
+        "center": {
+          "x": 5.960464477539063e-08,
+          "y": 1.5613443851470947,
+          "z": -0.11079445481300354
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [
+        "art01.derived.plinth.segment.v1",
+        "adjacent 2.00 m facade host"
+      ],
+      "connections": [
+        "SUPPORTED_BY plinth at y=0",
+        "MEETS adjacent host at x=±1.00 m",
+        "HOSTS named real cut opening if Door/Window variant"
+      ],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "scene-generated jambs/lintel or full wall; no competing source mesh collider",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.windowshutters_wide_flat_closed",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "HOSTED_INSERT",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/WindowShutters_Wide_Flat_Closed.fbx",
+        "sha256": "1900885a2656a8faa9e16f0215e1b58092006606b3da03c0191bbd07a050061f",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 1.3469352722167969,
+          "y": 1.4240314960479736,
+          "z": 0.1357695758342743
+        },
+        "center": {
+          "x": 1.1920928955078125e-07,
+          "y": 1.8052598237991333,
+          "z": 0.22034980356693268
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [
+        "matching 2.00 m facade opening only"
+      ],
+      "connections": [
+        "FILLS matching cut host at common source pivot; never plain wall sticker"
+      ],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none; host owns structural collision",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.windowshutters_wide_flat_open",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "HOSTED_INSERT",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/WindowShutters_Wide_Flat_Open.fbx",
+        "sha256": "3b835fc6a896793ab546f9a5602877b5dce78db3ab084a0945f17209983f2a70",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 2.480569362640381,
+          "y": 1.4240314960479736,
+          "z": 0.4565187096595764
+        },
+        "center": {
+          "x": -0.0015755891799926758,
+          "y": 1.8052598237991333,
+          "z": 0.36491498351097107
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [
+        "matching 2.00 m facade opening only"
+      ],
+      "connections": [
+        "FILLS matching cut host at common source pivot; never plain wall sticker"
+      ],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none; host owns structural collision",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.medieval.window_wide_flat1",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "HOSTED_INSERT",
+      "provenance": {
+        "sourceId": "quaternius-medieval-source",
+        "sourceLockDest": "Medieval/Models/Window_Wide_Flat1.fbx",
+        "sha256": "da526c2d7f89f001da31626acdc97af4a57491579776e9073a515a64e78827c4",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 1.608236312866211,
+          "y": 1.580111026763916,
+          "z": 0.6834383010864258
+        },
+        "center": {
+          "x": 9.5367431640625e-07,
+          "y": 1.7342333793640137,
+          "z": 0.07513833045959473
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
+      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "allowedHosts": [
+        "matching 2.00 m facade opening only"
+      ],
+      "connections": [
+        "FILLS matching cut host at common source pivot; never plain wall sticker"
+      ],
+      "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none; host owns structural collision",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "source 1.61 m overall opening exceeds 1.40 m typical band; reviewed source-module exception"
+      ]
+    },
+    {
+      "id": "art01.quaternius.nature.bush_common",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "NATURE",
+      "provenance": {
+        "sourceId": "quaternius-nature-standard",
+        "sourceLockDest": "Nature/Models/Bush_Common.fbx",
+        "sha256": "f4c057dc7118ab76b946cfa9d01908aa151cc2585bc8799e5a97833bccfec022",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 1.9148447513580322,
+          "y": 1.5817855596542358,
+          "z": 1.9651408195495605
+        },
+        "center": {
+          "x": -0.03394615650177002,
+          "y": 0.5561980605125427,
+          "z": 0.008181214332580566
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "site soil outside traversable route"
+      ],
+      "connections": [
+        "ROOTED_IN scenic bank; maintain route clearance"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in benchmark",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.nature.bush_common_flowers",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "NATURE",
+      "provenance": {
+        "sourceId": "quaternius-nature-standard",
+        "sourceLockDest": "Nature/Models/Bush_Common_Flowers.fbx",
+        "sha256": "3187c4e37f3be09da9d212e1c3ae04ae24814b7fc7074c19c56f633e95d10943",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 1.9148447513580322,
+          "y": 1.5817855596542358,
+          "z": 1.9651408195495605
+        },
+        "center": {
+          "x": -0.03394615650177002,
+          "y": 0.5561980605125427,
+          "z": 0.008181214332580566
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "site soil outside traversable route"
+      ],
+      "connections": [
+        "ROOTED_IN scenic bank; maintain route clearance"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in benchmark",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.nature.commontree_1",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "NATURE",
+      "provenance": {
+        "sourceId": "quaternius-nature-standard",
+        "sourceLockDest": "Nature/Models/CommonTree_1.fbx",
+        "sha256": "270b8be7dbde95980a308212319d99580a433821ca8daa7d115f3d289ede9608",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 4.311422824859619,
+          "y": 7.264784812927246,
+          "z": 4.577713966369629
+        },
+        "center": {
+          "x": 0.038747310638427734,
+          "y": 3.389620304107666,
+          "z": 0.06433773040771484
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "site soil outside traversable route"
+      ],
+      "connections": [
+        "ROOTED_IN scenic bank; maintain route clearance"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in benchmark",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.nature.fern_1",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "NATURE",
+      "provenance": {
+        "sourceId": "quaternius-nature-standard",
+        "sourceLockDest": "Nature/Models/Fern_1.fbx",
+        "sha256": "520f1bce3d292885b6d85d5f7b541a1f0c236697ca99eb69e57817eed47eab31",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 9.046188354492188,
+          "y": 2.6887784004211426,
+          "z": 8.48742389678955
+        },
+        "center": {
+          "x": -0.103118896484375,
+          "y": 1.096919059753418,
+          "z": 0.15239620208740234
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "site soil outside traversable route"
+      ],
+      "connections": [
+        "ROOTED_IN scenic bank; maintain route clearance"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in benchmark",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "source bounds 9.05×2.69×8.49 m; benchmark placement scale 0.12–0.16"
+      ]
+    },
+    {
+      "id": "art01.quaternius.nature.grass_common_short",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "NATURE",
+      "provenance": {
+        "sourceId": "quaternius-nature-standard",
+        "sourceLockDest": "Nature/Models/Grass_Common_Short.fbx",
+        "sha256": "9bdb821b226ec62e485e648f35ea227c21d0245f3aefe1633d560e457476cd09",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.6388704776763916,
+          "y": 1.3341034650802612,
+          "z": 0.7372654676437378
+        },
+        "center": {
+          "x": 0.03620713949203491,
+          "y": 0.6446664929389954,
+          "z": -0.11074554920196533
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "site soil outside traversable route"
+      ],
+      "connections": [
+        "ROOTED_IN scenic bank; maintain route clearance"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in benchmark",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.nature.rock_medium_1",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "NATURE",
+      "provenance": {
+        "sourceId": "quaternius-nature-standard",
+        "sourceLockDest": "Nature/Models/Rock_Medium_1.fbx",
+        "sha256": "e75986c05c1071ca99b8810005aa6d69d575a529e38c7e77c519c592e16f264e",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 3.2251484394073486,
+          "y": 2.2597968578338623,
+          "z": 2.9891369342803955
+        },
+        "center": {
+          "x": 0.11471307277679443,
+          "y": 0.8587669730186462,
+          "z": 0.3446848392486572
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": -9.334667083749082e-06,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "site soil outside traversable route"
+      ],
+      "connections": [
+        "ROOTED_IN scenic bank; maintain route clearance"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in benchmark",
+      "knownIncompatibilities": [
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.props.barrel",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "DRESSING",
+      "provenance": {
+        "sourceId": "quaternius-props-standard",
+        "sourceLockDest": "Props/Models/Barrel.fbx",
+        "sha256": "ab4fa392eb5122fcffa9aed225e4136cbf2d34ceb8c53141cd951c1d69ebdb2d",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.6980310082435608,
+          "y": 0.8979582786560059,
+          "z": 0.6980310082435608
+        },
+        "center": {
+          "x": 5.960464477539063e-08,
+          "y": 0.4524158835411072,
+          "z": -2.9802322387695312e-08
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 100.0,
+          "y": 100.0,
+          "z": 100.0
+        },
+        "rootRotationEuler": {
+          "x": 270.019775390625,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "floor",
+        "ground",
+        "countertop"
+      ],
+      "connections": [
+        "SUPPORTED_BY named host; never seam cover"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in bounded visual specimen",
+      "knownIncompatibilities": [
+        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.props.bench",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "DRESSING",
+      "provenance": {
+        "sourceId": "quaternius-props-standard",
+        "sourceLockDest": "Props/Models/Bench.fbx",
+        "sha256": "cd55d1c21ee5055a2002739268014138f3cfe06c7a5cb9fcee3f22c55196d6f3",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 2.776681661605835,
+          "y": 0.5332138538360596,
+          "z": 0.5342670679092407
+        },
+        "center": {
+          "x": 0.0,
+          "y": 0.2593447268009186,
+          "z": 0.005013227462768555
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 100.0,
+          "y": 100.0,
+          "z": 100.0
+        },
+        "rootRotationEuler": {
+          "x": 270.019775390625,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "floor",
+        "ground",
+        "countertop"
+      ],
+      "connections": [
+        "SUPPORTED_BY named host; never seam cover"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in bounded visual specimen",
+      "knownIncompatibilities": [
+        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.props.chair_1",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "DRESSING",
+      "provenance": {
+        "sourceId": "quaternius-props-standard",
+        "sourceLockDest": "Props/Models/Chair_1.fbx",
+        "sha256": "f779954e1f6264a90ca28d690135960eb8412da92b8bc0753138bab8845e9540",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.5805182456970215,
+          "y": 1.1232843399047852,
+          "z": 0.5489381551742554
+        },
+        "center": {
+          "x": 0.0,
+          "y": 0.5589360594749451,
+          "z": -0.017077893018722534
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 100.0,
+          "y": 100.0,
+          "z": 100.0
+        },
+        "rootRotationEuler": {
+          "x": 270.019775390625,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "floor",
+        "ground",
+        "countertop"
+      ],
+      "connections": [
+        "SUPPORTED_BY named host; never seam cover"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in bounded visual specimen",
+      "knownIncompatibilities": [
+        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.props.crate_wooden",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "DRESSING",
+      "provenance": {
+        "sourceId": "quaternius-props-standard",
+        "sourceLockDest": "Props/Models/Crate_Wooden.fbx",
+        "sha256": "1cea14e2d937586186cc8f0c0ca01b33fd999030622bc4c33133c7d91c257916",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.8422585129737854,
+          "y": 0.9309278726577759,
+          "z": 0.9082933068275452
+        },
+        "center": {
+          "x": 0.0047155022621154785,
+          "y": 0.41303229331970215,
+          "z": -5.960464477539063e-08
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 78.0,
+          "y": 78.0,
+          "z": 78.0
+        },
+        "rootRotationEuler": {
+          "x": 270.019775390625,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "floor",
+        "ground",
+        "countertop"
+      ],
+      "connections": [
+        "SUPPORTED_BY named host; never seam cover"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in bounded visual specimen",
+      "knownIncompatibilities": [
+        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.props.lantern_wall",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "DRESSING",
+      "provenance": {
+        "sourceId": "quaternius-props-standard",
+        "sourceLockDest": "Props/Models/Lantern_Wall.fbx",
+        "sha256": "1ca62ceccecc644e9a5e758228b1c649d6d5167f320ffd6dea324cf444f57a5f",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.3573414385318756,
+          "y": 1.3370076417922974,
+          "z": 1.3023145198822021
+        },
+        "center": {
+          "x": 0.0,
+          "y": 0.7503413558006287,
+          "z": 0.6001798510551453
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 100.0,
+          "y": 100.0,
+          "z": 100.0
+        },
+        "rootRotationEuler": {
+          "x": 270.019775390625,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "floor",
+        "ground",
+        "wall host"
+      ],
+      "connections": [
+        "SUPPORTED_BY named host; never seam cover"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in bounded visual specimen",
+      "knownIncompatibilities": [
+        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.props.mug",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "DRESSING",
+      "provenance": {
+        "sourceId": "quaternius-props-standard",
+        "sourceLockDest": "Props/Models/Mug.fbx",
+        "sha256": "8faae7c09627c709b8d38a9422b19c799240e80af092eecd9d9476f0b5c11e19",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.19208256900310516,
+          "y": 0.183882936835289,
+          "z": 0.14678776264190674
+        },
+        "center": {
+          "x": -0.025670446455478668,
+          "y": 0.0872986689209938,
+          "z": -0.0013401955366134644
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 100.0,
+          "y": 100.0,
+          "z": 100.0
+        },
+        "rootRotationEuler": {
+          "x": 270.019775390625,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "floor",
+        "ground",
+        "countertop"
+      ],
+      "connections": [
+        "SUPPORTED_BY named host; never seam cover"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in bounded visual specimen",
+      "knownIncompatibilities": [
+        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.props.stool",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "DRESSING",
+      "provenance": {
+        "sourceId": "quaternius-props-standard",
+        "sourceLockDest": "Props/Models/Stool.fbx",
+        "sha256": "4eed4a314f6373444cb4e3192e2c76ff67514984f1fc5d167ccf06df1b55b5ed",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 0.47460803389549255,
+          "y": 0.5887229442596436,
+          "z": 0.47460809350013733
+        },
+        "center": {
+          "x": 0.00030650198459625244,
+          "y": 0.28791293501853943,
+          "z": -0.00030656158924102783
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 100.0,
+          "y": 100.0,
+          "z": 100.0
+        },
+        "rootRotationEuler": {
+          "x": 270.019775390625,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "floor",
+        "ground",
+        "countertop"
+      ],
+      "connections": [
+        "SUPPORTED_BY named host; never seam cover"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in bounded visual specimen",
+      "knownIncompatibilities": [
+        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.props.table_large",
+      "kind": "source_model",
+      "readiness": "KEEPER_READY",
+      "role": "DRESSING",
+      "provenance": {
+        "sourceId": "quaternius-props-standard",
+        "sourceLockDest": "Props/Models/Table_Large.fbx",
+        "sha256": "64560001286e169879dea986bd2e7295ccaf2269b0fbc1e7b2bc8b802f693689",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 2.8484928607940674,
+          "y": 0.8134466409683228,
+          "z": 1.0966624021530151
+        },
+        "center": {
+          "x": 0.0,
+          "y": 0.4079861342906952,
+          "z": 0.006345570087432861
+        }
+      },
+      "import": {
+        "globalScale": 0.009999999776482582,
+        "rootScale": {
+          "x": 100.0,
+          "y": 100.0,
+          "z": 100.0
+        },
+        "rootRotationEuler": {
+          "x": 270.019775390625,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [
+        "floor",
+        "ground",
+        "countertop"
+      ],
+      "connections": [
+        "SUPPORTED_BY named host; never seam cover"
+      ],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none in bounded visual specimen",
+      "knownIncompatibilities": [
+        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "raw FBX centimetres normalized by importer globalScale=0.01"
+      ]
+    },
+    {
+      "id": "art01.quaternius.ual.ual1",
+      "kind": "source_model",
+      "readiness": "SOURCE_ONLY",
+      "role": "SCALE_SOURCE_ONLY",
+      "provenance": {
+        "sourceId": "quaternius-ual1-source",
+        "sourceLockDest": "UAL/UAL1.fbx",
+        "sha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+        "license": "CC0-1.0"
+      },
+      "effectiveBoundsM": {
+        "size": {
+          "x": 1.9454509019851685,
+          "y": 1.9445945024490356,
+          "z": 0.46079468727111816
+        },
+        "center": {
+          "x": -5.960464477539063e-08,
+          "y": 0.8619291186332703,
+          "z": 0.02495245635509491
+        }
+      },
+      "import": {
+        "globalScale": 1.0,
+        "rootScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "rootRotationEuler": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "facing": "preserve source root rotation, then author yaw in wrapper",
+      "allowedHosts": [],
+      "connections": [],
+      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
+      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.derived.render_host.straight.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "FACADE_HOST",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:Wall_UnevenBrick_Straight",
+          "T_Plaster_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "2.00 W × 3.122689 H × 0.44 D",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "plinth",
+        "adjacent 2 m host"
+      ],
+      "connections": [
+        "SUPPORTED_BY plinth",
+        "MEETS adjacent host",
+        "CAPS at eave"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "full wall BoxCollider",
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.derived.render_host.window_wide_flat.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "FACADE_HOST",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:Wall_UnevenBrick_Window_Wide_Flat",
+          "Window_Wide_Flat1"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "2.00 W × 3.122689 H × 0.44 D; aperture 1.61 W × 1.59 H, sill 0.94",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "plinth",
+        "matching wide flat window insert"
+      ],
+      "connections": [
+        "HOSTS true through-opening",
+        "sill/jamb/lintel extruded 0.44 m"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "four jamb/sill/lintel colliders; no full-window block",
+      "knownIncompatibilities": [
+        "overall opening 1.61 m exceeds 1.40 m typical profile; accepted source insert exception"
+      ]
+    },
+    {
+      "id": "art01.derived.render_host.door_flat.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "FACADE_HOST",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:Wall_UnevenBrick_Door_Flat",
+          "DoorFrame_Flat_Brick"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "2.00 W × 3.122689 H × 0.44 D; opening 1.61 W × 2.39 H at ground",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "plinth gap",
+        "public/private door insert"
+      ],
+      "connections": [
+        "HOSTS real clear opening",
+        "MEETS landing and interior floor"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "two jambs plus lintel, no doorway floor blocker",
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.derived.roof.lowpitch.6x10.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "ROOF",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:Roof_RoundTiles_6x10"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "source 8.25×5.67×11.85; applied scale 0.86×0.45×0.94",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "6×10 m two-storey wall assembly"
+      ],
+      "connections": [
+        "eave derived from 0.25+2×3.122689 m wall top",
+        "gable penetrates roof underside by ≤0.25 m"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "source chalet pitch vetoed; only named flattened assembly is admitted"
+      ]
+    },
+    {
+      "id": "art01.derived.roof.lowpitch.8x14.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "ROOF",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:Roof_RoundTiles_8x14"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "source 9.95×6.78×15.71; applied scale 0.91×0.45×0.96",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "8×14 m two-storey wall assembly"
+      ],
+      "connections": [
+        "eave derived from supported wall top",
+        "gable penetrates roof underside by ≤0.25 m"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "source chalet pitch vetoed; do not generalize scaling to other roof models"
+      ]
+    },
+    {
+      "id": "art01.derived.gable.stone.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "GABLE",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:roof family"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "span 6 or 8 m; rise derives from matching lowpitch roof bounds",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "matching 6×10 or 8×14 roof"
+      ],
+      "connections": [
+        "MEETS upper wall",
+        "CAPS under roof by 0.25 m overlap"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "mismatched roof width/pitch creates visible gap"
+      ]
+    },
+    {
+      "id": "art01.derived.plinth.segment.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "PLINTH",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_UnevenBrick_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "0.30 H × 0.52 D, 2 m facade repeat; interrupted at door",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "site datum",
+        "2 m facade host"
+      ],
+      "connections": [
+        "SUPPORTED_BY site",
+        "SUPPORTS facade",
+        "MEETS threshold and street edge"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "non-traversable visual base",
+      "knownIncompatibilities": [
+        "never block public door gap"
+      ]
+    },
+    {
+      "id": "art01.derived.threshold.lean_to.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "PORCH_ROOF",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_RoundTiles_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "3.60 W × 1.65 projection; 3.10 wall rise to 2.82 eave",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "F01 facade",
+        "two 2.65 m posts"
+      ],
+      "connections": [
+        "MEETS facade beneath upper floor",
+        "SUPPORTED_BY posts",
+        "CAPS threshold"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "posts only; roof visual",
+      "knownIncompatibilities": [
+        "not an independent floating roof"
+      ]
+    },
+    {
+      "id": "art01.derived.threshold.public.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "THRESHOLD",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_Brick_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "landing 1.20 W × 0.96 D × 0.11; step rise 0.15",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "door frame",
+        "street",
+        "interior floor"
+      ],
+      "connections": [
+        "TRANSITIONS_TO street, landing and interior floor"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "landing/step single local support owner",
+      "knownIncompatibilities": [
+        "CITY-07 must still validate final access role/elevation"
+      ]
+    },
+    {
+      "id": "art01.derived.street.crowned.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "STREET",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_RoundRocks_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "variable width X1 5.5 → W12 2.8 → micro B 2.4 m; crown +0.045",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "site datum"
+      ],
+      "connections": [
+        "SUPPORTED_BY site",
+        "MEETS named edge/drain/threshold"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "one continuous MeshCollider traversable owner",
+      "knownIncompatibilities": [
+        "ART specimen stations are not CITY-07 coordinates or elevation decisions"
+      ]
+    },
+    {
+      "id": "art01.derived.street.edge_drain.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "EDGE_DRAIN",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_Brick_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "kerb 0.18 W × 0.13 rise; drain visual groove 0.12 W",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "street side"
+      ],
+      "connections": [
+        "MEETS road edge",
+        "DRAINS_TO visual groove outside sole path collider"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "none on path",
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.derived.retaining.capped.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "RETAINING",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_UnevenBrick_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "0.42 W × 0.56 H garden; 0.53 W × 0.09 cap",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "site bank/shoulder"
+      ],
+      "connections": [
+        "SUPPORTED_BY ground",
+        "CAPS wall",
+        "MEETS road shoulder"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "static wall collider outside path",
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.derived.site.scenic_bank.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "SCENIC",
+      "provenance": {
+        "lineage": [
+          "quaternius-nature-standard:wet valley palette"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "local sample ±48 m width, irregular rise 0–2.5 m",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "outside traversable road"
+      ],
+      "connections": [
+        "MEETS road visually below edge",
+        "ROOTS vegetation"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "none; road owns traversal",
+      "knownIncompatibilities": [
+        "not CITY heightfield/elevation authority"
+      ]
+    },
+    {
+      "id": "art01.derived.sign.bar.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "SIGN",
+      "provenance": {
+        "lineage": [],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "1.55 W × 0.48 H × 0.10 D; two independently oriented text faces",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "F01 facade host"
+      ],
+      "connections": [
+        "ATTACHED_TO host",
+        "FACES both directions without mirrored text"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "none",
+      "knownIncompatibilities": [
+        "word BAR is specimen label, not canonized venue name"
+      ]
+    },
+    {
+      "id": "art01.derived.clothed_scale.forastero.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "SCALE_REFERENCE",
+      "provenance": {
+        "lineage": [
+          "quaternius-base-characters-source:Regular_Male_FullBody",
+          "Hair_Buzzed",
+          "UAL1:Idle_Loop",
+          "diagnostic #233 garment-carving technique"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed"
+      },
+      "effectiveDimensionsM": "1.8 m standing human; no behavior",
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "allowedHosts": [
+        "road",
+        "public floor"
+      ],
+      "connections": [
+        "SUPPORTED_BY route surface",
+        "FACES travel direction after documented 180° visual adjustment"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "collisionTraversal": "inspection CharacterController only; no NPC/gameplay",
+      "knownIncompatibilities": [
+        "raw T-pose/mannequin is PROXY_VISUAL"
+      ]
+    }
+  ]
+}

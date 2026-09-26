@@ -7,15 +7,16 @@ namespace Juego2.ART.Editor
     {
         const string Root = "Assets/Arkus/ART/External/";
         const string Character = Root + "Characters/Regular_Male_FullBody.fbx";
+        const string DerivedHuman = "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx";
         const string Ual = Root + "UAL/UAL1.fbx";
 
-        public override uint GetVersion() => 1;
+        public override uint GetVersion() => 2;
 
         void OnPreprocessModel()
         {
-            if (!assetPath.StartsWith(Root)) return;
+            if (!assetPath.StartsWith(Root) && assetPath != DerivedHuman) return;
             var importer = (ModelImporter)assetImporter;
-            if (assetPath == Character)
+            if (assetPath == Character || assetPath == DerivedHuman)
             {
                 importer.animationType = ModelImporterAnimationType.Human;
                 importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
