@@ -20,7 +20,8 @@ namespace Arkus.H1.UnityHost
         {
             var profile = H1UnityLaunchProfile.ForCurrentHost();
             var world = new PortableWorldAuthoringSession(new WorldState(
-                new WorldId(ProductionHarnessHost.InitialWorldId), 0, Array.Empty<WorldObject>()));
+                new WorldId(ProductionHarnessHost.InitialWorldId), 0, Array.Empty<WorldObject>()),
+                UnityAuthoringProvider.CreateDocumentCodecs());
             var worldReader = new ReadOnlyWorldStateView(world);
             var store = new H1ProjectCheckpointStore(profile);
             var projectLease = new FileH1UnityProjectLease(profile);
