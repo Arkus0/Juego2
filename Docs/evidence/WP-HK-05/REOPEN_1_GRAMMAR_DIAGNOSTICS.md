@@ -18,6 +18,17 @@ Owner authority (2026-09-26):
 - This reopen applies that instruction to the second causal owner exposed by the same trial. It is recorded as such, and the owner may require a retroactive independent review.
 - The WP-H1-GATE candidate itself still requires its own fresh independent Reviewer.
 
+## PREDECESSOR_CONTRACT_CHECK
+
+This reopen corrects WP-HK-05 itself. The direct accepted dependency is `WP-HK-02A`, which is COMPLETE.
+
+- The correction consumes only these accepted guarantees:
+  - the HK-02A/HK-04 canonical world state and the transactional mutation envelope;
+  - the H0 `StructuredError` contract (`machineCode`, `message`, `path`, open `context`, `retryable`, `repairHint`);
+  - `PortableData` for transport-neutral context values.
+- None of them changes. The per-kind field sets stay exactly the accepted HK-04 grammar.
+- Reopen condition checked: concrete effective evidence (trial 2) shows the HK-05 "repairable diagnostics" guarantee does not reach a public client for grammar violations. No HK-02A/HK-04 guarantee is contradicted, so none of them reopens.
+
 ## Accepted guarantee proved inapplicable
 
 HK-05 guarantees "validation + repairable diagnostics". The four per-kind grammar rejections in `WorldMutationService.ParseOperation` were not repairable by a client that has only the published flattened schema. They did not name the kind's allowed fields, its required fields or the offending fields.
@@ -38,6 +49,12 @@ A grammar violation for `put-object`, `remove-object`, `put-extension` or `remov
 - Machine codes, paths, capability schemas and the published operation schema are unchanged. `SchemaNode` still cannot express per-kind `oneOf`, and that remains a named future H0 schema-expressiveness decision.
 - Canonical state, hashing, journal and validation semantics are unchanged.
 - An unknown `kind` is still rejected earlier by the published schema enum (`contract.invalid_request`), so it is not affected.
+
+## Exact-SHA verifier maintenance (pre-existing breakage)
+
+`scripts/hk05-observe-exact-sha.sh` and `scripts/hk05-verify-exact-sha.sh` require a completely clean tree. Arkus Candidate Validation now writes `VALIDATION_CONTEXT.json` and `validation.log` before calling the verifier, so the HK-05 route could not pass in CI whatever the candidate contained.
+
+Both scripts now tolerate exactly those receipt files, with the same pattern as the newer exact-SHA verifiers, for example `h1-04-verify-exact-sha.sh`. Any other untracked or modified file still fails.
 
 ## Proof
 
