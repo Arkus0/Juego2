@@ -1,0 +1,1222 @@
+{
+  "schemaId": "arkus.h1-gate-reconciliation@1",
+  "residualDiscovery": "scripts/h1-gate-verify.py discover_residuals (independent of this file)",
+  "residuals": [
+    {
+      "key": "Docs/workpacks/H1/WP-H1-00.md#59e59e1fd4409e61",
+      "itemSha256": "59e59e1fd4409e619ca53bb6320d3a20714d3bdd2a84fa799413c3c2d475386c",
+      "excerpt": "The reference materializer does not prove Unity serialization, real assets, editor persistence or cross-version byte identity.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion: byte-identical Unity serialization",
+      "basis": "Unity serialization, real assets and Editor persistence were proved by the accepted H1-02..H1-11 chain and are executed on the public path at Gate S09-S14; cross-version byte identity stays excluded."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-01.md#0b5148ed6d02c8d6",
+      "itemSha256": "0b5148ed6d02c8d635bc424693eb84c16d8ed08686add7aecfdabc84e5c2b6c2",
+      "excerpt": "Asset existence/type compatibility and component effective serialization remain later Unity-owned proofs. Generic external-resource references outside this provider remain unmodele",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "R-02-05 narrowed / future provider",
+      "basis": "Asset existence and type compatibility were closed by H1-04 (catalogue) and component serialization by H1-07 (Gate S05/S10). Generic external-resource references stay unmodeled."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-02.md#87178d33a95ea641",
+      "itemSha256": "87178d33a95ea6417191a3f4feb08e179dc89ec9703fd9f9d53ba39f81c9311a",
+      "excerpt": "Editor availability/licensing remains an execution prerequisite; byte-identical imports across OSes and future Unity upgrades are not claimed.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "operations / platform (post-H1)",
+      "basis": "Editor licensing is an execution prerequisite; the Gate satisfies it with the accepted hosted seat. Byte-identical cross-OS/upgrade imports stay excluded."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-03.md#6cfb1c89ad187c98",
+      "itemSha256": "6cfb1c89ad187c98ce20a332c38195d39ef6578476346761a244887fbb66d060",
+      "excerpt": "This is application-level project containment, not OS sandboxing, authentication or hostile plugin isolation.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future security/product owner",
+      "basis": "Application-level containment only; OS sandboxing, authentication and hostile-plugin isolation are not H1 claims."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-03A.md#1255039c3c0e02c8",
+      "itemSha256": "1255039c3c0e02c8b947ca6b862d06c1e681d3d879c667e2dfac3caf2fb5ec02",
+      "excerpt": "Batch-per-operation startup latency, editor licensing/availability, OS process failure, power loss, hostile plugins and multi-host concurrency remain outside this WP. A CI runner i",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion: low-latency/parallel Editor dispatch, durability, multi-host",
+      "basis": "The batch-per-operation profile is exercised as accepted at the Gate. Startup latency, power loss, hostile plugins and multi-host remain excluded."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-04.md#caa1ad294deaf941",
+      "itemSha256": "caa1ad294deaf9411672b9511b1cd7581f25fa6d02fa735f9cfa9940b1ac45c5",
+      "excerpt": "The catalogue is complete only for declared roots/types. Full Quaternius pack coverage, broad representative hierarchy/rig/animation conformance, production art breadth, Cantabrian",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "H2 / ART / CITY production owners",
+      "basis": "Representative hierarchy/rig/animation conformance was closed by H1-11 and exercised at Gate S05/S10. Pack breadth, production art and Cantabrian adaptation remain later production scope."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-05.md#4c95f5e66de78463",
+      "itemSha256": "4c95f5e66de78463acda606d6800008b7e659f45ad2a80ebe45f247a6d57b0a4",
+      "excerpt": "Power-loss/torn-file durability, arbitrary scene size, real prefab relationship fidelity, render polish, Cantabrian adaptation, missing production assets and gameplay behavior rema",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusions + H2 / ART / CITY production owners",
+      "basis": "Prefab relationship fidelity was closed by H1-06/H1-11. Power-loss durability, arbitrary scene size, render polish, missing assets and gameplay remain excluded."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-06.md#73eea8752c9b71bf",
+      "itemSha256": "73eea8752c9b71bff37586f19f4d199cdd291c56cd204205c2f9ff18c3861f09",
+      "excerpt": "Complex model-importer adaptation, broad art transformation, clothing/wardrobe, vehicles, missing production props/meshes/animations and shipping asset delivery remain outside scop",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "H2 / ART / CITY production owners",
+      "basis": "Importer adaptation beyond the H1-11 recipe, broad art, wardrobe, vehicles and delivery remain production scope."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-07.md#2d8b7d1b5182bdf2",
+      "itemSha256": "2d8b7d1b5182bdf297ed51189979363bfebaa94bcd35575d18bdc6f017092fc7",
+      "excerpt": "Only the initial allowlist is supported. Runtime component behavior, animation correctness and visual quality are later claims.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future versioned component adapters / H2",
+      "basis": "Only the H1-07 allowlist exists. The Gate realizes transform/mesh-renderer/animator/canonical-link on the real slice (S10)."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-08.md#1eae5ea66a78ef11",
+      "itemSha256": "1eae5ea66a78ef119017b12ca0f7d949e00116285546dca5377eabf82f8d4923",
+      "excerpt": "Console warnings outside the owned inventory, aesthetic defects, runtime behavior and unknown third-party custom serialization remain outside scope.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future diagnostics / production owners",
+      "basis": "Console warnings outside the owned inventory, aesthetics, runtime behaviour and third-party serialization stay outside the H1-08 claim."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-09.md#5925bdeee0050aca",
+      "itemSha256": "5925bdeee0050acada1a17909282a8766f162d57f6d22bd4b6689a4ca420b839",
+      "excerpt": "No automatic merge, continuous sync, collaborative editing or arbitrary Unity scene import is claimed.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion: merge / live sync / multi-user",
+      "basis": "The Gate exercises explicit drift -> proposal -> H0 apply only (S13)."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-10.md#9deb8cc95be88b9e",
+      "itemSha256": "9deb8cc95be88b9e0aaf68c85c343c78f01314648ee3381f67179f813dd3dea0",
+      "excerpt": "No power-loss theorem, remote backup, cross-machine asset-cache portability, cross-Unity-version migration, full Quaternius source breadth, finished Juego2 art or runtime save cont",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusions (durability, portability, production art, runtime save)",
+      "basis": "H1-10 non-claims are unchanged. The Gate restores only inside one clean import (S14)."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-11.md#3cc7cffbff24e7c4",
+      "itemSha256": "3cc7cffbff24e7c42525c190068c8978e68945b29bdcec7dd026b66d26a088b4",
+      "excerpt": "Unselected pack content, finished character clothing/wardrobe, production variants, bespoke Cantabrian architecture/props, missing gameplay animations, production LOD/performance, ",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "H2 / ART / CITY production owners",
+      "basis": "H1-11 production non-claims are carried unchanged."
+    },
+    {
+      "key": "Docs/workpacks/H1/WP-H1-GATE.md#8e0b965afade821a",
+      "itemSha256": "8e0b965afade821a6d36e964d02c322509ebf509b5f78fb4588e7443e766e383",
+      "excerpt": "All declared post-H1 exclusions remain visible: arbitrary components/assets, power-loss durability, collaborative sync, runtime/save parity, shipping SLOs, gameplay behavior and pr",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 owners named in H1_RISK_AND_RESIDUAL_PLAN.md",
+      "basis": "These are the Gate's own declared post-H1 exclusions, carried visibly into H2 planning."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/RESIDUAL_RISK.md#9ffd8e26ea1ec207",
+      "itemSha256": "9ffd8e26ea1ec20723594d982b1105d431d2f6331dc25e648b2c401d5a465dc7",
+      "excerpt": "| Real catalogue inventory completeness, logical catalogue ID mapping and type/version compatibility | downstream | `WP-H1-01` and later catalogue/provider work |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-01 + WP-H1-04 (accepted)",
+      "basis": "H1-04 PASS #5306149043: effective inventory universe, logical/native mapping, type compatibility. Exercised at Gate S05."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/RESIDUAL_RISK.md#86a69b3fe3f1a4a1",
+      "itemSha256": "86a69b3fe3f1a4a14a75b2048b26ad19097a248a19338871b8b419f025263860",
+      "excerpt": "| Unity serialization, `AssetDatabase`, native GUID/local-file IDs, `GlobalObjectId`, scenes/prefabs/components and Editor-effective observation | downstream | Unity bridge/materia",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-04..WP-H1-06, WP-H1-09 (accepted)",
+      "basis": "Native locators, scenes/prefabs/components and Editor-effective observation were accepted by H1-04/05/06/09 and are observed at Gate S09-S10."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/RESIDUAL_RISK.md#38505351f35fc19d",
+      "itemSha256": "38505351f35fc19dec8f32819e459176ed14bb414aa873348282bd30a5cd5e90",
+      "excerpt": "| Exact Unity editor/package/platform behavior and byte-level YAML identity | out of H1-00 claim | later pinned Unity WPs; normalized parity, not cross-version byte identity, remai",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion: byte-identical serialization",
+      "basis": "Exact editor/package are pinned by H1-02 and verified at Gate S01/S03. Byte-level YAML identity stays excluded; normalized parity is the rule."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/RESIDUAL_RISK.md#92866fe89f484d97",
+      "itemSha256": "92866fe89f484d978fafaf4134ae0449235548ce68cde3602a6452998a796b31",
+      "excerpt": "| Project checkpoint/restart/rebuild against real Unity files | downstream | `WP-H1-10`; H1-00 rebuild proof is deliberately fileless/reference-only |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-10 (accepted)",
+      "basis": "H1-10 PASS #5325001446. Composed checkpoint/restore/rebuild is executed on the public path at Gate S14."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/RESIDUAL_RISK.md#a1da2cb155b43eb6",
+      "itemSha256": "a1da2cb155b43eb61a9c7748de9b70aa960874cb44e6468cb2f937560d91c6b5",
+      "excerpt": "| WAL/fsync/power-loss/crash atomicity across canonical state and engine files | out of H1 architecture claim | not introduced by H1-00; only explicit later durability requirements",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion: power-loss durability",
+      "basis": "Not introduced by any H1 WP; R-04-01 stays narrowed only."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/RESIDUAL_RISK.md#42ce32fc1773c217",
+      "itemSha256": "42ce32fc1773c2174e883b953ec0655be8c8d866496aa6776e233f34b0242eb7",
+      "excerpt": "| Public host-to-Editor batch lifecycle, cancellation/crash recovery and Editor main-thread execution | downstream | `WP-H1-03A` / feature owners under ADR-H1-004 |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-03A (accepted)",
+      "basis": "H1-03A PASS #5303016012. The Gate exercises the lifecycle through every Editor-bound public call; the ledger audit proves it."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/RESIDUAL_RISK.md#3fbf6436db5d620f",
+      "itemSha256": "3fbf6436db5d620fb6a21fc14b561b9493c35488af61f5f2392582acd2468e4b",
+      "excerpt": "| Unity-to-canonical supported-edit proposal compilation | downstream | later synchronization owner; H1-00 creates no canonical mutation route |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-09 (accepted)",
+      "basis": "H1-09 PASS #5322464433. Supported-edit proposal compilation is exercised at Gate S13."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/RESIDUAL_RISK.md#f0b99982c9fcf80f",
+      "itemSha256": "f0b99982c9fcf80f88853f09256f7d0634b5e06b241a262bf24b5170ed0dd3bd",
+      "excerpt": "| Gameplay/runtime state, navigation, physics, animation behavior, AI/save state and CITY keeper realization | out of boundary | H2+/CITY owners |",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "H2+ / CITY owners",
+      "basis": "Gameplay/runtime state and CITY keeper realization stay outside H1. PASS only satisfies the H1 prerequisite of CITY-07."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-01/RESIDUAL_RISK.md#c8a146a7f2c6e5a6",
+      "itemSha256": "c8a146a7f2c6e5a6c6817a32f840eed2267419a5c49c5210781105d67be9835c",
+      "excerpt": "| Logical catalogue resource existence, exact Unity type compatibility and catalogue fingerprint acquisition | downstream | later Unity catalogue/materialization work; does not reo",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-04 (accepted)",
+      "basis": "Catalogue existence, type compatibility and fingerprint acquisition were accepted at H1-04. The Gate resolves every selected ID (S05)."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-01/RESIDUAL_RISK.md#3ffef5394582cb30",
+      "itemSha256": "3ffef5394582cb30bb9ee12809395bb456af1ce7ee313d612736ba24c7c23eda",
+      "excerpt": "| Logical catalogue ID ↔ Unity GUID/path/local-file-ID resolution | downstream/private Unity implementation | later Unity-facing provider/materializer; native locators remain non-a",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-04 (accepted)",
+      "basis": "Logical <-> GUID/path/local-file-ID resolution was accepted at H1-04. Native locators stay non-authoritative."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-01/RESIDUAL_RISK.md#a333024eec3b0822",
+      "itemSha256": "a333024eec3b08222b792cd7fc174dc0f1302e37e6dc81efc5861f1ebd27c9b1",
+      "excerpt": "| Effective scene/prefab/component serialization and object lifecycle in Unity Editor | downstream | H1-05 and parity/materialization owners |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-05..WP-H1-07 (accepted)",
+      "basis": "Effective scene/prefab/component serialization was accepted at H1-05/06/07. The Gate observes it on the public path (S09/S10)."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-01/RESIDUAL_RISK.md#64ec6a9e3a65e9f9",
+      "itemSha256": "64ec6a9e3a65e9f9127b27530bb1947b6ad1820135689da8957b81c0b09c6899",
+      "excerpt": "| Public host-to-Editor process lifecycle, main-thread dispatch, cancellation/crash/restart behavior | downstream | H1-03A/process boundary under the accepted H1 architecture |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-03A (accepted)",
+      "basis": "Public host-to-Editor lifecycle was accepted at H1-03A and is exercised by every Gate Editor call."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-01/RESIDUAL_RISK.md#99bf6a859c6dfb4c",
+      "itemSha256": "99bf6a859c6dfb4c6e27a7c13d7416896c40d897279181428c68ba8192e8823a",
+      "excerpt": "| Editor-side drift/reconciliation of generated resources | downstream | H1-05/H1-10 parity/rebuild owners |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-09 + WP-H1-10 (accepted)",
+      "basis": "Drift/reconciliation and rebuild parity were accepted and are exercised at Gate S13/S14."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-01/RESIDUAL_RISK.md#767ec17f74411c4f",
+      "itemSha256": "767ec17f74411c4fdd1079b100feab2e6f9638bfcb32977606727a72140b2934",
+      "excerpt": "| Generic external-resource references outside the H1-01 catalogue kinds | intentionally unmodeled | future provider/version if a concrete admitted use case requires them |",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future provider/version (R-02-05)",
+      "basis": "Intentionally unmodeled; no admitted use case at H1."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-01/RESIDUAL_RISK.md#baf10ea0a8baebcd",
+      "itemSha256": "baf10ea0a8baebcd261623ad0ac2cb390d9dd1ee3b0a2bfe0230d0d7e0a6a5f4",
+      "excerpt": "| Additional Unity component-document kinds beyond canonical-link/renderer/animator | versioned extension | future compatible/minor or breaking/major evolution under HK01 rules, as",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future versioned extension under HK01",
+      "basis": "Only the canonical-link/renderer/animator component documents exist."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-01/RESIDUAL_RISK.md#1a45cc9ee60744ed",
+      "itemSha256": "1a45cc9ee60744ed7664ff48cff4f4fa48d35bd9dd63cf25251cb1d6a61591d5",
+      "excerpt": "| Gameplay/runtime state, physics/navigation/AI/save behavior and CITY keeper realization | out of boundary | H2+/CITY owners |",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "H2+ / CITY owners",
+      "basis": "Out of boundary for H1."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-08/RESIDUAL_RISK.md#e86c60d572a0dac3",
+      "itemSha256": "e86c60d572a0dac375d3e0769b9740f819d420a0d24b50ecbbc6c278e0a715b3",
+      "excerpt": "- Unity Console warnings outside the finite owned inventory, aesthetics, runtime/gameplay behavior and third-party custom serialization remain outside H1-08.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future diagnostics / production owners",
+      "basis": "The H1-08 residual is carried unchanged."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-08/RESIDUAL_RISK.md#bf391dac781725b0",
+      "itemSha256": "bf391dac781725b074705b984339c7e9d6f322fc4d3164e0377291942ff778d9",
+      "excerpt": "- The accepted Unity Editor, AssetDatabase, package graph and H1-04/05/06/07 causal validators are trusted inputs to this composition claim. Concrete contradictory effective eviden",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "The Gate composes H1-08 pre/postflight on the real slice through public plan/materialize (S08/S09/S12). No contradictory effective evidence was found, so no predecessor reopens."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-08/RESIDUAL_RISK.md#3ae5071994b106de",
+      "itemSha256": "3ae5071994b106ded266a52a1336a93965f66f96775eb6c0f9be0d332b7234a5",
+      "excerpt": "- A private legacy projection helper remains source-internal and is not a public capability. The versioned public `Execute` path is the H1-08 validation contract.",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "The Gate never uses the private legacy helper. The ledger audit reconciles every Unity launch to a public composed call."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-10/RESIDUAL_RISK.md#6976acdf1074118e",
+      "itemSha256": "6976acdf1074118e0a24193241995765f52817ae3603be3d05f6b9112e8446b6",
+      "excerpt": "- No WAL/fsync/power-loss durability theorem, remote backup, distributed storage, cross-machine checkpoint portability (fingerprints include line-ending-sensitive bridge source byt",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusions (durability, portability, migration)",
+      "basis": "H1-10 non-claims are carried unchanged."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-10/RESIDUAL_RISK.md#a7c9f959a54c0d7f",
+      "itemSha256": "a7c9f959a54c0d7fe9d96b78824618c23084c37ce63683af64ed3ef491d606f9",
+      "excerpt": "- Reconstruction parity is the normalized effective observation. Rendered appearance, runtime behaviour and byte-identical Unity serialization are outside the claim.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusions (rendered appearance, runtime, byte identity)",
+      "basis": "Normalized observation stays the parity authority at Gate S14."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-10/RESIDUAL_RISK.md#119feac76af78809",
+      "itemSha256": "119feac76af788093bc4398a71590a482d1319fdbfab700d1c6cfb1d8e3435db",
+      "excerpt": "- The normalization excludes only the generation-local GUID/local file id of generated derivative prefabs. If a future bridge change made another generated locator observable, pari",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "Gate S14 compares the accepted checkpoint graph and reconstruction digests after a fresh-process restore and a clean rebuild. The normalization is consumed as it is, with no second oracle."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-10/RESIDUAL_RISK.md#1349e305d24b3e3f",
+      "itemSha256": "1349e305d24b3e3ffeff79f841d82330c57c573c4da5779e84705a860385cd0f",
+      "excerpt": "- Accepted H0 import/compare/provenance, the H1-03A lifecycle, H1-04 source identity and the H1-05..09 materializer/observer are consumed. Concrete contrary effective evidence reop",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "Every consumed predecessor is exercised on the public path. No contrary effective evidence was found."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-10/RESIDUAL_RISK.md#c31b7e6db269503f",
+      "itemSha256": "c31b7e6db269503fed50f824f390bf27e4445fc00128b5beb2671cf268f65571",
+      "excerpt": "- The effective CI stages call the accepted Unity worker entry points directly inside GameCI Editor processes (the H1-09 pattern); the .NET host -> Editor dispatch of those entries",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "Closed by Gate evidence. The public --h1-unity reference and MCP hosts dispatch materialize/observe/drift/import-proposal/rematerialize/checkpoint/restore/clean-rebuild to the real Unity worker (S09-S14). No GameCI test helper or direct entry point is used; the workflow static check and the ledger audit prove it."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#6c376e619065fda5",
+      "itemSha256": "6c376e619065fda55679f85bdb48b39463afe4cf4ed61b43675775f071edbd5b",
+      "excerpt": "| F1 | The adopted Medieval Village MegaKit Source archive and UAL1 Source contain **no lamp, no tree and no standalone rock model** (the WP's allowed-scope list names them as exam",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "ART / H2 source adoption",
+      "basis": "No lamp/tree/rock exists in the adopted distributions, and the Gate adopts nothing. The Gate also records that the admitted slice has no bench/table/chair class; the crate is the seat for civilian.sit."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#f6ffdd7ff2222984",
+      "itemSha256": "f6ffdd7ff2222984adc0957356af6669299803ec593c6e071c2dbbd2923af814",
+      "excerpt": "| F2 | Real Quaternius modules are multi-material meshes (2–3 slots); the accepted H1-07 renderer adapter binds exactly one material slot. | Out of boundary / accepted scope (not a",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future H1-07 adapter schema decision",
+      "basis": "Single-slot renderer override is accepted scope. The Gate overrides the single-material crate and fence only."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#68ed2ba87f476f9b",
+      "itemSha256": "68ed2ba87f476f9b536fbf92abf155bff8d360cbfb27dc6997e851cb2377d42a",
+      "excerpt": "| F3 | The H1-04 facade FBX came from the pack's `FBX (Unity)` folder and is pinned by its own content hash; it is not an entry of the pinned URP archive payload. The new represent",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "ART import normalization (future)",
+      "basis": "H1-04 provenance is true; recorded observation only."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#a296f5584652d961",
+      "itemSha256": "a296f5584652d961207e54e052f3179515a9b324463cb2b617f708ca8e4b9266",
+      "excerpt": "| F5 | The accepted H1-04 sidecars are GUID-only, so Unity applies its serialized ModelImporter defaults: **no FBX file-unit conversion** (`useFileScale=false`). The facade's centi",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "ART import normalization (future)",
+      "basis": "The facade keeps its accepted 1% unit-scale binding in the Gate scenario (facade.front)."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#8b2d77fd21f26926",
+      "itemSha256": "8b2d77fd21f269261b5b802973bd67e6934b9e70fbe6774d36782e56e5e47898",
+      "excerpt": "| F6 | Unity orders imported submesh material slots differently from FBX material-connection order (e.g. `Door_1_Flat`: FBX `WoodTrim, WindowGlass`; Unity `WindowGlass, WoodTrim`).",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "H1-11 accepted import-recipe fact",
+      "basis": "Slot order is not a claimed property; normalized observation preserves imported order."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#83d1cf348d4ba2e5",
+      "itemSha256": "83d1cf348d4ba2e5dbeda96698d91a27ca4fc60f29663d6fcb58409bfc2450a8",
+      "excerpt": "| F7 | The first rigged humanoid used as a *prefab source*: the accepted H1-06 relationship universe (`CollectRelationships`) enumerated `MeshFilter`/`MeshRenderer` references only",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-11 (accepted)",
+      "basis": "Skinned-renderer relationships were added by H1-11. The Gate observes the three humanoids' relationships (S10)."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#6b3c290f7712a10e",
+      "itemSha256": "6b3c290f7712a10ebc217c8f38b41f5f271060483848e9b92f07f93ee12daf83",
+      "excerpt": "| F8 | Drawing the real slice in an Editor process (the supplementary capture) left the source materials it drew dirty, and the Editor's exit-time save rewrote them: the catalogue-",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-11 (accepted)",
+      "basis": "The capture exit-time write was fixed in the H1-11 capture stage. The Gate has no rendering Editor process that could re-save sources, and it re-verifies source bytes after the run."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#7c9bda91a9d905a7",
+      "itemSha256": "7c9bda91a9d905a7b5c4adefc5d8d878e9cab86a9eb6f3f4a635bd299935a728",
+      "excerpt": "| F9 | Removing a selected source used by an *asset* node (`Prop_Crate` → `crate.stack`): the accepted H1-09 observer reports the node as `projection.source-wrong-type` rather than",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future H1 diagnostics decision",
+      "basis": "Code granularity only; drifted node still named."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#719922c09f8ceeac",
+      "itemSha256": "719922c09f8ceeac424f33c7d7c7578b937fb8f93a5a0c0e52e69741f8caf500",
+      "excerpt": "| F10 | The real kit modules, the facade and UAL1 bind importer-generated materials: their sidecars (upstream for the kit, accepted H1-04 defaults for the facade/UAL1) use external",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future ART/H1 import decision",
+      "basis": "The Gate avoids the per-import non-claim: the isolated MCP copy is taken after the shared baseline import (S15). Cross-import portability is not claimed."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#6593fe0cb41ccdcb",
+      "itemSha256": "6593fe0cb41ccdcb685e8304f7df9de962c4680271807763987d2d568f2a3e28",
+      "excerpt": "| F4 | UAL1 is imported with the accepted H1-04 GUID-only sidecar (Legacy/Generic rig); no Mecanim Humanoid avatar is configured. | Named future/residual decision. | H1-11 proves t",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "H2 animation production",
+      "basis": "No Mecanim Humanoid avatar; clip references only."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#465959dfb9960360",
+      "itemSha256": "465959dfb99603602287feebc155c115c177cb84c37d025e5c4715bd21c7b7cd",
+      "excerpt": "- Unselected pack content, finished character clothing/wardrobe, production variants, bespoke Cantabrian architecture/props, missing gameplay animations, production LOD/performance",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "H2 / ART / CITY production owners",
+      "basis": "H1-11 production non-claims are carried unchanged."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#842b4f740bbae59b",
+      "itemSha256": "842b4f740bbae59ba2275710bf7553e2167c07afbde981064871f56971777d01",
+      "excerpt": "- Interactive Editor use can re-serialize upstream `.mat` sources in `SourceSlice` the same way (F8) when the project is saved after the slice was drawn. The accepted H1-10 checkpo",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future local-tooling decision",
+      "basis": "Interactive Editor re-serialization blocks restore fail-closed. It is not claimed as fixed."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#7703a2790db3cae1",
+      "itemSha256": "7703a2790db3cae11bbb93cbc6529b21163dafb5c7229c92dbcf96531843fd81",
+      "excerpt": "- The supplementary capture shows the kit modules untextured (no kit texture file is in the admitted slice) and the humanoids in bind pose (edit-mode capture does not evaluate the ",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "ART / H2",
+      "basis": "Untextured kit and bind pose are production scope."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#29393ad55bc49011",
+      "itemSha256": "29393ad55bc49011f5a5e799e77191fb8002cf99d7f90da4e772bd5504b2e84c",
+      "excerpt": "- The rendered capture is supplementary and hosted-rendered; it is not a visual-quality or parity oracle. Pixel output across GPUs/drivers is not claimed.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 (no pixel parity claim)",
+      "basis": "The Gate's stage-16 capture is the Editor log capture of the loaded slice. It is not a parity oracle."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#9f4da8438c3b8940",
+      "itemSha256": "9f4da8438c3b8940325bda49bfe1278279e8876cf96c22311da80145f26503ed",
+      "excerpt": "- Import expectations use a declared, uniform conversion (FBX handedness flip, centimetre→metre unit scale, single-root collapse). A future Unity importer that changes these conven",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future Unity upgrade owner",
+      "basis": "Importer convention changes are detected, not predicted."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#039cfaac1fee4f12",
+      "itemSha256": "039cfaac1fee4f12ba1050240c782395f69adf6c7664fd359c03c22ca7edbb3b",
+      "excerpt": "- Historical exact-SHA freeze verifiers of already accepted WPs (for example `scripts/h1-05-evidence-check.py`, `scripts/h1-04-public-conformance.py`, `scripts/ctx-dw-h1-0{1,2}-ver",
+      "disposition": "PROCESS_RECORD",
+      "owner": "accepted historical freeze verifiers",
+      "basis": "Historical verifiers stay bound to their own candidates. The Gate reruns none of them and relies on live Main Safety."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#e82b4dd4846e8d3b",
+      "itemSha256": "e82b4dd4846e8d3be45e89ac970870eccdf32891bebf9ea0d9a1ae6d67313323",
+      "excerpt": "- CTX-DW-H1 derived projection: refreshed to the extended authority (`Docs/evidence/WP-CTX-DW-H1-01/LIFECYCLE.md`, digest `bc9af3fc…`, 294 facts) because its accepted lifecycle req",
+      "disposition": "PROCESS_RECORD",
+      "owner": "WP-CTX-DW-H1 lifecycle",
+      "basis": "Derived projection identity refresh; not a bridge residual."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-11/RESIDUAL_RISK.md#2909a4e7a74d50fb",
+      "itemSha256": "2909a4e7a74d50fbdf906c54e3212dbb74a05c6af83eb359331e4faf7617a84e",
+      "excerpt": "- Cross-machine portability of the checkpoint environment fingerprint remains the accepted H1-10 residual; F10 adds that, for the real slice, the normalized observation itself is p",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion: checkpoint portability",
+      "basis": "Cross-machine portability stays a non-claim."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/WORKER_PRE_REVIEW.md#f25c9f5633cc7d08",
+      "itemSha256": "f25c9f5633cc7d08551015a938c3f1f21924236d8ec0797a2e2b283125117d6f",
+      "excerpt": "`PROOF_MATRIX.md` reports `FOUNDATIONAL_PROOF_VERDICT: READY`, `UNRESOLVED_PROOF_OBLIGATIONS: 0`, `KNOWN_UNDETECTED_DEFECT_CLASSES: 0` and `PROOF_BUDGET_VERDICT: WITHIN_BUDGET` ins",
+      "disposition": "PROCESS_RECORD",
+      "owner": "WP-H1-00 Worker pre-review",
+      "basis": "Historical readiness statement."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/WORKER_PRE_REVIEW.md#f1f473465b2a8f5d",
+      "itemSha256": "f1f473465b2a8f5d8b0dec6d296a148c9c787e3dcee9834c0d253b588370496c",
+      "excerpt": "`CONTENT_SHAPE_PROBE.md` remains complete and found no H1-00 blocker or H0 reopen condition. `RESIDUAL_RISK.md` still classifies real catalogue completeness, Unity serialization/na",
+      "disposition": "PROCESS_RECORD",
+      "owner": "WP-H1-00 Worker pre-review",
+      "basis": "Historical readiness statement; its residual rows are reconciled individually above."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-00/WORKER_PRE_REVIEW.md#3939ac850b389857",
+      "itemSha256": "3939ac850b389857d8adaeaaa024ceefc895b8be8b5eb8884970c86c5707c5f6",
+      "excerpt": "No external runtime/package dependency or new IP adoption is introduced by this WP.",
+      "disposition": "PROCESS_RECORD",
+      "owner": "WP-H1-00 Worker pre-review",
+      "basis": "No dependency adoption. The Gate adopts nothing either."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-02/PROOF_PLAN.md#3cfcf5b7295f7944",
+      "itemSha256": "3cfcf5b7295f7944529d62d8112d76302bc561ae95e27e5e24f53ba59cb69c87",
+      "excerpt": "- Editor availability/licensing remains a workstation prerequisite.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "operations (Unity seat availability)",
+      "basis": "Satisfied at the Gate by the accepted hosted seat; remains an execution prerequisite."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-02/PROOF_PLAN.md#3ad9acab09497f39",
+      "itemSha256": "3ad9acab09497f39751cf3b9447cbd9c3f4785c788fe3b5f7701763826a5a9c9",
+      "excerpt": "- Byte-identical import output across operating systems or future Unity patches is outside the claim; normalized effective state is the oracle.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion: byte-identical serialization",
+      "basis": "Normalized effective state remains the oracle."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-02/PROOF_PLAN.md#cc8414cb11cd8c98",
+      "itemSha256": "cc8414cb11cd8c980795bb316b4e62194eea1ebf9c5c5d1a62206bebfc508505",
+      "excerpt": "- Rendered/interactive quality, bridge public capabilities, materialization, scenes, prefabs, asset catalogues and gameplay remain downstream.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusions (rendered/interactive quality, gameplay)",
+      "basis": "Bridge capabilities, materialization, scenes, prefabs and catalogues were closed by H1-03A..H1-11 and executed at the Gate. Rendered/interactive quality and gameplay remain."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-02/PROOF_PLAN.md#b0df7b0d6f5a9833",
+      "itemSha256": "b0df7b0d6f5a98335e563e0fecb5b6de0b61b17f8f9018abfa182d98cc9c6e8b",
+      "excerpt": "- Release-wide SBOM/notice packaging remains a release owner; this WP records the exact adopted build/test package evidence needed by that later work.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "release owner (SBOM/notice packaging)",
+      "basis": "Not an H1 claim."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-02/PROOF_PLAN.md#5c8a9c5e770960a9",
+      "itemSha256": "5c8a9c5e770960a916ee8e8da51de73a5f7602d6159d7af276c073e2b6bb7d2d",
+      "excerpt": "- No residual above can falsify the current exact toolchain/project-baseline claim inside its trust boundary.",
+      "disposition": "PROCESS_RECORD",
+      "owner": "WP-H1-02 proof plan",
+      "basis": "Historical classification statement."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-02/PROOF_PLAN.md#07e427893316563f",
+      "itemSha256": "07e427893316563f887846018840fd7838fb4c904aad523d6f0e98b86ac69b57",
+      "excerpt": "- The two observed wrapper defects produced product/acceptance progress: exact GUI-process waiting and a fail-closed required-output postcondition. Proof machinery did not expand s",
+      "disposition": "PROCESS_RECORD",
+      "owner": "WP-H1-02 proof plan",
+      "basis": "Historical proof-budget statement."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-02/PROOF_PLAN.md#de41274d3037a5c0",
+      "itemSha256": "de41274d3037a5c01f84b526acf60db6c5cef8144a644029a77474881d66a873",
+      "excerpt": "UNCLASSIFIED_RESIDUALS: 0",
+      "disposition": "PROCESS_RECORD",
+      "owner": "WP-H1-02 proof plan",
+      "basis": "Historical classification marker."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-02/PROOF_PLAN.md#b786370da188dfea",
+      "itemSha256": "b786370da188dfeac9d0666dca7cd5660cff4ad90bdb2ee5c7bdcdb4ea66a267",
+      "excerpt": "PREDECESSOR_REOPEN_TRIGGERED: NO",
+      "disposition": "PROCESS_RECORD",
+      "owner": "WP-H1-02 proof plan",
+      "basis": "Historical reopen marker."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-04/PROOF_MATRIX.md#75908b3e0b8cf892",
+      "itemSha256": "75908b3e0b8cf892936d2f33b4f4d49fb106b76969fc8609e295f6a6e077000a",
+      "excerpt": "The proof uses one bounded real Source slice, one fixture scene, one reviewed component-type set, a full effective inventory versus mapping/adoption reconciliation, focused unit de",
+      "disposition": "PROCESS_RECORD",
+      "owner": "WP-H1-04 proof budget",
+      "basis": "Historical proof-budget statement."
+    },
+    {
+      "key": "Docs/evidence/WP-H1-05/PROOF_MATRIX.md#4abe8ec9c7151794",
+      "itemSha256": "4abe8ec9c71517945ebca89975b895388f579a55bc278779e74dc5714f07ffe3",
+      "excerpt": "H1-05 intentionally supports one fixed scene and 128 bound objects. Renderer/Animator authored component documents fail closed in this projection until their owner supplies an adap",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "accepted H1 limits (one fixed scene, 128 objects)",
+      "basis": "The Gate operates inside the fixed scene and the object ceiling (17 bound objects). The other boundaries were closed by H1-06..H1-10 or are carried as post-H1 exclusions."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#0596df8f27e78594",
+      "itemSha256": "0596df8f27e785942f47a1ffc5ec8673856fa402e089d1477575f8470bdb5a85",
+      "excerpt": "| `R-00A-05` concrete engine abstractions/capabilities absent | `WP-H1-00` + `WP-H1-01`, final confirmation at GATE | executable engine-neutral projection contract plus composed Un",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "Final confirmation at the Gate: the composed Unity capability definitions are discovered through both reference and MCP (S04) and executed end to end."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#bc942a435386d1f9",
+      "itemSha256": "bc942a435386d1f9bc7c750f14505b64e72a32aaa05ee0a2b7376f8f8e299976",
+      "excerpt": "| `R-01-09` Unity scoped-provider instantiation absent | `WP-H1-01` | composed Unity producer, schemas and bindings with no parallel registry |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-01 (accepted)",
+      "basis": "Composed Unity producer and bindings with no parallel registry (H1-01 PASS #5265525323). Used at Gate S06."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#63769f7d82734900",
+      "itemSha256": "63769f7d82734900e3bad4019ba8c1ec32131778652b3b8f8202eb4f6f8d5bc6",
+      "excerpt": "| `R-05-05` Unity/editor validation absent | `WP-H1-08` | stable preflight/post-materialization Unity diagnostics |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-08 (accepted)",
+      "basis": "Stable preflight/post-materialization Unity diagnostics (H1-08 PASS #5319609389). Consumed at Gate S08/S12."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#8f1c962e333509cb",
+      "itemSha256": "8f1c962e333509cbfe4e3e19ea8847f6cc809c1a476b2e6463c5108115d2e9b6",
+      "excerpt": "- `R-02-05`: H1 supports provider-owned logical Unity catalogue references, not a universal cross-world/external-resource model.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "R-02-05 (narrowed, not closed)",
+      "basis": "Provider-owned logical catalogue references only."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#2b47fd67572c09a2",
+      "itemSha256": "2b47fd67572c09a2b2a704c70c0459acef745a8acf6f1a2d5caca811f67515ea",
+      "excerpt": "- `R-02A-01`: the schema-aware Unity producer derives known references; arbitrary raw opaque payloads can still hide undeclared meaning.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "R-02A-01 (narrowed, not closed)",
+      "basis": "Opaque payloads can still hide meaning outside the schema-aware producer."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#389102a5bcc2e0ad",
+      "itemSha256": "389102a5bcc2e0ad04dda6e54631f949baddeef43d349cc8e47845001dcf01df",
+      "excerpt": "- `R-04-01`: H1 provides project-checkpoint/rebuild for its representative scope, not WAL/fsync/power-loss durability for all canonical state.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "R-04-01 (narrowed, not closed)",
+      "basis": "Project checkpoint/rebuild only; no WAL/power-loss durability."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#3efbed5ea8238984",
+      "itemSha256": "3efbed5ea8238984d06e4bdc97da0bf20fc69def3d8d499d1299d16029edaa08",
+      "excerpt": "- `R-06B-04`: H1 promotes authored Unity binding intent only; live transforms, clocks, physics, animation state, AI and simulation remain outside canonical authored replay.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "R-06B-04 (narrowed, not closed)",
+      "basis": "Only authored binding intent is canonical."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#521f671a2ce60d3b",
+      "itemSha256": "521f671a2ce60d3beadfd4816fe9cf452e5db18b061bc55bedf3f31e3e619a01",
+      "excerpt": "- canonical object count and snapshot size of the representative bridge slice;",
+      "disposition": "SATISFIED_BY_GATE_EVIDENCE",
+      "owner": "H0S (non-blocking)",
+      "basis": "Gate facts record canonical object count and snapshot bytes (h0sMeasurements)."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#b4490dad55fcd35e",
+      "itemSha256": "b4490dad55fcd35e553e7047dfa0b8f07bcd8e518ad8c7c414a928efd7223818",
+      "excerpt": "- materialization plan size and duration;",
+      "disposition": "SATISFIED_BY_GATE_EVIDENCE",
+      "owner": "H0S (non-blocking)",
+      "basis": "Gate facts record plan node count and materialize durations."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#0b2e6ef3a7062b9b",
+      "itemSha256": "0b2e6ef3a7062b9b6634e58103235d39848f09e8d63faa589a5740bca3aa0687",
+      "excerpt": "- catalogue size and scan duration;",
+      "disposition": "SATISFIED_BY_GATE_EVIDENCE",
+      "owner": "H0S (non-blocking)",
+      "basis": "Gate facts record catalogue total and query/resolve durations."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#e1a536d5353ffa1f",
+      "itemSha256": "e1a536d5353ffa1f0b0a814e1618bbe5ed00a5f6766cd4616990d8872a637f2f",
+      "excerpt": "- drift/observation cost;",
+      "disposition": "SATISFIED_BY_GATE_EVIDENCE",
+      "owner": "H0S (non-blocking)",
+      "basis": "Gate facts record drift/observe durations."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#54eaea04d5fcd11f",
+      "itemSha256": "54eaea04d5fcd11f1016822f97f6ea043ae29ab5b015265387d4c505c62c1246",
+      "excerpt": "- canonical commit latency/stale rate when H1 authoring is exercised.",
+      "disposition": "SATISFIED_BY_GATE_EVIDENCE",
+      "owner": "H0S (non-blocking)",
+      "basis": "Gate facts record apply latency and the forced stale conflict count."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#3eacad3bdec3f2b2",
+      "itemSha256": "3eacad3bdec3f2b29bbe6576b7bd27e69d39bc97e9a403f5429e05b77537158f",
+      "excerpt": "| Unity IDs become canonical IDs | H1-00/H1-04 | logical/native identity split; causal relocation/recreation tests |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-00 + WP-H1-04 (accepted)",
+      "basis": "Logical/native split accepted. The Gate binds logical IDs only; native GUIDs appear only as observation locators."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#b636bb752bd7a8aa",
+      "itemSha256": "b636bb752bd7a8aa79f5552a0fffb46167fa961b9ffd5165be2471c0279b4e4b",
+      "excerpt": "| catalogue or component registry proves its own completeness | H1-04/H1-07 | independent AssetDatabase/effective-adapter universe |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-04 + WP-H1-07 (accepted)",
+      "basis": "Independent inventory/adapter universes accepted. The Gate derives its stage and role universes independently (verifier)."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#881c8edf128a82ed",
+      "itemSha256": "881c8edf128a82edb1bbbc4e0044d415f9441a2e4250ac493b20fe768701f95d",
+      "excerpt": "| bridge creates a second mutation authority | H1-01/H1-09 | producer emits mutation proposals; only H0 commits |",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "S13: the Unity edit becomes a non-authoritative proposal, and only H0 plan/dry-run/apply commits it, after a forced stale conflict."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#82913a3e0b818398",
+      "itemSha256": "82913a3e0b818398baab3ca07cd1ec92a05ac74cd088602f773cf0c48464c1a1",
+      "excerpt": "| H0 host policy is skipped or weakened for editor effects | H1-03 | separate Unity policy at the below-transport seam |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-03 (accepted)",
+      "basis": "Separate Unity host policy; every Gate call goes through the composed H1 host policy."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#7ac6c69d64cf742e",
+      "itemSha256": "7ac6c69d64cf742eaed65d52a41d7fa49fbe82506f88f5f040d536d0cacfa0e9",
+      "excerpt": "| public H0/MCP host cannot truthfully reach Unity or grows a private/parallel route | H1-03A | fixed external-host → batch-worker topology; same composed handler for reference/MCP",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "The ledger audit reconciles every Unity launch to a public composed call. The workflow static check forbids private Editor paths. Reference and MCP use the same topology."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#4a874264bc4a37ad",
+      "itemSha256": "4a874264bc4a37ad6707433699bd71ea25273e6a7b07b117f881d81b04c28351",
+      "excerpt": "| disposable substitute art hides real source/import/catalogue behavior | H1-04 | adopt exact Quaternius Source at first game-art use; positive game-shaped catalogue proof uses acc",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-04 (accepted)",
+      "basis": "Real Quaternius Source from first game-art use. The Gate uses only the accepted representative slice."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#c27cbe36f2f85f11",
+      "itemSha256": "c27cbe36f2f85f11de40a665fb97c5326b6f52a6f92002a8bd69f8eac9d95f0c",
+      "excerpt": "| materialization partially replaces the active projection | H1-05 | generation staging, publication manifest and interruption controls |",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "S12: rejected invalid references leave the prior active generation unchanged and not current."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#987d61f931b935e1",
+      "itemSha256": "987d61f931b935e1263475d18e903d260b887815ddf78787e17f5565c5e9fb36",
+      "excerpt": "| purchased source prefab/asset is overwritten | H1-06 | adopted upstream source is read-only to bridge materialization; only bridge-managed projection derivatives writable |",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "The workflow re-verifies the mounted source bytes after all Gate Unity processes. Materialization writes only managed derivatives."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#fcf6ecd8badf211c",
+      "itemSha256": "fcf6ecd8badf211cdb13a93859de78be067458f8e61bef9bfce8ad19562c9776",
+      "excerpt": "| generic reflection silently broadens component mutation | H1-07 | explicit schema adapters and effective allowlist coverage |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-07 (accepted)",
+      "basis": "Explicit schema adapters; the Gate realizes only the allowlisted kinds."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#f42778db2f585855",
+      "itemSha256": "f42778db2f585855f6ee2edc0d68457d99310ab2114f9dfa0821b4fe8a8c4077",
+      "excerpt": "| engine validation suppresses unrelated diagnostics | H1-08 | dependency-local ambiguity, preserving HK05 lesson |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-08 (accepted)",
+      "basis": "Dependency-local ambiguity accepted. The Gate observes independent missing-source and missing-clip diagnostics (S12)."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#c9bcb669216b5d11",
+      "itemSha256": "c9bcb669216b5d11550ad7cc2abc4fa769955a1bf46acefd13c250166c810784",
+      "excerpt": "| manual Unity edits silently become authored truth | H1-09 | drift plus explicit import proposal; never auto-pull |",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "S13: drift is visible and never auto-pulled. The canonical change happens only after H0 apply."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#0e5b9101a3d2feb6",
+      "itemSha256": "0e5b9101a3d2feb65449a2907aeebcd994b2b89278113a9215603ac6b9cf188a",
+      "excerpt": "| checkpoint/restoration redefines snapshot/replay lineage or silently substitutes missing source art | H1-10 | consume HK06B/HK06C; Unity rebuild remains downstream and binds acce",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "S14: the fresh process restores through H0 snapshot import (new-local-lineage) and binds accepted source fingerprints."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#badd67ec44554d03",
+      "itemSha256": "badd67ec44554d03d0bbe650ffc11b7de2077c0724102676362e608c37414cfe",
+      "excerpt": "| bounded early source slice hides broader real hierarchy/material/rig/animation failures | H1-11/GATE | broaden the already-adopted Quaternius Source baseline into an exact repres",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-11 (accepted)",
+      "basis": "The representative selected-item slice is accepted, and the Gate scenario uses all of it."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#182695b0d0f9e022",
+      "itemSha256": "182695b0d0f9e022b76c3405eaae1cd382ce1d49563c53208eb989f2f3679fc9",
+      "excerpt": "| H1 absorbs finished-art/Cantabrian adaptation ownership and blocks the first playable | H1-04..GATE | source-first bridge proof only; later H2/ART/CITY creates Juego2-derived con",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "The Gate adopts nothing and makes no art/Cantabrian claim. Production art stays H2/ART demand-first."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#eda6b4b89038c768",
+      "itemSha256": "eda6b4b89038c768a1f56a413ef7d41c22db5b4d8ec916da58417f2916196f23",
+      "excerpt": "| H1 conformance fixture silently takes CITY geography/seed ownership | H1-11/GATE | consume CITY-00 shape only; exact seed and keeper realization stay CITY-03/07-owned |",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "A non-keeper conformance assembly only (wedge tip + river-edge marker). No CITY seed, route graph or keeper geometry."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#b1998094869f0042",
+      "itemSha256": "b1998094869f00428b7d526cdfd51951901a437da8f01c52668d6d58dfe4a288",
+      "excerpt": "| gate invents semantics to close an omission | H1-GATE | closure-only rule and predecessor reopen routing |",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "The scope verifier limits the candidate diff to Gate-owned orchestration/evidence paths, and the predecessor reopen routing is recorded."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#e65ac4469d73fc72",
+      "itemSha256": "e65ac4469d73fc723241eefd12d66891a8e8861ed2e656bf7ddda7d3cfdbd2b8",
+      "excerpt": "- arbitrary Unity asset/component support;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion (H2+/product)",
+      "basis": "Arbitrary asset/component support is not claimed."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#f9a692459f855f17",
+      "itemSha256": "f9a692459f855f17bdd1fb8c44ff8a105865b4deae6af88cfa329d241e1d89fa",
+      "excerpt": "- byte-identical Unity serialization across versions/platforms;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion",
+      "basis": "Byte-identical serialization is not claimed."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#515fc28563b9849e",
+      "itemSha256": "515fc28563b9849e3cec676f8d177f722bcf1ddd4264823b815c9c061d8eca9d",
+      "excerpt": "- background live synchronization or multi-user editor coordination;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion (product)",
+      "basis": "Live sync / multi-user coordination is not claimed."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#0294ee59e4ed75c5",
+      "itemSha256": "0294ee59e4ed75c5537577d76a052197b4cb6809da2eba8171823262bdd41137",
+      "excerpt": "- low-latency/parallel Editor dispatch, a long-lived Editor daemon or a startup-time SLO beyond the accepted batch-per-operation H1 profile;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion (H0S/product)",
+      "basis": "Batch-per-operation latency is recorded, not optimized."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#c25ac19ad223fbd5",
+      "itemSha256": "c25ac19ad223fbd59de7767435599e57cc9cb741bcb250d13573e6fc39959b15",
+      "excerpt": "- merge of independent canonical/Unity histories;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion",
+      "basis": "No history merge."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#129375ba0daa8454",
+      "itemSha256": "129375ba0daa8454c8bdb9e322c09c25cea1da411d59843f5e68cc6cdfec140b",
+      "excerpt": "- power-loss durability for editor publication;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion",
+      "basis": "No power-loss durability."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#4449f337c648cd57",
+      "itemSha256": "4449f337c648cd57c74fc7cbdac591ff29c1a92c2fe1ff8bd414fbaf47718b88",
+      "excerpt": "- shipping-scale catalogue/world throughput or SLOs;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion (H0S)",
+      "basis": "No shipping SLOs."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#74e67e084f43c3b0",
+      "itemSha256": "74e67e084f43c3b0fc6fa501a35b89407205ec57e8f287506d12f7b80c97bdd5",
+      "excerpt": "- addressables/asset-bundle delivery, remote build farm or cloud tenancy;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion (product/delivery)",
+      "basis": "No addressables/build farm/tenancy."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#d586054c7830ac69",
+      "itemSha256": "d586054c7830ac697b85bebeebcd0774432b62ff4d7df8ce1a1b2e2e025f393d",
+      "excerpt": "- runtime/save-state parity, navigation, physics, lighting quality or gameplay correctness;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion (H2+)",
+      "basis": "No runtime/save/gameplay parity."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#c3b72f2a97b70231",
+      "itemSha256": "c3b72f2a97b70231a98b65a7c0b3451dd118bbac64c1061d9e001f8f4e35ed44",
+      "excerpt": "- finished Cantabrian art conversion, complete clothing/wardrobe, all missing props/meshes/variants or all gameplay/demo animations;",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "H2 / ART / CITY production owners",
+      "basis": "No finished art or animation breadth."
+    },
+    {
+      "key": "Docs/engineering/H1_RISK_AND_RESIDUAL_PLAN.md#59998afe3f91047f",
+      "itemSha256": "59998afe3f91047fa18b5d87aeed757a228833a838e00709739f65fcd28a1ade",
+      "excerpt": "- portability of Unity-specific binding intent to another engine without a reviewed translator.",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "post-H1 exclusion (future engine translator)",
+      "basis": "Unity binding intent is engine-specific."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-00A-05",
+      "itemSha256": "5d6a4ecde3025aeb0ee435d23e07f3751f76da14859fe118dc759fd6f928e2fc",
+      "excerpt": "| `R-00A-05` | HK-00A | Concrete H1 engine abstractions and Unity capability definitions not selected | H1-00 + H1-01, confirmed at H1-GATE | `DEFERRED` |",
+      "disposition": "CONFIRMED_BY_GATE",
+      "owner": "WP-H1-GATE",
+      "basis": "Final confirmation recorded; ledger row R-00A-05 may be closed at post-PASS DocSync."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-01-09",
+      "itemSha256": "88a49a9ca6e36ee8181e84a66650efa8ff6d7363fbea1fab733ebbe4ee19c873",
+      "excerpt": "| `R-01-09` | HK-01 | Unity/editor types absent; H1 instantiates the scoped-provider boundary | H1-01 | `DEFERRED` |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-01 (accepted)",
+      "basis": "Scoped provider instantiated by H1-01."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-05-05",
+      "itemSha256": "174510fd873571ba5dcccbecaef951579d07867c62c07973b7b7251ed4f09a78",
+      "excerpt": "| `R-05-05` | HK-05 | Unity/engine validation: scene serialization, prefab/component rules, editor constraints | H1-08 | `DEFERRED` |",
+      "disposition": "CLOSED_BY_ACCEPTED_OWNER",
+      "owner": "WP-H1-08 (accepted)",
+      "basis": "Unity validation delivered by H1-08."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-00-06",
+      "itemSha256": "909e2f10d6d208e72ef374743adfdd445e2e9cc020c193429a851037d17c5c24",
+      "excerpt": "| `R-00-06` | HK-00 | Semantic game-content code added inside otherwise owned product source | HK10: `OUT-BOUNDARY`; product/H1 semantic growth is not generic harness closure |",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "HK10 OUT-BOUNDARY",
+      "basis": "The Gate adds no semantic game content (scope verifier)."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-02A-02",
+      "itemSha256": "a62013ba642e7c11406f435bf12ad88d7a07a19786a0efcca94c984c11b386f7",
+      "excerpt": "| `R-02A-02` | HK-02A, HK-08B | Whole-world revision/hash CAS; no per-resource concurrency and no automatic merge of disjoint edits | HK10: `OUT-BOUNDARY`; closure stress-tests det",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "HK10 OUT-BOUNDARY",
+      "basis": "The Gate exercises deterministic stale rejection and replan (S13). Finer concurrency and merge are not claimed."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-03-01",
+      "itemSha256": "477a09848441c2a2208a4f1c967e051337510362cd89d60eeb769ac8ba3d5a65",
+      "excerpt": "| `R-03-01` | HK-03 | Query evaluation is bounded in output, not in scan cost; no index, sublinear complexity or world-size-independent CPU claim | HK10: `OUT-BOUNDARY`; post-GATE ",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "HK10 OUT-BOUNDARY (post-GATE scale)",
+      "basis": "Not an H1 claim."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-04-05",
+      "itemSha256": "510d942ea75baf1d8e85974b8e1a691ac2db9d3ede117dffbd192e6665b19767",
+      "excerpt": "| `R-04-05` | HK-04 | Asymptotic performance for very large worlds | HK10: `OUT-BOUNDARY`; post-GATE scale evidence |",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "HK10 OUT-BOUNDARY (post-GATE scale)",
+      "basis": "Not an H1 claim."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-06B-04",
+      "itemSha256": "742ab25383f7accd72fff09829a68543fc1aef98a1c566accaa2b7ec1a57dc0f",
+      "excerpt": "| `R-06B-04` | HK-06B, HK-06C, HK-07A, HK-07B | Gameplay/runtime state such as transforms, clocks, schedules, physics, animation, AI and simulation remains outside canonical author",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "HK10 OUT-BOUNDARY",
+      "basis": "Runtime state stays outside canonical authored state."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-CITY05-01",
+      "itemSha256": "5ab22d4528fb6c14eb530b8c75282a488087f04d8bcef5310f97f3cffcbcf4e6",
+      "excerpt": "| `R-CITY05-01` | CITY-05 | Final asset/prefab/module inventory and imported dependency adoption are not selected by the exterior grammar | ART / H1 / later production owners | `DE",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "ART / H2 production owners",
+      "basis": "H1 supplies the catalogue mechanism, not the final inventory selection."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-CITY05-02",
+      "itemSha256": "9ea787e898c087ac719b4df3dde1c2464dcd7618e845ba36ab391572b57dfa7e",
+      "excerpt": "| `R-CITY05-02` | CITY-05 | Arkus public capability/schema implementation for reviewed environment discovery is not implemented by the non-canonical requirements projection | ownin",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "later authoring WPs (H2 / CITY-07)",
+      "basis": "No accepted H1 WP owns environment-discovery capabilities, and the proof-only Gate may not add one. Carried visibly."
+    },
+    {
+      "key": "Docs/engineering/RESIDUAL_LEDGER.md#R-CITY05-03",
+      "itemSha256": "80d4539cc1e5d42aa33fe748da11bdc013c21b0266e750f42a2e516d2e1767b8",
+      "excerpt": "| `R-CITY05-03` | CITY-05 | Keeper realization of the accepted city grammar remains unbuilt | CITY-07 after H1-GATE | `DEFERRED` |",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "CITY-07 (after H1-GATE PASS + CITY-04 PASS)",
+      "basis": "H1-GATE PASS satisfies only the H1 prerequisite."
+    },
+    {
+      "key": "PR#236/comment-5845036679#meta-sidecar-integrity",
+      "externalSource": "https://github.com/Arkus0/Juego2/pull/236#issuecomment-5845036679 (owner circuit-breaker PASS, H1-11)",
+      "excerpt": "extend the post-Editor SourceSlice integrity check to admitted .meta sidecars and add a sidecar-mutation negative control",
+      "disposition": "CARRIED_FORWARD",
+      "owner": "future H1 proof-harness hardening",
+      "basis": "The owner classified it as non-blocking; it does not block H1-GATE. The Gate re-verifies admitted source bytes after its run but does not extend H1-11's .meta coverage, because that would repair a predecessor's harness."
+    }
+  ],
+  "dependencies": [
+    {
+      "wp": "WP-H1-00",
+      "acceptedCandidate": "3dc513dd963b77116fd45b5af8d800ae8993dd34",
+      "pr": "#75",
+      "verdict": "PASS #5264661860",
+      "mergeSha": "c02cf54c89c13db43edda4a602b0c1620baa3fa2",
+      "consumedAs": "neutral projection vocabulary"
+    },
+    {
+      "wp": "WP-H1-01",
+      "acceptedCandidate": "385ce2466190003d18c849c8d944b881d184e1c7",
+      "pr": "#79",
+      "verdict": "PASS #5265525323",
+      "mergeSha": "0b8f23fbce227bbbc710c8410dff575fcb9fcf12",
+      "consumedAs": "unity.binding.compile/inspect/decode (S06)",
+      "reopen": {
+        "trigger": "WP-H1-GATE trials 4-5; owner option 3 (typed extension documents)",
+        "pr": "#245",
+        "frozenCandidate": "c97ada780efe507e0f7dfd7ca3794d45cf866d0d",
+        "review": "waived by owner (#5847364183)",
+        "mergeSha": "525b6f2932bfa8a3540e27624165efa08c79e402",
+        "consumedAs": "unity.binding.compile documentMutation + registered binding document codec (S06/S07, AI trial)"
+      }
+    },
+    {
+      "wp": "WP-H1-02",
+      "acceptedCandidate": "d86a08e644f542e9515f5e54fd4061f61e251c70",
+      "pr": "#152",
+      "verdict": "owner acceptance override #5798755634 (review #5293810284)",
+      "mergeSha": "faa42a3d58ab26b0dc2547f9b6b7fc49a604219d",
+      "consumedAs": "pinned Unity 6000.3.24f1 project/packages (S01/S03)"
+    },
+    {
+      "wp": "WP-H1-03",
+      "acceptedCandidate": "6d78ebc07e48419e279d4a17b93eeb099307316b",
+      "pr": "#168",
+      "verdict": "PASS #5299906832",
+      "mergeSha": "b52fe8f67bb74880af8ed2d734c1293869fd9f86",
+      "consumedAs": "Unity host policy below transports (every call)"
+    },
+    {
+      "wp": "WP-H1-03A",
+      "acceptedCandidate": "24d24526487af0d32e69799960f4251e44f0b5ad",
+      "pr": "#176",
+      "verdict": "PASS #5303016012",
+      "mergeSha": "90428b803948820663abfebaa3fe21eb37596247",
+      "consumedAs": "--h1-unity host -> batch worker lifecycle (every Editor call, ledger audit)"
+    },
+    {
+      "wp": "WP-H1-04",
+      "acceptedCandidate": "8c6ffd61d17e832ed5b9f900e8c0f7d4e85bf5f5",
+      "pr": "#185",
+      "verdict": "PASS #5306149043",
+      "mergeSha": "4f172f7aa9e7c4a0909be046d095eac5477ad765",
+      "consumedAs": "catalogue query/resolve (S05)",
+      "reopen": {
+        "trigger": "WP-H1-GATE trial 1 FAIL (R1-R4)",
+        "pr": "#239",
+        "frozenCandidate": "ce3ba74efae28692d886a5e11366c7849695e9f6",
+        "review": "owner-waived for this correction only (#5846142155)",
+        "mergeSha": "4ab82fb1c0a0d8654aaa44ebc66452a3507ef347",
+        "consumedAs": "recoverable catalogue and pre-launch refusal diagnostics (S05, S12, AI trial)"
+      }
+    },
+    {
+      "wp": "WP-H1-05",
+      "acceptedCandidate": "186224fbc3f53eb9c47ae528a56dcf3514af163f",
+      "pr": "#192",
+      "verdict": "PASS #5308430565",
+      "mergeSha": "7039adecac4e6e07d899247759d9b3c9fd3c2dae",
+      "consumedAs": "plan/materialize/observe, generational publication (S08-S12)"
+    },
+    {
+      "wp": "WP-H1-06",
+      "acceptedCandidate": "96de260021fb28ff2cc7da8d2ef488be419568b3",
+      "pr": "#195",
+      "verdict": "PASS #5313437809",
+      "mergeSha": "6d04581bc3916b376bedc0797258097cfb22c225",
+      "consumedAs": "prefab lineage/relationships (S10)"
+    },
+    {
+      "wp": "WP-H1-07",
+      "acceptedCandidate": "a11f9c012307ee2c1d925eb1a1be143f1d127d21",
+      "pr": "#206",
+      "verdict": "PASS #5315878884",
+      "mergeSha": "f733b2fd50ab0aed27fce99d5ca7773969f3f339",
+      "consumedAs": "allowlisted component adapters (S10)"
+    },
+    {
+      "wp": "WP-H1-08",
+      "acceptedCandidate": "8b7ea7b9ad74d67c5b300180b79833fe89350f4d",
+      "pr": "#216",
+      "verdict": "PASS #5319609389",
+      "mergeSha": "f22fa99e4427849b8a7202bf24bbae83fb90ee83",
+      "consumedAs": "pre/postflight validation (S08/S12)"
+    },
+    {
+      "wp": "WP-H1-09",
+      "acceptedCandidate": "8f2103c037d08416d70687d4fb08b3d3c62bceac",
+      "pr": "#220",
+      "verdict": "PASS #5322464433",
+      "mergeSha": "9574f80aa07effc3022a3bb100a516d107965a19",
+      "consumedAs": "drift/import-proposal/rematerialize (S13)"
+    },
+    {
+      "wp": "WP-H1-10",
+      "acceptedCandidate": "bad48d1cf76cb5c8d7c3870b3dc88dc9b9a5c5e5",
+      "pr": "#230",
+      "verdict": "PASS #5325001446",
+      "mergeSha": "aa31db7d3ca34f72709db19b22375166c6fd42dd",
+      "consumedAs": "checkpoint capture/current/restore/clean-rebuild (S14)"
+    },
+    {
+      "wp": "WP-H1-11",
+      "acceptedCandidate": "228990be44052e376a112d0cac7dc3d712a0875f",
+      "pr": "#236",
+      "verdict": "owner circuit-breaker PASS #5845036679 (after FAIL #5325400881)",
+      "mergeSha": "338dd0c8a3e9b1a882a8654bdc2556db9a0520f5",
+      "consumedAs": "representative selected-item manifest (all scenario sources)"
+    },
+    {
+      "wp": "WP-H1-ASSET-CLOUD",
+      "acceptedCandidate": "e4d18002e6ca81f302daa645e306e9373debac92",
+      "pr": "#201",
+      "verdict": "PASS #5313800159",
+      "mergeSha": "fe6ecd5e14ef2581fd8fbe8f87166d13d02109bd",
+      "consumedAs": "private vault mount (S01)"
+    },
+    {
+      "wp": "WP-H1-UNITY-CI",
+      "acceptedCandidate": "b49b081a92b088d7b0fd9adce4bd5f26a3b6c1bf",
+      "pr": "#166",
+      "verdict": "PASS #5299167558",
+      "mergeSha": "6898250be985ab5d805bbdb129e30c9c6f1f4cdf",
+      "consumedAs": "GitHub-hosted Unity substrate (S01-S16)"
+    }
+  ],
+  "stages": [
+    {
+      "stage": 1,
+      "executedBy": "workflow: exact clean checkout, ProjectVersion, packages-lock, vault verify",
+      "evidence": "stage-01.json"
+    },
+    {
+      "stage": 2,
+      "executedBy": "workflow: unfiltered .NET suite (H0 + bridge-neutral) on the exact candidate",
+      "evidence": "stage-02.json"
+    },
+    {
+      "stage": 3,
+      "executedBy": "driver bootstrap + each transport: public project-profile.inspect + operation-status",
+      "evidence": "transcript-bootstrap/reference/mcp"
+    },
+    {
+      "stage": 4,
+      "executedBy": "driver: system.describe (reference) / tools/list (MCP) against ADR-derived roles",
+      "evidence": "transcript discovery events"
+    },
+    {
+      "stage": 5,
+      "executedBy": "driver: paged catalogue.query + resolve of every selected logical ID",
+      "evidence": "transcript S05"
+    },
+    {
+      "stage": 6,
+      "executedBy": "driver: unity.binding.compile per node",
+      "evidence": "transcript S06"
+    },
+    {
+      "stage": 7,
+      "executedBy": "driver: H0 plan -> dry-run -> apply + journal/snapshot",
+      "evidence": "transcript S07"
+    },
+    {
+      "stage": 8,
+      "executedBy": "driver: world.validation.current + unity.projection.plan",
+      "evidence": "transcript S08"
+    },
+    {
+      "stage": 9,
+      "executedBy": "driver: public materialize + observe == plan",
+      "evidence": "transcript S09"
+    },
+    {
+      "stage": 10,
+      "executedBy": "driver: public observe inspection + drift parity",
+      "evidence": "transcript S10"
+    },
+    {
+      "stage": 11,
+      "executedBy": "driver: same-input materialize, no semantic delta",
+      "evidence": "transcript S11"
+    },
+    {
+      "stage": 12,
+      "executedBy": "driver: missing source + missing clip, preflight diagnostics, refused materialize, retained generation, H0 repair",
+      "evidence": "transcript S12"
+    },
+    {
+      "stage": 13,
+      "executedBy": "driver: managed Unity edit -> drift -> proposal -> forced stale -> HK08B replan -> H0 apply -> rematerialize parity",
+      "evidence": "transcript S13"
+    },
+    {
+      "stage": 14,
+      "executedBy": "driver: checkpoint, close, remove generated output, fresh host, restore, clean-rebuild, digest parity",
+      "evidence": "transcript S14"
+    },
+    {
+      "stage": 15,
+      "executedBy": "workflow: isolated project copy + MCP rerun; verifier recomputes equivalence from both transcripts",
+      "evidence": "transport-equivalence.json + transcripts"
+    },
+    {
+      "stage": 16,
+      "executedBy": "driver: public observe of the rebuilt real slice + Editor log capture with zero owned errors",
+      "evidence": "transcript S16 + ledger"
+    },
+    {
+      "stage": 17,
+      "executedBy": "workflow: verifier, negative controls, reconciliation, scope, source-byte re-verification",
+      "evidence": "stage-17.json"
+    }
+  ],
+  "h0Reopens": [
+    {
+      "wp": "WP-HK-05",
+      "trigger": "WP-H1-GATE trial 2 FAIL (R5)",
+      "pr": "#241",
+      "frozenCandidate": "93cdc3b5a6f38190a4ae0b8ba13894a004babe78",
+      "review": "waived by owner instruction (#5846410743)",
+      "mergeSha": "5d48cb55ac2815be417dc2a910734192b6d1543c",
+      "consumedAs": "recoverable operation-grammar diagnostics (S06/S07 authoring, AI trial)"
+    },
+    {
+      "wp": "WP-HK-05",
+      "reopen": 2,
+      "trigger": "WP-H1-GATE trial 5 FAIL (payload transcription); owner option 2 kept as complement",
+      "pr": "#243",
+      "frozenCandidate": "66fe499eb9d6f65b3c23bb62ad4a0eb61b60cf92",
+      "review": "waived by owner (#5847139006)",
+      "mergeSha": "c6d88a257aab3a8536aa7c40e98be257257eb80c",
+      "consumedAs": "recoverable extension-payload diagnostics"
+    },
+    {
+      "wp": "WP-HK-04",
+      "reopen": 1,
+      "trigger": "WP-H1-GATE trials 4-5; owner option 3 (typed extension documents)",
+      "pr": "#244",
+      "frozenCandidate": "f97e840912038838805f0f09804cdb1915a339e9",
+      "review": "waived by owner (#5847233722)",
+      "mergeSha": "a6a59af9f51bdd6bcb7955794489d1bc71994394",
+      "consumedAs": "typed extension documents in authoring.change.* (S07 document path + parity, AI trial)"
+    }
+  ]
+}
