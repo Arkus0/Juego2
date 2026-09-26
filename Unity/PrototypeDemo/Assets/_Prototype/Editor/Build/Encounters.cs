@@ -24,6 +24,7 @@ namespace Proto.Build
             Slipway();
             BarInterior();
             BarPatio();
+            new Interiors(tb, lay, root, mk, sk).BuildAll();
             Civic();
             Signs();
             Hornacina();
@@ -209,9 +210,6 @@ namespace Proto.Build
                 mk.Box(wood, new Vector3(u1 - 0.15f, fl + 1.3f + i * 0.45f, (cv0 + cv1) / 2), Vector3.right * 0.15f, Vector3.up * 0.025f, Vector3.forward * ((cv1 - cv0) / 2 - 0.3f));
             var props = new GameObject("Bar_Props").transform; props.SetParent(root, false);
             var rng = new Rng(9);
-            for (int i = 0; i < 3; i++)
-                for (float v = cv0 + 0.4f; v < cv1 - 0.4f; v += 0.28f)
-                    if (rng.Chance(0.75f)) Kit.Put("Bottle_1", props, W(P(u1 - 0.18f, v), fl + 1.33f + i * 0.45f), Quaternion.Euler(0, rng.Range(0, 360f), 0), Vector3.one * 0.9f, false, false);
             foreach (var v in new[] { 47.6f, 48.9f, 50.2f })
                 Kit.Put("Stool", props, W(P(cu0 - 0.55f, v), fl), Quaternion.identity);
             for (float v = cv0 + 0.3f; v < cv1; v += 0.7f) Kit.Put("Mug", props, W(P(cu0 + 0.2f, v), fl + 1.11f), Quaternion.Euler(0, rng.Range(0, 360f), 0), null, false, false);
@@ -234,9 +232,6 @@ namespace Proto.Build
                 l.transform.position = W(P(u, v), fl + 2.5f);
                 l.type = LightType.Point; l.range = 7f; l.intensity = i; l.color = new Color(1f, 0.74f, 0.45f);
                 l.shadows = LightShadows.Soft;
-                mk.Box(M("WoodDark"), W(P(u, v), fl + 2.62f), Vector3.right * 0.2f, Vector3.up * 0.03f, Vector3.forward * 0.2f);
-                mk.Box(M("WarmGlass"), W(P(u, v), fl + 2.5f), Vector3.right * 0.08f, Vector3.up * 0.1f, Vector3.forward * 0.08f);
-                mk.Box(M("Iron"), W(P(u, v), fl + 2.76f), Vector3.right * 0.015f, Vector3.up * 0.2f, Vector3.forward * 0.015f);
             }
             var light = new GameObject("BarDoorGlow").AddComponent<Light>();
             light.transform.SetParent(root, false); light.transform.position = W(P(91f, 44.8f), fl + 2.2f);

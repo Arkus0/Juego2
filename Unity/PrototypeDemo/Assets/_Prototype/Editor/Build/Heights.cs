@@ -92,7 +92,7 @@ namespace Proto.Build
             // gardens (lowest priority), houses, routes, platforms (highest)
             if (withGardens)
                 foreach (var g in lay.Gardens) Stamp(g.Poly, 0, _ => g.H);
-            foreach (var h in lay.Houses) Stamp(h.Foot, 0.4f, _ => h.FL - 0.2f);
+            foreach (var h in lay.Houses) if (!float.IsNaN(h.FL)) Stamp(h.Foot, 0.4f, _ => h.FL - 0.2f);
             foreach (var r in Seed.Routes)
             {
                 var b = Bounds(r.Pts, r.Width * 0.5f + 1.5f);
@@ -175,6 +175,16 @@ namespace Proto.Build
 
         public void AssignGardenHeights(Layout lay)
         {
+            // back buildings sit on the relaxed ground of the first solve; too steep -> dropped
+            foreach (var h in lay.Houses.Where(x => float.IsNaN(x.FL)).ToList())
+            {
+                var hs = h.Foot.Select(q => Sample(q.x, q.y)).ToArray();
+                if (hs.Max() - hs.Min() > 2.4f) { lay.Houses.Remove(h); continue; }
+                var hc = h.Center;
+                float a = hs.Average() * 0.5f + Sample(hc.x, hc.y) * 0.5f;
+                h.FL = Mathf.Round(a * 4f) / 4f + 0.12f;
+                h.StreetH = h.FL - 0.17f;
+            }
             foreach (var g in lay.Gardens)
             {
                 var c = Centroid(g.Poly);

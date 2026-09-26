@@ -5,7 +5,7 @@ using static Proto.Build.Geo;
 
 namespace Proto.Build
 {
-    public enum HouseKind { Filler, Bar, Civic, Tower, Shop, P9, Arcade, Slot, Soft }
+    public enum HouseKind { Filler, Bar, Civic, Tower, Shop, P9, Arcade, Slot, Soft, Back }
 
     public class HousePlan
     {
@@ -19,8 +19,14 @@ namespace Proto.Build
         public float StreetH, FL;
         public int DoorModule = -1;
         public string Sign, Name, Facade;
-        public bool Enterable, Hero, PlasterUpper, Balcony, GableToStreet;
+        public bool Enterable, Hero, PlasterUpper, Balcony, GableToStreet, CrossBalcony;
         public int Seed;
+        /// Back buildings: "house", "barn" (stone byre + timber hayloft) or "shed". Null for street houses.
+        public string Style;
+        /// 0 bare stone, 1 lime-washed, 2 ochre render, 3 faded rose render (quoins and plinth stay stone).
+        public int Finish;
+        /// shutter paint: 0 green, 1 oxblood, 2 blue-grey, 3 natural wood
+        public int Shutter;
         public Vector2 B => A + Dir * W;
         public Vector2 C => A + Dir * W + In * D;
         public Vector2 Dd => A + In * D;
@@ -136,7 +142,9 @@ namespace Proto.Build
             PlanFiller();
             Debug.Log("[Proto] house rejections: " + string.Join(", ", Reject.Select(kv => kv.Key + "=" + kv.Value)));
             Reject.Clear();
+            PlanBackfill();
             PlanGardens();
+            PlanFinishes();
             Debug.Log($"[Proto] layout: {Houses.Count} houses ({Houses.Count(h => h.Kind == HouseKind.Filler)} filler), {Gardens.Count} gardens");
         }
 
@@ -191,7 +199,7 @@ namespace Proto.Build
             var shop = Add(new HousePlan
             {
                 Id = "F03", Kind = HouseKind.Shop, Name = "Tienda de diario", Sign = "comestibles", Facade = "facade_comestibles",
-                A = P(188, 76.4f), Dir = P(1, 0), In = P(0, 1), W = 10, D = 8, Floors = 2, DoorModule = 2, Hero = true,
+                A = P(188, 76.4f), Dir = P(1, 0), In = P(0, 1), W = 10, D = 8, Floors = 2, DoorModule = 2, Hero = true, Enterable = true,
             });
             shop.StreetH = 12.5f; shop.FL = 12.67f;
 
@@ -242,6 +250,7 @@ namespace Proto.Build
                     Id = q.Id, Kind = HouseKind.P9, Name = q.Name, Sign = q.Sign, A = a, Dir = dir, In = inn, W = W, D = D,
                     Facade = q.Id == "F09" ? "facade_taberna" : q.Id == "F16" ? "facade_fonda" : null,
                     Floors = q.Id == "F19" ? 2 : 3, DoorModule = W / 4, Hero = true, Balcony = q.Id != "F17",
+                    Enterable = q.Id == "F09" || q.Id == "F12" || q.Id == "F13",
                 };
                 h.StreetH = StreetHeight(r, h.A, h.B);
                 h.FL = h.StreetH + 0.17f;
@@ -342,6 +351,77 @@ namespace Proto.Build
                     }
                     else s += 1f;
                 }
+            }
+        }
+
+        /// No empty lots: the blocks behind the street fronts get byres, haylofts, sheds and back houses
+        /// (their floor level is set after the first terrain solve, see Heights.AssignGardenHeights).
+        void PlanBackfill()
+        {
+            var rng = new Rng(4242);
+            var b = Bounds(Seed.Hard);
+            var farm = Centroid(Seed.StubX1O) + P(0, -6);
+            var styles = new[] { (10, 8, "barn"), (8, 8, "house"), (8, 6, "barn"), (8, 6, "house"), (6, 6, "house"), (6, 4, "shed"), (4, 4, "shed") };
+            int added = 0, south = 0;
+            for (float u = b.xMin + 3; u < b.xMax - 3; u += 3f)
+                for (float v = b.yMin + 3; v < b.yMax - 3; v += 3f)
+                {
+                    if (added >= 48) break;
+                    var p = P(u, v);
+                    if (!Seed.InHard(p) || Seed.InMask(p)) continue;
+                    bool farmSide = (p - farm).sqrMagnitude < 32f * 32f && p.y < -62f;
+                    if (farmSide && south >= 5) continue;
+                    if (!farmSide && !Houses.Any(hh => hh.Kind != HouseKind.Back && (hh.Center - p).sqrMagnitude < 22f * 22f)) continue;
+                    Vector2 dir = P(1, 0), toLane = P(0, 1); float best = 99;
+                    foreach (var r in Seed.Routes)
+                    {
+                        float dd = DistPolyline(p, r.Pts, out int seg, out float t) - r.Width * 0.5f;
+                        if (dd < best) { best = dd; dir = (r.Pts[seg + 1] - r.Pts[seg]).normalized; toLane = Vector2.Lerp(r.Pts[seg], r.Pts[seg + 1], t) - p; }
+                    }
+                    if (farmSide) { toLane = Centroid(Seed.StubX1O) - p; dir = Perp(toLane.normalized); best = 99; }
+                    if (best < 3.5f) continue;
+                    int start = rng.Range(0, 3);
+                    HousePlan pick = null;
+                    for (int k = 0; k < styles.Length && pick == null; k++)
+                    {
+                        var (w, d, style) = styles[(start + k) % styles.Length];
+                        foreach (bool turn in new[] { false, true })
+                        {
+                            var along = turn ? Perp(dir) : dir;
+                            var inn = Perp(along);
+                            if (Vector2.Dot(inn, toLane) > 0) inn = -inn;              // door wall (edge 0) looks at the lane
+                            var A = p - along * (w * 0.5f) - inn * (d * 0.5f);
+                            var h = new HousePlan { Kind = HouseKind.Back, Style = style, A = A, Dir = along, In = inn, W = w, D = d };
+                            if (!Free(h.Foot, 1.2f)) continue;
+                            var nat = h.Foot.Select(Heights.Natural).ToArray();
+                            if (nat.Max() - nat.Min() > 2.2f) { No("slope"); continue; }
+                            pick = h; break;
+                        }
+                    }
+                    if (pick == null) continue;
+                    pick.Id = $"B{Houses.Count:000}";
+                    pick.FL = float.NaN;
+                    pick.Floors = pick.Style == "shed" ? 1 : pick.Style == "barn" ? 2 : (pick.D >= 8 && rng.Chance(0.4f) ? 3 : 2);
+                    pick.DoorModule = pick.Style == "barn" ? pick.W / 4 : rng.Range(0, pick.W / 2);
+                    pick.GableToStreet = pick.Style == "barn";
+                    pick.Balcony = pick.Style == "house" && rng.Chance(0.45f);
+                    Add(pick);
+                    Mark(pick.Foot, 1.4f);                                              // keep a passage around it
+                    added++; if (farmSide) south++;
+                }
+            Debug.Log($"[Proto] backfill: {added} back buildings ({south} on the south bank)");
+        }
+
+        void PlanFinishes()
+        {
+            foreach (var h in Houses)
+            {
+                var r = new Rng((uint)(h.Seed * 31 + 3));
+                bool plain = h.Kind == HouseKind.Filler || h.Kind == HouseKind.Back || h.Kind == HouseKind.P9 || h.Kind == HouseKind.Slot;
+                float x = r.Next();
+                h.Finish = !plain || h.Style == "barn" ? 0 : x < 0.55f ? 0 : x < 0.85f ? 1 : x < 0.95f ? 2 : 3;
+                h.Shutter = r.Range(0, 4);
+                h.CrossBalcony = r.Chance(0.4f);
             }
         }
 

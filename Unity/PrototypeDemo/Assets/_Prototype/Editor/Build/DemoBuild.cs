@@ -92,10 +92,22 @@ namespace Proto.Build
             Log(t0, "walls");
             BuildLate(maxLayer, L);
             Log(t0, "late layers");
+            CheckPresence(world);
 
             Atmosphere.Probe(world, new Vector3(90, 14, 10), new Vector3(420, 120, 420), "ReflectionProbe_Town");
             SaveScene(scene);
             Log(t0, "saved");
+        }
+
+        /// What is missing never shows in a capture: flag placed renderers that ended up microscopic
+        /// (e.g. a prop whose 100x root scale was overwritten) instead of trusting the review to notice.
+        static void CheckPresence(Transform world)
+        {
+            var tiny = world.GetComponentsInChildren<Renderer>(true)
+                .Where(r => r.enabled && !(r is ParticleSystemRenderer) && r.bounds.size.magnitude < 0.03f)
+                .Select(r => r.gameObject.name).ToList();
+            Debug.Log(tiny.Count == 0 ? "[Proto] presence check: OK (no microscopic renderers)"
+                : $"[Proto] presence check: {tiny.Count} microscopic renderers, e.g. " + string.Join(", ", tiny.Distinct().Take(8)));
         }
 
         /// Hook filled by the later-layer builders (houses, encounters, dressing, gameplay).

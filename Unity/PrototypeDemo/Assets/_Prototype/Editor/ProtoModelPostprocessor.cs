@@ -9,6 +9,8 @@ namespace Proto.EditorTools
         const string Root = "Assets/ThirdParty/Quaternius/";
         const string Townsfolk = "Assets/_Derived/Generated/Characters/";
 
+        public override uint GetVersion() => 2;
+
         void OnPreprocessModel()
         {
             if (assetPath.StartsWith(Townsfolk))
@@ -57,7 +59,9 @@ namespace Proto.EditorTools
                 clip.lockRootRotation = true;
                 clip.lockRootHeightY = true;
                 clip.lockRootPositionXZ = true;
-                clip.keepOriginalOrientation = true;
+                // body orientation, not the original root: Quaternius roots are turned 180 deg, so "original"
+                // made every humanoid face backwards while moving forwards
+                clip.keepOriginalOrientation = false;
                 clip.keepOriginalPositionY = true;
                 clip.keepOriginalPositionXZ = true;
             }

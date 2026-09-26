@@ -369,7 +369,10 @@ def build(name, base, tone, garments, hair_files, hair_hex):
         for o in new:
             if o.type == "ARMATURE":
                 bpy.data.objects.remove(o, do_unlink=True)
-    # export like the Quaternius Unity FBX kit
+    # export like the Quaternius Unity FBX kit. Their importer turns the rig 180 deg about Z; undo it so the
+    # re-exported character faces the same way as the original FBX (+Z in Unity), not backwards.
+    arm.rotation_euler = (arm.rotation_euler.x, arm.rotation_euler.y, 0.0)
+    bpy.context.view_layer.update()
     bpy.ops.object.select_all(action="DESELECT")
     for o in bpy.context.scene.objects:
         if o.type in ("ARMATURE", "MESH"):

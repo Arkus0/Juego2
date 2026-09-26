@@ -56,9 +56,10 @@ namespace Proto.Build
             bool plaster = false;   // kit plaster walls carry timber framing (vetoed): stone only
             bool wide = rng.Chance(0.7f);
             int doorN = rng.Range(1, 9);
-            bool roundDoor = rng.Chance(0.25f) || h.Kind == HouseKind.Civic;
+            bool barn = h.Style == "barn";
+            bool roundDoor = rng.Chance(0.25f) || h.Kind == HouseKind.Civic || barn;
             bool solana = h.Balcony && h.W >= 8 && rng.Chance(0.45f);
-            var shutterMat = MatLib.Get("ShutterGreen");
+            var shutterMat = MatLib.Get(ShutterMats[h.Shutter]);
             var edges = Edges(h);
             int F = h.Floors;
             bool tower = h.Kind == HouseKind.Tower, arcade = h.Kind == HouseKind.Arcade;
@@ -66,6 +67,7 @@ namespace Proto.Build
             for (int f = 0; f < F; f++)
             {
                 float y = h.FL + 3f * f;
+                if (barn && f == F - 1 && f > 0) { Hayloft(h, y); continue; }
                 foreach (var e0 in edges)
                 {
                     var e = e0;
@@ -101,7 +103,50 @@ namespace Proto.Build
             }
             if (arcade) Arcade(h, root);
             Roof(h, root, rng, tower);
+            // render over the stone modules; quoins, plinth and gables stay bare stone
+            if (h.Finish > 0)
+                foreach (Transform t in root)
+                    if (t.name.StartsWith("Wall_")) Kit.Tint(t.gameObject, "MI_UnevenBrick", MatLib.Get(FinishMats[h.Finish]));
             return root.gameObject;
+        }
+
+        static readonly string[] ShutterMats = { "ShutterGreen", "ShutterRed", "ShutterBlue", "ShutterWood" };
+        static readonly string[] FinishMats = { null, "Lime", "Ochre", "Rose" };
+
+        /// Upper floor of a byre: vertical boards with gaps, a hayloft opening over the door, a floor and straw inside.
+        void Hayloft(HousePlan h, float y0)
+        {
+            var boards = MatLib.Get("Boards"); var dark = MatLib.Get("WoodDark"); var straw = MatLib.Get("Straw");
+            float y1 = h.Top;
+            foreach (var e in Edges(h))
+            {
+                var d = (e.b - e.a).normalized; float L = (e.b - e.a).magnitude;
+                var o = W(e.outward, 0); var dd = W(d, 0);
+                float doorC = 1 + 2 * Mathf.Max(0, h.DoorModule);
+                // sill beam and posts
+                Plinths.Box(dark, W(e.a + d * (L * 0.5f) - e.outward * 0.08f, y0 + 0.12f), dd * (L * 0.5f + 0.08f), Vector3.up * 0.12f, o * 0.12f);
+                for (float s = 0; s <= L + 0.01f; s += L / Mathf.Max(1, Mathf.Round(L / 2.5f)))
+                    Plinths.Box(dark, W(e.a + d * s - e.outward * 0.1f, (y0 + y1) * 0.5f), dd * 0.09f, Vector3.up * ((y1 - y0) * 0.5f), o * 0.09f);
+                for (float s = 0.11f; s < L - 0.05f; s += 0.24f)
+                {
+                    float top = y1 - 0.02f, bot = y0 + 0.24f;
+                    bool loft = e.idx == 0 && Mathf.Abs(s - doorC) < 0.85f;
+                    if (loft)
+                    {
+                        // hayloft opening: boards only above and below it, straw showing through
+                        Plinths.Box(boards, W(e.a + d * s - e.outward * 0.05f, (bot + y0 + 0.6f) * 0.5f), dd * 0.105f, Vector3.up * ((y0 + 0.6f - bot) * 0.5f), o * 0.025f);
+                        Plinths.Box(boards, W(e.a + d * s - e.outward * 0.05f, (top + y0 + 2.2f) * 0.5f), dd * 0.105f, Vector3.up * ((top - y0 - 2.2f) * 0.5f), o * 0.025f);
+                        continue;
+                    }
+                    Plinths.Box(boards, W(e.a + d * s - e.outward * 0.05f, (top + bot) * 0.5f), dd * 0.105f, Vector3.up * ((top - bot) * 0.5f), o * 0.025f);
+                }
+            }
+            // loft floor and straw bales
+            var c = h.Center;
+            Plinths.Box(dark, W(c, y0 + 0.03f), W(h.Dir, 0) * (h.W * 0.5f - 0.1f), Vector3.up * 0.05f, W(h.In, 0) * (h.D * 0.5f - 0.1f));
+            var front = h.A + h.Dir * (1 + 2 * Mathf.Max(0, h.DoorModule)) + h.In * 1.4f;
+            Plinths.Box(straw, W(front, y0 + 0.55f), W(h.Dir, 0) * 0.9f, Vector3.up * 0.5f, W(h.In, 0) * 0.8f);
+            Plinths.Box(straw, W(c + h.In * 1.2f, y0 + 0.8f), W(h.Dir, 0) * (h.W * 0.35f), Vector3.up * 0.75f, W(h.In, 0) * (h.D * 0.25f));
         }
 
         void Module(HousePlan h, Transform root, Edge e, int k, int count, int f, int F, Vector3 pos, Quaternion rot, Rng rng,
@@ -129,6 +174,10 @@ namespace Proto.Build
                 door = roundDoor ? $"Door_{doorN}_Round" : $"Door_{doorN}_Flat";
                 openDoor = h.Enterable;
             }
+            else if (f == 0 && h.Style == "barn")
+            {
+                if (rng.Chance(front ? 0.3f : 0.12f)) { wall = "Wall_UnevenBrick_Window_Thin_Round"; insert = "Window_Thin_Round1"; }
+            }
             else if (f == 0 && front)
             {
                 if (shop || rng.Chance(0.55f)) { wall = "Wall_UnevenBrick_Window_Wide_Flat"; insert = "Window_Wide_Flat1"; if (!shop && rng.Chance(0.6f)) shutters = "WindowShutters_Wide_Flat_" + (rng.Chance(0.5f) ? "Closed" : "Open"); }
@@ -149,7 +198,7 @@ namespace Proto.Build
                 bool balc = h.Balcony && top && F >= 2 && (solana || (k == count / 2) || (count >= 4 && k == count / 2 - 1));
                 if (balc)
                 {
-                    wall = $"Wall_{mat}_Door_Flat"; door = "Door_1_Flat"; balcony = "Balcony_Simple_Straight";
+                    wall = $"Wall_{mat}_Door_Flat"; door = "Door_1_Flat"; balcony = h.CrossBalcony ? "Balcony_Cross_Straight" : "Balcony_Simple_Straight";
                 }
                 else if (count >= 4 && rng.Chance(0.12f)) { }
                 else if (wide || mat == "Plaster")
@@ -257,9 +306,9 @@ namespace Proto.Build
         }
 
         /// Pentagon prism under the roof: wall line at gp, facing "outward", spanning spanDir.
-        void Gable(Vector2 gp, Vector2 outward, Vector2 spanDir, int span, float top, Bounds roofLocal)
+        void Gable(Vector2 gp, Vector2 outward, Vector2 spanDir, int span, float top, Bounds roofLocal, string matName = "Stone")
         {
-            var stone = MatLib.Get("Stone");
+            var stone = MatLib.Get(matName);
             float half = span * 0.5f;
             float halfExt = Mathf.Max(roofLocal.extents.x, half + 0.1f);
             float ridge = top + roofLocal.max.y, eave = top + roofLocal.min.y;
@@ -347,7 +396,7 @@ namespace Proto.Build
             {
                 var gp = c + pick.ridge * (pick.len * 0.5f) * sgn;
                 if (Covered(h, gp + pick.ridge * sgn * 0.5f, h.Top + 1)) continue;
-                Gable(gp, pick.ridge * sgn, pick.spanDir, pick.span, h.Top, lb);
+                Gable(gp, pick.ridge * sgn, pick.spanDir, pick.span, h.Top, lb, h.Style == "barn" ? "Boards" : "Stone");
             }
             // chimney
             if (rng.Chance(0.75f))

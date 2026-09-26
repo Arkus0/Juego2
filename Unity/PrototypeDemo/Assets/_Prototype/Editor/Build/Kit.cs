@@ -50,9 +50,13 @@ namespace Proto.Build
             var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
             if (zUp.Contains(name)) rot = rot * Quaternion.Euler(-90f, 0f, 0f);
             go.transform.SetPositionAndRotation(pos, rot);
-            if (scale.HasValue) go.transform.localScale = scale.Value;
+            // Props roots carry a 100x scale (their meshes are in cm): scale relative to the prefab, never replace it
+            if (scale.HasValue) go.transform.localScale = Vector3.Scale(prefab.transform.localScale, scale.Value);
             if (swap) Swap(go);
             if (!colliders) foreach (var c in go.GetComponentsInChildren<Collider>()) Object.DestroyImmediate(c);
+            // small decor never casts shadows (thousands of casters x cascades was the frame cost)
+            if (!colliders && (zUp.Contains(name) || name.StartsWith("Plant") || name.StartsWith("Grass") || name.StartsWith("Clover") || name.StartsWith("Flower") || name.StartsWith("Fern") || name.StartsWith("Bush") || name.StartsWith("Prop_Vine")))
+                foreach (var r in go.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             go.isStatic = true;
             foreach (Transform t in go.GetComponentsInChildren<Transform>()) t.gameObject.isStatic = true;
             return go;

@@ -63,8 +63,8 @@ namespace Proto.EditorTools
             asset.msaaSampleCount = 4;
             asset.renderScale = 1f;
             asset.supportsCameraDepthTexture = true;
-            asset.shadowDistance = 140f;
-            asset.shadowCascadeCount = 4;
+            asset.shadowDistance = 110f;
+            asset.shadowCascadeCount = 3;
             asset.mainLightShadowmapResolution = 4096;
             asset.maxAdditionalLightsCount = 8;
             var aso = new SerializedObject(asset);

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.IO;
 using Proto.EditorTools;
 using UnityEditor;
@@ -8,6 +9,47 @@ namespace Proto.Build
 {
     public static class DebugViews
     {
+        /// Batch: log transform, bounds and materials of the first instances of a few props in the saved scene.
+        public static void Probe()
+        {
+            EditorSceneManager.OpenScene(DemoBuild.ScenePath);
+            foreach (var name in new[] { "Bottle_1", "Chandelier", "SmallBottle", "Mug" })
+            {
+                int n = 0;
+                foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                {
+                    if (go.name != name || n++ > 1) continue;
+                    var rs = go.GetComponentsInChildren<Renderer>(true);
+                    var b = rs.Length > 0 ? rs[0].bounds : new Bounds();
+                    foreach (var r in rs) b.Encapsulate(r.bounds);
+                    Debug.Log($"[Probe] {name} active={go.activeInHierarchy} pos={go.transform.position} rot={go.transform.rotation.eulerAngles} scale={go.transform.lossyScale} renderers={rs.Length} bounds={b.center}/{b.size} " +
+                        string.Join(",", rs.SelectMany(r => r.sharedMaterials).Select(m => m == null ? "null" : m.name + ":" + m.shader.name + ":" + (m.HasProperty("_Surface") ? m.GetFloat("_Surface").ToString() : "-") + ":" + (m.HasProperty("_BaseColor") ? m.GetColor("_BaseColor").a.ToString() : "-"))) +
+                        " meshes=" + string.Join(",", go.GetComponentsInChildren<MeshFilter>(true).Select(f => f.sharedMesh == null ? "null" : f.sharedMesh.name + ":" + f.sharedMesh.vertexCount)));
+                }
+            }
+        }
+
+        /// Batch: which way does each humanoid actually face once the Animator poses it?
+        public static void FacingProbe()
+        {
+            var ac = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(MatLib.GenDir + "/Townsfolk.controller");
+            foreach (var path in new[] { "Assets/_Derived/Generated/Characters/Townsfolk_Forastero.fbx", "Assets/_Derived/Generated/Characters/Townsfolk_Vecina.fbx", "Assets/ThirdParty/Quaternius/UAL/Models/UAL1.fbx" })
+            {
+                var go = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(path));
+                var anim = go.GetComponent<Animator>();
+                anim.runtimeAnimatorController = ac; anim.Rebind(); anim.Update(0.05f); anim.Update(0.05f);
+                var lf = anim.GetBoneTransform(HumanBodyBones.LeftFoot); var lt = anim.GetBoneTransform(HumanBodyBones.LeftToes);
+                var lu = anim.GetBoneTransform(HumanBodyBones.LeftUpperLeg); var ru = anim.GetBoneTransform(HumanBodyBones.RightUpperLeg);
+                var head = anim.GetBoneTransform(HumanBodyBones.Head);
+                var imp = (ModelImporter)AssetImporter.GetAtPath(path);
+                Debug.Log($"[Facing] {System.IO.Path.GetFileName(path)} human={anim.isHuman} body*fwd={anim.bodyRotation * Vector3.forward} " +
+                    $"leftUpperLeg={(lu ? lu.name + lu.position.ToString() : "-")} rightUpperLeg={(ru ? ru.name + ru.position.ToString() : "-")} " +
+                    $"toe-foot={(lf && lt ? (lt.position - lf.position).ToString() : "-")} root rot={go.transform.GetChild(0).localRotation.eulerAngles} " +
+                    $"bones={imp.humanDescription.human.Length}");
+                Object.DestroyImmediate(go);
+            }
+        }
+
         public static void PropsLineup()
         {
             string dir = Path.GetFullPath("Captures/Debug/Props");

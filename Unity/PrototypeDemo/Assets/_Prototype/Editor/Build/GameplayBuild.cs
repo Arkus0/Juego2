@@ -198,6 +198,24 @@ namespace Proto.Build
             Npc("Vecina", "¡Hola! Mira el agua.", "Paisana", P(114.0f, 117.0f), P(-1, 0), "LookAround");
             Npc("Chaval", "¡Hola!", "Chaval", P(150.5f, 111.6f), P(0, 1), "LookAround");
             Npc("Vecina", "¡Hola! Buenos días.", "Vecina", Along("P8e", 0.6f)[0], P(-1, 0), "Move", Along("P8e", 0.6f), 1.0f);
+            // inside: patrons at the bar tables and a keeper behind every walk-in counter
+            Npc("Parroquiano", "¡Hola! Siéntate, que aquí se está bien.", "Abuelo", P(88.95f, 48.0f), P(1, 0), "SitTalk");
+            Npc("Parroquiana", "¡Hola! ¿Eres de fuera?", "Moza", P(90.85f, 51.2f), P(-1, 0), "Sit");
+            var keepers = new Dictionary<string, (string role, string hello, string variant)>
+            {
+                { "F03", ("Tendera", "¡Hola! ¿Qué va a ser hoy?", "Moza") },
+                { "F09", ("Tabernero", "¡Hola! Aquí el orujo es de casa.", "Vecino") },
+                { "F12", ("Panadera", "¡Hola! El pan acaba de salir del horno.", "Vecina") },
+                { "F13", ("Quesero", "¡Hola! Prueba el picón, que pica.", "Paisano") },
+            };
+            foreach (var (id, _) in Interiors.Shops)
+            {
+                var h = lay.Houses.FirstOrDefault(x => x.Id == id);
+                if (h == null || !keepers.TryGetValue(id, out var k)) continue;
+                var (at, face) = Interiors.Keeper(h);
+                var go = Npc(k.role, k.hello, k.variant, at, face, "Counter");
+                go.transform.position = W(at, h.FL);
+            }
 
             // ---- auto capture shots (used by `PuenteBar.exe -autocapture <dir>`)
             var capGo = new GameObject("AutoCapture");
@@ -213,6 +231,16 @@ namespace Proto.Build
             shots.Add(new AutoCapture.Shot { name = "11_desembarcadero", pos = W(P(5, 2), 1f + 1.7f), look = new Vector3(-6, 0.4f, -8) });
             shots.Add(new AutoCapture.Shot { name = "12_calle_comercial", pos = W(P(176, 64), Hgt(P(176, 64)) + 1.7f), look = new Vector3(151, 16, 68) });
             shots.Add(new AutoCapture.Shot { name = "13_aerea", pos = new Vector3(-20, 70, -110), look = new Vector3(100, 5, 30) });
+            var bar = lay.Houses.First(x => x.Id == "F01");
+            shots.Add(new AutoCapture.Shot { name = "7b_bar_hogar", pos = new Vector3(93.2f, bar.FL + 1.6f, 47.0f), look = new Vector3(90.1f, bar.FL + 0.9f, 52.6f) });
+            foreach (var (id, kind) in Interiors.Shops)
+            {
+                var h = lay.Houses.FirstOrDefault(x => x.Id == id);
+                if (h == null) continue;
+                shots.Add(new AutoCapture.Shot { name = $"14_interior_{kind}", pos = W(h.A + h.Dir * (h.W * 0.5f) + h.In * 0.8f, h.FL + 1.6f), look = W(h.A + h.Dir * (h.W * 0.45f) + h.In * (h.D - 0.6f), h.FL + 1.0f) });
+            }
+            shots.Add(new AutoCapture.Shot { name = "15_orilla_sur_granjas", pos = new Vector3(52f, 13f, -58f), look = new Vector3(26f, 4.5f, -77f) });
+            shots.Add(new AutoCapture.Shot { name = "16_traseras_huertas", pos = new Vector3(60, 34, 95), look = new Vector3(112, 8, 38) });
             capture.shots = shots.ToArray();
             // walk test through the chain: Orilla sur -> Puente Viejo -> S02 -> W12 -> Casco -> traza B -> Bar F01
             var wp = new List<(string, Vector2)> { ("orilla_sur", P(40.6f, -67.8f)) };

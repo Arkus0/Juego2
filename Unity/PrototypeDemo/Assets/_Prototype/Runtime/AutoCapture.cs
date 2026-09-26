@@ -61,6 +61,27 @@ namespace Proto.Runtime
             File.WriteAllText(Path.Combine(dir, "recorrido.txt"), log.ToString());
         }
 
+        /// Characters are checked, not eyeballed: toes (ball) must be ahead of the ankle along transform.forward.
+        /// Off-screen animators do not pose their bones, so every humanoid is forced to animate while measuring.
+        static IEnumerator FacingCheck(string dir)
+        {
+            var anims = new System.Collections.Generic.List<Animator>();
+            foreach (var a in FindObjectsByType<Animator>(FindObjectsSortMode.None)) if (a.isHuman) anims.Add(a);
+            var modes = anims.ConvertAll(a => a.cullingMode);
+            foreach (var a in anims) a.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+            yield return null; yield return null;
+            int ok = 0; var bad = new System.Collections.Generic.List<string>();
+            foreach (var a in anims)
+            {
+                var foot = a.GetBoneTransform(HumanBodyBones.LeftFoot); var toes = a.GetBoneTransform(HumanBodyBones.LeftToes);
+                if (foot == null || toes == null) continue;
+                var d = toes.position - foot.position; d.y = 0;
+                if (Vector3.Dot(d.normalized, a.transform.forward) > 0.3f) ok++; else bad.Add(a.name);
+            }
+            for (int i = 0; i < anims.Count; i++) anims[i].cullingMode = modes[i];
+            File.WriteAllText(Path.Combine(dir, "orientacion.txt"), $"humanoides mirando hacia delante: {ok}" + System.Environment.NewLine + $"al revés: {bad.Count} {string.Join(", ", bad)}" + System.Environment.NewLine);
+        }
+
         IEnumerator Start()
         {
             var args = System.Environment.GetCommandLineArgs();
@@ -71,6 +92,7 @@ namespace Proto.Runtime
             var cam = Camera.main;
             var orbit = cam.GetComponent<OrbitCamera>();
             yield return new WaitForSeconds(4f);
+            yield return FacingCheck(dir);
             // gameplay view first (third person, as the player sees it at the start)
             yield return new WaitForEndOfFrame();
             ScreenCapture.CaptureScreenshot(Path.Combine(dir, "00_juego_inicio.png"));

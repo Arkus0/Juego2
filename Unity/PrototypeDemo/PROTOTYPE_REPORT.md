@@ -1,6 +1,6 @@
 # PROTOTYPE_REPORT — «Del Puente Viejo al Bar»
 
-Estado: **PROTOTIPO NO CANÓNICO** · rama local `prototype/demo-puente-bar` · sin push.
+Estado: **PROTOTIPO NO CANÓNICO** · rama `prototype/demo-puente-bar` · PR en borrador #233, sin merge.
 No es evidencia de ningún WP (ni CITY-07, ni ART-01, ni H1/H2). Nada de este documento modifica contratos
 aceptados; las recomendaciones de la §7 son **propuestas** para que el propietario decida.
 
@@ -20,8 +20,9 @@ El mapeo es el de CITY-04 (`City04GreyboxBuilder.At`): **X = U, Z = V, Y = cota*
 |---|---|
 | Medieval Village MegaKit (proyecto URP del pack) | `Wall_UnevenBrick_{Straight, Window_Wide_Flat, Window_Thin_Round, Window_Wide_Round, Door_Flat, Door_Round}`, `Corner_Exterior_Brick`, `DoorFrame_{Flat,Round}_Brick`, `Door_1..8_{Flat,Round}`, `Window_Wide_Flat1-3`, `Window_Thin_Round1-3`, `WindowShutters_{Wide_Flat,Thin_Round}_{Open,Closed}`, `Balcony_Simple_Straight`, `Roof_RoundTiles_{4,6,8}x{4..14}`, `Roof_Tower_RoundTiles`, `Prop_Chimney/2`, `Prop_Vine1-9`, `Prop_Wagon`, `Prop_WoodenFence_Single`; texturas `T_UnevenBrick`, `T_RoundRocks`, `T_Brick`, `T_Plaster`, `T_WoodTrim` reutilizadas en la geometría propia |
 | Nature | `CommonTree_1-5`, `Pine_1-5`, `Bush_Common`, `Bush_Common_Flowers` (hortensias), `Grass_Common_Short/Tall`, `Plant_1`, `Plant_1_Big`, `Plant_7`, `Fern_1`, `Rock_Medium_1-3` |
-| Props | `Barrel`, `Barrel_Apples`, `Barrel_Holder`, `Bench`, `Bottle_1`, `Bucket_Wooden_1`, `Candle_1`, `CandleStick`, `Chair_1`, `Crate_Wooden`, `FarmCrate_{Apple,Carrot,Empty}`, `Lantern_Wall`, `Mug`, `Pot_1`, `Stool`, `Table_Large` |
-| Universal Animation Library | maniquí masculino UAL1 + `Mannequin_F`; clips `Idle_Loop`, `Walk_Loop`, `Jog_Fwd_Loop`, `Idle_Talking_Loop`, `Sitting_*`, `Counter_Idle_Loop`, `Idle_LookAround_Loop`, `Idle_FoldArms_Loop`, `Walk_Carry_Loop` |
+| Props | `Barrel`, `Barrel_Apples`, `Barrel_Holder`, `Bench`, `Bottle_1`, `Bucket_Wooden_1`, `Candle_1`, `CandleStick`, `Chair_1`, `Crate_Wooden`, `FarmCrate_{Apple,Carrot,Empty}`, `Lantern_Wall`, `Mug`, `Pot_1`, `Stool`, `Table_Large`; en la 2.ª iteración `Chandelier`, `SmallBottle(s)`, `Bag`, `Vase_2`, `Coin_Pile`, `Peg_Rack`, `Table_Knife` |
+| Base Characters | cuerpos `Regular_{Male,Female}` y `Teen_{Male,Female}`, texturas de piel y ojos, peinados «Rigged to Head Bone»: base de los 13 vecinos vestidos (§8) |
+| Universal Animation Library | clips `Idle_Loop`, `Walk_Loop`, `Jog_Fwd_Loop`, `Idle_Talking_Loop`, `Sitting_*`, `Counter_Idle_Loop`, `Idle_LookAround_Loop`, `Idle_FoldArms_Loop`, `Walk_Carry_Loop` |
 
 **Descartadas a propósito:** todos los `Wall_Plaster_*` y `Roof_Front_*` (llevan entramado de madera, veto de la
 Visual Bible), `Wall_WoodBrick/WoodWear/WoodGrid`, `Roof_Spikes*`, `Roof_Wooden*`, armas, pociones, monedas,
@@ -40,6 +41,9 @@ Visual Bible), `Wall_WoodBrick/WoodWear/WoodGrid`, `Roof_Spikes*`, `Roof_Wooden*
   fuentes, puestos de mercado, farolas, ropa tendida, leña, estela de riadas, hornacina, puerta cegada,
   escalera del patio S03, interior y patio del bar, carteles de doble cara, montañas de fondo y caseríos
   lejanos.
+- **2.ª iteración** (§8): vecinos vestidos (`Tools/blender/make_townsfolk.py`), 40 carteles pintados
+  (`Tools/make_signs.py`), pajares con tablazón, medas, caballones de huerta, hogar con fuego, jamones,
+  quesos y hogazas, revocos de cal/ocre/rosa y contraventanas de cuatro colores.
 
 ## 4. Huecos del kit (entrada para ART-01)
 
@@ -52,7 +56,8 @@ Visual Bible), `Wall_WoodBrick/WoodWear/WoodGrid`, `Roof_Spikes*`, `Roof_Wooden*
 | Balcón-solana con cortafuegos laterales | `Balcony_Simple` repetido a lo largo de la fachada |
 | Puente de piedra, muro de orilla/contención, bordillo, cuneta | geometría propia |
 | Farola de pie, fuente, puesto de mercado, barca, hortensia, ropa tendida, carteles | geometría propia o props adaptados |
-| **Personajes vestidos** (los Base Characters vienen en ropa interior) | maniquíes UAL tintados como ropa |
+| **Personajes vestidos** (los Base Characters vienen en ropa interior) | 2.ª iteración: ropa tallada del propio cuerpo en Blender + faldas, mandiles y boinas generados (§8) |
+| Revoco liso, pajar de tabla, meda, género de tienda (pan, queso, embutido) | derivados procedurales (§8) |
 | Pipeline de importación: Nature/Props en **centímetros** (×100) y con **materiales Standard** extraídos (magenta en URP); los árboles de terreno piden shaders de billboard | escala 0,01 + reasignación a URP en el importador; árboles con `LODGroup` para que Unity no genere billboards |
 
 ## 5. Cotas finales
@@ -76,7 +81,7 @@ casa con E0; se queda como rampa empinada). Senda del Arroyo (P8g) ~13 %.
 
 ## 6. Qué funciona y qué no como juego
 
-Build: `Builds/PrototypeDemo/PuenteBar.exe` (Windows, 519 MB). Capturas finales en
+Build: `Builds/PrototypeDemo/PuenteBar.exe` (Windows, 710 MB tras la 2.ª iteración). Capturas finales en
 [`Captures/Final/`](Captures/Final/), tomadas **con el juego en marcha** (`-autocapture`), no en el editor.
 
 **Cómo lo he comprobado.** No he jugado a mano. Todo lo que afirmo sale de la build ejecutada con captura
@@ -86,8 +91,8 @@ conduce al jugador con su `CharacterController` real por el eslabón completo.
 | Medida | Resultado |
 |---|---|
 | Recorrido Orilla sur → Puente Viejo → S02 → W12 → plazuela → traza B → dentro del Bar F01 | **completo, sin atascos**: 134 m en 94,5 s andando (≈ 1,4 m/s) — [`recorrido.txt`](Captures/Final/recorrido.txt) |
-| Rendimiento (RTX 3060, 1600×900, vsync) | 44–60 fps; lo más caro son las vistas del puente y la Orilla sur (44–48) — [`fps.txt`](Captures/Final/fps.txt) |
-| Escena | ~100 casas (80 de relleno + 20 singulares), 56 huertas, ~4 900 árboles de bosque, 23 NPCs, 11 secretos |
+| Rendimiento (RTX 3060, 1600×900, vsync) | 1.ª iteración 44–60 fps; 2.ª iteración 42–60 fps, lo más caro sigue siendo el lomo del puente — [`fps.txt`](Captures/Final/fps.txt) |
+| Escena | 1.ª iteración: ~100 casas (80 de relleno + 20 singulares), 56 huertas, ~4 900 árboles de bosque, 23 NPCs, 11 secretos. 2.ª: ver §8.3 |
 
 El recorrido automático **encontró dos defectos reales** que ninguna captura mostraba: el muro de orilla y un
 murete de borde de plataforma cruzaban la entrada norte del puente (el jugador se quedaba parado). Ambos están
@@ -112,10 +117,9 @@ corregidos; el log de atascos dice qué colisionador bloquea y dónde.
 
 - **Identidad cántabra parcial.** El kit sigue mandando: tejados de ~40° con teja rojiza oscurecida (no la teja
   cántabra), una viga de madera en cada planta que da aire de «medieval de catálogo», y ni solanas ni cortafuegos.
-- **Solares vacíos.** Quedan explanadas pavimentadas junto a las orillas e interiores de manzana; faltan casas de
-  segunda fila y huertas con más vida.
-- **NPCs**: sin ropa, sin rutina y caminando de ida y vuelta por la calle. Solo esquivan al jugador, no entre ellos.
-- **Locales P9**: tienen fachada y cartel de doble cara, pero solo el bar es enterable.
+- ~~Solares vacíos~~ → resuelto en la 2.ª iteración (§8).
+- **NPCs**: ya vestidos (§8), pero sin rutina: caminan de ida y vuelta por la calle y solo esquivan al jugador, no entre ellos.
+- **Locales P9**: además del bar, en la 2.ª iteración se entra en taberna, horno, quesería y tienda; el resto solo tiene fachada.
 - **Tejado de la torre**: desde la plaza apenas se ve el remate piramidal por la perspectiva.
 - **Sin verificar por una persona**: la sensación de control (andar 1,4 / correr 3,5 m/s), la cámara en los rincones
   estrechos y la colisión en todos los escalones fuera del eslabón probado.
@@ -243,3 +247,73 @@ Mi recomendación es un giro de **~90°, no de 180°**:
 
 Esta propuesta **no está aplicada**: no he tocado el ROADMAP ni ningún documento canónico. Si la apruebas,
 el siguiente paso es convertir la §7 en una enmienda de proceso/roadmap revisada por el flujo normal.
+
+## 8. Segunda iteración: personas, carteles, pueblo lleno e interiores
+
+Encargo: jugador y vecinos como personas y no maniquíes; más variedad con los assets que ya hay y con
+derivados propios coherentes, sin ceñirse tanto al modelo de pueblo; ningún solar vacío (no habrá city
+builder); interiores con vida; carteles nuevos.
+
+### 8.1 Qué cambia
+
+| Tema | Antes | Ahora |
+|---|---|---|
+| Personajes | maniquíes UAL tintados | 13 vecinos vestidos derivados de Base Characters con `Tools/blender/make_townsfolk.py`: la ropa (camisa, jersey, chaleco, chaqueta, pantalón, calzado) se talla del propio cuerpo por hueso dominante, así hereda los pesos y se anima con los clips UAL; faldas, mandiles y boinas son geometría generada y pesada al esqueleto; el pelo es del pack. El jugador es el «Forastero»; camarero, tendera, panadera, quesero… van vestidos según su papel, y las variantes repetidas cambian de tono |
+| Carteles | texto 3D con un shader propio | 40 texturas pintadas con `Tools/make_signs.py` (Pillow y tipografías del sistema): colgantes de hierro y madera legibles por los dos lados, rótulos de fachada, placas esmaltadas de calle, placas de piedra, carteles de fiestas, bolos y feria, pizarra del bar |
+| Solares | interiores de manzana vacíos y huertas casi desnudas | 48 edificios traseros (cuadra con pajar de tabla y boca de pajar, casa de dos plantas, caseta), una granja en la orilla sur, huertas con caballones y filas densas, frutales, corrales con meda y carro, prados con frutales, arbustos y medas |
+| Variedad | todo piedra, contraventanas verdes | ~45 % de las casas revocadas (cal, ocre, rosa gastado) con esquinales y zócalo de piedra; contraventanas verdes, granate, azules o de madera; balcón simple o de cruces; pajares con hastial de tabla |
+| Interiores | bar con estanterías vacías y cajas blancas por lámparas | bar con hogar encendido (luz que parpadea), lámparas de hierro, botellas, jamones, carteles, pizarra y dos parroquianos sentados; se entra en la **taberna, el horno, la quesería y la tienda de comestibles**, cada una con mostrador, género (botellas, hogazas, quesos, cajas de fruta, sacos) y su tendero |
+
+Capturas: `Captures/Final/` (las de la 2.ª iteración sustituyen a las anteriores; se añaden el hogar del bar,
+los cuatro interiores, la orilla sur y las traseras).
+
+### 8.2 Tres defectos que la primera revisión no vio
+
+1. **El PR no llevaba el generador.** El `.gitignore` del proyecto tenía `[Bb]uild/`, que también excluía
+   `Assets/_Prototype/Editor/Build/`: los primeros commits subieron capturas, informe y scripts de runtime, pero
+   no el código que construye la escena. Corregido (patrones anclados a la raíz del proyecto) y comprobado con
+   `git ls-files`.
+2. **Atrezo invisible.** Los modelos de Props traen escala raíz ×100 (están en centímetros) y `Kit.Put` la
+   sustituía cuando se le pasaba una escala: botellas, macetas, bancos, cajas del mercado y los faroles de las
+   farolas medían milímetros. Ninguna captura lo delataba porque lo que falta no se ve. Ahora la escala se
+   multiplica.
+3. **Todos los humanoides andaban de espaldas**, también los maniquíes de la primera iteración: el
+   importador de clips usaba la orientación original de la raíz, y Quaternius la exporta girada 180°. Con
+   maniquíes sin cara no se notaba; con personas saltó a la vista en la primera captura de un tendero. Ahora
+   se usa la orientación del cuerpo.
+
+### 8.3 Coste y estado
+
+- Escena: 148 edificios (80 de relleno, 20 singulares, 48 traseros), 50 huertas, ~170 elementos de prado,
+  29 NPCs (23 en la calle, 2 sentados en el bar y 4 tenderos).
+- Rendimiento (RTX 3060, 1600×900): al añadir los edificios cayó a ~40 fps en las vistas del puente; con
+  sombras a 110 m y 3 cascadas, y sin sombras en el atrezo pequeño, queda en 42–60 fps (42 en el lomo del puente, ~49 en la subida W12 y en la aérea, 56–60 en el resto).
+- Recorrido automático completo y sin atascos: 134 m en 94,5 s; además, 30 de 30 humanoides mirando hacia donde andan ([`orientacion.txt`](Captures/Final/orientacion.txt)) y ningún render microscópico en la comprobación de presencia de la build.
+- Sigue **sin jugarse a mano**.
+
+### 8.4 Qué no funciona todavía
+
+- La ropa es muy ceñida (el cuerpo desplazado unos milímetros y suavizado). Las faldas se aplastan al
+  sentarse, por eso los parroquianos sentados llevan pantalón.
+- Faldas y mandiles son rígidos, pesados a pelvis y muslos: en una zancada larga la rodilla puede asomar.
+- Hogazas, quesos, jamones y el horno son procedurales sencillos: aguantan a distancia de juego, no un
+  primer plano.
+- Los revocos se aplican sobre el muro de mampostería del kit (el relieve de la piedra sigue debajo): se lee
+  como piedra encalada, no como revoco liso.
+- Las tiendas no tienen trastienda ni planta alta, y el género no tiene colisión fina.
+
+### 8.5 Lecciones añadidas
+
+1. **Lo que falta no sale en las capturas.** Hacen falta comprobaciones automáticas de presencia y
+   orientación: tamaño mínimo de cada prop colocado, personaje mirando hacia donde anda y archivos que la
+   build usa pero git no versiona. Las tres se detectan en segundos con una prueba corta; ninguna revisión
+   visual las encontró.
+2. **Derivar es barato cuando hay pipeline.** Con Blender en modo batch salen 13 personajes vestidos en
+   ~1 min desde un solo pack, y se regeneran al cambiar una tabla; los carteles, igual con Pillow. Es la vía
+   más rápida para dar identidad sin encargar arte. La lista de ART-01 debería distinguir lo derivable por
+   script de lo que hay que modelar.
+3. **Rellenar por reglas funciona.** Casas traseras, huertas, frutales y medas colocados por ocupación y
+   distancia a la calle llenaron los huecos en una pasada, sin tocar la semilla. No hace falta un city builder
+   para que no haya solares: basta una capa de relleno en el compilador de mundo (§7.3).
+4. **El rendimiento se mide en cada iteración.** Un 50 % más de edificios costó un 25 % de fps; recortar
+   sombras recuperó casi todo.

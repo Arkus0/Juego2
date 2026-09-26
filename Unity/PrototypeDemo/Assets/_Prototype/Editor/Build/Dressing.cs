@@ -30,6 +30,8 @@ namespace Proto.Build
             HouseLife();
             Laundry();
             Gardens();
+            Farmyards();
+            Meadows();
             Era();
             RiverSide();
             Seams();
@@ -125,7 +127,7 @@ namespace Proto.Build
             mk.Box(M("StoneDark"), W(p, g + 0.15f), Vector3.right * 0.16f, Vector3.up * 0.15f, Vector3.forward * 0.16f);
             var q = Quaternion.Euler(0, yaw, 0);
             mk.Box(M("Iron"), W(p, g + 3.15f) + q * Vector3.forward * 0.25f, q * Vector3.right * 0.03f, Vector3.up * 0.03f, q * Vector3.forward * 0.28f);
-            Kit.Put("Lantern_Wall", props, W(p, g + 2.35f) + q * Vector3.forward * 0.02f, q, Vector3.one * 1.1f, true, false);
+            Kit.Put("Lantern_Wall", props, W(p, g + 2.35f) + q * Vector3.forward * 0.02f, q, Vector3.one * 0.62f, true, false);
         }
 
         void Lamps()
@@ -161,8 +163,8 @@ namespace Proto.Build
                         var at = e.a + d * (1 + 2 * h.DoorModule + sgn * 1.05f) + e.outward * 0.42f;
                         if (lay.RouteClear(at) < -0.15f) continue;
                         float g = G(at);
-                        Kit.Put("Pot_1", props, W(at, g), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * 1.3f, true, false);
-                        Kit.Put("Bush_Common_Flowers", props, W(at, g + 0.42f), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * r.Range(0.32f, 0.42f), true, false);
+                        Kit.Put("Pot_1", props, W(at, g), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * 0.95f, true, false);
+                        Kit.Put("Bush_Common_Flowers", props, W(at, g + 0.17f), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * r.Range(0.32f, 0.42f), true, false);
                     }
                 }
                 if (h.Kind == HouseKind.Filler && r.Chance(0.3f))
@@ -190,8 +192,8 @@ namespace Proto.Build
                 {
                     var at = e.a + d * (h.W * 0.5f + r.Range(-0.6f, 0.6f)) + e.outward * 0.85f;
                     float y = h.FL + 3f * (h.Floors - 1) + 0.02f;
-                    Kit.Put("Pot_1", props, W(at, y), Quaternion.identity, Vector3.one * 1.1f, true, false);
-                    Kit.Put("Bush_Common_Flowers", props, W(at, y + 0.36f), Quaternion.identity, Vector3.one * 0.3f, true, false);
+                    Kit.Put("Pot_1", props, W(at, y), Quaternion.identity, Vector3.one * 0.85f, true, false);
+                    Kit.Put("Bush_Common_Flowers", props, W(at, y + 0.15f), Quaternion.identity, Vector3.one * 0.3f, true, false);
                 }
             }
             // the bar's barrels by the door and a crate stack by the service door
@@ -252,23 +254,67 @@ namespace Proto.Build
         // ------------------------------------------------------------------ huertas, era, river edge
         void Gardens()
         {
-            string[] rowPlants = { "Plant_1", "Plant_7", "Grass_Common_Short", "Plant_1_Big" };
+            // three kinds of plot so no walled garden reads as an empty lot: vegetable rows, orchard, hay yard
+            string[][] crops = { new[] { "Plant_1", "Plant_7" }, new[] { "Bush_Common" }, new[] { "Grass_Common_Tall", "Grass_Wispy_Tall" }, new[] { "Fern_1" }, new[] { "Plant_1_Big" } };
             foreach (var g in lay.Gardens)
             {
                 var r = new Rng((uint)g.Seed + 99);
                 var c = Centroid(g.Poly);
                 var along = g.Dir; var across = Perp(g.Dir);
-                string plant = rowPlants[r.Range(0, rowPlants.Length)];
                 float w = (g.Poly[1] - g.Poly[0]).magnitude, dp = (g.Poly[3] - g.Poly[0]).magnitude;
-                for (float a = -w / 2 + 1.2f; a < w / 2 - 1.2f; a += 0.9f)
-                    for (float b = -dp / 2 + 1.4f; b < dp / 2 - 1.0f; b += 1.8f)
-                        if (r.Chance(0.55f))
+                float kind = g.WithWell ? 0.1f : r.Next();
+                if (kind < 0.5f)
+                {
+                    // huerta: soil ridges with dense rows, a different crop every row or two, bean poles on one row
+                    int row = 0;
+                    for (float b = -dp / 2 + 1.3f; b < dp / 2 - 1.1f; b += 1.05f, row++)
+                    {
+                        var set = crops[(row / 2 + r.Range(0, crops.Length)) % crops.Length];
+                        var rc = c + across * b;
+                        mk.Box(M("Soil"), W(rc, g.H + 0.03f), W(along, 0) * (w / 2 - 1.0f), Vector3.up * 0.06f, W(across, 0) * 0.34f);
+                        bool poles = row == 1 && r.Chance(0.6f);
+                        for (float a = -w / 2 + 1.25f; a < w / 2 - 1.2f; a += poles ? 0.7f : 0.42f)
                         {
-                            var p = c + along * b * 0f + across * 0 + along * a + across * b;
-                            Kit.Put(plant, props, W(p, g.H), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * r.Range(0.5f, 0.8f), true, false);
+                            var q = rc + along * (a + r.Range(-0.06f, 0.06f));
+                            if (poles)
+                            {
+                                foreach (int sg in new[] { -1, 1 })
+                                    mk.Box(M("Wood"), W(q + across * sg * 0.12f, g.H + 1.0f), W(along, 0) * 0.015f, Vector3.up * 0.95f, W(across, 0) * 0.015f);
+                                Kit.Put("Plant_7", props, W(q, g.H + 0.08f), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * r.Range(0.9f, 1.2f), true, false);
+                                continue;
+                            }
+                            string n = set[r.Range(0, set.Length)];
+                            float sc = n == "Bush_Common" ? r.Range(0.26f, 0.34f) : n == "Plant_1_Big" ? r.Range(0.45f, 0.6f) : r.Range(0.75f, 1.05f);
+                            Kit.Put(n, props, W(q, g.H + 0.08f), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * sc, true, false);
                         }
-                if (r.Chance(0.75f) || g.WithWell)
-                    Kit.Put("CommonTree_" + r.Range(1, 6), props, W(c + across * (dp / 2 - 1.6f) + along * r.Range(-w / 4, w / 4), g.H), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * r.Range(0.45f, 0.62f), true, false);
+                    }
+                }
+                else if (kind < 0.8f)
+                {
+                    // frutal: a few low fruit trees over grass and flowers
+                    int nx = Mathf.Max(1, Mathf.FloorToInt((w - 2f) / 4f)), ny = Mathf.Max(1, Mathf.FloorToInt((dp - 2f) / 4f));
+                    for (int i = 0; i < nx; i++)
+                        for (int j = 0; j < ny; j++)
+                        {
+                            var q = c + along * ((i - (nx - 1) * 0.5f) * 4f + r.Range(-0.5f, 0.5f)) + across * ((j - (ny - 1) * 0.5f) * 4f + r.Range(-0.5f, 0.5f));
+                            Kit.Put("CommonTree_" + r.Range(1, 6), props, W(q, g.H), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * r.Range(0.38f, 0.52f), true, false);
+                        }
+                    for (int k = 0; k < 14; k++)
+                    {
+                        var q = c + along * r.Range(-w / 2 + 1, w / 2 - 1) + across * r.Range(-dp / 2 + 1, dp / 2 - 1);
+                        Kit.Put(r.Chance(0.3f) ? "Flower_3_Group" : r.Chance(0.5f) ? "Grass_Common_Tall" : "Clover_1", props, W(q, g.H), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * r.Range(0.7f, 1.1f), true, false);
+                    }
+                }
+                else
+                {
+                    // hay yard: a meda, a cart or crates, firewood
+                    Meda(c + along * r.Range(-w / 5, w / 5) + across * r.Range(-dp / 6, dp / 6), g.H, r.Range(0.85f, 1.1f));
+                    if (w > 10f) Meda(c + along * (w / 2 - 2.2f) - across * (dp / 2 - 2.2f), g.H, r.Range(0.7f, 0.9f));
+                    var corner = c - along * (w / 2 - 1.6f) + across * (dp / 2 - 1.3f);
+                    if (r.Chance(0.5f)) Kit.Put("Prop_Wagon", props, W(corner, g.H), Quaternion.LookRotation(W(along, 0)), Vector3.one * 0.9f, true, false);
+                    else { Kit.Put("FarmCrate_Empty", props, W(corner, g.H), Quaternion.identity, null, true, false); Kit.Put("Barrel", props, W(corner + along * 0.9f, g.H), Quaternion.identity, null, true, false); }
+                    Woodpile(c + across * (dp / 2 - 0.9f) + along * (w / 4), along, g.H);
+                }
                 if (g.WithWell)
                 {
                     var wp = c - across * 1.2f;
@@ -285,6 +331,64 @@ namespace Proto.Build
                     var gd = Perp((gate - c).normalized);
                     for (float x = -0.55f; x <= 0.56f; x += 0.12f) mk.Box(M("Iron"), W(gate + gd * x + (gate - c).normalized * 0.25f, g.H + 1.3f), Vector3.right * 0.015f, Vector3.up * 1.0f, Vector3.forward * 0.015f);
                 }
+            }
+        }
+
+        /// Cantabrian meda: straw stacked round a pole.
+        void Meda(Vector2 at, float g, float scale)
+        {
+            var straw = M("Straw");
+            var prof = new[] { (1.15f, 0f), (1.3f, 0.55f), (1.2f, 1.35f), (0.85f, 2.05f), (0.35f, 2.55f), (0.05f, 2.72f) };
+            const int N = 14;
+            for (int k = 0; k < prof.Length - 1; k++)
+                for (int i = 0; i < N; i++)
+                {
+                    float a0 = i * Mathf.PI * 2 / N, a1 = (i + 1) * Mathf.PI * 2 / N;
+                    Vector3 R(float r, float y, float a) => W(at + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r * scale, g + y * scale);
+                    WallBuild.O(mk, straw, R(prof[k].Item1, prof[k].Item2, a0), R(prof[k].Item1, prof[k].Item2, a1), R(prof[k + 1].Item1, prof[k + 1].Item2, a1), R(prof[k + 1].Item1, prof[k + 1].Item2, a0),
+                        W(new Vector2(Mathf.Cos((a0 + a1) / 2), Mathf.Sin((a0 + a1) / 2)), 0.4f));
+                }
+            mk.Box(M("WoodDark"), W(at, g + 1.75f * scale), Vector3.right * 0.04f, Vector3.up * 1.75f * scale, Vector3.forward * 0.04f);
+        }
+
+        void Meadows()
+        {
+            var r = new Rng(606);
+            var b = Bounds(Seed.Hard);
+            int n = 0;
+            for (float u = b.xMin + 2; u < b.xMax - 2; u += 7f)
+                for (float v = b.yMin + 2; v < b.yMax - 2; v += 7f)
+                {
+                    var p = P(u, v) + new Vector2(r.Range(-2.5f, 2.5f), r.Range(-2.5f, 2.5f));
+                    if (!Seed.InHard(p) || Seed.InMask(p) || Seed.WaterDistance(p) < 4.5f || lay.RouteClear(p) < 3f) continue;
+                    if (DistPolyEdge(p, Seed.Hard) < 2f) continue;
+                    if (Seed.Platforms.Any(pl => InPoly(p, pl.Poly) || DistPolyEdge(p, pl.Poly) < 2f)) continue;
+                    if (lay.Houses.Any(h => (h.Center - p).sqrMagnitude < 200 && (InPoly(p, h.Foot) || DistPolyEdge(p, h.Foot) < 3f))) continue;
+                    if (lay.Gardens.Any(g => InPoly(p, g.Poly) || DistPolyEdge(p, g.Poly) < 2.5f)) continue;
+                    float x = r.Next(); float g0 = G(p);
+                    if (x < 0.45f) Kit.Put("CommonTree_" + r.Range(1, 6), props, W(p, g0 - 0.05f), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * r.Range(0.45f, 0.62f), true, false);
+                    else if (x < 0.6f) Meda(p, g0 - 0.05f, r.Range(0.8f, 1.05f));
+                    else if (x < 0.8f) Kit.Put("Bush_Common", props, W(p, g0 - 0.05f), Quaternion.Euler(0, r.Range(0, 360f), 0), Vector3.one * r.Range(0.5f, 0.8f), true, false);
+                    else continue;
+                    n++;
+                }
+            Debug.Log("[Proto] meadow items: " + n);
+        }
+
+        void Farmyards()
+        {
+            foreach (var h in lay.Houses.Where(x => x.Kind == HouseKind.Back))
+            {
+                var r = new Rng((uint)(h.Seed * 17 + 5));
+                var side = HouseBuilder.Edges(h)[r.Chance(0.5f) ? 1 : 3];
+                var sd = (side.b - side.a).normalized;
+                var at = side.a + sd * ((side.b - side.a).magnitude * 0.5f) + side.outward * 2.2f;
+                bool clear = lay.RouteClear(at) > 1.6f && !lay.Houses.Any(o => o != h && (InPoly(at, o.Foot) || DistPolyEdge(at, o.Foot) < 1.6f))
+                    && !lay.Gardens.Any(gg => InPoly(at, gg.Poly) || DistPolyEdge(at, gg.Poly) < 1.4f) && Seed.WaterDistance(at) > 3f;
+                if (!clear) continue;
+                if (h.Style == "barn" && r.Chance(0.75f)) Meda(at, G(at) - 0.05f, r.Range(0.8f, 1.05f));
+                else if (h.Style == "shed") { Woodpile(side.a + sd * 1.2f + side.outward * 0.55f, sd, G(side.a + side.outward * 0.55f)); }
+                else if (r.Chance(0.5f)) { Put("Barrel", at, r.Range(0, 360f)); Put("Bucket_Wooden_1", at + sd * 0.8f, 0); }
             }
         }
 

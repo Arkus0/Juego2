@@ -82,6 +82,19 @@ namespace Proto.Build
                 case "Cloth": return Save(name, LitMat(name, Color.white, null, null, 0.05f, 1, false, true));
                 case "Candle": return Emissive(name, new Color(1f, 0.72f, 0.38f), 6f);
                 case "WarmGlass": return Emissive(name, new Color(0.85f, 0.55f, 0.28f), 0.55f);
+                // renders over the stone wall modules (lime wash, ochre, faded rose) and village materials
+                case "Lime": return Save(name, LitMat(name, new Color(0.9f, 0.9f, 0.88f), null, NormalTex(Kit + "T_Plaster_Normal.png"), 0.06f));
+                case "Ochre": return Save(name, LitMat(name, new Color(0.9f, 0.74f, 0.5f), Tex(Kit + "T_Plaster_BaseColor.png"), NormalTex(Kit + "T_Plaster_Normal.png"), 0.08f));
+                case "Rose": return Save(name, LitMat(name, new Color(0.9f, 0.72f, 0.66f), Tex(Kit + "T_Plaster_BaseColor.png"), NormalTex(Kit + "T_Plaster_Normal.png"), 0.08f));
+                case "Straw": return Save(name, LitMat(name, new Color(0.86f, 0.72f, 0.42f), GenTex("gravel", 512), null, 0.03f, 3f));
+                case "Soil": return Save(name, LitMat(name, new Color(0.5f, 0.4f, 0.32f), GenTex("dirt", 512), null, 0.06f, 2f));
+                case "Boards": return Save(name, LitMat(name, new Color(0.55f, 0.46f, 0.38f), Tex(Kit + "T_WoodTrim_BaseColor.png"), NormalTex(Kit + "T_WoodTrim_Normal.png"), 0.12f));
+                case "Soot": return Save(name, LitMat(name, new Color(0.05f, 0.045f, 0.04f), null, null, 0.05f));
+                case "Fire": return Emissive(name, new Color(1f, 0.55f, 0.2f), 5f);
+                case "Bread": return Save(name, LitMat(name, new Color(0.66f, 0.43f, 0.22f), Tex(Kit + "T_Plaster_BaseColor.png"), null, 0.22f));
+                case "Cheese": return Save(name, LitMat(name, new Color(0.96f, 0.88f, 0.6f), null, null, 0.3f));
+                case "Rind": return Save(name, LitMat(name, new Color(0.78f, 0.6f, 0.32f), Tex(Kit + "T_Plaster_BaseColor.png"), null, 0.2f));
+                case "Ham": return Save(name, LitMat(name, new Color(0.44f, 0.21f, 0.15f), Tex(Kit + "T_Plaster_BaseColor.png"), null, 0.38f));
                 case "Mannequin": return Save(name, LitMat(name, new Color(0.3f, 0.34f, 0.4f), null, null, 0.3f));
                 // dark wet tile: the kit tile material with a darker tint (VISUAL_BIBLE teja #4A3730)
                 // dark wet tile / dark timber / green-blue shutters: kit materials with luminance-remapped base textures
@@ -89,6 +102,9 @@ namespace Proto.Build
                 case "TileDarkFlat": return KitRemap(name, "MI_FlatTiles", "T_FlatTiles_BaseColor", new Color(0.13f, 0.10f, 0.09f), new Color(0.46f, 0.38f, 0.34f));
                 case "TrimDark": return KitRemap(name, "MI_WoodTrim", "T_WoodTrim_BaseColor", new Color(0.12f, 0.08f, 0.06f), new Color(0.45f, 0.34f, 0.25f));
                 case "ShutterGreen": return KitRemap(name, "MI_WoodTrim_Wear", "T_WoodTrim_BaseColor", new Color(0.10f, 0.16f, 0.16f), new Color(0.36f, 0.52f, 0.5f));
+                case "ShutterRed": return KitRemap(name, "MI_WoodTrim_Wear", "T_WoodTrim_BaseColor", new Color(0.18f, 0.06f, 0.05f), new Color(0.56f, 0.24f, 0.2f));
+                case "ShutterBlue": return KitRemap(name, "MI_WoodTrim_Wear", "T_WoodTrim_BaseColor", new Color(0.09f, 0.12f, 0.17f), new Color(0.38f, 0.46f, 0.56f));
+                case "ShutterWood": return KitRemap(name, "MI_WoodTrim_Wear", "T_WoodTrim_BaseColor", new Color(0.16f, 0.1f, 0.06f), new Color(0.58f, 0.44f, 0.3f));
                 // nature / props remaps
                 case "Bark": return Save(name, LitMat(name, new Color(0.8f, 0.78f, 0.75f), Tex(Nat + "Bark_NormalTree.png"), NormalTex(Nat + "Bark_NormalTree_Normal.png"), 0.1f));
                 case "Leaves": return Save(name, LitMat(name, new Color(0.34f, 0.44f, 0.30f), Tex(Nat + "Leaves_NormalTree.png"), null, 0.1f, 1, true, true));
