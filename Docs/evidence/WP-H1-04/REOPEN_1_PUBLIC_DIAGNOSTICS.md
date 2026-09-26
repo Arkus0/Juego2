@@ -40,3 +40,16 @@ The accepted acceptance criterion reads "public bounded discovery describes each
 - `H1ProjectionReconciliationTransportTests` (H1-09, through the composed reference transport): an out-of-scope scene reconciliation now returns `projection.scene-out-of-scope` with the `unity.projection.plan` hint instead of `unity.lifecycle.corrupt-result`.
 - The full `Arkus.Harness.Tests` suite passes locally at 450/450. Exact-SHA hosted evidence (Main Safety plus the path-triggered H1 Unity workflows) is recorded on the PR.
 - The effective public proof is WP-H1-GATE: its deterministic 17-stage scenario on reference and MCP, and a new fresh-agent trial on the Gate's final frozen SHA.
+
+## Exact-SHA verifier maintenance (pre-existing breakage on `main`)
+
+`scripts/h1-04-verify-exact-sha.sh` was already RED on `main` `78a6a867` before this reopen, independent of the diagnostics change. It hard-coded the accepted 250-row H1-04 extent and bound the current Unity package files. Later accepted work changed both inputs legitimately:
+
+- WP-H1-11 appended 24 rows (12 asset and 12 prefab) and 12 adoption slices to the committed inventory and adoption record as a declared extension of the same distribution. The extension is recorded in `SOURCE_ADOPTION.md` and `Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json`.
+- CITY-04 added `com.unity.modules.physics` to the Unity manifest and lock.
+
+The verifier now handles each change exactly:
+
+- `h1-04-evidence-summary.py` removes the H1-11 extension by the declared `distribution-entry` paths in that record, and it requires the declaration, rows and slices to agree. The remaining 250-row baseline must reproduce the reviewed `baselineInventorySha256` byte-for-byte.
+- With `--package-revision`, it binds the package digests at the accepted H1-04 merge `4f172f7a`. Only the exact-SHA route passes that option. A fresh local round (`h1-04-local-evidence.ps1`) still binds the current tree.
+- The resulting summary must still equal the committed `EFFECTIVE_VALIDATION.json` exactly. No committed evidence value was changed.
