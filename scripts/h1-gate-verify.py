@@ -408,6 +408,11 @@ def check_hosts(f, records, t):
                     "-executeMethod" not in command and "Editor/Unity" not in command, f"HOST.{t}.not-public-host", record["session"])
 
 
+def world_anchor(records, session):
+    summaries = calls(records, "world.summary@1.0", "S07", session, status="success")
+    return result(summaries[-1]).get("world") if summaries else None
+
+
 def verify_evidence(directory, candidate, root=ROOT):
     f = Findings()
     directory = Path(directory)
@@ -461,7 +466,7 @@ def verify_evidence(directory, candidate, root=ROOT):
         check_s16(f, records, ledger, t)
         check_ledger(f, records, ledger, t)
         derived[t] = {
-            "canonical": result(last(calls(records, "world.summary@1.0", "S07", f"{t}-a", status="success")) or {"result": {}}) if calls(records, "world.summary@1.0", "S07", f"{t}-a", status="success") else None,
+            "canonical": world_anchor(records, f"{t}-a"),
             "plan": plan and {k: plan.get(k) for k in ("inputDigest", "canonicalHash", "catalogueFingerprint")},
             "first": first and {k: first.get(k) for k in ("inputDigest", "canonicalHash", "graphDigest")},
             "codes": codes, "stale": stale,
@@ -507,8 +512,10 @@ def strip_comments(text):
 def verify_workflow(path, root=ROOT):
     f = Findings()
     text = strip_comments((root / path).read_text(encoding="utf-8"))
-    for pattern, code in FORBIDDEN_WORKFLOW:
-        f.check(not re.search(pattern, text), f"WORKFLOW.private-unity-path.{code}")
+    for workflow in sorted({path, TRIAL_WORKFLOW}):
+        body = strip_comments((root / workflow).read_text(encoding="utf-8"))
+        for pattern, code in FORBIDDEN_WORKFLOW:
+            f.check(not re.search(pattern, body), f"WORKFLOW.private-unity-path.{code}", workflow)
     for pattern, code in REQUIRED_WORKFLOW:
         f.check(re.search(pattern, text), f"WORKFLOW.stage-not-executed.{code}")
     unity_image_uses = re.findall(r"\$\{\{? ?env\.PINNED_UNITY_IMAGE ?\}?\}|\$\{PINNED_UNITY_IMAGE\}|\"\$\{PINNED_UNITY_IMAGE\}\"", text)

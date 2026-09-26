@@ -154,8 +154,9 @@ class PublicHost:
         self.process = subprocess.Popen(
             command, cwd=str(self.workspace), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, bufsize=1)
-        self.transcript.write({"event": "host-start", "session": session, "transport": transport,
-                               "command": [part for part in command if not part.startswith("--volume")]})
+        public_command = [part for index, part in enumerate(command)
+                          if part != "--volume" and (index == 0 or command[index - 1] != "--volume")]
+        self.transcript.write({"event": "host-start", "session": session, "transport": transport, "command": public_command})
         if transport == "mcp":
             initialized = self._rpc("initialize", {
                 "protocolVersion": "2025-11-25", "capabilities": {},

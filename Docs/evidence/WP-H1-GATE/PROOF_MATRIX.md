@@ -1,0 +1,44 @@
+# WP-H1-GATE — foundational proof matrix
+
+Claim: from public discovered contracts only, and without making Unity canonical truth, Arkus creates, inspects, modifies, validates, materializes and reconstructs a representative Juego2 slice in Unity. It does so with identity, dependencies, diagnostics, transactionality/provenance and parity sufficient to begin H2.
+
+## Trust boundary
+
+- The accepted H0 (HK-GATE) and H1-00…H1-11 guarantees, H1-ASSET-CLOUD and H1-UNITY-CI (identities in `RECONCILIATION.json#dependencies`).
+- The pinned Unity `6000.3.24f1 (4e7b9b5b6244)` image `unityci/editor:ubuntu-6000.3.24f1-linux-il2cpp-3@sha256:0884a94a…`, GameCI CLI `v0.1.69` (license activate/return only), .NET SDK `8.0.425`, and the private vault `Arkus0/Juego2-assets@ae782c5f`.
+- The public `--h1-unity` reference (JSONL) and MCP hosts, as composed on the candidate.
+
+The Gate owns orchestration, evidence, reconciliation and omission controls. It owns no product semantics. Its only changes are Gate-owned scripts, workflows, evidence and one additive dispatcher route, and `h1-gate-verify.py scope` enforces this.
+
+## Obligations
+
+| # | Acceptance criterion | Oracle (independent of the driver) | Positive evidence | Causal negative control |
+| --- | --- | --- | --- | --- |
+| A1 | Every stage of `H1_UNITY_PARITY_GATE.md` executes on the exact candidate. | The verifier parses the numbered stage list from the accepted gate contract, and each stage number maps to an oracle. `RECONCILIATION.json#stages` must be bijective with it. | `h1-gate-verify.py evidence` GREEN, with stage receipts 1/2/17 bound to `candidateSha`. | C6 `stage-universe-grows-without-oracle`, C1 `second-materialization-removed`, `stale-conflict-removed`, `mcp-execution-removed`, `remote-validation-removed`. |
+| A2 | Reference and MCP discover the composed contract and dispatch the equivalent H1 surface through the H1-03A seam. | Required keys are derived from the ADR-H1-004 role table (pinned digest) plus the H0 authoring keys. Discovery is `system.describe` (reference) or `tools/list` (MCP), in each host session. | Four discovery events (reference-a/b, mcp-a/b), plus the bootstrap. | C7 `materialize-absent-from-discovery`. C6 `adr-role-table-changed`. |
+| A3 | No stage launches Unity through a private script/menu/test helper, adapter-only tool or direct Editor entry point, and no public route is added by the Gate. | The ledger audit reconciles every product-launcher operation directory against the public calls, including capabilities nested inside checkpoint capture/restore. The workflow static check forbids `-executeMethod`, the Editor binary, test runners and predecessor stage helpers. The scope check forbids product paths. | `LEDGER.*` GREEN for both transports. `workflow` and `scope` GREEN. | C7 `private-unity-launch-in-ledger`, `unaccounted-unity-launch`, `gameci-test-helper`, `direct-entry-point`, `predecessor-private-stage`. |
+| A4 | Canonical state/provenance and bridge projection receipts remain distinct. | The S07 canonical anchor comes from H0 apply/journal and is independent of Unity. S14 restore must be `new-local-lineage` through H0 snapshot import, with no authoring before it in the fresh process. | S07 journal and snapshot. S14 restore facts. | C3 `unity-observation-as-canonical-recovery`, `restore-not-snapshot-import`. |
+| A5 | The normalized plan equals the effective Unity observation, a second apply is idempotent, and a clean rebuild is equal. | Only the digests returned by the accepted capabilities are compared: plan `inputDigest`/`canonicalHash` against the materialize/observe observation (S09), same-input materialize digests (S11), and checkpoint graph/reconstruction digests before close versus after fresh-process restore and clean rebuild (S14). | S09, S11 and S14 facts. Drift `parity=true` after S10, S11, S13 and S14. | C4 `parity-skipped-capture-remains`. |
+| A6 | Invalid or missing asset/component references give structured diagnostics and never publish a false active generation. | S12 requires `projection.source-missing` and `projection.reference-missing` from public preflight, and a refused materialize. The retained generation must be the same `generationId` with `current=false`. The repair must return to the authored content (H0 semantic diff `sameAuthorableState`). | S12 facts. | Verifier codes `S12.*.false-publication`, `S12.*.invalid-materialize-not-refused`. |
+| A7 | Supported Unity drift becomes a reviewable canonical proposal, and only H0 commits it. | S13: a managed edit → drift `Changed[transform]` → `import-proposal.available` → forced stale plan (`world.change.stale_*` + HK08B `same-lineage-replan`) → replanned plan/dry-run/apply → the concurrent writer is preserved → rematerialize → parity. | S13 facts. | C1 `stale-conflict-removed`. |
+| A8 | The representative real-asset slice includes hierarchy, prefab/asset relationships, materials, allowlisted components and humanoid animation references from the Quaternius Source baseline. | Stage-10 inspection compares component rows with the catalogue identities resolved at S05: clip and material `path|guid`, canonical-link rows, relationships, depth ≥ 3, and two roots (wedge tip + river edge). | S05/S10 facts. `CONTENT_SHAPE_PROBE.md`. | Verifier codes `S10.*`, `S05.*.selected-id-not-resolved`. |
+| A9 | All H1 residuals and dependencies are reconciled without shrinking the inherited universe. | `discover_residuals` is independent of the reconciliation file and covers the residual sections of every H1 WP, every H1 `RESIDUAL_RISK.md`, residual-titled sections of H1 evidence, the H1 risk plan and H1 ledger rows. Every item is keyed by source path and text digest. The H1-11 owner residual (PR #236 comment `5845036679`) is mandatory. The dependencies come from `Docs/workpacks/H1/WP-H1-*.md`. | `reconcile` GREEN: 119 discovered + 1 external residual, 15 dependencies, 17 stages. | C2 `residual-row-omitted`, `new-upstream-residual-unreconciled`, `h1-11-owner-residual-omitted`, `dependency-omitted`, `gate-stage-omitted`, `residual-unclassified`. |
+| A10 | The fresh independent AI-agent trial succeeds using public discovery/schemas, with no implementation-source or private product call. | `h1-gate-verify.py trial` checks that the exact SHA and artifact digest match, that every call was issued by the model, offered by the host and discovered, that the authoring/materialize/observe/checkpoint/rebuild capabilities were used, that one structured `projection.*`/`unity.*` diagnostic was consumed, and that the closing evidence comes from the tool results. | Hosted trial run recorded in PR metadata (`AI trial run:`). | C5 `trial-sha-mismatch`, `trial-hidden-private-call`, `trial-worker-supplied-call`, `trial-artifact-tampered`, plus the same controls on the real trial artifacts. |
+| A11 | Foundational proof is READY, with zero unresolved in-boundary obligations or classes. | The Worker pre-review, bound to the exact SHA. | PR comment `WORKER_PRE_REVIEW`. | — |
+
+## Stage ↔ evidence map
+
+`RECONCILIATION.json#stages` lists, for each of the 17 stages, the component that executes it and the artifact that proves it. The workflow uploads the public-safe bundle as the `h1-gate-evidence-<sha>` artifact: stage receipts, per-transport transcripts, facts, ledgers and the transport-equivalence record. Raw Unity logs and private source bytes are never retained. The only information read from Editor logs is the owned-error line scan in the ledger.
+
+## Parity tuple
+
+The facts files carry the tuple: canonical world hash and revision, binding schema, catalogue snapshot fingerprint, checkpoint environment digest (source/package/editor/profile fingerprints, H1-10), bridge contract, Unity editor, projection plan digest, active generation ID and checkpoint ID, and the normalized observation graph and reconstruction digests. The workflow step "Emit public-safe parity tuple" prints both transports' tuples. Serialized YAML bytes and pixels are never the parity authority.
+
+## Proof budget
+
+The Gate reuses the H1-03A precedent for the public-host topology and the H1-10 digests for parity. It adds no product code, second oracle, private route or new dependency. The only external service added is the owner-selected OpenRouter route for the trial, which already exists for WP-DW-04. The driver and verifier are two small scripts, and the negative controls mutate real evidence rather than synthetic proxies wherever the evidence exists.
+
+```text
+FOUNDATIONAL_PROOF_VERDICT: see the exact-SHA Worker pre-review comment
+PROOF_BUDGET_VERDICT: WITHIN_BUDGET
+```

@@ -1,0 +1,15 @@
+{
+  "schemaId": "arkus.h1-gate-ai-trial-protocol@1",
+  "brief": "Docs/evidence/WP-H1-GATE/AI_AGENT_TRIAL_BRIEF.md",
+  "provider": "openrouter",
+  "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+  "model": "openai/gpt-5.6-luna-20260709",
+  "modelSelectionBasis": "Owner-selected hosted route (OpenRouter, secret OPENROUTER_API_KEY). Model already reachable by the WP-DW-04 accepted campaign. It comes from a different vendor than the Worker session, which strengthens independence.",
+  "hostCommand": "dotnet src/Arkus.Harness.Mcp/bin/Release/net8.0/Arkus.Harness.Mcp.dll --h1-unity",
+  "maxModelTurns": 90,
+  "maxToolResultCharsShownToModel": 14000,
+  "maxOutputTokensPerTurn": 6000,
+  "requestTimeoutSeconds": 300,
+  "providerRetries": 3,
+  "userKickoff": "Begin the evaluation now. The public MCP host is already running and its tools are offered to you."
+}
