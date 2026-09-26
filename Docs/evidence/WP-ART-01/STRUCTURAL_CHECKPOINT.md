@@ -12,9 +12,10 @@ This is checkpoint 2 of `ART_01_ASSEMBLY_GRAMMAR_AMENDMENT.md` ("massing checkpo
 
 | Artifact | SHA-256 | Meaning |
 |---|---|---|
-| `UNITY_STRUCTURAL_AUDIT.json` | `f4b3fe3a5398275e1c5efbb975ec2a3af433edd590f356935cb9135214cfa952` | **GREEN: 2006 checks, 0 failures**; binds manifest `d6f755c9…` and structural digest `a7f8534f…` |
+| `UNITY_STRUCTURAL_AUDIT.json` | `c36d31b51eb6e3e579014a5bcfa6d889b9e8c0f4adb8f6e41283b20a047d9584` | **GREEN: 2009 checks, 0 failures**; binds manifest `105e2fef…` and structural digest `a7f8534f…` |
 | `STRUCTURAL_SCENE_DIGEST.json` | `815976c488bf32314c78de0413d65c32b3bf8acaf65ac6b4843e5ca9fbf77231` | Canonical 360-piece record (id, kit, role, state, collision, pose, scale, meshes). Digest `a7f8534f33a46a189c5afb726125b01b6ab0eeba5907cbc3ba4aaafb8e30601e`. A full rebuild reproduced the same digest; scene YAML fileIDs are not deterministic, this digest is. |
-| `KIT_COMPOSITION_MANIFEST.json` | `d6f755c964fca6035d4182288346df4a59ea06a0b81df5608d02979876c03adc` | Schema `@2`: 55 pieces (45 KEEPER_READY), 4 assemblies, `unityAssets`, `formPrimitive`, numeric dimensions, declared exceptions |
+| `KIT_COMPOSITION_MANIFEST.json` | `105e2feff2d9fbe01269b7889722fc2aee837b2148c3d1dc17145fa271620992` | Schema `@2`: 55 pieces (45 KEEPER_READY), 4 assemblies, `unityAssets`, `formPrimitive`, numeric dimensions, declared exceptions, benchmark route segments |
+| `UNITY_STRUCTURAL_AUDIT_NEGATIVE_W12_2p5.json` | `1b82596f27e3b746e9344d93c9e3304dedc05ac59dbb512560d13b006ba8fd10` | Defect-injection run: W12 temporarily narrowed to 2.5 m. **Only** `accepted_route_width_class` fails (2.500 vs accepted 2.800); every other check, including route clearance, stays green. Builder and assets were restored afterwards and the audit re-ran GREEN on digest `a7f8534f…`. |
 | `UNITY_STRUCTURAL_AUDIT_BASELINE_290c487.json` | `3506538c17f20ba118504fb75305c63898eb15ab3aa10e665947199287a72793` | Same audit run on the geometry produced by Codex's committed builder at `290c487`: **569/1449 failures** (353 were missing kit IDs) |
 | `UNITY_BENCHMARK_AUDIT.json` | regenerated | `@2`, positions read from tagged pieces (no hard-coded coordinates); GREEN; `renderPipeline: built-in` |
 | `structural_checkpoint/neutral_*.png` | below | 11 neutral-material human-scale views of digest `a7f8534f…` |
@@ -32,7 +33,7 @@ Unity -batchmode -quit -projectPath Unity/ArkusUnity -executeMethod Juego2.ART.E
 
 All exited 0 without `-nographics`. With `-nographics`, the Build method sometimes segfaults after `Batchmode quit successfully invoked`, during editor shutdown without network. By then the scene is already saved, and the subsequent audit re-opens and verifies it. Evidence runs use the graphics path.
 
-## Audit scope (what 2006 checks cover)
+## Audit scope (what 2009 checks cover)
 
 - **Identity/provenance (890):** every piece's `kitId` resolves to a KEEPER_READY manifest entry or assembly. Every source-model instance matches its kit's `sourceLockDest`/`unityAssets`. SOURCE_ONLY sources (roofs) are consumed only through a named derivative. Every generated mesh is listed by its kit entry. Every BOX-form piece is declared BOX, is not a facade/roof/building, and has one dimension ≤ 0.60 m (the no-decorated-cuboid guard). Every renderer and collider is owned by a kit piece.
 - **Openings/inserts (287):** plain hosts are closed. Opening hosts have one real rectangular through-opening. Inserts are centred on a real opening. No insert projects past a facade end, and no two hosts' inserts clash.
@@ -40,7 +41,7 @@ All exited 0 without `-nographics`. With `-nographics`, the Build method sometim
 - **Envelope (112):** horizontal probes over every facade (≈23–33k per side) and diagonal corner probes. They detect eave slits, jamb voids, module gaps and re-entrant corner notches. A leak is only counted inside the envelope (below the roof-skin underside).
 - **Roof (16):** underside meets the outer wall-top line, eave projection is in band, gables are flush with the wall face, pitch is within the declared band.
 - **Contact/attachment (368):** base of every ground-storey host on plinth/threshold/floor. Upper storeys stacked flush. Box feet embedded. Kerb feet embedded. Dressing/nature/human pivots on a real support. Attached pieces touch their host. Sign readable from its mounted side. Dressing/nature clear of structure.
-- **Street/surface (7) and public threshold (5):** one traversable collider; street support on every route sample; no stacked traversable surfaces; route width clear 0.20–2.10 m; no coplanar overlapping top surfaces (34,496 samples); visible water; modelled drainage channel.
+- **Street/surface (10) and public threshold (5):** one traversable collider; street support on every route sample; no stacked traversable surfaces; route width clear 0.20–2.10 m; **measured traversable width equals the predecessor-accepted CITY-04 width class** — X1 5.5, W12 2.8, casco.micro.B 2.4, read from `City04Layout.json`, never from the mesh or builder (−0.01/+0.02 m); no coplanar overlapping top surfaces (34,496 samples); visible water; modelled drainage channel.
 
 ## Measured result (selected)
 
@@ -65,6 +66,7 @@ All exited 0 without `-nographics`. With `-nographics`, the Build method sometim
 | Porch clear head height | 2.1–2.8 | 2.655 |
 | Kerb rise above road edge / visible width | 0.08–0.16 / 0.12–0.30 | 0.119–0.120 / 0.205–0.220 |
 | Low retaining/garden wall visible height | 0.45–1.20 | 0.62–0.70 |
+| Accepted route width (X1 / W12 / micro-route B, from CITY-04) | 5.5 / 2.8 / 2.4 (−0.01/+0.02) | 5.500 / 2.800 / 2.400 |
 | Clothed human reference | 1.70–1.85 | 1.814 |
 | Dressing/nature pivot support gap | −0.12…+0.02 | −0.10…0.00 |
 
@@ -115,3 +117,7 @@ Each line below is a measured baseline failure. Each one is resolved in the curr
 - No change to `Unity/ArkusUnity` ProjectSettings, Packages or render pipeline. All mutations are under `Assets/Arkus/ART`, ART evidence and ART tools, so there is no interference with H1-11/H1-GATE.
 - No CITY route/place/access/elevation semantic changed. Specimen stations, F01's local +1 m offset, the 6.0 m Casco pocket and the bridgehead sample are ART composition specimens. CITY-07 places the vocabulary against the accepted seed.
 - PR #233 was not modified or used as geometry.
+
+## Pre-review hardening (review #5325775001)
+
+The pre-evaluation of `f60ed87` accepted the STRUCTURAL checkpoint. It noted that route clearance was derived from the road mesh itself, so an accidental narrowing could stay "clear". `accepted_route_width_class` closes that gap: it compares widths measured by transverse rays on the sole traversable collider against the accepted CITY-04 widths, with the specimen segment map declared in the manifest benchmark assembly. The 6.0 m Casco reveal pocket is declared as an ART specimen and is not checked against CITY. The negative run above demonstrates that the check causally detects a narrowed W12 that every other oracle would miss.

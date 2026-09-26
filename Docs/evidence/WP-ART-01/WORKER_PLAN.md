@@ -45,7 +45,7 @@ While `WP-H1-11` / `WP-H1-GATE` are closing `Unity/ArkusUnity`, ART-01 must not 
    - Effective raw/normalized Unity import audit; three frozen human-scale targets.
    - Unity `6000.3.24f1`, `ART01_SOURCE_AUDIT_GREEN rows=32`.
 2. **STRUCTURAL — complete (Claude, see `STRUCTURAL_CHECKPOINT.md`).**
-   - `Art01StructuralAudit` GREEN: 2006 renderer-independent checks, 0 failures.
+   - `Art01StructuralAudit` GREEN: 2009 renderer-independent checks, 0 failures, including the accepted CITY-04 route-width oracle added after pre-review #5325775001 (causally demonstrated by a W12-narrowing negative run).
    - Deterministic structural digest `a7f8534f…`; manifest `@2` with kit-ID closure.
    - Neutral captures in `structural_checkpoint/`.
    - The same audit measured 569 failures on the `290c487` geometry (`UNITY_STRUCTURAL_AUDIT_BASELINE_290c487.json`). They are fixed here rather than tolerated. This supersedes `MASSING_CHECKPOINT.md`, which is retained as history.

@@ -48,9 +48,11 @@ namespace Juego2.ART.Editor
         }
         [Serializable] sealed class MExc { public string measure; public float min; public float max; public string reason; }
         [Serializable] sealed class MProv { public string sourceLockDest; public string[] unityAssets; }
+        [Serializable] sealed class MRouteSegment { public string route; public float z0; public float z1; }
         [Serializable] sealed class MPiece
         {
-            public string id, kind, readiness, role, formPrimitive;
+            public string id, kind, readiness, role, formPrimitive, routeWidthSource;
+            public MRouteSegment[] routeSegments;
             public MProv provenance;
             public MExc[] dimensionalExceptions;
             public float roofPitchMinDeg, roofPitchMaxDeg;
@@ -909,6 +911,7 @@ namespace Juego2.ART.Editor
             }
             Add("street", "route_support_is_street", road.logicalId, missing == 0, $"{missing}/{n} samples lack street support before threshold", "0");
             Add("street", "no_stacked_traversable_surfaces", road.logicalId, stacked == 0, $"{stacked}/{n}", "0 samples with two colliders within 0.05 m");
+            AcceptedRouteWidths(road);
             Add("street", "route_clear_width_unobstructed", road.logicalId, obstructions == 0,
                 obstructions == 0 ? "clear" : string.Join(",", obstructionIds.Take(8)), "street width minus 0.12 m each side clear from 0.20 to 2.10 m");
             // Kerb dimensions at every segment midpoint.
@@ -938,6 +941,53 @@ namespace Juego2.ART.Editor
                 float ground = Hit(new Vector3(b.max.x + 0.3f, 3f, b.center.z), Vector3.down, 6f, VisMask, o => o != null && o.assemblyRole == "SCENIC", out var g)
                     ? g.point.y : b.min.y;
                 Band("dimension", "low_retaining_wall_visible_height", wall.logicalId, topY - ground, 0.45f, 1.20f);
+            }
+        }
+
+        /// <summary>
+        /// Measured traversable width vs the predecessor-accepted CITY width class. The expected width is
+        /// read from the accepted CITY-04 layout, never from the road mesh or the builder, so an accidental
+        /// narrowing that stays "unobstructed" still fails.
+        /// </summary>
+        static void AcceptedRouteWidths(Art01Piece road)
+        {
+            var bench = kit.Values.FirstOrDefault(k => k.role == "BENCHMARK");
+            if (bench == null || bench.routeSegments == null || bench.routeSegments.Length == 0 || string.IsNullOrEmpty(bench.routeWidthSource))
+            {
+                Add("street", "accepted_route_width_class", "benchmark", false, "no routeSegments/routeWidthSource", "declared benchmark route segments");
+                return;
+            }
+            var sourcePath = Path.GetFullPath(Path.Combine(Application.dataPath, "../../../", bench.routeWidthSource));
+            var accepted = new Dictionary<string, float>();
+            if (File.Exists(sourcePath))
+                foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(
+                             File.ReadAllText(sourcePath, Encoding.UTF8), "\\{\\s*\"id\"\\s*:\\s*\"([^\"]+)\"\\s*,\\s*\"width\"\\s*:\\s*([0-9.]+)"))
+                    accepted[m.Groups[1].Value] = float.Parse(m.Groups[2].Value, System.Globalization.CultureInfo.InvariantCulture);
+            foreach (var seg in bench.routeSegments)
+            {
+                if (!accepted.TryGetValue(seg.route, out var expected))
+                {
+                    Add("street", "accepted_route_width_class", seg.route, false, "route absent from " + bench.routeWidthSource, "accepted CITY route id");
+                    continue;
+                }
+                float min = float.MaxValue, max = float.MinValue; int samples = 0;
+                for (float z = seg.z0; z <= seg.z1 + 1e-4f; z += 0.5f)
+                {
+                    float left = float.NaN, right = float.NaN;
+                    for (float x = -5f; x <= 5f + 1e-4f; x += 0.005f)
+                        if (Hit(new Vector3(x, 3f, z), Vector3.down, 6f, PlayMask, o => o == road, out _))
+                        {
+                            if (float.IsNaN(left)) left = x;
+                            right = x;
+                        }
+                    if (float.IsNaN(left)) continue;
+                    float w = right - left + 0.005f;
+                    min = Mathf.Min(min, w); max = Mathf.Max(max, w); samples++;
+                }
+                bool ok = samples > 0 && min >= expected - 0.01f && max <= expected + 0.02f;
+                Add("street", "accepted_route_width_class", $"{seg.route} z={F(seg.z0)}..{F(seg.z1)}", ok,
+                    samples == 0 ? "no road samples" : $"{F(min)}..{F(max)} m over {samples} stations",
+                    $"{F(expected)} m from {bench.routeWidthSource} (-0.01/+0.02)");
             }
         }
 

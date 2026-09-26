@@ -308,6 +308,16 @@ derived_pieces = [
 assemblies = [
     {"id": "art01.assembly.benchmark.retained_chain.v1", "kind": "assembly", "readiness": "KEEPER_READY",
      "role": "BENCHMARK", "layers": ["X1 bridgehead", "S02 pause", "W12 lane", "Casco reveal", "micro-route B", "F01 threshold"],
+     "routeWidthSource": "Unity/ArkusUnity/Assets/Arkus/CITY/City04Layout.json",
+     "routeSegments": [
+         {"route": "X1", "z0": -35.5, "z1": -26.5},
+         {"route": "W12", "z0": -22.5, "z1": 6.5},
+         {"route": "casco.micro.B", "z0": 22.5, "z1": 24.5},
+     ],
+     "specimenSegments": [
+         {"id": "casco.reveal_pocket", "z0": 13.0, "z1": 18.0, "width": 6.0,
+          "note": "ART composition specimen, not an accepted CITY widening; not checked against CITY"},
+     ],
      "note": "local specimen order only; not CITY coordinates, grades or keeper placement"},
     {"id": "art01.assembly.house.two_storey_6x10.v1", "kind": "assembly", "readiness": "KEEPER_READY",
      "role": "BUILDING_ASSEMBLY",
