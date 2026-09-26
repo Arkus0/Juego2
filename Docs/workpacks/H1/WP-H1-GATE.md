@@ -63,7 +63,7 @@ Gate evidence begins with canonical discovery/authoring and ends with normalized
 
 ## Deterministic proof / evidence
 
-The gate uses a clean checkout, exact local Unity/toolchain fingerprint, remote H0/reference proof and local Unity batchmode plus required graphics/editor evidence. It captures canonical hashes, mutation journal/diff, catalogue fingerprint, accepted source-content fingerprint, plan/generation/observation digests, diagnostics, receipts, checkpoint/rebuild results and interaction transcript.
+The gate uses a clean checkout, exact local Unity/toolchain fingerprint, remote H0/reference proof and local Unity batchmode plus the stage-16 Editor-load evidence. It captures canonical hashes, mutation journal/diff, catalogue fingerprint, accepted source-content fingerprint, plan/generation/observation digests, diagnostics, receipts, checkpoint/rebuild results and interaction transcript. The Gate's Unity processes are headless; the supplementary rendered capture is consumed by digest from accepted `WP-H1-11`, per `H1_UNITY_PARITY_GATE.md` amendment v1.3.
 
 ## Causal negative-conformance classes
 
