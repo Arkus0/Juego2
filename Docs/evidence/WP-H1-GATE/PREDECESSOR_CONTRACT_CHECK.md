@@ -140,7 +140,7 @@ Fresh repair Worker, owner-invoked. The prior Worker stopped at the frozen candi
   - the Editor-compiled `Library/ScriptAssemblies`.
 
   The verifier checks that universe against sources the driver does not control. The frozen `packages-lock.json` must match exactly (name, version and source section). The repository's own asmdef/loose-script layout, plus the registered packages' asmdefs, must match the compiled set with nothing missing and nothing undeclared. The universe must also be identical across the bootstrap, reference and MCP inspections, and the package fingerprint enters the parity tuple.
-- **S16.** The Gate is aligned with the parity-gate amendment v1.3 (PROCESS_ONLY PR `#246`, owner decision). It adds three checks to the existing load and owned-error checks:
+- **S16.** The Gate is aligned with the parity-gate amendment v1.3 (PROCESS_ONLY PR `#246`, owner decision; independent PASS `#5328105230` on `a0899c37`; merged to `main` as `f5a480d0` and merged into this candidate). It adds three checks to the existing load and owned-error checks:
   - every Gate Unity process's Editor log must have been read;
   - the rendered capture is bound by digest to the accepted H1-11 capture;
   - every source and clip the Gate slice authors must belong to the manifest that capture rendered.
