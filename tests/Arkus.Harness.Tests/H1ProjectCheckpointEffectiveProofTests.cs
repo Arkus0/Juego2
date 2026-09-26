@@ -281,8 +281,8 @@ namespace Arkus.Harness.Tests
 
         /// <summary>
         /// Content-shape probe: the complete accepted Potes market-corner hierarchy (plaza > market > bar/workshop)
-        /// with the H1-04 Quaternius facade prefab, its MI_Plaster renderer material, a UAL1 animator clip and a
-        /// canonical link (the shape accepted by H1-05/07), plus one later H0 mutation so the checkpoint carries
+        /// with the H1-04 Quaternius facade prefab for plaza/market/workshop and, on the bar, the facade mesh with its
+        /// renderer material, a UAL1 animator clip and a canonical link (the shapes accepted by H1-05/06/07), plus one later H0 mutation so the checkpoint carries
         /// non-empty mutation history.
         /// </summary>
         private static PortableWorldAuthoringSession AuthoredSession(H1CatalogueSnapshot catalogue)
@@ -302,7 +302,7 @@ namespace Arkus.Harness.Tests
                 {
                     Binding("plaza.potes", 0),
                     Binding("market.potes", 500),
-                    Binding("bar.potes", 1250, link: "plaza.potes", renderer: true, animator: true),
+                    Binding("bar.potes", 1250, link: "plaza.potes", renderer: true, animator: true, sourceKind: "asset", sourceId: FacadeMesh),
                     Binding("workshop.potes", -800)
                 });
             var session = new PortableWorldAuthoringSession(initial);
@@ -330,8 +330,9 @@ namespace Arkus.Harness.Tests
         }
 
         private const string FacadePrefab = "quaternius.medieval.prefab.wall-plaster-window-wide-flat";
+        private const string FacadeMesh = "quaternius.medieval.asset.wall-plaster-window-wide-flat";
 
-        private static WorldExtensionData Binding(string subject, long x, string? link = null, bool renderer = false, bool animator = false)
+        private static WorldExtensionData Binding(string subject, long x, string? link = null, bool renderer = false, bool animator = false, string sourceKind = "prefab", string sourceId = FacadePrefab)
         {
             var components = new List<object?>();
             var references = new List<WorldReference>();
@@ -346,7 +347,7 @@ namespace Arkus.Harness.Tests
             {
                 ["schemaId"] = UnityBindingProducer.BindingSchemaId,
                 ["targetSceneId"] = H1ManagedScenePlan.SceneId,
-                ["source"] = new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "prefab", ["logicalId"] = FacadePrefab },
+                ["source"] = new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = sourceKind, ["logicalId"] = sourceId },
                 ["transform"] = new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["coordinateConvention"] = UnityBindingProducer.CoordinateConvention,
