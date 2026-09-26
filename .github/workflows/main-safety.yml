@@ -65,8 +65,17 @@ jobs:
       - name: Build release
         run: dotnet build Juego2.sln --no-restore -c Release
 
-      - name: Run tests
-        run: dotnet test Juego2.sln --no-build --no-restore -c Release --logger "console;verbosity=minimal"
+      - name: Validate test classification runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/test-suite.py self-test
+
+      - name: Run Main Safety core tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/test-suite.py run MAIN_SAFETY_CORE
 
       - name: Compile Python process checkers
         shell: bash
