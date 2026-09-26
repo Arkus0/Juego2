@@ -6,7 +6,7 @@ Repository: `Arkus0/Juego2`
 
 ## Accepted state
 
-`PA-01` through `PA-06` are accepted in Juego2. Their result artefacts and prior reviews remain authoritative inputs.
+`PA-01` through `PA-12` are accepted in Juego2. PA-07..09 were accepted through `WP-PA-B1`; PA-10..12 were accepted through `WP-PA-B2`. Their result artefacts, independent reviews and binding DocSync records remain authoritative inputs.
 
 PA answers **what behaviour/product semantics Juego2 needs and what failure modes later runtime work must prevent**. PA research does not itself prove Unity/runtime behaviour.
 
@@ -31,10 +31,10 @@ PA-01 ✅ Daily Life
  -> PA-04 ✅ Knowledge/Beliefs
  -> PA-05 ✅ Rumours
  -> PA-06 ✅ Memory & Consequences
- -> PA-B1  { PA-07 Work/Material + PA-08 Activities + PA-09 Player Agency }
- -> PA-B2  { PA-10 Events + PA-11 Legibility + PA-12 Governance }
- -> PA-B3  { PA-13 Simulation Control + H3/H4 handoff index }
- -> PA-14  Integration Review, deferred until H2-GATE
+ -> PA-B1 ✅ { PA-07 Work/Material + PA-08 Activities + PA-09 Player Agency }
+ -> PA-B2 ✅ { PA-10 Events + PA-11 Legibility + PA-12 Governance }
+ -> PA-B3    { PA-13 Simulation Control + H3/H4 handoff index }
+ -> PA-14    Integration Review, deferred until H2-GATE
 ```
 
 This reduces the pending remote research spine from seven review/merge/DocSync cycles before PA-14 to three, while retaining all original acceptance/negative gates.
@@ -102,4 +102,6 @@ PA does not own geography or the Unity bridge. Accepted CITY places/routes may b
 
 ## Current next PA workpack
 
-`WP-PA-B1 — Daily-life agency research batch`.
+`WP-PA-B3 — Simulation-control + implementation handoff batch`.
+
+Dependency status: READY / NOT_STARTED. Execution still requires explicit dispatch.

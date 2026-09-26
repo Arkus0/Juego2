@@ -1,10 +1,12 @@
 # WP-PA-B3 — Simulation-control + implementation handoff batch
 
-Status: **DORMANT / NOT_STARTED**  
+Status: **READY / NOT_STARTED**  
 Class: RESEARCH / `RESEARCH_BATCH`  
 Depends on: `WP-PA-B2` PASS  
 Consumes: `WP-PA-13.md` as binding research contract  
 Blocks: `WP-PA-14` subject to H2-GATE
+
+Dependency status: `WP-PA-B2` accepted via PR `#240`, independent PASS review `#5326015639`, merge `c886ac2712bd81718607153f9cae9394959bcdf5`, and binding DocSync `Docs/evidence/WP-PA-B2/DOCSYNC.md`. PA-B3 is dependency-valid but remains NOT_STARTED until explicitly dispatched.
 
 ## Work
 

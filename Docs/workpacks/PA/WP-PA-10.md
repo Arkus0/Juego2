@@ -1,10 +1,18 @@
 # WP-PA-10 — Autonomous Events & Causal Chains research
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_RESEARCH**  
 Depends on: `WP-PA-09` PASS + merge + DocSync  
 Blocks: `WP-PA-11` only
+
+Accepted in batch: `WP-PA-B2`  
+Accepted candidate: `6d05206884ac729e02cdcceb2edeecb43244b4bd`  
+Canonical batch PR: `#240`  
+Independent PASS review: `#5326015639`  
+Batch merge: `c886ac2712bd81718607153f9cae9394959bcdf5`  
+Canonical result: `Docs/research/living-world/results/PA-10.md`  
+Binding DocSync: `Docs/evidence/WP-PA-B2/DOCSYNC.md`
 
 ## Objective
 
@@ -41,6 +49,8 @@ Define how interesting multi-step events can emerge from accepted actor/player c
 A 3+ step causal chain can originate from a legitimate actor cause, recruit/affect others for explicit reasons, remain bounded and terminate without a privileged script deciding every step.
 
 Negative gate: random event generation that merely assigns roles to actors after deciding the story in advance cannot be presented as autonomous agency.
+
+Accepted by the PA-B2 batch evidence and independent PASS review above.
 
 ## Deferred proof
 
