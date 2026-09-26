@@ -59,3 +59,12 @@ Catalogue reconciliation, materialization/publication, prefab lineage, component
 - A missing production-art feature (for example content absent from the adopted distributions) is downstream H2/ART scope, not a predecessor reopen.
 
 Theoretical possibility or a desire for duplicate proof is not a reopen condition.
+
+## Implementation-time escalations (recorded after the first effective imports)
+
+The first hosted effective imports produced two concrete real-source findings. Both were classified against the reopen conditions above before any code changed:
+
+1. **Import unit scale (F5).** The accepted H1-04 GUID-only sidecars import FBX file units without conversion; the facade therefore realizes ×100 relative to the kit modules, whose original upstream sidecars convert centimetres. H1-04's catalogue/identity claim is not false (identity, content hashes and inventory rows are unchanged), so H1-04 is **not** reopened. This is the H1-11-owned "pivot/scale import assumption" requirement: the per-item importer unit settings are now explicit (derived from the sidecar bytes) and validated against the effective importer and bounds, and the scenario's Unity binding states the facade's unit scale.
+2. **Rig shape (F7).** The accepted H1-06 source-derived relationship universe enumerates `MeshFilter`/`MeshRenderer` references; the representative humanoid is the first rigged *prefab source*, whose `SkinnedMeshRenderer` mesh/material references therefore sat outside the normalized observation consumed by H1-09 reconciliation and H1-10 parity. H1-06 is inapplicable to this shape rather than false for its accepted shapes, and the compression amendment assigns a "genuinely new in-boundary rig-shape compatibility requirement" to H1-11. The fix records skinned mesh/material references with the existing relationship kinds; non-skinned shapes and all predecessor evidence are unchanged.
+
+No other predecessor guarantee was found false or inapplicable.
