@@ -24,7 +24,9 @@ The exact-SHA run identifiers for the frozen candidate are recorded in the Worke
 
 ## Established facts
 
-First complete GREEN chain: H1-11 run `36230271886` (job `108372049047`) on `2207da31d7948c6117020eb13b99586cddbff7f6`. The frozen candidate re-runs the same chain; its run IDs and any changed digest are recorded in the Worker pre-review comment. Digests below are content-addressed and stable for identical inputs.
+First complete GREEN chain: H1-11 run `36230271886` (job `108372049047`) on `2207da31d7948c6117020eb13b99586cddbff7f6`; second: run `36230964265` on `7550137b04b656e144b9e718053ec929b0a25ccf`. The frozen candidate's run IDs are recorded in the Worker pre-review comment.
+
+Canonical hash, plan input digest, catalogue fingerprint, graph digest, environment digest and source fingerprint are identical in every run. Realization and reconstruction digests, and therefore the checkpoint ID and manifest hash that bind them, are **per import** (F10): they are equal between baseline and rebuild inside one run, which is the parity claim, and differ between runs because each clean import creates the importer-generated `SourceSlice/Materials/*.mat` with new GUIDs. Both runs' values are listed.
 
 **Resolve / import (Stage 0)**
 
@@ -46,9 +48,9 @@ First complete GREEN chain: H1-11 run `36230271886` (job `108372049047`) on `220
 
 **Checkpoint, restore and parity (Processes A3/B/C)**
 
-- Checkpoint `09614a63d302e0c6680550757ef6ce5f7b93e622c20d4c825b040902aa1d3fdd`, manifest SHA-256 `5c913813b11b133c9fa75336511a3482eb987d3fade10d1de4b496436b623f7a`, source fingerprint `6887464d78ca6f329c57313fa2b8c7d3c886ddeceacda65fa8d7604b83fb0019`. The observation it was captured from carries each civilian's skinned `Mannequin` mesh and both skinned material references.
+- Environment digest `09aa4e818c5ddf24729af8b2b7f9d569425ff78f288ad8cbc6ca15ba4bf9e04d` and source fingerprint `6887464d78ca6f329c57313fa2b8c7d3c886ddeceacda65fa8d7604b83fb0019` in both runs. Per-import checkpoint / manifest SHA-256: `09614a63…` / `5c913813…` (run `36230271886`), `c889d322…` / `7fcba997…` (run `36230964265`). The observation each checkpoint was captured from carries each civilian's skinned `Mannequin` mesh and both skinned material references.
 - Fresh-process restore only through accepted H0 import reproduces the canonical hash and plan input digest.
-- Normalized reconstruction parity through `H1ReconstructionParity`: reconstruction digest `ec5ab177ad073d655365b31a0a516445b13986758e75f22ebd559baac6f1d0ba` over 16 nodes, while the realization digests of baseline (`a225b0fa…`) and rebuild (`de2e574c…`) differ in the generation-specific locators that the accepted normalization excludes. The drift control on `civilian.walk`/`roof.house` is rejected with `checkpoint.restore-observation-drift`.
+- Normalized reconstruction parity through `H1ReconstructionParity` over 16 nodes: the rebuilt observation's reconstruction digest equals the checkpoint's in each run (`ec5ab177…` in run `36230271886`, `451d1d56…` in run `36230964265`), while baseline and rebuild realization digests differ inside each run (`a225b0fa…`/`de2e574c…`, `e8ccbb5e…`/`05916f1b…`) only in the generated-derivative locators that the accepted normalization excludes. The drift control on `civilian.walk`/`roof.house` is rejected with `checkpoint.restore-observation-drift`.
 
 **Removed / replaced asset (Unity C, Process D)**
 
@@ -59,6 +61,6 @@ First complete GREEN chain: H1-11 run `36230271886` (job `108372049047`) on `220
 
 **Supplementary capture (Unity A2) — not the parity oracle**
 
-- `SUPPLEMENTARY_CAPTURE.jpg`: 960×540, `OpenGLCore`, SHA-256 `a5d42476d1b74ffb1ceb7a5762669aef3353f621356f6a4dae7dbcd8e1b2c8d5`, 9.1 % covered pixels, 618 colour bins, graph digest `762a8a0d…` (the same generation). It is a derived render of CC0 content, not source bytes.
+- `SUPPLEMENTARY_CAPTURE.jpg` (from run `36230271886`): 960×540, `OpenGLCore`, SHA-256 `a5d42476d1b74ffb1ceb7a5762669aef3353f621356f6a4dae7dbcd8e1b2c8d5`, 9.1 % covered pixels, 618 colour bins, graph digest `762a8a0d…` (the same generation). It is a derived render of CC0 content, not source bytes. Later runs render the same coverage but not byte-identical JPEGs (run `36230964265`: `89a707f7…`); the workflow reports the comparison and emits a differing render, and it is never an oracle.
 - The kit modules render untextured: no texture file of the kit is part of the admitted slice. The civilians show the bind pose because edit-mode capture does not evaluate the Animator. Neither is a claimed property.
 - Drawing left 10 source materials dirty in the Editor (`FacadeImportedMaterial.mat` and nine importer-generated `Materials/*.mat`); the stage discarded that state and the whole SourceSlice and published-generation trees were byte-identical after the capture and after the Editor exited (F8).
