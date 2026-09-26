@@ -639,7 +639,7 @@ namespace Arkus.Game.Authoring
                     if (!TryGetInteger(data, "schemaVersion", out var schemaVersion) || schemaVersion <= 0 || schemaVersion > int.MaxValue)
                         return InvalidRequest(OperationPath(index) + ".schemaVersion", "Extension schemaVersion must be a positive 32-bit integer.");
                     if (!TryGetString(data, "payloadBase64", out var payloadText) || !TryCanonicalBase64(payloadText, out var payload))
-                        return InvalidRequest(OperationPath(index) + ".payloadBase64", "payloadBase64 must use canonical Base64 encoding.");
+                        return Base64Violation(index, data.ContainsKey("payloadBase64") ? payloadText : null);
                     if (payload.Length > H0ResourceEnvelope.MaximumExtensionPayloadBytes)
                     {
                         return CapabilityInvocationResult.Failed(H0ResourceDiagnostics.Exceeded(
@@ -1275,6 +1275,53 @@ namespace Arkus.Game.Authoring
                 }),
                 false,
                 "Remove unexpectedFields; each operation kind accepts only its own allowedFields. Object data (id, typeId, containerId, references) and extension data (owner, schemaVersion, subjectId, dependencies, payloadBase64) are separate put-object and put-extension operations in the same transaction.");
+        }
+
+        // WP-HK-05 reopen 2: a rejected extension payload names why it is not canonical Base64. The payload is an opaque
+        // value produced by a tool; clients (notably model-driven ones) that retype it rather than pass it through can
+        // then see the corruption instead of guessing at the envelope.
+        private static CapabilityInvocationResult Base64Violation(int index, string? text)
+        {
+            var context = new Dictionary<string, object?>(StringComparer.Ordinal);
+            if (text == null)
+            {
+                context["reason"] = "missing-or-not-a-string";
+            }
+            else
+            {
+                context["receivedLength"] = (long)text.Length;
+                context["lengthRemainder"] = (long)(text.Length % 4);
+                var invalidIndex = -1;
+                for (var position = 0; position < text.Length; position++)
+                {
+                    var character = text[position];
+                    var alphabet = (character >= 'A' && character <= 'Z') || (character >= 'a' && character <= 'z') ||
+                                   (character >= '0' && character <= '9') || character == '+' || character == '/' || character == '=';
+                    if (!alphabet)
+                    {
+                        invalidIndex = position;
+                        break;
+                    }
+                }
+
+                if (invalidIndex >= 0)
+                {
+                    context["reason"] = "invalid-character";
+                    context["firstInvalidIndex"] = (long)invalidIndex;
+                }
+                else
+                {
+                    context["reason"] = text.Length % 4 != 0 ? "length-not-multiple-of-4" : "non-canonical-padding";
+                }
+            }
+
+            return Failure(
+                "world.change.invalid_request",
+                "payloadBase64 must use canonical Base64 encoding.",
+                OperationPath(index) + ".payloadBase64",
+                ReadOnly(context),
+                false,
+                "payloadBase64 is an opaque value: pass it exactly as returned by the tool that produced it (for example a compiled extension mutation). If it was retyped, shortened or edited, request it again instead of repairing it by hand.");
         }
 
         private static CapabilityInvocationResult InvalidProvenanceRequest(string message)
