@@ -66,6 +66,14 @@ ok = result == "Passed" or (allow_skip and result == "Skipped")
 sys.exit(0 if ok and not others else 1)
 PY
 verdict=$?
+# Checked after the Editor has exited: no Editor process may leave the purchased upstream bytes changed on disk,
+# including through the dirty-asset save the Editor performs on exit.
+python3 Tools/AssetVault/h1_representative_slice.py sources --public-root .
+sources=$?
+echo "H1_11_SOURCE_INTEGRITY label=${label} exit=${sources}"
+if [[ ${sources} -ne 0 ]]; then
+  exit 1
+fi
 if [[ ${code} -ne 0 && ! ( "${allow_skip}" == "allow-skip" && ${verdict} -eq 0 ) ]]; then
   exit 1
 fi

@@ -212,6 +212,11 @@ namespace Arkus.H1.Editor.Tests
         [Test]
         public void StageA2_SupplementaryRenderedCaptureIsNotTheParityOracle()
         {
+            // Rendering is the only stage that draws, and drawing leaves the source materials it touched dirty in
+            // memory; the Editor saves dirty assets on exit, which rewrote a catalogue-pinned SourceSlice material on
+            // 777bafb. Editor-side state on read-only upstream assets must never be written back, and the capture must
+            // not touch the published generation either; both trees are byte-compared around the capture.
+            var protectedBefore = TreeHashes(SourceRoot, ManagedScenes, ManagedPrefabs);
             var rawPlan = ReadRawPlan("plan.json", out _);
             var observed = Execute("observe", rawPlan, out var raw);
             Assert.That(observed.errorCode, Is.Empty, raw);
@@ -263,7 +268,10 @@ namespace Arkus.H1.Editor.Tests
 
                 target = new RenderTexture(CaptureWidth, CaptureHeight, 24, RenderTextureFormat.ARGB32);
                 camera.targetTexture = target;
-                camera.Render();
+                var asynchronous = ShaderUtil.allowAsyncCompilation;
+                ShaderUtil.allowAsyncCompilation = false;
+                try { camera.Render(); }
+                finally { ShaderUtil.allowAsyncCompilation = asynchronous; }
                 RenderTexture.active = target;
                 pixels = new Texture2D(CaptureWidth, CaptureHeight, TextureFormat.RGB24, false);
                 pixels.ReadPixels(new Rect(0, 0, CaptureWidth, CaptureHeight), 0, 0);
@@ -289,7 +297,11 @@ namespace Arkus.H1.Editor.Tests
                 SceneManager.SetActiveScene(managed);
                 EditorSceneManager.CloseScene(temporary, true);
             }
+            evidence.discardedSourceEdits = DiscardSourceEdits();
+            AssetDatabase.SaveAssets();
             File.WriteAllText(Path.Combine(ProofDirectory(), "capture.json"), JsonUtility.ToJson(evidence, true));
+            Assert.That(TreeHashes(SourceRoot, ManagedScenes, ManagedPrefabs), Is.EqualTo(protectedBefore),
+                "the supplementary capture wrote upstream source bytes or the published generation");
             Assert.That(managed.isDirty, Is.False, "the capture must not mutate the managed generation");
             Assert.That(evidence.coveredPixelFraction, Is.GreaterThan(0.05f), "the rendered capture shows no geometry");
             Assert.That(evidence.distinctColours, Is.GreaterThan(24), "the rendered capture is flat");
@@ -597,6 +609,34 @@ namespace Arkus.H1.Editor.Tests
             return guid + "|" + fileId.ToString(CultureInfo.InvariantCulture);
         }
 
+        private static string[] TreeHashes(params string[] assetRoots)
+        {
+            var project = ProjectRoot();
+            return assetRoots.Select(ProjectPath).Where(Directory.Exists)
+                .SelectMany(root => Directory.GetFiles(root, "*", SearchOption.AllDirectories))
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .Select(path => path.Substring(project.Length).TrimStart(Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, '/') +
+                                "=" + Sha(File.ReadAllBytes(path))).ToArray();
+        }
+
+        // Clears the dirty flag of every loaded object under the SourceSlice so no Editor-side normalization of a
+        // purchased upstream asset is ever serialized; returns what was discarded as public-safe evidence.
+        private static string[] DiscardSourceEdits()
+        {
+            var discarded = new List<string>();
+            foreach (var path in AssetDatabase.FindAssets(string.Empty, new[] { SourceRoot }).Select(AssetDatabase.GUIDToAssetPath)
+                         .Where(path => !AssetDatabase.IsValidFolder(path)).Distinct().OrderBy(path => path, StringComparer.Ordinal))
+            {
+                foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(path))
+                {
+                    if (asset == null || !EditorUtility.IsDirty(asset)) continue;
+                    discarded.Add(path + "#" + asset.GetType().Name + ":" + asset.name);
+                    EditorUtility.ClearDirty(asset);
+                }
+            }
+            return discarded.ToArray();
+        }
+
         private static string[] SourceHashes()
         {
             var root = ProjectPath(SourceRoot);
@@ -751,7 +791,7 @@ namespace Arkus.H1.Editor.Tests
         [Serializable] private sealed class CaptureEvidence
         {
             public string schemaId; public string state; public string graphicsDevice; public int width; public int height; public string graphDigest;
-            public float coveredPixelFraction; public int distinctColours; public string jpegSha256;
+            public float coveredPixelFraction; public int distinctColours; public string jpegSha256; public string[] discardedSourceEdits;
         }
         [Serializable] private sealed class NegativeEvidence
         {
