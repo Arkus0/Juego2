@@ -11,7 +11,7 @@ given to the agent. That excludes this header, all source code, tests, Worker ev
 
 The owner selected a hosted route. The relay starts the fixed public host command below on the exact candidate, inside
 the pinned Unity image, and forwards **only** tool calls that the model issues. It never supplies an intermediate call.
-Every model message, tool call and tool result is recorded in `trial-transcript.jsonl`. The verifier
+The tool schemas are presented to the provider exactly as the host lists them, with two deterministic changes. `$schema` is dropped, and the vendor keyword `x-arkus-reference-namespace` is moved into the property's description. Property names and all other keywords are unchanged. Every model message, tool call and tool result is recorded in `trial-transcript.jsonl`. The verifier
 (`h1-gate-verify.py trial`) and its negative controls check that record.
 
 <!-- BRIEF START -->

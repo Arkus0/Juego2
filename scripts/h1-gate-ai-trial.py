@@ -110,9 +110,32 @@ def openai_name(name):
 
 
 def model_parameters(schema):
-    schema = dict(schema or {"type": "object"})
-    schema.pop("$schema", None)
-    return schema
+    """Present the host's JSON schema to the provider without meaning loss.
+
+    `$schema` is dropped, and the vendor keyword `x-arkus-reference-namespace` is moved into the node's
+    description, because some providers reject unknown `x-*` keywords. Property names are never touched.
+    """
+    def node(value):
+        if not isinstance(value, dict):
+            return value
+        out = {}
+        for key, child in value.items():
+            if key == "$schema":
+                continue
+            if key == "x-arkus-reference-namespace":
+                continue
+            if key == "properties" and isinstance(child, dict):
+                out[key] = {name: node(sub) for name, sub in child.items()}
+            elif key == "items":
+                out[key] = node(child)
+            else:
+                out[key] = child
+        namespace = value.get("x-arkus-reference-namespace")
+        if namespace:
+            prefix = (out.get("description", "") + " ").lstrip()
+            out["description"] = f"{prefix}Arkus logical reference in namespace {namespace}.".strip()
+        return out
+    return node(dict(schema or {"type": "object"}))
 
 
 def provider_call(protocol, messages, tools, key):
@@ -190,6 +213,7 @@ def main():
     verdict = "INCOMPLETE"
     report = None
     turns = 0
+    relay_error = None
     try:
         initialized = host.rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
                                               "clientInfo": {"name": "arkus.h1-gate.ai-trial-relay", "version": "1.0.0"}})
@@ -259,6 +283,10 @@ def main():
                 if len(shown) > protocol["maxToolResultCharsShownToModel"]:
                     shown = shown[:protocol["maxToolResultCharsShownToModel"]] + f"...[relay truncated {len(shown) - protocol['maxToolResultCharsShownToModel']} chars for context size; the full result is recorded]"
                 messages.append({"role": "tool", "tool_call_id": call["id"], "content": shown})
+    except Exception as exc:  # recorded, never silently turned into a verdict
+        relay_error = f"{type(exc).__name__}: {str(exc)[:1500]}"
+        verdict = "RELAY_ERROR"
+        recorder.write({"event": "relay-error", "error": relay_error})
     finally:
         exit_code = host.close()
     transcript = out / "trial-transcript.jsonl"
@@ -268,10 +296,13 @@ def main():
         "briefSha256": sha(brief), "protocolSha256": sha(PROTOCOL.read_bytes()), "modelTurns": turns,
         "hostExitCode": exit_code, "transcriptSha256": sha(transcript.read_bytes()),
         "final": derive_final(results), "agentReport": report, "verdict": verdict,
-        "githubRunId": os.environ.get("GITHUB_RUN_ID"),
+        "relayError": relay_error, "githubRunId": os.environ.get("GITHUB_RUN_ID"),
     }
     (out / "trial-record.json").write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(f"H1_GATE_TRIAL_RECORDED verdict={verdict} turns={turns} final={compact(record['final'])}")
+    if relay_error:
+        print(f"H1_GATE_TRIAL_RED relay error: {relay_error}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
