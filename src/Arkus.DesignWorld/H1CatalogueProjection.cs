@@ -61,8 +61,8 @@ namespace Arkus.DesignWorld
         public const string SourceAdoptionSchemaId = "arkus.h1-04-source-adoption@1";
         public const string ProjectIdentity = "arkus.unity-project@1:ArkusUnity";
         public const string DistributionMode = "external-readonly-local-source";
-        public const string CatalogueBlobSha = "922dbdffbe2f0a622acc2e153ca8b181427f6ce6";
-        public const string SourceAdoptionBlobSha = "664e83e25269f345a248ce43410a28ed0a670750";
+        public const string CatalogueBlobSha = "31d5ccc9dac335a3b49f0ec3cbb5007848146626";
+        public const string SourceAdoptionBlobSha = "23e2a423c26903702e4035b600007ad35a926c58";
 
         private static readonly IReadOnlyList<H1ProjectionSourceDescriptor> ManifestSources =
             new List<H1ProjectionSourceDescriptor>

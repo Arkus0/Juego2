@@ -1,0 +1,356 @@
+name: H1-11 Representative Real-Source Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/h1-11-unity-validation.yml'
+      - 'Docs/workpacks/H1/WP-H1-11.md'
+      - 'Docs/evidence/WP-H1-04/**'
+      - 'Docs/evidence/WP-H1-11/**'
+      - 'Tools/AssetVault/**'
+      - 'scripts/h1-11-*'
+      - 'tools/Arkus.H1.UnityHost/**'
+      - 'tests/Arkus.Harness.Tests/H1RepresentativeSlice*.cs'
+      - 'Unity/ArkusUnity/Assets/Arkus/H1/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-11-unity-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  h1-11-representative-slice:
+    name: Exact H1-11 representative real-source slice
+    runs-on: ubuntu-24.04
+    timeout-minutes: 80
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PINNED_ASSET_VAULT_SHA: ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      ASSET_VAULT_TOKEN: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      ARKUS_H1_11_EFFECTIVE_PROOF: '1'
+      PROOF: Unity/ArkusUnity/H1-11-RealAssetSlice
+
+    steps:
+      - name: Validate exact target and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact lowercase 40-hex'; exit 2; }
+          missing=0
+          for name in ASSET_VAULT_TOKEN UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret ${name}"
+              missing=1
+            fi
+          done
+          test "${missing}" -eq 0
+
+      - name: Checkout exact public candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify exact clean public checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          grep -Fxq 'm_EditorVersion: 6000.3.24f1' Unity/ArkusUnity/ProjectSettings/ProjectVersion.txt
+          printf '/_asset_vault/\n/artifacts/\n/Unity/ArkusUnity/H1-11-RealAssetSlice/\n/Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint/\n' >> .git/info/exclude
+          python3 Tools/AssetVault/h1_representative_slice.py self-test
+          echo "H1_11_EXACT_SHA_GREEN ${TARGET_SHA}"
+
+      - name: Prepare the .NET toolchain before any root-owned Editor container
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore Juego2.sln --locked-mode
+          dotnet build tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj --no-restore --configuration Release
+          echo "H1_11_DOTNET_READY $(dotnet --version)"
+
+      - name: Checkout exact private H1 asset baseline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Arkus0/Juego2-assets
+          ref: ${{ env.PINNED_ASSET_VAULT_SHA }}
+          token: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+          fetch-depth: 1
+          lfs: true
+          path: _asset_vault
+
+      - name: Resolve — verify and mount the admitted slice from the adopted distributions
+        shell: bash
+        run: |
+          set -euo pipefail
+          VAULT_SHA="$(git -C _asset_vault rev-parse HEAD)"
+          test "${VAULT_SHA}" = "${PINNED_ASSET_VAULT_SHA}"
+          python3 Tools/AssetVault/verify_h1_asset_vault.py \
+            --public-root . \
+            --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" \
+            --vault-sha "${VAULT_SHA}" \
+            --mount > /dev/null
+          python3 Tools/AssetVault/h1_representative_slice.py check --public-root . --vault-root _asset_vault
+          python3 Tools/AssetVault/h1_representative_slice.py sources --public-root .
+          echo "H1_11_SOURCE_RESOLVED_GREEN ${VAULT_SHA}"
+
+      - name: Negative — provenance and universe barriers on the real adopted payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          expect_red() {
+            local label="$1"; shift
+            set +e
+            "$@" >"${RUNNER_TEMP}/${label}.out" 2>"${RUNNER_TEMP}/${label}.err"
+            local code=$?
+            set -e
+            [[ ${code} -ne 0 ]] || { echo "::error::negative control unexpectedly passed: ${label}"; exit 3; }
+            grep -q 'H1_11_REPRESENTATIVE_SLICE_RED' "${RUNNER_TEMP}/${label}.err" || { cat "${RUNNER_TEMP}/${label}.err"; exit 3; }
+            echo "H1_11_NEGATIVE_CONTROL_GREEN ${label}: $(tail -n 1 "${RUNNER_TEMP}/${label}.err")"
+          }
+          scratch="${RUNNER_TEMP}/h1-11-public-copy"
+          reset() {
+            rm -rf "${scratch}"
+            mkdir -p "${scratch}/Docs/evidence/WP-H1-04" "${scratch}/Docs/evidence/WP-H1-11" "${scratch}/Unity/ArkusUnity/Assets/Arkus/H1"
+            cp Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json "${scratch}/Docs/evidence/WP-H1-04/"
+            cp Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json "${scratch}/Docs/evidence/WP-H1-11/"
+            cp Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json "${scratch}/Unity/ArkusUnity/Assets/Arkus/H1/"
+            cp -r Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice "${scratch}/Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice"
+          }
+          edit() {
+            python3 - "${scratch}" "$1" <<'PY'
+          import json, sys
+          from pathlib import Path
+          root, case = Path(sys.argv[1]), sys.argv[2]
+          manifest_path = root / 'Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json'
+          adoption_path = root / 'Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json'
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          adoption = json.loads(adoption_path.read_text(encoding='utf-8'))
+          item = next(value for value in manifest['items'] if value['assetPath'].endswith('/Wall_Plaster_Straight.fbx'))
+          if case == 'rebound-entry':
+              item['distributionEntry'] = item['distributionEntry'].replace('Wall_Plaster_Straight.fbx', 'Wall_Plaster_Straight_Base.fbx')
+          elif case == 'rebound-guid':
+              item['unityGuid'] = '0' * 32
+          elif case == 'untraced-item':
+              adoption['slices'] = [row for row in adoption['slices'] if row['assetPath'] != item['assetPath']]
+          elif case == 'silent-widening':
+              adoption['slices'].append({'assetPath': 'Assets/Arkus/H1/SourceSlice/Prop_Brick1.fbx', 'sourceId': 'quaternius-medieval-source', 'adoptionStatus': 'approved-source', 'contentSha256': 'f' * 64})
+          elif case == 'modified-upstream-byte':
+              target = root / 'Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/Wall_Plaster_Straight.fbx'
+              target.write_bytes(target.read_bytes() + b'\0')
+          manifest_path.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+          adoption_path.write_text(json.dumps(adoption, indent=2) + '\n', encoding='utf-8')
+          PY
+          }
+          tool=(python3 Tools/AssetVault/h1_representative_slice.py)
+          for case in rebound-entry rebound-guid untraced-item silent-widening; do
+            reset; edit "${case}"
+            expect_red "${case}" "${tool[@]}" check --public-root "${scratch}" --vault-root _asset_vault
+          done
+          reset; edit modified-upstream-byte
+          expect_red modified-upstream-byte "${tool[@]}" sources --public-root "${scratch}"
+          rm -rf "${scratch}"
+          echo "H1_11_PROVENANCE_BARRIER_NEGATIVES_GREEN"
+
+      - name: Install exact GameCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" \
+            --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+
+      - name: Unity process 0 — clean import against source-derived facts and the committed catalogue
+        shell: bash
+        run: bash scripts/h1-11-unity-stage.sh import Stage0_EffectiveImportAndCatalogueMatchTheAdoptedSource
+
+      - name: Public-safe import and catalogue diagnostics
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          proof = Path('Unity/ArkusUnity/H1-11-RealAssetSlice')
+          observation = proof / 'import-observation.json'
+          if observation.exists():
+              data = json.loads(observation.read_text(encoding='utf-8'))
+              for failure in data.get('failures', []):
+                  print('H1_11_IMPORT_FAILURE ' + failure)
+              for item in data.get('items', []):
+                  print('H1_11_IMPORT_ITEM ' + json.dumps(item, sort_keys=True))
+              for row in data.get('sharedMaterials', []) + data.get('clips', []):
+                  print('H1_11_IMPORT_FACT ' + row)
+          captured = proof / 'effective-inventory.json'
+          committed = Path('Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json')
+          if captured.exists():
+              effective = json.loads(captured.read_text(encoding='utf-8'))
+              accepted = json.loads(committed.read_text(encoding='utf-8'))
+              key = lambda row: json.dumps(row, sort_keys=True)
+              left = {key(row) for row in accepted['rows']}
+              right = {key(row) for row in effective['rows']}
+              print(f'H1_11_INVENTORY committed={len(left)} effective={len(right)} equalRows={left == right}')
+              for row in sorted(right - left):
+                  print('H1_11_INVENTORY_EFFECTIVE_ONLY ' + row)
+              for row in sorted(left - right):
+                  print('H1_11_INVENTORY_COMMITTED_ONLY ' + row)
+          PY
+
+      - name: Static — representative manifest bound to admission record and catalogue
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Tools/AssetVault/h1_representative_slice.py static --public-root .
+
+      - name: Process A — canonical bind and plan of the street-corner scenario
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1RepresentativeSliceContractTests|FullyQualifiedName~H1RepresentativeSliceEffectiveProofTests.StageA_SeedStreetCornerAndPlanTheCompleteRepresentativeUniverse"
+          test -f "${PROOF}/plan.json"
+          test -f "${PROOF}/seed.json"
+          echo "H1_11_PROCESS_A_PLAN_GREEN $(cat "${PROOF}/seed.json")"
+
+      - name: Unity process A — materialize, validate, save/reload and inspect
+        shell: bash
+        run: bash scripts/h1-11-unity-stage.sh baseline StageA_MaterializeSaveReloadAndInspectTheStreetCorner
+
+      - name: Unity process A2 — supplementary rendered capture
+        shell: bash
+        run: bash scripts/h1-11-unity-stage.sh capture StageA2_SupplementaryRenderedCaptureIsNotTheParityOracle allow-skip
+
+      - name: Process A3 — publish checkpoint from the effective observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "${PROOF}/baseline.json"
+          test -f "${PROOF}/baseline-observation.json"
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1RepresentativeSliceEffectiveProofTests.StageB_CaptureCheckpointFromTheEffectiveRepresentativeBaseline"
+          test -f "${PROOF}/captured.json"
+          echo "H1_11_CHECKPOINT_PUBLISHED_GREEN $(cat "${PROOF}/captured.json")"
+
+      - name: Delete every generated Unity projection
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes.meta Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta
+          test ! -e Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes
+          test ! -e Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          echo 'H1_11_GENERATED_OUTPUT_REMOVED'
+
+      - name: Process B — fresh H0 session restores only through accepted snapshot import
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1RepresentativeSliceEffectiveProofTests.StageC_FreshProcessRestoresRepresentativeSliceOnlyThroughAcceptedH0Import"
+          test -f "${PROOF}/restored-plan.json"
+          echo "H1_11_FRESH_RESTORE_GREEN"
+
+      - name: Unity process B — clean rebuild in a fresh Editor
+        shell: bash
+        run: bash scripts/h1-11-unity-stage.sh rebuild StageB_CleanGeneratedOutputRebuildOfTheRealSliceInFreshEditor
+
+      - name: Process C — normalized reconstruction parity through the product verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1RepresentativeSliceEffectiveProofTests.StageD_RebuiltRepresentativeObservationProvesNormalizedParity"
+          echo "H1_11_PARITY_GREEN $(cat "${PROOF}/parity.json")"
+
+      - name: Unity process C — removed or replaced real asset is named, never substituted
+        shell: bash
+        run: bash scripts/h1-11-unity-stage.sh negative StageC_RemovedOrReplacedSelectedAssetYieldsNamedDiagnosticsNotSubstitution
+
+      - name: Process D — live catalogue and public restore name the missing or rebound asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1RepresentativeSliceEffectiveProofTests.StageE_"
+          echo "H1_11_NEGATIVE_GREEN $(cat "${PROOF}/negative.json" | tr -d '\n ')"
+
+      - name: Purchased upstream source bytes are unchanged by the complete flow
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Tools/AssetVault/h1_representative_slice.py sources --public-root .
+
+      - name: Emit public-safe evidence summary and supplementary capture
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64
+          import hashlib
+          import json
+          from pathlib import Path
+          proof = Path('Unity/ArkusUnity/H1-11-RealAssetSlice')
+          for name in ('seed.json', 'baseline.json', 'baseline-inspection.json', 'captured.json', 'rebuilt-inspection.json', 'parity.json', 'negative.json', 'capture.json'):
+              path = proof / name
+              if path.exists():
+                  print(f'H1_11_EVIDENCE {name} ' + json.dumps(json.loads(path.read_text(encoding="utf-8")), sort_keys=True))
+          capture = proof / 'capture.jpg'
+          committed = Path('Docs/evidence/WP-H1-11/SUPPLEMENTARY_CAPTURE.jpg')
+          if capture.exists():
+              # Informational only: the capture is supplementary and never the parity oracle. A rendering that differs
+              # from the committed capture is emitted so it can be inspected.
+              rendered = hashlib.sha256(capture.read_bytes()).hexdigest()
+              stored = hashlib.sha256(committed.read_bytes()).hexdigest() if committed.exists() else 'absent'
+              print(f'H1_11_CAPTURE_RENDERED sha256={rendered} committed={stored} identical={str(rendered == stored).lower()}')
+          if capture.exists() and rendered != stored:
+              encoded = base64.b64encode(capture.read_bytes()).decode('ascii')
+              print(f'H1_11_CAPTURE_BEGIN bytes={capture.stat().st_size}')
+              for index in range(0, len(encoded), 120):
+                  print('H1_11_CAPTURE ' + encoded[index:index + 120])
+              print('H1_11_CAPTURE_END')
+          PY
+
+      - name: Delete raw Unity evidence and private source
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf artifacts
+          sudo rm -rf Unity/ArkusUnity/H1-11-RealAssetSlice
+          sudo rm -rf Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta
+          sudo rm -rf Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes.meta Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta
+          rm -rf _asset_vault
+          sudo chown "$(id -u):$(id -g)" \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          git restore --source="${TARGET_SHA}" -- \
+            Unity/ArkusUnity/Packages/manifest.json \
+            Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          if [[ -d .git ]]; then
+            test -z "$(git status --porcelain --untracked-files=all)"
+          fi
+          echo 'H1_11_EPHEMERAL_EVIDENCE_REMOVED'

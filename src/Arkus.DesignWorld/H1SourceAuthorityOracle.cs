@@ -274,8 +274,8 @@ namespace Arkus.DesignWorld
         {
             private const string CataloguePath = "Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json";
             private const string AdoptionPath = "Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json";
-            private const string CatalogueBlob = "922dbdffbe2f0a622acc2e153ca8b181427f6ce6";
-            private const string AdoptionBlob = "664e83e25269f345a248ce43410a28ed0a670750";
+            private const string CatalogueBlob = "31d5ccc9dac335a3b49f0ec3cbb5007848146626";
+            private const string AdoptionBlob = "23e2a423c26903702e4035b600007ad35a926c58";
             private const string CandidateSha = "8c6ffd61d17e832ed5b9f900e8c0f7d4e85bf5f5";
             private const string AdapterId = "ctx-dw-h1-01-adapter-v1";
 

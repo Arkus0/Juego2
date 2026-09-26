@@ -1,0 +1,41 @@
+# WP-H1-11 foundational proof matrix
+
+Claim: a representative real-source slice selected from the Quaternius distributions already adopted by H1-04 (12 further Medieval pieces plus the accepted H1-04 facade and UAL1 humanoid with idle/walk/sit clips) is resolved, imported, bound, materialized, validated, saved/reloaded, inspected, checkpointed, deleted and rebuilt through the accepted H1-04..H1-10 public bridge with hierarchy, material, pivot/scale, rig and clip relationships intact; removing or replacing a selected asset is named, never silently substituted.
+
+Trust boundary: the accepted H1-04 adoption/catalogue model, H1-ASSET-CLOUD vault barrier, H1-05/06/07/08 materialization/lineage/adapters/validation, H1-09 reconciliation, H1-10 checkpoint/restore/parity, accepted H0 import/compare, Unity Editor/AssetDatabase/FBX importer and the pinned toolchains (Unity `6000.3.24f1`, GameCI `v0.1.69`, .NET `8.0.425`). H1-11 owns the selected-item manifest, the import recipe, the independently derived import expectations, the representative scenario and its coverage/diagnostic obligations (`Docs/workpacks/H1/H1_REMAINING_COMPRESSION_AMENDMENT.md`).
+
+Independent universe: `REPRESENTATIVE_SLICE.json` items are bijective with the admitted adoption slices beyond the four H1-04 slices (checked in both directions by `Tools/AssetVault/h1_representative_slice.py static` and `H1RepresentativeSliceContractTests`); the mount verifies every admitted slice; the scenario must cover every manifest item and clip. No completeness claim is derived from the plan, the mapping or Unity's own inventory.
+
+| Acceptance criterion | Oracle / completeness | Positive evidence | Negative control | Residual |
+| --- | --- | --- | --- | --- |
+| Every selected item traces to the accepted H1-04 source/adoption record | Adoption slice ↔ manifest bijection; distribution entry, content SHA-256, original `.meta` SHA-256 and GUID recomputed from the hash-verified vault payload (`check`) | Workflow `Resolve` step; `H1RepresentativeSliceContractTests.Every_selected_item_is_admitted_catalogued_and_nothing_is_admitted_silently` | Self-test: unadmitted item, omitted admitted item, rebound GUID, content drift, entry outside distribution, changed distribution byte, mount over existing file | F3 (facade provenance form) |
+| Stable logical catalogue ID and truthful native mapping | Accepted H1-04 catalogue reconciliation: committed effective inventory must equal Unity's live inventory; every effective row mapped, every mapping row effective | Unity Stage 0 inventory equality; contract test binds each manifest ID to its kind/source/content/path | Self-test/contract: logical ID replaced by asset path rejected (`unity.binding.*`), unknown item → `projection.source-missing`, wrong kind → `projection.source-wrong-type` | — |
+| Street-corner/humanoid slice materializes with hierarchy, prefab, material and component relationships intact | Stage A/B inspection after reload: canonical parents; realized prefab subtree = source prefab tree; every renderer slot bound, compatible and equal to the source binding; mesh/material/clip native identities equal the plan | Unity `StageA_*`, `StageB_*`, `baseline-inspection.json`, `rebuilt-inspection.json` | Coverage negatives: substituting any selected item or dropping any clip is named by `UncoveredObligations` | F2 (single-slot override schema) |
+| Pivot/scale/import assumptions explicit and validated | Expectations recomputed from FBX bytes (axis, unit scale, node tree, geometry bounds, material slots); declared uniform conversion | Unity `Stage0_EffectiveImportAndCatalogueMatchTheAdoptedSource`, `import-observation.json` | A changed conversion or source byte changes the recomputed facts (`check`) or fails Stage 0 | Importer-convention change is detected, not predicted |
+| Humanoid plus idle/walk/sit bindings inspect and reload without missing references | Stage 0 resolves each clip logical ID to the exact native clip, and every transform curve of each clip must target a node of the rig recomputed from the UAL1 FBX bytes that also exists in the imported rig (animation shape); Stage A/B require the reloaded animator, exact clip identity and every animated transform resolving under the realized rig on all three civilians; rig bones preserved. The normalized observation now carries the rig's skinned mesh/material references (F7), so parity covers them | Unity Stage 0/A/B; .NET StageB asserts every civilian's observed relationships include the `Mannequin` skinned mesh and both skinned materials | Dropped clip binding is named by the coverage oracle; a skinned material rebound inside the published generation is reported on `civilian.walk` (Unity Stage C) | F4 (Mecanim Humanoid) |
+| Clean reconstruction reproduces normalized semantic parity | Accepted H1-10 `H1ReconstructionParity` over the real slice after deleting all generated output and restoring only through H0 import | Workflow processes A3/B/C | One changed non-locator fact on a real humanoid/roof node → `checkpoint.restore-observation-drift` | F10 (observation is per import; parity across fresh re-imports not claimed) |
+| Removing/replacing one selected asset yields actionable diagnostics, not substitution | Reconciliation names the affected canonical node; live catalogue names the logical ID; materialize refuses without replacing the published generation; public restore blocks | Unity `StageC_*`; `StageE_*`; `EFFECTIVE_EVIDENCE.md` | This row is itself the negative class | F9 (asset-node removal code granularity) |
+| No H2 gameplay, exact CITY-03 seed or keeper geometry | Scenario is a generic street corner in the fixed managed test scene; only allowlisted H1-07 components | Scenario source | — | — |
+| Purchased upstream source not modified by bridge projection | Mounted SourceSlice must equal exactly the admitted files and hashes before and after the complete flow and after every Editor process has exited (exit-time saves included); the capture stage byte-compares the whole SourceSlice and published-generation trees around the draw | Workflow `sources` checks; `scripts/h1-11-unity-stage.sh` post-exit `sources`; Unity stage source-hash assertions | Extra/missing/changed file fails `sources`; the H1-10 fingerprint caught the capture's exit-time material write on `777bafb` (F8) | Interactive-Editor re-serialization (F8 residual) |
+| Rendered-looking success cannot hide normalized parity failure | Parity is decided only by the normalized product verifier; the capture is supplementary | `SUPPLEMENTARY_CAPTURE.jpg` + `capture.json` (same graph digest as the baseline) | Drift control above | Visual quality, textures and pose not claimed |
+
+## Proof budget
+
+H1-11 adds no product subsystem. Product-code changes are exactly two, both H1-11-owned compatibility requirements exposed by the representative real source (compression amendment: "import/pivot/scale/rig/animation-shape"):
+
+1. the H1-04 adoption pin data (12 admitted slices) inside the accepted catalogue model;
+2. the rig shape (F7): the H1-06 source-derived relationship universe enumerated `MeshFilter`/`MeshRenderer` references only, so a rigged source's `SkinnedMeshRenderer` mesh and materials were outside the normalized observation and parity. `CollectRelationships` now records them with the existing `mesh-reference`/`material-reference` kinds (no schema, digest or oracle change for non-skinned shapes; no predecessor evidence changes because no accepted scenario used a skinned prefab source).
+
+Everything else is manifest/import-configuration evidence, the vault mount of already-adopted content, the derived CTX-DW-H1 identity refresh, and tests/workflow. The capture exit-save finding (F8) was repaired inside H1-11's own test stage, not in product code.
+
+## Verdict
+
+```text
+FOUNDATIONAL_PROOF_VERDICT: READY
+UNRESOLVED_PROOF_OBLIGATIONS: 0
+KNOWN_UNDETECTED_DEFECT_CLASSES: 0
+TRUST_BOUNDARY: see "Trust boundary" above; accepted H1-04..H1-10, H1-ASSET-CLOUD, H0 import/compare, Unity 6000.3.24f1 Editor/importer, GameCI v0.1.69, .NET 8.0.425
+PROOF_BUDGET_VERDICT: WITHIN_BUDGET
+```
+
+Classified findings F1–F10 and out-of-claim residuals: `RESIDUAL_RISK.md`. Stable effective facts: `EFFECTIVE_EVIDENCE.md`. Exact-SHA run IDs of the frozen candidate: Worker pre-review comment on the canonical PR.
