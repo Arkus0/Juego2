@@ -7,9 +7,21 @@ namespace Proto.EditorTools
     public class ProtoModelPostprocessor : AssetPostprocessor
     {
         const string Root = "Assets/ThirdParty/Quaternius/";
+        const string Townsfolk = "Assets/_Derived/Generated/Characters/";
 
         void OnPreprocessModel()
         {
+            if (assetPath.StartsWith(Townsfolk))
+            {
+                // clothed Base Characters from Tools/blender/make_townsfolk.py: humanoid, animated by the UAL clips
+                var ti = (ModelImporter)assetImporter;
+                ti.animationType = ModelImporterAnimationType.Human;
+                ti.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+                ti.importAnimation = false;
+                ti.materialImportMode = ModelImporterMaterialImportMode.ImportViaMaterialDescription;
+                ti.materialLocation = ModelImporterMaterialLocation.InPrefab;
+                return;
+            }
             if (!assetPath.StartsWith(Root)) return;
             var importer = (ModelImporter)assetImporter;
             if (assetPath.Contains("/UAL/"))

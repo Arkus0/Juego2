@@ -31,12 +31,17 @@ LOOSE = [
     ("Animation/Unity", "UAL1.fbx", "UAL/Models"),
     ("Animation2/Unity", "UAL2.fbx", "UAL/Models"),
     ("Animation2/Female Mannequin/Unity", "Mannequin_F.fbx", "UAL/Models"),
+    # skin/eye textures for the townsfolk derived from Base Characters (Tools/blender/make_townsfolk.py)
+    ("Base Characters/Base Characters/Textures", "T_Regular_*.png", "BaseCharacters/Textures"),
+    ("Base Characters/Base Characters/Textures", "T_Teen_*.png", "BaseCharacters/Textures"),
+    ("Base Characters/Base Characters/Textures", "T_Eye_*.png", "BaseCharacters/Textures"),
 ]
 LICENSES = [
     ("Medieval Village/License_Source.txt", "MedievalVillage/LICENSE_Quaternius.txt"),
     ("Nature/License_Standard.txt", "Nature/LICENSE_Quaternius.txt"),
     ("Props (gratis)/License_Standard.txt", "Props/LICENSE_Quaternius.txt"),
     ("Animation/License.txt", "UAL/LICENSE_Quaternius.txt"),
+    ("Base Characters/License_Source.txt", "BaseCharacters/LICENSE_Quaternius.txt"),
 ]
 
 
