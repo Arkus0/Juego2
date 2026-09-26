@@ -520,47 +520,91 @@ namespace Arkus.H1.UnityHost
     /// </summary>
     public static class H1ReconstructionParity
     {
-        public const string SchemaId = "arkus.h1-10-reconstruction-digest@1";
+        public const string SchemaId = "arkus.h1-10-reconstruction-digest@2";
         public const string GeneratedRealizationKind = "managed-prefab-variant";
-        private static readonly string[] Fields =
-        {
-            "objectId", "parentObjectId", "sourceLogicalId", "sourceKind", "sourcePath", "sourceGuid", "sourceLocalFileId",
-            "sourceContentSha256", "realizationKind", "realizedPath", "realizedGuid", "realizedLocalFileId", "prefabGenerationId",
-            "relationshipDigest", "componentDigest"
-        };
+        private static readonly HashSet<string> GeneratedLocators = new HashSet<string>(StringComparer.Ordinal) { "realizedGuid", "realizedLocalFileId" };
 
+        /// <summary>
+        /// Canonical digest over every field of every observed node (recursively, keys ordinal-sorted), so a
+        /// fact added to the observation later is included by construction. The only exclusion is the value of
+        /// the two native locators of generated derivative prefabs; they must still be present and non-empty.
+        /// </summary>
         public static string Digest(IReadOnlyDictionary<string, object?> observation)
         {
             if (observation == null) throw new ArgumentNullException(nameof(observation));
-            if (!observation.TryGetValue("nodes", out var raw) || raw is not IEnumerable<object?> nodes)
+            if (!observation.TryGetValue("nodes", out var raw) || raw is not IEnumerable<object?> nodes || raw is string)
                 throw Invalid("The observation has no node list.");
             var rows = new SortedDictionary<string, string>(StringComparer.Ordinal);
             foreach (var item in nodes)
             {
                 if (item is not IReadOnlyDictionary<string, object?> node) throw Invalid("An observed node is not an object.");
-                var generated = string.Equals(Text(node, "realizationKind"), GeneratedRealizationKind, StringComparison.Ordinal);
-                var values = new List<string>();
-                foreach (var field in Fields)
-                {
-                    var value = Text(node, field);
-                    if (generated && (field == "realizedGuid" || field == "realizedLocalFileId"))
-                    {
-                        // The locator must exist; only its generation-local value is excluded.
-                        if (value.Length == 0) throw Invalid("A generated realization has no native locator.");
-                        value = "generated";
-                    }
-                    values.Add(field + "=" + value);
-                }
-                values.Add("positionMm=" + Vector(node, "positionMm", false));
-                values.Add("rotationMilliDegrees=" + Vector(node, "rotationMilliDegrees", true));
-                values.Add("scalePpm=" + Vector(node, "scalePpm", false));
                 var objectId = Text(node, "objectId");
+                var generated = string.Equals(Text(node, "realizationKind"), GeneratedRealizationKind, StringComparison.Ordinal);
+                var builder = new StringBuilder();
+                foreach (var key in node.Keys.OrderBy(value => value, StringComparer.Ordinal))
+                {
+                    builder.Append(Canonical(key)).Append(':');
+                    if (generated && GeneratedLocators.Contains(key))
+                    {
+                        if (Text(node, key).Length == 0) throw Invalid("A generated realization has no native locator.");
+                        builder.Append("\"<generation-local>\"");
+                    }
+                    else builder.Append(CanonicalValue(node[key], key == "rotationMilliDegrees"));
+                    builder.Append(';');
+                }
                 if (objectId.Length == 0 || rows.ContainsKey(objectId)) throw Invalid("Observed node identities are empty or duplicated.");
-                rows.Add(objectId, string.Join("|", values));
+                rows.Add(objectId, builder.ToString());
             }
             if (rows.Count == 0) throw Invalid("The observation has no managed nodes.");
             return H1ProjectEnvironmentProbe.ShaText(SchemaId + "\n" + string.Join("\n", rows.Values));
         }
+
+        private static string CanonicalValue(object? value, bool rotation)
+        {
+            switch (value)
+            {
+                case null: return "null";
+                case string text: return Canonical(text);
+                case bool flag: return flag ? "true" : "false";
+                case IReadOnlyDictionary<string, object?> map:
+                    return rotation
+                        ? RotationBody(map)
+                        : "{" + string.Join(",", map.Keys.OrderBy(key => key, StringComparer.Ordinal).Select(key => Canonical(key) + ":" + CanonicalValue(map[key], false))) + "}";
+                case IEnumerable<object?> list:
+                    return "[" + string.Join(",", list.Select(item => CanonicalValue(item, false))) + "]";
+                case double real:
+                    return real.ToString("R", CultureInfo.InvariantCulture);
+                case float single:
+                    return ((double)single).ToString("R", CultureInfo.InvariantCulture);
+                case IConvertible number:
+                    try { return Convert.ToInt64(number, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture); }
+                    catch (Exception exception) when (exception is FormatException || exception is InvalidCastException || exception is OverflowException)
+                    {
+                        throw Invalid("Observed value is not canonical.");
+                    }
+                default:
+                    throw Invalid("Observed value has an unsupported type.");
+            }
+        }
+
+        private static string RotationBody(IReadOnlyDictionary<string, object?> map)
+        {
+            var parts = new List<string>();
+            foreach (var key in map.Keys.OrderBy(value => value, StringComparer.Ordinal))
+            {
+                long number;
+                try { number = Convert.ToInt64(map[key], CultureInfo.InvariantCulture); }
+                catch (Exception exception) when (exception is FormatException || exception is InvalidCastException || exception is OverflowException || exception is ArgumentNullException)
+                {
+                    throw Invalid("Observed rotation axis is not an integer.");
+                }
+                number %= 360000; if (number < 0) number += 360000;
+                parts.Add(Canonical(key) + ":" + number.ToString(CultureInfo.InvariantCulture));
+            }
+            return "{" + string.Join(",", parts) + "}";
+        }
+
+        private static string Canonical(string text) => JsonSerializer.Serialize(text);
 
         public static void RequireBaseline(H1ProjectCheckpointManifest manifest)
         {
@@ -591,25 +635,6 @@ namespace Arkus.H1.UnityHost
         {
             if (!source.TryGetValue(key, out var value) || value is not string text) throw Invalid("Observed field is missing or not text: " + key + ".");
             return text;
-        }
-
-        private static string Vector(IReadOnlyDictionary<string, object?> node, string key, bool rotation)
-        {
-            if (!node.TryGetValue(key, out var raw) || raw is not IReadOnlyDictionary<string, object?> vector) throw Invalid("Observed vector is missing: " + key + ".");
-            var parts = new List<string>();
-            foreach (var axis in new[] { "x", "y", "z" })
-            {
-                if (!vector.TryGetValue(axis, out var value) || value == null) throw Invalid("Observed vector axis is missing: " + key + "." + axis + ".");
-                long number;
-                try { number = Convert.ToInt64(value, CultureInfo.InvariantCulture); }
-                catch (Exception exception) when (exception is FormatException || exception is InvalidCastException || exception is OverflowException)
-                {
-                    throw Invalid("Observed vector axis is not an integer: " + key + "." + axis + ".");
-                }
-                if (rotation) { number %= 360000; if (number < 0) number += 360000; }
-                parts.Add(number.ToString(CultureInfo.InvariantCulture));
-            }
-            return string.Join(",", parts);
         }
 
         private static bool IsHash(string value) => value != null && value.Length == 64 && value.All(c => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'));

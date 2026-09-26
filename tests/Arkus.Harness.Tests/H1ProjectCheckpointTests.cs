@@ -145,6 +145,19 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void Parity_IncludesObservedFactsItDoesNotNameExplicitly()
+        {
+            var plan = Fixture().Plan;
+            var baseline = H1ReconstructionParity.Digest(Observation(plan, true, PrefabNode("facade", "g1", "1")));
+            var extended = PrefabNode("facade", "g2", "2");
+            extended["futureRealizationFact"] = "value";
+            Assert.NotEqual(baseline, H1ReconstructionParity.Digest(Observation(plan, true, extended)));
+            var relationships = PrefabNode("facade", "g3", "3");
+            relationships["relationships"] = new object?[] { new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "variant-base", ["assetGuid"] = "a" } };
+            Assert.NotEqual(baseline, H1ReconstructionParity.Digest(Observation(plan, true, relationships)));
+        }
+
+        [Fact]
         public void Parity_DetectsSourceLocatorTransformAndMembershipDrift()
         {
             var plan = Fixture().Plan;
