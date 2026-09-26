@@ -37,6 +37,34 @@ namespace Arkus.Harness.Tests
                 result.GetProperty("canonicalDependencies")[0].GetProperty("targetId").GetString());
         }
 
+        [Fact]
+        public void ProductionHostsApplyTheCompiledDocumentMutationAcrossJsonlAndMcp()
+        {
+            // WP-H1-01 reopen 1: both public production hosts admit the Unity binding document codec, so a client can
+            // author the binding without transcribing the opaque payload.
+            using var reference = new ReferenceClient();
+            using var mcp = new McpClient();
+            var compile = Equivalent(reference, mcp, UnityAuthoringProvider.CompileName, PotesCompileRequest());
+            var documentMutation = JsonSerializer.Deserialize<Dictionary<string, object?>>(Result(compile.Reference).GetProperty("documentMutation").GetRawText());
+            var summary = Result(Equivalent(reference, mcp, "world.summary", Empty()).Reference).GetProperty("world");
+            var request = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["idempotencyKey"] = "request.h1-01.transport-document",
+                ["expectedRevision"] = summary.GetProperty("revision").GetInt64(),
+                ["expectedHash"] = summary.GetProperty("hash").GetString(),
+                ["operations"] = new object?[]
+                {
+                    new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "put-object", ["id"] = "building.potes-facade", ["typeId"] = "fixture.facade" },
+                    new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "put-object", ["id"] = "market.potes-root", ["typeId"] = "fixture.market-root" },
+                    documentMutation
+                }
+            };
+            var applied = Equivalent(reference, mcp, "authoring.change.apply", request);
+            Assert.Equal("success", applied.Reference.GetProperty("status").GetString());
+            var after = Result(Equivalent(reference, mcp, "world.summary", Empty()).Reference);
+            Assert.Equal(1, after.GetProperty("extensionCount").GetInt32());
+        }
+
         private static (JsonElement Reference, JsonElement Mcp) Equivalent(
             IClient reference,
             IClient mcp,
