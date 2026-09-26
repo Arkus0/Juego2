@@ -22,6 +22,7 @@ for required in \
   Docs/evidence/WP-H1-11/PROOF_MATRIX.md \
   Docs/evidence/WP-H1-11/RESIDUAL_RISK.md \
   Docs/evidence/WP-H1-11/EFFECTIVE_EVIDENCE.md \
+  Docs/evidence/WP-H1-11/SUPPLEMENTARY_CAPTURE.jpg \
   Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json \
   Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json \
   Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json \
