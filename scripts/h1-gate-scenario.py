@@ -367,7 +367,11 @@ def author(host, stage, key, operations):
 
 
 def published_scene(workspace, generation):
-    path = Path(workspace) / "Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes/Generations" / f"{generation}.unity"
+    """Locate the published scene the way a human editor would: through the active publication manifest."""
+    project = Path(workspace) / "Unity/ArkusUnity"
+    manifest = json.loads((project / "Assets/Arkus/H1/ManagedScenes/current.json").read_text(encoding="utf-8"))
+    require(manifest.get("generationId") == generation, f"active manifest names {manifest.get('generationId')}, not {generation}")
+    path = project / manifest["scenePath"]
     require(path.is_file(), f"published generation scene is absent: {path}")
     return path
 
