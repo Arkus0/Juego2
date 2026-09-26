@@ -153,6 +153,7 @@ jobs:
           set -euo pipefail
           test "${H1_10_UNITY_BASELINE_EXIT:-99}" -eq 0
           test -f Unity/ArkusUnity/H1-10-Reconstruction/baseline.json
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/baseline-observation.json
           test -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes/current.json
 
       - name: Process A2 — publish checkpoint from effective observation
@@ -165,6 +166,16 @@ jobs:
           test -f Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint/current.json
           test -f Unity/ArkusUnity/H1-10-Reconstruction/captured.json
           echo "H1_10_CHECKPOINT_PUBLISHED_GREEN ${TARGET_SHA}"
+
+      - name: Effective negative — missing or rebound accepted source blocks public restore
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1ProjectCheckpointEffectiveProofTests.Negative_EffectiveMissingOrReboundSourceBlocksPublicRestore"
+          test -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx
+          echo "H1_10_SOURCE_BLOCK_GREEN ${TARGET_SHA}"
 
       - name: Effective negative — incompatible fingerprint withholds recovery artifacts
         shell: bash
@@ -227,7 +238,25 @@ jobs:
           set -euo pipefail
           test "${H1_10_UNITY_REBUILD_EXIT:-99}" -eq 0
           test -f Unity/ArkusUnity/H1-10-Reconstruction/final.json
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/rebuilt-observation.json
           test -f Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes/current.json
+
+      - name: Process D — normalized reconstruction parity through the product verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Arkus.Harness.Tests/Arkus.Harness.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~H1ProjectCheckpointEffectiveProofTests.StageD_RebuiltObservationProvesNormalizedParityThroughProductVerifier"
+          test -f Unity/ArkusUnity/H1-10-Reconstruction/parity.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          parity = json.loads(Path('Unity/ArkusUnity/H1-10-Reconstruction/parity.json').read_text(encoding='utf-8'))
+          print('H1_10_PARITY nodes={} reconstruction={} graph={} baselineRealization={} rebuiltRealization={}'.format(
+              parity['nodes'], parity['reconstructionDigest'], parity['graphDigest'],
+              parity['baselineRealizationDigest'], parity['rebuiltRealizationDigest']))
+          PY
           echo "H1_10_FRESH_RECONSTRUCTION_PARITY_GREEN ${TARGET_SHA}"
 
       - name: Unity process C — injected failure before generated publication

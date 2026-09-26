@@ -7,6 +7,12 @@ using UnityEngine;
 
 namespace Arkus.H1.Editor.Tests
 {
+    /// <summary>
+    /// Effective Unity stages of the process-staged H1-10 proof. Each stage runs in its own Editor process.
+    /// The canonical plan is passed to the accepted worker entry points byte-for-byte (never re-serialized by
+    /// test-local types), and the raw worker replies are handed back to the .NET product decoder and parity
+    /// verifier, which own the reconstruction-parity decision.
+    /// </summary>
     public sealed class H1ProjectCheckpointReconstructionTests
     {
         private const string SourceRoot = "Assets/Arkus/H1/SourceSlice";
@@ -20,8 +26,8 @@ namespace Arkus.H1.Editor.Tests
         {
             Assert.That(AssetDatabase.IsValidFolder(SourceRoot), Is.True, "accepted H1 SourceSlice must be mounted");
             DeleteGenerated();
-            var plan = ReadPlan("plan.json");
-            var materialized = Execute("materialize", plan);
+            var rawPlan = ReadRawPlan("plan.json", out var plan);
+            var materialized = Execute("materialize", rawPlan, out _);
             Assert.That(materialized.errorCode, Is.Empty);
             Assert.That(materialized.observation, Is.Not.Null);
             Assert.That(materialized.observation.active, Is.True);
@@ -41,6 +47,7 @@ namespace Arkus.H1.Editor.Tests
                 realizationDigest = observed.observation.realizationDigest
             };
             File.WriteAllText(Path.Combine(ProofDirectory(), "baseline.json"), JsonUtility.ToJson(baseline));
+            WriteObservation(rawPlan, "baseline-observation.json");
         }
 
         [Test]
@@ -51,23 +58,19 @@ namespace Arkus.H1.Editor.Tests
             Assert.That(AssetDatabase.IsValidFolder(ManagedScenes), Is.False, "workflow must remove all generated scenes before fresh-process rebuild");
             Assert.That(AssetDatabase.IsValidFolder(ManagedPrefabs), Is.False, "workflow must remove all generated prefabs before fresh-process rebuild");
 
-            var plan = ReadPlan("restored-plan.json");
+            var rawPlan = ReadRawPlan("restored-plan.json", out var plan);
             var baseline = ReadBaseline();
             Assert.That(plan.inputDigest, Is.EqualTo(baseline.inputDigest));
             Assert.That(plan.canonicalHash, Is.EqualTo(baseline.canonicalHash));
             Assert.That(plan.catalogueFingerprint, Is.EqualTo(baseline.catalogueFingerprint));
 
-            var rebuiltRaw = H1SceneProjection.ExecuteCleanRebuild(JsonUtility.ToJson(new ProjectionRequest
-            {
-                schemaId = "arkus.h1-projection-worker-request@1",
-                mode = "clean-rebuild",
-                sceneLogicalId = SceneId,
-                plan = plan
-            }));
+            // The public clean-rebuild worker entry point (H1EditorWorker executor clean-rebuild@1).
+            var rebuiltRaw = H1SceneProjection.ExecuteCleanRebuild(Request("clean-rebuild", rawPlan));
             var rebuilt = JsonUtility.FromJson<ProjectionReply>(rebuiltRaw);
             Assert.That(rebuilt, Is.Not.Null, rebuiltRaw);
             Assert.That(rebuilt.errorCode, Is.Empty, rebuiltRaw);
             Assert.That(rebuilt.observation, Is.Not.Null, rebuiltRaw);
+            Assert.That(rebuilt.observation.active, Is.True, rebuiltRaw);
             Assert.That(rebuilt.observation.inputDigest, Is.EqualTo(baseline.inputDigest));
             Assert.That(rebuilt.observation.canonicalHash, Is.EqualTo(baseline.canonicalHash));
             Assert.That(rebuilt.observation.catalogueFingerprint, Is.EqualTo(baseline.catalogueFingerprint));
@@ -75,7 +78,10 @@ namespace Arkus.H1.Editor.Tests
             var observed = Reconcile();
             RequireParityObservation(observed, plan);
             Assert.That(observed.observation.graphDigest, Is.EqualTo(baseline.graphDigest));
-            Assert.That(observed.observation.realizationDigest, Is.EqualTo(baseline.realizationDigest));
+            // The accepted realization digest embeds generation-local derivative-prefab locators, which a clean
+            // rebuild must regenerate. Normalized reconstruction parity is decided by the .NET product verifier
+            // (H1ReconstructionParity) over the raw observation written below.
+            WriteObservation(rawPlan, "rebuilt-observation.json");
             File.WriteAllText(Path.Combine(ProofDirectory(), "final.json"), JsonUtility.ToJson(new BaselineEvidence
             {
                 schemaId = "arkus.h1-10-final@1",
@@ -92,13 +98,13 @@ namespace Arkus.H1.Editor.Tests
         {
             Assert.That(AssetDatabase.IsValidFolder(SourceRoot), Is.True, "accepted H1 SourceSlice must be mounted");
             DeleteGenerated();
-            var plan = ReadPlan("plan.json");
+            var rawPlan = ReadRawPlan("plan.json", out _);
             var fault = Path.Combine(ProjectRoot(), "Library", "Arkus", "H1Projection", "fail-before-publish");
             Directory.CreateDirectory(Path.GetDirectoryName(fault));
             File.WriteAllText(fault, "fail");
             try
             {
-                var failed = Execute("materialize", plan);
+                var failed = Execute("materialize", rawPlan, out _);
                 Assert.That(failed.errorCode, Is.EqualTo("projection.forced-prepublication-failure"));
                 AssetDatabase.Refresh();
                 Assert.That(File.Exists(ProjectPath(ManifestPath)), Is.False, "failed staged generation must never become current");
@@ -110,18 +116,25 @@ namespace Arkus.H1.Editor.Tests
             }
         }
 
-        private static ProjectionReply Execute(string mode, ProjectionPlan plan)
+        private static string Request(string mode, string rawPlan) =>
+            "{\"schemaId\":\"arkus.h1-projection-worker-request@1\",\"mode\":\"" + mode + "\",\"sceneLogicalId\":\"" + SceneId + "\",\"plan\":" + rawPlan + "}";
+
+        private static ProjectionReply Execute(string mode, string rawPlan, out string raw)
         {
-            var raw = H1SceneProjection.Execute(JsonUtility.ToJson(new ProjectionRequest
-            {
-                schemaId = "arkus.h1-projection-worker-request@1",
-                mode = mode,
-                sceneLogicalId = SceneId,
-                plan = plan
-            }));
+            raw = H1SceneProjection.Execute(Request(mode, rawPlan));
             var reply = JsonUtility.FromJson<ProjectionReply>(raw);
             Assert.That(reply, Is.Not.Null, raw);
             return reply;
+        }
+
+        private static void WriteObservation(string rawPlan, string name)
+        {
+            // Exactly the worker reply the public unity.host.projection.observe executor decodes.
+            var observed = Execute("observe", rawPlan, out var raw);
+            Assert.That(observed.errorCode, Is.Empty, raw);
+            Assert.That(observed.observation, Is.Not.Null, raw);
+            Assert.That(observed.observation.active, Is.True, raw);
+            File.WriteAllText(Path.Combine(ProofDirectory(), name), raw);
         }
 
         private static ReconciliationReply Reconcile()
@@ -153,16 +166,17 @@ namespace Arkus.H1.Editor.Tests
                 Is.EqualTo(plan.nodes.Select(value => value.objectId).OrderBy(value => value, StringComparer.Ordinal).ToArray()));
         }
 
-        private static ProjectionPlan ReadPlan(string name)
+        private static string ReadRawPlan(string name, out ProjectionPlan plan)
         {
             var path = Path.Combine(ProofDirectory(), name);
             Assert.That(File.Exists(path), Is.True, "H1-10 proof plan is missing: " + path);
-            var plan = JsonUtility.FromJson<ProjectionPlan>(File.ReadAllText(path));
+            var raw = File.ReadAllText(path);
+            plan = JsonUtility.FromJson<ProjectionPlan>(raw);
             Assert.That(plan, Is.Not.Null);
             Assert.That(plan.schemaId, Is.EqualTo("arkus.h1-managed-scene-plan@1"));
             Assert.That(plan.sceneLogicalId, Is.EqualTo(SceneId));
             Assert.That(plan.nodes, Is.Not.Null.And.Not.Empty);
-            return plan;
+            return raw;
         }
 
         private static BaselineEvidence ReadBaseline()
@@ -186,25 +200,12 @@ namespace Arkus.H1.Editor.Tests
             AssetDatabase.Refresh();
         }
 
-        [Serializable] private sealed class ProjectionRequest { public string schemaId; public string mode; public string sceneLogicalId; public ProjectionPlan plan; }
         [Serializable] private sealed class ProjectionPlan
         {
-            public string schemaId; public string sceneLogicalId; public string worldId; public long worldRevision;
-            public string canonicalHash; public string catalogueFingerprint; public string inputDigest; public ProjectionNode[] nodes;
+            public string schemaId; public string sceneLogicalId; public string inputDigest; public string canonicalHash; public string catalogueFingerprint;
+            public ProjectionNodeId[] nodes;
         }
-        [Serializable] private sealed class ProjectionNode
-        {
-            public string objectId; public string parentObjectId; public string sourceKind; public string sourceLogicalId;
-            public string sourcePath; public string sourceGuid; public string sourceLocalFileId; public string sourceContentSha256;
-            public ProjectionVector positionMm; public ProjectionVector rotationMilliDegrees; public ProjectionVector scalePpm;
-            public ProjectionComponent[] components;
-        }
-        [Serializable] private sealed class ProjectionComponent
-        {
-            public string schemaId; public string kind; public string relation; public string targetObjectId; public string referenceKind;
-            public string referenceLogicalId; public string referencePath; public string referenceGuid; public string referenceLocalFileId; public string referenceContentSha256;
-        }
-        [Serializable] private sealed class ProjectionVector { public long x; public long y; public long z; }
+        [Serializable] private sealed class ProjectionNodeId { public string objectId; }
         [Serializable] private sealed class ProjectionReply { public string errorCode; public ProjectionObservation observation; }
         [Serializable] private sealed class ProjectionObservation
         {

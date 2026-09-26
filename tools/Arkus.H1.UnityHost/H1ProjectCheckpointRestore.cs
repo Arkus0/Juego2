@@ -39,6 +39,8 @@ namespace Arkus.H1.UnityHost
                 var checkpoint = ReadVerifiedCheckpoint();
                 if (!string.Equals(checkpoint.State, "ready", StringComparison.Ordinal))
                     return CapabilityInvocationResult.Succeeded(BlockedData(checkpoint));
+                // Parity must be provable before anything is imported, deleted or rebuilt.
+                H1ReconstructionParity.RequireBaseline(checkpoint.Manifest);
 
                 // Read the fresh process's actual current anchor. This is deliberately obtained from
                 // the accepted H0 export surface rather than reconstructed by H1.
@@ -94,11 +96,15 @@ namespace Arkus.H1.UnityHost
                 var observed = RequireSuccess(
                     context.Contract.Dispatch(H1ManagedSceneExecutor.ObserveKey.Name, Exact(), SceneRequest()),
                     "checkpoint.restore-observe-failed");
-                VerifyObservation(observed, checkpoint.Manifest);
+                var reconstructionDigest = H1ReconstructionParity.Require(checkpoint.Manifest, observed);
 
-                return CapabilityInvocationResult.Succeeded(RestoredData(checkpoint, imported, observed));
+                return CapabilityInvocationResult.Succeeded(RestoredData(checkpoint, imported, observed, reconstructionDigest));
             }
             catch (H1ProjectCheckpointException exception)
+            {
+                return Failure(exception.Code, exception.Message);
+            }
+            catch (H1ProjectionException exception)
             {
                 return Failure(exception.Code, exception.Message);
             }
@@ -162,33 +168,6 @@ namespace Arkus.H1.UnityHost
                 "checkpoint.restore-journal-anchor-mismatch");
         }
 
-        private static void VerifyObservation(
-            IReadOnlyDictionary<string, object?> observed,
-            H1ProjectCheckpointManifest manifest)
-        {
-            if (!RequireBool(observed, "current", "checkpoint.restore-observation-invalid"))
-                throw Error("checkpoint.restore-observation-not-current", "Clean rebuild did not produce a current normalized Unity observation.");
-            if (!string.Equals(RequireString(observed, "inputDigest", "checkpoint.restore-observation-invalid"), manifest.Projection.InputDigest, StringComparison.Ordinal) ||
-                !string.Equals(RequireString(observed, "canonicalHash", "checkpoint.restore-observation-invalid"), manifest.Canonical.Hash, StringComparison.Ordinal) ||
-                !string.Equals(RequireString(observed, "catalogueFingerprint", "checkpoint.restore-observation-invalid"), manifest.Environment.CatalogueFingerprint, StringComparison.Ordinal))
-            {
-                throw Error("checkpoint.restore-plan-drift", "Clean rebuild observation no longer matches the checkpoint normalized plan/canonical/catalogue identity.");
-            }
-
-            var graph = RequireString(observed, "graphDigest", "checkpoint.restore-observation-invalid");
-            var realization = RequireString(observed, "realizationDigest", "checkpoint.restore-observation-invalid");
-            if (string.IsNullOrWhiteSpace(manifest.Projection.ObservationGraphDigest) ||
-                string.IsNullOrWhiteSpace(manifest.Projection.ObservationRealizationDigest))
-            {
-                throw Error("checkpoint.restore-missing-baseline-observation", "The checkpoint has no accepted baseline observation digests to prove reconstruction parity.");
-            }
-            if (!string.Equals(graph, manifest.Projection.ObservationGraphDigest, StringComparison.Ordinal) ||
-                !string.Equals(realization, manifest.Projection.ObservationRealizationDigest, StringComparison.Ordinal))
-            {
-                throw Error("checkpoint.restore-observation-drift", "Clean rebuild observation differs from the checkpoint graph/realization digests.");
-            }
-        }
-
         private static IReadOnlyDictionary<string, object?> BlockedData(H1ProjectCheckpointRead checkpoint)
         {
             return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -201,6 +180,7 @@ namespace Arkus.H1.UnityHost
                 ["planInputDigest"] = checkpoint.Manifest.Projection.InputDigest,
                 ["graphDigest"] = checkpoint.Manifest.Projection.ObservationGraphDigest,
                 ["realizationDigest"] = checkpoint.Manifest.Projection.ObservationRealizationDigest,
+                ["reconstructionDigest"] = checkpoint.Manifest.Projection.ObservationReconstructionDigest,
                 ["lineageDisposition"] = "not-restored",
                 ["sameAuthorableState"] = false,
                 ["blockers"] = ToObjectArray(checkpoint.Blockers)
@@ -210,7 +190,8 @@ namespace Arkus.H1.UnityHost
         private static IReadOnlyDictionary<string, object?> RestoredData(
             H1ProjectCheckpointRead checkpoint,
             IReadOnlyDictionary<string, object?> imported,
-            IReadOnlyDictionary<string, object?> observed)
+            IReadOnlyDictionary<string, object?> observed,
+            string reconstructionDigest)
         {
             return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
             {
@@ -222,6 +203,7 @@ namespace Arkus.H1.UnityHost
                 ["planInputDigest"] = checkpoint.Manifest.Projection.InputDigest,
                 ["graphDigest"] = RequireString(observed, "graphDigest", "checkpoint.restore-observation-invalid"),
                 ["realizationDigest"] = RequireString(observed, "realizationDigest", "checkpoint.restore-observation-invalid"),
+                ["reconstructionDigest"] = reconstructionDigest,
                 ["lineageDisposition"] = RequireString(imported, "lineageDisposition", "checkpoint.restore-import-result-invalid"),
                 ["sameAuthorableState"] = true,
                 ["blockers"] = Array.Empty<object?>()
@@ -340,6 +322,7 @@ namespace Arkus.H1.UnityHost
                     ["planInputDigest"] = SchemaNode.String(),
                     ["graphDigest"] = SchemaNode.String(),
                     ["realizationDigest"] = SchemaNode.String(),
+                    ["reconstructionDigest"] = SchemaNode.String(),
                     ["lineageDisposition"] = SchemaNode.String(new[] { "new-local-lineage", "not-restored" }),
                     ["sameAuthorableState"] = SchemaNode.Boolean(),
                     ["blockers"] = SchemaNode.Array(SchemaNode.String())
@@ -347,7 +330,7 @@ namespace Arkus.H1.UnityHost
                 new[]
                 {
                     "schemaId", "state", "checkpointId", "canonicalHash", "revision", "planInputDigest",
-                    "graphDigest", "realizationDigest", "lineageDisposition", "sameAuthorableState", "blockers"
+                    "graphDigest", "realizationDigest", "reconstructionDigest", "lineageDisposition", "sameAuthorableState", "blockers"
                 }));
 
             return new CapabilityDefinition(

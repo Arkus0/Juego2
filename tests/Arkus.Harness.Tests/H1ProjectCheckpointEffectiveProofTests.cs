@@ -9,6 +9,7 @@ using Arkus.EngineBridge.UnityAuthoring;
 using Arkus.Game.Authoring;
 using Arkus.Game.World;
 using Arkus.H1.UnityHost;
+using Arkus.Harness.Projection;
 using Arkus.Harness.Protocol;
 using Arkus.Harness.Runtime;
 using Xunit;
@@ -49,7 +50,8 @@ namespace Arkus.Harness.Tests
             Assert.Equal(1L, Integer(journal, "entryCount"));
 
             var plan = H1ManagedScenePlan.Build(session.Current, catalogue);
-            Assert.Equal(2, plan.Nodes.Length);
+            Assert.Equal(4, plan.Nodes.Length);
+            Assert.Contains(plan.Nodes, node => node.ObjectId == "bar.potes" && node.ParentObjectId == "market.potes" && node.Components.Count() >= 3);
             Assert.Equal(session.Current.Revision, plan.WorldRevision);
             Assert.Equal(CanonicalWorldStateCodec.ComputeContentHash(session.Current), plan.CanonicalHash);
             File.WriteAllText(Path.Combine(directory, "plan.json"), JsonSerializer.Serialize(plan, Json));
@@ -88,15 +90,17 @@ namespace Arkus.Harness.Tests
             Assert.Equal(plan.CanonicalHash, baseline.CanonicalHash);
             Assert.Equal(plan.CatalogueFingerprint, baseline.CatalogueFingerprint);
 
+            // The raw effective Unity reply is decoded by the accepted public observe executor, and the
+            // checkpoint baseline is derived by the same product path the capture handler uses.
+            var observed = DecodeObservation(new ReadOnlyWorldStateView(session), profile, File.ReadAllText(Path.Combine(directory, "baseline-observation.json")));
+            Assert.True((bool)observed["current"]!);
+            Assert.Equal(baseline.GraphDigest, Text(observed, "graphDigest"));
+            Assert.Equal(baseline.RealizationDigest, Text(observed, "realizationDigest"));
+
             var environment = H1ProjectEnvironmentProbe.Capture(profile, catalogue);
-            var captured = new H1ProjectCheckpointStore(profile).Capture(
-                snapshot,
-                journal,
-                environment,
-                plan,
-                baseline.GraphDigest,
-                baseline.RealizationDigest);
+            var captured = new H1ProjectCheckpointStore(profile).CaptureFromObservation(snapshot, journal, environment, plan, observed);
             Assert.Equal("ready", captured.State);
+            Assert.Equal(H1ReconstructionParity.Digest(observed), captured.Manifest.Projection.ObservationReconstructionDigest);
             File.WriteAllText(Path.Combine(directory, "captured.json"), JsonSerializer.Serialize(new CaptureEvidence
             {
                 SchemaId = "arkus.h1-10-capture-evidence@1",
@@ -107,7 +111,8 @@ namespace Arkus.Harness.Tests
                 Revision = captured.Manifest.Canonical.Revision,
                 InputDigest = captured.Manifest.Projection.InputDigest,
                 GraphDigest = captured.Manifest.Projection.ObservationGraphDigest,
-                RealizationDigest = captured.Manifest.Projection.ObservationRealizationDigest
+                RealizationDigest = captured.Manifest.Projection.ObservationRealizationDigest,
+                ReconstructionDigest = captured.Manifest.Projection.ObservationReconstructionDigest
             }, Json));
         }
 
@@ -186,6 +191,78 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void StageD_RebuiltObservationProvesNormalizedParityThroughProductVerifier()
+        {
+            if (!Enabled()) return;
+            var profile = H1UnityLaunchProfile.ForCurrentHost();
+            var directory = ProofDirectory(profile);
+            var catalogue = Catalogue(profile);
+            var checkpoint = new H1ProjectCheckpointStore(profile).ReadCurrent(H1ProjectEnvironmentProbe.Capture(profile, catalogue));
+            Assert.Equal("ready", checkpoint.State);
+
+            // A distinct process again recovers canonical truth only through accepted H0 import, then decodes
+            // the second Editor process's effective observation of the clean rebuild.
+            var fresh = new PortableWorldAuthoringSession(new WorldState(new WorldId("world.h1-10.parity-process"), 0, Array.Empty<WorldObject>()));
+            var contract = CanonicalWorldContract.Compose(new WorldInspectionService(fresh), fresh);
+            var anchor = Map(Success(contract.Dispatch(WorldPortabilityContract.ExportName, Exact(), Empty()), "fresh export"), "anchor");
+            Success(contract.Dispatch(WorldPortabilityContract.ImportName, Exact(), ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["idempotencyKey"] = "h1-10-parity:" + checkpoint.CheckpointId,
+                ["expectedRevision"] = Integer(anchor, "revision"),
+                ["expectedHash"] = Text(anchor, "hash"),
+                ["snapshot"] = H1ProjectCheckpointStore.ParsePortableObject(checkpoint.SnapshotJson)
+            })), "accepted H0 snapshot import");
+
+            var rebuilt = DecodeObservation(new ReadOnlyWorldStateView(fresh), profile, File.ReadAllText(Path.Combine(directory, "rebuilt-observation.json")));
+            var reconstruction = H1ReconstructionParity.Require(checkpoint.Manifest, rebuilt);
+            Assert.Equal(checkpoint.Manifest.Projection.ObservationReconstructionDigest, reconstruction);
+
+            // Causal control on the effective observation: one changed non-locator fact must break parity.
+            var drifted = CopyWithFirstNodeField(rebuilt, "componentDigest", new string('0', 64));
+            Assert.Equal("checkpoint.restore-observation-drift",
+                Assert.Throws<H1ProjectCheckpointException>(() => H1ReconstructionParity.Require(checkpoint.Manifest, drifted)).Code);
+
+            File.WriteAllText(Path.Combine(directory, "parity.json"), JsonSerializer.Serialize(new ParityEvidence
+            {
+                SchemaId = "arkus.h1-10-parity-evidence@1",
+                CheckpointId = checkpoint.CheckpointId,
+                ReconstructionDigest = reconstruction,
+                BaselineRealizationDigest = checkpoint.Manifest.Projection.ObservationRealizationDigest,
+                RebuiltRealizationDigest = Text(rebuilt, "realizationDigest"),
+                GraphDigest = Text(rebuilt, "graphDigest"),
+                RebuiltGenerationId = Text(rebuilt, "generationId"),
+                Nodes = ((IEnumerable<object?>)rebuilt["nodes"]!).Count()
+            }, Json));
+        }
+
+        [Fact]
+        public async System.Threading.Tasks.Task Negative_EffectiveMissingOrReboundSourceBlocksPublicRestore()
+        {
+            if (!Enabled()) return;
+            var profile = H1UnityLaunchProfile.ForCurrentHost();
+            var catalogue = Catalogue(profile);
+            var source = catalogue.Entries.First(value => value.LogicalId == FacadePrefab);
+            var path = Path.Combine(profile.ProjectRoot, source.Path.Replace('/', Path.DirectorySeparatorChar));
+            var accepted = File.ReadAllBytes(path);
+            using var host = ProductionH1ProjectCheckpointHost.Create();
+            try
+            {
+                File.WriteAllBytes(path, accepted.Concat(new byte[] { 0 }).ToArray());
+                AssertBlocked(await Restore(host), "checkpoint.source-rebound");
+                File.Delete(path);
+                AssertBlocked(await Restore(host), "checkpoint.source-missing");
+            }
+            finally
+            {
+                File.WriteAllBytes(path, accepted);
+            }
+
+            var current = await host.InvokeAsync(new NeutralProjectionRequest("h1-10.current", "unity.host.checkpoint.current", Exact(), SceneRequest()));
+            Assert.True(current.Success, current.Error?.MachineCode);
+            Assert.Equal("ready", Text(current.Result!, "state"));
+        }
+
+        [Fact]
         public void Negative_EffectiveFingerprintMismatchDoesNotReleaseCanonicalArtifacts()
         {
             if (!Enabled()) return;
@@ -202,21 +279,31 @@ namespace Arkus.Harness.Tests
             Assert.Equal(string.Empty, checkpoint.JournalJson);
         }
 
+        /// <summary>
+        /// Content-shape probe: the complete accepted Potes market-corner hierarchy (plaza > market > bar/workshop)
+        /// with the H1-04 Quaternius facade prefab, its MI_Plaster renderer material, a UAL1 animator clip and a
+        /// canonical link (the shape accepted by H1-05/07), plus one later H0 mutation so the checkpoint carries
+        /// non-empty mutation history.
+        /// </summary>
         private static PortableWorldAuthoringSession AuthoredSession(H1CatalogueSnapshot catalogue)
         {
-            var source = catalogue.Entries.First(value => value.Kind == "prefab");
+            Assert.Contains(catalogue.Entries, value => value.LogicalId == FacadePrefab);
             var initial = new WorldState(
-                new WorldId("world.h1-10.composed"),
+                new WorldId("world.h1-10.potes"),
                 7,
                 new[]
                 {
-                    new WorldObject(new WorldObjectId("facade"), new WorldTypeId("fixture.facade")),
-                    new WorldObject(new WorldObjectId("workshop"), new WorldTypeId("fixture.workshop"))
+                    new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")),
+                    new WorldObject(new WorldObjectId("market.potes"), new WorldTypeId("fixture.market"), new WorldObjectId("plaza.potes")),
+                    new WorldObject(new WorldObjectId("bar.potes"), new WorldTypeId("fixture.bar"), new WorldObjectId("market.potes")),
+                    new WorldObject(new WorldObjectId("workshop.potes"), new WorldTypeId("fixture.workshop"), new WorldObjectId("market.potes"))
                 },
                 new[]
                 {
-                    Binding("facade", source.LogicalId, 100, 0, 0),
-                    Binding("workshop", source.LogicalId, 900, 0, 0)
+                    Binding("plaza.potes", 0),
+                    Binding("market.potes", 500),
+                    Binding("bar.potes", 1250, link: "plaza.potes", renderer: true, animator: true),
+                    Binding("workshop.potes", -800)
                 });
             var session = new PortableWorldAuthoringSession(initial);
             var contract = CanonicalWorldContract.Compose(new WorldInspectionService(session), session);
@@ -242,25 +329,32 @@ namespace Arkus.Harness.Tests
             return session;
         }
 
-        private static WorldExtensionData Binding(string subject, string sourceLogicalId, long x, long y, long z)
+        private const string FacadePrefab = "quaternius.medieval.prefab.wall-plaster-window-wide-flat";
+
+        private static WorldExtensionData Binding(string subject, long x, string? link = null, bool renderer = false, bool animator = false)
         {
+            var components = new List<object?>();
+            var references = new List<WorldReference>();
+            if (link != null)
+            {
+                components.Add(new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "canonical-link", ["relation"] = "faces", ["targetObjectId"] = link });
+                references.Add(new WorldReference(new WorldReferenceKind("faces"), new WorldObjectId(link)));
+            }
+            if (renderer) components.Add(new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "renderer", ["materialId"] = "quaternius.medieval.material.wall-plaster-window-wide-flat-mi-plaster" });
+            if (animator) components.Add(new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "animator", ["clipId"] = "quaternius.ual1.animation-clip.armature-a-tpose" });
             var binding = new Dictionary<string, object?>(StringComparer.Ordinal)
             {
                 ["schemaId"] = UnityBindingProducer.BindingSchemaId,
                 ["targetSceneId"] = H1ManagedScenePlan.SceneId,
-                ["source"] = new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["kind"] = "prefab",
-                    ["logicalId"] = sourceLogicalId
-                },
+                ["source"] = new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "prefab", ["logicalId"] = FacadePrefab },
                 ["transform"] = new Dictionary<string, object?>(StringComparer.Ordinal)
                 {
                     ["coordinateConvention"] = UnityBindingProducer.CoordinateConvention,
-                    ["positionMm"] = Vector(x, y, z),
-                    ["rotationMilliDegrees"] = Vector(0, 0, 0),
-                    ["scalePpm"] = Vector(1000000, 1000000, 1000000)
+                    ["positionMm"] = Vector(x, 0, 0),
+                    ["rotationMilliDegrees"] = Vector(0, link == null ? 0 : 90000, 0),
+                    ["scalePpm"] = Vector(link == null ? 1000000 : 1250000, 1000000, 1000000)
                 },
-                ["components"] = Array.Empty<object?>()
+                ["components"] = components
             };
             var compiled = UnityBindingProducer.Compile(new Dictionary<string, object?>(StringComparer.Ordinal)
             {
@@ -272,7 +366,40 @@ namespace Arkus.Harness.Tests
                 UnityBindingProducer.ExtensionSchemaVersion,
                 Convert.FromBase64String((string)compiled["payloadBase64"]!),
                 new WorldObjectId(subject),
-                Array.Empty<WorldReference>());
+                references);
+        }
+
+        private static IReadOnlyDictionary<string, object?> DecodeObservation(IWorldStateSource world, H1UnityLaunchProfile profile, string rawUnityReply)
+        {
+            var executor = new H1ManagedSceneExecutor(H1ManagedSceneExecutor.ObserveKey, H1ManagedSceneExecutor.ObserveExecutorId, world, profile);
+            executor.EncodeRequest(SceneRequest());
+            var envelope = new H1UnityResultEnvelope(
+                "h1-10-effective-proof", H1ManagedSceneExecutor.ObserveKey.Name, H1ManagedSceneExecutor.ObserveExecutorId, profile.Id,
+                profile.ProjectIdentity, profile.EffectiveEditorVersion, profile.EffectiveEditorRevision, true, rawUnityReply);
+            return Success(executor.DecodeResult(envelope), "decode effective Unity observation through the public observe executor");
+        }
+
+        private static IReadOnlyDictionary<string, object?> CopyWithFirstNodeField(IReadOnlyDictionary<string, object?> observation, string field, string value)
+        {
+            var nodes = ((IEnumerable<object?>)observation["nodes"]!)
+                .Select(node => (object?)new Dictionary<string, object?>((IReadOnlyDictionary<string, object?>)node!, StringComparer.Ordinal))
+                .ToArray();
+            ((Dictionary<string, object?>)nodes[0]!)[field] = value;
+            var copy = observation.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+            copy["nodes"] = nodes;
+            return copy;
+        }
+
+        private static System.Threading.Tasks.Task<NeutralProjectionOutcome> Restore(NeutralProjectionService host) =>
+            host.InvokeAsync(new NeutralProjectionRequest("h1-10.restore." + Guid.NewGuid().ToString("N"), "unity.host.checkpoint.restore", Exact(), SceneRequest()));
+
+        private static void AssertBlocked(NeutralProjectionOutcome outcome, string blocker)
+        {
+            Assert.True(outcome.Success, outcome.Error?.MachineCode);
+            var result = outcome.Result!;
+            Assert.Equal("blocked", Text(result, "state"));
+            Assert.Equal("not-restored", Text(result, "lineageDisposition"));
+            Assert.Contains(blocker, ((IEnumerable<object?>)result["blockers"]!).Cast<string>());
         }
 
         private static H1CatalogueSnapshot Catalogue(H1UnityLaunchProfile profile) => H1CatalogueSnapshot.Build(
@@ -297,6 +424,7 @@ namespace Arkus.Harness.Tests
         private static string Text(IReadOnlyDictionary<string, object?> source, string key) => Assert.IsType<string>(source[key]);
         private static long Integer(IReadOnlyDictionary<string, object?> source, string key) => Convert.ToInt64(source[key], CultureInfo.InvariantCulture);
         private static IReadOnlyDictionary<string, object?> Empty() => ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal));
+        private static IReadOnlyDictionary<string, object?> SceneRequest() => ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal) { ["sceneLogicalId"] = H1ManagedScenePlan.SceneId });
         private static IReadOnlyDictionary<string, object?> ReadOnly(Dictionary<string, object?> value) => new ReadOnlyDictionary<string, object?>(value);
         private static ContractVersionRange Exact() => ContractVersionRange.Exact(new ContractVersion(1, 0));
 
@@ -320,6 +448,13 @@ namespace Arkus.Harness.Tests
             public string SchemaId { get; set; } = ""; public string CheckpointId { get; set; } = ""; public string ManifestSha256 { get; set; } = "";
             public string EnvironmentDigest { get; set; } = ""; public string CanonicalHash { get; set; } = ""; public long Revision { get; set; }
             public string InputDigest { get; set; } = ""; public string GraphDigest { get; set; } = ""; public string RealizationDigest { get; set; } = "";
+            public string ReconstructionDigest { get; set; } = "";
+        }
+        private sealed class ParityEvidence
+        {
+            public string SchemaId { get; set; } = ""; public string CheckpointId { get; set; } = ""; public string ReconstructionDigest { get; set; } = "";
+            public string BaselineRealizationDigest { get; set; } = ""; public string RebuiltRealizationDigest { get; set; } = "";
+            public string GraphDigest { get; set; } = ""; public string RebuiltGenerationId { get; set; } = ""; public int Nodes { get; set; }
         }
         private sealed class RestoreEvidence
         {

@@ -68,7 +68,11 @@ namespace Arkus.H1.UnityHost
         public long WorldRevision { get; set; }
         public string CatalogueFingerprint { get; set; } = "";
         public string ObservationGraphDigest { get; set; } = "";
+        /// <summary>Accepted H1-05/06 realization digest of the captured generation. Informational only:
+        /// it includes generation-local derivative-prefab locators and is never a cross-generation parity oracle.</summary>
         public string ObservationRealizationDigest { get; set; } = "";
+        /// <summary>H1-10 normalized reconstruction digest (<see cref="H1ReconstructionParity"/>); the parity baseline.</summary>
+        public string ObservationReconstructionDigest { get; set; } = "";
     }
 
     public sealed class H1ProjectCheckpointManifest
@@ -202,12 +206,17 @@ namespace Arkus.H1.UnityHost
             H1ProjectEnvironmentFingerprint environment,
             H1ManagedScenePlan plan,
             string observationGraphDigest,
-            string observationRealizationDigest)
+            string observationRealizationDigest,
+            string observationReconstructionDigest)
         {
             if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
             if (journal == null) throw new ArgumentNullException(nameof(journal));
             if (environment == null) throw new ArgumentNullException(nameof(environment));
             if (plan == null) throw new ArgumentNullException(nameof(plan));
+            // A checkpoint is published only with the effective projection baseline that a later clean
+            // rebuild must reproduce; a canonical-only checkpoint could never prove reconstruction parity.
+            if (!IsHash(observationGraphDigest) || !IsHash(observationRealizationDigest) || !IsHash(observationReconstructionDigest))
+                throw Error("checkpoint.observation-not-current", "A checkpoint requires the current effective Unity observation baseline (graph, realization and reconstruction digests).");
 
             var canonical = SnapshotAnchor(snapshot);
             var journalCurrent = Anchor(RequireDictionary(journal, "current"));
@@ -234,8 +243,9 @@ namespace Arkus.H1.UnityHost
                 CanonicalHash = plan.CanonicalHash,
                 WorldRevision = plan.WorldRevision,
                 CatalogueFingerprint = plan.CatalogueFingerprint,
-                ObservationGraphDigest = observationGraphDigest ?? "",
-                ObservationRealizationDigest = observationRealizationDigest ?? ""
+                ObservationGraphDigest = observationGraphDigest,
+                ObservationRealizationDigest = observationRealizationDigest,
+                ObservationReconstructionDigest = observationReconstructionDigest
             };
             var checkpointId = H1ProjectEnvironmentProbe.ShaText(string.Join("\n", new[]
             {
@@ -248,7 +258,8 @@ namespace Arkus.H1.UnityHost
                 environment.Digest,
                 projection.InputDigest,
                 projection.ObservationGraphDigest,
-                projection.ObservationRealizationDigest
+                projection.ObservationRealizationDigest,
+                projection.ObservationReconstructionDigest
             }));
             var manifest = new H1ProjectCheckpointManifest
             {
@@ -307,6 +318,42 @@ namespace Arkus.H1.UnityHost
             {
                 if (Directory.Exists(stage)) Directory.Delete(stage, true);
             }
+        }
+
+        /// <summary>
+        /// Captures from a decoded public <c>unity.host.projection.observe</c> result. The observation must be
+        /// current for exactly the checkpoint plan; its normalized reconstruction digest becomes the parity baseline.
+        /// </summary>
+        public H1ProjectCheckpointRead CaptureFromObservation(
+            IReadOnlyDictionary<string, object?> snapshot,
+            IReadOnlyDictionary<string, object?> journal,
+            H1ProjectEnvironmentFingerprint environment,
+            H1ManagedScenePlan plan,
+            IReadOnlyDictionary<string, object?> observation)
+        {
+            if (plan == null) throw new ArgumentNullException(nameof(plan));
+            if (observation == null) throw new ArgumentNullException(nameof(observation));
+            if (!observation.TryGetValue("current", out var currentRaw) || currentRaw is not bool current || !current)
+                throw Error("checkpoint.observation-not-current", "The effective Unity projection is not current for the canonical plan; no checkpoint is published.");
+            if (!string.Equals(ObservationText(observation, "inputDigest"), plan.InputDigest, StringComparison.Ordinal) ||
+                !string.Equals(ObservationText(observation, "canonicalHash"), plan.CanonicalHash, StringComparison.Ordinal) ||
+                !string.Equals(ObservationText(observation, "catalogueFingerprint"), plan.CatalogueFingerprint, StringComparison.Ordinal))
+                throw Error("checkpoint.observation-plan-mismatch", "The effective Unity observation does not describe the checkpoint plan.");
+            return Capture(
+                snapshot,
+                journal,
+                environment,
+                plan,
+                ObservationText(observation, "graphDigest"),
+                ObservationText(observation, "realizationDigest"),
+                H1ReconstructionParity.Digest(observation));
+        }
+
+        private static string ObservationText(IReadOnlyDictionary<string, object?> observation, string key)
+        {
+            if (!observation.TryGetValue(key, out var value) || value is not string text)
+                throw Error("checkpoint.observation-invalid", "The effective Unity observation is missing " + key + ".");
+            return text;
         }
 
         public H1ProjectCheckpointRead ReadCurrent(H1ProjectEnvironmentFingerprint? expectedEnvironment, params string[] preexistingBlockers)
@@ -463,6 +510,112 @@ namespace Arkus.H1.UnityHost
         }
     }
 
+    /// <summary>
+    /// H1-10 normalized reconstruction parity over a decoded public observe result. A clean rebuild must
+    /// regenerate derivative prefab assets, so their Unity GUID/local file id are generation-local bridge
+    /// locators (never canonical identity). Every other normalized fact — hierarchy, source identity and
+    /// content, deterministic realized path and prefab generation, nested relationships, components and
+    /// quantized transforms — must be identical. Source-asset realizations keep their locators because they
+    /// are the accepted external source, not generated output.
+    /// </summary>
+    public static class H1ReconstructionParity
+    {
+        public const string SchemaId = "arkus.h1-10-reconstruction-digest@1";
+        public const string GeneratedRealizationKind = "managed-prefab-variant";
+        private static readonly string[] Fields =
+        {
+            "objectId", "parentObjectId", "sourceLogicalId", "sourceKind", "sourcePath", "sourceGuid", "sourceLocalFileId",
+            "sourceContentSha256", "realizationKind", "realizedPath", "realizedGuid", "realizedLocalFileId", "prefabGenerationId",
+            "relationshipDigest", "componentDigest"
+        };
+
+        public static string Digest(IReadOnlyDictionary<string, object?> observation)
+        {
+            if (observation == null) throw new ArgumentNullException(nameof(observation));
+            if (!observation.TryGetValue("nodes", out var raw) || raw is not IEnumerable<object?> nodes)
+                throw Invalid("The observation has no node list.");
+            var rows = new SortedDictionary<string, string>(StringComparer.Ordinal);
+            foreach (var item in nodes)
+            {
+                if (item is not IReadOnlyDictionary<string, object?> node) throw Invalid("An observed node is not an object.");
+                var generated = string.Equals(Text(node, "realizationKind"), GeneratedRealizationKind, StringComparison.Ordinal);
+                var values = new List<string>();
+                foreach (var field in Fields)
+                {
+                    var value = Text(node, field);
+                    if (generated && (field == "realizedGuid" || field == "realizedLocalFileId"))
+                    {
+                        // The locator must exist; only its generation-local value is excluded.
+                        if (value.Length == 0) throw Invalid("A generated realization has no native locator.");
+                        value = "generated";
+                    }
+                    values.Add(field + "=" + value);
+                }
+                values.Add("positionMm=" + Vector(node, "positionMm", false));
+                values.Add("rotationMilliDegrees=" + Vector(node, "rotationMilliDegrees", true));
+                values.Add("scalePpm=" + Vector(node, "scalePpm", false));
+                var objectId = Text(node, "objectId");
+                if (objectId.Length == 0 || rows.ContainsKey(objectId)) throw Invalid("Observed node identities are empty or duplicated.");
+                rows.Add(objectId, string.Join("|", values));
+            }
+            if (rows.Count == 0) throw Invalid("The observation has no managed nodes.");
+            return H1ProjectEnvironmentProbe.ShaText(SchemaId + "\n" + string.Join("\n", rows.Values));
+        }
+
+        public static void RequireBaseline(H1ProjectCheckpointManifest manifest)
+        {
+            if (manifest == null) throw new ArgumentNullException(nameof(manifest));
+            if (!IsHash(manifest.Projection.ObservationGraphDigest) || !IsHash(manifest.Projection.ObservationReconstructionDigest))
+                throw new H1ProjectCheckpointException("checkpoint.restore-missing-baseline-observation", "The checkpoint has no normalized baseline observation to prove reconstruction parity.");
+        }
+
+        /// <summary>Returns the verified reconstruction digest or throws a structured restore error.</summary>
+        public static string Require(H1ProjectCheckpointManifest manifest, IReadOnlyDictionary<string, object?> observation)
+        {
+            RequireBaseline(manifest);
+            if (observation == null) throw new ArgumentNullException(nameof(observation));
+            if (!observation.TryGetValue("current", out var currentRaw) || currentRaw is not bool current || !current)
+                throw new H1ProjectCheckpointException("checkpoint.restore-observation-not-current", "Clean rebuild did not produce a current normalized Unity observation.");
+            if (!string.Equals(Text(observation, "inputDigest"), manifest.Projection.InputDigest, StringComparison.Ordinal) ||
+                !string.Equals(Text(observation, "canonicalHash"), manifest.Canonical.Hash, StringComparison.Ordinal) ||
+                !string.Equals(Text(observation, "catalogueFingerprint"), manifest.Environment.CatalogueFingerprint, StringComparison.Ordinal))
+                throw new H1ProjectCheckpointException("checkpoint.restore-plan-drift", "Clean rebuild observation no longer matches the checkpoint normalized plan/canonical/catalogue identity.");
+            var digest = Digest(observation);
+            if (!string.Equals(Text(observation, "graphDigest"), manifest.Projection.ObservationGraphDigest, StringComparison.Ordinal) ||
+                !string.Equals(digest, manifest.Projection.ObservationReconstructionDigest, StringComparison.Ordinal))
+                throw new H1ProjectCheckpointException("checkpoint.restore-observation-drift", "Clean rebuild observation differs from the checkpoint normalized graph/reconstruction digests.");
+            return digest;
+        }
+
+        private static string Text(IReadOnlyDictionary<string, object?> source, string key)
+        {
+            if (!source.TryGetValue(key, out var value) || value is not string text) throw Invalid("Observed field is missing or not text: " + key + ".");
+            return text;
+        }
+
+        private static string Vector(IReadOnlyDictionary<string, object?> node, string key, bool rotation)
+        {
+            if (!node.TryGetValue(key, out var raw) || raw is not IReadOnlyDictionary<string, object?> vector) throw Invalid("Observed vector is missing: " + key + ".");
+            var parts = new List<string>();
+            foreach (var axis in new[] { "x", "y", "z" })
+            {
+                if (!vector.TryGetValue(axis, out var value) || value == null) throw Invalid("Observed vector axis is missing: " + key + "." + axis + ".");
+                long number;
+                try { number = Convert.ToInt64(value, CultureInfo.InvariantCulture); }
+                catch (Exception exception) when (exception is FormatException || exception is InvalidCastException || exception is OverflowException)
+                {
+                    throw Invalid("Observed vector axis is not an integer: " + key + "." + axis + ".");
+                }
+                if (rotation) { number %= 360000; if (number < 0) number += 360000; }
+                parts.Add(number.ToString(CultureInfo.InvariantCulture));
+            }
+            return string.Join(",", parts);
+        }
+
+        private static bool IsHash(string value) => value != null && value.Length == 64 && value.All(c => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'));
+        private static H1ProjectCheckpointException Invalid(string message) => new H1ProjectCheckpointException("checkpoint.observation-invalid", message);
+    }
+
     public sealed class H1ProjectionCleanRebuildExecutor : IH1UnityCapabilityExecutor
     {
         public static readonly CapabilityKey Key = new CapabilityKey("unity.host.projection.clean-rebuild", new ContractVersion(1, 0));
@@ -511,16 +664,10 @@ namespace Arkus.H1.UnityHost
                 var environment = H1ProjectEnvironmentProbe.Capture(_profile, catalogue);
                 var plan = H1ManagedScenePlan.Build(_world.Current, catalogue);
 
-                var graphDigest = "";
-                var realizationDigest = "";
-                var observed = context.Contract.Dispatch(H1ManagedSceneExecutor.ObserveKey.Name, Exact(), SceneRequest());
-                if (observed.Success && observed.Data != null && observed.Data.TryGetValue("current", out var currentRaw) && currentRaw is bool current && current)
-                {
-                    graphDigest = observed.Data.TryGetValue("graphDigest", out var graph) ? graph as string ?? "" : "";
-                    realizationDigest = observed.Data.TryGetValue("realizationDigest", out var realization) ? realization as string ?? "" : "";
-                }
-
-                var captured = _store.Capture(snapshot, journal, environment, plan, graphDigest, realizationDigest);
+                var observed = RequireSuccess(
+                    context.Contract.Dispatch(H1ManagedSceneExecutor.ObserveKey.Name, Exact(), SceneRequest()),
+                    "checkpoint.observe-failed");
+                var captured = _store.CaptureFromObservation(snapshot, journal, environment, plan, observed);
                 return CapabilityInvocationResult.Succeeded(CaptureData(captured));
             }
             catch (H1ProjectCheckpointException exception) { return Failure(exception.Code, exception.Message); }
@@ -569,6 +716,7 @@ namespace Arkus.H1.UnityHost
                 return CapabilityInvocationResult.Succeeded(CurrentData(read));
             }
             catch (H1ProjectCheckpointException exception) { return Failure(exception.Code, exception.Message); }
+            catch (H1ProjectionException exception) { return Failure(exception.Code, exception.Message); }
         }
     }
 
@@ -633,18 +781,19 @@ namespace Arkus.H1.UnityHost
             ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-project-checkpoint-capture@1" }),
             ["state"] = SchemaNode.String(new[] { "ready" }), ["checkpointId"] = SchemaNode.String(), ["manifestSha256"] = SchemaNode.String(),
             ["canonicalHash"] = SchemaNode.String(), ["revision"] = SchemaNode.Integer(), ["planInputDigest"] = SchemaNode.String(), ["environmentDigest"] = SchemaNode.String(),
-            ["observationGraphDigest"] = SchemaNode.String(), ["observationRealizationDigest"] = SchemaNode.String()
-        }, new[] { "schemaId", "state", "checkpointId", "manifestSha256", "canonicalHash", "revision", "planInputDigest", "environmentDigest", "observationGraphDigest", "observationRealizationDigest" }));
+            ["observationGraphDigest"] = SchemaNode.String(), ["observationRealizationDigest"] = SchemaNode.String(), ["observationReconstructionDigest"] = SchemaNode.String()
+        }, new[] { "schemaId", "state", "checkpointId", "manifestSha256", "canonicalHash", "revision", "planInputDigest", "environmentDigest", "observationGraphDigest", "observationRealizationDigest", "observationReconstructionDigest" }));
 
         private static JsonSchemaDocument CurrentSuccess() => new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {
             ["schemaId"] = SchemaNode.String(new[] { "arkus.h1-project-checkpoint-current@1" }),
             ["state"] = SchemaNode.String(new[] { "ready", "blocked" }), ["checkpointId"] = SchemaNode.String(), ["manifestSha256"] = SchemaNode.String(),
             ["canonicalHash"] = SchemaNode.String(), ["revision"] = SchemaNode.Integer(), ["planInputDigest"] = SchemaNode.String(), ["environmentDigest"] = SchemaNode.String(),
-            ["observationGraphDigest"] = SchemaNode.String(), ["observationRealizationDigest"] = SchemaNode.String(), ["blockers"] = SchemaNode.Array(SchemaNode.String()),
+            ["observationGraphDigest"] = SchemaNode.String(), ["observationRealizationDigest"] = SchemaNode.String(), ["observationReconstructionDigest"] = SchemaNode.String(),
+            ["blockers"] = SchemaNode.Array(SchemaNode.String()),
             ["snapshot"] = WorldPortabilityContract.SnapshotSchema().Root,
             ["journal"] = WorldProvenanceContract.JournalResultSchema().Root
-        }, new[] { "schemaId", "state", "checkpointId", "manifestSha256", "canonicalHash", "revision", "planInputDigest", "environmentDigest", "observationGraphDigest", "observationRealizationDigest", "blockers" }));
+        }, new[] { "schemaId", "state", "checkpointId", "manifestSha256", "canonicalHash", "revision", "planInputDigest", "environmentDigest", "observationGraphDigest", "observationRealizationDigest", "observationReconstructionDigest", "blockers" }));
 
         private static JsonSchemaDocument H1ManagedSceneSuccessSchema() => new JsonSchemaDocument(SchemaNode.Object(new Dictionary<string, SchemaNode>(StringComparer.Ordinal)
         {
@@ -662,7 +811,8 @@ namespace Arkus.H1.UnityHost
             ["schemaId"] = "arkus.h1-project-checkpoint-capture@1", ["state"] = "ready", ["checkpointId"] = read.CheckpointId,
             ["manifestSha256"] = read.ManifestSha256, ["canonicalHash"] = read.Manifest.Canonical.Hash, ["revision"] = read.Manifest.Canonical.Revision,
             ["planInputDigest"] = read.Manifest.Projection.InputDigest, ["environmentDigest"] = read.Manifest.Environment.Digest,
-            ["observationGraphDigest"] = read.Manifest.Projection.ObservationGraphDigest, ["observationRealizationDigest"] = read.Manifest.Projection.ObservationRealizationDigest
+            ["observationGraphDigest"] = read.Manifest.Projection.ObservationGraphDigest, ["observationRealizationDigest"] = read.Manifest.Projection.ObservationRealizationDigest,
+            ["observationReconstructionDigest"] = read.Manifest.Projection.ObservationReconstructionDigest
         });
 
         public static IReadOnlyDictionary<string, object?> CurrentData(H1ProjectCheckpointRead read)
@@ -673,6 +823,7 @@ namespace Arkus.H1.UnityHost
                 ["manifestSha256"] = read.ManifestSha256, ["canonicalHash"] = read.Manifest.Canonical.Hash, ["revision"] = read.Manifest.Canonical.Revision,
                 ["planInputDigest"] = read.Manifest.Projection.InputDigest, ["environmentDigest"] = read.Manifest.Environment.Digest,
                 ["observationGraphDigest"] = read.Manifest.Projection.ObservationGraphDigest, ["observationRealizationDigest"] = read.Manifest.Projection.ObservationRealizationDigest,
+                ["observationReconstructionDigest"] = read.Manifest.Projection.ObservationReconstructionDigest,
                 ["blockers"] = read.Blockers.Cast<object?>().ToArray()
             };
             if (read.State == "ready")

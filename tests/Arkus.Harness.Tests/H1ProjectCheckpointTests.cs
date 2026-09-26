@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Arkus.Game.Authoring;
@@ -20,18 +21,19 @@ namespace Arkus.Harness.Tests
             using var temp = new TempDirectory();
             var store = new H1ProjectCheckpointStore(temp.Path);
             var fixture = Fixture();
-            var first = store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, "graph-a", "realization-a");
+            var first = store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, Hash('a'), Hash('b'), Hash('c'));
 
             File.WriteAllText(Path.Combine(temp.Path, "fail-before-publish"), "fail");
             var exception = Assert.Throws<H1ProjectCheckpointException>(() =>
-                store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, "graph-b", "realization-b"));
+                store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, Hash('d'), Hash('e'), Hash('f')));
             Assert.Equal("checkpoint.forced-prepublication-failure", exception.Code);
             File.Delete(Path.Combine(temp.Path, "fail-before-publish"));
 
             var current = store.ReadCurrent(fixture.Environment);
             Assert.Equal("ready", current.State);
             Assert.Equal(first.CheckpointId, current.CheckpointId);
-            Assert.Equal("graph-a", current.Manifest.Projection.ObservationGraphDigest);
+            Assert.Equal(Hash('a'), current.Manifest.Projection.ObservationGraphDigest);
+            Assert.Equal(Hash('c'), current.Manifest.Projection.ObservationReconstructionDigest);
         }
 
         [Fact]
@@ -40,7 +42,7 @@ namespace Arkus.Harness.Tests
             using var temp = new TempDirectory();
             var store = new H1ProjectCheckpointStore(temp.Path);
             var fixture = Fixture();
-            store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, "graph", "realization");
+            store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, Hash('a'), Hash('b'), Hash('c'));
 
             var rebound = Environment(fixture.Plan.CatalogueFingerprint, bridge: Hash('9'));
             var current = store.ReadCurrent(rebound);
@@ -58,7 +60,7 @@ namespace Arkus.Harness.Tests
             using var temp = new TempDirectory();
             var store = new H1ProjectCheckpointStore(temp.Path);
             var fixture = Fixture();
-            var captured = store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, "graph", "realization");
+            var captured = store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, Hash('a'), Hash('b'), Hash('c'));
             var snapshotPath = Path.Combine(temp.Path, "checkpoints", captured.CheckpointId, "snapshot.json");
             File.AppendAllText(snapshotPath, " ");
 
@@ -73,13 +75,154 @@ namespace Arkus.Harness.Tests
             var store = new H1ProjectCheckpointStore(temp.Path);
             var fixture = Fixture();
 
-            var first = store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, "graph", "realization");
-            var second = store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, "graph", "realization");
+            var first = store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, Hash('a'), Hash('b'), Hash('c'));
+            var second = store.Capture(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, Hash('a'), Hash('b'), Hash('c'));
 
             Assert.Equal(first.CheckpointId, second.CheckpointId);
             Assert.Equal(first.ManifestSha256, second.ManifestSha256);
             Assert.Equal(first.Manifest.Projection.InputDigest, second.Manifest.Projection.InputDigest);
         }
+
+        [Fact]
+        public void CaptureFromObservation_NotCurrent_PublishesNoCheckpoint()
+        {
+            using var temp = new TempDirectory();
+            var store = new H1ProjectCheckpointStore(temp.Path);
+            var fixture = Fixture();
+            var observation = Observation(fixture.Plan, current: false, PrefabNode("facade", "g1", "1"));
+
+            var exception = Assert.Throws<H1ProjectCheckpointException>(() =>
+                store.CaptureFromObservation(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, observation));
+            Assert.Equal("checkpoint.observation-not-current", exception.Code);
+            var missing = Assert.Throws<H1ProjectCheckpointException>(() => store.ReadCurrent(fixture.Environment));
+            Assert.Equal("checkpoint.missing-current", missing.Code);
+        }
+
+        [Fact]
+        public void CaptureFromObservation_RecordsNormalizedReconstructionBaseline()
+        {
+            using var temp = new TempDirectory();
+            var store = new H1ProjectCheckpointStore(temp.Path);
+            var fixture = Fixture();
+            var observation = Observation(fixture.Plan, current: true, PrefabNode("facade", "g1", "1"), SourceNode("workshop", "s1"));
+
+            var captured = store.CaptureFromObservation(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, observation);
+
+            Assert.Equal(H1ReconstructionParity.Digest(observation), captured.Manifest.Projection.ObservationReconstructionDigest);
+            Assert.Equal(Hash('7'), captured.Manifest.Projection.ObservationGraphDigest);
+            Assert.Equal(captured.Manifest.Projection.ObservationReconstructionDigest, H1ReconstructionParity.Require(captured.Manifest, observation));
+        }
+
+        [Fact]
+        public void Parity_ExcludesOnlyGenerationLocalDerivativeLocators()
+        {
+            var plan = Fixture().Plan;
+            var first = Observation(plan, true, PrefabNode("facade", "11111111111111111111111111111111", "100"), SourceNode("workshop", "s1"));
+            var rebuilt = Observation(plan, true, SourceNode("workshop", "s1"), PrefabNode("facade", "22222222222222222222222222222222", "200"));
+
+            Assert.Equal(H1ReconstructionParity.Digest(first), H1ReconstructionParity.Digest(rebuilt));
+        }
+
+        [Theory]
+        [InlineData("sourceContentSha256")]
+        [InlineData("sourceGuid")]
+        [InlineData("sourceLocalFileId")]
+        [InlineData("sourcePath")]
+        [InlineData("sourceLogicalId")]
+        [InlineData("parentObjectId")]
+        [InlineData("realizedPath")]
+        [InlineData("prefabGenerationId")]
+        [InlineData("relationshipDigest")]
+        [InlineData("componentDigest")]
+        public void Parity_DetectsEveryNonLocatorFact(string field)
+        {
+            var plan = Fixture().Plan;
+            var baseline = Observation(plan, true, PrefabNode("facade", "g1", "1"));
+            var changed = PrefabNode("facade", "g2", "2");
+            changed[field] = (string)changed[field]! + "-drift";
+
+            Assert.NotEqual(H1ReconstructionParity.Digest(baseline), H1ReconstructionParity.Digest(Observation(plan, true, changed)));
+        }
+
+        [Fact]
+        public void Parity_DetectsSourceLocatorTransformAndMembershipDrift()
+        {
+            var plan = Fixture().Plan;
+            var baseline = H1ReconstructionParity.Digest(Observation(plan, true, PrefabNode("facade", "g", "1"), SourceNode("workshop", "s1")));
+
+            // Source-asset realizations are accepted external input, so their locator is not excluded.
+            Assert.NotEqual(baseline, H1ReconstructionParity.Digest(Observation(plan, true, PrefabNode("facade", "g", "1"), SourceNode("workshop", "s2"))));
+            var moved = PrefabNode("facade", "g", "1");
+            moved["positionMm"] = Vector(101, 0, 0);
+            Assert.NotEqual(baseline, H1ReconstructionParity.Digest(Observation(plan, true, moved, SourceNode("workshop", "s1"))));
+            Assert.NotEqual(baseline, H1ReconstructionParity.Digest(Observation(plan, true, PrefabNode("facade", "g", "1"))));
+            var duplicate = Assert.Throws<H1ProjectCheckpointException>(() =>
+                H1ReconstructionParity.Digest(Observation(plan, true, PrefabNode("facade", "g", "1"), PrefabNode("facade", "g", "1"))));
+            Assert.Equal("checkpoint.observation-invalid", duplicate.Code);
+        }
+
+        [Fact]
+        public void Require_ReportsStructuredRestoreOutcomes()
+        {
+            using var temp = new TempDirectory();
+            var store = new H1ProjectCheckpointStore(temp.Path);
+            var fixture = Fixture();
+            var observation = Observation(fixture.Plan, true, PrefabNode("facade", "g1", "1"));
+            var manifest = store.CaptureFromObservation(fixture.Snapshot, fixture.Journal, fixture.Environment, fixture.Plan, observation).Manifest;
+
+            Assert.Equal(manifest.Projection.ObservationReconstructionDigest,
+                H1ReconstructionParity.Require(manifest, Observation(fixture.Plan, true, PrefabNode("facade", "g9", "9"))));
+
+            var drifted = PrefabNode("facade", "g1", "1");
+            drifted["componentDigest"] = Hash('9');
+            Assert.Equal("checkpoint.restore-observation-drift", Assert.Throws<H1ProjectCheckpointException>(() =>
+                H1ReconstructionParity.Require(manifest, Observation(fixture.Plan, true, drifted))).Code);
+            Assert.Equal("checkpoint.restore-observation-not-current", Assert.Throws<H1ProjectCheckpointException>(() =>
+                H1ReconstructionParity.Require(manifest, Observation(fixture.Plan, false, PrefabNode("facade", "g1", "1")))).Code);
+            var otherPlan = Observation(fixture.Plan, true, PrefabNode("facade", "g1", "1"));
+            ((Dictionary<string, object?>)otherPlan)["inputDigest"] = Hash('8');
+            Assert.Equal("checkpoint.restore-plan-drift", Assert.Throws<H1ProjectCheckpointException>(() =>
+                H1ReconstructionParity.Require(manifest, otherPlan)).Code);
+            manifest.Projection.ObservationReconstructionDigest = "";
+            Assert.Equal("checkpoint.restore-missing-baseline-observation", Assert.Throws<H1ProjectCheckpointException>(() =>
+                H1ReconstructionParity.RequireBaseline(manifest)).Code);
+        }
+
+        private static IReadOnlyDictionary<string, object?> Observation(H1ManagedScenePlan plan, bool current, params Dictionary<string, object?>[] nodes) =>
+            new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["schemaId"] = "arkus.h1-managed-scene-observation@1",
+                ["current"] = current,
+                ["inputDigest"] = plan.InputDigest,
+                ["canonicalHash"] = plan.CanonicalHash,
+                ["catalogueFingerprint"] = plan.CatalogueFingerprint,
+                ["graphDigest"] = Hash('7'),
+                ["realizationDigest"] = Hash('6'),
+                ["nodes"] = nodes.Cast<object?>().ToArray()
+            };
+
+        private static Dictionary<string, object?> PrefabNode(string id, string realizedGuid, string realizedFileId) => new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["objectId"] = id, ["parentObjectId"] = "", ["sourceLogicalId"] = "quaternius.medieval.prefab.wall-plaster-window-wide-flat",
+            ["sourceKind"] = "prefab", ["sourcePath"] = "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx",
+            ["sourceGuid"] = "0123456789abcdef0123456789abcdef", ["sourceLocalFileId"] = "919132149155446097", ["sourceContentSha256"] = Hash('3'),
+            ["realizationKind"] = H1ReconstructionParity.GeneratedRealizationKind, ["realizedPath"] = "Assets/Arkus/H1/ManagedPrefabs/Generations/gen/facade.prefab",
+            ["realizedGuid"] = realizedGuid, ["realizedLocalFileId"] = realizedFileId, ["prefabGenerationId"] = "0123456789abcdef0123456789abcdef",
+            ["relationshipDigest"] = Hash('4'), ["componentDigest"] = Hash('5'),
+            ["positionMm"] = Vector(100, 0, 0), ["rotationMilliDegrees"] = Vector(0, 0, 0), ["scalePpm"] = Vector(1000000, 1000000, 1000000)
+        };
+
+        private static Dictionary<string, object?> SourceNode(string id, string guid) => new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["objectId"] = id, ["parentObjectId"] = "", ["sourceLogicalId"] = "quaternius.medieval.mesh.facade", ["sourceKind"] = "asset",
+            ["sourcePath"] = "Assets/Arkus/H1/SourceSlice/Wall.fbx", ["sourceGuid"] = guid, ["sourceLocalFileId"] = "4300000", ["sourceContentSha256"] = Hash('3'),
+            ["realizationKind"] = "source-asset", ["realizedPath"] = "Assets/Arkus/H1/SourceSlice/Wall.fbx", ["realizedGuid"] = guid, ["realizedLocalFileId"] = "4300000",
+            ["prefabGenerationId"] = "", ["relationshipDigest"] = Hash('4'), ["componentDigest"] = Hash('5'),
+            ["positionMm"] = Vector(900, 0, 0), ["rotationMilliDegrees"] = Vector(0, 360000, 0), ["scalePpm"] = Vector(1000000, 1000000, 1000000)
+        };
+
+        private static IReadOnlyDictionary<string, object?> Vector(long x, long y, long z) =>
+            new Dictionary<string, object?>(StringComparer.Ordinal) { ["x"] = x, ["y"] = y, ["z"] = z };
 
         private static FixtureData Fixture()
         {
