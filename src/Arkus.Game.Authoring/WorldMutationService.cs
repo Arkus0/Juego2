@@ -604,8 +604,8 @@ namespace Arkus.Game.Authoring
             switch (kind)
             {
                 case "put-object":
-                    if (!OnlyFields(data, "kind", "id", "typeId", "containerId", "references"))
-                        return InvalidRequest(OperationPath(index), "put-object contains fields outside its declared grammar.");
+                    if (!OnlyFields(data, PutObjectFields))
+                        return GrammarViolation(data, index, kind, PutObjectFields, PutObjectRequired);
                     if (!TryStableToken(data, "id", out var id))
                         return InvalidRequest(OperationPath(index) + ".id", "put-object id must be a stable token.");
                     if (!TryStableToken(data, "typeId", out var typeId))
@@ -624,16 +624,16 @@ namespace Arkus.Game.Authoring
                     return null;
 
                 case "remove-object":
-                    if (!OnlyFields(data, "kind", "id"))
-                        return InvalidRequest(OperationPath(index), "remove-object contains fields outside its declared grammar.");
+                    if (!OnlyFields(data, RemoveObjectFields))
+                        return GrammarViolation(data, index, kind, RemoveObjectFields, RemoveObjectRequired);
                     if (!TryStableToken(data, "id", out var removeId))
                         return InvalidRequest(OperationPath(index) + ".id", "remove-object id must be a stable token.");
                     operation = MutationOperation.RemoveObject(removeId);
                     return null;
 
                 case "put-extension":
-                    if (!OnlyFields(data, "kind", "owner", "schemaVersion", "subjectId", "dependencies", "payloadBase64"))
-                        return InvalidRequest(OperationPath(index), "put-extension contains fields outside its declared grammar.");
+                    if (!OnlyFields(data, PutExtensionFields))
+                        return GrammarViolation(data, index, kind, PutExtensionFields, PutExtensionRequired);
                     if (!TryStableToken(data, "owner", out var owner))
                         return InvalidRequest(OperationPath(index) + ".owner", "Extension owner must be a stable token.");
                     if (!TryGetInteger(data, "schemaVersion", out var schemaVersion) || schemaVersion <= 0 || schemaVersion > int.MaxValue)
@@ -665,8 +665,8 @@ namespace Arkus.Game.Authoring
                     return null;
 
                 case "remove-extension":
-                    if (!OnlyFields(data, "kind", "owner", "schemaVersion", "subjectId"))
-                        return InvalidRequest(OperationPath(index), "remove-extension contains fields outside its declared grammar.");
+                    if (!OnlyFields(data, RemoveExtensionFields))
+                        return GrammarViolation(data, index, kind, RemoveExtensionFields, RemoveExtensionRequired);
                     if (!TryStableToken(data, "owner", out var removeOwner))
                         return InvalidRequest(OperationPath(index) + ".owner", "Extension owner must be a stable token.");
                     if (!TryGetInteger(data, "schemaVersion", out var removeVersion) || removeVersion <= 0 || removeVersion > int.MaxValue)
@@ -1234,6 +1234,47 @@ namespace Arkus.Game.Authoring
                 EmptyContext(),
                 false,
                 "Use only the typed mutation envelope declared by system.describe.");
+        }
+
+        // Per-kind operation grammar. The public request schema is a flattened union of these kinds, so a grammar
+        // violation names the kind's own allowed/required fields and the offending ones (WP-HK-05 reopen 1).
+        private static readonly string[] PutObjectFields = { "kind", "id", "typeId", "containerId", "references" };
+        private static readonly string[] PutObjectRequired = { "kind", "id", "typeId" };
+        private static readonly string[] RemoveObjectFields = { "kind", "id" };
+        private static readonly string[] RemoveObjectRequired = { "kind", "id" };
+        private static readonly string[] PutExtensionFields = { "kind", "owner", "schemaVersion", "subjectId", "dependencies", "payloadBase64" };
+        private static readonly string[] PutExtensionRequired = { "kind", "owner", "schemaVersion", "payloadBase64" };
+        private static readonly string[] RemoveExtensionFields = { "kind", "owner", "schemaVersion", "subjectId" };
+        private static readonly string[] RemoveExtensionRequired = { "kind", "owner", "schemaVersion" };
+
+        private static CapabilityInvocationResult GrammarViolation(
+            IReadOnlyDictionary<string, object?> data,
+            int index,
+            string kind,
+            IReadOnlyList<string> allowed,
+            IReadOnlyList<string> required)
+        {
+            var allowedSet = new HashSet<string>(allowed, StringComparer.Ordinal);
+            var unexpected = new List<string>();
+            foreach (var key in data.Keys)
+            {
+                if (!allowedSet.Contains(key)) unexpected.Add(key);
+            }
+
+            unexpected.Sort(StringComparer.Ordinal);
+            return Failure(
+                "world.change.invalid_request",
+                kind + " contains fields outside its declared grammar.",
+                OperationPath(index),
+                ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["operationKind"] = kind,
+                    ["allowedFields"] = ToObjectList(allowed),
+                    ["requiredFields"] = ToObjectList(required),
+                    ["unexpectedFields"] = ToObjectList(unexpected)
+                }),
+                false,
+                "Remove unexpectedFields; each operation kind accepts only its own allowedFields. Object data (id, typeId, containerId, references) and extension data (owner, schemaVersion, subjectId, dependencies, payloadBase64) are separate put-object and put-extension operations in the same transaction.");
         }
 
         private static CapabilityInvocationResult InvalidProvenanceRequest(string message)
