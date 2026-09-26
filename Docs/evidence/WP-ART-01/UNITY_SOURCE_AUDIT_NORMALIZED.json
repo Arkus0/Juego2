@@ -1,0 +1,1182 @@
+{
+    "schema": "juego2.art01.unity-source-audit@1",
+    "unityVersion": "6000.3.24f1",
+    "rows": [
+        {
+            "path": "Assets/Arkus/ART/External/Characters/Hair_Buzzed.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": -4.470348358154297e-8,
+                "y": 1.7279002666473389,
+                "z": 0.01319211721420288
+            },
+            "boundsSize": {
+                "x": 0.15459059178829194,
+                "y": 0.1768491268157959,
+                "z": 0.1946014016866684
+            },
+            "importerGlobalScale": 1.0,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Hair_1_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Characters/Regular_Male_FullBody.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 5.960464477539063e-8,
+                "y": 0.8578543663024902,
+                "z": 0.04647797346115112
+            },
+            "boundsSize": {
+                "x": 1.7993383407592774,
+                "y": 1.91029691696167,
+                "z": 0.41771793365478518
+            },
+            "importerGlobalScale": 1.0,
+            "importerUseFileScale": false,
+            "materials": [
+                "Regular_Male_FullBody-MI_Regular_Male",
+                "T_Eye_Brown",
+                "T_Hair_1_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Balcony_Simple_Straight.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 5.960464477539063e-8,
+                "y": 0.5098561644554138,
+                "z": 1.0011115074157715
+            },
+            "boundsSize": {
+                "x": 2.0,
+                "y": 1.2298866510391236,
+                "z": 0.2062830924987793
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Corner_Exterior_Brick.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.08760637044906616,
+                "y": 1.5007222890853882,
+                "z": 0.08878272771835327
+            },
+            "boundsSize": {
+                "x": 0.5306706428527832,
+                "y": 3.0156266689300539,
+                "z": 0.575833797454834
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "Corner_Exterior_Brick-MI_RockTrim"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/DoorFrame_Flat_Brick.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.0009016990661621094,
+                "y": 1.1861368417739869,
+                "z": -0.04797014594078064
+            },
+            "boundsSize": {
+                "x": 1.5746073722839356,
+                "y": 2.3756587505340578,
+                "z": 0.494327187538147
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "DoorFrame_Flat_Brick-MI_RockTrim"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Door_3_Flat.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": -0.5251554846763611,
+                "y": 1.0817725658416749,
+                "z": -0.008893907070159912
+            },
+            "boundsSize": {
+                "x": 1.1448849439620972,
+                "y": 2.0905890464782717,
+                "z": 0.252963125705719
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "Door_3_Flat-MI_MetalOrnaments",
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Floor_RoundRocks.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.0,
+                "y": -1.9650906324386598e-7,
+                "z": 0.0
+            },
+            "boundsSize": {
+                "x": 2.0,
+                "y": 0.02000037394464016,
+                "z": 2.0
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_RoundRocks_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Prop_Chimney.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.027110815048217775,
+                "y": 1.5889376401901246,
+                "z": 0.0
+            },
+            "boundsSize": {
+                "x": 0.945778489112854,
+                "y": 3.177875280380249,
+                "z": 1.0000001192092896
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "Prop_Chimney-MI_RockTrim",
+                "T_Brick_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Roof_RoundTiles_6x10.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.0,
+                "y": 2.0539586544036867,
+                "z": 0.028512001037597657
+            },
+            "boundsSize": {
+                "x": 8.249783515930176,
+                "y": 5.672171115875244,
+                "z": 11.85218620300293
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_RoundTiles_BaseColor",
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Roof_RoundTiles_8x14.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.0,
+                "y": 2.6107053756713869,
+                "z": -0.024187564849853517
+            },
+            "boundsSize": {
+                "x": 9.951993942260743,
+                "y": 6.781323432922363,
+                "z": 15.70588207244873
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_RoundTiles_BaseColor",
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Wall_UnevenBrick_Door_Flat.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 5.960464477539063e-8,
+                "y": 1.5613443851470948,
+                "z": -0.11079445481300354
+            },
+            "boundsSize": {
+                "x": 2.0,
+                "y": 3.1226887702941896,
+                "z": 0.4064817428588867
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Plaster_BaseColor",
+                "T_UnevenBrick_BaseColor",
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Wall_UnevenBrick_Straight.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 5.960464477539063e-8,
+                "y": 1.5613443851470948,
+                "z": -0.11079445481300354
+            },
+            "boundsSize": {
+                "x": 2.0,
+                "y": 3.1226887702941896,
+                "z": 0.4064817428588867
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Plaster_BaseColor",
+                "T_UnevenBrick_BaseColor",
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Wall_UnevenBrick_Window_Thin_Round.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 5.960464477539063e-8,
+                "y": 1.5613443851470948,
+                "z": -0.11079445481300354
+            },
+            "boundsSize": {
+                "x": 2.0,
+                "y": 3.1226887702941896,
+                "z": 0.4064817428588867
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Plaster_BaseColor",
+                "T_UnevenBrick_BaseColor",
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Wall_UnevenBrick_Window_Wide_Flat.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 5.960464477539063e-8,
+                "y": 1.5613443851470948,
+                "z": -0.11079445481300354
+            },
+            "boundsSize": {
+                "x": 2.0,
+                "y": 3.1226887702941896,
+                "z": 0.4064817428588867
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Plaster_BaseColor",
+                "T_UnevenBrick_BaseColor",
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/WindowShutters_Wide_Flat_Closed.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 1.1920928955078126e-7,
+                "y": 1.8052598237991334,
+                "z": 0.22034980356693269
+            },
+            "boundsSize": {
+                "x": 1.3469352722167969,
+                "y": 1.4240314960479737,
+                "z": 0.1357695758342743
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/WindowShutters_Wide_Flat_Open.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": -0.0015755891799926758,
+                "y": 1.8052598237991334,
+                "z": 0.36491498351097109
+            },
+            "boundsSize": {
+                "x": 2.480569362640381,
+                "y": 1.4240314960479737,
+                "z": 0.4565187096595764
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_WoodTrim_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Medieval/Models/Window_Wide_Flat1.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 9.5367431640625e-7,
+                "y": 1.7342333793640137,
+                "z": 0.07513833045959473
+            },
+            "boundsSize": {
+                "x": 1.608236312866211,
+                "y": 1.580111026763916,
+                "z": 0.6834383010864258
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_WoodTrim_BaseColor",
+                "Window_Wide_Flat1-MI_WindowGlass"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Nature/Models/Bush_Common.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": -0.03394615650177002,
+                "y": 0.5561980605125427,
+                "z": 0.008181214332580567
+            },
+            "boundsSize": {
+                "x": 1.9148447513580323,
+                "y": 1.5817855596542359,
+                "z": 1.9651408195495606
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "Bush_Common-Leaves_TwistedTree"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Nature/Models/Bush_Common_Flowers.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": -0.03394615650177002,
+                "y": 0.5561980605125427,
+                "z": 0.008181214332580567
+            },
+            "boundsSize": {
+                "x": 1.9148447513580323,
+                "y": 1.5817855596542359,
+                "z": 1.9651408195495606
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "Bush_Common_Flowers-Leaves_NormalTree",
+                "Flowers"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Nature/Models/CommonTree_1.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.038747310638427737,
+                "y": 3.389620304107666,
+                "z": 0.06433773040771485
+            },
+            "boundsSize": {
+                "x": 4.311422824859619,
+                "y": 7.264784812927246,
+                "z": 4.577713966369629
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "Bark_NormalTree",
+                "CommonTree_1-Leaves_NormalTree"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Nature/Models/Fern_1.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": -0.103118896484375,
+                "y": 1.096919059753418,
+                "z": 0.15239620208740235
+            },
+            "boundsSize": {
+                "x": 9.046188354492188,
+                "y": 2.6887784004211427,
+                "z": 8.48742389678955
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "Leaves"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Nature/Models/Grass_Common_Short.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.03620713949203491,
+                "y": 0.6446664929389954,
+                "z": -0.11074554920196533
+            },
+            "boundsSize": {
+                "x": 0.6388704776763916,
+                "y": 1.3341034650802613,
+                "z": 0.7372654676437378
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "Grass"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Nature/Models/Rock_Medium_1.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": -0.000009334667083749082,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.11471307277679444,
+                "y": 0.8587669730186462,
+                "z": 0.3446848392486572
+            },
+            "boundsSize": {
+                "x": 3.2251484394073488,
+                "y": 2.2597968578338625,
+                "z": 2.9891369342803957
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "Rocks_Diffuse"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Props/Models/Barrel.fbx",
+            "rootScale": {
+                "x": 100.0,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "rootRotationEuler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 5.960464477539063e-8,
+                "y": 0.4524158835411072,
+                "z": -2.9802322387695315e-8
+            },
+            "boundsSize": {
+                "x": 0.6980310082435608,
+                "y": 0.8979582786560059,
+                "z": 0.6980310082435608
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Trim_Furniture_BaseColor",
+                "T_Trim_Metal_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Props/Models/Bench.fbx",
+            "rootScale": {
+                "x": 100.0,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "rootRotationEuler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.0,
+                "y": 0.2593447268009186,
+                "z": 0.005013227462768555
+            },
+            "boundsSize": {
+                "x": 2.776681661605835,
+                "y": 0.5332138538360596,
+                "z": 0.5342670679092407
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Trim_Furniture_BaseColor",
+                "T_Trim_Metal_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Props/Models/Chair_1.fbx",
+            "rootScale": {
+                "x": 100.0,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "rootRotationEuler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.0,
+                "y": 0.5589360594749451,
+                "z": -0.017077893018722535
+            },
+            "boundsSize": {
+                "x": 0.5805182456970215,
+                "y": 1.1232843399047852,
+                "z": 0.5489381551742554
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Trim_Furniture_BaseColor",
+                "T_Trim_Metal_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Props/Models/Crate_Wooden.fbx",
+            "rootScale": {
+                "x": 78.0,
+                "y": 78.0,
+                "z": 78.0
+            },
+            "rootRotationEuler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.0047155022621154789,
+                "y": 0.41303229331970217,
+                "z": -5.960464477539063e-8
+            },
+            "boundsSize": {
+                "x": 0.8422585129737854,
+                "y": 0.9309278726577759,
+                "z": 0.9082933068275452
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Trim_Furniture_BaseColor",
+                "T_Trim_Metal_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Props/Models/Lantern_Wall.fbx",
+            "rootScale": {
+                "x": 100.0,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "rootRotationEuler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.0,
+                "y": 0.7503413558006287,
+                "z": 0.6001798510551453
+            },
+            "boundsSize": {
+                "x": 0.3573414385318756,
+                "y": 1.3370076417922974,
+                "z": 1.3023145198822022
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Trim_Metal_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Props/Models/Mug.fbx",
+            "rootScale": {
+                "x": 100.0,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "rootRotationEuler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": -0.025670446455478669,
+                "y": 0.0872986689209938,
+                "z": -0.0013401955366134644
+            },
+            "boundsSize": {
+                "x": 0.19208256900310517,
+                "y": 0.183882936835289,
+                "z": 0.14678776264190675
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Trim_Furniture_BaseColor",
+                "T_Trim_Metal_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Props/Models/Stool.fbx",
+            "rootScale": {
+                "x": 100.0,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "rootRotationEuler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.00030650198459625244,
+                "y": 0.28791293501853945,
+                "z": -0.00030656158924102783
+            },
+            "boundsSize": {
+                "x": 0.47460803389549258,
+                "y": 0.5887229442596436,
+                "z": 0.47460809350013735
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Trim_Furniture_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/Props/Models/Table_Large.fbx",
+            "rootScale": {
+                "x": 100.0,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "rootRotationEuler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": 0.0,
+                "y": 0.4079861342906952,
+                "z": 0.006345570087432861
+            },
+            "boundsSize": {
+                "x": 2.8484928607940676,
+                "y": 0.8134466409683228,
+                "z": 1.0966624021530152
+            },
+            "importerGlobalScale": 0.009999999776482582,
+            "importerUseFileScale": false,
+            "materials": [
+                "T_Trim_Furniture_BaseColor",
+                "T_Trim_Metal_BaseColor"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        },
+        {
+            "path": "Assets/Arkus/ART/External/UAL/UAL1.fbx",
+            "rootScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rootRotationEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boundsCenter": {
+                "x": -5.960464477539063e-8,
+                "y": 0.8619291186332703,
+                "z": 0.02495245635509491
+            },
+            "boundsSize": {
+                "x": 1.9454509019851685,
+                "y": 1.9445945024490357,
+                "z": 0.46079468727111819
+            },
+            "importerGlobalScale": 1.0,
+            "importerUseFileScale": false,
+            "materials": [
+                "UAL1-M_Joints",
+                "UAL1-M_Main"
+            ],
+            "shaders": [
+                "Standard"
+            ]
+        }
+    ]
+}
