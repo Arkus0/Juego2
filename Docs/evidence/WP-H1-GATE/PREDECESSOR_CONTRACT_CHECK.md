@@ -34,6 +34,9 @@ The binding planning amendment is `Docs/workpacks/H1/H1_REMAINING_COMPRESSION_AM
 | H1-04 | `8c6ffd61d17e832ed5b9f900e8c0f7d4e85bf5f5` | `#185` | PASS `#5306149043` | `4f172f7aa9e7c4a0909be046d095eac5477ad765` |
 | H1-04 reopen 1 (Gate trial 1 → R1–R4) | `ce3ba74efae28692d886a5e11366c7849695e9f6` | `#239` | owner-waived review (correction only; pre-review `#5846087974`) | `4ab82fb1c0a0d8654aaa44ebc66452a3507ef347` |
 | H0 WP-HK-05 reopen 1 (Gate trial 2 → R5) | `93cdc3b5a6f38190a4ae0b8ba13894a004babe78` | `#241` | review waived by owner instruction (`#5846410743`; pre-review `#5846390197`) | `5d48cb55ac2815be417dc2a910734192b6d1543c` |
+| H0 WP-HK-05 reopen 2 (trial 5, Base64 diagnostic; owner-directed) | `66fe499eb9d6f65b3c23bb62ad4a0eb61b60cf92` | `#243` | review waived by owner (`#5847139006`) | `c6d88a257aab3a8536aa7c40e98be257257eb80c` |
+| H0 WP-HK-04 reopen 1 (trial 5, typed extension documents; owner-directed) | `f97e840912038838805f0f09804cdb1915a339e9` | `#244` | review waived by owner (`#5847233722`) | `a6a59af9f51bdd6bcb7955794489d1bc71994394` |
+| H1-01 reopen 1 (trial 5, Unity binding document codec; owner-directed) | `c97ada780efe507e0f7dfd7ca3794d45cf866d0d` | `#245` | review waived by owner (`__H101_WAIVER__`) | `__H101_MERGE__` |
 | H1-ASSET-CLOUD | `e4d18002e6ca81f302daa645e306e9373debac92` (vault `Arkus0/Juego2-assets@ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6`) | `#201` | PASS `#5313800159` | `fe6ecd5e14ef2581fd8fbe8f87166d13d02109bd` |
 | H1-05 | `186224fbc3f53eb9c47ae528a56dcf3514af163f` | `#192` | PASS `#5308430565` | `7039adecac4e6e07d899247759d9b3c9fd3c2dae` |
 | H1-06 | `96de260021fb28ff2cc7da8d2ef488be419568b3` | `#195` | PASS `#5313437809` | `6d04581bc3916b376bedc0797258097cfb22c225` |

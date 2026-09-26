@@ -1,6 +1,6 @@
 # WP-H1-GATE — fresh AI-agent trial history and predecessor reopen routing
 
-Gate state: **bounded unchanged repeats on the final frozen SHA (policy below)**. Trial 1 FAIL led to the WP-H1-04 reopen (merged). Trial 2 FAIL led to the WP-HK-05 reopen (merged). Trial 3 FAIL led to a Gate-owned relay-fidelity correction. Trial 4 FAIL came from agent diligence, not a surface gap (see below).
+Gate state: **final trial pending on the final frozen SHA, after the owner-selected structural fix (typed extension documents)**. Trial 1 FAIL led to the WP-H1-04 reopen. Trial 2 FAIL led to the WP-HK-05 reopen. Trial 3 FAIL led to a Gate-owned relay-fidelity correction. Trial 4 FAIL came from agent diligence. Trial 5 FAIL came from opaque-payload transcription and led to the owner's decision for WP-HK-05 reopen 2, WP-HK-04 reopen 1 and WP-H1-01 reopen 1 (all merged).
 
 ## Trial 1 — FAIL
 
@@ -169,3 +169,41 @@ It never attempted brief step 5 (break a reference, read the projection diagnost
 - At most **two** further repeats (trials 5 and 6). Each one is recorded, whatever its result, in the PR evidence next to trials 1–4.
 - The Gate claims PASS only for a repeat that `h1-gate-verify.py trial` finds GREEN on that exact SHA. Every earlier FAIL is reported with it.
 - If neither repeat passes, the Gate stays `NOT_READY`, and the model-selection question goes back to the owner. The Worker changes nothing further on its own authority.
+
+## Trial 5 — FAIL (opaque payload transcription)
+
+| Field | Value |
+| --- | --- |
+| Candidate SHA | `3bc9f141eeee0a5c462e8156b387fbc9851ea229` |
+| Deterministic Gate on the same SHA | run `36246907498` **GREEN** |
+| Trial run | run `36248237941` (transcript sha256 `994e7bae…`). The PR record is `#5847067730`. |
+| Model / served by | `openai/gpt-5.6-luna-20260709` (provider `OpenAI`) |
+| Turns | 10 of 90 |
+| Agent verdict | `FAIL`. Hidden/private calls: none. |
+
+The agent recovered from `catalogue.page-bound`, compiled bindings, and fixed its operations from the HK-05 grammar context. Every `put-extension` was then refused as non-canonical Base64. The agent had retyped a compiled ~476-character `payloadBase64` as 475 characters, miscounting a run of 71 `A` characters that encodes zero bytes. This was verified offline from the logged argument. The compiler output itself is canonical. Trial 4 hit the same failure and recovered only by recompiling.
+
+## Owner decisions after trial 5
+
+The decisions were taken in the Worker session on 2026-09-26, in this order:
+
+1. PR comment `#5847050362`, before trial 5 ran: trial 5 is the last trial. This superseded the committed bounded-repeat policy.
+2. After trial 5 failed, three options were compared: (1) retry with a stronger model, (2) a small Base64 diagnostic, (3) the structural ergonomics fix. The owner chose **option 3** as the best for the future, with no rush.
+3. Design: **typed extension documents inside the authoring transaction**, with an engine-agnostic codec port.
+4. Process: **a direct reopen with independent review waived**.
+5. The already-built Base64 diagnostic was **kept as a complement**.
+6. The final trial after the fix uses the **same model (luna)**, which keeps it comparable with trials 1–5 and shows that the fix works for a weaker agent.
+
+## Structural fix (merged)
+
+- **WP-HK-05 reopen 2** (PR `#243`, merge `c6d88a25`): the Base64 rejection names its reason (lengths, remainder, first invalid index) and gives a pass-through hint.
+- **WP-HK-04 reopen 1** (PR `#244`, merge `a6a59af9`):
+  - `put-extension` accepts a structured `document`, exclusive with `payloadBase64`.
+  - The owner's registered codec, whose port is in `Arkus.Harness.Protocol`, canonicalizes it inside the transaction.
+  - The result is identical to the payload form in state, hash, fingerprint and journal.
+- **WP-H1-01 reopen 1** (PR `#245`, merge `__H101_MERGE__`):
+  - The `arkus.unity-binding` codec reuses the compiler's own encoding.
+  - `unity.binding.compile` also returns `documentMutation`.
+  - All production hosts admit the codec.
+
+The Gate's S07 now authors the slice through `documentMutation`, after requiring that the document path plans byte-identically to the payload path on both transports. The verifier checks `S07.*.document-parity-not-proven` and `S07.*.not-authored-through-documents`, and the C6 control `document-parity-dropped` proves the check is sensitive. The trial brief, protocol, model, route, relay and verifier are otherwise unchanged. The final trial runs once, on the final frozen SHA.

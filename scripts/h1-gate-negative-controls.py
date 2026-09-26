@@ -276,6 +276,12 @@ def evidence_controls(directory, candidate):
         return records
     control("grammar-diagnostic-opaque", "C6", mutate_transcript("mcp", opaque_grammar), "S06.mcp.grammar-diagnostic-not-repairable")
 
+    # C6: the typed-document parity obligation self-shrinks: the document-path plan is dropped while the slice is still
+    # authored through documents.
+    control("document-parity-dropped", "C6",
+            mutate_transcript("reference", lambda rs: [r for r in rs if r.get("label") != "plan:parity-document"]),
+            "S07.reference.document-parity-not-proven")
+
     # C4: the normalized parity comparison after rebuild is skipped; the stage-16 Editor capture remains.
     control("parity-skipped-capture-remains", "C4",
             mutate_transcript("reference", lambda rs: [r for r in rs if not (r.get("session") == "reference-b" and r.get("stage") == "S14" and

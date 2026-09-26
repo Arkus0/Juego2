@@ -35,3 +35,16 @@ No inherited residual was reclassified to hide it. Mixed items, where part is cl
 **Reopen resolved: WP-H1-04 reopen 1.** PR `#239`, frozen candidate `ce3ba74efae28692d886a5e11366c7849695e9f6`, merge `4ab82fb1c0a0d8654aaa44ebc66452a3507ef347`. The owner waived independent review for that correction only. The fix gives structured context and code-specific hints on catalogue errors, and projection codes on pre-launch refusals. It does not change capabilities, schemas, codes or catalogue content. The Gate merged the new base and re-ran its deterministic validation on the new exact SHA. S12 now requires the actionable refusal codes. The trial was then repeated once on the final frozen SHA (`AI_TRIAL_HISTORY.md`). Residual: R1 is solved through diagnostics, not through schema numeric bounds, because `SchemaNode` (H0) cannot express `minimum`/`maximum`. This is a named future H0 schema-expressiveness decision, not a Gate blocker.
 
 **Second reopen: WP-HK-05 (trial 2, R5).** After the H1-04 fix, the fresh agent could page the catalogue but could not recover from an operation-grammar rejection. The published operation schema is a flattened union, and the rejection carried no field context. The fix is WP-HK-05 reopen 1: PR `#241`, frozen candidate `93cdc3b5a6f38190a4ae0b8ba13894a004babe78`, merge `5d48cb55ac2815be417dc2a910734192b6d1543c`, review waived by owner instruction (`#5846410743`). It adds the per-kind allowed, required and unexpected fields and a hint, and it leaves the grammar, codes and schemas unchanged. Residual: a per-kind `oneOf` in the published schema needs H0 `SchemaNode` expressiveness. This is a named future H0 decision, not a Gate blocker.
+
+**Owner-selected structural fix after trial 5 (typed extension documents).**
+
+- WP-HK-05 reopen 2: `#243`, merge `c6d88a25`.
+- WP-HK-04 reopen 1: `#244`, merge `a6a59af9`.
+- WP-H1-01 reopen 1: `#245`, merge `__H101_MERGE__`.
+
+All three were owner-directed with independent review waived. Model-driven clients author extensions as structured documents that the kernel canonicalizes, instead of transcribing opaque Base64. The result is byte-identical, and the Gate proves parity with the payload path on both transports.
+
+Residuals:
+
+- Per-kind `oneOf` in the published schema still needs H0 `SchemaNode` expressiveness. This is a named future H0 decision.
+- These owner-waived reopens (H1-04 r1, HK-05 r1/r2, HK-04 r1, H1-01 r1) carry no independent review. The owner may require a retroactive one.

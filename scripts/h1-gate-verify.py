@@ -208,6 +208,16 @@ def compiled_bindings(records, session):
 def check_s05_s08(f, records, session, t):
     bindings = compiled_bindings(records, session)
     f.check(len(bindings) >= 12, f"S06.{t}.compiled-slice-too-small", str(len(bindings)))
+    # WP-HK-04 / WP-H1-01 reopen 1: the slice is authored through typed documents, and that path plans exactly like
+    # the opaque payload path.
+    parity_payload = last(calls(records, "authoring.change.plan@1.0", "S07", session, label="plan:parity-payload", status="success"))
+    parity_document = last(calls(records, "authoring.change.plan@1.0", "S07", session, label="plan:parity-document", status="success"))
+    f.check(parity_payload is not None and parity_document is not None and result(parity_payload) == result(parity_document),
+            f"S07.{t}.document-parity-not-proven")
+    authored = last(calls(records, "authoring.change.apply@1.0", "S07", session, label="apply:h1-gate.slice.create", status="success"))
+    extension_ops = [op for op in (authored["arguments"].get("operations", []) if authored else []) if op.get("kind") == "put-extension"]
+    f.check(len(extension_ops) >= 12 and all("document" in op and "payloadBase64" not in op for op in extension_ops),
+            f"S07.{t}.not-authored-through-documents", str(len(extension_ops)))
     # WP-HK-05 reopen 1: the operation-grammar refusal must be repairable on the public wire.
     probe = last(calls(records, "authoring.change.plan@1.0", "S06", session, label="plan:grammar-probe"))
     context = probe["outcome"].get("error", {}).get("context", {}) if probe else {}

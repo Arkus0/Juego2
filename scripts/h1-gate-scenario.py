@@ -354,6 +354,9 @@ def compile_binding(host, node, stage, **overrides):
                        f"compile:{node[0]}")
     mutation = dict(compiled["extensionMutation"])
     require(mutation.get("kind") == "put-extension" and mutation.get("payloadBase64"), "compile did not return an extension mutation")
+    document = compiled.get("documentMutation") or {}
+    require(document.get("kind") == "put-extension" and isinstance(document.get("document"), dict) and "payloadBase64" not in document,
+            "compile did not return a typed documentMutation")
     return compiled, mutation
 
 
@@ -546,11 +549,12 @@ def stage5_catalogue(host):
 
 def stage6_7_author(host):
     host.stage = "S06"
-    objects, extensions, dependencies = [], [], {}
+    objects, extensions, documents, dependencies = [], [], [], {}
     for node in NODES:
         compiled, mutation = compile_binding(host, node, "S06")
         dependencies[node[0]] = {"canonical": compiled.get("canonicalDependencies", []), "catalogue": compiled.get("catalogueDependencies", [])}
         extensions.append(mutation)
+        documents.append(dict(compiled["documentMutation"]))
         operation = {"kind": "put-object", "id": node[0], "typeId": node[2]}
         if node[1]:
             operation["containerId"] = node[1]
@@ -567,7 +571,15 @@ def stage6_7_author(host):
             sorted(context.get("unexpectedFields", [])) == sorted(key for key in extensions[0] if key != "kind"),
             "the operation-grammar rejection does not name the allowed and unexpected fields")
     host.stage = "S07"
-    applied = author(host, "S07", "h1-gate.slice.create", objects + extensions)
+    # WP-HK-04 / WP-H1-01 reopen 1 (typed extension documents): the slice is authored the way a model-driven client
+    # authors it, through compile's documentMutation, after proving that the document path plans exactly like the
+    # opaque payloadBase64 path (same canonical operations, fingerprint and plan).
+    revision, digest = anchor(host, "S07")
+    parity = {"idempotencyKey": "h1-gate.parity", "expectedRevision": revision, "expectedHash": digest}
+    payload_plan = host.ok("authoring.change.plan", dict(parity, operations=objects + extensions), "S07", "plan:parity-payload")
+    document_plan = host.ok("authoring.change.plan", dict(parity, operations=objects + documents), "S07", "plan:parity-document")
+    require(canonical_json(document_plan) == canonical_json(payload_plan), "the typed-document path plans differently from the payload path")
+    applied = author(host, "S07", "h1-gate.slice.create", objects + documents)
     journal = host.ok("authoring.journal.read", {}, "S07", "journal.read")
     snapshot = host.ok("authoring.snapshot.export", {}, "S07", "snapshot.export:authored")
     revision, digest = anchor(host, "S07")
