@@ -26,6 +26,7 @@ for required in \
   Docs/evidence/WP-H1-GATE/CONTENT_SHAPE_PROBE.md \
   Docs/evidence/WP-H1-GATE/AI_AGENT_TRIAL_BRIEF.md \
   Docs/evidence/WP-H1-GATE/AI_TRIAL_PROTOCOL.json \
+  Docs/evidence/WP-H1-GATE/AI_TRIAL_HISTORY.md \
   scripts/h1-gate-scenario.py \
   scripts/h1-gate-verify.py \
   scripts/h1-gate-negative-controls.py \

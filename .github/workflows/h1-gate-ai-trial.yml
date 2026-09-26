@@ -141,6 +141,19 @@ jobs:
           record = json.loads(Path(os.environ['TRIAL_OUT'], 'trial-record.json').read_text())
           print('H1_GATE_TRIAL_RECORD ' + json.dumps({k: record[k] for k in ('candidateSha', 'model', 'modelTurns', 'verdict', 'final', 'transcriptSha256')}, sort_keys=True))
           print('H1_GATE_TRIAL_AGENT_REPORT ' + json.dumps(record.get('agentReport'), sort_keys=True))
+          # Public-safe chronological transcript in the log, so a review never depends on artifact download access.
+          for line in Path(os.environ['TRIAL_OUT'], 'trial-transcript.jsonl').read_text().splitlines():
+              event = json.loads(line)
+              kind = event.get('event')
+              if kind == 'model-message':
+                  print('H1_GATE_TRIAL_MODEL ' + json.dumps({'turn': event.get('turn'), 'content': (event.get('content') or '')[:1200],
+                        'toolCalls': [{'name': c['name'], 'arguments': (c.get('arguments') or '')[:600]} for c in event.get('toolCalls', [])]}))
+              elif kind == 'tool-result':
+                  outcome = event.get('outcome') if isinstance(event.get('outcome'), dict) else {}
+                  print('H1_GATE_TRIAL_RESULT ' + json.dumps({'key': event.get('canonicalKey'), 'status': event.get('status'),
+                        'machineCode': event.get('machineCode'), 'ms': event.get('elapsedMs'), 'outcome': json.dumps(outcome)[:600]}))
+              elif kind in ('discovery', 'relay-error'):
+                  print('H1_GATE_TRIAL_EVENT ' + json.dumps({k: v for k, v in event.items() if k != 'offeredToolNames'})[:1500])
           PY
           python3 scripts/h1-gate-verify.py trial --dir "${TRIAL_OUT}" --candidate-sha "${TARGET_SHA}"
           python3 scripts/h1-gate-negative-controls.py trial --dir "${TRIAL_OUT}" --candidate-sha "${TARGET_SHA}"

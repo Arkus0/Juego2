@@ -30,4 +30,4 @@ No inherited residual was reclassified to hide it. Mixed items, where part is cl
 
 ## Reopen status
 
-No predecessor reopen is triggered by the Gate design. If the effective Gate run shows a semantic difference between an accepted predecessor's guarantee and the public-path behaviour, the Gate routes that difference to the causal owner using the reopen conditions in `PREDECESSOR_CONTRACT_CHECK.md`, and does not repair it.
+**Reopen triggered (owner decision, 2026-09-26): WP-H1-04.** The deterministic Gate is GREEN, but the single fresh AI-agent trial failed on the public catalogue surface. The causes are an undeclared page bound, a `stale-snapshot` diagnostic with no current token and a misleading repair hint, and a managed scene ID that is not discoverable in the catalogue. Evidence, classification (R1–R4) and routing are in `AI_TRIAL_HISTORY.md`. The Gate repairs none of these. It stays `NOT_READY` until the reopened owner is accepted. The Gate then re-runs on the new base, and the trial is repeated on the final frozen SHA.
