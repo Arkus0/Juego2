@@ -2,7 +2,7 @@
 
 Version: 1.3 — 2026-09-26
 Owner: `WP-H1-GATE`
-Status: ACCEPTED CONTRACT / NOT EXECUTED — adopted by H1 planning PR `#71` at merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; Quaternius source-timing amendment proposed by the later PROCESS_ONLY correction; stage-16 capture amendment (v1.3) proposed by a PROCESS_ONLY correction after the first independent `WP-H1-GATE` review (`#5326742797`), see "Amendment v1.3"; only a later exact-SHA `WP-H1-GATE` PASS can satisfy it.
+Status: ACCEPTED CONTRACT / NOT EXECUTED — adopted by H1 planning PR `#71` at merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; Quaternius source-timing amendment proposed by the later PROCESS_ONLY correction; stage-16 capture amendment v1.3 accepted through PROCESS_ONLY PR `#246`, accepted candidate `a0899c37b6958efb3036a6367377e5ed0773a10b`, PASS review `#5328105230`, merge `f5a480d03f93b711811610c18bfdb699ccee4776`, see "Amendment v1.3"; only a later exact-SHA `WP-H1-GATE` PASS can satisfy the Gate.
 
 ## Representative slice
 
@@ -62,6 +62,8 @@ The plan and observation digests must agree under the accepted normalization. Re
 Plain .NET contract/codec/reference proofs run remotely. Unity catalogue, scene/prefab/component/save/reload and batchmode evidence require the exact local editor installation. The Gate produces no pixels: all of its Unity processes run through the accepted headless H1-03A launch profile. The supplementary rendered capture is the accepted `WP-H1-11` capture, which is consumed by digest; it is not, and never was, a parity oracle. A remote machine without the required editor cannot substitute fixtures and cannot issue PASS; the valid intermediate state is `READY_FOR_LOCAL_VALIDATION`.
 
 ## Amendment v1.3 — stage-16 supplementary capture
+
+Accepted through PROCESS_ONLY PR `#246` on candidate `a0899c37b6958efb3036a6367377e5ed0773a10b`, PASS review `#5328105230`, merge `f5a480d03f93b711811610c18bfdb699ccee4776`.
 
 The v1.2 stage 16 asked the Gate to "produce one supplementary rendered/editor capture". Within the accepted H1 contracts, the Gate cannot produce one:
 
