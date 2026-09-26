@@ -1,5 +1,12 @@
 # ART-01 fresh-author composition smoke test
 
+> **Status: HISTORICAL / PROVISIONAL (built-in renderer, geometry of `290c487`).** This run is retained as evidence of an earlier iteration. It does **not** satisfy the ART-01 smoke-test deliverable for the candidate:
+>
+> - the STRUCTURAL checkpoint then corrected the geometry it judged (see `STRUCTURAL_CHECKPOINT.md`: the baseline audit of that geometry had 569 failures, including elements this report classified `KEEPER_READY`);
+> - the owner decided the production renderer is URP.
+>
+> The smoke test is re-executed by a fresh author against the STRUCTURAL kit/manifest under the final URP pipeline, before CANDIDATE. The captures it cites live in `captures/` at `290c487` and are superseded.
+
 2026-09-26. Role: fresh environment author, not the kit creator or independent Reviewer. Scope: bounded ART specimen in `C:\Juego2-ART01` / `codex/wp-art-01`. No CITY/H0/H1 identity, gameplay, NPC system, PR #233, commit, push or review action was changed.
 
 ## Inputs consumed before editing

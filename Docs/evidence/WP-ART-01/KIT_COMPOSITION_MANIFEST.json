@@ -1,10 +1,11 @@
 {
-  "schema": "juego2.art01.kit-composition@1",
+  "schema": "juego2.art01.kit-composition@2",
   "wp": "WP-ART-01",
   "authority": "ART-owned composition companion; does not alter H0/H1/CITY contracts",
   "unityVersion": "6000.3.24f1",
   "sourceLockSha256": "6610fc17e406f8416ce4959f89cfc7d82fd7fda959a911090f28c086ccb463ec",
   "metricPolicy": "Docs/workpacks/ART/ART_01_DIMENSIONAL_PROFILE.md",
+  "renderPipelineStatus": "STRUCTURAL checkpoint: geometry/metadata are renderer-independent; materials are provisional built-in Standard until the post-H1-GATE URP adoption",
   "presentationStates": {
     "KEEPER_READY": "admitted composition with required host/support/metric truth",
     "PROXY_VISUAL": "deliberate visual placeholder; cannot satisfy required benchmark",
@@ -47,13 +48,14 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [],
       "connections": [],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": []
     },
     {
@@ -92,13 +94,14 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [],
       "connections": [],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": []
     },
     {
@@ -137,13 +140,14 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [],
       "connections": [],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -185,14 +189,16 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [],
       "connections": [],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "raw FBX centimetres normalized by importer globalScale=0.01"
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "3.02 m tall on a 3.12 m storey; the corner notch above it is closed by corner_closure"
       ]
     },
     {
@@ -232,7 +238,7 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [
         "matching 2.00 m facade opening only"
       ],
@@ -240,8 +246,22 @@
         "FILLS matching cut host at common source pivot; never plain wall sticker"
       ],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none; host owns structural collision",
+      "dimensionalExceptions": [
+        {
+          "measure": "PUBLIC_DOOR_CLEAR_WIDTH",
+          "min": 1.1,
+          "max": 1.16,
+          "reason": "reviewed source-insert exception: DoorFrame_Flat_Brick leaves 1.14 m clear; stylized low-poly proportion accepted for the first slice, never narrower than the band"
+        },
+        {
+          "measure": "PRIVATE_DOOR_CLEAR_WIDTH",
+          "min": 1.0,
+          "max": 1.16,
+          "reason": "same single source door frame for private doors; one frame family in the first slice"
+        }
+      ],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -283,7 +303,7 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [
         "matching 2.00 m facade opening only"
       ],
@@ -291,10 +311,12 @@
         "FILLS matching cut host at common source pivot; never plain wall sticker"
       ],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none; host owns structural collision",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "raw FBX centimetres normalized by importer globalScale=0.01"
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "leaf is placed 0.10 m behind the frame face (reveal 0.18 m)"
       ]
     },
     {
@@ -333,13 +355,14 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [],
       "connections": [],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -380,13 +403,14 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [],
       "connections": [],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -427,7 +451,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "art01.derived.roof.lowpitch.* only"
@@ -435,9 +459,10 @@
       "connections": [
         "source geometry remeasured and recapped by named derivative"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01",
         "source steep/chalet roof cannot be used unmodified"
@@ -479,7 +504,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "art01.derived.roof.lowpitch.* only"
@@ -487,9 +512,10 @@
       "connections": [
         "source geometry remeasured and recapped by named derivative"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01",
         "source steep/chalet roof cannot be used unmodified"
@@ -532,19 +558,21 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [
-        "art01.derived.plinth.segment.v1",
-        "adjacent 2.00 m facade host"
+        "art01.derived.plinth.segment.v1 (ground storey)",
+        "lower storey host (upper storey)"
       ],
       "connections": [
-        "SUPPORTED_BY plinth at y=0",
-        "MEETS adjacent host at x=±1.00 m",
-        "HOSTS named real cut opening if Door/Window variant"
+        "SUPPORTED_BY plinth top / lower storey top at host y=0",
+        "MEETS adjacent host at x=+/-1.00 m",
+        "corner notch closed by art01.derived.facade.corner_closure.v1",
+        "HOSTS real cut opening if Door/Window variant"
       ],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
-      "collisionTraversal": "scene-generated jambs/lintel or full wall; no competing source mesh collider",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "scene-generated jambs/lintel or full wall BoxColliders; no source mesh collider",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -586,19 +614,21 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [
-        "art01.derived.plinth.segment.v1",
-        "adjacent 2.00 m facade host"
+        "art01.derived.plinth.segment.v1 (ground storey)",
+        "lower storey host (upper storey)"
       ],
       "connections": [
-        "SUPPORTED_BY plinth at y=0",
-        "MEETS adjacent host at x=±1.00 m",
-        "HOSTS named real cut opening if Door/Window variant"
+        "SUPPORTED_BY plinth top / lower storey top at host y=0",
+        "MEETS adjacent host at x=+/-1.00 m",
+        "corner notch closed by art01.derived.facade.corner_closure.v1",
+        "HOSTS real cut opening if Door/Window variant"
       ],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
-      "collisionTraversal": "scene-generated jambs/lintel or full wall; no competing source mesh collider",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "scene-generated jambs/lintel or full wall BoxColliders; no source mesh collider",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -640,19 +670,21 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [
-        "art01.derived.plinth.segment.v1",
-        "adjacent 2.00 m facade host"
+        "art01.derived.plinth.segment.v1 (ground storey)",
+        "lower storey host (upper storey)"
       ],
       "connections": [
-        "SUPPORTED_BY plinth at y=0",
-        "MEETS adjacent host at x=±1.00 m",
-        "HOSTS named real cut opening if Door/Window variant"
+        "SUPPORTED_BY plinth top / lower storey top at host y=0",
+        "MEETS adjacent host at x=+/-1.00 m",
+        "corner notch closed by art01.derived.facade.corner_closure.v1",
+        "HOSTS real cut opening if Door/Window variant"
       ],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
-      "collisionTraversal": "scene-generated jambs/lintel or full wall; no competing source mesh collider",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "scene-generated jambs/lintel or full wall BoxColliders; no source mesh collider",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01",
         "round head incompatible with rectangular retained benchmark"
@@ -695,27 +727,30 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [
-        "art01.derived.plinth.segment.v1",
-        "adjacent 2.00 m facade host"
+        "art01.derived.plinth.segment.v1 (ground storey)",
+        "lower storey host (upper storey)"
       ],
       "connections": [
-        "SUPPORTED_BY plinth at y=0",
-        "MEETS adjacent host at x=±1.00 m",
-        "HOSTS named real cut opening if Door/Window variant"
+        "SUPPORTED_BY plinth top / lower storey top at host y=0",
+        "MEETS adjacent host at x=+/-1.00 m",
+        "corner notch closed by art01.derived.facade.corner_closure.v1",
+        "HOSTS real cut opening if Door/Window variant"
       ],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
-      "collisionTraversal": "scene-generated jambs/lintel or full wall; no competing source mesh collider",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "scene-generated jambs/lintel or full wall BoxColliders; no source mesh collider",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "raw FBX centimetres normalized by importer globalScale=0.01"
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "measured through-opening 1.20 x 1.275 m, sill 1.05 m: within profile; the Window_Wide_Flat1 frame overlaps the stone reveal"
       ]
     },
     {
       "id": "art01.quaternius.medieval.windowshutters_wide_flat_closed",
       "kind": "source_model",
-      "readiness": "SOURCE_ONLY",
+      "readiness": "KEEPER_READY",
       "role": "HOSTED_INSERT",
       "provenance": {
         "sourceId": "quaternius-medieval-source",
@@ -749,7 +784,7 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [
         "matching 2.00 m facade opening only"
       ],
@@ -757,10 +792,12 @@
         "FILLS matching cut host at common source pivot; never plain wall sticker"
       ],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none; host owns structural collision",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "raw FBX centimetres normalized by importer globalScale=0.01"
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "fits inside the 2 m module; used where open leaves would clash with a neighbouring opening or overhang a corner"
       ]
     },
     {
@@ -800,7 +837,7 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [
         "matching 2.00 m facade opening only"
       ],
@@ -808,10 +845,12 @@
         "FILLS matching cut host at common source pivot; never plain wall sticker"
       ],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none; host owns structural collision",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "raw FBX centimetres normalized by importer globalScale=0.01"
+        "raw FBX centimetres normalized by importer globalScale=0.01",
+        "open leaves reach +/-1.24 m from the module centre: admitted only when both neighbouring modules on the same facade/storey are plain and the module is not a facade end"
       ]
     },
     {
@@ -851,7 +890,7 @@
         }
       },
       "pivot": "FBX root local origin; facade base y=0; insert shares source host origin",
-      "facing": "+Z exterior normal for normalized facade family; verify mirrored corner/door leaf",
+      "facing": "+Z local = exterior normal for normalized facade family",
       "allowedHosts": [
         "matching 2.00 m facade opening only"
       ],
@@ -859,11 +898,11 @@
         "FILLS matching cut host at common source pivot; never plain wall sticker"
       ],
       "repeatSnap": "x=2.00 m module, 0.25 m assembly snap, 0.05 m trim correction",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none; host owns structural collision",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "raw FBX centimetres normalized by importer globalScale=0.01",
-        "source 1.61 m overall opening exceeds 1.40 m typical band; reviewed source-module exception"
+        "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
     },
     {
@@ -902,17 +941,18 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "site soil outside traversable route"
       ],
       "connections": [
-        "ROOTED_IN scenic bank; maintain route clearance"
+        "ROOTED_IN scenic ground at its measured height; CLEAR_OF route and structure"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in benchmark",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -953,17 +993,18 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "site soil outside traversable route"
       ],
       "connections": [
-        "ROOTED_IN scenic bank; maintain route clearance"
+        "ROOTED_IN scenic ground at its measured height; CLEAR_OF route and structure"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in benchmark",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -1004,17 +1045,18 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "site soil outside traversable route"
       ],
       "connections": [
-        "ROOTED_IN scenic bank; maintain route clearance"
+        "ROOTED_IN scenic ground at its measured height; CLEAR_OF route and structure"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in benchmark",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -1055,20 +1097,21 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "site soil outside traversable route"
       ],
       "connections": [
-        "ROOTED_IN scenic bank; maintain route clearance"
+        "ROOTED_IN scenic ground at its measured height; CLEAR_OF route and structure"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in benchmark",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01",
-        "source bounds 9.05×2.69×8.49 m; benchmark placement scale 0.12–0.16"
+        "source bounds 9.05x2.69x8.49 m; benchmark placement scale 0.12-0.16"
       ]
     },
     {
@@ -1107,17 +1150,18 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "site soil outside traversable route"
       ],
       "connections": [
-        "ROOTED_IN scenic bank; maintain route clearance"
+        "ROOTED_IN scenic ground at its measured height; CLEAR_OF route and structure"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in benchmark",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -1158,17 +1202,18 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "site soil outside traversable route"
       ],
       "connections": [
-        "ROOTED_IN scenic bank; maintain route clearance"
+        "ROOTED_IN scenic ground at its measured height; CLEAR_OF route and structure"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in benchmark",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
@@ -1209,7 +1254,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "floor",
@@ -1219,11 +1264,12 @@
       "connections": [
         "SUPPORTED_BY named host; never seam cover"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in bounded visual specimen",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "FBX root scale x100 and X~270 deg; preserve prefab root and multiply local scale",
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
     },
@@ -1263,7 +1309,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "floor",
@@ -1273,11 +1319,12 @@
       "connections": [
         "SUPPORTED_BY named host; never seam cover"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in bounded visual specimen",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "FBX root scale x100 and X~270 deg; preserve prefab root and multiply local scale",
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
     },
@@ -1317,7 +1364,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "floor",
@@ -1327,11 +1374,12 @@
       "connections": [
         "SUPPORTED_BY named host; never seam cover"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in bounded visual specimen",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "FBX root scale x100 and X~270 deg; preserve prefab root and multiply local scale",
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
     },
@@ -1371,7 +1419,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "floor",
@@ -1381,11 +1429,12 @@
       "connections": [
         "SUPPORTED_BY named host; never seam cover"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in bounded visual specimen",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "FBX root scale x100 and X~270 deg; preserve prefab root and multiply local scale",
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
     },
@@ -1425,7 +1474,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "floor",
@@ -1433,13 +1482,14 @@
         "wall host"
       ],
       "connections": [
-        "SUPPORTED_BY named host; never seam cover"
+        "ATTACHED_TO facade host face"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in bounded visual specimen",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "FBX root scale x100 and X~270 deg; preserve prefab root and multiply local scale",
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
     },
@@ -1479,7 +1529,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "floor",
@@ -1489,11 +1539,12 @@
       "connections": [
         "SUPPORTED_BY named host; never seam cover"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in bounded visual specimen",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "FBX root scale x100 and X~270 deg; preserve prefab root and multiply local scale",
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
     },
@@ -1533,7 +1584,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "floor",
@@ -1543,11 +1594,12 @@
       "connections": [
         "SUPPORTED_BY named host; never seam cover"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in bounded visual specimen",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "FBX root scale x100 and X~270 deg; preserve prefab root and multiply local scale",
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
     },
@@ -1587,7 +1639,7 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [
         "floor",
@@ -1597,11 +1649,12 @@
       "connections": [
         "SUPPORTED_BY named host; never seam cover"
       ],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none in bounded visual specimen",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "FBX root scale x100 and X≈270°; preserve prefab root and multiply local scale",
+        "FBX root scale x100 and X~270 deg; preserve prefab root and multiply local scale",
         "raw FBX centimetres normalized by importer globalScale=0.01"
       ]
     },
@@ -1641,13 +1694,14 @@
           "z": 0.0
         }
       },
-      "pivot": "FBX root local origin; use audited bounds/contact plane",
+      "pivot": "FBX root local origin at base; place on measured support height",
       "facing": "preserve source root rotation, then author yaw in wrapper",
       "allowedHosts": [],
       "connections": [],
-      "repeatSnap": "no automatic repeat; placement-specific scale and clearance",
-      "materialFamily": "ART01 Standard/built-in explicit remap; URP consumer requires separate explicit remap",
+      "repeatSnap": "no automatic repeat; placement-specific uniform scale recorded in the scene digest",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": []
     },
     {
@@ -1657,27 +1711,38 @@
       "role": "FACADE_HOST",
       "provenance": {
         "lineage": [
-          "quaternius-medieval-source:Wall_UnevenBrick_Straight",
+          "quaternius-medieval-source:Wall_UnevenBrick_Straight (faces)",
           "T_Plaster_BaseColor"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/Derived/Meshes/art01.facade.render_host.straight.v1.asset"
+        ]
       },
-      "effectiveDimensionsM": "2.00 W × 3.122689 H × 0.44 D",
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "width": 2.0,
+        "height": 3.122689,
+        "outerFaceFromModuleLine": 0.0924,
+        "innerFaceFromModuleLine": 0.3141,
+        "depth": 0.4065
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "plinth",
+        "lower storey host",
         "adjacent 2 m host"
       ],
       "connections": [
-        "SUPPORTED_BY plinth",
-        "MEETS adjacent host",
-        "CAPS at eave"
+        "SUPPORTED_BY lower storey",
+        "MEETS adjacent host flush",
+        "outer/inner faces identical to the stone source wall so storeys are flush"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "full wall BoxCollider",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": []
     },
     {
@@ -1691,54 +1756,85 @@
           "Window_Wide_Flat1"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/Derived/Meshes/art01.facade.render_host.window_wide_flat.v1.asset"
+        ]
       },
-      "effectiveDimensionsM": "2.00 W × 3.122689 H × 0.44 D; aperture 1.61 W × 1.59 H, sill 0.94",
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "width": 2.0,
+        "height": 3.122689,
+        "outerFaceFromModuleLine": 0.0924,
+        "innerFaceFromModuleLine": 0.3141,
+        "depth": 0.4065,
+        "apertureWidth": 1.61,
+        "apertureHeight": 1.59,
+        "sillAboveStoreyDatum": 0.94
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "plinth",
+        "lower storey host",
         "matching wide flat window insert"
       ],
       "connections": [
         "HOSTS true through-opening",
-        "sill/jamb/lintel extruded 0.44 m"
+        "sill/jamb/lintel extruded through full wall depth"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
-      "collisionTraversal": "four jamb/sill/lintel colliders; no full-window block",
-      "knownIncompatibilities": [
-        "overall opening 1.61 m exceeds 1.40 m typical profile; accepted source insert exception"
-      ]
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "two jamb, sill and lintel BoxColliders; no full-window block",
+      "dimensionalExceptions": [
+        {
+          "measure": "WINDOW_OPENING_WIDTH",
+          "min": 1.4,
+          "max": 1.62,
+          "reason": "reviewed source-insert exception: Quaternius Window_Wide_Flat1 is 1.61 m; the host opening is sized to that insert rather than stretching it"
+        },
+        {
+          "measure": "WINDOW_OPENING_HEIGHT",
+          "min": 1.55,
+          "max": 1.6,
+          "reason": "reviewed source-insert exception: Window_Wide_Flat1 is 1.58 m tall"
+        }
+      ],
+      "knownIncompatibilities": []
     },
     {
-      "id": "art01.derived.render_host.door_flat.v1",
+      "id": "art01.derived.facade.corner_closure.v1",
       "kind": "juego2_derivative",
       "readiness": "KEEPER_READY",
-      "role": "FACADE_HOST",
+      "role": "CORNER_CLOSURE",
       "provenance": {
         "lineage": [
-          "quaternius-medieval-source:Wall_UnevenBrick_Door_Flat",
-          "DoorFrame_Flat_Brick"
+          "measured source wall outer-face offset"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
       },
-      "effectiveDimensionsM": "2.00 W × 3.122689 H × 0.44 D; opening 1.61 W × 2.39 H at ground",
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "width": 0.0924,
+        "height": 3.122689,
+        "depth": 0.0924
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "plinth gap",
-        "public/private door insert"
+        "two facade modules meeting at a corner"
       ],
       "connections": [
-        "HOSTS real clear opening",
-        "MEETS landing and interior floor"
+        "fills the WALL_OUT x WALL_OUT notch left where two module lines meet; coplanar-adjacent to both outer faces"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
-      "collisionTraversal": "two jambs plus lintel, no doorway floor blocker",
-      "knownIncompatibilities": []
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "none",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": [
+        "never enlarged to stand in for a wall; stone storeys also carry a Corner_Exterior_Brick quoin"
+      ]
     },
     {
       "id": "art01.derived.roof.lowpitch.6x10.v1",
@@ -1750,24 +1846,44 @@
           "quaternius-medieval-source:Roof_RoundTiles_6x10"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/External/Medieval/Models/Roof_RoundTiles_6x10.fbx"
+        ]
       },
-      "effectiveDimensionsM": "source 8.25×5.67×11.85; applied scale 0.86×0.45×0.94",
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "sourceBounds": [
+          8.25,
+          5.67,
+          11.85
+        ],
+        "appliedScale": [
+          0.86,
+          0.45,
+          0.94
+        ],
+        "span": 6.0,
+        "length": 10.0
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "6×10 m two-storey wall assembly"
+        "6x10 m two-storey wall assembly"
       ],
       "connections": [
-        "eave derived from 0.25+2×3.122689 m wall top",
-        "gable penetrates roof underside by ≤0.25 m"
+        "measured underside placed on the outer wall-top line (eave)",
+        "gables fitted to the measured underside"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "source chalet pitch vetoed; only named flattened assembly is admitted"
-      ]
+      ],
+      "roofPitchMinDeg": 28.0,
+      "roofPitchMaxDeg": 36.0
     },
     {
       "id": "art01.derived.roof.lowpitch.8x14.v1",
@@ -1779,24 +1895,44 @@
           "quaternius-medieval-source:Roof_RoundTiles_8x14"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/External/Medieval/Models/Roof_RoundTiles_8x14.fbx"
+        ]
       },
-      "effectiveDimensionsM": "source 9.95×6.78×15.71; applied scale 0.91×0.45×0.96",
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "sourceBounds": [
+          9.95,
+          6.78,
+          15.71
+        ],
+        "appliedScale": [
+          0.91,
+          0.45,
+          0.96
+        ],
+        "span": 8.0,
+        "length": 14.0
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "8×14 m two-storey wall assembly"
+        "8x14 m two-storey wall assembly"
       ],
       "connections": [
-        "eave derived from supported wall top",
-        "gable penetrates roof underside by ≤0.25 m"
+        "measured underside placed on the outer wall-top line (eave)",
+        "gables fitted to the measured underside"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "source chalet pitch vetoed; do not generalize scaling to other roof models"
-      ]
+      ],
+      "roofPitchMinDeg": 28.0,
+      "roofPitchMaxDeg": 36.0
     },
     {
       "id": "art01.derived.gable.stone.v1",
@@ -1808,24 +1944,69 @@
           "quaternius-medieval-source:roof family"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/Derived/Meshes/art01.gable.6.v1.asset",
+          "Assets/Arkus/ART/Derived/Meshes/art01.gable.8.v1.asset"
+        ]
       },
-      "effectiveDimensionsM": "span 6 or 8 m; rise derives from matching lowpitch roof bounds",
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "halfWidth": "house half width + 0.0924",
+        "rise": "fitted per roof family from measured underside + 0.03",
+        "outerFace": 0.0924,
+        "innerFace": 0.3141
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "matching 6×10 or 8×14 roof"
+        "matching 6x10 or 8x14 roof"
       ],
       "connections": [
-        "MEETS upper wall",
-        "CAPS under roof by 0.25 m overlap"
+        "MEETS top-storey wall face flush",
+        "top edge at/above measured roof underside, below roof top surface"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "mismatched roof width/pitch creates visible gap"
+        "mismatched roof width/pitch creates a visible slit"
       ]
+    },
+    {
+      "id": "art01.derived.eave.timber_plate.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "EAVE",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_WoodTrim_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
+      },
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "width": 0.14,
+        "height": 0.12,
+        "length": "house depth + 1.08"
+      },
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
+      "allowedHosts": [
+        "eave-side outer wall face"
+      ],
+      "connections": [
+        "ATTACHED_TO outer wall face",
+        "top MEETS measured roof underside at its outer edge"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "none",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": []
     },
     {
       "id": "art01.derived.plinth.segment.v1",
@@ -1837,56 +2018,32 @@
           "quaternius-medieval-source:T_UnevenBrick_BaseColor"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
       },
-      "effectiveDimensionsM": "0.30 H × 0.52 D, 2 m facade repeat; interrupted at door",
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "bottom": -0.15,
+        "top": "storey datum (0.18 house / 0.30 public room)",
+        "projectionBeyondWallFace": 0.1,
+        "innerFace": "wall inner face"
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "site datum",
-        "2 m facade host"
+        "site datum -0.05 (embedded 0.10)"
       ],
       "connections": [
-        "SUPPORTED_BY site",
-        "SUPPORTS facade",
-        "MEETS threshold and street edge"
+        "continuous ring SUPPORTS every ground-storey host",
+        "private door sill = plinth top (single 0.17 m rise)",
+        "interrupted only by a public threshold of equal width"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "non-traversable visual base",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "never block public door gap"
-      ]
-    },
-    {
-      "id": "art01.derived.threshold.lean_to.v1",
-      "kind": "juego2_derivative",
-      "readiness": "KEEPER_READY",
-      "role": "PORCH_ROOF",
-      "provenance": {
-        "lineage": [
-          "quaternius-medieval-source:T_RoundTiles_BaseColor"
-        ],
-        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
-      },
-      "effectiveDimensionsM": "3.60 W × 1.65 projection; 3.10 wall rise to 2.82 eave",
-      "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
-      "allowedHosts": [
-        "F01 facade",
-        "two 2.65 m posts"
-      ],
-      "connections": [
-        "MEETS facade beneath upper floor",
-        "SUPPORTED_BY posts",
-        "CAPS threshold"
-      ],
-      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
-      "collisionTraversal": "posts only; roof visual",
-      "knownIncompatibilities": [
-        "not an independent floating roof"
+        "never interrupted without a threshold/landing filling the gap"
       ]
     },
     {
@@ -1899,25 +2056,183 @@
           "quaternius-medieval-source:T_Brick_BaseColor"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
       },
-      "effectiveDimensionsM": "landing 1.20 W × 0.96 D × 0.11; step rise 0.15",
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "width": 1.7,
+        "landingDepthFromWallFace": 0.96,
+        "stepTread": 0.3,
+        "stepTop": 0.1775,
+        "landingTop": 0.3
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
         "door frame",
         "street",
-        "interior floor"
+        "public floor"
       ],
       "connections": [
-        "TRANSITIONS_TO street, landing and interior floor"
+        "street -> step (0.12-0.155 m) -> landing (0.1225 m) -> public floor level"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
-      "collisionTraversal": "landing/step single local support owner",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "step/landing single local support owner",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "CITY-07 must still validate final access role/elevation"
       ]
+    },
+    {
+      "id": "art01.derived.threshold.lean_to.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "PORCH_ROOF",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_RoundTiles_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/Derived/Meshes/art01.roof.threshold.lean_to.v1.asset"
+        ]
+      },
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "width": 3.6,
+        "projection": 1.65,
+        "undersideAtWall": 3.03,
+        "undersideAtEdge": 2.75,
+        "thickness": 0.07
+      },
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
+      "allowedHosts": [
+        "F01 facade",
+        "two porch posts"
+      ],
+      "connections": [
+        "back edge embedded 0.02 m in facade under first floor",
+        "SUPPORTED_BY porch posts"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "none",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": [
+        "not an independent floating roof"
+      ]
+    },
+    {
+      "id": "art01.derived.threshold.porch_frame.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "PORCH_POST",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_WoodTrim_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
+      },
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "postSection": 0.17,
+        "footSection": 0.32,
+        "footBottom": -0.15,
+        "footTop": 0.25,
+        "postSetbackFromWallFace": 1.4,
+        "postHalfSpan": 1.65,
+        "fasciaHeight": 0.21
+      },
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
+      "allowedHosts": [
+        "site datum",
+        "lean-to canopy"
+      ],
+      "connections": [
+        "foot embedded in site",
+        "post top MEETS canopy underside",
+        "fascia CAPS canopy edge"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "post/foot BoxColliders outside the public step width",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.derived.interior.public_room_shell.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "INTERIOR_FLOOR",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_WoodTrim_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
+      },
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "floorThickness": 0.13,
+        "ceilingThickness": 0.2,
+        "clearHeight": 2.9227
+      },
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
+      "allowedHosts": [
+        "F01 walls"
+      ],
+      "connections": [
+        "floor continues landing level at the door line",
+        "ceiling CAPS public room"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "floor BoxCollider only",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.derived.interior.counter.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "INTERIOR_FURNITURE",
+      "provenance": {
+        "lineage": [
+          "quaternius-props-standard:T_Trim_Furniture_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
+      },
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "height": 1.02,
+        "depth": 0.92,
+        "length": 3.8
+      },
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
+      "allowedHosts": [
+        "public room floor"
+      ],
+      "connections": [
+        "carcass SUPPORTED_BY floor",
+        "top SUPPORTED_BY carcass"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "none",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": []
     },
     {
       "id": "art01.derived.street.crowned.v1",
@@ -1929,50 +2244,84 @@
           "quaternius-medieval-source:T_RoundRocks_BaseColor"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/Derived/Meshes/art01.street.crowned.s02_w12_casco.v1.asset"
+        ]
       },
-      "effectiveDimensionsM": "variable width X1 5.5 → W12 2.8 → micro B 2.4 m; crown +0.045",
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "widthClasses": {
+          "X1": 5.5,
+          "W12": 2.8,
+          "casco_reveal_specimen": 6.0,
+          "micro_route_B": 2.4
+        },
+        "crownRise": 0.045,
+        "edgeHeight": 0.01,
+        "channel": {
+          "centreFromRightEdge": 0.2,
+          "width": 0.2,
+          "depth": 0.03
+        }
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "site datum"
+        "site datum",
+        "X1 arch span"
       ],
       "connections": [
-        "SUPPORTED_BY site",
-        "MEETS named edge/drain/threshold"
+        "one continuous crowned mesh and MeshCollider",
+        "integrated right-side drainage channel submesh",
+        "MEETS kerbs, parapets and the F01 plinth face"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "one continuous MeshCollider traversable owner",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "ART specimen stations are not CITY-07 coordinates or elevation decisions"
+        "ART specimen stations are not CITY-07 coordinates or elevation decisions",
+        "6.0 m Casco pocket is an ART composition specimen, not an accepted CITY widening"
       ]
     },
     {
       "id": "art01.derived.street.edge_drain.v1",
       "kind": "juego2_derivative",
       "readiness": "KEEPER_READY",
-      "role": "EDGE_DRAIN",
+      "role": "EDGE",
       "provenance": {
         "lineage": [
           "quaternius-medieval-source:T_Brick_BaseColor"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/Derived/Meshes/art01.street.kerb.-1.v1.asset",
+          "Assets/Arkus/ART/Derived/Meshes/art01.street.kerb.1.v1.asset"
+        ]
       },
-      "effectiveDimensionsM": "kerb 0.18 W × 0.13 rise; drain visual groove 0.12 W",
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "width": 0.2,
+        "top": 0.13,
+        "bottom": -0.15,
+        "riseAboveRoadEdge": 0.12
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "street side"
+        "street edge outside the traversable surface"
       ],
       "connections": [
-        "MEETS road edge",
-        "DRAINS_TO visual groove outside sole path collider"
+        "continuous mitred kerb MEETS road edge",
+        "ends MEET parapet ends and the F01 plinth",
+        "drainage is the channel modelled inside street.crowned.v1"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none on path",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": []
     },
     {
@@ -1985,22 +2334,148 @@
           "quaternius-medieval-source:T_UnevenBrick_BaseColor"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
       },
-      "effectiveDimensionsM": "0.42 W × 0.56 H garden; 0.53 W × 0.09 cap",
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "bodyWidth": 0.42,
+        "bodyTop": 0.48,
+        "bottom": -0.15,
+        "capWidth": 0.53,
+        "capHeight": 0.09
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "site bank/shoulder"
+        "site datum",
+        "kerb outer edge"
       ],
       "connections": [
-        "SUPPORTED_BY ground",
-        "CAPS wall",
-        "MEETS road shoulder"
+        "SUPPORTED_BY site (embedded)",
+        "cap CAPS wall",
+        "MEETS house wall / frontage plinth line"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "static wall collider outside path",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.derived.bridge.arch_span.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "BRIDGE_SPAN",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_UnevenBrick_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/Derived/Meshes/art01.bridge.arch_span.x1.v1.asset"
+        ]
+      },
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "halfWidth": 3.3,
+        "deckTop": 0.0,
+        "archSpan": 7.9,
+        "archRise": 1.5,
+        "crownUnderside": -0.7,
+        "waterLevel": -2.2
+      },
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
+      "allowedHosts": [
+        "river embankment abutment"
+      ],
+      "connections": [
+        "SUPPORTS X1 road and parapets",
+        "spandrel faces flush with parapet outer faces",
+        "SPRINGS_FROM embankment"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "deck MeshCollider below the street surface",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": [
+        "isolated bridgehead sample; the south end is a declared specimen cut, not CITY-07 bridge geometry"
+      ]
+    },
+    {
+      "id": "art01.derived.bridge.parapet_capped.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "PARAPET",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_UnevenBrick_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
+      },
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "width": 0.55,
+        "top": 1.08,
+        "bottom": -0.1,
+        "capWidth": 0.68,
+        "capHeight": 0.12
+      },
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
+      "allowedHosts": [
+        "arch span deck",
+        "bridgehead ground"
+      ],
+      "connections": [
+        "inner face MEETS road edge",
+        "end MEETS S02 kerb start"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "static parapet collider",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": []
+    },
+    {
+      "id": "art01.derived.retaining.embankment.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "RETAINING",
+      "provenance": {
+        "lineage": [
+          "quaternius-medieval-source:T_UnevenBrick_BaseColor"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
+      },
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "depth": 0.6,
+        "bottom": -2.4,
+        "top": -0.05,
+        "capDepth": 0.7,
+        "capTop": 0.05
+      },
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
+      "allowedHosts": [
+        "river bed",
+        "S02 bank datum"
+      ],
+      "connections": [
+        "RETAINS bank above river",
+        "MEETS arch span abutment"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "static wall collider",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": []
     },
     {
@@ -2013,24 +2488,67 @@
           "quaternius-nature-standard:wet valley palette"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/Derived/Meshes/art01.site.scenic_bank.-1.v1.asset",
+          "Assets/Arkus/ART/Derived/Meshes/art01.site.scenic_bank.1.v1.asset"
+        ]
       },
-      "effectiveDimensionsM": "local sample ±48 m width, irregular rise 0–2.5 m",
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "datumBesideFeatures": -0.05,
+        "flatApron": 1.5,
+        "blendDistance": 5.0,
+        "riverEdgeZ": -26.5
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
         "outside traversable road"
       ],
       "connections": [
-        "MEETS road visually below edge",
-        "ROOTS vegetation"
+        "flat local datum beside route, buildings and edges; valley relief beyond",
+        "ROOTS vegetation at measured height"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none; road owns traversal",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "not CITY heightfield/elevation authority"
       ]
+    },
+    {
+      "id": "art01.derived.site.river_water.v1",
+      "kind": "juego2_derivative",
+      "readiness": "KEEPER_READY",
+      "role": "SCENIC_WATER",
+      "provenance": {
+        "lineage": [
+          "quaternius-nature-standard:wet valley palette"
+        ],
+        "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
+      },
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "level": -2.2,
+        "thickness": 0.02
+      },
+      "pivot": "local datum at support plane unless connection says otherwise",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
+      "allowedHosts": [
+        "river bed below X1 arch"
+      ],
+      "connections": [
+        "visible below arch and embankment"
+      ],
+      "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
+      "collisionTraversal": "none",
+      "dimensionalExceptions": [],
+      "knownIncompatibilities": []
     },
     {
       "id": "art01.derived.sign.bar.v1",
@@ -2040,23 +2558,31 @@
       "provenance": {
         "lineage": [],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": []
       },
-      "effectiveDimensionsM": "1.55 W × 0.48 H × 0.10 D; two independently oriented text faces",
+      "formPrimitive": "BOX",
+      "dimensionsM": {
+        "width": 1.4,
+        "height": 0.42,
+        "depth": 0.08,
+        "letterHeightApprox": 0.27
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
-        "F01 facade host"
+        "plain F01 facade host"
       ],
       "connections": [
-        "ATTACHED_TO host",
-        "FACES both directions without mirrored text"
+        "back flush on host face",
+        "one readable face toward the public approach"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "none",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
-        "word BAR is specimen label, not canonized venue name"
+        "word BAR is a specimen label, not a canonized venue name"
       ]
     },
     {
@@ -2072,25 +2598,110 @@
           "diagnostic #233 garment-carving technique"
         ],
         "implementation": "Unity/ArkusUnity/Assets/Arkus/ART/Editor/Art01BenchmarkBuilder.cs",
-        "license": "Juego2-owned derivative of CC0 source where listed"
+        "license": "Juego2-owned derivative of CC0 source where listed",
+        "unityAssets": [
+          "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx"
+        ],
+        "artifactSha256": "1348d378b46a7eded0f8d1ece8e00b854e6b6cbe7fda0f202cfbb0fb08d7ccf4"
       },
-      "effectiveDimensionsM": "1.8 m standing human; no behavior",
+      "formPrimitive": "MESH",
+      "dimensionsM": {
+        "standingHeight": 1.8
+      },
       "pivot": "local datum at support plane unless connection says otherwise",
-      "facing": "+Z local outward; wrapper yaw supplies street orientation",
+      "facing": "+Z local outward; wrapper/house yaw supplies street orientation",
       "allowedHosts": [
         "road",
         "public floor"
       ],
       "connections": [
         "SUPPORTED_BY route surface",
-        "FACES travel direction after documented 180° visual adjustment"
+        "FACES travel direction after documented 180 deg visual adjustment"
       ],
       "repeatSnap": "0.25 m massing snap; 0.05 m contact correction",
-      "materialFamily": "ART01 built-in Standard explicit material IDs; overcast target",
+      "materialFamily": "family intent only; concrete materials are render-pipeline work (built-in Standard now, explicit URP remap before CANDIDATE)",
       "collisionTraversal": "inspection CharacterController only; no NPC/gameplay",
+      "dimensionalExceptions": [],
       "knownIncompatibilities": [
         "raw T-pose/mannequin is PROXY_VISUAL"
       ]
+    }
+  ],
+  "assemblies": [
+    {
+      "id": "art01.assembly.benchmark.retained_chain.v1",
+      "kind": "assembly",
+      "readiness": "KEEPER_READY",
+      "role": "BENCHMARK",
+      "layers": [
+        "X1 bridgehead",
+        "S02 pause",
+        "W12 lane",
+        "Casco reveal",
+        "micro-route B",
+        "F01 threshold"
+      ],
+      "note": "local specimen order only; not CITY coordinates, grades or keeper placement"
+    },
+    {
+      "id": "art01.assembly.house.two_storey_6x10.v1",
+      "kind": "assembly",
+      "readiness": "KEEPER_READY",
+      "role": "BUILDING_ASSEMBLY",
+      "layers": [
+        "site datum -0.05",
+        "plinth ring -0.15..0.18",
+        "stone ground storey (source walls + quoins)",
+        "render upper storey (render hosts)",
+        "corner closures",
+        "hosted openings/inserts",
+        "low-pitch roof on measured eave",
+        "fitted stone gables",
+        "eave timber plates"
+      ],
+      "members": [
+        "art01.quaternius.medieval.wall_unevenbrick_*",
+        "art01.derived.render_host.*",
+        "art01.derived.plinth.segment.v1",
+        "art01.derived.facade.corner_closure.v1",
+        "art01.derived.roof.lowpitch.6x10.v1",
+        "art01.derived.gable.stone.v1",
+        "art01.derived.eave.timber_plate.v1"
+      ],
+      "placementRule": "plinth outer face meets the kerb outer edge; accepted route width is never narrowed"
+    },
+    {
+      "id": "art01.assembly.house.bar_8x14.v1",
+      "kind": "assembly",
+      "readiness": "KEEPER_READY",
+      "role": "BUILDING_ASSEMBLY",
+      "layers": [
+        "site datum -0.05",
+        "plinth ring -0.15..0.30 interrupted by public threshold",
+        "stone ground storey",
+        "render upper storey",
+        "corner closures",
+        "hosted openings/inserts",
+        "public threshold + lean-to porch",
+        "public room shell",
+        "low-pitch roof on measured eave",
+        "fitted stone gables",
+        "eave timber plates",
+        "flush wall sign and wall lantern"
+      ],
+      "members": [
+        "as two_storey_6x10 plus art01.derived.threshold.*",
+        "art01.derived.interior.*",
+        "art01.derived.sign.bar.v1"
+      ],
+      "placementRule": "public door module centred on micro-route B; lane terminates on the plinth face"
+    },
+    {
+      "id": "art01.inspection.walk_rig.v1",
+      "kind": "assembly",
+      "readiness": "INSPECTION_ONLY",
+      "role": "INSPECTION_ONLY",
+      "note": "third-person inspection instrument; no game identity"
     }
   ]
 }

@@ -1,5 +1,7 @@
 # ART-01 neutral/massing checkpoint — 2026-09-26
 
+> **Superseded (2026-09-26) by `STRUCTURAL_CHECKPOINT.md`.** Retained as history of Codex's `290c487` iteration. The same structural audit, run on that geometry, recorded 569/1449 failures (`UNITY_STRUCTURAL_AUDIT_BASELINE_290c487.json`). These include door-module base voids, 0.13–0.22 m corner notches, a 0.2 m eave slit at gable ends, 0.17 m recessed gables, shutter overhang/clash, a buried drain, invisible water, route narrowing and floating plinths/kerbs. All of them are resolved in the current candidate. The images in `massing_checkpoint/` show the superseded geometry and are not current evidence.
+
 Frozen before the fresh-author smoke test. Unity `6000.3.24f1`, built-in renderer; `Art01BenchmarkBuilder.Build` and `CaptureNeutral` both exited 0. The neutral renderer replaced all ordinary materials with one grey Standard material and hid props/vegetation. The four retained captures in `massing_checkpoint/` show:
 
 - `neutral_puente_s02.png`: 5.5 m bridgehead-to-2.8 m W12 width transition, parapet/coping, real two-storey mass, supported roof/eave and plinth;

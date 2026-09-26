@@ -1,39 +1,75 @@
-# ART-01 representative assembly plans
+# ART-01 representative assembly plans (STRUCTURAL checkpoint)
 
-These plans use the accepted X1 5.5 m, W12 2.8 m and casco micro-route B 2.4 m **width classes** and the accepted F01 8 × 15 m planning frontage. The ART specimen's station coordinates are local test coordinates, not a replacement CITY layout, route grade, elevation decision or final keeper placement. CITY-07 must place and grade this vocabulary against the accepted seed. One Unity unit is one metre; massing snap is 0.25 m and contact trim is 0.05 m unless an audited Quaternius pivot forces a recorded correction.
+These plans use the accepted **width classes**: X1 5.5 m, W12 2.8 m, casco micro-route B 2.4 m, and the accepted F01 planning frontage (8 m used, within the 8 × 15 m class).
 
-## Building: F01 exterior/public threshold specimen
+The ART specimen's station coordinates are local test coordinates. They are not a replacement CITY layout, route grade, elevation decision or final keeper placement; CITY-07 must place and grade this vocabulary against the accepted seed.
 
-| Layer | Retained assembly rule | Instance/metric proof |
+Metric conventions:
+- one Unity unit is one metre;
+- massing snap is 0.25 m and contact trim 0.05 m, unless a measured Quaternius dimension forces a recorded value;
+- every value below is enforced by `Art01StructuralAudit` (GREEN, digest `a7f8534f…`).
+
+Kit families and assemblies are the `kitId`s in `KIT_COMPOSITION_MANIFEST.json` (`@2`). Materials named here are **family intent only** and provisional until the URP CANDIDATE checkpoint.
+
+## Building: two-storey families (`house.two_storey_6x10.v1`, `house.bar_8x14.v1`)
+
+| Layer | Retained assembly rule | Measured / enforced |
 |---|---|---|
-| Site/datum | Ground-floor support is local `y=0`; no world-height assumption is exported. | `Art01Benchmark.unity`, F01 specimen local pivot. |
-| Footprint/base | 8 × 14 m within the accepted F01 planning class; 0.30 m stone plinth with a **real doorway interruption**. | `art01.plinth.F01*`; facade modules start at `y=0.30`. |
-| Massing/storeys | Two 3.122689 m audited Quaternius module storeys. Lower stone and upper lime render; gable-to-approach silhouette. | `art01.assembly.F01_bar_exterior_threshold`. |
-| Facade hosts | Repeat source 2.00 m stone hosts, or ART-owned 2.00 × 3.122689 × 0.44 m render hosts with actual extruded door/window apertures. A plain host never receives a pasted insert. | `art01.derived.render_host.*`; source wall bounds in `KIT_COMPOSITION_MANIFEST.json`. |
-| Openings/inserts | Window inserts, shutters, and stone entry frame share host pivot/facing. Render-host window aperture is 1.61 × 1.59 m, sill 0.94 m. This is a reviewed **source-insert exception** to the 1.40 m typical ART opening band. Door uses 1.61 × 2.39 m rough opening; source leaf's 1.14 × 2.09 m visible size remains within the door scale target. | `Wall()` and `RenderHostMesh()`; neutral captures reveal wall depth and open doorway. |
-| Roof/top closure | Named low-pitch derivative from measured RoundTiles 8×14 source uses scale `(0.91, 0.45, 0.96)` **only for this family**. Eave `y` derives from `0.30 + 2 × 3.122689`; gable fills the measured rise and penetrates 0.25 m into roof underside. Timber eave meets wall. | `art01.derived.roof.lowpitch.8x14.v1`; `art01.derived.gable.stone.v1`. Source steep roof is `SOURCE_ONLY`. |
-| Public threshold | Porch roof is a pitched 3.60 × 1.65 m authored mesh supported by two 2.65 m posts, with feet and fascia. Street ends at the first step at local station 23.84; 0.15 m step, 0.30 m landing/floor, open leaf and interior floor meet at the doorway. | `art01.f01.*threshold*`, `*porch*`, `*roof.threshold*`; road/threshold collider ownership is disjoint. |
-| Room context | Full-depth floor, ceiling at first-floor datum, table, stool, chair and a slatted counter with mug establish scale and public use; no schedules, shop semantics or NPC behavior. | `dressed_f01_interior_scale.png`. |
-| Contact/dressing | Plinth meets scenic ground; portal and kerb terminate at the step; low capped garden wall, restrained wet-valley vegetation, lantern, barrel, crate and two-sided sign follow hosts rather than hide a seam. | Dressed and neutral F01 captures. |
+| Site/datum | Local ground datum −0.05 within 1.5 m of the footprint, blended to valley relief beyond. No world-height guess is exported. | Every plinth foot embedded; ground-contact checks GREEN |
+| Footprint/base | Continuous plinth ring from −0.15 to the storey datum, from the wall inner face to 0.10 beyond the wall outer face. Private doors: the plinth top **is** the sill. Public threshold: the ring is interrupted exactly by the landing width. | Visible plinth 0.165–0.35 m; no unsupported host base |
+| Storey datum | Private house 0.18 (one 0.17 m rise from the street edge); public room 0.30 (two 0.123 m risers). | `facade_base_supported` 70/70 |
+| Massing/storeys | Two 3.122689 m storeys: stone source walls below, ART render hosts above. Render hosts share the source wall faces (outer +0.0924, inner −0.3141 from the module line), so storeys are flush. | `upper_storey_stacked_flush` 70/70; wall depth 0.406 |
+| Corners | Stone storey: `Corner_Exterior_Brick` quoin, symmetric within 0.06 m. Every storey: `facade.corner_closure.v1` fills the 0.0924 × 0.0924 notch where two module lines meet. | 96 diagonal corner probes ≤ 0.07 m |
+| Facade hosts | 2.00 m modules; plain hosts closed; opening hosts carry one real through-opening. A plain host never receives an insert. | 107 plain hosts closed; 33 single rectangular openings |
+| Openings/inserts | Stone window: 1.20 × 1.275 opening, 1.05 sill, frame overlapping the stone reveal. Render window: 1.61 × 1.59 aperture sized to the `Window_Wide_Flat1` insert (declared exception). Door frame: 1.14 × 2.16 clear (declared exception). Private leaf recessed 0.10 m behind the frame (reveal 0.18). Public leaf swings **inward** against the jamb. | Inserts centred on real openings; within facade ends; no inter-host clash |
+| Shutters | Open leaves (±1.24 m) only when both same-storey neighbours are plain and the module is not a facade end. Constrained windows get the closed source shutters, or none on the bar ground floor. | No overhang, no clash |
+| Roof/top closure | Named low-pitch derivatives (`0.86/0.45/0.94` for 6×10, `0.91/0.45/0.96` for 8×14) placed so the **measured** underside meets the outer wall-top line. Pitch 34° (declared band 28–36°); eave projection 0.44–0.46 m. | Underside gap 0.000; 16 envelope probes GREEN |
+| Gables | `gable.stone.v1` flush with the top-storey wall faces. Rise fitted to the measured roof underside (+0.03), checked to stay under the roof top surface. | Gable offset 0.000; no ridge/rake slit inside the envelope |
+| Eave plate | Timber plate on the eave-side outer wall face; top meets the measured underside at its outer edge. | Attached |
+| Public threshold (F01) | Landing 1.70 × 0.96 (from the wall face) at 0.30, continuing level into the public floor. Step 1.70 × 0.30 at 0.1775; both embedded into the street. Lean-to canopy (3.60 × 1.65, back edge embedded in the facade under the first floor) on two posts at ±1.65 m and 1.40 m setback, stone feet embedded. Fascia caps the edge. | Risers 0.123/0.123; landing 0.94; body clearance clear; porch head 2.655; posts touch canopy |
+| Room context (F01) | Public floor at 0.30 and ceiling (clear 2.92). Counter on the right wall, table and chair on the left; all supported, no intersections. No schedules, shop semantics or NPC behavior. | Pivots/support GREEN |
+| Attachments | Flush sign on the plain ground-storey module, back behind the measured stone surface, lettering readable from the street. Wall lantern on the measured pier beside the public door. | Attached; readable |
+| Placement | Plinth outer face meets the kerb outer edge (houses at \|x\| = 6.80). F01's public door module is centred on micro-route B (local +1 m specimen offset). | Route clear-width check GREEN |
 
-For the 6 × 10 m S02/W12 houses, the same 2 m wall/3.122689 m storey rule applies. The paired source roof derivative is `(0.86, 0.45, 0.94)` and has a separately measured gable. Window distribution is deliberately asymmetric; upper corner quoins are omitted where smooth render itself closes the junction. This is a reusable family demonstration, not a universal urban generator. No Bar/Casco special from #233 was copied into the house grammar.
-
-## Street: X1/S02 → W12 → Casco/micro B → F01 specimen
+## Street: X1 → S02 → W12 → Casco/micro B → F01 specimen
 
 | Layer | Retained assembly rule | Collision/connection evidence |
 |---|---|---|
-| Terrain/support | ART-owned irregular **scenic** bank meshes flank the route and remain below its crown at the contact; no independent traversal surface or CITY heightfield claim. | `art01.site.*.scenic`, no collider. |
-| Traversable surface | One continuous crowned cobble mesh for width-class transitions 5.5 → 2.8 → 6.0 local reveal pocket → 2.4 m. The 6.0 m pocket is an ART composition specimen and is **not** an accepted CITY widening. | `art01.street.s02_w12_casco_microB`, one `MeshCollider`. |
-| Surface treatment | Quaternius round-rock albedo is remapped to restrained wet grey; UV repeats in metres. It is a real road mesh, not a thin plane layered over a second traversable slab. | `art01.derived.street.crowned.v1`, `Art01Materials.Cobble`. |
-| Edge/kerb/drainage | 0.18 × 0.13 m stone kerb follows each measured station; the right 0.12 m dark groove is visual drainage beyond the sole road collider. | `art01.kerb.*`, `art01.drain.*`. |
-| Retaining/building contact | Parapet/bank sample at the S02 side, capped low garden wall at F01, stone plinth at facades. No wall or plant is used as an unexplained seam mask. | `art01.bridgehead.*`, `art01.f01.garden.*`. |
-| Threshold transition | Road collider ends where F01's first step begins. Step and landing provide the sole next support, then meet the full-depth interior floor at the doorway plane. The final CITY access/elevation check remains CITY-07's job. | No duplicate coplanar road/landing ownership. |
-| Dressing/nature | Quaternius Nature and Props are explicitly imported at centimetre normalization; Props retain root ×100 and X≈270° orientation. Roots/feet are positioned on bank/floor and outside clear path. | Material/source checks plus third-person captures. |
+| Terrain/support | Non-collidable scenic ground: flat −0.05 datum beside the route, buildings, walls and river edge; valley relief beyond. Never a CITY heightfield. | `art01.site.*.scenic`, no collider |
+| Bridgehead | `bridge.arch_span.v1`: 6.6 m wide deck body with one segmental arch (7.9 m span, 1.5 m rise, crown underside −0.70) and flush spandrels. `bridge.parapet_capped.v1` parapets: inner face on the road edge, ends meeting the S02 kerb start. `retaining.embankment.v1`: capped river embankment. Visible water at −2.2. The south end is a declared specimen cut. | Deck has **no** traversal collider; street is the sole owner |
+| Traversable surface | One continuous crowned mesh (crown +0.045) for widths 5.5 → 2.8 → 6.0 local reveal pocket → 2.4. It terminates on the F01 plinth face. The 6.0 m pocket is an ART composition specimen, **not** an accepted CITY widening. | One `MeshCollider`; 0/1215 samples unsupported or stacked |
+| Drainage | Right-side channel modelled **inside** the street mesh (0.20 m wide, 0.03 m deep, own submesh). | Visible; walkable |
+| Edge/kerb | Continuous mitred kerb **outside** the traversable edge (0.20 wide, top 0.13, foot −0.15). It starts at the parapet ends and ends on the F01 plinth. | Rise 0.12, width 0.205–0.22 |
+| Retaining/building contact | Capped low walls (body 0.42 × to 0.48, cap 0.53 × 0.09, foot −0.15). The W12/Casco edge continues the kerb outer line from the W12 right house wall; the F01 garden walls meet the frontage plinth line. | Visible height 0.62–0.70 |
+| Threshold transition | Street → step → landing → public floor (see building table). The step and landing sit on the street surface; there is no coplanar duplicate ownership. | Stacked-surface check GREEN |
+| Dressing/nature | Quaternius Nature/Props with centimetre normalization; Props keep root ×100 and X≈270°. Placed on the measured ground/floor height, clear of route and structure. | Pivots −0.10…0.00; `dressing_clear_of_structure` 21/21 |
 
 ## Authoring states and negative examples
 
-Use `KEEPER_READY` only when every demanded host, support, cap, connection, dimension and source is present. Use `PROXY_VISUAL` for a labeled test blockout and `COVERAGE_BLOCKED` if the needed piece/connection is absent. Neither diagnostic state can satisfy an ART-01 required benchmark row. In particular, a big solid cube carrying a window/frame/roof, a floating roof, a painted window on an uncut facade, a sign with a mirrored back, a decorative grass strip hiding a road gap, or two collidable coplanar road slabs is not keeper-ready. The scene's ART tags are navigation aids, not proof by themselves; inspect geometry and captures.
+Use `KEEPER_READY` only when every demanded host, support, cap, connection, dimension and source is present. `PROXY_VISUAL` marks a labelled test blockout; `COVERAGE_BLOCKED` marks a needed piece or connection that is absent. Neither diagnostic state can satisfy an ART-01 required benchmark row.
+
+The structural audit now makes the following machine-detectable failures, not just prose:
+- a big box standing in for a facade/roof/building;
+- a floating roof or eave slit;
+- a window on an uncut host;
+- a mirrored or floating sign;
+- a buried "drain";
+- invisible scenic water;
+- two collidable coplanar road slabs;
+- a plinth gap under a door;
+- a prop inside a building.
+
+The ART tags are navigation aids, not proof by themselves: the audit measures geometry.
 
 ## Target reconciliation
 
-The three frozen targets in `VISUAL_TARGETS.md` remain illustration, not CITY geometry. The benchmark carries the stone/render split, darkened low-pitch tile, deep shuttered openings, a supported entry canopy, explicit plinth, wet grey cobble, local retaining/kerb/drain, overcast light and clothed human. Its local specimen has less built density and landscape depth than the targets because ART-01 only proves reusable first-chain vocabulary; CITY-07 owns the actual district composition and ART-02 later polish. The current source tree reads somewhat pale under overcast lighting; that is a bounded art-direction residual, not a missing required structural connection.
+The three frozen targets in `VISUAL_TARGETS.md` remain illustration, not CITY geometry.
+
+**Structural relations now realized:**
+- a bridge deck, parapet and bridgehead as one traversable system, with a visible arch and water edge (T1);
+- a singular 2.8 m W12 surface with authored drainage and stone lower walls behind plinths (T2);
+- an F01 separate plinth, thick hosted facade, true public opening with reveal, continuous threshold/landing into the public floor, and a supported canopy (T3).
+
+**Deferred to URP CANDIDATE:** dark wet tile, restrained render tone, damp greens, overcast fog and the overall mood. The current built-in materials are provisional.
+
+**Density:** the local specimen has less built density and landscape depth than the targets, because ART-01 only proves reusable first-chain vocabulary; CITY-07 owns district composition, ART-02 later polish.

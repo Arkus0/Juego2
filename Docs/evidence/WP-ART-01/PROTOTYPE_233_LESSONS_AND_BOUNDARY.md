@@ -5,7 +5,7 @@ PR #233 `prototype/demo-puente-bar` remains a frozen, non-canonical experiment. 
 | Diagnostic finding in #233 | ART-01 action |
 |---|---|
 | Centimetre-scale FBX geometry, Props root ×100 and X-axis orientation | Selected-source lock, before/after Unity audit, scoped importer normalization and placement that preserves prefab transform. |
-| Standard source materials incompatible with prototype URP | Explicit source-material remap for the actual built-in H1 Unity project; URP adaptation documented as a distinct future consumer task. |
+| Standard source materials incompatible with prototype URP | Owner decision 2026-09-26: URP is the production renderer. The STRUCTURAL checkpoint stays renderer-independent on the built-in H1 project (explicit Standard remap, provisional). After `WP-H1-GATE`, ART-01 adopts URP and performs an explicit, reproducible, fail-closed material conversion; #233's URP 17.3.0 is only a starting reference, not an imported configuration. |
 | HouseBuilder showed the source can assemble genuine opened walls | ART composes selected source hosts/inserts and adds its own smooth extruded render hosts, plinth, measured eave/gable and threshold rules. No Bar/Casco special layout rule was transplanted. |
 | Source roof slope/chalet read, upper facade framing | Named flattened source-roof derivatives, dark tile palette, smooth render host with real holes, stone lower band; incompatible direct source use rejected. |
 | Buildings floated without contact and route edges were unclear | Continuous plinth/gap, named entrance landing and two steps, singly collidable road, kerb/drain, capped retaining wall, scenic bank without path collision. |

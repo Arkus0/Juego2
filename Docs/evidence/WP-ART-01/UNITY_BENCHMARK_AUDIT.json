@@ -1,9 +1,10 @@
 {
-    "schema": "juego2.art01.benchmark-audit@1",
+    "schema": "juego2.art01.benchmark-audit@2",
     "unityVersion": "6000.3.24f1",
     "scene": "Assets/Arkus/ART/Art01Benchmark.unity",
+    "renderPipeline": "built-in",
     "passed": true,
-    "taggedPieces": 353,
+    "taggedPieces": 360,
     "streetMeshColliders": 1,
     "dressedHumans": 3,
     "supports": [
@@ -15,7 +16,7 @@
         {
             "point": "F01 first step",
             "hit": "art01.f01.threshold.step",
-            "topY": 0.15000000596046449
+            "topY": 0.17749999463558198
         },
         {
             "point": "F01 landing",
