@@ -158,7 +158,9 @@ corregidos; el log de atascos dice qué colisionador bloquea y dónde.
 3. **La revisión visual automática encontró todos los defectos importantes.** Reconstruir → capturar
    desde 6 cámaras fijas + aérea → mirar contra la lista de FALLA detectó: ruido de textura en rejilla,
    splat perdido por el orden de creación del `TerrainData`, entramado alpino y teja roja del kit,
-   césped en mitad del Casco, y la pantalla magenta. Ningún test estructural lo habría visto.
+   césped en mitad del Casco, y la pantalla magenta. Ningún test estructural lo habría visto. Y un
+   **recorrido automático** con el controlador real del jugador encontró lo que las capturas no ven: dos muros
+   generados que cerraban la entrada del puente. Mirar y recorrer son las dos pruebas que más valor dieron.
 4. **El conocimiento del kit se extrae de datos.** Las reglas de montaje (dónde va la ventana respecto al
    muro, a qué altura el tejado, cómo girar una esquina) salieron en minutos de volcar la escena de
    muestra de Quaternius (907 instancias). El «perfil dimensional» de ART-01 puede derivarse
