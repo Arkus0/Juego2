@@ -295,8 +295,8 @@ namespace Arkus.H1.UnityHost
                 {
                     // A structured projection precondition (for example an unresolved catalogue reference in the
                     // canonical binding) is a canonical-input diagnostic, not a host/worker contract fault. No Editor
-                    // process is launched.
-                    return Failure(exception.Code, exception.Message, false, null,
+                    // process is launched. The message stays fixed so no raw exception text becomes public contract.
+                    return Failure(exception.Code, "The canonical request failed a projection precondition before any Unity launch.", false, null,
                         "Run unity.projection.plan for the preflight diagnostic, then repair the canonical binding through authoring.change.* before retrying.");
                 }
                 catch (Exception) { return Failure(CorruptResultCode, "The typed worker request encoder rejected the canonical request.", false); }
