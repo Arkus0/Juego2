@@ -25,6 +25,10 @@ The previous contracts formed a causal cycle: H2F-01/H2F-02 consumed ART-01 PASS
 
 The cycle is resolved by splitting ART-01 execution into a non-PASS, renderer-independent/source-facing `PREFOUNDATION_INPUT` handoff and a later effective Unity candidate/PASS phase on the H2F-GATE baseline.
 
+## Relationship to accepted H2F-00 history
+
+`WP-H2F-00` was already accepted and DocSynced before this owner-directed sequencing correction. Its accepted survey claim, evidence and identity remain unchanged. Any downstream-order wording in that historical DocSync reflects the contract graph that existed when H2F-00 closed; once this amendment is accepted, this decision plus the amended H2F/ART contracts are authoritative for subsequent execution. Historical PASS evidence is not rewritten to manufacture a different past dependency graph.
+
 ## Authority boundary
 
 - ART-01 owns visual/source demand, assembly/dimensional grammar, keeper-readiness and the no-silent-proxy oracle.
