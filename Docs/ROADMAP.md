@@ -1,6 +1,6 @@
 # ROADMAP — Juego2 / Arkus Harness
 
-Version: 1.35 — 2026-09-24
+Version: 1.36 — 2026-09-27 (H1 Gate acceptance reconciliation)
 
 ## North star
 
@@ -8,7 +8,7 @@ Build an engine-agnostic, commercially viable AI-native game-authoring platform 
 
 A fresh AI agent, without C# implementation knowledge, must be able to discover available capabilities and safely create, inspect, modify, validate, diff, replay and test a representative world through stable machine-readable contracts.
 
-**H0 / `WP-HK-GATE` has passed. The Engine Bridge / Unity-first H1 plan is accepted and binding; `WP-H1-00`, `WP-H1-01` and `WP-H1-02` are complete, and `WP-H1-03` is the next default dependency-valid H1 workpack. `WP-H1-UNITY-CI` is also COMPLETE / ACCEPTED as process infrastructure: machine-verifiable effective Unity evidence may use the reviewed GitHub-hosted substrate, while physical-local execution remains required when a claim depends on visual/interactive/local-machine state or on required source bytes unavailable to the runner. Gameplay and keeper realization remain blocked until `WP-H1-GATE` passes, merges and completes DocSync; the bounded CITY-04 greybox has the narrower H1-08 prerequisite recorded below. DW-GATE and CTX↔DW selective-adoption are accepted; they do not block H1-03/H1-03A and instead feed later selective H1/H2 use.**
+**H0 / `WP-HK-GATE` and H1 / `WP-H1-GATE` have passed and merged. H1 Gate acceptance is recorded in `Docs/evidence/WP-H1-GATE/DOCSYNC.md`. The H1 interlock for H2/gameplay and CITY-07 keeper realization is satisfied; each downstream workpack still requires its other accepted predecessors and its own review. `WP-H1-UNITY-CI`, DW-GATE and CTX↔DW selective adoption remain accepted on their respective boundaries.**
 
 Juego2 / Arkus Harness is a **game-development and software-verification project, not a cybersecurity project**. Robustness work in H0 is repository-local testing of the harness's own code, fixtures and contracts. New work uses the neutral negative-conformance terminology defined in `AGENTS.md`.
 
@@ -158,24 +158,24 @@ WP-HK-GATE
  H1-GATE -. keeper authorization .----> CITY-07 (after CITY-04)
 ```
 
-`H1-00`, `H1-01` and `H1-02` are accepted predecessor truth. The default human sequence is numeric. Every later edge requires predecessor PASS, merge and DocSync.
+`H1-00` through `H1-GATE` are accepted predecessor truth. Each downstream edge still requires its own predecessor PASS, merge and DocSync.
 
 | Order | Workpack | Owned outcome | Execution |
 |---:|---|---|---|
 | 1 | `WP-H1-00` ✅ | neutral projection contract + deterministic reference materializer | `REMOTE_OK` |
 | 2 | `WP-H1-01` ✅ | Unity scoped producer + automatic dependency derivation | `REMOTE_OK` |
 | 3 | `WP-H1-02` ✅ | exact reproducible Unity project/toolchain/package baseline | `EFFECTIVE_UNITY` |
-| 4 | `WP-H1-03` | project-scoped Unity host authority below transports | `HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE` |
-| 5 | `WP-H1-03A` | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE` |
-| 6 | `WP-H1-04` | effective catalogue + logical/native identity mapping + first Quaternius Source adoption | `EFFECTIVE_UNITY / SOURCE_DEPENDENT` |
-| 7 | `WP-H1-05` | managed scene graph + generational publication | `EFFECTIVE_UNITY / SOURCE_OR_VISUAL_DEPENDENT_AS_CLAIM_REQUIRES` |
-| 8 | `WP-H1-06` | source asset/prefab fidelity + managed derivatives | `EFFECTIVE_UNITY / SOURCE_DEPENDENT` |
-| 9 | `WP-H1-07` | finite allowlisted component schema/adapters | `EFFECTIVE_UNITY / CLASSIFY_BY_CLAIM` |
-| 10 | `WP-H1-08` | Unity-owned validation + actionable diagnostics | `HYBRID / CLASSIFY_BY_CLAIM` |
-| 11 | `WP-H1-09` | drift/reconciliation + explicit import proposals | `EFFECTIVE_UNITY / CLASSIFY_BY_CLAIM` |
-| 12 | `WP-H1-10` | project checkpoint + clean Unity reconstruction | `HYBRID / CLASSIFY_BY_CLAIM` |
-| 13 | `WP-H1-11` | broad real hierarchy/material/rig/animation conformance over accepted Quaternius Source | `EFFECTIVE_UNITY / SOURCE_AND_POSSIBLY_VISUAL_DEPENDENT` |
-| 14 | `WP-H1-GATE` | composed Unity parity/readiness + one fresh public AI trial | `HYBRID / CLASSIFY_BY_CLAIM` |
+| 4 | `WP-H1-03` ✅ | project-scoped Unity host authority below transports | `HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE` |
+| 5 | `WP-H1-03A` ✅ | public host-to-Editor dispatch, main-thread and lifecycle contract | `HYBRID / GITHUB_HOSTED_UNITY_ELIGIBLE` |
+| 6 | `WP-H1-04` ✅ | effective catalogue + logical/native identity mapping + first Quaternius Source adoption | `EFFECTIVE_UNITY / SOURCE_DEPENDENT` |
+| 7 | `WP-H1-05` ✅ | managed scene graph + generational publication | `EFFECTIVE_UNITY / SOURCE_OR_VISUAL_DEPENDENT_AS_CLAIM_REQUIRES` |
+| 8 | `WP-H1-06` ✅ | source asset/prefab fidelity + managed derivatives | `EFFECTIVE_UNITY / SOURCE_DEPENDENT` |
+| 9 | `WP-H1-07` ✅ | finite allowlisted component schema/adapters | `EFFECTIVE_UNITY / CLASSIFY_BY_CLAIM` |
+| 10 | `WP-H1-08` ✅ | Unity-owned validation + actionable diagnostics | `HYBRID / CLASSIFY_BY_CLAIM` |
+| 11 | `WP-H1-09` ✅ | drift/reconciliation + explicit import proposals | `EFFECTIVE_UNITY / CLASSIFY_BY_CLAIM` |
+| 12 | `WP-H1-10` ✅ | project checkpoint + clean Unity reconstruction | `HYBRID / CLASSIFY_BY_CLAIM` |
+| 13 | `WP-H1-11` ✅ | broad real hierarchy/material/rig/animation conformance over accepted Quaternius Source | `EFFECTIVE_UNITY / SOURCE_AND_POSSIBLY_VISUAL_DEPENDENT` |
+| 14 | `WP-H1-GATE` ✅ | composed Unity parity/readiness + one fresh public AI trial | `HYBRID / CLASSIFY_BY_CLAIM` |
 
 The split is claim-driven, not quota-driven. Adjacent workpacks remain separate where authority or proof can fail independently; component types and individual assets remain together where further division would create administrative micro-WPs. H0 guarantees are inherited and only delta-checked at changed seams. The sole planned fresh external AI-agent trial is the final Gate.
 
@@ -183,7 +183,7 @@ From `WP-H1-04` onward, positive game-representative art probes use the exact ac
 
 H1 consumes accepted CITY-00 geography only as representative shape pressure; it does not own or redraw it. CITY remote planning remains independent. `CITY-04` may use the accepted scene/prefab/component/diagnostic surface after `H1-08` to falsify the CITY-03 greybox, without becoming an H1 acceptance stage. `CITY-07` keeper realization waits for H1-GATE. CITY-08 later owns keeper-slice authoring-efficiency/reuse proof and is not duplicated by the smaller H1 Gate readiness trial.
 
-H1 ends only when `WP-H1-GATE` answers the published reference question affirmatively without adding semantics: Arkus can create, inspect, modify, validate, materialize and reconstruct the bounded Juego2 Unity slice from public contracts while canonical identity, transactions/provenance, dependencies, diagnostics and normalized parity remain truthful.
+H1 closed when `WP-H1-GATE` answered the published reference question affirmatively without adding semantics: Arkus can create, inspect, modify, validate, materialize and reconstruct the bounded Juego2 Unity slice from public contracts while canonical identity, transactions/provenance, dependencies, diagnostics and normalized parity remain truthful.
 
 ---
 
@@ -226,9 +226,9 @@ The binding DW architecture/workpack contracts are `Docs/engineering/DW_DESIGN_W
 
 ---
 
-# H2 — Vertical Slice Foundation (blocked by Unity parity gate; final boundary interlocked with accepted DW)
+# H2 — Keeper World + Visual Identity (H1 Gate satisfied; accepted H2 plan governs)
 
-Only after `WP-H1-GATE` PASS, merge and DocSync may H2 gameplay/first-playable production proceed under this roadmap. The final H2 public/external-boundary acceptance consumes the already accepted `WP-DW-GATE` evidence/interlock; this condition does not predefine H2 implementation scope or make DW a substitute for H1-GATE.
+`WP-H1-GATE` PASS, merge and DocSync satisfy the H1 prerequisite for H2. The accepted `Docs/workpacks/H2/README.md` and individual H2 workpacks govern current scope and remaining dependencies, including ART-01 and CITY-07 where named. H2-GATE consumes the accepted DW-GATE evidence without making DW a substitute for H1-GATE.
 
 - build the first playable/demo with **maximum practical direct reuse of the Quaternius Source baseline already adopted at H1-04** rather than waiting for final custom art;
 - use `Docs/art/VISUAL_BIBLE.md` as the visual/adaptation contract and progressively create separately identified Juego2-derived assets only where concrete needs require Cantabrian materials/architecture, clothing/outfits, missing props/meshes, variants or missing/retargeted animations;

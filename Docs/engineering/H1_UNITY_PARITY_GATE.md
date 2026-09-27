@@ -2,7 +2,7 @@
 
 Version: 1.3 — 2026-09-26
 Owner: `WP-H1-GATE`
-Status: ACCEPTED CONTRACT / NOT EXECUTED — adopted by H1 planning PR `#71` at merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; Quaternius source-timing amendment proposed by the later PROCESS_ONLY correction; stage-16 capture amendment v1.3 accepted through PROCESS_ONLY PR `#246`, accepted candidate `a0899c37b6958efb3036a6367377e5ed0773a10b`, PASS review `#5328105230`, merge `f5a480d03f93b711811610c18bfdb699ccee4776`, see "Amendment v1.3"; only a later exact-SHA `WP-H1-GATE` PASS can satisfy the Gate.
+Status: ACCEPTED CONTRACT / EXECUTED / PASS — adopted by H1 planning PR `#71` at merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; stage-16 capture amendment v1.3 accepted through PROCESS_ONLY PR `#246`, candidate `a0899c37b6958efb3036a6367377e5ed0773a10b`, PASS review `#5328105230`, merge `f5a480d03f93b711811610c18bfdb699ccee4776`, see "Amendment v1.3". `WP-H1-GATE` passed on exact candidate `8bcf171f2520a0e23ccba094bf353c8a78b5d239` (PR `#238`, independent PASS review `#5329808171`, merge `b730ba0c0b1a4ad454edbd420cd8e44555dfaf10`). Acceptance and residuals: `Docs/evidence/WP-H1-GATE/DOCSYNC.md`.
 
 ## Representative slice
 
