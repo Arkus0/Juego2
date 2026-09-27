@@ -5,13 +5,13 @@ Class: PRODUCT / TOOLCHAIN + CONTENT INTEGRATION
 Execution policy: `RESEARCH_BATCH` for survey; `PRODUCT_CHECKPOINT` for Unity spikes/integration  
 Plan date: 2026-09-27  
 Accepted: PR `#250`, candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`, independent PASS review `#5330069733`, merge `9d3bb90ebfae8837155576c13b705fc1c72c2579`  
-Progress: `WP-H2F-00` COMPLETE / ACCEPTED via PR `#251`, candidate `8600c43da8cd7ef0cf7776845de3ee53593134d7`, PASS review `#5330291941`, merge `a47f879c46abce88ee23d5959736e32ba5bd62be`. Next in sequence: `WP-H2F-01`, consuming accepted ART-01 evidence wherever a spike claims keeper-source or visual fit.
+Progress: `WP-H2F-00` COMPLETE / ACCEPTED via PR `#251`, candidate `8600c43da8cd7ef0cf7776845de3ee53593134d7`, PASS review `#5330291941`, merge `a47f879c46abce88ee23d5959736e32ba5bd62be`. Next in sequence: `WP-H2F-01`, consuming ART-01 `PREFOUNDATION_INPUT` source/demand/assembly evidence rather than ART-01 PASS.
 
 ## 1. Phase claim
 
 H2F answers one question before keeper production continues:
 
-> **Have we deliberately surveyed, selected, integrated and frozen the rendering, worldbuilding, character/animation and production-tool baseline that CITY-07 and H2 are expected to build on, so that keeper work does not discover foundational visual/tooling choices piecemeal after content has already been authored around weaker assumptions?**
+> **Have we deliberately surveyed, selected, integrated and frozen the rendering, worldbuilding, character/animation and production-tool baseline that ART-01, CITY-07 and H2 are expected to build on, so that keeper work does not discover foundational visual/tooling choices piecemeal after content has already been authored around weaker assumptions?**
 
 H2F is not a new canonical/platform foundation. It does not reopen H0 or H1, does not make Unity semantic authority, and does not replace ART or CITY ownership. It is a bounded pre-production freeze over the Unity/product toolchain and admitted external content sources used to realize the game.
 
@@ -20,7 +20,7 @@ The intended execution order is:
 ```text
 H1-GATE accepted
       +
-ART-01 KEEPER_READY
+ART-01 PREFOUNDATION_INPUT
       ↓
 H2F-00 capability survey + candidate register
       ↓
@@ -32,18 +32,20 @@ H2F-03 integrated compatibility/authoring benchmark
       ↓
 H2F-GATE foundation freeze
       ↓
+ART-01 effective CANDIDATE / KEEPER_READY PASS
+      ↓
 CITY-07 keeper game-space realization
       ↓
 H2-01 / H2-02 / H2-03 / ART-02 / H2-GATE
 ```
 
-`H2F-00` may be researched remotely before ART-01 closes because it does not mutate the project or approve dependencies. No adoption, migration or keeper claim may use that overlap to pretend ART-01 has already passed.
+ART-01 may perform and publish renderer-independent/source-facing work before H2F as its non-PASS `PREFOUNDATION_INPUT` checkpoint. H2F consumes that demand, source, assembly/dimensional and representative-asset truth without requiring ART-01's effective Unity benchmark to have passed. No H2F fixture may claim ART-01 `KEEPER_READY`, and ART-01 may not freeze its final render/toolchain-sensitive benchmark until H2F-GATE has accepted the production foundation.
 
-## 2. Why H2F must precede CITY-07
+## 2. Why H2F must precede ART-01 final acceptance and CITY-07
 
-CITY-07 owns the first retained keeper game-space and may make material choices about roads, terrain, local vertical realization, walls/edges, vegetation, collision/navigation and Unity-native geometry. If the project selected URP, spline/road tooling, terrain/vegetation rules, water/shoreline treatment, character retargeting or other retained implementation mechanisms only after CITY-07, the first keeper slice could be authored around assumptions that immediately require rework.
+ART-01's final visual benchmark is render/toolchain-sensitive, while CITY-07 owns the first retained keeper game-space and may make material choices about roads, terrain, local vertical realization, walls/edges, vegetation, collision/navigation and Unity-native geometry. If the project selected URP, spline/road tooling, terrain/vegetation rules, water/shoreline treatment, character retargeting or other retained implementation mechanisms only after ART-01/CITY-07 finalization, those retained outputs could be authored around assumptions that immediately require rework.
 
-H2F therefore consumes ART-01 and blocks CITY-07. It does not ask ART-01 to redo its production-kit claim, and it does not let H2F redesign CITY semantics.
+H2F therefore consumes ART-01 `PREFOUNDATION_INPUT`, freezes the foundation first, and blocks ART-01's effective Unity candidate/PASS as well as CITY-07. It does not ask ART-01 to surrender visual/content authority, and it does not let H2F redesign CITY semantics.
 
 ## 3. Exhaustive-by-capability discovery rule
 
@@ -154,19 +156,19 @@ Accepted in PR `#251`; post-PASS state is recorded in `Docs/evidence/WP-H2F-00/D
 
 ### `WP-H2F-01 — Decision spikes + final stack selection`
 
-Run only the Unity/source-content spikes necessary to distinguish serious candidates whose choice is expensive to reverse. Produce the final disposition matrix and one recommended baseline with explicit rejected/deferred alternatives.
+Run only the Unity/source-content spikes necessary to distinguish serious candidates whose choice is expensive to reverse. Consume ART-01 `PREFOUNDATION_INPUT` for representative assets, source/demand/assembly truth and visual discriminators; do not require or claim ART-01 PASS. Produce the final disposition matrix and one recommended baseline with explicit rejected/deferred alternatives.
 
 ### `WP-H2F-02 — Exact adoption + URP/toolchain bootstrap`
 
-Apply the selected baseline to the real Unity project: exact package/adoption records, render-pipeline migration, project/preset/import conventions, external-source provisioning, character retarget rules and selected worldbuilding adapters/presets. For every material retained/generated state introduced by the selected stack, also freeze its H1 lifecycle class/host and its materialize/observe/reconcile/rematerialize/clean-rebuild expectation. This is the first H2F WP allowed to make the chosen dependencies project truth.
+Apply the selected baseline to the real Unity project: exact package/adoption records, render-pipeline migration, project/preset/import conventions, external-source provisioning, character retarget rules and selected worldbuilding adapters/presets. For every material retained/generated state introduced by the selected stack, also freeze its H1 lifecycle class/host and its materialize/observe/reconcile/rematerialize/clean-rebuild expectation. This is the first H2F WP allowed to make the chosen dependencies and canonical URP/toolchain baseline project truth.
 
 ### `WP-H2F-03 — Integrated compatibility + AI-authoring benchmark`
 
-Prove the selected stack works together rather than only in isolated package demos. Use a bounded **non-keeper integration fixture** so this work cannot bypass CITY-07. Exercise the adopted rendering/worldbuilding/player/navigation/character-animation path, execute one composed accepted H1 materialize → observe → reconcile → rematerialize → clean-rebuild cycle with the full stack present, and run one public/AI-assisted authoring operation through the approved boundary. Profiling is diagnostic except for the explicitly enumerated foundation pathologies in the WP.
+Prove the selected stack works together rather than only in isolated package demos. Use a bounded **non-keeper integration fixture** so this work cannot bypass ART-01 or CITY-07. Exercise the adopted rendering/worldbuilding/player/navigation/character-animation path, execute one composed accepted H1 materialize → observe → reconcile → rematerialize → clean-rebuild cycle with the full stack present, and run one public/AI-assisted authoring operation through the approved boundary. Profiling is diagnostic except for the explicitly enumerated foundation pathologies in the WP. This fixture cannot satisfy ART-01 keeper-readiness.
 
 ### `WP-H2F-GATE — Foundation freeze`
 
-Freeze the exact admitted baseline, demonstrate the selected foundation state is preserved or deterministically reconstructed through the accepted H1 lifecycle, demonstrate clean/reproducible project restoration with documented lawful/manual inputs, close dependency/IP records, prove the integrated fixture, retain rejected/deferred decisions and authorize CITY-07/H2 to build keeper content on the frozen baseline.
+Freeze the exact admitted baseline, demonstrate the selected foundation state is preserved or deterministically reconstructed through the accepted H1 lifecycle, demonstrate clean/reproducible project restoration with documented lawful/manual inputs, close dependency/IP records, prove the integrated fixture and retain rejected/deferred decisions. Gate PASS authorizes ART-01 to run/freeze its effective candidate on this baseline; it does not itself claim ART-01 `KEEPER_READY` or CITY keeper acceptance.
 
 ## 8. Freeze semantics after H2F-GATE
 
@@ -174,7 +176,8 @@ The freeze is strong enough to prevent accidental dependency drift but not a ban
 
 After H2F-GATE:
 
-- CITY-07 and H2 use the admitted baseline by default;
+- ART-01 executes its effective visual benchmark, render-sensitive tuning and fresh-author smoke test on the admitted baseline and must PASS before CITY-07 starts;
+- CITY-07 and H2 use the admitted baseline by default once their own predecessors are satisfied;
 - a new material dependency or replacement that changes keeper construction, rendering, character/animation handling, navigation, asset provenance or public AI authoring requires an explicit H2F amendment/adoption record before keeper content relies on it;
 - ordinary assets that fit an already-admitted content/source class may enter through the existing ART/DEPENDENCY-IP process without pretending they are a new toolchain architecture;
 - profiling may justify a later optimization dependency, but it is evidence-driven and does not retroactively make the H2F survey incomplete;
@@ -205,6 +208,7 @@ A collection of successfully installed packages is not H2F success. The claim is
 
 H2F does not prove:
 
+- ART-01 `KEEPER_READY` or ART-01 PASS;
 - final CITY-07 keeper geometry;
 - H2 visual closure;
 - Living World NPC semantics;
