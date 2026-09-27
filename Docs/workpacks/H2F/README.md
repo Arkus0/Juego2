@@ -1,9 +1,10 @@
 # H2F — Pre-H2 product/toolchain foundation freeze
 
-Status: **PROPOSED PLAN / NOT STARTED**  
+Status: **ACCEPTED PLAN / NOT STARTED**  
 Class: PRODUCT / TOOLCHAIN + CONTENT INTEGRATION  
 Execution policy: `RESEARCH_BATCH` for survey; `PRODUCT_CHECKPOINT` for Unity spikes/integration  
-Plan date: 2026-09-27
+Plan date: 2026-09-27  
+Accepted: PR `#250`, candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`, independent PASS review `#5330069733`, merge `9d3bb90ebfae8837155576c13b705fc1c72c2579`
 
 ## 1. Phase claim
 
