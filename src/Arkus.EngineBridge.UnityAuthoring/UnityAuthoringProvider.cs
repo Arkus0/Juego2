@@ -306,9 +306,9 @@ namespace Arkus.EngineBridge.UnityAuthoring
                     exception.MachineCode,
                     exception.Message,
                     exception.Path,
-                    EmptyContext(),
+                    exception.Context ?? EmptyContext(),
                     false,
-                    "Repair the structured Unity binding document or dependency assertion and retry."));
+                    exception.RepairHint ?? "Repair the structured Unity binding document or dependency assertion and retry."));
             }
         }
 

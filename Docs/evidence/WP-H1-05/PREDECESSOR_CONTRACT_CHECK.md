@@ -19,3 +19,22 @@ Managed scene/root/object markers and mapping; normalized scene membership, hier
 ## Concrete reopen conditions
 
 Reopen H1-00 only if evidence shows Unity cannot implement the accepted generation/receipt semantics without changing them. Reopen H1-04 only if evidence proves its accepted source/catalogue identity is false or inapplicable to the effective input used here. Reopen another inherited contract only if concrete execution evidence shows that its guarantee does not cover the effective H1-05 path or is false; theoretical possibility or a request for duplicate proof is insufficient. Otherwise, mapping, staging, publication and observation defects are H1-05 obligations.
+
+## Reopen 1 (2026-09-27) — owner-directed after WP-H1-GATE trial 7
+
+- The accepted identity reopened is PR `#192`, candidate `186224fbc3f53eb9c47ae528a56dcf3514af163f`, PASS `#5308430565`, merge `7039adecac4e6e07d899247759d9b3c9fd3c2dae`.
+- The base is `main` `edd20167`, which includes the later accepted reopens of H1-04, HK-05, HK-04 and H1-01, and parity-gate v1.3.
+- The inherited guarantees are unchanged.
+- The correction covers the public structured facts and repair hints of the refusals of the H1-05-owned capabilities: the plan preflight and, after pre-merge probe 1, the materialize/observe Editor refusal (`REOPEN_1_BINDING_DIAGNOSTICS.md`).
+- Nothing here reopens another predecessor. The H1-01 codec and the H0 opaque-payload admission are consumed exactly as accepted.
+- **Disclosed boundary touch.** Probe 1 adds one Unity-side check inside H1-05's materialize preflight: the renderer target rule applied to a prefab source before staging.
+  - It calls the H1-07 renderer adapter's own target rule (`ResolveSingleOwnedComponent<MeshRenderer>` plus the material-slot bound), which is unchanged.
+  - It runs under the existing H1-08 `unity.plan.component` invariant. There is no new invariant ID, inventory entry or code.
+  - The rule is the same one materialization already enforced, now enforced earlier. The Reviewer and owner may judge whether that belongs to H1-07/H1-08 instead.
+- **Disclosed boundary touch (probe 2).** One repair-hint string of the WP-HK-05-owned canonical-Base64 refusal (`WorldMutationService`, HK-05 reopen 2 `#243`) now also names the typed-document form.
+  - No code, message, path, context or behavior changes, and the HK-05 test still pins everything it pinned.
+  - It rides in this reopen only because the owner's agile probe loop found it one step before this reopen's own refusal. The owner may require it as its own HK-05 reopen before merge.
+- **Disclosed boundary touch (probe 3).** The WP-H1-01-owned compile refusals `unity.binding.canonical-dependency-mismatch` and `unity.binding.catalogue-dependency-mismatch` (`UnityBindingProducer` / `UnityAuthoringProvider`, accepted in H1-01 and reopen 1 `#245`) now carry the derived dependency list and a hint.
+  - `UnityBindingException` gains optional `Context` and `RepairHint`; its existing constructor is unchanged.
+  - No code, message, path, schema, payload, dependency derivation or success result changes, and every other binding refusal is byte-identical.
+  - The owner may require it as its own H1-01 reopen before merge.

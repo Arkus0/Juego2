@@ -1481,7 +1481,7 @@ namespace Arkus.Game.Authoring
                 OperationPath(index) + ".payloadBase64",
                 ReadOnly(context),
                 false,
-                "payloadBase64 is an opaque value: pass it exactly as returned by the tool that produced it (for example a compiled extension mutation). If it was retyped, shortened or edited, request it again instead of repairing it by hand.");
+                "payloadBase64 is an opaque value and must never be retyped. If the tool that produced it also returned the same put-extension as a typed document (for example a documentMutation), send that operation with document instead of payloadBase64: it needs no transcription and its dependencies are derived. Otherwise pass payloadBase64 exactly as returned by that tool; if it was retyped, shortened or edited, request it again instead of repairing it by hand.");
         }
 
         private static CapabilityInvocationResult InvalidProvenanceRequest(string message)
