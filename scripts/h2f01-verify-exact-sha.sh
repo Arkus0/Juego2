@@ -32,7 +32,7 @@ assert not missing, f'Missing H2F-01 evidence: {missing}'
 # Scope: evidence + this verifier/routing only. No Unity/ArkusUnity, keeper, or other WP bytes.
 changed = subprocess.check_output(['git', 'diff', '--name-only', BASELINE, 'HEAD'], text=True).splitlines()
 allowed_scripts = {'scripts/h2f01-verify-exact-sha.sh', 'scripts/arkus-verify-exact-sha-base.sh'}
-outside = [p for p in changed if not p.startswith(str(root) + '/') and p not in allowed_scripts]
+outside = [p for p in changed if not p.startswith(root.as_posix() + '/') and p not in allowed_scripts]
 assert not outside, f'Unexpected mutation outside H2F-01 evidence: {outside}'
 
 # Isolation: the recipe carries code/config only; no vendor or Source bytes; images only under captures/.
