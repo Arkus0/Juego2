@@ -19,3 +19,11 @@ Managed scene/root/object markers and mapping; normalized scene membership, hier
 ## Concrete reopen conditions
 
 Reopen H1-00 only if evidence shows Unity cannot implement the accepted generation/receipt semantics without changing them. Reopen H1-04 only if evidence proves its accepted source/catalogue identity is false or inapplicable to the effective input used here. Reopen another inherited contract only if concrete execution evidence shows that its guarantee does not cover the effective H1-05 path or is false; theoretical possibility or a request for duplicate proof is insufficient. Otherwise, mapping, staging, publication and observation defects are H1-05 obligations.
+
+## Reopen 1 (2026-09-27) — owner-directed after WP-H1-GATE trial 7
+
+- The accepted identity reopened is PR `#192`, candidate `186224fbc3f53eb9c47ae528a56dcf3514af163f`, PASS `#5308430565`, merge `7039adecac4e6e07d899247759d9b3c9fd3c2dae`.
+- The base is `main` `edd20167`, which includes the later accepted reopens of H1-04, HK-05, HK-04 and H1-01, and parity-gate v1.3.
+- The inherited guarantees are unchanged.
+- The only correction is the public structured facts of the H1-05-owned plan preflight refusal (`REOPEN_1_BINDING_DIAGNOSTICS.md`).
+- Nothing here reopens another predecessor. The H1-01 codec and the H0 opaque-payload admission are consumed exactly as accepted.

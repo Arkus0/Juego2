@@ -262,9 +262,7 @@ namespace Arkus.H1.UnityHost
             }
             catch (H1ProjectionException exception)
             {
-                return CapabilityInvocationResult.Failed(new StructuredError(exception.Code, exception.Message, "$",
-                    new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)), false,
-                    "Repair the canonical binding or catalogue input before materialization."));
+                return CapabilityInvocationResult.Failed(H1ProjectionContract.PreflightError(exception));
             }
         }
     }
@@ -288,6 +286,18 @@ namespace Arkus.H1.UnityHost
     public static class H1ProjectionContract
     {
         public const string ReferenceNamespace = "ref.arkus.unity-host.projection";
+        public const string DefaultPreflightRepairHint = "Repair the canonical binding or catalogue input before materialization.";
+
+        // The public preflight refusal of unity.projection.plan. Since WP-H1-05 reopen 1 it carries the structured facts
+        // of the failing binding (for example subjectId, bindingCode, catalogueCode) and a code-specific hint when one
+        // exists; the machine code and message are unchanged.
+        public static StructuredError PreflightError(H1ProjectionException exception)
+        {
+            if (exception == null) throw new ArgumentNullException(nameof(exception));
+            return new StructuredError(exception.Code, exception.Message, "$", exception.Context, false,
+                exception.RepairHint ?? DefaultPreflightRepairHint);
+        }
+
         private static readonly CapabilityKey PlanKey = new CapabilityKey("unity.projection.plan", new ContractVersion(1, 0));
 
         public static H1ManagedScenePlan Plan(IWorldStateSource world, H1UnityLaunchProfile profile)

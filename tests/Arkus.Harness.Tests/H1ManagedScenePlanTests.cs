@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Arkus.EngineBridge.UnityAuthoring;
 using Arkus.Game.World;
 using Arkus.H1.UnityHost;
+using Arkus.Harness.Protocol;
 using Xunit;
 
 namespace Arkus.Harness.Tests
@@ -82,6 +84,59 @@ namespace Arkus.Harness.Tests
                 },
                 new[] { Binding("plaza.potes", 0, link: "ghost.potes") });
             Assert.Equal("projection.canonical-target-unbound", Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(targetNotProjected, catalogue)).Code);
+        }
+
+        [Fact]
+        public void Binding_failures_name_the_canonical_subject_and_the_typed_document_repair()
+        {
+            // WP-H1-05 reopen 1 (WP-H1-GATE trial 7): a payload that is valid Base64 but not a Unity binding, which is what
+            // a mis-transcribed payloadBase64 looks like after the kernel accepted it. The public refusal must name the
+            // failing subject and point to the typed document form instead of transcription.
+            var catalogue = Catalogue();
+            var garbled = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[]
+                {
+                    new WorldExtensionData(UnityBindingProducer.ExtensionOwner, UnityBindingProducer.ExtensionSchemaVersion,
+                        Encoding.UTF8.GetBytes("not-a-unity-binding"), new WorldObjectId("plaza.potes"), new List<WorldReference>())
+                });
+            var invalid = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(garbled, catalogue));
+            Assert.Equal("projection.binding-invalid", invalid.Code);
+            Assert.Equal("unity.binding.invalid-payload at $.payloadBase64", invalid.Message);
+            Assert.Equal("plaza.potes", invalid.Context["subjectId"]);
+            Assert.Equal("unity.binding.invalid-payload", invalid.Context["bindingCode"]);
+            Assert.Equal("$.payloadBase64", invalid.Context["bindingPath"]);
+            Assert.Contains("documentMutation", invalid.RepairHint, StringComparison.Ordinal);
+
+            var missing = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) }, new[] { Binding("plaza.potes", 0, "prefab.absent") });
+            var source = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(missing, catalogue));
+            Assert.Equal("projection.source-missing", source.Code);
+            Assert.Equal("plaza.potes", source.Context["subjectId"]);
+            Assert.Equal("catalogue.missing-reference", source.Context["catalogueCode"]);
+            Assert.Equal("prefab.absent", source.Context["logicalId"]);
+
+            var unbound = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")), new WorldObject(new WorldObjectId("market.potes"), new WorldTypeId("fixture.market"), new WorldObjectId("plaza.potes")) },
+                new[] { Binding("market.potes", 0) });
+            var parent = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(unbound, catalogue));
+            Assert.Equal("projection.parent-unbound", parent.Code);
+            Assert.Equal("market.potes", parent.Context["subjectId"]);
+            Assert.Equal("plaza.potes", parent.Context["parentObjectId"]);
+
+            // The public preflight error keeps the code and message, carries the facts and the code-specific hint, and is
+            // a valid portable StructuredError; a failure without a specific hint keeps the accepted default hint.
+            foreach (var exception in new[] { invalid, source, parent })
+            {
+                var error = H1ProjectionContract.PreflightError(exception);
+                Assert.Equal(exception.Code, error.MachineCode);
+                Assert.Equal(exception.Message, error.Message);
+                Assert.Equal(exception.Context["subjectId"], error.Context["subjectId"]);
+                Assert.Empty(PortableData.Validate(error.ToData()));
+                Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(error.ToData()));
+            }
+            Assert.Equal(H1ManagedScenePlan.BindingInvalidRepairHint, H1ProjectionContract.PreflightError(invalid).RepairHint);
+            Assert.Equal(H1ProjectionContract.DefaultPreflightRepairHint, H1ProjectionContract.PreflightError(source).RepairHint);
         }
 
         [Fact]

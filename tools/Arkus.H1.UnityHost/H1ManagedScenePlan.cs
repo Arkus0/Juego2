@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,8 +12,33 @@ namespace Arkus.H1.UnityHost
 {
     public sealed class H1ProjectionException : Exception
     {
-        public H1ProjectionException(string code, string message) : base(message) { Code = code; }
+        private static readonly IReadOnlyDictionary<string, object?> NoContext =
+            new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal));
+
+        public H1ProjectionException(string code, string message) : this(code, message, NoContext, null) { }
+
+        public H1ProjectionException(string code, string message, IReadOnlyDictionary<string, object?> context, string? repairHint) : base(message)
+        {
+            Code = code;
+            Context = context ?? NoContext;
+            RepairHint = repairHint;
+        }
+
         public string Code { get; }
+
+        // Structured public facts of the failure (WP-H1-05 reopen 1): which canonical binding failed and why, so a
+        // client that has only the public contract can locate and repair it.
+        public IReadOnlyDictionary<string, object?> Context { get; }
+
+        public string? RepairHint { get; }
+
+        internal H1ProjectionException ForSubject(string subjectId)
+        {
+            if (subjectId.Length == 0 || Context.ContainsKey("subjectId")) return this;
+            var context = new Dictionary<string, object?>(StringComparer.Ordinal) { ["subjectId"] = subjectId };
+            foreach (var pair in Context) context[pair.Key] = pair.Value;
+            return new H1ProjectionException(Code, Message, new ReadOnlyDictionary<string, object?>(context), RepairHint);
+        }
     }
 
     // These DTOs are the versioned host-to-Editor plan. Native locators are replaceable
@@ -22,6 +48,9 @@ namespace Arkus.H1.UnityHost
         public const string Schema = "arkus.h1-managed-scene-plan@1";
         public const string SceneId = "arkus.h1-05.scene.potes";
         public const int MaximumObjects = 128;
+        public const string BindingInvalidRepairHint =
+            "Recompile this subject's binding with unity.binding.compile and apply the returned documentMutation " +
+            "(put-extension with a typed document) instead of copying payloadBase64; then rerun unity.projection.plan.";
 
         public string SchemaId { get; set; } = Schema;
         public string SceneLogicalId { get; set; } = SceneId;
@@ -42,135 +71,26 @@ namespace Arkus.H1.UnityHost
             foreach (var extension in state.Extensions)
             {
                 if (extension.Owner != UnityBindingProducer.ExtensionOwner) continue;
-                if (extension.SchemaVersion != UnityBindingProducer.ExtensionSchemaVersion)
-                    throw Error("projection.binding-version", "A Unity binding has an unsupported authored schema version.");
-                if (!extension.SubjectId.HasValue || !objects.TryGetValue(extension.SubjectId.Value.Value, out var subject))
-                    throw Error("projection.subject-missing", "A Unity binding must belong to an existing canonical object.");
-                if (!seen.Add(subject.Id.Value)) throw Error("projection.duplicate-binding", "One canonical object has duplicate Unity bindings.");
-                var dependencies = extension.Dependencies.Select(reference => (object?)new Dictionary<string, object?>
-                {
-                    ["kind"] = reference.Kind.Value, ["targetId"] = reference.TargetId.Value
-                }).ToArray();
-                IReadOnlyDictionary<string, object?> inspected;
                 try
                 {
-                    inspected = UnityBindingProducer.Inspect(new Dictionary<string, object?>
-                    {
-                        ["subjectId"] = subject.Id.Value,
-                        ["payloadBase64"] = Convert.ToBase64String(extension.GetPayloadCopy()),
-                        ["dependencies"] = dependencies
-                    });
+                    nodes.Add(PlanNode(extension, objects, seen, catalogue));
                 }
-                catch (UnityBindingException exception)
+                catch (H1ProjectionException exception)
                 {
-                    throw Error("projection.binding-invalid", exception.MachineCode + " at " + exception.Path);
+                    throw exception.ForSubject(extension.SubjectId.HasValue ? extension.SubjectId.Value.Value : "");
                 }
-                var binding = (IReadOnlyDictionary<string, object?>)inspected["binding"]!;
-                if ((string)binding["targetSceneId"]! != SceneId)
-                    throw Error("projection.scene-out-of-scope", "The binding targets a scene outside the fixed managed scene.");
-
-                var source = (IReadOnlyDictionary<string, object?>)binding["source"]!;
-                var sourceKind = (string)source["kind"]!;
-                var sourceId = (string)source["logicalId"]!;
-                var resolved = Resolve(catalogue, sourceId, sourceKind, MapSourceFailure);
-                if (sourceKind != "prefab" && sourceKind != "asset")
-                    throw Error("projection.source-kind", "Only admitted prefab or mesh asset sources may be materialized.");
-
-                foreach (var raw in (IReadOnlyList<object?>)inspected["catalogueDependencies"]!)
-                {
-                    var reference = (IReadOnlyDictionary<string, object?>)raw!;
-                    var kind = (string)reference["kind"]!;
-                    if (kind == "scene") continue;
-                    Resolve(catalogue, (string)reference["logicalId"]!, kind,
-                        code => code == "catalogue.missing-reference" ? "projection.reference-missing" :
-                            code == "catalogue.incompatible-reference" ? "projection.reference-wrong-type" : "projection.reference-rebound");
-                }
-
-                var transform = (IReadOnlyDictionary<string, object?>)binding["transform"]!;
-                var components = new List<H1ComponentPlan>
-                {
-                    new H1ComponentPlan { SchemaId = H1ComponentSchemas.Transform, Kind = "transform" }
-                };
-                foreach (var raw in (IReadOnlyList<object?>)binding["components"]!)
-                {
-                    var component = (IReadOnlyDictionary<string, object?>)raw!;
-                    var kind = (string)component["kind"]!;
-                    if (kind == "renderer")
-                    {
-                        var materialId = (string)component["materialId"]!;
-                        var material = Resolve(catalogue, materialId, "material", MapReferenceFailure);
-                        components.Add(new H1ComponentPlan
-                        {
-                            SchemaId = H1ComponentSchemas.MeshRenderer,
-                            Kind = kind,
-                            ReferenceKind = "material",
-                            ReferenceLogicalId = materialId,
-                            ReferencePath = material.Path,
-                            ReferenceGuid = material.NativeGuid,
-                            ReferenceLocalFileId = material.LocalFileId,
-                            ReferenceContentSha256 = material.ContentSha256
-                        });
-                    }
-                    else if (kind == "animator")
-                    {
-                        var clipId = (string)component["clipId"]!;
-                        var clip = Resolve(catalogue, clipId, "animation-clip", MapReferenceFailure);
-                        components.Add(new H1ComponentPlan
-                        {
-                            SchemaId = H1ComponentSchemas.Animator,
-                            Kind = kind,
-                            ReferenceKind = "animation-clip",
-                            ReferenceLogicalId = clipId,
-                            ReferencePath = clip.Path,
-                            ReferenceGuid = clip.NativeGuid,
-                            ReferenceLocalFileId = clip.LocalFileId,
-                            ReferenceContentSha256 = clip.ContentSha256
-                        });
-                    }
-                    else if (kind == "canonical-link")
-                    {
-                        var targetObjectId = (string)component["targetObjectId"]!;
-                        if (!objects.ContainsKey(targetObjectId))
-                            throw Error("projection.canonical-target-missing", "A canonical component reference targets an object absent from the canonical state.");
-                        components.Add(new H1ComponentPlan
-                        {
-                            SchemaId = H1ComponentSchemas.CanonicalLink,
-                            Kind = kind,
-                            Relation = (string)component["relation"]!,
-                            TargetObjectId = targetObjectId
-                        });
-                    }
-                    else
-                    {
-                        throw Error("projection.component-not-allowlisted", "The binding contains a component with no H1-07 adapter schema.");
-                    }
-                }
-
-                nodes.Add(new H1ManagedSceneNode
-                {
-                    ObjectId = subject.Id.Value,
-                    ParentObjectId = subject.ContainerId?.Value ?? "",
-                    SourceKind = sourceKind,
-                    SourceLogicalId = sourceId,
-                    SourcePath = resolved.Path,
-                    SourceGuid = resolved.NativeGuid,
-                    SourceLocalFileId = resolved.LocalFileId,
-                    SourceContentSha256 = resolved.ContentSha256,
-                    PositionMm = Vector((IReadOnlyDictionary<string, object?>)transform["positionMm"]!),
-                    RotationMilliDegrees = Vector((IReadOnlyDictionary<string, object?>)transform["rotationMilliDegrees"]!),
-                    ScalePpm = Vector((IReadOnlyDictionary<string, object?>)transform["scalePpm"]!),
-                    Components = components.OrderBy(value => value.SortKey, StringComparer.Ordinal).ToArray()
-                });
             }
             if (nodes.Count > MaximumObjects) throw Error("projection.object-limit", "The managed scene exceeds its reviewed object ceiling.");
             var bound = new HashSet<string>(nodes.Select(node => node.ObjectId), StringComparer.Ordinal);
             foreach (var node in nodes)
             {
                 if (node.ParentObjectId.Length != 0 && !bound.Contains(node.ParentObjectId))
-                    throw Error("projection.parent-unbound", "Every managed child needs a managed canonical container in the same scene.");
+                    throw Error("projection.parent-unbound", "Every managed child needs a managed canonical container in the same scene.",
+                        Facts(("subjectId", node.ObjectId), ("parentObjectId", node.ParentObjectId)));
                 foreach (var component in node.Components)
                     if (component.Kind == "canonical-link" && !bound.Contains(component.TargetObjectId))
-                        throw Error("projection.canonical-target-unbound", "Every realized canonical component reference must target a managed object in the same scene.");
+                        throw Error("projection.canonical-target-unbound", "Every realized canonical component reference must target a managed object in the same scene.",
+                            Facts(("subjectId", node.ObjectId), ("targetObjectId", component.TargetObjectId)));
             }
             nodes.Sort((left, right) => StringComparer.Ordinal.Compare(left.ObjectId, right.ObjectId));
             var plan = new H1ManagedScenePlan
@@ -189,6 +109,131 @@ namespace Arkus.H1.UnityHost
             return plan;
         }
 
+        private static H1ManagedSceneNode PlanNode(WorldExtensionData extension, IReadOnlyDictionary<string, WorldObject> objects,
+            HashSet<string> seen, H1CatalogueSnapshot catalogue)
+        {
+            if (extension.SchemaVersion != UnityBindingProducer.ExtensionSchemaVersion)
+                throw Error("projection.binding-version", "A Unity binding has an unsupported authored schema version.");
+            if (!extension.SubjectId.HasValue || !objects.TryGetValue(extension.SubjectId.Value.Value, out var subject))
+                throw Error("projection.subject-missing", "A Unity binding must belong to an existing canonical object.");
+            if (!seen.Add(subject.Id.Value)) throw Error("projection.duplicate-binding", "One canonical object has duplicate Unity bindings.");
+            var dependencies = extension.Dependencies.Select(reference => (object?)new Dictionary<string, object?>
+            {
+                ["kind"] = reference.Kind.Value, ["targetId"] = reference.TargetId.Value
+            }).ToArray();
+            IReadOnlyDictionary<string, object?> inspected;
+            try
+            {
+                inspected = UnityBindingProducer.Inspect(new Dictionary<string, object?>
+                {
+                    ["subjectId"] = subject.Id.Value,
+                    ["payloadBase64"] = Convert.ToBase64String(extension.GetPayloadCopy()),
+                    ["dependencies"] = dependencies
+                });
+            }
+            catch (UnityBindingException exception)
+            {
+                throw new H1ProjectionException("projection.binding-invalid", exception.MachineCode + " at " + exception.Path,
+                    Facts(("bindingCode", exception.MachineCode), ("bindingPath", exception.Path)), BindingInvalidRepairHint);
+            }
+            var binding = (IReadOnlyDictionary<string, object?>)inspected["binding"]!;
+            if ((string)binding["targetSceneId"]! != SceneId)
+                throw Error("projection.scene-out-of-scope", "The binding targets a scene outside the fixed managed scene.");
+
+            var source = (IReadOnlyDictionary<string, object?>)binding["source"]!;
+            var sourceKind = (string)source["kind"]!;
+            var sourceId = (string)source["logicalId"]!;
+            var resolved = Resolve(catalogue, sourceId, sourceKind, MapSourceFailure);
+            if (sourceKind != "prefab" && sourceKind != "asset")
+                throw Error("projection.source-kind", "Only admitted prefab or mesh asset sources may be materialized.");
+
+            foreach (var raw in (IReadOnlyList<object?>)inspected["catalogueDependencies"]!)
+            {
+                var reference = (IReadOnlyDictionary<string, object?>)raw!;
+                var kind = (string)reference["kind"]!;
+                if (kind == "scene") continue;
+                Resolve(catalogue, (string)reference["logicalId"]!, kind,
+                    code => code == "catalogue.missing-reference" ? "projection.reference-missing" :
+                        code == "catalogue.incompatible-reference" ? "projection.reference-wrong-type" : "projection.reference-rebound");
+            }
+
+            var transform = (IReadOnlyDictionary<string, object?>)binding["transform"]!;
+            var components = new List<H1ComponentPlan>
+            {
+                new H1ComponentPlan { SchemaId = H1ComponentSchemas.Transform, Kind = "transform" }
+            };
+            foreach (var raw in (IReadOnlyList<object?>)binding["components"]!)
+            {
+                var component = (IReadOnlyDictionary<string, object?>)raw!;
+                var kind = (string)component["kind"]!;
+                if (kind == "renderer")
+                {
+                    var materialId = (string)component["materialId"]!;
+                    var material = Resolve(catalogue, materialId, "material", MapReferenceFailure);
+                    components.Add(new H1ComponentPlan
+                    {
+                        SchemaId = H1ComponentSchemas.MeshRenderer,
+                        Kind = kind,
+                        ReferenceKind = "material",
+                        ReferenceLogicalId = materialId,
+                        ReferencePath = material.Path,
+                        ReferenceGuid = material.NativeGuid,
+                        ReferenceLocalFileId = material.LocalFileId,
+                        ReferenceContentSha256 = material.ContentSha256
+                    });
+                }
+                else if (kind == "animator")
+                {
+                    var clipId = (string)component["clipId"]!;
+                    var clip = Resolve(catalogue, clipId, "animation-clip", MapReferenceFailure);
+                    components.Add(new H1ComponentPlan
+                    {
+                        SchemaId = H1ComponentSchemas.Animator,
+                        Kind = kind,
+                        ReferenceKind = "animation-clip",
+                        ReferenceLogicalId = clipId,
+                        ReferencePath = clip.Path,
+                        ReferenceGuid = clip.NativeGuid,
+                        ReferenceLocalFileId = clip.LocalFileId,
+                        ReferenceContentSha256 = clip.ContentSha256
+                    });
+                }
+                else if (kind == "canonical-link")
+                {
+                    var targetObjectId = (string)component["targetObjectId"]!;
+                    if (!objects.ContainsKey(targetObjectId))
+                        throw Error("projection.canonical-target-missing", "A canonical component reference targets an object absent from the canonical state.");
+                    components.Add(new H1ComponentPlan
+                    {
+                        SchemaId = H1ComponentSchemas.CanonicalLink,
+                        Kind = kind,
+                        Relation = (string)component["relation"]!,
+                        TargetObjectId = targetObjectId
+                    });
+                }
+                else
+                {
+                    throw Error("projection.component-not-allowlisted", "The binding contains a component with no H1-07 adapter schema.");
+                }
+            }
+
+            return new H1ManagedSceneNode
+            {
+                ObjectId = subject.Id.Value,
+                ParentObjectId = subject.ContainerId?.Value ?? "",
+                SourceKind = sourceKind,
+                SourceLogicalId = sourceId,
+                SourcePath = resolved.Path,
+                SourceGuid = resolved.NativeGuid,
+                SourceLocalFileId = resolved.LocalFileId,
+                SourceContentSha256 = resolved.ContentSha256,
+                PositionMm = Vector((IReadOnlyDictionary<string, object?>)transform["positionMm"]!),
+                RotationMilliDegrees = Vector((IReadOnlyDictionary<string, object?>)transform["rotationMilliDegrees"]!),
+                ScalePpm = Vector((IReadOnlyDictionary<string, object?>)transform["scalePpm"]!),
+                Components = components.OrderBy(value => value.SortKey, StringComparer.Ordinal).ToArray()
+            };
+        }
+
         public static string Sha(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
 
         private static H1CatalogueEntry Resolve(H1CatalogueSnapshot catalogue, string logicalId, string kind, Func<string, string> mapFailure)
@@ -200,7 +245,11 @@ namespace Arkus.H1.UnityHost
             }
             catch (H1CatalogueException exception)
             {
-                throw Error(mapFailure(exception.Code), exception.Code + ": " + exception.Message);
+                var facts = new Dictionary<string, object?>(StringComparer.Ordinal) { ["catalogueCode"] = exception.Code };
+                foreach (var pair in exception.Context ?? new Dictionary<string, object?>(StringComparer.Ordinal))
+                    if (!facts.ContainsKey(pair.Key)) facts[pair.Key] = pair.Value;
+                throw new H1ProjectionException(mapFailure(exception.Code), exception.Code + ": " + exception.Message,
+                    new ReadOnlyDictionary<string, object?>(facts), null);
             }
         }
 
@@ -226,6 +275,16 @@ namespace Arkus.H1.UnityHost
         };
 
         private static H1ProjectionException Error(string code, string message) => new H1ProjectionException(code, message);
+
+        private static H1ProjectionException Error(string code, string message, IReadOnlyDictionary<string, object?> facts) =>
+            new H1ProjectionException(code, message, facts, null);
+
+        private static IReadOnlyDictionary<string, object?> Facts(params (string Key, string Value)[] values)
+        {
+            var facts = new Dictionary<string, object?>(StringComparer.Ordinal);
+            foreach (var (key, value) in values) facts[key] = value;
+            return new ReadOnlyDictionary<string, object?>(facts);
+        }
     }
 
     public static class H1ComponentSchemas
