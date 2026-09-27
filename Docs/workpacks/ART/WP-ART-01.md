@@ -3,9 +3,9 @@
 Status: **PROPOSED / NOT_STARTED**  
 Class: PRODUCT / CONTENT PRODUCTION (NON-FOUNDATIONAL)  
 Mode: **HYBRID** — planning/triage may be remote; effective Unity visual acceptance is `LOCAL_UNITY_REQUIRED` unless an equivalent truthful hosted evidence path exists  
-Depends on: `WP-ART-00` accepted direction + `WP-CITY-04` PASS + `WP-H1-04` accepted Quaternius Source adoption baseline  
+Depends on: `WP-ART-00` accepted direction + `WP-CITY-04` PASS + `WP-H1-04` accepted Quaternius Source adoption baseline; **the effective Unity CANDIDATE/PASS phase additionally requires `WP-H2F-GATE` PASS**  
 Blocks: `WP-CITY-07` keeper realization  
-Does not block: remaining H1 infrastructure work or `WP-H1-GATE`
+Does not block: remaining H1 infrastructure work, `WP-H1-GATE`, or H2F once the `PREFOUNDATION_INPUT` checkpoint below is published
 
 ## Binding contracts
 
@@ -16,6 +16,40 @@ This canonical workpack must be read together with the following ART-01 contract
 - `Docs/workpacks/ART/ART_01_DIMENSIONAL_PROFILE.md`.
 
 The assembly amendment carries the required pre-production paintovers/overpaints, layered building/street assembly evidence, neutral-material checkpoint and rapid bounded-iteration protocol. The environment grammar and dimensional profile define the connection and metric vocabulary consumed by the benchmark. A Worker following only this file is still required to consume those contracts.
+
+## H2F sequencing / `PREFOUNDATION_INPUT` handoff
+
+ART-01 is deliberately split into two execution phases so ART does not have to complete a render-specific benchmark on a foundation that H2F is about to replace.
+
+### Phase A — `PREFOUNDATION_INPUT` (non-PASS checkpoint)
+
+Before H2F, ART-01 may and should complete renderer-independent/source-facing work that materially informs foundation selection. Publish a discoverable `PREFOUNDATION_INPUT` checkpoint containing, at minimum:
+
+- current retained-chain demand/coverage matrix and source triage;
+- the binding assembly/dimensional grammar and structural/neutral-material findings available so far;
+- representative Quaternius/Juego2 assets, materials, transparency cases and humanoids that H2F must exercise;
+- known source, material, shader, scale, animation/retarget and composition gaps relevant to tool selection;
+- any paintover/structural evidence that does not depend on a final render-pipeline baseline;
+- explicit unresolved external-source needs rather than silent fallback.
+
+This checkpoint is **not ART-01 PASS** and must not claim `KEEPER_READY` for the final representative benchmark. It may expose `PROXY_VISUAL`/`COVERAGE_BLOCKED` findings honestly. ART-01 must not make the canonical URP/toolchain migration itself; H2F owns that foundation change.
+
+Once `PREFOUNDATION_INPUT` is published, H2F may run to completion without waiting for ART-01 PASS:
+
+```text
+ART-01 PREFOUNDATION_INPUT
+-> H2F-00
+-> H2F-01
+-> H2F-02
+-> H2F-03
+-> H2F-GATE
+```
+
+### Phase B — effective Unity `CANDIDATE` / PASS
+
+Only after `WP-H2F-GATE` PASS may ART-01 freeze its effective Unity candidate. The Worker must then rebase/update onto the frozen H2F baseline and revalidate all render/toolchain-sensitive evidence there, including material conversion, lighting/atmosphere presentation, third-person captures, effective benchmark and fresh-author/agent smoke test.
+
+ART-01 **cannot PASS before H2F-GATE PASS**. H2F-GATE in turn does not depend on ART-01 PASS; this staged handoff is the explicit cycle breaker.
 
 ## Objective
 
@@ -122,6 +156,8 @@ Unity-native geometry is not banned. It is acceptable when intentionally authore
 
 ### 5. Representative visual benchmark
 
+The effective benchmark and any frozen ART-01 candidate **must run on the `WP-H2F-GATE`-accepted foundation baseline**. Pre-H2F structural/neutral fixtures are diagnostic `PREFOUNDATION_INPUT`, not final visual acceptance evidence.
+
 Run one bounded benchmark on the already-accepted retained seed using the CITY-07 representative route:
 
 `Orilla sur → Puente Viejo → S02 bridgehead → W12 climb → Casco square → casco micro-route B → accepted Bar F01`
@@ -145,6 +181,8 @@ If PR `#228` has been independently accepted and DocSynced before execution, the
 Because the current defect was exposed by an AI-assisted Astra build, ART-01 must prove that the kit and its metadata are usable by an author who was not the asset creator.
 
 Use a fresh human/agent session to assemble or materially revise the benchmark from the admitted kit and composition metadata. Astra may be used as evidence, but the contract is tool-agnostic and no hosted author becomes semantic authority.
+
+The effective smoke test is downstream of H2F-GATE and must use the accepted H2F baseline rather than a private or provisional render/toolchain configuration.
 
 The smoke test must distinguish:
 
@@ -190,6 +228,7 @@ A supplementary untextured/neutral-material inspection may be used to judge mass
 
 PASS only if all are true:
 
+- `WP-H2F-GATE` has passed and the effective/frozen benchmark is executed on that accepted foundation baseline;
 - every mandatory retained-chain need exercised by the representative benchmark is covered by admitted source/derived assets plus the required assembly/connection/metric vocabulary and the frozen benchmark is explicitly `KEEPER_READY`;
 - any `PROXY_VISUAL` or `COVERAGE_BLOCKED` outcome is treated as truthful non-pass evidence for the affected required need, never as readiness success;
 - retained pieces and derivatives have truthful provenance and stable identity;
@@ -207,6 +246,7 @@ PASS only if all are true:
 
 FAIL if any of these occurs:
 
+- ART-01 freezes or passes its effective Unity benchmark before `WP-H2F-GATE` PASS, or relies on a private/provisional render/toolchain baseline instead of the accepted H2F baseline;
 - a mandatory benchmark need remains `PROXY_VISUAL` or `COVERAGE_BLOCKED` at the frozen candidate, even when that state is reported honestly;
 - a visible keeper building is fundamentally a primitive cuboid/plane with facade/roof/opening assets attached as decoration because the kit lacked the necessary structural pieces;
 - a missing corner, opening, roof junction, threshold or ground-contact solution is hidden by texture/material polish instead of being covered or declared blocked;
@@ -224,9 +264,11 @@ ART-01 supplies the **keeper-capable visual vocabulary**; CITY-07 owns the actua
 
 ART-01 must not author the CITY-07 keeper in advance. CITY-07 must not compensate for an inadequate art kit by silently promoting visible proxy geometry into the keeper.
 
-`WP-CITY-07` therefore starts only after both `WP-H1-GATE` and ART-01 have passed. ART-01 cannot pass while a required representative-chain need is unresolved as `COVERAGE_BLOCKED` or `PROXY_VISUAL`; such a state keeps CITY-07 blocked for that chain until the gap is closed or the proper owner changes the requirement.
+`WP-CITY-07` therefore starts only after `WP-H2F-GATE` and ART-01 have both passed. ART-01 cannot pass while a required representative-chain need is unresolved as `COVERAGE_BLOCKED` or `PROXY_VISUAL`; such a state keeps CITY-07 blocked for that chain until the gap is closed or the proper owner changes the requirement.
 
 ## Relationship to H2 / ART-02
+
+The foundation order is explicit: ART-01 publishes `PREFOUNDATION_INPUT`; H2F selects/adopts/proves/freezes the production foundation; then ART-01 performs its effective visual candidate and PASS on that frozen baseline. ART-01 must not redo or bypass H2F's project-wide render/toolchain authority, while H2F must not claim final keeper-ready art composition.
 
 ART-01 is **not** final visual polish and does not require the whole town or whole Quaternius distribution to be production-ready. ART-02 still owns first-playable visual closure after the keeper slice exists.
 
@@ -234,4 +276,4 @@ However, H2 planning must consume the no-silent-proxy contract established here:
 
 ## Definition of Done
 
-A reviewed, provenance-safe, Cantabrian-compatible environment vocabulary exists for the first retained chain; the binding visual-target/assembly/dimensional contracts are satisfied; and a fresh author can use the kit to produce the required building/street benchmark as `KEEPER_READY` in Unity. If the author can only return `PROXY_VISUAL` or `COVERAGE_BLOCKED` for a mandatory benchmark need, that is valuable truthful evidence but the WP is **not done** and CITY-07 remains blocked.
+A reviewed, provenance-safe, Cantabrian-compatible environment vocabulary exists for the first retained chain; the binding visual-target/assembly/dimensional contracts are satisfied; `WP-H2F-GATE` has frozen the production foundation; and a fresh author can use the kit on that accepted baseline to produce the required building/street benchmark as `KEEPER_READY` in Unity. If the author can only return `PROXY_VISUAL` or `COVERAGE_BLOCKED` for a mandatory benchmark need, that is valuable truthful evidence but the WP is **not done** and CITY-07 remains blocked.

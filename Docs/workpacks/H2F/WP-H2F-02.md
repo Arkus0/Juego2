@@ -3,22 +3,28 @@
 Status: **PROPOSED / NOT_STARTED**  
 Class: `PRODUCT_CHECKPOINT` with dependency-policy adoption controls  
 Mode: **LOCAL_UNITY_REQUIRED where licensed/source bytes or visual import evidence are local-only; hosted evidence may cover reproducible machine-verifiable portions**  
-Depends on: `WP-H2F-01` PASS + `WP-H1-GATE` PASS + `WP-ART-01` PASS  
-Blocks: `WP-H2F-03`
+Depends on: `WP-H2F-01` PASS + `WP-H1-GATE` PASS + ART-01 `PREFOUNDATION_INPUT` checkpoint published; **ART-01 PASS is intentionally downstream**  
+Blocks: `WP-H2F-03`; the adopted foundation also becomes the required baseline for the later ART-01 effective candidate
 
 ## Claim
 
 The H2F-01 selected stack is installed/admitted in the real Juego2 Unity project with exact versions/provenance, a working URP baseline, reproducible project configuration and explicit replaceable boundaries before keeper CITY-07 production begins.
+
+## Sequencing rule with ART-01
+
+H2F-02 is the **only current workpack allowed to turn URP/toolchain selection into canonical project baseline truth**. ART-01 may supply renderer-independent/source/structural inputs beforehand, but it must not independently migrate the canonical project render pipeline in order to satisfy its own visual benchmark.
+
+H2F-02 therefore does **not** depend on ART-01 PASS. It consumes the published ART-01 `PREFOUNDATION_INPUT` so representative Quaternius/Juego2 assets, dimensions, assembly conditions and known material/source gaps are exercised during foundation adoption. The ART-01 effective Unity benchmark, render-specific tuning, fresh-author smoke test, frozen candidate and PASS occur only after `WP-H2F-GATE` has frozen this baseline.
 
 ## PASS-before-work acceptance contract
 
 - **Positive claim:** the selected baseline has become explicit project truth without breaking accepted H0/H1 authority or silently relying on one developer machine.
 - **Mandatory positive evidence:** (1) exact Unity package manifest/lock state; (2) exact external dependency/source adoption records required by `DEPENDENCY_IP_POLICY`; (3) URP migration/import evidence on representative real assets; (4) project/preset/import conventions; (5) documented manual/account-gated provisioning steps; (6) clean compile/import after the selected stack is present; (7) replacement/authority boundary for every material dependency; (8) a complete selected-foundation-state → H1 lifecycle classification matrix defining host, observation/reconciliation treatment and rebuild expectation for every material serialized/generated state introduced by the adopted stack.
 - **Negative gates:** FAIL if dependency versions float; if exact license/EULA cannot be established; if unsupported/magenta/fallback materials are hidden; if local Asset Store/source bytes are assumed to exist without provisioning documentation; if a plugin-private identifier becomes canonical world semantics; if selected tools create a mutation path around Arkus authoring authority; or if material selected foundation state has no declared H1 lifecycle classification/host and could therefore be silently deleted, falsely reported as unsupported drift or made unrebuildable.
-- **Non-claims:** no CITY-07 keeper realization, no final visual-polish claim and no H2 NPC/Living World claim.
-- **Allowed residuals:** final artistic tuning owned by CITY-07/ART-02; later profiling-driven optimization; deferred categories from H2F-01.
+- **Non-claims:** no CITY-07 keeper realization, no ART-01 readiness/PASS, no final visual-polish claim and no H2 NPC/Living World claim.
+- **Allowed residuals:** final artistic tuning owned by ART-01/CITY-07/ART-02; later profiling-driven optimization; deferred categories from H2F-01.
 - **Evaluation method:** exact-version/config inspection + Unity compile/import + targeted human visual inspection of migrated real content + dependency-policy review + H1 lifecycle-boundary classification review.
-- **Consumed predecessors:** H2F-01 selection, H1 accepted bridge/materialization boundary, ART-01 accepted production-content truth.
+- **Consumed predecessors:** H2F-01 selection, H1 accepted bridge/materialization boundary, ART-01 `PREFOUNDATION_INPUT` source/demand/assembly truth.
 
 ## Required work
 
