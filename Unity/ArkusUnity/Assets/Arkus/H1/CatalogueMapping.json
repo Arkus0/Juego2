@@ -53,6 +53,246 @@
       "contentSha256": "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8"
     },
     {
+      "logicalId": "quaternius.medieval.asset.corner-exterior-wood",
+      "kind": "asset",
+      "nativeGuid": "c9549b3b14121b84baccac5394379647",
+      "localFileId": "-7866971871740080886",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "9808a8a25a67446f5d4d76836eb62d843414d1a3ed0979bb08bbe9f9e544ffee"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.door-1-flat",
+      "kind": "asset",
+      "nativeGuid": "b008cd8053424984380bebca9426d8ae",
+      "localFileId": "1232950760326697860",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "c8a1f7bfc8cff15356ab80aa3deee0b42597c0033c44f04807719c2ea8a77753"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.prop-chimney",
+      "kind": "asset",
+      "nativeGuid": "f737f5d1d3f1c7c4f9b41c4fc741eb81",
+      "localFileId": "-941783140963364509",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "d132c893fbf957c92c51697de1329f0603d185849a7d0e94ec9ce5a78a0b90ed"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.prop-crate",
+      "kind": "asset",
+      "nativeGuid": "c8380c71919f1694b9e99f69d20dd066",
+      "localFileId": "-3653785948389616989",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "8e38d27f360ef68fe9f0e3382917d5ae500d78de3cace53e07a2f6d21c94cd43"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.prop-vine1",
+      "kind": "asset",
+      "nativeGuid": "9ded629f09f94a2449f219d511d3d9f1",
+      "localFileId": "-5571489717433656697",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "de0bea8119f7b12fac3795718b331658f9bbe6e9e38a02272a1f92e28a4edeca"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.prop-wagon",
+      "kind": "asset",
+      "nativeGuid": "612d31ec60a92474d8c28be827233dfe",
+      "localFileId": "1064877516495748917",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "977e9344cce589a9625a7a7340da42f2ed9783a628b257dfdbfe0e892cd36847"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.prop-woodenfence-single",
+      "kind": "asset",
+      "nativeGuid": "1bf65997b403411488eef5d3cf692dc3",
+      "localFileId": "-2103801154271525397",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "f5e0e0210292ab5dfd95a10f684850406b26d0a016b3fbd3ba499542e644d440"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.roof-roundtiles-4x4",
+      "kind": "asset",
+      "nativeGuid": "05480a035831dec43bbcf445f9f8da56",
+      "localFileId": "-2791341191641100959",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "051f77ad0ccd0167ea3c65f6b3e8a279cfdb9d2fa17e6f911f228fe3260f7a50"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.wall-plaster-door-flat",
+      "kind": "asset",
+      "nativeGuid": "7ffce3dada5ffee4f940a797b9c78aaf",
+      "localFileId": "7749522914590162421",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "d373cff1fc4bd0d3369e1abc792f68e2500562744f39c237ebb184dd49533c90"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.wall-plaster-straight",
+      "kind": "asset",
+      "nativeGuid": "e9c7f17150cfb7741abda8572d7013f3",
+      "localFileId": "2765029961918457010",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "ad7d807b28ce4ec564773c9a9637c47b91db53cd9e7e6a8c90de5b1a56d3c96a"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.window-wide-flat1",
+      "kind": "asset",
+      "nativeGuid": "16396acda011f6c42b03303d8f57263c",
+      "localFileId": "-7858744620666516545",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "da526c2d7f89f001da31626acdc97af4a57491579776e9073a515a64e78827c4"
+    },
+    {
+      "logicalId": "quaternius.medieval.asset.windowshutters-wide-flat-open",
+      "kind": "asset",
+      "nativeGuid": "8b575e2679b732c409d5c7741eb57d62",
+      "localFileId": "-3229520323129646467",
+      "typeName": "UnityEngine.Mesh",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "3b835fc6a896793ab546f9a5602877b5dce78db3ab084a0945f17209983f2a70"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.corner-exterior-wood",
+      "kind": "prefab",
+      "nativeGuid": "c9549b3b14121b84baccac5394379647",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "9808a8a25a67446f5d4d76836eb62d843414d1a3ed0979bb08bbe9f9e544ffee"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.door-1-flat",
+      "kind": "prefab",
+      "nativeGuid": "b008cd8053424984380bebca9426d8ae",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "c8a1f7bfc8cff15356ab80aa3deee0b42597c0033c44f04807719c2ea8a77753"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.prop-chimney",
+      "kind": "prefab",
+      "nativeGuid": "f737f5d1d3f1c7c4f9b41c4fc741eb81",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "d132c893fbf957c92c51697de1329f0603d185849a7d0e94ec9ce5a78a0b90ed"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.prop-crate",
+      "kind": "prefab",
+      "nativeGuid": "c8380c71919f1694b9e99f69d20dd066",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "8e38d27f360ef68fe9f0e3382917d5ae500d78de3cace53e07a2f6d21c94cd43"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.prop-vine1",
+      "kind": "prefab",
+      "nativeGuid": "9ded629f09f94a2449f219d511d3d9f1",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "de0bea8119f7b12fac3795718b331658f9bbe6e9e38a02272a1f92e28a4edeca"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.prop-wagon",
+      "kind": "prefab",
+      "nativeGuid": "612d31ec60a92474d8c28be827233dfe",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "977e9344cce589a9625a7a7340da42f2ed9783a628b257dfdbfe0e892cd36847"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.prop-woodenfence-single",
+      "kind": "prefab",
+      "nativeGuid": "1bf65997b403411488eef5d3cf692dc3",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "f5e0e0210292ab5dfd95a10f684850406b26d0a016b3fbd3ba499542e644d440"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.roof-roundtiles-4x4",
+      "kind": "prefab",
+      "nativeGuid": "05480a035831dec43bbcf445f9f8da56",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "051f77ad0ccd0167ea3c65f6b3e8a279cfdb9d2fa17e6f911f228fe3260f7a50"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.wall-plaster-door-flat",
+      "kind": "prefab",
+      "nativeGuid": "7ffce3dada5ffee4f940a797b9c78aaf",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "d373cff1fc4bd0d3369e1abc792f68e2500562744f39c237ebb184dd49533c90"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.wall-plaster-straight",
+      "kind": "prefab",
+      "nativeGuid": "e9c7f17150cfb7741abda8572d7013f3",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "ad7d807b28ce4ec564773c9a9637c47b91db53cd9e7e6a8c90de5b1a56d3c96a"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.window-wide-flat1",
+      "kind": "prefab",
+      "nativeGuid": "16396acda011f6c42b03303d8f57263c",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "da526c2d7f89f001da31626acdc97af4a57491579776e9073a515a64e78827c4"
+    },
+    {
+      "logicalId": "quaternius.medieval.prefab.windowshutters-wide-flat-open",
+      "kind": "prefab",
+      "nativeGuid": "8b575e2679b732c409d5c7741eb57d62",
+      "localFileId": "919132149155446097",
+      "typeName": "UnityEngine.GameObject",
+      "sourceId": "quaternius-medieval-source",
+      "adoptionStatus": "approved-source",
+      "contentSha256": "3b835fc6a896793ab546f9a5602877b5dce78db3ab084a0945f17209983f2a70"
+    },
+    {
       "logicalId": "quaternius.ual1.animation-clip.armature-a-tpose",
       "kind": "animation-clip",
       "nativeGuid": "06d37381cd6d9bece36de7794e2fc74a",

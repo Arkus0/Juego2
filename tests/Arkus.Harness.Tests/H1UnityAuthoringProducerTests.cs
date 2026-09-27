@@ -128,6 +128,17 @@ namespace Arkus.Harness.Tests
                 missingCanonical,
                 "unity.binding.canonical-dependency-mismatch");
 
+            // WP-H1-GATE pre-merge probe 3: the mismatch refusal returns the derived dependencies and says the assertion is optional.
+            var mismatch = contract.Dispatch(UnityAuthoringProvider.CompileName, ExactVersion(), missingCanonical);
+            var derivedCanonical = Assert.IsAssignableFrom<IReadOnlyList<object?>>(mismatch.Error!.Context["derivedCanonicalDependencies"]);
+            Assert.Single(derivedCanonical);
+            var link = Assert.IsAssignableFrom<IReadOnlyDictionary<string, object?>>(derivedCanonical[0]);
+            Assert.Equal("attached-to", link["kind"]);
+            Assert.Equal("market.potes-root", link["targetId"]);
+            Assert.Equal(UnityBindingProducer.CanonicalDependencyMismatchRepairHint, mismatch.Error.RepairHint);
+            Assert.Empty(PortableData.Validate(mismatch.Error.ToData()));
+            Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(mismatch.Error.ToData()));
+
             var wrongCatalogue = CompileRequest(PotesBinding(false));
             wrongCatalogue["expectedCatalogueDependencies"] = new List<object?>
             {
@@ -140,6 +151,10 @@ namespace Arkus.Harness.Tests
                 contract,
                 wrongCatalogue,
                 "unity.binding.catalogue-dependency-mismatch");
+            var catalogueMismatch = contract.Dispatch(UnityAuthoringProvider.CompileName, ExactVersion(), wrongCatalogue);
+            Assert.Equal(4, Assert.IsAssignableFrom<IReadOnlyList<object?>>(catalogueMismatch.Error!.Context["derivedCatalogueDependencies"]).Count);
+            Assert.Equal(UnityBindingProducer.CatalogueDependencyMismatchRepairHint, catalogueMismatch.Error.RepairHint);
+            Assert.Empty(PortableData.Validate(catalogueMismatch.Error.ToData()));
 
             var duplicateCanonical = CompileRequest(PotesBinding(false));
             var duplicate = CanonicalDependency("attached-to", "market.potes-root");
@@ -284,6 +299,70 @@ namespace Arkus.Harness.Tests
             return CanonicalWorldContract.ComposeEmptyPortableSession(
                 "world.h1-01",
                 new[] { UnityAuthoringProvider.CreateContribution() });
+        }
+
+        [Fact]
+        public void CompiledDocumentMutationAppliesByteIdenticallyToTheCompiledPayload()
+        {
+            // WP-H1-01 reopen 1 (typed extension documents, WP-HK-04 reopen 1): the compiler also returns the extension as a
+            // structured document; a host that admits UnityBindingDocumentCodec stores exactly the compiled bytes.
+            var initial = new WorldState(
+                new WorldId("world.h1-01.documents"),
+                0,
+                new[]
+                {
+                    new WorldObject(new WorldObjectId("building.potes-facade"), new WorldTypeId("fixture.facade")),
+                    new WorldObject(new WorldObjectId("market.potes-root"), new WorldTypeId("fixture.market-root"))
+                });
+            var documentSession = new PortableWorldAuthoringSession(initial, UnityAuthoringProvider.CreateDocumentCodecs());
+            var payloadSession = new PortableWorldAuthoringSession(initial);
+            var documentContract = CanonicalWorldContract.Compose(new WorldInspectionService(documentSession), documentSession, new[] { UnityAuthoringProvider.CreateContribution() });
+            var payloadContract = CanonicalWorldContract.Compose(new WorldInspectionService(payloadSession), payloadSession, new[] { UnityAuthoringProvider.CreateContribution() });
+
+            var compiled = Success(documentContract, UnityAuthoringProvider.CompileName, CompileRequest(PotesBinding(false)));
+            var documentMutation = Map(compiled, "documentMutation");
+            Assert.Equal("put-extension", documentMutation["kind"]);
+            Assert.Equal(UnityBindingProducer.ExtensionOwner, documentMutation["owner"]);
+            Assert.False(documentMutation.ContainsKey("payloadBase64"));
+            Assert.False(documentMutation.ContainsKey("dependencies"));
+
+            Success(documentContract, WorldMutationContract.ApplyName, MutationRequest(initial, "request.h1-01.document", documentMutation));
+            Success(payloadContract, WorldMutationContract.ApplyName, MutationRequest(initial, "request.h1-01.document", Map(compiled, "extensionMutation")));
+            Assert.Equal(
+                CanonicalWorldStateCodec.ComputeContentHash(payloadSession.Current),
+                CanonicalWorldStateCodec.ComputeContentHash(documentSession.Current));
+            var stored = documentSession.Current.Extensions[0];
+            Assert.Equal(Convert.ToBase64String(payloadSession.Current.Extensions[0].GetPayloadCopy()), Convert.ToBase64String(stored.GetPayloadCopy()));
+            Assert.Single(stored.Dependencies);
+            Assert.Equal(new WorldObjectId("market.potes-root"), stored.Dependencies[0].TargetId);
+
+            // Binding errors surface in the authoring transaction with the compiler's own code and a document-rooted path.
+            var badSource = new Dictionary<string, object?>((IDictionary<string, object?>)PotesBinding(false), StringComparer.Ordinal)
+            {
+                ["source"] = new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "mesh", ["logicalId"] = "prefab.potes-facade" }
+            };
+            var rejected = documentContract.Dispatch(WorldMutationContract.PlanName, ExactVersion(), MutationRequest(documentSession.Current, "request.h1-01.bad-document",
+                new Dictionary<string, object?>((IDictionary<string, object?>)documentMutation, StringComparer.Ordinal) { ["document"] = badSource }));
+            Assert.Equal("world.change.invalid_extension_document", rejected.Error!.MachineCode);
+            Assert.Equal("$.operations[0].document.source.kind", rejected.Error.Path);
+            Assert.Equal("unity.binding.invalid-source-kind", rejected.Error.Context["extensionMachineCode"]);
+            Assert.Contains("unity.binding.compile", rejected.Error.RepairHint);
+
+            var withoutSubject = new Dictionary<string, object?>((IDictionary<string, object?>)documentMutation, StringComparer.Ordinal);
+            withoutSubject.Remove("subjectId");
+            var unattached = documentContract.Dispatch(WorldMutationContract.PlanName, ExactVersion(), MutationRequest(documentSession.Current, "request.h1-01.no-subject", withoutSubject));
+            Assert.Equal("unity.binding.missing-subject", unattached.Error!.Context["extensionMachineCode"]);
+        }
+
+        private static IReadOnlyDictionary<string, object?> MutationRequest(WorldState state, string key, IReadOnlyDictionary<string, object?> operation)
+        {
+            return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["idempotencyKey"] = key,
+                ["expectedRevision"] = state.Revision,
+                ["expectedHash"] = CanonicalWorldStateCodec.ComputeContentHash(state),
+                ["operations"] = new List<object?> { operation }.AsReadOnly()
+            });
         }
 
         private static IReadOnlyDictionary<string, object?> Success(

@@ -1,0 +1,1022 @@
+{
+  "schemaId": "arkus.h1-11-representative-slice@1",
+  "authority": {
+    "admission": "Docs/evidence/WP-H1-04/SOURCE_ADOPTION.json",
+    "admittedBy": "WP-H1-11",
+    "sources": [
+      "quaternius-medieval-source",
+      "quaternius-ual1-source"
+    ]
+  },
+  "importRecipe": {
+    "mount": "distribution entries are copied byte-for-byte from the hash-verified adopted payload together with their original upstream Unity .meta sidecar; H1-04 slices keep their accepted vault bytes and sidecars",
+    "importSettings": "per item (import.*): upstream ModelImporter values read from the original sidecar bytes; accepted H1-04 GUID-only sidecars use Unity's serialized ModelImporter defaults, declared as no file-unit conversion",
+    "handedness": "unity-negates-fbx-x",
+    "unitScale": "UnityMetres = FbxUnits * globalScale * (unitConversion ? UnitScaleFactor/100 : 1)",
+    "rootCollapse": "a single top-level FBX node becomes the imported prefab root; several top-level nodes become children of a root named after the file",
+    "materialSlots": "the multiset of imported slot materials equals the FBX material set of the node; Unity may order submeshes differently from FBX connection order",
+    "boundsToleranceMetres": 0.0005
+  },
+  "items": [
+    {
+      "shapeClass": "wall-module-window",
+      "provenance": "h1-04-source-slice",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Window_Wide_Flat.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.wall-plaster-window-wide-flat",
+        "prefab": "quaternius.medieval.prefab.wall-plaster-window-wide-flat"
+      },
+      "contentSha256": "45825c565b9d1027036ce7fc922f7e7a7d69bc05e459d886eb738bf1eafc92b8",
+      "metaSha256": "849cb4c26f04007c1fef93ff2e7956a2aeb5632305f47421b5c67efb6f13a1e1",
+      "unityGuid": "a914dbae2609f0107a8bce353d33727c",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Wall_Plaster_Window_Wide_Flat",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Wall_Plaster_Window_Wide_Flat",
+            "boundsSource": {
+              "min": [
+                -100.0,
+                0.0,
+                -31.4035
+              ],
+              "max": [
+                100.0,
+                312.2689,
+                9.2447
+              ]
+            },
+            "materials": [
+              "MI_Plaster",
+              "MI_Brick",
+              "MI_WoodTrim"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "guid-only",
+        "unitConversion": false,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "corner-module",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Corner_Exterior_Wood.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Corner_Exterior_Wood.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.corner-exterior-wood",
+        "prefab": "quaternius.medieval.prefab.corner-exterior-wood"
+      },
+      "contentSha256": "9808a8a25a67446f5d4d76836eb62d843414d1a3ed0979bb08bbe9f9e544ffee",
+      "metaSha256": "1f2fbabc4ddd24779ca56fc5a0f42127e302174ea1365033dba822e03f41f21c",
+      "unityGuid": "c9549b3b14121b84baccac5394379647",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Corner_Exterior_Wood",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Corner_Exterior_Wood",
+            "boundsSource": {
+              "min": [
+                -10.5087,
+                -0.0,
+                -11.982
+              ],
+              "max": [
+                10.5087,
+                300.0,
+                11.982
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "wall-module",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Straight.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_Plaster_Straight.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.wall-plaster-straight",
+        "prefab": "quaternius.medieval.prefab.wall-plaster-straight"
+      },
+      "contentSha256": "ad7d807b28ce4ec564773c9a9637c47b91db53cd9e7e6a8c90de5b1a56d3c96a",
+      "metaSha256": "bf8f62f396b9900c2be12512dc22c361839c182b21fdaf23efb505cf666c9a7a",
+      "unityGuid": "e9c7f17150cfb7741abda8572d7013f3",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Wall_Plaster_Straight",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Wall_Plaster_Straight",
+            "boundsSource": {
+              "min": [
+                -100.0,
+                -0.2096,
+                -31.4035
+              ],
+              "max": [
+                100.0,
+                312.2689,
+                9.2447
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim",
+              "MI_Plaster"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "wall-module-door-opening",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Door_Flat.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_Plaster_Door_Flat.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.wall-plaster-door-flat",
+        "prefab": "quaternius.medieval.prefab.wall-plaster-door-flat"
+      },
+      "contentSha256": "d373cff1fc4bd0d3369e1abc792f68e2500562744f39c237ebb184dd49533c90",
+      "metaSha256": "3a9ae74e1fe22f8420f562fb8764ab6ee0da284302a094fa7ebac2ddd48f6373",
+      "unityGuid": "7ffce3dada5ffee4f940a797b9c78aaf",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Wall_Plaster_Door_Flat",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Wall_Plaster_Door_Flat",
+            "boundsSource": {
+              "min": [
+                -100.0,
+                0.0,
+                -31.4035
+              ],
+              "max": [
+                100.0,
+                312.2689,
+                9.2447
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim",
+              "MI_Plaster",
+              "MI_RockTrim"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "door",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Door_1_Flat.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Door_1_Flat.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.door-1-flat",
+        "prefab": "quaternius.medieval.prefab.door-1-flat"
+      },
+      "contentSha256": "c8a1f7bfc8cff15356ab80aa3deee0b42597c0033c44f04807719c2ea8a77753",
+      "metaSha256": "89100dc085ea1323f9d2095f0331c07c4b0123e503a9e777037f00d7a0777b29",
+      "unityGuid": "b008cd8053424984380bebca9426d8ae",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Door_1_Flat",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Door_1_Flat",
+            "boundsSource": {
+              "min": [
+                -4.6263,
+                3.5225,
+                -5.7558
+              ],
+              "max": [
+                107.1603,
+                213.4945,
+                6.3143
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim",
+              "MI_WindowGlass"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "window",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Window_Wide_Flat1.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Window_Wide_Flat1.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.window-wide-flat1",
+        "prefab": "quaternius.medieval.prefab.window-wide-flat1"
+      },
+      "contentSha256": "da526c2d7f89f001da31626acdc97af4a57491579776e9073a515a64e78827c4",
+      "metaSha256": "763d4e88b3d2d9b56952e815d9333a14e2408f701f82fc36213f78b2141ffeba",
+      "unityGuid": "16396acda011f6c42b03303d8f57263c",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Window_Wide_Flat1",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Window_Wide_Flat1",
+            "boundsSource": {
+              "min": [
+                -80.4119,
+                94.4178,
+                -26.6581
+              ],
+              "max": [
+                80.4117,
+                252.4289,
+                41.6857
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim",
+              "MI_WindowGlass"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "window-shutter",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/WindowShutters_Wide_Flat_Open.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/WindowShutters_Wide_Flat_Open.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.windowshutters-wide-flat-open",
+        "prefab": "quaternius.medieval.prefab.windowshutters-wide-flat-open"
+      },
+      "contentSha256": "3b835fc6a896793ab546f9a5602877b5dce78db3ab084a0945f17209983f2a70",
+      "metaSha256": "e007c837de9b77ebd86c1275f4d83bce47a17844af9537027b1b2b5e4396793a",
+      "unityGuid": "8b575e2679b732c409d5c7741eb57d62",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "WindowShutters_Wide_Flat_Open",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "WindowShutters_Wide_Flat_Open",
+            "boundsSource": {
+              "min": [
+                -123.8709,
+                109.3244,
+                13.6656
+              ],
+              "max": [
+                124.186,
+                251.7276,
+                59.3174
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim_Wear"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "roof",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Roof_RoundTiles_4x4.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_RoundTiles_4x4.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.roof-roundtiles-4x4",
+        "prefab": "quaternius.medieval.prefab.roof-roundtiles-4x4"
+      },
+      "contentSha256": "051f77ad0ccd0167ea3c65f6b3e8a279cfdb9d2fa17e6f911f228fe3260f7a50",
+      "metaSha256": "4ce108001d6b7fdb08b633ef88e6d1e685f0e083418a87840a2be2cc7819d6f3",
+      "unityGuid": "05480a035831dec43bbcf445f9f8da56",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Roof_RoundTiles_4x4",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Roof_RoundTiles_4x4",
+            "boundsSource": {
+              "min": [
+                -275.6538,
+                -51.5719,
+                -273.9908
+              ],
+              "max": [
+                275.6538,
+                373.3674,
+                282.1567
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim",
+              "MI_RoundTiles"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "roof-prop",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Prop_Chimney.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_Chimney.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.prop-chimney",
+        "prefab": "quaternius.medieval.prefab.prop-chimney"
+      },
+      "contentSha256": "d132c893fbf957c92c51697de1329f0603d185849a7d0e94ec9ce5a78a0b90ed",
+      "metaSha256": "8e4652200df473e12ea28e2899bf8fcefc09ff7a532958e1b430aefda7234705",
+      "unityGuid": "f737f5d1d3f1c7c4f9b41c4fc741eb81",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Props_Chimney",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Props_Chimney",
+            "boundsSource": {
+              "min": [
+                -50.0,
+                0.0,
+                -50.0
+              ],
+              "max": [
+                44.5778,
+                317.7875,
+                50.0
+              ]
+            },
+            "materials": [
+              "MI_RockTrim",
+              "MI_Brick"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "small-prop",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Prop_Crate.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_Crate.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.prop-crate",
+        "prefab": "quaternius.medieval.prefab.prop-crate"
+      },
+      "contentSha256": "8e38d27f360ef68fe9f0e3382917d5ae500d78de3cace53e07a2f6d21c94cd43",
+      "metaSha256": "a2c8f97894584667fe307510d3c472b2ff317a0fda1fbe4094f36caaeefcb3d2",
+      "unityGuid": "c8380c71919f1694b9e99f69d20dd066",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Prop_Crate",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Prop_Crate",
+            "boundsSource": {
+              "min": [
+                -54.1791,
+                0.3362,
+                -54.1791
+              ],
+              "max": [
+                54.1791,
+                106.2942,
+                54.1791
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "small-prop",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Prop_WoodenFence_Single.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_WoodenFence_Single.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.prop-woodenfence-single",
+        "prefab": "quaternius.medieval.prefab.prop-woodenfence-single"
+      },
+      "contentSha256": "f5e0e0210292ab5dfd95a10f684850406b26d0a016b3fbd3ba499542e644d440",
+      "metaSha256": "49633465841eba4c5856c97408e2aaad4cc823ef4da3608af900ef2d60fb61da",
+      "unityGuid": "1bf65997b403411488eef5d3cf692dc3",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Prop_WoodenFence_Single",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Prop_WoodenFence_Single",
+            "boundsSource": {
+              "min": [
+                -103.1451,
+                -2.8253,
+                -5.991
+              ],
+              "max": [
+                103.2649,
+                80.9857,
+                5.991
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "large-prop",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Prop_Wagon.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_Wagon.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.prop-wagon",
+        "prefab": "quaternius.medieval.prefab.prop-wagon"
+      },
+      "contentSha256": "977e9344cce589a9625a7a7340da42f2ed9783a628b257dfdbfe0e892cd36847",
+      "metaSha256": "caf805c7e04099688a249f24105932914103cc9c2575a8908f66ecb20349b5fd",
+      "unityGuid": "612d31ec60a92474d8c28be827233dfe",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Prop_Wagon",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Prop_Wagon",
+            "boundsSource": {
+              "min": [
+                -97.9359,
+                0.313,
+                -315.0432
+              ],
+              "max": [
+                97.2049,
+                153.2327,
+                87.3584
+              ]
+            },
+            "materials": [
+              "MI_WoodTrim_Wear"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "foliage-prop",
+      "provenance": "distribution-entry",
+      "sourceId": "quaternius-medieval-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/Prop_Vine1.fbx",
+      "distributionEntry": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_Vine1.fbx",
+      "catalogue": {
+        "asset": "quaternius.medieval.asset.prop-vine1",
+        "prefab": "quaternius.medieval.prefab.prop-vine1"
+      },
+      "contentSha256": "de0bea8119f7b12fac3795718b331658f9bbe6e9e38a02272a1f92e28a4edeca",
+      "metaSha256": "815e2b5e02117cb820c23d312a6051f757c4056e35ea60348c66fb1b4edac7ad",
+      "unityGuid": "9ded629f09f94a2449f219d511d3d9f1",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 1.0,
+        "upAxis": 1,
+        "nodes": [
+          {
+            "path": "Prop_Vine1",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Prop_Vine1",
+            "boundsSource": {
+              "min": [
+                -78.3139,
+                -212.0522,
+                -4.4708
+              ],
+              "max": [
+                75.262,
+                48.2029,
+                17.4256
+              ]
+            },
+            "materials": [
+              "MI_Vine"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "upstream-model-importer",
+        "unitConversion": true,
+        "globalScale": 1.0
+      }
+    },
+    {
+      "shapeClass": "rigged-humanoid",
+      "provenance": "h1-04-source-slice",
+      "sourceId": "quaternius-ual1-source",
+      "assetPath": "Assets/Arkus/H1/SourceSlice/UAL1.fbx",
+      "catalogue": {
+        "asset": "quaternius.ual1.asset.mannequin",
+        "prefab": "quaternius.ual1.prefab.ual1"
+      },
+      "contentSha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842",
+      "metaSha256": "b4ba6919402098dabd555a80d7c3f0e444a70a4fbfff629613a68acbc73ae128",
+      "unityGuid": "06d37381cd6d9bece36de7794e2fc74a",
+      "fbx": {
+        "version": 7400,
+        "unitScaleFactor": 100.0,
+        "upAxis": 2,
+        "nodes": [
+          {
+            "path": "Armature",
+            "type": "Null"
+          },
+          {
+            "path": "Armature/root",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/index_01_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/index_01_l/index_02_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/index_01_l/index_02_l/index_03_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/index_01_l/index_02_l/index_03_l/index_04_leaf_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/middle_01_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/middle_01_l/middle_02_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/middle_01_l/middle_02_l/middle_03_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/middle_01_l/middle_02_l/middle_03_l/middle_04_leaf_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/pinky_01_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/pinky_01_l/pinky_02_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/pinky_01_l/pinky_02_l/pinky_03_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/pinky_01_l/pinky_02_l/pinky_03_l/pinky_04_leaf_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/ring_01_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/ring_01_l/ring_02_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/ring_01_l/ring_02_l/ring_03_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/ring_01_l/ring_02_l/ring_03_l/ring_04_leaf_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/thumb_01_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/thumb_01_l/thumb_02_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/thumb_01_l/thumb_02_l/thumb_03_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/thumb_01_l/thumb_02_l/thumb_03_l/thumb_04_leaf_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/index_01_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/index_01_r/index_02_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/index_01_r/index_02_r/index_03_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/index_01_r/index_02_r/index_03_r/index_04_leaf_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/middle_01_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/middle_01_r/middle_02_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/middle_01_r/middle_02_r/middle_03_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/middle_01_r/middle_02_r/middle_03_r/middle_04_leaf_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/pinky_01_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/pinky_01_r/pinky_02_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/pinky_01_r/pinky_02_r/pinky_03_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/pinky_01_r/pinky_02_r/pinky_03_r/pinky_04_leaf_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/ring_01_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/ring_01_r/ring_02_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/ring_01_r/ring_02_r/ring_03_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/ring_01_r/ring_02_r/ring_03_r/ring_04_leaf_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/thumb_01_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/thumb_01_r/thumb_02_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/thumb_01_r/thumb_02_r/thumb_03_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/thumb_01_r/thumb_02_r/thumb_03_r/thumb_04_leaf_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/neck_01",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/spine_01/spine_02/spine_03/neck_01/Head",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_l/calf_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_l/calf_l/foot_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_l/calf_l/foot_l/ball_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_l/calf_l/foot_l/ball_l/ball_leaf_l",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_r/calf_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_r/calf_r/foot_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_r/calf_r/foot_r/ball_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Armature/root/pelvis/thigh_r/calf_r/foot_r/ball_r/ball_leaf_r",
+            "type": "LimbNode"
+          },
+          {
+            "path": "Mannequin",
+            "type": "Mesh"
+          }
+        ],
+        "meshes": [
+          {
+            "node": "Mannequin",
+            "boundsSource": {
+              "min": [
+                -0.9722,
+                -0.2054,
+                0.0005
+              ],
+              "max": [
+                0.9722,
+                0.1642,
+                1.8292
+              ]
+            },
+            "materials": [
+              "M_Main",
+              "M_Joints"
+            ]
+          }
+        ]
+      },
+      "import": {
+        "sidecar": "guid-only",
+        "unitConversion": false,
+        "globalScale": 1.0
+      }
+    }
+  ],
+  "clips": [
+    {
+      "role": "idle",
+      "logicalId": "quaternius.ual1.animation-clip.armature-idle-loop"
+    },
+    {
+      "role": "walk",
+      "logicalId": "quaternius.ual1.animation-clip.armature-walk-loop"
+    },
+    {
+      "role": "sit",
+      "logicalId": "quaternius.ual1.animation-clip.armature-sitting-idle-loop"
+    }
+  ],
+  "absentFromAdoptedDistributions": [
+    {
+      "category": "lamp",
+      "finding": "no lamp/light-fixture model exists in the adopted Medieval Village MegaKit Source archive or UAL1 Source"
+    },
+    {
+      "category": "tree",
+      "finding": "no tree model exists in the adopted distributions; Prop_Vine1 carries the foliage/leaf-material shape class"
+    },
+    {
+      "category": "rock",
+      "finding": "no standalone rock model exists in the adopted distributions; rock-trim material appears only on modules (for example Wall_Plaster_Door_Flat, Prop_Chimney)"
+    }
+  ]
+}

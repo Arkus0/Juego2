@@ -89,6 +89,15 @@ namespace Arkus.H1.Editor
                 ResolveAsset<Material>(path, guid, localFileId, contentSha256, "material"));
         }
 
+        // The renderer adapter's target rule, checked against an unstaged source prefab (WP-H1-05 reopen 1). A source
+        // prefab carries no nested managed objects, so this equals the rule ApplyRenderer enforces on the realized object.
+        internal static void ValidateRendererTarget(GameObject source)
+        {
+            var renderer = ResolveSingleOwnedComponent<MeshRenderer>(source);
+            if (renderer.sharedMaterials.Length > 1)
+                throw new InvalidDataException("projection.component-material-slot-cardinality");
+        }
+
         internal static string ApplyAnimator(GameObject owner, string objectId, string path, string guid, string localFileId, string contentSha256)
         {
             return Get<AnimatorAdapter>(AnimatorSchema).Apply(owner, objectId,

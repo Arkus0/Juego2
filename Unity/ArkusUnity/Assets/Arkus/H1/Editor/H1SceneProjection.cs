@@ -531,6 +531,13 @@ namespace Arkus.H1.Editor
                 if (filter != null && filter.sharedMesh != null) AddRelationship(rows, "mesh-reference", relative, filter.sharedMesh);
                 var renderer = candidate.GetComponent<MeshRenderer>();
                 if (renderer != null) foreach (var material in renderer.sharedMaterials) if (material != null) AddRelationship(rows, "material-reference", relative, material);
+                // WP-H1-11 rig shape: a skinned (rigged) source renderer carries its own mesh and material references.
+                var skinned = candidate.GetComponent<SkinnedMeshRenderer>();
+                if (skinned != null)
+                {
+                    if (skinned.sharedMesh != null) AddRelationship(rows, "mesh-reference", relative, skinned.sharedMesh);
+                    foreach (var material in skinned.sharedMaterials) if (material != null) AddRelationship(rows, "material-reference", relative, material);
+                }
                 foreach (var clip in AnimationUtility.GetAnimationClips(candidate)) if (clip != null) AddRelationship(rows, "animation-clip-reference", relative, clip);
             }
             if (rows.Count > MaximumRelationships) throw new InvalidDataException("projection.prefab-relationship-limit");

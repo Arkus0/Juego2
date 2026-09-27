@@ -117,9 +117,22 @@ namespace Arkus.Harness.Runtime
             string worldId,
             IEnumerable<CanonicalProviderContribution>? scopedContributions)
         {
+            return ComposeEmptyPortableSession(worldId, scopedContributions, null);
+        }
+
+        /// <summary>
+        /// Composes an empty portable session whose authoring kernel admits the given extension document codecs
+        /// (WP-HK-04 reopen 1). Codecs only canonicalize documents into ordinary put-extension payloads; they acquire
+        /// no capability, route or write authority.
+        /// </summary>
+        public static ComposedContract ComposeEmptyPortableSession(
+            string worldId,
+            IEnumerable<CanonicalProviderContribution>? scopedContributions,
+            ExtensionDocumentCodecs? codecs)
+        {
             if (worldId == null) throw new ArgumentNullException(nameof(worldId));
             var initial = new WorldState(new WorldId(worldId), 0, Array.Empty<WorldObject>());
-            var session = new PortableWorldAuthoringSession(initial);
+            var session = new PortableWorldAuthoringSession(initial, codecs);
             return Compose(new WorldInspectionService(session), session, scopedContributions);
         }
     }

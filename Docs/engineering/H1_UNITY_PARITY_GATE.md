@@ -1,8 +1,8 @@
 # H1 Unity parity gate — deterministic reference scenario
 
-Version: 1.2 — 2026-09-21
+Version: 1.3 — 2026-09-26
 Owner: `WP-H1-GATE`
-Status: ACCEPTED CONTRACT / NOT EXECUTED — adopted by H1 planning PR `#71` at merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; Quaternius source-timing amendment proposed by the later PROCESS_ONLY correction; only a later exact-SHA `WP-H1-GATE` PASS can satisfy it.
+Status: ACCEPTED CONTRACT / EXECUTED / PASS — adopted by H1 planning PR `#71` at merge `09ce3fb495d331285bef0ab8aebf4c6117c84d57`; stage-16 capture amendment v1.3 accepted through PROCESS_ONLY PR `#246`, candidate `a0899c37b6958efb3036a6367377e5ed0773a10b`, PASS review `#5328105230`, merge `f5a480d03f93b711811610c18bfdb699ccee4776`, see "Amendment v1.3". `WP-H1-GATE` passed on exact candidate `8bcf171f2520a0e23ccba094bf353c8a78b5d239` (PR `#238`, independent PASS review `#5329808171`, merge `b730ba0c0b1a4ad454edbd420cd8e44555dfaf10`). Acceptance and residuals: `Docs/evidence/WP-H1-GATE/DOCSYNC.md`.
 
 ## Representative slice
 
@@ -36,7 +36,7 @@ Exact third-party pieces come from the Quaternius Source distribution first adop
 13. introduce a supported managed Unity edit, observe deterministic drift, compile a canonical proposal, force one stale-base conflict, recover through HK08B, apply through H0 and rematerialize to parity;
 14. invoke composed project checkpoint, close processes, remove generated projection output, start a fresh H1 host, restore canonical state through accepted snapshot/replay semantics and invoke composed rebuild to reproduce the normalized Unity digest;
 15. from the same baseline in an isolated project copy, rerun the H1 public semantic delta through MCP; require identical composed capability coverage, the same H1-03A lifecycle/error semantics and equivalent normalized results to the reference path;
-16. produce one supplementary rendered/editor capture and confirm the real asset slice loads with no owned error diagnostics;
+16. confirm, through the public composed observe of the rebuilt generation, that the real asset slice loads in the fixed batch Editor worker, and that the product launcher's Editor log of every Gate Unity process was read and carries no owned error diagnostics; bind the supplementary rendered capture by digest to the accepted `WP-H1-11` capture of the same representative selected-item manifest from which the Gate slice is drawn;
 17. run the complete required H1 exact-SHA validation and reconcile dependencies/residuals.
 
 ## Parity tuple
@@ -59,7 +59,23 @@ The plan and observation digests must agree under the accepted normalization. Re
 
 ## Headless versus local evidence
 
-Plain .NET contract/codec/reference proofs run remotely. Unity catalogue, scene/prefab/component/save/reload and batchmode evidence require the exact local editor installation. The rendered capture may require a graphics-capable editor/player run. A remote machine without the required editor cannot substitute fixtures and cannot issue PASS; the valid intermediate state is `READY_FOR_LOCAL_VALIDATION`.
+Plain .NET contract/codec/reference proofs run remotely. Unity catalogue, scene/prefab/component/save/reload and batchmode evidence require the exact local editor installation. The Gate produces no pixels: all of its Unity processes run through the accepted headless H1-03A launch profile. The supplementary rendered capture is the accepted `WP-H1-11` capture, which is consumed by digest; it is not, and never was, a parity oracle. A remote machine without the required editor cannot substitute fixtures and cannot issue PASS; the valid intermediate state is `READY_FOR_LOCAL_VALIDATION`.
+
+## Amendment v1.3 — stage-16 supplementary capture
+
+Accepted through PROCESS_ONLY PR `#246` on candidate `a0899c37b6958efb3036a6367377e5ed0773a10b`, PASS review `#5328105230`, merge `f5a480d03f93b711811610c18bfdb699ccee4776`.
+
+The v1.2 stage 16 asked the Gate to "produce one supplementary rendered/editor capture". Within the accepted H1 contracts, the Gate cannot produce one:
+
+- the only lawful Gate route to Unity is the public composed capabilities. The fixed H1-03A launcher starts every Editor process with `-batchmode -nographics` (ADR-H1-004), so no public process has a graphics device;
+- `WP-H1-GATE` forbids any Gate stage from launching Unity through a private script, menu, test helper, adapter-only tool, direct Editor entry point or Gate-added public route;
+- the H1 remaining-work compression amendment forbids the Gate from adding a product capability, and no accepted predecessor guarantee is false, so no reopen applies.
+
+The capture was always supplementary. The parity authority is the normalized observation, and "screenshot pixels are not the parity authority" (see "Parity tuple"). `FOUNDATIONAL_PROOF_STANDARD.md` requires a graphics-capable run only when a WP claims a rendered or interactive result. `H1_ENGINE_BRIDGE_ARCHITECTURE.md` requires one only where the representative render evidence cannot be produced truthfully with `-nographics`. `WP-H1-GATE` claims no rendered result. The representative rendered capture already exists: accepted `WP-H1-11` rendered the same representative selected-item manifest on the same pinned editor.
+
+Stage 16 therefore keeps its load obligation on the public path, and makes it stricter. The real slice must load as the current generation through the public observe of the fresh-process rebuild, and the Editor log of every Gate Unity process must be read and must carry no owned error. The rendered capture is consumed from `WP-H1-11` by digest, together with a check that every source and clip the Gate slice authors belongs to the manifest that capture rendered.
+
+This amendment removes no stage, oracle, causal class or acceptance criterion. A future public rendering capability, if one is wanted, needs its own workpack.
 
 ## Fresh AI-agent trial scope
 

@@ -17,6 +17,9 @@ import shutil
 import sys
 from pathlib import Path, PurePosixPath
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import h1_representative_slice  # noqa: E402
+
 GUID_RE = re.compile(r"(?m)^guid:\s*([0-9a-f]{32})\s*$")
 
 
@@ -187,6 +190,13 @@ def main() -> int:
             }
         )
 
+    # WP-H1-11 admitted a representative subset of the same adopted distributions.
+    # It is verified here too, so every consumer mounts the complete admitted universe.
+    try:
+        h1_representative_slice.verify_for_vault(public_root, vault_root, write=False)
+    except h1_representative_slice.SliceError as exc:
+        die(f"representative slice: {exc}")
+
     target = public_root / "Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice"
     if args.mount:
         if target.exists() and any(target.iterdir()):
@@ -197,6 +207,10 @@ def main() -> int:
             meta_rel = safe_relative(item["metaPath"])
             shutil.copy2(vault_root / file_rel, target / file_rel.name)
             shutil.copy2(vault_root / meta_rel, target / meta_rel.name)
+        try:
+            h1_representative_slice.verify_for_vault(public_root, vault_root, write=True)
+        except h1_representative_slice.SliceError as exc:
+            die(f"representative slice: {exc}")
 
     receipt = {
         "schemaId": "arkus.h1-asset-cloud-receipt@1",

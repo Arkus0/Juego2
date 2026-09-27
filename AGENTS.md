@@ -2,7 +2,7 @@
 
 ## Prime directive
 
-Juego2 is harness-first. `WP-HK-GATE` has passed. No gameplay, keeper realization (`CITY-07+`), vertical-slice content, DFU integration, or Creator GUI work may begin before `WP-H1-GATE` passes. The bounded `CITY-04` greybox may start after its own CITY chain and `WP-H1-08`; that exception validates accepted CITY geometry and authorizes neither H2 nor keeper content. H1 itself may create only the bounded Unity project, fixtures, generated projections and representative real-asset slice explicitly owned by its bridge workpacks; those are proof inputs, not CITY/H2 production.
+Juego2 is harness-first. `WP-HK-GATE` and `WP-H1-GATE` have passed and merged (H1 Gate: PR `#238`; see `Docs/evidence/WP-H1-GATE/DOCSYNC.md`). Gameplay, keeper realization (`CITY-07+`), vertical-slice content, DFU integration and Creator GUI work remain subject to their own accepted downstream contracts and prerequisites. H1 created only the bounded Unity project, fixtures, generated projections and representative real-asset slice owned by its bridge workpacks; those proof inputs do not themselves constitute CITY/H2 production.
 
 The harness exists to let an AI agent create, inspect, modify, validate, replay, and test the game world through stable machine-readable contracts without knowing C# implementation details.
 

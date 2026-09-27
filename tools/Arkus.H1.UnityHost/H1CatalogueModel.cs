@@ -15,7 +15,21 @@ namespace Arkus.H1.UnityHost
     public sealed class H1CatalogueException : Exception
     {
         public H1CatalogueException(string code, string message) : base(message) { Code = code; }
+
+        public H1CatalogueException(string code, string message, string repairHint, IReadOnlyDictionary<string, object?> context) : base(message)
+        {
+            Code = code;
+            RepairHint = repairHint;
+            Context = context;
+        }
+
         public string Code { get; }
+
+        /// <summary>Code-specific public repair guidance; null keeps the capability's generic catalogue hint.</summary>
+        public string? RepairHint { get; }
+
+        /// <summary>Public-safe structured facts a client needs to recover without implementation knowledge.</summary>
+        public IReadOnlyDictionary<string, object?>? Context { get; }
     }
 
     public sealed class H1CatalogueEffectiveInventory
@@ -223,12 +237,23 @@ namespace Arkus.H1.UnityHost
 
         public IReadOnlyDictionary<string, object?> Query(string kind, int pageSize, int offset, long? expectedSnapshotToken = null)
         {
-            if (pageSize < 1 || pageSize > MaximumPageSize) throw Error("catalogue.page-bound", "Page size is outside the fixed 1..64 bound.");
-            if (!string.IsNullOrEmpty(kind) && !Kinds.Contains(kind)) throw Error("catalogue.unknown-kind", "Requested catalogue kind is not admitted.");
+            if (pageSize < 1 || pageSize > MaximumPageSize)
+                throw Error("catalogue.page-bound", "Page size is outside the fixed 1..64 bound.",
+                    "Use a pageSize from 1 to 64 and page with the returned nextOffset.",
+                    Context(("minimumPageSize", 1L), ("maximumPageSize", (long)MaximumPageSize)));
+            if (!string.IsNullOrEmpty(kind) && !Kinds.Contains(kind))
+                throw Error("catalogue.unknown-kind", "Requested catalogue kind is not admitted.",
+                    "Omit kind or use one of the admitted catalogue kinds.",
+                    Context(("admittedKinds", Kinds.OrderBy(value => value, StringComparer.Ordinal).Cast<object?>().ToArray())));
             var source = Entries.Where(entry => string.IsNullOrEmpty(kind) || entry.Kind == kind).ToArray();
-            if (offset < 0 || offset > source.Length) throw Error("catalogue.page-bound", "Offset is outside the effective scoped inventory.");
+            if (offset < 0 || offset > source.Length)
+                throw Error("catalogue.page-bound", "Offset is outside the effective scoped inventory.",
+                    "Start at offset 0 and continue with the nextOffset returned by the previous page.",
+                    Context(("minimumOffset", 0L), ("maximumOffset", (long)source.Length), ("total", (long)source.Length)));
             if (expectedSnapshotToken.HasValue && expectedSnapshotToken.Value != SnapshotToken)
-                throw Error("catalogue.stale-snapshot", "A previous page belongs to a different effective catalogue snapshot.");
+                throw Error("catalogue.stale-snapshot", "A previous page belongs to a different effective catalogue snapshot.",
+                    "Omit expectedSnapshotToken on the first page. On later pages, pass the snapshotToken returned by the previous page. If the snapshot changed, restart at offset 0.",
+                    Context(("currentSnapshotToken", SnapshotToken), ("fingerprint", Fingerprint), ("restartOffset", 0L)));
             var page = source.Skip(offset).Take(pageSize).Select(entry => (object?)entry.ToData()).ToArray();
             var next = offset + page.Length;
             return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -242,12 +267,28 @@ namespace Arkus.H1.UnityHost
         public IReadOnlyDictionary<string, object?> Get(string logicalId, string kind, bool requireCompatible)
         {
             if (!CanonicalIdentityRules.IsCanonicalIdentifier(logicalId) || !Kinds.Contains(kind))
-                throw Error("catalogue.invalid-reference", "Catalogue reference has invalid logical identity or kind.");
+                throw Error("catalogue.invalid-reference", "Catalogue reference has invalid logical identity or kind.",
+                    "Use an Arkus logical ID returned by unity.host.catalogue.query together with its admitted kind.",
+                    Context(("admittedKinds", Kinds.OrderBy(value => value, StringComparer.Ordinal).Cast<object?>().ToArray())));
             if (!_byId.TryGetValue(logicalId, out var entry))
-                throw Error("catalogue.missing-reference", "The referenced Arkus logical ID is not in the effective catalogue.");
-            if (entry.Kind != kind) throw Error("catalogue.incompatible-reference", "The referenced kind disagrees with the effective entry.");
+            {
+                if (string.Equals(logicalId, H1ManagedScenePlan.SceneId, StringComparison.Ordinal))
+                    throw Error("catalogue.missing-reference", "The referenced Arkus logical ID is not in the effective catalogue.",
+                        "This ID is the fixed managed projection target scene, not a catalogued source. Use it as binding.targetSceneId and as the projection sceneLogicalId. It does not need to resolve in the catalogue.",
+                        Context(("logicalId", logicalId), ("kind", kind), ("managedProjectionTarget", true),
+                            ("targetFor", new object?[] { "binding.targetSceneId", "sceneLogicalId" })));
+                throw Error("catalogue.missing-reference", "The referenced Arkus logical ID is not in the effective catalogue.",
+                    "Page through unity.host.catalogue.query to discover the admitted logical IDs.",
+                    Context(("logicalId", logicalId), ("kind", kind)));
+            }
+            if (entry.Kind != kind)
+                throw Error("catalogue.incompatible-reference", "The referenced kind disagrees with the effective entry.",
+                    "Use the kind reported for this logical ID by unity.host.catalogue.query.",
+                    Context(("logicalId", logicalId), ("requestedKind", kind), ("effectiveKind", entry.Kind)));
             if (requireCompatible && !entry.Compatible)
-                throw Error("catalogue.incompatible-reference", "The referenced Unity entry is not compatible with the effective project.");
+                throw Error("catalogue.incompatible-reference", "The referenced Unity entry is not compatible with the effective project.",
+                    "Choose a catalogue entry that reports compatible=true.",
+                    Context(("logicalId", logicalId), ("kind", kind), ("compatible", false)));
             return ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal)
             {
                 ["schemaId"] = "arkus.h1-catalogue-get@1", ["fingerprint"] = Fingerprint,
@@ -308,7 +349,33 @@ namespace Arkus.H1.UnityHost
                 ["Assets/Arkus/H1/SourceSlice/FacadeImportedMaterial.mat"] =
                     ("quaternius-medieval-source", "source-derived", "e585297c2271fc83378e2eebe7f72ff9f8b66c2fc1b8a1eeb1c7abdfac5d2e29"),
                 ["Assets/Arkus/H1/SourceSlice/UAL1.fbx"] =
-                    ("quaternius-ual1-source", "approved-source", "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842")
+                    ("quaternius-ual1-source", "approved-source", "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"),
+                // WP-H1-11 representative subset of the same adopted Medieval distribution
+                // (Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json); no new source, version or licence.
+                ["Assets/Arkus/H1/SourceSlice/Corner_Exterior_Wood.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "9808a8a25a67446f5d4d76836eb62d843414d1a3ed0979bb08bbe9f9e544ffee"),
+                ["Assets/Arkus/H1/SourceSlice/Wall_Plaster_Straight.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "ad7d807b28ce4ec564773c9a9637c47b91db53cd9e7e6a8c90de5b1a56d3c96a"),
+                ["Assets/Arkus/H1/SourceSlice/Wall_Plaster_Door_Flat.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "d373cff1fc4bd0d3369e1abc792f68e2500562744f39c237ebb184dd49533c90"),
+                ["Assets/Arkus/H1/SourceSlice/Door_1_Flat.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "c8a1f7bfc8cff15356ab80aa3deee0b42597c0033c44f04807719c2ea8a77753"),
+                ["Assets/Arkus/H1/SourceSlice/Window_Wide_Flat1.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "da526c2d7f89f001da31626acdc97af4a57491579776e9073a515a64e78827c4"),
+                ["Assets/Arkus/H1/SourceSlice/WindowShutters_Wide_Flat_Open.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "3b835fc6a896793ab546f9a5602877b5dce78db3ab084a0945f17209983f2a70"),
+                ["Assets/Arkus/H1/SourceSlice/Roof_RoundTiles_4x4.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "051f77ad0ccd0167ea3c65f6b3e8a279cfdb9d2fa17e6f911f228fe3260f7a50"),
+                ["Assets/Arkus/H1/SourceSlice/Prop_Chimney.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "d132c893fbf957c92c51697de1329f0603d185849a7d0e94ec9ce5a78a0b90ed"),
+                ["Assets/Arkus/H1/SourceSlice/Prop_Crate.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "8e38d27f360ef68fe9f0e3382917d5ae500d78de3cace53e07a2f6d21c94cd43"),
+                ["Assets/Arkus/H1/SourceSlice/Prop_WoodenFence_Single.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "f5e0e0210292ab5dfd95a10f684850406b26d0a016b3fbd3ba499542e644d440"),
+                ["Assets/Arkus/H1/SourceSlice/Prop_Wagon.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "977e9344cce589a9625a7a7340da42f2ed9783a628b257dfdbfe0e892cd36847"),
+                ["Assets/Arkus/H1/SourceSlice/Prop_Vine1.fbx"] =
+                    ("quaternius-medieval-source", "approved-source", "de0bea8119f7b12fac3795718b331658f9bbe6e9e38a02272a1f92e28a4edeca")
             };
             foreach (var slice in adoption.Slices)
             {
@@ -362,6 +429,16 @@ namespace Arkus.H1.UnityHost
 
         private static void Append(StringBuilder builder, string value) => builder.Append(value.Length.ToString(CultureInfo.InvariantCulture)).Append(':').Append(value);
         private static H1CatalogueException Error(string code, string message) => new H1CatalogueException(code, message);
+
+        private static H1CatalogueException Error(string code, string message, string repairHint, IReadOnlyDictionary<string, object?> context) =>
+            new H1CatalogueException(code, message, repairHint, context);
+
+        private static IReadOnlyDictionary<string, object?> Context(params (string Key, object? Value)[] values)
+        {
+            var context = new Dictionary<string, object?>(StringComparer.Ordinal);
+            foreach (var (key, value) in values) context[key] = value;
+            return new ReadOnlyDictionary<string, object?>(context);
+        }
         private static IReadOnlyDictionary<string, object?> ReadOnly(IDictionary<string, object?> data) =>
             new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(data, StringComparer.Ordinal));
     }

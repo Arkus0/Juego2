@@ -291,6 +291,14 @@ namespace Arkus.H1.UnityHost
                 if (!context.ResourceBudget.TryContinue("h1-unity-after-lease", out prelaunchError)) return CapabilityInvocationResult.Failed(prelaunchError!);
                 string payload;
                 try { payload = executor.EncodeRequest(request); }
+                catch (H1ProjectionException exception)
+                {
+                    // A structured projection precondition (for example an unresolved catalogue reference in the
+                    // canonical binding) is a canonical-input diagnostic, not a host/worker contract fault. No Editor
+                    // process is launched. The message stays fixed so no raw exception text becomes public contract.
+                    return Failure(exception.Code, "The canonical request failed a projection precondition before any Unity launch.", false, null,
+                        "Run unity.projection.plan for the preflight diagnostic, then repair the canonical binding through authoring.change.* before retrying.");
+                }
                 catch (Exception) { return Failure(CorruptResultCode, "The typed worker request encoder rejected the canonical request.", false); }
                 if (System.Text.Encoding.UTF8.GetByteCount(payload) > H1UnityOperationCeilings.MaximumPayloadBytes) return Failure("unity.lifecycle.payload-too-large", "The internal worker payload exceeded the fixed H1 ceiling.", false);
 
@@ -352,11 +360,12 @@ namespace Arkus.H1.UnityHost
             string.Equals(result.EditorVersion, _profile.EffectiveEditorVersion, StringComparison.Ordinal) &&
             string.Equals(result.EditorRevision, _profile.EffectiveEditorRevision, StringComparison.Ordinal);
 
-        private static CapabilityInvocationResult Failure(string code, string message, bool retryable, string? invocationId = null)
+        private static CapabilityInvocationResult Failure(string code, string message, bool retryable, string? invocationId = null, string? repairHint = null)
         {
             var details = new Dictionary<string, object?>(StringComparer.Ordinal);
             if (invocationId != null) details["invocationId"] = invocationId;
-            return CapabilityInvocationResult.Failed(new StructuredError(code, message, "$", new ReadOnlyDictionary<string, object?>(details), retryable, retryable ? "Query unity.lifecycle.operation-status with the invocation identity before retrying." : "Repair the host/worker contract mismatch before retrying."));
+            return CapabilityInvocationResult.Failed(new StructuredError(code, message, "$", new ReadOnlyDictionary<string, object?>(details), retryable,
+                repairHint ?? (retryable ? "Query unity.lifecycle.operation-status with the invocation identity before retrying." : "Repair the host/worker contract mismatch before retrying.")));
         }
 
         private static string CreateInvocationId() => "h1u-" + DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N");

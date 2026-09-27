@@ -21,7 +21,16 @@ def main():
     accepted = json.loads((root / "Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json").read_text(encoding="utf-8"))
     effective = json.loads(args.inventory.read_text(encoding="utf-8"))
     require(accepted == effective, "Effective H1-04 catalogue differs from accepted snapshot")
-    require(len(effective["rows"]) == 250, "H1-04 effective catalogue count changed")
+    # Accepted WP-H1-11 appended its declared extension of the same adopted distribution to the committed inventory
+    # (as scripts/h1-04-evidence-summary.py records). The accepted H1-05 proof binds the 250-row H1-04 baseline, so the
+    # extension is projected out by its own declared asset paths, and what remains must be exactly that baseline.
+    extension = json.loads((root / "Docs/evidence/WP-H1-11/REPRESENTATIVE_SLICE.json").read_text(encoding="utf-8"))
+    extension_paths = {item["assetPath"] for item in extension["items"] if item["provenance"] == "distribution-entry"}
+    require(len(extension_paths) == 12, "WP-H1-11 extension declaration is incomplete")
+    extension_rows = [row for row in effective["rows"] if row["path"] in extension_paths]
+    require({row["path"] for row in extension_rows} == extension_paths and len(extension_rows) == 24,
+            "WP-H1-11 extension rows disagree with its declaration")
+    require(len(effective["rows"]) - len(extension_rows) == 250, "H1-04 effective catalogue count changed")
     public = json.loads(args.public.read_text(encoding="utf-8"))
     if args.committed_public:
         committed = json.loads(args.committed_public.read_text(encoding="utf-8"))

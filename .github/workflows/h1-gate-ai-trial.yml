@@ -1,0 +1,204 @@
+name: H1-GATE Fresh AI-Agent Trial
+
+# Owner-selected hosted route for the single fresh independent public-client trial of WP-H1-GATE.
+# Triggered only by adding the `h1-gate-ai-trial` label to the PR, so that it runs once on the exact final candidate
+# HEAD. Orchestration only: the relay is scripts/h1-gate-ai-trial.py; the verdict oracle is `h1-gate-verify.py trial`.
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-gate-unity-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  ai-trial:
+    name: Fresh independent AI-agent MCP trial on the exact candidate
+    if: github.event.label.name == 'h1-gate-ai-trial'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+      PINNED_ASSET_VAULT_SHA: ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6
+      PINNED_GAMECI_VERSION: v0.1.69
+      PINNED_GAMECI_COMMIT: 75c5dcf81523f31b3cca9d7cd16228a2b53de9a8
+      PINNED_GAMECI_LINUX_X64_SHA256: d847fe7b0131a00c521c51b0e6987b356301bb7121b69d9266c9414e78832329
+      PINNED_UNITY_IMAGE: unityci/editor:ubuntu-6000.3.24f1-linux-il2cpp-3@sha256:0884a94ace0ce762a4f5d7d2424f71bf59f4319267716f22695acfb49c0b1ff5
+      ASSET_VAULT_TOKEN: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+    steps:
+      - name: Validate exact target and credentials
+        shell: bash
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          set -euo pipefail
+          [[ "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::target SHA must be exact'; exit 2; }
+          missing=0
+          for name in ASSET_VAULT_TOKEN UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD OPENROUTER_API_KEY; do
+            if [[ -z "${!name:-}" ]]; then echo "::error::Missing GitHub Actions secret ${name}"; missing=1; fi
+          done
+          test "${missing}" -eq 0
+          UNITY_LICENSE_HOME="${RUNNER_TEMP}/h1-gate-trial-unity-home"
+          mkdir -p "${UNITY_LICENSE_HOME}" "${RUNNER_TEMP}/h1-gate-trial"
+          chmod 0777 "${UNITY_LICENSE_HOME}"
+          echo "UNITY_LICENSE_HOME=${UNITY_LICENSE_HOME}" >> "${GITHUB_ENV}"
+          echo "TRIAL_OUT=${RUNNER_TEMP}/h1-gate-trial" >> "${GITHUB_ENV}"
+
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Setup .NET from global.json
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+
+      - name: Checkout exact private H1 asset baseline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Arkus0/Juego2-assets
+          ref: ${{ env.PINNED_ASSET_VAULT_SHA }}
+          token: ${{ secrets.ARKUS_ASSET_VAULT_TOKEN }}
+          fetch-depth: 1
+          lfs: true
+          path: _asset_vault
+
+      - name: Verify clean candidate, mount accepted source and build the public host
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '/_asset_vault/\n' >> .git/info/exclude
+          test "$(git rev-parse HEAD)" = "${TARGET_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          python3 Tools/AssetVault/verify_h1_asset_vault.py --public-root . --vault-root _asset_vault \
+            --candidate-sha "${TARGET_SHA}" --vault-sha "$(git -C _asset_vault rev-parse HEAD)" --mount > /dev/null
+          python3 Tools/AssetVault/h1_representative_slice.py check --public-root . --vault-root _asset_vault
+          dotnet restore Juego2.sln --locked-mode
+          dotnet build Juego2.sln --no-restore -c Release
+
+      - name: Install exact GameCI CLI, Unity image and licence-return scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          PINNED_GAMECI_BIN="${RUNNER_TEMP}/game-ci-${PINNED_GAMECI_VERSION}-linux-x64"
+          curl --fail --location --silent --show-error \
+            "https://github.com/game-ci/cli/releases/download/${PINNED_GAMECI_VERSION}/game-ci-linux-x64" --output "${PINNED_GAMECI_BIN}"
+          printf '%s  %s\n' "${PINNED_GAMECI_LINUX_X64_SHA256}" "${PINNED_GAMECI_BIN}" | sha256sum --check --strict
+          chmod +x "${PINNED_GAMECI_BIN}"
+          RETURN_STEPS_DIR="${RUNNER_TEMP}/h1-gate-trial-gameci-steps"
+          mkdir -p "${RETURN_STEPS_DIR}"
+          for script in return_license.sh resolve_unity_path.sh licensing_method.sh; do
+            curl --fail --location --silent --show-error \
+              "https://raw.githubusercontent.com/game-ci/cli/${PINNED_GAMECI_COMMIT}/dist/platforms/ubuntu/steps/${script}" \
+              --output "${RETURN_STEPS_DIR}/${script}"
+          done
+          echo "PINNED_GAMECI_BIN=${PINNED_GAMECI_BIN}" >> "${GITHUB_ENV}"
+          echo "RETURN_STEPS_DIR=${RETURN_STEPS_DIR}" >> "${GITHUB_ENV}"
+          docker pull "${PINNED_UNITY_IMAGE}"
+          case "$(docker image inspect --format '{{index .RepoDigests 0}}' "${PINNED_UNITY_IMAGE}")" in
+            *'@sha256:0884a94ace0ce762a4f5d7d2424f71bf59f4319267716f22695acfb49c0b1ff5') ;;
+            *) echo '::error::unexpected Unity image digest'; exit 2 ;;
+          esac
+
+      - name: Activate exact hosted Unity seat in an isolated home
+        shell: bash
+        run: |
+          set -euo pipefail
+          HOME="${UNITY_LICENSE_HOME}" "${PINNED_GAMECI_BIN}" activate Unity/ArkusUnity \
+            --engine=unity --target-platform StandaloneLinux64 --custom-image="${PINNED_UNITY_IMAGE}"
+          touch "${RUNNER_TEMP}/h1-gate-trial-license-activated"
+          sudo chown "$(id -u):$(id -g)" Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json || true
+          git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json
+          git diff --quiet "${TARGET_SHA}" --
+
+      - name: Fresh independent agent drives the public MCP host
+        shell: bash
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          set -euo pipefail
+          sudo --preserve-env=OPENROUTER_API_KEY,PINNED_UNITY_IMAGE,UNITY_LICENSE_HOME,GITHUB_RUN_ID \
+            python3 scripts/h1-gate-ai-trial.py --workspace "${GITHUB_WORKSPACE}" --out "${TRIAL_OUT}" --candidate-sha "${TARGET_SHA}"
+          sudo chown -R "$(id -u):$(id -g)" "${TRIAL_OUT}"
+
+      - name: Verify the trial and run its negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          record = json.loads(Path(os.environ['TRIAL_OUT'], 'trial-record.json').read_text())
+          print('H1_GATE_TRIAL_RECORD ' + json.dumps({k: record[k] for k in ('candidateSha', 'model', 'modelTurns', 'verdict', 'final', 'transcriptSha256')}, sort_keys=True))
+          print('H1_GATE_TRIAL_AGENT_REPORT ' + json.dumps(record.get('agentReport'), sort_keys=True))
+          # Public-safe chronological transcript in the log, so a review never depends on artifact download access.
+          for line in Path(os.environ['TRIAL_OUT'], 'trial-transcript.jsonl').read_text().splitlines():
+              event = json.loads(line)
+              kind = event.get('event')
+              if kind == 'model-message':
+                  print('H1_GATE_TRIAL_MODEL ' + json.dumps({'turn': event.get('turn'), 'provider': event.get('provider'), 'servedModel': event.get('model'),
+                        'content': (event.get('content') or '')[:1200],
+                        'toolCalls': [{'name': c['name'], 'arguments': (c.get('arguments') or '')[:600]} for c in event.get('toolCalls', [])]}))
+              elif kind == 'tool-result':
+                  outcome = event.get('outcome') if isinstance(event.get('outcome'), dict) else {}
+                  print('H1_GATE_TRIAL_RESULT ' + json.dumps({'key': event.get('canonicalKey'), 'status': event.get('status'),
+                        'machineCode': event.get('machineCode'), 'ms': event.get('elapsedMs'), 'outcome': json.dumps(outcome)[:600]}))
+              elif kind in ('discovery', 'relay-error'):
+                  print('H1_GATE_TRIAL_EVENT ' + json.dumps({k: v for k, v in event.items() if k != 'offeredToolNames'})[:1500])
+          PY
+          python3 scripts/h1-gate-verify.py trial --dir "${TRIAL_OUT}" --candidate-sha "${TARGET_SHA}"
+          python3 scripts/h1-gate-negative-controls.py trial --dir "${TRIAL_OUT}" --candidate-sha "${TARGET_SHA}"
+          python3 Tools/AssetVault/h1_representative_slice.py sources --public-root .
+
+      - name: Upload public-safe trial transcript and record
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: h1-gate-ai-trial-${{ env.TARGET_SHA }}
+          path: ${{ env.TRIAL_OUT }}
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Return hosted Unity seat with pinned GameCI licensing step
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f "${RUNNER_TEMP}/h1-gate-trial-license-activated" ]]; then
+            mkdir -p "${GITHUB_WORKSPACE}/_activate-license~"
+            set +e
+            docker run --rm --workdir /github/workspace \
+              --volume "${UNITY_LICENSE_HOME}:/root" --volume "${GITHUB_WORKSPACE}:/github/workspace" \
+              --volume "${RETURN_STEPS_DIR}:/steps:ro" --env STEPS_DIR=/steps \
+              --env ACTIVATE_LICENSE_PATH=/github/workspace/_activate-license~ \
+              --env UNITY_EMAIL --env UNITY_PASSWORD --env UNITY_LICENSE \
+              --env GAME_CI_ACTIVATED_VIA=personal --env UNITY_LICENSE_RETRY_MAX_ATTEMPTS=2 \
+              "${PINNED_UNITY_IMAGE}" bash -lc 'source /steps/return_license.sh' 2>&1 | tee "${RUNNER_TEMP}/return-license.log"
+            rc=${PIPESTATUS[0]}
+            set -e
+            test "${rc}" -eq 0 || { echo "::error::pinned license return script exit=${rc}"; exit 1; }
+            grep -Eq 'Successfully returned ULF license|Successfully returned floating license|Successfully returned the entitlement license|License has been returned|No Personal license seat was held - nothing to return' "${RUNNER_TEMP}/return-license.log"
+            sudo rm -rf "${GITHUB_WORKSPACE}/_activate-license~" || true
+          fi
+
+      - name: Delete private source and generated projection
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf _asset_vault Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes \
+            Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs Unity/ArkusUnity/ProjectSettings/Arkus/H1Checkpoint
+          sudo rm -f Unity/ArkusUnity/Assets/Arkus/H1/SourceSlice.meta Unity/ArkusUnity/Assets/Arkus/H1/ManagedScenes.meta Unity/ArkusUnity/Assets/Arkus/H1/ManagedPrefabs.meta
+          sudo chown -R "$(id -u):$(id -g)" Unity/ArkusUnity 2>/dev/null || true
+          git restore --source="${TARGET_SHA}" -- Unity/ArkusUnity/Packages/manifest.json Unity/ArkusUnity/Packages/packages-lock.json 2>/dev/null || true
+          test -z "$(git status --porcelain --untracked-files=no)"

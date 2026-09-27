@@ -95,12 +95,22 @@ namespace Arkus.Game.Authoring
         private readonly object _gate = new object();
         private PortableSessionState _session;
 
+        private readonly ExtensionDocumentCodecs _codecs;
+
         public PortableWorldAuthoringSession(WorldState initialState)
+            : this(initialState, null)
+        {
+        }
+
+        /// <param name="codecs">Extension document codecs admitted by the host composition. They survive snapshot import
+        /// and replay, which replace the inner session.</param>
+        public PortableWorldAuthoringSession(WorldState initialState, ExtensionDocumentCodecs? codecs)
         {
             if (initialState == null) throw new ArgumentNullException(nameof(initialState));
             var resourceError = WorldResourceLimits.ValidateState(initialState, "$", out _);
             if (resourceError != null) throw new ArgumentException(resourceError.Message, nameof(initialState));
-            _session = PortableSessionState.Initial(new TransactionalWorldAuthoringSession(initialState));
+            _codecs = codecs ?? ExtensionDocumentCodecs.Empty;
+            _session = PortableSessionState.Initial(new TransactionalWorldAuthoringSession(initialState, _codecs));
         }
 
         public WorldState Current
@@ -278,7 +288,7 @@ namespace Arkus.Game.Authoring
                         "Refresh world.summary and retry against the current revision/hash.");
                 }
 
-                var stagedInner = new TransactionalWorldAuthoringSession(imported!);
+                var stagedInner = new TransactionalWorldAuthoringSession(imported!, _codecs);
                 var currentAnchor = AuthoredWorldAnchor.FromState(imported!);
                 var baseResult = WorldPortabilityEngine.ReadOnly(
                     new Dictionary<string, object?>(StringComparer.Ordinal)

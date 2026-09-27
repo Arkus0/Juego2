@@ -1,10 +1,18 @@
 # WP-PA-12 — Governance as Intervention in Simulation research
 
-Status: **FROZEN PLAN / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
 Class: **RESEARCH / NON-FOUNDATIONAL**  
 Execution: **REMOTE_RESEARCH**  
 Depends on: `WP-PA-11` PASS + merge + DocSync  
 Blocks: `WP-PA-13` only
+
+Accepted in batch: `WP-PA-B2`  
+Accepted candidate: `6d05206884ac729e02cdcceb2edeecb43244b4bd`  
+Canonical batch PR: `#240`  
+Independent PASS review: `#5326015639`  
+Batch merge: `c886ac2712bd81718607153f9cae9394959bcdf5`  
+Canonical result: `Docs/research/living-world/results/PA-12.md`  
+Binding DocSync: `Docs/evidence/WP-PA-B2/DOCSYNC.md`
 
 ## Objective
 
@@ -41,6 +49,8 @@ Research governance as high-leverage intervention into the same causal town: pol
 A governance decision can change shared opportunities for multiple actors, actors respond for their own reasons, and later local action can alter the aftermath without bypassing subsystem ownership.
 
 Negative gate: `CommunistTown`, `AuthoritarianTown`, `CultTown` or equivalent global labels cannot substitute for concrete rules plus actor decisions.
+
+Accepted by the PA-B2 batch evidence and independent PASS review above.
 
 ## Deferred proof
 

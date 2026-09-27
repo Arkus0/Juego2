@@ -1,6 +1,6 @@
 # H1 — Engine Bridge Foundation: Unity First
 
-Status: ACTIVE / `WP-H1-00` + `WP-H1-01` + `WP-H1-02` + `WP-H1-03` + `WP-H1-03A` + `WP-H1-04` + `WP-H1-05` + `WP-H1-06` + `WP-H1-07` + `WP-H1-08` COMPLETE
+Status: COMPLETE / `WP-H1-GATE` PASS and merge; see `Docs/evidence/WP-H1-GATE/DOCSYNC.md`.
 Initial reconstruction baseline: `c87c4c195d63cc9255745014f2b9757d9cd34050`
 Reconciled integration base: `7fe44840076eba05f1b67a7633cd33fc67b9023d` (CITY programme v2 PASS, merge and DocSync)
 Binding architecture: `Docs/engineering/H1_ENGINE_BRIDGE_ARCHITECTURE.md`
@@ -102,7 +102,7 @@ WP-HK-GATE
  H1-GATE -. keeper authorization .----> CITY-07 (after CITY-04)
 ```
 
-`H1-00`, `H1-01`, `H1-02`, `H1-03`, `H1-03A`, `H1-04`, `H1-05`, `H1-06`, `H1-07` and `H1-08` are accepted predecessor truth. `H1-09` is now the next default dependency-valid workpack. No H1-09 implementation is implicitly authorized by DocSync; it begins only when a human explicitly starts its Worker.
+`WP-H1-GATE` is COMPLETE on candidate `8bcf171f2520a0e23ccba094bf353c8a78b5d239` (PR `#238`, independent PASS review `#5329808171`, merge `b730ba0c0b1a4ad454edbd420cd8e44555dfaf10`). The H1 chain is accepted; downstream execution follows each workpack's own prerequisites. The Gate authorizes no automatic CITY/H2/ART PASS.
 
 The CITY side edges do not add CITY work to H1. CITY-04 owns spatial greybox falsification and may consume H1-08; CITY-07 owns keeper realization after the Gate; CITY-08 later owns keeper-slice authoring efficiency/reuse. H1 consumes CITY-00 geography only as representative shape pressure and never selects the CITY-03 seed.
 

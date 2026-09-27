@@ -266,6 +266,117 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void OperationGrammarViolationsNameTheAllowedAndUnexpectedFieldsForRecovery()
+        {
+            // WP-HK-05 reopen 1, triggered by the WP-H1-GATE fresh-agent trial 2: a client that mixed object and
+            // extension fields in one put-object received no field-level context and could not recover.
+            var initial = Hk02TestFixtures.MicroWorld();
+            var session = new TransactionalWorldAuthoringSession(initial);
+            var contract = Hk04TransactionalMutationTests.Compose(session);
+            var mixed = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["kind"] = "put-object",
+                ["id"] = "slice.root",
+                ["typeId"] = "slice.type",
+                ["references"] = new List<object?>().AsReadOnly(),
+                ["owner"] = "eval",
+                ["schemaVersion"] = 1L,
+                ["subjectId"] = "slice.root",
+                ["dependencies"] = new List<object?>().AsReadOnly(),
+                ["payloadBase64"] = ""
+            };
+            var before = CanonicalWorldStateCodec.ComputeContentHash(session.Current);
+
+            foreach (var name in new[] { WorldMutationContract.PlanName, WorldMutationContract.ApplyName })
+            {
+                var result = contract.Dispatch(name, Hk04TransactionalMutationTests.ExactVersion(),
+                    Hk04TransactionalMutationTests.Request(initial, "request.hk05-grammar", mixed));
+                Assert.False(result.Success);
+                var error = result.Error!;
+                Assert.Equal("world.change.invalid_request", error.MachineCode);
+                Assert.Equal("$.operations[0]", error.Path);
+                Assert.False(error.Retryable);
+                Assert.Equal("put-object", error.Context["operationKind"]);
+                Assert.Equal(new object?[] { "kind", "id", "typeId", "containerId", "references" }, (IReadOnlyList<object?>)error.Context["allowedFields"]!);
+                Assert.Equal(new object?[] { "kind", "id", "typeId" }, (IReadOnlyList<object?>)error.Context["requiredFields"]!);
+                Assert.Equal(new object?[] { "dependencies", "owner", "payloadBase64", "schemaVersion", "subjectId" }, (IReadOnlyList<object?>)error.Context["unexpectedFields"]!);
+                Assert.Contains("put-extension", error.RepairHint);
+                Assert.Empty(PortableData.Validate(error.ToData()));
+                Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(error.ToData()));
+            }
+
+            // Splitting the same intent into the declared kinds is accepted by the unchanged grammar.
+            var split = contract.Dispatch(WorldMutationContract.PlanName, Hk04TransactionalMutationTests.ExactVersion(),
+                Hk04TransactionalMutationTests.Request(initial, "request.hk05-split",
+                    new Dictionary<string, object?>(StringComparer.Ordinal) { ["kind"] = "put-object", ["id"] = "slice.root", ["typeId"] = "slice.type" }));
+            Assert.True(split.Success, split.Error?.Message);
+            Assert.Equal(before, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
+        }
+
+        [Fact]
+        public void NonCanonicalExtensionPayloadNamesWhyItIsNotCanonicalBase64()
+        {
+            // WP-HK-05 reopen 2, triggered by the WP-H1-GATE fresh-agent trial 5: a model-driven client retyped a compiled
+            // 476-character payload as 475 characters (a miscounted run of 'A') and received no field context.
+            var initial = Hk02TestFixtures.MicroWorld();
+            var session = new TransactionalWorldAuthoringSession(initial);
+            var contract = Hk04TransactionalMutationTests.Compose(session);
+            var before = CanonicalWorldStateCodec.ComputeContentHash(session.Current);
+            var canonical = Convert.ToBase64String(new byte[] { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 });
+
+            IReadOnlyDictionary<string, object?> Reject(object? payload)
+            {
+                var operation = new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["kind"] = "put-extension", ["owner"] = "probe.owner", ["schemaVersion"] = 1L
+                };
+                if (payload != null) operation["payloadBase64"] = payload;
+                var result = contract.Dispatch(WorldMutationContract.PlanName, Hk04TransactionalMutationTests.ExactVersion(),
+                    Hk04TransactionalMutationTests.Request(initial, "request.hk05-base64", operation));
+                Assert.False(result.Success);
+                Assert.Equal("world.change.invalid_request", result.Error!.MachineCode);
+                Assert.Equal("payloadBase64 must use canonical Base64 encoding.", result.Error.Message);
+                Assert.Equal("$.operations[0].payloadBase64", result.Error.Path);
+                Assert.Contains("exactly as returned", result.Error.RepairHint);
+                // WP-H1-GATE pre-merge probe 2: the hint also names the typed document form, which needs no transcription.
+                Assert.Contains("documentMutation", result.Error.RepairHint);
+                Assert.Contains("send that operation with document instead of payloadBase64", result.Error.RepairHint);
+                Assert.Empty(PortableData.Validate(result.Error.ToData()));
+                Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(result.Error.ToData()));
+                return result.Error.Context;
+            }
+
+            var shortened = Reject(canonical.Remove(4, 1));
+            Assert.Equal("length-not-multiple-of-4", shortened["reason"]);
+            Assert.Equal((long)(canonical.Length - 1), shortened["receivedLength"]);
+            Assert.Equal((long)((canonical.Length - 1) % 4), shortened["lengthRemainder"]);
+
+            var invalid = Reject(canonical.Substring(0, 8) + "-" + canonical.Substring(9));
+            Assert.Equal("invalid-character", invalid["reason"]);
+            Assert.Equal(8L, invalid["firstInvalidIndex"]);
+
+            // "QQ==" is canonical for 0x41; "QR==" decodes to the same byte but is not its canonical encoding.
+            Assert.Equal("non-canonical-padding", Reject("QR==")["reason"]);
+            // A non-string payload is refused earlier by the published schema; an absent payload source is the
+            // WP-HK-04 reopen 1 one-of rule (payloadBase64 or document).
+            var absent = contract.Dispatch(WorldMutationContract.PlanName, Hk04TransactionalMutationTests.ExactVersion(),
+                Hk04TransactionalMutationTests.Request(initial, "request.hk05-base64-absent", new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["kind"] = "put-extension", ["owner"] = "probe.owner", ["schemaVersion"] = 1L
+                }));
+            Assert.Equal("world.change.invalid_request", absent.Error!.MachineCode);
+            Assert.Equal("$.operations[0]", absent.Error.Path);
+
+            var accepted = contract.Dispatch(WorldMutationContract.PlanName, Hk04TransactionalMutationTests.ExactVersion(),
+                Hk04TransactionalMutationTests.Request(initial, "request.hk05-base64-ok", new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["kind"] = "put-extension", ["owner"] = "probe.owner", ["schemaVersion"] = 1L, ["payloadBase64"] = canonical
+                }));
+            Assert.NotEqual("$.operations[0].payloadBase64", accepted.Error?.Path);
+            Assert.Equal(before, CanonicalWorldStateCodec.ComputeContentHash(session.Current));
+        }
+
+        [Fact]
         public void ExplicitValidationAndApplyUseTheSameDiagnosticsAndInvalidStateCannotCommit()
         {
             var initial = Hk02TestFixtures.MicroWorld();

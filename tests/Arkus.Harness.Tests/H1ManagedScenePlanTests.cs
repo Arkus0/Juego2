@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using Arkus.EngineBridge.UnityAuthoring;
 using Arkus.Game.World;
 using Arkus.H1.UnityHost;
+using Arkus.Harness.Protocol;
 using Xunit;
 
 namespace Arkus.Harness.Tests
@@ -85,6 +88,147 @@ namespace Arkus.Harness.Tests
         }
 
         [Fact]
+        public void Binding_failures_name_the_canonical_subject_and_the_typed_document_repair()
+        {
+            // WP-H1-05 reopen 1 (WP-H1-GATE trial 7): a payload that is valid Base64 but not a Unity binding, which is what
+            // a mis-transcribed payloadBase64 looks like after the kernel accepted it. The public refusal must name the
+            // failing subject and point to the typed document form instead of transcription.
+            var catalogue = Catalogue();
+            var garbled = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[]
+                {
+                    new WorldExtensionData(UnityBindingProducer.ExtensionOwner, UnityBindingProducer.ExtensionSchemaVersion,
+                        Encoding.UTF8.GetBytes("not-a-unity-binding"), new WorldObjectId("plaza.potes"), new List<WorldReference>())
+                });
+            var invalid = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(garbled, catalogue));
+            Assert.Equal("projection.binding-invalid", invalid.Code);
+            Assert.Equal("unity.binding.invalid-payload at $.payloadBase64", invalid.Message);
+            Assert.Equal("plaza.potes", invalid.Context["subjectId"]);
+            Assert.Equal("unity.binding.invalid-payload", invalid.Context["bindingCode"]);
+            Assert.Equal("$.payloadBase64", invalid.Context["bindingPath"]);
+            Assert.Contains("documentMutation", invalid.RepairHint, StringComparison.Ordinal);
+
+            var missing = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) }, new[] { Binding("plaza.potes", 0, "prefab.absent") });
+            var source = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(missing, catalogue));
+            Assert.Equal("projection.source-missing", source.Code);
+            Assert.Equal("plaza.potes", source.Context["subjectId"]);
+            Assert.Equal("catalogue.missing-reference", source.Context["catalogueCode"]);
+            Assert.Equal("prefab.absent", source.Context["logicalId"]);
+
+            var unbound = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")), new WorldObject(new WorldObjectId("market.potes"), new WorldTypeId("fixture.market"), new WorldObjectId("plaza.potes")) },
+                new[] { Binding("market.potes", 0) });
+            var parent = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(unbound, catalogue));
+            Assert.Equal("projection.parent-unbound", parent.Code);
+            Assert.Equal("market.potes", parent.Context["subjectId"]);
+            Assert.Equal("plaza.potes", parent.Context["parentObjectId"]);
+
+            // The public preflight error keeps the code and message, carries the facts and the code-specific hint, and is
+            // a valid portable StructuredError; a failure without a specific hint keeps the accepted default hint.
+            foreach (var exception in new[] { invalid, source, parent })
+            {
+                var error = H1ProjectionContract.PreflightError(exception);
+                Assert.Equal(exception.Code, error.MachineCode);
+                Assert.Equal(exception.Message, error.Message);
+                Assert.Equal(exception.Context["subjectId"], error.Context["subjectId"]);
+                Assert.Empty(PortableData.Validate(error.ToData()));
+                Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(error.ToData()));
+            }
+            Assert.Equal(H1ManagedScenePlan.BindingInvalidRepairHint, H1ProjectionContract.PreflightError(invalid).RepairHint);
+            Assert.Equal(H1ManagedScenePlan.CatalogueReferenceMissingRepairHint, H1ProjectionContract.PreflightError(source).RepairHint);
+            Assert.Equal(H1ManagedScenePlan.ParentUnboundRepairHint, H1ProjectionContract.PreflightError(parent).RepairHint);
+
+            // Pre-merge probe 3: a binding compiled for another catalogued scene names both scenes and the recompile repair.
+            var otherScene = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[] { Binding("plaza.potes", 0, targetSceneId: "arkus.h1-04.scene.catalogueproof") });
+            var scope = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(otherScene, catalogue));
+            Assert.Equal("projection.scene-out-of-scope", scope.Code);
+            Assert.Equal("The binding targets a scene outside the fixed managed scene.", scope.Message);
+            Assert.Equal("plaza.potes", scope.Context["subjectId"]);
+            Assert.Equal("arkus.h1-04.scene.catalogueproof", scope.Context["targetSceneId"]);
+            Assert.Equal(H1ManagedScenePlan.SceneId, scope.Context["managedSceneId"]);
+            Assert.Equal(H1ManagedScenePlan.SceneOutOfScopeRepairHint, H1ProjectionContract.PreflightError(scope).RepairHint);
+
+            // A catalogue failure that is not a missing reference keeps the accepted default hint.
+            var wrongType = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[] { Binding("plaza.potes", 0, "quaternius.medieval.asset.wall-plaster-window-wide-flat") });
+            var incompatible = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(wrongType, catalogue));
+            Assert.Equal("projection.source-wrong-type", incompatible.Code);
+            Assert.Equal(H1ProjectionContract.DefaultPreflightRepairHint, H1ProjectionContract.PreflightError(incompatible).RepairHint);
+            Assert.Contains("containerId", H1ManagedScenePlan.ParentUnboundRepairHint, StringComparison.Ordinal);
+
+            var targetNotProjected = new WorldState(new WorldId("world.potes"), 0,
+                new[]
+                {
+                    new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")),
+                    new WorldObject(new WorldObjectId("ghost.potes"), new WorldTypeId("fixture.target"))
+                },
+                new[] { Binding("plaza.potes", 0, link: "ghost.potes") });
+            var target = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(targetNotProjected, catalogue));
+            Assert.Equal("projection.canonical-target-unbound", target.Code);
+            Assert.Equal("plaza.potes", target.Context["subjectId"]);
+            Assert.Equal("ghost.potes", target.Context["targetObjectId"]);
+            Assert.Equal(H1ManagedScenePlan.CanonicalTargetUnboundRepairHint, H1ProjectionContract.PreflightError(target).RepairHint);
+        }
+
+        [Fact]
+        public void Editor_refusals_carry_the_unity_diagnostic_subject_and_a_code_specific_repair()
+        {
+            // WP-H1-05 reopen 1 (WP-H1-GATE pre-merge probe): a renderer bound to a prefab that owns no MeshRenderer (a skinned
+            // model) is refused by the Unity preflight. The public refusal must name the canonical subject and its source, not
+            // only the scene, and say how to repair it. This is the Editor reply shape of H1SceneProjection.ValidationReply.
+            var reply = Reply("projection.component-target-missing",
+                "{\"code\":\"projection.component-target-missing\",\"severity\":\"error\",\"invariantId\":\"unity.plan.component\"," +
+                "\"phase\":\"preflight\",\"canonicalResource\":\"slice-humanoid\",\"logicalAsset\":\"quaternius.ual1.prefab.ual1\"," +
+                "\"managedPath\":\"Assets/Arkus/H1/ManagedScenes/slice-humanoid\",\"context\":\"repair component schema/field/reference\"}");
+            var target = H1ManagedSceneExecutor.WorkerFailure(reply).Error!;
+            Assert.Equal("projection.component-target-missing", target.MachineCode);
+            Assert.Equal("Unity rejected the staged managed-scene projection.", target.Message);
+            Assert.Equal("slice-humanoid", target.Context["subjectId"]);
+            Assert.Equal("quaternius.ual1.prefab.ual1", target.Context["sourceLogicalId"]);
+            Assert.Equal("unity.plan.component", target.Context["invariantId"]);
+            Assert.Equal("preflight", target.Context["phase"]);
+            Assert.Equal("repair component schema/field/reference", target.Context["validationContext"]);
+            Assert.Equal(H1ProjectionContract.RendererTargetRepairHint, target.RepairHint);
+
+            // A scene-scoped diagnostic names no subject; its code-specific hint still applies.
+            var inactive = H1ManagedSceneExecutor.WorkerFailure(Reply("projection.active-scene-missing",
+                "{\"code\":\"projection.active-scene-missing\",\"invariantId\":\"unity.scene.effective-observation\"," +
+                "\"phase\":\"post-materialization\",\"canonicalResource\":\"arkus.h1-05.scene.potes\",\"logicalAsset\":\"\"," +
+                "\"managedPath\":\"Assets/Arkus/H1/ManagedScenes/current.json\",\"context\":\"repair the active manifest/current managed generation\"}")).Error!;
+            Assert.False(inactive.Context.ContainsKey("subjectId"));
+            Assert.False(inactive.Context.ContainsKey("sourceLogicalId"));
+            Assert.Equal(H1ProjectionContract.ActiveSceneMissingRepairHint, inactive.RepairHint);
+
+            // A reply whose diagnostics do not carry its code (or carry none) keeps the accepted empty context and default hint.
+            var bare = H1ManagedSceneExecutor.WorkerFailure(Reply("projection.editor-failure", "")).Error!;
+            Assert.Empty(bare.Context);
+            Assert.Equal(H1ProjectionContract.DefaultWorkerRepairHint, bare.RepairHint);
+            Assert.Equal(H1ProjectionContract.RendererMaterialSlotRepairHint, H1ProjectionContract.WorkerRepairHint("projection.component-material-slot-cardinality"));
+            Assert.Equal(H1ProjectionContract.RendererTargetRepairHint, H1ProjectionContract.WorkerRepairHint("projection.component-target-cardinality"));
+
+            foreach (var error in new[] { target, inactive, bare })
+            {
+                Assert.Empty(PortableData.Validate(error.ToData()));
+                Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(error.ToData()));
+            }
+        }
+
+        private static H1ManagedSceneWorkerReply Reply(string errorCode, string diagnostic)
+        {
+            var payload = "{\"schemaId\":\"arkus.h1-projection-worker-result@1\",\"sceneLogicalId\":\"arkus.h1-05.scene.potes\"," +
+                "\"expectedInputDigest\":\"\",\"errorCode\":\"" + errorCode + "\",\"observation\":{\"schemaId\":\"\",\"nodes\":[]}," +
+                "\"validation\":{\"schemaId\":\"arkus.h1-unity-validation-result@1\",\"valid\":false,\"executedInvariantIds\":[]," +
+                "\"diagnostics\":[" + diagnostic + "]}}";
+            return JsonSerializer.Deserialize<H1ManagedSceneWorkerReply>(payload,
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true })!;
+        }
+
+        [Fact]
         public void Component_adapter_source_has_no_generic_reflection_or_serialized_property_mutation_endpoint()
         {
             var root = H1UnityLaunchProfile.ForCurrentHost().RepositoryRoot;
@@ -119,7 +263,7 @@ namespace Arkus.Harness.Tests
             return new WorldState(new WorldId("world.potes"), revision, objects, extensions);
         }
 
-        private static WorldExtensionData Binding(string subject, long x, string sourceId = "quaternius.medieval.prefab.wall-plaster-window-wide-flat", string? link = null, bool renderer = false, bool animator = false)
+        private static WorldExtensionData Binding(string subject, long x, string sourceId = "quaternius.medieval.prefab.wall-plaster-window-wide-flat", string? link = null, bool renderer = false, bool animator = false, string? targetSceneId = null)
         {
             var components = new List<object?>();
             var references = new List<WorldReference>();
@@ -133,7 +277,7 @@ namespace Arkus.Harness.Tests
             var binding = new Dictionary<string, object?>
             {
                 ["schemaId"] = UnityBindingProducer.BindingSchemaId,
-                ["targetSceneId"] = H1ManagedScenePlan.SceneId,
+                ["targetSceneId"] = targetSceneId ?? H1ManagedScenePlan.SceneId,
                 ["source"] = new Dictionary<string, object?> { ["kind"] = "prefab", ["logicalId"] = sourceId },
                 ["transform"] = new Dictionary<string, object?>
                 {

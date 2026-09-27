@@ -194,6 +194,7 @@ namespace Arkus.H1.Editor
                         if (!ComponentCheckEligible(captured)) return;
                         ValidateComponents(captured);
                         ValidateComponentReferencesForH108(captured);
+                        ValidateComponentTargets(captured);
                     }));
             }
 
@@ -440,6 +441,20 @@ namespace Arkus.H1.Editor
                 }
                 finally { UnityEngine.Object.DestroyImmediate(probe); }
             }
+        }
+
+        // WP-H1-05 reopen 1: a renderer needs exactly one single-slot MeshRenderer owned by the realized object. A mesh
+        // asset source always realizes one; a prefab source (for example a skinned model) is checked here, before
+        // staging, so the refusal names the canonical subject and its logical source instead of the staged scene.
+        private static void ValidateComponentTargets(ProjectionNode node)
+        {
+            if (node.sourceKind != "prefab" ||
+                !node.components.Any(component => component != null && component.schemaId == H1ComponentProjection.MeshRendererSchema))
+                return;
+            GameObject prefab;
+            try { prefab = ResolveSource(node) as GameObject; }
+            catch (InvalidDataException) { return; } // unity.plan.source-binding reports this node's source failure.
+            if (prefab != null) H1ComponentProjection.ValidateRendererTarget(prefab);
         }
 
         private static void ValidatePlanHierarchyForH108(ProjectionPlan plan)
