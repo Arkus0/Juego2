@@ -33,7 +33,7 @@ A disposable copy of the W12 climb was built in a clean scene. It uses the ART c
 | Scenic surfaces | Terrain banks must be `NavMeshModifier` Not Walkable, otherwise the NavMesh floods them. |
 | ProBuilder | A bounded threshold step is generated with `ShapeGenerator.GenerateStair`. Stripping to a plain mesh is possible only through the **internal** `StripProBuilderScripts.DoStrip` (no public API). |
 
-Evidence: `results/s02_result.json`, `captures/owner/` (S02 is technical; its captures are in the workspace, `out/s02/`).
+Evidence: `results/s02_result.json`, `captures/technical/s02_*.png` (junction, retaining wall + fence, NavMesh over the spline route and through the F01 threshold).
 
 ## S03 — river
 
@@ -97,7 +97,7 @@ GC2 Core installation facts are in `results/gc2_import_report.json`, `gc2_vendor
 | Animation Rigging contact (TwoBoneIK, right hand to bar-counter height) | Hand-to-target 0.371 m → **0.000 m** at weight 1, when the target is placed from the *animated* shoulder. Targets placed from bind pose were out of reach (0.199 m residual). |
 | ART material coupling | Calling ART-01's `Art01Materials.Remap/Get` after the URP conversion re-binds `Shader.Find("Standard")` and **persists** it (Skin/Coat/Shirt/… reverted on disk). |
 
-Evidence: `results/s07_*`, `captures/owner/S07_humanoid.png`, `captures/negative/s07_art01materials_reverts_standard.png`.
+Evidence: `results/s07_*`, `captures/owner/S07_humanoid.png`, `captures/technical/s07_ik_counter_contact.png`, `captures/negative/s07_art01materials_reverts_standard.png`.
 
 ## Workstation/tooling facts discovered (not candidate failures)
 

@@ -12,7 +12,7 @@ This is **selection**, not adoption. H2F-02 owns exact admission, migration of t
 | Water | Project-owned URP water shader (depth tint, shoreline foam, flow ripples) | S03 (`spike_project/Assets/H2F01/Shaders/H2F01StylizedWater.shader`) |
 | Non-enterable windows | Project-owned interior-mapping material; never on enterable openings | S05 (`H2F01InteriorWindow.shader`) |
 | Linear features | Unity Splines centreline host + project-owned profile extrusion + junction apron/fillet generator + `SplineInstantiate` for repeated modules | `com.unity.splines` 2.9.1 |
-| Terrain | Unity Terrain for scenic periphery/banks only; street network, junctions and edges stay authored/derived meshes | built-in module |
+| Terrain | Unity Terrain as ground surface for scenic periphery/banks only; street network, junctions and edges stay authored/derived meshes. Terrain trees/details are **not** selected; vegetation is the scatter role. | built-in module |
 | Nature placement | Project-owned deterministic seeded scatter of ART-admitted prefabs with no-go masks (traversable, structure, river) and ART scale bands | S04 |
 | Navigation | AI Navigation NavMeshSurface over the sole traversable colliders, project agent (radius 0.28, climb 0.30, slope 40°), `NavMeshModifier` Not Walkable on scenic surfaces | `com.unity.ai.navigation` 2.0.15 |
 | Player control | CharacterController + Input System action map + project-owned locomotion/camera-root controller | `com.unity.inputsystem` 1.20.0 |

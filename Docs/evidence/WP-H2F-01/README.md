@@ -14,7 +14,7 @@ Status: **Worker evidence, Draft + ACTIVE**, not frozen. Mode: HYBRID. Real Unit
 | `OWNER_JUDGEMENT.md` | What the owner saw, the verbatim delegation, and how it is applied |
 | `SPIKE_INPUT_LOCK.json` | Hash lock for vault inputs beyond ART-01's lock |
 | `spike_project/` | Reproducible disposable spike recipe (no vendor bytes) |
-| `results/`, `captures/owner/`, `captures/negative/` | Measurements, owner review sheets, negative controls |
+| `results/`, `captures/owner/`, `captures/technical/`, `captures/negative/` | Measurements, owner review sheets, technical captures, negative controls |
 
 ## PASS conditions → evidence
 

@@ -10,9 +10,9 @@ Fixed sky/fog/light presets,04,SPIKE_REQUIRED,S01,ADOPT_NOW,S01: captures/owner/
 Enviro 3 sky and weather,04,DEFER,no,DEFER,H2F-00,No dynamic-weather requirement; paid. Unchanged.
 URP mesh + Shader Graph water,05,SPIKE_REQUIRED,S03,ADOPT_NOW,S03: results/s03_result.json,"Selected as a project-owned dependency-free URP water shader (depth tint, shoreline foam, flow ripples, fresnel); requires the URP depth texture. Shader Graph authoring optional."
 Stylized Water 3,05,DEFER,no,DEFER,S03,Free route has no critical gap; not purchased.
-Unity Terrain,06|08|24,SPIKE_REQUIRED,S02|S04,ADOPT_NOW,"S02/S04: results/s02_result.json, s04_result.json","Scoped to scenic periphery/banks: NavMeshModifier Not Walkable, flush seams (0.006 m); street network/junctions/edges stay authored meshes. Terrain trees need root-baked URP derivatives; terrain detail meshes unresolved (residual)."
+Unity Terrain,06|08|24,SPIKE_REQUIRED,S02|S04,ADOPT_NOW,"S02/S04: results/s02_result.json, results/s04_result.json, captures/technical/s02_navmesh_spline_topdown.png","Ground surface for scenic periphery/banks only: NavMeshModifier Not Walkable, flush seams (0.006 m); street network, junctions and edges stay authored/derived meshes. Vegetation placement is NOT a Terrain role (single owner: project scatter); Terrain trees were shown to need root-baked URP derivatives and Terrain detail meshes did not render, so neither is selected."
 Terrain Tools,06|08|24,SPIKE_REQUIRED,S02|S04,DEFER,S02/S04,"Manual sculpting brushes add no value to deterministic, authored/derived heights; optional editor helper later."
-Unity Splines + authored profiles,07|24,SPIKE_REQUIRED,S02,ADOPT_NOW,S02: results/s02_result.json,"Splines 2.9.1 as centreline realization host + project-owned profile extrusion and junction generator (widths 2.795/5.490 m, junction 0 holes) + SplineInstantiate for repeated modules (generated, unserialized instances)."
+Unity Splines + authored profiles,07|24,SPIKE_REQUIRED,S02,ADOPT_NOW,"S02: results/s02_result.json, captures/technical/s02_spline_junction_street.png, captures/technical/s02_spline_retaining_wall_fence.png","Splines 2.9.1 as centreline realization host + project-owned profile extrusion and junction generator (widths 2.795/5.490 m, junction 0 holes) + SplineInstantiate for repeated modules (generated, unserialized instances)."
 EasyRoads3D Pro v3,07|24,DEFER,no,DEFER,S02,The critical junction case was solved natively with a small project-owned generator; no large measured saving; paid.
 Gaia Pro VS,06|08|24,DEFER,no,DEFER,S02/S04,Would compete with CITY/ART authority; no need. Unchanged.
 Existing Medieval Village MegaKit Source,07|09|10|12,AVAILABLE_ASSET,S05,AVAILABLE_ASSET,S01/S02/S05,"Admitted Source content (models, fences, stairs, borders). Its URP Shader Graph materials are valid only on unmodified Source modules, not on ART-derived meshes."
@@ -28,9 +28,9 @@ Adopted UAL1 Source clips,13,SPIKE_REQUIRED,S07,ADOPT_NOW,"S07: results/s07_clip
 UAL2 animation library,13,SPIKE_REQUIRED,S07,AVAILABLE_ASSET,S07,"Owner-owned CC0 gap filler (fold-arms, rail-lean, carry, step-up, yes/no); admitted per named clip."
 Mixamo clips/autorigger,13,SPIKE_REQUIRED,S07,REDUNDANT,S07,No named civilian clip is missing from UAL1+UAL2; no Adobe account step needed.
 Unity Humanoid/Animator/root motion,13,SPIKE_REQUIRED,S07,ADOPT_NOW,S07: results/s07_motion_log.txt,"Humanoid with explicit avatar mapping; in-place clips driven by controller/agent speed as default (root motion drifts 6.8 deg), root motion optional per clip."
-Animation Rigging,13,SPIKE_REQUIRED,S07,ADOPT_NOW,S07: results/s07_motion_log.txt,Animation Rigging 1.4.1 TwoBoneIK reaches a counter-height contact exactly (0.000 m) when targets are resolved against the animated pose.
+Animation Rigging,13,SPIKE_REQUIRED,S07,ADOPT_NOW,"S07: results/s07_motion_log.txt, captures/technical/s07_ik_counter_contact.png",Animation Rigging 1.4.1 TwoBoneIK reaches a counter-height contact exactly (0.000 m) when targets are resolved against the animated pose.
 uLipSync,14,DEFER,no,DEFER,H2F-00,Unchanged.
-AI Navigation,15,SPIKE_REQUIRED,S02,ADOPT_NOW,S02: results/s02_result.json,AI Navigation 2.0.15 NavMeshSurface over the sole traversable colliders; project agent radius 0.28/climb 0.30/slope 40; bridge to Bar F01 interior PathComplete.
+AI Navigation,15,SPIKE_REQUIRED,S02,ADOPT_NOW,"S02: results/s02_result.json, captures/technical/s02_navmesh_art_f01_threshold.png",AI Navigation 2.0.15 NavMeshSurface over the sole traversable colliders; project agent radius 0.28/climb 0.30/slope 40; bridge to Bar F01 interior PathComplete.
 Ink Unity integration,16,DEFER,no,DEFER,H2F-00,Unchanged.
 Yarn Spinner Unity,16,DEFER,no,DEFER,H2F-00,Unchanged.
 Timeline,17,DEFER,no,DEFER,H2F-00,Unchanged.
