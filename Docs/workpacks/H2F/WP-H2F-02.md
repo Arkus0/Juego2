@@ -6,6 +6,10 @@ Mode: **LOCAL_UNITY_REQUIRED where licensed/source bytes or visual import eviden
 Depends on: `WP-H2F-01` PASS + `WP-H2F-01A` PASS + `WP-H1-GATE` PASS + ART-01 `PREFOUNDATION_INPUT` checkpoint published; **ART-01 PASS is intentionally downstream**  
 Blocks: `WP-H2F-03`; the adopted foundation also becomes the required baseline for the later ART-01 effective candidate
 
+## Post-01A urban product amendment (prospective)
+
+After the urban expansion decision passes, this is still the **immediate next executable WP** after H2F-01A PASS/merge/DocSync and the ART-01 `PREFOUNDATION_INPUT` checkpoint. Its baseline, evidence, negative gates and H1 lifecycle proof are unchanged. Select/host the admitted GC2 Core seam for later local urban gameplay while Arkus remains the active persistent authority. Record how the selected street/worldbuilding profiles can be reused on compact urban blocks, without requiring a port keeper scene, a new district graph or extra licensed modules in H2F-02. Any accepted 01A S06 amendment remains binding; Core admission is not assumed before 01A review. See `Docs/product/URBAN_EXPANSION_DECISION.md` and `Docs/architecture/GC2_ARKUS_RUNTIME_SPLIT.md`.
+
 ## Claim
 
 The H2F-01 selected stack, including the H2F-01A Game Creator 2 Core handoff where Core remains admitted, is installed/admitted in the real Juego2 Unity project with exact versions/provenance, a working URP baseline, reproducible project configuration and explicit replaceable boundaries before keeper CITY-07 production begins.

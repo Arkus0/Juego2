@@ -6,6 +6,10 @@ Mode: **LOCAL / real Unity visual-play evidence required**
 Depends on: `WP-H2F-02` PASS  
 Blocks: `WP-H2F-GATE`
 
+## Post-01A urban product amendment (prospective)
+
+The existing non-keeper integration fixture also checks that the admitted player/interaction path and 01A GC2↔Arkus public seam coexist with the selected stack, where Core is admitted. Record the street/interior/navigation realization profile that a later compact city block can reuse. The fixture does **not** claim a real port street, an urban character population, new GC2 modules, or ART/CITY keeper approval. Its original lifecycle, fresh-author, evidence and negative gates stay binding.
+
 ## Claim
 
 The frozen candidate stack works as one coherent Juego2 production baseline when rendering, worldbuilding, traversal/navigation and character presentation are exercised together, survives the accepted H1 public lifecycle according to the H2F-02 state-classification boundary, and a fresh author/agent can use the prescribed Juego2-side surfaces without turning plugin-private state into canonical authority.

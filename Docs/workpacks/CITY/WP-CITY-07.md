@@ -6,6 +6,10 @@ Mode: **LOCAL**
 Depends on: `WP-CITY-04` PASS + `WP-H1-GATE` PASS + `WP-ART-01` PASS + `WP-H2F-GATE` PASS
 Blocks: `WP-CITY-08` only
 
+## Prospective urban expansion boundary
+
+Finish the original Puente Viejo/Casco/Bar keeper pilot under its accepted CITY geometry and binding amendments. Its physical constraints and realized assembly become reusable evidence. The new port-city topology, coast and first urban block are owned separately by `WP-CITY-URBAN-00/01`; this WP cannot make the inland seed coastal by renaming it. This note does not reopen accepted CITY-04 measurements or relax ART-01 `KEEPER_READY`.
+
 ## Objective
 
 Turn the CITY-04 validated greybox into the first structurally keeper **game-space** of the shipping city using accepted assets/compositions while preserving accepted CITY semantics and deliberately improving the embodied third-person experience.

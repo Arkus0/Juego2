@@ -7,6 +7,8 @@ Plan date: 2026-09-27
 Accepted: PR `#250`, candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`, independent PASS review `#5330069733`, merge `9d3bb90ebfae8837155576c13b705fc1c72c2579`  
 Progress: `WP-H2F-00` COMPLETE / ACCEPTED via PR `#251`; `WP-H2F-01` COMPLETE / ACCEPTED via PR `#254`, frozen candidate `b642024ee54523d19b91448016af83a50d0ff361`, PASS review `#5331371244`, merge `27e6e56215268e566f24ea1f3a80e62601126f89`. Owner-directed `WP-H2F-01A` / PR `#255` is the next bounded insertion before H2F-02.
 
+**Prospective product amendment:** `Docs/product/URBAN_EXPANSION_DECISION.md` and `Docs/roadmap/POST_H2F01A_ROADMAP.md` expand the *future* game to port-city districts while keeping Arkus active. PR #255 inserted the 01A **contract**; the implementation candidate is separate PR #256. H2F-01A itself is not reopened by this amendment. After its PASS/merge/DocSync, `WP-H2F-02` is next under its existing foundation proof and added urban reuse note. Historical selection/evidence in this README remain historical truth.
+
 ## 1. Phase claim
 
 H2F answers one question before keeper production continues:

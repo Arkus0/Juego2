@@ -2,6 +2,8 @@
 
 Version: 1.36 — 2026-09-27 (H1 Gate acceptance reconciliation)
 
+> **Prospective urban expansion amendment (2026-09-27):** Once independently accepted, [`product/URBAN_EXPANSION_DECISION.md`](product/URBAN_EXPANSION_DECISION.md) sets the final-game direction: fictional north-Spain port city by compact districts, more selectively deep NPCs, activities, pursuit and combat. **GC2 ejecuta. Arkus recuerda y conecta.** [`roadmap/POST_H2F01A_ROADMAP.md`](roadmap/POST_H2F01A_ROADMAP.md) governs *pending* ordering after H2F-01A; [`roadmap/POST_H2F01A_WP_AUDIT.md`](roadmap/POST_H2F01A_WP_AUDIT.md) maps each pending WP. Earlier H0/H1/CITY/ART/H2F closures and the inland pilot below are retained history/foundation, not retroactive port-city proof. H2F-01A's active candidate is unaffected.
+
 ## North star
 
 Build an engine-agnostic, commercially viable AI-native game-authoring platform whose canonical contracts, transactional semantics and verification guarantees exceed any single engine-specific AI harness; then prove it by building Juego2 on top of it.
@@ -244,7 +246,7 @@ The intended visual progression is therefore **Quaternius Source playable first 
 
 # H3+ — Game Systems
 
-Gameplay systems follow only after H0/H1 prove the AI can safely evolve the project.
+Gameplay systems follow the accepted H0/H1 foundation. After the prospective urban expansion is accepted, bounded GC2-02..08 gameplay WPs demonstrate investigation, persistent witness reaction, routine, living block, melee and pursuit, leading to GC2-SLICE and DISTRICT-01. The older generic H3/H4 ordering remains historical planning input; it does not impose a second infrastructure campaign before visible gameplay.
 
 ---
 
