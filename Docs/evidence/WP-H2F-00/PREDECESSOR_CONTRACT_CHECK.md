@@ -1,5 +1,7 @@
 # H2F-00 predecessor contract check
 
+PREDECESSOR_CONTRACT_CHECK
+
 Date: 2026-09-27. Baseline `main`: `2e10beb11830b10d0f12015d24f86cfa19c56b28`.
 
 - Direct dependency: accepted H2F plan PR #250; reviewed candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`; independent PASS #5330069733; merge `9d3bb90ebfae8837155576c13b705fc1c72c2579`; `Docs/evidence/H2F-PLAN/DOCSYNC.md` records DOCSYNC_COMPLETE on main. The accepted H2F README and WP-H2F-00 are the exact scope. No capsule replaces these directly binding documents.

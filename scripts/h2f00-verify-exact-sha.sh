@@ -7,7 +7,12 @@ EXPECTED_SHA="${1:-${CANDIDATE_SHA:-}}"
 ACTUAL_SHA="$(git rev-parse HEAD)"
 [[ "${EXPECTED_SHA}" =~ ^[0-9a-fA-F]{40}$ ]] || { echo 'Expected an exact candidate SHA' >&2; exit 2; }
 [[ "${ACTUAL_SHA}" == "${EXPECTED_SHA}" ]] || { echo 'Candidate SHA mismatch' >&2; exit 2; }
-[[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo 'Dirty candidate before research verification' >&2; exit 2; }
+# Candidate Validation writes its own context and receipt files before this step.
+# Ignore only those untracked workflow artifacts; tracked changes still fail closed.
+clean_candidate() {
+  [[ -z "$(git status --porcelain --untracked-files=all | grep -Ev '^\?\? (VALIDATION_CONTEXT\.json|validation\.log|EXECUTION_RECEIPT\.txt|artifacts/observed/.*)$' || true)" ]]
+}
+clean_candidate || { echo 'Dirty candidate before research verification' >&2; exit 2; }
 
 python3 - <<'PY'
 import csv
@@ -70,7 +75,7 @@ if [[ -n "${PR_BODY:-}" ]]; then
   printf '%s\n' "${PR_BODY}" | grep -Eq '^Worker pre-review:[[:space:]]*CLEAN[[:space:]]*$'
   printf '%s\n' "${PR_BODY}" | grep -Eq '^Branch frozen:[[:space:]]*YES[[:space:]]*$'
 fi
-[[ -z "$(git status --porcelain --untracked-files=all)" ]] || { echo 'Dirty candidate after research verification' >&2; exit 2; }
+clean_candidate || { echo 'Dirty candidate after research verification' >&2; exit 2; }
 
 cat <<EOF
 EXECUTION_RECEIPT_V1
