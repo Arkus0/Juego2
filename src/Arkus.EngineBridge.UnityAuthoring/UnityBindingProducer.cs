@@ -10,14 +10,25 @@ namespace Arkus.EngineBridge.UnityAuthoring
     public sealed class UnityBindingException : Exception
     {
         public UnityBindingException(string machineCode, string path, string message)
+            : this(machineCode, path, message, null, null)
+        {
+        }
+
+        // Optional structured facts and a code-specific repair hint for the public refusal (WP-H1-GATE pre-merge probe 3).
+        public UnityBindingException(string machineCode, string path, string message,
+            IReadOnlyDictionary<string, object?>? context, string? repairHint)
             : base(message)
         {
             MachineCode = machineCode ?? throw new ArgumentNullException(nameof(machineCode));
             Path = path ?? throw new ArgumentNullException(nameof(path));
+            Context = context;
+            RepairHint = repairHint;
         }
 
         public string MachineCode { get; }
         public string Path { get; }
+        public IReadOnlyDictionary<string, object?>? Context { get; }
+        public string? RepairHint { get; }
     }
 
     public static class UnityBindingProducer
@@ -28,6 +39,12 @@ namespace Arkus.EngineBridge.UnityAuthoring
         public const int ExtensionSchemaVersion = 1;
         public const string CoordinateConvention = "unity-local-left-handed-y-up-z-forward";
         public const int MaximumComponents = 64;
+        public const string CanonicalDependencyMismatchRepairHint =
+            "expectedCanonicalDependencies is optional: omit it, or set it to exactly derivedCanonicalDependencies. Canonical " +
+            "dependencies are derived only from canonical-link components; containment comes from put-object containerId, not from the binding.";
+        public const string CatalogueDependencyMismatchRepairHint =
+            "expectedCatalogueDependencies is optional: omit it, or set it to exactly derivedCatalogueDependencies (the target scene, " +
+            "the source and every component reference).";
         public const int MaximumStringBytes = 1024;
 
         private static readonly UTF8Encoding StrictUtf8 = new UTF8Encoding(false, true);
@@ -301,7 +318,10 @@ namespace Arkus.EngineBridge.UnityAuthoring
             }
             supplied.Sort((left, right) => StringComparer.Ordinal.Compare(left.Key, right.Key));
             if (!EqualCanonical(supplied, derived))
-                throw Error("unity.binding.canonical-dependency-mismatch", path, "Caller canonical dependency metadata does not exactly equal mechanically derived structured references.");
+                throw new UnityBindingException("unity.binding.canonical-dependency-mismatch", path,
+                    "Caller canonical dependency metadata does not exactly equal mechanically derived structured references.",
+                    ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal) { ["derivedCanonicalDependencies"] = CanonicalData(derived) }),
+                    CanonicalDependencyMismatchRepairHint);
         }
 
         private static void ValidateCatalogueAssertion(object? raw, IReadOnlyList<CatalogueDependency> derived, string path)
@@ -324,7 +344,10 @@ namespace Arkus.EngineBridge.UnityAuthoring
             }
             supplied.Sort((left, right) => StringComparer.Ordinal.Compare(left.Key, right.Key));
             if (!EqualCatalogue(supplied, derived))
-                throw Error("unity.binding.catalogue-dependency-mismatch", path, "Caller catalogue dependency metadata does not exactly equal mechanically derived structured references.");
+                throw new UnityBindingException("unity.binding.catalogue-dependency-mismatch", path,
+                    "Caller catalogue dependency metadata does not exactly equal mechanically derived structured references.",
+                    ReadOnly(new Dictionary<string, object?>(StringComparer.Ordinal) { ["derivedCatalogueDependencies"] = CatalogueData(derived) }),
+                    CatalogueDependencyMismatchRepairHint);
         }
 
         private static bool EqualCanonical(IReadOnlyList<CanonicalDependency> left, IReadOnlyList<CanonicalDependency> right)

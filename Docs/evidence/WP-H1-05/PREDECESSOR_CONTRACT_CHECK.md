@@ -34,3 +34,7 @@ Reopen H1-00 only if evidence shows Unity cannot implement the accepted generati
 - **Disclosed boundary touch (probe 2).** One repair-hint string of the WP-HK-05-owned canonical-Base64 refusal (`WorldMutationService`, HK-05 reopen 2 `#243`) now also names the typed-document form.
   - No code, message, path, context or behavior changes, and the HK-05 test still pins everything it pinned.
   - It rides in this reopen only because the owner's agile probe loop found it one step before this reopen's own refusal. The owner may require it as its own HK-05 reopen before merge.
+- **Disclosed boundary touch (probe 3).** The WP-H1-01-owned compile refusals `unity.binding.canonical-dependency-mismatch` and `unity.binding.catalogue-dependency-mismatch` (`UnityBindingProducer` / `UnityAuthoringProvider`, accepted in H1-01 and reopen 1 `#245`) now carry the derived dependency list and a hint.
+  - `UnityBindingException` gains optional `Context` and `RepairHint`; its existing constructor is unchanged.
+  - No code, message, path, schema, payload, dependency derivation or success result changes, and every other binding refusal is byte-identical.
+  - The owner may require it as its own H1-01 reopen before merge.

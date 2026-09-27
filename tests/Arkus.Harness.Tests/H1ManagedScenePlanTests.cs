@@ -137,8 +137,28 @@ namespace Arkus.Harness.Tests
                 Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(error.ToData()));
             }
             Assert.Equal(H1ManagedScenePlan.BindingInvalidRepairHint, H1ProjectionContract.PreflightError(invalid).RepairHint);
-            Assert.Equal(H1ProjectionContract.DefaultPreflightRepairHint, H1ProjectionContract.PreflightError(source).RepairHint);
+            Assert.Equal(H1ManagedScenePlan.CatalogueReferenceMissingRepairHint, H1ProjectionContract.PreflightError(source).RepairHint);
             Assert.Equal(H1ManagedScenePlan.ParentUnboundRepairHint, H1ProjectionContract.PreflightError(parent).RepairHint);
+
+            // Pre-merge probe 3: a binding compiled for another catalogued scene names both scenes and the recompile repair.
+            var otherScene = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[] { Binding("plaza.potes", 0, targetSceneId: "arkus.h1-04.scene.catalogueproof") });
+            var scope = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(otherScene, catalogue));
+            Assert.Equal("projection.scene-out-of-scope", scope.Code);
+            Assert.Equal("The binding targets a scene outside the fixed managed scene.", scope.Message);
+            Assert.Equal("plaza.potes", scope.Context["subjectId"]);
+            Assert.Equal("arkus.h1-04.scene.catalogueproof", scope.Context["targetSceneId"]);
+            Assert.Equal(H1ManagedScenePlan.SceneId, scope.Context["managedSceneId"]);
+            Assert.Equal(H1ManagedScenePlan.SceneOutOfScopeRepairHint, H1ProjectionContract.PreflightError(scope).RepairHint);
+
+            // A catalogue failure that is not a missing reference keeps the accepted default hint.
+            var wrongType = new WorldState(new WorldId("world.potes"), 0,
+                new[] { new WorldObject(new WorldObjectId("plaza.potes"), new WorldTypeId("fixture.plaza")) },
+                new[] { Binding("plaza.potes", 0, "quaternius.medieval.asset.wall-plaster-window-wide-flat") });
+            var incompatible = Assert.Throws<H1ProjectionException>(() => H1ManagedScenePlan.Build(wrongType, catalogue));
+            Assert.Equal("projection.source-wrong-type", incompatible.Code);
+            Assert.Equal(H1ProjectionContract.DefaultPreflightRepairHint, H1ProjectionContract.PreflightError(incompatible).RepairHint);
             Assert.Contains("containerId", H1ManagedScenePlan.ParentUnboundRepairHint, StringComparison.Ordinal);
 
             var targetNotProjected = new WorldState(new WorldId("world.potes"), 0,
@@ -243,7 +263,7 @@ namespace Arkus.Harness.Tests
             return new WorldState(new WorldId("world.potes"), revision, objects, extensions);
         }
 
-        private static WorldExtensionData Binding(string subject, long x, string sourceId = "quaternius.medieval.prefab.wall-plaster-window-wide-flat", string? link = null, bool renderer = false, bool animator = false)
+        private static WorldExtensionData Binding(string subject, long x, string sourceId = "quaternius.medieval.prefab.wall-plaster-window-wide-flat", string? link = null, bool renderer = false, bool animator = false, string? targetSceneId = null)
         {
             var components = new List<object?>();
             var references = new List<WorldReference>();
@@ -257,7 +277,7 @@ namespace Arkus.Harness.Tests
             var binding = new Dictionary<string, object?>
             {
                 ["schemaId"] = UnityBindingProducer.BindingSchemaId,
-                ["targetSceneId"] = H1ManagedScenePlan.SceneId,
+                ["targetSceneId"] = targetSceneId ?? H1ManagedScenePlan.SceneId,
                 ["source"] = new Dictionary<string, object?> { ["kind"] = "prefab", ["logicalId"] = sourceId },
                 ["transform"] = new Dictionary<string, object?>
                 {

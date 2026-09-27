@@ -37,6 +37,14 @@ The kernel's HK-05 reopen-2 refusal gave the reason, and its hint said "pass it 
 
 This refusal is the one step before `projection.binding-invalid`: a transcription that is invalid Base64 is caught here, and a valid but wrong one is caught at plan. Only the plan refusal pointed to `documentMutation`.
 
+### Probe 3 (Gate run `36304524613`, exploratory copy of `a3a20d53`)
+
+The agent gave up at turn 23. It authored only with transcribed `payloadBase64`, and each transcription happened to be valid Base64, so the kernel's Base64 refusal never fired. Three refusals cost it turns without saying what to repair:
+
+1. **`unity.binding.compile` → `unity.binding.canonical-dependency-mismatch`**, with an empty context and a generic hint (WP-H1-01 surface). The agent had guessed a `containment` dependency. It misread the refusal and recompiled two bindings for the other catalogued scene.
+2. **`projection.scene-out-of-scope`**, with only `subjectId` and the generic hint. The refusal named neither the binding's scene nor the managed scene.
+3. **`projection.source-missing` for `quaternius.mediewal.prefab.prop-vine1`.** One flipped character of a transcribed payload (`…bWVkaWV3YWw…` instead of `…bWVkaWV2YWw…`) had changed the `logicalId`, and the payload was still valid Base64 and a valid binding. The hint was generic, so the agent re-transcribed, then stopped at a correct `binding-invalid` refusal.
+
 ## Accepted guarantee proved inapplicable
 
 WP-H1-05 owns "versioned public projection plan/materialize/observe capabilities". The plan's preflight refusal is accepted as a structured diagnostic. It holds for a client with implementation knowledge, but it is inapplicable to a fresh public client:
@@ -67,6 +75,16 @@ The same gap class was corrected for the catalogue in WP-H1-04 reopen 1 (`#239`)
 
   The machine code, message, path and context are unchanged. So is the accepted payload semantics.
 
+- **Probe 3 corrections:**
+  - `projection.scene-out-of-scope` carries `targetSceneId` and `managedSceneId`. Its hint says to recompile with the managed scene and apply the `documentMutation`.
+  - The catalogue-mapped `projection.source-missing`, `projection.reference-missing` and `projection.component-reference-missing` get a hint:
+    - check the `logicalId` against the catalogue;
+    - one changed character of a transcribed payload can change it;
+    - recompile (compile validates catalogue references) and apply the `documentMutation`.
+
+    Other catalogue failures keep the default hint.
+  - **Compile (disclosed WP-H1-01 touch; see `PREDECESSOR_CONTRACT_CHECK.md`).** `unity.binding.canonical-dependency-mismatch` and `unity.binding.catalogue-dependency-mismatch` carry `derivedCanonicalDependencies` / `derivedCatalogueDependencies` in their context. Their hints say the assertion is optional (omit it, or set it to exactly the derived list), and that containment comes from `containerId`, not from the binding. `UnityBindingException` gains optional `Context` and `RepairHint`, which the provider passes through. Every other binding refusal keeps its empty context and its accepted hint.
+
 ## Not changed
 
 - No capability, schema, machine code, public message, plan digest, input digest, catalogue content or fingerprint changes.
@@ -90,6 +108,9 @@ The same gap class was corrected for the catalogue in WP-H1-04 reopen 1 (`#239`)
 
   All three are valid `StructuredError`s.
 - `Hk05ValidationDiagnosticsTests.NonCanonicalExtensionPayloadNamesWhyItIsNotCanonicalBase64` still pins the refusal's code, message, path, context and "exactly as returned". It now also requires the typed-document direction (`documentMutation`, and "send that operation with document instead of payloadBase64").
-- The existing `H1ManagedScenePlanTests` and `H1CatalogueTests` are unchanged and still pin the codes.
+- Probe 3:
+  - `H1ManagedScenePlanTests` covers `scene-out-of-scope`, with its facts and hint, and the catalogue-missing hint. `source-wrong-type` keeps the default hint.
+  - `H1UnityAuthoringProducerTests.CallerMaintainedDependencyTruthFailsClosedOnOmissionContradictionAndDuplicates` covers both mismatch refusals: they carry the derived dependencies and hints and are valid `StructuredError`s.
+- The existing `H1ManagedScenePlanTests` and `H1CatalogueTests` still pin the codes.
 - Exact-SHA hosted evidence is recorded on the PR: Arkus Main Safety, and the H1-05 route `scripts/h1-05-verify-exact-sha.sh`.
 - The effective public proof is WP-H1-GATE: its deterministic 17-stage scenario on reference and MCP, and trial 8 on the Gate's final frozen SHA.

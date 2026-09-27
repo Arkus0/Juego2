@@ -54,6 +54,13 @@ namespace Arkus.H1.UnityHost
         public const string ParentUnboundRepairHint =
             "The managed scene is not a canonical object. Either give parentObjectId its own arkus.unity-binding in the same " +
             "targetSceneId, or clear this subject's containerId so it is realized at the managed scene root; then rerun unity.projection.plan.";
+        public const string SceneOutOfScopeRepairHint =
+            "Only the fixed managed scene (managedSceneId) is projected. Recompile this subject's binding with binding.targetSceneId " +
+            "set to managedSceneId and apply the returned documentMutation; then rerun unity.projection.plan.";
+        public const string CatalogueReferenceMissingRepairHint =
+            "logicalId is not in the effective catalogue; check it against unity.host.catalogue.query. One changed character of a " +
+            "transcribed payloadBase64 can change it, so recompile this subject's binding with unity.binding.compile (it validates " +
+            "catalogue references) and apply the returned documentMutation; then rerun unity.projection.plan.";
         public const string CanonicalTargetUnboundRepairHint =
             "Give targetObjectId its own arkus.unity-binding in the same targetSceneId, or remove the canonical-link component " +
             "from this subject's binding; then rerun unity.projection.plan.";
@@ -143,8 +150,10 @@ namespace Arkus.H1.UnityHost
                     Facts(("bindingCode", exception.MachineCode), ("bindingPath", exception.Path)), BindingInvalidRepairHint);
             }
             var binding = (IReadOnlyDictionary<string, object?>)inspected["binding"]!;
-            if ((string)binding["targetSceneId"]! != SceneId)
-                throw Error("projection.scene-out-of-scope", "The binding targets a scene outside the fixed managed scene.");
+            var targetSceneId = (string)binding["targetSceneId"]!;
+            if (targetSceneId != SceneId)
+                throw new H1ProjectionException("projection.scene-out-of-scope", "The binding targets a scene outside the fixed managed scene.",
+                    Facts(("targetSceneId", targetSceneId), ("managedSceneId", SceneId)), SceneOutOfScopeRepairHint);
 
             var source = (IReadOnlyDictionary<string, object?>)binding["source"]!;
             var sourceKind = (string)source["kind"]!;
@@ -254,8 +263,10 @@ namespace Arkus.H1.UnityHost
                 var facts = new Dictionary<string, object?>(StringComparer.Ordinal) { ["catalogueCode"] = exception.Code };
                 foreach (var pair in exception.Context ?? new Dictionary<string, object?>(StringComparer.Ordinal))
                     if (!facts.ContainsKey(pair.Key)) facts[pair.Key] = pair.Value;
-                throw new H1ProjectionException(mapFailure(exception.Code), exception.Code + ": " + exception.Message,
-                    new ReadOnlyDictionary<string, object?>(facts), null);
+                var code = mapFailure(exception.Code);
+                throw new H1ProjectionException(code, exception.Code + ": " + exception.Message,
+                    new ReadOnlyDictionary<string, object?>(facts),
+                    code.EndsWith("-missing", StringComparison.Ordinal) ? CatalogueReferenceMissingRepairHint : null);
             }
         }
 

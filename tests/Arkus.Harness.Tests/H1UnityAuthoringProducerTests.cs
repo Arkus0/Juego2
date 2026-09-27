@@ -128,6 +128,17 @@ namespace Arkus.Harness.Tests
                 missingCanonical,
                 "unity.binding.canonical-dependency-mismatch");
 
+            // WP-H1-GATE pre-merge probe 3: the mismatch refusal returns the derived dependencies and says the assertion is optional.
+            var mismatch = contract.Dispatch(UnityAuthoringProvider.CompileName, ExactVersion(), missingCanonical);
+            var derivedCanonical = Assert.IsAssignableFrom<IReadOnlyList<object?>>(mismatch.Error!.Context["derivedCanonicalDependencies"]);
+            Assert.Single(derivedCanonical);
+            var link = Assert.IsAssignableFrom<IReadOnlyDictionary<string, object?>>(derivedCanonical[0]);
+            Assert.Equal("attached-to", link["kind"]);
+            Assert.Equal("market.potes-root", link["targetId"]);
+            Assert.Equal(UnityBindingProducer.CanonicalDependencyMismatchRepairHint, mismatch.Error.RepairHint);
+            Assert.Empty(PortableData.Validate(mismatch.Error.ToData()));
+            Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(mismatch.Error.ToData()));
+
             var wrongCatalogue = CompileRequest(PotesBinding(false));
             wrongCatalogue["expectedCatalogueDependencies"] = new List<object?>
             {
@@ -140,6 +151,10 @@ namespace Arkus.Harness.Tests
                 contract,
                 wrongCatalogue,
                 "unity.binding.catalogue-dependency-mismatch");
+            var catalogueMismatch = contract.Dispatch(UnityAuthoringProvider.CompileName, ExactVersion(), wrongCatalogue);
+            Assert.Equal(4, Assert.IsAssignableFrom<IReadOnlyList<object?>>(catalogueMismatch.Error!.Context["derivedCatalogueDependencies"]).Count);
+            Assert.Equal(UnityBindingProducer.CatalogueDependencyMismatchRepairHint, catalogueMismatch.Error.RepairHint);
+            Assert.Empty(PortableData.Validate(catalogueMismatch.Error.ToData()));
 
             var duplicateCanonical = CompileRequest(PotesBinding(false));
             var duplicate = CanonicalDependency("attached-to", "market.potes-root");
