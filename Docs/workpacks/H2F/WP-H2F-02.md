@@ -3,12 +3,14 @@
 Status: **PROPOSED / NOT_STARTED**  
 Class: `PRODUCT_CHECKPOINT` with dependency-policy adoption controls  
 Mode: **LOCAL_UNITY_REQUIRED where licensed/source bytes or visual import evidence are local-only; hosted evidence may cover reproducible machine-verifiable portions**  
-Depends on: `WP-H2F-01` PASS + `WP-H1-GATE` PASS + ART-01 `PREFOUNDATION_INPUT` checkpoint published; **ART-01 PASS is intentionally downstream**  
+Depends on: `WP-H2F-01` PASS + `WP-H2F-01A` PASS + `WP-H1-GATE` PASS + ART-01 `PREFOUNDATION_INPUT` checkpoint published; **ART-01 PASS is intentionally downstream**  
 Blocks: `WP-H2F-03`; the adopted foundation also becomes the required baseline for the later ART-01 effective candidate
 
 ## Claim
 
-The H2F-01 selected stack is installed/admitted in the real Juego2 Unity project with exact versions/provenance, a working URP baseline, reproducible project configuration and explicit replaceable boundaries before keeper CITY-07 production begins.
+The H2F-01 selected stack, including the H2F-01A Game Creator 2 Core handoff where Core remains admitted, is installed/admitted in the real Juego2 Unity project with exact versions/provenance, a working URP baseline, reproducible project configuration and explicit replaceable boundaries before keeper CITY-07 production begins.
+
+If H2F-01A accepted an explicit `S06_BASELINE_AMENDMENT.md`, that amendment replaces only the named H2F-01 controller/camera/input realization and becomes the exact realization H2F-02 must adopt. Without such an amendment, the H2F-01 winner remains binding.
 
 ## Sequencing rule with ART-01
 
@@ -19,18 +21,18 @@ H2F-02 therefore does **not** depend on ART-01 PASS. It consumes the published A
 ## PASS-before-work acceptance contract
 
 - **Positive claim:** the selected baseline has become explicit project truth without breaking accepted H0/H1 authority or silently relying on one developer machine.
-- **Mandatory positive evidence:** (1) exact Unity package manifest/lock state; (2) exact external dependency/source adoption records required by `DEPENDENCY_IP_POLICY`; (3) URP migration/import evidence on representative real assets; (4) project/preset/import conventions; (5) documented manual/account-gated provisioning steps; (6) clean compile/import after the selected stack is present; (7) replacement/authority boundary for every material dependency; (8) a complete selected-foundation-state → H1 lifecycle classification matrix defining host, observation/reconciliation treatment and rebuild expectation for every material serialized/generated state introduced by the adopted stack.
-- **Negative gates:** FAIL if dependency versions float; if exact license/EULA cannot be established; if unsupported/magenta/fallback materials are hidden; if local Asset Store/source bytes are assumed to exist without provisioning documentation; if a plugin-private identifier becomes canonical world semantics; if selected tools create a mutation path around Arkus authoring authority; or if material selected foundation state has no declared H1 lifecycle classification/host and could therefore be silently deleted, falsely reported as unsupported drift or made unrebuildable.
+- **Mandatory positive evidence:** (1) exact Unity package manifest/lock state; (2) exact external dependency/source adoption records required by `DEPENDENCY_IP_POLICY`; (3) URP migration/import evidence on representative real assets; (4) project/preset/import conventions; (5) documented manual/account-gated provisioning steps; (6) clean compile/import after the selected stack is present; (7) replacement/authority boundary for every material dependency; (8) a complete selected-foundation-state → H1 lifecycle classification matrix defining host, observation/reconciliation treatment and rebuild expectation for every material serialized/generated state introduced by the adopted stack; (9) closure of `H2F02_CORE_HANDOFF.md` when Core remains admitted; (10) if present, exact consumption of the accepted S06 baseline amendment.
+- **Negative gates:** FAIL if dependency versions float; if exact license/EULA cannot be established; if unsupported/magenta/fallback materials are hidden; if local Asset Store/source bytes are assumed to exist without provisioning documentation; if a plugin-private identifier becomes canonical world semantics; if selected tools create a mutation path around Arkus authoring authority; if material selected foundation state has no declared H1 lifecycle classification/host; if admitted GC2 state ignores the 01A authority/lifecycle boundary; or if H2F-02 silently changes the player/camera/input choice without the accepted 01A amendment.
 - **Non-claims:** no CITY-07 keeper realization, no ART-01 readiness/PASS, no final visual-polish claim and no H2 NPC/Living World claim.
-- **Allowed residuals:** final artistic tuning owned by ART-01/CITY-07/ART-02; later profiling-driven optimization; deferred categories from H2F-01.
+- **Allowed residuals:** final artistic tuning owned by ART-01/CITY-07/ART-02; later profiling-driven optimization; deferred categories from H2F-01/H2F-01A; separately licensed GC2 modules owned by later causal phases.
 - **Evaluation method:** exact-version/config inspection + Unity compile/import + targeted human visual inspection of migrated real content + dependency-policy review + H1 lifecycle-boundary classification review.
-- **Consumed predecessors:** H2F-01 selection, H1 accepted bridge/materialization boundary, ART-01 `PREFOUNDATION_INPUT` source/demand/assembly truth.
+- **Consumed predecessors:** H2F-01 selection, H2F-01A Core capability/anti-duplication and adoption handoff, H1 accepted bridge/materialization boundary, ART-01 `PREFOUNDATION_INPUT` source/demand/assembly truth.
 
 ## Required work
 
 ### A. Exact dependency/content adoption
 
-For every `ADOPT_NOW` material package/tool/source:
+For every `ADOPT_NOW` material package/tool/source selected by H2F-01, plus every dependency H2F-01A requires in the foundation handoff:
 
 - pin the supported version/commit where the ecosystem permits;
 - record exact license/EULA/commercial terms at that version/acquisition;
@@ -42,9 +44,16 @@ For every `ADOPT_NOW` material package/tool/source:
 
 For `AVAILABLE_ASSET` content sources, record enough acquisition/provenance identity to make future retained derivatives traceable without pretending the content source is a runtime dependency.
 
+For Game Creator 2 Core, if admitted after H2F-01A:
+
+- freeze the exact owner-supplied Core version and lawful provisioning path without committing restricted vendor bytes;
+- retain the distinction between `USE_FOUNDATION_NOW`, `USE_LATER_DO_NOT_DUPLICATE`, `LOCAL_EXECUTION_ONLY`, redundant/deferred/rejected capabilities;
+- preserve the public Juego2 adapter boundary and non-canonical status of GC2 Variables/private IDs;
+- do not install Inventory, Dialogue, Quests, Behavior, Perception, Melee, Shooter or another separately licensed module without a later explicit adoption WP.
+
 ### B. URP project baseline
 
-Migrate/configure the real Unity project to the selected URP baseline and record the settings that future Workers must inherit.
+Migrate/configure the real Unity project to the selected URP baseline and record the settings future Workers must inherit.
 
 At minimum close where applicable:
 
@@ -82,7 +91,7 @@ Do not overwrite ART-owned visual semantics with generic engine defaults.
 
 For selected tools that CITY/H2/Astra will invoke repeatedly, provide the smallest stable Juego2-side adapter, preset or documented projection boundary needed to avoid authoring raw plugin-private state as the semantic contract.
 
-Examples include a spline realization profile, vegetation placement/exclusion profile, water/shoreline profile, character retarget profile or navigation surface preset. Do not build speculative abstraction layers around tools that are not actually selected.
+Examples include a spline realization profile, vegetation placement/exclusion profile, water/shoreline profile, character retarget profile, navigation surface preset, or the small Juego2-owned GC2 Instruction/Condition/Property/interaction adapter surface accepted by H2F-01A. Do not build speculative abstraction layers around tools that are not actually selected.
 
 ### E. Reproducible provisioning
 
@@ -103,36 +112,42 @@ For each state family, publish one row with at least:
 
 | Selected foundation state | Lifecycle class / host | Source of truth | `materialize` expectation | `observe` / drift expectation | `reconcile` expectation | rematerialize / clean-rebuild expectation |
 |---|---|---|---|---|---|---|
-| example: stable Juego2 realization profile/preset | retained realization sidecar/prefab/preset | reviewed repo/project asset | preserved/consumed through documented host | recognized as admitted retained state, not false unsupported drift | canonical edits route through accepted owner; local realization edits remain explicitly downstream | survives or is deterministically reconstructed from admitted source |
-| example: generated bake/cache | generated/transient | admitted source inputs + deterministic/documented generation step | may be regenerated | must not become canonical drift/source truth | never reconciled as canonical intent | disposable and reproducible or explicitly re-baked during restoration |
+| stable Juego2 realization profile/preset | retained realization sidecar/prefab/preset | reviewed repo/project asset | preserved/consumed through documented host | admitted retained state, not false unsupported drift | canonical edits route through accepted owner | survives or is deterministically reconstructed |
+| generated bake/cache | generated/transient | admitted source inputs + documented generation step | may be regenerated | must not become canonical source truth | never reconciled as canonical intent | disposable and reproducible |
 
-Every row must choose a concrete lifecycle class/host. At minimum distinguish where applicable:
+Every row must choose a concrete lifecycle class/host. Distinguish where applicable:
 
-- **H1-managed projection state** already covered by accepted H1 component/materialization contracts;
-- **retained realization state** hosted in an admitted Juego2 sidecar, prefab, preset, project asset or equivalent reviewed Unity-side source that H1 must preserve rather than reinterpret as canonical Arkus truth;
-- **generated/transient state** that may be deleted and must be deterministically reconstructible or covered by an explicit documented regeneration step;
+- **H1-managed projection state** already covered by accepted H1 contracts;
+- **retained realization state** hosted in an admitted Juego2 sidecar, prefab, preset or project asset;
+- **generated/transient state** that may be deleted and must be reproducible;
 - **external/manual source input** whose lawful provisioning is required before reconstruction.
 
-The matrix must explicitly cover selected Cinemachine, Splines, AI Navigation, Animation Rigging, Terrain and equivalent tool state **when those capabilities are adopted**; naming a package without classifying the actual retained/generated state it introduces is insufficient.
+The matrix must explicitly cover selected Cinemachine, Splines, AI Navigation, Animation Rigging, Terrain and equivalent tool state when adopted.
 
-If H1 observation/reconciliation would currently see an admitted retained state as unsupported drift, or materialization/clean rebuild would erase required state, H2F-02 must either place that state behind a documented retained host/boundary that preserves H1 authority or record a causal H2F/H1 compatibility blocker. It may not silently rely on the Editor Library/cache or on hand repair after materialization.
+If GC2 Core is admitted, additionally classify every material family named by `H2F02_CORE_HANDOFF.md`, including Core settings/project assets, retained Character/camera/interaction/Hotspot/visual-scripting state actually used, Juego2-owned custom GC2 adapters, allowed GC2-local Variables, any admitted save-host configuration and generated/transient editor/runtime data.
 
-H2F-03 owns the effective composed lifecycle proof for this declared matrix.
+If H1 observation/reconciliation would see admitted retained state as unsupported drift, or materialization/clean rebuild would erase required state, H2F-02 must place it behind a documented retained host/boundary or record a causal compatibility blocker. It may not rely on Editor Library/cache or hand repair.
+
+H2F-03 owns the effective composed lifecycle proof for this matrix.
 
 ## PASS only if all are true
 
 - every `ADOPT_NOW` material dependency/source has exact reviewed adoption data;
-- package/project dependency state is pinned or otherwise reproducibly constrained;
-- URP is the active selected baseline and representative real assets render without silent unsupported fallback;
+- every admitted GC2 Core dependency/capability has exact reviewed provisioning and no silent module expansion;
+- package/project dependency state is pinned or reproducibly constrained;
+- URP is active and representative real assets render without silent unsupported fallback;
 - selected external tools do not redefine Arkus/CITY/ART semantic authority;
-- manual/account-gated inputs have explicit provisioning rather than hidden local assumptions;
+- manual/account-gated inputs have explicit provisioning;
 - character Humanoid/retarget and selected worldbuilding import/preset rules are explicit;
-- every material selected foundation-state family has a complete H1 lifecycle classification/host row with explicit observe/reconcile/rebuild expectations;
-- no required selected foundation state depends on being invisible to H1 or manually re-created after ordinary materialize/rematerialize/clean-rebuild operations;
-- project compile/import succeeds with the selected baseline;
-- non-selected spike packages/assets are removed or isolated so they do not become accidental project dependencies;
-- H2F-03 can exercise the baseline and the declared H1 lifecycle boundary without making new unresolved tooling choices.
+- every material selected foundation-state family has a complete H1 lifecycle classification/host row;
+- every material GC2 family named by `H2F02_CORE_HANDOFF.md` is classified/adopted or explicitly rejected from foundation scope;
+- no GC2 Variable, save slot identifier, component GUID or plugin-private identifier becomes canonical Juego2 identity;
+- any accepted S06 baseline amendment is adopted exactly and its displaced H2F-01 realization is not accidentally retained as duplicate ownership;
+- no required selected state depends on invisibility to H1 or manual recreation after rebuild;
+- project compile/import succeeds;
+- non-selected spike packages/assets are removed or isolated;
+- H2F-03 can exercise the baseline without making new unresolved tooling choices.
 
 ## Negative gates
 
-The acceptance-contract negative gates are binding. In particular, “works on the owner PC because the package happens to be in the local Library/cache” is not reproducible adoption evidence, and “works until the next H1 materialize/reconcile/rebuild” is not an admissible foundation state.
+The acceptance-contract negative gates are binding. “Works on the owner PC because the package happens to be in local Library/cache” is not reproducible adoption evidence; “works until the next H1 materialize/reconcile/rebuild” is not admissible foundation state; and owning GC2 is not permission to install every module or make GC2 state canonical.
