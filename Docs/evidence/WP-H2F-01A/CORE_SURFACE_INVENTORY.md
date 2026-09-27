@@ -44,10 +44,10 @@ Source files: 2,198 runtime and 489 editor `.cs` files. The package ships source
 | character.interaction-mode | `TInteractionMode` | 3 | C03/C07 (default near-character) |
 | character.interactive | `IInteractive` | 1 | C03/C07 (`InteractionTracker` via Trigger On Interact) |
 | character.animation-state-asset | `State` | 3 | — (GC2 locomotion state assets are redundant with UAL; see matrix) |
-| camera.shot-type | `TShotType` | 8 | C02g (Third Person shot, comparison only) |
-| camera.component | `TCamera` | 1 | C02g (`MainCamera`, comparison only) |
+| camera.shot-type | `TShotType` | 8 | C02g/C07 (Third Person shot: the amended S06 camera) |
+| camera.component | `TCamera` | 1 | C02g/C07 (`MainCamera`: the amended S06 camera) |
 | input.button | `TInputButton` | 26 | J2 action map drives Interact through Juego2 glue; GC2 InputAction button types exist |
-| input.value | `TInputValue<T>` | 22 | C02/C07 (`InputValueVector2InputAction` bound to `J2_Input/Player/Move`) |
+| input.value | `TInputValue<T>` | 22 | C02/C07 (`InputValueVector2InputAction` bound to `J2_Input/Player/Move`, `Look`, `Zoom`) |
 | navigation.marker-type | `TMarkerType` | 2 | — |
 | variables.value-type | `TVariable` | 2 | C06 observes GC2's own variable keys in every save |
 | runtime.manager-singleton | `Singleton<T>` | 13 | Auto-created during C02–C07 |

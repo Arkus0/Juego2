@@ -10,7 +10,7 @@ H2F-01 did not structurally reject GC2 Core (it deferred only the S06 role), so 
 | `CORE_VERSION_AND_PROVISIONING.md` | Exact Core 2.19.61 identity, hash-gated Assets-only route, bound dependencies, project-global state |
 | `CORE_SURFACE_INVENTORY.md` | C01: assemblies, 28 extension families (all public and extensible), components, assets, auto-run hooks |
 | `CORE_CAPABILITY_MATRIX.csv` | 35 families: PRESENT/ABSENT, evidence, public route, retained state, horizon, risks, one disposition each |
-| `CORE_STATE_INVENTORY.md` | S1–S14 state families GC2 stores/generates, with lifecycle hints for H2F-02 |
+| `CORE_STATE_INVENTORY.md` | S1–S15 state families GC2 stores/generates, with lifecycle hints for H2F-02 |
 | `PROBE_RESULTS.md` | C01–C07 methods, measurements, negative controls and the S06 outcome |
 | `S06_BASELINE_AMENDMENT.md` | The single explicit amendment: what it displaces, measured benefit, authority/lifecycle burden, H2F-02 handoff |
 | `OWNER_JUDGEMENT.md` | The owner's scope decision (controller + GC2 camera), verbatim |

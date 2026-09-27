@@ -42,7 +42,7 @@ Astra = authors through the approved Juego2/GC2 public surfaces (PUBLIC_AUTHORIN
    - the GC2 player reads `J2_Input/Player/Move`;
    - the amended GC2 camera reads `Look` and `Zoom`.
 
-   Juego2 creates, binds, enables and disables the map. NPC presets set their dormant player-unit input to none. With these rules the enabled actions are exactly the Juego2 ones, plus Unity's URP debug-menu actions (C02/C07). Without them GC2 enabled loose `Primary Motion`, `Secondary Motion` and `Zoom` device actions.
+   Juego2 creates, binds, enables and disables the map. NPC presets set their dormant player-unit input to none. With these rules the enabled actions are exactly the Juego2 ones, plus Unity's URP debug-menu actions (C02/C07). Workspace-A development runs without them showed GC2 enabling loose `Primary Motion`, `Secondary Motion` and `Zoom` device actions.
 9. **Adapter types are frozen seam names.** GC2 stores adapter entries as `[SerializeReference]` with class/namespace/assembly strings (state S6). Renames need `[MovedFrom]`.
 
 ## What stays Juego2/Arkus-owned

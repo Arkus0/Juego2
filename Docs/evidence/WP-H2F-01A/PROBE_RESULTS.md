@@ -6,7 +6,7 @@ All probes ran on 2026-09-27 on the owner's workstation:
 - the selected H2F-01 stack;
 - GC2 Core 2.19.61 imported Assets-only.
 
-Every run used a disposable, non-keeper workspace built by `probe_project/bootstrap_01a.py`. The authoritative run is **workspace B**, rebuilt from an empty directory. Workspace A (exploration) produced identical values for every shared metric; the C06 and C07 Arkus digests are byte-identical across A and B.
+Every run used a disposable, non-keeper workspace built by `probe_project/bootstrap_01a.py`. The authoritative run is **workspace B**, rebuilt from an empty directory. Workspace A (exploration) reproduced the same values for the metrics compared: route, interaction, presentation and save facts. The C06 and C07 Arkus digests are byte-identical across A and B.
 
 Play-mode probes run in a windowed editor, because this license lacks a headless entitlement (H2F-01 finding). A scripted driver measures each run, captures it and exits the editor. The raw outputs are in `results/`:
 
@@ -61,7 +61,7 @@ Other C02 facts, identical in both runs:
 - **Model.** The model is `J2_Citizen` with a valid Humanoid avatar. The foot bone sits **0.026 m** above the ground, inside H2F-01 S07's accepted −0.02…0.03 m range. The animator controller is the Juego2 UAL locomotion controller.
 - **Navigation.** One NPC navigation command (`Motion.MoveToLocation`) arrived in **7.5 s**, 0.27 m from the goal.
 - **Ownership.** One GC2 player; one enabled camera; one MainCamera tag; no `PlayerInput`. The enabled input actions are exactly `J2_Input/Player/{Move, Look, Zoom, Interact}`, plus Unity's URP debug-menu actions.
-- **NPC input rule.** Without the NPC preset rule and the camera bindings, GC2 enabled loose `Primary Motion`, `Secondary Motion` and `Zoom` device actions. That was observed in workspace A before the rule was applied.
+- **NPC input rule.** Workspace-A development runs, which are not retained as results, showed what happens without the NPC preset rule and the camera bindings: GC2 enabled loose `Primary Motion`, `Secondary Motion` and `Zoom` device actions. The retained runs apply both rules.
 - **Identity.** No GC2 identity field in the scene; Juego2 keys unique.
 
 ## C03 — interaction / affordance execution
