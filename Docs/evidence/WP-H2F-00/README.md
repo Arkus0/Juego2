@@ -9,6 +9,7 @@ Status: WORKER CANDIDATE / independent review pending. Mode: `REMOTE_OK / RESEAR
 | Source and gap/redundancy map | `RESEARCH_SOURCES.md` and `GAPS_ACQUISITION_AND_SPIKES.md` G1–G7. Exact H1 Source evidence is distinguished from private full-project unknowns and from active ART-01 work. |
 | Manual/account map | `GAPS_ACQUISITION_AND_SPIKES.md`: existing owner vault, conditional Source/Adobe/CC0/Asset Store/UPM inputs, explicit pin destination. |
 | Bounded uncertainty queue | S01–S07 selection questions with experiment and decision discriminator; S08 reserved for H2F-03 composed authoring/lifecycle validation. |
+| Owner cost constraint | `GAPS_ACQUISITION_AND_SPIKES.md`: already-owned/native/free first; paid tool only for a critical gap or a large measured work saving, with a separate owner purchase decision. |
 | Provenance | `RESEARCH_SOURCES.md`: repository evidence and primary vendor/Unity 6.3 pages, observed 2026-09-27. Listings are not accepted compatibility or licenses. |
 | Accepted predecessor boundary | `PREDECESSOR_CONTRACT_CHECK.md`; H2F plan accepted + DocSync, ART-01 active, H1 bounded Source adoption consumed. |
 
