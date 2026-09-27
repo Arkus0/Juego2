@@ -39,6 +39,5 @@ Status: **Worker evidence, Draft + ACTIVE**, not frozen. Mode: HYBRID. Real Unit
 
 ## Freeze preconditions still open
 
-- the ART sequencing amendment merged on `main`;
-- ART-01 `PREFOUNDATION_INPUT` published;
+- the ART sequencing amendment (PR #252) independently reviewed and merged on `main` (ART-01 `PREFOUNDATION_INPUT` is already published at `174d05d2`, PR #234);
 - exact-SHA preflight and the strict Worker pre-review.

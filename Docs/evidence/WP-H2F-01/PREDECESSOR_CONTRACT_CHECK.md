@@ -11,7 +11,7 @@ Date: 2026-09-27. Worker start `main`: `a47f879c46abce88ee23d5959736e32ba5bd62be
 | `WP-H2F-00` capability survey | PR #251; reviewed candidate `8600c43da8cd7ef0cf7776845de3ee53593134d7`; independent PASS review `#5330291941`; merge `a47f879c46abce88ee23d5959736e32ba5bd62be` | Direct dependency, accepted. Its DocSync PR #253 merged during this cycle; the branch was updated onto `main` `2aa179b2eebd99d6d25152e87a105f3791b59408` before evidence closure. |
 | H2F plan | PR #250; candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`; PASS `#5330069733`; merge `9d3bb90ebfae8837155576c13b705fc1c72c2579` | Phase contract, disposition vocabulary, authority rules. |
 | `WP-H1-GATE` | PR #238; candidate `8bcf171f2520a0e23ccba094bf353c8a78b5d239`; PASS `#5329808171`; merge `b730ba0c0b1a4ad454edbd420cd8e44555dfaf10`; `Docs/evidence/WP-H1-GATE/DOCSYNC.md` | Accepted Unity bridge boundary (6000.3.24f1, H1 Source slice, projection/lifecycle authority). |
-| ART-01 | PR #234, **Draft, not PASS**; structural checkpoint consumed at `174d05d23c3bceb9d5df00e460b33519cf68328e` | Consumed only as a pre-foundation input source (see the sequencing note below). No ART-01 readiness or PASS is claimed or assumed. |
+| ART-01 | PR #234, **Draft, not PASS**, `Worker state: PAUSED_FOR_H2F_FOUNDATION`; its PR body publishes the retained structural checkpoint as the ART-01 `PREFOUNDATION_INPUT` at head `174d05d23c3bceb9d5df00e460b33519cf68328e` — the exact SHA consumed here | Consumed only as a pre-foundation input source (see the sequencing note below). No ART-01 readiness or PASS is claimed or assumed. |
 
 No context capsule covers H2F-00 or the H2F plan; the exact documents were read (`Docs/workpacks/H2F/**`, `Docs/evidence/WP-H2F-00/**`, H1-GATE DocSync).
 
@@ -19,7 +19,7 @@ No context capsule covers H2F-00 or the H2F plan; the exact documents were read 
 
 The `WP-H2F-01.md` contract on `main` names `WP-ART-01` PASS as a dependency "before any spike claims keeper-source fit". The owner has directed a sequencing amendment (branch `process/h2f-before-art01-final`, head `bc77748f3bdb55e4f1a4c8695e012821042571b7`, decision `Docs/decisions/H2F_ART01_SEQUENCE_2026-09-27.md`). It changes that dependency to "ART-01 `PREFOUNDATION_INPUT` checkpoint published; ART-01 PASS is intentionally not a predecessor", because the previous contracts formed a cycle: ART-01's final Unity benchmark needs the render/toolchain baseline that H2F selects.
 
-This Worker executes under the amended wording. Until the amendment is on `main` and ART-01 publishes `PREFOUNDATION_INPUT`, this candidate:
+This Worker executes under the amended wording. ART-01 has published `PREFOUNDATION_INPUT` (PR #234 body, head `174d05d2`). The amendment itself is PR #252 (head `744f5e3d`, wording verified identical for WP-H2F-01), still awaiting independent review and merge. Until it is on `main`, this candidate:
 
 - stays Draft + ACTIVE and is **not** frozen for review;
 - makes no keeper-source-fit, `KEEPER_READY` or ART readiness claim;
