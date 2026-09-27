@@ -1,11 +1,12 @@
 # WP-H2F-00 — Capability ecosystem survey + candidate register
 
-Status: **PROPOSED / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
 Class: `RESEARCH_BATCH`  
 Mode: `REMOTE_OK`  
 Depends on: accepted H2F plan  
 May overlap: late ART-01 execution as research-only work  
-Blocks: `WP-H2F-01`
+Blocks: `WP-H2F-01`  
+Accepted: PR `#251`, candidate `8600c43da8cd7ef0cf7776845de3ee53593134d7`, independent PASS review `#5330291941`, merge `a47f879c46abce88ee23d5959736e32ba5bd62be`; post-PASS record: `Docs/evidence/WP-H2F-00/DOCSYNC.md`
 
 ## Claim
 

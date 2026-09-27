@@ -1,10 +1,11 @@
 # H2F — Pre-H2 product/toolchain foundation freeze
 
-Status: **ACCEPTED PLAN / NOT STARTED**  
+Status: **ACTIVE / WP-H2F-00 COMPLETE**  
 Class: PRODUCT / TOOLCHAIN + CONTENT INTEGRATION  
 Execution policy: `RESEARCH_BATCH` for survey; `PRODUCT_CHECKPOINT` for Unity spikes/integration  
 Plan date: 2026-09-27  
-Accepted: PR `#250`, candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`, independent PASS review `#5330069733`, merge `9d3bb90ebfae8837155576c13b705fc1c72c2579`
+Accepted: PR `#250`, candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`, independent PASS review `#5330069733`, merge `9d3bb90ebfae8837155576c13b705fc1c72c2579`  
+Progress: `WP-H2F-00` COMPLETE / ACCEPTED via PR `#251`, candidate `8600c43da8cd7ef0cf7776845de3ee53593134d7`, PASS review `#5330291941`, merge `a47f879c46abce88ee23d5959736e32ba5bd62be`. Next in sequence: `WP-H2F-01`, consuming accepted ART-01 evidence wherever a spike claims keeper-source or visual fit.
 
 ## 1. Phase claim
 
@@ -147,9 +148,9 @@ The selected package API is not itself the stable Juego2 semantic contract when 
 
 ## 7. Workpacks
 
-### `WP-H2F-00 — Capability ecosystem survey + candidate register`
+### `WP-H2F-00 — Capability ecosystem survey + candidate register` ✅ COMPLETE / ACCEPTED
 
-Remote research batch. Close every mandatory capability category, create the longlist and gap map, record native/free/commercial alternatives that could change the decision, and emit the bounded spike queue. No project mutation or dependency approval occurs here.
+Accepted in PR `#251`; post-PASS state is recorded in `Docs/evidence/WP-H2F-00/DOCSYNC.md`. The survey closed all 27 mandatory capability categories, produced the candidate/provenance/gap/acquisition registers and handed the bounded S01–S08 decision queue downstream. It adopted no package and mutated no Unity project state.
 
 ### `WP-H2F-01 — Decision spikes + final stack selection`
 
