@@ -1,6 +1,6 @@
 # WP-H2F-01 — decision spikes and final stack selection
 
-Status: **Worker evidence, Draft + ACTIVE**, not frozen. Mode: HYBRID. Real Unity 6000.3.24f1 evidence was produced on the owner's workstation in disposable non-keeper workspaces. Baseline `main` `2aa179b2` (updated from `a47f879c` after H2F-00 DocSync). Contract: `Docs/workpacks/H2F/WP-H2F-01.md`, executed under the owner's ART-01 sequencing amendment (see `PREDECESSOR_CONTRACT_CHECK.md`).
+Status: **Worker evidence, Draft + ACTIVE**, not frozen. Mode: HYBRID. Real Unity 6000.3.24f1 evidence was produced on the owner's workstation in disposable non-keeper workspaces. Baseline `main` `0c056810` (updated from `a47f879c` after the H2F-00 DocSync and the #252 sequencing amendment). Contract: `Docs/workpacks/H2F/WP-H2F-01.md`, executed under the ART-01 sequencing amendment now merged on `main` (#252; see `PREDECESSOR_CONTRACT_CHECK.md`).
 
 | File | Content |
 |---|---|
@@ -37,7 +37,6 @@ Status: **Worker evidence, Draft + ACTIVE**, not frozen. Mode: HYBRID. Real Unit
 - **No keeper geometry mutated.**
 - **No feature-rich duplicate selected.** GC2 was deferred despite smoother defaults.
 
-## Freeze preconditions still open
+## Freeze preconditions
 
-- the ART sequencing amendment (PR #252) independently reviewed and merged on `main` (ART-01 `PREFOUNDATION_INPUT` is already published at `174d05d2`, PR #234);
-- exact-SHA preflight and the strict Worker pre-review.
+All dependency preconditions are met on `main`: H2F-00 accepted with DocSync, sequencing amendment #252 merged, ART-01 `PREFOUNDATION_INPUT` published. The remaining steps are exact-SHA preflight and the strict Worker pre-review, recorded on the PR.

@@ -20,7 +20,7 @@ import re
 import subprocess
 from pathlib import Path
 
-BASELINE = '2aa179b2eebd99d6d25152e87a105f3791b59408'
+BASELINE = '0c056810a60e681625c335c34f4722d50df533ac'
 root = Path('Docs/evidence/WP-H2F-01')
 required = ['README.md', 'PREDECESSOR_CONTRACT_CHECK.md', 'WORKER_PLAN.md', 'SPIKE_RESULTS.md',
             'DISPOSITION_MATRIX.csv', 'BASELINE_INTENT.md', 'SPIKE_LEDGER.md', 'ACQUISITION_AND_POLICY.md',

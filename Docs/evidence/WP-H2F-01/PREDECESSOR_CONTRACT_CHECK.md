@@ -15,17 +15,14 @@ Date: 2026-09-27. Worker start `main`: `a47f879c46abce88ee23d5959736e32ba5bd62be
 
 No context capsule covers H2F-00 or the H2F plan; the exact documents were read (`Docs/workpacks/H2F/**`, `Docs/evidence/WP-H2F-00/**`, H1-GATE DocSync).
 
-## ART-01 sequencing: open freeze precondition
+## ART-01 sequencing (resolved on `main`)
 
-The `WP-H2F-01.md` contract on `main` names `WP-ART-01` PASS as a dependency "before any spike claims keeper-source fit". The owner has directed a sequencing amendment (branch `process/h2f-before-art01-final`, head `bc77748f3bdb55e4f1a4c8695e012821042571b7`, decision `Docs/decisions/H2F_ART01_SEQUENCE_2026-09-27.md`). It changes that dependency to "ART-01 `PREFOUNDATION_INPUT` checkpoint published; ART-01 PASS is intentionally not a predecessor", because the previous contracts formed a cycle: ART-01's final Unity benchmark needs the render/toolchain baseline that H2F selects.
+The original `WP-H2F-01.md` named `WP-ART-01` PASS as a dependency "before any spike claims keeper-source fit". The owner-directed sequencing amendment resolved the ART-01 ↔ H2F cycle. It was merged on `main` as PR #252: candidate `744f5e3d2ad0e6ae2fea92020a274bd4bff05e20`, independent PASS review `#5331337738`, merge `0c056810a60e681625c335c34f4722d50df533ac`. H2F-01 now depends on "`WP-H2F-00` PASS + ART-01 `PREFOUNDATION_INPUT` checkpoint published; ART-01 PASS is intentionally not a predecessor".
 
-This Worker executes under the amended wording. ART-01 has published `PREFOUNDATION_INPUT` (PR #234 body, head `174d05d2`). The amendment itself is PR #252 (head `744f5e3d`, wording verified identical for WP-H2F-01), still awaiting independent review and merge. Until it is on `main`, this candidate:
-
-- stays Draft + ACTIVE and is **not** frozen for review;
-- makes no keeper-source-fit, `KEEPER_READY` or ART readiness claim;
-- consumes only ART-01's renderer-independent structural checkpoint as a pinned, read-only input.
-
-If the amendment is rejected or changed, this check and the affected spike conclusions are revised before freeze.
+- ART-01 published `PREFOUNDATION_INPUT` in PR #234: `Worker state: PAUSED_FOR_H2F_FOUNDATION`, retained structural checkpoint at `174d05d23c3bceb9d5df00e460b33519cf68328e`. That is the exact input consumed.
+- This worker executed under the amended wording from its start. The wording was verified identical for WP-H2F-01 before and after merge.
+- Per the amendment, spike findings about ART sources, materials or tools are foundation-selection evidence, not an ART-01 readiness verdict. No `KEEPER_READY` or ART-01 PASS is claimed.
+- The branch was updated onto `main` `0c056810a60e681625c335c34f4722d50df533ac` before freeze.
 
 ## Inherited guarantees consumed, not re-proved
 
@@ -50,4 +47,4 @@ No package, dependency or render pipeline becomes project baseline (H2F-02 owns 
 - A spike shows an accepted H1 Source identity/hash, or the effective H1 import slice, contradicts H1-04/H1-11 evidence. → Reopen the H1 Source boundary.
 - The ART-01 structural input cannot be reproduced byte- or digest-identically from its pinned sources. → Stop consuming it; escalate to ART-01.
 - A candidate can only be realized by making plugin-private state canonical or by mutating CITY topology. → This is a REJECT for the candidate, not a reason to reopen CITY/H0.
-- The sequencing amendment is not accepted. → Revisit the ART-01 dependency before freeze.
+- Concrete evidence that the pinned `174d05d2` input is not the published `PREFOUNDATION_INPUT`, or a later ART-01 publication that invalidates a spike input. → Revisit the affected spike.

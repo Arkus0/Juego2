@@ -1,6 +1,6 @@
 # WP-H2F-01 Worker plan and spike execution contract
 
-Status: **DRAFT + ACTIVE**. Worker: Claude. Baseline `main` `a47f879c46abce88ee23d5959736e32ba5bd62be`. Mode: HYBRID. Real Unity evidence is produced on the owner's workstation (Windows 11, Unity 6000.3.24f1 `4e7b9b5b6244`).
+Status: **evidence complete; closing for freeze**. Worker: Claude. Baseline `main` `a47f879c46abce88ee23d5959736e32ba5bd62be`. Mode: HYBRID. Real Unity evidence is produced on the owner's workstation (Windows 11, Unity 6000.3.24f1 `4e7b9b5b6244`).
 
 ## Isolation boundary
 
@@ -34,4 +34,4 @@ Spike families 9 (fog/weather) and 10 (performance helpers) have no surviving ex
 
 ## Freeze preconditions
 
-These are required in addition to the normal protocol: the ART sequencing amendment is merged on `main`; ART-01 `PREFOUNDATION_INPUT` is published. Done during the cycle: H2F-00 DocSync (#253) on `main`; owner judgement recorded (visual choice delegated to the Worker, `OWNER_JUDGEMENT.md`).
+Met on `main`: sequencing amendment #252 merged (`0c056810`); ART-01 `PREFOUNDATION_INPUT` published (PR #234 @ `174d05d2`); H2F-00 DocSync (#253). Owner judgement recorded (the visual choice was delegated to the Worker, `OWNER_JUDGEMENT.md`).
