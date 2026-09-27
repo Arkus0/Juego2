@@ -113,4 +113,8 @@ The same gap class was corrected for the catalogue in WP-H1-04 reopen 1 (`#239`)
   - `H1UnityAuthoringProducerTests.CallerMaintainedDependencyTruthFailsClosedOnOmissionContradictionAndDuplicates` covers both mismatch refusals: they carry the derived dependencies and hints and are valid `StructuredError`s.
 - The existing `H1ManagedScenePlanTests` and `H1CatalogueTests` still pin the codes.
 - Exact-SHA hosted evidence is recorded on the PR: Arkus Main Safety, and the H1-05 route `scripts/h1-05-verify-exact-sha.sh`.
+- **The stale exact-SHA route is restored.** `scripts/h1-05-evidence-check.py` required exactly 250 effective catalogue rows. Accepted WP-H1-11 (`#236`) later appended its declared 24-row extension of the same adopted distribution, so the route was already RED on `main`, independent of this reopen. Candidate Validation run `36306847164` showed it.
+  - The check now projects out the WP-H1-11 extension by its own declared asset paths: exactly 12 paths and 24 rows. It requires the remainder to be the 250-row baseline. This is the same correction WP-H1-04 reopen 1 (`#239`) made to the H1-04 route.
+  - No committed evidence value changes.
+  - An extra or missing row is still refused.
 - The effective public proof is WP-H1-GATE: its deterministic 17-stage scenario on reference and MCP, and trial 8 on the Gate's final frozen SHA.
