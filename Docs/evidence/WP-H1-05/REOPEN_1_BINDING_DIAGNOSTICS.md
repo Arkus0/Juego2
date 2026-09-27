@@ -29,6 +29,14 @@ Second owner decision (same day): the reopen is **probed with the fresh-agent tr
 - **`projection.parent-unbound`.** The facts were present, but the hint was the generic default. The agent tried to contain its objects in the scene by creating a canonical object named after the scene. That object was unbound, and it took four attempts to recover.
 - **`projection.component-target-missing` from materialize, with an empty `context` and a generic hint.** The agent had put a `renderer` on the UAL1 humanoid prefab. That prefab owns a `SkinnedMeshRenderer`, not a `MeshRenderer`. Unity's preflight tests renderer references on a synthetic probe, so the refusal surfaced only inside the staged scene, with the scene as its resource. In addition, the host ignored the Unity validation diagnostic in the reply. The agent could not tell which subject or component was wrong, and stopped at FAIL.
 
+### Probe 2 (Gate run `36304041997`, exploratory copy of `da72a70b`)
+
+The run stopped at turn 9, before any H1-05 surface was reached. The agent authored its bindings by transcribing `payloadBase64` again, and the transcription was not valid Base64 (321 characters, invalid character at index 92).
+
+The kernel's HK-05 reopen-2 refusal gave the reason, and its hint said "pass it exactly as returned … request it again". It never mentioned the typed `document` form, which needs no transcription. The agent resent the same transcription and stopped at FAIL.
+
+This refusal is the one step before `projection.binding-invalid`: a transcription that is invalid Base64 is caught here, and a valid but wrong one is caught at plan. Only the plan refusal pointed to `documentMutation`.
+
 ## Accepted guarantee proved inapplicable
 
 WP-H1-05 owns "versioned public projection plan/materialize/observe capabilities". The plan's preflight refusal is accepted as a structured diagnostic. It holds for a client with implementation knowledge, but it is inapplicable to a fresh public client:
@@ -52,12 +60,19 @@ The same gap class was corrected for the catalogue in WP-H1-04 reopen 1 (`#239`)
   - **Unity preflight (`unity.plan.component`, a per-subject check).** For a prefab source with a `renderer` component, it applies the renderer adapter's own target rule (`H1ComponentProjection.ValidateRendererTarget`: exactly one owned `MeshRenderer`, at most one material slot) to the source prefab, before staging. The existing codes `projection.component-target-missing`, `projection.component-target-cardinality` and `projection.component-material-slot-cardinality` are therefore reported with the subject as `canonicalResource` and its source as `logicalAsset`. A mesh `asset` source always realizes one `MeshRenderer`, so it is not affected.
   - **Materialize/observe refusals (`H1ManagedSceneExecutor.WorkerFailure`).** They carry the facts of the Unity validation diagnostic that has the reply's code: `subjectId` (when it is not the scene), `sourceLogicalId`, `invariantId`, `phase` and `validationContext`. They also carry a code-specific hint for the renderer target and material-slot codes and for `projection.active-scene-missing`; otherwise they keep the accepted default hint.
 
+- **Probe 2 correction (kernel hint, disclosed cross-WP touch; see `PREDECESSOR_CONTRACT_CHECK.md`).** The hint of the canonical-Base64 refusal of `authoring.change.*` now says:
+  - `payloadBase64` must never be retyped;
+  - when the producing tool also returned the same `put-extension` as a typed document (for example a `documentMutation`), send that operation with `document`;
+  - otherwise pass the payload exactly as returned, or request it again.
+
+  The machine code, message, path and context are unchanged. So is the accepted payload semantics.
+
 ## Not changed
 
 - No capability, schema, machine code, public message, plan digest, input digest, catalogue content or fingerprint changes.
 - The same inputs produce the same successful plan. On the Unity side, the only change is the renderer target preflight above. It enforces the rule that materialization already enforced, earlier, and adds no invariant ID and no new code. A plan that materializes today also passes it.
 - Checkpoint, reconciliation and lifecycle pre-launch refusals are unchanged. The lifecycle refusal already points the client to `unity.projection.plan`, which now carries the facts.
-- The H0 kernel is unchanged. An opaque `payloadBase64` that is valid Base64 is still admitted by authoring and caught at projection preflight, which is accepted H0/H1-08 semantics.
+- The H0 kernel's behavior is unchanged; only the repair-hint text of its Base64 refusal changes. An opaque `payloadBase64` that is valid Base64 is still admitted by authoring and caught at projection preflight, which is accepted H0/H1-08 semantics.
 
 ## Proof
 
@@ -74,6 +89,7 @@ The same gap class was corrected for the catalogue in WP-H1-04 reopen 1 (`#239`)
   - a reply without a matching diagnostic keeps the empty context and the default hint.
 
   All three are valid `StructuredError`s.
+- `Hk05ValidationDiagnosticsTests.NonCanonicalExtensionPayloadNamesWhyItIsNotCanonicalBase64` still pins the refusal's code, message, path, context and "exactly as returned". It now also requires the typed-document direction (`documentMutation`, and "send that operation with document instead of payloadBase64").
 - The existing `H1ManagedScenePlanTests` and `H1CatalogueTests` are unchanged and still pin the codes.
 - Exact-SHA hosted evidence is recorded on the PR: Arkus Main Safety, and the H1-05 route `scripts/h1-05-verify-exact-sha.sh`.
 - The effective public proof is WP-H1-GATE: its deterministic 17-stage scenario on reference and MCP, and trial 8 on the Gate's final frozen SHA.
