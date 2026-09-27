@@ -47,7 +47,14 @@ No inherited residual was reclassified to hide it. Mixed items, where part is cl
 
 All three were owner-directed with independent review waived. Model-driven clients author extensions as structured documents that the kernel canonicalizes, instead of transcribing opaque Base64. The result is byte-identical, and the Gate proves parity with the payload path on both transports.
 
+**Owner-directed reopen after trial 7: WP-H1-05 reopen 1.** PR `#248`, frozen candidate `72d49e41f942a90f2c434bc40850c22d549d86f1`, merge `d905a974020f6c0120f3ff4fdcd8c5f3516d9882`.
+- The owner waived independent review.
+- It was probed before merge by the fresh-agent trial (probes 1–5, `AI_TRIAL_HISTORY.md`). Probe 5 PASSED.
+- Public refusals on the authoring → plan → materialize path now name the failing subject and the typed-document repair.
+- It carries two disclosed touches that the owner kept in the PR: the WP-HK-05 Base64 hint and the WP-H1-01 compile dependency refusals.
+
 Residuals:
 
 - Per-kind `oneOf` in the published schema still needs H0 `SchemaNode` expressiveness. This is a named future H0 decision.
-- These owner-waived reopens (H1-04 r1, HK-05 r1/r2, HK-04 r1, H1-01 r1) carry no independent review. The owner may require a retroactive one.
+- These owner-waived reopens (H1-04 r1, HK-05 r1/r2, HK-04 r1, H1-01 r1, H1-05 r1) carry no independent review. The owner may require a retroactive one. H1-05 r1 also carries the HK-05 and H1-01 touches listed above.
+- A model-driven client can still transcribe `payloadBase64`. Every refusal on that path now names the cause and points to `documentMutation`, and the typed document remains the effective path. The fresh-agent trial remains a single run with a stochastic model.

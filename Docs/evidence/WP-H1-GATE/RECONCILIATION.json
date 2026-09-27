@@ -1034,7 +1034,15 @@
       "pr": "#192",
       "verdict": "PASS #5308430565",
       "mergeSha": "7039adecac4e6e07d899247759d9b3c9fd3c2dae",
-      "consumedAs": "plan/materialize/observe, generational publication (S08-S12)"
+      "consumedAs": "plan/materialize/observe, generational publication (S08-S12)",
+      "reopen": {
+        "trigger": "WP-H1-GATE trial 7 (projection.binding-invalid without context) and pre-merge probes 1-4",
+        "pr": "#248",
+        "frozenCandidate": "72d49e41f942a90f2c434bc40850c22d549d86f1",
+        "review": "waived by owner (pre-review #5854263720, #5854287969)",
+        "mergeSha": "d905a974020f6c0120f3ff4fdcd8c5f3516d9882",
+        "consumedAs": "actionable projection preflight and Editor refusal facts and hints (S12 codes unchanged; AI trial)"
+      }
     },
     {
       "wp": "WP-H1-06",

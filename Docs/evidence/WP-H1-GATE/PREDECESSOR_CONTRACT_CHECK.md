@@ -39,6 +39,7 @@ The binding planning amendment is `Docs/workpacks/H1/H1_REMAINING_COMPRESSION_AM
 | H1-01 reopen 1 (trial 5, Unity binding document codec; owner-directed) | `c97ada780efe507e0f7dfd7ca3794d45cf866d0d` | `#245` | review waived by owner (`#5847364183`) | `525b6f2932bfa8a3540e27624165efa08c79e402` |
 | H1-ASSET-CLOUD | `e4d18002e6ca81f302daa645e306e9373debac92` (vault `Arkus0/Juego2-assets@ae782c5f08cc4144a7ff0c3d4af67451d4d86bb6`) | `#201` | PASS `#5313800159` | `fe6ecd5e14ef2581fd8fbe8f87166d13d02109bd` |
 | H1-05 | `186224fbc3f53eb9c47ae528a56dcf3514af163f` | `#192` | PASS `#5308430565` | `7039adecac4e6e07d899247759d9b3c9fd3c2dae` |
+| H1-05 reopen 1 (trial 7 and pre-merge probes 1–4; owner-directed) | `72d49e41f942a90f2c434bc40850c22d549d86f1` | `#248` | review waived by owner (pre-review `#5854263720`, `#5854287969`) | `d905a974020f6c0120f3ff4fdcd8c5f3516d9882` |
 | H1-06 | `96de260021fb28ff2cc7da8d2ef488be419568b3` | `#195` | PASS `#5313437809` | `6d04581bc3916b376bedc0797258097cfb22c225` |
 | H1-07 | `a11f9c012307ee2c1d925eb1a1be143f1d127d21` | `#206` | PASS `#5315878884` | `f733b2fd50ab0aed27fce99d5ca7773969f3f339` |
 | H1-08 | `8b7ea7b9ad74d67c5b300180b79833fe89350f4d` | `#216` | PASS `#5319609389` | `f22fa99e4427849b8a7202bf24bbae83fb90ee83` |
@@ -160,3 +161,28 @@ Fresh repair Worker, owner-invoked. The prior Worker stopped at the frozen candi
 - H1-02 reopens only if the effective registration of a public Editor process differs from the pinned lock while S01 proves the lock unchanged; that would be a baseline defect.
 - H1-03A reopens only if a public inspection launches an Editor process whose log or compiled output contradicts its reported identity.
 - A mismatch that comes from Gate wiring is Gate-owned.
+
+## WP-H1-05 reopen 1 (after trial 7) — predecessor check
+
+**Live state.** `main` = `d905a974020f6c0120f3ff4fdcd8c5f3516d9882`, the merge of PR `#248`. That merge has been merged into this candidate, and no other open PR owns WP-H1-GATE.
+
+**Owner decisions** (2026-09-27, in this repair session; see `AI_TRIAL_HISTORY.md`):
+1. Reopen WP-H1-05, with independent review waived.
+2. Probe the reopen with the fresh-agent trial before merging it. This agile loop ran without Gate reruns between probes.
+3. Merge #248 as it stands, including its two disclosed touches outside WP-H1-05.
+
+**Consumed as accepted, not re-proved by the Gate.**
+- **WP-H1-05 reopen 1** (frozen candidate `72d49e41`, merge `d905a974`). Public refusals now carry structured facts and code-specific repair hints, with codes, messages, schemas, digests and successful results unchanged. This covers:
+  - the plan preflight: `subjectId`, `bindingCode`/`bindingPath`, catalogue facts, parent/target/scene facts;
+  - the materialize/observe Editor refusals, which carry the Unity validation diagnostic's facts;
+  - a Unity preflight that applies the renderer adapter's own target rule to a prefab source before staging, with no new invariant or code.
+- **Disclosed touches carried by #248.**
+  - The WP-HK-05 canonical-Base64 refusal hint now also names the typed-document form.
+  - The WP-H1-01 compile dependency-mismatch refusals carry the derived dependency list.
+  - #248 also restored the stale H1-05 exact-SHA route: the 250-row check now projects out the declared WP-H1-11 extension.
+
+**Effect on the Gate.**
+- No Gate stage, verifier rule or control changes. S12 still requires the same refusal codes, and the richer context and hints are additive.
+- The exploratory probe commits that carried copies of #248 onto this branch are no-ops after the merge. This candidate's diff against `main` touches only Gate-owned paths.
+
+**Reopen conditions.** No new ones. A trial failure that names a public refusal without actionable facts is routed to that refusal's owner, as before.
