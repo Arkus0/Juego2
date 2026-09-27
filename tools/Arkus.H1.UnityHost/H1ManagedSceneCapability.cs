@@ -57,7 +57,7 @@ namespace Arkus.H1.UnityHost
                     reply.ExpectedInputDigest != expected.InputDigest || reply.Observation == null)
                     throw new JsonException("Projection reply identity is wrong.");
                 if (reply.ErrorCode.Length != 0)
-                    return Failure(reply.ErrorCode, "Unity rejected the staged managed-scene projection.");
+                    return WorkerFailure(reply);
 
                 var observation = reply.Observation;
                 if (observation.SchemaId != "arkus.h1-managed-scene-observation@1" ||
@@ -174,7 +174,28 @@ namespace Arkus.H1.UnityHost
         private static CapabilityInvocationResult Failure(string code, string message) =>
             CapabilityInvocationResult.Failed(new StructuredError(code, message, "$",
                 new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(StringComparer.Ordinal)), false,
-                "Inspect the active generation and retry after repairing the canonical binding or effective Unity input."));
+                H1ProjectionContract.DefaultWorkerRepairHint));
+
+        // Since WP-H1-05 reopen 1 an Editor refusal also carries the facts of the Unity validation diagnostic that
+        // carries its code: the canonical subject and logical source when the diagnostic names one, and a code-specific
+        // hint when one exists. The machine code and message are unchanged.
+        public static CapabilityInvocationResult WorkerFailure(H1ManagedSceneWorkerReply reply)
+        {
+            if (reply == null) throw new ArgumentNullException(nameof(reply));
+            var facts = new Dictionary<string, object?>(StringComparer.Ordinal);
+            var diagnostic = reply.Validation?.Diagnostics?.FirstOrDefault(value => value != null && value.Code == reply.ErrorCode);
+            if (diagnostic != null)
+            {
+                if (!string.IsNullOrEmpty(diagnostic.CanonicalResource) && diagnostic.CanonicalResource != H1ManagedScenePlan.SceneId)
+                    facts["subjectId"] = diagnostic.CanonicalResource;
+                if (!string.IsNullOrEmpty(diagnostic.LogicalAsset)) facts["sourceLogicalId"] = diagnostic.LogicalAsset;
+                if (!string.IsNullOrEmpty(diagnostic.InvariantId)) facts["invariantId"] = diagnostic.InvariantId;
+                if (!string.IsNullOrEmpty(diagnostic.Phase)) facts["phase"] = diagnostic.Phase;
+                if (!string.IsNullOrEmpty(diagnostic.Context)) facts["validationContext"] = diagnostic.Context;
+            }
+            return CapabilityInvocationResult.Failed(new StructuredError(reply.ErrorCode, "Unity rejected the staged managed-scene projection.", "$",
+                new ReadOnlyDictionary<string, object?>(facts), false, H1ProjectionContract.WorkerRepairHint(reply.ErrorCode)));
+        }
     }
 
     public sealed class H1ManagedSceneWorkerReply
@@ -184,6 +205,22 @@ namespace Arkus.H1.UnityHost
         public string ExpectedInputDigest { get; set; } = "";
         public string ErrorCode { get; set; } = "";
         public H1ManagedSceneObservation? Observation { get; set; }
+        public H1ManagedSceneWorkerValidation? Validation { get; set; }
+    }
+
+    public sealed class H1ManagedSceneWorkerValidation
+    {
+        public H1ManagedSceneWorkerDiagnostic?[]? Diagnostics { get; set; }
+    }
+
+    public sealed class H1ManagedSceneWorkerDiagnostic
+    {
+        public string? Code { get; set; }
+        public string? InvariantId { get; set; }
+        public string? Phase { get; set; }
+        public string? CanonicalResource { get; set; }
+        public string? LogicalAsset { get; set; }
+        public string? Context { get; set; }
     }
 
     public sealed class H1ManagedSceneObservation
@@ -287,6 +324,27 @@ namespace Arkus.H1.UnityHost
     {
         public const string ReferenceNamespace = "ref.arkus.unity-host.projection";
         public const string DefaultPreflightRepairHint = "Repair the canonical binding or catalogue input before materialization.";
+        public const string DefaultWorkerRepairHint = "Inspect the active generation and retry after repairing the canonical binding or effective Unity input.";
+        public const string RendererTargetRepairHint =
+            "A renderer component needs exactly one MeshRenderer owned by the subject's source; this prefab has none (for example " +
+            "a skinned model) or several. Remove the renderer component from this subject's binding, or put it on a mesh asset " +
+            "source (source kind asset); recompile with unity.binding.compile, apply the returned documentMutation, then retry.";
+        public const string RendererMaterialSlotRepairHint =
+            "The subject's MeshRenderer has more than one material slot, so one renderer material is ambiguous. Remove the renderer " +
+            "component from this subject's binding, or put it on a mesh asset source (source kind asset); recompile with " +
+            "unity.binding.compile, apply the returned documentMutation, then retry.";
+        public const string ActiveSceneMissingRepairHint =
+            "No managed generation is active. Materialize the current canonical state with unity.host.projection.materialize " +
+            "(or restore a checkpoint) before observing it.";
+
+        // The repair hint of an Editor-side refusal: code-specific when one exists (WP-H1-05 reopen 1), else the accepted default.
+        public static string WorkerRepairHint(string code)
+        {
+            if (code == "projection.component-target-missing" || code == "projection.component-target-cardinality") return RendererTargetRepairHint;
+            if (code == "projection.component-material-slot-cardinality") return RendererMaterialSlotRepairHint;
+            if (code == "projection.active-scene-missing") return ActiveSceneMissingRepairHint;
+            return DefaultWorkerRepairHint;
+        }
 
         // The public preflight refusal of unity.projection.plan. Since WP-H1-05 reopen 1 it carries the structured facts
         // of the failing binding (for example subjectId, bindingCode, catalogueCode) and a code-specific hint when one

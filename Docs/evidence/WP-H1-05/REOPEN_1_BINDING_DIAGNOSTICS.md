@@ -21,6 +21,14 @@ A client that has only the public contract could not tell which of its bindings 
 
 Owner decision (2026-09-27, in the WP-H1-GATE repair Worker session): reopen WP-H1-05, then run trial 8 on the Gate's final frozen SHA.
 
+Second owner decision (same day): the reopen is **probed with the fresh-agent trial before it merges**, in an agile loop. Exploratory copies of this PR's commits go onto the Gate branch, and the trial runs there. Each failed probe names the next public-surface obstacle, which is corrected here and probed again. Probe records are exploratory; the Gate's own trial still runs once, on its final frozen SHA.
+
+### Probe 1 (Gate run `36303087443`, exploratory copy `279bde65` of `7cb371d3`)
+
+- **The `binding-invalid` correction worked.** The refusal named `subjectId=slice-root`. The agent recompiled, applied the typed `document`, and the plan advanced.
+- **`projection.parent-unbound`.** The facts were present, but the hint was the generic default. The agent tried to contain its objects in the scene by creating a canonical object named after the scene. That object was unbound, and it took four attempts to recover.
+- **`projection.component-target-missing` from materialize, with an empty `context` and a generic hint.** The agent had put a `renderer` on the UAL1 humanoid prefab. That prefab owns a `SkinnedMeshRenderer`, not a `MeshRenderer`. Unity's preflight tests renderer references on a synthetic probe, so the refusal surfaced only inside the staged scene, with the scene as its resource. In addition, the host ignored the Unity validation diagnostic in the reply. The agent could not tell which subject or component was wrong, and stopped at FAIL.
+
 ## Accepted guarantee proved inapplicable
 
 WP-H1-05 owns "versioned public projection plan/materialize/observe capabilities". The plan's preflight refusal is accepted as a structured diagnostic. It holds for a client with implementation knowledge, but it is inapplicable to a fresh public client:
@@ -39,11 +47,15 @@ The same gap class was corrected for the catalogue in WP-H1-04 reopen 1 (`#239`)
   - Catalogue-mapped failures (`projection.source-*`, `projection.reference-*`, `projection.component-reference-*`) add `catalogueCode` and the catalogue's own context, for example `logicalId` and `kind`.
   - `projection.parent-unbound` adds `parentObjectId`, and `projection.canonical-target-unbound` adds `targetObjectId`.
 - **Plan handler.** `H1ManagedScenePlanHandler` returns these facts through `H1ProjectionContract.PreflightError`. It uses the code-specific hint when there is one, and otherwise the accepted default hint.
+- **Probe 1 corrections:**
+  - `projection.parent-unbound` and `projection.canonical-target-unbound` have code-specific hints. For `parent-unbound`: the managed scene is not a canonical object, so either bind the container in the same scene or clear `containerId` to realize the subject at the scene root. For `canonical-target-unbound`: bind the target, or remove the `canonical-link`.
+  - **Unity preflight (`unity.plan.component`, a per-subject check).** For a prefab source with a `renderer` component, it applies the renderer adapter's own target rule (`H1ComponentProjection.ValidateRendererTarget`: exactly one owned `MeshRenderer`, at most one material slot) to the source prefab, before staging. The existing codes `projection.component-target-missing`, `projection.component-target-cardinality` and `projection.component-material-slot-cardinality` are therefore reported with the subject as `canonicalResource` and its source as `logicalAsset`. A mesh `asset` source always realizes one `MeshRenderer`, so it is not affected.
+  - **Materialize/observe refusals (`H1ManagedSceneExecutor.WorkerFailure`).** They carry the facts of the Unity validation diagnostic that has the reply's code: `subjectId` (when it is not the scene), `sourceLogicalId`, `invariantId`, `phase` and `validationContext`. They also carry a code-specific hint for the renderer target and material-slot codes and for `projection.active-scene-missing`; otherwise they keep the accepted default hint.
 
 ## Not changed
 
-- No capability, schema, machine code, public message, plan digest, input digest, catalogue content, fingerprint or Unity/Editor code changes.
-- The same inputs produce the same successful plan.
+- No capability, schema, machine code, public message, plan digest, input digest, catalogue content or fingerprint changes.
+- The same inputs produce the same successful plan. On the Unity side, the only change is the renderer target preflight above. It enforces the rule that materialization already enforced, earlier, and adds no invariant ID and no new code. A plan that materializes today also passes it.
 - Checkpoint, reconciliation and lifecycle pre-launch refusals are unchanged. The lifecycle refusal already points the client to `unity.projection.plan`, which now carries the facts.
 - The H0 kernel is unchanged. An opaque `payloadBase64` that is valid Base64 is still admitted by authoring and caught at projection preflight, which is accepted H0/H1-08 semantics.
 
@@ -54,7 +66,14 @@ The same gap class was corrected for the catalogue in WP-H1-04 reopen 1 (`#239`)
   - `projection.source-missing` with `subjectId`, `catalogueCode` and `logicalId`;
   - `projection.parent-unbound` with `subjectId` and `parentObjectId`;
   - each public preflight error keeps its code and message and is a `PortableData`-valid `StructuredError` that validates against `CanonicalContractSchemas.StructuredError()`;
-  - the default hint remains where there is no code-specific hint.
+  - the default hint remains where there is no code-specific hint;
+  - `projection.parent-unbound` and `projection.canonical-target-unbound` carry their code-specific hints and facts.
+- `H1ManagedScenePlanTests.Editor_refusals_carry_the_unity_diagnostic_subject_and_a_code_specific_repair` deserializes the Editor reply shape (`H1SceneProjection.ValidationReply`) and checks three cases:
+  - a `component-target-missing` preflight diagnostic yields `subjectId`, `sourceLogicalId`, `invariantId`, `phase`, `validationContext` and the renderer hint;
+  - a scene-scoped `active-scene-missing` yields no `subjectId` and gets its own hint;
+  - a reply without a matching diagnostic keeps the empty context and the default hint.
+
+  All three are valid `StructuredError`s.
 - The existing `H1ManagedScenePlanTests` and `H1CatalogueTests` are unchanged and still pin the codes.
 - Exact-SHA hosted evidence is recorded on the PR: Arkus Main Safety, and the H1-05 route `scripts/h1-05-verify-exact-sha.sh`.
 - The effective public proof is WP-H1-GATE: its deterministic 17-stage scenario on reference and MCP, and trial 8 on the Gate's final frozen SHA.
