@@ -338,6 +338,9 @@ namespace Arkus.Harness.Tests
                 Assert.Equal("payloadBase64 must use canonical Base64 encoding.", result.Error.Message);
                 Assert.Equal("$.operations[0].payloadBase64", result.Error.Path);
                 Assert.Contains("exactly as returned", result.Error.RepairHint);
+                // WP-H1-GATE pre-merge probe 2: the hint also names the typed document form, which needs no transcription.
+                Assert.Contains("documentMutation", result.Error.RepairHint);
+                Assert.Contains("send that operation with document instead of payloadBase64", result.Error.RepairHint);
                 Assert.Empty(PortableData.Validate(result.Error.ToData()));
                 Assert.Empty(CanonicalContractSchemas.StructuredError().ValidateValue(result.Error.ToData()));
                 return result.Error.Context;

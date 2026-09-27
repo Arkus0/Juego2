@@ -31,3 +31,6 @@ Reopen H1-00 only if evidence shows Unity cannot implement the accepted generati
   - It calls the H1-07 renderer adapter's own target rule (`ResolveSingleOwnedComponent<MeshRenderer>` plus the material-slot bound), which is unchanged.
   - It runs under the existing H1-08 `unity.plan.component` invariant. There is no new invariant ID, inventory entry or code.
   - The rule is the same one materialization already enforced, now enforced earlier. The Reviewer and owner may judge whether that belongs to H1-07/H1-08 instead.
+- **Disclosed boundary touch (probe 2).** One repair-hint string of the WP-HK-05-owned canonical-Base64 refusal (`WorldMutationService`, HK-05 reopen 2 `#243`) now also names the typed-document form.
+  - No code, message, path, context or behavior changes, and the HK-05 test still pins everything it pinned.
+  - It rides in this reopen only because the owner's agile probe loop found it one step before this reopen's own refusal. The owner may require it as its own HK-05 reopen before merge.
