@@ -16,6 +16,11 @@ Changed/added planning surfaces:
 - canonical `WP-H2-GATE` checks that retained production did not silently drift away from the frozen H2F baseline;
 - H2 plan DAG now places H2F before CITY-07/H2 keeper implementation.
 
+Reviewer repair closure on 2026-09-27 adds only the two requested causal contracts:
+
+- every material selected foundation-state family must be classified against the accepted H1 lifecycle (managed projection, admitted retained realization host, generated/transient state or lawful external/manual input), with explicit materialize/observe/reconcile/rematerialize/clean-rebuild expectations; H2F-03 then proves those expectations in one composed public H1 lifecycle with the full selected stack present;
+- H2F profiling is diagnostic by default. PASS/FAIL is predeclared: only the enumerated reproducible foundation pathologies block, while ordinary FPS/frame-time/draw-call/triangle/memory observations remain later optimization evidence rather than post-hoc H2F thresholds.
+
 No H0/H1 authority, CITY topology/programme, ART visual authority or H2 Living-World non-claim is widened by this plan.
 
 Global ROADMAP/track summaries should be DocSynced after independent plan acceptance rather than treated as authority ahead of review.
