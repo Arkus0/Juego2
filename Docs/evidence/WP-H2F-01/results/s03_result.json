@@ -1,0 +1,23 @@
+{
+    "waterObjects": "art01.river.water",
+    "boundsCenter": {
+        "x": 0.0,
+        "y": -2.2100000381469728,
+        "z": -37.25
+    },
+    "boundsSize": {
+        "x": 80.0,
+        "y": 0.019999980926513673,
+        "z": 21.5
+    },
+    "riverAxis": "X",
+    "shader": "H2F01/StylizedWater",
+    "shaderSupported": true,
+    "passes": 1,
+    "depthTexture": true,
+    "flowPixelDelta": 0.0055890497751533989,
+    "auditGreen": true,
+    "notes": [
+        "views derived from ART water bounds; flow along X"
+    ]
+}

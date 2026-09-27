@@ -1,0 +1,22 @@
+assemblies=GameCreator.Editor.Core,GameCreator.Runtime.Core,GameCreator.Tests.Core
+type GameCreator.Runtime.Characters.Character: present
+type GameCreator.Runtime.Characters.UnitPlayerDirectional: present
+type GameCreator.Runtime.Characters.UnitDriverController: present
+type GameCreator.Runtime.Characters.UnitDriverNavmesh: present
+type GameCreator.Runtime.Cameras.MainCamera: present
+type GameCreator.Runtime.Cameras.ShotCamera: present
+type GameCreator.Runtime.Cameras.ShotTypeThirdPerson: present
+type GameCreator.Runtime.Variables.GlobalNameVariables: present
+type GameCreator.Runtime.Variables.LocalNameVariables: present
+type GameCreator.Runtime.Common.SaveLoadManager: present
+type GameCreator.Runtime.VisualScripting.Trigger: present
+type GameCreator.Runtime.VisualScripting.Actions: present
+components GameCreator.Runtime.Cameras: 2 (MainCamera, ShotCamera)
+components GameCreator.Runtime.Characters: 3 (Character, DriverControllerComponent, InteractionTracker)
+components GameCreator.Runtime.Common: 19 (ApplicationManager, AsyncManager, AudioManager, EventSystemManager, InputManager, Marker, PoolManager, Remember, RoomManager, RunnerConditionsList, RunnerInstructionsList, SaveLoadManager, ScheduleManager, StagingGizmos, ...)
+components GameCreator.Runtime.Common.UnityUI: 9 (ButtonInstructions, DropdownPropertyInteger, DropdownTMPPropertyInteger, EventCallback, InputFieldPropertyString, InputFieldTMPPropertyString, SliderPropertyFloat, TextPropertyString, TogglePropertyBool)
+components GameCreator.Runtime.Variables: 4 (GlobalListVariablesManager, GlobalNameVariablesManager, LocalListVariables, LocalNameVariables)
+components GameCreator.Runtime.VisualScripting: 6 (Actions, Conditions, CopyRunnerConditionList, CopyRunnerInstructionList, Hotspot, Trigger)
+generated_settings_assets=
+scripting_defines=
+activeInputHandler=0

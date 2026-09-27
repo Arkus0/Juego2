@@ -1,0 +1,21 @@
+{
+    "placed": 2072,
+    "candidates": 4292,
+    "digestRun1": "5ebb6e06d5cf7fe17e06d717fb4b0c89c25d35cea8aa2f1486d05321ca5ba9f1",
+    "digestRun2": "5ebb6e06d5cf7fe17e06d717fb4b0c89c25d35cea8aa2f1486d05321ca5ba9f1",
+    "deterministic": true,
+    "violationsRoad": 0,
+    "violationsStructure": 0,
+    "violationsRiver": 0,
+    "negativeRoadMaskOffViolations": 9,
+    "countsByKind": "grass=968,bush=264,fern=517,bush_flowers=161,tree=65,rock=97",
+    "waterY": -2.200000047683716,
+    "terrainTrees": 78,
+    "terrainDetailCells": 5051,
+    "terrainGrassShader": "Bark:Universal Render Pipeline/Lit,Leaves:Universal Render Pipeline/Lit,GrassGround:Universal Render Pipeline/Lit",
+    "terrainAuditGreen": true,
+    "notes": [
+        "scenic area (-48.0, -0.1, -26.5)..(48.0, 2.6, 48.0); water top y -2,20",
+        "terrain trees/details are serialized inside TerrainData (asset), prefab scatter as scene objects"
+    ]
+}

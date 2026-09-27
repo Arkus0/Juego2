@@ -1,0 +1,29 @@
+{
+    "windowPiece": "art01.wall.W12_left_house.201.3.30.window",
+    "glassCentre": {
+        "x": -4.8000006675720219,
+        "y": 5.036922454833984,
+        "z": -8.075138092041016
+    },
+    "outward": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -1.0
+    },
+    "right": {
+        "x": -1.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "glassSize": {
+        "x": 1.6082367897033692,
+        "y": 1.5801109075546265
+    },
+    "shader": "H2F01/InteriorWindow",
+    "shaderSupported": true,
+    "auditGreen": true,
+    "notes": [
+        "visible-glass lane windows: 6",
+        "facade normal (0.00, 0.00, -1.00) (lane facade=False)"
+    ]
+}

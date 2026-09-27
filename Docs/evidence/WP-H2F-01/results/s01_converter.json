@@ -1,0 +1,5 @@
+{
+    "batchApi": "MissingMethodException: Default constructor not found for type UnityEditor.Rendering.Universal.Base2DMaterialUpgrader",
+    "publicUpgraderCount": 63,
+    "materialsUpgraded": 25
+}
