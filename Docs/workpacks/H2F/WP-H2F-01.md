@@ -1,6 +1,7 @@
 # WP-H2F-01 — Decision spikes + final stack selection
 
-Status: **PROPOSED / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
+Accepted: PR `#254`; frozen candidate `b642024ee54523d19b91448016af83a50d0ff361`; independent PASS review `#5331371244`; merge `27e6e56215268e566f24ea1f3a80e62601126f89`; post-PASS state: `Docs/evidence/WP-H2F-01/DOCSYNC.md`  
 Class: `PRODUCT_CHECKPOINT`  
 Mode: **HYBRID** — remote planning, real Unity/source-asset evidence where the decision depends on rendering, import, animation or interaction  
 Depends on: `WP-H2F-00` PASS + ART-01 `PREFOUNDATION_INPUT` checkpoint published; **ART-01 PASS is intentionally not a predecessor**  
