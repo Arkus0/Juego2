@@ -156,15 +156,15 @@ Run only the Unity/source-content spikes necessary to distinguish serious candid
 
 ### `WP-H2F-02 — Exact adoption + URP/toolchain bootstrap`
 
-Apply the selected baseline to the real Unity project: exact package/adoption records, render-pipeline migration, project/preset/import conventions, external-source provisioning, character retarget rules and selected worldbuilding adapters/presets. This is the first H2F WP allowed to make the chosen dependencies project truth.
+Apply the selected baseline to the real Unity project: exact package/adoption records, render-pipeline migration, project/preset/import conventions, external-source provisioning, character retarget rules and selected worldbuilding adapters/presets. For every material retained/generated state introduced by the selected stack, also freeze its H1 lifecycle class/host and its materialize/observe/reconcile/rematerialize/clean-rebuild expectation. This is the first H2F WP allowed to make the chosen dependencies project truth.
 
 ### `WP-H2F-03 — Integrated compatibility + AI-authoring benchmark`
 
-Prove the selected stack works together rather than only in isolated package demos. Use a bounded **non-keeper integration fixture** so this work cannot bypass CITY-07. Exercise the adopted rendering/worldbuilding/player/navigation/character-animation path and one public/AI-assisted authoring operation through the approved boundary.
+Prove the selected stack works together rather than only in isolated package demos. Use a bounded **non-keeper integration fixture** so this work cannot bypass CITY-07. Exercise the adopted rendering/worldbuilding/player/navigation/character-animation path, execute one composed accepted H1 materialize → observe → reconcile → rematerialize → clean-rebuild cycle with the full stack present, and run one public/AI-assisted authoring operation through the approved boundary. Profiling is diagnostic except for the explicitly enumerated foundation pathologies in the WP.
 
 ### `WP-H2F-GATE — Foundation freeze`
 
-Freeze the exact admitted baseline, demonstrate clean/reproducible project restoration with documented lawful/manual inputs, close dependency/IP records, prove the integrated fixture, retain rejected/deferred decisions and authorize CITY-07/H2 to build keeper content on the frozen baseline.
+Freeze the exact admitted baseline, demonstrate the selected foundation state is preserved or deterministically reconstructed through the accepted H1 lifecycle, demonstrate clean/reproducible project restoration with documented lawful/manual inputs, close dependency/IP records, prove the integrated fixture, retain rejected/deferred decisions and authorize CITY-07/H2 to build keeper content on the frozen baseline.
 
 ## 8. Freeze semantics after H2F-GATE
 
@@ -190,10 +190,12 @@ H2F-GATE may PASS only when:
 6. the selected worldbuilding tools coexist on one integrated fixture;
 7. the selected player/camera/input/navigation path works on that fixture;
 8. at least one representative Quaternius humanoid proves the accepted animation/retarget/rigging baseline;
-9. a fresh author/agent can use the prescribed public/preset/adapter surfaces without making plugin-private state canonical;
-10. a clean restoration/import path reproduces the accepted baseline given the documented lawful/manual asset inputs;
-11. a bounded performance/profiling sanity pass finds no obvious baseline blocker for the H2 representative slice;
-12. the final adoption, defer, reject and replacement decisions are retained so later Workers do not repeatedly rediscover or silently overturn them.
+9. every material selected foundation-state family has an explicit H1 lifecycle class/host and materialize/observe/reconcile/rematerialize/clean-rebuild expectation;
+10. the full selected stack passes the composed accepted H1 lifecycle proof without losing required state, generating false unsupported drift or requiring undocumented hand repair;
+11. a fresh author/agent can use the prescribed public/preset/adapter surfaces without making plugin-private state canonical;
+12. a clean restoration/import path reproduces the accepted baseline given the documented lawful/manual asset inputs;
+13. a bounded profiler snapshot is captured under a declared comparison context and none of the explicit H2F-03 foundation pathologies reproduces; ordinary numeric profiler findings are diagnostic residuals, not invented H2F thresholds;
+14. the final adoption, defer, reject and replacement decisions are retained so later Workers do not repeatedly rediscover or silently overturn them.
 
 A collection of successfully installed packages is not H2F success. The claim is a **coherent, reviewed, reproducible production baseline**.
 
