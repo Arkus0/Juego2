@@ -51,6 +51,12 @@ namespace Arkus.H1.UnityHost
         public const string BindingInvalidRepairHint =
             "Recompile this subject's binding with unity.binding.compile and apply the returned documentMutation " +
             "(put-extension with a typed document) instead of copying payloadBase64; then rerun unity.projection.plan.";
+        public const string ParentUnboundRepairHint =
+            "The managed scene is not a canonical object. Either give parentObjectId its own arkus.unity-binding in the same " +
+            "targetSceneId, or clear this subject's containerId so it is realized at the managed scene root; then rerun unity.projection.plan.";
+        public const string CanonicalTargetUnboundRepairHint =
+            "Give targetObjectId its own arkus.unity-binding in the same targetSceneId, or remove the canonical-link component " +
+            "from this subject's binding; then rerun unity.projection.plan.";
 
         public string SchemaId { get; set; } = Schema;
         public string SceneLogicalId { get; set; } = SceneId;
@@ -85,12 +91,12 @@ namespace Arkus.H1.UnityHost
             foreach (var node in nodes)
             {
                 if (node.ParentObjectId.Length != 0 && !bound.Contains(node.ParentObjectId))
-                    throw Error("projection.parent-unbound", "Every managed child needs a managed canonical container in the same scene.",
-                        Facts(("subjectId", node.ObjectId), ("parentObjectId", node.ParentObjectId)));
+                    throw new H1ProjectionException("projection.parent-unbound", "Every managed child needs a managed canonical container in the same scene.",
+                        Facts(("subjectId", node.ObjectId), ("parentObjectId", node.ParentObjectId)), ParentUnboundRepairHint);
                 foreach (var component in node.Components)
                     if (component.Kind == "canonical-link" && !bound.Contains(component.TargetObjectId))
-                        throw Error("projection.canonical-target-unbound", "Every realized canonical component reference must target a managed object in the same scene.",
-                            Facts(("subjectId", node.ObjectId), ("targetObjectId", component.TargetObjectId)));
+                        throw new H1ProjectionException("projection.canonical-target-unbound", "Every realized canonical component reference must target a managed object in the same scene.",
+                            Facts(("subjectId", node.ObjectId), ("targetObjectId", component.TargetObjectId)), CanonicalTargetUnboundRepairHint);
             }
             nodes.Sort((left, right) => StringComparer.Ordinal.Compare(left.ObjectId, right.ObjectId));
             var plan = new H1ManagedScenePlan
@@ -275,9 +281,6 @@ namespace Arkus.H1.UnityHost
         };
 
         private static H1ProjectionException Error(string code, string message) => new H1ProjectionException(code, message);
-
-        private static H1ProjectionException Error(string code, string message, IReadOnlyDictionary<string, object?> facts) =>
-            new H1ProjectionException(code, message, facts, null);
 
         private static IReadOnlyDictionary<string, object?> Facts(params (string Key, string Value)[] values)
         {

@@ -25,5 +25,9 @@ Reopen H1-00 only if evidence shows Unity cannot implement the accepted generati
 - The accepted identity reopened is PR `#192`, candidate `186224fbc3f53eb9c47ae528a56dcf3514af163f`, PASS `#5308430565`, merge `7039adecac4e6e07d899247759d9b3c9fd3c2dae`.
 - The base is `main` `edd20167`, which includes the later accepted reopens of H1-04, HK-05, HK-04 and H1-01, and parity-gate v1.3.
 - The inherited guarantees are unchanged.
-- The only correction is the public structured facts of the H1-05-owned plan preflight refusal (`REOPEN_1_BINDING_DIAGNOSTICS.md`).
+- The correction covers the public structured facts and repair hints of the refusals of the H1-05-owned capabilities: the plan preflight and, after pre-merge probe 1, the materialize/observe Editor refusal (`REOPEN_1_BINDING_DIAGNOSTICS.md`).
 - Nothing here reopens another predecessor. The H1-01 codec and the H0 opaque-payload admission are consumed exactly as accepted.
+- **Disclosed boundary touch.** Probe 1 adds one Unity-side check inside H1-05's materialize preflight: the renderer target rule applied to a prefab source before staging.
+  - It calls the H1-07 renderer adapter's own target rule (`ResolveSingleOwnedComponent<MeshRenderer>` plus the material-slot bound), which is unchanged.
+  - It runs under the existing H1-08 `unity.plan.component` invariant. There is no new invariant ID, inventory entry or code.
+  - The rule is the same one materialization already enforced, now enforced earlier. The Reviewer and owner may judge whether that belongs to H1-07/H1-08 instead.
