@@ -219,3 +219,32 @@ Any repair commit creates a new candidate SHA, and the trial must be bound to th
 - triggered once through the `h1-gate-ai-trial` label.
 
 Trial 7 is recorded whatever its result. The Gate claims PASS only if `h1-gate-verify.py trial` finds it GREEN on that exact SHA.
+
+## Trial 7 — FAIL (payload transcription; undiagnosable binding refusal)
+
+| Field | Value |
+| --- | --- |
+| Candidate SHA | `fb0933f27cd0141ed4320d022bd683bdd432d846` |
+| Deterministic Gate on the same SHA | run `36280239062` **GREEN** |
+| Trial run | run `36281413613` (transcript sha256 `07f827e1…`). The PR record is `#5851178404`. |
+| Model / served by | `openai/gpt-5.6-luna-20260709` (provider `OpenAI`) |
+| Turns | 18 of 90 |
+| Agent verdict | `FAIL`. Hidden/private calls: none. |
+
+The agent applied its own transcription of `payloadBase64` instead of the `documentMutation` returned by compile. The transcription happened to be valid Base64, so apply accepted it. `unity.projection.plan` then refused with `projection.binding-invalid` and an empty `context`: the refusal named neither the offending subject nor the typed-document repair. The agent re-transcribed and stopped. The causal owner of that gap is WP-H1-05 (managed scene plan preflight).
+
+## Owner decisions after trial 7
+
+The decisions were taken in the Worker session on 2026-09-27:
+
+1. **Reopen WP-H1-05** (reopen 1, PR `#248`): `projection.binding-invalid` names the canonical subject, the binding code and path, and gives a repair hint toward compile's `documentMutation`. Independent review of the reopen is waived; it merges once green.
+2. **Agile probe loop before merging the reopen.** A Unity validation run takes about 20 minutes, so the fix is probed first with the fresh-agent trial alone. Exploratory copies of the reopen's commits are placed on this branch and the trial is triggered on them. Each probe that fails points to the next public-surface obstacle, which is fixed in the reopen and probed again. The formal hosted Gate is not re-run between probes.
+3. Only after a probe passes: merge the reopen, merge `main` into this branch (the probe commits become no-ops), then run the formal hosted Gate **once** plus one final trial on the final frozen SHA. That final trial is the one the Gate claims.
+
+Probe trials are exploratory records. They do not count as the Gate's trial, whatever their result.
+
+## Exploratory probe records (not Gate trials)
+
+| Probe | Candidate (exploratory) | Run | Turns | Result | Next obstacle found, and where it was corrected |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `279bde65` (copy of #248 `7cb371d3`) | `36303087443` | 23 | FAIL; hidden/private calls: none | `binding-invalid` now named the subject, and the agent switched to the typed document. The run then stalled on `projection.parent-unbound`, which had a generic hint, and on `projection.component-target-missing` from materialize: a renderer on the skinned UAL1 prefab, reported with an empty context. Corrected in #248 `da72a70b`. |
