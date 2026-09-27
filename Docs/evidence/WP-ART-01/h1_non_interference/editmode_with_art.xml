@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="43" result="Failed(Child)" total="43" passed="16" failed="27" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:25Z" duration="11,8290809">
+  <test-suite type="TestSuite" id="1000" name="ArkusUnity" fullname="ArkusUnity" runstate="Runnable" testcasecount="43" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:25Z" duration="11.829081" total="43" passed="16" failed="27" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1058" name="Arkus.H1.Baseline.Tests.Editor.dll" fullname="C:/Juego2-ART01-S/Unity/ArkusUnity/Library/ScriptAssemblies/Arkus.H1.Baseline.Tests.Editor.dll" runstate="Runnable" testcasecount="43" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:25Z" duration="11.821986" total="43" passed="16" failed="27" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34944" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1059" name="Arkus" fullname="Arkus" runstate="Runnable" testcasecount="43" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:25Z" duration="11.821749" total="43" passed="16" failed="27" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1060" name="H1" fullname="Arkus.H1" runstate="Runnable" testcasecount="43" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:25Z" duration="11.821677" total="43" passed="16" failed="27" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1061" name="Editor" fullname="Arkus.H1.Editor" runstate="Runnable" testcasecount="43" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:25Z" duration="11.821609" total="43" passed="16" failed="27" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1062" name="Tests" fullname="Arkus.H1.Editor.Tests" runstate="Runnable" testcasecount="43" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:25Z" duration="11.821450" total="43" passed="16" failed="27" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1001" name="H1AssetCloudTests" fullname="Arkus.H1.Editor.Tests.H1AssetCloudTests" classname="Arkus.H1.Editor.Tests.H1AssetCloudTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.025333" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1002" name="PrivateVaultMount_RecreatesAcceptedH104UnityIdentities" fullname="Arkus.H1.Editor.Tests.H1AssetCloudTests.PrivateVaultMount_RecreatesAcceptedH104UnityIdentities" methodname="PrivateVaultMount_RecreatesAcceptedH104UnityIdentities" classname="Arkus.H1.Editor.Tests.H1AssetCloudTests" runstate="Runnable" seed="741864536" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.015963" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Assets/Arkus/H1/SourceSlice/FacadeImportedMaterial.mat did not import
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1AssetCloudTests.AssertGuid (System.String fileName, System.String expected) [0x0000c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1AssetCloudTests.cs:40
+at Arkus.H1.Editor.Tests.H1AssetCloudTests.PrivateVaultMount_RecreatesAcceptedH104UnityIdentities () [0x0003c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1AssetCloudTests.cs:19
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1003" name="H1BaselineTests" fullname="Arkus.H1.Editor.Tests.H1BaselineTests" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.011174" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1006" name="BuiltInRenderPipelineIsTheRetainedBaseline" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.BuiltInRenderPipelineIsTheRetainedBaseline" methodname="BuiltInRenderPipelineIsTheRetainedBaseline" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="2119623836" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.001982" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1004" name="EffectiveEditorMatchesPinnedPatch" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.EffectiveEditorMatchesPinnedPatch" methodname="EffectiveEditorMatchesPinnedPatch" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="2138705790" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.000119" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1005" name="ForceTextAndVisibleMetaPolicyAreEffective" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.ForceTextAndVisibleMetaPolicyAreEffective" methodname="ForceTextAndVisibleMetaPolicyAreEffective" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="255502978" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.001320" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1007" name="PackagesLockExists" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.PackagesLockExists" methodname="PackagesLockExists" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="257334967" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.000215" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1008" name="RepositoryOwnedUnityCodeHasVisibleMetaFiles" fullname="Arkus.H1.Editor.Tests.H1BaselineTests.RepositoryOwnedUnityCodeHasVisibleMetaFiles" methodname="RepositoryOwnedUnityCodeHasVisibleMetaFiles" classname="Arkus.H1.Editor.Tests.H1BaselineTests" runstate="Runnable" seed="435887929" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.006861" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1009" name="H1ComponentProjectionTests" fullname="Arkus.H1.Editor.Tests.H1ComponentProjectionTests" classname="Arkus.H1.Editor.Tests.H1ComponentProjectionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.083961" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1010" name="MultiComponentRoundTrip_SaveReloadObserveAndRebuild_IsDeterministic" fullname="Arkus.H1.Editor.Tests.H1ComponentProjectionTests.MultiComponentRoundTrip_SaveReloadObserveAndRebuild_IsDeterministic" methodname="MultiComponentRoundTrip_SaveReloadObserveAndRebuild_IsDeterministic" classname="Arkus.H1.Editor.Tests.H1ComponentProjectionTests" runstate="Runnable" seed="2125548321" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.020918" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  accepted facade material must import
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ComponentProjectionTests.BuildFixture (System.String salt) [0x00043] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ComponentProjectionTests.cs:125
+at Arkus.H1.Editor.Tests.H1ComponentProjectionTests.MultiComponentRoundTrip_SaveReloadObserveAndRebuild_IsDeterministic () [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ComponentProjectionTests.cs:35
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1012" name="ReboundMaterialReference_FailsBeforePublication_AndKeepsPreviousGenerationActive" fullname="Arkus.H1.Editor.Tests.H1ComponentProjectionTests.ReboundMaterialReference_FailsBeforePublication_AndKeepsPreviousGenerationActive" methodname="ReboundMaterialReference_FailsBeforePublication_AndKeepsPreviousGenerationActive" classname="Arkus.H1.Editor.Tests.H1ComponentProjectionTests" runstate="Runnable" seed="231704755" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.030688" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  accepted facade material must import
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ComponentProjectionTests.BuildFixture (System.String salt) [0x00043] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ComponentProjectionTests.cs:125
+at Arkus.H1.Editor.Tests.H1ComponentProjectionTests.ReboundMaterialReference_FailsBeforePublication_AndKeepsPreviousGenerationActive () [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ComponentProjectionTests.cs:93
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1011" name="UnsupportedSchema_FailsBeforePublication_AndKeepsPreviousGenerationActive" fullname="Arkus.H1.Editor.Tests.H1ComponentProjectionTests.UnsupportedSchema_FailsBeforePublication_AndKeepsPreviousGenerationActive" methodname="UnsupportedSchema_FailsBeforePublication_AndKeepsPreviousGenerationActive" classname="Arkus.H1.Editor.Tests.H1ComponentProjectionTests" runstate="Runnable" seed="265206447" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.031406" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  accepted facade material must import
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ComponentProjectionTests.BuildFixture (System.String salt) [0x00043] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ComponentProjectionTests.cs:125
+at Arkus.H1.Editor.Tests.H1ComponentProjectionTests.UnsupportedSchema_FailsBeforePublication_AndKeepsPreviousGenerationActive () [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ComponentProjectionTests.cs:72
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1013" name="H1HostPolicyTests" fullname="Arkus.H1.Editor.Tests.H1HostPolicyTests" classname="Arkus.H1.Editor.Tests.H1HostPolicyTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.011611" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1019" name="AmbientAuthorityShapedSelectorsAreNotLogicalResources" fullname="Arkus.H1.Editor.Tests.H1HostPolicyTests.AmbientAuthorityShapedSelectorsAreNotLogicalResources" classname="Arkus.H1.Editor.Tests.H1HostPolicyTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.002563" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1015" name="AmbientAuthorityShapedSelectorsAreNotLogicalResources(&quot;../outside.txt&quot;)" fullname="Arkus.H1.Editor.Tests.H1HostPolicyTests.AmbientAuthorityShapedSelectorsAreNotLogicalResources(&quot;../outside.txt&quot;)" methodname="AmbientAuthorityShapedSelectorsAreNotLogicalResources" classname="Arkus.H1.Editor.Tests.H1HostPolicyTests" runstate="Runnable" seed="1041952306" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.001975" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1016" name="AmbientAuthorityShapedSelectorsAreNotLogicalResources(&quot;file:///tmp/outside.txt&quot;)" fullname="Arkus.H1.Editor.Tests.H1HostPolicyTests.AmbientAuthorityShapedSelectorsAreNotLogicalResources(&quot;file:///tmp/outside.txt&quot;)" methodname="AmbientAuthorityShapedSelectorsAreNotLogicalResources" classname="Arkus.H1.Editor.Tests.H1HostPolicyTests" runstate="Runnable" seed="27466167" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.000060" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1017" name="AmbientAuthorityShapedSelectorsAreNotLogicalResources(&quot;https://example.invalid/outside&quot;)" fullname="Arkus.H1.Editor.Tests.H1HostPolicyTests.AmbientAuthorityShapedSelectorsAreNotLogicalResources(&quot;https://example.invalid/outside&quot;)" methodname="AmbientAuthorityShapedSelectorsAreNotLogicalResources" classname="Arkus.H1.Editor.Tests.H1HostPolicyTests" runstate="Runnable" seed="579611125" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.000047" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1018" name="AmbientAuthorityShapedSelectorsAreNotLogicalResources(&quot;System.Diagnostics.Process&quot;)" fullname="Arkus.H1.Editor.Tests.H1HostPolicyTests.AmbientAuthorityShapedSelectorsAreNotLogicalResources(&quot;System.Diagnostics.Process&quot;)" methodname="AmbientAuthorityShapedSelectorsAreNotLogicalResources" classname="Arkus.H1.Editor.Tests.H1HostPolicyTests" runstate="Runnable" seed="2124858472" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.000043" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-case id="1014" name="BootstrappedAuthorityResolvesPotesResourceInsideReviewedManagedRoot" fullname="Arkus.H1.Editor.Tests.H1HostPolicyTests.BootstrappedAuthorityResolvesPotesResourceInsideReviewedManagedRoot" methodname="BootstrappedAuthorityResolvesPotesResourceInsideReviewedManagedRoot" classname="Arkus.H1.Editor.Tests.H1HostPolicyTests" runstate="Runnable" seed="372257217" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.000495" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1020" name="ExternalReversibleEffectStaysInsideManagedRootAndRestoresWorkspace" fullname="Arkus.H1.Editor.Tests.H1HostPolicyTests.ExternalReversibleEffectStaysInsideManagedRootAndRestoresWorkspace" methodname="ExternalReversibleEffectStaysInsideManagedRootAndRestoresWorkspace" classname="Arkus.H1.Editor.Tests.H1HostPolicyTests" runstate="Runnable" seed="300707130" result="Passed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.007804" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1021" name="H1ProjectCheckpointReconstructionTests" fullname="Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests" classname="Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.067084" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1024" name="Negative_PrepublicationFailureDoesNotPublishGeneratedCurrent" fullname="Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.Negative_PrepublicationFailureDoesNotPublishGeneratedCurrent" methodname="Negative_PrepublicationFailureDoesNotPublishGeneratedCurrent" classname="Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests" runstate="Runnable" seed="1962245567" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.025643" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  H1-10 proof plan is missing: C:\Juego2-ART01-S\Unity\ArkusUnity\H1-10-Reconstruction\plan.json
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.ReadRawPlan (System.String name, Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests+ProjectionPlan& plan) [0x0000c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectCheckpointReconstructionTests.cs:172
+at Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.Negative_PrepublicationFailureDoesNotPublishGeneratedCurrent () [0x00023] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectCheckpointReconstructionTests.cs:101
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1022" name="StageA_MaterializeCheckpointBaselineInFreshEditorProcess" fullname="Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.StageA_MaterializeCheckpointBaselineInFreshEditorProcess" methodname="StageA_MaterializeCheckpointBaselineInFreshEditorProcess" classname="Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests" runstate="Runnable" seed="1537219181" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.030358" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  H1-10 proof plan is missing: C:\Juego2-ART01-S\Unity\ArkusUnity\H1-10-Reconstruction\plan.json
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.ReadRawPlan (System.String name, Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests+ProjectionPlan& plan) [0x0000c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectCheckpointReconstructionTests.cs:172
+at Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.StageA_MaterializeCheckpointBaselineInFreshEditorProcess () [0x00023] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectCheckpointReconstructionTests.cs:29
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1023" name="StageB_CleanGeneratedOutputRebuildMatchesCheckpointInSecondEditorProcess" fullname="Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.StageB_CleanGeneratedOutputRebuildMatchesCheckpointInSecondEditorProcess" methodname="StageB_CleanGeneratedOutputRebuildMatchesCheckpointInSecondEditorProcess" classname="Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests" runstate="Runnable" seed="770756361" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.010534" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  H1-10 proof plan is missing: C:\Juego2-ART01-S\Unity\ArkusUnity\H1-10-Reconstruction\restored-plan.json
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.ReadRawPlan (System.String name, Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests+ProjectionPlan& plan) [0x0000c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectCheckpointReconstructionTests.cs:172
+at Arkus.H1.Editor.Tests.H1ProjectCheckpointReconstructionTests.StageB_CleanGeneratedOutputRebuildMatchesCheckpointInSecondEditorProcess () [0x0005f] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectCheckpointReconstructionTests.cs:61
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1025" name="H1ProjectionContentShapeTests" fullname="Arkus.H1.Editor.Tests.H1ProjectionContentShapeTests" classname="Arkus.H1.Editor.Tests.H1ProjectionContentShapeTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.002381" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1026" name="StreetCorner_BadMaterialReferenceAndIndependentHierarchyDefect_AggregateActionably" fullname="Arkus.H1.Editor.Tests.H1ProjectionContentShapeTests.StreetCorner_BadMaterialReferenceAndIndependentHierarchyDefect_AggregateActionably" methodname="StreetCorner_BadMaterialReferenceAndIndependentHierarchyDefect_AggregateActionably" classname="Arkus.H1.Editor.Tests.H1ProjectionContentShapeTests" runstate="Runnable" seed="1958460161" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.001904" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionContentShapeTests.StreetCorner_BadMaterialReferenceAndIndependentHierarchyDefect_AggregateActionably () [0x0006b] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionContentShapeTests.cs:29
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1027" name="H1ProjectionReconciliationComposedTests" fullname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests" classname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.061129" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1028" name="Stage1_MaterializeCanonicalPlan_EditEffectiveUnity_EmitPublicDriftReply" fullname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests.Stage1_MaterializeCanonicalPlan_EditEffectiveUnity_EmitPublicDriftReply" methodname="Stage1_MaterializeCanonicalPlan_EditEffectiveUnity_EmitPublicDriftReply" classname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests" runstate="Runnable" seed="192026270" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.028176" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  composed proof input is missing: C:\Juego2-ART01-S\Unity\ArkusUnity\H1-09-Composition\initial-plan.json
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests.ReadPlan (System.String fileName) [0x0000c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionReconciliationComposedTests.cs:90
+at Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests.Stage1_MaterializeCanonicalPlan_EditEffectiveUnity_EmitPublicDriftReply () [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionReconciliationComposedTests.cs:32
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1029" name="Stage2_RematerializeAppliedH0Plan_EmitFinalEffectiveReply" fullname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests.Stage2_RematerializeAppliedH0Plan_EmitFinalEffectiveReply" methodname="Stage2_RematerializeAppliedH0Plan_EmitFinalEffectiveReply" classname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests" runstate="Runnable" seed="880292114" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.030900" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  composed proof input is missing: C:\Juego2-ART01-S\Unity\ArkusUnity\H1-09-Composition\applied-plan.json
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests.ReadPlan (System.String fileName) [0x0000c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionReconciliationComposedTests.cs:90
+at Arkus.H1.Editor.Tests.H1ProjectionReconciliationComposedTests.Stage2_RematerializeAppliedH0Plan_EmitFinalEffectiveReply () [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionReconciliationComposedTests.cs:61
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1030" name="H1ProjectionReconciliationTests" fullname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationTests" classname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.030221" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1031" name="EffectiveScene_MixedManagedAndUnmanagedDrift_RemainsObservableAndRematerializationRestoresParity" fullname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationTests.EffectiveScene_MixedManagedAndUnmanagedDrift_RemainsObservableAndRematerializationRestoresParity" methodname="EffectiveScene_MixedManagedAndUnmanagedDrift_RemainsObservableAndRematerializationRestoresParity" classname="Arkus.H1.Editor.Tests.H1ProjectionReconciliationTests" runstate="Runnable" seed="1748989616" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:13Z" duration="0.029672" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  accepted material GUID must resolve in the mounted SourceSlice
+  Expected: not <empty>
+  But was:  <string.Empty>
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionReconciliationTests.AcceptedMaterial (System.String guid, System.Int64 localFileId) [0x00020] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionReconciliationTests.cs:280
+at Arkus.H1.Editor.Tests.H1ProjectionReconciliationTests.EffectiveScene_MixedManagedAndUnmanagedDrift_RemainsObservableAndRematerializationRestoresParity () [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionReconciliationTests.cs:39
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1032" name="H1ProjectionStructuralBoundaryTests" fullname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests" classname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:17Z" duration="3.135884" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1036" name="CurrentValidation_InvalidActiveManifest_IsStructuredExpectedInvalidity" fullname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.CurrentValidation_InvalidActiveManifest_IsStructuredExpectedInvalidity" methodname="CurrentValidation_InvalidActiveManifest_IsStructuredExpectedInvalidity" classname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests" runstate="Runnable" seed="1884421447" result="Failed" start-time="2026-09-27 12:14:13Z" end-time="2026-09-27 12:14:14Z" duration="0.742264" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: <empty>
+  But was:  "projection.catalogue-snapshot-stale"
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.CurrentValidation_InvalidActiveManifest_IsStructuredExpectedInvalidity () [0x00014] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionStructuralBoundaryTests.cs:60
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1038" name="CurrentValidation_MissingManagedGeneration_IsStructuredExpectedInvalidity" fullname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.CurrentValidation_MissingManagedGeneration_IsStructuredExpectedInvalidity" methodname="CurrentValidation_MissingManagedGeneration_IsStructuredExpectedInvalidity" classname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests" runstate="Runnable" seed="1951573546" result="Failed" start-time="2026-09-27 12:14:14Z" end-time="2026-09-27 12:14:15Z" duration="0.598775" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: <empty>
+  But was:  "projection.catalogue-snapshot-stale"
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.CurrentValidation_MissingManagedGeneration_IsStructuredExpectedInvalidity () [0x00015] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionStructuralBoundaryTests.cs:107
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1035" name="MaterializationStructuralPrecondition_CannotPassPublicPreflight" fullname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.MaterializationStructuralPrecondition_CannotPassPublicPreflight" classname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-27 12:14:15Z" end-time="2026-09-27 12:14:16Z" duration="1.196865" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <failure>
+                    <message><![CDATA[One or more child tests had errors]]></message>
+                  </failure>
+                  <test-case id="1033" name="MaterializationStructuralPrecondition_CannotPassPublicPreflight(False)" fullname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.MaterializationStructuralPrecondition_CannotPassPublicPreflight(False)" methodname="MaterializationStructuralPrecondition_CannotPassPublicPreflight" classname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests" runstate="Runnable" seed="1887199313" result="Failed" start-time="2026-09-27 12:14:15Z" end-time="2026-09-27 12:14:15Z" duration="0.594860" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  Expected string length 23 but was 35. Strings differ at index 11.
+  Expected: "projection.invalid-node"
+  But was:  "projection.catalogue-snapshot-stale"
+  ----------------------^
+]]></message>
+                      <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.AssertStructuredInvalid (Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests+ProjectionReply reply, System.String expectedCode) [0x00037] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionStructuralBoundaryTests.cs:124
+at Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.MaterializationStructuralPrecondition_CannotPassPublicPreflight (System.Boolean omitParent) [0x00053] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionStructuralBoundaryTests.cs:46
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                  <test-case id="1034" name="MaterializationStructuralPrecondition_CannotPassPublicPreflight(True)" fullname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.MaterializationStructuralPrecondition_CannotPassPublicPreflight(True)" methodname="MaterializationStructuralPrecondition_CannotPassPublicPreflight" classname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests" runstate="Runnable" seed="955118396" result="Failed" start-time="2026-09-27 12:14:15Z" end-time="2026-09-27 12:14:16Z" duration="0.601145" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  Expected string length 23 but was 35. Strings differ at index 11.
+  Expected: "projection.invalid-node"
+  But was:  "projection.catalogue-snapshot-stale"
+  ----------------------^
+]]></message>
+                      <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.AssertStructuredInvalid (Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests+ProjectionReply reply, System.String expectedCode) [0x00037] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionStructuralBoundaryTests.cs:124
+at Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.MaterializationStructuralPrecondition_CannotPassPublicPreflight (System.Boolean omitParent) [0x00053] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionStructuralBoundaryTests.cs:46
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                </test-suite>
+                <test-case id="1037" name="Materialize_InvalidActiveManifest_IsStructuredAndDoesNotStageOrPublish" fullname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.Materialize_InvalidActiveManifest_IsStructuredAndDoesNotStageOrPublish" methodname="Materialize_InvalidActiveManifest_IsStructuredAndDoesNotStageOrPublish" classname="Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests" runstate="Runnable" seed="744453226" result="Failed" start-time="2026-09-27 12:14:16Z" end-time="2026-09-27 12:14:17Z" duration="0.597163" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: <empty>
+  But was:  "projection.catalogue-snapshot-stale"
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionStructuralBoundaryTests.Materialize_InvalidActiveManifest_IsStructuredAndDoesNotStageOrPublish () [0x00014] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionStructuralBoundaryTests.cs:75
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1039" name="H1ProjectionValidationTests" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-09-27 12:14:17Z" end-time="2026-09-27 12:14:24Z" duration="7.204794" total="11" passed="5" failed="6" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1051" name="CurrentValidation_IsPublicVersionedAndPostMaterializationScoped" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.CurrentValidation_IsPublicVersionedAndPostMaterializationScoped" methodname="CurrentValidation_IsPublicVersionedAndPostMaterializationScoped" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="40210810" result="Failed" start-time="2026-09-27 12:14:17Z" end-time="2026-09-27 12:14:17Z" duration="0.601628" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: <empty>
+  But was:  "projection.catalogue-snapshot-stale"
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionValidationTests.CurrentValidation_IsPublicVersionedAndPostMaterializationScoped () [0x00017] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionValidationTests.cs:221
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1050" name="CurrentValidation_RejectsActiveManifestDigestDrift" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.CurrentValidation_RejectsActiveManifestDigestDrift" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-27 12:14:17Z" end-time="2026-09-27 12:14:18Z" duration="1.194720" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <failure>
+                    <message><![CDATA[One or more child tests had errors]]></message>
+                  </failure>
+                  <test-case id="1048" name="CurrentValidation_RejectsActiveManifestDigestDrift(&quot;graphDigest&quot;,&quot;projection.active-scene-drift&quot;)" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.CurrentValidation_RejectsActiveManifestDigestDrift(&quot;graphDigest&quot;,&quot;projection.active-scene-drift&quot;)" methodname="CurrentValidation_RejectsActiveManifestDigestDrift" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="550455986" result="Failed" start-time="2026-09-27 12:14:17Z" end-time="2026-09-27 12:14:18Z" duration="0.593705" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  Expected: <empty>
+  But was:  "projection.catalogue-snapshot-stale"
+]]></message>
+                      <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionValidationTests.CurrentValidation_RejectsActiveManifestDigestDrift (System.String field, System.String expectedCode) [0x0002b] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionValidationTests.cs:198
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                  <test-case id="1049" name="CurrentValidation_RejectsActiveManifestDigestDrift(&quot;realizationDigest&quot;,&quot;projection.active-prefab-drift&quot;)" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.CurrentValidation_RejectsActiveManifestDigestDrift(&quot;realizationDigest&quot;,&quot;projection.active-prefab-drift&quot;)" methodname="CurrentValidation_RejectsActiveManifestDigestDrift" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="469172993" result="Failed" start-time="2026-09-27 12:14:18Z" end-time="2026-09-27 12:14:18Z" duration="0.600250" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  Expected: <empty>
+  But was:  "projection.catalogue-snapshot-stale"
+]]></message>
+                      <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionValidationTests.CurrentValidation_RejectsActiveManifestDigestDrift (System.String field, System.String expectedCode) [0x0002b] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionValidationTests.cs:198
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                </test-suite>
+                <test-case id="1047" name="CurrentValidation_UsesActiveManifestIdentity_NotCallerProposedIdentity" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.CurrentValidation_UsesActiveManifestIdentity_NotCallerProposedIdentity" methodname="CurrentValidation_UsesActiveManifestIdentity_NotCallerProposedIdentity" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="788189513" result="Failed" start-time="2026-09-27 12:14:18Z" end-time="2026-09-27 12:14:19Z" duration="0.602254" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: <empty>
+  But was:  "projection.catalogue-snapshot-stale"
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionValidationTests.CurrentValidation_UsesActiveManifestIdentity_NotCallerProposedIdentity () [0x00017] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionValidationTests.cs:177
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1042" name="InvalidNodeShape_DoesNotSuppressIndependentHierarchyDiagnostic" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.InvalidNodeShape_DoesNotSuppressIndependentHierarchyDiagnostic" methodname="InvalidNodeShape_DoesNotSuppressIndependentHierarchyDiagnostic" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="483777657" result="Passed" start-time="2026-09-27 12:14:19Z" end-time="2026-09-27 12:14:20Z" duration="0.600906" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1044" name="InvalidRequestEnvelope_ReturnsStructuredDiagnostic_NotRawException" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.InvalidRequestEnvelope_ReturnsStructuredDiagnostic_NotRawException" methodname="InvalidRequestEnvelope_ReturnsStructuredDiagnostic_NotRawException" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="278692529" result="Passed" start-time="2026-09-27 12:14:20Z" end-time="2026-09-27 12:14:20Z" duration="0.027419" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1040" name="Inventory_IsFiniteUniqueVersionedAndDeterministicallyOrdered" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.Inventory_IsFiniteUniqueVersionedAndDeterministicallyOrdered" methodname="Inventory_IsFiniteUniqueVersionedAndDeterministicallyOrdered" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="778026894" result="Passed" start-time="2026-09-27 12:14:20Z" end-time="2026-09-27 12:14:20Z" duration="0.031981" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1046" name="NonFinitePostflightSample_FailsBeforePublication_AndKeepsPreviousGenerationActive" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.NonFinitePostflightSample_FailsBeforePublication_AndKeepsPreviousGenerationActive" methodname="NonFinitePostflightSample_FailsBeforePublication_AndKeepsPreviousGenerationActive" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="1867183580" result="Failed" start-time="2026-09-27 12:14:20Z" end-time="2026-09-27 12:14:20Z" duration="0.604122" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: <empty>
+  But was:  "projection.catalogue-snapshot-stale"
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionValidationTests.NonFinitePostflightSample_FailsBeforePublication_AndKeepsPreviousGenerationActive () [0x00017] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionValidationTests.cs:149
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1041" name="ProposedValidation_AggregatesIndependentDefectsDeterministically_WhenInputOrderReverses" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.ProposedValidation_AggregatesIndependentDefectsDeterministically_WhenInputOrderReverses" methodname="ProposedValidation_AggregatesIndependentDefectsDeterministically_WhenInputOrderReverses" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="421821719" result="Passed" start-time="2026-09-27 12:14:20Z" end-time="2026-09-27 12:14:21Z" duration="1.174705" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1043" name="ProposedValidation_ComposesCanonicalSourceIdentityCheck_ForIncompleteLocatorParts" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.ProposedValidation_ComposesCanonicalSourceIdentityCheck_ForIncompleteLocatorParts" methodname="ProposedValidation_ComposesCanonicalSourceIdentityCheck_ForIncompleteLocatorParts" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="2070146437" result="Passed" start-time="2026-09-27 12:14:21Z" end-time="2026-09-27 12:14:23Z" duration="1.758658" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1045" name="UnsupportedComponentSchema_ReturnsStructuredDiagnostic_NotRawUnityException" fullname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests.UnsupportedComponentSchema_ReturnsStructuredDiagnostic_NotRawUnityException" methodname="UnsupportedComponentSchema_ReturnsStructuredDiagnostic_NotRawUnityException" classname="Arkus.H1.Editor.Tests.H1ProjectionValidationTests" runstate="Runnable" seed="419239070" result="Failed" start-time="2026-09-27 12:14:23Z" end-time="2026-09-27 12:14:24Z" duration="0.605031" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected string length 39 but was 35. Strings differ at index 12.
+  Expected: "projection.component-schema-unsupported"
+  But was:  "projection.catalogue-snapshot-stale"
+  -----------------------^
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1ProjectionValidationTests.UnsupportedComponentSchema_ReturnsStructuredDiagnostic_NotRawUnityException () [0x0006f] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1ProjectionValidationTests.cs:137
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1052" name="H1RepresentativeSliceTests" fullname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests" classname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-27 12:14:24Z" end-time="2026-09-27 12:14:25Z" duration="1.186434" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1053" name="Stage0_EffectiveImportAndCatalogueMatchTheAdoptedSource" fullname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.Stage0_EffectiveImportAndCatalogueMatchTheAdoptedSource" methodname="Stage0_EffectiveImportAndCatalogueMatchTheAdoptedSource" classname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests" runstate="Runnable" seed="895322129" result="Failed" start-time="2026-09-27 12:14:24Z" end-time="2026-09-27 12:14:24Z" duration="0.616485" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  effective catalogue inventory differs from the committed snapshot
+Assets/Arkus/H1/SourceSlice/Corner_Exterior_Wood.fbx: GUID  != c9549b3b14121b84baccac5394379647
+Assets/Arkus/H1/SourceSlice/Corner_Exterior_Wood.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Wall_Plaster_Straight.fbx: GUID  != e9c7f17150cfb7741abda8572d7013f3
+Assets/Arkus/H1/SourceSlice/Wall_Plaster_Straight.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Wall_Plaster_Door_Flat.fbx: GUID  != 7ffce3dada5ffee4f940a797b9c78aaf
+Assets/Arkus/H1/SourceSlice/Wall_Plaster_Door_Flat.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Door_1_Flat.fbx: GUID  != b008cd8053424984380bebca9426d8ae
+Assets/Arkus/H1/SourceSlice/Door_1_Flat.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Window_Wide_Flat1.fbx: GUID  != 16396acda011f6c42b03303d8f57263c
+Assets/Arkus/H1/SourceSlice/Window_Wide_Flat1.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/WindowShutters_Wide_Flat_Open.fbx: GUID  != 8b575e2679b732c409d5c7741eb57d62
+Assets/Arkus/H1/SourceSlice/WindowShutters_Wide_Flat_Open.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Roof_RoundTiles_4x4.fbx: GUID  != 05480a035831dec43bbcf445f9f8da56
+Assets/Arkus/H1/SourceSlice/Roof_RoundTiles_4x4.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Prop_Chimney.fbx: GUID  != f737f5d1d3f1c7c4f9b41c4fc741eb81
+Assets/Arkus/H1/SourceSlice/Prop_Chimney.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Prop_Crate.fbx: GUID  != c8380c71919f1694b9e99f69d20dd066
+Assets/Arkus/H1/SourceSlice/Prop_Crate.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Prop_WoodenFence_Single.fbx: GUID  != 1bf65997b403411488eef5d3cf692dc3
+Assets/Arkus/H1/SourceSlice/Prop_WoodenFence_Single.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Prop_Wagon.fbx: GUID  != 612d31ec60a92474d8c28be827233dfe
+Assets/Arkus/H1/SourceSlice/Prop_Wagon.fbx: no imported model prefab
+Assets/Arkus/H1/SourceSlice/Prop_Vine1.fbx: GUID  != 9ded629f09f94a2449f219d511d3d9f1
+Assets/Arkus/H1/SourceSlice/Prop_Vine1.fbx: no imported model prefab
+no shared kit material was observed
+  Expected: <empty>
+  But was:  < "effective catalogue inventory differs from the committed snapshot", "Assets/Arkus/H1/SourceSlice/Corner_Exterior_Wood.fbx: GUID  != c9549b3b14121b84baccac5394379647", "Assets/Arkus/H1/SourceSlice/Corner_Exterior_Wood.fbx: no imported model prefab", "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Straight.fbx: GUID  != e9c7f17150cfb7741abda8572d7013f3", "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Straight.fbx: no imported model prefab", "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Door_Flat.fbx: GUID  != 7ffce3dada5ffee4f940a797b9c78aaf", "Assets/Arkus/H1/SourceSlice/Wall_Plaster_Door_Flat.fbx: no imported model prefab", "Assets/Arkus/H1/SourceSlice/Door_1_Flat.fbx: GUID  != b008cd8053424984380bebca9426d8ae", "Assets/Arkus/H1/SourceSlice/Door_1_Flat.fbx: no imported model prefab", "Assets/Arkus/H1/SourceSlice/Window_Wide_Flat1.fbx: GUID  != 16396acda011f6c42b03303d8f57263c"... >
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.Stage0_EffectiveImportAndCatalogueMatchTheAdoptedSource () [0x01156] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:195
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1054" name="StageA_MaterializeSaveReloadAndInspectTheStreetCorner" fullname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.StageA_MaterializeSaveReloadAndInspectTheStreetCorner" methodname="StageA_MaterializeSaveReloadAndInspectTheStreetCorner" classname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests" runstate="Runnable" seed="1936169944" result="Failed" start-time="2026-09-27 12:14:24Z" end-time="2026-09-27 12:14:24Z" duration="0.002925" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  H1-11 proof plan is missing: C:\Juego2-ART01-S\Unity\ArkusUnity\H1-11-RealAssetSlice\plan.json
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.ReadRawPlanText (System.String name) [0x0000c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:730
+at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.ReadRawPlan (System.String name, Arkus.H1.Editor.Tests.H1RepresentativeSliceTests+ProjectionPlan& plan) [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:736
+at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.StageA_MaterializeSaveReloadAndInspectTheStreetCorner () [0x00023] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:203
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1055" name="StageA2_SupplementaryRenderedCaptureIsNotTheParityOracle" fullname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.StageA2_SupplementaryRenderedCaptureIsNotTheParityOracle" methodname="StageA2_SupplementaryRenderedCaptureIsNotTheParityOracle" classname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests" runstate="Runnable" seed="214962483" result="Failed" start-time="2026-09-27 12:14:24Z" end-time="2026-09-27 12:14:25Z" duration="0.561556" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  H1-11 proof plan is missing: C:\Juego2-ART01-S\Unity\ArkusUnity\H1-11-RealAssetSlice\plan.json
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.ReadRawPlanText (System.String name) [0x0000c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:730
+at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.ReadRawPlan (System.String name, Arkus.H1.Editor.Tests.H1RepresentativeSliceTests+ProjectionPlan& plan) [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:736
+at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.StageA2_SupplementaryRenderedCaptureIsNotTheParityOracle () [0x00024] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:236
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1056" name="StageB_CleanGeneratedOutputRebuildOfTheRealSliceInFreshEditor" fullname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.StageB_CleanGeneratedOutputRebuildOfTheRealSliceInFreshEditor" methodname="StageB_CleanGeneratedOutputRebuildOfTheRealSliceInFreshEditor" classname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests" runstate="Runnable" seed="2090561835" result="Failed" start-time="2026-09-27 12:14:25Z" end-time="2026-09-27 12:14:25Z" duration="0.002850" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  H1-11 proof plan is missing: C:\Juego2-ART01-S\Unity\ArkusUnity\H1-11-RealAssetSlice\restored-plan.json
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.ReadRawPlanText (System.String name) [0x0000c] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:730
+at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.ReadRawPlan (System.String name, Arkus.H1.Editor.Tests.H1RepresentativeSliceTests+ProjectionPlan& plan) [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:736
+at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.StageB_CleanGeneratedOutputRebuildOfTheRealSliceInFreshEditor () [0x0005f] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:334
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1057" name="StageC_RemovedOrReplacedSelectedAssetYieldsNamedDiagnosticsNotSubstitution" fullname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.StageC_RemovedOrReplacedSelectedAssetYieldsNamedDiagnosticsNotSubstitution" methodname="StageC_RemovedOrReplacedSelectedAssetYieldsNamedDiagnosticsNotSubstitution" classname="Arkus.H1.Editor.Tests.H1RepresentativeSliceTests" runstate="Runnable" seed="1230019257" result="Failed" start-time="2026-09-27 12:14:25Z" end-time="2026-09-27 12:14:25Z" duration="0.001220" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  a published generation is required
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Arkus.H1.Editor.Tests.H1RepresentativeSliceTests.StageC_RemovedOrReplacedSelectedAssetYieldsNamedDiagnosticsNotSubstitution () [0x00000] in C:\Juego2-ART01-S\Unity\ArkusUnity\Assets\Arkus\H1\Tests\Editor\H1RepresentativeSliceTests.cs:357
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: C:/Juego2-ART01-S-logs/h1_ART01-S.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
