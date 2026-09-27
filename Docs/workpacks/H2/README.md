@@ -3,7 +3,7 @@
 Status: **PROPOSED PLAN / NOT STARTED**  
 Class: PRODUCT PHASE  
 Execution default: `PRODUCT_CHECKPOINT`  
-Plan date: 2026-09-25
+Plan date: 2026-09-25; H2F predecessor amendment: 2026-09-27
 
 ## 1. Phase claim
 
@@ -21,6 +21,7 @@ H2 consumes without reopening:
 
 - accepted H0 canonical authoring/validation/replay/public-surface guarantees;
 - accepted H1 Unity materialization/observation/reconciliation boundary and `WP-H1-GATE`;
+- accepted `WP-H2F-GATE` frozen product/toolchain baseline: render pipeline, admitted dependencies/content-source classes, worldbuilding realization profiles, player/camera/input/navigation path, character-animation/retarget baseline and reproducible provisioning;
 - accepted CITY geography/programme/seed and the final `WP-CITY-07` keeper slice;
 - accepted ART-00 visual direction;
 - accepted ART-01 production kit, assembly grammar, dimensional profile and `KEEPER_READY` boundary;
@@ -28,6 +29,8 @@ H2 consumes without reopening:
 - accepted DW/CTX evidence where it improves public discovery/context, without turning fresh external-repository packaging into an H2 visual/product blocker.
 
 `PROXY_VISUAL` or `COVERAGE_BLOCKED` may be truthful execution results, but they do not satisfy a required H2 keeper-readiness claim.
+
+H2 does not reopen H2F ecosystem selection merely because a later Worker prefers another plugin. If effective keeper evidence exposes a causal foundation blocker, the change is routed through an explicit H2F amendment/adoption record. This freeze applies to material tooling/dependency choices, not to ordinary content additions inside an already admitted ART/source class.
 
 ## 3. Representative retained benchmark
 
@@ -53,6 +56,7 @@ H2-GATE may PASS only when all of the following are true:
 8. **AI-native world authoring** — a fresh capable author can use accepted Arkus public surfaces to inspect the bounded world, discover legal composition/semantic options, make one localized semantic improvement, materialize/reconcile it and prove unrelated accepted content was not silently regenerated or damaged.
 9. **Reuse/economics proof** — the former CITY-08 claim is discharged here: at least one reviewed composition/relation is reused or varied with observably lower authoring effort than first assembly while preserving constraints.
 10. **Truthful failure** — unavailable required coverage, invalid connections or unsupported edits fail visibly instead of being improvised into final-looking success.
+11. **Foundation stability** — the keeper result consumes the accepted H2F baseline or explicit reviewed amendments; H2 does not achieve visual success by silently replacing foundation tools after retained content was authored.
 
 A hero screenshot alone cannot satisfy H2-GATE.
 
@@ -80,21 +84,25 @@ Those remain later consumer problems unless a reviewed amendment proves a smalle
 ## 6. H2 workpack DAG
 
 ```text
-accepted H2 plan
-      + WP-H1-GATE + ART-01 ----------------------> H2-01 world authoring
-      |
-      + WP-H1-GATE + CITY-07 --------------------> H2-02 playable shell
-                                                      ↓
-                                                   H2-03 character presentation
-                                                      ↓
-                                                   ART-02 visual closure
-                                                      ↓
-H2-01 -----------------------------------------------+
-                                                     ↓
-                                                  H2-GATE
+WP-H1-GATE + ART-01
+          ↓
+      WP-H2F-GATE
+        ↙       ↘
+ H2-01 start   CITY-07 keeper realization
+        \       ↙
+         H2-01 final
+             + CITY-07 -> H2-02 playable shell
+                              ↓
+                           H2-03 character presentation
+                              ↓
+                           ART-02 visual closure
+                              ↓
+H2-01 --------------------------------+
+                                      ↓
+                                   H2-GATE
 ```
 
-`H2-01` may proceed in parallel with late CITY keeper work only to the extent its own fixtures do not pretend CITY-07 is already accepted. Its final acceptance must consume the accepted keeper constraints it claims to support.
+H2F is a pre-H2 product/toolchain freeze, not a replacement for H2 product proof. `H2-01` may begin bounded semantic-authoring work after H2F-GATE while CITY-07 is still closing, but its final acceptance must consume the accepted CITY-07 keeper constraints/slice. `H2-02` begins only after CITY-07 and H2F-GATE are accepted.
 
 ## 7. Workpacks
 
@@ -102,13 +110,13 @@ H2-01 -----------------------------------------------+
 
 Prove typed world concepts above raw transforms: route/street, site, building/shell, facade/host/opening, threshold/portal, interior, landmark/edge, activity/wait node where justified, shared metric/elevation relations and approved composition identity.
 
-A fresh author must be able to inspect a bounded brief, discover legal assets/compositions, create or alter a local plan, materialize it through H1, inspect the result and make one bounded semantic correction without full-scene regeneration.
+A fresh author must be able to inspect a bounded brief, discover legal assets/compositions, create or alter a local plan, materialize it through H1 using the H2F-admitted realization baseline, inspect the result and make one bounded semantic correction without full-scene regeneration.
 
 This is the authoring capability claim, not visual polish.
 
 ### `WP-H2-02 — Keeper playable shell`
 
-On the accepted CITY-07 slice, provide the retained third-person player shell: movement, camera, collision/traversal, basic navigation support and bounded interaction/transition sufficient to walk the representative chain and enter/use the Bar public interior.
+On the accepted CITY-07 slice, provide the retained third-person player shell using the H2F-frozen player/camera/input/navigation baseline: movement, camera, collision/traversal, basic navigation support and bounded interaction/transition sufficient to walk the representative chain and enter/use the Bar public interior.
 
 This WP does not implement Living World semantics.
 
@@ -136,16 +144,16 @@ ART-02 uses `PRODUCT_CHECKPOINT`; owner visual approval is part of its acceptanc
 
 ### `WP-H2-GATE — Keeper visual + AI world-authoring benchmark`
 
-Compose H2-01/02/03 + ART-02 on the retained CITY-07 benchmark.
+Compose H2-01/02/03 + ART-02 on the retained CITY-07 benchmark while consuming the accepted H2F foundation baseline.
 
 Required fresh-author trial:
 
 ```text
-inspect accepted world + visual/assembly constraints
+inspect accepted world + visual/assembly + H2F realization constraints
 -> discover legal semantic/composition options
 -> make one bounded local improvement
 -> plan/validate/apply through accepted Arkus authority
--> materialize in Unity
+-> materialize in Unity through the admitted realization path
 -> inspect/play from third-person scale with representative occupants
 -> correct one observed local issue if needed
 -> reconcile/rematerialize
@@ -185,4 +193,4 @@ H2 consumes accepted DW/CTX public/context evidence but prioritizes proving Jueg
 
 ## 11. What H2 success looks like
 
-A short capture of the retained slice should no longer need the explanation “ignore the cubes/assets/proxies; imagine the final game.” The environment, characters, proportions, lighting and density should already communicate the intended game. What is missing after H2 should primarily be **behavioural depth and content breadth**, not the answer to what Juego2 looks like.
+A short capture of the retained slice should no longer need the explanation “ignore the cubes/assets/proxies; imagine the final game.” The environment, characters, proportions, lighting and density should already communicate the intended game. What is missing after H2 should primarily be **behavioural depth and content breadth**, not the answer to what Juego2 looks like — and not a still-open choice of which foundational Unity tools the project should have used before keeper construction began.
