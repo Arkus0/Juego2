@@ -113,15 +113,17 @@ namespace Juego2.H2F01.Editor
             // table in front (ART Source() placement rule) and a contact target on its top
             var tablePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Arkus/ART/External/Props/Models/Table_Large.fbx");
             var tableHolder = new GameObject("table_holder").transform;
-            tableHolder.position = new Vector3(-3, 0, 0.75f);
+            tableHolder.position = new Vector3(-3, 0, 0.62f);
             var table = (GameObject)PrefabUtility.InstantiatePrefab(tablePrefab, tableHolder);
             table.transform.localRotation = tablePrefab.transform.localRotation; table.transform.localScale = tablePrefab.transform.localScale;
             H2F01HumanSpike.RemapConverted(table, "PropWood");
             var tb = table.GetComponentsInChildren<Renderer>().Select(r => r.bounds).Aggregate((a, b) => { a.Encapsulate(b); return a; });
             var target = new GameObject("ik_target").transform;
             var animator = ik.GetComponentInChildren<Animator>();
-            var handBind = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
-            target.position = new Vector3(handBind.x - 0.05f, tb.max.y + 0.03f, tb.min.z + 0.18f);
+            // reachable contact: on the table top, ~0.45 m forward of the right shoulder (arm ~0.6 m)
+            var shoulder = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
+            // bar-counter contact height (~1.05 m) inside arm reach (~0.55 m): the Bar F01 case, not a table stretch
+            target.position = new Vector3(shoulder.x, shoulder.y - 0.33f, shoulder.z + 0.34f);
             target.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
             var rigGo = new GameObject("H2F01_Rig"); rigGo.transform.SetParent(animator.transform, false);
             var rig = rigGo.AddComponent<Rig>();

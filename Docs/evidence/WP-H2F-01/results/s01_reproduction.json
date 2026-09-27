@@ -1,0 +1,8 @@
+{
+    "unityVersion": "6000.3.24f1",
+    "expectedDigest": "a7f8534f33a46a189c5afb726125b01b6ab0eeba5907cbc3ba4aaafb8e30601e",
+    "actualDigest": "a7f8534f33a46a189c5afb726125b01b6ab0eeba5907cbc3ba4aaafb8e30601e",
+    "auditSummary": "{\n    \"schema\": \"juego2.art01.structural-audit@1\",\n    \"unityVersion\": \"6000.3.24f1\",\n    \"scene\": \"Assets/Arkus/ART/Art01Benchmark.unity\",\n    \"rendererIndependence\": \"Geometry-only: temporary audit-layer MeshColliders on every MeshFilter; no material, shader, light, fog or pixel is read.\",\n    \"manifestSha256\": \"217d89fa64f25379abc69e8fc7e373e8601a8ea10cf8c239c543a347da893ff8\",\n    \"structuralDi",
+    "rows": 360,
+    "digestMatch": true
+}

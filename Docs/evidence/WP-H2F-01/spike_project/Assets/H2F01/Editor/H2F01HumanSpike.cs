@@ -43,10 +43,11 @@ namespace Juego2.H2F01.Editor
                 overrideId ?? (n.Contains("Regular_Male") || n.Contains("Skin_Regular_Male_Light") ? "Skin"
                 : n.Contains("Eye") ? "Eye" : n.Contains("Hair") ? "Hair" : n.Contains("Cloth_D8D2C4") ? "Shirt"
                 : n.Contains("Cloth_2E4A4E") ? "Coat" : n.Contains("Cloth_3A3530") ? "Trousers" : n.Contains("Cloth_4A3222") ? "Shoes"
-                : n.Contains("Trim_Furniture") ? "PropWood" : "PropOther");
+                : n.Contains("Trim_Furniture") ? "PropWood" : null);
+            // Unknown (e.g. third-party runtime) materials are left untouched and remain visible to the shader audit.
             foreach (var r in go.GetComponentsInChildren<Renderer>(true))
-                r.sharedMaterials = r.sharedMaterials.Select(m => AssetDatabase.LoadAssetAtPath<Material>($"Assets/Arkus/ART/Materials/{Id(m.name)}.mat")
-                    ?? throw new Exception("H2F01_CONVERTED_MATERIAL_MISSING " + Id(m.name))).ToArray();
+                r.sharedMaterials = r.sharedMaterials.Select(m => m == null || Id(m.name) == null ? m
+                    : AssetDatabase.LoadAssetAtPath<Material>($"Assets/Arkus/ART/Materials/{Id(m.name)}.mat") ?? m).ToArray();
         }
 
         public static void Poses()

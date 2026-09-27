@@ -1,0 +1,22 @@
+{
+    "material": "MI_Plaster",
+    "shader": "Shader Graphs/M_Plaster",
+    "supported": true,
+    "textures": [
+        "_Brick_Texture=T_Brick_BaseColor",
+        "_Bottom_Wear_Texture=none",
+        "_Top_Wear_Texture=none",
+        "_Mid_Wear_Texture=none",
+        "_SampleTexture2D_04e3481c749e48b090b7f5473f0bf75e_Texture_1_Texture2D=T_Plaster_BaseColor",
+        "_SampleTexture2D_7e047ac4f50e4002bc332cf9f3d9ba66_Texture_1_Texture2D=T_TopWear",
+        "_SampleTexture2D_68539aa9ca64429ca74dd5eecf8041b4_Texture_1_Texture2D=none",
+        "_SampleTexture2D_03ef88c522374d63881ef010fc5f8213_Texture_1_Texture2D=T_BottomWear",
+        "_SampleTexture2D_a74e37fda9cf407ba532944cb56f932c_Texture_1_Texture2D=T_Plaster_Normal",
+        "_SampleTexture2D_949451e0e3b548b9b60b2e8c7b422c0d_Texture_1_Texture2D=T_Brick_Normal",
+        "_SampleTexture2D_1bdfdbd3baa44c6d857d7a91cacfc558_Texture_1_Texture2D=T_Plaster_ORM",
+        "_SampleTexture2D_d330ae265a06445da65787e928385aa1_Texture_1_Texture2D=T_Brick_Roughness",
+        "unity_Lightmaps=none",
+        "unity_LightmapsInd=none",
+        "unity_ShadowMasks=none"
+    ]
+}

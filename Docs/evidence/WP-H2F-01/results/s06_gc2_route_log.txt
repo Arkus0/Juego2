@@ -1,0 +1,3 @@
+gc2 path=PathComplete corners=3
+gc2 arrived frame=1215 t=40,5s
+gc2 arrived=True final_distance=0,42 camera_clip_frames=0 occluded_frames=25 jerk_frames(>12deg)=0 max_jerk_deg=0,0 stalls=0 min_camera_clearance=-1,000 frames_captured=28

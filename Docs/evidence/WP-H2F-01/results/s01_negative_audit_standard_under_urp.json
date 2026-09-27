@@ -1,0 +1,38 @@
+{
+    "pipeline": "UniversalRenderPipelineAsset",
+    "bindings": 565,
+    "nullBindings": 0,
+    "materials": 26,
+    "shaders": [
+        "GUI/Text Shader=1",
+        "Standard=25"
+    ],
+    "failures": [
+        "WoodDark: Standard",
+        "Stone: Standard",
+        "Plaster: Standard",
+        "StoneTrim: Standard",
+        "ShutterGreen: Standard",
+        "StoneShadow: Standard",
+        "PropWood: Standard",
+        "Glass: Standard",
+        "TileWet: Standard",
+        "Leaves: Standard",
+        "Flowers: Standard",
+        "Iron: Standard",
+        "PropMetal: Standard",
+        "Bark: Standard",
+        "GrassGround: Standard",
+        "Cobble: Standard",
+        "Water: Standard",
+        "Rock: Standard",
+        "Shoes: Standard",
+        "Trousers: Standard",
+        "Shirt: Standard",
+        "Hair: Standard",
+        "Skin: Standard",
+        "Coat: Standard",
+        "Eye: Standard"
+    ],
+    "green": false
+}

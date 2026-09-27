@@ -21,6 +21,12 @@ namespace Juego2.H2F01.Gc2
     {
         public static void S06Gc2()
         {
+            try { Build(); }
+            catch (System.Exception e) { Debug.LogError("H2F01_GC2_BUILD_FAILED " + e); EditorApplication.Exit(1); }
+        }
+
+        static void Build()
+        {
             H2F01PlayBuilder.Folder();
             H2F01WorldSpike.ConfigureAgent();
             H2F01Common.OpenArtScene();
@@ -44,7 +50,11 @@ namespace Juego2.H2F01.Gc2
             player.transform.position = new Vector3(0, startY + character.Motion.Height * 0.5f + 0.05f, -30);
             var citizen = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx");
             var rtc = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/Plugins/GameCreator/Packages/Core/Runtime/Characters/Assets/Controllers/CompleteLocomotion.controller");
+            // GC2's ChangeModel calls Destroy() (runtime-only); in edit mode the old mannequin would survive and hide
+            // the new model, so remove it explicitly first.
+            if (character.Animim.Animator != null) Object.DestroyImmediate(character.Animim.Animator.gameObject);
             character.ChangeModel(citizen, new Character.ChangeOptions { controller = rtc, offset = Vector3.zero });
+            character.Motion.LinearSpeed = 1.45f; // civilian walk, same as the minimal composition
             H2F01HumanSpike.RemapConverted(character.Animim.Mannequin.gameObject, null);
             foreach (var t in player.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = 2;
 
@@ -63,6 +73,8 @@ namespace Juego2.H2F01.Gc2
             align.GetType().GetField("m_AutoAlign", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(align, true);
             align.GetType().GetField("m_Delay", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(align, 0.5f);
             align.GetType().GetField("m_SmoothTime", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(align, 1.0f);
+            var radius = typeof(GameCreator.Runtime.Common.GetDecimalDecimal).GetMethod("Create", new[] { typeof(float) }).Invoke(null, new object[] { 3.0f });
+            system.GetType().GetField("m_Radius", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(system, radius);
             var so = new SerializedObject(shot);
             so.FindProperty("m_ShotType").managedReferenceValue = third;
             so.ApplyModifiedPropertiesWithoutUndo();

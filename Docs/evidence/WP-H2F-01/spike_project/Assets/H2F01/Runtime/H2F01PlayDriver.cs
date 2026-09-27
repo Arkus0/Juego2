@@ -96,6 +96,13 @@ namespace Juego2.H2F01
                 }
                 lastL = l; lastR = r;
                 if (f == 60) Capture(cam, "s07_motion_t2s");
+                if (f == 70)
+                {
+                    // contact target from the *animated* shoulder (bind-pose shoulder differs under Idle_Loop)
+                    var sh = ik.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
+                    ikTarget.position = sh + ik.transform.forward * 0.30f + Vector3.down * 0.28f + ik.transform.right * 0.05f;
+                    Note($"ik_target_from_animated_shoulder distance={Vector3.Distance(sh, ikTarget.position):F3}");
+                }
                 if (f == 75)
                 {
                     float d0 = Vector3.Distance(ik.GetBoneTransform(HumanBodyBones.RightHand).position, ikTarget.position);

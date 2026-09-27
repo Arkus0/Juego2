@@ -1,0 +1,10 @@
+Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx: Hips=root, Spine=spine_01, Chest=spine_02, UpperChest=spine_03, Neck=neck_01, Head=Head, LeftUpperLeg=thigh_l, LeftFoot=foot_l, LeftToes=ball_l, LeftHand=hand_l
+  -> applied; avatar valid=True human=True
+Assets/Arkus/ART/External/UAL/UAL1.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03, Neck=neck_01, Head=Head, LeftUpperLeg=thigh_l, LeftFoot=foot_l, LeftToes=ball_l, LeftHand=hand_l
+  -> applied; avatar valid=True human=True
+Assets/H2F01Inputs/Animation/UAL1_RM.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03, Neck=neck_01, Head=Head, LeftUpperLeg=thigh_l, LeftFoot=foot_l, LeftToes=ball_l, LeftHand=hand_l
+  -> applied; avatar valid=True human=True
+Assets/H2F01Inputs/Animation/UAL2.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03, Neck=neck_01, Head=Head, LeftUpperLeg=thigh_l, LeftFoot=foot_l, LeftToes=ball_l, LeftHand=hand_l
+  -> applied; avatar valid=True human=True
+Assets/H2F01Inputs/Animation/UAL2_RM.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03, Neck=neck_01, Head=Head, LeftUpperLeg=thigh_l, LeftFoot=foot_l, LeftToes=ball_l, LeftHand=hand_l
+  -> applied; avatar valid=True human=True

@@ -1,0 +1,58 @@
+candidate,capability_categories,h2f00_disposition,h2f00_spike,final_disposition,evidence,rationale
+Current H1 Built-in render baseline,01|02|03,SPIKE_REQUIRED,S01,REJECT,S01: results/s01_audit_builtin.json,Superseded by URP; Built-in cannot host the retained URP presentation. H1 fixture evidence stays valid for its own claim.
+URP + Shader Graph,01|02|03|04|05|19,SPIKE_REQUIRED,S01,ADOPT_NOW,"S01: results/s01_audit_urpA.json, s01_audit_urpC.json, s01_converter.json",URP 17.3.0 (6000.3 core) renders the representative ART/Quaternius route with 0 unsupported shaders; conversion must use the public MaterialUpgrader path or explicit URP material generation. Shader Graph comes with URP; project-owned HLSL shaders are allowed.
+HDRP pipeline,01|02|03|04|05,REJECT,no,REJECT,H2F-00,No visual need; complexity/platform cost. Unchanged.
+Unity lightmaps/probes/APV/shadows,02,SPIKE_REQUIRED,S01,ADOPT_NOW,S01: captures/owner/S01_render.png,Native realtime soft-shadow key + trilight ambient + reflection probes is the foundation lighting; baked lightmaps/APV are not part of the frozen foundation and may be introduced by a measured CITY-07 lighting need without a new dependency.
+URP Volumes/SSAO/Decals,03|04,SPIKE_REQUIRED,S01,ADOPT_NOW,S01: captures/negative/s01_decal_probe_bleeds_onto_walls.png,"Native Volume (neutral tonemapping/colour/white balance), SSAO and Decal renderer features work; decals require rendering layers to stop bleeding onto walls."
+Poly Haven HDRI/texture inputs,03|04|08|09,AVAILABLE_ASSET,S04,DEFER,S01/S04: not needed,The project-generated overcast sky and admitted ART/Quaternius textures covered S01/S04; individual CC0 assets can still enter later through the ART admission process. No download was performed.
+ambientCG texture inputs,03|04|08|09,DEFER,no,DEFER,H2F-00,No demonstrated gap. Unchanged.
+Fixed sky/fog/light presets,04,SPIKE_REQUIRED,S01,ADOPT_NOW,S01: captures/owner/S01_render.png,Native Skybox/Panoramic with a project-generated overcast gradient + exp2 fog + Volume preset; no weather suite.
+Enviro 3 sky and weather,04,DEFER,no,DEFER,H2F-00,No dynamic-weather requirement; paid. Unchanged.
+URP mesh + Shader Graph water,05,SPIKE_REQUIRED,S03,ADOPT_NOW,S03: results/s03_result.json,"Selected as a project-owned dependency-free URP water shader (depth tint, shoreline foam, flow ripples, fresnel); requires the URP depth texture. Shader Graph authoring optional."
+Stylized Water 3,05,DEFER,no,DEFER,S03,Free route has no critical gap; not purchased.
+Unity Terrain,06|08|24,SPIKE_REQUIRED,S02|S04,ADOPT_NOW,"S02/S04: results/s02_result.json, s04_result.json","Scoped to scenic periphery/banks: NavMeshModifier Not Walkable, flush seams (0.006 m); street network/junctions/edges stay authored meshes. Terrain trees need root-baked URP derivatives; terrain detail meshes unresolved (residual)."
+Terrain Tools,06|08|24,SPIKE_REQUIRED,S02|S04,DEFER,S02/S04,"Manual sculpting brushes add no value to deterministic, authored/derived heights; optional editor helper later."
+Unity Splines + authored profiles,07|24,SPIKE_REQUIRED,S02,ADOPT_NOW,S02: results/s02_result.json,"Splines 2.9.1 as centreline realization host + project-owned profile extrusion and junction generator (widths 2.795/5.490 m, junction 0 holes) + SplineInstantiate for repeated modules (generated, unserialized instances)."
+EasyRoads3D Pro v3,07|24,DEFER,no,DEFER,S02,The critical junction case was solved natively with a small project-owned generator; no large measured saving; paid.
+Gaia Pro VS,06|08|24,DEFER,no,DEFER,S02/S04,Would compete with CITY/ART authority; no need. Unchanged.
+Existing Medieval Village MegaKit Source,07|09|10|12,AVAILABLE_ASSET,S05,AVAILABLE_ASSET,S01/S02/S05,"Admitted Source content (models, fences, stairs, borders). Its URP Shader Graph materials are valid only on unmodified Source modules, not on ART-derived meshes."
+Blender source-asset/DCC,09|10|12,SPIKE_REQUIRED,S05|S07,ADOPT_NOW,S07: results/s07_avatar_map_*.txt,External DCC for ART derivatives; derivative export must carry an explicit Humanoid mapping (auto-mapping picked Hips=root on the Blender-derived body).
+ProBuilder bounded mesh editing,06|09|24,SPIKE_REQUIRED,S02|S05,REDUNDANT,S02: results/s02_result.json,Bounded shapes work but stripping to plain meshes uses an internal-only API; ART code-generated derivatives + Blender already cover transition/derivative geometry.
+Fake interior via authored Shader Graph/parallax,09,SPIKE_REQUIRED,S05,ADOPT_NOW,S05: results/s05_result.json,Project-owned interior-mapping material for NON-ENTERABLE windows only (never on enterable openings); palette tuning residual to ART.
+Unity CharacterController + basic controller,11,SPIKE_REQUIRED,S06,ADOPT_NOW,S06: results/s06_minimal_route_log.txt,Minimal project-owned controller reached the Bar interior with 0 clip/0 occlusion/0 stalls; camera interior framing is a tuning residual.
+Input System,11,SPIKE_REQUIRED,S06,ADOPT_NOW,S06,Input System 1.20.0; project activeInputHandler must be set explicitly (new projects default to legacy-only).
+Cinemachine 3,11|17,SPIKE_REQUIRED,S06,ADOPT_NOW,S06,Cinemachine 3.1.7 ThirdPersonFollow with obstacle avoidance for the player camera; later cinematic use via the same package.
+Universal Base Characters,12,DEFER,S07,AVAILABLE_ASSET,S07,"Owner-owned CC0 Source already used by the ART clothed derivative; admitted as content, runtime customization still deferred."
+UMA character framework,12,DEFER,no,DEFER,H2F-00,No customization-scale need. Unchanged.
+Adopted UAL1 Source clips,13,SPIKE_REQUIRED,S07,ADOPT_NOW,"S07: results/s07_clip_catalog.tsv, s07_pose_report.json",Same-emitter civilian clip baseline (idle/talk/walk/sit/drink/counter) with explicit Humanoid mapping and loopTime for _Loop clips.
+UAL2 animation library,13,SPIKE_REQUIRED,S07,AVAILABLE_ASSET,S07,"Owner-owned CC0 gap filler (fold-arms, rail-lean, carry, step-up, yes/no); admitted per named clip."
+Mixamo clips/autorigger,13,SPIKE_REQUIRED,S07,REDUNDANT,S07,No named civilian clip is missing from UAL1+UAL2; no Adobe account step needed.
+Unity Humanoid/Animator/root motion,13,SPIKE_REQUIRED,S07,ADOPT_NOW,S07: results/s07_motion_log.txt,"Humanoid with explicit avatar mapping; in-place clips driven by controller/agent speed as default (root motion drifts 6.8 deg), root motion optional per clip."
+Animation Rigging,13,SPIKE_REQUIRED,S07,ADOPT_NOW,S07: results/s07_motion_log.txt,Animation Rigging 1.4.1 TwoBoneIK reaches a counter-height contact exactly (0.000 m) when targets are resolved against the animated pose.
+uLipSync,14,DEFER,no,DEFER,H2F-00,Unchanged.
+AI Navigation,15,SPIKE_REQUIRED,S02,ADOPT_NOW,S02: results/s02_result.json,AI Navigation 2.0.15 NavMeshSurface over the sole traversable colliders; project agent radius 0.28/climb 0.30/slope 40; bridge to Bar F01 interior PathComplete.
+Ink Unity integration,16,DEFER,no,DEFER,H2F-00,Unchanged.
+Yarn Spinner Unity,16,DEFER,no,DEFER,H2F-00,Unchanged.
+Timeline,17,DEFER,no,DEFER,H2F-00,Unchanged.
+Unity AudioSource/AudioMixer,18,NO_ADOPT,no,NO_ADOPT,H2F-00,Unchanged.
+FMOD for Unity,18,DEFER,no,DEFER,H2F-00,Unchanged.
+Unity Particle System/VFX Graph,19,NO_ADOPT,no,NO_ADOPT,H2F-00,Unchanged.
+UI Toolkit/uGUI,20,NO_ADOPT,no,NO_ADOPT,H2F-00,Unchanged.
+Unity Localization,20,DEFER,no,DEFER,H2F-00,Unchanged.
+Unity scenes/prefabs direct references,21|26,NO_ADOPT,no,NO_ADOPT,H2F-00,Unchanged.
+Addressables,21,DEFER,no,DEFER,H2F-00,Unchanged.
+LODGroup/culling/instancing/SRP Batcher,22,NO_ADOPT,no,NO_ADOPT,H2F-00,Unchanged; H2F-03 profiling is diagnostic.
+Unity Test Framework/Profiler/Frame Debugger,23,NO_ADOPT,no,NO_ADOPT,H2F-00,Unchanged (test-framework already present).
+Unity Recorder,23,DEFER,no,DEFER,H2F-00,Unchanged; spike captures used camera render requests.
+Juego2-owned Astra presets/wrappers,25,SPIKE_REQUIRED,S08,ADOPT_NOW,H2F-00 S08 -> H2F-03,"Selected as the authoring surface over the chosen stack (spline/profile, scatter, material, agent presets); implemented in H2F-02 and proven by H2F-03 S08."
+External direct-editor copilot as authority,25|26,REJECT,no,REJECT,H2F-00,Unchanged.
+Game save framework or cloud save,26,NO_ADOPT,no,NO_ADOPT,H2F-00,Unchanged.
+Multiplayer/DOTS/ML-Agents foundation,27,NO_ADOPT,no,NO_ADOPT,H2F-00,Unchanged.
+Legacy Input Manager,11,REDUNDANT,no,REDUNDANT,S06,"Input System selected; ART-01 walk inspector still uses legacy Input, so activeInputHandler=Both is a transition setting until ART Phase B migrates it."
+ActorCore motion library,13,DEFER,no,DEFER,S07,No named missing motion. Unchanged.
+GPU Instancer Pro,08|22,DEFER,no,DEFER,S04,No measured pathology. Unchanged.
+Unity Starter Assets - ThirdPerson / Character Controllers,11,SPIKE_REQUIRED,S06,DEFER,S06: manual acquisition not performed,"Not spiked (free Asset Store acquisition not done). It packages the same CharacterController + Input System + Cinemachine composition that S06 proved directly, so its value is limited to wiring the minimal route already covers; reconsider only if that wiring grows."
+Unity Assistant (com.unity.ai.assistant),25,DEFER,S08,DEFER,H2F-00,Unchanged.
+Unity AI Gateway,25,DEFER,S08,DEFER,H2F-00,Unchanged.
+Unity MCP Server,25,SPIKE_REQUIRED,S08,DEFER,H2F-00 S08 -> H2F-03,Arkus H1 public MCP seam remains the transport; Unity MCP Server may be evaluated as optional transport inside H2F-03 S08 behind Arkus authority.
+Game Creator 2 Core 2.19.61 (owner-supplied),11|13|16|25|26,NOT_IN_H2F00,S06 (owner addition),DEFER,"S06: results/s06_gc2_route_log.txt, gc2_probe.txt, gc2_import_report.json, gc2_vendor_embedded_manifest.json","Owned and technically compatible (controlled Assets-only import + physics2d); smooth camera and interior follow. Not in the frozen foundation: the measured benefit over the native composition is presentation polish, while Core brings a parallel runtime (Variables, SaveLoad/Remember, Triggers, managers), non-redistributable provisioning and edit-mode API caveats. Re-decide at H3 (e.g. Inventory) through an explicit authority-bridge decision; the player swap was proven bounded."
