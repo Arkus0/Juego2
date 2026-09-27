@@ -1,0 +1,9 @@
+{
+  "package": "Game Creator 2.unitypackage",
+  "sha256": "1e4f3ba0560eadb944b3cf3ca63f7095d95b47c55a94ee655f28a15952f3380b",
+  "bytes": 28236878,
+  "imported": 3630,
+  "excluded": [
+    "Packages/manifest.json"
+  ]
+}

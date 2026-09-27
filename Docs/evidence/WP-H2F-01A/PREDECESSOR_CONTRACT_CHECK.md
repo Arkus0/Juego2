@@ -23,6 +23,14 @@ H2F-01 did **not** structurally reject GC2 Core. Its matrix row says: "Owned and
 - the `NOT_MATERIAL` fast path does **not** apply; C01–C07 run;
 - the accepted S06 winner (CharacterController + Input System action map + project-owned locomotion/camera-root controller + Cinemachine 3 `CinemachineCamera`/`ThirdPersonFollow` with obstacle avoidance) stays binding unless C02/C07 produce new, material evidence meeting the explicit `S06_BASELINE_AMENDMENT.md` rule. The S06 measurements already recorded by H2F-01 are consumed, not re-litigated.
 
+### Finding about an H2F-01 record (not a reopen)
+
+H2F-01's S06 route walker computed the camera-to-head occlusion point as `player.position + 1.6 m`. For the minimal controller the transform sits at the feet, so the point is correct. For the GC2 Character the transform sits at the capsule centre, which puts the point about 2.5 m up, at lintel height. H2F-01's 25 "occluded" GC2 frames are therefore a measurement artifact:
+
+- C02 measures with the feet taken from the body's real capsule and finds 0 for both cameras.
+- The minimal composition's numbers are unaffected, so the accepted H2F-01 selection is **not** falsified.
+- The finding is new evidence that feeds only the explicit amendment mechanism (`S06_BASELINE_AMENDMENT.md`).
+
 ## Inherited guarantees consumed, not re-proved
 
 - **H2F-01 selection:** the whole selected stack in `BASELINE_INTENT.md` (URP 17.3.0, Input System 1.20.0, Cinemachine 3.1.7, AI Navigation 2.0.15 with the project agent 0.28/0.30/40°, Animation Rigging 1.4.1, Splines 2.9.1, UAL1/UAL2, explicit Humanoid mapping rule for Base Characters derivatives).

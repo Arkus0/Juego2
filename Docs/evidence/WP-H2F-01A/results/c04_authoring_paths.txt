@@ -1,0 +1,12 @@
+CharacterEditor.CreateCharacter + Character.ChangeModel(J2_Citizen) [J2_NPC_UAL]
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2None
+Character.m_Footsteps.m_FootstepSounds.m_SoundsAsset = J2_Footsteps
+Character.m_Footsteps.m_FootstepDetector = FootstepDetectorFulcrum
+Character.m_Ragdoll.m_Ragdoll = RagdollDefault
+Character.m_Ragdoll.m_Ragdoll.m_BoneRack.m_Skeleton = Skeleton
+Character.m_Ragdoll.m_Ragdoll.m_RecoverFaceDown = Human@Action_StandFaceDown
+Character.m_Ragdoll.m_Ragdoll.m_RecoverFaceUp = Human@Action_StandFaceUp
+CharacterEditor.CreateCharacter + Character.ChangeModel(J2_Citizen) [J2_NPC_GC2LOCO]
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2None
+Character.m_Footsteps.m_FootstepSounds.m_SoundsAsset = J2_Footsteps
+Character.m_Footsteps.m_FootstepDetector = FootstepDetectorAnimationCurves
