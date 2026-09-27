@@ -2,13 +2,13 @@
 
 PREDECESSOR_CONTRACT_CHECK
 
-Date: 2026-09-27. Baseline `main`: `a47f879c46abce88ee23d5959736e32ba5bd62be`. Worker: Claude (owner-invoked Worker session).
+Date: 2026-09-27. Worker start `main`: `a47f879c46abce88ee23d5959736e32ba5bd62be`; updated onto `main` `2aa179b2eebd99d6d25152e87a105f3791b59408` (H2F-00 DocSync). Worker: Claude (owner-invoked Worker session).
 
 ## Accepted predecessors and identities
 
 | Predecessor | Accepted identity | Status used here |
 |---|---|---|
-| `WP-H2F-00` capability survey | PR #251; reviewed candidate `8600c43da8cd7ef0cf7776845de3ee53593134d7`; independent PASS review `#5330291941`; merge `a47f879c46abce88ee23d5959736e32ba5bd62be` | Direct dependency, accepted. Its DocSync PR #253 is open at Worker start; this Worker does not freeze before that DocSync is on `main`. |
+| `WP-H2F-00` capability survey | PR #251; reviewed candidate `8600c43da8cd7ef0cf7776845de3ee53593134d7`; independent PASS review `#5330291941`; merge `a47f879c46abce88ee23d5959736e32ba5bd62be` | Direct dependency, accepted. Its DocSync PR #253 merged during this cycle; the branch was updated onto `main` `2aa179b2eebd99d6d25152e87a105f3791b59408` before evidence closure. |
 | H2F plan | PR #250; candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`; PASS `#5330069733`; merge `9d3bb90ebfae8837155576c13b705fc1c72c2579` | Phase contract, disposition vocabulary, authority rules. |
 | `WP-H1-GATE` | PR #238; candidate `8bcf171f2520a0e23ccba094bf353c8a78b5d239`; PASS `#5329808171`; merge `b730ba0c0b1a4ad454edbd420cd8e44555dfaf10`; `Docs/evidence/WP-H1-GATE/DOCSYNC.md` | Accepted Unity bridge boundary (6000.3.24f1, H1 Source slice, projection/lifecycle authority). |
 | ART-01 | PR #234, **Draft, not PASS**; structural checkpoint consumed at `174d05d23c3bceb9d5df00e460b33519cf68328e` | Consumed only as a pre-foundation input source (see the sequencing note below). No ART-01 readiness or PASS is claimed or assumed. |

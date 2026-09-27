@@ -34,7 +34,7 @@
 2. Whether the project-owned shaders (water, interior window) and generators (profile/junction, scatter) live in a Juego2 package or the project. Decide their ownership and tests.
 3. UAL2 admission record (distribution identity, per-clip allowlist) and the Universal Base Characters derivative lineage, including the avatar mapping as part of the derivative contract.
 4. The provisioning route for owner-vault content in clean restoration (inherit the H1 vault pattern).
-5. If GC2 is ever proposed (H3):
+5. If GC2 Core is admitted (through the owner-proposed WP-H2F-01A, PR #255):
    - EULA seat and redistribution terms;
    - Assets-only import with a manifest diff/merge policy;
    - `physics2d` module;

@@ -1,6 +1,6 @@
 # WP-H2F-01 — decision spikes and final stack selection
 
-Status: **Worker evidence, Draft + ACTIVE**, not frozen. Mode: HYBRID. Real Unity 6000.3.24f1 evidence was produced on the owner's workstation in disposable non-keeper workspaces. Baseline `main` `a47f879c`. Contract: `Docs/workpacks/H2F/WP-H2F-01.md`, executed under the owner's ART-01 sequencing amendment (see `PREDECESSOR_CONTRACT_CHECK.md`).
+Status: **Worker evidence, Draft + ACTIVE**, not frozen. Mode: HYBRID. Real Unity 6000.3.24f1 evidence was produced on the owner's workstation in disposable non-keeper workspaces. Baseline `main` `2aa179b2` (updated from `a47f879c` after H2F-00 DocSync). Contract: `Docs/workpacks/H2F/WP-H2F-01.md`, executed under the owner's ART-01 sequencing amendment (see `PREDECESSOR_CONTRACT_CHECK.md`).
 
 | File | Content |
 |---|---|
@@ -26,7 +26,7 @@ Status: **Worker evidence, Draft + ACTIVE**, not frozen. Mode: HYBRID. Real Unit
 | Quaternius Source capabilities considered before external tooling | Source URP Shader Graph (S01), Source fences/stairs (S02), UAL1/UAL2 before Mixamo (S07), Source chair for sit anchors |
 | Actual Quaternius character animation/retarget fit proven | S07: explicit mapping, pose metrics, root motion, IK contact on the ART clothed citizen |
 | Visual decisions receive owner/art-direction inspection | `OWNER_JUDGEMENT.md`: owner inspected the sheets and delegated; choices are reversible defaults re-checked at ART-01 Phase B / CITY-07 |
-| Selected tools remain downstream helpers, not canonical authorities | Splines/Terrain/scatter/NavMesh outputs are generated realizations; GC2's parallel runtime was the deciding reason to defer it |
+| Selected tools remain downstream helpers, not canonical authorities | Splines/Terrain/scatter/NavMesh outputs are generated realizations; GC2 Core's parallel runtime was the deciding reason not to select it for the S06 role; its Core-wide extraction is WP-H2F-01A |
 | No keeper CITY-07 content claimed or frozen | All fixtures live in disposable workspaces outside the repository |
 
 ## Negative gates checked
@@ -41,6 +41,4 @@ Status: **Worker evidence, Draft + ACTIVE**, not frozen. Mode: HYBRID. Real Unit
 
 - the ART sequencing amendment merged on `main`;
 - ART-01 `PREFOUNDATION_INPUT` published;
-- H2F-00 DocSync (#253) merged;
-- the owner's answer on GC2 (keep deferred or promote);
 - exact-SHA preflight and the strict Worker pre-review.

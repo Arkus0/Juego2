@@ -34,4 +34,4 @@ Spike families 9 (fog/weather) and 10 (performance helpers) have no surviving ex
 
 ## Freeze preconditions
 
-These are required in addition to the normal protocol: the ART sequencing amendment is merged on `main`; ART-01 `PREFOUNDATION_INPUT` is published; H2F-00 DocSync (#253) is on `main`; owner judgements are recorded for S01, S03, S04, S05, S06 and S07.
+These are required in addition to the normal protocol: the ART sequencing amendment is merged on `main`; ART-01 `PREFOUNDATION_INPUT` is published. Done during the cycle: H2F-00 DocSync (#253) on `main`; owner judgement recorded (visual choice delegated to the Worker, `OWNER_JUDGEMENT.md`).

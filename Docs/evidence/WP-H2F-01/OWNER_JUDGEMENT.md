@@ -32,4 +32,4 @@ In other words: the owner inspected the sheets, saw no decisive visual differenc
 | S06 | Native composition (minimal) as the baseline. GC2 is technically fine, and its feel is arguably smoother. | This row is **not** a visual-only decision. See the authority reasoning in `DISPOSITION_MATRIX.csv`. The camera interior framing of the minimal route is a tuning residual. |
 | S07 | UAL1 baseline + UAL2 fillers on the explicitly mapped citizen | Poses read correctly at human scale once `Hips=pelvis`. |
 
-- **Open for the owner before freeze:** whether to keep GC2 Core deferred (the Worker's recommendation) or promote it now as the player/camera presentation layer. This is an authority/scope decision, not a visual one.
+- **GC2 Core:** the owner routed the Core-wide question to a separate owner-proposed WP-H2F-01A (PR #255, stacked on the sequencing amendment). H2F-01 therefore records only the S06 role result and a non-structural disposition for Core (see `DISPOSITION_MATRIX.csv`); it neither adopts nor structurally rejects Core.

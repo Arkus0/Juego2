@@ -26,7 +26,7 @@ This is **selection**, not adoption. H2F-02 owns exact admission, migration of t
 Not selected for the foundation (see `DISPOSITION_MATRIX.csv`):
 
 - HDRP, weather/water/road/landscape paid suites, Terrain Tools, ProBuilder, Mixamo, Starter Assets (not spiked), Unity AI stack as authority.
-- Game Creator 2 Core (owned; deferred to an explicit H3 decision).
+- Game Creator 2 Core for the S06 player controller/camera role. Core itself is owned and compatible (not structurally rejected). Its Core-wide capability extraction is the owner-proposed WP-H2F-01A (PR #255). If 01A admits Core, S06 data (GC2 follows the camera into interiors better) is the input for re-selecting the camera/controller role there, and H2F-02 then consumes the 01A handoff.
 
 ## Requirements H2F-02 must carry (from spike findings)
 
