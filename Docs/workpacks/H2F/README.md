@@ -1,11 +1,11 @@
 # H2F — Pre-H2 product/toolchain foundation freeze
 
-Status: **ACTIVE / WP-H2F-00 COMPLETE**  
+Status: **ACTIVE / WP-H2F-01 COMPLETE**  
 Class: PRODUCT / TOOLCHAIN + CONTENT INTEGRATION  
 Execution policy: `RESEARCH_BATCH` for survey; `PRODUCT_CHECKPOINT` for Unity spikes/integration  
 Plan date: 2026-09-27  
 Accepted: PR `#250`, candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`, independent PASS review `#5330069733`, merge `9d3bb90ebfae8837155576c13b705fc1c72c2579`  
-Progress: `WP-H2F-00` COMPLETE / ACCEPTED via PR `#251`, candidate `8600c43da8cd7ef0cf7776845de3ee53593134d7`, PASS review `#5330291941`, merge `a47f879c46abce88ee23d5959736e32ba5bd62be`. Next in sequence: `WP-H2F-01`, consuming ART-01 `PREFOUNDATION_INPUT` source/demand/assembly evidence rather than ART-01 PASS.
+Progress: `WP-H2F-00` COMPLETE / ACCEPTED via PR `#251`; `WP-H2F-01` COMPLETE / ACCEPTED via PR `#254`, frozen candidate `b642024ee54523d19b91448016af83a50d0ff361`, PASS review `#5331371244`, merge `27e6e56215268e566f24ea1f3a80e62601126f89`. Owner-directed `WP-H2F-01A` / PR `#255` is the next bounded insertion before H2F-02.
 
 ## 1. Phase claim
 
@@ -25,6 +25,8 @@ ART-01 PREFOUNDATION_INPUT
 H2F-00 capability survey + candidate register
       ↓
 H2F-01 decision spikes + stack selection
+      ↓
+H2F-01A GC2 Core capability extraction (owner-directed insertion)
       ↓
 H2F-02 exact adoption + URP/toolchain bootstrap
       ↓
@@ -154,9 +156,13 @@ The selected package API is not itself the stable Juego2 semantic contract when 
 
 Accepted in PR `#251`; post-PASS state is recorded in `Docs/evidence/WP-H2F-00/DOCSYNC.md`. The survey closed all 27 mandatory capability categories, produced the candidate/provenance/gap/acquisition registers and handed the bounded S01–S08 decision queue downstream. It adopted no package and mutated no Unity project state.
 
-### `WP-H2F-01 — Decision spikes + final stack selection`
+### `WP-H2F-01 — Decision spikes + final stack selection` ✅ COMPLETE / ACCEPTED
 
-Run only the Unity/source-content spikes necessary to distinguish serious candidates whose choice is expensive to reverse. Consume ART-01 `PREFOUNDATION_INPUT` for representative assets, source/demand/assembly truth and visual discriminators; do not require or claim ART-01 PASS. Produce the final disposition matrix and one recommended baseline with explicit rejected/deferred alternatives.
+Accepted in PR `#254`, frozen candidate `b642024ee54523d19b91448016af83a50d0ff361`, independent PASS review `#5331371244`, merge `27e6e56215268e566f24ea1f3a80e62601126f89`; post-PASS state is recorded in `Docs/evidence/WP-H2F-01/DOCSYNC.md`. It selected the baseline intent without adopting project state or claiming ART-01 readiness.
+
+### `WP-H2F-01A — GC2 Core capability extraction`
+
+Owner-directed bounded insertion carried by PR `#255`. It may admit reusable Game Creator 2 Core infrastructure only behind Arkus authority and only where the already-owned Core removes generic plumbing without becoming canonical semantic state. If accepted, H2F-02 consumes its explicit adoption/lifecycle handoff.
 
 ### `WP-H2F-02 — Exact adoption + URP/toolchain bootstrap`
 
