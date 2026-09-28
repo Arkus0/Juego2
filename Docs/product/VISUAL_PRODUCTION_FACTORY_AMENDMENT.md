@@ -46,7 +46,8 @@ H2 must establish and prove reusable production lanes for all of the following.
 
 - a coherent Juego2 UI language including typography, dialogue/subtitle treatment, choices, prompts and interaction readability;
 - the game assumes **no spoken voice acting** as the normal case;
-- Dialogue 2 may be adopted before deep dialogue gameplay as a presentation/directing tool if the exact owner-supplied version passes the normal dependency/adoption boundary;
+- Dialogue 2 may be adopted before deep dialogue gameplay as a presentation/directing tool only through `WP-GC2-DIALOGUE-00`, after the exact owner-supplied version passes the binding `DEPENDENCY_IP_POLICY` adoption record and composed H1 lifecycle proof;
+- `WP-GC2-03` later consumes that accepted disposition and may not independently adopt or upgrade Dialogue 2;
 - one presentation benchmark must prove text, speaker identity, choices, acting/gesture timing and camera coexist cleanly without requiring finished narrative content.
 
 ### Final setting transfer
@@ -64,7 +65,7 @@ This amendment introduces the following bounded WPs. They may run in parallel wh
 - `WP-ART-ANIM-01` — animation source audit, admission, retarget and coverage plan.
 - `WP-ART-ANIM-02` — reusable animation vocabulary + runtime mapping proof.
 - `WP-ART-ENV-02` — scenario-production factory and fresh-author repeatability proof.
-- `WP-GC2-DIALOGUE-00` — bounded Dialogue 2 adoption/presentation seam; no investigation system claim.
+- `WP-GC2-DIALOGUE-00` — bounded Dialogue 2 adoption/presentation seam; single Dialogue 2 adoption authority, no investigation system claim.
 - `WP-ART-UI-01` — Juego2 UI/dialogue visual-language benchmark for a no-voice game.
 - `WP-ART-03` — integrated visual-production lock on the actual port-town keeper block.
 
@@ -72,36 +73,34 @@ Existing `ART-01`, `H2-01`, `H2-02`, `H2-03` and `ART-02` remain useful, but the
 
 ## Revised H2 ordering
 
-The intended causal graph after `WP-H2F-GATE` is:
+The intended causal DAG after `WP-H2F-GATE` is shown with explicit multi-predecessor joins; `A + B -> C` means all named predecessors are required for the downstream PASS.
 
 ```text
-H2F-GATE
-  |
-  +--> ART-01 effective closure ---------> ART-ENV-02 -----------+
-  |                                                              |
-  +--> CITY-URBAN-00 --------------------> ART-URBAN-01 ----------+--> CITY-URBAN-01 --+
-  |                                                              |                     |
-  +--> ART-CHAR-01 --> ART-CHAR-02 -------------------------------+                     |
-  |                                                              |                     |
-  +--> ART-ANIM-01 -----> ART-ANIM-02 ----------------------------+                     |
-  |                           ^                                  |                     |
-  |                           +---- ART-CHAR-02                    |                     |
-  |                                                                                    |
-  +--> GC2-00 --> CITY-07/H2-01/H2-02 --> H2-03 --> ART-02 ----------------------------+
-  |                                                                                    |
-  +--> GC2-DIALOGUE-00 --> ART-UI-01 --------------------------------------------------+
-                                                                                       |
-                                                                                       v
-                                                                                    ART-03
-                                                                                       |
-                                                                                       v
-                                                                                    H2-GATE
-                                                                                       |
-                                                                                       v
-                                                                                   GC2-02+
+H2F-GATE -> ART-01
+H2F-GATE -> ART-CHAR-01 -> ART-CHAR-02
+H2F-GATE -> ART-ANIM-01
+ART-ANIM-01 + ART-CHAR-02 -> ART-ANIM-02
+H2F-GATE -> GC2-DIALOGUE-00
+GC2-DIALOGUE-00 + ART-CHAR-02 + H2F-GATE -> ART-UI-01
+
+ART-01 + CITY-URBAN-00 -> ART-ENV-02
+ART-01 + ART-ENV-02 + CITY-URBAN-00 -> ART-URBAN-01
+CITY-URBAN-00 + ART-URBAN-01 -> CITY-URBAN-01
+
+H2F-GATE -> GC2-00
+H2F-GATE + ART-01 + CITY-07 -> H2-01
+H2F-GATE + CITY-07 + GC2-00 -> H2-02
+H2-02 + ART-CHAR-02 + ART-ANIM-02 -> H2-03
+CITY-07 + H2-02 + H2-03 + ART-01 -> ART-02
+
+ART-02 + ART-ENV-02 + ART-CHAR-02 + ART-ANIM-02 + ART-UI-01
+  + ART-URBAN-01 + CITY-URBAN-01 -> ART-03
+
+H2F-GATE + H2-01 + H2-03 + ART-02 + ART-03 + CITY-URBAN-01 -> H2-GATE
+H2-GATE -> GC2-02+
 ```
 
-The graph is intentionally not fully serial. Environment, character, animation, final-setting planning and Dialogue/UI presentation can overlap once their exact predecessors are ready.
+The graph is intentionally not fully serial. Environment, character, animation, final-setting planning and Dialogue/UI presentation can overlap once their exact predecessors are ready. Individual WP predecessor sets remain binding; this causal graph must not present a weaker shortcut than those contracts.
 
 ## H2-GATE meaning after this amendment
 
@@ -133,4 +132,8 @@ It also does not turn H2 into an endless asset-collection phase. Each production
 
 ## Purchase / module timing
 
-Acquiring a module early does not authorize premature gameplay integration. Dialogue 2 is the only separately licensed module explicitly eligible for pre-H2-GATE adoption under this amendment because its bounded use contributes directly to the presentation/UI lock. All later modules remain owned by their causal GC2 gameplay WPs unless separately amended.
+Acquiring a module early does not authorize premature gameplay integration. Dialogue 2 is the only separately licensed module explicitly eligible for pre-H2-GATE adoption under this amendment because its bounded use contributes directly to the presentation/UI lock.
+
+That exception is owned exclusively by `WP-GC2-DIALOGUE-00`. It must run the complete exact-version `Docs/engineering/DEPENDENCY_IP_POLICY.md` record, classify all material state families against the accepted H1 host/materialize/observe/reconcile/rematerialize/clean-rebuild lifecycle, and prove the bounded composed lifecycle before `ADOPTED` can become retained production truth. A `NOT_MATERIAL` or `REJECTED` disposition authorizes no module use; any later reconsideration requires an explicit reviewed reopen/amendment of the Dialogue adoption checkpoint. `WP-GC2-03` remains a consumer only.
+
+All later modules remain owned by their causal GC2 gameplay WPs unless separately amended.
