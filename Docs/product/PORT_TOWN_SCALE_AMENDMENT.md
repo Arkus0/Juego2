@@ -5,6 +5,8 @@ Date: 2026-09-28
 Accepted: PR `#262`, candidate `489312831ca0e337de58762c067ca60e5c20c874`, Reviewer PASS `#5333508771`, merge `65a2a727371833806f019af0a7af1767b3724534`.
 Amends: [`URBAN_EXPANSION_DECISION.md`](URBAN_EXPANSION_DECISION.md), [`NPC_DEPTH_TIERS.md`](../design/NPC_DEPTH_TIERS.md) and the post-H2F-01A urban route.
 
+Current product authority (upon acceptance of [the identity/nightlife amendment](PORT_TOWN_IDENTITY_NIGHTLIFE_AMENDMENT.md), PR `#266`): the historical `nightlife/industrial` planning option below is superseded as a description of the town's primary nightlife. `Villa Bruma` is retired and is not a canonical/final town name; the final proper name remains undecided. The current five-zone distribution is `N.CASCO` **nightlife-primary** and `N.TALLERES` **nightlife-secondary**. Where this record conflicts with the later amendment, that amendment governs current product work; the earlier wording remains historical evidence.
+
 ## Product scale decision
 
 The final setting is a **large fictional port town / villa portuaria in northern Spain**, around the late 1990s or early 2000s. It should feel socially like a substantial town or comarca hub rather than an anonymous major city: repeated faces, family and business connections, rumours, local reputations and reasons for the same people to encounter each other across days.

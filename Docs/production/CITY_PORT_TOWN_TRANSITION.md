@@ -4,6 +4,8 @@ Status: **WORKER CANDIDATE / proposed CITY-URBAN-00 planning authority**. Nothin
 
 Source contract: `Docs/workpacks/CITY/WP-CITY-URBAN-00.md`. Product direction: `Docs/product/URBAN_EXPANSION_DECISION.md` as scaled by `Docs/product/PORT_TOWN_SCALE_AMENDMENT.md`. First-slice target: `Docs/product/SHENMUE_URBAN_SLICE_TARGET.md`.
 
+Current product authority (upon acceptance of [the identity/nightlife amendment](../product/PORT_TOWN_IDENTITY_NIGHTLIFE_AMENDMENT.md), PR `#266`): references below to `Villa Bruma` are retained as the accepted planning record, but that working label is superseded and is not the canonical/final town name; the final proper name remains undecided. `N.CASCO` is **nightlife-primary** and `N.TALLERES` is **nightlife-secondary**; the older Talleres night-social description does not assign it the primary role. Where this brief conflicts with the later amendment, that amendment governs current product work. The accepted five-zone/B0 planning topology and historical text remain intact.
+
 ## 1. Decision and boundary
 
 The final setting is **Villa Bruma**, a fictional large northern-Spain port town around 1999–2002. The name is a working fiction label, not a claim about a real municipality. A working maritime port and sheltered urban waterfront give it a coastal identity. Four or five compact **production neighbourhoods** should feel socially connected by recurring faces, work, errands and rumours. They are not formal administrative districts and all five need not be built for the first block, H2-GATE or first gameplay slice.
