@@ -6,12 +6,15 @@ Depends on: `WP-H2F-GATE` PASS + `WP-ART-01` PASS + `WP-CITY-URBAN-00` accepted 
 Blocks: `WP-ART-URBAN-01`, `WP-ART-03`
 Binding decision: `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`
 Binding identity/nightlife amendment: `Docs/product/PORT_TOWN_IDENTITY_NIGHTLIFE_AMENDMENT.md`
+Binding reuse amendment: `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md`
 
 ## Claim
 
 Juego2 can produce additional third-person streets, corners, thresholds and interiors from briefs using the accepted environment kit, metadata and tooling without falling back to primitive boxes, raw transform-by-transform improvisation or new bespoke code for every scene.
 
 The reusable factory must remain neutral to the town's unresolved final proper name. It must also be capable of producing materially different day/evening/night presentations from bounded briefs without requiring a second scene-specific pipeline merely because a district changes social intensity after dark.
+
+The factory must preserve the accepted reuse-first dispositions: whole source prefabs are not the only production unit. `DIRECT`, `ADAPTABLE`, `DONOR`/component reuse and reviewed Juego2 derivatives are all normal inputs to scenario production when provenance and connection rules remain traceable.
 
 ## Production surface
 
@@ -28,6 +31,7 @@ The recipe should cover, where relevant:
 - props, signage, vegetation and bounded dressing passes;
 - material/palette/lighting profile handoff;
 - bounded day/evening/night presentation variants without baking a final town proper name into reusable assets;
+- reuse disposition and provenance handoff for `DIRECT / ADAPTABLE / DONOR / derived` pieces;
 - collision/navigation hooks that are already foundation responsibilities;
 - validation for visible proxy/coverage gaps.
 
@@ -49,7 +53,8 @@ Record separately:
 2. repeated/variant assembly operations;
 3. manual corrections;
 4. new reusable assets genuinely required;
-5. any blocked coverage.
+5. donor/component reuse where it avoided unnecessary new whole-prefab production;
+6. any blocked coverage.
 
 The repeated path must show a real reduction in repeated setup/authoring work under stated counting assumptions. No wall-clock productivity threshold is imposed because machine/agent speed is not a stable product oracle.
 
@@ -69,9 +74,10 @@ A repeated composition that still requires a new generator, new import conventio
 - first-build versus repeat-build operation record with assumptions;
 - explicit `KEEPER_READY / PROXY_VISUAL / COVERAGE_BLOCKED` result per required composition role;
 - reusable gap/asset additions with provenance;
+- evidence that reusable source components may be consumed without requiring intact-prefab geographic matching;
 - no-bespoke-framework confirmation for repeated briefs.
 
-**FAIL if:** a fresh author needs implementation-source archaeology; repeated streets are just copies with prop swaps; raw cubes/planes substitute for missing architecture while marked keeper; scene-local scripts become the normal assembly mechanism; reusable profiles hard-code `Villa Bruma` or another unreviewed final town name; a normal day/night variant requires a bespoke second pipeline; or the reuse claim is subjective without observable first/repeated evidence.
+**FAIL if:** a fresh author needs implementation-source archaeology; repeated streets are just copies with prop swaps; raw cubes/planes substitute for missing architecture while marked keeper; scene-local scripts become the normal assembly mechanism; reusable profiles hard-code `Villa Bruma` or another unreviewed final town name; a normal day/night variant requires a bespoke second pipeline; source assets are rejected or external replacements required merely because they contain wood or originate in a medieval/fantasy-labelled pack without the accepted reuse/adaptation analysis; or the reuse claim is subjective without observable first/repeated evidence.
 
 **Allowed residuals:** final port-specific art breadth owned by `ART-URBAN-01`, later neighbourhood variants and rare hero locations.
 
