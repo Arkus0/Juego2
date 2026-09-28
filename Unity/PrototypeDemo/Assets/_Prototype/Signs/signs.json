@@ -1,0 +1,242 @@
+{
+ "hang_taberna": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_barberia": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_orujos": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_horno": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_quesos": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_ferreteria": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_cafe_billar": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_fonda": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_herreria": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_ultramarinos": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_comestibles": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_bar": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "hang_estanco": {
+  "w": 768,
+  "h": 480,
+  "kind": "board",
+  "alpha": true
+ },
+ "facade_bar": {
+  "w": 1400,
+  "h": 300,
+  "kind": "board",
+  "alpha": false
+ },
+ "facade_comestibles": {
+  "w": 1300,
+  "h": 300,
+  "kind": "board",
+  "alpha": false
+ },
+ "facade_taberna": {
+  "w": 1300,
+  "h": 280,
+  "kind": "board",
+  "alpha": false
+ },
+ "facade_fonda": {
+  "w": 1300,
+  "h": 280,
+  "kind": "board",
+  "alpha": false
+ },
+ "private": {
+  "w": 640,
+  "h": 220,
+  "kind": "board",
+  "alpha": false
+ },
+ "plaque_ayuntamiento": {
+  "w": 1400,
+  "h": 320,
+  "kind": "stone",
+  "alpha": false
+ },
+ "plaque_riadas": {
+  "w": 900,
+  "h": 260,
+  "kind": "stone",
+  "alpha": false
+ },
+ "plaque_archivo": {
+  "w": 1100,
+  "h": 280,
+  "kind": "stone",
+  "alpha": false
+ },
+ "board_bandos": {
+  "w": 1100,
+  "h": 220,
+  "kind": "board",
+  "alpha": false
+ },
+ "calle_W04": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_W05": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_W06": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_W12": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_W13": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_P8a": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_P8b": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_P8c": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_P8d": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_P8e": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_plaza": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_casco": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_puente": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "calle_landing": {
+  "w": 900,
+  "h": 300,
+  "kind": "enamel",
+  "alpha": false
+ },
+ "pizarra_bar": {
+  "w": 700,
+  "h": 960,
+  "kind": "board",
+  "alpha": false
+ },
+ "poster_fiestas": {
+  "w": 600,
+  "h": 840,
+  "kind": "paper",
+  "alpha": false
+ },
+ "poster_bolos": {
+  "w": 600,
+  "h": 840,
+  "kind": "paper",
+  "alpha": false
+ },
+ "poster_feria": {
+  "w": 600,
+  "h": 840,
+  "kind": "paper",
+  "alpha": false
+ }
+}

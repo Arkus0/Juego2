@@ -1,0 +1,30 @@
+# Prototype-only Unity project. Version only own scripts, scenes, derived materials and docs.
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+MemoryCaptures/
+Recordings/
+*.csproj
+*.sln
+*.user
+.vs/
+.idea/
+
+# Third-party packs (Quaternius, CC0) are copied locally by Tools/import_thirdparty.py and never versioned.
+Assets/ThirdParty/
+Assets/ThirdParty.meta
+
+# Generated derived textures (derivatives of third-party textures) are rebuilt by the builder.
+Assets/_Derived/Generated/
+Assets/_Derived/Generated.meta
+
+# Capture scratch: only the curated final captures are versioned
+Captures/*
+!Captures/Final/
+
+# The demo scene is generated output (Prototype > Rebuild Scene); do not version it
+Assets/_Prototype/Scenes/PuenteBar.unity
