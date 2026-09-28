@@ -1,8 +1,9 @@
 # ART-01 asset-reuse and recovery amendment
 
-Status: **PROPOSED / NOT ACCEPTED**  
+Status: **ACCEPTED / BINDING COMPANION CONTRACT**  
 Class: `DOCS_ONLY / PRODUCT_ART_CONTRACT_AMENDMENT`  
 Scope: `WP-ART-01` source triage, visual target and final acceptance  
+Accepted: PR `#267`, candidate `18abb02c012210cab2da9400b0fcef9c120b29b9`, Reviewer PASS `#5334859404`, merge `8afffe80fea691abadd92b73d86a9b77492842e4`.  
 Binding parent decision: `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md`
 
 ## Why this exists
