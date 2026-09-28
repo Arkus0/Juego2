@@ -1,0 +1,26 @@
+{
+    "name": "Juego2.H2F03.Evidence.Runtime",
+    "rootNamespace": "Juego2.H2F03.Evidence",
+    "references": [
+        "GameCreator.Runtime.Core",
+        "Juego2.Arkus",
+        "Juego2.Foundation",
+        "Juego2.Gc2Adapter",
+        "Unity.InputSystem",
+        "Unity.AI.Navigation",
+        "Unity.Animation.Rigging",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "JUEGO2_GC2_CORE"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

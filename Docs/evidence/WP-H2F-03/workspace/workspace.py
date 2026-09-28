@@ -132,9 +132,46 @@ def content(root: Path, vault_root: Path) -> None:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(git("show", f"{ART_SHA}:{rel}"))
     n_src = recipe.import_art_sources(root, vault_root)
-    n_extra = recipe.import_extra(root, vault_root)
-    write_json(results(root) / "content.json", {"artFiles": n_art, "artSources": n_src, "h2f01Extra": n_extra, "artInputSha": ART_SHA})
-    print(f"H2F03_WORKSPACE_CONTENT art_files={n_art} art_sources={n_src} extra={n_extra}")
+    n_extra = import_h2f01_animation(recipe, root, vault_root)
+    collisions = guid_collisions(root)
+    write_json(results(root) / "content.json", {"artFiles": n_art, "artSources": n_src, "h2f01AnimationExtra": n_extra, "artInputSha": ART_SHA,
+                                                "guidCollisions": collisions})
+    if collisions:
+        raise SystemExit(f"H2F03_WORKSPACE_GUID_COLLISION {collisions[:5]}")
+    print(f"H2F03_WORKSPACE_CONTENT art_files={n_art} art_sources={n_src} extra={n_extra} guid_collisions=0")
+
+
+def import_h2f01_animation(recipe, root: Path, vault_root: Path) -> int:
+    """Only the UAL2 / root-motion libraries (+ UAL2 licence) of H2F-01's SPIKE_INPUT_LOCK. Its Medieval URP Source
+    materials keep the vendor .meta GUIDs, which the mounted H1 SourceSlice already owns: co-importing them makes Unity
+    reassign a GUID and H1 fails closed with catalogue.stale-mapping (found by this WP's first lifecycle run)."""
+    lock = json.loads(recipe.INPUT_LOCK.read_text(encoding="utf-8"))
+    if lock["files"] != recipe.extra_rows(vault_root):
+        raise SystemExit("SPIKE_INPUT_LOCK mismatch: vault bytes or selection changed")
+    rows = [r for r in lock["files"] if r["dest"].startswith(("Animation/", "Licenses/"))]
+    for row in rows:
+        data = (vault_root / row["file"]).read_bytes()
+        if sha256_bytes(data) != row["sha256"]:
+            raise SystemExit(f"H2F-01 input byte mismatch: {row['dest']}")
+        target = root / PROJECT / "Assets/H2F01Inputs" / row["dest"]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+    return len(rows)
+
+
+def guid_collisions(root: Path) -> list[str]:
+    """Every .meta GUID under Assets must be unique; a duplicate silently re-identifies an asset (fail closed)."""
+    seen: dict[str, str] = {}
+    duplicates = []
+    for meta in (root / PROJECT / "Assets").rglob("*.meta"):
+        for line in meta.read_text(encoding="utf-8", errors="replace").splitlines()[:3]:
+            if line.startswith("guid:"):
+                guid = line.split(":", 1)[1].strip()
+                rel = meta.relative_to(root / PROJECT).as_posix()
+                if guid in seen:
+                    duplicates.append(f"{guid} {seen[guid]} {rel}")
+                seen[guid] = rel
+    return duplicates
 
 
 def evidence_code_digest() -> dict:
@@ -142,11 +179,22 @@ def evidence_code_digest() -> dict:
     return {p.relative_to(HERE).as_posix(): sha256_bytes(p.read_bytes()) for p in files}
 
 
+def deterministic_meta(path: Path, rel: str) -> None:
+    """Stable GUIDs, so a redeploy keeps the sidecar scene's script references (sha256 of the evidence-relative path)."""
+    guid = sha256_bytes(f"juego2-h2f03-evidence:{rel}".encode())[:32]
+    lines = ["fileFormatVersion: 2", f"guid: {guid}"] + (["folderAsset: yes"] if path.is_dir() else [])
+    Path(str(path) + ".meta").write_text("".join(line + chr(10) for line in lines), encoding="utf-8")
+
+
 def deploy(root: Path) -> None:
     target = root / PROJECT / EVIDENCE_DIR
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(HERE / "Unity/H2F03Evidence", target)
+    deterministic_meta(target, "H2F03Evidence")
+    for path in sorted(target.rglob("*")):
+        if not path.name.endswith(".meta"):
+            deterministic_meta(path, "H2F03Evidence/" + path.relative_to(target).as_posix())
     write_json(results(root) / "evidence_code.json", evidence_code_digest())
     print(f"H2F03_EVIDENCE_CODE_DEPLOYED files={len(evidence_code_digest())}")
 
@@ -210,11 +258,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=["create", "build", "vault", "gc2", "gc2-remove", "gc2-status", "content", "deploy",
                                          "unity", "tree", "prepare"])
-    parser.add_argument("rest", nargs=argparse.REMAINDER)
     parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
     parser.add_argument("--vault", type=Path, default=DEFAULT_VAULT)
     parser.add_argument("--sha")
-    args, _ = parser.parse_known_args()
+    parser.add_argument("--windowed", action="store_true")
+    args, rest = parser.parse_known_args()
     root = args.root.resolve()
 
     def need_sha() -> str:
@@ -239,12 +287,9 @@ def main() -> int:
     elif args.mode == "deploy":
         deploy(root)
     elif args.mode == "unity":
-        rest = [a for a in args.rest if a not in ("--root", str(args.root))]
-        windowed = "--windowed" in rest
-        rest = [a for a in rest if a != "--windowed"]
         if len(rest) < 2:
             raise SystemExit("unity needs <Class.Method> <log-name>")
-        return unity(root, rest[0], rest[1], windowed, rest[2:])
+        return unity(root, rest[0], rest[1], args.windowed, rest[2:])
     elif args.mode == "tree":
         result = tree(root, need_sha())
         print(json.dumps(result, indent=2))
