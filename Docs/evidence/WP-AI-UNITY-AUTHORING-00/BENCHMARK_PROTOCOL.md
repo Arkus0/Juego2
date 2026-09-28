@@ -1,6 +1,6 @@
-# AI Unity operator benchmark protocol v2
+# AI Unity operator benchmark protocol v3
 
-Frozen before the first candidate run. Version 2 adds the owner's explicit replacement question from 2026-09-28; no candidate had begun its agent run when this was added. All candidate results use this protocol unless a deviation is recorded before scoring.
+Version 2 was frozen before the first Coplay connection check. That check verified Editor routing but stopped before ENV/CHAR/ANIM/REPLACEMENT or any scene mutation because the Codex CLI session could not read the brief files from local disk. Version 3 changes only context delivery: the identical protocol, brief and replacement probe text is embedded in the initial prompt for every decision-bearing run. The failed connection check is retained as provisioning evidence and excluded from candidate scores. No decision-bearing candidate run occurred before version 3.
 
 ## Primary comparison operator
 
@@ -9,9 +9,9 @@ Frozen before the first candidate run. Version 2 adds the owner's explicit repla
 | Client | Codex CLI `0.156.1`, noninteractive `codex exec --json --ephemeral` |
 | Provider/model | OpenAI via the owner's existing Codex sign-in; explicit model ID `gpt-6-sol` |
 | Reasoning | `model_reasoning_effort=xhigh`; no candidate-specific extra budget or model |
-| Prompt/brief | This protocol v2, `PRIMARY_OPERATOR_BRIEF.md` v2 and `REPLACEMENT_PROBE.md` v1; identical task prose for every candidate except the name of its Editor connection |
+| Prompt/brief | This protocol v3, `PRIMARY_OPERATOR_BRIEF.md` v3 and `REPLACEMENT_PROBE.md` v1, embedded verbatim in the initial prompt; identical task prose for every candidate except the name of its Editor connection |
 | Starting context | Same clean Juego2 Unity project from `main` `e8652d1cbd4d4eb77b4545c79c34e807b4ab4c73`, Unity `6000.3.24f1`, same copied broad lawful corpus inventory, same baseline package/settings state; candidate package is the only intended difference |
-| Non-candidate tools | Codex CLI built-in local file/shell inspection and patch tools, no other MCP server and no additional asset-generation service; shell may inspect files but Unity authoring, observation and validation must use the candidate Editor surface |
+| Non-candidate tools | No other MCP server and no additional asset-generation service. Codex CLI's local shell/file commands were unavailable in the first Windows `workspace-write` connection check; the decision-bearing comparison therefore does not rely on them. Unity asset/project inspection, authoring, observation and validation use the candidate Editor surface. Worker gathers transcripts and file hashes outside the agent run. |
 | Filesystem/approval | CLI `workspace-write` rooted at the disposable project, `approval_policy=never`, no writes outside the trial project; candidate Editor commands follow the candidate's own permission settings |
 | Permission rule | Discovery starts with broad code execution disabled or gated where practical. If the candidate needs such a tool for a task, record the reason and every use as rescue/high-authority operation. Do not hand a candidate unrestricted filesystem/network authority through the project. |
 | Reset/retry | One fresh imported project per candidate from the same baseline. A failed operation may be retried once after observing the error. A candidate may perform its own diagnosis/correction; worker intervention is recorded. Do not supply exact asset paths until discovery has failed and the hint is logged. |
