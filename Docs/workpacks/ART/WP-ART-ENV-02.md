@@ -5,10 +5,13 @@ Class: PRODUCT ART / WORLD-AUTHORING INDUSTRIALIZATION
 Depends on: `WP-H2F-GATE` PASS + `WP-ART-01` PASS + `WP-CITY-URBAN-00` accepted first-block brief
 Blocks: `WP-ART-URBAN-01`, `WP-ART-03`
 Binding decision: `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`
+Binding identity/nightlife amendment: `Docs/product/PORT_TOWN_IDENTITY_NIGHTLIFE_AMENDMENT.md`
 
 ## Claim
 
 Juego2 can produce additional third-person streets, corners, thresholds and interiors from briefs using the accepted environment kit, metadata and tooling without falling back to primitive boxes, raw transform-by-transform improvisation or new bespoke code for every scene.
+
+The reusable factory must remain neutral to the town's unresolved final proper name. It must also be capable of producing materially different day/evening/night presentations from bounded briefs without requiring a second scene-specific pipeline merely because a district changes social intensity after dark.
 
 ## Production surface
 
@@ -24,6 +27,7 @@ The recipe should cover, where relevant:
 - public interior shell/threshold pattern;
 - props, signage, vegetation and bounded dressing passes;
 - material/palette/lighting profile handoff;
+- bounded day/evening/night presentation variants without baking a final town proper name into reusable assets;
 - collision/navigation hooks that are already foundation responsibilities;
 - validation for visible proxy/coverage gaps.
 
@@ -67,10 +71,10 @@ A repeated composition that still requires a new generator, new import conventio
 - reusable gap/asset additions with provenance;
 - no-bespoke-framework confirmation for repeated briefs.
 
-**FAIL if:** a fresh author needs implementation-source archaeology; repeated streets are just copies with prop swaps; raw cubes/planes substitute for missing architecture while marked keeper; scene-local scripts become the normal assembly mechanism; or the reuse claim is subjective without observable first/repeated evidence.
+**FAIL if:** a fresh author needs implementation-source archaeology; repeated streets are just copies with prop swaps; raw cubes/planes substitute for missing architecture while marked keeper; scene-local scripts become the normal assembly mechanism; reusable profiles hard-code `Villa Bruma` or another unreviewed final town name; a normal day/night variant requires a bespoke second pipeline; or the reuse claim is subjective without observable first/repeated evidence.
 
 **Allowed residuals:** final port-specific art breadth owned by `ART-URBAN-01`, later neighbourhood variants and rare hero locations.
 
 ## Non-claims
 
-No universal city generator, procedural whole-town system, final port-town visual lock, Living World behaviour or gameplay-system claim.
+No universal city generator, procedural whole-town system, final port-town visual lock, Living World behaviour or gameplay-system claim. This WP does not need to build Casco or Talleres nightlife; it only preserves a reusable factory capable of serving those later briefs.
