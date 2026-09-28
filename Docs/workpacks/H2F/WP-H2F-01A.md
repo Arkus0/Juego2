@@ -1,6 +1,7 @@
 # WP-H2F-01A — Game Creator 2 Core capability extraction + anti-duplication freeze
 
-Status: **PROPOSED / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
+Accepted: PR `#256`; frozen candidate `0eabed44bd73a396c0292892405e349900da0e32`; independent PASS review `#5333319449`; merge `2276dc1c2b429f273b7715fda023539feefdb086`  
 Class: `PRODUCT_CHECKPOINT / CAPABILITY_EXTRACTION`  
 Mode: **HYBRID / LOCAL_UNITY_REQUIRED for licensed GC2 Core bytes; remote work may prepare docs, matrices and verifier logic**  
 Depends on: `WP-H2F-01` PASS + `WP-H1-GATE` PASS + ART-01 `PREFOUNDATION_INPUT` already consumed by H2F-01  

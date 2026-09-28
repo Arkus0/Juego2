@@ -6,15 +6,15 @@ Mode: **LOCAL_UNITY_REQUIRED where licensed/source bytes or visual import eviden
 Depends on: `WP-H2F-01` PASS + `WP-H2F-01A` PASS + `WP-H1-GATE` PASS + ART-01 `PREFOUNDATION_INPUT` checkpoint published; **ART-01 PASS is intentionally downstream**  
 Blocks: `WP-H2F-03`; the adopted foundation also becomes the required baseline for the later ART-01 effective candidate
 
-## Post-01A urban product amendment (prospective)
+## Post-01A urban product amendment (accepted)
 
-After the urban expansion decision passes, this is still the **immediate next executable WP** after H2F-01A PASS/merge/DocSync and the ART-01 `PREFOUNDATION_INPUT` checkpoint. Its baseline, evidence, negative gates and H1 lifecycle proof are unchanged. Select/host the admitted GC2 Core seam for later local urban gameplay while Arkus remains the active persistent authority. Record how the selected street/worldbuilding profiles can be reused on compact urban blocks, without requiring a port keeper scene, a new district graph or extra licensed modules in H2F-02. Any accepted 01A S06 amendment remains binding; Core admission is not assumed before 01A review. See `Docs/product/URBAN_EXPANSION_DECISION.md` and `Docs/architecture/GC2_ARKUS_RUNTIME_SPLIT.md`.
+The urban expansion decision is accepted and `WP-H2F-01A` is COMPLETE / ACCEPTED, so this is the **immediate next executable WP**. Its baseline, evidence, negative gates and H1 lifecycle proof are unchanged. Select/host the admitted GC2 Core seam for later local urban gameplay while Arkus remains the active persistent authority. Record how the selected street/worldbuilding profiles can be reused on compact urban blocks, without requiring a port keeper scene, a new district graph or extra licensed modules in H2F-02. The accepted 01A S06 amendment is binding: GC2 `Character` realizes the player body, GC2 `MainCamera` + Third Person shot realizes the player camera, and the Juego2 action map remains the sole input owner. See `Docs/evidence/WP-H2F-01A/H2F02_CORE_HANDOFF.md`, `Docs/evidence/WP-H2F-01A/S06_BASELINE_AMENDMENT.md`, `Docs/product/URBAN_EXPANSION_DECISION.md` and `Docs/architecture/GC2_ARKUS_RUNTIME_SPLIT.md`.
 
 ## Claim
 
-The H2F-01 selected stack, including the H2F-01A Game Creator 2 Core handoff where Core remains admitted, is installed/admitted in the real Juego2 Unity project with exact versions/provenance, a working URP baseline, reproducible project configuration and explicit replaceable boundaries before keeper CITY-07 production begins.
+The H2F-01 selected stack, including the accepted H2F-01A Game Creator 2 Core handoff, is installed/admitted in the real Juego2 Unity project with exact versions/provenance, a working URP baseline, reproducible project configuration and explicit replaceable boundaries before keeper CITY-07 production begins.
 
-If H2F-01A accepted an explicit `S06_BASELINE_AMENDMENT.md`, that amendment replaces only the named H2F-01 controller/camera/input realization and becomes the exact realization H2F-02 must adopt. Without such an amendment, the H2F-01 winner remains binding.
+H2F-01A accepted an explicit `S06_BASELINE_AMENDMENT.md`; that amendment replaces only the named H2F-01 controller/camera/input realization and is the exact realization H2F-02 must adopt.
 
 ## Sequencing rule with ART-01
 
@@ -25,7 +25,7 @@ H2F-02 therefore does **not** depend on ART-01 PASS. It consumes the published A
 ## PASS-before-work acceptance contract
 
 - **Positive claim:** the selected baseline has become explicit project truth without breaking accepted H0/H1 authority or silently relying on one developer machine.
-- **Mandatory positive evidence:** (1) exact Unity package manifest/lock state; (2) exact external dependency/source adoption records required by `DEPENDENCY_IP_POLICY`; (3) URP migration/import evidence on representative real assets; (4) project/preset/import conventions; (5) documented manual/account-gated provisioning steps; (6) clean compile/import after the selected stack is present; (7) replacement/authority boundary for every material dependency; (8) a complete selected-foundation-state → H1 lifecycle classification matrix defining host, observation/reconciliation treatment and rebuild expectation for every material serialized/generated state introduced by the adopted stack; (9) closure of `H2F02_CORE_HANDOFF.md` when Core remains admitted; (10) if present, exact consumption of the accepted S06 baseline amendment.
+- **Mandatory positive evidence:** (1) exact Unity package manifest/lock state; (2) exact external dependency/source adoption records required by `DEPENDENCY_IP_POLICY`; (3) URP migration/import evidence on representative real assets; (4) project/preset/import conventions; (5) documented manual/account-gated provisioning steps; (6) clean compile/import after the selected stack is present; (7) replacement/authority boundary for every material dependency; (8) a complete selected-foundation-state → H1 lifecycle classification matrix defining host, observation/reconciliation treatment and rebuild expectation for every material serialized/generated state introduced by the adopted stack; (9) closure of `H2F02_CORE_HANDOFF.md` for the admitted Core; (10) exact consumption of the accepted S06 baseline amendment.
 - **Negative gates:** FAIL if dependency versions float; if exact license/EULA cannot be established; if unsupported/magenta/fallback materials are hidden; if local Asset Store/source bytes are assumed to exist without provisioning documentation; if a plugin-private identifier becomes canonical world semantics; if selected tools create a mutation path around Arkus authoring authority; if material selected foundation state has no declared H1 lifecycle classification/host; if admitted GC2 state ignores the 01A authority/lifecycle boundary; or if H2F-02 silently changes the player/camera/input choice without the accepted 01A amendment.
 - **Non-claims:** no CITY-07 keeper realization, no ART-01 readiness/PASS, no final visual-polish claim and no H2 NPC/Living World claim.
 - **Allowed residuals:** final artistic tuning owned by ART-01/CITY-07/ART-02; later profiling-driven optimization; deferred categories from H2F-01/H2F-01A; separately licensed GC2 modules owned by later causal phases.
@@ -48,7 +48,7 @@ For every `ADOPT_NOW` material package/tool/source selected by H2F-01, plus ever
 
 For `AVAILABLE_ASSET` content sources, record enough acquisition/provenance identity to make future retained derivatives traceable without pretending the content source is a runtime dependency.
 
-For Game Creator 2 Core, if admitted after H2F-01A:
+For Game Creator 2 Core, admitted by H2F-01A:
 
 - freeze the exact owner-supplied Core version and lawful provisioning path without committing restricted vendor bytes;
 - retain the distinction between `USE_FOUNDATION_NOW`, `USE_LATER_DO_NOT_DUPLICATE`, `LOCAL_EXECUTION_ONLY`, redundant/deferred/rejected capabilities;
@@ -128,7 +128,7 @@ Every row must choose a concrete lifecycle class/host. Distinguish where applica
 
 The matrix must explicitly cover selected Cinemachine, Splines, AI Navigation, Animation Rigging, Terrain and equivalent tool state when adopted.
 
-If GC2 Core is admitted, additionally classify every material family named by `H2F02_CORE_HANDOFF.md`, including Core settings/project assets, retained Character/camera/interaction/Hotspot/visual-scripting state actually used, Juego2-owned custom GC2 adapters, allowed GC2-local Variables, any admitted save-host configuration and generated/transient editor/runtime data.
+GC2 Core is admitted; additionally classify every material family named by `H2F02_CORE_HANDOFF.md`, including Core settings/project assets, retained Character/camera/interaction/Hotspot/visual-scripting state actually used, Juego2-owned custom GC2 adapters, allowed GC2-local Variables, any admitted save-host configuration and generated/transient editor/runtime data.
 
 If H1 observation/reconciliation would see admitted retained state as unsupported drift, or materialization/clean rebuild would erase required state, H2F-02 must place it behind a documented retained host/boundary or record a causal compatibility blocker. It may not rely on Editor Library/cache or hand repair.
 
