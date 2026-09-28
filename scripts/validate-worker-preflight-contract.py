@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Regression guard for the simplified Worker preflight contract.
 
-The normal hosted path is Arkus Main Safety on the exact PR SHA. A dedicated
-Worker Candidate Preflight workflow remains available only as an explicit
-workflow_dispatch fallback. Ordinary PR activity must not launch both.
+The normal hosted path is Arkus Main Safety. It must build the complete solution,
+validate the fail-closed test classification, and execute the bounded foundational
+MAIN_SAFETY_CORE bucket. A dedicated Worker Candidate Preflight workflow remains
+available only as an explicit workflow_dispatch fallback and retains the complete
+legacy test command for explicit preflight verification. Ordinary PR activity must
+not launch both.
 """
 from pathlib import Path
 import sys
@@ -19,7 +22,9 @@ SURFACES = {
 
 LOCKED = "dotnet restore Juego2.sln --locked-mode"
 BUILD = "dotnet build Juego2.sln --no-restore -c Release"
-TEST = "dotnet test Juego2.sln --no-build --no-restore -c Release"
+FULL_TEST = "dotnet test Juego2.sln --no-build --no-restore -c Release"
+CLASSIFICATION_SELF_TEST = "python3 scripts/test-suite.py self-test"
+MAIN_SAFETY_TEST = "python3 scripts/test-suite.py run MAIN_SAFETY_CORE"
 
 
 def validate(texts: dict[str, str]) -> list[str]:
@@ -32,13 +37,30 @@ def validate(texts: dict[str, str]) -> list[str]:
         if token not in local:
             errors.append(f"local preflight missing {token}")
 
-    # Main Safety is the normal hosted execution substrate.
-    for token in ("pull_request:", LOCKED, BUILD, TEST):
+    # Main Safety is the normal hosted execution substrate. It still restores and
+    # builds the whole solution, but its per-PR .NET execution is deliberately
+    # bounded to the classified foundational core.
+    for token in (
+        "pull_request:",
+        LOCKED,
+        BUILD,
+        CLASSIFICATION_SELF_TEST,
+        MAIN_SAFETY_TEST,
+    ):
         if token not in safety:
             errors.append(f"Main Safety missing {token}")
 
     # The dedicated runner must be explicit-only, never automatic PR fan-out.
-    for token in ("workflow_dispatch:", "pr_number:", "candidate_sha:", LOCKED, BUILD, TEST, "WORKER_PREFLIGHT_DELEGATED_GREEN"):
+    # It remains a complete fallback and therefore keeps the unfiltered test command.
+    for token in (
+        "workflow_dispatch:",
+        "pr_number:",
+        "candidate_sha:",
+        LOCKED,
+        BUILD,
+        FULL_TEST,
+        "WORKER_PREFLIGHT_DELEGATED_GREEN",
+    ):
         if token not in manual:
             errors.append(f"manual Worker preflight missing {token}")
     on_block = manual.split("permissions:", 1)[0]
@@ -76,6 +98,19 @@ def main() -> int:
         if not validate(broken):
             print("error: self-test failed to reject automatic dedicated preflight", file=sys.stderr)
             return 1
+
+        broken = dict(texts)
+        broken["main_safety"] = broken["main_safety"].replace(MAIN_SAFETY_TEST, "", 1)
+        if not validate(broken):
+            print("error: self-test failed to reject missing Main Safety core test bucket", file=sys.stderr)
+            return 1
+
+        broken = dict(texts)
+        broken["main_safety"] = broken["main_safety"].replace(CLASSIFICATION_SELF_TEST, "", 1)
+        if not validate(broken):
+            print("error: self-test failed to reject missing test classification guard", file=sys.stderr)
+            return 1
+
         print("WORKER_PREFLIGHT_CONTRACT_SELF_TEST_GREEN")
     else:
         print("WORKER_PREFLIGHT_CONTRACT_GREEN")
