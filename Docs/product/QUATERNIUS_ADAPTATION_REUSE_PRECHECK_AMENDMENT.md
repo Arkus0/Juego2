@@ -1,7 +1,8 @@
 # Quaternius adaptation reuse-precheck amendment
 
-Status: **PROPOSED / PROCESS_ONLY / DOCS_ONLY**  
+Status: **ACCEPTED product-art process amendment / PROCESS_ONLY / DOCS_ONLY**  
 Date: 2026-09-28  
+Accepted: PR `#269`, candidate `6246a0e1357276f93f94b36eea235832a24a0079`, owner-authorized Reviewer PASS `#5335772268`, merge `155859cbc16301a53c334ef381702cd4a134a7e6`.  
 Class: PRODUCT-ART PROCESS AMENDMENT  
 Research input: `Docs/discovery/QUATERNIUS_ADAPTATION_ECOSYSTEM_AUDIT.md`  
 Tooling catalog: `Docs/discovery/QUATERNIUS_TOOLING_CATALOG.md`  

@@ -11,7 +11,7 @@ The accepted PR #229 planning/contract changes are binding inputs here: producti
 
 Current product visual identity is the **large fictional northern-Spain port town**, not the historical Potes/Liébana inland pilot. The final town proper name remains undecided. `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md` is the accepted binding reuse-first interpretation of source selection and final scene coherence (PR `#267`).
 
-The [Quaternius adaptation ecosystem audit](../../discovery/QUATERNIUS_ADAPTATION_ECOSYSTEM_AUDIT.md) and [tooling catalog](../../discovery/QUATERNIUS_TOOLING_CATALOG.md) are non-canonical research. The companion `Docs/product/QUATERNIUS_ADAPTATION_REUSE_PRECHECK_AMENDMENT.md` becomes a binding reuse precheck for the six named ART workpacks only upon independent acceptance and DocSync; each affected WP links it directly. It does not install tools, authorize purchases, change visual acceptance, or reopen H2F-02.
+The [Quaternius adaptation ecosystem audit](../../discovery/QUATERNIUS_ADAPTATION_ECOSYSTEM_AUDIT.md) and [tooling catalog](../../discovery/QUATERNIUS_TOOLING_CATALOG.md) remain non-canonical research. The accepted `Docs/product/QUATERNIUS_ADAPTATION_REUSE_PRECHECK_AMENDMENT.md` (PR `#269`) is the binding reuse precheck for the six named ART workpacks; each affected WP links it directly. It does not install tools, authorize purchases, change visual acceptance, or reopen H2F-02.
 
 ART product work uses `PRODUCT_CHECKPOINT` under `Docs/workpacks/PRODUCT_EXECUTION_POLICY.md`.
 
