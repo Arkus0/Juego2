@@ -107,6 +107,16 @@ namespace Juego2.Foundation.Tests
             Assert.That(J2AssemblyBoundary.CodeNamesGameCreator("GameCreator.Runtime.Characters.Character c;"), Is.True);
         }
 
+        [Test]
+        public void AssemblyBoundary_LegacyInputManagerIsRejectedInJuego2Code()
+        {
+            var legacy = TempProject(r => Write(r, "Assets/Arkus/ART/Walk.cs", "class Walk { void Update() { var x = Input.GetAxis(\"Horizontal\"); } }"));
+            Assert.That(J2AssemblyBoundary.Verify(legacy), Has.Member("J2_LEGACY_INPUT_IN_JUEGO2_CODE:Assets/Arkus/ART/Walk.cs"));
+            Assert.That(J2AssemblyBoundary.CodeUsesLegacyInput("var v = move.ReadValue<Vector2>(); // Input.GetAxis is legacy"), Is.False);
+            Assert.That(J2AssemblyBoundary.CodeUsesLegacyInput("var p = UnityEngine.Input.mousePosition;"), Is.True);
+            Assert.That(J2AssemblyBoundary.CodeUsesLegacyInput("InputSystem.onEvent += e; actions.FindAction(\"Move\");"), Is.False);
+        }
+
         sealed class TableAuthority : IArkusFactAuthority
         {
             public string state = "closed";

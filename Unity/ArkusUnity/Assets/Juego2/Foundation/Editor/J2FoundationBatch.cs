@@ -53,6 +53,16 @@ namespace Juego2.Foundation.Editor
             public J2ShaderAudit.Report audit;
         }
 
+        public static string OutputPath() => Argument("-j2-output");
+
+        /// <summary>Extra content roots passed as <c>-j2-roots a;b</c> (evidence workspaces).</summary>
+        public static string[] ExtraRoots()
+        {
+            var args = Environment.GetCommandLineArgs();
+            var i = Array.IndexOf(args, "-j2-roots");
+            return i >= 0 && i + 1 < args.Length ? args[i + 1].Split(';') : new string[0];
+        }
+
         internal static bool Flag(string name) => Array.IndexOf(Environment.GetCommandLineArgs(), name) >= 0;
 
         internal static string Argument(string name)

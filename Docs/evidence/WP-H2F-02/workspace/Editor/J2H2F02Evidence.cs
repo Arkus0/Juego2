@@ -99,6 +99,7 @@ namespace Juego2.H2F02.Evidence
                 npcPreset.locomotionController = controller;
                 var start = Ground(new Vector3(0, 40, -8));
                 var player = J2Gc2Presets.MaterializeCharacter(playerPreset, "j2.char.player", start);
+                player.transform.rotation = Quaternion.LookRotation(Vector3.forward); // walking the route toward the bar
                 var npc = J2Gc2Presets.MaterializeCharacter(npcPreset, "j2.npc.evidence_a", Ground(new Vector3(1.6f, 40, -5.5f)));
                 npc.transform.rotation = Quaternion.Euler(0, 200, 0);
                 J2Gc2Presets.MaterializePlayerCamera(AssetDatabase.LoadAssetAtPath<J2CameraPreset>(J2FoundationBaseline.CameraPreset));
@@ -110,7 +111,7 @@ namespace Juego2.H2F02.Evidence
                 r.enabledInputBindings = InputBindings(scene);
                 PoseHumans(UalClip(Ual1, "Idle_Loop"));
                 var body = player.transform.position;
-                captures.Add(Capture("s06_third_person_player", body + new Vector3(0.8f, 1.0f, -3.0f), body + Vector3.up * 0.4f, 55));
+                captures.Add(Capture("s06_third_person_player", body + new Vector3(0.6f, 1.1f, -3.2f), body + new Vector3(0, 0.5f, 2.0f), 55));
                 captures.Add(Capture("s06_player_and_npc", body + new Vector3(-1.6f, 0.9f, 3.4f), body + new Vector3(0.8f, 0.3f, 1.2f), 55));
                 AnimationMode.StopAnimationMode();
                 EditorSceneManager.SaveScene(scene, Dir + "/RouteEvidence.unity", true);

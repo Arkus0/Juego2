@@ -44,12 +44,15 @@ namespace Juego2.Foundation.Editor
             // The subshader RenderPipeline tag is reliable in batch mode; the active-subshader pass list is not.
             for (int i = 0; i < shader.subshaderCount; i++)
                 if (shader.FindSubshaderTagValue(i, new ShaderTagId("RenderPipeline")).name == "UniversalPipeline") return "URP_OK";
+            bool allUntagged = shader.passCount > 0;
             for (int i = 0; i < shader.passCount; i++)
             {
                 var mode = shader.FindPassTagValue(i, new ShaderTagId("LightMode")).name;
                 if (UrpLightModes.Contains(mode)) return "URP_OK";
+                allUntagged &= string.IsNullOrEmpty(mode);
             }
-            return "BUILTIN_ONLY";
+            // URP draws passes without a LightMode tag as SRPDefaultUnlit (e.g. legacy TextMesh "GUI/Text Shader").
+            return allUntagged ? "URP_OK" : "BUILTIN_ONLY";
         }
 
         public static Report Audit(IEnumerable<(Material material, string source)> materials, IEnumerable<string> declaredFixturePrefixes = null)

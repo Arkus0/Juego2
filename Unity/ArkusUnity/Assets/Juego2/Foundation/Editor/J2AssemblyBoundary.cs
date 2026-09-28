@@ -15,8 +15,23 @@ namespace Juego2.Foundation.Editor
     {
         public static readonly string[] Gc2AdapterRoots = { "Assets/Juego2/Gc2Adapter" };
         public const string Gc2Define = "JUEGO2_GC2_CORE";
+
+        /// <summary>
+        /// Accepted debug/benchmark tools that still read the legacy Input Manager (CITY-04 traversal probe; ART-01's
+        /// walk inspector when ART-01 rebases). They are why activeInputHandler stays Both; no other code may join them.
+        /// </summary>
+        public static readonly string[] LegacyInputTransitionTools =
+        {
+            "Assets/Arkus/CITY/City04TraversalProbe.cs",
+            "Assets/Arkus/ART/Art01WalkInspector.cs",
+        };
         static readonly Regex GameCreatorToken = new Regex(@"\bGameCreator\b");
         static readonly Regex StringsAndComments = new Regex(@"@""(?:""""|[^""])*""|""(?:\\.|[^""\\])*""|//[^\n]*|/\*.*?\*/", RegexOptions.Singleline);
+
+        static readonly Regex LegacyInput = new Regex(@"(?<![\w.])(UnityEngine\.)?Input\.(GetAxis|GetAxisRaw|GetButton|GetButtonDown|GetButtonUp|GetKey|GetKeyDown|GetKeyUp|GetMouseButton|GetMouseButtonDown|GetMouseButtonUp|mousePosition|mouseScrollDelta|GetTouch|touchCount|anyKey|anyKeyDown|inputString)\b");
+
+        /// <summary>True when code calls the legacy Input Manager (UnityEngine.Input), not the Input System.</summary>
+        public static bool CodeUsesLegacyInput(string source) => LegacyInput.IsMatch(StringsAndComments.Replace(source, " "));
 
         /// <summary>True when code (not a string literal or comment) names the GameCreator namespace.</summary>
         public static bool CodeNamesGameCreator(string source) => GameCreatorToken.IsMatch(StringsAndComments.Replace(source, " "));
@@ -45,6 +60,16 @@ namespace Juego2.Foundation.Editor
                 if (!Directory.Exists(dir)) continue;
                 foreach (var cs in Directory.EnumerateFiles(dir, "*.cs", SearchOption.AllDirectories))
                     if (CodeNamesGameCreator(File.ReadAllText(cs))) findings.Add("J2_GC2_L1_SOURCE_NAMES_GAMECREATOR:" + Rel(projectRoot, cs));
+            }
+            // Juego2 owns input through the Input System action map; the legacy Input Manager stays enabled
+            // (activeInputHandler = Both) only for the named pre-existing debug/benchmark tools below.
+            foreach (var root in new[] { "Assets/Arkus", "Assets/Juego2" })
+            {
+                var dir = Path.Combine(projectRoot, root);
+                if (!Directory.Exists(dir)) continue;
+                foreach (var cs in Directory.EnumerateFiles(dir, "*.cs", SearchOption.AllDirectories))
+                    if (!LegacyInputTransitionTools.Contains(Rel(projectRoot, cs)) && CodeUsesLegacyInput(File.ReadAllText(cs)))
+                        findings.Add("J2_LEGACY_INPUT_IN_JUEGO2_CODE:" + Rel(projectRoot, cs));
             }
             return findings;
         }

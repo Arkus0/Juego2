@@ -17,6 +17,7 @@ namespace Juego2.Foundation.Tests
             Assert.That(J2ShaderAudit.Classify(Shader.Find("Legacy Shaders/Diffuse")), Is.Not.EqualTo("URP_OK"));
             Assert.That(J2ShaderAudit.Classify(null), Is.EqualTo("MISSING_SHADER"));
             Assert.That(J2ShaderAudit.Classify(Shader.Find("Skybox/Panoramic")), Is.EqualTo("URP_OK"));
+            Assert.That(J2ShaderAudit.Classify(Shader.Find("GUI/Text Shader")), Is.EqualTo("URP_OK"), "untagged unlit passes draw as SRPDefaultUnlit");
         }
 
         [TestCase("Juego2/StylizedWater")]
