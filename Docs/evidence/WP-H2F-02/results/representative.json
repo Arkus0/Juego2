@@ -33,9 +33,9 @@
     "humanoidMapping": [
         "citizen: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03",
         "UAL2.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03",
+        "UAL1.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03",
         "UAL1_RM.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03",
-        "UAL2_RM.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03",
-        "UAL1.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03"
+        "UAL2_RM.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03"
     ],
     "importFindings": [
         "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Climb_Down_Loop",
@@ -88,10 +88,10 @@
         "captures/route_facade_stone_close.png",
         "captures/route_f01_exterior.png",
         "captures/route_f01_threshold.png",
-        "captures/s06_third_person_player.png",
+        "captures/s06_gc2_player_citizen.png",
         "captures/s06_player_and_npc.png",
-        "captures/worldbuilding_junction_oblique.png",
-        "captures/worldbuilding_water_window.png"
+        "captures/worldbuilding_water_window.png",
+        "captures/worldbuilding_junction_oblique.png"
     ],
     "routeAudit": {
         "pipeline": "UniversalRenderPipelineAsset",
@@ -2129,13 +2129,37 @@
     },
     "worldbuildingAudit": {
         "pipeline": "UniversalRenderPipelineAsset",
-        "materials": 14,
+        "materials": 18,
         "green": true,
         "rows": [
             {
                 "material": "Assets/Arkus/ART/Materials/GrassGround.mat#GrassGround",
                 "shader": "Universal Render Pipeline/Lit",
-                "source": "renderer:ground",
+                "source": "renderer:ground_w",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/GrassGround.mat#GrassGround",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:ground_e",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/GrassGround.mat#GrassGround",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:ground_s",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/GrassGround.mat#GrassGround",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:ground_n",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Rock.mat#Rock",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:basin_bed",
                 "status": "URP_OK"
             },
             {
@@ -2171,7 +2195,7 @@
             {
                 "material": "#J2_Water_evidence",
                 "shader": "Juego2/StylizedWater",
-                "source": "renderer:pond_exclusion",
+                "source": "renderer:pond_water",
                 "status": "URP_OK"
             },
             {
@@ -2187,13 +2211,13 @@
                 "status": "URP_OK"
             },
             {
-                "material": "Assets/Arkus/ART/External/Nature/Materials/Rocks_Diffuse.mat#Rocks_Diffuse",
+                "material": "Assets/Arkus/ART/Materials/Rock.mat#Rock",
                 "shader": "Universal Render Pipeline/Lit",
                 "source": "renderer:Rock_Medium_1",
                 "status": "URP_OK"
             },
             {
-                "material": "Assets/Arkus/ART/External/Nature/Models/Materials/Bush_Common_Flowers-Leaves_NormalTree.mat#Bush_Common_Flowers-Leaves_NormalTree",
+                "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
                 "shader": "Universal Render Pipeline/Lit",
                 "source": "renderer:Bush_Common_Flowers",
                 "status": "URP_OK"
@@ -2205,7 +2229,7 @@
                 "status": "URP_OK"
             },
             {
-                "material": "Assets/Arkus/ART/External/Nature/Models/Materials/Bush_Common-Leaves_TwistedTree.mat#Bush_Common-Leaves_TwistedTree",
+                "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
                 "shader": "Universal Render Pipeline/Lit",
                 "source": "renderer:Bush_Common",
                 "status": "URP_OK"
@@ -2223,7 +2247,7 @@
     "junctionSamples": 11971,
     "junctionHoles": 0,
     "junctionSteps": 0,
-    "scatterInstances": 193,
+    "scatterInstances": 195,
     "scatterInExclusion": 0,
     "citizenAvatarValid": true,
     "playerIsGc2Player": true,

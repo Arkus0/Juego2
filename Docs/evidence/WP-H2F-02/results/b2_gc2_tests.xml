@@ -1,121 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<test-run id="2" testcasecount="33" result="Passed" total="33" passed="33" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:24Z" duration="2,5709834">
-  <test-suite type="TestSuite" id="1000" name="ArkusUnity" fullname="ArkusUnity" runstate="Runnable" testcasecount="76" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:24Z" duration="2.570983" total="33" passed="33" failed="0" inconclusive="0" skipped="0" asserts="0">
+<test-run id="2" testcasecount="34" result="Passed" total="34" passed="34" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:33Z" duration="2,3568516">
+  <test-suite type="TestSuite" id="1000" name="ArkusUnity" fullname="ArkusUnity" runstate="Runnable" testcasecount="77" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:33Z" duration="2.356852" total="34" passed="34" failed="0" inconclusive="0" skipped="0" asserts="0">
     <properties>
       <property name="platform" value="EditMode" />
     </properties>
-    <test-suite type="Assembly" id="1093" name="Juego2.Foundation.Tests.Editor.dll" fullname="C:/Juego2-H2F02-W/Unity/ArkusUnity/Library/ScriptAssemblies/Juego2.Foundation.Tests.Editor.dll" runstate="Runnable" testcasecount="24" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:22Z" duration="1.192868" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <test-suite type="Assembly" id="1094" name="Juego2.Foundation.Tests.Editor.dll" fullname="C:/Juego2-H2F02-W/Unity/ArkusUnity/Library/ScriptAssemblies/Juego2.Foundation.Tests.Editor.dll" runstate="Runnable" testcasecount="25" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:31Z" duration="0.927592" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
       <properties>
-        <property name="_PID" value="26628" />
+        <property name="_PID" value="34424" />
         <property name="_APPDOMAIN" value="Unity Child Domain" />
         <property name="platform" value="EditMode" />
         <property name="EditorOnly" value="True" />
       </properties>
-      <test-suite type="TestSuite" id="1094" name="Juego2" fullname="Juego2" runstate="Runnable" testcasecount="24" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:22Z" duration="1.192592" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <test-suite type="TestSuite" id="1095" name="Juego2" fullname="Juego2" runstate="Runnable" testcasecount="25" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:31Z" duration="0.927290" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
         <properties />
-        <test-suite type="TestSuite" id="1095" name="Foundation" fullname="Juego2.Foundation" runstate="Runnable" testcasecount="24" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:22Z" duration="1.192491" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <test-suite type="TestSuite" id="1096" name="Foundation" fullname="Juego2.Foundation" runstate="Runnable" testcasecount="25" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:31Z" duration="0.927184" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
           <properties />
-          <test-suite type="TestSuite" id="1096" name="Tests" fullname="Juego2.Foundation.Tests" runstate="Runnable" testcasecount="24" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:22Z" duration="1.192359" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <test-suite type="TestSuite" id="1097" name="Tests" fullname="Juego2.Foundation.Tests" runstate="Runnable" testcasecount="25" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:31Z" duration="0.927047" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
             <properties />
-            <test-suite type="TestFixture" id="1064" name="J2FoundationBaselineTests" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.180105" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1064" name="J2FoundationBaselineTests" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.170706" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1065" name="AdoptedBaselineVerifiesGreen" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.AdoptedBaselineVerifiesGreen" methodname="AdoptedBaselineVerifiesGreen" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1433982790" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.118645" asserts="0">
+              <test-case id="1065" name="AdoptedBaselineVerifiesGreen" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.AdoptedBaselineVerifiesGreen" methodname="AdoptedBaselineVerifiesGreen" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1685524652" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.114479" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1073" name="ArkusFacts_FailClosedWithoutAuthority" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.ArkusFacts_FailClosedWithoutAuthority" methodname="ArkusFacts_FailClosedWithoutAuthority" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="29760620" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.002867" asserts="0">
+              <test-case id="1073" name="ArkusFacts_FailClosedWithoutAuthority" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.ArkusFacts_FailClosedWithoutAuthority" methodname="ArkusFacts_FailClosedWithoutAuthority" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1237236317" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.002834" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1074" name="ArkusFacts_RelaysAuthorityDecisions" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.ArkusFacts_RelaysAuthorityDecisions" methodname="ArkusFacts_RelaysAuthorityDecisions" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="494437398" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.002537" asserts="0">
+              <test-case id="1074" name="ArkusFacts_RelaysAuthorityDecisions" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.ArkusFacts_RelaysAuthorityDecisions" methodname="ArkusFacts_RelaysAuthorityDecisions" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="2067706792" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.002403" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1071" name="AssemblyBoundary_ArkusSourceMayNotNameGameCreator" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.AssemblyBoundary_ArkusSourceMayNotNameGameCreator" methodname="AssemblyBoundary_ArkusSourceMayNotNameGameCreator" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="710606375" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.004484" asserts="0">
+              <test-case id="1071" name="AssemblyBoundary_ArkusSourceMayNotNameGameCreator" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.AssemblyBoundary_ArkusSourceMayNotNameGameCreator" methodname="AssemblyBoundary_ArkusSourceMayNotNameGameCreator" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="652127660" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.004269" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1072" name="AssemblyBoundary_LegacyInputManagerIsRejectedInJuego2Code" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.AssemblyBoundary_LegacyInputManagerIsRejectedInJuego2Code" methodname="AssemblyBoundary_LegacyInputManagerIsRejectedInJuego2Code" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1854122298" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.007953" asserts="0">
+              <test-case id="1072" name="AssemblyBoundary_LegacyInputManagerIsRejectedInJuego2Code" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.AssemblyBoundary_LegacyInputManagerIsRejectedInJuego2Code" methodname="AssemblyBoundary_LegacyInputManagerIsRejectedInJuego2Code" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1840759291" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.007189" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1070" name="AssemblyBoundary_OnlyGatedAdapterMayReferenceGameCreator" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.AssemblyBoundary_OnlyGatedAdapterMayReferenceGameCreator" methodname="AssemblyBoundary_OnlyGatedAdapterMayReferenceGameCreator" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="790900682" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.023525" asserts="0">
+              <test-case id="1070" name="AssemblyBoundary_OnlyGatedAdapterMayReferenceGameCreator" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.AssemblyBoundary_OnlyGatedAdapterMayReferenceGameCreator" methodname="AssemblyBoundary_OnlyGatedAdapterMayReferenceGameCreator" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="297571769" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.021970" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1075" name="EntityKeysAreJuego2SemanticKeysNotEngineIdentities" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.EntityKeysAreJuego2SemanticKeysNotEngineIdentities" methodname="EntityKeysAreJuego2SemanticKeysNotEngineIdentities" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1204249840" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.001479" asserts="0">
+              <test-case id="1075" name="EntityKeysAreJuego2SemanticKeysNotEngineIdentities" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.EntityKeysAreJuego2SemanticKeysNotEngineIdentities" methodname="EntityKeysAreJuego2SemanticKeysNotEngineIdentities" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1693582540" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.001278" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1066" name="PackageBaseline_ExactSetIsGreen" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_ExactSetIsGreen" methodname="PackageBaseline_ExactSetIsGreen" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="465592246" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.002035" asserts="0">
+              <test-case id="1066" name="PackageBaseline_ExactSetIsGreen" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_ExactSetIsGreen" methodname="PackageBaseline_ExactSetIsGreen" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1923399700" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.001643" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1067" name="PackageBaseline_FloatingOrChangedVersionFails" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_FloatingOrChangedVersionFails" methodname="PackageBaseline_FloatingOrChangedVersionFails" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1751387748" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.002272" asserts="0">
+              <test-case id="1067" name="PackageBaseline_FloatingOrChangedVersionFails" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_FloatingOrChangedVersionFails" methodname="PackageBaseline_FloatingOrChangedVersionFails" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1146819540" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.002173" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1069" name="PackageBaseline_NotAdmittedOrTransitiveDirectFails" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_NotAdmittedOrTransitiveDirectFails" methodname="PackageBaseline_NotAdmittedOrTransitiveDirectFails" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="649552200" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.000573" asserts="0">
+              <test-case id="1069" name="PackageBaseline_NotAdmittedOrTransitiveDirectFails" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_NotAdmittedOrTransitiveDirectFails" methodname="PackageBaseline_NotAdmittedOrTransitiveDirectFails" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="684184382" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.000618" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1068" name="PackageBaseline_UnreviewedDirectOrMissingDirectFails" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_UnreviewedDirectOrMissingDirectFails" methodname="PackageBaseline_UnreviewedDirectOrMissingDirectFails" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1980941412" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.000692" asserts="0">
+              <test-case id="1068" name="PackageBaseline_UnreviewedDirectOrMissingDirectFails" fullname="Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_UnreviewedDirectOrMissingDirectFails" methodname="PackageBaseline_UnreviewedDirectOrMissingDirectFails" classname="Juego2.Foundation.Tests.J2FoundationBaselineTests" runstate="Runnable" seed="1980445487" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.000688" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1076" name="J2RenderingTests" fullname="Juego2.Foundation.Tests.J2RenderingTests" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:22Z" duration="0.066118" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1076" name="J2RenderingTests" fullname="Juego2.Foundation.Tests.J2RenderingTests" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.066061" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1083" name="ImportConventions_FailClosedOnMissingModels" fullname="Juego2.Foundation.Tests.J2RenderingTests.ImportConventions_FailClosedOnMissingModels" methodname="ImportConventions_FailClosedOnMissingModels" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1185142908" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.001357" asserts="0">
+              <test-case id="1083" name="ClipRules_InPlaceBakesRootAndRootMotionKeepsIt" fullname="Juego2.Foundation.Tests.J2RenderingTests.ClipRules_InPlaceBakesRootAndRootMotionKeepsIt" methodname="ClipRules_InPlaceBakesRootAndRootMotionKeepsIt" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1200296302" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.000570" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-suite type="ParameterizedMethod" id="1080" name="ProjectShaders_AreSupportedUrpShaders" fullname="Juego2.Foundation.Tests.J2RenderingTests.ProjectShaders_AreSupportedUrpShaders" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.002282" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <test-case id="1084" name="ImportConventions_FailClosedOnMissingModels" fullname="Juego2.Foundation.Tests.J2RenderingTests.ImportConventions_FailClosedOnMissingModels" methodname="ImportConventions_FailClosedOnMissingModels" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="340671898" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.002773" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1080" name="ProjectShaders_AreSupportedUrpShaders" fullname="Juego2.Foundation.Tests.J2RenderingTests.ProjectShaders_AreSupportedUrpShaders" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.002265" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
                 <properties />
-                <test-case id="1078" name="ProjectShaders_AreSupportedUrpShaders(&quot;Juego2/StylizedWater&quot;)" fullname="Juego2.Foundation.Tests.J2RenderingTests.ProjectShaders_AreSupportedUrpShaders(&quot;Juego2/StylizedWater&quot;)" methodname="ProjectShaders_AreSupportedUrpShaders" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1090963566" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.001820" asserts="0">
+                <test-case id="1078" name="ProjectShaders_AreSupportedUrpShaders(&quot;Juego2/StylizedWater&quot;)" fullname="Juego2.Foundation.Tests.J2RenderingTests.ProjectShaders_AreSupportedUrpShaders(&quot;Juego2/StylizedWater&quot;)" methodname="ProjectShaders_AreSupportedUrpShaders" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1524718916" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.001797" asserts="0">
                   <properties>
                     <property name="retryIteration" value="0" />
                     <property name="repeatIteration" value="0" />
                   </properties>
                 </test-case>
-                <test-case id="1079" name="ProjectShaders_AreSupportedUrpShaders(&quot;Juego2/InteriorWindow&quot;)" fullname="Juego2.Foundation.Tests.J2RenderingTests.ProjectShaders_AreSupportedUrpShaders(&quot;Juego2/InteriorWindow&quot;)" methodname="ProjectShaders_AreSupportedUrpShaders" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1618744561" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.000074" asserts="0">
+                <test-case id="1079" name="ProjectShaders_AreSupportedUrpShaders(&quot;Juego2/InteriorWindow&quot;)" fullname="Juego2.Foundation.Tests.J2RenderingTests.ProjectShaders_AreSupportedUrpShaders(&quot;Juego2/InteriorWindow&quot;)" methodname="ProjectShaders_AreSupportedUrpShaders" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1148344087" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.000070" asserts="0">
                   <properties>
                     <property name="retryIteration" value="0" />
                     <property name="repeatIteration" value="0" />
                   </properties>
                 </test-case>
               </test-suite>
-              <test-case id="1081" name="RetainedProjectMaterials_AreAllUrp" fullname="Juego2.Foundation.Tests.J2RenderingTests.RetainedProjectMaterials_AreAllUrp" methodname="RetainedProjectMaterials_AreAllUrp" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1233779277" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:21Z" duration="0.021101" asserts="0">
+              <test-case id="1081" name="RetainedProjectMaterials_AreAllUrp" fullname="Juego2.Foundation.Tests.J2RenderingTests.RetainedProjectMaterials_AreAllUrp" methodname="RetainedProjectMaterials_AreAllUrp" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1757620073" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.020589" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1082" name="ShaderAudit_ReportsATerrainPrototypeThatRendererAuditsMiss" fullname="Juego2.Foundation.Tests.J2RenderingTests.ShaderAudit_ReportsATerrainPrototypeThatRendererAuditsMiss" methodname="ShaderAudit_ReportsATerrainPrototypeThatRendererAuditsMiss" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1641096894" result="Passed" start-time="2026-09-28 07:04:21Z" end-time="2026-09-28 07:04:22Z" duration="0.039106" asserts="0">
+              <test-case id="1082" name="ShaderAudit_ReportsATerrainPrototypeThatRendererAuditsMiss" fullname="Juego2.Foundation.Tests.J2RenderingTests.ShaderAudit_ReportsATerrainPrototypeThatRendererAuditsMiss" methodname="ShaderAudit_ReportsATerrainPrototypeThatRendererAuditsMiss" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1824320472" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.037482" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -123,55 +129,55 @@
                 <output><![CDATA[The tree Cube must use the Nature/Soft Occlusion shader. Otherwise billboarding/lighting will not work correctly.
 ]]></output>
               </test-case>
-              <test-case id="1077" name="ShaderClassification_SeparatesUrpFromBuiltinOnlyAndMissing" fullname="Juego2.Foundation.Tests.J2RenderingTests.ShaderClassification_SeparatesUrpFromBuiltinOnlyAndMissing" methodname="ShaderClassification_SeparatesUrpFromBuiltinOnlyAndMissing" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1668824086" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.000751" asserts="0">
+              <test-case id="1077" name="ShaderClassification_SeparatesUrpFromBuiltinOnlyAndMissing" fullname="Juego2.Foundation.Tests.J2RenderingTests.ShaderClassification_SeparatesUrpFromBuiltinOnlyAndMissing" methodname="ShaderClassification_SeparatesUrpFromBuiltinOnlyAndMissing" classname="Juego2.Foundation.Tests.J2RenderingTests" runstate="Runnable" seed="1127291770" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:30Z" duration="0.000725" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1084" name="J2WorldbuildingTests" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.945085" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1085" name="J2WorldbuildingTests" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:31Z" duration="0.689163" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1085" name="LinearProfile_IsDeterministicAndDetectsStaleInputs" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.LinearProfile_IsDeterministicAndDetectsStaleInputs" methodname="LinearProfile_IsDeterministicAndDetectsStaleInputs" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="296387436" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.073569" asserts="0">
+              <test-case id="1086" name="LinearProfile_IsDeterministicAndDetectsStaleInputs" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.LinearProfile_IsDeterministicAndDetectsStaleInputs" methodname="LinearProfile_IsDeterministicAndDetectsStaleInputs" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="1286132797" result="Passed" start-time="2026-09-28 07:22:30Z" end-time="2026-09-28 07:22:31Z" duration="0.072000" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1092" name="Scatter_IsSeedDeterministicAndKeepsOutOfNoGoAreas" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.Scatter_IsSeedDeterministicAndKeepsOutOfNoGoAreas" methodname="Scatter_IsSeedDeterministicAndKeepsOutOfNoGoAreas" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="373433765" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.328621" asserts="0">
+              <test-case id="1093" name="Scatter_IsSeedDeterministicAndKeepsOutOfNoGoAreas" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.Scatter_IsSeedDeterministicAndKeepsOutOfNoGoAreas" methodname="Scatter_IsSeedDeterministicAndKeepsOutOfNoGoAreas" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="104527103" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.297236" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-suite type="ParameterizedMethod" id="1089" name="TeeJunction_HasNoHolesOrStepsAtAnyHeading" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_HasNoHolesOrStepsAtAnyHeading" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.452420" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <test-suite type="ParameterizedMethod" id="1090" name="TeeJunction_HasNoHolesOrStepsAtAnyHeading" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_HasNoHolesOrStepsAtAnyHeading" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.238474" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
                 <properties />
-                <test-case id="1086" name="TeeJunction_HasNoHolesOrStepsAtAnyHeading(0.0f,0.0f)" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_HasNoHolesOrStepsAtAnyHeading(0.0f,0.0f)" methodname="TeeJunction_HasNoHolesOrStepsAtAnyHeading" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="386525782" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.066712" asserts="0">
+                <test-case id="1087" name="TeeJunction_HasNoHolesOrStepsAtAnyHeading(0.0f,0.0f)" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_HasNoHolesOrStepsAtAnyHeading(0.0f,0.0f)" methodname="TeeJunction_HasNoHolesOrStepsAtAnyHeading" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="1412125912" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.066218" asserts="0">
                   <properties>
                     <property name="retryIteration" value="0" />
                     <property name="repeatIteration" value="0" />
                   </properties>
                 </test-case>
-                <test-case id="1087" name="TeeJunction_HasNoHolesOrStepsAtAnyHeading(30.0f,0.06f)" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_HasNoHolesOrStepsAtAnyHeading(30.0f,0.06f)" methodname="TeeJunction_HasNoHolesOrStepsAtAnyHeading" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="215536733" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.129284" asserts="0">
+                <test-case id="1088" name="TeeJunction_HasNoHolesOrStepsAtAnyHeading(30.0f,0.06f)" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_HasNoHolesOrStepsAtAnyHeading(30.0f,0.06f)" methodname="TeeJunction_HasNoHolesOrStepsAtAnyHeading" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="1879335958" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.060411" asserts="0">
                   <properties>
                     <property name="retryIteration" value="0" />
                     <property name="repeatIteration" value="0" />
                   </properties>
                 </test-case>
-                <test-case id="1088" name="TeeJunction_HasNoHolesOrStepsAtAnyHeading(-117.0f,0.04f)" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_HasNoHolesOrStepsAtAnyHeading(-117.0f,0.04f)" methodname="TeeJunction_HasNoHolesOrStepsAtAnyHeading" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="1659046711" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.247037" asserts="0">
+                <test-case id="1089" name="TeeJunction_HasNoHolesOrStepsAtAnyHeading(-117.0f,0.04f)" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_HasNoHolesOrStepsAtAnyHeading(-117.0f,0.04f)" methodname="TeeJunction_HasNoHolesOrStepsAtAnyHeading" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="1492642735" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.103012" asserts="0">
                   <properties>
                     <property name="retryIteration" value="0" />
                     <property name="repeatIteration" value="0" />
                   </properties>
                 </test-case>
               </test-suite>
-              <test-case id="1090" name="TeeJunction_OracleDetectsAMissingApron" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_OracleDetectsAMissingApron" methodname="TeeJunction_OracleDetectsAMissingApron" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="2020522725" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.061210" asserts="0">
+              <test-case id="1091" name="TeeJunction_OracleDetectsAMissingApron" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_OracleDetectsAMissingApron" methodname="TeeJunction_OracleDetectsAMissingApron" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="1035595144" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.057308" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1091" name="TeeJunction_RejectsAnObliqueBranch" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_RejectsAnObliqueBranch" methodname="TeeJunction_RejectsAnObliqueBranch" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="541094866" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.026788" asserts="0">
+              <test-case id="1092" name="TeeJunction_RejectsAnObliqueBranch" fullname="Juego2.Foundation.Tests.J2WorldbuildingTests.TeeJunction_RejectsAnObliqueBranch" methodname="TeeJunction_RejectsAnObliqueBranch" classname="Juego2.Foundation.Tests.J2WorldbuildingTests" runstate="Runnable" seed="911421449" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.021672" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -182,70 +188,70 @@
         </test-suite>
       </test-suite>
     </test-suite>
-    <test-suite type="Assembly" id="1108" name="Juego2.Gc2Adapter.Tests.Editor.dll" fullname="C:/Juego2-H2F02-W/Unity/ArkusUnity/Library/ScriptAssemblies/Juego2.Gc2Adapter.Tests.Editor.dll" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:24Z" duration="1.371755" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <test-suite type="Assembly" id="1109" name="Juego2.Gc2Adapter.Tests.Editor.dll" fullname="C:/Juego2-H2F02-W/Unity/ArkusUnity/Library/ScriptAssemblies/Juego2.Gc2Adapter.Tests.Editor.dll" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:33Z" duration="1.422612" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
       <properties>
-        <property name="_PID" value="26628" />
+        <property name="_PID" value="34424" />
         <property name="_APPDOMAIN" value="Unity Child Domain" />
         <property name="platform" value="EditMode" />
         <property name="EditorOnly" value="True" />
       </properties>
-      <test-suite type="TestSuite" id="1109" name="Juego2" fullname="Juego2" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:24Z" duration="1.370884" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <test-suite type="TestSuite" id="1110" name="Juego2" fullname="Juego2" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:33Z" duration="1.421815" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
         <properties />
-        <test-suite type="TestSuite" id="1110" name="Gc2Adapter" fullname="Juego2.Gc2Adapter" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:24Z" duration="1.370690" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <test-suite type="TestSuite" id="1111" name="Gc2Adapter" fullname="Juego2.Gc2Adapter" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:33Z" duration="1.421624" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
           <properties />
-          <test-suite type="TestSuite" id="1111" name="Tests" fullname="Juego2.Gc2Adapter.Tests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:24Z" duration="1.370525" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <test-suite type="TestSuite" id="1112" name="Tests" fullname="Juego2.Gc2Adapter.Tests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:33Z" duration="1.421462" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
             <properties />
-            <test-suite type="TestFixture" id="1098" name="J2Gc2FoundationTests" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:24Z" duration="1.370297" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1099" name="J2Gc2FoundationTests" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:33Z" duration="1.421231" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1107" name="AdapterSeam_ConditionAndPropertiesReadArkus_FailClosedWithoutAuthority" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.AdapterSeam_ConditionAndPropertiesReadArkus_FailClosedWithoutAuthority" methodname="AdapterSeam_ConditionAndPropertiesReadArkus_FailClosedWithoutAuthority" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="186990140" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:22Z" duration="0.025854" asserts="0">
+              <test-case id="1108" name="AdapterSeam_ConditionAndPropertiesReadArkus_FailClosedWithoutAuthority" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.AdapterSeam_ConditionAndPropertiesReadArkus_FailClosedWithoutAuthority" methodname="AdapterSeam_ConditionAndPropertiesReadArkus_FailClosedWithoutAuthority" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="54742303" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.022390" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1101" name="Lint_L2_RememberAndSceneLoadingAreRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L2_RememberAndSceneLoadingAreRejected" methodname="Lint_L2_RememberAndSceneLoadingAreRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1111030601" result="Passed" start-time="2026-09-28 07:04:22Z" end-time="2026-09-28 07:04:23Z" duration="0.037781" asserts="0">
+              <test-case id="1102" name="Lint_L2_RememberAndSceneLoadingAreRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L2_RememberAndSceneLoadingAreRejected" methodname="Lint_L2_RememberAndSceneLoadingAreRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="2024962051" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.035661" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1102" name="Lint_L3_VariableNamedAsJuego2FactIsRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L3_VariableNamedAsJuego2FactIsRejected" methodname="Lint_L3_VariableNamedAsJuego2FactIsRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1570993995" result="Passed" start-time="2026-09-28 07:04:23Z" end-time="2026-09-28 07:04:23Z" duration="0.029035" asserts="0">
+              <test-case id="1103" name="Lint_L3_VariableNamedAsJuego2FactIsRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L3_VariableNamedAsJuego2FactIsRejected" methodname="Lint_L3_VariableNamedAsJuego2FactIsRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1045485897" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.028792" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1103" name="Lint_L4_AdapterEntryOnUnboundObjectIsRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L4_AdapterEntryOnUnboundObjectIsRejected" methodname="Lint_L4_AdapterEntryOnUnboundObjectIsRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="194314757" result="Passed" start-time="2026-09-28 07:04:23Z" end-time="2026-09-28 07:04:23Z" duration="0.023757" asserts="0">
+              <test-case id="1104" name="Lint_L4_AdapterEntryOnUnboundObjectIsRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L4_AdapterEntryOnUnboundObjectIsRejected" methodname="Lint_L4_AdapterEntryOnUnboundObjectIsRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1516854947" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.022759" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1104" name="Lint_L5_StockMutationOfBoundObjectNeedsAStoppingArkusRequestFirst" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L5_StockMutationOfBoundObjectNeedsAStoppingArkusRequestFirst" methodname="Lint_L5_StockMutationOfBoundObjectNeedsAStoppingArkusRequestFirst" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="991512401" result="Passed" start-time="2026-09-28 07:04:23Z" end-time="2026-09-28 07:04:23Z" duration="0.025938" asserts="0">
+              <test-case id="1105" name="Lint_L5_StockMutationOfBoundObjectNeedsAStoppingArkusRequestFirst" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L5_StockMutationOfBoundObjectNeedsAStoppingArkusRequestFirst" methodname="Lint_L5_StockMutationOfBoundObjectNeedsAStoppingArkusRequestFirst" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1033049005" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:31Z" duration="0.024418" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1105" name="Lint_L6_DeviceInputOrNonJuego2ActionsAreRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L6_DeviceInputOrNonJuego2ActionsAreRejected" methodname="Lint_L6_DeviceInputOrNonJuego2ActionsAreRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1553390552" result="Passed" start-time="2026-09-28 07:04:23Z" end-time="2026-09-28 07:04:23Z" duration="0.414420" asserts="0">
+              <test-case id="1106" name="Lint_L6_DeviceInputOrNonJuego2ActionsAreRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L6_DeviceInputOrNonJuego2ActionsAreRejected" methodname="Lint_L6_DeviceInputOrNonJuego2ActionsAreRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="216564253" result="Passed" start-time="2026-09-28 07:22:31Z" end-time="2026-09-28 07:22:32Z" duration="0.398133" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1106" name="Lint_L7_Juego2PersistenceThroughGc2IsRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L7_Juego2PersistenceThroughGc2IsRejected" methodname="Lint_L7_Juego2PersistenceThroughGc2IsRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1243609779" result="Passed" start-time="2026-09-28 07:04:23Z" end-time="2026-09-28 07:04:23Z" duration="0.030653" asserts="0">
+              <test-case id="1107" name="Lint_L7_Juego2PersistenceThroughGc2IsRejected" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.Lint_L7_Juego2PersistenceThroughGc2IsRejected" methodname="Lint_L7_Juego2PersistenceThroughGc2IsRejected" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="355765486" result="Passed" start-time="2026-09-28 07:22:32Z" end-time="2026-09-28 07:22:32Z" duration="0.027415" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1100" name="MaterializedPresets_CarryNoGc2Identity_OnlyJuego2Keys" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.MaterializedPresets_CarryNoGc2Identity_OnlyJuego2Keys" methodname="MaterializedPresets_CarryNoGc2Identity_OnlyJuego2Keys" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="823925306" result="Passed" start-time="2026-09-28 07:04:23Z" end-time="2026-09-28 07:04:23Z" duration="0.391564" asserts="0">
+              <test-case id="1101" name="MaterializedPresets_CarryNoGc2Identity_OnlyJuego2Keys" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.MaterializedPresets_CarryNoGc2Identity_OnlyJuego2Keys" methodname="MaterializedPresets_CarryNoGc2Identity_OnlyJuego2Keys" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1834560351" result="Passed" start-time="2026-09-28 07:22:32Z" end-time="2026-09-28 07:22:32Z" duration="0.377594" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1099" name="S06Presets_MaterializeGc2PlayerNpcAndCamera_ReadingOnlyJuego2Input" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.S06Presets_MaterializeGc2PlayerNpcAndCamera_ReadingOnlyJuego2Input" methodname="S06Presets_MaterializeGc2PlayerNpcAndCamera_ReadingOnlyJuego2Input" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1794973283" result="Passed" start-time="2026-09-28 07:04:23Z" end-time="2026-09-28 07:04:24Z" duration="0.389599" asserts="0">
+              <test-case id="1100" name="S06Presets_MaterializeGc2PlayerNpcAndCamera_ReadingOnlyJuego2Input" fullname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests.S06Presets_MaterializeGc2PlayerNpcAndCamera_ReadingOnlyJuego2Input" methodname="S06Presets_MaterializeGc2PlayerNpcAndCamera_ReadingOnlyJuego2Input" classname="Juego2.Gc2Adapter.Tests.J2Gc2FoundationTests" runstate="Runnable" seed="1234536771" result="Passed" start-time="2026-09-28 07:22:32Z" end-time="2026-09-28 07:22:33Z" duration="0.482480" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />

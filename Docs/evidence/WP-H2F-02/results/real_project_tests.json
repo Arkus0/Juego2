@@ -1,7 +1,7 @@
 {
   "result": "Passed",
-  "total": "33",
-  "passed": "33",
+  "total": "34",
+  "passed": "34",
   "failed": "0",
   "cases": {
     "Juego2.Foundation.Tests.J2FoundationBaselineTests.AdoptedBaselineVerifiesGreen": "Passed",
@@ -15,6 +15,7 @@
     "Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_FloatingOrChangedVersionFails": "Passed",
     "Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_NotAdmittedOrTransitiveDirectFails": "Passed",
     "Juego2.Foundation.Tests.J2FoundationBaselineTests.PackageBaseline_UnreviewedDirectOrMissingDirectFails": "Passed",
+    "Juego2.Foundation.Tests.J2RenderingTests.ClipRules_InPlaceBakesRootAndRootMotionKeepsIt": "Passed",
     "Juego2.Foundation.Tests.J2RenderingTests.ImportConventions_FailClosedOnMissingModels": "Passed",
     "Juego2.Foundation.Tests.J2RenderingTests.ProjectShaders_AreSupportedUrpShaders(\"Juego2/StylizedWater\")": "Passed",
     "Juego2.Foundation.Tests.J2RenderingTests.ProjectShaders_AreSupportedUrpShaders(\"Juego2/InteriorWindow\")": "Passed",

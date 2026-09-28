@@ -1,11 +1,11 @@
 {
-  "candidateSha": "2a2a9112c00760ac5895faa41a392b6dd7375b68",
-  "unityTree": "8763ff7652e7fc61f56a473174a482926e5ee975",
+  "candidateSha": "8c214597411b1d38bbf66a05cda4e9e2c9533ce1",
+  "unityTree": "c981387405f00f16f0951722f7cac4e3b77ae738",
   "a_clean_absent_verify_exit": 0,
   "a_clean_absent_tests": {
     "result": "Passed",
-    "total": "24",
-    "passed": "24",
+    "total": "25",
+    "passed": "25",
     "failed": "0",
     "failedCases": []
   },
@@ -17,8 +17,8 @@
   "b_gc2_verify_exit": 0,
   "b_gc2_tests": {
     "result": "Passed",
-    "total": "33",
-    "passed": "33",
+    "total": "34",
+    "passed": "34",
     "failed": "0",
     "failedCases": []
   },

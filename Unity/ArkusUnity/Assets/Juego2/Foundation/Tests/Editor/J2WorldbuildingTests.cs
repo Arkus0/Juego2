@@ -105,6 +105,11 @@ namespace Juego2.Foundation.Tests
             Assert.That(report.holes, Is.Zero, $"holes {report.holes}/{report.samples}");
             Assert.That(report.steps, Is.Zero, $"max step {report.maxStepFound:F3}");
             Assert.That(result.junction.GetComponent<J2GeneratedRealization>().generator, Is.EqualTo(J2JunctionRealizer.Generator));
+            // kerb fillets are single-sided with well-formed normals (a double-sided band averaged to degenerate, black normals)
+            var fillets = result.junction.transform.Find("kerb_fillets").GetComponent<MeshFilter>().sharedMesh;
+            Assert.That(fillets.normals.All(n => n.magnitude > 0.99f), Is.True, "degenerate fillet normals");
+            Assert.That(fillets.normals.Count(n => n.y > 0.99f), Is.GreaterThan(0), "fillet top faces must face up");
+            Assert.That(fillets.triangles.Length / 3, Is.EqualTo(2 * 8 * 3 * 2), "one quad per face, no duplicated back faces");
         }
 
         [Test]

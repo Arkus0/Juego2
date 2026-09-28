@@ -56,6 +56,7 @@ namespace Juego2.H2F02.Evidence
             public J2ShaderAudit.Report routeAudit, contentAudit, worldbuildingAudit;
             public int junctionSamples, junctionHoles, junctionSteps, scatterInstances, scatterInExclusion;
             public bool citizenAvatarValid, playerIsGc2Player, npcInputNone;
+            public string[] characterOverlaps;
         }
 
         public static void Representative()
@@ -102,13 +103,14 @@ namespace Juego2.H2F02.Evidence
                 npcPreset.name = "J2_Npc_Civilian (evidence copy)";
                 npcPreset.model = playerPreset.model;
                 npcPreset.locomotionController = controller;
-                var start = Ground(new Vector3(0, 40, -8));
+                var start = FreeSpot(new Vector3(-0.2f, 0, -8f));
                 var player = J2Gc2Presets.MaterializeCharacter(playerPreset, "j2.char.player", start);
-                var npc = J2Gc2Presets.MaterializeCharacter(npcPreset, "j2.npc.evidence_a", Ground(new Vector3(1.6f, 40, -5.5f)));
+                var npc = J2Gc2Presets.MaterializeCharacter(npcPreset, "j2.npc.evidence_a", FreeSpot(new Vector3(0.4f, 0, -5.4f)));
                 npc.transform.rotation = Quaternion.Euler(0, 200, 0);
                 J2Gc2Presets.MaterializePlayerCamera(AssetDatabase.LoadAssetAtPath<J2CameraPreset>(J2FoundationBaseline.CameraPreset));
                 r.playerIsGc2Player = new SerializedObject(player).FindProperty("m_IsPlayer").boolValue;
                 r.npcInputNone = new SerializedObject(npc).FindProperty("m_Kernel.m_Player.m_InputMove.m_Input").managedReferenceFullTypename.EndsWith("InputValueVector2None");
+                r.characterOverlaps = new[] { player.gameObject, npc.gameObject }.SelectMany(Overlaps).ToArray();
                 r.lintFindings = J2Gc2Lint.CheckScene(scene).Select(f => f.ToString()).ToArray();
                 r.identityFields = IdentityFields(scene);
                 r.bindings = UnityEngine.Object.FindObjectsByType<ArkusEntityBinding>(FindObjectsSortMode.None).Select(b => b.entityKey).OrderBy(k => k).ToArray();
@@ -210,9 +212,12 @@ namespace Juego2.H2F02.Evidence
 
             var scatter = ScriptableObject.CreateInstance<J2ScatterProfile>();
             scatter.name = "art_nature";
-            scatter.entries = new[] { "Bush_Common", "Fern_1", "Rock_Medium_1", "Bush_Common_Flowers" }
-                .Select(id => ArtPalettePrefab($"Assets/Arkus/ART/External/Nature/Models/{id}.fbx", $"{Dir}/Nature/{id}.prefab"))
-                .Select(p => new J2ScatterProfile.Entry { prefab = p, weight = 1, scaleBand = new Vector2(0.8f, 1.2f) }).ToArray();
+            scatter.entries = new[] { ("CommonTree_1", 0.35f), ("Bush_Common", 1f), ("Rock_Medium_1", 0.8f), ("Bush_Common_Flowers", 1f) }
+                .Select(e => new J2ScatterProfile.Entry
+                {
+                    prefab = ArtPalettePrefab($"Assets/Arkus/ART/External/Nature/Models/{e.Item1}.fbx", $"{Dir}/Nature/{e.Item1}.prefab"),
+                    weight = e.Item2, scaleBand = new Vector2(0.8f, 1.2f),
+                }).ToArray();
             scatter.density = 0.45f; scatter.minSpacing = 1.4f; scatter.exclusionMargin = 0.6f;
             var nature = J2ScatterRealizer.Realize(new GameObject("nature").transform, new Bounds(Vector3.zero, new Vector3(40, 6, 40)), scatter, 20260928);
             r.scatterInstances = nature.transform.childCount;
@@ -260,6 +265,30 @@ namespace Juego2.H2F02.Evidence
         {
             try { action(); }
             catch (Exception e) { errors.Add(name + ": " + e.GetType().Name + ": " + e.Message); Debug.LogException(e); }
+        }
+
+        /// <summary>
+        /// A standing spot near <paramref name="near"/> whose body capsule (0.05-1.8 m above the feet, radius 0.3) touches
+        /// nothing: evidence bodies are placed, not simulated, so they must not stand in kerbs, walls or props.
+        /// </summary>
+        static Vector3 FreeSpot(Vector3 near)
+        {
+            for (int ring = 0; ring < 12; ring++)
+                for (int k = 0; k < Mathf.Max(1, ring * 8); k++)
+                {
+                    float a = k * Mathf.PI * 2 / Mathf.Max(1, ring * 8);
+                    var feet = Ground(new Vector3(near.x + Mathf.Cos(a) * ring * 0.15f, 40, near.z + Mathf.Sin(a) * ring * 0.15f));
+                    if (!Physics.CheckCapsule(feet + Vector3.up * 0.35f, feet + Vector3.up * 1.5f, 0.3f)) return feet;
+                }
+            throw new Exception("H2F02_NO_FREE_SPOT near " + near);
+        }
+
+        static IEnumerable<string> Overlaps(GameObject body)
+        {
+            Physics.SyncTransforms();
+            var feet = body.transform.position + Vector3.down * 0.92f; // GC2 Character origin sits at the capsule centre
+            return Physics.OverlapCapsule(feet + Vector3.up * 0.35f, feet + Vector3.up * 1.5f, 0.3f)
+                .Where(c => !c.transform.IsChildOf(body.transform)).Select(c => body.name + " overlaps " + c.name);
         }
 
         static Vector3 Ground(Vector3 from)

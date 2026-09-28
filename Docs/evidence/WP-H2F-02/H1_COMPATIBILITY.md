@@ -28,3 +28,15 @@ Nothing else under `Assets/Arkus/H1`, `tools/`, `src/`, `tests/` or H1 evidence 
 - H1-managed scenes and prefabs keep only H1-allowlisted components (Transform, MeshRenderer, Animator, canonical link). A selected-tool component authored inside a managed scene is unmanaged drift, which H1 reports by design.
 - The lighting/look sidecar is the active scene; H1-managed scenes load additively.
 - Per-family expectations for materialize, observe, reconcile and rematerialize/clean rebuild are in `H1_LIFECYCLE_MATRIX.csv`. H2F-03 owns the composed lifecycle proof over that matrix with the full stack present.
+
+## 4. Hosted run record
+
+| SHA (Unity tree) | H1-07 | H1-08 | H1-09 | H1-10 | H1-11 | Meaning |
+|---|---|---|---|---|---|---|
+| `d770bf20` (URP adopted, snapshot not yet re-baselined) | failure 36372671029 | failure 36372671015 | failure 36372670925 | failure 36372670963 | failure 36372670931 | H1 fails closed: `projection.catalogue-snapshot-stale`, one differing row |
+| `1b91d43d` (snapshot re-baselined) | success 36373728445 | success 36373728505 | success 36373728511 | success 36373728441 | cancelled | re-baseline restores H1 |
+| `2a2a9112` (URP first-use state committed) | success 36389412638 | success 36389412577 | success 36389412719 | cancelled | **success 36389412778** (cleanup clean-tree check passes) | URP init no longer dirties the tree |
+| `0e4a44ac` (tree `c9813874`, identical to the final evidence) | success 36390296667 | success 36390296763 | success 36390296765 | success 36390296837 | recorded on the PR | final Unity bytes |
+
+Later docs-only commits keep the Unity tree `c9813874`; their hosted runs are listed on the PR.
+

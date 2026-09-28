@@ -116,16 +116,22 @@ namespace Juego2.Foundation.Editor
 
         static void Fillet(List<Vector3> v, List<int> t, Vector3 centre, Vector3 dirA, Vector3 dirB, float radius, float kerb, float height, float embed)
         {
-            // road-facing inner edge at radius+kerb, outer edge at radius (the kerb band sits on the corner)
+            // road-facing inner edge at radius+kerb, outer edge at radius (the kerb band sits on the corner).
+            // Faces: road-facing side (normal away from the corner centre), top (up), back side (toward the centre).
             (float r, float h)[] ring = { (radius + kerb, 0f), (radius + kerb, height), (radius, height), (radius, -embed) };
-            int start = v.Count;
-            foreach (var dir in new[] { dirA, dirB })
-                foreach (var (r, h) in ring)
-                    v.Add(centre + dir * r + Vector3.up * h);
+            var mid = (dirA + dirB).normalized;
+            Vector3[] outward = { mid, Vector3.up, -mid };
             for (int k = 0; k < ring.Length - 1; k++)
             {
-                int i0 = start + k, i1 = i0 + 1, j0 = start + ring.Length + k, j1 = j0 + 1;
-                t.AddRange(new[] { i0, i1, j0, i1, j1, j0, i0, j0, i1, i1, j0, j1 }); // double-sided band
+                // one quad per face with its own vertices, so flat faces keep crisp, well-defined normals
+                int start = v.Count;
+                v.Add(centre + dirA * ring[k].r + Vector3.up * ring[k].h);
+                v.Add(centre + dirA * ring[k + 1].r + Vector3.up * ring[k + 1].h);
+                v.Add(centre + dirB * ring[k].r + Vector3.up * ring[k].h);
+                v.Add(centre + dirB * ring[k + 1].r + Vector3.up * ring[k + 1].h);
+                var n = Vector3.Cross(v[start + 1] - v[start], v[start + 2] - v[start]);
+                if (Vector3.Dot(n, outward[k]) >= 0) t.AddRange(new[] { start, start + 1, start + 2, start + 1, start + 3, start + 2 });
+                else t.AddRange(new[] { start, start + 2, start + 1, start + 1, start + 2, start + 3 });
             }
         }
     }
