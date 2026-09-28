@@ -1,7 +1,8 @@
 # Urban expansion decision — Juego2
 
-Status: **PROPOSED product amendment; effective after independent PASS, merge and DocSync**
+Status: **ACCEPTED product amendment**
 Date: 2026-09-27
+Accepted: PR `#257`, candidate `fdfc9be334a750217f2152c76d17bfcd20ba5ded`, Reviewer PASS `#5333313032`, merge `6bf2d6e74215be51e73d85f659a2a734752ea34c`.
 Transition: after `WP-H2F-01A`; its active candidate and acceptance contract stay intact.
 
 ## Decision
