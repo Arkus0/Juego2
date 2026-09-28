@@ -2,6 +2,8 @@
 
 State: DRAFT + ACTIVE. Baseline `main`: `e8652d1cbd4d4eb77b4545c79c34e807b4ab4c73` (PR #275 DocSync). Work in the isolated `codex/wp-ai-unity-authoring-00` worktree and disposable Unity project copies. The open H2F-03 and ART-01 candidates are separate and must not be modified.
 
+Owner direction on 2026-09-28: evaluate whether a better AI-to-Unity tool could replace H0, H1 and Arkus. The accepted WP's operator disposition remains the reviewable deliverable, while a separately identified replacement probe will measure the broader possibility without treating Arkus compatibility as a success criterion. No production architecture is changed by a trial outcome alone.
+
 ## PREDECESSOR_CONTRACT_CHECK
 
 - Direct accepted dependency: `WP-H2F-02`, implementation PR #261, reviewed candidate `91047ecc71be1b3f8c00440a8de07cc90ca6be9e`, independent PASS review #5335599241, merge `5c1877b224a7183e248adc0d6b08f677a20f4d3f`, and DocSync PR #270 merge `204b169fcd9f8650fe37e76df726f507a403aa4f`.
@@ -15,7 +17,7 @@ State: DRAFT + ACTIVE. Baseline `main`: `e8652d1cbd4d4eb77b4545c79c34e807b4ab4c7
 
 1. Record exact local editor, candidate versions/terms and the widest lawful available corpus, with independent file/path counts and exclusions. Freeze one primary Codex configuration, common briefs, scoring and intervention-count rules before candidate trials.
 2. Create an isolated Unity project from the baseline. Record project/source SHA, package manifest/lock and reset method. Provision only candidate-specific Editor packages in that copy; preserve before/after file inventories and never touch the active H2F-03 project.
-3. Run the same ENV, CHAR and ANIM tasks for each available candidate through its actual external-agent Editor surface. Capture tool calls, Console, Play/validation, screenshots, repair passes and explicit missing/failed capabilities. Keep candidate-native assistant experiments separate.
+3. Run the same ENV, CHAR, ANIM and owner-directed replacement probe for each available candidate through its actual external-agent Editor surface. Capture tool calls, Console, Play/validation, screenshots, repair passes and explicit missing/failed capabilities. Keep candidate-native assistant experiments separate.
 4. Decide `ADOPT`, `ADOPT_BOUNDED`, `TOOL_SOURCE` or `REJECT` from the primary evidence. If adopting, perform every required production-constrained lane replay and current-workflow baseline before making the claim.
 5. Commit only lawful evidence and benchmark-owned files. Validate the exact evidence, perform strict pre-review, freeze the exact SHA and hand off to a fresh independent Reviewer. This Worker performs no independent verdict or merge.
 
