@@ -1,6 +1,6 @@
 # NPC depth tiers — planning and authoring rule
 
-Status: **PROPOSED product direction**. Counts are orientation for the final city, not H2, slice, performance or recruitment gates.
+Status: **ACCEPTED product direction** via PR `#257`, Reviewer PASS `#5333313032`, merge `6bf2d6e74215be51e73d85f659a2a734752ea34c`. Counts are orientation for the final city, not H2, slice, performance or recruitment gates.
 
 | Tier | Typical final planning range | Gameplay obligation | Persistent cost |
 |---|---:|---|---|
