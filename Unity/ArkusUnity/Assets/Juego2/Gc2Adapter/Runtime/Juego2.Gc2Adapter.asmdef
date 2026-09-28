@@ -3,7 +3,8 @@
     "rootNamespace": "Juego2.Gc2Adapter",
     "references": [
         "GameCreator.Runtime.Core",
-        "Juego2.Arkus"
+        "Juego2.Arkus",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -177,5 +177,38 @@ namespace Juego2.Foundation.Tests
             Assert.That(J2ScatterRealizer.Realize(host, area, profile, 7).GetComponent<J2GeneratedRealization>().outputDigest, Is.EqualTo(digest));
             Assert.That(J2ScatterRealizer.Realize(host, area, profile, 8).GetComponent<J2GeneratedRealization>().outputDigest, Is.Not.EqualTo(digest));
         }
+
+        /// <summary>A renderer-only projection (like an H1-managed scene) gets collision from a sidecar proxy, never in itself.</summary>
+        [Test]
+        public void CollisionProxy_BlocksLikeTheSource_IsDeterministic_AndDetectsAMovedSource()
+        {
+            var projection = new GameObject("projection");
+            var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.DestroyImmediate(wall.GetComponent<Collider>());
+            wall.name = "wall";
+            wall.transform.SetParent(projection.transform);
+            wall.transform.SetPositionAndRotation(new Vector3(2, 1, 3), Quaternion.Euler(0, 30, 0));
+            wall.transform.localScale = new Vector3(4, 2, 0.3f);
+            var sources = new[] { projection.transform };
+            var host = new GameObject("sidecar").transform;
+
+            var root = J2CollisionRealizer.Realize(sources, host, "house");
+            var marker = root.GetComponent<J2GeneratedRealization>();
+            string input = marker.inputDigest, output = marker.outputDigest;
+            Assert.That(projection.GetComponentsInChildren<Collider>(true), Is.Empty, "the proxy is never written into the source");
+            Physics.SyncTransforms();
+            Assert.That(Physics.Raycast(new Vector3(2, 1, -5), Vector3.forward, out var hit, 20f), Is.True);
+            Assert.That(hit.collider.transform.IsChildOf(root.transform), Is.True);
+            Assert.That(hit.point.z, Is.EqualTo(3f - 0.15f / Mathf.Cos(30 * Mathf.Deg2Rad)).Within(0.3f), "the proxy has the source's world geometry");
+            Assert.That(J2ScatterRealizer.IsNoGo(hit.collider), Is.True, "scatter keeps nature out of proxied structures");
+
+            var again = J2CollisionRealizer.Realize(sources, host, "house").GetComponent<J2GeneratedRealization>();
+            Assert.That(again.inputDigest, Is.EqualTo(input));
+            Assert.That(again.outputDigest, Is.EqualTo(output));
+            Assert.That(host.Cast<Transform>().Count(), Is.EqualTo(1), "re-realization replaces, never duplicates");
+            Assert.That(J2CollisionRealizer.IsStale(again.gameObject, sources), Is.False);
+            wall.transform.position += Vector3.right * 0.375f;
+            Assert.That(J2CollisionRealizer.IsStale(again.gameObject, sources), Is.True, "a moved projection is detected, not silently kept");
+        }
     }
 }

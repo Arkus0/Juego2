@@ -55,12 +55,17 @@ namespace Juego2.Gc2Adapter.Tests
             Assert.That(P(player, "m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_InputAsset").objectReferenceValue, Is.SameAs(input));
             Assert.That(P(player, "m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_Action").stringValue, Is.EqualTo("Move"));
             Assert.That(player.GetComponent<J2InputOwner>().actions, Is.SameAs(input));
+            var interact = player.GetComponent<J2Gc2InteractInput>();
+            Assert.That(interact, Is.Not.Null, "the player's Interact comes from the Juego2 action map (WP-H2F-03)");
+            Assert.That(interact.actions, Is.SameAs(input));
+            Assert.That(interact.actionMap + "/" + interact.interactAction, Is.EqualTo("Player/Interact"));
             Assert.That(ArkusEntityBinding.KeyOf(player.gameObject), Is.EqualTo("j2.char.player"));
 
             Assert.That(P(npc, "m_IsPlayer").boolValue, Is.False);
             Assert.That(RefType(npc, "m_Kernel.m_Player.m_InputMove.m_Input"), Is.EqualTo(typeof(InputValueVector2None).FullName));
             Assert.That(RefType(npc, "m_Kernel.m_Driver"), Is.EqualTo(typeof(UnitDriverNavmesh).FullName));
             Assert.That(npc.GetComponent<J2InputOwner>(), Is.Null);
+            Assert.That(npc.GetComponent<J2Gc2InteractInput>(), Is.Null);
 
             Assert.That(camera.CompareTag("MainCamera"), Is.True);
             Assert.That(camera.GetComponent<MainCamera>(), Is.Not.Null);

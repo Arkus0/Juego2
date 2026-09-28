@@ -77,6 +77,12 @@ namespace Juego2.Gc2Adapter.Editor
                 var owner = go.AddComponent<J2InputOwner>();
                 owner.actions = actions;
                 owner.actionMap = preset.moveActionMap;
+                if (actions.FindActionMap(preset.moveActionMap, false)?.FindAction(J2Gc2InteractInput.DefaultAction, false) == null)
+                    throw new InvalidOperationException($"J2_INPUT_ACTION_MISSING {actions.name}/{preset.moveActionMap}/{J2Gc2InteractInput.DefaultAction}");
+                var interact = go.AddComponent<J2Gc2InteractInput>();
+                interact.actions = actions;
+                interact.actionMap = preset.moveActionMap;
+                Record($"J2Gc2InteractInput [{actions.name}/{preset.moveActionMap}/{J2Gc2InteractInput.DefaultAction}]");
             }
             EditorUtility.SetDirty(character);
             return character;
