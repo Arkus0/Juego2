@@ -18,6 +18,8 @@ After H2F-GATE, priority moves to **locking and industrializing the visual/conte
 
 `GC2-02` and later gameplay WPs remain blocked until the expanded H2-GATE passes. `GC2-00` and the bounded `GC2-DIALOGUE-00` presentation-strategy checkpoint are allowed before H2-GATE because they are required inputs to playable visual inspection/UI presentation, not Living World/gameplay depth. The Dialogue checkpoint may PASS without acquiring Dialogue 2.
 
+Discovery input for later GC2 work: [Game Creator Hub reuse audit](../discovery/GC2_HUB_REUSE_AUDIT.md) (77 exact-version detail records and a wider card inventory). It is research, not an adopted extension, a module purchase, or an amendment of any GC2 workpack. Future GC2 adoption decisions remain with their owning workpacks and the dependency/IP gate.
+
 ## Ordering and ownership
 
 | Lane | Dependency and owner | Product output | Parallelism |

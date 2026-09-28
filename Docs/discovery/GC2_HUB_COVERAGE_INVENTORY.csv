@@ -1,0 +1,644 @@
+Name,Version,CardText,SeenVia,DetailOpened
+Activate only one child,0.0.1,Activate only one child (0.0.1) | Created 3 years ago | Disable all children of an object except one. Very usefull for customize Synty character | 3 people like this,zone,no
+Activate Preloaded Scene,0.1.0,Activate Preloaded Scene (0.1.0) | Created 10 months ago | Activates a preloaded Scene and triggers Success or Failure instructions | 1 person likes this,initial 150; scene,yes
+Add Children to Local List Variables,1.0.0,Add Children to Local List Variables (1.0.0) | Created 2 years ago | Adds all children of the specified parent GameObject to the LocalListVariables. | 1 person likes this,variable,no
+Add Goal (Property),0.0.1,Add Goal (Property) (0.0.1) | Created 3 years ago | Adds a new Goal to the specified Action Plan using a dynamic property | Behavior | 2 people like this,behavior,yes
+Add Item with Randomized Property,0.1.0,"Add Item with Randomized Property (0.1.0) | Created 2 years ago | Creates a new item, adds it to the specified Bag, and randomizes a specified property value within a given range based on a base value | 8 people like this",inventory,no
+Add Item with Sockets,0.2.3,Add Item with Sockets (0.2.3) | Updated 3 years ago | Creates a new item with Sockets and adds it to the specified Bag | Inventory | 7 people like this,inventory,no
+Add Items (Random Range),0.0.2,Add Items (Random Range) (0.0.2) | Updated 4 years ago | Adds a random range of a specific item to a specified bag | Inventory | 7 people like this,inventory,no
+Add items to Bag from List,1.0.0,Add items to Bag from List (1.0.0) | Created a year ago | Loops a list and adds each item to the bag | Inventory | 3 people like this,inventory,no
+Add Multiple Items,1.0.2,Add Multiple Items (1.0.2) | Updated 4 years ago | Creates new items and adds them to the specified Bag | Inventory | 4 people like this,inventory,no
+Add Multiple Items,1.0.4,Add Multiple Items (1.0.4) | Created 2 months ago | Fix of last version// Creates new items and adds them to the specified Bag | Inventory,initial 150; inventory,no
+Add Status Effect In Sphere,0.0.1,Add Status Effect In Sphere (0.0.1) | Created a year ago | Adds a Status Effect to all GameObjects with one or more tags within a sphere radius from a reference GameObject. | 1 person likes this,radius; zone,no
+Add Status Effects,0.1.1,Add Status Effects (0.1.1) | Created 5 years ago | Adds a variable number of Status Effects to the selected game object's Traits component | Stats | 3 people like this,variable; shop; debug,no
+Add Status Effects,2.0.0,Add Status Effects (2.0.0) | Created 3 years ago | Adds a variable number of Status Effects to the selected game object's Traits component | Stats | 3 people like this,variable; shop; debug,no
+Add Strings,1.0.3,Add Strings (1.0.3) | Updated 3 years ago | Get a resultant output string from a source String and one or more added Strings with additional rules. | 1 person likes this,variable; zone,no
+Adjust Collider to Rect,1.0.0,Adjust Collider to Rect (1.0.0) | Created 10 months ago | Adjusts the BoxCollider2D size and offset to match the RectTransform dimensions.,initial 150,no
+Advanced Draw 3D GUI,1.0.3,"Advanced Draw 3D GUI (1.0.3) | Updated a year ago | Draws a 2D label at a 3D world position, optionally following a target object | 2 people like this",camera,no
+Advanced Instantiate Item,1.0.1,"Advanced Instantiate Item (1.0.1) | Updated 4 years ago | Instantiates the prefab of an item on the scene with the possibility of setting the parent or saving the instantiated game object, just like the normal Instantiate Game Object instructio",save; scene; inventory,no
+Advanced Instantiate Item,1.0.3,"Advanced Instantiate Item (1.0.3) | Updated 2 years ago | Instantiates the prefab of an item on the scene with the possibility of setting the parent or saving the instantiated game object, just like the normal Instantiate Game Object instructio",save; scene; inventory,no
+Advanced Instruction Template,1.0.0,Advanced Instruction Template (1.0.0) | Created 10 months ago | Template instruction with editor window,initial 150,yes
+Aim Gun at Camera Center,1.0.1,Aim Gun at Camera Center (1.0.1) | Created 3 years ago | Aims the specified gun to point towards the center of the camera view | 3 people like this,camera; shop; time,no
+Aim Gun Using IK,1.0.0,Aim Gun Using IK (1.0.0) | Created 3 years ago | Aims the gun using IK to point towards the center of the camera view | 3 people like this,camera; time,no
+Animate Variable Value,1.0.0,"Animate Variable Value (1.0.0) | Created 10 months ago | Animates a numeric variable's displayed value (int or decimal) on screen with optional smoothing, stepping, scale and animator triggers.",initial 150; variable; animation,no
+Animation End,1.0.0,Animation End (1.0.0) | Created 3 years ago | Triggered when an animation ends | 3 people like this,animation,no
+Animation Loop,1.0.0,Animation Loop (1.0.0) | Created 3 years ago | Triggered when an animation loops | 3 people like this,animation,no
+Animation Start,1.0.0,Animation Start (1.0.0) | Created 3 years ago | Triggered when an animation starts | 4 people like this,animation,no
+Any Music Playing From List,1.0.0,Any Music Playing From List (1.0.0) | Created a year ago | Returns true if any music clip in the provided List Variable is currently playing,variable; audio,no
+Apply a percent to a value & round to X decimal,1.1.0,Apply a percent to a value & round to X decimal (1.1.0) | Created 10 months ago | Rounds to X decimal a value after apply a percent to it,initial 150,no
+Apply Damage (Armor Priority),1.0.0,"Apply Damage (Armor Priority) (1.0.0) | Created 5 months ago | Applies damage to a target. If the target has Armor, damage is absorbed by Armor first. Remaining damage overflows to Health. If the target has no Armor attribute, all damage goes directly to Health.",initial 150,no
+Apply Directional Force to Character,1.0.2,Apply Directional Force to Character (1.0.2) | Created 3 years ago | Applies a directional force to the character's Rigidbody | 2 people like this,time,no
+Apply Force to Character,1.0.0,Apply Force to Character (1.0.0) | Created 3 years ago | Applies a force to the character's Rigidbody to push them forward | 1 person likes this,time,no
+Attach Prop and Equip Shooter Weapon,0.0.1,Attach Prop and Equip Shooter Weapon (0.0.1) | Created 10 months ago | Attaches a prop (prefab or instance) to a Character and equips a Shooter Weapon using the attached prop as the model.,initial 150; shop,no
+Bag UI Can Drop Outside,0.0.1,Bag UI Can Drop Outside (0.0.1) | Created 4 years ago | Changes whether a Bag UI is allowed to drop Items outside of the Bag into the scene | Inventory | 3 people like this,scene; inventory,no
+Bag UI Drop Amount,0.0.1,Bag UI Drop Amount (0.0.1) | Created 4 years ago | Changes the amount of items dropped | Inventory | 2 people like this,inventory,no
+Bag UI Drop Distance,0.0.1,Bag UI Drop Distance (0.0.1) | Created 4 years ago | Changes the maximum drop distance of a Bag UI | Inventory | 2 people like this,inventory,no
+Bloom Tween,1.0.0,Bloom Tween (1.0.0) | Created a year ago | Animates Bloom effect properties | 1 person likes this,initial 150,no
+Branch,2.0.3,"Branch (2.0.3) | Updated 2 years ago | Run a branch depending on the given conditions. The branch works like an if-else-than statement in one instruction. It is good to use in the GC2 modules. Example, Skill, Item, etc. | 8 people like this",zone,no
+Build Dialogue From Text,0.0.1,"Build Dialogue From Text (0.0.1) | Created 3 months ago | Parses a plain-text script (lines, 'Name:' speakers, '? choices' and '* options' with indented branches) into a real GC2 Dialogue on the target GameObject, then optionally plays it.",initial 150; dialogue,yes
+Buy Item,1.0.1,Buy Item (1.0.1) | Updated 4 years ago | Buy an Item from the Merchant that inherits from the specified type | 2 people like this,inventory; merchant,no
+Calc Numbers,1.0.2,Calc Numbers (1.0.2) | Updated 3 years ago | Get a resultant output Number from one or more source Numbers calculated together with dropdown operands. | 5 people like this,variable; zone,no
+Camera Obstruction,0.0.1,Camera Obstruction (0.0.1) | Created 2 years ago | Fades objects between the camera and the player by swapping their material | 5 people like this,camera,no
+Can Dash In Air,0.0.2,Can Dash In Air (0.0.2) | Updated 3 years ago | Changes whether the Character is allowed to dash in the air or not | 3 people like this,shop,no
+Can Drop,1.0.0,Can Drop (1.0.0) | Created 2 years ago | Returns true if the runtime item can be dropped | Inventory | 3 people like this,inventory,no
+Can Use Root Rotation,0.1.1,Can Use Root Rotation (0.1.1) | Created a year ago | Enables or disables the use of root rotation in a Character,animation,no
+Cancel Tween,1.0.0,Cancel Tween (1.0.0) | Created 9 days ago | Cancels all active Game Creator tweens on a game object,initial 150; animation; shop,no
+Car Controller,1.0.0,Car Controller (1.0.0) | Created 3 years ago | Controls the car's movement based on user input | 3 people like this,time,no
+Cast Spell with Aiming Reticle,1.0.3,Cast Spell with Aiming Reticle (1.0.3) | Updated 3 years ago | Projects an aiming circle and casts a spell at the clicked position | 3 people like this,time,no
+Chance Branch,2.0.1,"Chance Branch (2.0.1) | Updated 2 years ago | Run a branch depending on a changce. The random range is 0 to 1. E.g., threshold 0.1 means you have 10% to run the true instruction. | 1 person likes this",save,no
+Change Acceleration and Deceleration,0.1.1,Change Acceleration and Deceleration (0.1.1) | Created 4 years ago | Changes the Character's Acceleration or Deceleration over time | 4 people like this,time,no
+Change Active Scene,1.0.0,"Change Active Scene (1.0.0) | Created 4 years ago | Change the active scene, useful for those that are making their game using multiple scenes | 2 people like this",scene,no
+Change Active Scene,1.0.1,"Change Active Scene (1.0.1) | Created 3 years ago | Change the active scene, useful for those that are making their game using multiple scenes | 2 people like this",scene,no
+Change Ambient Light Color,1.0.0,Change Ambient Light Color (1.0.0) | Created 10 months ago | Changes the Environment Lighting ambient color over time using a Transition | 1 person likes this,initial 150; time,no
+Change Ambient volume +,0.1.1,Change Ambient volume + (0.1.1) | Created 3 years ago | Change the Volume of Ambient music over time | 1 person likes this,audio; time,no
+Change AudioClip,1.0.2,Change AudioClip (1.0.2) | Updated 4 years ago | Changes the AudioClip of an AudioSource | 4 people like this,audio,no
+Change Bag Skin,0.0.1,Change Bag Skin (0.0.1) | Created 2 years ago | Changes a Character's bag skin UI | 3 people like this,inventory,no
+Change Blend Shape Extended,1.0.2,Change Blend Shape Extended (1.0.2) | Updated 4 years ago | Changes the value of a Blend Shape parameter | 4 people like this,shop,no
+Change Camera Avoid Clipping Settings,1.0.0,Change Camera Avoid Clipping Settings (1.0.0) | Created 4 years ago | Change any setting of the 'Avoid Clipping' field of a Camera | 5 people like this,camera,no
+Change Camera Avoid Clipping Settings,2.0.0,Change Camera Avoid Clipping Settings (2.0.0) | Created 9 months ago | Change any setting of the 'Avoid Clipping' field of a Camera,initial 150; camera,yes
+Change Canvas Render Camera,1.0.1,Change Canvas Render Camera (1.0.1) | Updated 4 years ago | Changes the Render Camera property of a Canvas | 3 people like this,camera,no
+Change Dialogue Node Duration,1.0.0,Change Dialogue Node Duration (1.0.0) | Created 10 months ago | Changes the node between until interaction or timeout,initial 150; interaction; dialogue; time,yes
+Change Field of View over Time,1.0.2,Change Field of View over Time (1.0.2) | Updated 2 years ago | Changes the camera field of view over time | 6 people like this,camera; time,no
+Change Interact Radius,1.0.0,Change Interact Radius (1.0.0) | Created 5 years ago | Changes the Character's Interact radius over time | 4 people like this,radius; time,yes
+Change Language (GC2 + Save),1.0.2,Change Language (GC2 + Save) (1.0.2) | Created a year ago | Overrides the default localization by applying the specified locale and saves its code to a global variable | 1 person likes this,save,no
+Change Maskable Graphic Material Float,1.0.1,Change Maskable Graphic Material Float (1.0.1) | Created a year ago | Changes over time the float property of a Material used by a Maskable Graphic component | 1 person likes this,time,no
+Change Master volume +,0.1.1,Change Master volume + (0.1.1) | Created 3 years ago | Change the Master volume over time. The Master volume controls how loud all other channels are,audio; time,no
+Change Material Color of all By Tag,1.0.1,Change Material Color of all By Tag (1.0.1) | Created 9 months ago | Instantly sets or smoothly transitions a color property on all materials of objects with a given tag.,initial 150,no
+Change Material Float by Index or All,1.0.0,Change Material Float by Index or All (1.0.0) | Created a year ago | Changes over time the Float property of one or all materials on a Renderer component | 2 people like this,time; zone,no
+Change Material of all By Tag,1.0.1,Change Material of all By Tag (1.0.1) | Updated 10 months ago | Instantly sets or smoothly transitions between two materials on all objects with a given tag. | 1 person likes this,initial 150,no
+Change Material Offset,1.0.2,"Change Material Offset (1.0.2) | Updated 10 months ago | Change the offset of some material ( If the source target is a UI chart, it is recommended that the material be instantiated first, I have already created an instruction for this )",initial 150; save,no
+Change Multiple Attributes,1.0.0,"Change Multiple Attributes (1.0.0) | Created 6 months ago | Changes the value of multiple Attributes on a target's Traits component. Skips any Attribute the target does not have, so AoE damage works safely across different enemy types.",initial 150; save,no
+Change Music volume +,0.1.1,Change Music volume + (0.1.1) | Created 3 years ago | Change the Volume of Music over time,audio; time,no
+Change of List Objects Material Color,1.0.3,Change of List Objects Material Color (1.0.3) | Updated 3 years ago | Changes over time the Color property of an instantiated material of a Renderer component | 2 people like this,time,no
+Change Position Extended,1.0.1,Change Position Extended (1.0.1) | Updated 2 years ago | Changes the position of a game object over time. Extended Duration property has been added and used instead of constant Duration value | 2 people like this,time,no
+Change Position(Rigidbody),1.0.1,Change Position(Rigidbody) (1.0.1) | Created 3 years ago | Changes the position of a game object over time(Rigidbody),time,no
+Change PositionV3,0.0.5,Change PositionV3 (0.0.5) | Updated 4 years ago | Changes the position of a game object over time | 2 people like this,time,no
+Change Reflection Probe Intensity,1.0.1,Change Reflection Probe Intensity (1.0.1) | Updated 4 years ago | Changes the Intensity of a Reflection Probe over time | 1 person likes this,time,no
+Change Rotation Speed,1.0.1,Change Rotation Speed (1.0.1) | Updated 4 years ago | Changes the Character's maximum rotation over time | 1 person likes this,time,no
+Change Run Mode,1.0.0,Change Run Mode (1.0.0) | Created 2 years ago | Changes the run mode of the main camera to Main Update or Fixed Update | 1 person likes this,camera,no
+Change Scene,1.0.0,Change Scene (1.0.0) | Created 4 years ago | Change the scene of a game object | 7 people like this,scene,no
+Change Shared Material Color,1.0.1,Change Shared Material Color (1.0.1) | Created 2 months ago | Changes over time the Color property of a the shared material of a Renderer component | 1 person likes this,initial 150; time,no
+Change Slider Over Time,1.0.0,Change Slider Over Time (1.0.0) | Created 2 years ago | Changes the value of a Slider component over a period of time | 1 person likes this,time,no
+Change Sound Effects volume +,0.1.1,Change Sound Effects volume + (0.1.1) | Created 3 years ago | Change the Volume of Sound Effects over time,audio; time,no
+Change Speech volume +,0.1.1,Change Speech volume + (0.1.1) | Created 3 years ago | Change the Volume of character Speech over time | 1 person likes this,audio; time,no
+Change String If,1.0.1,"Change String If (1.0.1) | Created 3 years ago | Change Source String either adding to it or replacing it, dependent also if New String is Null. | 4 people like this",variable,no
+Change Target Zoom,1.0.0,Change Target Zoom (1.0.0) | Created 2 years ago | Changes the target zoom percentage of a camera shot | 3 people like this,camera; shop,no
+Change to Shot+,0.1.1,Change to Shot+ (0.1.1) | Created a year ago | Changes the active Shot for a particular camera | 1 person likes this,camera; shop,no
+Change UI Position,1.0.0,Change UI Position (1.0.0) | Created a year ago | Changes the Position of a Rect Transform (anchoredPosition) with options to Set or Add and animate over time. | 2 people like this,time,no
+Change UI volume +,0.1.1,Change UI volume + (0.1.1) | Created 3 years ago | Change the Volume of UI elements over time | 1 person likes this,audio; time,no
+Change Width With Easing,0.1.1,Change Width With Easing (0.1.1) | Created 2 years ago | Changes the Width of a Rect Transform over time using easing | 1 person likes this,time,no
+Character Dash Ready,1.0.0,"Character Dash Ready (1.0.0) | Created 7 months ago | Returns true if the Character can dash (checks cooldown, grounded state, etc.)",initial 150; pool,no
+Character Facing Target,1.0.0,Character Facing Target (1.0.0) | Created 10 months ago | Returns true if the Character is facing the Target within a given angle threshold | 1 person likes this,initial 150,yes
+Check Any Hovered UI,1.0.1,Check Any Hovered UI (1.0.1) | Created 3 months ago | Check if the player is currently hovering over any UI element,initial 150,no
+Check Fullscreen Mode,0.0.1,Check Fullscreen Mode (0.0.1) | Created 3 years ago | Check if the current Fullscreen Mode matches the selected one | 2 people like this,zone,no
+Check Item in Bag,1.0.2,Check Item in Bag (1.0.2) | Created 3 years ago | Checks if a specified item exists in the targeted Bag | 4 people like this,inventory; time,no
+Check Lock and Key,0.0.1,Check Lock and Key (0.0.1) | Created 2 years ago | Executed while a game object stays inside the Trigger collider and checks for an item,inventory,no
+Check Magnitude Rigidbody Speed,1.0.1,Check Magnitude Rigidbody Speed (1.0.1) | Created 3 years ago | Check Magnitude the veloctiy (magnitude) of a rigidbody | 2 people like this,variable,no
+Check Naninovel Script,1.0.8,"Check Naninovel Script (1.0.8) | Created a year ago | Проверяет, соответствует ли текущий скрипт Naninovel указанному имени.",scene,no
+Check Object in Range,1.0.0,Check Object in Range (1.0.0) | Created 8 months ago | Checks if a tracked object is within or outside a certain distance of the player and triggers an event. Tracks range status in a variable. | 1 person likes this,initial 150; proximity,yes
+Check Targets Within FOV,1.0.0,Check Targets Within FOV (1.0.0) | Created a year ago | Checks if the targets of a character are within the field of view (FOV) of a camera | 3 people like this,camera,no
+Check Within Vision,1.0.2,Check Within Vision (1.0.2) | Updated 2 years ago | Determines whether a target object is within the viewable range and field of view of a source object | 5 people like this,zone,no
+Clamp Rigidbody Speed,1.0.0,Clamp Rigidbody Speed (1.0.0) | Created 4 years ago | Clamps the veloctiy (magnitude) of a rigidbody | 3 people like this,variable,no
+Clear Bag,0.0.3,Clear Bag (0.0.3) | Updated 5 years ago | Deletes all items from a bag | Inventory | 4 people like this,inventory,no
+Clear Bag,0.0.4,Clear Bag (0.0.4) | Created 3 years ago | Deletes all items from a bag | Inventory | 4 people like this,inventory,no
+Clear Bag,0.0.6,Clear Bag (0.0.6) | Updated 3 years ago | Deletes all items of a category from a bag | Inventory | 1 person likes this,inventory,no
+Clear Dialogue Visits,1.0.1,Clear Dialogue Visits (1.0.1) | Created 4 years ago | Removes all remembered visited nodes from a Dialogue | Dialogue | 2 people like this,dialogue,yes
+Clear Saved Value,0.0.7,Clear Saved Value (0.0.7) | Updated 3 years ago | Clear Saved Value if exist | 4 people like this,variable; save,no
+Close Bag UI,1.0.2,Close Bag UI (1.0.2) | Updated 4 years ago | Closes an inventory UI | Inventory | 3 people like this,inventory,no
+Closest Target in Screen Space,1.0.0,Closest Target in Screen Space (1.0.0) | Created a year ago | Finds the closest target in screen space to the camera's screen center | 1 person likes this,camera,no
+Code Examples Convert C# List to Local List,1.0.0,Code Examples Convert C# List to Local List (1.0.0) | Created 10 months ago | Code Examples Converts a C# List to Local List Variables,initial 150; variable,no
+Code Examples Convert Generic List to Local List,1.0.0,Code Examples Convert Generic List to Local List (1.0.0) | Created 10 months ago | Converts any generic List or Array to Local List Variables,initial 150; variable,no
+Code Examples Convert Runtime List to Local List,1.0.0,Code Examples Convert Runtime List to Local List (1.0.0) | Created 10 months ago | Code Examples Converts any runtime List or Array to Local List Variables using reflection,initial 150,no
+Code Examples Convert Vector3 Collections to Local List,1.0.0,Code Examples Convert Vector3 Collections to Local List (1.0.0) | Created 10 months ago | Code Examples Converts Vector3 values from multiple sources to a Local List Variables,initial 150; variable,no
+Code Examples Find Enemies by Tag,1.0.0,Code Examples Find Enemies by Tag (1.0.0) | Created 10 months ago | Code Examples Finds all GameObjects with the Enemy tag and stores them in Local List Variables,initial 150; variable,no
+Code Examples Find Objects by Tag and Filter,1.0.1,Code Examples Find Objects by Tag and Filter (1.0.1) | Created 10 months ago | Code Examples Finds GameObjects by tag with optional filtering and stores them in Local List Variables | 1 person likes this,initial 150,no
+Collect Characters [Optimized],1.0.3,Collect Characters [Optimized] (1.0.3) | Updated 3 years ago | Optimized version of the default 'Collect Characters' instruction | 2 people like this,variable; optimized,yes
+Collect Characters tag,1.0.0,Collect Characters tag (1.0.0) | Created 4 years ago | Collect all characters with a specific tag and within a certain radius of a position | 1 person likes this,radius; variable,no
+Collect Children,1.0.1,Collect Children (1.0.1) | Updated 4 years ago | Collects the children of a Game Object into a List Variable | 7 people like this,variable,no
+Collect Children,1.0.2,Collect Children (1.0.2) | Created 2 years ago | Collects the children of a Game Object into a List Variable | 2 people like this,variable,no
+Collect Markers [Optimized],1.0.3,Collect Markers [Optimized] (1.0.3) | Updated 3 years ago | Optimized version of the default 'Collect Markers' instruction | 1 person likes this,variable; optimized,no
+Collect Object Tag,1.0.2,Collect Object Tag (1.0.2) | Updated 4 years ago | Collects all Objects by Tag that are within a certain radius of a position | 11 people like this,radius; variable,no
+Collect Parents,1.0.1,Collect Parents (1.0.1) | Updated 4 years ago | Collects the chain of parents of a Game Object into a List Variable | 2 people like this,variable,no
+Color Adjustments Tween,1.0.0,Color Adjustments Tween (1.0.0) | Created a year ago | Animates Color Adjustments properties | 1 person likes this,initial 150,no
+Combine Strings,1.0.1,"Combine Strings (1.0.1) | Created 5 years ago | Get a resultant output String from one or more source Strings added together, optionally separated by spaces or characters. | 4 people like this",variable; zone,no
+Comment Pro ..,0.1.1,Comment Pro .. (0.1.1) | Created 2 years ago | Displays an explanation or annotation in the instructions list. It is intended to make instructions easier for humans to understand | 1 person likes this,debug,no
+Compare Blendshape Key,1.0.0,Compare Blendshape Key (1.0.0) | Created a year ago | Returns true if a comparison between a blendshape key and a value is satisfied | 2 people like this,shop,no
+Compare Colors,0.0.1,Compare Colors (0.0.1) | Created 2 years ago | Returns true if the color is the same as another color | 2 people like this,save,no
+Compare Game Object Tags,0.0.1,Compare Game Object Tags (0.0.1) | Created 3 years ago | Returns true if the given game objects have the same tag | 2 people like this,save,no
+Compare Multiple Attributes,1.0.0,Compare Multiple Attributes (1.0.0) | Created 6 months ago | Returns true if ANY of the listed Attributes matches the comparison. Skips Attributes the target does not have.,initial 150; save,no
+Compare Sprites,0.0.1,Compare Sprites (0.0.1) | Created 2 years ago | Returns true if the two sprites are the same | 1 person likes this,save,no
+Compare State,1.0.0,Compare State (1.0.0) | Created 2 years ago | Returns true if the Character has the specified State running at the specified layer index | 1 person likes this,animation,no
+Compare the StatusEffect Type,1.0.1,Compare the StatusEffect Type (1.0.1) | Updated 4 years ago | Returns true if StatusEffect matches the target type | 2 people like this,debug,no
+Condition Chance,2.0.2,"Condition Chance (2.0.2) | Updated 2 years ago | The random range is 0 to 1. E.g., threshold 0.1 means you have 10% to pass. | 2 people like this",save,no
+Continue Slate Cutscene,0.0.1,Continue Slate Cutscene (0.0.1) | Created 3 years ago | Continues playing a cutscene using SLATE | Slate | 2 people like this,animation; time,no
+Copy Filter List by List,0.1.1,"Copy Filter List by List (0.1.1) | Updated 9 months ago | Filters one List Variable using another List Variable as a whitelist or blacklist, with optional tag-based restriction",initial 150; variable; zone,yes
+Core Mod Item Price Edit,1.0.0,"Core Mod Item Price Edit (1.0.0) | Created 3 years ago | Read ME This instruction allows you to add and remove a core mod to edit the price of an item at runtime. Currently, place in Plugin/Editor folder and Remove before compileing its a . | 1 p",time,no
+Count Item in Bag,1.0.0,Count Item in Bag (1.0.0) | Created 10 months ago | Counts how many of a specified item exists in the targeted Bag and stores the result | 1 person likes this,initial 150; inventory,no
+Count List,1.1.2,Count List (1.1.2) | Created 2 years ago | Counts how many elements are in a list variable and outputs to a name variable | 2 people like this,variable,no
+Crouch,1.0.0,Crouch (1.0.0) | Created 9 months ago | Changes the character's crouching state,initial 150,no
+Current DateTime To Text,1.1.0,Current DateTime To Text (1.1.0) | Updated 5 years ago | Set current DateTime to string object | 3 people like this,time,no
+Curve Function,1.0.0,Curve Function (1.0.0) | Created 4 years ago | Uses a curve as a function to transform one range into another | 4 people like this,animation; zone,no
+Custom Free Camera,1.0.2,"Custom Free Camera (1.0.2) | Created 2 years ago | Enables a custom free camera control on a specified camera object. This allows the camera to be moved and rotated freely using the keyboard and mouse. The camera can be moved using the W, A, S,",camera,no
+Cycle List,1.0.0,Cycle List (1.0.0) | Created 4 years ago | Moves first element of a list to the bottom of the list | 5 people like this,variable,no
+Cycle List Reversed,1.0.0,Cycle List Reversed (1.0.0) | Created 4 years ago | Moves the last element of a list to the first of the list | 1 person likes this,variable,no
+Cycle Through Melee Skills,0.0.2,Cycle Through Melee Skills (0.0.2) | Updated 9 months ago | Cycles through a list of Skills and plays the next skill each time,initial 150; save; time,no
+Dash 8 Directions,0.1.2,Dash 8 Directions (0.1.2) | Updated 4 years ago | Moves the Character in the chosen direction for a brief period of time | 10 people like this,time,no
+Dash with Melee Skill,0.2.0,"Dash with Melee Skill (0.2.0) | Created 3 years ago | Moves the Character in the chosen direction for a brief period of time, this dash is based on melee skill, so it won't trigger on dash trigger, beware of this when using this instruction, bu",time,no
+Date Days To Number,1.0.0,Date Days To Number (1.0.0) | Created 5 years ago | Calculates the days from the date until now and saves it to a variable | 2 people like this,save; time,no
+Day Shift,1.0.1,"Day Shift (1.0.1) | Updated a year ago | Given a day name, outputs the next (or previous) day with wrap-around | 1 person likes this",initial 150; time,yes
+Deactivate GameObjects By Name List,1.0.0,Deactivate GameObjects By Name List (1.0.0) | Created 10 months ago | Compares a list of GameObjects with a list of strings and deactivates matching GameObjects.,initial 150,no
+Deactivate GameObjects By Name List,1.0.1,Deactivate GameObjects By Name List (1.0.1) | Created 10 months ago | Compares a list of GameObjects with a list of strings and deactivates matching GameObjects.,initial 150,no
+Debug Bool,1.0.1,Debug Bool (1.0.1) | Updated 3 years ago | Prints a message to the Unity Console about given Bool | 2 people like this,shop; pool; debug,no
+Debug Direction,1.0.1,Debug Direction (1.0.1) | Updated 3 years ago | Prints a message to the Unity Console about given Direction | 1 person likes this,shop; debug,no
+Debug GameObject,1.0.1,Debug GameObject (1.0.1) | Created 5 years ago | Prints a GameObject's name to the Unity Console | 4 people like this,shop; debug,no
+Debug Position,1.0.1,Debug Position (1.0.1) | Updated 3 years ago | Prints a message to the Unity Console about given Position | 1 person likes this,shop; debug,no
+Debug Rotation,1.0.1,Debug Rotation (1.0.1) | Updated 3 years ago | Prints a message to the Unity Console about given Rotation | 3 people like this,shop; debug,no
+Debug Vector3,1.0.1,Debug Vector3 (1.0.1) | Updated 5 years ago | Prints a Vector3 from a source to the Unity Console | 3 people like this,shop; debug,no
+Decibel,1.0.3,Decibel (1.0.3) | Updated 5 years ago | Sets a value equal the Decibel of a number | 1 person likes this,variable,no
+Decrement Number,1.0.0,"Decrement Number (1.0.0) | Created 8 months ago | Sets a value equal the sum of itself, minus another number",initial 150; variable,no
+Delete Save Record,1.0.0,Delete Save Record (1.0.0) | Created 10 months ago | Deletes a saved data record (slot+ID) from GC2's save storage. Works by SaveID or by reference to a save-aware variable. Returns whether deletion succeeded.,initial 150; save,yes
+Disable Radial Menu,1.0.0,Disable Radial Menu (1.0.0) | Created 10 months ago | Disables a Radial Menu by name from Ultimate Radial Menu | Ultimate Radial Menu | 1 person likes this,initial 150,no
+Display Drop Chance and Amount for Specific Item,1.0.1,Display Drop Chance and Amount for Specific Item (1.0.1) | Updated 2 years ago | Displays the drop chance and amount for a specific item in a loot table | Inventory | 2 people like this,inventory,no
+Display Touchstick Custom Skin,1.0.0,Display Touchstick Custom Skin (1.0.0) | Created 4 years ago | Shows or hides a custom skinned Touchstick | 2 people like this,shop,no
+Does Variable Exist,2.0.0,Does Variable Exist (2.0.0) | Created 3 years ago | Does the variable exist in the Variable Name Variables | 1 person likes this,variable,no
+Don't Destroy,0.0.1,Don't Destroy (0.0.1) | Created 4 years ago | Don't Destroy a game object on Load Scene.Action before Loading | 2 people like this,scene,no
+Drag to Create UI Element,1.0.0,Drag to Create UI Element (1.0.0) | Created 3 years ago | Creates a new UI element from a list on drag,time,no
+Drag to Define UI Element Size,1.0.0,Drag to Define UI Element Size (1.0.0) | Created 3 years ago | Creates a new UI element and defines its size by dragging | 1 person likes this,time,no
+Drag to Rotate Door,1.0.0,Drag to Rotate Door (1.0.0) | Created 3 years ago | Rotates a door GameObject based on mouse drag | 2 people like this,time; door,no
+Draw 3D GUI,1.0.1,"Draw 3D GUI (1.0.1) | Created a year ago | Draws a 2D label at a 3D world position, optionally following a target object | 1 person likes this",camera,no
+Draw 3D Label,1.0.1,"Draw 3D Label (1.0.1) | Updated a year ago | Draws a GUI label that tracks a 3D world position/Transform, scaling with distance. Now with shadow/outline and clamped arrow. | 1 person likes this",waypoint,no
+Draw Gizmo Sphere,1.0.1,Draw Gizmo Sphere (1.0.1) | Updated 3 years ago | Sets up parameters for drawing a sphere Gizmo at the specified GameObject's position | 4 people like this,time,no
+Drop all items from Bag,0.0.2,"Drop all items from Bag (0.0.2) | Updated 2 years ago | Drop all items from the bag, With this instruction you can add a time delay for each item drop. The items will be droped in the world one by one using this delay. If delay is (zero), the i",inventory; time; zone,no
+Drop Item To Target,0.0.7,Drop Item To Target (0.0.7) | Updated 3 years ago | Drop Selected Item from bag to Target | 5 people like this,inventory,no
+Emit To Target Signal,2.0.1,"Emit To Target Signal (2.0.1) | Updated 2 years ago | Emits a specific signal, which is captured by other listeners | 5 people like this",signal,no
+Enable Radial Menu,1.0.0,Enable Radial Menu (1.0.0) | Created 10 months ago | Enables a Radial Menu by name from Ultimate Radial Menu | Ultimate Radial Menu,initial 150,no
+Enter Reactive State,0.1.0,Enter Reactive State (0.1.0) | Created 10 months ago | Enters a ReactiveState using ReactiveStateOutput so notifies are processed | Abilities,initial 150,yes
+Enter State Extended,1.0.3,"Enter State Extended (1.0.3) | Updated 2 years ago | Makes a Character start an animation State. Delay, Speed, Weight and Transition parameters were extended. | 6 people like this",animation,no
+Enter State Random,1.0.0,Enter State Random (1.0.0) | Created 7 months ago | Plays a random animation State from a list of up to 8 states,initial 150; animation,no
+Equip Item at Slot,0.0.1,Equip Item at Slot (0.0.1) | Created a year ago | Equips an Item from the Bag at the specified equipment slot index | 4 people like this,inventory,no
+Equip Item or Stack,2.0.0,Equip Item or Stack (2.0.0) | Updated 2 years ago | Equips an Item or Stack of Items from the Bag that inherits from the specified type | 2 people like this,inventory,no
+Example Bool,1.0.0,Example Bool (1.0.0) | Created 3 years ago | Sets and checks a boolean value within the Game Creator framework. | 1 person likes this,time; pool,no
+Example Character Player,1.0.0,Example Character Player (1.0.0) | Created 3 years ago | Retrieves the player character and performs specified actions. | 1 person likes this,time,no
+Example Variables,1.0.1,Example Variables (1.0.1) | Updated 3 years ago | Demonstrates retrieving various types of variables from local and global scopes in Game Creator 2. | 3 people like this,variable; shop; time; pool,no
+Fade Audio Source,1.0.2,Fade Audio Source (1.0.2) | Updated 5 years ago | Fades an Audio Source to a target volume over time | 2 people like this,audio; time,no
+Fade Post-processing Volume,1.0.2,Fade Post-processing Volume (1.0.2) | Created 5 years ago | Built-in | URP | HDRP | Fades a post-processing volume in or out over time by tweening the weight setting. Only for the built-in render pipeline. | 2 people like this,time,no
+Fill Over Time,1.0.0,Fill Over Time (1.0.0) | Updated 3 years ago | Fills an image over time by a value | 3 people like this,time,no
+Fill UI with Item,1.0.2,Fill UI with Item (1.0.2) | Updated 2 years ago | Fills a UI with Items from a specified Bag and you can Equip/Use them on button click | 2 people like this,inventory,no
+Filter List [Optimized],1.0.3,Filter List [Optimized] (1.0.3) | Updated 3 years ago | Optimized version of the default 'Filter List' instruction | 2 people like this,tick; variable; optimized,yes
+Find Best Available Cover,1.0.0,"Find Best Available Cover (1.0.0) | Created a year ago | Finds the best available cover position, even if perfect cover isn't available | 2 people like this",navigation,no
+Find Characters in Range and Fill List,1.0.3,Find Characters in Range and Fill List (1.0.3) | Created 3 years ago | Finds all GameObjects with a specified tag within a specified range and fills a List Variable with them. This is useful for detecting characters or objects within a certain ,time,yes
+Find Child By Name,1.0.0,Find Child By Name (1.0.0) | Created 6 months ago | Finds a child Game Object by name from a parent Game Object and stores the result,initial 150,no
+Find Closest Bone from Hit,1.0.1,"Find Closest Bone from Hit (1.0.1) | Created 9 months ago | Add all your bones to a list, and this will find which bone was closest to where the last shot hit. Useful for determining specific hit locations like head, torso, or limbs. | 1 person likes this",initial 150; shop; zone,no
+Find Component In Parent,6.0.1,"Find Component In Parent (6.0.1) | Updated a year ago | Find component from parent and save the partent gameobject included the inactivated. Workaround, use Transforms/Parent With Component to find the parent with the specified component. | Stats",behavior; save,no
+Find Components In Children,2.0.1,Find Components In Children (2.0.1) | Updated a year ago | Find component from children and save the game objects included inactivated. | 2 people like this,behavior; save,no
+Find Cover Locations with Peak Loactions,0.0.1,Find Cover Locations with Peak Loactions (0.0.1) | Created 10 months ago | Scans the environment for potential cover locations using edge detection,initial 150,no
+Find Cover Locations with Peak Locations,0.0.3,Find Cover Locations with Peak Locations (0.0.3) | Created 10 months ago | Scans the environment for potential cover locations using edge detection | 1 person likes this,initial 150,no
+Find GameObject,1.0.0,Find GameObject (1.0.0) | Created 5 years ago | Finds a gameobject in the scene and stores it in a variable | 7 people like this,scene,no
+Find Nearest Bone and Hit Location,1.0.1,"Find Nearest Bone and Hit Location (1.0.1) | Created 9 months ago | Finds the closest bone to the hit position and determines the hit location relative to that bone (Front, Back, Left, Right, Top, Bottom).",initial 150; zone,no
+Find Objects by Tag and Fill List,1.0.1,Find Objects by Tag and Fill List (1.0.1) | Updated 3 years ago | Finds all GameObjects with a specified tag and fills a List Variable with them | 3 people like this,time,no
+Find Objects With Tag,1.0.0,Find Objects With Tag (1.0.0) | Created 9 days ago | Finds all active scene objects with a tag and stores them in a local list,initial 150; scene,yes
+Fire Bullet at Mouse,1.0.0,Fire Bullet at Mouse (1.0.0) | Created 3 years ago | Fires a bullet towards the mouse click location. | 2 people like this,time,no
+Flags: Contains All Flags,1.0.0,Flags: Contains All Flags (1.0.0) | Created 8 months ago | Checks if a comma-separated flags string contains every flag from a comma-separated list,initial 150; variable,no
+Flags: Contains Any Flag,1.0.0,Flags: Contains Any Flag (1.0.0) | Created 8 months ago | Checks if a comma-separated flags string contains any flag from a comma-separated list,initial 150; variable,no
+Flags: Contains Flag,1.0.0,"Flags: Contains Flag (1.0.0) | Created 8 months ago | Checks if a comma-separated flags string (e.g. 'work, hard, urban') contains a specific flag",initial 150; variable,no
+Flags: Count,1.0.0,Flags: Count (1.0.0) | Created 8 months ago | Counts the amount of comma-separated flags in a string and compares the result,initial 150; variable,no
+Flashlight Controller,1.0.3,Flashlight Controller (1.0.3) | Updated 3 years ago | Controls a flashlight based on smoothed ambient luminance readings with hysteresis to prevent flickering. | 4 people like this,time,no
+Flee,1.0.6,Flee (1.0.6) | Created 5 months ago | Moves the Character toward a waypoint away from the Danger game object,initial 150; waypoint,yes
+Flip Flop,1.0.1,Flip Flop (1.0.1) | Created 9 months ago | Alternates between executing the 'Flip' list and the 'Flop' list each time it is called.,initial 150; time,no
+Floats from Direction,1.0.2,Floats from Direction (1.0.2) | Updated 4 years ago | Populate a Vector 3 variable from Individual Float values for XYZ | 1 person likes this,variable,no
+Floor To Int,1.0.0,Floor To Int (1.0.0) | Created 3 years ago | Applies Math.FloorToInt to a float variable and stores the result in an integer variable | 2 people like this,variable; time,no
+Follow For Duration,0.1.2,"Follow For Duration (0.1.2) | Created a year ago | Instructs a Character to follow another game object for specified amount of time, then stops",shop; time,no
+For Each in Radius,1.1.0,For Each in Radius (1.1.0) | Updated 6 months ago | Finds ALL GameObjects within a radius and executes Actions for each one. No separate list needed! | 1 person likes this,initial 150; radius; zone,yes
+Force Cancel Skill,0.0.1,"Force Cancel Skill (0.0.1) | Created a year ago | Forces the cancellation of an ongoing Charge, Skill or Reaction being executed by a character, regardless of current state",shop,no
+Force Third Person Alignment,1.0.0,Force Third Person Alignment (1.0.0) | Created 5 months ago | Forces the active Third Person shot to align behind its pivot immediately | 1 person likes this,initial 150; camera; shop,yes
+Format Text/TextTMP Abbreviated,1.0.0,Format Text/TextTMP Abbreviated (1.0.0) | Created a year ago | Formats a Text or TMP_Text into short form like 1.2k or 3.4M. | 1 person likes this,initial 150; shop,no
+Game Object Randomly Keep One Child,2.0.1,Game Object Randomly Keep One Child (2.0.1) | Updated 3 years ago | Game Object Randomly Keep One Child | 2 people like this,zone,no
+Gamepad Haptics Manager,1.0.2,Gamepad Haptics Manager (1.0.2) | Updated 9 months ago | Uses InputSystem.Haptics to rumble | 1 person likes this,initial 150,no
+Gather Target Candidates In Range,1.0.1,Gather Target Candidates In Range (1.0.1) | Updated 3 years ago | Captures all colliders matching the given tag in a radius around a Character and sets them as Target Candidates. Removes Target canditates that are no longer in the given radius.,radius,no
+Gather Target Candidates In Range,1.0.2,Gather Target Candidates In Range (1.0.2) | Created 2 years ago | Captures all colliders matching the given tag in a radius around a Character and sets them as Target Candidates. Removes Target canditates that are no longer in the given radius.,radius,yes
+Generate Quest (Detailed),1.0.0,Generate Quest (Detailed) (1.0.0) | Created a year ago | Generates a random quest and stores each part in separate string variables | 3 people like this,quest,yes
+Generate Random Number,1.0.2,Generate Random Number (1.0.2) | Created a year ago | Generates a random integer between two specified values (inclusive) and stores it in a variable | 2 people like this,variable,no
+Get Altered String,1.0.2,"Get Altered String (1.0.2) | Updated 5 years ago | Get alterned (tidied, uppercase, lowercase or titlecase) version of String. | 2 people like this",variable,no
+Get Ammo Info,1.0.0,Get Ammo Info (1.0.0) | Created 10 months ago | Gets ammo information from a character's current weapon and stores the values | 1 person likes this,initial 150; shop,no
+Get Ammo Name,1.0.0,Get Ammo Name (1.0.0) | Created 6 months ago | Gets the ammo name used by a weapon | 1 person likes this,initial 150; shop,no
+Get AnimationClip Lenth,1.0.1,Get AnimationClip Lenth (1.0.1) | Updated 4 years ago | Get AnimationClip Lenth | 2 people like this,animation,no
+Get Audio Source Volume,1.0.0,Get Audio Source Volume (1.0.0) | Created a year ago | Gets the current Audio Source volume (0..1) and sets it to a variable | 1 person likes this,variable; audio,no
+Get Character Slope,1.0.0,Get Character Slope (1.0.0) | Created 3 years ago | Get normalized (-1...1) value of Character Slope by selected axis | 4 people like this,shop,no
+Get Color From String,1.0.1,Get Color From String (1.0.1) | Updated 3 years ago | Get a resultant output Color from a hexidecimal (RRGGBBAA) String using the Color Utility.,variable,no
+Get combat targets to a list variable,0.0.1,Get combat targets to a list variable (0.0.1) | Created 3 years ago | Get combat targets to a list variable | 2 people like this,variable,no
+Get Current Naninovel Script,1.0.5,Get Current Naninovel Script (1.0.5) | Created a year ago | Gets the name of the current executing script in Naninovel and saves it to a GameCreator 2 variable only if the script has changed.,save; scene,no
+Get Current Scene Index,1.0.0,Get Current Scene Index (1.0.0) | Created 3 years ago | Gets the current Scene Index and sets it to a variable | 1 person likes this,variable; scene,no
+Get Current Scene Name,1.0.0,Get Current Scene Name (1.0.0) | Created 2 years ago | Gets the current Scene Name and sets it to a variable,variable; scene,no
+Get Current Weapon Ammo,1.0.0,Get Current Weapon Ammo (1.0.0) | Created 10 months ago | Gets the current ammo count from the character's equipped shooter weapon,initial 150; shop,no
+Get Empty Or Default Index to Variable,1.0.0,"Get Empty Or Default Index to Variable (1.0.0) | Created 9 months ago | Loops a Game Object List Variables, gets the lowest empty or default index and stores it in a local or global variable.",initial 150; variable,no
+Get Game Version,1.0.2,Get Game Version (1.0.2) | Updated a year ago | Stores Application.version in a variable | 1 person likes this,variable,no
+Get highest value,1.1.2,Get highest value (1.1.2) | Updated 3 years ago | Get highest value + index in a list | 3 people like this,variable,no
+Get Index of Value in List,1.0.0,Get Index of Value in List (1.0.0) | Created 9 months ago | Gets the index of a value in a list variable.,initial 150; variable,yes
+Get Item Price,1.0.1,Get Item Price (1.0.1) | Created 4 years ago | Get the price of an item | 3 people like this,inventory,no
+Get Item Properties,1.0.0,Get Item Properties (1.0.0) | Created 3 years ago | Gets the ID and Text of an item's properties | 2 people like this,time,no
+Get Item Weight,1.0.2,"Get Item Weight (1.0.2) | Created 2 years ago | Get the weight of an item (In grams) and convert it to kilograms, pounds, or ounces. | 2 people like this",inventory,no
+Get Level Zoom,0.1.1,Get Level Zoom (0.1.1) | Updated 3 years ago | Get a zoom level percentage and store it to the variable | 4 people like this,camera; shop,no
+Get Markup String For Text,1.0.2,"Get Markup String For Text (1.0.2) | Updated 5 years ago | Get a String to use in a Text with markup for Font Size, Style, Color. | 4 people like this",variable,no
+Get Material Name,1.0.0,Get Material Name (1.0.0) | Created 3 years ago | Gets the material name of a specified GameObject and stores it in a variable | 4 people like this,variable; time,no
+Get Max Magazine Size,0.1.0,Get Max Magazine Size (0.1.0) | Created 10 months ago | Gets the maximum magazine capacity from a shooter weapon and stores it in a variable,initial 150; shop,no
+Get Max Magazine Size of a weapon,0.1.0,Get Max Magazine Size of a weapon (0.1.0) | Created 10 months ago | Gets the maximum magazine capacity from a shooter weapon and stores it in a variable | 1 person likes this,initial 150; shop,no
+Get Prefab from Item,1.0.1,Get Prefab from Item (1.0.1) | Updated 3 years ago | Retrieves the assigned prefab from an Item asset and saves it to a variable. NOTE: Requires editing of the Item.cs script; Change '[SerializeField] private GameObject m_Prefab;' to 'public' t,save,no
+Get Quantity of Status Effect,1.0.0,Get Quantity of Status Effect (1.0.0) | Created 4 years ago | Get Quantity of Status Effect From the selected game object's Traits component | 1 person likes this,shop; debug,no
+Get Rigibdoy Speed,1.0.0,Get Rigibdoy Speed (1.0.0) | Created 4 years ago | Returns the speed of a rigidbody in Vector3 and/or float magnitude,variable,no
+Get Shooter Weapon GameObject,0.1.0,Get Shooter Weapon GameObject (0.1.0) | Created 10 months ago | Gets the GameObject of the current Shooter Weapon equipped by a Character,initial 150; shop,no
+Get String From Color,1.0.1,Get String From Color (1.0.1) | Updated 3 years ago | Get a resultant output String in hexidecimal (RRGGBBAA) format from a Color using the Color Utility.,variable,no
+Grid-Based Movement,1.0.2,Grid-Based Movement (1.0.2) | Updated 3 years ago | Moves the player character in a grid-based pattern and allows facing specific cardinal directions | 5 people like this,time,no
+GUID,2.0.0,GUID (2.0.0) | Created a year ago | Generate a GUID and save to a string variable | 4 people like this,variable; save,no
+Has Children,1.0.0,Has Children (1.0.0) | Created a year ago | Checks if the GameObject has at least one child,zone,no
+Has Equipped Shooter Weapon,1.0.0,Has Equipped Shooter Weapon (1.0.0) | Created 2 years ago | Returns true if the Character has a specific Shooter Weapon equipped | Shooter | 4 people like this,shop,no
+Has Quest Started,1.0.0,"Has Quest Started (1.0.0) | Created 10 months ago | Returns true if a Quest has been started at any point, regardless of current state (active, complete, abandoned, failed)",initial 150; quest,yes
+Has Saved Sound Volume,1.0.0,Has Saved Sound Volume (1.0.0) | Created 4 years ago | Checks if there is Saved Volume data to PlayerPrefs | 4 people like this,save,no
+Has Stack Quantity of Status Effect,1.0.0,Has Stack Quantity of Status Effect (1.0.0) | Created 4 years ago | Returns true if the game object has a particular Stack quantity Status Effect active | 2 people like this,shop; debug,no
+Hide UI Element On Click,1.0.0,Hide UI Element On Click (1.0.0) | Created 3 years ago | Hides the specified UI element when it is clicked,time,no
+Hit Reaction,1.0.0,Hit Reaction (1.0.0) | Created 7 months ago | Applies a procedural bone flinch on the hit target without interrupting animations | 1 person likes this,initial 150; animation; zone,no
+Hold Key Progress Indicator,1.1.1,"Hold Key Progress Indicator (1.1.1) | Updated a year ago | Provides and Progress Animation by filling an image, while a key is held down. The relevant key can either be provided via Global Variables or KeyCode, as well as the time needed to com",variable; animation; time,no
+If bag empty?,0.0.1,If bag empty? (0.0.1) | Created 4 years ago | if bag empty | 4 people like this,inventory,no
+if bag not empty,0.0.1,if bag not empty (0.0.1) | Created 4 years ago | if bag not empty | 2 people like this,inventory,no
+If Else Container,1.0.0,If Else Container (1.0.0) | Created 4 years ago | Runs either of two Instruction Lists based on Conditions. Can also be used to check conditions within the same set of instructions | 3 people like this,save,no
+If Else Container Updated,1.0.0,If Else Container Updated (1.0.0) | Created 3 years ago | Runs either of two Instruction Lists based on Conditions. Can also be used to check conditions within the same set of instructions | 5 people like this,save,no
+Ignore Dialogue Tag,1.0.1,Ignore Dialogue Tag (1.0.1) | Created 4 years ago | Marks a Dialogue Tag as not visited | Dialogue | 2 people like this,dialogue,no
+Impact Camera Shake,1.0.0,"Impact Camera Shake (1.0.0) | Created 6 months ago | Spring-based impact shake: sharp, short, directional. Feels like a real hit instead of soft Perlin noise.",initial 150; camera; shop,no
+In Awareness Stage with intructions,1.0.3,"In Awareness Stage with intructions (1.0.3) | Updated 2 years ago | Returns true or false and runs instructions acordingly if the awareness of a target is in any of the specified stages , custom,e made to simplyfy if tables in statemachine 2 by",state machine; interaction,no
+In Awareness Stage with intructions,1.0.4,"In Awareness Stage with intructions (1.0.4) | Created 2 years ago | Returns true or false and runs nodes acordingly if the awareness of a target is in any of the specified stages , custom,e made to simplyfy if tables in statemachine 2 by (Ninju",state machine; interaction,no
+Input Float to Variable,1.0.3,Input Float to Variable (1.0.3) | Updated 4 years ago | Gets the value of a float based input and assigns it to a Variable. Useful for using with L2 and R2 Gamepad triggers. An example of how to create an float based input for GC2 can be found ,variable,no
+Instantiate at Mouse Cursor Position,1.0.3,Instantiate at Mouse Cursor Position (1.0.3) | Updated 9 months ago | Instantiate a Object at Mouse Cursor Position,initial 150,no
+Instantiate Item In Front of Player,1.0.0,Instantiate Item In Front of Player (1.0.0) | Created 3 years ago | Creates a new instance of a referenced item and spawns it in front of player | 4 people like this,inventory,no
+Instructions Container,1.0.1,"Instructions Container (1.0.1) | Updated 4 years ago | Lets you create a group of instructions together as one whole instruction. You can use this for organizational purposes, or as a way to run instructions based off of conditions all in one b",zone,yes
+Interact With InteractionTarget (Final IK),1.0.0,Interact With InteractionTarget (Final IK) (1.0.0) | Created 3 years ago | Uses the default Interaction System from Final IK to Resume Interaction of a Target (Final IK) | Final Ik,interaction,no
+Interact With Object (Final IK),1.0.2,Interact With Object (Final IK) (1.0.2) | Updated 4 years ago | Uses the default Interaction System from Final IK to Interact with an Object(Final IK) | Final Ik | 3 people like this,interaction,no
+Invoke DLL Method,1.0.0,Invoke DLL Method (1.0.0) | Created 3 years ago | Creates an instance of a class from a loaded DLL and invokes a method,time,no
+Invoke DLL Method with GameObject,1.0.0,"Invoke DLL Method with GameObject (1.0.0) | Created 3 years ago | Creates an instance of a class from a loaded DLL and invokes a method, passing a GameObject",time,no
+Invoke Method with Game Object,0.0.1,Invoke Method with Game Object (0.0.1) | Created 3 months ago | Invokes a method from any script attached to a game object with a game object parameter,initial 150,no
+Invoke Method with Integer,0.0.1,Invoke Method with Integer (0.0.1) | Created 3 months ago | Invokes a method from any script attached to a game object with an Integer parameter,initial 150,no
+Invoke Method with Number,0.0.1,Invoke Method with Number (0.0.1) | Created 3 months ago | Invokes a method from any script attached to a game object with a number (float or double) parameter | 1 person likes this,initial 150,no
+Invoke Method with Text,0.0.1,Invoke Method with Text (0.0.1) | Created 3 months ago | Invokes a method from any script attached to a game object with a text (string) parameter,initial 150,no
+Invoke UI Button,1.0.0,Invoke UI Button (1.0.0) | Created 3 years ago | Invokes a UI Button's onClick event | 2 people like this,time,no
+Is Active Scene,1.0.0,Is Active Scene (1.0.0) | Created 3 years ago | Checks if Scene is Active | 3 people like this,scene,no
+Is any Quest Active,1.0.1,Is any Quest Active (1.0.1) | Updated 3 years ago | Returns true if at least one Quest from a List is Active | 2 people like this,quest; zone,no
+Is Any Quest Tracked,2.0.0,Is Any Quest Tracked (2.0.0) | Created 2 years ago | Returns true if any quest in the specified Journal is tracked | 4 people like this,quest,no
+Is Causes Overloading,1.0.0,Is Causes Overloading (1.0.0) | Created 2 years ago | Returns true if the item causes overloading to the Bag component | 3 people like this,inventory,no
+Is Console Open,1.0.0,Is Console Open (1.0.0) | Created 3 years ago | Returns if the console is open or not | 2 people like this,debug,no
+Is Current State,0.1.0,Is Current State (0.1.0) | Created 4 months ago | Checks if the StateMachine's current state name is equal to a certain value,initial 150; state machine; behavior,yes
+Is Dialogue UI Open,1.0.2,Is Dialogue UI Open (1.0.2) | Updated 4 years ago | Returns true if the there is a Dialogue UI open | Dialogue | 7 people like this,dialogue,yes
+Is Equipped at Index,0.0.1,Is Equipped at Index (0.0.1) | Created 3 years ago | Returns true if the Bag's wearer has a Runtime Item equipped at the specified equipment Index | 3 people like this,inventory,no
+Is Equipped at Slot,0.0.1,Is Equipped at Slot (0.0.1) | Created 3 years ago | Returns true if the Bag's has an Item equipped at the specified Slot Index | 1 person likes this,inventory,no
+Is Equipped With Sockets,1.0.3,Is Equipped With Sockets (1.0.3) | Updated 3 years ago | Returns true if the Bag's wearer has an Item Equipped with selected Sockets. For exemple: Check if equipped Sword has a FireRune OR a WaterRune in one of the sockets. | Inventory | 7 people l,inventory; zone,no
+Is Increment Of,1.0.0,Is Increment Of (1.0.0) | Created 10 months ago | Returns true if the tested value is an exact multiple of the other number. | 1 person likes this,initial 150,no
+Is Input Performed,1.0.1,Is Input Performed (1.0.1) | Created 4 years ago | Returns true if the Input Action asset with a button behavior is perform during this frame | 2 people like this,behavior,no
+Is Item Equipped In Slot,1.0.0,Is Item Equipped In Slot (1.0.0) | Created a year ago | Returns true if the specified item is equipped in the specified slot | 5 people like this,inventory,no
+Is Quest Tracked,1.0.1,Is Quest Tracked (1.0.1) | Updated 3 years ago | Returns true if a Quest from a Journal is tracked | 6 people like this,quest,yes
+Is Reloading,1.0.0,Is Reloading (1.0.0) | Created 2 years ago | Checks if the Character is currently reloading a weapon | Shooter | 5 people like this,shop,no
+Is Seen By Camera,1.0.0,"Is Seen By Camera (1.0.0) | Created 4 years ago | Checks if a Game Objects is Seen by a Camera (this is not raycast, this method is checking if the target pivot is within the camera frustum) | 9 people like this",camera,no
+Is Seen By Camera (With Occlusion),1.0.0,Is Seen By Camera (With Occlusion) (1.0.0) | Created a year ago | Checks if a target is inside the camera frustum AND not occluded by environment colliders. | 2 people like this,camera,no
+Item Price Equals,1.0.0,Item Price Equals (1.0.0) | Created 2 years ago | Returns true if the price of the selected item matches the expected value,inventory,no
+Joystick Mouse Control,1.0.1,Joystick Mouse Control (1.0.1) | Updated 3 years ago | Executed every time there is input from the joystick to control a virtual cursor | 4 people like this,time,no
+Jump Custom Gravity,1.0.0,Jump Custom Gravity (1.0.0) | Created 9 months ago | Performs a jump with custom gravity values then returns to the original,initial 150,no
+KnockBack,1.0.0,KnockBack (1.0.0) | Created 2 years ago | knock back the target over time | 3 people like this,time,no
+KnockBack,1.0.2,"KnockBack (1.0.2) | Updated a year ago | Knocks back the target over time, stopping on collision with allowed layers. | 3 people like this",shop; time,no
+Last Melee Hit From Direction,1.0.1,Last Melee Hit From Direction (1.0.1) | Created 7 months ago | Checks if the property Skill.LastHitPosition (GC2 2.2.14) Melee hit came from a direction,initial 150,no
+Last RuntimeItem Selected,0.0.1,Last RuntimeItem Selected (0.0.1) | Created 4 years ago | Set the RuntimeItem selected in runtime on a variable | 5 people like this,variable,no
+Legs Animator: Toggle Glue,0.0.1,Legs Animator: Toggle Glue (0.0.1) | Created 2 years ago | Toggles Glue settings for a Legs Animator component | Legs Animator | 1 person likes this,animation,no
+Lerp Blood (Camera Filter Pack),1.0.0,Lerp Blood (Camera Filter Pack) (1.0.0) | Created a year ago | Smoothly lerps a selected Blood_N parameter (1..12) on CameraFilterPack_AAA_Blood_Plus using GC2 Transition. | Camera Filter Pack | 1 person likes this,camera,no
+Lerp Blood On Screen (Camera Filter Pack),1.0.0,Lerp Blood On Screen (Camera Filter Pack) (1.0.0) | Created a year ago | Smoothly animates a parameter from CameraFilterPack_AAA_BloodOnScreen using GC2 Transition | 1 person likes this,camera,no
+Line Renderer Basic,1.0.2,Line Renderer Basic (1.0.2) | Updated 5 years ago | Draws a line renderer between two Vector3 variables. | 6 people like this,variable,no
+List is Empty or all Nulls,0.0.1,List is Empty or all Nulls (0.0.1) | Created 2 years ago | Checks whether a List Variable is empty or or every value in it is Null | 3 people like this,variable,no
+List is Not Null,2.0.0,List is Not Null (2.0.0) | Created 3 years ago | Checks whether a List Variable is not null | 1 person likes this,variable,no
+List Item Selector,1.0.0,"List Item Selector (1.0.0) | Created 2 years ago | Selects an item from a list based on a specified method (first, last, by index, random, closest, or farthest) and assigns it to a named variable. | 3 people like this",variable; time,no
+List Of Strings is All Empty Strings,1.0.0,List Of Strings is All Empty Strings (1.0.0) | Created 9 months ago | Checks Whether a List Variable of Strings is All Empty Strings,initial 150; variable,no
+List Variable Contains Game Object,1.1.2,"List Variable Contains Game Object (1.1.2) | Updated 4 years ago | Checks if a GameObject exists in Local or Global List Variable and return true if exists, false if it doesn't | 4 people like this",variable,no
+List Variable Contains Game Object,2.0.3,"List Variable Contains Game Object (2.0.3) | Created 2 years ago | Checks if a GameObject exists in Local or Global List Variable and return true if exists, false if it doesn't | 3 people like this",variable,no
+List Variable Contains Game Object,2.0.5,"List Variable Contains Game Object (2.0.5) | Updated a year ago | Checks if a GameObject exists in Local or Global List Variable and return true if exists, false if it doesn't | 6 people like this",variable,no
+List Variable Contains Game Object By Name,2.0.0,"List Variable Contains Game Object By Name (2.0.0) | Created a year ago | Checks if a GameObject that with then exactly name exists in Local or Global List Variable and return true if exists, false if it doesn't | 1 person likes this",variable,no
+List Variable Contains Number,1.1.2,List Variable Contains Number (1.1.2) | Created a year ago | Checks if number exists within a list. | 2 people like this,variable,no
+List Variable Contains Quest,1.0.1,List Variable Contains Quest (1.0.1) | Updated 2 years ago | Checks if a Quest exists in Local or Global List Variable | Quests | 1 person likes this,quest; variable,no
+List Variable contains String,1.1.2,"List Variable contains String (1.1.2) | Updated 4 years ago | Checks if a string exists in List Variable and return true if exists, false if it doesn't | 3 people like this",variable,no
+List Variable contains String,2.0.2,"List Variable contains String (2.0.2) | Updated 3 years ago | Checks if a string exists in List Variable and return true if exists, false if it doesn't | 2 people like this",variable,no
+List Variable is Null,1.0.0,List Variable is Null (1.0.0) | Created 4 years ago | Checks if a list is Null or empty | 2 people like this,variable,no
+Load All selected Name Variables data from GC2 Save,1.2.9,"Load All selected Name Variables data from GC2 Save (1.2.9) | Updated 9 months ago | Load all selected variables from GC2's native save system. Supports all variable types: LocalName, Local List, GlobalName, Global List",initial 150; variable; save,yes
+Load Bool,0.1.0,Load Bool (0.1.0) | Created 3 years ago | Load a saved Bool that have been saved with instruction Save Value | 2 people like this,variable; save; pool,no
+Load Bool From PlayerPrefs,1.0.0,Load Bool From PlayerPrefs (1.0.0) | Created a year ago | Loads a boolean value from PlayerPrefs using a specified key name,variable; pool,no
+Load Float From PlayerPrefs,1.0.0,Load Float From PlayerPrefs (1.0.0) | Created a year ago | Loads a float value from PlayerPrefs using a specified key name,variable,no
+Load from Slot,1.2.3,"Load from Slot (1.2.3) | Updated a year ago | Loads a previously saved value from a GameCreator Save Slot into a Local Variable, **If there are local variables with the same ID in different scenes, you can load the data using the same ID.** | 1 p",save; scene,no
+"Load Game (No Scene Reload, Reflection)",0.1.0,"Load Game (No Scene Reload, Reflection) (0.1.0) | Created 10 months ago | Loads saved data from a slot without reloading the scene, via reflection on SaveLoadManager | 1 person likes this",initial 150; save; scene,yes
+Load Global Variables,2.0.0,Load Global Variables (2.0.0) | Created 3 years ago | Load Global Variables | 5 people like this,variable; save,no
+Load Integer From PlayerPrefs,1.0.0,Load Integer From PlayerPrefs (1.0.0) | Created a year ago | Loads an integer value from PlayerPrefs using a specified key name,variable,no
+Load Lists from GC2 Save,1.0.3,Load Lists from GC2 Save (1.0.3) | Updated 10 months ago | Load LocalListVariables or GlobalListVariables from GC2 save system. Supports ByReference and ByID modes.,initial 150; save,no
+Load Name Variables data from GC2 Save,1.2.5,"Load Name Variables data from GC2 Save (1.2.5) | Updated 10 months ago | Load variables from GC2's native save system. Supports all variable types: LocalName, LocalList, GlobalName, GlobalList",initial 150; variable; save,yes
+Load Scene with Transition,1.0.2,Load Scene with Transition (1.0.2) | Updated a year ago | Loads a new scene using a Transition Plus effect | Transitions Plus | 4 people like this,scene,yes
+Load Single Variable from GC2 Save,1.0.5,Load Single Variable from GC2 Save (1.0.5) | Updated 10 months ago | Load only ONE specific variable by name from GC2's save system | 1 person likes this,initial 150; variable; save; zone,no
+Load String,0.0.2,Load String (0.0.2) | Updated 3 years ago | Load a saved String that have been saved with instruction Save Value | 2 people like this,variable; save,no
+Load String From PlayerPrefs,1.0.0,Load String From PlayerPrefs (1.0.0) | Created a year ago | Loads a string value from PlayerPrefs using a specified key name,variable,no
+Load URP Runtime Settings from Name Variables,1.0.2,Load URP Runtime Settings from Name Variables (1.0.2) | Updated 9 months ago | Read URP-related values from a NameVariables asset (Global or Local) and apply them at runtime. | 1 person likes this,initial 150; variable,no
+Load Value,0.0.8,Load Value (0.0.8) | Updated 3 years ago | Load a saved Value that have been saved with instruction Save Value | 8 people like this,variable; save,no
+Load/Unload DLL,1.0.0,Load/Unload DLL (1.0.0) | Created 3 years ago | Loads or Unloads a DLL given a file path,time,no
+Log10,1.0.4,Log10 (1.0.4) | Updated 5 years ago | Sets a value equal the decimal logarithm of a number | 4 people like this,variable,no
+Look At With Duration,1.0.1,Look At With Duration (1.0.1) | Updated 3 years ago | Rotates the transform towards the chosen target over time. | 5 people like this,time,no
+Loop For Instruction,2.0.2,Loop For Instruction (2.0.2) | Updated 2 years ago | Loops instructions in one instruction | 1 person likes this,zone,no
+Loop for instructions,0.0.1,"Loop for instructions (0.0.1) | Created 2 years ago | Allows to iterate a specified number of times in the instructions. Think of it as a For(...), loop. | 8 people like this",interaction; time,no
+Loop Instruction,2.1.3,Loop Instruction (2.1.3) | Updated 2 years ago | Loops a Game Object List Variables and executes instructions for each value in one instruction | 3 people like this,variable; zone,no
+Loop List Get Index,1.0.0,"Loop List Get Index (1.0.0) | Created 4 years ago | Loops a Game Object List Variables and executes an Actions component for each value,And get the current index number | 3 people like this",variable,no
+Loop List Get Index,2.0.0,"Loop List Get Index (2.0.0) | Created 3 years ago | Loops a Game Object List Variables and executes an Actions component for each value,And get the current index number | 2 people like this",variable,yes
+Loop Next Instructions,1.0.1,"Loop Next Instructions (1.0.1) | Updated 3 years ago | Loop Next X instructions a Y amount of times. This will not stop them from being executed right after, which means that if you loop an instruction 4 times, it will get executed a 5th outsid",shop; time,no
+LSS: Load Scene from String,1.0.1,LSS: Load Scene from String (1.0.1) | Updated a year ago | Uses Loading Screen Studio to load a scene from a designated String | Loading Screen Studio | 2 people like this,scene,no
+Make UI Draggable,1.0.0,Make UI Draggable (1.0.0) | Created 3 years ago | Makes a UI panel draggable | 4 people like this,time,no
+Make UI Element Resizable,1.0.0,Make UI Element Resizable (1.0.0) | Created 3 years ago | Makes a UI element resizable with mouse drags | 2 people like this,time,no
+Manage Enemy Target List,1.0.1,Manage Enemy Target List (1.0.1) | Created 3 years ago | Adds or removes targets based on their distance from the enemy | 1 person likes this,time,no
+Manage NPC Visibility and Pooling,0.0.1,"Manage NPC Visibility and Pooling (0.0.1) | Created 3 years ago | Alpha untested code to pool npc in the players blind spots and remove npc in blind spot that are to far away, this dosnt trigger anything it just runs | 3 people like this",time; pool,yes
+MasterAudio Fire Custom Event,1.0.1,MasterAudio Fire Custom Event (1.0.1) | Updated 2 days ago | Fires a MasterAudio 2024 Custom Event,initial 150; audio,no
+Minimap Mod,0.0.1,Minimap Mod (0.0.1) | Created 3 years ago | Maps the player and ground in real-time | 5 people like this,camera; time,no
+Mix Colors,1.0.1,Mix Colors (1.0.1) | Created 5 years ago | Make A New Color by mixing two or more other source colors. | 2 people like this,variable,no
+Mouse Cursor World Position,1.0.2,Mouse Cursor World Position (1.0.2) | Created 4 years ago | Get Mouse Cursor World Position and set to a Variable | 3 people like this,variable,no
+Move and Rotate Multiple GameObjects with Individual Targets and Durations,1.0.3,Move and Rotate Multiple GameObjects with Individual Targets and Durations (1.0.3) | Created 3 years ago | Moves and rotates multiple GameObjects each to their specific target positions and rotations over their specified durations. | 1 person lik,time,no
+Move and Rotate Multiple UI Elements with Individual Targets and Durations,1.0.3,Move and Rotate Multiple UI Elements with Individual Targets and Durations (1.0.3) | Updated 3 years ago | Moves and rotates multiple UI elements each to their specific target positions and rotations over their specified durations.,time,no
+Move Character Relative To Current Position,0.0.2,"Move Character Relative To Current Position (0.0.2) | Updated 3 years ago | Instructs the Character to move to a new location, relative to the current one | 3 people like this",zone,no
+Move Content to Bag with Log,0.0.2,Move Content to Bag with Log (0.0.2) | Updated 3 years ago | Moves all the contents of a Bag to another Bag and show log on Global Variable | 5 people like this,inventory; shop,no
+Move Content to Random Tagged Bag,0.0.1,Move Content to Random Tagged Bag (0.0.1) | Created 8 months ago | Moves all the contents of a Bag to a random Bag with a specified tag | 1 person likes this,initial 150; inventory,no
+Move Object Over Time,1.0.0,Move Object Over Time (1.0.0) | Created 3 years ago | Moves a GameObject with a collider over a set distance in a specified direction and timeframe | 3 people like this,time,no
+Move Self to Target,1.0.0,Move Self to Target (1.0.0) | Created 7 months ago | Moves the trigger's game object towards the triggering target over time,initial 150; tick; time,no
+Move To,0.1.2,Move To (0.1.2) | Updated 10 months ago | Instructs the Character to move to a new location,initial 150,yes
+Move to Random Marker,1.0.0,"Move to Random Marker (1.0.0) | Created 3 years ago | Moves a character to a random marker from a local list, waits, and then completes | 3 people like this",time,yes
+Move To Stop Distance By Variables,0.1.2,Move To Stop Distance By Variables (0.1.2) | Created 3 years ago | Instructs the Character to move to a new location | 1 person likes this,variable; shop,no
+Move UI over time,1.0.0,Move UI over time (1.0.0) | Created 3 years ago | Moves multiple UI elements each to their specific target positions over their specified durations. | 1 person likes this,time,no
+Move UI with Bezier Path,1.0.13,"Move UI with Bezier Path (1.0.13) | Created a year ago | Moves a UI element along a Bezier curve to the target position with alternating bend direction. The movement follows a smooth curved path defined by a Bezier curve, which is calculated dy",animation,no
+Multiple Else If Condition,1.0.0,Multiple Else If Condition (1.0.0) | Created 3 years ago | Evaluates a list of conditions and returns true for the first one that is true | 2 people like this,time; zone,no
+Multiple NPCs See Player in Zone,1.0.0,Multiple NPCs See Player in Zone (1.0.0) | Created 10 months ago | Triggers when ANY NPC with a specific tag sees the player inside a trigger zone,initial 150; perception; crowd; zone,no
+Multiple NPCs See Player in Zone,1.0.1,Multiple NPCs See Player in Zone (1.0.1) | Created 10 months ago | Triggers when ANY NPC with a specific tag sees the player inside a trigger zone,initial 150; perception; crowd; zone,yes
+Next Language,1.0.0,Next Language (1.0.0) | Created 2 years ago | Changes the current language of the project to next one | 1 person likes this,zone,no
+NPC Sees Player in Zone,1.0.0,NPC Sees Player in Zone (1.0.0) | Created 10 months ago | Triggers continuously while NPC sees player inside a trigger zone,initial 150; perception; zone,yes
+Number Child Object To Active,0.1.1,"Number Child Object To Active (0.1.1) | Updated a year ago | Sets the active state of child GameObjects under a parent, or in a local/global list, based on the value of a selected variable.",variable,no
+On Animator Parameter Change,1.0.0,On Animator Parameter Change (1.0.0) | Created 3 years ago | Triggered when a specific Animator parameter changes. | 5 people like this,animation,no
+On Any Task Activate From Quest,1.0.1,On Any Task Activate From Quest (1.0.1) | Updated 2 years ago | Executes after any Task from a specified Quest is activated | Quests | 1 person likes this,quest,yes
+On Any Task Completed From Quest,1.0.1,On Any Task Completed From Quest (1.0.1) | Updated 2 years ago | Executes after any Task from a specified Quest is completed | Quests | 1 person likes this,quest,yes
+On Button Click,1.0.1,On Button Click (1.0.1) | Updated 4 years ago | Executed when the UI Button is Clicked/Submit | 6 people like this,tick,no
+On Buy from Merchant,1.0.3,On Buy from Merchant (1.0.3) | Updated 5 years ago | Executes after successfully purchasing an item from a specific Merchant | Inventory | 5 people like this,inventory; merchant,yes
+On Close Target Bag UI,1.0.2,"On Close Target Bag UI (1.0.2) | Updated 2 months ago | Detects when a Bag UI is closed, but ONLY if the closed Bag belongs to the specifically targeted Character or GameObject.",initial 150; inventory,yes
+On Edge Detection,1.0.0,On Edge Detection (1.0.0) | Created 3 years ago | Executed when one of the two sphere colliders is not in contact | 2 people like this,zone,no
+On Edge Detection with Raycasts,1.0.0,On Edge Detection with Raycasts (1.0.0) | Created 3 years ago | Executed when one of the two raycasts does not hit a target | 4 people like this,zone,no
+On Equip Slot,1.0.1,On Equip Slot (1.0.1) | Created 3 years ago | Executes after equipping | Inventory | 2 people like this,inventory,no
+On Equip Slot,1.0.2,On Equip Slot (1.0.2) | Updated 3 years ago | Executes after equipping an item from the specified Bag and equipment index | Inventory | 5 people like this,inventory,no
+On Equip Slot Remove Item,1.0.1,On Equip Slot Remove Item (1.0.1) | Created 3 years ago | Executes after equipping and remove the item from your inventory | Inventory | 3 people like this,inventory,no
+On Feel (Duration),1.0.0,On Feel (Duration) (1.0.0) | Created 10 months ago | Executed when the Perception feels another tracked game object for a specified duration,initial 150; perception; time,yes
+On Hard Turn,1.0.0,On Hard Turn (1.0.0) | Created 3 years ago | Executed every time the character performs a turn exceeding the given thresholds | 5 people like this,time,no
+On Idle,1.0.0,On Idle (1.0.0) | Created 2 years ago | Executes when the specified game object is idle for more than the defined amount of time | 2 people like this,time,yes
+On Input Key Combo State,1.0.1,On Input Key Combo State (1.0.1) | Created 2 years ago | Triggered when input and keycombos changes and stores the new values in named variables | 2 people like this,variable; time,no
+On Input Press-Release,1.0.0,On Input Press-Release (1.0.0) | Created 9 months ago | Executes instructions when a input action is pressed and when it is released,initial 150,no
+On Input System Interaction,1.0.1,On Input System Interaction (1.0.1) | Updated 3 years ago | Detects when an action of InputSystem performs an interaction. This is a modified script from [on input system] event. The detection is based on performed and canceled callback. If an ,interaction; time,no
+On Inventory Cell Event,1.0.0,On Inventory Cell Event (1.0.0) | Created 3 years ago | Triggered when an inventory cell event occurs | 4 people like this,inventory; time,no
+On Joystick Direction Reversed,1.0.0,On Joystick Direction Reversed (1.0.0) | Created 3 years ago | Executed when the joystick direction changes significantly in the opposite direction | 1 person likes this,time,no
+On Land Store Velocity,1.0.1,On Land Store Velocity (1.0.1) | Updated 5 years ago | Executed every time the character lands on the ground | 8 people like this,time,no
+On Luminance Compare,1.0.1,On Luminance Compare (1.0.1) | Updated 3 years ago | Triggered when the Luminance value of a target matches a specified comparison | 2 people like this,perception; time,yes
+On Melee Hit With Specific Weapon,2.0.2,"On Melee Hit With Specific Weapon (2.0.2) | Updated 10 months ago | Executed when the Trigger receives a hit from a melee Skill, but only if the weapon matches the specified weapon and the character matches (if specified)",initial 150,no
+On Mouse Click Fire Bullet with Adjustment,1.0.2,On Mouse Click Fire Bullet with Adjustment (1.0.2) | Updated 3 years ago | Fires a bullet towards the mouse click location with direction and height adjustments | 3 people like this,shop; time,no
+On Mouse Hover Exit,1.0.0,On Mouse Hover Exit (1.0.0) | Created 2 years ago | Executed when the mouse stops hovering over a game object | 5 people like this,shop,no
+On Mouse Wheel Scrolling,1.0.0,On Mouse Wheel Scrolling (1.0.0) | Created 3 years ago | Detects when mouse wheel is scrolling or has stopped | 3 people like this,shop,no
+On Mouse Wheel Scrolling,1.0.1,"On Mouse Wheel Scrolling (1.0.1) | Created 2 years ago | Detects when mouse wheel is scrolling, has stopped, or scrolled in specific directions | 5 people like this",shop,no
+On NavOffLink Enter,2.0.0,On NavOffLink Enter (2.0.0) | Created 2 years ago | Executed when a character enters a navigation mesh Off Mesh Link | 1 person likes this,navigation,no
+On Open Target Bag UI,1.0.2,"On Open Target Bag UI (1.0.2) | Updated 2 months ago | Detects when a Bag UI is opened, but ONLY if the opened Bag belongs to the specifically targeted Character or GameObject. | 1 person likes this",initial 150; inventory,yes
+On Particle Collision Tag,1.0.1,On Particle Collision Tag (1.0.1) | Updated 3 years ago | Executed when the Particle System collides with a game object with a specific tag | 3 people like this,time,no
+On Peak Deceleration,0.1.1,On Peak Deceleration (0.1.1) | Created 3 years ago | Triggers when the Character's Deceleration reaches its peak | 1 person likes this,time,no
+On Scene Load,1.0.0,On Scene Load (1.0.0) | Created a year ago | Executes when a scene is loaded | 1 person likes this,scene,yes
+On Scene Unload,1.0.0,On Scene Unload (1.0.0) | Created a year ago | Executes when a scene is unloaded | 1 person likes this,scene,no
+On Sell from Merchant,1.0.2,On Sell from Merchant (1.0.2) | Updated 5 years ago | Executes after successfully selling an item to a specific Merchant | Inventory | 7 people like this,inventory; merchant,yes
+On Shoot Hit With Specific Weapon,1.0.0,"On Shoot Hit With Specific Weapon (1.0.0) | Created 10 months ago | Executed when the Trigger receives a shoot hit, but only if the shooter weapon that hit matches the specified weapon and the shooter character matches (if specified)",initial 150; shop,no
+On Speed Threshold,1.0.1,On Speed Threshold (1.0.1) | Updated 4 years ago | Executed every time the character speed matches comparison | 4 people like this,time,no
+On Trigger Enter Instantiate,1.0.2,On Trigger Enter Instantiate (1.0.2) | Updated 3 years ago | Executed when a game object enters the Trigger collider and instantiates a new GameObject | 1 person likes this,time,no
+On Unequip Referenced Item,1.0.0,On Unequip Referenced Item (1.0.0) | Created a year ago | Executes after unequipping a specific referenced item from the selected Bag,inventory,no
+On Unequip Slot,1.0.2,On Unequip Slot (1.0.2) | Updated 3 years ago | Executes after unequipping an item from the specified Bag and equipment index | Inventory | 5 people like this,inventory,no
+On Update Position Change With Threshold,1.0.1,"On Update Position Change With Threshold (1.0.1) | Created 3 years ago | Stores changes in GameObject's position in a named variable, ignoring small movements | 2 people like this",variable; time,yes
+On Update Rate,1.0.1,On Update Rate (1.0.1) | Created 9 months ago | Executes at a fixed rate (Hz) using Time.deltaTime/Time.unscaledDeltaTime instead of per-frame | 1 person likes this,initial 150; tick; time,yes
+On Update Rotation,1.0.1,On Update Rotation (1.0.1) | Created 3 years ago | Stores the GameObject's rotation in a named variable every frame | 1 person likes this,variable; time,no
+Overlap Sphere 3D Can Hit Tigger,2.0.0,Overlap Sphere 3D Can Hit Tigger (2.0.0) | Created 3 years ago | Captures all colliders caught inside a sphere defined by a point and radius | 1 person likes this,radius,no
+Overlap Sphere 3D Use Query Trigger Interaction,2.0.1,Overlap Sphere 3D Use Query Trigger Interaction (2.0.1) | Created 3 years ago | Captures all colliders caught inside a sphere defined by a point and radius | 1 person likes this,radius; interaction,no
+Painkiller Pin,1.0.0,Painkiller Pin (1.0.0) | Created 9 months ago | Ragdolls character and pins them to whatever surface is behind them when hit (Painkiller-style stake gun) | 1 person likes this,initial 150; tick,no
+Pause Slate Cutscene,0.0.1,Pause Slate Cutscene (0.0.1) | Created 3 years ago | Pause's a cutscene using SLATE | Slate | 2 people like this,animation; shop; time,no
+Pause Video Player,1.0.0,Pause Video Player (1.0.0) | Created a year ago | Pauses a Video Player component | 1 person likes this,shop; time,no
+Physics Trigger,1.0.0,Physics Trigger (1.0.0) | Created a year ago | Executed when a game object enters or exits the Trigger collider (MORE OPTIMIZED THAN THE DEFAULT GC2 TRIGGER ENTER AND EXIT) | 3 people like this,optimized,yes
+Place Marker At Character,0.1.1,Place Marker At Character (0.1.1) | Created a year ago | Moves a marker to the character's location,initial 150,no
+Place Nearest Marker in Variable random Waypoints pathfinding,1.0.5,Place Nearest Marker in Variable random Waypoints pathfinding (1.0.5) | Created 3 years ago | Waypoint system that finds one of the top pooled nearest markers with a specific tag and places it into a named LocalNameVariables | 2 people like this,navigation; variable; time; waypoint; pool; zone,no
+Play Audio Source,1.0.1,Play Audio Source (1.0.1) | Updated 3 years ago | Plays Audio Source | 3 people like this,audio; shop,no
+Play Gesture (Extended),0.1.0,Play Gesture (Extended) (0.1.0) | Created 5 years ago | Plays an Animation Clip on a Character once. Some parameters were changed to variables. | 7 people like this,animation,yes
+Play Gesture (Property),0.1.1,Play Gesture (Property) (0.1.1) | Created 3 years ago | Plays an Animation Clip on a Character once | 2 people like this,animation,no
+Play Gesture Speed With Variables,1.0.0,Play Gesture Speed With Variables (1.0.0) | Created 4 years ago | Plays an Animation Clip on a Character once | 2 people like this,variable; animation,no
+Play Juice,0.0.3,"Play Juice (0.0.3) | Created 2 months ago | Plays optional juice on a GameObject: wobble, material color flash, spatial sound, and/or particles. Enable any combination - leave unused effects off. On Characters, wobble drives the Animim Mannequin (Character root pose is overwritten every frame). Self-contained - safe to share as a single script. | 1 person likes this",initial 150; save,no
+Play Nani Script,1.0.4,Play Nani Script (1.0.4) | Created a year ago | Executes inline NaniNovel script commands. Useful for triggering dialogue or actions directly from GC2. Example: @hideUI TitleUI @hideAll @showUI Inventory | 3 people like this,dialogue; inventory; shop,no
+Play NWT Phase Line,0.0.1,Play NWT Phase Line (0.0.1) | Created 2 years ago | Plays a Now We're Talking phase line by the given string name.,time,no
+Play Random Melee Skill,0.0.1,Play Random Melee Skill (0.0.1) | Created 10 months ago | Plays a random Skill from a list on a Character | 1 person likes this,initial 150,no
+Play Random Sound Effect,0.0.2,Play Random Sound Effect (0.0.2) | Updated 4 years ago | Plays a random Audio Clip from an array just once | 5 people like this,audio,no
+Play Slate Cutscene,0.0.2,Play Slate Cutscene (0.0.2) | Updated 3 years ago | Plays a cutscene using SLATE | Slate | 4 people like this,animation; time,no
+Play Speech,0.3.0,"Play Speech (0.3.0) | Created 3 months ago | Plays an Audio Clip speech, optionally pitch/timbre-shifted to sound like a different voice | 1 person likes this",initial 150; audio; time,yes
+Play Video Player,1.0.0,Play Video Player (1.0.0) | Created a year ago | Plays a Video Player component | 2 people like this,time,no
+Preload Scene,0.1.0,Preload Scene (0.1.0) | Created 10 months ago | Loads a Scene in the background without activating it,initial 150; scene,yes
+Print String,1.0.0,Print String (1.0.0) | Created a year ago | Prints a message to the Console and/or draws it on screen for a short duration (Unreal-like),shop; debug,no
+Process List by List (Advanced),1.2.0,"Process List by List (Advanced) (1.2.0) | Created 10 months ago | Finds matching items between two lists and performs an action (e.g., Deactivate GameObject, Remove from List).",initial 150,no
+Processor Restart,1.0.0,Processor Restart (1.0.0) | Created 3 years ago | Manually Restart a Processor | 1 person likes this,state machine; behavior,no
+Property get Player Closest Visible Target,0.0.1,Property get Player Closest Visible Target (0.0.1) | Created 10 months ago | Returns the closest GameObject currently visible to the player's sight sensor,initial 150,no
+Quest Filter,0.1.4,Quest Filter (0.1.4) | Updated 4 years ago | Filter the Quests on UI | Quests | 1 person likes this,quest,yes
+Quit or Stop Application,1.0.1,Quit or Stop Application (1.0.1) | Updated 5 years ago | Closes the application and exits the program or stops the application launched in the Game view of Unity Editor | 3 people like this,shop,no
+Ragdoll and Pin to Surface,0.1.0,Ragdoll and Pin to Surface (0.1.0) | Created 9 months ago | Ragdolls character and pins them to whatever surface is behind them when hit,initial 150; tick,no
+Raycast Collision,1.0.1,"Raycast Collision (1.0.1) | Updated 4 years ago | Stores a raycast collision target GameObject in a variable ( Originally created by 'Yojimbo', I have made some modifications so that the instruction is based on a transform instead of global pos",variable; save,no
+Raycast to Surface,1.1.1,"Raycast to Surface (1.1.1) | Updated 6 months ago | Casts a ray from a source position in a configurable direction until it hits a surface on the specified LayerMask. Stores the hit position and optionally the hit normal, hit GameObject and hit Character.",initial 150,yes
+Read NaniNovel to GC2,1.0.26,"Read NaniNovel to GC2 (1.0.26) | Updated a year ago | The variable name and its type must match in both NaniNovel and GameCreator 2. A string variable in NaniNovel should be wrapped in quotes, e.g. ""text"". | 4 people like this",variable; shop; import,no
+Refresh Bag,1.0.0,Refresh Bag (1.0.0) | Created 2 years ago | Refreshes a BagListUI | 2 people like this,inventory,no
+Refresh Hotspot Text,1.0.0,Refresh Hotspot Text (1.0.0) | Created 12 days ago | Updates the floating text on the selected hotspot.,initial 150; variable,no
+Remove Amount from List,1.0.1,Remove Amount from List (1.0.1) | Created 5 years ago | Deletes a certain amount of elements from a given Local or Global List Variables | 3 people like this,variable,no
+Remove Goal (Property),0.0.1,Remove Goal (Property) (0.0.1) | Created 3 years ago | Removes an existing Goal from a dynamic property from the specified Action Plan | Behavior | 3 people like this,behavior,no
+Remove Multiple Items,1.0.3,Remove Multiple Items (1.0.3) | Updated a year ago | Remove items to the specified Bag fixed | Inventory | 10 people like this,inventory,no
+Remove Prop From Bone,1.0.1,Remove Prop From Bone (1.0.1) | Updated 4 years ago | Removes a prefab Prop (if any) from a Character | 1 person likes this,zone,no
+Rename GameObject,1.0.0,Rename GameObject (1.0.0) | Created 5 years ago | Renames a gameobject in the scene | 4 people like this,scene,no
+Repeat Instructions With Interval,1.0.2,"Repeat Instructions With Interval (1.0.2) | Updated 10 months ago | Runs a set of instructions a set number of times, with an interval between each run.",initial 150; time,yes
+Replace Game Object With Prefab,1.0.0,Replace Game Object With Prefab (1.0.0) | Created 4 years ago | Replaces a game object in the scene with a prefab | 2 people like this,scene,no
+Replace Sub String,1.0.2,Replace Sub String (1.0.2) | Updated 5 years ago | Replace all instances of a Old Sub String within the Source String with a New Sub String and return the resultant Output String. | 2 people like this,variable,no
+Restart Instructions Loop,0.0.1,Restart Instructions Loop (0.0.1) | Created a year ago | Restarts the current Instructions a specified number of times,time,no
+Retrieve and Set Item,1.0.0,Retrieve and Set Item (1.0.0) | Created 3 years ago | Retrieves an item from a BagCellUI and sets it to a Runtime Item variable | 1 person likes this,variable,no
+Retrieve and Set Item From Bag,1.0.1,Retrieve and Set Item From Bag (1.0.1) | Updated 2 years ago | Retrieves an item from a BagCellUI and sets it to a Runtime Item variable | 1 person likes this,variable,no
+Retrieve System Time,1.0.1,Retrieve System Time (1.0.1) | Created a year ago | Retrieves the current system time in a specified format (full date-time or specific components) and stores it in a variable | 2 people like this,time,no
+Rotate Around,1.0.1,Rotate Around (1.0.1) | Updated 4 years ago | One object is rotating around another object at a certain radius | 1 person likes this,radius; zone,no
+Rotate In Place,1.0.0,Rotate In Place (1.0.0) | Created 2 years ago | Rotates the transform in place towards the chosen target over time. | 4 people like this,time,no
+Rotate To Cursor,1.0.1,Rotate To Cursor (1.0.1) | Updated a year ago | Rotates the transform in place towards cursor over time. | 2 people like this,time,no
+Round Number,1.0.0,Round Number (1.0.0) | Created 5 years ago | Rounds a float to an integer | 3 people like this,variable,no
+Run Actions and Wait,0.0.1,Run Actions and Wait (0.0.1) | Created 4 years ago | Executes an collection of Actions and waits until they all have completed | 2 people like this,save,no
+Run Actions N Times,1.0.2,Run Actions N Times (1.0.2) | Updated 5 years ago | Executes an Actions component N times | 8 people like this,time,no
+Run Actions with Args,0.0.2,Run Actions with Args (0.0.2) | Updated 4 years ago | Executes an Actions component object with variable Self and Target properties | 6 people like this,variable,yes
+Run All Actions in List,1.0.0,"Run All Actions in List (1.0.0) | Created a year ago | Runs Actions on each GameObject in the provided list variable, with an optional delay between each run",variable,no
+Run All Conditions,1.0.0,Run All Conditions (1.0.0) | Created 8 days ago | Evaluates every branch in a Conditions component,initial 150,yes
+Run Child Actions by Name,0.0.1,Run Child Actions by Name (0.0.1) | Created a year ago | Executes an Actions component from a child GameObject by name,initial 150,no
+Run Garbage Collection,0.1.1,Run Garbage Collection (0.1.1) | Created 9 months ago | Forces cleanup of unused native assets and managed memory.,initial 150; scene; optimized,no
+Run Random Action in List,1.1.2,Run Random Action in List (1.1.2) | Updated 4 years ago | Selects a random game object in a list variable and runs the Actions | 5 people like this,variable,no
+Run Random Instructions,0.0.1,Run Random Instructions (0.0.1) | Created 2 years ago | Randomly runs one of either Instruction Lists | 3 people like this,zone,no
+Run State Machine Runner Node Advanced,2.0.0,"Run State Machine Runner Node Advanced (2.0.0) | Created a year ago | Executes a State Machine node from an specific target runner with the retargeting Target. By defailt, Self always refer to the SM | 3 people like this",state machine,yes
+Runtime Item has Property with value,1.0.0,Runtime Item has Property with value (1.0.0) | Created 2 years ago | Returns true if the chosen Runtime Item has the specified item Property,inventory,no
+Runtime Item Property Value Range Comparison,1.0.0,Runtime Item Property Value Range Comparison (1.0.0) | Created 2 years ago | Returns true if the chosen Runtime Item has the specified item Property defined and its value is within the specified range.,inventory,no
+Safely Restart Instructions,1.0.2,Safely Restart Instructions (1.0.2) | Updated 2 years ago | Safe version of default 'Restart Instructions' with a protection feature to prevent Unity from freezing/crashing when encountering an infinite loop | 6 people like this,save,no
+Save and Load Scene by Layers,1.0.0,Save and Load Scene by Layers (1.0.0) | Created 3 years ago | Saves and loads GameObjects in the scene based on specified layers | 2 people like this,save; scene; time,yes
+Save Bool,0.1.0,Save Bool (0.1.0) | Created 3 years ago | Save a Bool outside of the Game Save Slot. | 2 people like this,variable; save; pool,no
+Save Bool To PlayerPrefs,1.0.0,Save Bool To PlayerPrefs (1.0.0) | Created a year ago | Saves a boolean value to PlayerPrefs with a specified key name,variable; save; pool,no
+Save Can See Result,0.0.1,Save Can See Result (0.0.1) | Created 9 months ago | Checks if object can be seen by Perception and saves the result to a variable,initial 150; perception; save,yes
+Save Float To PlayerPrefs,1.0.0,Save Float To PlayerPrefs (1.0.0) | Created a year ago | Saves a float value to PlayerPrefs with a specified key name,variable; save,no
+Save Global Var to PlayerPrefs,1.0.15,Save Global Var to PlayerPrefs (1.0.15) | Updated a year ago | Saves the value of a global string variable to PlayerPrefs | 2 people like this,variable; save,no
+Save Global Variables,2.0.0,Save Global Variables (2.0.0) | Created 3 years ago | Save Global Variables | 5 people like this,variable; save,no
+Save Integer to PlayerPrefs,1.0.0,Save Integer to PlayerPrefs (1.0.0) | Created a year ago | Saves an integer value to PlayerPrefs with a specified key name | 1 person likes this,variable; save,no
+Save Single Variable to Playerpref GC2 Save,1.0.0,Save Single Variable to Playerpref GC2 Save (1.0.0) | Created 10 months ago | Save a single variable (local or a named global variable) into GC2 save storage for a given slot,initial 150; variable; save,no
+Save Single Variable to Playerpref GC2 Save,1.0.6,"Save Single Variable to Playerpref GC2 Save (1.0.6) | Updated 8 months ago | Save a single variable (local or a named global variable) into GC2 save storage for a given slot, MERGING with existing data.",initial 150; variable; save,no
+Save Sound Volume,1.0.2,Save Sound Volume (1.0.2) | Updated 4 years ago | Saves Volume data to PlayerPrefs | 4 people like this,save,no
+Save String,0.0.2,Save String (0.0.2) | Updated 3 years ago | Save a String outside of the Game Save Slot. | 3 people like this,variable; save,no
+Save String to a Variable,0.0.2,Save String to a Variable (0.0.2) | Updated 3 years ago | Save a String to a Local or Global Variable. | 5 people like this,variable; save,no
+Save String To PlayerPrefs,1.0.0,Save String To PlayerPrefs (1.0.0) | Created a year ago | Saves a string value to PlayerPrefs with a specified key name,variable; save,no
+Save to Slot,1.2.3,Save to Slot (1.2.3) | Updated a year ago | Saves a Local Variable value to a GameCreator Save Slot for persistent storage | 2 people like this,variable; save,no
+Save Value,0.0.6,Save Value (0.0.6) | Created 3 years ago | Save a Value outside of the Game Save Slot. | 2 people like this,variable; save,no
+Save Value,0.0.7,Save Value (0.0.7) | Updated 3 years ago | Save a Value outside of the Game Save Slot. | 6 people like this,variable; save,no
+Save Value,1.0.0,Save Value (1.0.0) | Created 2 years ago | Save a Integer outside of the Game Save Slot. | 2 people like this,variable; save,no
+Saved Value Exist,1.0.3,Saved Value Exist (1.0.3) | Updated 3 years ago | Returns true if a saved value with same name exist | 5 people like this,save,no
+Scale Bone and Descendants,1.0.0,Scale Bone and Descendants (1.0.0) | Created 3 years ago | Scales a bone and all its descendant bones in the skeleton | 1 person likes this,time; zone,no
+Scroll to Bottom,0.1.1,Scroll to Bottom (0.1.1) | Created 3 years ago | Scrolls a ScrollRect to the bottom over time | 2 people like this,time,no
+Scroll to Top,0.1.1,Scroll to Top (0.1.1) | Created 3 years ago | Scrolls a ScrollRect to the top over time | 2 people like this,time,no
+Send Data to PHP Script,1.0.0,Send Data to PHP Script (1.0.0) | Created 3 years ago | Sends Level and IDPlayer data to a specified PHP script | 4 people like this,time,no
+Set Active Advanced,1.0.0,"Set Active Advanced (1.0.0) | Created 3 months ago | Sets a Game Object active/inactive with advanced options for siblings, parents, children, and timed deactivation. | 1 person likes this",initial 150; time,no
+Set Active Extended,1.2.0,"Set Active Extended (1.2.0) | Created 3 years ago | Changes the active state of selected game objects independently, from the targeted list, arrays, or based on a specified tag | 3 people like this",behavior,no
+Set Active Scene,1.0.0,Set Active Scene (1.0.0) | Created a year ago | Sets the active scene,scene,no
+Set Active with Tag,1.0.1,Set Active with Tag (1.0.1) | Created 5 years ago | Changes the state of all game objects with the specified tag to active or inactive | 4 people like this,behavior,no
+Set all Active from List,0.0.1,Set all Active from List (0.0.1) | Created 4 years ago | Changes the active state of all game objects of the targeted list | 3 people like this,behavior,no
+Set all Active from List,0.0.2,Set all Active from List (0.0.2) | Created 3 years ago | Changes the active state of all game objects of the targeted list | 3 people like this,behavior,no
+Set Audio Mixer Group Volume,1.0.1,Set Audio Mixer Group Volume (1.0.1) | Created 9 months ago | Transitions an Audio Mixer exposed volume parameter from its current value to a target volume (0-1) using linear gain (converted to dB internally) | 1 person likes this,initial 150; audio,yes
+Set Box Collider Size And Center,0.0.1,Set Box Collider Size And Center (0.0.1) | Created 3 months ago | Changes the Center and/or Size values of a BoxCollider component,initial 150,no
+Set Button Interactable,1.0.2,Set Button Interactable (1.0.2) | Created a year ago | Sets whether a Button component is interactable based on a boolean value,pool,no
+Set Camera Rotation (Third Person),1.0.0,Set Camera Rotation (Third Person) (1.0.0) | Created 3 years ago | Sets the Third Person camera rotation from a Vector3 variable | 5 people like this,variable; camera,no
+Set Canvas Camera,0.0.2,Set Canvas Camera (0.0.2) | Updated 2 years ago | Sets the Canvas Camera reference | 2 people like this,camera,no
+Set Character Interaction Mode,0.1.1,Set Character Interaction Mode (0.1.1) | Created 3 years ago | Changes the interaction behavior of the Character | 4 people like this,tick; behavior; interaction,yes
+Set Child Local Name Variable,0.0.1,Set Child Local Name Variable (0.0.1) | Created a year ago | Sets a local named variable on a child GameObject | 1 person likes this,initial 150; variable,no
+Set custom Mixer On Sources from obj,1.0.2,Set custom Mixer On Sources from obj (1.0.2) | Created 2 years ago | Set Mixer On All Audio Sources From a Object | 2 people like this,audio,no
+Set Dynamic Bone Blend Weight,1.0.0,Set Dynamic Bone Blend Weight (1.0.0) | Created a year ago | Sets the blend weight of a Dynamic Bone component | Dynamic Bones | 1 person likes this,zone,no
+Set Feel Radius,0.0.1,Set Feel Radius (0.0.1) | Created a year ago | Built-in | URP | HDRP | Changes the radius of Feel. | 1 person likes this,radius,yes
+Set Fog (Runtime),1.0.0,Set Fog (Runtime) (1.0.0) | Created 10 months ago | Change the global fog settings at runtime only. Non-persistent: the instruction applies settings while the app is running and does not save them to project assets.,initial 150; save,no
+Set Game Object from building socket,1.0.0,Set Game Object from building socket (1.0.0) | Created 2 years ago | Set the gameobject from building socket | Easy Build System | 3 people like this,save,no
+Set Global Stat Base,1.0.0,Set Global Stat Base (1.0.0) | Created 6 months ago | Overwrites a Stat base value globally so new spawned Traits use it,initial 150,no
+Set Image To Ammo Icon,1.0.1,Set Image To Ammo Icon (1.0.1) | Updated 6 months ago | Sets an Image sprite to the icon of the ammo used by a weapon | 1 person likes this,initial 150,no
+Set Language From Global,1.0.2,Set Language From Global (1.0.2) | Updated a year ago | Reads the locale code from a global variable and applies it to override the default localization settings | 1 person likes this,variable,no
+Set Layer Visibility,1.0.1,Set Layer Visibility (1.0.1) | Created 3 years ago | Sets on/off the visiblity of a specific layer | 3 people like this,camera,no
+Set Light Properties,1.0.1,Set Light Properties (1.0.1) | Updated 4 years ago | Set light intensity and range | 1 person likes this,radius,no
+Set Local Position,1.0.1,"Set Local Position (1.0.1) | Created 4 years ago | Simple instruction to Set the Local Position of a Transform, does not have any tweening or animation, but can be more accurate | 2 people like this",save; animation,no
+Set Melee Weapon,0.0.2,Set Melee Weapon (0.0.2) | Updated 3 years ago | Sets a Equip Melee Weapon | 5 people like this,variable,no
+Set Mixer On Sources,1.0.2,Set Mixer On Sources (1.0.2) | Updated 3 years ago | Set Mixer On All Audio Sources From Object | 2 people like this,audio,no
+Set Name Variable Position,2.1.0,Set Name Variable Position (2.1.0) | Updated 3 years ago | Changes the value of a Vector3 in Local Name Variables that represents a position | 2 people like this,variable,no
+Set NavMesh Agent Priority,0.1.2,Set NavMesh Agent Priority (0.1.2) | Created 3 years ago | Changes the Avoidance Priority field of a Navmesh Agent | 3 people like this,navigation,yes
+Set Number from Vector Rotation,0.0.6,Set Number from Vector Rotation (0.0.6) | Updated 4 years ago | Sets a value equal to one of Vector Rotation | 2 people like this,variable; zone,no
+Set Number of Childs Count,0.0.3,Set Number of Childs Count (0.0.3) | Updated 4 years ago | Sets a value equal to Childs Count found | 2 people like this,variable,no
+Set numbers of items from bag,0.0.1,Set numbers of items from bag (0.0.1) | Created 4 years ago | Set numbers of items from bag | 1 person likes this,inventory,no
+Set Orbit Position to Follow Offset,1.0.0,"Set Orbit Position to Follow Offset (1.0.0) | Created 4 years ago | Workaround to enable or disable Orbit using a follow shot, NOTE: It is not possible to account for Look Offset | 4 people like this",shop,no
+Set Point Between Two Points,0.0.1,Set Point Between Two Points (0.0.1) | Created 3 years ago | Changes the value of a Vector3 to a random point between two points,variable,no
+Set Rigidbody Interpolation fixed,1.0.1,Set Rigidbody Interpolation fixed (1.0.1) | Created 9 months ago | Set the assigned gameobjects rigidbody component's interpolate value.,initial 150,no
+Set Rotate Character With Camera,2.0.1,Set Rotate Character With Camera (2.0.1) | Created 2 years ago | Set Rotate Character With Camera | Vrif | 4 people like this,camera,no
+Set RuntimeItem Equipped Index,0.0.2,Set RuntimeItem Equipped Index (0.0.2) | Updated 2 years ago | Retrieve the RuntimeItem Equipped Slot Index (Last Equipped) | 1 person likes this,inventory,no
+Set Shooter Weapon,1.0.0,Set Shooter Weapon (1.0.0) | Created 2 years ago | Sets the Shooter Weapon value | Shooter | 6 people like this,variable; shop,no
+Set Sight Laser Active,1.0.0,Set Sight Laser Active (1.0.0) | Created 7 months ago | Enables or disables the laser sight of the specified (or currently equipped) Shooter Weapon for the given Character,initial 150; shop,no
+Set String,1.0.2,Set String (1.0.2) | Updated 3 years ago | Sets a (Result) string from an Input String under rules. | 1 person likes this,variable,no
+Set Texture Sheet Animation Sprite,1.0.2,Set Texture Sheet Animation Sprite (1.0.2) | Updated a year ago | Changes the sprite in the Texture Sheet Animation module of a Particle System | 1 person likes this,animation,no
+Set URP Runtime Settings,1.0.1,"Set URP Runtime Settings (1.0.1) | Updated 10 months ago | Change runtime URP rendering options: shadows, post-processing (Volumes) and render scale. Changes are applied at runtime and may modify the active pipeline asset instance.",initial 150,no
+Set Video Loop,1.0.0,Set Video Loop (1.0.0) | Created a year ago | Sets whether a Video Player component should loop its playback | 2 people like this,shop,no
+Set Video Time,1.0.0,Set Video Time (1.0.0) | Created a year ago | Sets the current playback time of a Video Player component | 3 people like this,time,no
+Set VSync,0.1.0,Set VSync (0.1.0) | Created 5 months ago | Enables or disables Vertical Synchronization (VSync). | 1 person likes this,initial 150,no
+Setup Timer,0.1.1,Setup Timer (0.1.1) | Updated 4 years ago | Set a timer and bound it to the variable | 3 people like this,variable; time,no
+Show FPS,1.0.0,Show FPS (1.0.0) | Created a year ago | Displays the current FPS in the top-right corner of the screen | Imdraw | 6 people like this,shop,no
+Show Gley Ad,0.0.1,Show Gley Ad (0.0.1) | Created a year ago | Show ads using Gley Mobile Ads,shop,no
+Show Keypad (UGUI),1.2.0,"Show Keypad (UGUI) (1.2.0) | Updated a year ago | Centered keypad with full-screen dim, input display, per-key actions, custom font & colors (digits + OK/CLR/DEL), smooth fade, and early success/failure actions. | 1 person likes this",shop,no
+Show Play Store Review,0.0.1,Show Play Store Review (0.0.1) | Created a year ago | Triggers Google Play Store in-app review dialog | 1 person likes this,dialogue; shop,no
+Show POI Beacons,1.0.2,Show POI Beacons (1.0.2) | Updated a year ago | Show all POI Beacons. Requires Kronnect CompassNavigatorPro 3,shop,no
+Simple Field Of View,1.0.0,"Simple Field Of View (1.0.0) | Created 4 years ago | Create a field of view with raycast ( Angle, radius and layers ). Useful for creating A.I. This version supports detection of only one target.) | 7 people like this",radius; zone,yes
+Simulate Physics,1.0.0,Simulate Physics (1.0.0) | Created 7 months ago | Manually advances the physics simulation by a given time,initial 150; time,no
+Skip Typewriter,1.0.0,Skip Typewriter (1.0.0) | Created 2 years ago | Skips the typewriter effect | Text Animator | 1 person likes this,animation,no
+Snap to Grid,1.0.0,Snap to Grid (1.0.0) | Created 3 years ago | Snaps a GameObject to a grid defined by variable cell sizes | 1 person likes this,variable; time,no
+Snap to Grid at Cursor,1.0.1,Snap to Grid at Cursor (1.0.1) | Created 3 years ago | Snaps a GameObject to a grid cell based on the cursor's position | 2 people like this,time,no
+Some Enviro action,0.1.2,Some Enviro action (0.1.2) | Created 3 years ago | Change the TimeOfDay and the weather of Enviro with Game Creator 2 | Enviro 3 | 3 people like this,time,no
+Spawn Blood Decal,1.0.1,"Spawn Blood Decal (1.0.1) | Created 9 months ago | Spawns a random blood decal from a list at the hit point, optionally raycast through to wall behind",initial 150,no
+Spawn Stake on Hit,1.0.0,Spawn Stake on Hit (1.0.0) | Created 9 months ago | Spawns a stake/projectile prefab at the hit point,initial 150,no
+Spawn Weighted Prefab,1.0.0,Spawn Weighted Prefab (1.0.0) | Created 10 months ago | Instantiates one prefab from a list using a 1-100 weight (percent) per entry,initial 150; zone,no
+Start Disappearing Text,1.0.0,Start Disappearing Text (1.0.0) | Created 2 years ago | Starts the disappearing process for typewriter text) | Text Animator | 1 person likes this,animation,no
+Start Following and Move Backwards,0.1.2,Start Following and Move Backwards (0.1.2) | Created 3 years ago | Instructs a Character to follow another game object and move backwards if too close | 5 people like this,time,no
+Start Following By Variables,1.0.1,Start Following By Variables (1.0.1) | Updated 4 years ago | Instructs a Character to follow another game object | 3 people like this,variable,yes
+Start Ragdoll with Configurable Force,0.4.0,"Start Ragdoll with Configurable Force (0.4.0) | Created a year ago | Makes a Character ragdoll. Applies Random force, Directional force (away from a reference, with optional vertical), or layered Relative force (Primary Away/Towards + Supplemen",shop,no
+Start Ragdoll with Diagnostics,1.0.0,Start Ragdoll with Diagnostics (1.0.0) | Created 9 months ago | Starts the Character's ragdoll state and logs detailed diagnostic information to help debug skeleton configuration issues | 1 person likes this,initial 150; debug,no
+Start Showing Text,1.0.0,Start Showing Text (1.0.0) | Created 2 years ago | Starts the show process for typewriter text | Text Animator | 1 person likes this,animation; shop,no
+Steam - Achievement from a String Value,1.0.0,Steam - Achievement from a String Value (1.0.0) | Created 5 years ago | Select a string to unlock a Achievement in Steam. Installation instructions for Steamworks: 1) visit this website https://steamworks.github.io/installation/ 2) Import Unity,stream; import,no
+Steam - Remove Achievement from a String Value,1.0.1,Steam - Remove Achievement from a String Value (1.0.1) | Updated 5 years ago | Select a string to Remove a Achievement in Steam. Installation instructions for Steamworks: 1) visit this website https://steamworks.github.io/installation/ 2) Impor,stream; import,no
+Steam - Removes all Achievements,1.0.1,Steam - Removes all Achievements (1.0.1) | Updated 5 years ago | Removes all Achievements. Installation instructions for Steamworks: 1) visit this website https://steamworks.github.io/installation/ 2) Import Unity Package 3) Create a GameObject,stream; import,no
+Steam Achievement Unlock,1.0.0,Steam Achievement Unlock (1.0.0) | Created 2 years ago | Unlocks Achievment. Requires Steamworks.net!! | 4 people like this,stream,no
+Steam Test,1.0.1,Steam Test (1.0.1) | Updated 2 years ago | Checks Steam and outputs your username if working. Requires Steamworks.net!! | 1 person likes this,stream,no
+Stop All Actions,1.0.2,Stop All Actions (1.0.2) | Created 4 years ago | Stops all actions nested under the gameObject | 3 people like this,shop,no
+Stop All Conditions,1.0.2,Stop All Conditions (1.0.2) | Created 4 years ago | Stops all Conditions nested under the gameObject | 2 people like this,shop,no
+Stop All Triggers,1.0.2,Stop All Triggers (1.0.2) | Updated 4 years ago | Stops all triggers nested under the gameObject | 3 people like this,shop,no
+Stop Audio Source,1.0.1,Stop Audio Source (1.0.1) | Updated 3 years ago | Stops Audio Source | 3 people like this,audio; shop,no
+Stop Feel Feedbacks,1.0.0,Stop Feel Feedbacks (1.0.0) | Created 3 years ago | Stop Feel Feedbacks | 3 people like this,shop,no
+Stop Particle System,0.0.1,Stop Particle System (0.0.1) | Created 4 years ago | Stops a Particle system | 4 people like this,shop,no
+Stop Particle System,2.0.0,Stop Particle System (2.0.0) | Created 2 years ago | Stops a Particle system | 2 people like this,shop,no
+Stop Reload,0.0.2,Stop Reload (0.0.2) | Updated 4 months ago | Stops an ongoing Reload on a Character | Shooter,initial 150; shop,no
+Stop Slate Cutscene,0.0.2,Stop Slate Cutscene (0.0.2) | Created 3 years ago | Stops a cutscene using SLATE | Slate | 2 people like this,animation; shop; time,no
+Stop Video Player,1.0.0,Stop Video Player (1.0.0) | Created a year ago | Stops the Video Player and resets its time to 0 | 2 people like this,shop; time,no
+Store Camera Direction,1.0.1,Store Camera Direction (1.0.1) | Updated 5 years ago | Stores the camera direction in a Vector3 variable | 4 people like this,variable; camera,no
+Store Camera Rotation (Third Person),1.0.0,Store Camera Rotation (Third Person) (1.0.0) | Created 3 years ago | Stores the Third Person camera rotation to a Vector3 variable | 2 people like this,variable; camera,no
+Store Distance Between Transforms,1.0.0,Store Distance Between Transforms (1.0.0) | Created 3 years ago | Stores the distance between two Transform objects in a named variable | 1 person likes this,variable; time,no
+Store Last Shot Hit Data,2.0.2,"Store Last Shot Hit Data (2.0.2) | Created 7 months ago | Saves last shot hit position (local to Self) and shot direction, with optional flip to face or go away from the shooter",initial 150; save; shop,no
+Store Last Shot Hit Position,1.0.1,Store Last Shot Hit Position (1.0.1) | Created 9 months ago | Stores the position where the last shot hit | 1 person likes this,initial 150; shop,no
+Store Raycast Collision,1.0.3,Store Raycast Collision (1.0.3) | Updated 5 years ago | Stores a raycast collision target GameObject in a variable | 4 people like this,variable,no
+Sum Any Number Of Numbers,1.0.0,Sum Any Number Of Numbers (1.0.0) | Created 7 months ago | Sum Any Number Of Numbers,initial 150; variable,no
+Switch (String),1.0.0,Switch (String) (1.0.0) | Created 5 months ago | Runs one case branch based on a string value. Works like a switch-case-default statement in one instruction.,initial 150; zone,yes
+Sync Camera with Shot,0.1.2,Sync Camera with Shot (0.1.2) | Updated 3 years ago | Repositions the camera where the Shot points without any smoothing | 3 people like this,camera; shop,no
+Take a Standard Screenshot,1.0.1,Take a Standard Screenshot (1.0.1) | Updated 4 years ago | Takes a screenshot of what the set Camera sees. | 6 people like this,camera,no
+Task Activate,0.0.3,Task Activate (0.0.3) | Updated 3 years ago | Changes the state of a Task on a Journal component to Active. Useful when Completion of a Task is set to 'Manual' | Quests | 5 people like this,quest,no
+Task Deactivate,0.0.1,Task Deactivate (0.0.1) | Created 3 years ago | Changes the state of a Task on a Journal component to Inactive. Useful when Completion of a Task is set to 'Manual' or when completed tasks need to be reset | Quests | 5 people like this,quest,no
+Teleport & Stop,0.1.1,Teleport & Stop (0.1.1) | Created 4 years ago | Instantaneously moves a Character from its current position to a new one and stops | 6 people like this,shop; zone,no
+Text with Dialog System,1.0.0,Text with Dialog System (1.0.0) | Created a year ago | Displays text as a dialog with sentence-by-sentence progression | 2 people like this,dialogue,yes
+Text with Star Wars Crawl,1.0.0,Text with Star Wars Crawl (1.0.0) | Created a year ago | Displays text with a Star Wars-style opening crawl effect | 1 person likes this,initial 150,no
+Text with Typewriter Effect,1.0.0,"Text with Typewriter Effect (1.0.0) | Created a year ago | Displays text with a typewriter effect, revealing characters one by one",initial 150; zone,no
+Text with Wave Animation,1.0.0,Text with Wave Animation (1.0.0) | Created a year ago | Applies a wave animation effect to text characters,initial 150; save; animation,no
+There Can Be Only One,1.0.0,There Can Be Only One (1.0.0) | Created 8 months ago | Object destroys itself if there are other objects with the same tag,initial 150; save; zone,no
+Time Converter,2.0.0,Time Converter (2.0.0) | Created 2 years ago | Convert time in seconds into HH:MM:SS:mm,time,no
+Time Date To Seconds,1.0.0,Time Date To Seconds (1.0.0) | Created a year ago | Calculates the seconds from the given date/time until now and saves it to a variable | 1 person likes this,save; time,no
+Timeout,1.0.1,Timeout (1.0.1) | Created 5 years ago | Waits for a certain amount of time before executing | 11 people like this,schedule; time; pool,no
+Toggle Inventory,1.0.0,Toggle Inventory (1.0.0) | Created 4 years ago | Toggle the Inventory UI | Inventory | 5 people like this,inventory,no
+Toggle Layer Visibility,1.0.0,Toggle Layer Visibility (1.0.0) | Created 3 years ago | Toggles on/off the visiblity of a specific layer | 3 people like this,camera,no
+Toggle Shots,0.1.2,Toggle Shots (0.1.2) | Updated a year ago | Switches between two Shots for the Main Camera to switch between first and third person. | 2 people like this,camera; shop,no
+Toggle UI Visibility,1.0.0,Toggle UI Visibility (1.0.0) | Created 3 years ago | Toggles the visibility of a UI element | 3 people like this,time,no
+Track by Layers Optimized,0.0.1,Track by Layers Optimized (0.0.1) | Created 2 years ago | Starts tracking all game objects on a specified layer (using a cached list for performance) | 1 person likes this,optimized,yes
+Track Object with Indicator,1.0.0,Track Object with Indicator (1.0.0) | Created 3 years ago | Tracks an object and updates an on-screen indicator. Triggers event if within a certain distance | 3 people like this,time,no
+Transfer Item,1.0.1,Transfer Item (1.0.1) | Updated 2 years ago | Transfer an Item from one bag to another | Inventory | 7 people like this,inventory; zone,no
+Trigger At Specific Time,0.1.2,Trigger At Specific Time (0.1.2) | Updated 3 years ago | Triggers an event at a specified time of day | 2 people like this,time,yes
+Trigger At Specific Time web UTC,0.1.2,Trigger At Specific Time web UTC (0.1.2) | Updated 3 years ago | Triggers an event at a specified time of day web based UTC | 2 people like this,time,no
+Trigger New Custom Unity Event,1.0.0,Trigger New Custom Unity Event (1.0.0) | Created 3 years ago | Creates and triggers a new UnityEvent | 3 people like this,time,no
+Truncate List,0.1.2,Truncate List (0.1.2) | Updated 9 months ago | Truncates a List Variable to a maximum length,initial 150; variable,no
+UI Follow World Position,1.0.3,"UI Follow World Position (1.0.3) | Updated a year ago | Makes a RectTransform on a 2D Canvas track a 3D world position (waypoint style), with a clamp-arrow that orbits and points toward the true position. | 1 person likes this",waypoint,no
+URP: Toggle Post-Processing Effect - More Options,1.1.0,"URP: Toggle Post-Processing Effect - More Options (1.1.0) | Created a year ago | Enable/disable, toggle, or sync a specific URP Volume override with a Local Variable.",initial 150; variable,no
+Use Equipment,1.0.1,Use Equipment (1.0.1) | Updated 4 years ago | Use the item equipped item in the specified slot. | 3 people like this,inventory,no
+Use Item,0.0.1,Use Item (0.0.1) | Created 4 years ago | Uses an Item from the Bag that inherits from the specified type | 2 people like this,inventory,no
+Use Item,1.0.0,Use Item (1.0.0) | Created 3 years ago | Uses an Item from the a Bag | Inventory | 5 people like this,inventory,no
+Use Item,1.0.1,Use Item (1.0.1) | Created 2 years ago | Uses an Item from the a Bag | Inventory | 4 people like this,inventory,no
+Use Runtime Item,1.0.0,Use Runtime Item (1.0.0) | Created 3 years ago | Uses existing Item from a Bag | Inventory | 2 people like this,inventory,no
+Variable is Null,1.0.0,Variable is Null (1.0.0) | Created 4 years ago | Checks if a GameObject is Null or empty | 2 people like this,variable,no
+Vector 3 from Float value,1.0.3,Vector 3 from Float value (1.0.3) | Updated 3 years ago | Set one Vector X Y or Z from a float | 1 person likes this,zone,no
+Vector 3 from Floats,1.0.2,Vector 3 from Floats (1.0.2) | Updated 4 years ago | Populate a Vector 3 variable from Individual Float values for XYZ | 1 person likes this,variable,no
+VFX Manager,1.0.1,VFX Manager (1.0.1) | Updated 9 months ago | Plays or Stops a VFX,initial 150; shop,no
+Vision Cone Trigger Event,1.0.0,"Vision Cone Trigger Event (1.0.0) | Created 3 years ago | Broken but example code ..the actual trigger event is not correct ,Creates a vision cone and triggers an event when a specific GameObject enters it | 1 person likes this",time; zone,no
+Vision Detection,1.0.1,Vision Detection (1.0.1) | Updated 3 years ago | AI vision | 4 people like this,time,yes
+Vision Detection Condition,1.0.0,Vision Detection Condition (1.0.0) | Created 3 years ago | AI vision | 2 people like this,time,no
+VRIF Set Return To Snap Zone,2.0.1,VRIF Set Return To Snap Zone (2.0.1) | Updated a year ago | VRIF VRIF Set Return To Snap Zone | Vrif,zone,no
+Wait Cozy Time,1.0.0,Wait Cozy Time (1.0.0) | Created 2 years ago | Waits for a certain amount of Cozy time units,time,no
+Wait For Audio,0.0.1,Wait For Audio (0.0.1) | Created 2 years ago | Waits for the length of an AudioClip,audio; time,no
+Wait for Custom Unity Event,1.0.0,Wait for Custom Unity Event (1.0.0) | Created 3 years ago | Waits for a custom UnityEvent to be triggered before continuing | 2 people like this,time,no
+Wait For Effect,0.0.2,Wait For Effect (0.0.2) | Created 3 years ago | Waits until a Particle Effect is completed | 1 person likes this,time,no
+Wait For Signal,0.0.2,Wait For Signal (0.0.2) | Updated 4 years ago | Waits until a Signal is received | 5 people like this,time; signal,no
+Wait Random,1.0.0,Wait Random (1.0.0) | Created 5 years ago | Waits a random number of seconds | 2 people like this,time; pool,no
+Wait Seconds Animation Clip,1.0.0,Wait Seconds Animation Clip (1.0.0) | Created 3 years ago | Waits using the duration of the clip | 3 people like this,animation; time; pool,no
+Wait Until True,0.0.1,Wait Until True (0.0.1) | Created 2 years ago | Waits until the boolean value is True | 2 people like this,pool,no
+Wait Variable Timer,0.1.0,"Wait Variable Timer (0.1.0) | Created a year ago | Waits for a duration defined by a variable and updates another variable each tick. Supports increment, decrement, or setting the remaining time. Executes an action when the timer completes.",tick; variable; time,yes
+Wake Up Inventory,0.0.1,Wake Up Inventory (0.0.1) | Created 3 years ago | Forces the Inventory and all Items to initialize if they haven't | 2 people like this,save; inventory; zone,no
+Wander,1.0.0,"Wander (1.0.0) | Created 3 years ago | [Requires NavMesh Agent] Sets a target destination for the character using the character's NavMeshAgent, then moves the character to that location. | 5 people like this",wander,no
+Wander,1.0.3,"Wander (1.0.3) | Updated 3 years ago | [Requires NavMesh Agent] Sets a target destination for the character using the character's NavMeshAgent, then moves the character to that location. | 13 people like this",time; wander,yes
+Wander Prefered Paths,3.0.1,Wander Prefered Paths (3.0.1) | Updated 2 years ago | Iterates through all waypoints of a path before selecting the next path with randomness. Executes actions if the end of all ways is reached. you will need to make a gameboject path with ways,navigation; wander; waypoint,yes
+Weighted Random Event,1.0.0,"Weighted Random Event (1.0.0) | Created a year ago | Runs one instruction list from a list, each with a different chance (weight) | 1 person likes this",zone,no
+While Bag Empty,0.0.1,While Bag Empty (0.0.1) | Created 8 months ago | Executes continuously while a bag remains empty,initial 150; inventory,no
+While Bag Empty,1.0.1,While Bag Empty (1.0.1) | Created a month ago | Executes continuously while a bag remains empty | 1 person likes this,initial 150; inventory,no
+Wind Magnitude to Wind Zone,0.0.1,Wind Magnitude to Wind Zone (0.0.1) | Created 2 years ago | Set Wind Magnitude to Wind Zone | 1 person likes this,zone,no
+Write GC2 to NaniNovel,1.0.24,Write GC2 to NaniNovel (1.0.24) | Created a year ago | Transfers the value of a variable from GameCreator 2 to Naninovel. The type and name of the variable must match in both systems. This instruction allows you to synchronize data between Game,behavior; interaction; variable; pool,no
