@@ -11,11 +11,12 @@ Mode: LOCAL_UNITY_REQUIRED for licensed/vault/visual evidence (Mode A, single-en
 | `Unity/ArkusUnity/Assets/Juego2/**` | new retained Juego2 production foundation (rendering baseline, shaders, input, presets, worldbuilding profiles, Arkus seam, GC2 adapter, lints, tests) |
 | `Unity/ArkusUnity/Assets/Arkus/H1/Editor/H1Baseline.cs`, `Tests/Editor/H1BaselineTests.cs` | the H1 bootstrap's render-pipeline expectation moves from built-in to the adopted URP asset (the only H1 edit) |
 | `Unity/ArkusUnity/Assets/Arkus/CITY/Editor/City04GreyboxBuilder.cs`, `CITY/Materials/*.mat` | pipeline-aware greybox materials, so retained content does not render with a hidden fallback |
+| `Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json` (one row) + the pinned fingerprint in `tests/Arkus.Harness.Tests/H1CatalogueTests.cs` | **Amendment (recorded during implementation):** the committed H1 catalogue snapshot is a live H1 contract input. Adopting URP resolves the URP `AssetVersion` script already referenced by the owner-vault `MI_Plaster.mat`, so that row gains one dependency. H1 fails closed on that (`projection.catalogue-snapshot-stale`, hosted H1-07..11 on `d770bf20`). The snapshot and its pinned fingerprint are re-baselined together, exactly as WP-H1-11 did for its catalogue change. No other H1 byte changes. |
 | `.gitignore` | GC2 vendor bytes, generated provisioning state, restored external sources |
 | `scripts/h2f02-*`, `scripts/arkus-verify-exact-sha-base.sh` (routing line) | provisioning + exact-SHA verifier |
 | `Docs/evidence/WP-H2F-02/**` | evidence |
 
-Forbidden: H0/.NET kernel (`src/`, `tools/`, `tests/`); ART-01 content or its PR branch; CITY semantics or keeper geometry; GC2 vendor bytes or any separately licensed module; managed H1 roots; workpack status text (DocSync owns it).
+Forbidden: H0/.NET kernel (`src/`, `tools/`, `tests/`) except the single pinned catalogue fingerprint above; ART-01 content or its PR branch; CITY semantics or keeper geometry; GC2 vendor bytes or any separately licensed module; managed H1 roots; workpack status text (DocSync owns it).
 
 ## Decisions to make and record
 

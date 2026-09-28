@@ -28,7 +28,7 @@ namespace Arkus.Harness.Tests
             Assert.Equal(274, snapshot.Entries.Count);
             Assert.Equal(240, snapshot.Entries.Count(entry => entry.Kind == "animation-clip"));
             Assert.Equal(14, snapshot.Entries.Count(entry => entry.Kind == "prefab" && entry.SourceId.StartsWith("quaternius-", StringComparison.Ordinal)));
-            Assert.Equal("e1e92d9878a4fea1ac9fb876d10b17a870db7ac68a669dd97ecf49b036f8c3e1", snapshot.Fingerprint);
+            Assert.Equal("ee13be7cb7603ad2cf08a57d19fb3c09a6e9fed151fa11f8fe88326eed1b48ce", snapshot.Fingerprint);
             Assert.Equal(before, CanonicalWorldStateCodec.ComputeContentHash(world));
         }
 
