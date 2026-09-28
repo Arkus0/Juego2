@@ -1,0 +1,28 @@
+{
+    "name": "Juego2.Foundation.Tests.Editor",
+    "rootNamespace": "Juego2.Foundation.Tests",
+    "references": [
+        "Juego2.Foundation",
+        "Juego2.Foundation.Editor",
+        "Juego2.Arkus",
+        "Unity.Splines",
+        "Unity.Mathematics",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

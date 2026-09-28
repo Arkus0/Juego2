@@ -34,3 +34,11 @@ Unity/ArkusUnity/Recordings/
 Unity/ArkusUnity/*.csproj
 Unity/ArkusUnity/*.sln
 Unity/ArkusUnity/*.user
+
+# WP-H2F-02: owner-licensed Game Creator 2 Core (Unity Asset Store EULA, per seat, not redistributable).
+# Restored locally by scripts/h2f02-provision.py gc2; never committed. csc.rsp carries its local define.
+Unity/ArkusUnity/Assets/Plugins/GameCreator/
+Unity/ArkusUnity/Assets/Plugins/GameCreator.meta
+Unity/ArkusUnity/Assets/Plugins.meta
+Unity/ArkusUnity/Assets/csc.rsp
+Unity/ArkusUnity/Assets/csc.rsp.meta

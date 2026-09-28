@@ -1,0 +1,13 @@
+{
+  "schema": "juego2.h2f02.gc2-provisioning@1",
+  "product": "Game Creator 2 Core",
+  "version": "2.19.61",
+  "packageSha256": "1e4f3ba0560eadb944b3cf3ca63f7095d95b47c55a94ee655f28a15952f3380b",
+  "packageBytes": 28236878,
+  "route": "assets-only",
+  "imported": 3630,
+  "excluded": [
+    "Packages/manifest.json"
+  ],
+  "define": "JUEGO2_GC2_CORE"
+}

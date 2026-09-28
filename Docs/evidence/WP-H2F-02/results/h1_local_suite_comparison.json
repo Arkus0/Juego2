@@ -1,0 +1,25 @@
+{
+  "note": "Arkus.H1.Baseline.Tests.Editor on this workstation without the private vault mount or host-prepared plans; main e5322c84 (built-in) vs this branch (URP) with identical local ignored state",
+  "main": {
+    "result": "Failed(Child)",
+    "total": "43",
+    "passed": "18",
+    "failed": "25"
+  },
+  "branch": {
+    "result": "Failed(Child)",
+    "total": "43",
+    "passed": "18",
+    "failed": "25"
+  },
+  "differingCases": {
+    "Arkus.H1.Editor.Tests.H1BaselineTests.BuiltInRenderPipelineIsTheRetainedBaseline": {
+      "main": "Passed",
+      "branch": null
+    },
+    "Arkus.H1.Editor.Tests.H1BaselineTests.Juego2UrpIsTheRetainedBaseline": {
+      "main": null,
+      "branch": "Passed"
+    }
+  }
+}

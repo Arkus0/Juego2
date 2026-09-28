@@ -1,0 +1,36 @@
+{
+  "candidateSha": "5623fa9fba4f1153cc3211a81a10240ecd90bf7a",
+  "unityTree": "ed331750ffa23c142f06bdbd33c89c22d2517b72",
+  "a_clean_absent_verify_exit": 0,
+  "a_clean_absent_tests": {
+    "result": "Passed",
+    "total": "25",
+    "passed": "25",
+    "failed": "0",
+    "failedCases": []
+  },
+  "a_tree": {
+    "files": 276,
+    "changed": []
+  },
+  "b_gc2_provision_exit": 0,
+  "b_gc2_verify_exit": 0,
+  "b_gc2_tests": {
+    "result": "Passed",
+    "total": "34",
+    "passed": "34",
+    "failed": "0",
+    "failedCases": []
+  },
+  "b_tree": {
+    "files": 276,
+    "changed": []
+  },
+  "c_representative_exit": 0,
+  "c_lint_exit": 0,
+  "c_player_build_exit": 0,
+  "c_tree": {
+    "files": 276,
+    "changed": []
+  }
+}

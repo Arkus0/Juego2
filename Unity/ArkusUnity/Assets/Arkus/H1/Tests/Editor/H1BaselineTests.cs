@@ -24,9 +24,13 @@ namespace Arkus.H1.Editor.Tests
         }
 
         [Test]
-        public void BuiltInRenderPipelineIsTheRetainedBaseline()
+        public void Juego2UrpIsTheRetainedBaseline()
         {
-            Assert.That(GraphicsSettings.currentRenderPipeline, Is.Null);
+            // WP-H2F-02 turned the H2F-01 URP selection into the project baseline.
+            var pipeline = GraphicsSettings.currentRenderPipeline;
+            Assert.That(pipeline, Is.Not.Null);
+            Assert.That(pipeline.GetType().FullName, Is.EqualTo("UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset"));
+            Assert.That(AssetDatabase.GetAssetPath(pipeline), Is.EqualTo("Assets/Juego2/Foundation/Rendering/J2_URP_High.asset"));
         }
 
         [Test]

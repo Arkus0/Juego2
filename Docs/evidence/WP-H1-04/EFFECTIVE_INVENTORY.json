@@ -4174,7 +4174,9 @@
             "dimensions": "shader=Hidden/InternalErrorShader",
             "contentSha256": "3fcfc0359d1460009858533461893c626e25ea52364ae4e85f4a6bf84fc3ce69",
             "schemaFields": [],
-            "dependencies": [],
+            "dependencies": [
+                "Packages/com.unity.render-pipelines.universal/Editor/AssetVersion.cs"
+            ],
             "compatible": false
         },
         {

@@ -1,0 +1,16 @@
+{
+    "name": "Juego2.Foundation",
+    "rootNamespace": "Juego2.Foundation",
+    "references": [
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
