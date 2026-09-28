@@ -93,6 +93,9 @@ namespace Juego2.Foundation.Editor
             var low = EnsurePipeline(PipelineLow, rendererLow, ShadowDistanceLow, cascades: 1, MsaaQuality.Disabled);
 
             GraphicsSettings.defaultRenderPipeline = high;
+            // URP expects physical light units; it sets both on first build/interactive use, so the baseline commits them.
+            GraphicsSettings.lightsUseLinearIntensity = true;
+            GraphicsSettings.lightsUseColorTemperature = true;
             ApplyQuality(low, high);
             ApplyRenderingLayers();
             ApplyPlayerSettings();
@@ -405,6 +408,7 @@ namespace Juego2.Foundation.Editor
                 }
             }
             Require(PlayerSettings.colorSpace == ColorSpace.Linear, "J2_COLOR_SPACE_NOT_LINEAR");
+            Require(GraphicsSettings.lightsUseLinearIntensity && GraphicsSettings.lightsUseColorTemperature, "J2_LIGHTS_NOT_LINEAR_INTENSITY");
             var player = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset")[0]);
             Require(player.FindProperty("activeInputHandler").intValue == InputHandlerBoth, "J2_INPUT_HANDLER");
             var agent = NavMesh.GetSettingsByID(0);
