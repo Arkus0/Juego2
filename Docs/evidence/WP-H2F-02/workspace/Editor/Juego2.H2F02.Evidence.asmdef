@@ -1,0 +1,28 @@
+{
+    "name": "Juego2.H2F02.Evidence",
+    "rootNamespace": "Juego2.H2F02.Evidence",
+    "references": [
+        "GameCreator.Runtime.Core",
+        "Juego2.Arkus",
+        "Juego2.Foundation",
+        "Juego2.Foundation.Editor",
+        "Juego2.Gc2Adapter.Editor",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.Splines",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "JUEGO2_GC2_CORE"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
