@@ -16,7 +16,7 @@ No visual-production amendment in this branch changes the H2F-02/03/GATE accepta
 
 After H2F-GATE, priority moves to **locking and industrializing the visual/content production system before deeper gameplay expansion**.
 
-`GC2-02` and later gameplay WPs remain blocked until the expanded H2-GATE passes. `GC2-00` and a bounded `GC2-DIALOGUE-00` presentation adoption are allowed before H2-GATE because they are required inputs to playable visual inspection/UI presentation, not Living World/gameplay depth.
+`GC2-02` and later gameplay WPs remain blocked until the expanded H2-GATE passes. `GC2-00` and the bounded `GC2-DIALOGUE-00` presentation-strategy checkpoint are allowed before H2-GATE because they are required inputs to playable visual inspection/UI presentation, not Living World/gameplay depth. The Dialogue checkpoint may PASS without acquiring Dialogue 2.
 
 ## Ordering and ownership
 
@@ -27,7 +27,7 @@ After H2F-GATE, priority moves to **locking and industrializing the visual/conte
 | B2 | `CITY-URBAN-00` | Final large-port-town topology + first-block brief | Remote/planning; can begin when existing deps allow |
 | B3 | `ART-CHAR-01 -> ART-CHAR-02` | Character/wardrobe grammar -> repeatable ordinary-population factory | Can overlap ART-01/env work |
 | B4 | `ART-ANIM-01 -> ART-ANIM-02` (`ANIM-02` also consumes CHAR-02) | Source/retarget truth -> reusable locomotion/acting/ambient/object animation vocabulary | Can overlap environment work |
-| B5 | `GC2-DIALOGUE-00 + ART-CHAR-02 -> ART-UI-01` | Exact Dialogue 2 presentation seam -> approved no-voice Juego2 UI/dialogue language on factory-produced characters | No real investigation content yet |
+| B5 | `GC2-DIALOGUE-00 + ART-CHAR-02 -> ART-UI-01` | Dialogue strategy/disposition -> approved no-voice Juego2 UI/dialogue language on factory-produced characters, using adopted Dialogue 2 or Core/local | No real investigation content; no purchase prerequisite |
 | C1 | `ART-ENV-02` after ART-01 + CITY-URBAN-00 | Scenario-production factory + fresh-author repeatability proof | Runs while characters/animation/UI mature |
 | C2 | `GC2-00`; `H2-01` final acceptance after ART-01 + CITY-07 + H2F-GATE; `H2-02` after CITY-07 + GC2-00 + H2F-GATE; `H2-03` after H2-02 + CHAR-02 + ANIM-02; then `ART-02` after CITY-07 + H2-02 + H2-03 + ART-01 | Retained inland pilot remains playable transfer/reuse benchmark; H2-03 consumes CHAR/ANIM factories | Does not become final-setting approval |
 | D1 | `ART-URBAN-01` after ART-01 + ART-ENV-02 + CITY-URBAN-00 | Port-town keeper kit using the same scenario factory | Final-setting art lane |
@@ -68,6 +68,8 @@ H2F-GATE + H2-01 + H2-03 + ART-02 + ART-03 + CITY-URBAN-01 -> H2-GATE
 H2-GATE -> GC2-02+
 ```
 
+`GC2-DIALOGUE-00` is a strategy/disposition node, not an installation node. `ADOPTED` consumes the exact admitted Dialogue 2 seam; `NOT_MATERIAL`, `REJECTED` or `DEFERRED_NOT_ACQUIRED` consume Core/local. All four dispositions can legally feed `ART-UI-01`, so absence of the paid plugin does not block `ART-03` or `H2-GATE`.
+
 The graph is intentionally parallel. We are not adding a long serial infrastructure wall; we are adding bounded production lanes that converge at a single meaningful visual/production lock. Exact predecessor sets in individual WPs remain binding; this navigation graph must be amended whenever one of those sets changes rather than presenting a weaker shortcut.
 
 ## What H2-GATE now guarantees
@@ -86,9 +88,11 @@ Future work may add breadth and bespoke content. It should not reopen these foun
 
 ## Dialogue/Ink/module note
 
-`GC2-DIALOGUE-00` is the single Dialogue 2 adoption authority and a bounded pre-Gate presentation WP. It must satisfy the binding dependency/IP policy and the composed H1 lifecycle proof before an `ADOPTED` disposition becomes production input. It does not decide the final Ink authoring relationship and does not satisfy `GC2-03`.
+`GC2-DIALOGUE-00` is the single Dialogue 2 adoption authority and a bounded pre-Gate **strategy checkpoint**. It first resolves availability/materiality. `DEFERRED_NOT_ACQUIRED`, `NOT_MATERIAL` and `REJECTED` are valid PASS outcomes that retain no Dialogue 2 dependency and route `ART-UI-01` through Core/local.
 
-`GC2-03` consumes the accepted disposition. If Dialogue 2 was `NOT_MATERIAL`/`REJECTED`, GC2-03 uses the accepted local/Core path; any later reconsideration requires an explicit reviewed reopen/amendment of `GC2-DIALOGUE-00`, never an implicit adoption inside GC2-03. Ink may remain a writer-facing/narrative source candidate. The runtime narrative-authority decision is deferred until real dialogue production requires it.
+Only if the owner provides a lawful package and adoption is materially justified may the checkpoint pursue `ADOPTED`; before that disposition becomes production input it must satisfy the binding dependency/IP policy and the composed H1 lifecycle proof. It does not decide the final Ink authoring relationship and does not satisfy `GC2-03`.
+
+`GC2-03` consumes the accepted disposition. If Dialogue 2 is non-adopted, GC2-03 uses the accepted local/Core path; any later material reason to acquire it requires an explicit reviewed reopen of `GC2-DIALOGUE-00`, never an implicit adoption inside GC2-03 or ART-UI-01. Ink may remain a writer-facing/narrative source candidate. The runtime narrative-authority decision is deferred until real dialogue production requires it.
 
 Behavior 2, Inventory 2, Perception, Melee and other separately licensed modules remain with their later causal gameplay WPs. Buying them earlier during sales does not authorize premature integration.
 
