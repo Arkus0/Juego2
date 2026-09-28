@@ -1,0 +1,22 @@
+{
+  "schema": "juego2.art01.recovery-donor-probe@1",
+  "status": "PREFOUNDATION_DIAGNOSTIC_ONLY_NOT_UNITY_ADMISSION",
+  "source": "Wall_WoodBrick_Straight",
+  "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_WoodBrick_Straight.fbx",
+  "sourceSha256": "b2fec70125860e0c1659072d7bd3c3e746c4be09349f95c2e989a035ee5e6f77",
+  "sourcePolygonCount": 55,
+  "materialPolygonCounts": {
+    "MI_WoodTrim_Wear": 24,
+    "MI_WoodTrim": 29,
+    "MI_UnevenBrick": 1,
+    "MI_Plaster": 1
+  },
+  "keptMaterialIndices": [
+    0,
+    1
+  ],
+  "keptPolygonCount": 53,
+  "method": "Blender 5.2.1: preserve faces whose imported source material starts with MI_WoodTrim; remove other material faces without altering source file",
+  "remainingWork": "Assess disconnected parts and joints; create stable ART derivative ID and exact import/material/collider proof on accepted H2F baseline before keeper use",
+  "capture": "recovery_diagnostic/donor_timber_partition_probe.png"
+}

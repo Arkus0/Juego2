@@ -75,3 +75,5 @@ The raw `Grass.png` is a foliage texture, not a ground-surface texture.
 - **`SOURCE_ONLY`:** the raw Base Character/UAL mannequin. It cannot be presented as a final player-facing outfit.
 - **Measured but not claimed as benchmark construction:** balcony, chimney, round-rock floor tile and short grass.
 - **Not ingested:** props or plants outside the locked 51-file subset.
+
+**Reuse-first supersession (2026-09-28):** the rejected-default line above describes the old pilot default, not a source-family ban. `RECOVERY_PASS.md` reclassifies cleaner plaster hosts as `ADAPT`, WoodBrick and related timber families as potential `DONOR_COMPONENTS`, and flat-tile/wood roof variants for bounded uses; `Wall_Plaster_WoodGrid` remains rejected as a whole for a concrete adaptation-cost reason. `RECOVERY_DONOR_PROBE.json` records an actual material-partition extraction from `Wall_WoodBrick_Straight`. These are inspection/diagnostic lineages only. The existing `KIT_COMPOSITION_MANIFEST.json` and its 55 selected identities are unchanged until H2F Phase B exact-byte admission and Unity proof.

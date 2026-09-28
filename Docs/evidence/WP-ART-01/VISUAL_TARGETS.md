@@ -1,5 +1,7 @@
 # ART-01 visual target checkpoint — frozen before kit adaptation
 
+**Current-product note (2026-09-28):** these retained Puente/S02/W12/F01 paintovers remain useful **historical/pilot composition targets** for massing, facade depth and joins. The accepted reuse-first amendment and current `VISUAL_BIBLE.md`/`SETTING.md` supersede any inland Potes/Liébana final-setting or blanket wood/medieval-source veto implied below. The final scene-level target is an unnamed fictional northern-Spain port town; see `RECOVERY_PASS.md`. Do not discard the paintovers or read them as final geographic authority.
+
 Frozen on 2026-09-26 against `main` `648272bb50a0c5c718a9f0f4668faaaa0482aef9`. These are **human-scale concept overpaints, not CITY geometry or a photoreal rendering target**. The accepted CITY-04 image `x1_to_casco.png` supplies the first framing; the non-canonical PR #233 images `3_subida_w12.jpg` and `5_fachada_bar.jpg` inform only the latter two human-view questions. The generated images do not adopt demo layouts, route coordinates, signs, building placement, P1/P8/P9 proposals, or any CITY-07 keeper choice.
 
 Metric inputs available now: CITY-04 seed/projection and technical scene, `City04Layout.json` X1/S02/W12/F01 planning regions; W12 drawn width 2.8 m, X1 5.5 m, F01 planning region about 8 × 15 m. `ART_01_DIMENSIONAL_PROFILE.md` supplies 1 Unity unit = 1 m, a 1.70–1.85 m human, 0.25 m assembly snap and 0.05 m fine snap. CITY-07 still owns the final shared keeper elevation profile. The PR #233 numeric heights are observations, not target datum.

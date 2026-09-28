@@ -59,3 +59,9 @@ The original checkpoint split below remains historical context. `WP-H1-GATE` sub
 No `REVIEW_READY`, frozen candidate or ART-01 PASS may be claimed before `WP-H2F-GATE` PASS and the final evidence on its accepted baseline.
 
 Iteration between checkpoints is local and cheap under `PRODUCT_EXECUTION_POLICY.md`. Any CITY route/site/access/elevation semantic change stops and returns to its owner.
+
+## 2026-09-28 reuse-first Worker continuation
+
+The owner requested a bounded retriage of the **existing** Draft PR #234 after accepted PR #267. The branch was synchronized by a clean merge of live `main` (`1a37d10be9da8e85aafa75b5ac3b5d5472efc439`); no historical checkpoint was restarted or discarded. The receiving Worker refreshed `PREDECESSOR_CONTRACT_CHECK.md` **before recovery edits**. Phase A now adds `RECOVERY_PASS.md`, exact source/member and geometry probes, donor extraction and noncanonical Blender third-person diagnostic, updates the canonical matrix/pre-foundation handoff, and retains the previous structural evidence. No new source is silently imported into ART Unity.
+
+Decision boundary: the source/geometry survey and diagnostic test recoverability, **not** final visual quality. The diagnostic shows actual hosted wall openings and donor timber cladding but still lacks urban variety and port-town context; it remains `PROXY_VISUAL`. `WP-H2F-02` is Draft and `WP-H2F-GATE` has no PASS. Keep PR #234 Draft, `PAUSED_FOR_H2F_FOUNDATION`, no frozen candidate or `REVIEW_READY`. After the Gate, Phase B must make the new family physically and visually effective on the accepted Unity baseline and obtain the normal fresh-author/strict pre-review evidence.
