@@ -5,6 +5,10 @@ Class: PRODUCT ART / `PRODUCT_CHECKPOINT`
 Depends on: `WP-CITY-07` PASS + `WP-H2-02` PASS + `WP-H2-03` PASS + `WP-ART-01` PASS  
 Blocks: `WP-H2-GATE`
 
+## Urban amendment: visual transfer ledger
+
+Finish the existing pilot visual benchmark and owner review on its accepted setting. Add a short transfer ledger for the fictional port city: reusable PS2+/northern-Spain Quaternius adaptations versus new waterfront, denser facades, market signage and urban clothing needs. Do not call the inland pilot the final approved *port-city* look. `WP-CITY-URBAN-01` must close required urban visual gaps on the actual first urban block; ART-01 structural/KEEPER_READY obligations remain unchanged.
+
 ## Claim
 
 The representative keeper slice and population presentation express an approved, coherent Juego2 visual language at third-person scale rather than a raw asset pack, technical assembly or dressed greybox.

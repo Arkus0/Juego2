@@ -3,7 +3,11 @@
 Status: **DORMANT / NOT_STARTED**  
 Class: PRODUCT GATE / `PRODUCT_CHECKPOINT`  
 Depends on: `WP-H2F-GATE` PASS + `WP-H2-01` PASS + `WP-H2-03` PASS + `WP-ART-02` PASS + accepted CITY-07 keeper  
-Blocks: H3 persistent-actor/runtime implementation
+Blocks: `WP-GC2-02`, `WP-CITY-URBAN-01` and later persistent-actor/runtime implementation
+
+## Urban amendment: bounded sample
+
+Keep the visual/keeper/public-authoring gate on the accepted CITY-07 pilot, including the original six-person sample and CITY-08 reuse proof. This establishes a production-quality spatial/character grammar for expansion, not a claim that the inland scene is already the port city or that six people are the final population. `GC2-02..08`, `CITY-URBAN-00/01` and `GC2-SLICE` own the first reactive urban adventure. The original H2 integrity and owner visual gates still apply.
 
 ## Gate claim
 

@@ -4,7 +4,11 @@ Status: **PROPOSED / NOT_STARTED**
 Class: PRODUCT / TOOLCHAIN GATE  
 Mode: **HYBRID** — documentary/adoption checks may be remote; effective Unity visual/play evidence is local or equivalent truthful hosted Unity evidence  
 Depends on: `WP-H2F-00` PASS + `WP-H2F-01` PASS + `WP-H2F-02` PASS + `WP-H2F-03` PASS  
-Blocks: ART-01 effective Unity `CANDIDATE`/PASS, `WP-CITY-07`, `WP-H2-01`, `WP-H2-02` and any keeper production that relies on the selected H2F baseline
+Blocks: ART-01 effective Unity `CANDIDATE`/PASS, `WP-CITY-07`, `WP-GC2-00`, `WP-H2-01`, `WP-H2-02` and any keeper production that relies on the selected H2F baseline
+
+## Post-01A urban product amendment (prospective)
+
+The gate freezes a reusable production foundation for compact urban blocks as well as the retained CITY-07 pilot. If 01A admitted Core, its public GC2↔Arkus adapter/lifecycle is part of the selected foundation. GC2-00 consumes this gate and proves the later gameplay round trip. Do not demand a keeper port district, 80–120 NPCs or separately licensed gameplay modules as foundation PASS. Arkus remains active canonical authority; all original reproducibility and H1 lifecycle obligations remain binding.
 
 ## Claim
 

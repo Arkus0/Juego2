@@ -2,6 +2,8 @@
 
 Each workpack is one independently reviewable contract. Work only inside its allowed scope and stop when its Definition of Done is met.
 
+For the **prospective post-H2F-01A product expansion**, navigate from `Docs/roadmap/POST_H2F01A_ROADMAP.md` and its WP audit. `H2F-02` remains the immediate next WP after 01A PASS/merge/DocSync. Later urban/art and GC2 gameplay contracts are under `CITY/WP-CITY-URBAN-*`, `ART/WP-ART-URBAN-01.md` and `GC2/`; `H2-02` owns the first keeper street rather than a duplicate GC2-01. Arkus remains the active persistent authority. This note does not retroactively amend accepted WP evidence.
+
 For all `HK-*` workpacks through `WP-HK-GATE`, all H1 workpacks marked `FOUNDATIONAL`, and all DW workpacks:
 
 - `Docs/engineering/FOUNDATIONAL_PROOF_STANDARD.md` is binding;
