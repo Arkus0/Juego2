@@ -12,6 +12,8 @@ H2F-03 -> H2F-GATE
 
 No visual-production amendment in this branch changes the H2F-03/GATE acceptance bars or authorizes Dialogue 2 or another separately licensed module inside H2F.
 
+`WP-AI-UNITY-AUTHORING-00` is a separate **non-blocking isolated spike** that may run in parallel from the accepted H2F-02/current-Unity baseline. It is not part of H2F acceptance and must not mutate the active H2F candidate. Its purpose is to determine whether a direct AI↔Unity Editor operator materially accelerates the later ENV/CHAR/ANIM factories.
+
 ## Revised post-H2F principle
 
 After H2F-GATE, priority moves to **locking and industrializing the visual/content production system before deeper gameplay expansion**.
@@ -25,6 +27,7 @@ Discovery input for later GC2 work: [Game Creator Hub reuse audit](../discovery/
 | Lane | Dependency and owner | Product output | Parallelism |
 |---|---|---|---|
 | A | `H2F-03 -> H2F-GATE` (H2F-02 accepted baseline) | Frozen reproducible URP/GC2 Core/toolchain foundation | Current active path |
+| A0 | `AI-UNITY-AUTHORING-00` from accepted H2F-02/current Unity in an isolated disposable environment | Evidence-backed `ADOPT / ADOPT_BOUNDED / TOOL_SOURCE / REJECT` decision for direct AI Editor operation across ENV/CHAR/ANIM | Non-blocking; may run while H2F-03/GATE proceeds |
 | B1 | ART-01 effective closure after H2F-GATE | Keeper-ready base environment kit/assembly grammar | Can overlap B2/B3/B4 |
 | B2 | `CITY-URBAN-00` | Final large-port-town topology + first-block brief | Remote/planning; can begin when existing deps allow |
 | B3 | `ART-CHAR-01 -> ART-CHAR-02` | Character/wardrobe grammar -> repeatable ordinary-population factory | Can overlap ART-01/env work |
@@ -46,6 +49,8 @@ Discovery input for later GC2 work: [Game Creator Hub reuse audit](../discovery/
 The graph below makes the multi-predecessor joins explicit; `A + B -> C` means **all** named predecessors must have passed before the downstream PASS can be claimed. `H2-01` may start bounded work earlier under its own contract, but its final acceptance still requires the join shown here.
 
 ```text
+H2F-02 -> AI-UNITY-AUTHORING-00   [isolated, non-blocking; may feed operator adoption]
+
 H2F-GATE -> ART-01
 H2F-GATE -> ART-CHAR-01 -> ART-CHAR-02
 H2F-GATE -> ART-ANIM-01
@@ -69,6 +74,8 @@ ART-02 + ART-ENV-02 + ART-CHAR-02 + ART-ANIM-02 + ART-UI-01
 H2F-GATE + H2-01 + H2-03 + ART-02 + ART-03 + CITY-URBAN-01 -> H2-GATE
 H2-GATE -> GC2-02+
 ```
+
+`AI-UNITY-AUTHORING-00` deliberately measures the operator against the broadest lawful, actually available corpus rather than only pre-curated ART inputs. Its trial outputs do not become keeper assets by success alone. A successful operator disposition may be consumed by later factory WPs, but those WPs retain normal ART/dependency/IP/provenance/H1-lifecycle authority.
 
 `GC2-DIALOGUE-00` is a strategy/disposition node, not an installation node. `ADOPTED` consumes the exact admitted Dialogue 2 seam; `NOT_MATERIAL`, `REJECTED` or `DEFERRED_NOT_ACQUIRED` consume Core/local. All four dispositions can legally feed `ART-UI-01`, so absence of the paid plugin does not block `ART-03` or `H2-GATE`.
 
@@ -104,4 +111,6 @@ Whole-town planning may still aim for roughly 60–100 routine-bearing NPCs insi
 
 ## Immediate next Worker
 
-`WP-H2F-03 — Integrated compatibility + AI-authoring benchmark` is the immediate dependency-valid foundation Worker. It consumes the accepted H2F-02 baseline and must close the composed H1 lifecycle, integrated fixture, fresh-author/agent and diagnostic profiler obligations before `WP-H2F-GATE`. The visual factory lanes begin only when their named predecessors are satisfied.
+`WP-H2F-03 — Integrated compatibility + AI-authoring benchmark` remains the immediate dependency-valid foundation Worker. It consumes the accepted H2F-02 baseline and must close the composed H1 lifecycle, integrated fixture, fresh-author/agent and diagnostic profiler obligations before `WP-H2F-GATE`.
+
+In parallel, `WP-AI-UNITY-AUTHORING-00` may be executed only in an isolated disposable real-Unity environment. Its result may reduce later factory implementation work, but it neither delays nor relaxes H2F-03/GATE. The visual factory lanes begin only when their named predecessors are satisfied.
