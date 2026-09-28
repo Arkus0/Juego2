@@ -1,6 +1,7 @@
 # WP-AI-UNITY-AUTHORING-00 — AI Unity production-operator benchmark
 
-Status: **PROPOSED / NOT_STARTED**  
+Status: **CONTRACT ACCEPTED FOR EXECUTION / NOT_STARTED**  
+Accepted: PR `#274`, candidate `2544307e17419099920139f4543940dd51773bcf`, independent Reviewer PASS `#5336640510`, merge `9646ef769ed65bfbe7a18cc28829bdce46eac36f`.  
 Class: PRODUCT TOOLING / VISUAL-PRODUCTION ACCELERATION SPIKE  
 Execution: **ISOLATED REAL-UNITY EVIDENCE REQUIRED**; may run before `WP-H2F-GATE` on a disposable branch/worktree/project copy and must not mutate the active H2F candidate.  
 Depends on: accepted `WP-H2F-02` baseline + a reconstructable current Unity project + lawful access to the owner/project asset corpus used by the benchmark.  
