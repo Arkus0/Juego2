@@ -1,7 +1,7 @@
 # Visual Bible — Juego2
 
 Version: 0.2.0 — 2026-09-28  
-Status: DRAFT — current art-direction authority must be read with accepted port-town product amendments and `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md` once accepted.  
+Status: DRAFT — current art-direction authority must be read with accepted port-town product amendments and accepted `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md` (PR `#267`).  
 Scope: art direction and asset selection only. This document does not alter H0/H1 authority or CITY topology.
 
 > **Current-setting note.** The former fictional Potes/Liébana inland anchor is no longer the final product setting. It survives as historical/pilot art evidence only. The current final-product setting is the accepted **large fictional port town / villa portuaria in northern Spain**. Final town proper name remains undecided.
