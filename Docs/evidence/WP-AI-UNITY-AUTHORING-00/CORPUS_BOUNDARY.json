@@ -1,0 +1,23 @@
+{
+  "schema": "juego2.ai-unity-authoring.corpus-boundary@1",
+  "baseline_main_sha": "e8652d1cbd4d4eb77b4545c79c34e807b4ab4c73",
+  "unity_version": "6000.3.24f1",
+  "baseline_manifest_sha256": "27c25840ee521dd70f981106a83877b43d510c8ea1519bdba02f61186c06a6aa",
+  "baseline_packages_lock_sha256": "c6db785b255607a2ee466513ebcac1d3c3eb44194f8dc604c30f0f3f99dba7db",
+  "trial_location": "outside the Git checkout under the managed AI Unity authoring worktree's trial directory",
+  "copied_from": "C:/Juego2-Assets",
+  "copy_scope": "All seven top-level expanded content families; no ART curation filter. The vault's h1/ duplicate distribution and .git control directory are excluded.",
+  "total_files": 4689,
+  "total_bytes": 2603283590,
+  "tree_hash_algorithm": "For each category, SHA-256 over files sorted by case-insensitive relative path. Each record is UTF-8 relative path, NUL, decimal byte length, NUL, lowercase per-file SHA-256 hex, newline.",
+  "categories": [
+    {"name":"Animation","files":12,"bytes":216451263,"tree_sha256":"9b542e56e96ee856526749f847c6f6417bb5a042793bc8b3af9e1dd8a99fed4b","license_file":"License.txt","license_sha256":"6d01f55c6e4c49a2c9963e147e561945ae2c83958c8ca667d90a6bffdbfac061","license":"CC0 1.0"},
+    {"name":"Animation2","files":16,"bytes":257591354,"tree_sha256":"48069472a459c05a22c1150a16e84910f5300f100fa30f0cc3c95525fe902481","license_file":"License.txt","license_sha256":"6d01f55c6e4c49a2c9963e147e561945ae2c83958c8ca667d90a6bffdbfac061","license":"CC0 1.0"},
+    {"name":"Base Characters","files":431,"bytes":733558966,"tree_sha256":"a4950a1a3cbcc834deff41868a05ed555f0aa330ce31158a666cedd23f50eea0","license_file":"License_Source.txt","license_sha256":"173831869ea6f9e270e1d13604c54a4dcf5af62e3593c47599510c929b892c99","license":"CC0 1.0"},
+    {"name":"Medieval Village","files":3138,"bytes":804698551,"tree_sha256":"d56fc1ee3ca950377980df0fa56dd0c0c8fb47e4b6fead58fbe01b99e8d172ca","license_file":"License_Source.txt","license_sha256":"7310dfa8512d7ca12b6591329fda4adab7e8b9cdbe04c7d7061c2fe5c7dc38ee","license":"CC0 1.0"},
+    {"name":"Modular Character Outfits - Fantasy[Standard]","files":121,"bytes":305995429,"tree_sha256":"1cc6e8feed54ee022d2ec275387f464abdd46dbb0721f077949cba243faed77e","license_file":"License_Standard.txt","license_sha256":"2202cc2f608c4210790b112e5f121bc2e7f8dced7b5b1c7f4be6203461bdebbb","license":"CC0 1.0"},
+    {"name":"Nature","files":454,"bytes":122116746,"tree_sha256":"5d162b67dc7bf69b5dfabcf6cd2f1e3e81c7b9487fbcb89301dd684d67466a44","license_file":"License_Standard.txt","license_sha256":"120710e542c3ebaf83856c4eb55b4a1e680593b39302eba7fdc5d942dfe78c58","license":"CC0 1.0"},
+    {"name":"Props (gratis)","files":517,"bytes":162871281,"tree_sha256":"ebdb703cce59ec913f97976e7cea4be5c94839510bc7a6ff2ce0e6b3a418aa4f","license_file":"License_Standard.txt","license_sha256":"edad12240087a33e08fc031e4e66c2b2b4b2a6d4f086339bde04f741b385fbda","license":"CC0 1.0"}
+  ],
+  "output_authority": "TRIAL_ONLY_UNCURATED unless an individual source already has a separate admitted production record. No copied source bytes enter this public repository."
+}
