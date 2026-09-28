@@ -22,6 +22,8 @@ PLANNING_GRAPH_CONSISTENT: 8 dry nodes, 10 public edges, 2 stated cycles, closur
 
 The first draft incorrectly said B04 closure disconnected P. The edge ledger itself showed E–O–Q–P remained open; §4 and §7 were corrected while Draft. The accepted planning claim is now: B04 closure removes the direct approach but a longer **pedestrian** detour remains through B07/B06/B05; B04+B06 closure disconnects P from the B0 public graph. This is a causal closure-truth correction, not a new edge.
 
+A pairwise proper-intersection check of the ten straight chords found **zero crossings without a shared node**. This eliminates an obvious paper-plan crossing contradiction; it does not certify street engineering, shore clearance or curves.
+
 The straight-chord numbers are lower bounds from the illustrative coordinates. Curved routes, obstacles, vertical travel, walking speed, pursuit and camera lag remain unmeasured. They are not CITY-01 planning weights, NPC schedule times or player traversal measurements.
 
 ## Third-person route review at planning fidelity

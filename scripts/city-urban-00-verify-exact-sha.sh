@@ -8,7 +8,12 @@ BASE_SHA="5d74e59d4af7738fc28450a60313f0f5932a769d"
 
 [[ "$TARGET_SHA" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "CITYURBAN00_VERIFY_RED: exact SHA required" >&2; exit 2; }
 [[ "$(git rev-parse HEAD)" == "$TARGET_SHA" ]] || { echo "CITYURBAN00_VERIFY_RED: checkout mismatch" >&2; exit 2; }
-git diff --quiet && git diff --cached --quiet || { echo "CITYURBAN00_VERIFY_RED: tracked bytes changed" >&2; exit 2; }
+clean_candidate() {
+  local unexpected
+  unexpected="$(git status --porcelain --untracked-files=all | grep -Ev '^\?\? (VALIDATION_CONTEXT\.json|validation\.log|EXECUTION_RECEIPT\.txt|artifacts/observed/.*)$' || true)"
+  [[ -z "$unexpected" ]]
+}
+clean_candidate || { echo "CITYURBAN00_VERIFY_RED: candidate input is dirty" >&2; exit 2; }
 git merge-base --is-ancestor "$BASE_SHA" "$TARGET_SHA" || { echo "CITYURBAN00_VERIFY_RED: baseline is not an ancestor" >&2; exit 2; }
 
 python3 - "$BASE_SHA" "$TARGET_SHA" <<'PY_CHECK'
@@ -45,7 +50,7 @@ assert "PLANNING_GRAPH_CONSISTENT" in evaluation
 print("CITYURBAN00_STRUCTURAL_CHECK_GREEN: required planning/evidence files and diff scope")
 PY_CHECK
 
-git diff --quiet && git diff --cached --quiet || { echo "CITYURBAN00_VERIFY_RED: tracked bytes changed after check" >&2; exit 2; }
+clean_candidate || { echo "CITYURBAN00_VERIFY_RED: candidate changed during check" >&2; exit 2; }
 cat <<EOF
 EXECUTION_RECEIPT_V1
 WP: WP-CITY-URBAN-00
