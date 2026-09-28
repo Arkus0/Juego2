@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3cef51486c1ae4c81dc4abad1ca01d, type: 3}
+  m_Name: J2_Npc_Civilian
+  m_EditorClassIdentifier: Juego2.Foundation::Juego2.Foundation.J2CharacterPreset
+  isPlayer: 0
+  height: 1.8
+  radius: 0.28
+  linearSpeed: 1.2
+  inputActions: {fileID: 0}
+  moveActionMap: Player
+  moveAction: Move
+  navMeshDriver: 1
+  footstepDetector: 1
+  footstepSounds: {fileID: 0}
+  model: {fileID: 0}
+  locomotionController: {fileID: 0}

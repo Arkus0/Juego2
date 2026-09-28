@@ -19,6 +19,9 @@ namespace Arkus.H1.Editor
         internal const string ExpectedUnityVersion = "6000.3.24f1";
         internal const string ProjectIdentity = "arkus-h1-unity";
         internal const string RenderPipelineBaseline = "builtin";
+        // WP-H2F-02 adopted URP as the project baseline; H1 now requires that exact asset instead of built-in.
+        internal const string RenderPipelineType = "UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset";
+        internal const string RenderPipelineAssetPath = "Assets/Juego2/Foundation/Rendering/J2_URP_High.asset";
 
         public static void ConfigureBaseline()
         {
@@ -61,10 +64,14 @@ namespace Arkus.H1.Editor
                     EditorSettings.externalVersionControl);
             }
 
-            if (GraphicsSettings.currentRenderPipeline != null)
+            var pipeline = GraphicsSettings.currentRenderPipeline;
+            if (pipeline == null
+                || !string.Equals(pipeline.GetType().FullName, RenderPipelineType, StringComparison.Ordinal)
+                || !string.Equals(AssetDatabase.GetAssetPath(pipeline), RenderPipelineAssetPath, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException(
-                    "render-pipeline-mismatch: expected built-in render pipeline");
+                    "render-pipeline-mismatch: expected " + RenderPipelineAssetPath + ", effective " +
+                    (pipeline == null ? RenderPipelineBaseline : AssetDatabase.GetAssetPath(pipeline)));
             }
 
             var lockPath = Path.Combine(ProjectRoot(), "Packages", "packages-lock.json");

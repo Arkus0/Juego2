@@ -1,0 +1,25 @@
+{
+    "name": "Juego2.Foundation.Editor",
+    "rootNamespace": "Juego2.Foundation.Editor",
+    "references": [
+        "Juego2.Foundation",
+        "Juego2.Arkus",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.InputSystem",
+        "Unity.Splines",
+        "Unity.Mathematics",
+        "Unity.AI.Navigation"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
