@@ -1,12 +1,12 @@
 # Executable roadmap after H2F-01A
 
-Status: **ACCEPTED amendment** via PR `#257`, Reviewer PASS `#5333313032`, merge `6bf2d6e74215be51e73d85f659a2a734752ea34c`. Earlier accepted milestones are unaffected. `WP-H2F-01A` subsequently passed and merged via PR `#256`; its own post-PASS DocSync remains separate. This is the navigation source for the pending work listed in [`POST_H2F01A_WP_AUDIT.md`](POST_H2F01A_WP_AUDIT.md); exact PASS remains in each WP.
+Status: **ACCEPTED amendment** via PR `#257`, Reviewer PASS `#5333313032`, merge `6bf2d6e74215be51e73d85f659a2a734752ea34c`. Earlier accepted milestones are unaffected. `WP-H2F-01A` is now COMPLETE / ACCEPTED via PR `#256`, frozen candidate `0eabed44bd73a396c0292892405e349900da0e32`, Reviewer PASS `#5333319449`, merge `2276dc1c2b429f273b7715fda023539feefdb086`, with post-PASS DocSync complete. This is the navigation source for the pending work listed in [`POST_H2F01A_WP_AUDIT.md`](POST_H2F01A_WP_AUDIT.md); exact PASS remains in each WP.
 
 ## Ordering and ownership
 
 | Step | Dependency and owner | Player/product output | Execution |
 |---|---|---|---|
-| A1 | `H2F-01A` current contract → `H2F-02` → `H2F-03` → `H2F-GATE` | Reproducible URP/GC2 Core if admitted, Unity/Arkus foundation and integration fixture | Licensed Core/visual claims local or accepted hosted path as specified by WPs |
+| A1 | `H2F-01A` accepted handoff → `H2F-02` → `H2F-03` → `H2F-GATE` | Reproducible URP/GC2 Core if admitted, Unity/Arkus foundation and integration fixture | Licensed Core/visual claims local or accepted hosted path as specified by WPs |
 | A2 | ART-01 `PREFOUNDATION_INPUT` feeds H2F-02; ART-01 effective PASS after H2F-GATE | Keeper-ready visual kit; current inland pilot stays valid evidence | Local visual review |
 | B0 | `GC2-00` after H2F-GATE; may run alongside ART-01 effective closure | Installed Core player/interaction and one bounded Arkus fact round trip in a non-keeper fixture | Local Unity when licensed/interactive evidence is required |
 | B1 | `CITY-07` after ART-01/H2F-GATE; `H2-01` accepted on its keeper fixture; `H2-02` after CITY-07 + GC2-00 | First reusable keeper street/pilot with player, camera, hotspot and interior | Local visual/play evidence |
@@ -22,7 +22,7 @@ This chain allows a first keeper street before systemic character depth; the six
 
 ## Immediate next Worker: H2F-02
 
-`WP-H2F-01A` has independent PASS and implementation merge; after its own post-PASS DocSync, open `Docs/workpacks/H2F/WP-H2F-02.md`. Its effective inputs are the accepted 01A `H2F02_CORE_HANDOFF.md`, any accepted S06 amendment, accepted H2F-01 stack selection, H1-GATE and ART-01 `PREFOUNDATION_INPUT`. It owns exact version/license/provisioning, URP baseline, import/source conventions, plugin state lifecycle host, compile/import and H1 compatibility preparation. It **does not** independently install separately licensed GC2 modules or declare Arkus dormant. The WP's existing positive evidence, negative gates, method and residuals remain binding; its new product addendum names the urban constraints. If 01A rejects Core, the explicit 01A handoff governs instead of assuming adoption.
+`WP-H2F-01A` has independent PASS, implementation merge and completed post-PASS DocSync. Open `Docs/workpacks/H2F/WP-H2F-02.md` next. Its effective inputs are the accepted 01A `H2F02_CORE_HANDOFF.md`, accepted `S06_BASELINE_AMENDMENT.md`, accepted H2F-01 stack selection, H1-GATE and ART-01 `PREFOUNDATION_INPUT`. It owns exact version/license/provisioning, URP baseline, import/source conventions, plugin state lifecycle host, compile/import and H1 compatibility preparation. It **does not** independently install separately licensed GC2 modules or declare Arkus dormant. The WP's existing positive evidence, negative gates, method and residuals remain binding; its new product addendum names the urban constraints.
 
 ## First district and expansion rule
 
