@@ -13,7 +13,7 @@ Legend:
 - `WATCH` — interesting but not currently necessary.
 - `REJECT` — no current reason to carry forward.
 
-No row is dependency-adoption authority. `Docs/engineering/DEPENDENCY_IP_POLICY.md` governs actual adoption.
+No row is dependency-adoption authority. `Docs/engineering/DEPENDENCY_IP_POLICY.md` governs actual adoption. Late free/low-cost Unity candidates are also audited in `Docs/discovery/UNITY_FREE_LOW_COST_ASSET_AUDIT.md`.
 
 | Candidate | Area | Observed capability | Observed license/status | Disposition | Value | Primary WP | Key risk / note |
 |---|---|---|---|---|---|---|---|
@@ -22,6 +22,9 @@ No row is dependency-adoption authority. `Docs/engineering/DEPENDENCY_IP_POLICY.
 | Quaternius UAL | Animation | Large reusable humanoid animation vocabulary, root-motion/no-root-motion variants | Exact acquired pack provenance controls | USE when admitted | VERY_HIGH | ART-ANIM-01 | Do not infer useful coverage from raw clip count |
 | Quaternius Medieval Village MegaKit Source | Environment | 300+ modular parts, grid assembly, URP project, wear shaders, custom collisions | Exact acquired pack provenance controls | USE / ADAPT / DONOR | VERY_HIGH | ART-01 / ART-ENV-02 | Pack theme is not final scene identity |
 | Quaternius Downtown City MegaKit Source | Environment | 300+ modular city/street parts, fake interiors, vertex-color wear, bevel normals, collisions | Acquisition not authorized by this audit | WATCH / possible future USE | HIGH | ART-ENV-02 / ART-URBAN-01 | Do not buy solely because it exists |
+| UModeler X | Unity environment/mesh authoring | In-editor modeling, imported-mesh editing, UV, painting, rigging; Editor-only | Free Asset Store Extension Asset; current listing 1.0.5; Unity 6000.3.5+ supported; exact adoption still required | SPIKE after H2F-GATE | VERY_HIGH potential | ART-ENV-02 | Compare on real Quaternius donor adaptation against accepted Blender path; reject if source truth becomes plugin-private or savings are marginal |
+| Human Basic Motions FREE | Animation source | Humanoid/Mecanim locomotion, idle, talk and related motions; public free pack describes 118 files | Free Asset Store Extension Asset; current listing 2.4.2 | WATCH / GAP-FILLER | MEDIUM | ART-ANIM-01 | UAL1+UAL2 already cover the baseline; import only for a named coverage/quality gap |
+| IK Helper Tool | Animation authoring helper | Humanoid/Mecanim retarget/IK helper workflow | Free Asset Store Extension Asset; current listing 1.0.2 | SPIKE IF GAP | MEDIUM | ART-ANIM-01 | Editor-helper candidate only; accepted Unity Animation Rigging remains runtime/contact owner |
 | ChilyerStudiosLLC/blender-character-pipeline | Character tooling | Reproducible base/proportion/body-topology clothing/rig-verify/export workflow | MIT verified in repo LICENSE | ADAPT / REFERENCE | HIGH | ART-CHAR-01 | Workflow demo, not drop-in Juego2 factory |
 | Tinqs clothing pipeline | Clothing tooling | Headless staged garment census/fit/reduce/bake/skin/export on Quaternius skeleton | Code license NOT VERIFIED | REFERENCE_ONLY | VERY_HIGH conceptual | ART-CHAR-01 | Do not copy code until license is resolved |
 | benjamincanac/avelune | Character composition | Quaternius outfit+head composition, shared 65-bone animation asset, runtime colorway | MIT repo | REFERENCE / possible ADAPT | HIGH | ART-CHAR-01 / ART-ANIM-01 | Web runtime assumptions differ from Unity |
@@ -36,12 +39,14 @@ No row is dependency-adoption authority. `Docs/engineering/DEPENDENCY_IP_POLICY.
 ## Candidate ordering for future spikes
 
 1. `QuaterniusUnityUtils` — cheapest way to test whether known Quaternius import/collision work is already solved on the accepted Unity baseline.
-2. Chilyer character pipeline techniques — low-risk reference for `ART-CHAR-01` because the code license is clear and the workflow maps directly to our source family.
-3. Tinqs garment architecture — highest clothing-process insight, but reference-only until exact code licensing is known.
-4. `osm_building_grammar` semantic-role model — use as a vocabulary/metadata reference before inventing donor-component taxonomy.
-5. Material Batch Tools — test as an isolated Blender helper if material normalization becomes repetitive.
-6. Auto-Building vs Geo-Buildings — only when `ART-ENV-02` has an actual repeated-building brief and can measure whether purchase/tool complexity saves material work.
-7. `game_export` — inspect/benchmark only after the H2F import/prefab contract is frozen; do not bypass accepted Unity authority.
+2. `UModeler X` — after H2F-GATE, compare one real Quaternius donor/component adaptation against the accepted Blender route before inventing equivalent in-Unity mesh-edit tooling.
+3. Chilyer character pipeline techniques — low-risk reference for `ART-CHAR-01` because the code license is clear and the workflow maps directly to our source family.
+4. Tinqs garment architecture — highest clothing-process insight, but reference-only until exact code licensing is known.
+5. `Human Basic Motions FREE` / `IK Helper Tool` — only after `ART-ANIM-01` identifies an actual coverage or repetitive-authoring gap; do not ingest them pre-emptively.
+6. `osm_building_grammar` semantic-role model — use as a vocabulary/metadata reference before inventing donor-component taxonomy.
+7. Material Batch Tools — test as an isolated Blender helper if material normalization becomes repetitive.
+8. Auto-Building vs Geo-Buildings — only when `ART-ENV-02` has an actual repeated-building brief and can measure whether purchase/tool complexity saves material work.
+9. `game_export` — inspect/benchmark only after the H2F import/prefab contract is frozen; do not bypass accepted Unity authority.
 
 ## Explicit non-decisions
 
@@ -49,9 +54,11 @@ This catalog does not:
 
 - authorize buying Source packs not already owned/admitted;
 - authorize buying Auto-Building or Geo-Buildings;
-- select Blender as canonical over any already accepted DCC boundary;
+- select UModeler X over the already accepted Blender DCC boundary without a measured downstream spike;
+- treat free animation packs as automatic imports when UAL already covers the baseline;
 - vendor GPL code into Juego2;
 - adopt direct Unity YAML generation;
 - establish a 65-bone rig as product-semantic authority;
 - waive H2F lifecycle proof;
+- reopen accepted H2F-02;
 - supersede ART visual-quality or provenance gates.
