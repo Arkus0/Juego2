@@ -4,13 +4,13 @@ Status: **ACCEPTED visual-production roadmap amendment** via PR `#264`, candidat
 
 ## Immediate route — unchanged until H2F-GATE
 
-`H2F-01A` is COMPLETE / ACCEPTED. The active foundation sequence remains:
+`H2F-02` is COMPLETE / ACCEPTED via PR `#261`, frozen candidate `91047ecc71be1b3f8c00440a8de07cc90ca6be9e`, Reviewer PASS `#5335599241`, merge `5c1877b224a7183e248adc0d6b08f677a20f4d3f`. The active foundation sequence is now:
 
 ```text
-H2F-02 -> H2F-03 -> H2F-GATE
+H2F-03 -> H2F-GATE
 ```
 
-No visual-production amendment in this branch changes the H2F-02/03/GATE acceptance bars or authorizes Dialogue 2 or another separately licensed module inside H2F.
+No visual-production amendment in this branch changes the H2F-03/GATE acceptance bars or authorizes Dialogue 2 or another separately licensed module inside H2F.
 
 ## Revised post-H2F principle
 
@@ -22,7 +22,7 @@ After H2F-GATE, priority moves to **locking and industrializing the visual/conte
 
 | Lane | Dependency and owner | Product output | Parallelism |
 |---|---|---|---|
-| A | `H2F-02 -> H2F-03 -> H2F-GATE` | Frozen reproducible URP/GC2 Core/toolchain foundation | Current active path |
+| A | `H2F-03 -> H2F-GATE` (H2F-02 accepted baseline) | Frozen reproducible URP/GC2 Core/toolchain foundation | Current active path |
 | B1 | ART-01 effective closure after H2F-GATE | Keeper-ready base environment kit/assembly grammar | Can overlap B2/B3/B4 |
 | B2 | `CITY-URBAN-00` | Final large-port-town topology + first-block brief | Remote/planning; can begin when existing deps allow |
 | B3 | `ART-CHAR-01 -> ART-CHAR-02` | Character/wardrobe grammar -> repeatable ordinary-population factory | Can overlap ART-01/env work |
@@ -102,4 +102,4 @@ Whole-town planning may still aim for roughly 60–100 routine-bearing NPCs insi
 
 ## Immediate next Worker
 
-Until H2F-GATE passes, the immediate executable foundation Worker remains the current H2F sequence. The visual factory lanes begin only when their named predecessors are satisfied.
+`WP-H2F-03 — Integrated compatibility + AI-authoring benchmark` is the immediate dependency-valid foundation Worker. It consumes the accepted H2F-02 baseline and must close the composed H1 lifecycle, integrated fixture, fresh-author/agent and diagnostic profiler obligations before `WP-H2F-GATE`. The visual factory lanes begin only when their named predecessors are satisfied.

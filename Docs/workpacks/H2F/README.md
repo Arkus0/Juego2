@@ -1,13 +1,13 @@
 # H2F — Pre-H2 product/toolchain foundation freeze
 
-Status: **ACTIVE / WP-H2F-01A COMPLETE**  
+Status: **ACTIVE / WP-H2F-02 COMPLETE**  
 Class: PRODUCT / TOOLCHAIN + CONTENT INTEGRATION  
 Execution policy: `RESEARCH_BATCH` for survey; `PRODUCT_CHECKPOINT` for Unity spikes/integration  
 Plan date: 2026-09-27  
 Accepted: PR `#250`, candidate `d128aef60c951f3b19daae1d57cddae55c2519ac`, independent PASS review `#5330069733`, merge `9d3bb90ebfae8837155576c13b705fc1c72c2579`  
-Progress: `WP-H2F-00` COMPLETE / ACCEPTED via PR `#251`; `WP-H2F-01` COMPLETE / ACCEPTED via PR `#254`; `WP-H2F-01A` COMPLETE / ACCEPTED via PR `#256`, frozen candidate `0eabed44bd73a396c0292892405e349900da0e32`, PASS review `#5333319449`, merge `2276dc1c2b429f273b7715fda023539feefdb086`. Next in sequence: `WP-H2F-02`, consuming the accepted 01A Core handoff and S06 amendment.
+Progress: `WP-H2F-00` COMPLETE / ACCEPTED via PR `#251`; `WP-H2F-01` COMPLETE / ACCEPTED via PR `#254`; `WP-H2F-01A` COMPLETE / ACCEPTED via PR `#256`; `WP-H2F-02` COMPLETE / ACCEPTED via PR `#261`, frozen candidate `91047ecc71be1b3f8c00440a8de07cc90ca6be9e`, PASS review `#5335599241`, merge `5c1877b224a7183e248adc0d6b08f677a20f4d3f`. Next in sequence: `WP-H2F-03`.
 
-**Accepted product amendment:** `Docs/product/URBAN_EXPANSION_DECISION.md` and `Docs/roadmap/POST_H2F01A_ROADMAP.md` expand the future game to port-city districts while keeping Arkus active. PR #255 inserted the 01A contract and PR #256 completed it without reopening the urban amendment. `WP-H2F-02` is now the dependency-valid next Worker under its existing foundation proof and added urban reuse note. Historical selection/evidence in this README remain historical truth.
+**Accepted product amendment:** `Docs/product/URBAN_EXPANSION_DECISION.md` and `Docs/roadmap/POST_H2F01A_ROADMAP.md` expand the future game to port-city districts while keeping Arkus active. H2F-02 has now accepted the exact URP/toolchain/GC2 Core baseline without reopening that amendment. `WP-H2F-03` is the dependency-valid next Worker and must consume the accepted H2F-02 baseline/lifecycle matrix. Historical selection/evidence in this README remain historical truth.
 
 ## 1. Phase claim
 
@@ -166,9 +166,9 @@ Accepted in PR `#254`, frozen candidate `b642024ee54523d19b91448016af83a50d0ff36
 
 Accepted in PR `#256`, frozen candidate `0eabed44bd73a396c0292892405e349900da0e32`, independent PASS review `#5333319449`, merge `2276dc1c2b429f273b7715fda023539feefdb086`. It admits GC2 Core 2.19.61 behind the Juego2/Arkus authority seam, freezes anti-duplication guidance, and accepts the explicit S06 amendment: GC2 `Character` for the player body, GC2 `MainCamera` + Third Person shot for the player camera, with the Juego2 action map remaining the sole input owner. H2F-02 consumes `Docs/evidence/WP-H2F-01A/H2F02_CORE_HANDOFF.md`; save-host adoption remains deferred to H6 and separately licensed GC2 modules remain outside this acceptance.
 
-### `WP-H2F-02 — Exact adoption + URP/toolchain bootstrap`
+### `WP-H2F-02 — Exact adoption + URP/toolchain bootstrap` ✅ COMPLETE / ACCEPTED
 
-Apply the selected baseline to the real Unity project: exact package/adoption records, render-pipeline migration, project/preset/import conventions, external-source provisioning, character retarget rules and selected worldbuilding adapters/presets. For every material retained/generated state introduced by the selected stack, also freeze its H1 lifecycle class/host and its materialize/observe/reconcile/rematerialize/clean-rebuild expectation. This is the first H2F WP allowed to make the chosen dependencies and canonical URP/toolchain baseline project truth.
+Accepted in PR `#261`, frozen candidate `91047ecc71be1b3f8c00440a8de07cc90ca6be9e`, independent PASS review `#5335599241`, merge `5c1877b224a7183e248adc0d6b08f677a20f4d3f`; post-PASS state is recorded in `Docs/evidence/WP-H2F-02/DOCSYNC.md`. It makes the selected dependencies and canonical URP/toolchain baseline project truth, admits GC2 Core 2.19.61 through the lawful Juego2 seam, freezes import/preset/worldbuilding boundaries, and publishes the H1 lifecycle classification consumed by H2F-03. It does not claim the composed H1 lifecycle proof or ART/CITY keeper readiness.
 
 ### `WP-H2F-03 — Integrated compatibility + AI-authoring benchmark`
 
