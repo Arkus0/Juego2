@@ -87,7 +87,9 @@ namespace Juego2.H2F02.Evidence
                 var scene = EditorSceneManager.OpenScene(ArtScene, OpenSceneMode.Single);
                 J2FoundationLook.ApplyTo(scene, AssetDatabase.LoadAssetAtPath<J2LookPreset>(J2FoundationBaseline.LookPreset));
                 foreach (var cam in UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None)) cam.enabled = false;
+                PoseHumans(UalClip(Ual1, "Idle_Loop")); // ART's benchmark figure is shown posed, not in bind pose
                 foreach (var v in Views) captures.Add(Capture("route_" + v.id, v.pos, v.target, 55));
+                AnimationMode.StopAnimationMode();
                 r.routeAudit = J2ShaderAudit.Audit(J2ShaderAudit.SceneMaterials(scene));
 
                 // S06 amendment presets materialized with the ART clothed citizen and the UAL locomotion controller
@@ -135,11 +137,22 @@ namespace Juego2.H2F02.Evidence
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             J2FoundationLook.ApplyTo(scene, AssetDatabase.LoadAssetAtPath<J2LookPreset>(J2FoundationBaseline.LookPreset));
             Material Art(string id) => AssetDatabase.LoadAssetAtPath<Material>($"Assets/Arkus/ART/Materials/{id}.mat");
-            var ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            ground.name = "ground";
-            ground.transform.position = new Vector3(0, -0.5f, 0);
-            ground.transform.localScale = new Vector3(60, 1, 60);
-            ground.GetComponent<Renderer>().sharedMaterial = Art("GrassGround");
+            var rot = Quaternion.Euler(0, 25, 0);
+            // ground (top at y=0) split around a sunken basin so the water shader has real depth behind it
+            void Block(string name, float x0, float x1, float z0, float z1, float top, float bottom, Material m)
+            {
+                var g = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                g.name = name;
+                g.transform.SetPositionAndRotation(rot * new Vector3((x0 + x1) / 2, (top + bottom) / 2, (z0 + z1) / 2), rot);
+                g.transform.localScale = new Vector3(x1 - x0, top - bottom, z1 - z0);
+                g.GetComponent<Renderer>().sharedMaterial = m;
+            }
+            const float bx0 = -16.5f, bx1 = -7.5f, bz0 = 4.5f, bz1 = 11.5f;
+            Block("ground_w", -30, bx0, -30, 30, 0, -1, Art("GrassGround"));
+            Block("ground_e", bx1, 30, -30, 30, 0, -1, Art("GrassGround"));
+            Block("ground_s", bx0, bx1, -30, bz0, 0, -1, Art("GrassGround"));
+            Block("ground_n", bx0, bx1, bz1, 30, 0, -1, Art("GrassGround"));
+            Block("basin_bed", bx0, bx1, bz0, bz1, -1.2f, -2, Art("Rock"));
 
             J2LinearProfile Profile(string name, float width, J2LinearProfile.EdgeKind right)
             {
@@ -155,7 +168,6 @@ namespace Juego2.H2F02.Evidence
                 foreach (var p in pts) c.Spline.Add(new BezierKnot((float3)p), TangentMode.AutoSmooth);
                 return c;
             }
-            var rot = Quaternion.Euler(0, 25, 0);
             var main = Spline("x1_street", rot * new Vector3(0, 0.02f, -16), rot * new Vector3(0, 0.3f, 0), rot * new Vector3(0, 0.6f, 16));
             var branch = Spline("w12_lane", rot * new Vector3(0, 0.3f, 0), rot * new Vector3(8, 0.9f, 0) , rot * new Vector3(16, 1.8f, 0.5f));
             var junction = J2JunctionRealizer.Realize(main, Profile("x1", 5.5f, J2LinearProfile.EdgeKind.Kerb), main.CalculateLength() / 2f,
@@ -176,18 +188,25 @@ namespace Juego2.H2F02.Evidence
             });
             r.junctionSamples = report.samples; r.junctionHoles = report.holes; r.junctionSteps = report.steps;
 
-            var water = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            water.name = "pond_exclusion";
-            water.transform.position = rot * new Vector3(-12, -0.05f, 8);
-            water.transform.localScale = new Vector3(9, 0.1f, 7);
-            water.AddComponent<J2ScatterExclusion>();
+            var water = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            water.name = "pond_water";
+            water.transform.SetPositionAndRotation(rot * new Vector3((bx0 + bx1) / 2, -0.15f, (bz0 + bz1) / 2), rot);
+            water.transform.localScale = new Vector3((bx1 - bx0) / 10f, 1, (bz1 - bz0) / 10f);
+            UnityEngine.Object.DestroyImmediate(water.GetComponent<Collider>());
             water.GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Juego2/StylizedWater")) { name = "J2_Water_evidence" };
+            var pond = new GameObject("pond_exclusion");
+            pond.transform.SetPositionAndRotation(rot * new Vector3((bx0 + bx1) / 2, -0.5f, (bz0 + bz1) / 2), rot);
+            pond.AddComponent<BoxCollider>().size = new Vector3(bx1 - bx0, 1.4f, bz1 - bz0);
+            pond.AddComponent<J2ScatterExclusion>();
             var window = GameObject.CreatePrimitive(PrimitiveType.Quad);
             window.name = "interior_window";
-            window.transform.position = rot * new Vector3(-6, 1.6f, -6);
-            window.transform.rotation = rot * Quaternion.Euler(0, 90, 0);
+            window.transform.position = rot * new Vector3(-7.2f, 1.4f, 1.8f);
+            window.transform.rotation = rot * Quaternion.Euler(0, -90, 0); // quad front faces +X, toward the capture
             window.transform.localScale = new Vector3(1.4f, 1.6f, 1);
             window.GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Juego2/InteriorWindow")) { name = "J2_Window_evidence" };
+
+            // project shaders rendered before scatter hides them (water depth fade needs the URP depth texture)
+            captures.Add(Capture("worldbuilding_water_window", rot * new Vector3(-1.5f, 2.4f, -1.0f), rot * new Vector3(-9f, 0.3f, 5f), 60));
 
             var scatter = ScriptableObject.CreateInstance<J2ScatterProfile>();
             scatter.name = "art_nature";
@@ -197,11 +216,14 @@ namespace Juego2.H2F02.Evidence
             scatter.density = 0.45f; scatter.minSpacing = 1.4f; scatter.exclusionMargin = 0.6f;
             var nature = J2ScatterRealizer.Realize(new GameObject("nature").transform, new Bounds(Vector3.zero, new Vector3(40, 6, 40)), scatter, 20260928);
             r.scatterInstances = nature.transform.childCount;
-            r.scatterInExclusion = nature.transform.Cast<Transform>().Count(t => water.GetComponent<Collider>().bounds.Contains(new Vector3(t.position.x, water.transform.position.y, t.position.z)));
+            r.scatterInExclusion = nature.transform.Cast<Transform>().Count(t =>
+            {
+                var local = Quaternion.Inverse(rot) * t.position;
+                return local.x > bx0 && local.x < bx1 && local.z > bz0 && local.z < bz1;
+            });
 
             r.worldbuildingAudit = J2ShaderAudit.Audit(J2ShaderAudit.SceneMaterials(scene));
             captures.Add(Capture("worldbuilding_junction_oblique", at.position + n * 9 + f * -9 + Vector3.up * 7, at.position + n * 2, 55));
-            captures.Add(Capture("worldbuilding_water_window", rot * new Vector3(-3, 2.2f, 2), rot * new Vector3(-10, 0.4f, 6), 60));
             EditorSceneManager.SaveScene(scene, Dir + "/WorldbuildingEvidence.unity", true);
         }
 
