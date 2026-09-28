@@ -1,0 +1,335 @@
+{
+  "schema": "juego2.art01.source-lock@1",
+  "medievalArchiveSha256": "b9d757dd2608a5cee4d9ee1e8183f6cb4cad9d27480841a905180def9c7d8b10",
+  "licenseId": "CC0-1.0",
+  "licenses": {
+    "quaternius-medieval-source": {
+      "file": "Medieval Village/License_Source.txt",
+      "sha256": "7310dfa8512d7ca12b6591329fda4adab7e8b9cdbe04c7d7061c2fe5c7dc38ee"
+    },
+    "quaternius-nature-standard": {
+      "file": "Nature/License_Standard.txt",
+      "sha256": "120710e542c3ebaf83856c4eb55b4a1e680593b39302eba7fdc5d942dfe78c58"
+    },
+    "quaternius-props-standard": {
+      "file": "Props (gratis)/License_Standard.txt",
+      "sha256": "edad12240087a33e08fc031e4e66c2b2b4b2a6d4f086339bde04f741b385fbda"
+    },
+    "quaternius-base-characters-source": {
+      "file": "Base Characters/License_Source.txt",
+      "sha256": "173831869ea6f9e270e1d13604c54a4dcf5af62e3593c47599510c929b892c99"
+    },
+    "quaternius-ual1-source": {
+      "file": "Animation/License.txt",
+      "sha256": "6d01f55c6e4c49a2c9963e147e561945ae2c83958c8ca667d90a6bffdbfac061"
+    }
+  },
+  "files": [
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Balcony_Simple_Straight.fbx",
+      "dest": "Medieval/Models/Balcony_Simple_Straight.fbx",
+      "sha256": "a0bb2660fa0aac16dad2b389eac60a50c8c55ac0905036e8c2f8ad7d37f482fa"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Corner_Exterior_Brick.fbx",
+      "dest": "Medieval/Models/Corner_Exterior_Brick.fbx",
+      "sha256": "d8fdb6fbb68f62d39eb285413caf84aa2f1d32134682e8e0f5ce084822a21d82"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Door_3_Flat.fbx",
+      "dest": "Medieval/Models/Door_3_Flat.fbx",
+      "sha256": "9d6a03e8d93010780dd663a835126a53dd0596c10f35e79a57c01bdceefb0a5c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/DoorFrame_Flat_Brick.fbx",
+      "dest": "Medieval/Models/DoorFrame_Flat_Brick.fbx",
+      "sha256": "8bf5d52ea650d26ab581202974bfb063172e90ac5d4b0d0c14c8ba7fd47314ac"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Floor_RoundRocks.fbx",
+      "dest": "Medieval/Models/Floor_RoundRocks.fbx",
+      "sha256": "712eb27ad682ad207ee510d2b7e6da22381fbf69c86abea8ff97a49429b4903d"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_Chimney.fbx",
+      "dest": "Medieval/Models/Prop_Chimney.fbx",
+      "sha256": "d132c893fbf957c92c51697de1329f0603d185849a7d0e94ec9ce5a78a0b90ed"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_UnevenBrick_Door_Flat.fbx",
+      "dest": "Medieval/Models/Wall_UnevenBrick_Door_Flat.fbx",
+      "sha256": "75bdaf53a8f189fd50f91eeeb019db179dbb85af8f542979184a6e00c2941ee7"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_UnevenBrick_Straight.fbx",
+      "dest": "Medieval/Models/Wall_UnevenBrick_Straight.fbx",
+      "sha256": "2f46c7724db0d75d10742e1f74d4c044da33f55a6f289fadbac1b5720c4f7126"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_UnevenBrick_Window_Thin_Round.fbx",
+      "dest": "Medieval/Models/Wall_UnevenBrick_Window_Thin_Round.fbx",
+      "sha256": "73f8daebfd0dc9878675830b0769cc2d73fd424960667edfa6a5554b5944232c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_UnevenBrick_Window_Wide_Flat.fbx",
+      "dest": "Medieval/Models/Wall_UnevenBrick_Window_Wide_Flat.fbx",
+      "sha256": "c3dfd037322fc759160b4424c8ca3df35a2ff25c1d19b30cddbc41cc6223b8dc"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Window_Wide_Flat1.fbx",
+      "dest": "Medieval/Models/Window_Wide_Flat1.fbx",
+      "sha256": "da526c2d7f89f001da31626acdc97af4a57491579776e9073a515a64e78827c4"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/WindowShutters_Wide_Flat_Closed.fbx",
+      "dest": "Medieval/Models/WindowShutters_Wide_Flat_Closed.fbx",
+      "sha256": "1900885a2656a8faa9e16f0215e1b58092006606b3da03c0191bbd07a050061f"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/WindowShutters_Wide_Flat_Open.fbx",
+      "dest": "Medieval/Models/WindowShutters_Wide_Flat_Open.fbx",
+      "sha256": "3b835fc6a896793ab546f9a5602877b5dce78db3ab084a0945f17209983f2a70"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_RoundTiles_6x10.fbx",
+      "dest": "Medieval/Models/Roof_RoundTiles_6x10.fbx",
+      "sha256": "8128bf9f74c090a619527d8fe843018589ba048194f7865b87c56834c8a71b82"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_RoundTiles_8x14.fbx",
+      "dest": "Medieval/Models/Roof_RoundTiles_8x14.fbx",
+      "sha256": "b55d5ea435ae75c8ed47e64d3a06c44db0c254911b15021723864f50b68e5fcc"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Brick_BaseColor.png",
+      "dest": "Medieval/Textures/T_Brick_BaseColor.png",
+      "sha256": "5515f57e61767838f53f4b9e25aa83b1382ad345ff6b446482718b5140c33813"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Plaster_BaseColor.png",
+      "dest": "Medieval/Textures/T_Plaster_BaseColor.png",
+      "sha256": "98547ca83888307e3ffa96384ce058b7622affe0a42add3b36d0b48618c5eda4"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundRocks_BaseColor.png",
+      "dest": "Medieval/Textures/T_RoundRocks_BaseColor.png",
+      "sha256": "e8550acf0de35b2773a7108d26f754bbdc8f8fc601c6e770e28709782b3d5d4a"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundTiles_BaseColor.png",
+      "dest": "Medieval/Textures/T_RoundTiles_BaseColor.png",
+      "sha256": "acf388ebd1a97346e1e5b59091cfc609ed15b4f70b83a626089f12a82a2d9997"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_UnevenBrick_BaseColor.png",
+      "dest": "Medieval/Textures/T_UnevenBrick_BaseColor.png",
+      "sha256": "ee0f096df6110e943cd9739680b61bc0ffd6fe00db752c5c3797941057a95ebc"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WoodTrim_BaseColor.png",
+      "dest": "Medieval/Textures/T_WoodTrim_BaseColor.png",
+      "sha256": "a59f410b07a9bc5f0664df3ba7a2c1e37acffc7979795911f3fc8730ab60e33e"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/FBX (Unity)/CommonTree_1.fbx",
+      "dest": "Nature/Models/CommonTree_1.fbx",
+      "sha256": "270b8be7dbde95980a308212319d99580a433821ca8daa7d115f3d289ede9608"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/FBX (Unity)/Bush_Common.fbx",
+      "dest": "Nature/Models/Bush_Common.fbx",
+      "sha256": "f4c057dc7118ab76b946cfa9d01908aa151cc2585bc8799e5a97833bccfec022"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/FBX (Unity)/Bush_Common_Flowers.fbx",
+      "dest": "Nature/Models/Bush_Common_Flowers.fbx",
+      "sha256": "3187c4e37f3be09da9d212e1c3ae04ae24814b7fc7074c19c56f633e95d10943"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/FBX (Unity)/Fern_1.fbx",
+      "dest": "Nature/Models/Fern_1.fbx",
+      "sha256": "520f1bce3d292885b6d85d5f7b541a1f0c236697ca99eb69e57817eed47eab31"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/FBX (Unity)/Grass_Common_Short.fbx",
+      "dest": "Nature/Models/Grass_Common_Short.fbx",
+      "sha256": "9bdb821b226ec62e485e648f35ea227c21d0245f3aefe1633d560e457476cd09"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/FBX (Unity)/Rock_Medium_1.fbx",
+      "dest": "Nature/Models/Rock_Medium_1.fbx",
+      "sha256": "e75986c05c1071ca99b8810005aa6d69d575a529e38c7e77c519c592e16f264e"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/Textures/Bark_NormalTree.png",
+      "dest": "Nature/Textures/Bark_NormalTree.png",
+      "sha256": "f36e94fdd73255347325b998e02a0b2575fdf714b0315bfe5e8ff34bc8e13603"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/Textures/Leaves_NormalTree.png",
+      "dest": "Nature/Textures/Leaves_NormalTree.png",
+      "sha256": "171ad1c8fa6ddde351a3b3c9e2b1457d5c7a4a43ba4fd55a83801029db797151"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/Textures/Leaves.png",
+      "dest": "Nature/Textures/Leaves.png",
+      "sha256": "23248cebe28a24e78add32db3c2ee2f4d7b9219e9d2467279722f0197a7b6bd5"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/Textures/Flowers.png",
+      "dest": "Nature/Textures/Flowers.png",
+      "sha256": "5c531f2329c241c625aafd6cb769de29f33b480ef2a16491c2489f3c68e62a6a"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/Textures/Grass.png",
+      "dest": "Nature/Textures/Grass.png",
+      "sha256": "5d69048193b246a73c996b892607fb36c75d0c60afcb2dab8aa12de3c0b2d9bd"
+    },
+    {
+      "source": "quaternius-nature-standard",
+      "file": "Nature/Textures/Rocks_Diffuse.png",
+      "dest": "Nature/Textures/Rocks_Diffuse.png",
+      "sha256": "b813696df6081f469a127092eb0ce45cc39d56f3ccc0699152bfcd3804810b48"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Exports/FBX/Barrel.fbx",
+      "dest": "Props/Models/Barrel.fbx",
+      "sha256": "ab4fa392eb5122fcffa9aed225e4136cbf2d34ceb8c53141cd951c1d69ebdb2d"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Exports/FBX/Bench.fbx",
+      "dest": "Props/Models/Bench.fbx",
+      "sha256": "cd55d1c21ee5055a2002739268014138f3cfe06c7a5cb9fcee3f22c55196d6f3"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Exports/FBX/Chair_1.fbx",
+      "dest": "Props/Models/Chair_1.fbx",
+      "sha256": "f779954e1f6264a90ca28d690135960eb8412da92b8bc0753138bab8845e9540"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Exports/FBX/Crate_Wooden.fbx",
+      "dest": "Props/Models/Crate_Wooden.fbx",
+      "sha256": "1cea14e2d937586186cc8f0c0ca01b33fd999030622bc4c33133c7d91c257916"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Exports/FBX/Lantern_Wall.fbx",
+      "dest": "Props/Models/Lantern_Wall.fbx",
+      "sha256": "1ca62ceccecc644e9a5e758228b1c649d6d5167f320ffd6dea324cf444f57a5f"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Exports/FBX/Mug.fbx",
+      "dest": "Props/Models/Mug.fbx",
+      "sha256": "8faae7c09627c709b8d38a9422b19c799240e80af092eecd9d9476f0b5c11e19"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Exports/FBX/Stool.fbx",
+      "dest": "Props/Models/Stool.fbx",
+      "sha256": "4eed4a314f6373444cb4e3192e2c76ff67514984f1fc5d167ccf06df1b55b5ed"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Exports/FBX/Table_Large.fbx",
+      "dest": "Props/Models/Table_Large.fbx",
+      "sha256": "64560001286e169879dea986bd2e7295ccaf2269b0fbc1e7b2bc8b802f693689"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Textures/T_Trim_Furniture_BaseColor.png",
+      "dest": "Props/Textures/T_Trim_Furniture_BaseColor.png",
+      "sha256": "075fbc9ec2fabc15732bd4025b6f63a0b25762df38440d06bf30437565d39bab"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Textures/T_Trim_Metal_BaseColor.png",
+      "dest": "Props/Textures/T_Trim_Metal_BaseColor.png",
+      "sha256": "50422bbda9661effc259caf8b386224cac4b5ca811d2c5b3b8b25ae8efc714db"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Textures/T_Trim_Props_BaseColor.png",
+      "dest": "Props/Textures/T_Trim_Props_BaseColor.png",
+      "sha256": "75225a4ccfd8cc358c871de7a7a3cab7118ef197419a88464e807b81716215c8"
+    },
+    {
+      "source": "quaternius-props-standard",
+      "file": "Props (gratis)/Textures/T_Trim_Cloth_BaseColor.png",
+      "dest": "Props/Textures/T_Trim_Cloth_BaseColor.png",
+      "sha256": "c4d0e14506e05cc56e7ca62ebeeb2d45de055296a55e5a8e9c1330ff8ff1833a"
+    },
+    {
+      "source": "quaternius-base-characters-source",
+      "file": "Base Characters/Base Characters/Exports/Unity/Regular_Male_FullBody.fbx",
+      "dest": "Characters/Regular_Male_FullBody.fbx",
+      "sha256": "911b580144a40bc055948782ba721c90af919daa53f4ee33503a6ef8d70aea81"
+    },
+    {
+      "source": "quaternius-base-characters-source",
+      "file": "Base Characters/Hairstyles/Rigged to Head Bone/FBX (Unity)/Male/Hair_Buzzed.fbx",
+      "dest": "Characters/Hair_Buzzed.fbx",
+      "sha256": "01c5c2ededd8b164274147ee8713a7a68cf74cd699fad6b969ce5e37c1b7b686"
+    },
+    {
+      "source": "quaternius-base-characters-source",
+      "file": "Base Characters/Base Characters/Textures/T_Regular_Male_Light_BaseColor.png",
+      "dest": "Characters/T_Regular_Male_Light_BaseColor.png",
+      "sha256": "c0099a01cc216ddc8e877cfb073c7d91a73aeb5f8458fdbc883aa112f60fff50"
+    },
+    {
+      "source": "quaternius-base-characters-source",
+      "file": "Base Characters/Base Characters/Textures/T_Eye_Brown.png",
+      "dest": "Characters/T_Eye_Brown.png",
+      "sha256": "d08e3356a83211bc6ca21fe3a8e39f4b5c1a3b8f85457fc2c0fb57be09935025"
+    },
+    {
+      "source": "quaternius-base-characters-source",
+      "file": "Base Characters/Base Characters/Textures/T_Hair_1_BaseColor.png",
+      "dest": "Characters/T_Hair_1_BaseColor.png",
+      "sha256": "bc7aa863bd22ab0a995cd838cceb4d3a5186ee54ee2fb0108fad85d20c057e6e"
+    },
+    {
+      "source": "quaternius-ual1-source",
+      "file": "Animation/Unity/UAL1.fbx",
+      "dest": "UAL/UAL1.fbx",
+      "sha256": "0556d52f6bce01c0982b3548ee3cdfa1b8270977507001f62cbdfcc405570842"
+    }
+  ]
+}

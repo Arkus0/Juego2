@@ -1,0 +1,21 @@
+# ART-01 residual gaps and causal handoff
+
+None of the following is a license to leave a **required** ART-01 benchmark element as `PROXY_VISUAL` or `COVERAGE_BLOCKED`. Final readiness is recorded after fresh-author evidence and visual inspection.
+
+| Item | Owner / reason it stays outside ART-01 |
+|---|---|
+| Exact bridge/W12/Casco/Bar F01 footprint, grade, route access and place density in the retained district | CITY-07 consumes the admitted kit and accepted CITY seed; this ART scene uses local specimen stations and width classes only. |
+| H2 semantic world authoring, local recompilation, authorable-state transactions, persistent identity or edit propagation | H2 planning/implementation; ART exports only stable visual piece IDs and assembly relations. |
+| Further Quaternius breadth, additional house families, richer stonework, varied wet-valley foliage and town-wide dressing | ART-02 or a future demand-led kit increment when the keeper district exposes concrete gaps. No pack-wide ingestion occurred. |
+| Final Bar venue/interior programme, public access/elevation approval and crowd/NPC behavior | CITY-07 for physical access and later H2/H3 for behavior. ART only checks visible public threshold and human scale. |
+| URP/toolchain foundation and effective ART-01 visuals | Accepted sequencing PR #252 supersedes the older ART-01-owned URP instruction: H2F-02 adopts the canonical toolchain/render foundation, H2F-GATE freezes it, then ART-01 updates onto that baseline and revalidates materials/shaders, transparency, lighting/atmosphere, third-person captures, structural changes and fresh-author smoke test. All current built-in render-sensitive ART evidence is `PREFOUNDATION / REVALIDATE_AFTER_H2F_GATE`, not PASS. |
+| Ordinary port-town wardrobe breadth and factory | `FANTASY_OUTFITS_TRIAGE.md` identifies a small CC0 candidate subset (plain trousers and adapted sleeves/workwear/boots) without importing it. Modern outerwear, shoes, service/nightlife/youth/older variants, palette families, full head/body fit, animation clipping and repeatable production remain `WP-ART-CHAR-01/02`. Fantasy armour/hoods/jerkins are rejected; no percentage-use target. |
+| Source roof/insert family exceptions in other buildings | Use per-family measurements and a new named derivative; do not extrapolate ART's 6×10/8×14 scale rule to unmeasured models. |
+
+The final production handoff, **after H2F-GATE and ART-01 PASS**, is: locked selected source/adoption and derivative ledger; `KIT_COMPOSITION_MANIFEST.json` with hosts/dimensions/readiness; `ASSEMBLY_PLANS.md` and the accepted dimensional profile; visual targets; local Unity benchmark scene, generated ART mesh/material assets and revalidated third-person/neutral captures; effective fresh-author smoke-test result; and the separate #233 lesson/boundary record. The current `PREFOUNDATION_INPUT.md` is an earlier non-PASS handoff. CITY-07 can later use the admitted vocabulary without treating this local benchmark as canonical town geometry.
+
+## Reuse-first Phase A residual — 2026-09-28
+
+`RECOVERY_PASS.md` records a broad representative source recovery and an actual material-partition timber donor probe. It closes the **old blanket source-rejection reasoning**, not final kit admission. The 43 surveyed FBX members that are not already in `SOURCE_LOCK.json` remain inspection-only until exact ART selection/provenance, H2F-baseline Unity import and derivative IDs are reviewed. No environment `BLOCKED_EXTERNAL` follows from the inspected roles; DIRECT, ADAPT, DONOR and CREATE_DERIVED pathways exist. Any later external gap requires a concrete failed role and relative-cost explanation after those paths.
+
+The diagnostic third-person assembly has real walls/openings/roofs and donor wainscot but currently reads too repetitive/generic for the unnamed northern-Spain port-town target. Phase B must vary frontage and massing, resolve door/roof/ground connections in effective Unity, establish damp/material/port-work/commercial identity, inspect human-scale movement and rerun fresh-author evidence. The Blender image and earlier built-in captures are **not** keeper proof. H2F-02 PR #261 remains Draft; `WP-H2F-GATE` has not passed, so ART-01 stays `PAUSED_FOR_H2F_FOUNDATION / NOT REVIEW_READY`.

@@ -1,0 +1,311 @@
+{
+  "schema": "juego2.art01.recovery-source-survey@1",
+  "phase": "PREFOUNDATION_INSPECTION_ONLY",
+  "source": "quaternius-medieval-source",
+  "archiveSha256": "b9d757dd2608a5cee4d9ee1e8183f6cb4cad9d27480841a905180def9c7d8b10",
+  "sourceModelCount": 306,
+  "sampleCount": 43,
+  "files": [
+    {
+      "name": "Window_Wide_Flat1",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Window_Wide_Flat1.fbx",
+      "sha256": "da526c2d7f89f001da31626acdc97af4a57491579776e9073a515a64e78827c4",
+      "bytes": 26412,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "DoorFrame_Flat_Brick",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/DoorFrame_Flat_Brick.fbx",
+      "sha256": "8bf5d52ea650d26ab581202974bfb063172e90ac5d4b0d0c14c8ba7fd47314ac",
+      "bytes": 73356,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Door_3_Flat",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Door_3_Flat.fbx",
+      "sha256": "9d6a03e8d93010780dd663a835126a53dd0596c10f35e79a57c01bdceefb0a5c",
+      "bytes": 75884,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_Plaster_Straight",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_Plaster_Straight.fbx",
+      "sha256": "ad7d807b28ce4ec564773c9a9637c47b91db53cd9e7e6a8c90de5b1a56d3c96a",
+      "bytes": 28236,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_Plaster_Window_Wide_Flat",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_Plaster_Window_Wide_Flat.fbx",
+      "sha256": "7efe164cbd48f4bc5a0e26ada724f5444053df96f315bfd75963ad3bb6c6bf47",
+      "bytes": 33484,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_Plaster_Door_Flat",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_Plaster_Door_Flat.fbx",
+      "sha256": "d373cff1fc4bd0d3369e1abc792f68e2500562744f39c237ebb184dd49533c90",
+      "bytes": 31756,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_Plaster_WoodGrid",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_Plaster_WoodGrid.fbx",
+      "sha256": "e2eed49aa9d290fb5b3cd2a733b87d4e907076c60c95a1ab325d6a07d02d795c",
+      "bytes": 31980,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_WoodBrick_Straight",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_WoodBrick_Straight.fbx",
+      "sha256": "b2fec70125860e0c1659072d7bd3c3e746c4be09349f95c2e989a035ee5e6f77",
+      "bytes": 37836,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_WoodBrick_Window_Wide_Flat",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_WoodBrick_Window_Wide_Flat.fbx",
+      "sha256": "291c4300c926c049733342abe80a059aa9406992173d315390390b3d56287a0d",
+      "bytes": 38732,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_WoodBrick_Door_Flat",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_WoodBrick_Door_Flat.fbx",
+      "sha256": "6079b4940d968d93d393ef86d1b3ae312c26b75c294486f58357fc7251ea1863",
+      "bytes": 37644,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_WoodWear_Straight",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_WoodWear_Straight.fbx",
+      "sha256": "4cd2b207442b8594d20471770be1f0e37960977224cd898516348b1d4513b6ee",
+      "bytes": 35932,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_WoodWear_Window_Wide_Flat",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_WoodWear_Window_Wide_Flat.fbx",
+      "sha256": "56bf66faeb2c77e6a68fe056c11efce98bad24e2d5a8e3bab520edd9ed56723e",
+      "bytes": 38364,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Corner_Exterior_Wood",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Corner_Exterior_Wood.fbx",
+      "sha256": "9808a8a25a67446f5d4d76836eb62d843414d1a3ed0979bb08bbe9f9e544ffee",
+      "bytes": 21484,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Corner_ExteriorWide_Wood",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Corner_ExteriorWide_Wood.fbx",
+      "sha256": "2912fb6e584dc0de0e833fe9ee1b60685d7b8a94734d5bbf93ee7422f74c2dda",
+      "bytes": 22220,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Overhang_WoodBrick_Long",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Overhang_WoodBrick_Long.fbx",
+      "sha256": "c4d5c24da9e6233abd38956125bdeb7b60c9056ff4520c03b4e16ed293884c2e",
+      "bytes": 41788,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Overhang_WoodWear_Corner",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Overhang_WoodWear_Corner.fbx",
+      "sha256": "8c3740679f6d0b5219eaf5147ddde84e1768bb51457ce6fcffc20261df29e8b4",
+      "bytes": 81516,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Overhang_Side_WoodWear_Long_L",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Overhang_Side_WoodWear_Long_L.fbx",
+      "sha256": "5cf3b7a7041b5353db7453e8bf7271c5cda5cb6c81109490c9e790770fa20c0e",
+      "bytes": 41084,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Floor_WoodDark",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Floor_WoodDark.fbx",
+      "sha256": "b84f46e9a984be62796facfab5144cb0ad534d06271f78a5fe8567f7f64b11a2",
+      "bytes": 21740,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Floor_WoodLight",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Floor_WoodLight.fbx",
+      "sha256": "12298305fe0aff1e5fdf6cd69b11e519e099619822c7089b2d0333d627e7fbb5",
+      "bytes": 21740,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Balcony_Cross_Straight",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Balcony_Cross_Straight.fbx",
+      "sha256": "c054cf856c99aa36bf2bbf6a8cd5067b6b5787db14f9cb09512b5f399366cf2c",
+      "bytes": 24540,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Balcony_Cross_Corner",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Balcony_Cross_Corner.fbx",
+      "sha256": "4c6d3675553d6e8e5526eae4055d86243f48cd2ed65f9e7d1f0b270128141f9e",
+      "bytes": 27644,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Roof_Wooden_2x1",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_Wooden_2x1.fbx",
+      "sha256": "d494db3f4439a408e36ab2fc0eaee8eb054e3e2050be2ebbf6374a68ef02858f",
+      "bytes": 32444,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Roof_Wooden_2x1_Corner",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_Wooden_2x1_Corner.fbx",
+      "sha256": "d0f9ab8875b74252bd71985d5aa4d496cd7337b5f8298a92279c0319c2caa3bf",
+      "bytes": 28796,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Roof_FlatTiles_6x10",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_FlatTiles_6x10.fbx",
+      "sha256": "073f65a12321d5f72a0edf46385424db28d52e4c8e9c374e94f97ceb86459e42",
+      "bytes": 129964,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Roof_Modular_FlatTiles_6_Mid",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_Modular_FlatTiles_6_Mid.fbx",
+      "sha256": "ec916a8dbad69fd1add3e442961e008cf10544570fc9b981faff696d95d337e2",
+      "bytes": 46300,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Roof_Front_Wood6",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_Front_Wood6.fbx",
+      "sha256": "882b4d1a8d9ddba472f1580359ad01de3823c654ba65e3cb06218afdc541676f",
+      "bytes": 33084,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Roof_Front_Brick6",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_Front_Brick6.fbx",
+      "sha256": "24122cae2a59ce784ebb030f74fa80b9abf2c40f1e508204ccff7aa56f9279b1",
+      "bytes": 33516,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "DoorFrame_Flat_WoodDark",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/DoorFrame_Flat_WoodDark.fbx",
+      "sha256": "354d22be1e28d7820fc22265abebed0a54878fe57f3e43caa35ad83cdf634243",
+      "bytes": 22540,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Door_1_Flat",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Door_1_Flat.fbx",
+      "sha256": "c8a1f7bfc8cff15356ab80aa3deee0b42597c0033c44f04807719c2ea8a77753",
+      "bytes": 32972,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Window_Thin_Flat1",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Window_Thin_Flat1.fbx",
+      "sha256": "f033971c551d78e3733c3ab21f3fcec094053047865205b875dab94f31c5757d",
+      "bytes": 25404,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "WindowShutters_Thin_Flat_Closed",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/WindowShutters_Thin_Flat_Closed.fbx",
+      "sha256": "4f1fcb1d9d3969e60ae23c016036bf76e9aa0570da86154d815f1e2c09739d6a",
+      "bytes": 25068,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Stairs_Exterior_Straight",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Stairs_Exterior_Straight.fbx",
+      "sha256": "2453e5f40d894d89b4fa9b9bc676d17ca8d1e93479b9d16348a8a7995d05dc16",
+      "bytes": 26492,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Stair_Interior_Simple",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Stair_Interior_Simple.fbx",
+      "sha256": "9d2351b633861de9bef7f54cae73707efe788be853ce2c0ce2da357cbeff0836",
+      "bytes": 25548,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Prop_ExteriorBorder_Straight1",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_ExteriorBorder_Straight1.fbx",
+      "sha256": "7177ae660cafb074a0483271b38b3bacf522db1d94d626e966c13fc2e35504cb",
+      "bytes": 20188,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Prop_WoodenFence_Single",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_WoodenFence_Single.fbx",
+      "sha256": "f5e0e0210292ab5dfd95a10f684850406b26d0a016b3fbd3ba499542e644d440",
+      "bytes": 22300,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Prop_MetalFence_Simple",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_MetalFence_Simple.fbx",
+      "sha256": "2634e4560317091919ef52360688f1a309dabbd0fde683723bf0525eba68d4ba",
+      "bytes": 82204,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Prop_Vine1",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_Vine1.fbx",
+      "sha256": "de0bea8119f7b12fac3795718b331658f9bbe6e9e38a02272a1f92e28a4edeca",
+      "bytes": 23340,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Prop_Crate",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_Crate.fbx",
+      "sha256": "8e38d27f360ef68fe9f0e3382917d5ae500d78de3cace53e07a2f6d21c94cd43",
+      "bytes": 26332,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Roof_Spikes5",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_Spikes5.fbx",
+      "sha256": "448b21b8442261c1cb33fc4df336e7beb46eab8e41a3ed071c1fd3e020116e5e",
+      "bytes": 69132,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Roof_Tower_FlatTiles",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_Tower_FlatTiles.fbx",
+      "sha256": "8a86995748e1690b37e6d1e73dc61483e423d1f6fedb44abcda5ac1130e89827",
+      "bytes": 67996,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Roof_RoundTiles_6x10",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Roof_RoundTiles_6x10.fbx",
+      "sha256": "8128bf9f74c090a619527d8fe843018589ba048194f7865b87c56834c8a71b82",
+      "bytes": 149740,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_UnevenBrick_Straight",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_UnevenBrick_Straight.fbx",
+      "sha256": "2f46c7724db0d75d10742e1f74d4c044da33f55a6f289fadbac1b5720c4f7126",
+      "bytes": 31788,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    },
+    {
+      "name": "Wall_UnevenBrick_Window_Wide_Flat",
+      "archiveMember": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Wall_UnevenBrick_Window_Wide_Flat.fbx",
+      "sha256": "c3dfd037322fc759160b4424c8ca3df35a2ff25c1d19b30cddbc41cc6223b8dc",
+      "bytes": 33308,
+      "status": "INSPECTED_ONLY_NOT_ADMITTED"
+    }
+  ]
+}
