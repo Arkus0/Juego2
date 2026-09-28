@@ -5,6 +5,7 @@ Class: PRODUCT ART / PRODUCTION INDUSTRIALIZATION
 Depends on: `WP-H2F-GATE` PASS + accepted UAL/character animation inputs
 Blocks: `WP-ART-ANIM-02`
 Binding decision: `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`
+Quaternius tooling process precheck (binding once independently accepted and DocSynced): `Docs/product/QUATERNIUS_ADAPTATION_REUSE_PRECHECK_AMENDMENT.md`; consult its linked audit/catalog before material custom-tool invention, with adoption still subject to `Docs/engineering/DEPENDENCY_IP_POLICY.md`.
 
 ## Claim
 

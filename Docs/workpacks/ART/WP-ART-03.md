@@ -6,6 +6,7 @@ Depends on: `WP-ART-02` PASS + `WP-ART-ENV-02` PASS + `WP-ART-CHAR-02` PASS + `W
 Blocks: `WP-H2-GATE`
 Binding decision: `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`
 Binding reuse amendment: `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md`
+Quaternius tooling process precheck (binding once independently accepted and DocSynced): `Docs/product/QUATERNIUS_ADAPTATION_REUSE_PRECHECK_AMENDMENT.md`; consult its linked audit/catalog before material custom-tool invention, with adoption still subject to `Docs/engineering/DEPENDENCY_IP_POLICY.md`.
 
 ## Claim
 

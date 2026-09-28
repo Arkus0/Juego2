@@ -16,6 +16,8 @@ This canonical workpack must be read together with the following ART-01 contract
 - `Docs/workpacks/ART/ART_01_DIMENSIONAL_PROFILE.md`;
 - `Docs/workpacks/ART/ART_01_ASSET_REUSE_AMENDMENT.md`.
 
+**Quaternius tooling precheck (binding once independently accepted and DocSynced):** `Docs/product/QUATERNIUS_ADAPTATION_REUSE_PRECHECK_AMENDMENT.md` and its linked discovery catalog are required when a new source-recovery or tooling-gap decision is made. The already-active ART-01 candidate does not restart or redo completed evidence; the amendment does not transfer the final factory into ART-01.
+
 **Current-product supersession note:** `ART_01_ASSET_REUSE_AMENDMENT.md` governs the current interpretation of this workpack wherever the historical text still names fictional Potes/Liébana as the final setting or presents the older source-triage vocabulary without `DONOR_COMPONENTS`. Those clauses are retained as accepted history/context, but they are not independent current-product gates: setting/identity and asset disposition must be read through the reuse amendment, including its `DONOR_COMPONENTS` recovery path. ART-01 does not restart because of this supersession.
 
 The assembly amendment carries the required pre-production paintovers/overpaints, layered building/street assembly evidence, neutral-material checkpoint and rapid bounded-iteration protocol. The environment grammar and dimensional profile define the connection and metric vocabulary consumed by the benchmark. A Worker following only this file is still required to consume those contracts.

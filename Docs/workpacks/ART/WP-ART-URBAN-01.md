@@ -7,6 +7,7 @@ Blocks: `WP-CITY-URBAN-01` and `WP-ART-03`
 Binding decision: `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`
 Binding identity/nightlife amendment: `Docs/product/PORT_TOWN_IDENTITY_NIGHTLIFE_AMENDMENT.md`
 Binding reuse amendment: `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md`
+Quaternius tooling process precheck (binding once independently accepted and DocSynced): `Docs/product/QUATERNIUS_ADAPTATION_REUSE_PRECHECK_AMENDMENT.md`; consult its linked audit/catalog before material custom-tool invention, with adoption still subject to `Docs/engineering/DEPENDENCY_IP_POLICY.md`.
 
 ## Claim and work
 
