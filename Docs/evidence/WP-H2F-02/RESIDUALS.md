@@ -19,3 +19,6 @@ Allowed residuals under the WP: final artistic tuning (ART-01/CITY-07/ART-02), l
 | R13 | Separately licensed GC2 modules (Dialogue, Inventory, Behavior, Perception, Melee, Quests, …) are not installed; each needs its own adoption WP. GC2 save host is H6. | deferred | GC2-03+ / H6 |
 | R14 | `J2ShaderAudit` classification is structural (subshader `RenderPipeline` tag, URP LightModes, untagged passes = `SRPDefaultUnlit`, pipeline-agnostic builtins). Rendered captures are the human cross-check. | method limit | — |
 | R15 | Scatter exclusion margin is measured from no-go colliders. Kerbs carry no collider by design (NavMesh), so the margin must exceed kerb width; the default 0.6 m ≥ 0.2 m kerb. | documented rule | owners of scatter profiles |
+| R16 | Owner inspection: the ART-01 benchmark houses still look like glued modules (corners, windows mounted on walls, door frames not straight). This is identical under built-in, so it is ART-01's structural assembly, not the migration. Owner decision: "Congelar y derivar a ART-01". | owner-routed | ART-01 (before `KEEPER_READY`) |
+| R17 | Signage and typography (TextMesh sign on the benchmark). Owner: "Carteles iran en otro wp". | owner-routed | separate WP (owner) |
+| R18 | Source→ART-palette mapping for ferns: the tree-leaf texture on fern cards reads as floating paper. | art tuning | ART |

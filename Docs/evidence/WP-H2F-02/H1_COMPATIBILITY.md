@@ -36,7 +36,7 @@ Nothing else under `Assets/Arkus/H1`, `tools/`, `src/`, `tests/` or H1 evidence 
 | `d770bf20` (URP adopted, snapshot not yet re-baselined) | failure 36372671029 | failure 36372671015 | failure 36372670925 | failure 36372670963 | failure 36372670931 | H1 fails closed: `projection.catalogue-snapshot-stale`, one differing row |
 | `1b91d43d` (snapshot re-baselined) | success 36373728445 | success 36373728505 | success 36373728511 | success 36373728441 | cancelled | re-baseline restores H1 |
 | `2a2a9112` (URP first-use state committed) | success 36389412638 | success 36389412577 | success 36389412719 | cancelled | **success 36389412778** (cleanup clean-tree check passes) | URP init no longer dirties the tree |
-| `0e4a44ac` (tree `c9813874`, identical to the final evidence) | success 36390296667 | success 36390296763 | success 36390296765 | success 36390296837 | recorded on the PR | final Unity bytes |
+| `0e4a44ac` (tree `c9813874`) | success 36390296667 | success 36390296763 | success 36390296765 | success 36390296837 | see PR | UAL root-motion rules |
 
-Later docs-only commits keep the Unity tree `c9813874`; their hosted runs are listed on the PR.
+The final Unity tree (`ed331750`, from `5623fa9f`: single-sided junction kerb fillets) changes only Juego2 foundation code and tests. Its hosted runs and those of the frozen candidate are listed on the PR.
 

@@ -2129,7 +2129,7 @@
     },
     "worldbuildingAudit": {
         "pipeline": "UniversalRenderPipelineAsset",
-        "materials": 18,
+        "materials": 19,
         "green": true,
         "rows": [
             {
@@ -2207,13 +2207,7 @@
             {
                 "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
                 "shader": "Universal Render Pipeline/Lit",
-                "source": "renderer:Fern_1",
-                "status": "URP_OK"
-            },
-            {
-                "material": "Assets/Arkus/ART/Materials/Rock.mat#Rock",
-                "shader": "Universal Render Pipeline/Lit",
-                "source": "renderer:Rock_Medium_1",
+                "source": "renderer:Bush_Common",
                 "status": "URP_OK"
             },
             {
@@ -2229,9 +2223,21 @@
                 "status": "URP_OK"
             },
             {
+                "material": "Assets/Arkus/ART/Materials/Rock.mat#Rock",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Rock_Medium_1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Bark.mat#Bark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:CommonTree_1",
+                "status": "URP_OK"
+            },
+            {
                 "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
                 "shader": "Universal Render Pipeline/Lit",
-                "source": "renderer:Bush_Common",
+                "source": "renderer:CommonTree_1",
                 "status": "URP_OK"
             },
             {
@@ -2251,5 +2257,6 @@
     "scatterInExclusion": 0,
     "citizenAvatarValid": true,
     "playerIsGc2Player": true,
-    "npcInputNone": true
+    "npcInputNone": true,
+    "characterOverlaps": []
 }

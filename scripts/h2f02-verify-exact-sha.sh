@@ -200,6 +200,7 @@ assert receipt['packageSha256'] == GC2_SHA and receipt['version'] == '2.19.61' a
 r = json.loads((RES / 'representative.json').read_text(encoding='utf-8'))
 assert r['errors'] == [] and r['lintFindings'] == [] and r['identityFields'] == [], 'representative errors/lint/identity'
 assert r['citizenAvatarValid'] and r['playerIsGc2Player'] and r['npcInputNone']
+assert r['characterOverlaps'] == [], f"evidence bodies intersect geometry: {r['characterOverlaps']}"
 assert r['bindings'] == ['j2.char.player', 'j2.npc.evidence_a']
 assert r['junctionSamples'] > 5000 and r['junctionHoles'] == 0 and r['junctionSteps'] == 0
 assert r['scatterInstances'] > 50 and r['scatterInExclusion'] == 0
