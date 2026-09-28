@@ -29,11 +29,11 @@ After H2F-GATE, priority moves to **locking and industrializing the visual/conte
 | B4 | `ART-ANIM-01 -> ART-ANIM-02` (`ANIM-02` also consumes CHAR-02) | Source/retarget truth -> reusable locomotion/acting/ambient/object animation vocabulary | Can overlap environment work |
 | B5 | `GC2-DIALOGUE-00 + ART-CHAR-02 -> ART-UI-01` | Exact Dialogue 2 presentation seam -> approved no-voice Juego2 UI/dialogue language on factory-produced characters | No real investigation content yet |
 | C1 | `ART-ENV-02` after ART-01 + CITY-URBAN-00 | Scenario-production factory + fresh-author repeatability proof | Runs while characters/animation/UI mature |
-| C2 | `GC2-00`; `CITY-07 -> H2-01/H2-02`; `H2-03` after H2-02 + CHAR-02 + ANIM-02; then `ART-02` | Retained inland pilot remains playable transfer/reuse benchmark; H2-03 consumes CHAR/ANIM factories | Does not become final-setting approval |
+| C2 | `GC2-00`; `H2-01` final acceptance after ART-01 + CITY-07 + H2F-GATE; `H2-02` after CITY-07 + GC2-00 + H2F-GATE; `H2-03` after H2-02 + CHAR-02 + ANIM-02; then `ART-02` after CITY-07 + H2-02 + H2-03 + ART-01 | Retained inland pilot remains playable transfer/reuse benchmark; H2-03 consumes CHAR/ANIM factories | Does not become final-setting approval |
 | D1 | `ART-URBAN-01` after ART-01 + ART-ENV-02 + CITY-URBAN-00 | Port-town keeper kit using the same scenario factory | Final-setting art lane |
 | D2 | `CITY-URBAN-01` after CITY-URBAN-00 + ART-URBAN-01 | Actual first large-port-town keeper block **before H2-GATE** | Physical/visual keeper proof, no deep gameplay |
 | E | `ART-03` after ART-02 + ENV/CHAR/ANIM/UI factories + ART-URBAN-01 + CITY-URBAN-01 | Integrated final-setting visual lock + fresh-author production challenge | Final visual industrialization checkpoint |
-| F | `H2-GATE` after H2-01/H2-03/ART-02/ART-03/CITY-URBAN-01 | Locks look + production factories + keeper authoring truth | Unlocks gameplay chain |
+| F | `H2-GATE` after H2F-GATE + H2-01 + H2-03 + ART-02 + ART-03 + CITY-URBAN-01 | Locks look + production factories + keeper authoring truth | Unlocks gameplay chain |
 | G | `GC2-02 -> GC2-03 -> GC2-04 -> GC2-05 -> GC2-06` | Reactive NPC -> investigation/dialogue -> object/evidence -> routine/memory -> first living port-town block | `GC2-03` consumes the accepted Dialogue disposition; it does not adopt the module |
 | H | `GC2-07` + `GC2-08` | Fight + pursuit with selected persistent consequences | Parallel where causal deps allow |
 | I | `GC2-SLICE` | Connected 20–30 minute adventure and return-state proof | Owner play review |
@@ -41,7 +41,7 @@ After H2F-GATE, priority moves to **locking and industrializing the visual/conte
 
 ## Visual-production factory graph
 
-The graph below makes the multi-predecessor joins explicit; `A + B -> C` means **both** predecessors must have passed before `C` begins.
+The graph below makes the multi-predecessor joins explicit; `A + B -> C` means **all** named predecessors must have passed before the downstream PASS can be claimed. `H2-01` may start bounded work earlier under its own contract, but its final acceptance still requires the join shown here.
 
 ```text
 H2F-GATE -> ART-01
@@ -49,21 +49,22 @@ H2F-GATE -> ART-CHAR-01 -> ART-CHAR-02
 H2F-GATE -> ART-ANIM-01
 ART-ANIM-01 + ART-CHAR-02 -> ART-ANIM-02
 H2F-GATE -> GC2-DIALOGUE-00
-GC2-DIALOGUE-00 + ART-CHAR-02 -> ART-UI-01
+GC2-DIALOGUE-00 + ART-CHAR-02 + H2F-GATE -> ART-UI-01
 
 ART-01 + CITY-URBAN-00 -> ART-ENV-02
 ART-01 + ART-ENV-02 + CITY-URBAN-00 -> ART-URBAN-01
 CITY-URBAN-00 + ART-URBAN-01 -> CITY-URBAN-01
 
 H2F-GATE -> GC2-00
-CITY-07 + GC2-00 -> H2-02
+H2F-GATE + ART-01 + CITY-07 -> H2-01
+H2F-GATE + CITY-07 + GC2-00 -> H2-02
 H2-02 + ART-CHAR-02 + ART-ANIM-02 -> H2-03
-H2-03 -> ART-02
+CITY-07 + H2-02 + H2-03 + ART-01 -> ART-02
 
 ART-02 + ART-ENV-02 + ART-CHAR-02 + ART-ANIM-02 + ART-UI-01
   + ART-URBAN-01 + CITY-URBAN-01 -> ART-03
 
-H2-01 + H2-03 + ART-02 + ART-03 + CITY-URBAN-01 -> H2-GATE
+H2F-GATE + H2-01 + H2-03 + ART-02 + ART-03 + CITY-URBAN-01 -> H2-GATE
 H2-GATE -> GC2-02+
 ```
 
