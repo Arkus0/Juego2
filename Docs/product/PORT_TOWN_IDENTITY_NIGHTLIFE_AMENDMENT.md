@@ -1,8 +1,9 @@
 # Port-town identity and nightlife amendment
 
-Status: **PROPOSED / NOT ACCEPTED**
+Status: **ACCEPTED product amendment**
 Mode: `PROCESS_ONLY / DOCS_ONLY`
 Date: 2026-09-28
+Accepted: PR `#266`, candidate `a89276097b7247477cbede940678a131e81b2b64`, Reviewer PASS `#5334692121`, merge `70af61de17a7be9259008db279e58ddaf8b9b2ad`.
 Amends: `PORT_TOWN_SCALE_AMENDMENT.md`, accepted `WP-CITY-URBAN-00` planning output and downstream ART/CITY urban consumers.
 
 ## Owner decision
