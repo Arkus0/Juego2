@@ -1,7 +1,7 @@
 # ART — Visual/content production track
 
 Status: **ACTIVE / ART-01 CONTRACT ACCEPTED FOR EXECUTION; POST-H2F VISUAL PRODUCTION EXPANDED**  
-Version: 2.1 — 2026-09-28
+Version: 2.2 — 2026-09-28
 
 ## Authority
 
@@ -45,6 +45,14 @@ Under the reuse amendment, ART-01 does **not** restart: existing structural/dime
 The accepted visual-production expansion adds reusable environment, character/wardrobe, animation and dialogue/UI production lanes before the strengthened H2-GATE. `WP-ART-ENV-02`, `WP-ART-CHAR-01/02`, `WP-ART-ANIM-01/02`, `WP-ART-URBAN-01` and `WP-ART-03` consume the current product direction rather than the historical inland setting as final authority.
 
 Environment and character production inherit the same reuse-first rule: pack labels and wood/material percentage are not automatic rejection oracles. The final integrated block is judged by scene-level coherence, provenance, assembly quality and third-person readability.
+
+## AI Unity production-operator spike
+
+`WP-AI-UNITY-AUTHORING-00` is a bounded, non-blocking acceleration spike that may run in an isolated real-Unity environment before H2F-GATE. It asks whether an external AI agent connected directly to the Unity Editor can become an effective operator for the later ENV / CHAR / ANIM factories.
+
+Its discovery benchmark is intentionally **not constrained to the already ART-curated corpus**. The agent may inspect and combine the broadest lawful, actually available project/owner corpus so that the project measures the operator's real discovery/composition ceiling rather than a preselected easy case. Outputs produced from uncurated inputs remain `TRIAL_ONLY_UNCURATED` or `CANDIDATE_FOR_LATER_ART_REVIEW`; the spike cannot promote them to keeper status or bypass normal ART, dependency/IP, provenance or H1 lifecycle authority.
+
+The spike may end `ADOPT`, `ADOPT_BOUNDED`, `TOOL_SOURCE` or `REJECT`. None of those outcomes changes H2F acceptance. Any later production adoption must be consumed explicitly by the owning factory WP.
 
 ## ART-02 — retained inland-pilot visual closure
 
