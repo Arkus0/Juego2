@@ -1,7 +1,8 @@
 # Large port town scale and district-residency amendment
 
-Status: **OWNER_DECISION — canonical when this amendment is merged**
+Status: **ACCEPTED product amendment**
 Date: 2026-09-28
+Accepted: PR `#262`, candidate `489312831ca0e337de58762c067ca60e5c20c874`, Reviewer PASS `#5333508771`, merge `65a2a727371833806f019af0a7af1767b3724534`.
 Amends: [`URBAN_EXPANSION_DECISION.md`](URBAN_EXPANSION_DECISION.md), [`NPC_DEPTH_TIERS.md`](../design/NPC_DEPTH_TIERS.md) and the post-H2F-01A urban route.
 
 ## Product scale decision
