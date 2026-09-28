@@ -1,22 +1,35 @@
-# WP-GC2-DIALOGUE-00 — Dialogue 2 adoption + presentation seam
+# WP-GC2-DIALOGUE-00 — Dialogue presentation strategy + optional Dialogue 2 adoption
 
 Status: **PROPOSED / NOT_STARTED**
-Class: PRODUCT TOOLING / LICENSED MODULE ADOPTION
-Depends on: `WP-H2F-GATE` PASS + owner-provided lawful Dialogue 2 package
+Class: PRODUCT TOOLING / DIALOGUE STRATEGY + CONDITIONAL LICENSED MODULE ADOPTION
+Depends on: `WP-H2F-GATE` PASS
 Blocks: `WP-ART-UI-01`
 Binding decisions/policies: `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md` + `Docs/engineering/DEPENDENCY_IP_POLICY.md`
 
 ## Claim
 
-The exact owner-supplied Dialogue 2 version can be lawfully and reproducibly admitted into Juego2 as a **presentation/directing surface** without changing Arkus authority, creating a second narrative source of truth or prematurely implementing the investigation/dialogue gameplay WP.
+Juego2 has an explicit, reviewable dialogue-presentation strategy before the H2 visual lock. Dialogue 2 may be admitted as a **presentation/directing surface** only when its material value justifies acquisition and the owner provides a lawful package; otherwise the project may continue through the accepted Core/local presentation path without treating non-acquisition as a failure.
 
-This WP is the **single adoption authority** for Dialogue 2. `WP-GC2-03` may later consume the accepted disposition and admitted adapter/presentation surface, but it may not independently decide, install or adopt a different Dialogue 2 version.
+This WP is the **single adoption authority** for Dialogue 2. `WP-ART-UI-01` and later `WP-GC2-03` consume its accepted disposition. They may not independently buy, install, upgrade, repin or adopt Dialogue 2.
+
+## First step — availability + materiality decision
+
+The first action is to record whether Dialogue 2 is actually available and whether adopting it now is materially justified. The WP must end with exactly one explicit disposition:
+
+- `ADOPTED` — the owner has provided a lawful package and the exact admitted version has completed every dependency/IP and H1 lifecycle requirement below;
+- `NOT_MATERIAL` — evaluation found no material work saving or quality gain that justifies adopting the module for the current presentation need;
+- `REJECTED` — the evaluated module/version is unsuitable because of a concrete compatibility, licensing, authority, quality or replacement concern;
+- `DEFERRED_NOT_ACQUIRED` — the owner has not acquired Dialogue 2 and there is not yet sufficient material reason to buy it.
+
+`NOT_MATERIAL`, `REJECTED` and `DEFERRED_NOT_ACQUIRED` are legitimate PASS dispositions for this checkpoint. They authorize **no retained Dialogue 2 dependency** and hand `WP-ART-UI-01` the accepted Core/local presentation path.
+
+The project policy remains: do not buy a paid asset/plugin merely to satisfy this WP. Acquisition is justified only when the real need shows a material work saving or important quality gain.
 
 ## Scope
 
 This is deliberately narrower than `WP-GC2-03`.
 
-Admit and exercise only the surfaces needed to judge visual presentation, such as:
+If Dialogue 2 is being considered for `ADOPTED`, evaluate/admit only surfaces needed for visual presentation, such as:
 
 - actor/speaker presentation;
 - dialogue/subtitle UI skins;
@@ -24,13 +37,15 @@ Admit and exercise only the surfaces needed to judge visual presentation, such a
 - text reveal/typewriter or equivalent no-voice pacing;
 - expression/gesture/state callbacks;
 - bounded camera/presentation hooks where available;
-- one tiny dummy conversation used only as a visual fixture.
+- one tiny dummy conversation used only as an adoption/visual fixture.
+
+If the disposition is non-adopted, do **not** manufacture equivalent Dialogue 2 evidence. Record the decision and the Core/local presentation handoff instead.
 
 Do **not** build the real investigation conversation graph, story quest flow, Ink integration policy or persistent narrative state here.
 
-## Dependency/IP adoption gate — binding
+## Dependency/IP adoption gate — binding only for `ADOPTED`
 
-Dialogue 2 is a material separately licensed dependency introduced after the H2F foundation freeze. Before it can be treated as retained production, this WP must re-run the complete exact-version adoption gate from `Docs/engineering/DEPENDENCY_IP_POLICY.md` for the owner-supplied package.
+Dialogue 2 is a material separately licensed dependency introduced after the H2F foundation freeze. **Before and only before this WP may declare `ADOPTED`**, it must re-run the complete exact-version adoption gate from `Docs/engineering/DEPENDENCY_IP_POLICY.md` for the owner-supplied package.
 
 The adoption record must include, at minimum:
 
@@ -46,11 +61,11 @@ The adoption record must include, at minimum:
 - replacement/uninstall strategy and exit path;
 - explicit confirmation that Dialogue-private IDs/Variables/state do not become canonical NPC, clue, world, transaction or persistence identity.
 
-Unknown, ambiguous or incompatible terms fail closed. Owning the package is not sufficient evidence. If the owner-supplied version materially conflicts with the frozen H2F baseline, this WP fails/blocks rather than silently upgrading the foundation or Core.
+Unknown, ambiguous or incompatible terms fail closed **for adoption**. They may lead to `REJECTED` rather than forcing the whole checkpoint or H2 to wait for an impossible import. Owning the package is not sufficient evidence. If the proposed version materially conflicts with the frozen H2F baseline, it cannot be `ADOPTED` unless the conflict is resolved through the proper reviewed foundation process.
 
-## Host + H1 lifecycle classification
+## Host + H1 lifecycle classification — required only for `ADOPTED`
 
-Before PASS, publish a complete Dialogue-selected-state lifecycle matrix equivalent in rigor to the selected-foundation matrix required by `WP-H2F-02`. Every material state family actually used must choose a concrete host/lifecycle class, source of truth, observation/reconciliation behavior and rebuild expectation.
+Before `ADOPTED`, publish a complete Dialogue-selected-state lifecycle matrix equivalent in rigor to the selected-foundation matrix required by `WP-H2F-02`. Every material state family actually used must choose a concrete host/lifecycle class, source of truth, observation/reconciliation behavior and rebuild expectation.
 
 At minimum classify where applicable:
 
@@ -64,11 +79,13 @@ At minimum classify where applicable:
 | generated/import/cache/editor/runtime outputs | generated/transient; disposable and reproducible from admitted inputs |
 | licensed vendor bytes not lawfully stored in repo | external/manual source input with documented lawful provisioning before reconstruction |
 
-If accepted H1 observation/reconciliation would erase required Dialogue state, classify it as unsupported drift, or require undocumented hand repair after materialization/rebuild, the WP is blocked until a lawful retained host/boundary or deterministic reconstruction path exists.
+If accepted H1 observation/reconciliation would erase required Dialogue state, classify it as unsupported drift, or require undocumented hand repair after materialization/rebuild, `ADOPTED` is blocked until a lawful retained host/boundary or deterministic reconstruction path exists.
 
-## Required composed lifecycle witness
+No lifecycle matrix is required merely to close `NOT_MATERIAL`, `REJECTED` or `DEFERRED_NOT_ACQUIRED`, because those dispositions retain no Dialogue 2 state.
 
-Classification alone is not sufficient. Before Dialogue 2 is considered retained production, run one bounded composed witness with the exact admitted version and the actual dummy-presentation fixture present:
+## Required composed lifecycle witness — required only for `ADOPTED`
+
+Classification alone is not sufficient for adoption. Before Dialogue 2 is considered retained production, run one bounded composed witness with the exact admitted version and the actual dummy-presentation fixture present:
 
 `materialize -> observe -> reconcile -> rematerialize -> clean rebuild`
 
@@ -84,7 +101,11 @@ The evidence must show that:
 
 The witness may reuse accepted H1/H2F tooling and does not require H1 to understand arbitrary Dialogue internals. It proves only the bounded state families actually admitted by this WP.
 
-## Adoption work
+No import, compile proof, Dialogue fixture or lifecycle witness is required for a non-adopted disposition.
+
+## Conditional adoption work
+
+Only on the `ADOPTED` path:
 
 - complete the exact dependency/IP adoption record above;
 - record package/module dependencies and compatibility with the accepted H2F/GC2 Core version;
@@ -95,27 +116,32 @@ The witness may reuse accepted H1/H2F tooling and does not require H1 to underst
 - run and retain the composed H1 lifecycle witness;
 - record uninstall/replacement boundary.
 
+For `NOT_MATERIAL`, `REJECTED` or `DEFERRED_NOT_ACQUIRED`, record why there is no retained Dialogue 2 dependency and identify the accepted Core/local surface consumed next by `WP-ART-UI-01`.
+
 ## Disposition and later reopening rule
 
-The WP must record one explicit disposition: `ADOPTED`, `NOT_MATERIAL`, or `REJECTED`.
-
 - `ADOPTED`: the exact version, adapter boundary, adoption record and lifecycle witness are frozen outputs consumed by `WP-ART-UI-01` and later `WP-GC2-03`.
-- `NOT_MATERIAL` / `REJECTED`: no Dialogue 2 runtime/module adoption is authorized. Later gameplay WPs use the accepted local/Core presentation path unless the owner explicitly reopens this decision.
-- A later reopen must occur through a separately reviewed amendment/reopened `WP-GC2-DIALOGUE-00` adoption checkpoint that again satisfies the complete dependency/IP + H1 lifecycle gate for the proposed exact version **before** any gameplay WP uses it. `WP-GC2-03` itself may never perform an implicit second adoption.
+- `NOT_MATERIAL` / `REJECTED` / `DEFERRED_NOT_ACQUIRED`: no Dialogue 2 runtime/module adoption is authorized. `WP-ART-UI-01` and later gameplay WPs use the accepted Core/local presentation path.
+- If later evidence shows Dialogue 2 would save material work or create an important quality gain, adoption must be explicitly reopened through `WP-GC2-DIALOGUE-00`. Before the new exact version can become `ADOPTED`, that reopening must again satisfy exact version, license/EULA, provisioning, compatibility, authority boundary, H1 lifecycle classification, composed lifecycle witness and replacement/uninstall path.
+- There is no implicit adoption from `WP-ART-UI-01`, `WP-GC2-03` or any other WP.
 
 ## Authority boundary
 
 - Arkus/Juego2 owns persistent world truth and consequential state.
-- Dialogue 2 owns local dialogue presentation/execution only inside its admitted scope.
+- Dialogue 2, when `ADOPTED`, owns only local dialogue presentation/execution inside its admitted scope.
 - Dialogue assets/IDs may locate presentation content but do not become canonical NPC identity or persistent world facts.
 - Whether Ink becomes an authored narrative source is a later explicit decision; this WP neither rejects nor canonizes Ink.
 
 ## PASS-before-work acceptance contract
 
-**Mandatory evidence:** complete `DEPENDENCY_IP_POLICY` exact-version adoption record; exact module/provisioning record; compile/import proof; complete retained/generated/manual-input lifecycle classification matrix; bounded `materialize -> observe -> reconcile -> rematerialize -> clean rebuild` witness with the actual admitted Dialogue fixture; authority/replacement boundary; one no-voice dummy conversation showing text + choice + one expression/gesture callback; explicit `ADOPTED` / `NOT_MATERIAL` / `REJECTED` disposition; and a clean removal/replacement note.
+**Mandatory evidence for every disposition:** explicit disposition; availability/materiality rationale; confirmation of whether any Dialogue 2 dependency is retained; the downstream presentation surface (`ADOPTED` adapter or Core/local); and the reopening rule.
 
-**FAIL if:** package version floats; exact license/EULA or distribution/linkage mode is unresolved; vendor bytes are committed contrary to license; update/security/replacement ownership is missing; Dialogue state silently becomes Arkus authority; material Dialogue state has no declared host/lifecycle behavior; the composed H1 lifecycle loses retained state, reports it as unsupported canonical drift, requires hand repair, or relies on undeclared local cache; the WP expands into real story/investigation content; a required foundation package is silently replaced; or the presentation cannot coexist with the accepted GC2 Core/H2F baseline.
+**Additional mandatory evidence for `ADOPTED`:** complete `DEPENDENCY_IP_POLICY` exact-version adoption record; exact module/provisioning record; compile/import proof; complete retained/generated/manual-input lifecycle classification matrix; bounded `materialize -> observe -> reconcile -> rematerialize -> clean rebuild` witness with the actual admitted Dialogue fixture; authority/replacement boundary; one no-voice dummy conversation showing text + choice + one expression/gesture callback; and a clean removal/replacement note.
+
+**No impossible evidence for non-adoption:** `NOT_MATERIAL`, `REJECTED` and `DEFERRED_NOT_ACQUIRED` must not be failed for lacking package bytes, import/compile proof, Dialogue fixtures, provisioning or lifecycle witnesses that only make sense after acquisition/adoption.
+
+**FAIL if:** no explicit disposition is recorded; a downstream WP is made economically dependent on buying Dialogue 2; Dialogue 2 is used despite a non-adopted disposition; `ADOPTED` is claimed without the complete dependency/IP + lifecycle evidence; package version floats; vendor bytes are committed contrary to license; Dialogue state silently becomes Arkus authority; the WP expands into real story/investigation content; a required foundation package is silently replaced; or another WP performs an implicit adoption/upgrade.
 
 ## Non-claims
 
-No `GC2-03` investigation-dialogue PASS, no final UI skin, no final narrative pipeline, no Ink decision and no voice acting.
+No requirement to purchase Dialogue 2, no `GC2-03` investigation-dialogue PASS, no final UI skin, no final narrative pipeline, no Ink decision and no voice acting.
