@@ -22,7 +22,7 @@ The scene must include enough real third-person use to judge together:
 - props/signage/vegetation/material/lighting language;
 - multiple factory-produced characters with visibly distinct wardrobe reads;
 - locomotion plus representative conversational/ambient/object animation vocabulary;
-- the approved no-voice Dialogue/UI presentation pattern;
+- the approved no-voice dialogue/UI presentation pattern from `WP-ART-UI-01`, regardless of whether its accepted runtime surface is Dialogue 2 or Core/local;
 - the H2F-admitted player/camera at real play scale.
 
 Temporary dialogue content is allowed. Deep systemic gameplay is not required.
@@ -68,7 +68,7 @@ Later work may add breadth, hero polish, new assets and special-case animation, 
 7. separately observable first-use versus repeated-use effort/operation evidence with counting assumptions and a real reuse reduction;
 8. residual ledger separating future breadth/polish from foundation-blocking gaps.
 
-**FAIL if:** the final port-town scene still reads as dressed greybox; the inland pilot is used as a substitute for final-setting approval; characters are mostly raw/clone source models; ordinary acting requires new bespoke animation plumbing; Dialogue uses an untouched stock skin as the final visual result; a fresh author cannot produce another bounded scene/group without implementation archaeology or new framework code; or a fundamental visual/pipeline uncertainty is mislabeled as future polish.
+**FAIL if:** the final port-town scene still reads as dressed greybox; the inland pilot is used as a substitute for final-setting approval; characters are mostly raw/clone source models; ordinary acting requires new bespoke animation plumbing; dialogue/UI uses an untouched stock/default presentation as the final visual result; a fresh author cannot produce another bounded scene/group without implementation archaeology or new framework code; or a fundamental visual/pipeline uncertainty is mislabeled as future polish.
 
 ## Allowed residuals
 
