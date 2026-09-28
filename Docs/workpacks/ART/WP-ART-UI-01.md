@@ -8,7 +8,33 @@ Binding decision: `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`
 
 ## Claim
 
-Juego2 has a coherent, reusable UI/presentation language suitable for a third-person game with no normal spoken voice acting, and Dialogue 2 can present conversations without reading as an untouched plugin skin.
+Juego2 has a coherent, reusable UI/presentation language suitable for a third-person game with no normal spoken voice acting. The visual result must be Juego2-specific and reusable whether the accepted dialogue runtime/presentation surface is Dialogue 2 or the admitted Core/local path.
+
+`WP-GC2-DIALOGUE-00` supplies a **disposition**, not an economic prerequisite to purchase Dialogue 2.
+
+## Legal implementation paths
+
+This WP has exactly two valid consumption paths.
+
+### Path A — Dialogue 2 adopted
+
+When `WP-GC2-DIALOGUE-00 = ADOPTED`, consume only the already accepted:
+
+- exact admitted Dialogue 2 version;
+- lawful provisioning record;
+- Juego2 adapter/authority boundary;
+- H1 lifecycle classification and composed witness;
+- admitted Dialogue 2 presentation surfaces.
+
+Do not upgrade, repin, reinstall through a different path or expand the plugin authority inside this WP. The final UI must still be Juego2-owned presentation/skin language rather than untouched plugin defaults.
+
+### Path B — Dialogue 2 not adopted
+
+When `WP-GC2-DIALOGUE-00 = NOT_MATERIAL`, `REJECTED` or `DEFERRED_NOT_ACQUIRED`, use the accepted Core/local presentation surface.
+
+This path is fully sufficient for PASS and must demonstrate the same visual/product claim without Dialogue 2. Missing Dialogue 2 package bytes, import proof or plugin-specific presentation surfaces are **not** blockers on this path.
+
+If work during this WP exposes a strong material reason to acquire Dialogue 2, do not adopt it here. Reopen `WP-GC2-DIALOGUE-00`; only an accepted `ADOPTED` disposition may switch this WP to Path A.
 
 ## Required work
 
@@ -41,22 +67,31 @@ The benchmark must show, on an accepted keeper-quality environment and factory-p
 5. camera + character + text coexistence at third-person scale;
 6. no spoken voice dependency.
 
+The benchmark must be equivalent in visual/readability ambition on Path A and Path B. Path B may use the admitted local/Core runtime plumbing, but it may not reduce the required typography, speaker treatment, choice treatment, prompts, pacing, acting/camera coexistence, Juego2 skin/visual language or presentation reuse.
+
 Typewriter/gibberish-style character sounds may be evaluated if useful, but they are not mandatory and must not substitute for later sound direction.
 
 ## Reusable skin/system rule
 
-Start from Dialogue 2 supplied UI/presentation surfaces where they save plumbing, but produce Juego2-owned skin/presentation assets and style tokens. Do not fork or reimplement branching/dialogue runtime merely to change the look.
+Juego2 owns the visual presentation language, style tokens and reusable presentation assets.
 
-The UI system should be reusable for future barks, questioning and directed scenes without each conversation inventing a separate canvas/layout.
+- On Path A, use admitted Dialogue 2 UI/presentation surfaces where they materially save plumbing, then skin them behind the accepted Juego2 boundary.
+- On Path B, build the same reusable Juego2 presentation language on the admitted Core/local surface without creating a speculative universal dialogue engine merely to imitate Dialogue 2.
+
+In both paths, the UI system should be reusable for future barks, questioning and directed scenes without each conversation inventing a separate canvas/layout.
 
 ## PASS-before-work acceptance contract
 
-**Mandatory evidence:** UI style sheet/tokens, approved Dialogue skin/prefab assets, third-person benchmark captures/video, choice/readability inspection, at least one narrow/long-text stress case, and a residual ledger for menus/HUD systems not yet needed.
+**Mandatory evidence on both paths:** accepted `GC2-DIALOGUE-00` disposition; UI style sheet/tokens; reusable Juego2 presentation assets/prefabs or equivalent local presentation components; third-person benchmark captures/video; choice/readability inspection; at least one narrow/long-text stress case; no-voice pacing evidence; acting/camera/readability coexistence; and a residual ledger for menus/HUD systems not yet needed.
 
-**FAIL if:** the final benchmark is visibly stock/default GC2 presentation; dialogue obscures critical character acting or scene readability; no-voice pacing is unreadable/tedious in the tested presentation; each conversation needs bespoke UI layout code; or this WP expands into quest/inventory/combat HUD systems without a causal need.
+**Additional Path A evidence:** the benchmark consumes the exact admitted Dialogue 2 adapter/presentation seam without changing its accepted version/provisioning/lifecycle disposition.
+
+**Path B evidence:** the benchmark consumes the admitted Core/local surface and proves that lack of Dialogue 2 does not reduce the presentation claim or reuse pattern.
+
+**FAIL if:** the final benchmark is visibly stock/default GC2/plugin/local presentation; dialogue obscures critical character acting or scene readability; no-voice pacing is unreadable/tedious in the tested presentation; each conversation needs bespoke UI layout code; Path B is blocked merely because Dialogue 2 has not been bought; this WP implicitly installs/adopts/upgrades Dialogue 2; or this WP expands into quest/inventory/combat HUD systems without a causal need.
 
 **Allowed residuals:** inventory/menu UI, combat HUD, minimap, journal, final accessibility breadth and story-specific cinematic overlays.
 
 ## Non-claims
 
-No finished narrative content, Ink runtime decision, Quest UI, Inventory UI, combat HUD or complete game menu suite.
+No requirement to purchase Dialogue 2, no finished narrative content, no Ink runtime decision, no Quest UI, Inventory UI, combat HUD or complete game menu suite.
