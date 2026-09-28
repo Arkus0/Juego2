@@ -1,0 +1,144 @@
+{
+    "upgraded": [],
+    "audit": {
+        "pipeline": "UniversalRenderPipelineAsset",
+        "materials": 22,
+        "green": true,
+        "rows": [
+            {
+                "material": "Assets/Juego2/Foundation/Rendering/J2_Sky_Overcast.mat#J2_Sky_Overcast",
+                "shader": "Skybox/Panoramic",
+                "source": "asset:Assets/Juego2/Foundation/Rendering/J2_Sky_Overcast.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Arroyo_water.mat#Arroyo_water",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Arroyo_water.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Bar_public.mat#Bar_public",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Bar_public.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Civic_public.mat#Civic_public",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Civic_public.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Closed_ordinary_fabric.mat#Closed_ordinary_fabric",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Closed_ordinary_fabric.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Everyday_shop.mat#Everyday_shop",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Everyday_shop.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Historic_lane.mat#Historic_lane",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Historic_lane.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Land.mat#Land",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Land.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Measurement_marker.mat#Measurement_marker",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Measurement_marker.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Open_site.mat#Open_site",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Open_site.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Ordinary_road.mat#Ordinary_road",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Ordinary_road.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Restricted_threshold.mat#Restricted_threshold",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Restricted_threshold.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Rio_water.mat#Rio_water",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Rio_water.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Scenic_only.mat#Scenic_only",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Scenic_only.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/X1_old_bridge.mat#X1_old_bridge",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/X1_old_bridge.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/X5_conditional_foot_crossing.mat#X5_conditional_foot_crossing",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/X5_conditional_foot_crossing.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/arroyo_water.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/arroyo_water.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/land_visual.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/land_visual.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/rio_water.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/rio_water.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/walkable_collision.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/walkable_collision.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/x1_crossing.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/x1_crossing.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/x5_crossing.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/x5_crossing.obj",
+                "status": "URP_OK"
+            }
+        ],
+        "failures": [],
+        "declared": []
+    }
+}

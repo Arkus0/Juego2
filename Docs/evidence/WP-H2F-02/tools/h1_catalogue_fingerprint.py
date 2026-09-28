@@ -25,7 +25,9 @@ def fp(effective_text, mapping_text):
         for v in sorted(e[13], key=key): ap(v)
         ap("<end>")
     return hashlib.sha256("".join(b).encode('utf-8')).hexdigest()
-mapping=open('Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json',encoding='utf-8').read()
-old=subprocess.check_output(['git','show','HEAD:Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json']).decode('utf-8')
-new=open('Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json',encoding='utf-8').read()
-print('old', fp(old,mapping)); print('new', fp(new,mapping))
+if __name__ == "__main__":
+    mapping = open('Unity/ArkusUnity/Assets/Arkus/H1/CatalogueMapping.json', encoding='utf-8').read()
+    old = subprocess.check_output(['git', 'show', 'HEAD:Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json']).decode('utf-8')
+    new = open('Docs/evidence/WP-H1-04/EFFECTIVE_INVENTORY.json', encoding='utf-8').read()
+    print('head', fp(old, mapping))
+    print('worktree', fp(new, mapping))

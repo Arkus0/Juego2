@@ -28,8 +28,10 @@ namespace Juego2.Foundation.Editor
             QuaterniusCentimetreModel,
             /// <summary>Base Characters bodies and their Juego2 derivatives: Humanoid with the explicit mapping.</summary>
             HumanoidBaseCharacter,
-            /// <summary>UAL1/UAL2 clip libraries: Humanoid, same mapping, `_Loop` clips loop, root motion baked into clips.</summary>
+            /// <summary>UAL1/UAL2 in-place clip libraries: Humanoid, same mapping, `_Loop` clips loop, root baked into the pose.</summary>
             UalClipLibrary,
+            /// <summary>UAL `_RM` libraries: as UalClipLibrary, but horizontal root motion and rotation stay root motion.</summary>
+            UalRootMotionLibrary,
         }
 
         public static void ApplyModelDefaults(ModelImporter importer, SourceFamily family)
@@ -51,6 +53,7 @@ namespace Juego2.Foundation.Editor
                     importer.importAnimation = false;
                     break;
                 case SourceFamily.UalClipLibrary:
+                case SourceFamily.UalRootMotionLibrary:
                     importer.animationType = ModelImporterAnimationType.Human;
                     importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
                     importer.importAnimation = true;
@@ -76,21 +79,41 @@ namespace Juego2.Foundation.Editor
             }
             hd.human = map.Values.ToArray();
             importer.humanDescription = hd;
-            if (family == SourceFamily.UalClipLibrary)
+            if (family == SourceFamily.UalClipLibrary || family == SourceFamily.UalRootMotionLibrary)
             {
                 var clips = importer.defaultClipAnimations;
-                foreach (var clip in clips) clip.loopTime = clip.name.EndsWith("_Loop", StringComparison.Ordinal);
+                foreach (var clip in clips) ApplyClipRules(clip, family == SourceFamily.UalRootMotionLibrary);
                 importer.clipAnimations = clips;
             }
             importer.SaveAndReimport();
             return string.Join(", ", BaseCharacterMapping.Keys.Select(k => k + "=" + (map.TryGetValue(k, out var b) ? b.boneName : "-")));
         }
 
+        /// <summary>
+        /// Clip rules (H2F-01 S07): loop exactly the `_Loop` clips. In-place libraries bake root rotation, height and XZ
+        /// into the pose, and keepOriginalOrientation is off (ART-01's measured fix for a 180-degree body/root
+        /// discrepancy on moving humanoids); the controller or agent drives motion. `_RM` libraries keep XZ and
+        /// rotation as root motion and bake only the height.
+        /// </summary>
+        public static void ApplyClipRules(ModelImporterClipAnimation clip, bool rootMotion)
+        {
+            clip.loopTime = clip.name.EndsWith("_Loop", StringComparison.Ordinal);
+            clip.lockRootHeightY = true;
+            clip.keepOriginalPositionY = true;
+            clip.lockRootRotation = !rootMotion;
+            clip.lockRootPositionXZ = !rootMotion;
+            clip.keepOriginalOrientation = false;
+            clip.keepOriginalPositionXZ = true;
+        }
+
         /// <summary>Stable codes for every Humanoid/clip import that no longer follows the frozen rules.</summary>
-        public static List<string> Verify(IEnumerable<string> humanoidModels, IEnumerable<string> ualLibraries)
+        public static List<string> Verify(IEnumerable<string> humanoidModels, IEnumerable<string> ualLibraries,
+            IEnumerable<string> ualRootMotionLibraries = null)
         {
             var findings = new List<string>();
-            foreach (var path in humanoidModels.Concat(ualLibraries))
+            var rootMotion = (ualRootMotionLibraries ?? Enumerable.Empty<string>()).ToList();
+            ualLibraries = ualLibraries.ToList();
+            foreach (var path in humanoidModels.Concat(ualLibraries).Concat(rootMotion))
             {
                 var importer = AssetImporter.GetAtPath(path) as ModelImporter;
                 if (importer == null) { findings.Add("J2_IMPORT_MODEL_MISSING:" + path); continue; }
@@ -100,11 +123,19 @@ namespace Juego2.Foundation.Editor
                 var avatar = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Avatar>().FirstOrDefault();
                 if (avatar == null || !avatar.isValid || !avatar.isHuman) findings.Add("J2_IMPORT_AVATAR_INVALID:" + path);
             }
-            foreach (var path in ualLibraries)
+            foreach (var (path, isRootMotion) in ualLibraries.Select(p => (p, false)).Concat(rootMotion.Select(p => (p, true))))
                 if (AssetImporter.GetAtPath(path) is ModelImporter importer)
                     foreach (var clip in importer.clipAnimations.Length > 0 ? importer.clipAnimations : importer.defaultClipAnimations)
+                    {
                         if (clip.loopTime != clip.name.EndsWith("_Loop", StringComparison.Ordinal))
                             findings.Add($"J2_IMPORT_LOOP_FLAG:{path}#{clip.name}");
+                        if (!clip.lockRootHeightY || clip.keepOriginalOrientation)
+                            findings.Add($"J2_IMPORT_ROOT_HEIGHT_OR_ORIENTATION:{path}#{clip.name}");
+                        if (!isRootMotion && (!clip.lockRootRotation || !clip.lockRootPositionXZ))
+                            findings.Add($"J2_IMPORT_ROOT_NOT_IN_PLACE:{path}#{clip.name}");
+                        if (isRootMotion && (clip.lockRootRotation || clip.lockRootPositionXZ))
+                            findings.Add($"J2_IMPORT_ROOT_MOTION_BAKED:{path}#{clip.name}");
+                    }
             return findings;
         }
     }

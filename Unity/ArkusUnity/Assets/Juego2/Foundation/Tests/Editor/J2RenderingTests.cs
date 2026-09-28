@@ -55,6 +55,23 @@ namespace Juego2.Foundation.Tests
         }
 
         [Test]
+        public void ClipRules_InPlaceBakesRootAndRootMotionKeepsIt()
+        {
+            var walk = new ModelImporterClipAnimation { name = "Walk_Loop", keepOriginalOrientation = true };
+            var paper = new ModelImporterClipAnimation { name = "Idle_Paper", loopTime = true };
+            J2ImportConventions.ApplyClipRules(walk, rootMotion: false);
+            J2ImportConventions.ApplyClipRules(paper, rootMotion: false);
+            Assert.That(walk.loopTime, Is.True);
+            Assert.That(paper.loopTime, Is.False, "only *_Loop clips loop");
+            Assert.That(walk.lockRootRotation && walk.lockRootHeightY && walk.lockRootPositionXZ, Is.True, "in-place: root baked into the pose");
+            Assert.That(walk.keepOriginalOrientation, Is.False, "ART-01's 180-degree body/root fix");
+            var rm = new ModelImporterClipAnimation { name = "Walk_Loop" };
+            J2ImportConventions.ApplyClipRules(rm, rootMotion: true);
+            Assert.That(rm.lockRootPositionXZ || rm.lockRootRotation, Is.False, "_RM keeps XZ and rotation as root motion");
+            Assert.That(rm.lockRootHeightY, Is.True);
+        }
+
+        [Test]
         public void ImportConventions_FailClosedOnMissingModels()
         {
             var findings = J2ImportConventions.Verify(new[] { "Assets/Missing/Body.fbx" }, new[] { "Assets/Missing/UAL.fbx" });

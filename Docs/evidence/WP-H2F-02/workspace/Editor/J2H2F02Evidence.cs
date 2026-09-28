@@ -30,7 +30,8 @@ namespace Juego2.H2F02.Evidence
         const string ArtScene = "Assets/Arkus/ART/Art01Benchmark.unity";
         const string Citizen = "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx";
         const string Ual1 = "Assets/Arkus/ART/External/UAL/UAL1.fbx";
-        static readonly string[] UalLibraries = { "Assets/H2F01Inputs/Animation/UAL2.fbx", "Assets/H2F01Inputs/Animation/UAL1_RM.fbx", "Assets/H2F01Inputs/Animation/UAL2_RM.fbx" };
+        static readonly string[] UalLibraries = { "Assets/H2F01Inputs/Animation/UAL2.fbx" };
+        static readonly string[] UalRootMotionLibraries = { "Assets/H2F01Inputs/Animation/UAL1_RM.fbx", "Assets/H2F01Inputs/Animation/UAL2_RM.fbx" };
         const string Dir = "Assets/H2F02Evidence";
         static readonly string[] ContentRoots = { "Assets/Arkus/ART", "Assets/H2F01Inputs", "Assets/Juego2", "Assets/Arkus/CITY" };
 
@@ -72,8 +73,10 @@ namespace Juego2.H2F02.Evidence
                 var mapping = new List<string> { "citizen: " + J2ImportConventions.ApplyHumanoid(Citizen, J2ImportConventions.SourceFamily.HumanoidBaseCharacter) };
                 foreach (var ual in UalLibraries.Concat(new[] { Ual1 }))
                     mapping.Add(Path.GetFileName(ual) + ": " + J2ImportConventions.ApplyHumanoid(ual, J2ImportConventions.SourceFamily.UalClipLibrary));
+                foreach (var ual in UalRootMotionLibraries)
+                    mapping.Add(Path.GetFileName(ual) + ": " + J2ImportConventions.ApplyHumanoid(ual, J2ImportConventions.SourceFamily.UalRootMotionLibrary));
                 r.humanoidMapping = mapping.ToArray();
-                r.importFindings = J2ImportConventions.Verify(new[] { Citizen }, UalLibraries.Concat(new[] { Ual1 })).ToArray();
+                r.importFindings = J2ImportConventions.Verify(new[] { Citizen }, UalLibraries.Concat(new[] { Ual1 }), UalRootMotionLibraries).ToArray();
                 var avatar = AssetDatabase.LoadAllAssetsAtPath(Citizen).OfType<Avatar>().FirstOrDefault();
                 r.citizenAvatarValid = avatar != null && avatar.isValid && avatar.isHuman;
             });
@@ -91,7 +94,7 @@ namespace Juego2.H2F02.Evidence
                 var controller = UalLocomotion();
                 var playerPreset = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<J2CharacterPreset>(J2FoundationBaseline.PlayerPreset));
                 playerPreset.name = "J2_Player (evidence copy)";
-                playerPreset.model = AssetDatabase.LoadAssetAtPath<GameObject>(Citizen);
+                playerPreset.model = ArtPalettePrefab(Citizen, Dir + "/J2_Citizen.prefab");
                 playerPreset.locomotionController = controller;
                 var npcPreset = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<J2CharacterPreset>(J2FoundationBaseline.NpcPreset));
                 npcPreset.name = "J2_Npc_Civilian (evidence copy)";
@@ -99,7 +102,6 @@ namespace Juego2.H2F02.Evidence
                 npcPreset.locomotionController = controller;
                 var start = Ground(new Vector3(0, 40, -8));
                 var player = J2Gc2Presets.MaterializeCharacter(playerPreset, "j2.char.player", start);
-                player.transform.rotation = Quaternion.LookRotation(Vector3.forward); // walking the route toward the bar
                 var npc = J2Gc2Presets.MaterializeCharacter(npcPreset, "j2.npc.evidence_a", Ground(new Vector3(1.6f, 40, -5.5f)));
                 npc.transform.rotation = Quaternion.Euler(0, 200, 0);
                 J2Gc2Presets.MaterializePlayerCamera(AssetDatabase.LoadAssetAtPath<J2CameraPreset>(J2FoundationBaseline.CameraPreset));
@@ -111,7 +113,8 @@ namespace Juego2.H2F02.Evidence
                 r.enabledInputBindings = InputBindings(scene);
                 PoseHumans(UalClip(Ual1, "Idle_Loop"));
                 var body = player.transform.position;
-                captures.Add(Capture("s06_third_person_player", body + new Vector3(0.6f, 1.1f, -3.2f), body + new Vector3(0, 0.5f, 2.0f), 55));
+                // edit-time view of the materialized preset (GC2 turns the body along movement at play time; 01A C02g/C07)
+                captures.Add(Capture("s06_gc2_player_citizen", body + new Vector3(1.3f, 1.4f, 2.8f), body + Vector3.up * 0.9f, 50));
                 captures.Add(Capture("s06_player_and_npc", body + new Vector3(-1.6f, 0.9f, 3.4f), body + new Vector3(0.8f, 0.3f, 1.2f), 55));
                 AnimationMode.StopAnimationMode();
                 EditorSceneManager.SaveScene(scene, Dir + "/RouteEvidence.unity", true);
@@ -189,8 +192,8 @@ namespace Juego2.H2F02.Evidence
             var scatter = ScriptableObject.CreateInstance<J2ScatterProfile>();
             scatter.name = "art_nature";
             scatter.entries = new[] { "Bush_Common", "Fern_1", "Rock_Medium_1", "Bush_Common_Flowers" }
-                .Select(id => AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/Arkus/ART/External/Nature/Models/{id}.fbx"))
-                .Where(p => p != null).Select(p => new J2ScatterProfile.Entry { prefab = p, weight = 1, scaleBand = new Vector2(0.8f, 1.2f) }).ToArray();
+                .Select(id => ArtPalettePrefab($"Assets/Arkus/ART/External/Nature/Models/{id}.fbx", $"{Dir}/Nature/{id}.prefab"))
+                .Select(p => new J2ScatterProfile.Entry { prefab = p, weight = 1, scaleBand = new Vector2(0.8f, 1.2f) }).ToArray();
             scatter.density = 0.45f; scatter.minSpacing = 1.4f; scatter.exclusionMargin = 0.6f;
             var nature = J2ScatterRealizer.Realize(new GameObject("nature").transform, new Bounds(Vector3.zero, new Vector3(40, 6, 40)), scatter, 20260928);
             r.scatterInstances = nature.transform.childCount;
@@ -241,6 +244,39 @@ namespace Juego2.H2F02.Evidence
         {
             Physics.SyncTransforms();
             return Physics.Raycast(from, Vector3.down, out var hit, 80) ? hit.point : new Vector3(from.x, 0, from.z);
+        }
+
+        /// <summary>
+        /// H2F-01 route C: Source models render with the project-owned URP ART palette. Same name mapping as ART-01's
+        /// ForSource, but the migrated ART material assets are loaded directly (ART's Get() would recreate Standard).
+        /// </summary>
+        static GameObject ArtPalettePrefab(string model, string path)
+        {
+            J2FoundationBaseline.EnsureFolder(Path.GetDirectoryName(path).Replace('\\', '/'));
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(model) ?? throw new Exception("H2F02_MODEL_MISSING " + model));
+            foreach (var renderer in instance.GetComponentsInChildren<Renderer>(true))
+                renderer.sharedMaterials = renderer.sharedMaterials.Select(m => AssetDatabase.LoadAssetAtPath<Material>($"Assets/Arkus/ART/Materials/{Palette(m.name)}.mat")
+                    ?? throw new Exception("H2F02_PALETTE_MATERIAL_MISSING " + m.name)).ToArray();
+            var prefab = PrefabUtility.SaveAsPrefabAsset(instance, path);
+            UnityEngine.Object.DestroyImmediate(instance);
+            return prefab;
+        }
+
+        static string Palette(string source)
+        {
+            if (source.Contains("Bark")) return "Bark";
+            if (source.Contains("Leaves")) return "Leaves";
+            if (source.Contains("Flowers")) return "Flowers";
+            if (source == "Grass") return "GrassGround";
+            if (source.Contains("Rocks")) return "Rock";
+            if (source.Contains("Regular_Male") || source.Contains("Skin_Regular_Male_Light")) return "Skin";
+            if (source.Contains("Eye")) return "Eye";
+            if (source.Contains("Hair")) return "Hair";
+            if (source.Contains("Cloth_D8D2C4")) return "Shirt";
+            if (source.Contains("Cloth_2E4A4E")) return "Coat";
+            if (source.Contains("Cloth_3A3530")) return "Trousers";
+            if (source.Contains("Cloth_4A3222")) return "Shoes";
+            throw new Exception("H2F02_SOURCE_MATERIAL_UNMAPPED " + source);
         }
 
         static AnimatorController UalLocomotion()

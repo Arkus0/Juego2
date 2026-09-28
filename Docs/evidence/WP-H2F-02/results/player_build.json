@@ -1,0 +1,7 @@
+{
+  "result": "Succeeded",
+  "totalErrors": 0,
+  "totalWarnings": 0,
+  "platform": "StandaloneWindows64",
+  "playerAssemblies": ["Arkus.H1.Projection.Runtime.dll", "GameCreator.Runtime.Core.dll", "Juego2.Arkus.dll", "Juego2.Foundation.dll", "Juego2.Gc2Adapter.dll"]
+}

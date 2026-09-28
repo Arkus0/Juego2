@@ -107,9 +107,11 @@ row("import.humanoid", "Humanoid avatar with the explicit mapping Hips=pelvis, S
     "H2F-02 (J2ImportConventions)", "RETAINED_REALIZATION", "model importer settings in the owner's derivative .meta (committed by ART) or regenerated for restored vault copies",
     "J2ImportConventions.BaseCharacterMapping", "J2ImportConventions.ApplyHumanoid", "J2ImportConventions.Verify: J2_IMPORT_HIPS_NOT_PELVIS, J2_IMPORT_AVATAR_INVALID",
     "never", "reapplied deterministically after restoration", "results/representative.json")
-row("import.ual", "UAL1/UAL2 (+ _RM) clip libraries: Humanoid, same mapping, loopTime exactly on *_Loop clips", "H2F-02 (J2ImportConventions)", "RETAINED_REALIZATION",
-    "importer settings of the clip-library copies", "J2ImportConventions (UalClipLibrary)", "J2ImportConventions.ApplyHumanoid(path, UalClipLibrary)",
-    "J2_IMPORT_LOOP_FLAG per clip", "never", "reapplied after restoration; ART-01 converges its own UAL1 importer at rebase", "results/representative.json")
+row("import.ual", "UAL1/UAL2 clip libraries: Humanoid, same mapping, loopTime exactly on *_Loop clips, root rotation/height/XZ baked into the pose (in-place) with keepOriginalOrientation off; _RM libraries keep XZ/rotation as root motion",
+    "H2F-02 (J2ImportConventions)", "RETAINED_REALIZATION", "importer settings of the clip-library copies",
+    "J2ImportConventions (UalClipLibrary / UalRootMotionLibrary)", "J2ImportConventions.ApplyHumanoid(path, family)",
+    "J2_IMPORT_LOOP_FLAG, J2_IMPORT_ROOT_NOT_IN_PLACE, J2_IMPORT_ROOT_MOTION_BAKED, J2_IMPORT_ROOT_HEIGHT_OR_ORIENTATION per clip", "never",
+    "reapplied after restoration; ART-01 converges its own UAL1 loop rule at rebase", "results/representative.json")
 row("anim.controllers", "UAL locomotion AnimatorController (1D blend on Speed, layer 0 IK pass) and other owner controllers", "H2F-02 recipe", "RETAINED_REALIZATION",
     "owner asset (ART/fixture); references restored clips by deterministic GUID", "the controller asset", "authored by the owner", "outside the H1 catalogue universe",
     "never", "survives; clips resolve after lawful restoration", "Docs/evidence/WP-H2F-01A/PUBLIC_AUTHORING_SURFACE.md")

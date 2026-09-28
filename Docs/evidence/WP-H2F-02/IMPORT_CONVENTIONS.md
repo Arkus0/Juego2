@@ -20,7 +20,7 @@ Project-wide rules frozen before CITY-07/H2 author retained content. They are en
 - Every family: no cameras/lights imported; materials `ImportViaMaterialDescription`, which yields URP/Lit under the baseline.
 - `QuaterniusCentimetreModel` (Medieval/Nature/Props Source FBX): vertices are centimetres (ART-01 measurement, H2F-01), so `globalScale 0.01` with `useFileScale off`. No animation.
 - `HumanoidBaseCharacter` (Base Characters bodies and their derivatives): Humanoid, create-from-this-model, no clips, **explicit mapping** below.
-- `UalClipLibrary` (UAL1/UAL2 and `_RM`): Humanoid, same mapping, clips imported.
+- `UalClipLibrary` (UAL1/UAL2) and `UalRootMotionLibrary` (`_RM`): Humanoid, same mapping, clips imported.
 - Textures follow the owner's import (ART). The foundation imposes only sRGB colour for its own generated sky texture.
 
 ## Humanoid / retarget rule
@@ -34,7 +34,12 @@ Unity's auto-mapping on the Quaternius universal skeleton picks the ground `root
 ## Clips and root motion
 
 - `loopTime` is set **exactly** on clips whose name ends in `_Loop` (H2F-01 `BASELINE_INTENT` #5).
-- UAL clips are in-place by default, driven by controller or agent speed. Root motion is opt-in per use through the `_RM` library variants.
+- **In-place libraries** (`UalClipLibrary`; the default, driven by controller or agent speed):
+  - root rotation, height and XZ are baked into the pose (`lockRootRotation`, `lockRootHeightY`, `lockRootPositionXZ` on);
+  - `keepOriginalOrientation` is off, which is ART-01's measured fix for a 180° body/root discrepancy on moving humanoids;
+  - `keepOriginalPositionY` and `keepOriginalPositionXZ` are on.
+- **Root-motion libraries** (`UalRootMotionLibrary`, the `_RM` variants): XZ and rotation stay root motion; only the height is baked.
+- `Verify` reports `J2_IMPORT_ROOT_NOT_IN_PLACE`, `J2_IMPORT_ROOT_MOTION_BAKED` and `J2_IMPORT_ROOT_HEIGHT_OR_ORIENTATION`.
 - Locomotion controller recipe (01A): a 1D blend on `Speed`, `Idle_Loop` at 0 and `Walk_Loop` at 1, layer 0 IK Pass on.
 
 ## Colliders, navigation, LOD
@@ -59,5 +64,5 @@ A `J2GeneratedRealization` subtree, a NavMeshData, a bake, a GC2 `ChangeModel` c
 ART-01 must run its effective candidate on this baseline (H2F sequencing). The workspace evidence shows exactly where its paused checkpoint `174d05d2` diverges:
 
 1. `Art01Materials.Get/Remap` hard-binds `Shader.Find("Standard")` and reverts converted materials (H2F-01 finding). It must create URP/Lit materials (`J2MaterialMigration.LitShader()`) and pass `J2ShaderAudit`. Evidence: `J2MaterialMigration` migrated all 25 ART materials in the workspace.
-2. ART's `Art01ModelPostprocessor` sets `loopTime` on idle/walk/jog clips of its UAL1 copy. That gives 29 `J2_IMPORT_LOOP_FLAG` findings against the foundation's `_Loop` rule (`results/representative.json`). ART converges to `J2ImportConventions` or drops its UAL rule.
+2. ART's `Art01ModelPostprocessor` sets `loopTime` on idle/walk/jog clips of its UAL1 copy. That gives 29 `J2_IMPORT_LOOP_FLAG` findings against the foundation's `_Loop` rule (`results/representative.json`); its root settings already match the in-place rule. ART converges to `J2ImportConventions` or drops its UAL rule.
 3. `Art01WalkInspector` reads the legacy Input Manager. It is one of the two named `LegacyInputTransitionTools`, which are why `activeInputHandler = Both`. It moves to the Input System / `J2_Input` before the project can switch to Input System only.

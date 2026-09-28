@@ -1,0 +1,2231 @@
+{
+    "candidateNote": "values produced by the WP-H2F-02 evidence workspace",
+    "unityVersion": "6000.3.24f1",
+    "pipeline": "J2_URP_High",
+    "gc2Core": "PROVISIONED_CORE_2.19.61",
+    "migrated": [
+        "Assets/Arkus/ART/Materials/Bark.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Coat.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Cobble.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Eye.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Flowers.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Glass.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/GrassGround.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Hair.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Iron.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Leaves.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Plaster.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/PropMetal.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/PropWood.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Rock.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Shirt.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Shoes.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/ShutterGreen.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Skin.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Stone.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/StoneShadow.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/StoneTrim.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/TileWet.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Trousers.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/Water.mat -> Universal Render Pipeline/Lit",
+        "Assets/Arkus/ART/Materials/WoodDark.mat -> Universal Render Pipeline/Lit"
+    ],
+    "humanoidMapping": [
+        "citizen: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03",
+        "UAL2.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03",
+        "UAL1_RM.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03",
+        "UAL2_RM.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03",
+        "UAL1.fbx: Hips=pelvis, Spine=spine_01, Chest=spine_02, UpperChest=spine_03"
+    ],
+    "importFindings": [
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Climb_Down_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Climb_Left_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Climb_Right_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Climb_Up_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crawl_Bwd_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crawl_Fwd_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crawl_Left_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crawl_Right_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crouch_Bwd_L_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crouch_Bwd_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crouch_Bwd_R_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crouch_Fwd_L_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crouch_Fwd_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crouch_Fwd_R_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crouch_Left_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Crouch_Right_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Dance_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Driving_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Idle_Paper",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Idle_Rock",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Idle_Scissors",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Jump_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Push_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Sitting_Nodding_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Sitting_Talking_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Spell_Double_Shoot_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Sprint_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Swim_Fwd_Loop",
+        "J2_IMPORT_LOOP_FLAG:Assets/Arkus/ART/External/UAL/UAL1.fbx#Armature|Sword_Idle"
+    ],
+    "lintFindings": [],
+    "identityFields": [],
+    "enabledInputBindings": [
+        "j2.char.player.m_Kernel.m_Player.m_InputMove.m_Input = GameCreator.Runtime.Common.InputValueVector2InputAction J2_Input/Move",
+        "j2.npc.evidence_a.m_Kernel.m_Player.m_InputMove.m_Input = GameCreator.Runtime.Common.InputValueVector2None ",
+        "Camera Shot.m_ShotType.m_Zoom.m_InputZoom.m_Input = GameCreator.Runtime.Common.InputValueVector2InputAction J2_Input/Zoom",
+        "Camera Shot.m_ShotType.m_ThirdPerson.m_InputRotate.m_Input = GameCreator.Runtime.Common.InputValueVector2InputAction J2_Input/Look"
+    ],
+    "bindings": [
+        "j2.char.player",
+        "j2.npc.evidence_a"
+    ],
+    "errors": [],
+    "captures": [
+        "captures/route_puente_s02.png",
+        "captures/route_w12_casco.png",
+        "captures/route_roof_eave_corner.png",
+        "captures/route_facade_stone_close.png",
+        "captures/route_f01_exterior.png",
+        "captures/route_f01_threshold.png",
+        "captures/s06_third_person_player.png",
+        "captures/s06_player_and_npc.png",
+        "captures/worldbuilding_junction_oblique.png",
+        "captures/worldbuilding_water_window.png"
+    ],
+    "routeAudit": {
+        "pipeline": "UniversalRenderPipelineAsset",
+        "materials": 227,
+        "green": true,
+        "rows": [
+            {
+                "material": "Assets/Arkus/ART/Materials/Cobble.mat#Cobble",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.street.s02_w12_casco_microB",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.street.s02_w12_casco_microB",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.kerb.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.kerb.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.bridge.x1.arch_span",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.bridge.x1.left.parapet",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.bridge.x1.left.coping",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.river.left.embankment",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.river.left.embankment_coping",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.bridge.x1.right.parapet",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.bridge.x1.right.coping",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.river.right.embankment",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.river.right.embankment_coping",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Water.mat#Water",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.river.water",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/GrassGround.mat#GrassGround",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.site.left.scenic",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/GrassGround.mat#GrassGround",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.site.right.scenic",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Wall_UnevenBrick_Window_Wide_Flat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Wall_UnevenBrick_Window_Wide_Flat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Wall_UnevenBrick_Window_Wide_Flat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Window_Wide_Flat1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Glass.mat#Glass",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Window_Wide_Flat1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/ShutterGreen.mat#ShutterGreen",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:WindowShutters_Wide_Flat_Closed",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Wall_UnevenBrick_Straight",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Wall_UnevenBrick_Straight",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Wall_UnevenBrick_Straight",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Wall_UnevenBrick_Door_Flat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Wall_UnevenBrick_Door_Flat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Wall_UnevenBrick_Door_Flat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:DoorFrame_Flat_Brick",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Door_3_Flat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Iron.mat#Iron",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Door_3_Flat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.S02_stone_house.0.-1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Corner_Exterior_Brick",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.S02_stone_house.0.-1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.S02_stone_house.0.1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.S02_stone_house.0.1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.0.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.100.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.1.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.101.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.2.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.102.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.200.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.300.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.201.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/ShutterGreen.mat#ShutterGreen",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:WindowShutters_Wide_Flat_Open",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.301.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.202.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.302.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.203.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.303.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.204.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.S02_stone_house.304.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.S02_stone_house.1.-1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.S02_stone_house.1.-1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.S02_stone_house.1.1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.S02_stone_house.1.1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.S02_stone_house.front",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.S02_stone_house.back",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.S02_stone_house.left",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.S02_stone_house.right",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Roof_RoundTiles_6x10",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/TileWet.mat#TileWet",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Roof_RoundTiles_6x10",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.gable.S02_stone_house.front",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.gable.S02_stone_house.back",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.eave.S02_stone_house.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.eave.S02_stone_house.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_left_house.0.-1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_left_house.0.-1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_left_house.0.1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_left_house.0.1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.0.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.100.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.1.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.101.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.2.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.102.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.200.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.300.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.201.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.301.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.202.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.302.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.203.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.303.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.204.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_left_house.304.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_left_house.1.-1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_left_house.1.-1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_left_house.1.1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_left_house.1.1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.W12_left_house.front",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.W12_left_house.back",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.W12_left_house.left",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.W12_left_house.right",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.gable.W12_left_house.front",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.gable.W12_left_house.back",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.eave.W12_left_house.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.eave.W12_left_house.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_right_house.0.-1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_right_house.0.-1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_right_house.0.1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_right_house.0.1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.0.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.100.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.1.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.101.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.2.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.102.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.200.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.300.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.201.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.301.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.202.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.302.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.203.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.303.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.204.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.W12_right_house.304.3.30",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_right_house.1.-1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_right_house.1.-1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_right_house.1.1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.W12_right_house.1.1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.W12_right_house.front",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.W12_right_house.back",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.W12_right_house.left",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.W12_right_house.right",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.gable.W12_right_house.front",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.gable.W12_right_house.back",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.eave.W12_right_house.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.eave.W12_right_house.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.F01_bar_exterior_threshold.0.-1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.F01_bar_exterior_threshold.0.-1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.F01_bar_exterior_threshold.0.1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.F01_bar_exterior_threshold.0.1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.0.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.100.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.1.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.101.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.2.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.102.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.3.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.103.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.200.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.300.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.201.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.301.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.202.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.302.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.203.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.303.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.204.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.304.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.205.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.305.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.206.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.wall.F01_bar_exterior_threshold.306.3.42",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.F01_bar_exterior_threshold.1.-1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.F01_bar_exterior_threshold.1.-1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.F01_bar_exterior_threshold.1.1.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.corner_closure.F01_bar_exterior_threshold.1.1.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.F01_bar_exterior_threshold.front.0",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.F01_bar_exterior_threshold.front.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.F01_bar_exterior_threshold.back",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.F01_bar_exterior_threshold.left",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.plinth.F01_bar_exterior_threshold.right",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/TileWet.mat#TileWet",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Roof_RoundTiles_8x14",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Roof_RoundTiles_8x14",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.gable.F01_bar_exterior_threshold.front",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.gable.F01_bar_exterior_threshold.back",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.eave.F01_bar_exterior_threshold.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.eave.F01_bar_exterior_threshold.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.threshold.landing",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.threshold.step",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/TileWet.mat#TileWet",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.roof.threshold.lean_to",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.porch.post_foot.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.porch.post.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.porch.post_foot.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.porch.post.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.porch.fascia",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.sign.board",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Library/unity default resources#Font Material",
+                "shader": "GUI/Text Shader",
+                "source": "renderer:art01.f01.sign.lettering",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropMetal.mat#PropMetal",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Lantern_Wall",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.interior.floor",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.interior.ceiling",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropWood.mat#PropWood",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Table_Large",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropMetal.mat#PropMetal",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Table_Large",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropWood.mat#PropWood",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Stool",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropWood.mat#PropWood",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Chair_1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropMetal.mat#PropMetal",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Chair_1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.counter.top",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropWood.mat#PropWood",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.counter.front",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.counter.stile.0",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.counter.stile.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.counter.stile.2",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.counter.stile.3",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.counter.stile.4",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropWood.mat#PropWood",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Mug",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropMetal.mat#PropMetal",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Mug",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.w12_casco.right.retaining",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.w12_casco.right.coping",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Hair.mat#Hair",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Eyebrows",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Eye.mat#Eye",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Eyes",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Hair.mat#Hair",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Forastero_Hair_Buzzed",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Coat.mat#Coat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Forastero_jacket",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Shirt.mat#Shirt",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Forastero_shirt_long",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Shoes.mat#Shoes",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Forastero_shoes",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Trousers.mat#Trousers",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Forastero_trousers",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Skin.mat#Skin",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:RegularMale",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Bark.mat#Bark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:CommonTree_1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:CommonTree_1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Bush_Common_Flowers",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Flowers.mat#Flowers",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Bush_Common_Flowers",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Fern_1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Rock.mat#Rock",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Rock_Medium_1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropWood.mat#PropWood",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Bench",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropMetal.mat#PropMetal",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Bench",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropWood.mat#PropWood",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Barrel",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropMetal.mat#PropMetal",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Barrel",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropWood.mat#PropWood",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Crate_Wooden",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropMetal.mat#PropMetal",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Crate_Wooden",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.garden.retaining.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.garden.coping.-1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Bush_Common",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.garden.retaining.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:art01.f01.garden.coping.1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Juego2/Foundation/Rendering/J2_Sky_Overcast.mat#J2_Sky_Overcast",
+                "shader": "Skybox/Panoramic",
+                "source": "skybox",
+                "status": "URP_OK"
+            }
+        ],
+        "failures": [],
+        "declared": []
+    },
+    "contentAudit": {
+        "pipeline": "UniversalRenderPipelineAsset",
+        "materials": 109,
+        "green": true,
+        "rows": [
+            {
+                "material": "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx#Skin_Regular_Male_Light",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx#Cloth_4A3222",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx#Cloth_2E4A4E",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx#Cloth_D8D2C4",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx#Hair_3A2A20",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx#Cloth_3A3530",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx#MI_Eyes",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Derived/Characters/Townsfolk_Forastero.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Characters/Materials/Regular_Male_FullBody-MI_Regular_Male.mat#Regular_Male_FullBody-MI_Regular_Male",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Characters/Materials/Regular_Male_FullBody-MI_Regular_Male.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Characters/Materials/T_Eye_Brown.mat#T_Eye_Brown",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Characters/Materials/T_Eye_Brown.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Characters/Materials/T_Hair_1_BaseColor.mat#T_Hair_1_BaseColor",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Characters/Materials/T_Hair_1_BaseColor.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Materials/T_Brick_BaseColor.mat#T_Brick_BaseColor",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Materials/T_Brick_BaseColor.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Materials/T_Plaster_BaseColor.mat#T_Plaster_BaseColor",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Materials/T_Plaster_BaseColor.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Materials/T_RoundRocks_BaseColor.mat#T_RoundRocks_BaseColor",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Materials/T_RoundRocks_BaseColor.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Materials/T_RoundTiles_BaseColor.mat#T_RoundTiles_BaseColor",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Materials/T_RoundTiles_BaseColor.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Materials/T_UnevenBrick_BaseColor.mat#T_UnevenBrick_BaseColor",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Materials/T_UnevenBrick_BaseColor.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Materials/T_WoodTrim_BaseColor.mat#T_WoodTrim_BaseColor",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Materials/T_WoodTrim_BaseColor.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Models/Materials/Corner_Exterior_Brick-MI_RockTrim.mat#Corner_Exterior_Brick-MI_RockTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Models/Materials/Corner_Exterior_Brick-MI_RockTrim.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Models/Materials/Door_3_Flat-MI_MetalOrnaments.mat#Door_3_Flat-MI_MetalOrnaments",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Models/Materials/Door_3_Flat-MI_MetalOrnaments.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Models/Materials/DoorFrame_Flat_Brick-MI_RockTrim.mat#DoorFrame_Flat_Brick-MI_RockTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Models/Materials/DoorFrame_Flat_Brick-MI_RockTrim.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Models/Materials/Prop_Chimney-MI_RockTrim.mat#Prop_Chimney-MI_RockTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Models/Materials/Prop_Chimney-MI_RockTrim.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Medieval/Models/Materials/Window_Wide_Flat1-MI_WindowGlass.mat#Window_Wide_Flat1-MI_WindowGlass",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Medieval/Models/Materials/Window_Wide_Flat1-MI_WindowGlass.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Nature/Materials/Bark_NormalTree.mat#Bark_NormalTree",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Nature/Materials/Bark_NormalTree.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Nature/Materials/Grass.mat#Grass",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Nature/Materials/Grass.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Nature/Materials/Rocks_Diffuse.mat#Rocks_Diffuse",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Nature/Materials/Rocks_Diffuse.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Nature/Models/Materials/Bush_Common-Leaves_TwistedTree.mat#Bush_Common-Leaves_TwistedTree",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Nature/Models/Materials/Bush_Common-Leaves_TwistedTree.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Nature/Models/Materials/Bush_Common_Flowers-Leaves_NormalTree.mat#Bush_Common_Flowers-Leaves_NormalTree",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Nature/Models/Materials/Bush_Common_Flowers-Leaves_NormalTree.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Nature/Models/Materials/CommonTree_1-Leaves_NormalTree.mat#CommonTree_1-Leaves_NormalTree",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Nature/Models/Materials/CommonTree_1-Leaves_NormalTree.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Props/Materials/T_Trim_Furniture_BaseColor.mat#T_Trim_Furniture_BaseColor",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Props/Materials/T_Trim_Furniture_BaseColor.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Props/Materials/T_Trim_Metal_BaseColor.mat#T_Trim_Metal_BaseColor",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/Props/Materials/T_Trim_Metal_BaseColor.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/UAL/Materials/UAL1-M_Joints.mat#UAL1-M_Joints",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/UAL/Materials/UAL1-M_Joints.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/UAL/Materials/UAL1-M_Main.mat#UAL1-M_Main",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/External/UAL/Materials/UAL1-M_Main.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Bark.mat#Bark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Bark.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Coat.mat#Coat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Coat.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Cobble.mat#Cobble",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Cobble.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Eye.mat#Eye",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Eye.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Flowers.mat#Flowers",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Flowers.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Glass.mat#Glass",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Glass.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/GrassGround.mat#GrassGround",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/GrassGround.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Hair.mat#Hair",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Hair.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Iron.mat#Iron",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Iron.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Leaves.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Plaster.mat#Plaster",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Plaster.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropMetal.mat#PropMetal",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/PropMetal.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/PropWood.mat#PropWood",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/PropWood.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Rock.mat#Rock",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Rock.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Shirt.mat#Shirt",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Shirt.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Shoes.mat#Shoes",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Shoes.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/ShutterGreen.mat#ShutterGreen",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/ShutterGreen.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Skin.mat#Skin",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Skin.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Stone.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneShadow.mat#StoneShadow",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/StoneShadow.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/StoneTrim.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/TileWet.mat#TileWet",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/TileWet.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Trousers.mat#Trousers",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Trousers.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Water.mat#Water",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/Water.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/WoodDark.mat#WoodDark",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/ART/Materials/WoodDark.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/Animation/UAL1_RM.fbx#M_Joints",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/Animation/UAL1_RM.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/Animation/UAL1_RM.fbx#M_Main",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/Animation/UAL1_RM.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/Animation/UAL2.fbx#M_Joints",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/Animation/UAL2.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/Animation/UAL2.fbx#M_Main",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/Animation/UAL2.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/Animation/UAL2_RM.fbx#M_Joints",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/Animation/UAL2_RM.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/Animation/UAL2_RM.fbx#M_Main",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/Animation/UAL2_RM.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/M_BaseMaterial.shadergraph#M_BaseMaterial",
+                "shader": "Shader Graphs/M_BaseMaterial",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/M_BaseMaterial.shadergraph",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/M_BaseWear.shadergraph#M_BaseWear",
+                "shader": "Shader Graphs/M_BaseWear",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/M_BaseWear.shadergraph",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/M_Leaves.shadergraph#M_Leaves",
+                "shader": "Shader Graphs/M_Leaves",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/M_Leaves.shadergraph",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/M_Plaster.shadergraph#M_Plaster",
+                "shader": "Shader Graphs/M_Plaster",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/M_Plaster.shadergraph",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/M_SampleScene_Ground.shadergraph#M_SampleScene_Ground",
+                "shader": "Shader Graphs/M_SampleScene_Ground",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/M_SampleScene_Ground.shadergraph",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/M_WindowGlass.shadergraph#M_WindowGlass",
+                "shader": "Shader Graphs/M_WindowGlass",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/M_WindowGlass.shadergraph",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_Brick.mat#MI_Brick",
+                "shader": "Shader Graphs/M_BaseMaterial",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_Brick.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_FlatTiles.mat#MI_FlatTiles",
+                "shader": "Shader Graphs/M_BaseWear",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_FlatTiles.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_MetalOrnaments.mat#MI_MetalOrnaments",
+                "shader": "Shader Graphs/M_BaseMaterial",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_MetalOrnaments.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_Plaster.mat#MI_Plaster",
+                "shader": "Shader Graphs/M_Plaster",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_Plaster.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_RedBrick.mat#MI_RedBrick",
+                "shader": "Shader Graphs/M_BaseMaterial",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_RedBrick.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_RockTrim.mat#MI_RockTrim",
+                "shader": "Shader Graphs/M_BaseMaterial",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_RockTrim.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_RoundRocks.mat#MI_RoundRocks",
+                "shader": "Shader Graphs/M_BaseMaterial",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_RoundRocks.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_RoundTiles.mat#MI_RoundTiles",
+                "shader": "Shader Graphs/M_BaseWear",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_RoundTiles.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_SampleScene_Ground.mat#MI_SampleScene_Ground",
+                "shader": "Shader Graphs/M_SampleScene_Ground",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_SampleScene_Ground.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_UnevenBrick.mat#MI_UnevenBrick",
+                "shader": "Shader Graphs/M_BaseMaterial",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_UnevenBrick.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_Vine.mat#MI_Vine",
+                "shader": "Shader Graphs/M_Leaves",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_Vine.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_WindowGlass.mat#MI_WindowGlass",
+                "shader": "Shader Graphs/M_WindowGlass",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_WindowGlass.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_WoodTrim.mat#MI_WoodTrim",
+                "shader": "Shader Graphs/M_BaseMaterial",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_WoodTrim.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Materials/MI_WoodTrim_Wear.mat#MI_WoodTrim_Wear",
+                "shader": "Shader Graphs/M_BaseWear",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Materials/MI_WoodTrim_Wear.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Models/Prop_ExteriorBorder_Straight1.fbx#MI_RockTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Models/Prop_ExteriorBorder_Straight1.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Models/Prop_WoodenFence_Extension1.fbx#MI_WoodTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Models/Prop_WoodenFence_Extension1.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Models/Prop_WoodenFence_Single.fbx#MI_WoodTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Models/Prop_WoodenFence_Single.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Models/Stairs_Exterior_Straight.fbx#MI_Brick",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Models/Stairs_Exterior_Straight.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/H2F01Inputs/QuaterniusURP/Models/Stairs_Exterior_Straight.fbx#MI_RockTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/H2F01Inputs/QuaterniusURP/Models/Stairs_Exterior_Straight.fbx",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Juego2/Foundation/Rendering/J2_Sky_Overcast.mat#J2_Sky_Overcast",
+                "shader": "Skybox/Panoramic",
+                "source": "asset:Assets/Juego2/Foundation/Rendering/J2_Sky_Overcast.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Arroyo_water.mat#Arroyo_water",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Arroyo_water.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Bar_public.mat#Bar_public",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Bar_public.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Civic_public.mat#Civic_public",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Civic_public.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Closed_ordinary_fabric.mat#Closed_ordinary_fabric",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Closed_ordinary_fabric.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Everyday_shop.mat#Everyday_shop",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Everyday_shop.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Historic_lane.mat#Historic_lane",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Historic_lane.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Land.mat#Land",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Land.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Measurement_marker.mat#Measurement_marker",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Measurement_marker.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Open_site.mat#Open_site",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Open_site.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Ordinary_road.mat#Ordinary_road",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Ordinary_road.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Restricted_threshold.mat#Restricted_threshold",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Restricted_threshold.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Rio_water.mat#Rio_water",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Rio_water.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/Scenic_only.mat#Scenic_only",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/Scenic_only.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/X1_old_bridge.mat#X1_old_bridge",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/X1_old_bridge.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Materials/X5_conditional_foot_crossing.mat#X5_conditional_foot_crossing",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Materials/X5_conditional_foot_crossing.mat",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/arroyo_water.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/arroyo_water.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/land_visual.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/land_visual.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/rio_water.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/rio_water.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/walkable_collision.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/walkable_collision.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/x1_crossing.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/x1_crossing.obj",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/CITY/Meshes/x5_crossing.obj#defaultMat",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "asset:Assets/Arkus/CITY/Meshes/x5_crossing.obj",
+                "status": "URP_OK"
+            }
+        ],
+        "failures": [],
+        "declared": []
+    },
+    "worldbuildingAudit": {
+        "pipeline": "UniversalRenderPipelineAsset",
+        "materials": 14,
+        "green": true,
+        "rows": [
+            {
+                "material": "Assets/Arkus/ART/Materials/GrassGround.mat#GrassGround",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:ground",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Cobble.mat#Cobble",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:surface_traversable",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:edge_kerbs",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Cobble.mat#Cobble",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:apron_traversable",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/StoneTrim.mat#StoneTrim",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:kerb_fillets",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Stone.mat#Stone",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:edge_retaining_walls",
+                "status": "URP_OK"
+            },
+            {
+                "material": "#J2_Water_evidence",
+                "shader": "Juego2/StylizedWater",
+                "source": "renderer:pond_exclusion",
+                "status": "URP_OK"
+            },
+            {
+                "material": "#J2_Window_evidence",
+                "shader": "Juego2/InteriorWindow",
+                "source": "renderer:interior_window",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Leaves.mat#Leaves",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Fern_1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Nature/Materials/Rocks_Diffuse.mat#Rocks_Diffuse",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Rock_Medium_1",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Nature/Models/Materials/Bush_Common_Flowers-Leaves_NormalTree.mat#Bush_Common_Flowers-Leaves_NormalTree",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Bush_Common_Flowers",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/Materials/Flowers.mat#Flowers",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Bush_Common_Flowers",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Arkus/ART/External/Nature/Models/Materials/Bush_Common-Leaves_TwistedTree.mat#Bush_Common-Leaves_TwistedTree",
+                "shader": "Universal Render Pipeline/Lit",
+                "source": "renderer:Bush_Common",
+                "status": "URP_OK"
+            },
+            {
+                "material": "Assets/Juego2/Foundation/Rendering/J2_Sky_Overcast.mat#J2_Sky_Overcast",
+                "shader": "Skybox/Panoramic",
+                "source": "skybox",
+                "status": "URP_OK"
+            }
+        ],
+        "failures": [],
+        "declared": []
+    },
+    "junctionSamples": 11971,
+    "junctionHoles": 0,
+    "junctionSteps": 0,
+    "scatterInstances": 193,
+    "scatterInExclusion": 0,
+    "citizenAvatarValid": true,
+    "playerIsGc2Player": true,
+    "npcInputNone": true
+}
