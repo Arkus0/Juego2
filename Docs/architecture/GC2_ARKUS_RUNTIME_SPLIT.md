@@ -1,6 +1,6 @@
 # GC2 ↔ Arkus runtime split
 
-Status: **PROPOSED; binding for post-H2F-01A WPs after this amendment is accepted**. H2F-01A's narrower accepted handoff and H0/H1 authority contracts take precedence for their own tested boundaries.
+Status: **ACCEPTED post-H2F-01A architecture rule** via PR `#257`, Reviewer PASS `#5333313032`, merge `6bf2d6e74215be51e73d85f659a2a734752ea34c`. H2F-01A's narrower accepted handoff and H0/H1 authority contracts take precedence for their own tested boundaries.
 
 **GC2 ejecuta. Arkus recuerda y conecta.** Unity/GC2 owns immediate character control, camera, interaction, local presentation and authored sequences. Arkus owns canonical persistent facts, important actor identities, knowledge, relationships, relevant schedules and causal outcomes that matter after the local sequence ends. The bridge passes reviewed Juego2 semantic IDs and small typed intents/results, not GC2 component IDs, GUIDs, Variable names or save slot IDs as canonical identity.
 
