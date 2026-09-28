@@ -1,7 +1,8 @@
 # Immersive object interaction scope
 
-Status: **OWNER_DIRECTION — canonical when merged**
+Status: **ACCEPTED product direction**
 Date: 2026-09-28
+Accepted: PR `#262`, candidate `489312831ca0e337de58762c067ca60e5c20c874`, Reviewer PASS `#5333508771`, merge `65a2a727371833806f019af0a7af1767b3724534`.
 Related: `PORT_TOWN_SCALE_AMENDMENT.md`, `GC2_ARKUS_RUNTIME_SPLIT.md`, `WP-H2-02`, `WP-GC2-04`.
 
 ## Goal
