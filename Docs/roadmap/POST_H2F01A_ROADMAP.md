@@ -1,6 +1,6 @@
 # Executable roadmap after H2F-01A
 
-Status: **ACCEPTED amendment** via PR `#257`, Reviewer PASS `#5333313032`, merge `6bf2d6e74215be51e73d85f659a2a734752ea34c`. Earlier accepted milestones and the active `WP-H2F-01A` candidate are unaffected. This is the navigation source for the pending work listed in [`POST_H2F01A_WP_AUDIT.md`](POST_H2F01A_WP_AUDIT.md); exact PASS remains in each WP.
+Status: **ACCEPTED amendment** via PR `#257`, Reviewer PASS `#5333313032`, merge `6bf2d6e74215be51e73d85f659a2a734752ea34c`. Earlier accepted milestones are unaffected. `WP-H2F-01A` subsequently passed and merged via PR `#256`; its own post-PASS DocSync remains separate. This is the navigation source for the pending work listed in [`POST_H2F01A_WP_AUDIT.md`](POST_H2F01A_WP_AUDIT.md); exact PASS remains in each WP.
 
 ## Ordering and ownership
 
@@ -22,7 +22,7 @@ This chain allows a first keeper street before systemic character depth; the six
 
 ## Immediate next Worker: H2F-02
 
-When H2F-01A has independent PASS, merge and DocSync, open `Docs/workpacks/H2F/WP-H2F-02.md`. Its effective inputs are the accepted 01A `H2F02_CORE_HANDOFF.md`, any accepted S06 amendment, accepted H2F-01 stack selection, H1-GATE and ART-01 `PREFOUNDATION_INPUT`. It owns exact version/license/provisioning, URP baseline, import/source conventions, plugin state lifecycle host, compile/import and H1 compatibility preparation. It **does not** independently install separately licensed GC2 modules or declare Arkus dormant. The WP's existing positive evidence, negative gates, method and residuals remain binding; its new product addendum names the urban constraints. If 01A rejects Core, the explicit 01A handoff governs instead of assuming adoption.
+`WP-H2F-01A` has independent PASS and implementation merge; after its own post-PASS DocSync, open `Docs/workpacks/H2F/WP-H2F-02.md`. Its effective inputs are the accepted 01A `H2F02_CORE_HANDOFF.md`, any accepted S06 amendment, accepted H2F-01 stack selection, H1-GATE and ART-01 `PREFOUNDATION_INPUT`. It owns exact version/license/provisioning, URP baseline, import/source conventions, plugin state lifecycle host, compile/import and H1 compatibility preparation. It **does not** independently install separately licensed GC2 modules or declare Arkus dormant. The WP's existing positive evidence, negative gates, method and residuals remain binding; its new product addendum names the urban constraints. If 01A rejects Core, the explicit 01A handoff governs instead of assuming adoption.
 
 ## First district and expansion rule
 
