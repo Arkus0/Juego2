@@ -1,6 +1,6 @@
 # First urban adventure slice — player-facing target
 
-Status: **PROPOSED target**; `GC2-SLICE` owns acceptance after the preceding workpacks. Duration target: **20–30 minutes of real first-play play**, measured on the retained route without counting setup, reload or debug steps.
+Status: **ACCEPTED product target** via PR `#257`, Reviewer PASS `#5333313032`, merge `6bf2d6e74215be51e73d85f659a2a734752ea34c`; `GC2-SLICE` still owns implementation acceptance after the preceding workpacks. Duration target: **20–30 minutes of real first-play play**, measured on the retained route without counting setup, reload or debug steps.
 
 The player leaves a lodging with a photograph or clue about a murder; asks people in a commercial area; learns something that points toward the port; obtains access through a person, job or another legible route; spots and follows a suspect; is discovered; plays a chase ending in confrontation or a bounded fight; gains a key or new lead; returns to an earlier place and finds a changed response based on the event. A short everyday activity (for example a bar game or small job) offers a reason to linger and can affect the encounter when authored. The final beat opens another thread.
 

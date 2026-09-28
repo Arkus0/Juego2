@@ -1,6 +1,6 @@
 # Executable roadmap after H2F-01A
 
-Status: **PROPOSED amendment; effective after independent PASS/merge/DocSync**. Earlier accepted milestones and the active `WP-H2F-01A` candidate are unaffected. This is the navigation source for the pending work listed in [`POST_H2F01A_WP_AUDIT.md`](POST_H2F01A_WP_AUDIT.md); exact PASS remains in each WP.
+Status: **ACCEPTED amendment** via PR `#257`, Reviewer PASS `#5333313032`, merge `6bf2d6e74215be51e73d85f659a2a734752ea34c`. Earlier accepted milestones and the active `WP-H2F-01A` candidate are unaffected. This is the navigation source for the pending work listed in [`POST_H2F01A_WP_AUDIT.md`](POST_H2F01A_WP_AUDIT.md); exact PASS remains in each WP.
 
 ## Ordering and ownership
 
