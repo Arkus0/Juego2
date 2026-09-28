@@ -58,15 +58,11 @@ The effective Unity audit before normalization exposed:
 
 The scoped ART postprocessor applies `globalScale=0.01` to Medieval/Nature/Props and leaves the Props prefab root ×100 intact. Props preserve their imported X≈270° root rotation; wrapper yaw supplies street facing. These are renderer-independent and final for the STRUCTURAL checkpoint.
 
-## Materials — PROVISIONAL (built-in), replaced under URP
+## Materials — PROVISIONAL (built-in), revalidated on H2F foundation
 
 `Art01Materials.cs` currently maps each selected source material by name to explicit **built-in Standard** materials; unknown names fail closed. The active H1 Unity project is built-in, so these are valid for iteration and neutral inspection.
 
-Per the owner's decision, URP is the production renderer. These materials, the overcast built-in light rig and the `provisional_builtin/` captures are **not frozen**. After `WP-H1-GATE`, ART-01 adopts URP for the production benchmark and replaces this path with a reproducible URP remap:
-- pinned package version;
-- versioned pipeline/renderer assets;
-- explicit cutout/transparent handling;
-- no silent Standard fallback and no magenta.
+Per the owner's decision, URP is the intended production renderer. These materials, the overcast built-in light rig and the `provisional_builtin/` captures are **not frozen**. Accepted sequencing PR #252 subsequently assigned canonical URP/toolchain adoption, package/pipeline assets and foundation freeze to H2F-02/03/GATE. After that Gate passes, ART-01 must update onto the accepted foundation and perform its own effective material/shader mapping and visual revalidation, including cutout/transparent handling and no silent Standard fallback or magenta. This ledger does not authorize an ART-private URP migration.
 
 Family intent for the URP pass (from the Visual Bible): grey stone, restrained lime-grey render, dark timber, muted green shutters, darkened wet tile, cool wet cobble, desaturated ground.
 
