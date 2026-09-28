@@ -1,14 +1,19 @@
 # WP-H2F-02 — Exact adoption + URP/toolchain bootstrap
 
-Status: **PROPOSED / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
+Accepted: PR `#261`, frozen candidate `91047ecc71be1b3f8c00440a8de07cc90ca6be9e`, independent PASS review `#5335599241`, merge `5c1877b224a7183e248adc0d6b08f677a20f4d3f`; post-PASS state: `Docs/evidence/WP-H2F-02/DOCSYNC.md`.  
 Class: `PRODUCT_CHECKPOINT` with dependency-policy adoption controls  
 Mode: **LOCAL_UNITY_REQUIRED where licensed/source bytes or visual import evidence are local-only; hosted evidence may cover reproducible machine-verifiable portions**  
 Depends on: `WP-H2F-01` PASS + `WP-H2F-01A` PASS + `WP-H1-GATE` PASS + ART-01 `PREFOUNDATION_INPUT` checkpoint published; **ART-01 PASS is intentionally downstream**  
 Blocks: `WP-H2F-03`; the adopted foundation also becomes the required baseline for the later ART-01 effective candidate
 
+## Post-acceptance sequencing
+
+H2F-02 is accepted. `WP-H2F-03` is now the immediate dependency-valid foundation checkpoint. The accepted urban expansion, GC2 Core handoff and S06 amendment remain binding; H2F-03 consumes this exact baseline and the lifecycle classification frozen here.
+
 ## Post-01A urban product amendment (accepted)
 
-The urban expansion decision is accepted and `WP-H2F-01A` is COMPLETE / ACCEPTED, so this is the **immediate next executable WP**. Its baseline, evidence, negative gates and H1 lifecycle proof are unchanged. Select/host the admitted GC2 Core seam for later local urban gameplay while Arkus remains the active persistent authority. Record how the selected street/worldbuilding profiles can be reused on compact urban blocks, without requiring a port keeper scene, a new district graph or extra licensed modules in H2F-02. The accepted 01A S06 amendment is binding: GC2 `Character` realizes the player body, GC2 `MainCamera` + Third Person shot realizes the player camera, and the Juego2 action map remains the sole input owner. See `Docs/evidence/WP-H2F-01A/H2F02_CORE_HANDOFF.md`, `Docs/evidence/WP-H2F-01A/S06_BASELINE_AMENDMENT.md`, `Docs/product/URBAN_EXPANSION_DECISION.md` and `Docs/architecture/GC2_ARKUS_RUNTIME_SPLIT.md`.
+The urban expansion decision is accepted and `WP-H2F-01A` is COMPLETE / ACCEPTED, so this workpack consumed that handoff under its existing foundation proof and urban reuse note. Its baseline, evidence, negative gates and H1 lifecycle proof were unchanged. The admitted GC2 Core seam is hosted for later local urban gameplay while Arkus remains the active persistent authority. The selected street/worldbuilding profiles are reusable on compact urban blocks without requiring a port keeper scene, a new district graph or extra licensed modules in H2F-02. The accepted 01A S06 amendment is binding: GC2 `Character` realizes the player body, GC2 `MainCamera` + Third Person shot realizes the player camera, and the Juego2 action map remains the sole input owner. See `Docs/evidence/WP-H2F-01A/H2F02_CORE_HANDOFF.md`, `Docs/evidence/WP-H2F-01A/S06_BASELINE_AMENDMENT.md`, `Docs/product/URBAN_EXPANSION_DECISION.md` and `Docs/architecture/GC2_ARKUS_RUNTIME_SPLIT.md`.
 
 ## Claim
 
