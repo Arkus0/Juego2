@@ -1,6 +1,8 @@
 # Visual production factory amendment
 
-Status: **PROPOSED / NOT ACCEPTED**
+Status: **ACCEPTED product/roadmap amendment**
+Date: 2026-09-28
+Accepted: PR `#264`, candidate `267b9c03e052535ba5b52fdc473e322d67abd0bc`, Reviewer PASS `#5334042264`, merge `bdf74e4380d5844324a2ade0e8bcbd17b160fcc6`.
 
 ## Owner decision
 

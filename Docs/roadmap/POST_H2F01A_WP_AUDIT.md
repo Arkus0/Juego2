@@ -1,6 +1,6 @@
 # Audit of pending product Workpacks after H2F-01A
 
-Status: **ACCEPTED base audit with PROPOSED visual-production amendment in this branch**. Existing accepted H0/H1/H2F/CITY/ART history is not rerun. This audit records only the future disposition if `VISUAL_PRODUCTION_FACTORY_AMENDMENT.md` is accepted.
+Status: **ACCEPTED visual-production audit amendment** via PR `#264`, candidate `267b9c03e052535ba5b52fdc473e322d67abd0bc`, Reviewer PASS `#5334042264`, merge `bdf74e4380d5844324a2ade0e8bcbd17b160fcc6`, with post-PASS DocSync complete. Existing accepted H0/H1/H2F/CITY/ART history is not rerun. The dispositions below are now the accepted future route under [`VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`](../product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md).
 
 | Current WP or line | Disposition | Revised objective / reason |
 |---|---|---|

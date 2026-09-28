@@ -1,6 +1,6 @@
 # Executable roadmap after H2F-01A
 
-Status: **ACCEPTED base roadmap with PROPOSED visual-production amendment in this branch**. Existing accepted H2F/urban/port-town decisions remain historical inputs. `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md` becomes the authoritative post-H2F sequencing amendment only after independent review/merge/DocSync.
+Status: **ACCEPTED visual-production roadmap amendment** via PR `#264`, candidate `267b9c03e052535ba5b52fdc473e322d67abd0bc`, Reviewer PASS `#5334042264`, merge `bdf74e4380d5844324a2ade0e8bcbd17b160fcc6`, with post-PASS DocSync complete. Existing accepted H2F/urban/port-town decisions remain historical inputs. [`VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`](../product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md) is the authoritative post-H2F visual-production sequencing amendment; exact PASS remains in each WP.
 
 ## Immediate route — unchanged until H2F-GATE
 
