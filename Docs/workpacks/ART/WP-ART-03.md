@@ -5,6 +5,7 @@ Class: PRODUCT ART / FINAL H2 VISUAL INDUSTRIALIZATION GATE INPUT
 Depends on: `WP-ART-02` PASS + `WP-ART-ENV-02` PASS + `WP-ART-CHAR-02` PASS + `WP-ART-ANIM-02` PASS + `WP-ART-UI-01` PASS + `WP-ART-URBAN-01` PASS + `WP-CITY-URBAN-01` PASS
 Blocks: `WP-H2-GATE`
 Binding decision: `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`
+Binding reuse amendment: `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md`
 
 ## Claim
 
@@ -51,7 +52,10 @@ Owner visual approval here locks the **fundamental** production direction:
 - character wardrobe/population read;
 - ordinary animation/acting language;
 - dialogue/UI presentation language;
-- scenario assembly grammar.
+- scenario assembly grammar;
+- the reuse-first source policy, including lawful `DIRECT / ADAPTABLE / DONOR / derived` production paths.
+
+The look lock judges **coherence of the integrated result**, not literal regional authenticity of every reused source mesh in isolation. A high proportion of Quaternius/source content is acceptable when the final block reads coherently as Juego2. Conversely, geographically plausible individual assets do not rescue a scene that reads as dressed greybox, asset showroom or incoherent kitbash.
 
 Later work may add breadth, hero polish, new assets and special-case animation, but it should not casually reopen these foundations. A material change requires an explicit reviewed visual-direction amendment.
 
@@ -66,9 +70,10 @@ Later work may add breadth, hero polish, new assets and special-case animation, 
 5. approved no-voice dialogue/UI presentation in context;
 6. fresh-author production challenge and outputs;
 7. separately observable first-use versus repeated-use effort/operation evidence with counting assumptions and a real reuse reduction;
-8. residual ledger separating future breadth/polish from foundation-blocking gaps.
+8. evidence that source reuse did not regress into blanket category rejection or irrational over-adaptation;
+9. residual ledger separating future breadth/polish from foundation-blocking gaps.
 
-**FAIL if:** the final port-town scene still reads as dressed greybox; the inland pilot is used as a substitute for final-setting approval; characters are mostly raw/clone source models; ordinary acting requires new bespoke animation plumbing; dialogue/UI uses an untouched stock/default presentation as the final visual result; a fresh author cannot produce another bounded scene/group without implementation archaeology or new framework code; or a fundamental visual/pipeline uncertainty is mislabeled as future polish.
+**FAIL if:** the final port-town scene still reads as dressed greybox; the inland pilot is used as a substitute for final-setting approval; characters are mostly raw/clone source models; ordinary acting requires new bespoke animation plumbing; dialogue/UI uses an untouched stock/default presentation as the final visual result; a fresh author cannot produce another bounded scene/group without implementation archaeology or new framework code; the final look imposes a new requirement that every reused source mesh be literally northern-Spain-authentic in isolation; useful source breadth is discarded by pack label/material alone; or a fundamental visual/pipeline uncertainty is mislabeled as future polish.
 
 ## Allowed residuals
 
