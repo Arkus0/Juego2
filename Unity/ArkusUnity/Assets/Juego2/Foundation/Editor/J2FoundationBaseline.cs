@@ -111,7 +111,7 @@ namespace Juego2.Foundation.Editor
                 throw new InvalidOperationException("J2_EDITOR_VERSION_MISMATCH " + Application.unityVersion);
         }
 
-        internal static void EnsureFolder(string path)
+        public static void EnsureFolder(string path)
         {
             var parts = path.Split('/');
             var current = parts[0];

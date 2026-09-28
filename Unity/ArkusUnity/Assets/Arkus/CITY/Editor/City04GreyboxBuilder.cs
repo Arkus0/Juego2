@@ -252,7 +252,8 @@ namespace Arkus.CITY.Editor
             var result = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (result == null)
             {
-                result = new Material(Shader.Find("Standard"));
+                // WP-H2F-02 made URP the project baseline: greybox materials use URP/Lit there, never a hidden fallback.
+                result = new Material(Shader.Find(GraphicsSettings.currentRenderPipeline != null ? "Universal Render Pipeline/Lit" : "Standard"));
                 AssetDatabase.CreateAsset(result, path);
             }
             result.color = color;

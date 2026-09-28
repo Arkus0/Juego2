@@ -6,6 +6,7 @@
         "Juego2.Arkus",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Editor",
         "Unity.InputSystem",
         "Unity.Splines",
         "Unity.Mathematics",
