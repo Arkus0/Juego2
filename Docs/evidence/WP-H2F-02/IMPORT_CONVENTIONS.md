@@ -42,6 +42,14 @@ Unity's auto-mapping on the Quaternius universal skeleton picks the ground `root
 - `Verify` reports `J2_IMPORT_ROOT_NOT_IN_PLACE`, `J2_IMPORT_ROOT_MOTION_BAKED` and `J2_IMPORT_ROOT_HEIGHT_OR_ORIENTATION`.
 - Locomotion controller recipe (01A): a 1D blend on `Speed`, `Idle_Loop` at 0 and `Walk_Loop` at 1, layer 0 IK Pass on.
 
+## Prefabs and variants the selected tooling depends on
+
+- **GC2 character model:** `J2CharacterPreset.model` is a Humanoid **model prefab** (the ART derivative or a prefab of it with ART-palette materials). GC2 `ChangeModel` instantiates a **copy**, not a prefab link, so a presentation variant is a separate prefab asset, never an edit of the copy (matrix `gc2.S4`).
+- **Scatter entries:** `J2ScatterProfile.entries[].prefab` are prefabs whose root transform carries the source import rotation/scale; the realizer composes instance rotation and scale on top.
+- **Palette variants:** Source models render through prefab variants or instances whose renderers use the ART-palette URP materials (H2F-01 route C). Source Shader Graph materials are used only on unmodified Source modules.
+- **Generated realizations** (linear, junction, scatter) are plain generated subtrees, not prefabs. They are regenerated, never edited through prefab overrides.
+- **H1-managed prefabs** (`Assets/Arkus/H1/ManagedPrefabs`) are H1 projections. Selected-tool components are never added to them.
+
 ## Colliders, navigation, LOD
 
 - Traversable realizations are the **only** colliders a NavMeshSurface collects (`PhysicsColliders`). Kerbs carry no collider; retaining walls and junction aprons do.

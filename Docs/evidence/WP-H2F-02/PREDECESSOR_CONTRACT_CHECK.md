@@ -52,3 +52,8 @@ The composed H1 materialize→observe→reconcile→rematerialize→clean-rebuil
 - The H1 public lifecycle cannot tolerate the URP baseline (for example accepted H1 EditMode tests fail for a reason other than the deliberate render-pipeline expectation) → compatibility blocker routed to the causal boundary; H1 is reopened only if effective evidence contradicts an accepted H1 guarantee.
 - ART-01 PR #234 publishes a new `PREFOUNDATION_INPUT` that invalidates the pinned `174d05d2` input → revisit the representative-content evidence.
 - A required GC2 capability can only be used by making GC2 identifiers canonical → reject the capability (01A rule), never reopen H1 authority.
+
+## Live-state addendum at freeze (2026-09-28)
+
+- **ART-01 PR #234** moved from `174d05d2` to `d227cb26`: an owner-directed, docs/evidence-only PREFOUNDATION continuation plus a merge of `main`. `git diff 174d05d2 d227cb26` is empty for `Unity/ArkusUnity/Assets/Arkus/ART`, `ART.meta`, `Docs/evidence/WP-ART-01/SOURCE_LOCK.json` and `KIT_COMPOSITION_MANIFEST.json`. The representative input used here is therefore byte-identical, and the reopen condition does not fire. The continuation keeps the benchmark scene and names assembly quality as ART-01's oracle, consistent with routing the owner's house observation to ART-01 (`OWNER_JUDGEMENT.md`).
+- **`main`** advanced from `e5322c84` to `1a37d10b` (visual-production, town-identity and asset-reuse amendments, all docs, plus a CITY-URBAN-00 route in `scripts/arkus-verify-exact-sha.sh`). `Docs/roadmap/POST_H2F01A_ROADMAP.md` on that `main` states that the route H2F-02 → H2F-03 → H2F-GATE and their acceptance bars are unchanged. No `Docs/workpacks/H2F/**`, Unity, protocol or dependency-policy file changed. The PR stays mergeable.
