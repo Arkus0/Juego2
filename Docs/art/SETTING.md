@@ -43,7 +43,7 @@ See:
 - `Docs/art/VISUAL_BIBLE.md`;
 - `Docs/product/PORT_TOWN_SCALE_AMENDMENT.md`;
 - `Docs/product/PORT_TOWN_IDENTITY_NIGHTLIFE_AMENDMENT.md`;
-- `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md` once accepted.
+- accepted `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md` (PR `#267`).
 
 ## Historical inland pilot
 
