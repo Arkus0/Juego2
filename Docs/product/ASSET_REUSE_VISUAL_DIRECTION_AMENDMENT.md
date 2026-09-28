@@ -1,8 +1,9 @@
 # Asset-reuse visual-direction amendment
 
-Status: **PROPOSED / NOT ACCEPTED**  
+Status: **ACCEPTED product amendment**  
 Mode: `PROCESS_ONLY / DOCS_ONLY`  
 Date: 2026-09-28  
+Accepted: PR `#267`, candidate `18abb02c012210cab2da9400b0fcef9c120b29b9`, Reviewer PASS `#5334859404`, merge `8afffe80fea691abadd92b73d86a9b77492842e4`.  
 Amends: `Docs/art/VISUAL_BIBLE.md`, `Docs/art/SETTING.md`, `WP-ART-01`, `WP-ART-ENV-02`, `WP-ART-CHAR-01`, `WP-ART-URBAN-01` and `WP-ART-03` visual-selection semantics.
 
 ## Owner decision
