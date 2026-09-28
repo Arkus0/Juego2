@@ -5,6 +5,7 @@ Status: **ACCEPTED visual-production audit amendment** via PR `#264`, candidate 
 | Current WP or line | Disposition | Revised objective / reason |
 |---|---|---|
 | H2F-02 / H2F-03 / H2F-GATE | KEEP | Finish and freeze the admitted production foundation exactly as currently contracted. No new licensed modules are pulled into H2F. |
+| AI-UNITY-AUTHORING-00 | ADD / PARALLEL SPIKE | Isolated real-Unity benchmark of AI Editor operators. May explore the broad lawful uncurated corpus to measure capability ceiling, but cannot promote trial assets to production authority or alter H2F acceptance. |
 | ART-01 | KEEP / FEEDS FACTORY | Close the accepted keeper-ready base environment grammar on the H2F baseline. Becomes the input to `ART-ENV-02`, not the whole industrialization claim. |
 | CITY-07 | KEEP | Retained inland pilot remains valuable production/transfer evidence. It is not final port-town look authority. |
 | H2-01 | KEEP | Typed/public localized authoring proof remains useful. |
@@ -24,6 +25,7 @@ Status: **ACCEPTED visual-production audit amendment** via PR `#264`, candidate 
 
 | New WP | Purpose | Key predecessor | Blocks / feeds |
 |---|---|---|---|
+| `AI-UNITY-AUTHORING-00` | Compare direct Unity AI/MCP operator candidates on ENV/CHAR/ANIM autonomous authoring; measure open-corpus discovery, self-correction and manual-intervention reduction | H2F-02 accepted baseline + isolated current Unity project | Non-blocking; may feed CHAR/ANIM/ENV/URBAN/ART-03 adoption decisions |
 | `ART-CHAR-01` | Character/wardrobe grammar, source/derivative rules and repeatable production specification | H2F-GATE | ART-CHAR-02 |
 | `ART-CHAR-02` | Character factory and representative population batch | ART-CHAR-01 | H2-03, ART-ANIM-02, ART-03 |
 | `ART-ANIM-01` | Animation source/provenance/retarget/coverage truth | H2F-GATE | ART-ANIM-02 |
@@ -36,13 +38,14 @@ Status: **ACCEPTED visual-production audit amendment** via PR `#264`, candidate 
 ## Causal rules
 
 1. **No disguised serial megaphase.** CHAR, ANIM, ENV, UI/Dialogue and CITY-URBAN planning run in parallel whenever their listed predecessors allow.
-2. **No dressed-greybox PASS.** Required environment roles remain subject to `KEEPER_READY / PROXY_VISUAL / COVERAGE_BLOCKED` truth.
-3. **No bespoke-six-NPC shortcut.** H2-03 consumes the character/animation factories.
-4. **No fake final look from the inland pilot.** ART-03 and H2-GATE inspect the actual port-town block.
-5. **No deep gameplay before the lock.** `GC2-02+` remains blocked until expanded H2-GATE.
-6. **Dialogue 2 is optional, not an H2 purchase gate.** `GC2-DIALOGUE-00` may PASS as `ADOPTED`, `NOT_MATERIAL`, `REJECTED` or `DEFERRED_NOT_ACQUIRED`; only `ADOPTED` requires exact-version dependency/IP, provisioning, compile/import and composed H1 lifecycle evidence. Non-adopted dispositions route ART-UI-01 through Core/local and do not block ART-03 or H2-GATE.
-7. **No implicit later adoption.** A later material reason to acquire Dialogue 2 reopens `GC2-DIALOGUE-00`; ART-UI-01 and GC2-03 remain consumers only.
-8. **Ink remains undecided at runtime level.** This amendment does not delete or canonize it.
-9. **Factory proof beats asset count.** Character and animation counts are planning orientations; PASS is repeatable useful coverage and authoring reuse.
+2. **AI operator spike is discovery, not production authority.** `AI-UNITY-AUTHORING-00` may expose the agent to lawful uncurated source material specifically to avoid an artificially easy benchmark; its output remains trial/candidate material until normal ART/dependency/IP/H1 lifecycle adoption occurs.
+3. **No dressed-greybox PASS.** Required environment roles remain subject to `KEEPER_READY / PROXY_VISUAL / COVERAGE_BLOCKED` truth.
+4. **No bespoke-six-NPC shortcut.** H2-03 consumes the character/animation factories.
+5. **No fake final look from the inland pilot.** ART-03 and H2-GATE inspect the actual port-town block.
+6. **No deep gameplay before the lock.** `GC2-02+` remains blocked until expanded H2-GATE.
+7. **Dialogue 2 is optional, not an H2 purchase gate.** `GC2-DIALOGUE-00` may PASS as `ADOPTED`, `NOT_MATERIAL`, `REJECTED` or `DEFERRED_NOT_ACQUIRED`; only `ADOPTED` requires exact-version dependency/IP, provisioning, compile/import and composed H1 lifecycle evidence. Non-adopted dispositions route ART-UI-01 through Core/local and do not block ART-03 or H2-GATE.
+8. **No implicit later adoption.** A later material reason to acquire Dialogue 2 reopens `GC2-DIALOGUE-00`; ART-UI-01 and GC2-03 remain consumers only.
+9. **Ink remains undecided at runtime level.** This amendment does not delete or canonize it.
+10. **Factory proof beats asset count.** Character and animation counts are planning orientations; PASS is repeatable useful coverage and authoring reuse.
 
 Historical accepted H0/H1, CTX, DW, PA, ART-00, CITY-00..06 and accepted H2F predecessors keep their accepted guarantees. No implementation rerun is implied by this roadmap amendment.
