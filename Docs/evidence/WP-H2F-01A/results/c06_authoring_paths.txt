@@ -1,0 +1,2 @@
+GeneralSettings.m_Repository.m_Save.m_Storage = Juego2WorkspaceStorage
+EditorBuildSettings.scenes += H2F01A_c06 (GC2 load reloads the saved scene by name)

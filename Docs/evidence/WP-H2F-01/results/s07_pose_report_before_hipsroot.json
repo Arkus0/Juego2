@@ -1,0 +1,180 @@
+{
+    "avatar": "Townsfolk_ForasteroAvatar",
+    "human": true,
+    "valid": true,
+    "heightM": 1.719800591468811,
+    "poses": [
+        {
+            "clip": "Idle_Loop",
+            "source": "UAL1",
+            "use": "stand",
+            "length": 2.500000238418579,
+            "footMin": 0.0070481374859809879,
+            "footMax": 0.08874256908893585,
+            "hipsY": -0.03703317046165466,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Idle_Talking_Loop",
+            "source": "UAL1",
+            "use": "stand",
+            "length": 2.933333396911621,
+            "footMin": 0.0071707963943481449,
+            "footMax": 0.08915148675441742,
+            "hipsY": -0.03368234634399414,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Idle_LookAround_Loop",
+            "source": "UAL1",
+            "use": "stand",
+            "length": 4.600000381469727,
+            "footMin": 0.005501598119735718,
+            "footMax": 0.08853212743997574,
+            "hipsY": -0.030505485832691194,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Walk_Loop",
+            "source": "UAL1",
+            "use": "walk",
+            "length": 1.3333333730697632,
+            "footMin": 0.011075668036937714,
+            "footMax": 0.3429809808731079,
+            "hipsY": -0.011195991188287735,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Walk_Formal_Loop",
+            "source": "UAL1",
+            "use": "walk",
+            "length": 1.3333333730697632,
+            "footMin": 0.010264486074447632,
+            "footMax": 0.34136760234832766,
+            "hipsY": -0.017802119255065919,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Drink",
+            "source": "UAL1",
+            "use": "stand",
+            "length": 3.000000238418579,
+            "footMin": 0.0072166696190834049,
+            "footMax": 0.08457748591899872,
+            "hipsY": -0.03224470466375351,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Counter_Give",
+            "source": "UAL1",
+            "use": "stand",
+            "length": 4.366666793823242,
+            "footMin": 0.009026303887367249,
+            "footMax": 0.1041448563337326,
+            "hipsY": -0.016858462244272233,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Interact",
+            "source": "UAL1",
+            "use": "stand",
+            "length": 2.0,
+            "footMin": 0.006791800260543823,
+            "footMax": 0.0875868946313858,
+            "hipsY": -0.03626491129398346,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Sitting_Idle_Loop",
+            "source": "UAL1",
+            "use": "sit",
+            "length": 1.6666667461395264,
+            "footMin": 0.04148918390274048,
+            "footMax": 0.10966945439577103,
+            "hipsY": -0.39615774154663088,
+            "seatGap": -0.9942646026611328,
+            "humanMotion": true
+        },
+        {
+            "clip": "Sitting_Talking_Loop",
+            "source": "UAL1",
+            "use": "sit",
+            "length": 2.933333396911621,
+            "footMin": 0.03809404373168945,
+            "footMax": 0.10912425071001053,
+            "hipsY": -0.39477455615997317,
+            "seatGap": -0.9928813576698303,
+            "humanMotion": true
+        },
+        {
+            "clip": "Idle_FoldArms_Loop",
+            "source": "UAL2",
+            "use": "stand",
+            "length": 2.500000238418579,
+            "footMin": 0.008914723992347718,
+            "footMax": 0.09053437411785126,
+            "hipsY": -0.03514595702290535,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Idle_Rail_Loop",
+            "source": "UAL2",
+            "use": "stand",
+            "length": 2.500000238418579,
+            "footMin": 0.017077766358852388,
+            "footMax": 0.08702336251735687,
+            "hipsY": 0.09028947353363037,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Walk_Carry_Loop",
+            "source": "UAL2",
+            "use": "walk",
+            "length": 2.0,
+            "footMin": -0.0012511461973190308,
+            "footMax": 0.28067746758461,
+            "hipsY": 0.17718955874443055,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "Yes",
+            "source": "UAL2",
+            "use": "stand",
+            "length": 2.500000238418579,
+            "footMin": 0.0038259997963905336,
+            "footMax": 0.08628664165735245,
+            "hipsY": -0.03688880056142807,
+            "seatGap": 0.0,
+            "humanMotion": true
+        },
+        {
+            "clip": "StepUp",
+            "source": "UAL2",
+            "use": "step",
+            "length": 0.6666666865348816,
+            "footMin": -0.09295790642499924,
+            "footMax": 0.6007944941520691,
+            "hipsY": -0.10366830229759217,
+            "seatGap": 0.0,
+            "humanMotion": true
+        }
+    ],
+    "notes": [
+        "Hips bone 'root' parent 'Armature' bind world y 0,000; LeftFoot 'foot_l'",
+        "Chair_1 bounds 0,58x1,12x0,55 seat raycast 0,498 hit=Chair_1",
+        "Sitting_Idle_Loop: hips -0,396 seat 0,498 (chair Chair_1 as imported); required vertical anchor offset 0,994 m",
+        "Chair_1 bounds 0,58x1,12x0,55 seat raycast 0,498 hit=Chair_1",
+        "Sitting_Talking_Loop: hips -0,395 seat 0,498 (chair Chair_1 as imported); required vertical anchor offset 0,993 m"
+    ]
+}

@@ -1,48 +1,101 @@
-# WP-H2-GATE — Keeper visual + AI world-authoring benchmark
+# WP-H2-GATE — Visual production factory + keeper authoring gate
 
-Status: **DORMANT / NOT_STARTED**  
-Class: PRODUCT GATE / `PRODUCT_CHECKPOINT`  
-Depends on: `WP-H2F-GATE` PASS + `WP-H2-01` PASS + `WP-H2-03` PASS + `WP-ART-02` PASS + accepted CITY-07 keeper  
-Blocks: H3 persistent-actor/runtime implementation
+Status: **DORMANT / NOT_STARTED**
+Class: PRODUCT GATE / `PRODUCT_CHECKPOINT`
+Depends on: `WP-H2F-GATE` PASS + `WP-H2-01` PASS + `WP-H2-03` PASS + `WP-ART-02` PASS + `WP-ART-03` PASS + `WP-CITY-URBAN-01` PASS
+Blocks: `WP-GC2-02` and later persistent-actor/runtime/gameplay implementation
+Binding decision: `Docs/product/VISUAL_PRODUCTION_FACTORY_AMENDMENT.md`
 
-## Gate claim
+## Revised gate claim
 
-A fresh capable AI author can use accepted Arkus public surfaces to understand, maintain and locally improve a visually representative keeper Juego2 zone in Unity; the player can traverse it in third person while representative characters occupy it; the result already expresses the approved visual language without disguised proxy/greybox gaps; and retained production remains on the accepted H2F foundation baseline or explicit reviewed amendments.
+H2 no longer passes merely because one pilot street and six characters look acceptable.
 
-## PASS-before-work acceptance contract
+A fresh capable author can use the accepted public production surfaces to understand, maintain and extend a visually representative Juego2 world; the player can traverse it in third person; the **actual first port-town keeper block** expresses the approved final visual language; and environment, character, animation and dialogue/UI presentation production are industrialized enough that ordinary new content does not require rebuilding the pipeline.
 
-- **Positive claim:** the accepted H2 stack forms one truthful keeper benchmark in which a fresh author can discover, edit, reuse and reconcile the representative world through public surfaces, while a player can traverse the approved visual result with representative H2 character occupancy on the accepted H2F foundation baseline.
-- **Mandatory positive evidence:** (1) fresh-author transcript covering inspect -> discover -> local semantic improvement -> validate/apply -> materialize -> inspect/play -> reconcile/rematerialize; (2) continuous third-person/play evidence on the retained Puente -> Casco -> Bar fixture with at least six approved H2-03 character presentations; (3) ART-02 owner approval and `KEEPER_READY` evidence for required environment roles/connections; (4) preservation/parity evidence showing the bounded edit did not silently damage unrelated accepted content; (5) one visible missing/unsupported-required-coverage failure; (6) a **distinguishable first-legal-assembly baseline and reuse/variant trial** for at least one reviewed composition, recording observable authoring steps/operations (or an equivalent predeclared measurable effort metric), the counting/measurement assumptions, and the resulting comparison; the reuse/variant must preserve the reviewed constraints and show a real reduction under that recorded measure; (7) foundation-manifest evidence showing the keeper benchmark used the accepted H2F baseline or named reviewed H2F amendments rather than opportunistic dependency drift.
-- **Negative gates:** FAIL if the scene reads as greybox plus pasted assets; if `PROXY_VISUAL`/`COVERAGE_BLOCKED` satisfies final readiness; if NPC proxies are claimed as H3 routines; if the fresh author must read implementation source or use hidden Unity-only authority; if visual approval is inferred solely from deterministic tests; if a material foundation package/tool was silently added/replaced after H2F-GATE; **or if first assembly and reuse/variant lack separately observable evidence, documented measurement assumptions, or a measured reduction and are accepted only on a subjective claim that reuse was easier.**
-- **Non-claims:** no persistent NPC identity/schedule/Living World claim, whole-town completeness, final shippable population, final asset breadth, shipping performance or external Arkus repository packaging claim.
-- **Allowed residuals:** town/content breadth outside the representative fixture, deeper NPC behaviour deferred to H3/H4, additional visual polish/asset variety that does not reopen the approved fundamental look, and broader authoring vocabulary not required by the benchmark. Residuals may not include required proxy/blocked coverage, broken public discoverability, inability to perform bounded correction/reuse, an unproven reuse-efficiency claim, or an unresolved foundational tool choice required by the keeper fixture.
-- **Evaluation method:** named combination of fresh-author transcript/public-surface inspection; deterministic/structured validation for authority, preservation, parity, readiness and constraint facts where machine-verifiable; mandatory human third-person/play inspection; owner ART-02 visual approval; H2F foundation-manifest/adoption inspection; and the recorded baseline-vs-reuse effort comparison using the predeclared observable operation/step metric (or equivalent measurable metric) and documented assumptions.
-- **Consumed predecessors:** `WP-H2F-GATE` supplies the frozen product/toolchain baseline and admitted realization boundaries; `WP-H2-01` supplies the accepted typed localized-authoring loop; `WP-H2-02` supplies the retained playable shell through its downstream accepted consumers; `WP-H2-03` supplies bounded representative character occupancy/interaction; `WP-ART-02` supplies approved visual closure; `WP-CITY-07` supplies keeper spatial structure. Generic H0/H1 authority/bridge/catalogue mechanics are consumed through those accepted owners and are not reimplemented here.
+The retained inland Puente -> Casco -> Bar pilot remains required evidence for transfer/reuse and H2 authoring history, but it cannot substitute for the final-setting proof.
 
-## PASS only if all are true
+## Mandatory positive evidence
 
-- `WP-H2F-GATE` has passed and the benchmark consumes its frozen foundation baseline or explicit reviewed amendments;
-- the representative Puente -> Casco -> Bar chain is keeper and playable;
-- ART-02 has approved the representative final visual language;
-- required environment roles/connections are `KEEPER_READY`;
-- at least six approved character presentations occupy the slice with H2-03 minimum behaviour;
-- human third-person inspection confirms scale, route rhythm, thresholds, character/environment proportions and representative occupancy are credible;
-- a fresh author completes inspect -> discover -> local semantic improvement -> validate/apply -> materialize -> inspect/play -> reconcile/rematerialize through accepted public surfaces;
-- the edit does not silently regenerate or damage unrelated accepted content;
-- at least one composition has a recorded first-legal-assembly baseline and a separately recorded reuse/variant trial using observable steps/operations or an equivalent predeclared measurable effort metric, with documented assumptions; reuse/variant shows a real reduction while preserving reviewed constraints;
-- missing required coverage or unsupported edits fail visibly rather than being replaced with final-looking improvisation;
-- parity/truthfulness remains intact after the authoring loop;
-- no unreviewed material foundation dependency/tool entered retained production after H2F-GATE;
-- evidence includes playable/third-person observation, not only screenshots or top-down/editor views.
+1. accepted H2F foundation manifest/baseline;
+2. H2-01 fresh-author typed semantic edit/reuse proof;
+3. playable third-person evidence on the retained pilot and on the actual `CITY-URBAN-01` port-town block;
+4. ART-02 pilot visual closure;
+5. ART-03 owner approval of the integrated final-setting environment + population + animation + no-voice UI/dialogue presentation;
+6. `KEEPER_READY` evidence for all required final-block environment roles;
+7. character-factory evidence showing ordinary presentable inhabitants can be produced repeatedly;
+8. animation-vocabulary evidence showing reusable acting/ambient/object motion on multiple characters and a documented future-animation intake path;
+9. approved Dialogue/UI presentation pattern that does not rely on spoken voice acting or stock/default plugin presentation;
+10. fresh-author production challenge from ART-03 covering a new bounded environment composition and a small inhabitant group;
+11. separately observable first-use versus repeated-use authoring/setup operations with stated counting assumptions and an actual reduction in repeated setup work;
+12. at least one visible unsupported/missing-coverage failure proving the factory fails honestly rather than dressing proxies as final content;
+13. parity/preservation evidence showing bounded edits/variants do not silently damage unrelated accepted content.
 
 ## Negative gates
 
-FAIL if the scene reads as greybox plus pasted assets; if `PROXY_VISUAL`/`COVERAGE_BLOCKED` satisfies final readiness; if NPC proxies are claimed as H3 routines; if the fresh author must read implementation source or use hidden Unity-only authority; if visual approval is inferred solely from deterministic tests; if retained production silently replaces/adds a material H2F foundation tool without the causal amendment; or if the reuse claim lacks a separately observable first-assembly baseline, separately observable reuse/variant evidence, documented measurement assumptions, or an actual measured reduction.
+FAIL if any of the following is true:
 
-## Superseded CITY-08 claim
+- the final product look is inferred only from the inland pilot;
+- the port-town block reads as greybox plus pasted assets;
+- `PROXY_VISUAL`/`COVERAGE_BLOCKED` satisfies final readiness;
+- ordinary population creation still requires bespoke per-NPC pipeline work;
+- the animation library is only a clip folder with no reusable authoring/runtime vocabulary;
+- Dialogue/UI is still an untouched stock/plugin skin or requires voiced dialogue to read acceptably;
+- fresh environment variants require new framework code or implementation-source archaeology;
+- first-build/reuse evidence is subjective or does not show real setup/authoring reuse;
+- NPC presentation proxies are claimed as schedules, memory or Living World behaviour;
+- a material foundation dependency/tool was silently replaced/added after H2F-GATE;
+- visual approval is inferred solely from deterministic tests or screenshots without third-person play inspection.
 
-This gate owns the final integrated proof formerly assigned to `WP-CITY-08`: public discoverability, bounded correction, constraint-preserving reuse and **observable first-assembly versus reuse/variant authoring-effort reduction**. The transferred economic oracle remains binding: the evidence must distinguish the first legal assembly from reuse/variant, record observable steps/operations (or an equivalent predeclared measurable effort metric), document the measurement assumptions, and demonstrate a real reduction rather than asserting one. Do not run a second duplicate CITY authoring gate after H2-GATE.
+## Evaluation method
+
+Use the named combination of:
+
+- fresh-author/public-surface transcripts;
+- deterministic/structured validation for authority, provenance, lifecycle, preservation and readiness where machine-verifiable;
+- mandatory human third-person/play inspection;
+- owner ART-03 visual approval;
+- H2F foundation-manifest inspection;
+- separately recorded first-use vs repeated-use operation/effort evidence under predeclared counting assumptions.
+
+Human judgement does not replace machine-verifiable authority/provenance facts, and deterministic checks do not replace visual/play judgement.
+
+## PASS only if all are true
+
+- H2F foundation is frozen and retained production remains inside it or explicit reviewed amendments;
+- the inland pilot remains playable/keeper and proves transfer/reuse history;
+- the actual first port-town keeper block is playable and visually approved as the final product direction;
+- ART-03 has locked the fundamental environment, character, animation and no-voice UI/dialogue presentation language;
+- required environment roles/connections are keeper-ready;
+- H2-03 proves representative factory-produced character occupancy without false systemic depth;
+- environment scenario production can repeat across new briefs without bespoke framework work;
+- ordinary population characters can be produced through the accepted factory;
+- the admitted animation vocabulary is broad enough for near-term conversation/ambient/object presentation and can be extended without architecture work;
+- Dialogue/UI presentation is reusable and visually Juego2-specific;
+- a fresh author completes a bounded content-production challenge using public/admitted surfaces;
+- measured/observable repeated production reduces setup/authoring work under documented assumptions;
+- unsupported needs fail visibly;
+- unrelated accepted content survives bounded edit/reuse operations.
+
+## Allowed residuals
+
+After PASS, remaining visual work may include:
+
+- additional neighbourhood-specific art breadth;
+- hero-character bespoke polish and facial detail;
+- special story animations;
+- combat/chase animation sets;
+- Inventory/Quest/combat/menu UI;
+- later weather/VFX/polish breadth;
+- final whole-town asset count and population breadth.
+
+Residuals may **not** include an undecided fundamental look, missing ordinary-character factory, missing scenario-production recipe, missing reusable animation vocabulary, or missing no-voice dialogue presentation pattern.
+
+## Non-claims
+
+No persistent NPC identity/schedule/Living World claim, finished story, final shippable population, full gameplay slice, combat, chase or town-wide completeness.
 
 ## Definition of Done
 
-After PASS, the main uncertainty handed to H3 is behavioural depth: persistent people, time, schedules and daily-life systems. H3 should not need to rediscover the representative game's fundamental visual identity, rebuild the H2 keeper world as a different art direction, or reopen the foundational Unity/toolchain decisions that H2F deliberately froze before keeper production.
+After PASS, the main uncertainty handed to the GC2 gameplay chain is **what the world and people do**, not how the game should fundamentally look or how ordinary visual content is produced.
+
+`WP-GC2-02+` may then build reactive/systemic gameplay on top of a locked production language rather than on temporary characters, temporary UI and dressed-greybox scenes.

@@ -1,0 +1,9 @@
+CharacterEditor.CreatePlayer + Character.ChangeModel(J2_Citizen) [J2_Player]
+CharacterEditor.CreateCharacter + Character.ChangeModel(J2_Citizen) [J2_NPC_A]
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2None
+Character.m_Kernel.m_Driver = UnitDriverNavmesh
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2InputAction
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_InputAsset = J2_Input
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_ActionMap = 'Player'
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_Action = 'Move'
+Cinemachine 3 CinemachineCamera + ThirdPersonFollow(S06 params) following J2CameraRig over the GC2 body

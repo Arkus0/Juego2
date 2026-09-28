@@ -1,0 +1,14 @@
+{
+    "name": "Juego2.H2F01A.Arkus",
+    "rootNamespace": "Juego2.H2F01A.Arkus",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

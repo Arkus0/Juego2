@@ -1,0 +1,16 @@
+{
+    "pipeline": "UniversalRenderPipelineAsset",
+    "bindings": 565,
+    "nullBindings": 0,
+    "materials": 24,
+    "shaders": [
+        "GUI/Text Shader=1",
+        "Shader Graphs/M_BaseMaterial=5",
+        "Shader Graphs/M_BaseWear=1",
+        "Shader Graphs/M_Plaster=1",
+        "Shader Graphs/M_WindowGlass=1",
+        "Universal Render Pipeline/Lit=15"
+    ],
+    "failures": [],
+    "green": true
+}

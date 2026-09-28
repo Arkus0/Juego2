@@ -1,0 +1,38 @@
+CharacterEditor.CreatePlayer + Character.ChangeModel(J2_Citizen) [J2_Player]
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2InputAction
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_InputAsset = J2_Input
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_ActionMap = 'Player'
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_Action = 'Move'
+Character.m_Footsteps.m_FootstepSounds.m_SoundsAsset = J2_Footsteps
+Character.m_Footsteps.m_FootstepDetector = FootstepDetectorFulcrum
+CharacterEditor.CreateCharacter + Character.ChangeModel(J2_Citizen) [J2_NPC_A]
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2None
+Character.m_Kernel.m_Driver = UnitDriverNavmesh
+Character.m_Footsteps.m_FootstepSounds.m_SoundsAsset = J2_Footsteps
+Character.m_Footsteps.m_FootstepDetector = FootstepDetectorFulcrum
+Character.m_Ragdoll.m_Ragdoll = RagdollDefault
+Character.m_Ragdoll.m_Ragdoll.m_BoneRack.m_Skeleton = Skeleton
+Character.m_Ragdoll.m_Ragdoll.m_RecoverFaceDown = Human@Action_StandFaceDown
+Character.m_Ragdoll.m_Ragdoll.m_RecoverFaceUp = Human@Action_StandFaceUp
+Trigger.m_Instructions.m_Instructions.Array.data[1].m_Message.m_Property = GetStringArkusFact
+Trigger.Reconfigure(EventCharacterOnInteract, [ArkusRequest 'seat.take', DebugText(Arkus fact)]) [J2_j2.chair.c07]
+Trigger.m_Instructions.m_Instructions.Array.data[1].m_Message.m_Property = GetStringArkusFact
+Trigger.Reconfigure(EventCharacterOnInteract, [ArkusRequest 'item.take', DebugText(Arkus fact)]) [J2_j2.mug.c07]
+Trigger.m_Instructions.m_Instructions.Array.data[0].m_Conditions.m_Conditions = arraySize 1
+Trigger.m_Instructions.m_Instructions.Array.data[0].m_Conditions.m_Conditions.Array.data[0] = ConditionArkusFact
+Trigger.m_Instructions.m_Instructions.Array.data[2].m_Light.m_Property = GetGameObjectArkusEntity
+GeneralSettings.m_Repository.m_Save.m_Storage = Juego2WorkspaceStorage
+ShotCamera.m_ShotType = ShotTypeThirdPerson
+ShotCamera.m_ShotType.m_ThirdPerson.m_Align.m_AutoAlign = True
+ShotCamera.m_ShotType.m_ThirdPerson.m_Align.m_Delay = 0,5
+ShotCamera.m_ShotType.m_ThirdPerson.m_Align.m_SmoothTime = 1
+ShotCamera.m_ShotType.m_ThirdPerson.m_Radius.m_Property = GetDecimalDecimal
+ShotCamera.m_ShotType.m_ThirdPerson.m_InputRotate.m_Input = InputValueVector2InputAction
+ShotCamera.m_ShotType.m_ThirdPerson.m_InputRotate.m_Input.m_Input.m_InputAsset = J2_Input
+ShotCamera.m_ShotType.m_ThirdPerson.m_InputRotate.m_Input.m_Input.m_ActionMap = 'Player'
+ShotCamera.m_ShotType.m_ThirdPerson.m_InputRotate.m_Input.m_Input.m_Action = 'Look'
+ShotCamera.m_ShotType.m_Zoom.m_InputZoom.m_Input = InputValueVector2InputAction
+ShotCamera.m_ShotType.m_Zoom.m_InputZoom.m_Input.m_Input.m_InputAsset = J2_Input
+ShotCamera.m_ShotType.m_Zoom.m_InputZoom.m_Input.m_Input.m_ActionMap = 'Player'
+ShotCamera.m_ShotType.m_Zoom.m_InputZoom.m_Input.m_Input.m_Action = 'Zoom'
+GC2 MainCamera + ShotCamera(Third Person: radius 3, auto-align delay 0.5, smooth 1.0) targeting the GC2 Player

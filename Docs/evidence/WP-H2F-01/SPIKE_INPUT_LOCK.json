@@ -1,0 +1,727 @@
+{
+  "schema": "juego2.h2f01.spike-input-lock@1",
+  "medievalArchiveSha256": "b9d757dd2608a5cee4d9ee1e8183f6cb4cad9d27480841a905180def9c7d8b10",
+  "artInputSha": "174d05d23c3bceb9d5df00e460b33519cf68328e",
+  "files": [
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_Brick.mat",
+      "dest": "QuaterniusURP/Materials/MI_Brick.mat",
+      "sha256": "976ceba5e196d1ec2ece8621aac4ca2dbdf741002feddb2e90476cca0b424faa"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_Brick.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_Brick.mat.meta",
+      "sha256": "48359572adb9507b91e162262d66f3041a27ad5545b1b24aec11d4b6b5f69f32"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_FlatTiles.mat",
+      "dest": "QuaterniusURP/Materials/MI_FlatTiles.mat",
+      "sha256": "2960839e2c215d4814647baef56de1daf8e8ec056ebd6eea5f325f85145e6b7d"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_FlatTiles.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_FlatTiles.mat.meta",
+      "sha256": "5ea41da0fe8d1ef5265a8d153aad3b00ae3de5cff94d8522a1e28fa3dd837cb8"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_MetalOrnaments.mat",
+      "dest": "QuaterniusURP/Materials/MI_MetalOrnaments.mat",
+      "sha256": "8fd8c2cbaa6547588d056f159f1f653453da48488dcab3358db2d5e0e1559bbc"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_MetalOrnaments.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_MetalOrnaments.mat.meta",
+      "sha256": "f9cd5d2f91e677cbd90b7df74cd23bf6e68a9de3f490c42276d080a895c9954d"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_Plaster.mat",
+      "dest": "QuaterniusURP/Materials/MI_Plaster.mat",
+      "sha256": "3fcfc0359d1460009858533461893c626e25ea52364ae4e85f4a6bf84fc3ce69"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_Plaster.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_Plaster.mat.meta",
+      "sha256": "1d4843119c9f80b78a8e4466bf5041e531d0c8072a72f1770e4d013070e9b042"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_RedBrick.mat",
+      "dest": "QuaterniusURP/Materials/MI_RedBrick.mat",
+      "sha256": "78b1e31f09052dc4b6c17139665fc71bd6caaffc4666374832ff801a0000a207"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_RedBrick.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_RedBrick.mat.meta",
+      "sha256": "290145a7388498d51b9ae4b71ce6b0a01d45f6eb68d1f7fa2948765a553ad640"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_RockTrim.mat",
+      "dest": "QuaterniusURP/Materials/MI_RockTrim.mat",
+      "sha256": "ac9fd06fefe11929f577eb929ef107bd0a270805676cff30122e35065df616a7"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_RockTrim.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_RockTrim.mat.meta",
+      "sha256": "06b5b99ff8c5e7a8e77935b6ff31b31024880913bcc101abb4d7cfe30cc26df4"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_RoundRocks.mat",
+      "dest": "QuaterniusURP/Materials/MI_RoundRocks.mat",
+      "sha256": "c10db4966304ab4a899c2ca7bf8dcff48c94a9772510f34e6e0d55a2cbfb9ebc"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_RoundRocks.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_RoundRocks.mat.meta",
+      "sha256": "eab67405efa418be99b4fe829e7c18a3129072272c9ee9da4dfc879a65568e97"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_RoundTiles.mat",
+      "dest": "QuaterniusURP/Materials/MI_RoundTiles.mat",
+      "sha256": "2021efd63bf15bb584011652dc55b9aa7c77b288fb9d9df035138358ef804083"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_RoundTiles.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_RoundTiles.mat.meta",
+      "sha256": "54b28ad2d47a1a85eca5005fd7b04386ab506fe43450cd5d18e15c9245cd4cd3"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_SampleScene_Ground.mat",
+      "dest": "QuaterniusURP/Materials/MI_SampleScene_Ground.mat",
+      "sha256": "6332dc37d1cb1d95db6da3f7c26ea01bd94c53b99cca558f28a654c53ba39343"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_SampleScene_Ground.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_SampleScene_Ground.mat.meta",
+      "sha256": "a5862388a4293aa87f3e29ba960c66c3a225877b5fdcb0cd4ff0ff350b55076c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_UnevenBrick.mat",
+      "dest": "QuaterniusURP/Materials/MI_UnevenBrick.mat",
+      "sha256": "f924a22b96174b1dec2ad0c1fb59e8893a5c210400fa6b84f6d58b81877ebcab"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_UnevenBrick.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_UnevenBrick.mat.meta",
+      "sha256": "48684493c95f47d70eaebdde3a819d93d8974fb52bcc32ace4f97e0f60e2fe65"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_Vine.mat",
+      "dest": "QuaterniusURP/Materials/MI_Vine.mat",
+      "sha256": "111b9a70234d3cc414250ad5e8648e9ea6ed1cd23b0ff045c09cd78ece58c776"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_Vine.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_Vine.mat.meta",
+      "sha256": "6f129c0a91ff8b804a046c93c86c9d4e221982995569174729c4b46ee1a3fb7b"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_WindowGlass.mat",
+      "dest": "QuaterniusURP/Materials/MI_WindowGlass.mat",
+      "sha256": "91a9d5b359b528679037b10a1a36902610b5904cfc426edb0b7d87e59ddbb0ed"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_WindowGlass.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_WindowGlass.mat.meta",
+      "sha256": "c667cf9edeb5a240ec406173c3cd7f3427d8831f8f8022684cf03f21edd589ba"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_WoodTrim.mat",
+      "dest": "QuaterniusURP/Materials/MI_WoodTrim.mat",
+      "sha256": "77e7592f59ec86e39e9a7ee79f2bd4213c5b1b2af919ef9bbdffb15017c9452c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_WoodTrim.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_WoodTrim.mat.meta",
+      "sha256": "afd65da73eb7b9dd1b7d2111a208bd9195c5d04d9a122f5dbfd30169cd62e306"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_WoodTrim_Wear.mat",
+      "dest": "QuaterniusURP/Materials/MI_WoodTrim_Wear.mat",
+      "sha256": "9dd9e0eac275a8981960abe19fe930d2cd55fa2f868ebbdad667f3a7bd66fb2a"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/MI_WoodTrim_Wear.mat.meta",
+      "dest": "QuaterniusURP/Materials/MI_WoodTrim_Wear.mat.meta",
+      "sha256": "178ad94ed24ee42afc9fd182457551632b403118548672b397a5c748a69e0d68"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_BaseMaterial.shadergraph",
+      "dest": "QuaterniusURP/Materials/M_BaseMaterial.shadergraph",
+      "sha256": "a55a32f393307282cf0b7ca650f45551afef66e2a5a85f9da32bd965ced816f7"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_BaseMaterial.shadergraph.meta",
+      "dest": "QuaterniusURP/Materials/M_BaseMaterial.shadergraph.meta",
+      "sha256": "315bad59c813476f6b502616c9e1d293dd50dfd2774265fdc2b3e0aa3509cdc2"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_BaseWear.shadergraph",
+      "dest": "QuaterniusURP/Materials/M_BaseWear.shadergraph",
+      "sha256": "0b6032d02ba786002fbf414539518fd87a1128d988d134216d8feafbb675304c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_BaseWear.shadergraph.meta",
+      "dest": "QuaterniusURP/Materials/M_BaseWear.shadergraph.meta",
+      "sha256": "6d6bf19c642d0acd9803afbe2011a09cfb53a188b904e676d8d0fd692431cd9a"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_Leaves.shadergraph",
+      "dest": "QuaterniusURP/Materials/M_Leaves.shadergraph",
+      "sha256": "8eae9ad0680386eab05cfb12d9bc641e7c77159f918d8b114b3abefaaea9917e"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_Leaves.shadergraph.meta",
+      "dest": "QuaterniusURP/Materials/M_Leaves.shadergraph.meta",
+      "sha256": "37fdb60cae8b9b6b2b362f37d82dfd70e0f2fcd8ebb6a5557ac2f2ca847e63d2"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_Plaster.shadergraph",
+      "dest": "QuaterniusURP/Materials/M_Plaster.shadergraph",
+      "sha256": "a53e42e55968ad320bce1b58aa0aa91fb2882acc33032ee31b73812e30ee9825"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_Plaster.shadergraph.meta",
+      "dest": "QuaterniusURP/Materials/M_Plaster.shadergraph.meta",
+      "sha256": "ea3d11a21bac5f00f0e46468a177561df9c12892906c59362d88671ae1edc5ef"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_SampleScene_Ground.shadergraph",
+      "dest": "QuaterniusURP/Materials/M_SampleScene_Ground.shadergraph",
+      "sha256": "63b25f12ccdfc4f7b050afa7605bbe572317207ba6b342fc0b88dd9d041f6ed0"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_SampleScene_Ground.shadergraph.meta",
+      "dest": "QuaterniusURP/Materials/M_SampleScene_Ground.shadergraph.meta",
+      "sha256": "fae883f43bd2782f35276791b41f1a81911e867a0061289657847b3172e45f2c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_WindowGlass.shadergraph",
+      "dest": "QuaterniusURP/Materials/M_WindowGlass.shadergraph",
+      "sha256": "5f1868d2c0ddd073a4b10862e96f0765bc87a631dd2213022b815a058a1ffb1e"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/M_WindowGlass.shadergraph.meta",
+      "dest": "QuaterniusURP/Materials/M_WindowGlass.shadergraph.meta",
+      "sha256": "6782d95cdb68ccf7b0d2b7c4eddf5eb21c51691635fb7c834cee172ca42a7edc"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_BottomWear.png",
+      "dest": "QuaterniusURP/Materials/T_BottomWear.png",
+      "sha256": "0114ea735fabd591c4bd9de3634a968160fe415ec0119f13805b3d5f8e1b121c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_BottomWear.png.meta",
+      "dest": "QuaterniusURP/Materials/T_BottomWear.png.meta",
+      "sha256": "95c7497ca8007f57d39fcde453f3d473e57ed53e9b1deac9cf4a0f9c3c6e459d"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Brick_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_Brick_BaseColor.png",
+      "sha256": "5515f57e61767838f53f4b9e25aa83b1382ad345ff6b446482718b5140c33813"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Brick_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_Brick_BaseColor.png.meta",
+      "sha256": "2be42fc09889ed5412ae19a00c1a1fddc76e058e2d5644e9fbc3d7318667d115"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Brick_Normal.png",
+      "dest": "QuaterniusURP/Materials/T_Brick_Normal.png",
+      "sha256": "6349f1fb3eed9985e6f969c1de04b9e92490020a12ba19a44b96ea808fb27c1a"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Brick_Normal.png.meta",
+      "dest": "QuaterniusURP/Materials/T_Brick_Normal.png.meta",
+      "sha256": "03dfda3acb00fc342402bcb85866fef0681956a0f442d4d249d7d6add4ed5f03"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Brick_Roughness.png",
+      "dest": "QuaterniusURP/Materials/T_Brick_Roughness.png",
+      "sha256": "297286525610d5a4b6fa77427b4a2c7cbd1e595eb3ce8fb9391b1118630d01a5"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Brick_Roughness.png.meta",
+      "dest": "QuaterniusURP/Materials/T_Brick_Roughness.png.meta",
+      "sha256": "03fe460040768fd70853e62f38a3b9340013f03f8e1701885ba8199eca573a44"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_BrushedNoise.png",
+      "dest": "QuaterniusURP/Materials/T_BrushedNoise.png",
+      "sha256": "217730ed808c69bb3f14a38a0ead20cf6929d025b2dc5535eed0319af93b3d69"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_BrushedNoise.png.meta",
+      "dest": "QuaterniusURP/Materials/T_BrushedNoise.png.meta",
+      "sha256": "e9fe0ac27f3442b17c49b5cee0f521a54240fef9618ef1d331970d30eacf2731"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_FlatTiles_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_FlatTiles_BaseColor.png",
+      "sha256": "e99ddf215d4172fb41f288cc1aab92193236206eb109dc260308dcb38c84c71d"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_FlatTiles_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_FlatTiles_BaseColor.png.meta",
+      "sha256": "997b96eb14db9d4f0417ec366d5fafab9969c1ce139ec5bb4df188e8a49a1f73"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_FlatTiles_Normal.png",
+      "dest": "QuaterniusURP/Materials/T_FlatTiles_Normal.png",
+      "sha256": "d4bd2fe0e149e8df373a67379623e82d77db32d3e77dfd5dba0154879b30baea"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_FlatTiles_Normal.png.meta",
+      "dest": "QuaterniusURP/Materials/T_FlatTiles_Normal.png.meta",
+      "sha256": "f674f1198ee54893c4eb2fc4774671e802ae9d37b2d2f663a2f5c3ccfa4c4c38"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_FlatTiles_Roughness.png",
+      "dest": "QuaterniusURP/Materials/T_FlatTiles_Roughness.png",
+      "sha256": "31e3a8821d3ceb96b557036bb3cc4fbf8bbd01ec323cd605f0b46a7607186db1"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_FlatTiles_Roughness.png.meta",
+      "dest": "QuaterniusURP/Materials/T_FlatTiles_Roughness.png.meta",
+      "sha256": "66dd115d2c811f0365c735ee8ac0bbd5b2bab23678f910f05c7ac35e753e285b"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_MetalOrnaments_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_MetalOrnaments_BaseColor.png",
+      "sha256": "28603125908bb443ef7ac405d6bf2978dafdd348081c1dfd21630ac09862b668"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_MetalOrnaments_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_MetalOrnaments_BaseColor.png.meta",
+      "sha256": "fb23946ddef672d7e874e322fc9cfb57fc4cd7a224f3b357a84a01a9ca4ef182"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_MetalOrnaments_Roughness.png",
+      "dest": "QuaterniusURP/Materials/T_MetalOrnaments_Roughness.png",
+      "sha256": "1554aaf1510264eafd875ccb9cd44b8cfd2f37037fa2133e88377a29e72ab24a"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_MetalOrnaments_Roughness.png.meta",
+      "dest": "QuaterniusURP/Materials/T_MetalOrnaments_Roughness.png.meta",
+      "sha256": "c2a07ebf47534f4d08c1c69d6721c70aab416774fb74cab347bf44318abd830d"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_MidWear.png",
+      "dest": "QuaterniusURP/Materials/T_MidWear.png",
+      "sha256": "d8a7d954ff2a0ff25fbd109794ded99378d60b6af01ab71913c31552ac5a0b64"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_MidWear.png.meta",
+      "dest": "QuaterniusURP/Materials/T_MidWear.png.meta",
+      "sha256": "9f4f7d242813db51de929d833f853a94cef0d74628bd65ec86fce48f3c668d62"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Noise_Terrain.png",
+      "dest": "QuaterniusURP/Materials/T_Noise_Terrain.png",
+      "sha256": "98fb32738b356cf376beb960045e7be728056a086acd612e24ad2855f445e7ff"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Noise_Terrain.png.meta",
+      "dest": "QuaterniusURP/Materials/T_Noise_Terrain.png.meta",
+      "sha256": "231feb05675b0f6722ac15f59549ea18580a31a8fb03352312d634a06168d7c2"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Normal_Default.png",
+      "dest": "QuaterniusURP/Materials/T_Normal_Default.png",
+      "sha256": "81d2cb2c07ccfce895dd9d0d8952de462709e1de7b9228ecdb5f11798ded9f66"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Normal_Default.png.meta",
+      "dest": "QuaterniusURP/Materials/T_Normal_Default.png.meta",
+      "sha256": "0ab236acacfe720dab836047705a6e8ec76eb87751e8e082c89b8f89c9b61ede"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Plaster_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_Plaster_BaseColor.png",
+      "sha256": "98547ca83888307e3ffa96384ce058b7622affe0a42add3b36d0b48618c5eda4"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Plaster_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_Plaster_BaseColor.png.meta",
+      "sha256": "e7215ab917b586a3d612377ba4ec7e2c4f726ec473e7d54358afaca3fc80cdb9"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Plaster_Normal.png",
+      "dest": "QuaterniusURP/Materials/T_Plaster_Normal.png",
+      "sha256": "8b9617b561466cce00d5a0628eae7bef208dcf63445d72570e7f8e5057fed0d4"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Plaster_Normal.png.meta",
+      "dest": "QuaterniusURP/Materials/T_Plaster_Normal.png.meta",
+      "sha256": "0371e9911c43c258bd3b7f95fe878c5a3ebd1b4c1a7ed525776a9b82febe982d"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Plaster_ORM.png",
+      "dest": "QuaterniusURP/Materials/T_Plaster_ORM.png",
+      "sha256": "7be9d64a6154ba12bb7086e1d6774a7d5bbbc95775efb614f6ff40a4787fe0c7"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_Plaster_ORM.png.meta",
+      "dest": "QuaterniusURP/Materials/T_Plaster_ORM.png.meta",
+      "sha256": "b564bc39d6d245769fbc1fbfbcd195f9f00b186ceea2f59101d1ddabe9d88c71"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RedBrick_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_RedBrick_BaseColor.png",
+      "sha256": "44c6303a8b9cef8988f02d92d7309482082412ebf0a2e2f99a50a642dcb3b8f9"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RedBrick_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RedBrick_BaseColor.png.meta",
+      "sha256": "376f678fb3d257a51a31d448bb25a891f7495aa758fb7ca33e5ba27cdaa0b70d"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RockTrim_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_RockTrim_BaseColor.png",
+      "sha256": "aa571cd612091a8f4c95393f8f938bd6e5d47a8cdfd9c896b60a4b37903e2c7c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RockTrim_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RockTrim_BaseColor.png.meta",
+      "sha256": "a3ad328982be81f6b61597ed7df330e4cb2a8b76fbcfd111da0ac49e6caa36ec"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RockTrim_Normal.png",
+      "dest": "QuaterniusURP/Materials/T_RockTrim_Normal.png",
+      "sha256": "f93f82f7e69aa0bf1900f8ab3f252390f091b771f0b84a345c5fefb0f0155cd3"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RockTrim_Normal.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RockTrim_Normal.png.meta",
+      "sha256": "32b8e04d4e270c632adb488372a4f710b5f4d2eb54c5a727036db3f1203e5e4c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RockTrim_ORM.png",
+      "dest": "QuaterniusURP/Materials/T_RockTrim_ORM.png",
+      "sha256": "5287dd9a4e9fb7423af8d8440a8de8bdb8910f9f37ba148f619a6eddf58d5bc8"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RockTrim_ORM.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RockTrim_ORM.png.meta",
+      "sha256": "3bcb07b436fb0f3deff05268ee80eca2eca2e6f4759736b8c07c96a1799d9ec5"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundRocks_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_RoundRocks_BaseColor.png",
+      "sha256": "e8550acf0de35b2773a7108d26f754bbdc8f8fc601c6e770e28709782b3d5d4a"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundRocks_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RoundRocks_BaseColor.png.meta",
+      "sha256": "80461f8819cb6f8e77cbe419aedd06bd9debe8f754ecd19eb58a9000b030b637"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundRocks_Normal.png",
+      "dest": "QuaterniusURP/Materials/T_RoundRocks_Normal.png",
+      "sha256": "53e11f0468e81cd4370c84b46be15e3b126153887082a53e2804c64049a23dba"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundRocks_Normal.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RoundRocks_Normal.png.meta",
+      "sha256": "f6371c6d1b7039a9a9fdf16719011cff372c64c394d859dee34e60e2d00a6c54"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundRocks_Roughness.png",
+      "dest": "QuaterniusURP/Materials/T_RoundRocks_Roughness.png",
+      "sha256": "d7c2166cda3a2f2487845f50bbc6eb643db8ae29eb8410d948e8fe5c13d5c8fc"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundRocks_Roughness.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RoundRocks_Roughness.png.meta",
+      "sha256": "fe71c7ed33176460b4450da6198c585c8713bb9fbcd0e2359557147d553abc28"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundTiles_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_RoundTiles_BaseColor.png",
+      "sha256": "acf388ebd1a97346e1e5b59091cfc609ed15b4f70b83a626089f12a82a2d9997"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundTiles_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RoundTiles_BaseColor.png.meta",
+      "sha256": "7bdc71d02c3a4d32f9d63c0a4b79c3719b123245cd6ee07a5b3adc0ea474b2bb"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundTiles_Normal.png",
+      "dest": "QuaterniusURP/Materials/T_RoundTiles_Normal.png",
+      "sha256": "b324fb5c76fd2e93760629b175aa159f4d824a98c382ec8030b982d93f74e0cc"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundTiles_Normal.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RoundTiles_Normal.png.meta",
+      "sha256": "25a31737fb013ec5dbe7deaa898222cca0cce34f98e1daa37a56b393bf045d21"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundTiles_Roughness.png",
+      "dest": "QuaterniusURP/Materials/T_RoundTiles_Roughness.png",
+      "sha256": "02709f84b0a15217c99082fecd7c8d2b44d004973a711b1edd47f69bcfb44c4e"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_RoundTiles_Roughness.png.meta",
+      "dest": "QuaterniusURP/Materials/T_RoundTiles_Roughness.png.meta",
+      "sha256": "a5433896f223c712a7589836bf70b5842bbc9ce0e760e92cee59fb9bc4c09624"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_TopWear.png",
+      "dest": "QuaterniusURP/Materials/T_TopWear.png",
+      "sha256": "838d2074dced0664111db305745a17cad25adfdd80ca9781b734e259f91f4fc6"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_TopWear.png.meta",
+      "dest": "QuaterniusURP/Materials/T_TopWear.png.meta",
+      "sha256": "e2b434b532e9bc14f9618ca866695fa27993fcd8ed8112f9ebe85ff623862dad"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_UnevenBrick_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_UnevenBrick_BaseColor.png",
+      "sha256": "ee0f096df6110e943cd9739680b61bc0ffd6fe00db752c5c3797941057a95ebc"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_UnevenBrick_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_UnevenBrick_BaseColor.png.meta",
+      "sha256": "c5b1e53d360308da2f5d9b129a3ad8834fcc984c15edeaa1548cc26f9ef10c25"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_UnevenBrick_Normal.png",
+      "dest": "QuaterniusURP/Materials/T_UnevenBrick_Normal.png",
+      "sha256": "bbf623cc35720d67a02079b20b9a6d9641c3686952b288cda97dec41e4b8acad"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_UnevenBrick_Normal.png.meta",
+      "dest": "QuaterniusURP/Materials/T_UnevenBrick_Normal.png.meta",
+      "sha256": "a2af7e66b7fc26badf372991530430b30df70593c1d386702606cbb6e5a86e17"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_UnevenBrick_Roughness.png",
+      "dest": "QuaterniusURP/Materials/T_UnevenBrick_Roughness.png",
+      "sha256": "c037bcaee905333108985d006958393e7e19580f29a1da334692303145ef6ed6"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_UnevenBrick_Roughness.png.meta",
+      "dest": "QuaterniusURP/Materials/T_UnevenBrick_Roughness.png.meta",
+      "sha256": "86790c03a5897ab0c826d913b59b76a489d3d063e000a4b4529eab93f8e31db9"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_VineLeaf.png",
+      "dest": "QuaterniusURP/Materials/T_VineLeaf.png",
+      "sha256": "8c80a9835d29cf7b1360ca46c2a96cedc0bfffee59f09db892f64db6825e3188"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_VineLeaf.png.meta",
+      "dest": "QuaterniusURP/Materials/T_VineLeaf.png.meta",
+      "sha256": "74be26a0429e2b6a12f8081feedb166aa102150f987f74e6aef5d5f40e1dec4c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WindowGradient.png",
+      "dest": "QuaterniusURP/Materials/T_WindowGradient.png",
+      "sha256": "57ce243ef673957eab01c02ebfb559c87c7ccd6fb2296aa30829aa823db5d3de"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WindowGradient.png.meta",
+      "dest": "QuaterniusURP/Materials/T_WindowGradient.png.meta",
+      "sha256": "b6e114ad78baa595b285b86e224faa8e66a4d536ac2153909e0d9d61ae4a795c"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WoodTrim_BaseColor.png",
+      "dest": "QuaterniusURP/Materials/T_WoodTrim_BaseColor.png",
+      "sha256": "a59f410b07a9bc5f0664df3ba7a2c1e37acffc7979795911f3fc8730ab60e33e"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WoodTrim_BaseColor.png.meta",
+      "dest": "QuaterniusURP/Materials/T_WoodTrim_BaseColor.png.meta",
+      "sha256": "6ae29204c995dc400459a8c655236ad0b7e8cb6cd08a25560ec71af590e29849"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WoodTrim_Normal.png",
+      "dest": "QuaterniusURP/Materials/T_WoodTrim_Normal.png",
+      "sha256": "5847623e4ed6c206e59f32d1718ee75dcb2b49a1d55ede7ef70a254739caf4a8"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WoodTrim_Normal.png.meta",
+      "dest": "QuaterniusURP/Materials/T_WoodTrim_Normal.png.meta",
+      "sha256": "a2ec111f8f219f5c3719682cf1fbadf15d5b57cc1ce0d1bbfdb052834ea068d8"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WoodTrim_ORM.png",
+      "dest": "QuaterniusURP/Materials/T_WoodTrim_ORM.png",
+      "sha256": "8947ae1f065dbf8a4ac01470e6cf1242782c3bc59733e0bbd91ba5efbdb3c1c1"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WoodTrim_ORM.png.meta",
+      "dest": "QuaterniusURP/Materials/T_WoodTrim_ORM.png.meta",
+      "sha256": "6da6d77dee024c3a432866bc0ba56374e9f4ce6c7605a63985b5d993d507a5a1"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WoodTrim_Roughness.png",
+      "dest": "QuaterniusURP/Materials/T_WoodTrim_Roughness.png",
+      "sha256": "5f63426bcc8d3db3254599d5a4c729f745a2fb2b7a11b5266b1894e3e7031a32"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Materials/T_WoodTrim_Roughness.png.meta",
+      "dest": "QuaterniusURP/Materials/T_WoodTrim_Roughness.png.meta",
+      "sha256": "22d5cf23f10b6bc08ea08b1b472cc1e1fc0ce14c61ea5e18486b7877051ceb16"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_WoodenFence_Single.fbx",
+      "dest": "QuaterniusURP/Models/Prop_WoodenFence_Single.fbx",
+      "sha256": "f5e0e0210292ab5dfd95a10f684850406b26d0a016b3fbd3ba499542e644d440"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_WoodenFence_Extension1.fbx",
+      "dest": "QuaterniusURP/Models/Prop_WoodenFence_Extension1.fbx",
+      "sha256": "93bafee1c23bcd44f2484ff62560abbf2eaff30219aab3717efabdcf95c4e73d"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Prop_ExteriorBorder_Straight1.fbx",
+      "dest": "QuaterniusURP/Models/Prop_ExteriorBorder_Straight1.fbx",
+      "sha256": "7177ae660cafb074a0483271b38b3bacf522db1d94d626e966c13fc2e35504cb"
+    },
+    {
+      "source": "quaternius-medieval-source",
+      "member": "Medieval Village MegaKit[Unity URP]/Quaternius/Assets/Quaternius/Medieval Village MegaKit/Modules/Source Models/Stairs_Exterior_Straight.fbx",
+      "dest": "QuaterniusURP/Models/Stairs_Exterior_Straight.fbx",
+      "sha256": "2453e5f40d894d89b4fa9b9bc676d17ca8d1e93479b9d16348a8a7995d05dc16"
+    },
+    {
+      "source": "quaternius-ual1-source",
+      "file": "Animation/Unity/UAL1_RM.fbx",
+      "dest": "Animation/UAL1_RM.fbx",
+      "sha256": "963e78eee5e6f8727c7114888f0352e47499dead0bafec431f24c84089aaa7c2"
+    },
+    {
+      "source": "quaternius-ual2-source",
+      "file": "Animation2/Unity/UAL2.fbx",
+      "dest": "Animation/UAL2.fbx",
+      "sha256": "28fe0ecc13b76568ff7093df7979b8935f6acd8179650337de92d1b6823984d2"
+    },
+    {
+      "source": "quaternius-ual2-source",
+      "file": "Animation2/Unity/UAL2_RM.fbx",
+      "dest": "Animation/UAL2_RM.fbx",
+      "sha256": "b6046fb3f3af5934819d6f3916207eb23791ec50e5e595921490f2f838e634e6"
+    },
+    {
+      "source": "quaternius-ual2-source",
+      "file": "Animation2/License.txt",
+      "dest": "Licenses/UAL2_License.txt",
+      "sha256": "6d01f55c6e4c49a2c9963e147e561945ae2c83958c8ca667d90a6bffdbfac061"
+    }
+  ]
+}

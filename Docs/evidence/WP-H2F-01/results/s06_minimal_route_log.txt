@@ -1,0 +1,3 @@
+minimal path=PathComplete corners=3
+minimal arrived frame=1213 t=40,4s
+minimal arrived=True final_distance=0,43 camera_clip_frames=0 occluded_frames=0 jerk_frames(>12deg)=0 max_jerk_deg=10,0 stalls=0 min_camera_clearance=0,192 frames_captured=27

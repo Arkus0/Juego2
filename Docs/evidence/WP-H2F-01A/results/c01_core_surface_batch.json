@@ -1,0 +1,731 @@
+{
+    "mode": "batch",
+    "version": "2.19.61",
+    "unityVersion": "6000.3.24f1",
+    "scriptingDefines": "",
+    "activeInputHandler": "2",
+    "runtimeSourceFiles": 2198,
+    "editorSourceFiles": 489,
+    "testSourceFiles": 6,
+    "exampleFiles": 6,
+    "assemblies": [
+        {
+            "name": "GameCreator.Editor.Core",
+            "types": 622,
+            "publicTypes": 449,
+            "references": [
+                "GameCreator.Runtime.Core",
+                "mscorlib",
+                "System",
+                "System.Core",
+                "Unity.InputSystem",
+                "Unity.TextMeshPro",
+                "Unity.TextMeshPro.Editor",
+                "UnityEditor.CoreModule",
+                "UnityEditor.EditorToolbarModule",
+                "UnityEditor.UI",
+                "UnityEngine.AIModule",
+                "UnityEngine.AnimationModule",
+                "UnityEngine.AudioModule",
+                "UnityEngine.CoreModule",
+                "UnityEngine.ImageConversionModule",
+                "UnityEngine.IMGUIModule",
+                "UnityEngine.JSONSerializeModule",
+                "UnityEngine.Physics2DModule",
+                "UnityEngine.PhysicsModule",
+                "UnityEngine.TextRenderingModule",
+                "UnityEngine.UI",
+                "UnityEngine.UIElementsModule",
+                "UnityEngine.UIModule",
+                "UnityEngine.UnityWebRequestModule",
+                "UnityEngine.UnityWebRequestTextureModule"
+            ]
+        },
+        {
+            "name": "GameCreator.Runtime.Core",
+            "types": 2473,
+            "publicTypes": 2178,
+            "references": [
+                "netstandard",
+                "Unity.Collections",
+                "Unity.InputSystem",
+                "Unity.Mathematics",
+                "Unity.TextMeshPro",
+                "UnityEditor.CoreModule",
+                "UnityEngine.AIModule",
+                "UnityEngine.AnimationModule",
+                "UnityEngine.AudioModule",
+                "UnityEngine.CoreModule",
+                "UnityEngine.ImageConversionModule",
+                "UnityEngine.JSONSerializeModule",
+                "UnityEngine.Physics2DModule",
+                "UnityEngine.PhysicsModule",
+                "UnityEngine.TerrainModule",
+                "UnityEngine.TerrainPhysicsModule",
+                "UnityEngine.TextRenderingModule",
+                "UnityEngine.UI",
+                "UnityEngine.UIModule"
+            ]
+        },
+        {
+            "name": "GameCreator.Tests.Core",
+            "types": 21,
+            "publicTypes": 6,
+            "references": [
+                "GameCreator.Runtime.Core",
+                "netstandard",
+                "nunit.framework",
+                "UnityEngine.CoreModule",
+                "UnityEngine.TestRunner"
+            ]
+        }
+    ],
+    "asmdefs": [
+        {
+            "path": "Assets/Plugins/GameCreator/Packages/Core/Editor/GameCreator.Editor.Core.asmdef",
+            "name": "GameCreator.Editor.Core",
+            "references": [
+                "GUID:75469ad4d38634e559750d17036d5f7c",
+                "GUID:406c89e0bc84d48f4b079c3c4cd13320",
+                "GUID:6546d7765b4165b40850b3667f981c26",
+                "GUID:6055be8ebefd69e48b49212b09b47b2f"
+            ],
+            "defineConstraints": [],
+            "versionDefines": [],
+            "autoReferenced": true
+        },
+        {
+            "path": "Assets/Plugins/GameCreator/Packages/Core/Runtime/GameCreator.Runtime.Core.asmdef",
+            "name": "GameCreator.Runtime.Core",
+            "references": [
+                "GUID:75469ad4d38634e559750d17036d5f7c",
+                "GUID:6055be8ebefd69e48b49212b09b47b2f",
+                "GUID:e0cd26848372d4e5c891c569017e11f1",
+                "GUID:d8b63aba1907145bea998dd612889d6b"
+            ],
+            "defineConstraints": [],
+            "versionDefines": [],
+            "autoReferenced": true
+        },
+        {
+            "path": "Assets/Plugins/GameCreator/Packages/Core/Tests/GameCreator.Tests.Core.asmdef",
+            "name": "GameCreator.Tests.Core",
+            "references": [
+                "GUID:27619889b8ba8c24980f49ee34dbb44a",
+                "GUID:0acc523941302664db1f4e527237feb3",
+                "GUID:406c89e0bc84d48f4b079c3c4cd13320",
+                "GUID:fa216a02d195f46dfac1c6346fe5a4ee"
+            ],
+            "defineConstraints": [
+                "UNITY_INCLUDE_TESTS"
+            ],
+            "versionDefines": [],
+            "autoReferenced": false
+        }
+    ],
+    "families": [
+        {
+            "family": "visual-scripting.instruction",
+            "baseType": "GameCreator.Runtime.VisualScripting.Instruction",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 317,
+            "publicConcreteTypes": 317,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "visual-scripting.condition",
+            "baseType": "GameCreator.Runtime.VisualScripting.Condition",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 93,
+            "publicConcreteTypes": 93,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "visual-scripting.event",
+            "baseType": "GameCreator.Runtime.VisualScripting.Event",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 67,
+            "publicConcreteTypes": 67,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "visual-scripting.hotspot-spot",
+            "baseType": "GameCreator.Runtime.VisualScripting.Spot",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 8,
+            "publicConcreteTypes": 8,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "property.get",
+            "baseType": "GameCreator.Runtime.Common.TPropertyTypeGet`1",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 402,
+            "publicConcreteTypes": 402,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "property.set",
+            "baseType": "GameCreator.Runtime.Common.TPropertyTypeSet`1",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 103,
+            "publicConcreteTypes": 103,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "save.storage",
+            "baseType": "GameCreator.Runtime.Common.SaveSystem.TDataStorage",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 2,
+            "publicConcreteTypes": 2,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "save.encryption",
+            "baseType": "GameCreator.Runtime.Common.SaveSystem.TDataEncryption",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 3,
+            "publicConcreteTypes": 3,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "save.game-save-host",
+            "baseType": "GameCreator.Runtime.Common.IGameSave",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 8,
+            "publicConcreteTypes": 8,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "save.remember-memory",
+            "baseType": "GameCreator.Runtime.Common.Memory",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 11,
+            "publicConcreteTypes": 11,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.unit.player-input",
+            "baseType": "GameCreator.Runtime.Characters.TUnitPlayer",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 4,
+            "publicConcreteTypes": 4,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.unit.motion",
+            "baseType": "GameCreator.Runtime.Characters.TUnitMotion",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 1,
+            "publicConcreteTypes": 1,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.unit.driver",
+            "baseType": "GameCreator.Runtime.Characters.TUnitDriver",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 3,
+            "publicConcreteTypes": 3,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.unit.facing",
+            "baseType": "GameCreator.Runtime.Characters.TUnitFacing",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 8,
+            "publicConcreteTypes": 8,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.unit.animim",
+            "baseType": "GameCreator.Runtime.Characters.TUnitAnimim",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 1,
+            "publicConcreteTypes": 1,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.ik-rig",
+            "baseType": "GameCreator.Runtime.Characters.IK.TRig",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 7,
+            "publicConcreteTypes": 7,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.ragdoll",
+            "baseType": "GameCreator.Runtime.Characters.TRagdollSystem",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 2,
+            "publicConcreteTypes": 2,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.footstep-detector",
+            "baseType": "GameCreator.Runtime.Characters.FootstepDetectorBase",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 2,
+            "publicConcreteTypes": 2,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.interaction-mode",
+            "baseType": "GameCreator.Runtime.Characters.TInteractionMode",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 3,
+            "publicConcreteTypes": 3,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.interactive",
+            "baseType": "GameCreator.Runtime.Characters.IInteractive",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 1,
+            "publicConcreteTypes": 1,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "character.animation-state-asset",
+            "baseType": "GameCreator.Runtime.Characters.State",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 3,
+            "publicConcreteTypes": 3,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "camera.shot-type",
+            "baseType": "GameCreator.Runtime.Cameras.TShotType",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 8,
+            "publicConcreteTypes": 8,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "camera.component",
+            "baseType": "GameCreator.Runtime.Cameras.TCamera",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 1,
+            "publicConcreteTypes": 1,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "input.button",
+            "baseType": "GameCreator.Runtime.Common.TInputButton",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 26,
+            "publicConcreteTypes": 26,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "input.value",
+            "baseType": "GameCreator.Runtime.Common.TInputValue`1",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 22,
+            "publicConcreteTypes": 22,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "navigation.marker-type",
+            "baseType": "GameCreator.Runtime.Common.TMarkerType",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 2,
+            "publicConcreteTypes": 2,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "variables.value-type",
+            "baseType": "GameCreator.Runtime.Variables.TVariable",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 2,
+            "publicConcreteTypes": 2,
+            "nonOverridableAbstracts": []
+        },
+        {
+            "family": "runtime.manager-singleton",
+            "baseType": "GameCreator.Runtime.Common.Singleton`1",
+            "found": true,
+            "isPublic": true,
+            "overridableFromOutside": true,
+            "concreteTypes": 13,
+            "publicConcreteTypes": 13,
+            "nonOverridableAbstracts": []
+        }
+    ],
+    "generatedSettings": [],
+    "autoHooks": [
+        {
+            "kind": "InitializeOnLoad",
+            "member": "GameCreator.Runtime.Common.DivideDeltaTimeProcessor"
+        },
+        {
+            "kind": "InitializeOnLoad",
+            "member": "GameCreator.Runtime.Common.DivideScreenSizeProcessor"
+        },
+        {
+            "kind": "InitializeOnLoad",
+            "member": "GameCreator.Runtime.Common.MultiplyDeltaTimeProcessor"
+        },
+        {
+            "kind": "InitializeOnLoad",
+            "member": "GameCreator.Runtime.Common.MultiplyScreenSizeProcessor"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Editor.Common.EditorSettingsCore.RegisterSettings"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Editor.Common.SettingsWindow.InitializeOnLoad"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Editor.Common.Versions.VersionsNotifications.InitializeOnLoad"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Editor.Common.WelcomeManager.InitializeOnLoad"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Editor.Variables.GlobalVariablesPostProcessor.InitializeOnLoad"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueAnimClip.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueAudioClip.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueBool.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueColor.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueGameObject.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueMaterial.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueNull.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueNumber.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueSprite.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueString.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueTexture.EditorInit"
+        },
+        {
+            "kind": "InitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueVector3.EditorInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Characters.Props.InitializeOnLoad"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Characters.SpatialHashCharacters.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Characters.SpatialHashInteractions.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.ApplicationManager.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.AudioManager.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.CacheUtils.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.DivideDeltaTimeProcessor.Initialize"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.DivideScreenSizeProcessor.Initialize"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.EventSystemManager.RuntimeInitialize"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.InputManager.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.Marker.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.MultiplyDeltaTimeProcessor.Initialize"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.MultiplyScreenSizeProcessor.Initialize"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.Runner.OnEnterPlayMode"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.SaveLoadManager.InitializeOnLoad"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Common.SpatialHashMarkers.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Console.Console.InitializeOnLoad"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.GlobalListVariablesManager.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.GlobalNameVariablesManager.OnSubsystemsInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueAnimClip.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueAudioClip.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueBool.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueColor.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueGameObject.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueMaterial.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueNull.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueNumber.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueSprite.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueString.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueTexture.RuntimeInit"
+        },
+        {
+            "kind": "RuntimeInitializeOnLoadMethod",
+            "member": "GameCreator.Runtime.Variables.ValueVector3.RuntimeInit"
+        }
+    ],
+    "namespaces": [
+        "GameCreator.Editor.Cameras 22",
+        "GameCreator.Editor.Characters 94",
+        "GameCreator.Editor.Common 169",
+        "GameCreator.Editor.Common.Audio 1",
+        "GameCreator.Editor.Common.Drawers 1",
+        "GameCreator.Editor.Common.ID 1",
+        "GameCreator.Editor.Common.UnityUI 11",
+        "GameCreator.Editor.Core 4",
+        "GameCreator.Editor.Hub 19",
+        "GameCreator.Editor.Installs 15",
+        "GameCreator.Editor.Overlays 1",
+        "GameCreator.Editor.Search 2",
+        "GameCreator.Editor.Variables 47",
+        "GameCreator.Editor.VisualScripting 47",
+        "GameCreator.Runtime.Cameras 43",
+        "GameCreator.Runtime.Characters 205",
+        "GameCreator.Runtime.Characters.Animim 8",
+        "GameCreator.Runtime.Characters.IK 14",
+        "GameCreator.Runtime.Common 1058",
+        "GameCreator.Runtime.Common.Audio 16",
+        "GameCreator.Runtime.Common.Mathematics 1",
+        "GameCreator.Runtime.Common.SaveSystem 11",
+        "GameCreator.Runtime.Common.UnityUI 35",
+        "GameCreator.Runtime.Console 27",
+        "GameCreator.Runtime.Variables 173",
+        "GameCreator.Runtime.VisualScripting 554",
+        "GameCreator.Tests.Core 6"
+    ],
+    "publicMonoBehaviours": [
+        "GameCreator.Runtime.Cameras.MainCamera",
+        "GameCreator.Runtime.Cameras.ShotCamera",
+        "GameCreator.Runtime.Characters.Character",
+        "GameCreator.Runtime.Characters.DriverControllerComponent",
+        "GameCreator.Runtime.Characters.InteractionTracker",
+        "GameCreator.Runtime.Common.ApplicationManager",
+        "GameCreator.Runtime.Common.AsyncManager",
+        "GameCreator.Runtime.Common.AudioManager",
+        "GameCreator.Runtime.Common.EventSystemManager",
+        "GameCreator.Runtime.Common.InputManager",
+        "GameCreator.Runtime.Common.Marker",
+        "GameCreator.Runtime.Common.PoolManager",
+        "GameCreator.Runtime.Common.Remember",
+        "GameCreator.Runtime.Common.RoomManager",
+        "GameCreator.Runtime.Common.RunnerConditionsList",
+        "GameCreator.Runtime.Common.RunnerInstructionsList",
+        "GameCreator.Runtime.Common.SaveLoadManager",
+        "GameCreator.Runtime.Common.ScheduleManager",
+        "GameCreator.Runtime.Common.StagingGizmos",
+        "GameCreator.Runtime.Common.TimeManager",
+        "GameCreator.Runtime.Common.TouchStick",
+        "GameCreator.Runtime.Common.TouchStickLeft",
+        "GameCreator.Runtime.Common.TouchStickRight",
+        "GameCreator.Runtime.Common.UnityUI.ButtonInstructions",
+        "GameCreator.Runtime.Common.UnityUI.DropdownPropertyInteger",
+        "GameCreator.Runtime.Common.UnityUI.DropdownTMPPropertyInteger",
+        "GameCreator.Runtime.Common.UnityUI.EventCallback",
+        "GameCreator.Runtime.Common.UnityUI.InputFieldPropertyString",
+        "GameCreator.Runtime.Common.UnityUI.InputFieldTMPPropertyString",
+        "GameCreator.Runtime.Common.UnityUI.SliderPropertyFloat",
+        "GameCreator.Runtime.Common.UnityUI.TextPropertyString",
+        "GameCreator.Runtime.Common.UnityUI.TogglePropertyBool",
+        "GameCreator.Runtime.Common.UpdateManager",
+        "GameCreator.Runtime.Variables.GlobalListVariablesManager",
+        "GameCreator.Runtime.Variables.GlobalNameVariablesManager",
+        "GameCreator.Runtime.Variables.LocalListVariables",
+        "GameCreator.Runtime.Variables.LocalNameVariables",
+        "GameCreator.Runtime.VisualScripting.Actions",
+        "GameCreator.Runtime.VisualScripting.Conditions",
+        "GameCreator.Runtime.VisualScripting.CopyRunnerConditionList",
+        "GameCreator.Runtime.VisualScripting.CopyRunnerInstructionList",
+        "GameCreator.Runtime.VisualScripting.Hotspot",
+        "GameCreator.Runtime.VisualScripting.Trigger"
+    ],
+    "scriptableObjectTypes": [
+        "GameCreator.Editor.Characters.SkeletonConfigurationStage",
+        "GameCreator.Editor.Installs.Installer",
+        "GameCreator.Runtime.Characters.Handle",
+        "GameCreator.Runtime.Characters.Skeleton",
+        "GameCreator.Runtime.Characters.StateAnimation",
+        "GameCreator.Runtime.Characters.StateBasicLocomotion",
+        "GameCreator.Runtime.Characters.StateCompleteLocomotion",
+        "GameCreator.Runtime.Common.GeneralSettings",
+        "GameCreator.Runtime.Common.MaterialSoundsAsset",
+        "GameCreator.Runtime.Common.TouchStickSkin",
+        "GameCreator.Runtime.Common.UpdatesSettings",
+        "GameCreator.Runtime.Common.WelcomeSettings",
+        "GameCreator.Runtime.Variables.GlobalListVariables",
+        "GameCreator.Runtime.Variables.GlobalNameVariables",
+        "GameCreator.Runtime.Variables.VariablesSettings"
+    ],
+    "projectStateChanged": [
+        "Packages/manifest.json"
+    ],
+    "projectStateAdded": [],
+    "layers": [
+        "0:Default",
+        "1:TransparentFX",
+        "2:Ignore Raycast",
+        "4:Water",
+        "5:UI"
+    ],
+    "tags": [
+        "Untagged",
+        "Respawn",
+        "Finish",
+        "EditorOnly",
+        "MainCamera",
+        "Player",
+        "GameController"
+    ],
+    "menuItems": 37
+}

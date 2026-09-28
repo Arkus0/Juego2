@@ -1,0 +1,6 @@
+rm_speed_after_1s=0,975
+ik_target_from_animated_shoulder distance=0,413
+ik_hand_to_target_weight0=0,371
+ik_hand_to_target_weight1=0,000
+rm_displacement=(0.58, 0.04, 4.91) speed=0,990 heading_deg=6,8 vertical_drift=0,039
+inplace_stance_foot_speed_p50=0,127 p10=0,089 (m/s; 0 = no slide) walk_speed=0,975

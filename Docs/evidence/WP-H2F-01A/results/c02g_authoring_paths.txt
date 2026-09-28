@@ -1,0 +1,22 @@
+CharacterEditor.CreatePlayer + Character.ChangeModel(J2_Citizen) [J2_Player]
+CharacterEditor.CreateCharacter + Character.ChangeModel(J2_Citizen) [J2_NPC_A]
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2None
+Character.m_Kernel.m_Driver = UnitDriverNavmesh
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2InputAction
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_InputAsset = J2_Input
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_ActionMap = 'Player'
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_Action = 'Move'
+ShotCamera.m_ShotType = ShotTypeThirdPerson
+ShotCamera.m_ShotType.m_ThirdPerson.m_Align.m_AutoAlign = True
+ShotCamera.m_ShotType.m_ThirdPerson.m_Align.m_Delay = 0,5
+ShotCamera.m_ShotType.m_ThirdPerson.m_Align.m_SmoothTime = 1
+ShotCamera.m_ShotType.m_ThirdPerson.m_Radius.m_Property = GetDecimalDecimal
+ShotCamera.m_ShotType.m_ThirdPerson.m_InputRotate.m_Input = InputValueVector2InputAction
+ShotCamera.m_ShotType.m_ThirdPerson.m_InputRotate.m_Input.m_Input.m_InputAsset = J2_Input
+ShotCamera.m_ShotType.m_ThirdPerson.m_InputRotate.m_Input.m_Input.m_ActionMap = 'Player'
+ShotCamera.m_ShotType.m_ThirdPerson.m_InputRotate.m_Input.m_Input.m_Action = 'Look'
+ShotCamera.m_ShotType.m_Zoom.m_InputZoom.m_Input = InputValueVector2InputAction
+ShotCamera.m_ShotType.m_Zoom.m_InputZoom.m_Input.m_Input.m_InputAsset = J2_Input
+ShotCamera.m_ShotType.m_Zoom.m_InputZoom.m_Input.m_Input.m_ActionMap = 'Player'
+ShotCamera.m_ShotType.m_Zoom.m_InputZoom.m_Input.m_Input.m_Action = 'Zoom'
+GC2 MainCamera + ShotCamera(Third Person: radius 3, auto-align delay 0.5, smooth 1.0) targeting the GC2 Player

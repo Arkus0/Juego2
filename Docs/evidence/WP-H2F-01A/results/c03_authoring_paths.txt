@@ -1,0 +1,17 @@
+CharacterEditor.CreatePlayer + Character.ChangeModel(J2_Citizen) [J2_Player]
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2InputAction
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_InputAsset = J2_Input
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_ActionMap = 'Player'
+Character.m_Kernel.m_Player.m_InputMove.m_Input.m_Input.m_Action = 'Move'
+CharacterEditor.CreateCharacter + Character.ChangeModel(J2_Citizen) [J2_NPC_A]
+Character.m_Kernel.m_Player.m_InputMove.m_Input = InputValueVector2None
+Trigger.m_Instructions.m_Instructions.Array.data[1].m_Message.m_Property = GetStringArkusFact
+Trigger.Reconfigure(EventCharacterOnInteract, [ArkusRequest 'door.open', DebugText(Arkus fact)]) [J2_j2.door.probe]
+Hotspot.m_Radius.m_Property = GetDecimalDecimal
+Hotspot(InRadius 2,5 m, target=Player) [J2_j2.door.probe]
+Trigger.m_Instructions.m_Instructions.Array.data[1].m_Message.m_Property = GetStringArkusFact
+Trigger.Reconfigure(EventCharacterOnInteract, [ArkusRequest 'seat.take', DebugText(Arkus fact)]) [J2_j2.chair.probe]
+Trigger.m_Instructions.m_Instructions.Array.data[1].m_Message.m_Property = GetStringArkusFact
+Trigger.Reconfigure(EventCharacterOnInteract, [ArkusRequest 'item.take', DebugText(Arkus fact)]) [J2_j2.mug.probe]
+Trigger.m_Instructions.m_Instructions.Array.data[1].m_Message.m_Property = GetStringArkusFact
+Trigger.Reconfigure(EventCharacterOnInteract, [ArkusRequest 'item.take', DebugText(Arkus fact)]) [J2_unbound_unbound]

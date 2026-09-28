@@ -1,0 +1,17 @@
+scenario=c05 unity=6000.3.24f1 scene=H2F01A_c05
+condition_door_open_initially=false
+property_fact_door_initially="closed"
+property_entity_lamp="J2_Lamp"
+property_entity_unknown="null"
+rejected_transition_reason="PRECONDITION:closed"
+trigger_runs_after_rejected=0
+trigger_runs_after_open=1
+condition_door_open_now=true
+lamp_fact_after_open="on"
+lamp_intensity_after_open=5
+presentation_lines_on=1
+trigger_runs_after_close=2
+lamp_requests_total=1
+adapter_requests="j2.rule.c05_door_lamp|j2.lamp.c05|lamp.on|ACCEPTED|ACCEPTED"
+arkus_log="000|j2.char.probe_author|j2.door.c05|door.close|REJECTED:PRECONDITION:closed ; 001|j2.char.probe_author|j2.door.c05|door.open|ACCEPTED:j2.door.c05:state=open ; 002|j2.rule.c05_door_lamp|j2.lamp.c05|lamp.on|ACCEPTED:j2.lamp.c05:light=on ; 003|j2.char.probe_author|j2.door.c05|door.close|ACCEPTED:j2.door.c05:state=closed"
+console_errors=0

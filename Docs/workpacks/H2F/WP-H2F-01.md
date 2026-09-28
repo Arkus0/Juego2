@@ -1,24 +1,43 @@
 # WP-H2F-01 — Decision spikes + final stack selection
 
-Status: **PROPOSED / NOT_STARTED**  
+Status: **COMPLETE / ACCEPTED**  
+Accepted: PR `#254`; frozen candidate `b642024ee54523d19b91448016af83a50d0ff361`; independent PASS review `#5331371244`; merge `27e6e56215268e566f24ea1f3a80e62601126f89`; post-PASS state: `Docs/evidence/WP-H2F-01/DOCSYNC.md`  
 Class: `PRODUCT_CHECKPOINT`  
 Mode: **HYBRID** — remote planning, real Unity/source-asset evidence where the decision depends on rendering, import, animation or interaction  
-Depends on: `WP-H2F-00` PASS + `WP-ART-01` PASS before any spike claims keeper-source fit  
+Depends on: `WP-H2F-00` PASS + ART-01 `PREFOUNDATION_INPUT` checkpoint published; **ART-01 PASS is intentionally not a predecessor**  
 Blocks: `WP-H2F-02`
 
 ## Claim
 
 Every H2F candidate whose choice is expensive to reverse and cannot be decided honestly from documentation has received the minimum real-project spike needed to select one baseline before keeper production.
 
+## Sequencing rule with ART-01
+
+H2F-01 consumes ART-01 only as a **pre-foundation input source**: current demand/coverage truth, source triage, assembly/dimensional grammar, representative real assets and known visual/source gaps. It must not require ART-01 to have completed its effective Unity visual benchmark, agent-composition smoke test, frozen candidate or PASS.
+
+The causal order is:
+
+```text
+ART-01 PREFOUNDATION_INPUT
+-> H2F-00
+-> H2F-01
+-> H2F-02
+-> H2F-03
+-> H2F-GATE
+-> ART-01 effective CANDIDATE / PASS
+```
+
+H2F spikes may reveal that a proposed source/material/tool choice is inadequate. That finding is foundation-selection evidence, not a substitute ART-01 readiness verdict. Final keeper-ready visual composition remains downstream of H2F-GATE.
+
 ## PASS-before-work acceptance contract
 
 - **Positive claim:** the bounded H2F-00 uncertainty queue has been resolved into an explicit final disposition matrix and one coherent recommended baseline.
 - **Mandatory positive evidence:** (1) H2F-00 register consumed; (2) real Unity/source evidence for every retained spike; (3) comparison notes against the actual Juego2/Quaternius target rather than generic package demos; (4) final `ADOPT_NOW / AVAILABLE_ASSET / DEFER / REDUNDANT / REJECT / NO_ADOPT` matrix; (5) owner-visible visual judgement for spikes whose discriminator is appearance/feel; (6) unresolved/manual acquisition blockers separated from technical failures.
 - **Negative gates:** FAIL if serious candidates are selected only from documentation; if every candidate is installed “just in case”; if visual/runtime fit is judged on a vendor demo instead of representative assets; if the spike mutates keeper CITY geometry; or if a plugin is selected because it is feature-rich while duplicating a simpler admitted solution without measured benefit.
-- **Non-claims:** this WP selects but does not yet make the selected stack the project baseline. H2F-02 owns exact adoption/migration.
+- **Non-claims:** this WP selects but does not yet make the selected stack the project baseline. H2F-02 owns exact adoption/migration. It also does not claim ART-01 keeper readiness.
 - **Allowed residuals:** deferred capabilities not required by CITY-07/H2; final fine-tuning of adopted settings; optimization packages whose need depends on later profiling.
 - **Evaluation method:** smallest named Unity/source-content spike per decision + human visual/play review where relevant + bounded technical checks.
-- **Consumed predecessors:** H2F-00 discovery, ART-01 production/visual truth, H1 accepted Unity bridge and dependency/IP policy.
+- **Consumed predecessors:** H2F-00 discovery, ART-01 `PREFOUNDATION_INPUT` source/demand/assembly truth, H1 accepted Unity bridge and dependency/IP policy.
 
 ## Mandatory spike families when H2F-00 retains competing candidates
 

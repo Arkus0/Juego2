@@ -1,40 +1,50 @@
-# Setting note — fictional Potes / Liébana
+# Setting note — fictional northern-Spain port town
 
-Status: **locked for art direction** (not a full design doc)  
-Date: 2026-09-19
+Status: **current art-direction setting anchor**  
+Date: 2026-09-28  
+Supersedes for current product art: the former fictional Potes/Liébana inland anchor, which remains historical/pilot evidence only.
 
 ## Anchor (now)
 
-The playable home town is a **fictionalized Potes in Liébana** (Cantabria):
+The final-product home setting is a **large fictional port town / villa portuaria in northern Spain**:
 
-- Mountain valley, stone streets, market-town density
-- Humid, overcast-biased light; green slopes and rock silhouettes on the skyline
-- Social/plaza core for living-world systems
-- **Not** a 1:1 rebuild of real Potes
-- **Not** primarily a coastal Castro-style harbour town
+- compact, dense and socially legible rather than metropolitan;
+- working port / muelle as a real economic layer rather than leisure-marina decoration;
+- old-town, market/commercial, workshop/industrial and residential neighbourhood fabrics;
+- damp Atlantic/northern light, green vegetation and weathered materials;
+- late-1990s / early-2000s product feel unless a later reviewed decision changes it;
+- **not** a 1:1 rebuild of any real town;
+- **not** required to be geographically literal asset-by-asset.
 
-Visual bible v0.1.3+ and `Docs/art/Refs/` follow this anchor.
+The final proper town name remains undecided. `Villa Bruma` is retired and must not be baked into keeper signage, UI or reusable assets.
 
-## Future expansion (allowed because fiction)
+## Current five-zone production model
 
-When systems and kit are stable, the same valley can grow without breaking identity:
+| Zone | Current role |
+|---|---|
+| `N.CASCO` | Dense old-town/civic/family fabric; primary nightlife pole in bounded streets |
+| `N.MERCADO` | Main repeat-visit commercial/everyday zone; ordinary evening life |
+| `N.MUELLE` | Working port, crews, deliveries, fishing/port work and limited port-social layer |
+| `N.TALLERES` | Repairs/workshops/small industry; secondary/alternative nightlife |
+| `N.VIVIENDAS` | Residential fabric; lower-intensity night activity |
 
-| Phase | Content | Note |
-|-------|---------|------|
-| H2 hero | Plaza + streets + bar/shop | No water required |
-| Later | **River** through or beside town | Bridge, banks, grey-green water (`#3F5A5E`) |
-| Later | **Small port / landing** on that river | Working boats only (Ships Pack: raft / small craft); not open-sea marina, not viking/cruise |
+This note does not fix exact parcels, architecture, lighting or venue placement beyond accepted CITY/product authority.
 
-Rules for the future port:
+## Art-direction implication
 
-- Keeps **valley** identity (inland waterway), not “suddenly on the Cantabrian Sea”.
-- Same material language as the town (stone, dark tile, muted props).
-- Does not force harbour-as-hero-read in the H2 slice.
+The setting identity must be strong at the **composed-scene level** while allowing broad reuse of admitted assets.
 
-## Implications for art (recap)
+A source mesh does not need to be a literal northern-Spain reference to be useful. It may be kept, adapted or dismantled into donor components if the final street/building/character composition reads coherently as Juego2.
 
-| Prefer now | Later OK | Avoid |
-|------------|----------|--------|
-| Valley town fabric (Potes refs) | River edge, small landing | Mediterranean / alpine chalet |
-| Market, bar, workshop life | Light river traffic | Fantasy keep / thatch |
-| Overcast + damp green | Occasional clearer weather event | Palm / tropical nature |
+Wood is allowed. Medieval/fantasy pack origin is not an automatic rejection reason. The final keeper result must still avoid a dominant fantasy/alpine/medieval read.
+
+See:
+
+- `Docs/art/VISUAL_BIBLE.md`;
+- `Docs/product/PORT_TOWN_SCALE_AMENDMENT.md`;
+- `Docs/product/PORT_TOWN_IDENTITY_NIGHTLIFE_AMENDMENT.md`;
+- accepted `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md` (PR `#267`).
+
+## Historical inland pilot
+
+The retained Potes/Liébana-like inland pilot remains useful for historical ART/H2 evidence, assembly grammar, toolchain tests and regression comparisons. It is **not** the final-setting visual authority and must not veto valid port-town source reuse merely because an asset would not fit that former pilot identity.

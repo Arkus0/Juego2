@@ -4,23 +4,33 @@ Status: **PROPOSED / NOT_STARTED**
 Class: PRODUCT / TOOLCHAIN GATE  
 Mode: **HYBRID** — documentary/adoption checks may be remote; effective Unity visual/play evidence is local or equivalent truthful hosted Unity evidence  
 Depends on: `WP-H2F-00` PASS + `WP-H2F-01` PASS + `WP-H2F-02` PASS + `WP-H2F-03` PASS  
-Blocks: `WP-CITY-07`, `WP-H2-01`, `WP-H2-02` and any keeper production that relies on the selected H2F baseline
+Blocks: ART-01 effective Unity `CANDIDATE`/PASS, `WP-CITY-07`, `WP-GC2-00`, `WP-H2-01`, `WP-H2-02` and any keeper production that relies on the selected H2F baseline
+
+## Post-01A urban product amendment (prospective)
+
+The gate freezes a reusable production foundation for compact urban blocks as well as the retained CITY-07 pilot. If 01A admitted Core, its public GC2↔Arkus adapter/lifecycle is part of the selected foundation. GC2-00 consumes this gate and proves the later gameplay round trip. Do not demand a keeper port district, 80–120 NPCs or separately licensed gameplay modules as foundation PASS. Arkus remains active canonical authority; all original reproducibility and H1 lifecycle obligations remain binding.
 
 ## Claim
 
-Juego2 has a coherent, deliberately selected, exact-version and reproducible Unity/product baseline for the first keeper slice, and later CITY/H2 Workers can build retained content without reopening foundational rendering/worldbuilding/player/navigation/character-animation tooling choices by accident.
+Juego2 has a coherent, deliberately selected, exact-version and reproducible Unity/product baseline for the first keeper slice, and later ART/CITY/H2 Workers can build retained content without reopening foundational rendering/worldbuilding/player/navigation/character-animation tooling choices by accident.
 
 This Gate does **not** claim the keeper slice is already built or visually closed. It proves that the foundation on which that retained work will be authored is ready, bounded, compatible with the accepted H1 public lifecycle and reviewable.
+
+## Sequencing boundary with ART-01
+
+H2F-GATE consumes ART-01 only through its published `PREFOUNDATION_INPUT`: renderer-independent/source-facing demand, source triage, assembly/dimensional grammar, representative real assets and known gaps. **ART-01 PASS is not a predecessor of this Gate.**
+
+The Gate is the causal point that freezes the production foundation. After Gate PASS, ART-01 resumes its effective Unity benchmark, render-specific tuning, fresh-author/agent smoke test and frozen candidate on this accepted baseline. H2F may not claim ART-01 `KEEPER_READY`; ART-01 may not freeze its final benchmark on a private/pre-Gate foundation.
 
 ## PASS-before-work acceptance contract
 
 - **Positive claim:** the project has closed the material pre-H2 capability decisions, adopted the selected stack under the dependency/IP policy, proved the components together on one non-keeper fixture, proved the selected foundation state survives or reconstructs through the accepted H1 lifecycle according to an explicit boundary, and documented a reproducible restoration path and replacement boundaries.
 - **Mandatory positive evidence:** (1) closed capability register covering every H2F mandatory category; (2) final `ADOPT_NOW / AVAILABLE_ASSET / DEFER / REDUNDANT / REJECT / NO_ADOPT` disposition matrix; (3) exact package/source/adoption ledger for every material adopted dependency; (4) frozen Unity package/project baseline and URP configuration; (5) complete selected-foundation-state → H1 lifecycle classification/host matrix; (6) H2F-03 integrated fixture evidence including third-person traversal, worldbuilding coexistence, real Quaternius humanoid animation/retarget proof and fresh-author/agent operation; (7) composed H1 materialize → observe → reconcile → rematerialize → accepted clean-rebuild evidence with the full selected stack present; (8) clean restore/import reproduction using the documented lawful/manual inputs; (9) bounded profiler sanity evidence evaluated only by the predeclared H2F-03 diagnostic/pathology oracle; (10) explicit residual/backlog list for deferred categories and future replacement triggers.
 - **Negative gates:** FAIL if a capability required by CITY-07/H2 still has unresolved `SPIKE_REQUIRED`; if a material dependency floats or lacks exact adoption/license truth; if material selected foundation state has no declared H1 lifecycle host/expectation; if the stack is only proven package-by-package or only before H1 lifecycle operations; if material selected state is lost, falsely classified as unsupported drift or requires undocumented hand repair after materialize/reconcile/rematerialize/clean rebuild; if representative Quaternius content still relies on hidden unsupported render/material fallback; if clean restoration depends on undocumented local caches/assets; if a plugin-private data model becomes canonical Juego2 semantics; if CITY/H2 would still have to choose between competing foundation tools while authoring keeper content; if an enumerated H2F-03 performance pathology reproduces; or if the H2F fixture is presented as keeper acceptance.
-- **Non-claims:** no final keeper geometry, no ART-02 visual closure, no Living World simulation, no town-wide/shipping performance budget, no final narrative/audio stack and no claim that deferred categories can never be revisited.
+- **Non-claims:** no ART-01 PASS/keeper-ready claim, no final keeper geometry, no ART-02 visual closure, no Living World simulation, no town-wide/shipping performance budget, no final narrative/audio stack and no claim that deferred categories can never be revisited.
 - **Allowed residuals:** later artistic tuning, content breadth, ordinary non-pathological profiler findings/optimization work, H3+ narrative/behaviour/audio choices and deliberately deferred capabilities whose absence does not constrain CITY-07/H2. Residuals may not include unresolved tool choice for any capability actually required by the representative keeper slice.
 - **Evaluation method:** documentary dependency/provenance review + exact project/package inspection + H1 lifecycle-boundary inspection + effective Unity integrated-fixture visual/play evidence + composed H1 public-lifecycle reproduction + clean-restoration reproduction + diagnostic profiler/pathology review + fresh-author transcript.
-- **Consumed predecessors:** accepted H0/H1 authority and Unity bridge, ART-01 keeper-ready production vocabulary, H2F-00 ecosystem coverage, H2F-01 decision evidence, H2F-02 exact adoption/lifecycle classification and H2F-03 integrated compatibility/lifecycle proof.
+- **Consumed predecessors:** accepted H0/H1 authority and Unity bridge, ART-01 `PREFOUNDATION_INPUT` source/demand/assembly truth, H2F-00 ecosystem coverage, H2F-01 decision evidence, H2F-02 exact adoption/lifecycle classification and H2F-03 integrated compatibility/lifecycle proof.
 
 ## Required frozen outputs
 
@@ -117,7 +127,7 @@ After Gate PASS, a new material tool/dependency may enter the keeper path only w
 - measured evidence exposes a blocker and an explicit H2F amendment adopts/replaces the relevant tool;
 - a later causal phase owns a capability intentionally deferred by H2F.
 
-Convenience, novelty or a promising Asset Store listing alone is not enough to silently alter the frozen baseline during CITY-07/H2.
+Convenience, novelty or a promising Asset Store listing alone is not enough to silently alter the frozen baseline during ART-01/CITY-07/H2.
 
 ## PASS only if all are true
 
@@ -156,4 +166,4 @@ FAIL if any of the following is true:
 
 ## Definition of Done
 
-`WP-CITY-07` and H2 receive one deliberately selected, frozen, H1-lifecycle-compatible and reproducible baseline rather than a toolbox still under discovery. Subsequent keeper work can focus on **making the game**, while any later foundation change has an explicit causal trigger and adoption path instead of arriving as opportunistic dependency drift.
+H2F freezes one deliberately selected, H1-lifecycle-compatible and reproducible production baseline. ART-01 can then execute its effective visual candidate/PASS on that foundation, after which `WP-CITY-07` and H2 receive both the frozen toolchain and keeper-capable visual vocabulary. Subsequent keeper work can focus on **making the game**, while any later foundation change has an explicit causal trigger and adoption path instead of arriving as opportunistic dependency drift.

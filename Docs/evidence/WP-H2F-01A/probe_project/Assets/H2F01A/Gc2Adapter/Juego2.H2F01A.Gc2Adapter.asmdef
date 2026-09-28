@@ -1,0 +1,17 @@
+{
+    "name": "Juego2.H2F01A.Gc2Adapter",
+    "rootNamespace": "Juego2.H2F01A.Gc2Adapter",
+    "references": [
+        "GameCreator.Runtime.Core",
+        "Juego2.H2F01A.Arkus"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

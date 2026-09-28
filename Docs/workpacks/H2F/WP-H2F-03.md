@@ -6,6 +6,10 @@ Mode: **LOCAL / real Unity visual-play evidence required**
 Depends on: `WP-H2F-02` PASS  
 Blocks: `WP-H2F-GATE`
 
+## Post-01A urban product amendment (prospective)
+
+The existing non-keeper integration fixture also checks that the admitted player/interaction path and 01A GC2↔Arkus public seam coexist with the selected stack, where Core is admitted. Record the street/interior/navigation realization profile that a later compact city block can reuse. The fixture does **not** claim a real port street, an urban character population, new GC2 modules, or ART/CITY keeper approval. Its original lifecycle, fresh-author, evidence and negative gates stay binding.
+
 ## Claim
 
 The frozen candidate stack works as one coherent Juego2 production baseline when rendering, worldbuilding, traversal/navigation and character presentation are exercised together, survives the accepted H1 public lifecycle according to the H2F-02 state-classification boundary, and a fresh author/agent can use the prescribed Juego2-side surfaces without turning plugin-private state into canonical authority.
@@ -14,7 +18,7 @@ The frozen candidate stack works as one coherent Juego2 production baseline when
 
 Use a bounded **`H2F_INTEGRATION_FIXTURE / NON_KEEPER`** fixture.
 
-It may reuse admitted ART-01 assets, dimensions, composition rules and representative conditions, but it must be visibly recorded as a compatibility fixture. It cannot satisfy CITY-07 keeper acceptance, replace the retained CITY seed or become a backdoor redesign of CITY semantics.
+It may reuse admitted ART-01 `PREFOUNDATION_INPUT` assets, dimensions, composition rules and representative conditions, but it must be visibly recorded as a compatibility fixture. ART-01 does not need to have passed. The fixture cannot satisfy ART-01 readiness, CITY-07 keeper acceptance, replace the retained CITY seed or become a backdoor redesign of CITY semantics.
 
 The fixture should be as small as possible while exposing cross-tool failures: one short exterior route/street or path, meaningful level/edge treatment, one threshold/window/interior-depth condition, bounded nature, one player route and one representative humanoid.
 
@@ -22,11 +26,11 @@ The fixture should be as small as possible while exposing cross-tool failures: o
 
 - **Positive claim:** the selected H2F stack coexists on one real Unity fixture, remains valid through the accepted H1 materialize/observe/reconcile/rematerialize/clean-rebuild lifecycle, and supports the complete minimal authoring/play path needed before CITY-07 commits keeper content.
 - **Mandatory positive evidence:** (1) continuous third-person capture/inspection of the integrated fixture; (2) rendering/material evidence under the frozen URP baseline; (3) selected linear/terrain/nature/edge tooling exercised together; (4) player camera/input + collision/navigation exercised; (5) one actual Quaternius humanoid using the selected animation/retarget baseline plus any adopted rigging/IK correction; (6) one fresh-author/agent operation using the approved adapter/preset/public path; (7) the composed H1 lifecycle transcript and before/after state witnesses required below; (8) bounded profiler snapshot under the predeclared diagnostic oracle below; (9) issue ledger distinguishing stack blocker from later art/performance polish.
-- **Negative gates:** FAIL if each package only works in its own demo scene; if the fixture hides incompatible materials or tools; if a plugin-private object graph becomes the only authoring API; if an AI directly mutates Unity/plugin state while presenting that as canonical Arkus authoring; if visual evidence is editor/top-down only; if required selected foundation state is lost, falsely classified as unsupported drift or requires undocumented hand repair after the H1 lifecycle; if an enumerated performance pathology occurs; or if this fixture is promoted as CITY-07 keeper content.
-- **Non-claims:** no final keeper level, no whole-town performance, no H3 routine/schedule semantics, no shipping frame-rate budget and no final ART-02 polish.
+- **Negative gates:** FAIL if each package only works in its own demo scene; if the fixture hides incompatible materials or tools; if a plugin-private object graph becomes the only authoring API; if an AI directly mutates Unity/plugin state while presenting that as canonical Arkus authoring; if visual evidence is editor/top-down only; if required selected foundation state is lost, falsely classified as unsupported drift or requires undocumented hand repair after the H1 lifecycle; if an enumerated performance pathology occurs; or if this fixture is promoted as ART-01/CITY-07 keeper acceptance.
+- **Non-claims:** no ART-01 readiness/PASS, no final keeper level, no whole-town performance, no H3 routine/schedule semantics, no shipping frame-rate budget and no final ART-02 polish.
 - **Allowed residuals:** visual tuning and content breadth that do not call the selected toolchain choice into question; ordinary profiler numbers/optimization opportunities that do not meet an enumerated pathology; deferred categories already recorded by H2F-01.
 - **Evaluation method:** human third-person visual/play inspection + bounded machine-verifiable configuration/navigation/identity checks + composed H1 public-lifecycle proof + diagnostic profiler evidence + fresh-author transcript.
-- **Consumed predecessors:** H2F-02 exact adoption and lifecycle-classification matrix, ART-01 source/assembly truth and accepted H1 canonical→Unity/reconciliation/rebuild authority.
+- **Consumed predecessors:** H2F-02 exact adoption and lifecycle-classification matrix, ART-01 `PREFOUNDATION_INPUT` source/demand/assembly truth and accepted H1 canonical→Unity/reconciliation/rebuild authority.
 
 ## Required integrated capabilities
 
@@ -97,6 +101,8 @@ inspect admitted realization profiles
 
 When the operation is purely downstream visual tooling with no canonical semantic change, direct use of the documented Unity-side adapter/preset is allowed, but it must remain clearly classified as realization state rather than canonical world truth.
 
+This is a foundation-authoring trial, not the ART-01 fresh-author composition smoke test. Passing H2F-03 does not prove that the final ART-01 representative benchmark is `KEEPER_READY`.
+
 ## Performance sanity — predeclared diagnostic oracle
 
 Profiling is **diagnostic by default**, not a shipping budget and not a subjective “looks slow” gate. Before capture, record the comparison context so later runs are interpretable:
@@ -145,8 +151,8 @@ Do not adopt optimization middleware merely to make this tiny fixture “faster�
 - profiler evidence is captured under the declared context and none of the enumerated foundation pathologies reproduces;
 - ordinary non-pathological performance findings are classified as diagnostic residuals rather than converted into post-hoc blockers;
 - all remaining issues are classified as H2F blocker, causal predecessor contradiction or permitted later residual;
-- the fixture remains explicitly non-keeper.
+- the fixture remains explicitly non-keeper and makes no ART-01 PASS claim.
 
 ## Negative gates
 
-The acceptance-contract negative gates are binding. Package-by-package demo success without one composed Juego2 fixture is an explicit FAIL. A fixture that works before H1 materialization/reconciliation but loses or corrupts required selected state after rematerialize/clean rebuild is also an explicit FAIL, as is inventing a new numeric performance threshold during review.
+The acceptance-contract negative gates are binding. Package-by-package demo success without one composed Juego2 fixture is an explicit FAIL. A fixture that works before H1 materialization/reconciliation but loses or corrupts required selected state after rematerialize/clean rebuild is also an explicit FAIL, as is inventing a new numeric performance threshold during review or treating this foundation fixture as ART-01/CITY-07 keeper acceptance.

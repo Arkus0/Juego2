@@ -2,6 +2,8 @@
 
 ## Prime directive
 
+**Prospective product direction after H2F-01A:** `Docs/product/URBAN_EXPANSION_DECISION.md` and `Docs/roadmap/POST_H2F01A_ROADMAP.md` amend pending product scope after independent acceptance. Arkus stays active canonical/persistent authority; admitted GC2 executes local gameplay. The inland CITY/H2 pilot stays a retained pilot, while any keeper port geography needs `CITY-URBAN-00/01`. Do not treat this paragraph as a retrospective change to accepted H0/H1 evidence or an amendment of H2F-01A's active candidate.
+
 Juego2 is harness-first. `WP-HK-GATE` and `WP-H1-GATE` have passed and merged (H1 Gate: PR `#238`; see `Docs/evidence/WP-H1-GATE/DOCSYNC.md`). Gameplay, keeper realization (`CITY-07+`), vertical-slice content, DFU integration and Creator GUI work remain subject to their own accepted downstream contracts and prerequisites. H1 created only the bounded Unity project, fixtures, generated projections and representative real-asset slice owned by its bridge workpacks; those proof inputs do not themselves constitute CITY/H2 production.
 
 The harness exists to let an AI agent create, inspect, modify, validate, replay, and test the game world through stable machine-readable contracts without knowing C# implementation details.

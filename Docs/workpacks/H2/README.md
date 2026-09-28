@@ -5,6 +5,8 @@ Class: PRODUCT PHASE
 Execution default: `PRODUCT_CHECKPOINT`  
 Plan date: 2026-09-25; H2F predecessor amendment: 2026-09-27
 
+> **Prospective urban expansion addendum:** [`Docs/product/URBAN_EXPANSION_DECISION.md`](../../product/URBAN_EXPANSION_DECISION.md) expands the **final** target to a fictional port city. This H2 phase keeps the accepted inland Puente → Casco → Bar pilot as a keeper spatial/visual authoring benchmark. `GC2-00` proves the admitted local/Core seam after H2F-GATE; H2-02 owns the first keeper street (`GC2-01` equivalent); H2-03's six characters sample future A/B/C tiers. H2-GATE closes this pilot's quality, not the city population or port geography. `CITY-URBAN-00/01` and GC2-02..SLICE subsequently realize the urban setting and systems. See [`POST_H2F01A_ROADMAP.md`](../../roadmap/POST_H2F01A_ROADMAP.md). The original 2026-09-25 claims below are retained as accepted planning context wherever the later product decision does not supersede their final-scale assumptions.
+
 ## 1. Phase claim
 
 H2 answers one product question:
@@ -168,9 +170,9 @@ Every H2 implementation WP must carry a prewritten `PASS only if all are true` s
 
 H2 uses `Docs/workpacks/PRODUCT_EXECUTION_POLICY.md`.
 
-## 9. H3 handoff
+## 9. H3 handoff (historical planning baseline; amended by urban expansion)
 
-H3 begins only after H2 visual/product closure and turns presentation actors into persistent people.
+H3 begins only after H2 visual/product closure and turns presentation actors into persistent people. After the prospective urban amendment passes, the concrete first implementations are GC2-02..06: one witness, then a routine and an urban living block. The research and deeper H3/H4 aspirations below remain input for later depth, not a mandatory new infrastructure gate before visible gameplay.
 
 Expected H3 ownership starts with:
 
