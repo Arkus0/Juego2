@@ -33,7 +33,7 @@ Any remaining wording such as “prospective urban expansion” inside individua
 
 ## Dependency disposition
 
-`WP-H2F-01A` remains untouched and finishes under its pre-existing contract. After its PASS/merge/DocSync, the immediate next executable Worker is `WP-H2F-02`, consuming the actual accepted 01A handoff and ART-01 `PREFOUNDATION_INPUT`. No additional product replanning gate is required.
+PR `#257` did not reopen `WP-H2F-01A`; it finished under its pre-existing contract and subsequently received Reviewer PASS and merged via PR `#256` as `2276dc1c2b429f273b7715fda023539feefdb086`. Its own post-PASS DocSync remains a separate process obligation. Once that 01A DocSync is complete, the immediate next executable Worker is `WP-H2F-02`, consuming the accepted 01A handoff and ART-01 `PREFOUNDATION_INPUT`. No additional **product replanning** gate is required.
 
 The accepted downstream route is:
 
