@@ -1,0 +1,11 @@
+{
+    "pipeline": "UniversalRenderPipelineAsset",
+    "bindings": 4,
+    "nullBindings": 0,
+    "materials": 2,
+    "shaders": [
+        "Universal Render Pipeline/Lit=2"
+    ],
+    "failures": [],
+    "green": true
+}

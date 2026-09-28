@@ -1,0 +1,5 @@
+Trigger.Reconfigure(EventOnArkusFactChanged, InstructionList[CheckConditions, ArkusRequest, LightIntensity, DebugText])
+Trigger.m_Instructions.m_Instructions.Array.data[0].m_Conditions.m_Conditions = arraySize 1
+Trigger.m_Instructions.m_Instructions.Array.data[0].m_Conditions.m_Conditions.Array.data[0] = ConditionArkusFact
+Trigger.m_Instructions.m_Instructions.Array.data[2].m_Light.m_Property = GetGameObjectArkusEntity
+Trigger.m_Instructions.m_Instructions.Array.data[3].m_Message.m_Property = GetStringArkusFact
