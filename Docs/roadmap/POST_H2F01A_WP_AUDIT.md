@@ -14,7 +14,7 @@ Status: **ACCEPTED base audit with PROPOSED visual-production amendment in this 
 | CITY-URBAN-00 | KEEP / EARLY | Define the actual large-port-town topology and first-block brief in parallel with post-H2F art work. |
 | ART-URBAN-01 | ADAPT / MOVE EARLY | Consume `ART-ENV-02`; extend the same scenario factory with port-town pieces instead of creating a second bespoke pipeline. |
 | CITY-URBAN-01 | ADAPT / MOVE BEFORE H2-GATE | Build the actual first port-town keeper block before H2-GATE so the final look is proven on the real setting. Remove the old H2-GATE prerequisite to avoid the causal cycle. |
-| H2-GATE | ADAPT / STRONGER | Final H2 gate now requires the real port-town block plus environment/character/animation/UI production factories and a fresh-author production challenge. |
+| H2-GATE | ADAPT / STRONGER | Final H2 gate now requires the real port-town block plus environment/character/animation/UI production factories and a fresh-author production challenge. It does not require purchasing Dialogue 2. |
 | GC2-00 | KEEP | Core player/interaction semantic seam remains a bounded pre-Gate input. |
 | GC2-02..08 / GC2-SLICE | DEFER UNTIL STRONG H2-GATE | Do not expand deeper gameplay until visual/content production is locked. Existing gameplay objectives remain. |
 | DISTRICT-01 | KEEP LATER | Uses the proven production factories when expanding the first neighbourhood. |
@@ -29,8 +29,8 @@ Status: **ACCEPTED base audit with PROPOSED visual-production amendment in this 
 | `ART-ANIM-01` | Animation source/provenance/retarget/coverage truth | H2F-GATE | ART-ANIM-02 |
 | `ART-ANIM-02` | Reusable locomotion/acting/ambient/object/reaction vocabulary mapped to admitted runtime surfaces | ART-ANIM-01 + CHAR-02 | H2-03, ART-03 |
 | `ART-ENV-02` | Scenario-production factory and first-build vs repeated-build proof | ART-01 + CITY-URBAN-00 | ART-URBAN-01, ART-03 |
-| `GC2-DIALOGUE-00` | Exact Dialogue 2 adoption only for presentation/directing; no investigation claim | H2F-GATE + owner package | ART-UI-01 |
-| `ART-UI-01` | Juego2 no-voice dialogue/UI visual language and reusable Dialogue skin | GC2-DIALOGUE-00 + CHAR-02 | ART-03 |
+| `GC2-DIALOGUE-00` | Resolve dialogue-presentation strategy; optionally adopt Dialogue 2 only if materially justified and owner-provided | H2F-GATE | ART-UI-01 |
+| `ART-UI-01` | Juego2 no-voice dialogue/UI visual language on either adopted Dialogue 2 or Core/local presentation surface | GC2-DIALOGUE-00 + CHAR-02 | ART-03 |
 | `ART-03` | Integrated visual-production lock on actual port-town block + fresh-author production challenge | all visual factories + ART-02 + CITY-URBAN-01 | H2-GATE |
 
 ## Causal rules
@@ -40,8 +40,9 @@ Status: **ACCEPTED base audit with PROPOSED visual-production amendment in this 
 3. **No bespoke-six-NPC shortcut.** H2-03 consumes the character/animation factories.
 4. **No fake final look from the inland pilot.** ART-03 and H2-GATE inspect the actual port-town block.
 5. **No deep gameplay before the lock.** `GC2-02+` remains blocked until expanded H2-GATE.
-6. **Dialogue 2 is the only new licensed module allowed pre-Gate by this amendment**, and only through `GC2-DIALOGUE-00` for visual/presentation needs. Buying other modules early does not change integration order.
-7. **Ink remains undecided at runtime level.** This amendment does not delete or canonize it.
-8. **Factory proof beats asset count.** Character and animation counts are planning orientations; PASS is repeatable useful coverage and authoring reuse.
+6. **Dialogue 2 is optional, not an H2 purchase gate.** `GC2-DIALOGUE-00` may PASS as `ADOPTED`, `NOT_MATERIAL`, `REJECTED` or `DEFERRED_NOT_ACQUIRED`; only `ADOPTED` requires exact-version dependency/IP, provisioning, compile/import and composed H1 lifecycle evidence. Non-adopted dispositions route ART-UI-01 through Core/local and do not block ART-03 or H2-GATE.
+7. **No implicit later adoption.** A later material reason to acquire Dialogue 2 reopens `GC2-DIALOGUE-00`; ART-UI-01 and GC2-03 remain consumers only.
+8. **Ink remains undecided at runtime level.** This amendment does not delete or canonize it.
+9. **Factory proof beats asset count.** Character and animation counts are planning orientations; PASS is repeatable useful coverage and authoring reuse.
 
 Historical accepted H0/H1, CTX, DW, PA, ART-00, CITY-00..06 and accepted H2F predecessors keep their accepted guarantees. No implementation rerun is implied by this roadmap amendment.
