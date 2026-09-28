@@ -9,7 +9,7 @@ ART owns Juego2 visual/content direction and the keeper-capable production vocab
 
 The accepted PR #229 planning/contract changes are binding inputs here: production coverage must distinguish `KEEPER_READY`, `PROXY_VISUAL` and `COVERAGE_BLOCKED`; assembly grammar, dimensions and shared elevation/metric truth are real product requirements; rapid bounded iteration is allowed between meaningful checkpoints.
 
-Current product visual identity is the **large fictional northern-Spain port town**, not the historical Potes/Liébana inland pilot. The final town proper name remains undecided. Once accepted, `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md` is the binding reuse-first interpretation of source selection and final scene coherence.
+Current product visual identity is the **large fictional northern-Spain port town**, not the historical Potes/Liébana inland pilot. The final town proper name remains undecided. `Docs/product/ASSET_REUSE_VISUAL_DIRECTION_AMENDMENT.md` is the accepted binding reuse-first interpretation of source selection and final scene coherence (PR `#267`).
 
 ART product work uses `PRODUCT_CHECKPOINT` under `Docs/workpacks/PRODUCT_EXECUTION_POLICY.md`.
 
@@ -26,7 +26,7 @@ It consumes/produces the companion contracts:
 - `ART_ENVIRONMENT_ASSEMBLY_GRAMMAR.md`;
 - `ART_01_ASSEMBLY_GRAMMAR_AMENDMENT.md`;
 - `ART_01_DIMENSIONAL_PROFILE.md`;
-- `ART_01_ASSET_REUSE_AMENDMENT.md` once accepted.
+- accepted `ART_01_ASSET_REUSE_AMENDMENT.md`.
 
 ART-01 must prove the required representative benchmark is actually `KEEPER_READY`. Truthful proxy/blockage is allowed as an execution outcome but blocks readiness PASS.
 
