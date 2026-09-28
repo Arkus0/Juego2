@@ -25,11 +25,43 @@ Any of these dispositions may PASS if the evidence is complete and the conclusio
 Benchmark at minimum:
 
 1. **Unity official MCP / AI Assistant tool surface** available for the pinned Unity generation used by Juego2;
-2. **KitWright Unity MCP** (open-source/MIT at planning time) or its current equivalent if the exact package has materially changed before execution.
+2. **KitWright Unity MCP** (open-source/MIT at planning time) or its current equivalent if the exact package has materially changed before execution;
+3. **CoplayDev/unity-mcp (MCP for Unity)** or its current maintained equivalent. At planning time it is MIT, actively maintained and materially comparable: it exposes scene/GameObject and asset operations, script editing/validation, tests, profiling/build/editor controls and supports external clients including Codex/Claude-style agents.
 
 Record exact versions/commits, terms/license, installation/provisioning path, prerequisites, tool exposure, permissions, network/cloud dependence and any project files/settings added by each candidate. A materially changed candidate must be re-audited rather than treated as identical by name.
 
-Do not silently add a third production dependency. Other tools may be noted as research; adding another benchmark candidate requires a bounded amendment with a reason it could change the decision.
+The mandatory list is a **floor, not a closed allowlist**. At execution time, any newly discovered candidate may be added to the benchmark **without another roadmap amendment** when it is plausibly decision-changing and satisfies all of the following:
+
+- lawful and actually obtainable for the spike;
+- exposes a materially comparable real-Unity authoring/observation surface rather than only chat/code generation;
+- can be tested under the same isolation, agent-control and evidence rules as the mandatory candidates;
+- its inclusion does not itself adopt a production/runtime dependency.
+
+For every such addition, record why it was included and pin its exact identity before running it. A candidate may also be excluded after discovery, but the evidence ledger must state the concrete reason (for example abandoned/unmaintained, incompatible Unity generation, non-comparable capability surface, unacceptable terms, or impossible provisioning). This prevents the benchmark from becoming stale merely because a strong third/fourth candidate appears after this WP was authored.
+
+Do not silently turn any benchmark candidate into a production dependency. Production adoption still requires the handoff and dependency/IP + H1-lifecycle proof defined below.
+
+## Comparison control — freeze the agent/model, not just the MCP
+
+The primary benchmark exists to compare **Unity operator surfaces**, so the agent side must be controlled.
+
+Before the first candidate run, freeze and record a **primary comparison operator configuration** containing at minimum:
+
+- agent/client identity and version;
+- model/provider and exact model identifier/version where the provider exposes one;
+- reasoning/effort mode and other material inference settings;
+- system/worker prompt and benchmark brief version;
+- available non-candidate tools/connectors;
+- context inputs and starting evidence supplied to the agent;
+- approval/permission mode;
+- retry/reset policy;
+- candidate tool-group exposure policy and any per-candidate unavoidable deviations.
+
+Run every candidate's decision-bearing comparison with that same primary configuration and the same task briefs/counting rules. If a setting cannot be made identical because of candidate architecture, record the deviation and its likely effect before scoring.
+
+Candidate-native assistants, a different model, a tuned prompt, or a higher reasoning budget may be explored in a **secondary capability pass**, but those results must be reported separately and may not be used to declare one MCP/operator surface superior to another in the primary scorecard.
+
+A run with an unrecorded or materially different agent/model/configuration is non-comparable and cannot support `ADOPT` / `ADOPT_BOUNDED`.
 
 ## Critical rule — open exploration corpus, not ART-curated corpus
 
@@ -146,7 +178,7 @@ The key productivity oracle is not wall-clock time. It is whether the operator c
 
 ## Comparative scorecard
 
-Score both candidates with evidence, not impressions, on:
+Score all candidates with evidence, not impressions, on:
 
 - project-state comprehension;
 - asset discovery across the open corpus;
@@ -195,28 +227,40 @@ Because these candidates can mutate the Editor directly, execution must use an i
 - record generated/modified files and package manifest changes;
 - prove the benchmark can be discarded without affecting the active H2F candidate.
 
-## Optional second pass — production-constrained replay
+## Production-constrained replay + current-workflow baseline
 
-If a candidate demonstrates meaningful leverage on the open corpus, replay **one** successful task using only the currently admitted production inputs and relevant ART/CITY rules. This is not required to discover the ceiling; it answers the separate question: *can the same operator follow our factory constraints after proving it can explore?*
+The open-corpus pass measures ceiling. Adoption additionally requires proof that the operator works under the real product constraints rather than only in a permissive sandbox.
 
-The replay must not weaken ART acceptance to make the tool look successful.
+For any final disposition of `ADOPT` or `ADOPT_BOUNDED`:
+
+1. replay at least one successful representative task for **every lane named in the proposed adoption** using only currently admitted production inputs and the then-current binding ART/CITY rules applicable to that task;
+2. keep the same frozen primary agent/model/configuration and intervention counting rules used by the comparison unless a documented product constraint forces a deviation;
+3. do not weaken ART/CITY acceptance, hand-pick exact asset paths, or add rescue tooling merely to make the candidate pass;
+4. run a like-for-like **current Juego2 workflow baseline** for the same constrained brief without the candidate operator, recording the same categories of manual intervention, exact-path assistance, rescue scripts/tools, recovery operations and human visual corrections;
+5. compare operator replay versus baseline explicitly. An adoption claim must show a material reduction in low-level manual manipulation and/or rescue burden while preserving the required evidence/quality boundary.
+
+For `ADOPT_BOUNDED`, evidence outside the adopted lane is informative but cannot substitute for the required constrained replay inside each adopted lane.
+
+`TOOL_SOURCE` and `REJECT` may PASS without this constrained replay if the evidence already supports those non-adoption conclusions, but the report must say that no production-operator adoption is being claimed.
 
 ## PASS acceptance contract
 
 Mandatory evidence:
 
-1. exact candidate/version/provisioning/terms ledger;
+1. exact candidate/version/provisioning/terms ledger, including every execution-time candidate added or excluded under the material-candidate rule;
 2. isolated-environment proof and starting SHA;
-3. open-corpus inventory boundary stating what the agent could see;
-4. ENV benchmark log + before/after/correction evidence;
-5. CHAR batch benchmark log + group inspection evidence;
-6. ANIM benchmark log + good/bad retarget evidence;
-7. manual-intervention and rescue-tooling counts under explicit counting rules;
-8. comparative scorecard;
-9. lifecycle/reconstructability impact assessment;
-10. risk/residual ledger;
-11. final `ADOPT | ADOPT_BOUNDED | TOOL_SOURCE | REJECT` disposition with named downstream consequences;
-12. if adopted in any form, a precise handoff identifying which later WP owns production integration and which package/tool state must be dependency/IP + H1-lifecycle proven before keeper use.
+3. frozen primary agent/client/model/configuration ledger plus any unavoidable per-candidate deviations;
+4. open-corpus inventory boundary stating what the agent could see;
+5. ENV benchmark log + before/after/correction evidence;
+6. CHAR batch benchmark log + group inspection evidence;
+7. ANIM benchmark log + good/bad retarget evidence;
+8. manual-intervention and rescue-tooling counts under explicit counting rules;
+9. comparative scorecard based on the frozen primary comparison, with secondary different-model/native-agent experiments clearly separated;
+10. lifecycle/reconstructability impact assessment;
+11. risk/residual ledger;
+12. final `ADOPT | ADOPT_BOUNDED | TOOL_SOURCE | REJECT` disposition with named downstream consequences;
+13. for `ADOPT` / `ADOPT_BOUNDED`, production-constrained replay evidence for every adopted lane plus the like-for-like current-workflow baseline and explicit manual-intervention/rescue-tooling comparison;
+14. if adopted in any form, a precise handoff identifying which later WP owns production integration and which package/tool state must be dependency/IP + H1-lifecycle proven before keeper use.
 
 ## FAIL conditions
 
@@ -224,8 +268,11 @@ FAIL if any of the following is true:
 
 - the agent is pre-fed exact asset paths/hand-selected final assemblies so heavily that autonomous discovery is not measured;
 - ART curation is used to hide difficult/unclassified material and therefore inflate the apparent success rate;
+- a materially comparable execution-time candidate is silently ignored without a recorded exclusion reason;
+- the primary candidate comparison uses materially different models/agent configurations, or fails to record those controls, yet treats the result as an MCP/operator-surface comparison;
 - a flashy screenshot substitutes for operation logs, runtime/console evidence and repeatability;
 - a candidate requires substantial bespoke rescue tooling yet is declared a productivity win without accounting for it;
+- `ADOPT` / `ADOPT_BOUNDED` is declared without the required production-constrained replay and current-workflow intervention/rescue baseline for every adopted lane;
 - uncurated benchmark output is silently promoted to production authority;
 - licensed/proprietary bytes are committed unlawfully;
 - the spike mutates or destabilizes the active H2F candidate;
@@ -243,3 +290,4 @@ These are discovery anchors only; execution must re-check current versions/terms
 - Unity official AI/MCP overview: https://unity.com/blog/unity-ai-mcp-how-to-get-started
 - Unity AI Assistant package/docs: https://docs.unity.com/en-us/engine/6000.6/manual/packages-list/packages-all/pack-safe/com-unity-ai-assistant
 - KitWright Unity MCP: https://github.com/kitwright/unity-mcp
+- CoplayDev MCP for Unity: https://github.com/CoplayDev/unity-mcp
