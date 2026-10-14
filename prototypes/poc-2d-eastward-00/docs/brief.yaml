@@ -1,0 +1,253 @@
+# Pegar íntegro como instrucción para Sol 6.1 Max.
+# YAML estructura la solicitud; no aumenta por sí solo la inteligencia del modelo.
+project:
+  id: POC-2D-EASTWARD-00
+  name: "Juego2 — prueba de dirección artística 2D en navegador"
+  owner_decision: "Pivot a 2D todavía NO aprobado"
+  status: experiment
+  priority: "Validación visual en movimiento antes que funcionalidades"
+
+role:
+  act_as:
+    - director_de_arte_2d
+    - technical_artist_pixel_art
+    - desarrollador_senior_phaser
+    - productor_critico
+  mandate: >-
+    Demostrar o refutar con evidencia jugable si podemos desarrollar una
+    aventura urbana asturiana con una calidad artística aspiracional comparable
+    a Eastward, una perspectiva legible inspirada también en Alundra y un
+    pipeline de assets realmente reutilizables. No maquilles los resultados.
+
+context:
+  original_game: >-
+    Juego2 es una aventura urbana de investigación ambientada en una ciudad
+    portuaria ficticia del norte de España inspirada en Cimavilla (Gijón).
+    Incluye exploración de calles, bares y viviendas, conversaciones, NPC
+    con rutinas, trabajos, investigación y peleas ocasionales.
+  problem: >-
+    Los escenarios 3D parecían aceptables en capturas, pero decepcionaron
+    al recorrerse en directo. Las capturas estáticas NO son criterio de éxito.
+  art_reference_primary: "Eastward: riqueza de pixel art, color, composición, detalle y atmósfera"
+  gameplay_reference_secondary: "Alundra y Zelda A Link to the Past: legibilidad y combate 2D en tiempo real"
+  location_reference: "Cimavilla, Gijón y pueblos portuarios asturianos"
+  intellectual_property: >-
+    Crear todos los sprites y diseños de forma original. No extraer, calcar,
+    trazar, copiar ni redistribuir gráficos de Eastward, Alundra o juegos de SEGA.
+    Usar las referencias solo para principios generales de diseño visual.
+
+executive_constraints:
+  - "Trabajar en la nube si el entorno conectado lo permite; comprobar las capacidades antes de prometer una URL pública."
+  - "Crear una rama y una carpeta/proyecto aislados: prototypes/poc-2d-eastward-00."
+  - "No modificar escenas, assets, historia ni código de la versión Unity 3D."
+  - "No migrar a Unity en esta prueba; evaluar Game Creator 2 más adelante."
+  - "No hacer otro Builder, editor de ciudades ni fábrica de assets completa."
+  - "No comprar assets ni contratar servicios sin autorización expresa."
+  - "No usar placeholders o arte procedimental simplón como si fueran arte final."
+  - "No sustituir el objetivo Eastward por un pixel art barato para completar el checklist."
+  - "No inflar el alcance para esconder una dirección artística mediocre."
+  - "No publicar ni desplegar repositorios o datos privados sin autorización; usar preview local o restringida cuando proceda."
+  - "Ante un bloqueo artístico grave, reportarlo y detener la expansión funcional."
+
+technical_stack:
+  framework: "Phaser con TypeScript y Vite; escoger versión estable comprobando compatibilidad real"
+  maps: >-
+    Preferir mapas editables de Tiled en formato JSON. Si Tiled no está
+    disponible en el entorno, generar datos compatibles y documentar cómo
+    importarlos; NO construir un editor propio.
+  rendering:
+    - "Escala interna definida y escalado entero cuando sea viable."
+    - "Evitar blur, filtrado incorrecto, píxeles inconsistentes y seams."
+    - "Depth sorting por pies/anclaje, capas superiores y máscaras de oclusión."
+    - "Iluminación y efectos atmosféricos subordinados a la calidad de los sprites."
+  portable_artifacts:
+    - "PNG con transparencia y dimensiones documentadas."
+    - "Tilesets, atlas y spritesheets con metadatos y procedencia."
+    - "Mapas Tiled JSON y diálogos/NPC en JSON independiente de Phaser."
+    - "Licencias, inventario y tamaños de los assets registrados en manifest."
+  target: "Navegador de escritorio; comprobar también visualización en móvil sin prometer controles táctiles completos"
+
+art_direction:
+  target: >-
+    Ambición visual comparable a Eastward en una muestra MUY pequeña:
+    pixel art original, expresivo, detallado y cohesionado, no '16-bit genérico'.
+    La escena debe reconocerse como Asturias costera reinterpretada.
+  style_rules:
+    - "Perspectiva 3/4 o cenital oblicua consistente: una sola gramática de proyección."
+    - "Escala coherente para personas, puertas, ventanas, tejados y mobiliario."
+    - "Riqueza cromática controlada; contraste focal en comercios y puntos importantes."
+    - "Piedra, revoco, madera, galerías, balcones, cubiertas y rótulos con carácter local."
+    - "Suelos con variación deliberada y transiciones; evitar ruido repetitivo."
+    - "Macro-sprites modulares para fachadas si mejoran el detalle y la composición."
+    - "Separar superficie repetible, elementos únicos, oclusión, sombras y decoración."
+    - "Iluminación atractiva pero sin ocultar carencias del arte base."
+  decisions_to_document:
+    - grid_tile_size
+    - logical_resolution_and_scale
+    - actor_sprite_dimensions
+    - projection_and_anchors
+    - palette_and_contrast
+    - modularity_rules
+    - layers_and_collision_conventions
+  visual_rejection_conditions:
+    - "La escena parece un paquete genérico de RPG Maker."
+    - "La arquitectura recuerda más a una ciudad japonesa genérica que a una asturiana."
+    - "Píxeles con densidad o dirección de luz incoherentes entre piezas."
+    - "Edificios montados como collages sin perspectiva/oclusiones válidas."
+    - "Bonita ilustración panorámica sin piezas reutilizables."
+
+scope:
+  street:
+    count: 1
+    size: "Microzona caminable, aproximadamente 20-35 segundos de recorrido"
+    environment:
+      - "Pavimento empedrado: base, 3 o más variantes y transiciones."
+      - "Dos fachadas realmente distintas, de las cuales una es residencial."
+      - "Un chigre con rótulo, puerta legible y personalidad propia."
+      - "Galería/balcón/alero u otros rasgos asturianos si corresponden."
+      - "6-10 props urbanos de calidad colocados de manera intencionada."
+      - "Una pequeña fuente de luz/atmósfera justificada por la escena."
+  later_if_art_approved:
+    - "Jugador provisional con idle y caminar en 4 direcciones."
+    - "Colisiones, cámara y sorting sin saltos visuales."
+    - "Un NPC, interacción y una línea corta de diálogo."
+    - "Una entrada de chigre y un microinterior, si la arquitectura lo permite."
+    - "Un combate de prueba contra un único enemigo: golpe, impacto, daño y retroceso."
+  exclusions:
+    - "Ciudad entera, 100 NPC, tramas, calendario, economía y guardado completo."
+    - "Combos elaborados, agarres, combate multienemigo y jefes."
+    - "Assets comprados o extraídos de videojuegos comerciales."
+    - "Sistema definitivo de creación de NPC y builder visual personalizado."
+
+execution:
+  phase_0_capability_audit:
+    goals:
+      - "Verificar acceso real a repo, rama, herramientas gráficas, Node, Phaser y navegador de pruebas."
+      - "Comprobar si se pueden generar sprites originales de calidad, no solo dibujar primitivas con código."
+      - "Comprobar si existen referencias fotográficas legales de Cimavilla en el workspace."
+      - "Verificar posibilidades concretas de preview web y sus restricciones."
+    deliverables:
+      - "reports/00-capability-audit.md"
+      - "Resumen de bloqueos, costes, licencias y vías de creación artística."
+    stop_if: >-
+      No existe una vía creíble para crear o integrar arte de calidad aspiracional.
+      No sustituyas el objetivo por una demo fea sin avisar.
+
+  phase_1_art_bible:
+    tasks:
+      - "Establecer gramática visual original inspirada en la calidad general de Eastward."
+      - "Elegir cuadrícula lógica, resolución, perspectiva, escala humana, paleta y capas."
+      - "Identificar al menos tres rasgos reconociblemente asturianos de la microzona."
+    deliverables:
+      - "docs/ART-DIRECTION.md"
+      - "docs/ASSET-SPEC.md"
+
+  phase_2_art_first_gate:
+    priority: "MÁXIMA. No construir funcionalidades encima de arte insuficiente."
+    tasks:
+      - "Producir 1 pavimento con variantes y transiciones realmente tileables."
+      - "Producir 1 fachada asturiana modular rica en detalle."
+      - "Producir una entrada de chigre con personalidad y 3-4 props de prueba."
+      - "Montar una microescena de inspección con desplazamiento de cámara o jugador de prueba."
+      - "Mostrar los sprites aislados, el atlas y el montaje sin filtros cosméticos."
+      - "Comprobar seams, escala, repetición, perspectivas y consistencia en movimiento."
+    required_outputs:
+      - "assets/tilesets/ y assets/props/ con PNG reales."
+      - "assets/manifest.json con tamaños, procedencia y criterios de reutilización."
+      - "Capturas sin retoque a resolución de juego y recorrido observable."
+      - "reports/01-ART-GATE.md, con PASS, CONDITIONAL o FAIL."
+    pass_if_all:
+      - "El usuario puede inspeccionar una escena realmente navegable, no un render."
+      - "Se percibe inequívocamente un lugar asturiano, no un decorado genérico."
+      - "El arte es original, atractivo y consistente con la ambición Eastward."
+      - "Las piezas encajan y se pueden recombinar de forma práctica."
+      - "La calidad no depende de filtros que camuflan tiles flojos."
+    user_approval_required: true
+    on_failure: >-
+      Detenerse y presentar diagnóstico, ejemplos visibles, alternativas y
+      estimación de trabajo. No avanzar automáticamente al combate ni declarar
+      el experimento prometedor sin evidencia.
+
+  phase_3_playable_street:
+    condition: "Solo después de aprobación expresa de ART-GATE"
+    tasks:
+      - "Crear escena Phaser navegable con tilemap y dos fachadas diferenciadas."
+      - "Añadir movimiento de 4 direcciones con sprite coherente."
+      - "Configurar colisiones, profundidad/oclusión, cámara y transiciones."
+      - "Añadir detalles, iluminación medida y props sin sacrificar legibilidad."
+      - "Añadir un NPC y diálogo contextual breve."
+      - "Añadir un microinterior del chigre si cabe sin perjudicar la calidad."
+    deliverables:
+      - "Preview jugable en navegador o instrucciones verificables para ejecutarla."
+      - "reports/02-MOVEMENT-GATE.md con problemas observados al recorrer la escena."
+
+  phase_4_combat_spike:
+    condition: "Solo si movimiento, cámara y arte ya están aprobados"
+    design:
+      - "Combate ligero tipo Alundra/Zelda, no Yakuza 3D."
+      - "Ataque direccional, hitbox, enemigo, impacto, daño y retroceso."
+      - "Feedback visual breve; sin combos ni árbol de habilidades."
+    deliverables:
+      - "Un encuentro corto reproducible que permita juzgar respuesta y diversión."
+      - "reports/03-COMBAT-GATE.md"
+
+  phase_5_production_review:
+    tasks:
+      - "Medir tiempo real para crear arte y ensamblar una microcalle adicional sin hacerla entera."
+      - "Estimar coste por fachada, calle y NPC con la calidad observada."
+      - "Separar asset reutilizable de asset específico y trabajo manual inevitable."
+      - "Evaluar continuidad en Phaser frente a futuro port a Unity, sin migrar todavía."
+      - "Entregar recomendación inequívoca de seguir, revisar o abandonar este pipeline."
+    deliverables:
+      - "reports/04-VERDICT.md"
+      - "README.md con ejecución, controles, arquitectura y limitaciones."
+
+quality_gates:
+  art: "Bloqueante: debe revisarlo el usuario mientras se desplaza por la escena."
+  movement: "Sin vibración de píxeles, colisiones absurdas, clipping ni sorting roto."
+  combat: "Solo juzgar cuando exista una escena atractiva y caminable."
+  maintainability: "Assets independientes del framework y mapa reproducible."
+  honesty: "No inventar screenshots, vídeos, URLs, pruebas ejecutadas o resultados."
+
+validation:
+  automated_if_available:
+    - "npm install/npm ci y compilación de producción sin errores."
+    - "Verificación de rutas y archivos referenciados en atlas, mapas y manifest."
+    - "Test de carga web con navegador automatizado si el entorno lo permite."
+    - "Capturas en dos resoluciones de ventana para detectar escalado incorrecto."
+  visual_mandatory:
+    - "Inspección en la escala REAL de juego, no solo al ampliar imágenes."
+    - "Recorrido de cámara con atención a costuras, parpadeos y variación de píxel."
+    - "Comparar sprites aislados frente a escena con y sin iluminación."
+    - "Comprobar que una segunda combinación de tiles no revela repetición evidente."
+  transparency: >-
+    Si no puedes inspeccionar gráficamente el resultado en ejecución,
+    informa NO VALIDADO; una build que compila no demuestra calidad artística.
+
+delivery:
+  checkpoints:
+    - "C0: capacidades reales, riesgos y stack confirmado."
+    - "C1: especificación artística y primeras piezas."
+    - "C2: ART-GATE con imágenes y prueba de movimiento; esperar aprobación."
+    - "C3: calle jugable, NPC y microinterior, si C2 fue aprobado."
+    - "C4: combate mínimo y veredicto, si C3 fue aprobado."
+  report_format:
+    - "Qué se hizo realmente y qué no."
+    - "Rutas exactas de archivos y comandos ejecutados."
+    - "Enlace de preview únicamente si existe y se verificó."
+    - "Evidencia visual accesible, no solo descripciones."
+    - "Problemas abiertos y costes previstos."
+    - "Próximo paso autorizado; no ampliar alcance unilateralmente."
+  verdict_values:
+    - "APTO_PARA_CONTINUAR"
+    - "PROMETEDOR_PERO_INMADURO"
+    - "NO_RECOMENDABLE"
+  final_rule: >-
+    Un prototipo funcional pero visualmente genérico NO APRUEBA. Una imagen
+    maravillosa sin tiles utilizables TAMPOCO APRUEBA. Priorizamos evidencia
+    visual directa, reutilización y honestidad frente a velocidad aparente.
+
+first_action: >-
+  Empieza por la auditoría de capacidades. Si resulta viable, define el
+  lenguaje artístico y construye exclusivamente el ART-GATE. Muestra una
+  prueba navegable y solicita aprobación antes de crear NPC, interior o combate.
