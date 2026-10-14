@@ -1,0 +1,20 @@
+{
+  "name": "poc-2d-eastward-00",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "assets": "python3 tools/pipeline.py && python3 tools/inspect_sheets.py",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "check": "node tools/check_refs.mjs"
+  },
+  "dependencies": {
+    "phaser": "4.2.1"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2",
+    "vite": "8.3.4"
+  }
+}
