@@ -1,0 +1,445 @@
+{
+ "frames": {
+  "fac_residencial_full": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 160,
+    "h": 182
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 160,
+    "h": 182
+   },
+   "sourceSize": {
+    "w": 160,
+    "h": 182
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fac_chigre_full": {
+   "frame": {
+    "x": 162,
+    "y": 0,
+    "w": 128,
+    "h": 119
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 119
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 119
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fac_residencial_upper": {
+   "frame": {
+    "x": 292,
+    "y": 0,
+    "w": 160,
+    "h": 82
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 160,
+    "h": 82
+   },
+   "sourceSize": {
+    "w": 160,
+    "h": 82
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fac_chigre_base": {
+   "frame": {
+    "x": 0,
+    "y": 184,
+    "w": 128,
+    "h": 67
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 67
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 67
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fac_residencial_base": {
+   "frame": {
+    "x": 130,
+    "y": 184,
+    "w": 160,
+    "h": 63
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 160,
+    "h": 63
+   },
+   "sourceSize": {
+    "w": 160,
+    "h": 63
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "lamp_post": {
+   "frame": {
+    "x": 292,
+    "y": 184,
+    "w": 14,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 14,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 14,
+    "h": 50
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fac_residencial_roof": {
+   "frame": {
+    "x": 308,
+    "y": 184,
+    "w": 160,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 160,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 160,
+    "h": 37
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "vending": {
+   "frame": {
+    "x": 470,
+    "y": 184,
+    "w": 24,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 36
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fac_chigre_upper": {
+   "frame": {
+    "x": 0,
+    "y": 253,
+    "w": 128,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 32
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "barrel_table": {
+   "frame": {
+    "x": 130,
+    "y": 253,
+    "w": 17,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 17,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 17,
+    "h": 24
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fish_crates": {
+   "frame": {
+    "x": 149,
+    "y": 253,
+    "w": 21,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 21,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 21,
+    "h": 20
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "bicycle": {
+   "frame": {
+    "x": 172,
+    "y": 253,
+    "w": 23,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 23,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 23,
+    "h": 20
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "hydrangea": {
+   "frame": {
+    "x": 197,
+    "y": 253,
+    "w": 17,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 17,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 17,
+    "h": 20
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "bench": {
+   "frame": {
+    "x": 216,
+    "y": 253,
+    "w": 25,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 25,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 25,
+    "h": 20
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fac_chigre_roof": {
+   "frame": {
+    "x": 243,
+    "y": 253,
+    "w": 128,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 20
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "wall_lantern": {
+   "frame": {
+    "x": 373,
+    "y": 253,
+    "w": 10,
+    "h": 15
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 10,
+    "h": 15
+   },
+   "sourceSize": {
+    "w": 10,
+    "h": 15
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "butane": {
+   "frame": {
+    "x": 385,
+    "y": 253,
+    "w": 7,
+    "h": 14
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 7,
+    "h": 14
+   },
+   "sourceSize": {
+    "w": 7,
+    "h": 14
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "stool": {
+   "frame": {
+    "x": 394,
+    "y": 253,
+    "w": 11,
+    "h": 12
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 11,
+    "h": 12
+   },
+   "sourceSize": {
+    "w": 11,
+    "h": 12
+   },
+   "anchor": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  }
+ },
+ "meta": {
+  "image": "world_atlas.png",
+  "size": {
+   "w": 512,
+   "h": 512
+  },
+  "scale": "1",
+  "app": "tools/pipeline.py"
+ }
+}
