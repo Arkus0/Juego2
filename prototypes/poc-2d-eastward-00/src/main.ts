@@ -39,15 +39,18 @@ class Street extends Phaser.Scene {
         const f = String(prop(o, 'frame')); const flip = Boolean(prop(o, 'flipX'));
         // modular stack: base + upper (world depth = foot line) and roof (occlusion layer above actors)
         const parts = ['base', 'upper', 'roof'].map(p => this.textures.getFrame('world', `${f}_${p}`));
+        const bias = Number(prop(o, 'depthBias') ?? 0);
         let y = o.y;
         for (const [i, fr] of parts.entries()) {
           const img = this.add.image(o.x + o.width / 2, y, 'world', fr.name).setOrigin(0.5, 1).setFlipX(flip);
-          img.setDepth(i === 2 ? 5000 : o.y);
+          img.setDepth(i === 2 ? 5000 + bias : o.y + bias);
           y -= fr.height;
         }
       } else if (o.type === 'prop' || o.type === 'prop_wall') {
         const img = this.add.image(o.x, o.y, 'world', String(prop(o, 'frame'))).setOrigin(0.5, 1);
         img.setDepth(o.type === 'prop_wall' ? foot + 1 : o.y);
+      } else if (o.type === 'decal') {
+        this.add.image(o.x, o.y, 'world', String(prop(o, 'frame'))).setOrigin(0.5, 0.5).setDepth(-50);
       } else if (o.type === 'light') {
         const r = Number(prop(o, 'radius'));
         this.lightObjs.push(this.add.image(o.x, o.y, 'glow').setScale(r / 32).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.55).setDepth(8001));
@@ -70,6 +73,7 @@ class Street extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     cam.startFollow(this.player, true, 0.12, 0.12);
+    cam.setFollowOffset(0, 48); // look ahead upwards so roofs/backwall stay in frame (3/4 street composition)
     cam.setRoundPixels(true);
     // lighting overlay (subordinate to the art; L toggles)
     // dusk grade: translucent warm-dark wash (works in Canvas and WebGL; MULTIPLY is not reliable in Canvas)

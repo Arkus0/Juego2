@@ -1,42 +1,55 @@
-# 01 · ART-GATE (C2)
+# 01 · ART-GATE — iteración 2 (C2)
 
-**Veredicto: CONDITIONAL (no aprobado para la fase 3).** Las fachadas se acercan a la ambición; el pavimento y la escala de los props **no**. Hace falta otra iteración de arte (con las imágenes nuevas pedidas abajo) antes de construir nada encima.
+**Veredicto: CONDITIONAL.** Es una mejora clara frente a la iteración 1 y la escena ya se puede recorrer para juzgar la dirección artística. Quedan 4 defectos visibles (ver «Problemas abiertos»). **No se avanza a la fase 3 sin aprobación expresa.**
+Fórmula de juicio: *Eastward meets Shenmue meets Asturias*. La iteración 1 se conserva en `evidence/iter1/` y `tools/pipeline_v1.py`.
 
-Fórmula de juicio: *Eastward meets Shenmue meets Asturias*.
+## Cómo inspeccionar
+`npm run build && npx vite preview --port 4173` → `http://localhost:4173/` (`?light=0`, `?auto=1`, `?r=webgl`). Teclas: WASD/flechas, L (luz), C (colisiones). Playwright: 0 errores; zoom ×2 a 1280×720 y ×4 a 1920×1080.
 
-## Qué se puede inspeccionar
-- Escena navegable en localhost: `npm run build && npx vite preview --port 4173` → `http://localhost:4173/`. Teclas: WASD/flechas, `L` (luz), `C` (colisiones). Parámetros: `?light=0`, `?auto=1` (recorrido automático), `?r=webgl`.
-- La valida Playwright: 0 errores de consola o página, carga en 1280×720 (zoom ×2) y 1920×1080 (zoom ×4).
-- Recorrido grabado: `evidence/recorrido_auto.webm` (19 s, 1280×720) y `evidence/recorrido_frames.gif`.
-- Sprites aislados: `evidence/isolated_sprites_1x.png` / `_x3.png` (la barra gris = humano de 30 px). Atlas: `evidence/atlas_1x.png` / `_x2.png`.
-- Montaje a 1× real (sin escalar): `evidence/frame_1x_luzON.png`, `evidence/frame_1x_luzOFF.png`.
-- Dos tamaños de ventana: `evidence/shot_{1280x720,1920x1080}_luz{ON,OFF}_{spawn,chigre}.png`.
-- Tiling: `evidence/tiling_3x3_*.png` (cada metatile en 3×3), `evidence/tiling_mix_*.png` (segunda combinación aleatoria).
-- Bug de WebGL: `evidence/bug_webgl_tilemap_1280x720.png`.
+## Pavimento: ¿los cobbles nuevos tilean limpios por sí solos? **No.**
+Medición objetiva en `evidence/seam_analysis_v2.json` (`tools/seam_analysis.py`):
+- La red diagonal tiene un periodo de ~68–70 px en X y ~60–61 px en Y. Es **anisótropa**: los rombos no son cuadrados.
+- La autocorrelación en el pico es baja (0,22–0,33): las piedras están pintadas de forma irregular y la red no es regular.
+- Con el mejor recorte posible (3 periodos, desplazamiento optimizado), el error de envoltura es **2,2–2,4 veces** la diferencia natural entre columnas vecinas. En los 4 tiles y en los dos ejes se ve costura.
+- Cabe solo 1 tile de 236 px útiles, es decir, 3 periodos: no hay margen para elegir un recorte que encaje.
 
-## Evaluación por criterio (a escala real de juego)
-| Criterio | Resultado | Diagnóstico honesto |
+**Solución aplicada:** reconstruir la red. Se genera una red de rombos perfecta (2 periodos por cada metatile de 32 px) y cada piedra se rellena con píxeles pintados del propio `pavement_v2.jpg`. Las juntas se rellenan con piedra vecina y cada piedra lleva borde claro arriba-izquierda y oscuro abajo-derecha. El resultado es **perfectamente tileable**: `evidence/tiling_3x3_*`, `evidence/tiling_mix_*`. Ojo: la forma de cada piedra la da el código; la textura sí es pintada.
+- Bordillo horizontal: reconstruido por bandas (2 losas, 3 y 5 piedras por fila), cortando por las juntas detectadas. Tilea en X.
+- Losa (`pav_slab`, 64×32): sin verificar como tileable; a la escala de la acera se nota su repetición.
+
+## Cambios de la iteración 2
+- `facade2` (ULTRAMARINOS) sustituye a la fachada en espejo: ahora hay **3 fachadas distintas** más una medianera.
+- `backwall` va retranqueada detrás del chigre y tapa el hueco de cielo. Una segunda copia cierra la calle por el este.
+- La cámara mira 48 px por encima del jugador para que tejados y fondo entren en cuadro.
+- Charco y musgo van como **decales** (capa del suelo, por debajo de los actores). El charco se re-colorea para el atardecer, porque reflejaba un cielo azul de mediodía.
+- Props reescalados a la referencia humana de 30 px: banco 34×26, máquina 32×44, bici 31×26, barrica 20×28, farola 16×58, etc. (lista en `assets/manifest.json`).
+- **Limpieza de propiedad intelectual** (`tools/pipeline.py: ip_repaint`), repintada sobre la imagen fuente:
+  - latas con marca → latas genéricas sin texto;
+  - bandera y «1992» de la máquina → panel crema liso;
+  - escudo y texto municipal de la papelera → verde liso;
+  - placa «BUTANO 1992» → placa en blanco.
+  Los textos genéricos que quedan («PRENSA TABACOS», cajas de sidra y de pescado) son ilegibles a escala de juego.
+- Halos de magenta: color de fondo detectado en cada imagen, erosión de 3 px y despill en el borde. Además, se eliminan los píxeles del contorno que siguen siendo magenta después de reducir.
+- Paleta: 48 colores = 39 por median-cut + 6 azules reservados (hortensia) + 3 verdes de musgo reservados.
+
+## Evaluación (a escala real)
+| Criterio | Iter 1 | Iter 2 |
 |---|---|---|
-| Escena navegable, no render | **PASS** | Tilemap Tiled + objetos + colisiones + cámara con seguimiento; el jugador es una cápsula PROVISIONAL. |
-| Lugar inequívocamente asturiano | **PASS (con reservas)** | Galería blanca, mampostería con revoco ocre, chigre verde con sidra, hortensias y cajas de pescado. La bombona **azul** no es de 1992 en España (era naranja). La máquina de refrescos tiene un aire algo japonés. |
-| Arte original, atractivo, ambición Eastward | **CONDITIONAL** | Las **fachadas** tienen detalle y carácter: es lo mejor del set. Los **props** quedan pequeños y menos definidos (se reducen ~10× frente a ~3,75× las fachadas), así que la densidad de detalle no es homogénea. |
-| Las piezas encajan y se recombinan | **CONDITIONAL** | Las fachadas se apilan (base, upper, roof) con anclas de pies. Pero solo hay **1 fachada residencial**: la segunda es la misma en espejo, y la repetición se ve. El chigre tiene 1,5 plantas frente a 2,5 de la residencial, sin edificio de fondo: queda un hueco de «cielo» liso. |
-| Calidad sin depender de filtros | **PASS** | La versión sin luz se sostiene. La luz es un velo cálido más halos aditivos en bandas. |
-| Pavimento tileable sin seams ni repetición | **FAIL** | A 1× se ve la **rejilla de 32 px**: la banda de fundido de 8 px emborrona las juntas. El charco es un cuadrado evidente. La acera de losas (`slab_fill`) es plana y borrosa. El bordillo horizontal está rotado 90°, con la luz incoherente. |
-| Proyección única | **PASS tras corrección** | Se recortaron la pared lateral 3D y el faldón de tejado del chigre. El borde izquierdo de su tejado queda cortado en recto. |
-| Coherencia de luz | **PASS (aprox.)** | Fuentes con luz arriba-izquierda; el chigre trae su propia luz interior, lo que es coherente con la escena. |
-| Movimiento / cámara | **NO VALIDADO a fondo** | El vídeo headless a unos 25 fps no basta para juzgar el *shimmer* subpíxel. Se usan zoom entero y `roundPixels`, pero la cámara con lerp 0,12 puede producir vibración: hay que revisarlo en un monitor real. A 1280×720, el zoom ×2 deja bandas negras (960×540). |
+| Escena navegable | PASS | PASS |
+| Lugar asturiano inequívoco | PASS con reservas | **PASS**: galería, chigre, ultramarinos con toldo, ropa tendida, hortensias, bombona naranja, losas y adoquín |
+| Pavimento sin seams ni repetición | FAIL | **PASS** en los cobbles (sin rejilla a 1×). **CONDITIONAL** en la losa de acera |
+| Piezas recombinables | CONDITIONAL | **PASS**: 4 fachadas en base/upper/roof, decales, 13 props, mapa Tiled |
+| Densidad de píxel y escala coherentes | CONDITIONAL | **CONDITIONAL**: los props siguen menos detallados que las fachadas (reducción de ~8× frente a ~3–4×). La bici queda fina y se pierde |
+| Sin depender de filtros | PASS | PASS (`frame_1x_luzOFF.png`) |
+| Movimiento | NO VALIDADO | **NO VALIDADO a fondo**: sin GPU real; el vídeo headless no permite juzgar el shimmer |
 
 ## Problemas abiertos
-1. Pavimento: cambiar el fundido por un recorte en juntas, o pedir tiles nativos de 32 px pensados como tileables. También faltan un decal de charco orgánico (con alfa) y un bordillo horizontal nativo.
-2. Falta una **segunda fachada residencial real** y una **fachada de fondo/medianera** detrás del chigre.
-3. Props: pedirlos a escala coherente y con más masa: banco a ~24 px de alto y bici a ~22 px, dibujados para esa escala y no reducidos 10×. Bombona naranja de época.
-4. Halo residual de despill en algunos bordes (hortensia).
-5. Phaser 4.2.1 WebGL TilemapLayer renderiza mal en headless/SwiftShader. Se usa Canvas; queda pendiente comprobarlo en GPU real.
-6. Los binarios no van en el repositorio como PNG (limitación del conector): van en un bundle base64 que se desempaqueta con `node tools/unpack_assets.mjs`.
+1. **Escala de la medianera:** sus sillares parecen grandes al lado de las fachadas, y la casa del este se lee como un muro. Haría falta una medianera dibujada a la escala de 30 px.
+2. **Luz:** los halos del chigre se ven como manchas difusas sobre la fachada, porque el halo aditivo cae sobre arte que ya tiene luz pintada. Hay que bajarlos o moverlos al suelo.
+3. **Charco:** el re-coloreado lo deja algo granulado y marrón. Mejor pedirlo pintado ya de atardecer.
+4. **Acera:** la losa de 64 px se repite. La bici y la máquina pierden lectura a escala de juego.
+5. El chigre (1,5 plantas) sigue más bajo que las demás fachadas. Es aceptable como edificio singular.
+6. Phaser 4.2.1 + WebGL TilemapLayer: sigue el render erróneo en headless, así que se usa Canvas.
 
-## Estimación
-Una iteración más de arte: unas 1–2 h de pipeline, más el tiempo de generación de 5–6 imágenes nuevas. Después, nuevo ART-GATE.
-
-## Próximo paso autorizado
-**Ninguno automático.** Se espera la aprobación o las instrucciones del usuario. No se han creado NPC, interior ni combate.
+## Próximo paso
+Esperar la aprobación del usuario tras recorrer la escena. NPC, interior y combate **no** están empezados.

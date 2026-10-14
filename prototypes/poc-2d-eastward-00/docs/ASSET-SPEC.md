@@ -27,3 +27,11 @@ Todos son PNG RGBA, alfa duro (0/255), cuantizados a `assets/palette/palette.png
 
 ## Cómo abrir en Tiled
 Abrir `assets/maps/street_00.json` en Tiled ≥1.10: el tileset está embebido y apunta a `../tilesets/pavement_16.png`. Los objetos llevan las propiedades `frame` y `flipX`, que corresponden a los frames del atlas.
+
+## Iteración 2 (actualización)
+- Fuentes nuevas: `pavement_v2.jpg`, `decals.jpg`, `facade2.jpg`, `backwall.jpg`, `props2.jpg`.
+- Tileset de 256×32: cobble_0..3 (rombos reconstruidos, tileables en ambos ejes), curb_h (tileable en X) y slab 64×32.
+- Decales en `assets/decals/`: puddle 56×45, moss_a 20×17, moss_b 20×16. Se anclan por el centro y van en la capa de suelo (depth −50).
+- Fachadas: residencial 160×182, chigre 128×119, ultramarinos 147×216 y backwall 256×141. La backwall usa `depthBias` −250 cuando va detrás del chigre.
+- Props: barrel_table 20×28, stool 14×15, lamp_post 16×58, wall_lantern 12×18, hydrangea 21×24, butane 11×19, vending 32×44, bicycle 31×26, bench 34×26, trash_bin 16×26, fish_boxes 27×26, prensa_sign 22×32, cider_crate 20×18.
+- Limpieza de PI: ver `assets/manifest.json` → `ip_cleanup`.
